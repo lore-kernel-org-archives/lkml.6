@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0547C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E68FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66EE52083E
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BFEC20818
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:36:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s+9aAX97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66EE52083E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VC3Li+kY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BFEC20818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbeKQXw2 (ORCPT
+        id S1726505AbeKQXxK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 18:52:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41276 "EHLO mail.kernel.org"
+        Sat, 17 Nov 2018 18:53:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbeKQXw2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 18:52:28 -0500
+        id S1726020AbeKQXxK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 18:53:10 -0500
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D42620815;
-        Sat, 17 Nov 2018 13:35:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8A6920815;
+        Sat, 17 Nov 2018 13:36:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542461745;
-        bh=l9u+Ph9bwmuVk0UOguQUQBEbiuJTSHp4PZeu8tNyANk=;
+        s=default; t=1542461787;
+        bh=fvTaDa6YrAUeIj12DCaFAmzV+gt817/48vJLaARFNik=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=s+9aAX97dUfEiKrI+S6cB7UOgaj8O5uhwycLm4lSB//UCUfAmsLLtK3XroKD1ufzH
-         WdOODAwWeWFQw2Ef7mXvzkwE5Fpkh9L8Qtvt5l5reaeztkfYjA5shGEDyjx+4KNuX3
-         KdDhajiJ+3omon6UeCviCbGQhmMkpLVGyIN6KeFY=
-Message-ID: <d8d65295cefd78929bfc9e21e1392b7936c49a9b.camel@kernel.org>
-Subject: Re: BUG: corrupted list in locks_delete_block
+        b=VC3Li+kYZrFDPYrsxSKipojOBerD8hrWOu2n0p225GQXT3pdUm5tsuEAF1hHEhZpc
+         mPzES6HmD3IlT/yO7ou3ruCrhZsW61bsnJjf7gb+VSfxoSd8DDcT401a6iI0r9Lstn
+         IJtS9ceDXXRjNL+hAxiQSZd8Sh66IlQc6R4O2hv8=
+Message-ID: <d357df98f4ba728f0252ac32861593b547af0d27.camel@kernel.org>
+Subject: Re: KASAN: stack-out-of-bounds Read in locks_remove_flock
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+13eb7470890c56ce3f37@syzkaller.appspotmail.com>
+        syzbot <syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com>
 Cc:     Bruce Fields <bfields@fieldses.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>,
         NeilBrown <neilb@suse.com>
-Date:   Sat, 17 Nov 2018 08:35:43 -0500
-In-Reply-To: <CACT4Y+bazpjyYUGo-PBQ2rXG-y2x8SrBeQWs_5-dMmkSxicFCg@mail.gmail.com>
-References: <000000000000fa9fb7057a679a42@google.com>
-         <CACT4Y+bazpjyYUGo-PBQ2rXG-y2x8SrBeQWs_5-dMmkSxicFCg@mail.gmail.com>
+Date:   Sat, 17 Nov 2018 08:36:25 -0500
+In-Reply-To: <CACT4Y+Zh4GmqecF0ftBjGUg0Zvi2Gto7QLzFcDe_+LGASxX5BQ@mail.gmail.com>
+References: <00000000000082cc8d057a0c0877@google.com>
+         <CACT4Y+Zh4GmqecF0ftBjGUg0Zvi2Gto7QLzFcDe_+LGASxX5BQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
 Mime-Version: 1.0
@@ -60,97 +60,86 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, 2018-11-16 at 12:40 -0800, Dmitry Vyukov wrote:
-> On Sun, Nov 11, 2018 at 10:18 AM, syzbot
-> <syzbot+13eb7470890c56ce3f37@syzkaller.appspotmail.com> wrote:
+> On Tue, Nov 6, 2018 at 9:03 PM, syzbot
+> <syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com> wrote:
 > > Hello,
 > > 
 > > syzbot found the following crash on:
 > > 
-> > HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> > HEAD commit:    d881de30d29e Add linux-next specific files for 20181107
 > > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12b1262b400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=13eb7470890c56ce3f37
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=14aa485d400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=caa433e1c8778437
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=1818cd833edc063452c6
 > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107566a3400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b5fa2b400000
+> > 
+> > Unfortunately, I don't have any reproducer for this crash yet.
 > > 
 > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+13eb7470890c56ce3f37@syzkaller.appspotmail.com
+> > Reported-by: syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com
 > 
 > This is another manifestation of the following report, right?
 > 
 > #syz dup: KASAN: use-after-free Read in locks_delete_block
 > 
 
-Yes, I think so.
+Slightly different manifestation in this case, but the same bug, yes.
 
-> > list_del corruption. prev->next should be ffff8801c135f960, but was
-> > 0000000000000007
-> > ------------[ cut here ]------------
-> > kernel BUG at lib/list_debug.c:53!
-> > invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 1 PID: 5972 Comm: syz-executor001 Not tainted 4.20.0-rc1-next-20181109+
-> > #110
+> > ==================================================================
+> > BUG: KASAN: stack-out-of-bounds in locks_remove_flock+0x33c/0x350
+> > fs/locks.c:2567
+> > Read of size 8 at addr ffff8801c71c7a08 by task syz-executor5/20562
+> > 
+> > CPU: 0 PID: 20562 Comm: syz-executor5 Not tainted 4.20.0-rc1-next-20181107+
+> > #107
 > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > > Google 01/01/2011
-> > RIP: 0010:__list_del_entry_valid.cold.1+0x48/0x4a lib/list_debug.c:51
-> > Code: fe 60 88 e8 72 9b d3 fd 0f 0b 48 89 de 48 c7 c7 40 00 61 88 e8 61 9b
-> > d3 fd 0f 0b 48 89 de 48 c7 c7 e0 ff 60 88 e8 50 9b d3 fd <0f> 0b 48 89 d9 48
-> > c7 c7 a0 00 61 88 e8 3f 9b d3 fd 0f 0b 48 89 f1
-> > RSP: 0018:ffff8801c135f750 EFLAGS: 00010286
-> > RAX: 0000000000000054 RBX: ffff8801c135f960 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff8165ba15 RDI: 0000000000000005
-> > RBP: ffff8801c135f768 R08: ffff8801c11ce080 R09: ffffed003b5e5020
-> > R10: ffffed003b5e5020 R11: ffff8801daf28107 R12: ffff8801d945f3a0
-> > R13: ffff8801d945f3a0 R14: 0000000000000000 R15: ffff8801c135f838
-> > FS:  00007f96b449c700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000000046aa40 CR3: 00000001b39ab000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > > Call Trace:
-> >  __list_del_entry include/linux/list.h:117 [inline]
-> >  list_del_init include/linux/list.h:159 [inline]
-> >  __locks_delete_block fs/locks.c:683 [inline]
-> >  locks_delete_block+0xce/0x3d0 fs/locks.c:716
-> >  locks_mandatory_area+0x48b/0x6a0 fs/locks.c:1398
-> >  rw_verify_area+0x2f2/0x360 fs/read_write.c:386
-> >  do_iter_write+0x101/0x5f0 fs/read_write.c:954
-> >  vfs_writev+0x1f1/0x360 fs/read_write.c:1004
-> >  do_writev+0x11a/0x310 fs/read_write.c:1039
-> >  __do_sys_writev fs/read_write.c:1112 [inline]
-> >  __se_sys_writev fs/read_write.c:1109 [inline]
-> >  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
-> >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >  __dump_stack lib/dump_stack.c:77 [inline]
+> >  dump_stack+0x244/0x39d lib/dump_stack.c:113
+> >  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+> >  kasan_report_error mm/kasan/report.c:354 [inline]
+> >  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+> >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >  locks_remove_flock+0x33c/0x350 fs/locks.c:2567
+> >  locks_remove_file+0x148/0x5c0 fs/locks.c:2607
+> >  __fput+0x2f0/0xa70 fs/file_table.c:271
+> >  ____fput+0x15/0x20 fs/file_table.c:312
+> >  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+> >  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+> >  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+> >  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+> >  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+> >  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
 > >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x446619
-> > Code: e8 6c b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
-> > 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007f96b449bda8 EFLAGS: 00000297 ORIG_RAX: 0000000000000014
-> > RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 0000000000446619
-> > RDX: 0000000000000001 RSI: 0000000020000440 RDI: 0000000000000003
-> > RBP: 00000000006dbc30 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000297 R12: 00000000006dbc3c
-> > R13: 2f30656c69662f2e R14: 64663d736e617274 R15: 00000000006dbd2c
-> > Modules linked in:
-> > ---[ end trace efdc3057b60b19f3 ]---
-> > RIP: 0010:__list_del_entry_valid.cold.1+0x48/0x4a lib/list_debug.c:51
-> > Code: fe 60 88 e8 72 9b d3 fd 0f 0b 48 89 de 48 c7 c7 40 00 61 88 e8 61 9b
-> > d3 fd 0f 0b 48 89 de 48 c7 c7 e0 ff 60 88 e8 50 9b d3 fd <0f> 0b 48 89 d9 48
-> > c7 c7 a0 00 61 88 e8 3f 9b d3 fd 0f 0b 48 89 f1
-> > RSP: 0018:ffff8801c135f750 EFLAGS: 00010286
-> > RAX: 0000000000000054 RBX: ffff8801c135f960 RCX: 0000000000000000
-> > RDX: 0000000000000000 RSI: ffffffff8165ba15 RDI: 0000000000000005
-> > RBP: ffff8801c135f768 R08: ffff8801c11ce080 R09: ffffed003b5e5020
-> > R10: ffffed003b5e5020 R11: ffff8801daf28107 R12: ffff8801d945f3a0
-> > R13: ffff8801d945f3a0 R14: 0000000000000000 R15: ffff8801c135f838
-> > FS:  00007f96b449c700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000000046aa40 CR3: 00000001b39ab000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > RIP: 0033:0x411021
+> > Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48
+> > 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
+> > c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+> > RSP: 002b:00007ffdb42509a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+> > RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411021
+> > RDX: 0000000000000000 RSI: 0000000000732ea0 RDI: 0000000000000004
+> > RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 00007ffdb42508c0 R11: 0000000000000293 R12: 0000000000000000
+> > R13: 0000000000000001 R14: 0000000000000201 R15: 0000000000000005
+> > 
+> > The buggy address belongs to the page:
+> > page:ffffea00071c71c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> > flags: 0x2fffc0000000000()
+> > raw: 02fffc0000000000 0000000000000000 ffffffff071c0101 0000000000000000
+> > raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> > page dumped because: kasan: bad access detected
+> > 
+> > Memory state around the buggy address:
+> >  ffff8801c71c7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> >  ffff8801c71c7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > > 
+> > > ffff8801c71c7a00: f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00 00
+> > 
+> >                       ^
+> >  ffff8801c71c7a80: 00 f1 f1 f1 f1 00 00 f2 f2 f2 f2 f2 f2 f8 f2 f2
+> >  ffff8801c71c7b00: f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00
+> > ==================================================================
 > > 
 > > 
 > > ---
@@ -161,8 +150,6 @@ Yes, I think so.
 > > syzbot will keep track of this bug report. See:
 > > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
 > > syzbot.
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
 > > 
 > > --
 > > You received this message because you are subscribed to the Google Groups
@@ -170,7 +157,7 @@ Yes, I think so.
 > > To unsubscribe from this group and stop receiving emails from it, send an
 > > email to syzkaller-bugs+unsubscribe@googlegroups.com.
 > > To view this discussion on the web visit
-> > https://groups.google.com/d/msgid/syzkaller-bugs/000000000000fa9fb7057a679a42%40google.com.
+> > https://groups.google.com/d/msgid/syzkaller-bugs/00000000000082cc8d057a0c0877%40google.com.
 > > For more options, visit https://groups.google.com/d/optout.
 
 -- 
