@@ -2,215 +2,333 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2A7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DBAC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D7D52084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7D52084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B0CB620854
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:25:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKcG1uMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0CB620854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725984AbeKQRdu (ORCPT
+        id S1726037AbeKQRlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 12:33:50 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:47987 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725837AbeKQRdu (ORCPT
+        Sat, 17 Nov 2018 12:41:31 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37287 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbeKQRla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 12:33:50 -0500
-Received: by mail-io1-f71.google.com with SMTP id y8-v6so25072180ioc.14
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 23:18:04 -0800 (PST)
+        Sat, 17 Nov 2018 12:41:30 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 80so11585496pge.4
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 23:25:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
+        b=QKcG1uMk5mguJs6ml4Ff0XzrPgi0YjToxRglB+Z30Ecg8tFpDdExWqx3ZJxIpbqJGB
+         2o0UjdpjQtwAKlrlRGouqfDIyu3cEnYZLRrFoySmZcFAnQtlt+K7EECGrwDe4sDwVyCp
+         4hjam6JbFSowqzFfzBWb/pYfpIISOqsk2sNl2/5CYDi6dX4JWZr7z2Tx6HhB6sbdbq2I
+         bHfFZrtJKeubPk+UGbbK1v5zysB1azCoGxz2hpjU8JDUxu7ECfbjwbuB5gmv3+z2+AtI
+         Gmms3LjrjhT2OscOWTpWCbf0n6svTzT3U/1u0lQz2cokgraXK6gOI71F6EyclTlJK/5K
+         1i6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=r99SkjSYnZ6axjqlld/mWg4+zxXsVz41bOFrmON26E8=;
-        b=XUZ+OdFEVdcPwa2hKcs8nZaAP75XJKUr1A2N1FbI1Kp/CKv0P76Do2R2MaZHf1OpyS
-         lZEDbfv/L6YGGNSZDzfIiJ4OIF5BQ/sj5pOsU4hHC2obA3B2exQQfkw4sqHlyZUrm7nf
-         LMXECKdBoNdM1sbPxDvGky0+SlpWOAOkMXXD8xT4URKwTdw3zGXy5k8HBIp+65jP3a+v
-         kAHNwTmKSGU6UHy7vR56660H5Fskw+2j6RNREj2qSlWxI8GID5VDAH+LFWm5zz/yAcRX
-         wq96FxNgjdI7ySJK8QIcw2L1GrJJC3BXfHxr7jJ0+t62mQpdHUM2/3ulTFGbdszE42H2
-         i4hQ==
-X-Gm-Message-State: AGRZ1gLixK4+Oc4VSkYNCaHlTWbUExSS5jpoDOuRWXO+NlsJKpOdiFLQ
-        5cS8Hanw/8qQ1GfPDnj9TBEF+iCMIucKSlhzMJVwXw5AtoJt
-X-Google-Smtp-Source: AFSGD/WaIVHI5FaFYtQtUf9SnjtdnMl/vI6bT5kqSC4MR9mbXzzGrgBmo0WUwRboRBtx9iOntp7T6bbEUoINTA19kxw02JX02LP6
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
+        b=nd1wjysQhbSNMUJinNisCbInfICrXpRe2LS6Ij6VaJvOBcEVsRGdQ7HA4BhB830lkx
+         heT9RHhGMYIkn3Ubx85gMNCdoPfyZQFFsYMnSkx2yzqd/lDVT0917ztwWdeZ77O3AB/7
+         yy9V8vab/2LepBzK/G+/IMk+0IRfIG0I4qlG3XzSfPdytmApwlsd77ZAAhN1zECAdSA8
+         K4Yov6iRHCxka6bmOadHgxBWOs+7KjMTNiI2P9noC/BW2QHPqaLOmydiDGKeE4P8QrCJ
+         2BtiTmBGxFqeEPueNpBpagF7iPyGBVLK/WWQmSv/Q5G5chmOvAvLBChldBiKNWH8rYFp
+         nnRQ==
+X-Gm-Message-State: AGRZ1gKp7zCUTPhDT112Y5FyoyCBgnV/46QuR01CYaISS7xRWQKIqcRp
+        eQDHW6PyaZtu4TztXiRQx/c=
+X-Google-Smtp-Source: AJdET5dJ/9C6nW70QNBbWniqBIfDuTxwQJ9p8vISxQ6NAt6U1spMRzy24/2swiFtAYbTWWQ7+jIdlg==
+X-Received: by 2002:a63:160d:: with SMTP id w13mr13005300pgl.43.1542439543621;
+        Fri, 16 Nov 2018 23:25:43 -0800 (PST)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id t21sm23301867pgg.24.2018.11.16.23.25.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 23:25:43 -0800 (PST)
+Date:   Sat, 17 Nov 2018 12:55:36 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alex Elder <elder@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] staging: greybus: arche-platform: Switch to the gpio
+ descriptor interface
+Message-ID: <20181117072532.GA22371@nishad>
 MIME-Version: 1.0
-X-Received: by 2002:a24:2212:: with SMTP id o18-v6mr955061ito.24.1542439084588;
- Fri, 16 Nov 2018 23:18:04 -0800 (PST)
-Date:   Fri, 16 Nov 2018 23:18:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b98a67057ad7158a@google.com>
-Subject: KASAN: use-after-free Read in __lock_sock
-From:   syzbot <syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Use the gpiod interface instead of the deprecated
+old non-descriptor interface.
 
-syzbot found the following crash on:
-
-HEAD commit:    ccda4af0f4b9 Linux 4.20-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=156cd533400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=9276d76e83e3bcde6c99
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com
-
-netlink: 5 bytes leftover after parsing attributes in process  
-`syz-executor5'.
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20  
-kernel/locking/lockdep.c:3218
-Read of size 8 at addr ffff8881d26d60e0 by task syz-executor1/13725
-
-CPU: 0 PID: 13725 Comm: syz-executor1 Not tainted 4.20.0-rc2+ #333
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
-  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
-  spin_lock_bh include/linux/spinlock.h:334 [inline]
-  __lock_sock+0x203/0x350 net/core/sock.c:2253
-  lock_sock_nested+0xfe/0x120 net/core/sock.c:2774
-  lock_sock include/net/sock.h:1492 [inline]
-  sctp_sock_dump+0x122/0xb20 net/sctp/diag.c:324
-  sctp_for_each_transport+0x2b5/0x370 net/sctp/socket.c:5091
-  sctp_diag_dump+0x3ac/0x660 net/sctp/diag.c:527
-  __inet_diag_dump+0xa8/0x140 net/ipv4/inet_diag.c:1049
-  inet_diag_dump+0x9b/0x110 net/ipv4/inet_diag.c:1065
-  netlink_dump+0x606/0x1080 net/netlink/af_netlink.c:2244
-  __netlink_dump_start+0x59a/0x7c0 net/netlink/af_netlink.c:2352
-  netlink_dump_start include/linux/netlink.h:216 [inline]
-  inet_diag_handler_cmd+0x2ce/0x3f0 net/ipv4/inet_diag.c:1170
-  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
-  sock_diag_rcv_msg+0x31d/0x410 net/core/sock_diag.c:263
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
-  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:274
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  sock_write_iter+0x35e/0x5c0 net/socket.c:900
-  call_write_iter include/linux/fs.h:1857 [inline]
-  do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
-  do_iter_write+0x185/0x5f0 fs/read_write.c:959
-  vfs_writev+0x1f1/0x360 fs/read_write.c:1004
-  do_writev+0x11a/0x310 fs/read_write.c:1039
-  __do_sys_writev fs/read_write.c:1112 [inline]
-  __se_sys_writev fs/read_write.c:1109 [inline]
-  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2cdabbac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000000000001 RSI: 000000002051c000 RDI: 000000000000000e
-RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2cdabbb6d4
-R13: 00000000004c33b1 R14: 00000000004d97c8 R15: 00000000ffffffff
-
-Allocated by task 13672:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
-  sk_prot_alloc+0x69/0x2e0 net/core/sock.c:1463
-  sk_alloc+0x10d/0x1690 net/core/sock.c:1523
-  inet_create+0x509/0x1070 net/ipv4/af_inet.c:321
-  __sock_create+0x536/0x930 net/socket.c:1277
-  sock_create net/socket.c:1317 [inline]
-  __sys_socket+0x106/0x260 net/socket.c:1347
-  __do_sys_socket net/socket.c:1356 [inline]
-  __se_sys_socket net/socket.c:1354 [inline]
-  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 13680:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x83/0x290 mm/slab.c:3760
-  sk_prot_free net/core/sock.c:1504 [inline]
-  __sk_destruct+0x728/0xa80 net/core/sock.c:1588
-  sk_destruct+0x78/0x90 net/core/sock.c:1596
-  __sk_free+0xcf/0x300 net/core/sock.c:1607
-  sk_free+0x42/0x50 net/core/sock.c:1618
-  sock_put include/net/sock.h:1693 [inline]
-  sctp_close+0x8d4/0xad0 net/sctp/socket.c:1569
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
-  __sock_release+0xd7/0x250 net/socket.c:579
-  sock_close+0x19/0x20 net/socket.c:1141
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  get_signal+0x1558/0x1980 kernel/signal.c:2347
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881d26d6040
-  which belongs to the cache SCTP(33:syz1) of size 1776
-The buggy address is located 160 bytes inside of
-  1776-byte region [ffff8881d26d6040, ffff8881d26d6730)
-The buggy address belongs to the page:
-page:ffffea000749b580 count:1 mapcount:0 mapping:ffff8881b517f200 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffff8881c6685748 ffffea0007538388 ffff8881b517f200
-raw: 0000000000000000 ffff8881d26d6040 0000000100000002 ffff8881b6b4e7c0
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8881b6b4e7c0
-
-Memory state around the buggy address:
-  ffff8881d26d5f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8881d26d6000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> ffff8881d26d6080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                        ^
-  ffff8881d26d6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881d26d6180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes in v2:
+ - Move comment to the same line as to what it applies to.
+---
+ drivers/staging/greybus/arche-platform.c | 119 ++++++++---------------
+ 1 file changed, 41 insertions(+), 78 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
+index 4c36e88766e7..a5cea79d8e32 100644
+--- a/drivers/staging/greybus/arche-platform.c
++++ b/drivers/staging/greybus/arche-platform.c
+@@ -8,10 +8,9 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+-#include <linux/of_gpio.h>
+ #include <linux/of_platform.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
+@@ -45,14 +44,14 @@ enum svc_wakedetect_state {
+ 
+ struct arche_platform_drvdata {
+ 	/* Control GPIO signals to and from AP <=> SVC */
+-	int svc_reset_gpio;
++	struct gpio_desc *svc_reset;
++	struct gpio_desc *svc_sysboot;
+ 	bool is_reset_act_hi;
+-	int svc_sysboot_gpio;
+-	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
++	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
+ 
+ 	enum arche_platform_state state;
+ 
+-	int svc_refclk_req;
++	struct gpio_desc *svc_refclk_req;
+ 	struct clk *svc_ref_clk;
+ 
+ 	struct pinctrl *pinctrl;
+@@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
+ 	arche_pdata->wake_detect_state = state;
+ }
+ 
+-static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
++static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
+ {
+-	gpio_set_value(gpio, onoff);
++	gpiod_set_value(gpio, onoff);
+ }
+ 
+ static int apb_cold_boot(struct device *dev, void *data)
+@@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
+ static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
+ {
+ 	/* Enable interrupt here, to read event back from SVC */
+-	gpio_direction_input(arche_pdata->wake_detect_gpio);
+ 	enable_irq(arche_pdata->wake_detect_irq);
+ }
+ 
+@@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
+ 
+ 	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
+ 
+-	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
++	if (gpiod_get_value(arche_pdata->wake_detect)) {
+ 		/* wake/detect rising */
+ 
+ 		/*
+@@ -224,10 +222,10 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+ 
+ 	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
+ 
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+-	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
++	gpiod_set_value(arche_pdata->svc_sysboot, 0);
+ 	usleep_range(100, 200);
+ 
+ 	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
+@@ -238,7 +236,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
+ 	}
+ 
+ 	/* bring SVC out of reset */
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			!arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
+@@ -259,10 +257,10 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
+ 
+ 	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
+ 
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+-	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
++	gpiod_set_value(arche_pdata->svc_sysboot, 1);
+ 
+ 	usleep_range(100, 200);
+ 
+@@ -273,7 +271,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
+ 		return ret;
+ 	}
+ 
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			!arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
+@@ -305,7 +303,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
+ 	clk_disable_unprepare(arche_pdata->svc_ref_clk);
+ 
+ 	/* As part of exit, put APB back in reset state */
+-	svc_reset_onoff(arche_pdata->svc_reset_gpio,
++	svc_reset_onoff(arche_pdata->svc_reset,
+ 			arche_pdata->is_reset_act_hi);
+ 
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
+@@ -435,6 +433,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
+ 	int ret;
++	unsigned int flags;
+ 
+ 	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
+ 				   GFP_KERNEL);
+@@ -444,61 +443,33 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	/* setup svc reset gpio */
+ 	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
+ 							     "svc,reset-active-high");
+-	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
+-							"svc,reset-gpio",
+-							0);
+-	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
+-		dev_err(dev, "failed to get reset-gpio\n");
+-		return arche_pdata->svc_reset_gpio;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
+-	if (ret) {
+-		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
+-				    arche_pdata->is_reset_act_hi);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
++	if (arche_pdata->is_reset_act_hi)
++		flags = GPIOD_OUT_HIGH;
++	else
++		flags = GPIOD_OUT_LOW;
++
++	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset-gpio", flags);
++	if (IS_ERR(arche_pdata->svc_reset)) {
++		ret = PTR_ERR(arche_pdata->svc_reset);
++		dev_err(dev, "failed to request svc-reset GPIO:%d\n", ret);
+ 		return ret;
+ 	}
+ 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
+ 
+-	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
+-							  "svc,sysboot-gpio",
+-							  0);
+-	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
+-		dev_err(dev, "failed to get sysboot gpio\n");
+-		return arche_pdata->svc_sysboot_gpio;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
+-	if (ret) {
+-		dev_err(dev, "failed to request sysboot0 gpio:%d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_output(arche_pdata->svc_sysboot_gpio, 0);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
++	arche_pdata->svc_sysboot = devm_gpiod_get(dev, "svc,sysboot-gpio",
++						  GPIOD_OUT_LOW);
++	if (IS_ERR(arche_pdata->svc_sysboot)) {
++		ret = PTR_ERR(arche_pdata->svc_sysboot);
++		dev_err(dev, "failed to request sysboot0 GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	/* setup the clock request gpio first */
+-	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
+-							"svc,refclk-req-gpio",
+-							0);
+-	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
+-		dev_err(dev, "failed to get svc clock-req gpio\n");
+-		return arche_pdata->svc_refclk_req;
+-	}
+-	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
+-				"svc-clk-req");
+-	if (ret) {
+-		dev_err(dev, "failed to request svc-clk-req gpio: %d\n", ret);
+-		return ret;
+-	}
+-	ret = gpio_direction_input(arche_pdata->svc_refclk_req);
+-	if (ret) {
+-		dev_err(dev, "failed to set svc-clk-req gpio dir :%d\n", ret);
++	arche_pdata->svc_refclk_req = devm_gpiod_get(dev, "svc,refclk-req-gpio",
++						     GPIOD_IN);
++	if (IS_ERR(arche_pdata->svc_refclk_req)) {
++		ret = PTR_ERR(arche_pdata->svc_refclk_req);
++		dev_err(dev, "failed to request svc-clk-req GPIO: %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -515,19 +486,11 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	arche_pdata->num_apbs = of_get_child_count(np);
+ 	dev_dbg(dev, "Number of APB's available - %d\n", arche_pdata->num_apbs);
+ 
+-	arche_pdata->wake_detect_gpio = of_get_named_gpio(np,
+-							  "svc,wake-detect-gpio",
+-							  0);
+-	if (arche_pdata->wake_detect_gpio < 0) {
+-		dev_err(dev, "failed to get wake detect gpio\n");
+-		return arche_pdata->wake_detect_gpio;
+-	}
+-
+-	ret = devm_gpio_request(dev, arche_pdata->wake_detect_gpio,
+-				"wake detect");
+-	if (ret) {
+-		dev_err(dev, "Failed requesting wake_detect gpio %d\n",
+-			arche_pdata->wake_detect_gpio);
++	arche_pdata->wake_detect = devm_gpiod_get(dev, "svc,wake-detect-gpio",
++						  GPIOD_IN);
++	if (IS_ERR(arche_pdata->wake_detect)) {
++		ret = PTR_ERR(arche_pdata->wake_detect);
++		dev_err(dev, "Failed requesting wake_detect GPIO %d\n", ret);
+ 		return ret;
+ 	}
+ 
+@@ -538,7 +501,7 @@ static int arche_platform_probe(struct platform_device *pdev)
+ 	spin_lock_init(&arche_pdata->wake_lock);
+ 	mutex_init(&arche_pdata->platform_state_mutex);
+ 	arche_pdata->wake_detect_irq =
+-		gpio_to_irq(arche_pdata->wake_detect_gpio);
++		gpiod_to_irq(arche_pdata->wake_detect);
+ 
+ 	ret = devm_request_threaded_irq(dev, arche_pdata->wake_detect_irq,
+ 					arche_platform_wd_irq,
+-- 
+2.17.1
+
