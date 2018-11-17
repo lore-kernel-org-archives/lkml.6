@@ -2,220 +2,130 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA96AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA4AC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D0602084C
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D0602084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EE0D2084C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE0D2084C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbeKQSj6 (ORCPT
+        id S1726071AbeKQSkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 13:39:58 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:33902 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeKQSj6 (ORCPT
+        Sat, 17 Nov 2018 13:40:39 -0500
+Received: from smtprelay0226.hostedemail.com ([216.40.44.226]:47603 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725981AbeKQSki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 13:39:58 -0500
-Received: by mail-io1-f69.google.com with SMTP id c7-v6so536250iod.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 00:24:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=+qOsSw38J8aunTaqatL1fHIIX0JtcEN43W5c4jzM+ok=;
-        b=GXGMgmHaZCDeNimfH/T59tiyxIIDuShUk11ET/soeoKlqbDyoMgezz34dg9AlKfE1r
-         Z8AgzONrwSpEf0xg7zdOKDNDcow5ZOoyo+YDFoy8d4KfkqzdPnKRF3xoLEGpx9zvKygq
-         a3DO/MWD81q0AZ/3u8aDennVB9gKYMflBCcJBwmhneV0RTKyWfQosn5DkaAn+h7g34NJ
-         TpLlCavej5z3SC8FVx5MjYO/+TTxdjTJJ/ixnPDpRwLgkUzRkYNTtxwTSnRuANGXBXOf
-         5mv4Xv/YAoXd/LbswB9368By7Ke1uHr6g3bLkueBbsAbWeMXOxZf1bYoCBsWzgFIbCN6
-         KYhg==
-X-Gm-Message-State: AA+aEWY3aRfW0C4CpqpYl6nOpi4ssNoXemq0ZFsVaXZD4DReae3UgY+s
-        AlNvGI+DMWWNbZR+8cBa43lPvkv+eHaC/sz1TzXo4n/VFhEd
-X-Google-Smtp-Source: AFSGD/UbrCLZE3jI8K9PNuxiw3PullMviXg7aJ4xmpWS79ckMoAZVE2NhBVasyNJiwJXQHRT4Og0VD6e0VOCkrflsGEycbocMjql
-MIME-Version: 1.0
-X-Received: by 2002:a5e:8d14:: with SMTP id m20-v6mr5804473ioj.20.1542443042943;
- Sat, 17 Nov 2018 00:24:02 -0800 (PST)
-Date:   Sat, 17 Nov 2018 00:24:02 -0800
-In-Reply-To: <0000000000005943f3057acf6a1e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a93b1d057ad80185@google.com>
-Subject: Re: possible deadlock in v4l2_release
-From:   syzbot <syzbot+ea05c832a73d0615bf33@syzkaller.appspotmail.com>
-To:     ezequiel@collabora.com, hans.verkuil@cisco.com,
-        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, sque@chromium.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Sat, 17 Nov 2018 13:40:38 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 614441800B891;
+        Sat, 17 Nov 2018 08:24:42 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: songs71_bbd521b5d657
+X-Filterd-Recvd-Size: 3762
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf17.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 17 Nov 2018 08:24:40 +0000 (UTC)
+Message-ID: <ced26fae338bb4bd28a16d44980bbd0517aaec10.camel@perches.com>
+Subject: Re: [PATCH] arch/powerpc: Use dma_zalloc_coherent
+From:   Joe Perches <joe@perches.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        darren@stevens-zone.net, christophe.leroy@c-s.fr,
+        geoff@infradead.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Date:   Sat, 17 Nov 2018 00:24:39 -0800
+In-Reply-To: <CAFqt6zY2bv=G1N13E4-SA2DE6ey3kw378fFzgEHV7wdpJ5hp5g@mail.gmail.com>
+References: <5bdfb8db.1c69fb81.c8f62.9586@mx.google.com>
+         <CAJr6mf1nOouU31WF_xb_46wDebPQ-7+NTCiSKBjLyQta2mny6w@mail.gmail.com>
+         <7a3922bc5089dfe0978e07a809606360c74c940c.camel@perches.com>
+         <CAFqt6zY2bv=G1N13E4-SA2DE6ey3kw378fFzgEHV7wdpJ5hp5g@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+On Sat, 2018-11-17 at 12:40 +0530, Souptick Joarder wrote:
+> Hi Joe,
 
-HEAD commit:    1ce80e0fe98e Merge tag 'fsnotify_for_v4.20-rc3' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=132ee77b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
-dashboard link: https://syzkaller.appspot.com/bug?extid=ea05c832a73d0615bf33
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b8e6a3400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14e73e2b400000
+Hi back.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+ea05c832a73d0615bf33@syzkaller.appspotmail.com
+> On Fri, Nov 16, 2018 at 12:55 AM Joe Perches <joe@perches.com> wrote:
+> > On Thu, 2018-11-15 at 23:29 +0530, Sabyasachi Gupta wrote:
+> > > On Mon, Nov 5, 2018 at 8:58 AM Sabyasachi Gupta
+> > > <sabyasachi.linux@gmail.com> wrote:
+> > > > Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
+> > > > 
+> > > > Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+> > > 
+> > > Any comment on this patch?
+> > 
+> > It's obviously correct.
+> > 
+> > You might realign the arguments on the next lines
+> > to the open parenthesis.
+> > 
+> > Perhaps there should be new function calls
+> > added for symmetry to the other alloc functions
+> > for multiplication overflow protection.
+> > 
+> > Perhaps:
+> > 
+> > void *dma_alloc_array_coherent()
+> > void *dma_calloc_coherent()
+> > 
+> > Something like
+> > ---
+> >  include/linux/dma-mapping.h | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> > 
+> > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> > index 15bd41447025..95bebf8883b1 100644
+> > --- a/include/linux/dma-mapping.h
+> > +++ b/include/linux/dma-mapping.h
+> > @@ -565,6 +565,25 @@ static inline void *dma_alloc_coherent(struct device *dev, size_t size,
+> >                         (gfp & __GFP_NOWARN) ? DMA_ATTR_NO_WARN : 0);
+> >  }
+> > 
+> > +static inline void *dma_alloc_array_coherent(struct device *dev,
+> > +                                            size_t n, size_t size,
+> > +                                            dma_addr_t *dma_handle, gfp_t gfp)
+> > +{
+> > +       size_t bytes;
+> > +
+> > +       if (unlikely(check_mul_overflow(n, size, &bytes)))
+> > +               return NULL;
+> > +       return dma_alloc_coherent(dev, bytes, dma_handle, gfp);
+> > +}
+> > +
+> > +static inline void *dma_calloc_coherent(struct device *dev,
+> > +                                       size_t n, size_t size,
+> > +                                       dma_addr_t *dma_handle, gfp_t gfp)
+> > +{
+> > +       return dma_alloc_array_coherent(dev, n, size, dma_handle,
+> > +                                       gfp | __GFP_ZERO);
+> > +}
+> > +
+> 
+> If I understood correctly, you are talking about adding these 2 new inline
+> functions. We can do that.
+> 
+> Can you please help to understand the consumers of these 2 new inline ?
 
-sshd (5890) used greatest stack depth: 15744 bytes left
+Any call to dma_alloc_coherent with a multiply
+_might_overflow the multiplication.  The
+check_mul_overflow simply avoids the overflow.
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.20.0-rc2+ #338 Not tainted
-------------------------------------------------------
-kworker/0:2/3421 is trying to acquire lock:
-00000000c364a3bd (&mdev->req_queue_mutex){+.+.}, at:  
-v4l2_release+0x1d7/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:455
-
-but task is already holding lock:
-000000009258f90c ((delayed_fput_work).work){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 ((delayed_fput_work).work){+.+.}:
-        process_one_work+0xc0a/0x1c40 kernel/workqueue.c:2129
-        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-        kthread+0x35a/0x440 kernel/kthread.c:246
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
--> #2 ((wq_completion)"events"){+.+.}:
-        flush_workqueue+0x30a/0x1e10 kernel/workqueue.c:2655
-        flush_scheduled_work include/linux/workqueue.h:599 [inline]
-        vim2m_stop_streaming+0x7c/0x2c0 drivers/media/platform/vim2m.c:811
-        __vb2_queue_cancel+0x171/0xd20  
-drivers/media/common/videobuf2/videobuf2-core.c:1823
-        vb2_core_queue_release+0x26/0x80  
-drivers/media/common/videobuf2/videobuf2-core.c:2229
-        vb2_queue_release+0x15/0x20  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:837
-        v4l2_m2m_ctx_release+0x1e/0x35  
-drivers/media/v4l2-core/v4l2-mem2mem.c:930
-        vim2m_release+0xe6/0x150 drivers/media/platform/vim2m.c:977
-        v4l2_release+0x224/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:456
-        __fput+0x385/0xa30 fs/file_table.c:278
-        ____fput+0x15/0x20 fs/file_table.c:309
-        task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-        tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-        exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-        prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-        syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-        do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #1 (&dev->dev_mutex){+.+.}:
-        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-        __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-        vim2m_release+0xbc/0x150 drivers/media/platform/vim2m.c:976
-        v4l2_release+0x224/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:456
-        __fput+0x385/0xa30 fs/file_table.c:278
-        ____fput+0x15/0x20 fs/file_table.c:309
-        task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-        tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-        exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-        prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-        syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-        do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 (&mdev->req_queue_mutex){+.+.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-        __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
-        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-        v4l2_release+0x1d7/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:455
-        __fput+0x385/0xa30 fs/file_table.c:278
-        delayed_fput+0x55/0x80 fs/file_table.c:304
-        process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-        kthread+0x35a/0x440 kernel/kthread.c:246
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-other info that might help us debug this:
-
-Chain exists of:
-   &mdev->req_queue_mutex --> (wq_completion)"events" -->  
-(delayed_fput_work).work
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock((delayed_fput_work).work);
-                                lock((wq_completion)"events");
-                                lock((delayed_fput_work).work);
-   lock(&mdev->req_queue_mutex);
-
-  *** DEADLOCK ***
-
-2 locks held by kworker/0:2/3421:
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:209 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at: atomic_long_set  
-include/asm-generic/atomic-long.h:59 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 00000000312444b2 ((wq_completion)"events"){+.+.}, at:  
-process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
-  #1: 000000009258f90c ((delayed_fput_work).work){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-kobject: 'regulatory.0' (0000000078fe9404): kobject_uevent_env
-
-stack backtrace:
-CPU: 0 PID: 3421 Comm: kworker/0:2 Not tainted 4.20.0-rc2+ #338
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-kobject: 'regulatory.0' (0000000078fe9404): fill_kobj_path: path  
-= '/devices/platform/regulatory.0'
-Workqueue: events delayed_fput
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2347 [inline]
-  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-  __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  v4l2_release+0x1d7/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:455
-  __fput+0x385/0xa30 fs/file_table.c:278
-  delayed_fput+0x55/0x80 fs/file_table.c:304
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-kobject: 'regulatory.0' (0000000078fe9404): kobject_uevent_env
-kobject: 'regulatory.0' (0000000078fe9404): fill_kobj_path: path  
-= '/devices/platform/regulatory.0'
 
