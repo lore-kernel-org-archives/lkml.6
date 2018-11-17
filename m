@@ -2,141 +2,126 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46E65C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7485CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C5820817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="OTngOWfM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08C5820817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C2522080C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2522080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKREhz (ORCPT
+        id S1726025AbeKRFAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 23:37:55 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34465 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbeKREhy (ORCPT
+        Sun, 18 Nov 2018 00:00:47 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49939 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725731AbeKRFAq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 23:37:54 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f1-v6so3135675wmg.1;
-        Sat, 17 Nov 2018 10:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4yRshoTlbJU8ReR5pMJHtrEv7ruvlij0JSHTbvXWAr4=;
-        b=OTngOWfMoHAuvn7DMLJZfu4OJpZ/bgklfLWU1rc3skhTEtWx46b6rjzsXXdKPIZJf5
-         n/x0LcCpKBNK+jdUPWqxA6kPWvlVxUbf5+uvSUVxxxsrJn/fjmG5AjUinRPNOWy/UVR7
-         Wg2NQgKHgPmmTjWBBEuOYjj4+h4wNkTvedZBWt12mSRjsLbmKJejRyWPLyNeYV1b7/Rb
-         Sh9R/ZhavlrHddxVy9VrtdBiEQ9A4QJPNyiIzwLI5Vz/IJFOiaJ6EsB4BxgFFN8aKrfB
-         Ma7OH4wrp+rZWYBCswcOedFPVVZMXG8jJITJKcCmJexNfWQ8LS0DMs10Ilql7ju6Dhu+
-         3WWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4yRshoTlbJU8ReR5pMJHtrEv7ruvlij0JSHTbvXWAr4=;
-        b=HLxXcU/Vj3xcEapyavcgNRJYPNN3z58Z0ZYBmShqOVjtzvObiyjSS9JLvpDQkfp1A6
-         P3m6RQ07xfCdHPB7M2OES84mWmRZmO779lpvpHMdXRYHu2XXJvhImYwhyWpIoVn/3Ku2
-         iq0S+YoIiIy1HUm1yfbskHbyHzjQYIA5GBLGqoQUwDJJmY//ArjMfqN70BMqEIoV7+GY
-         RJ0kszQesC+lh9EIWStbFQayJOT8ZtHru9RBY5yscY7F5hW+WjyhUd020Gpieo+RRuer
-         JYbxLuO4YCtq/y7giPzZz7yWx12B+jEZSxeDCM1vkNtaGLfAKRtd9k/3rJfqwOly4sgm
-         1iKw==
-X-Gm-Message-State: AA+aEWb4HEIMt/WYJxYrmr0tF7BuisHDn4+Dm0NfIClGBxJ/4xekoTJF
-        lKL5jkGP6AMG0CLofMW2gGCQKKmAcmw=
-X-Google-Smtp-Source: AJdET5fI7WTwCOMfDYDqvt6af7MsgXXFZJgH1uCKr8IPXF8kZbC7ew9cARGDCNsJeyPr3WIsS8fJSA==
-X-Received: by 2002:a1c:2807:: with SMTP id o7-v6mr2131897wmo.138.1542478823237;
-        Sat, 17 Nov 2018 10:20:23 -0800 (PST)
-Received: from blackbox.darklights.net (p200300DCD717A100C991D5C7C405D3EC.dip0.t-ipconnect.de. [2003:dc:d717:a100:c991:d5c7:c405:d3ec])
-        by smtp.googlemail.com with ESMTPSA id e8-v6sm63631232wmf.22.2018.11.17.10.20.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 10:20:22 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        f.fainelli@gmail.com, andrew@lunn.ch, mark.rutland@arm.com,
-        robh+dt@kernel.org, davem@davemloft.net
-Cc:     linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/7] net: phy: icplus: keep all ip101a_g functions together
-Date:   Sat, 17 Nov 2018 19:20:03 +0100
-Message-Id: <20181117182007.14791-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181117182007.14791-1-martin.blumenstingl@googlemail.com>
-References: <20181117182007.14791-1-martin.blumenstingl@googlemail.com>
+        Sun, 18 Nov 2018 00:00:46 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAHIgtHL1757956
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 17 Nov 2018 10:42:56 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAHIgtsC1757953;
+        Sat, 17 Nov 2018 10:42:55 -0800
+Date:   Sat, 17 Nov 2018 10:42:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Rob Herring <tipbot@zytor.com>
+Message-ID: <tip-c04e55388a4f2184e37827a1d2e733cded52d653@git.kernel.org>
+Cc:     x86@kernel.org, lkundrak@v3.sk, robh@kernel.org, mingo@redhat.com,
+        mingo@kernel.org, bp@suse.de, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: bp@suse.de, tglx@linutronix.de, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, x86@kernel.org, robh@kernel.org,
+          lkundrak@v3.sk, mingo@redhat.com, mingo@kernel.org
+In-Reply-To: <20181116201820.10065-1-robh@kernel.org>
+References: <20181116201820.10065-1-robh@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/platform] x86/platform/olpc: Do not call
+ of_platform_bus_probe()
+Git-Commit-ID: c04e55388a4f2184e37827a1d2e733cded52d653
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This simply moves ip101a_g_config_init right above
-ip101a_g_config_intr so all functions for the ICPlus IP101A/G PHYs are
-grouped together.
-No functional changes.
+Commit-ID:  c04e55388a4f2184e37827a1d2e733cded52d653
+Gitweb:     https://git.kernel.org/tip/c04e55388a4f2184e37827a1d2e733cded52d653
+Author:     Rob Herring <robh@kernel.org>
+AuthorDate: Fri, 16 Nov 2018 14:18:20 -0600
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sat, 17 Nov 2018 19:29:55 +0100
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+x86/platform/olpc: Do not call of_platform_bus_probe()
+
+The DT core will probe the DT by default now, so the OLPC platform code
+calling of_platform_bus_probe() is not necessary. The algorithm for what
+nodes are probed is a little different in how compatible is handled, but
+since OLPC uses compatible strings for matching it is not affected by
+this difference.
+
+Also, only the battery node located at the root level gets a device
+created as the dcon is a PCI device and the RTC device is created in
+olpc-xo1-rtc.c.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Lubomir Rintel <lkundrak@v3.sk>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+CC: devicetree@vger.kernel.org
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181116201820.10065-1-robh@kernel.org
 ---
- drivers/net/phy/icplus.c | 30 +++++++++++++++---------------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ arch/x86/platform/olpc/olpc_dt.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/drivers/net/phy/icplus.c b/drivers/net/phy/icplus.c
-index ad87bd3280d7..3d3e9134c762 100644
---- a/drivers/net/phy/icplus.c
-+++ b/drivers/net/phy/icplus.c
-@@ -162,21 +162,6 @@ static int ip1001_config_init(struct phy_device *phydev)
- 	return 0;
+diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
+index 24d2175a9480..b4ab779f1d47 100644
+--- a/arch/x86/platform/olpc/olpc_dt.c
++++ b/arch/x86/platform/olpc/olpc_dt.c
+@@ -19,7 +19,6 @@
+ #include <linux/kernel.h>
+ #include <linux/memblock.h>
+ #include <linux/of.h>
+-#include <linux/of_platform.h>
+ #include <linux/of_pdt.h>
+ #include <asm/olpc.h>
+ #include <asm/olpc_ofw.h>
+@@ -285,20 +284,3 @@ void __init olpc_dt_build_devicetree(void)
+ 	pr_info("PROM DT: Built device tree with %u bytes of memory.\n",
+ 			prom_early_allocated);
  }
- 
--static int ip101a_g_config_init(struct phy_device *phydev)
+-
+-/* A list of DT node/bus matches that we want to expose as platform devices */
+-static struct of_device_id __initdata of_ids[] = {
+-	{ .compatible = "olpc,xo1-battery" },
+-	{ .compatible = "olpc,xo1-dcon" },
+-	{ .compatible = "olpc,xo1-rtc" },
+-	{},
+-};
+-
+-static int __init olpc_create_platform_devices(void)
 -{
--	int c;
--
--	c = ip1xx_reset(phydev);
--	if (c < 0)
--		return c;
--
--	/* Enable Auto Power Saving mode */
--	c = phy_read(phydev, IP10XX_SPEC_CTRL_STATUS);
--	c |= IP101A_G_APS_ON;
--
--	return phy_write(phydev, IP10XX_SPEC_CTRL_STATUS, c);
+-	if (machine_is_olpc())
+-		return of_platform_bus_probe(NULL, of_ids, NULL);
+-	else
+-		return 0;
 -}
--
- static int ip175c_read_status(struct phy_device *phydev)
- {
- 	if (phydev->mdio.addr == 4) /* WAN port */
-@@ -196,6 +181,21 @@ static int ip175c_config_aneg(struct phy_device *phydev)
- 	return 0;
- }
- 
-+static int ip101a_g_config_init(struct phy_device *phydev)
-+{
-+	int c;
-+
-+	c = ip1xx_reset(phydev);
-+	if (c < 0)
-+		return c;
-+
-+	/* Enable Auto Power Saving mode */
-+	c = phy_read(phydev, IP10XX_SPEC_CTRL_STATUS);
-+	c |= IP101A_G_APS_ON;
-+
-+	return phy_write(phydev, IP10XX_SPEC_CTRL_STATUS, c);
-+}
-+
- static int ip101a_g_config_intr(struct phy_device *phydev)
- {
- 	u16 val;
--- 
-2.19.1
-
+-device_initcall(olpc_create_platform_devices);
