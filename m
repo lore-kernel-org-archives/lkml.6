@@ -2,195 +2,241 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D61AC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B30C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D5620869
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:23:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D5620869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9998220869
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:24:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="SOm4Ow1a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9998220869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeKSFoK (ORCPT
+        id S1727166AbeKSFqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 00:44:10 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:56582 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbeKSFoK (ORCPT
+        Mon, 19 Nov 2018 00:46:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:39873 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbeKSFqB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 00:44:10 -0500
-Received: by mail-it1-f199.google.com with SMTP id m123-v6so5655629ite.6
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 11:23:03 -0800 (PST)
+        Mon, 19 Nov 2018 00:46:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5-v6so13503369pla.6
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 11:24:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I80PH5bUeNvL93s2ghH98E9Rk1z819E/+ge494yQ1fw=;
+        b=SOm4Ow1aPfgl9ftEjYaQqtyRENyfLRKE0T4tk6Se5sQxxjBKFwPrtSrHTZF+lbdPOy
+         GPJcQ9IBK+kULRFFUU93MOINZQQuGG2fGU8jQCkf8JfPE6opF9RYmmIAfbg7OvM78vLF
+         lyOInkDdm6FzTAFZRJp37TPYPziIpnCKGecpEdvjKengsTUepipSEgW5F5Wi4gRLkZYa
+         CKK/uB9YE7rtEhKhvi4pJogUG6FC3cnXUWy9kBwAzWMIOE4KTo7aIaqcm9EU+101rfMU
+         VAJ0y3UkGYIDtyyyPIgDOaVvVFvN6UvHIHFOfax2zWBmB9UIXDAJZiyrEUtN1whbAmvy
+         i44g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=HweNna4bwP6ztw1aZjQL6sdAmjl1MIjq6fDmnf453FI=;
-        b=KFqhrtPvbGn4ZVR7+mCUtShfSgnyIMJ62yOEpeZjmvrWl2WbVhtel+hrFv7KE/MCZk
-         bTKxh2VR0sxcS6yKDReZpRYeetwsFuVprQU3zEjECDl6MbfaWfvMJRi65vPMd8D+OXet
-         2/14PIgQmjaOZEdZUYNrNhBNm1M8VI5/bfNgYhaN1Gyx/PAEyKV9P/8uXAAP0175U7R9
-         NhZhlryd3G7RmkWkwB2S+ScIW77c/ujSLjQbf78sOx9zNtwF91m7JF031me+eK5193zN
-         MCypCH58g5Ehppnn1KGFIXnKDKAhe1pgaB2sMjkozrmGc2CJP4fYxpDWMMm20Xb+zsGH
-         XARg==
-X-Gm-Message-State: AA+aEWa+MnlAATYav3CMhm7Sswh3Q6fTfqS5bj18V2iDjQ5U6wjoludp
-        WFeampfOhzXgh7d7RqkLHJ+FcQps7V9wzcoJImi3LHxRFWuW
-X-Google-Smtp-Source: AFSGD/UkG84MAE7wQ3V5HML8zRZyrgONmns+8fbq3PCpbiBj22SjHAMyl82+AKokzb8oIWTKYU0I/tEc0eXRbryM3mXaQvwlSiTA
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I80PH5bUeNvL93s2ghH98E9Rk1z819E/+ge494yQ1fw=;
+        b=Ok+fNYC3X0lufkPbPmAfW31KZIU3WQJMChSNokpXG0DcZyb6mC2r8JiLa0Qd/Ao98b
+         L+18EUv1BMh6EMwK+QGlWf9TOPiapoC2NIJktmEz9tGXlI2f/EX6i4aI7HvXLyMaQqnm
+         /glVMTDc53f4a2r9W4rUTbEczRU20Sn4xs2XgRYAZIr+X1taRLhLrPmyTt/QABBvzpWe
+         qqfAhd+T2Ruvw2n1eSzZbZdAxyDHgTmzEmkL/Lh6YENp6gxc9FOnVOftBf1R2gECz49n
+         DeZSEx11SBZNG9/d6X62OmU9WZoUgJH71UAoziBGqsQJzG5NEBtOWYS9wKs5W9PhLIoa
+         J+Fw==
+X-Gm-Message-State: AA+aEWbLeGquu6lr696CDwEWdSNkIC/eqJjOk3I0HFenVstXclLOlNgn
+        EhbYgJQb9OaX+ZiJ+Fg0vXKLfQ==
+X-Google-Smtp-Source: AFSGD/UkqR1LJfL+j9gmePInWTqGlhrsKYS5wT3eXMFYF0fK/yWanCtiNXSEzANjaX28NP6l9WkJgw==
+X-Received: by 2002:a17:902:142:: with SMTP id 60mr4715775plb.330.1542569094501;
+        Sun, 18 Nov 2018 11:24:54 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id p188sm16212347pfg.65.2018.11.18.11.24.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 18 Nov 2018 11:24:53 -0800 (PST)
+Date:   Sun, 18 Nov 2018 20:24:45 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] proc: allow killing processes via file descriptors
+Message-ID: <20181118192443.7ylyl24svrn6jvjd@brauner.io>
+References: <20181118111751.6142-1-christian@brauner.io>
+ <CAKOZuet3s0WxxPgrtrNkq8YiOWhYAiK6yEio6PKVV9J_H4_TSA@mail.gmail.com>
+ <CALCETrUd2Y2MmO8Qx8aUvQDOTNiyj35Y7bctPBZe0p2i1EUiLw@mail.gmail.com>
+ <20181118174148.nvkc4ox2uorfatbm@brauner.io>
+ <CAKOZueto1CmUSWFKjOkazcDcZH6CiXXCr4U=ghewLh8GjE2-=A@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9e05:: with SMTP id i5-v6mr10019397ioq.14.1542568982926;
- Sun, 18 Nov 2018 11:23:02 -0800 (PST)
-Date:   Sun, 18 Nov 2018 11:23:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000044e23f057af554d7@google.com>
-Subject: KASAN: use-after-free Read in sctp_hash_transport
-From:   syzbot <syzbot+0b05d8aa7cb185107483@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAKOZueto1CmUSWFKjOkazcDcZH6CiXXCr4U=ghewLh8GjE2-=A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Sun, Nov 18, 2018 at 10:07:31AM -0800, Daniel Colascione wrote:
+> On Sun, Nov 18, 2018 at 9:41 AM, Christian Brauner <christian@brauner.io> wrote:
+> > On Sun, Nov 18, 2018 at 07:38:09AM -0800, Andy Lutomirski wrote:
+> >> On Sun, Nov 18, 2018 at 5:59 AM Daniel Colascione <dancol@google.com> wrote:
+> >> >
+> >> > I had been led to believe that the proposal would be a comprehensive
+> >> > process API, not an ioctl basically equivalent to my previous patch.
+> >> > If you had a more comprehensive proposal, please just share it on LKML
+> >> > instead of limiting the discussion to those able to attend these
+> >> > various conferences. If there's some determined opposition to a
+> >> > general new process API, this opposition needs a fair and full airing,
+> >> > as not everyone can attend these conferences.
+> >> >
+> >> > On Sun, Nov 18, 2018 at 3:17 AM, Christian Brauner <christian@brauner.io> wrote:
+> >> > > With this patch an open() call on /proc/<pid> will give userspace a handle
+> >> > > to struct pid of the process associated with /proc/<pid>. This allows to
+> >> > > maintain a stable handle on a process.
+> >> > > I have been discussing various approaches extensively during technical
+> >> > > conferences this year culminating in a long argument with Eric at Linux
+> >> > > Plumbers. The general consensus was that having a handle on a process
+> >> > > will be something that is very simple and easy to maintain
+> >> >
+> >> > ioctls are the opposite of "easy to maintain". Their
+> >> > file-descriptor-specific behavior makes it difficult to use the things
+> >> > safely. If you want to take this approach, please make a new system
+> >> > call. An ioctl is just a system call with a very strange spelling and
+> >> > unfortunate collision semantics.
+> >> >
+> >> > > with the
+> >> > > option of being extensible via a more advanced api if the need arises.
+> >> >
+> >> > The need *has* arisen; see my exithand patch.
+> >> >
+> >> > > I
+> >> > > believe that this patch is the most simple, dumb, and therefore
+> >> > > maintainable solution.
+> >> > >
+> >> > > The need for this has arisen in order to reliably kill a process without
+> >> > > running into issues of the pid being recycled as has been described in the
+> >> > > rejected patch [1].
+> >> >
+> >> > That patch was not "rejected". It was tabled pending the more
+> >> > comprehensive process API proposal that was supposed to have emerged.
+> >> > This patch is just another variant of the sort of approach we
+> >> > discussed on that patch's thread here. As I mentioned on that thread,
+> >> > the right approach option is a new system call, not an ioctl.
+> >> >
+> >> >  To fulfill the need described in that patchset a new
+> >> > > ioctl() PROC_FD_SIGNAL is added. It can be used to send signals to a
+> >> > > process via a file descriptor:
+> >> > >
+> >> > > int fd = open("/proc/1234", O_DIRECTORY | O_CLOEXEC);
+> >> > > ioctl(fd, PROC_FD_SIGNAL, SIGKILL);
+> >> > > close(fd);
+> >> > >
+> >> > > Note, the stable handle will allow us to carefully extend this feature in
+> >> > > the future.
+> >> >
+> >> > We still need the ability to synchronously wait on a process's death,
+> >> > as in my patch set. I will be refreshing that patch set.
+> >>
+> >> I fully agree that a more comprehensive, less expensive API for
+> >> managing processes would be nice.  But I also think that this patch
+> >> (using the directory fd and ioctl) is better from a security
+> >> perspective than using a new file in /proc.
+> >>
+> >> I have an old patch to make proc directory fds pollable:
+> >>
+> >> https://lore.kernel.org/patchwork/patch/345098/
+> >>
+> >> That patch plus the one in this thread might make a nice addition to
+> >> the kernel even if we expect something much better to come along
+> >> later.
+> >
+> > I agree. Eric's point was to make the first implementation of this as
+> > simple as possible that's why this patch is intentionally almost
+> > trivial. And I like it for its simplicity.
+> >
+> > I had a more comprehensive API proposal of which open(/proc/<pid>) was a
+> > part. I didn't send out alongside this patch as Eric clearly prefered to
+> > only have the /proc/<pid> part. Here is the full proposal as I intended
+> > to originally send it out:
+> 
+> Thanks.
+> 
+> > The gist is to have file descriptors for processes which is obviously not a new
+> > idea. This has been done before in other OSes and it has been tried before in
+> > Linux [2], [3] (Thanks to Kees for pointing out these patches.). So I want to
+> > make it very clear that I'm not laying claim to this being my or even a novel
+> > idea in any way. However, I want to diverge from previous approaches with my
+> > suggestion. (Though I can't be sure that there's not something similar in other
+> > OSes already.)
+> 
+> Windows works basically as you describe. You can create a process is
+> suspended state, configure it however you want, then let it run.
+> CreateProcess (and even moreso, NtCreateProcess) also provide a rich
+> (and *extensible*) interface for pre-creation process configuration.
+> 
+> >> One of the main motivations for having procfds is to have a race-free way of
+> > configuring, starting, polling, and killing a process. Basically, a process
+> > lifecycle api if you want to think about it that way. The api should also be
+> > easily extendable in the future to avoid running into the limitations we
+> > currently see with the clone*() syscall(s) again.
+> >
+> > One of the crucial points of the api is to *separate the configuration
+> > of a process through a procfd from actually creating the process*.
+> > This is a crucial property expressed in the open*() system calls. First, get a
+> > stable handle on an object then allow for ways to configure it. As such the
+> > procfd api shares the same insight with Al's and David's new mount api.
+> > (Fwiw, Andy also pointed out similarities with posix_spawn().)
+> > What I envisioned was to have the following syscalls (multiple name suggestions):
+> >
+> > 1. int process_open / proc_open / procopen
+> > 2. int process_config / proc_config / procconfig or ioctl()-based
+> > 3. int process_info / proc_info / procinfo or ioctl()-based
+> > 4. int process_manage / proc_manage / procmanage or ioctl()-based
+> 
+> The API you've proposed seems fine to me, although I'd either 1)
+> consolidate operations further into one system call, or 2) separate
+> the different management operations into more and different system
+> calls that can be audited independently. The grouping you've proposed
+> seems to have the worst aspects of API splitting and API multiplexing.
+> But I have no objection to it in spirit.
+> 
+> That said, while I do want to fix process configuration and startup
+> generally, I want to fix specific holes in the existing API surface
+> first. The two patches I've already sent do that, and this work
+> shouldn't wait on an ideal larger process-API overhaul that may or may
+> not arrive. Based on previous history, I suspect that an API of the
+> scope you're proposing would take years to overcome all LKML
+> objections and land. I don't want to wait that long when we can make
+> smaller fixes that would not conflict with the general architecture.
+> 
+> The original patch on this thread is half of the right fix. While I
+> think we should use a system call instead of an ioctl, and while I
+> have some specific implementation critiques (which I described in a
+> different message), it's the right general sort of thing. We should
+> merge it.
 
-syzbot found the following crash on:
+Thanks. I agree. Note, I don't care if it's an ioctl() or not. I'm happy
+to instead add a syscall process_signal() alongside this patchset. What
+do people prefer?
 
-HEAD commit:    e119a369b0f1 Merge branch 'SMSC95xx-driver-updates'
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=124f5f7b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b05d8aa7cb185107483
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+0b05d8aa7cb185107483@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in sctp_hash_transport+0x803/0x810  
-net/sctp/input.c:958
-Read of size 8 at addr ffff8881c6b98cb0 by task syz-executor5/3552
-
-CPU: 0 PID: 3552 Comm: syz-executor5 Not tainted 4.20.0-rc2+ #299
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  sctp_hash_transport+0x803/0x810 net/sctp/input.c:958
-  sctp_assoc_add_peer+0xa21/0x10d0 net/sctp/associola.c:724
-  sctp_sendmsg_new_asoc+0x5da/0x11f0 net/sctp/socket.c:1757
-  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2086
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f45462c7c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000000000000 RSI: 000000002001afc8 RDI: 0000000000000005
-RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f45462c86d4
-R13: 00000000004c381e R14: 00000000004d59e8 R15: 00000000ffffffff
-
-Allocated by task 3509:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  sctp_association_new+0x14e/0x2290 net/sctp/associola.c:311
-  sctp_sendmsg_new_asoc+0x39c/0x11f0 net/sctp/socket.c:1723
-  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2086
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 3552:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  sctp_association_destroy net/sctp/associola.c:437 [inline]
-  sctp_association_put+0x264/0x350 net/sctp/associola.c:889
-  sctp_transport_destroy net/sctp/transport.c:180 [inline]
-  sctp_transport_put+0x186/0x1f0 net/sctp/transport.c:340
-  sctp_hash_cmp+0x1ef/0x260 net/sctp/input.c:901
-  __rhashtable_lookup.isra.24.constprop.29+0x3b6/0x7d0  
-include/linux/rhashtable.h:483
-  rhltable_lookup include/linux/rhashtable.h:566 [inline]
-  sctp_hash_transport+0x2f6/0x810 net/sctp/input.c:954
-  sctp_assoc_add_peer+0xa21/0x10d0 net/sctp/associola.c:724
-  sctp_sendmsg_new_asoc+0x5da/0x11f0 net/sctp/socket.c:1757
-  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2086
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881c6b98c00
-  which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 176 bytes inside of
-  4096-byte region [ffff8881c6b98c00, ffff8881c6b99c00)
-The buggy address belongs to the page:
-page:ffffea00071ae600 count:1 mapcount:0 mapping:ffff8881da800dc0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea0007175888 ffffea0006421308 ffff8881da800dc0
-raw: 0000000000000000 ffff8881c6b98c00 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881c6b98b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8881c6b98c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881c6b98c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                      ^
-  ffff8881c6b98d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881c6b98d80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+> 
+> Next, I want to merge my exithand proposal, or something like it. It's
+> likewise a simple change that, in a minimal way, addresses a
+> longstanding API deficiency. I'm very strongly against the
+> POLLERR-on-directory variant of the idea.
