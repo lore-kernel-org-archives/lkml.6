@@ -2,376 +2,113 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFFFC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 02:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5210C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 02:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 668952080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 02:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 668952080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7CE9420817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 02:59:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE9420817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbeKRNFv (ORCPT
+        id S1726481AbeKRNSi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 08:05:51 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:56567 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbeKRNFu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 08:05:50 -0500
-Received: by mail-io1-f72.google.com with SMTP id m1so14391175ioh.23
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 18:47:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=FFNnfxFHIno4yUTmhNf2OhrdTyjkhVvL8Gmj52Bje4U=;
-        b=kj2vNjaH9qXcivlnYvsizBHZBOH8rr/4FnjuSryf7gyHBVv1jxtRNmrke0dQ5e5SC5
-         LGQQFx5ySpaF+dZxySoQzzZNGyRXY0oQ3Vm87CSCzypqsIw/prStCJn4yAaIsoc4Y3vh
-         SAKYGdMiH2XXbkV0p1oydWfZCzDwUYTClZqxPsBPCEZ7FPkarBMUlWnwrKXrAOFy7j5A
-         lBIC+eaq/f8oZAmVOsAOauoTkRjZ9SoEa2xHKexGWeqgEg1FmTyyZf/Zuk1arA8ciQi8
-         1R9g4U3eDhtnYsa/NWvvi0ayyrynlBas8ldsN6bY5XZu66x8gc+RLejkuwFojQxvkr6D
-         gzDA==
-X-Gm-Message-State: AGRZ1gKIkAEyAGlWFKNUzxL0JBIOXelwv08jPWV0stV/DhZFv8ENC9HH
-        HwBIUNWqQr5xM9UPF+hIoyiadhiBOYJzsuuz2aDMrRSiWuHi
-X-Google-Smtp-Source: AJdET5fUbLPLPw2VKYYg5JC7keb0nS9jwNgrNfFFn+GuDIEpO5P9/q6ilcZni5wacjej+Z7UwJjozPM4CK1jKfwj1mOqgfFRqN5B
+        Sun, 18 Nov 2018 08:18:38 -0500
+Received: from mga18.intel.com ([134.134.136.126]:10749 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725814AbeKRNSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 08:18:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2018 18:59:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,246,1539673200"; 
+   d="scan'208";a="97144336"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Nov 2018 18:59:34 -0800
+Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
+ ORSMSX104.amr.corp.intel.com (10.22.225.131) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sat, 17 Nov 2018 18:59:32 -0800
+Received: from orsmsx108.amr.corp.intel.com ([169.254.2.228]) by
+ ORSMSX153.amr.corp.intel.com ([169.254.12.54]) with mapi id 14.03.0415.000;
+ Sat, 17 Nov 2018 18:59:32 -0800
+From:   "Williams, Dan J" <dan.j.williams@intel.com>
+To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: [GIT PULL] libnvdimm fixes for 4.20-rc3
+Thread-Topic: [GIT PULL] libnvdimm fixes for 4.20-rc3
+Thread-Index: AQHUfuq6M71Ai6RwMkyr/nzSXLRgEw==
+Date:   Sun, 18 Nov 2018 02:59:31 +0000
+Message-ID: <629da405d226a802394ba4e1cba4ff24b8589c85.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.252.136.215]
+Content-Type: text/plain; charset="utf-7"
+Content-ID: <D8CE84CF7D9CAC4F8D16492785FE0EF9@intel.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-Received: by 2002:a02:57c4:: with SMTP id b65-v6mr8547217jad.15.1542509223226;
- Sat, 17 Nov 2018 18:47:03 -0800 (PST)
-Date:   Sat, 17 Nov 2018 18:47:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000503cae057ae76a9d@google.com>
-Subject: WARNING: ODEBUG bug in __udp4_lib_lookup
-From:   syzbot <syzbot+db0c794afd165d3a10b3@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Linus, please pull from:
 
-syzbot found the following crash on:
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/libnvdimm-fixes-4.20-rc3
 
-HEAD commit:    3e536cff3424 net: phy: check if advertising is zero using ..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=153636d5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=db0c794afd165d3a10b3
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+...to receive a small batch of fixes for v4.20-rc3.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+db0c794afd165d3a10b3@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-ODEBUG: deactivate not available (active state 0) object type: hrtimer  
-hint: tick_sched_timer+0x0/0x130 kernel/time/tick-sched.c:66
-PANIC: double fault, error_code: 0x0
-WARNING: CPU: 1 PID: 51 at lib/debugobjects.c:329  
-debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-CPU: 0 PID: 8073 Comm: syz-executor3 Not tainted 4.20.0-rc2+ #294
-Kernel panic - not syncing: panic_on_warn set ...
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-CPU: 1 PID: 51 Comm: kworker/u4:2 Not tainted 4.20.0-rc2+ #294
-RIP: 0010:__udp4_lib_lookup+0x25/0x870 net/ipv4/udp.c:466
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Code: ff 0f 1f 40 00 55 48 89 e5 41 57 41 56 41 55 49 bd 00 00 00 00 00 fc  
-ff df 41 54 53 44 89 c3 48 81 ec 00 01 00 00 48 8b 45 20 <48> 89 bd 28 ff  
-ff ff 66 c1 c3 08 4c 8b 65 18 89 b5 1c ff ff ff 89
-Workqueue: netns cleanup_net
-RSP: 0018:ffff8881d9bfcf98 EFLAGS: 00010282
-Call Trace:
-RAX: 0000000000000000 RBX: 000000000000e4c7 RCX: 00000000111414ac
-  <IRQ>
-RDX: 000000000000244e RSI: 000000000100007f RDI: ffff8881b83f0100
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-RBP: ffff8881d9bfd0c0 R08: 000000000000e4c7 R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8881dae2db3b R12: ffff8881bef83800
-  panic+0x2ad/0x55c kernel/panic.c:188
-R13: dffffc0000000000 R14: ffff8881bef837ec R15: 0000000000000003
-FS:  00007f2078daf700(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8881d9bfcf88 CR3: 00000001c3e0c000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-Code: 60 88 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 92 00 00 00 48 8b 14 dd  
-20 da 60 88 4c 89 fe 48 c7 c7 c0 cf 60 88 e8 76 42 b5 fd <0f> 0b 83 05 f1  
-75 81 06 01 48 83 c4 18 5b 41 5c 41 5d 41 5e 41 5f
-RSP: 0018:ffff8881daf07a40 EFLAGS: 00010082
-RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000000000
-RDX: 0000000000010000 RSI: ffffffff8165e7e5 RDI: 0000000000000005
-RBP: ffff8881daf07a80 R08: ffff8881d95ea600 R09: ffffed103b5e3ef8
-R10: ffffed103b5e3ef8 R11: ffff8881daf1f7c7 R12: 0000000000000001
-R13: ffffffff895a9020 R14: ffffffff816d6760 R15: ffffffff8860d3a0
-  debug_object_deactivate+0x2c7/0x450 lib/debugobjects.c:566
-  debug_hrtimer_deactivate kernel/time/hrtimer.c:421 [inline]
-  debug_deactivate kernel/time/hrtimer.c:471 [inline]
-  __run_hrtimer kernel/time/hrtimer.c:1368 [inline]
-  __hrtimer_run_queues+0x2b6/0x10d0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
-[inline]
-RIP: 0010:lock_release+0x51d/0xa00 kernel/locking/lockdep.c:3866
-Code: 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 55 03 00 00 48 83 3d d2  
-29 f0 07 00 0f 84 15 02 00 00 48 8b bd e0 fe ff ff 57 9d <0f> 1f 44 00 00  
-48 b8 00 00 00 00 00 fc ff df 48 01 c3 48 c7 03 00
-RSP: 0018:ffff8881d95ff1e0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1103b2bfe41 RCX: 1ffff1103b2bd5ce
-RDX: 1ffffffff12a3f6e RSI: 1ffff1103b2bd5df RDI: 0000000000000286
-RBP: ffff8881d95ff310 R08: 1ffff1103b2bfe45 R09: ffffed103b5e5b67
-R10: 0000000000000004 R11: ffff8881daf2db3b R12: ffff8881d95ea600
-R13: 0000000000000003 R14: ffff8881d95ea600 R15: ffff8881d95ff228
-  rcu_lock_release include/linux/rcupdate.h:228 [inline]
-  rcu_read_unlock include/linux/rcupdate.h:661 [inline]
-  inet_twsk_purge+0x5e1/0x870 net/ipv4/inet_timewait_sock.c:298
-  dccp_v4_exit_batch+0x1a/0x20 net/dccp/ipv4.c:1033
-  ops_exit_list.isra.5+0x105/0x160 net/core/net_namespace.c:156
-  cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.20.0-rc2+ #294 Not tainted
-------------------------------------------------------
-kworker/u4:2/51 is trying to acquire lock:
-0000000091c62f63 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
-kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-000000002e556cbd (&obj_hash[i].lock){-.-.}, at:  
-debug_object_deactivate+0xf7/0x450 lib/debugobjects.c:541
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&obj_hash[i].lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        __debug_object_init+0x127/0x1290 lib/debugobjects.c:384
-        debug_object_init+0x16/0x20 lib/debugobjects.c:432
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x97/0x490 kernel/time/hrtimer.c:1308
-        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
-        __sched_fork+0x2ae/0x590 kernel/sched/core.c:2166
-        init_idle+0x75/0x740 kernel/sched/core.c:5374
-        sched_init+0xb33/0xc07 kernel/sched/core.c:6060
-        start_kernel+0x4be/0xa2b init/main.c:608
-        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1126 [inline]
-        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9768
-        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
-        copy_process+0x25b8/0x87a0 kernel/fork.c:1887
-        _do_fork+0x1cb/0x11d0 kernel/fork.c:2216
-        kernel_thread+0x34/0x40 kernel/fork.c:2275
-        rest_init+0x28/0x372 init/main.c:409
-        arch_call_rest_init+0xe/0x1b
-        start_kernel+0x9f0/0xa2b init/main.c:745
-        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xdc/0x1490 kernel/sched/core.c:1965
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2129
-        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
-        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:236
-        console_unlock+0x811/0x1190 kernel/printk/printk.c:2432
-        vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        check_stack_usage kernel/exit.c:755 [inline]
-        do_exit.cold.18+0x57/0x16f kernel/exit.c:916
-        do_group_exit+0x177/0x440 kernel/exit.c:970
-        __do_sys_exit_group kernel/exit.c:981 [inline]
-        __se_sys_exit_group kernel/exit.c:979 [inline]
-        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 ((console_sem).lock){-.-.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-        console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-        console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-        vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        __warn_printk+0x8c/0xe0 kernel/panic.c:594
-        debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-        debug_object_deactivate+0x2c7/0x450 lib/debugobjects.c:566
-        debug_hrtimer_deactivate kernel/time/hrtimer.c:421 [inline]
-        debug_deactivate kernel/time/hrtimer.c:471 [inline]
-        __run_hrtimer kernel/time/hrtimer.c:1368 [inline]
-        __hrtimer_run_queues+0x2b6/0x10d0 kernel/time/hrtimer.c:1460
-        hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-        local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-        smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-        apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-        arch_local_irq_restore arch/x86/include/asm/paravirt.h:761 [inline]
-        lock_release+0x51d/0xa00 kernel/locking/lockdep.c:3866
-        rcu_lock_release include/linux/rcupdate.h:228 [inline]
-        rcu_read_unlock include/linux/rcupdate.h:661 [inline]
-        inet_twsk_purge+0x5e1/0x870 net/ipv4/inet_timewait_sock.c:298
-        dccp_v4_exit_batch+0x1a/0x20 net/dccp/ipv4.c:1033
-        ops_exit_list.isra.5+0x105/0x160 net/core/net_namespace.c:156
-        cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
-        process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-        worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-        kthread+0x35a/0x440 kernel/kthread.c:246
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&obj_hash[i].lock);
-                                lock(&rq->lock);
-                                lock(&obj_hash[i].lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-5 locks held by kworker/u4:2/51:
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:209 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at:  
-atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 00000000a68b27d9 ((wq_completion)"%s""netns"){+.+.}, at:  
-process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
-  #1: 00000000e1ea6a3b (net_cleanup_work){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-  #2: 00000000b34795ad (pernet_ops_rwsem){++++}, at: cleanup_net+0x13f/0xb10  
-net/core/net_namespace.c:518
-  #3: 000000007c641a5b (hrtimer_bases.lock){-.-.}, at:  
-hrtimer_interrupt+0xfc/0x780 kernel/time/hrtimer.c:1499
-  #4: 000000002e556cbd (&obj_hash[i].lock){-.-.}, at:  
-debug_object_deactivate+0xf7/0x450 lib/debugobjects.c:541
-
-stack backtrace:
-CPU: 1 PID: 51 Comm: kworker/u4:2 Not tainted 4.20.0-rc2+ #294
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: netns cleanup_net
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2347 [inline]
-  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-  console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-  console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-  vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-  printk+0xa7/0xcf kernel/printk/printk.c:1997
-  __warn_printk+0x8c/0xe0 kernel/panic.c:594
-  debug_print_object+0x16a/0x210 lib/debugobjects.c:326
-  debug_object_deactivate+0x2c7/0x450 lib/debugobjects.c:566
-  debug_hrtimer_deactivate kernel/time/hrtimer.c:421 [inline]
-  debug_deactivate kernel/time/hrtimer.c:471 [inline]
-  __run_hrtimer kernel/time/hrtimer.c:1368 [inline]
-  __hrtimer_run_queues+0x2b6/0x10d0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-  </IRQ>
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:761  
-[inline]
-RIP: 0010:lock_release+0x51d/0xa00 kernel/locking/lockdep.c:3866
-Code: 00 00 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 55 03 00 00 48 83 3d d2  
-29 f0 07 00 0f 84 15 02 00 00 48 8b bd e0 fe ff ff 57 9d <0f> 1f 44 00 00  
-48 b8 00 00 00 00 00 fc ff df 48 01 c3 48 c7 03 00
-RSP: 0018:ffff8881d95ff1e0 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1103b2bfe41 RCX: 1ffff1103b2bd5ce
-RDX: 1ffffffff12a3f6e RSI: 1ffff1103b2bd5df RDI: 0000000000000286
-RBP: ffff8881d95ff310 R08: 1ffff1103b2bfe45 R09: ffffed103b5e5b67
-R10: 0000000000000004 R11: ffff8881daf2db3b R12: ffff8881d95ea600
-R13: 0000000000000003 R14: ffff8881d95ea600 R15: ffff8881d95ff228
-  rcu_lock_release include/linux/rcupdate.h:228 [inline]
-  rcu_read_unlock include/linux/rcupdate.h:661 [inline]
-  inet_twsk_purge+0x5e1/0x870 net/ipv4/inet_timewait_sock.c:298
-  dccp_v4_exit_batch+0x1a/0x20 net/dccp/ipv4.c:1033
-  ops_exit_list.isra.5+0x105/0x160 net/core/net_namespace.c:156
-  cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
-  ? find_held_l
-Lost 47 message(s)!
-Shutting down cpus with NMI
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
+These have soaked in -next for a few releases. The overflow
+continuation fix addresses something that has been broken for several
+releases. Arguably it could wait even longer, but it's a one line fix
+and this finishes the last of the known address range scrub bug
+reports. The revert addresses a lockdep regression. The unit tests are
+not critical to fix, but no reason to hold this fix back.
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm tags/libnvdimm-fixes-4.20-rc3
+
+for you to fetch changes up to 2121db09630113e67b51ae78c18115f1858f648a:
+
+  Revert +ACI-acpi, nfit: Further restrict userspace ARS start requests+ACI- (2018-11-10 09:54:28 -0800)
+
+----------------------------------------------------------------
+libnvdimm 4.20-rc3
+
+- Address Range Scrub overflow continuation handling has been broken
+  since it was initially merged. It was only recently that error injection
+  and platform-BIOS support enabled this corner case to be exercised.
+
+- The recent attempt to provide more isolation for the kernel Address
+  Range Scrub state machine from userapace initiated sessions triggers a
+  lockdep report. Revert and try again at the next merge window.
+
+- Fix a kasan reported buffer overflow in libnvdimm unit test
+  infrastrucutre (nfit+AF8-test)
+
+----------------------------------------------------------------
+Dan Williams (2):
+      acpi, nfit: Fix ARS overflow continuation
+      Revert +ACI-acpi, nfit: Further restrict userspace ARS start requests+ACI-
+
+Masayoshi Mizuma (1):
+      tools/testing/nvdimm: Fix the array size for dimm devices.
+
+ drivers/acpi/nfit/core.c         +AHw- 19 +-+-+-+-+---------------
+ tools/testing/nvdimm/test/nfit.c +AHw-  8 +-+-+-+-----
+ 2 files changed, 9 insertions(+-), 18 deletions(-)
