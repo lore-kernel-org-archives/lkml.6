@@ -2,140 +2,141 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB74C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 22:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA29C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 22:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F50F2075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 22:57:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gm0to+oa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F50F2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 9AC2B2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 22:59:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC2B2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeKSJSg (ORCPT
+        id S1728100AbeKSJVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 04:18:36 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45427 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726890AbeKSJSg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 04:18:36 -0500
-Received: by mail-pf1-f196.google.com with SMTP id g62so10621693pfd.12;
-        Sun, 18 Nov 2018 14:56:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3RFURpqRMJP1tniJlzsZP/khS1dRK2eXuF0gEkkIHLI=;
-        b=gm0to+oaaAWh6XjcWKYURQphBW7mBJUkdBXz/yshhgZydcnWC9QqBSaGlwbrnMVA9I
-         xPYlklIqXxZWzjt6lY1XkU4e9hCZjtjbFYEk2av/oJnw7W/dk8hwV1KArZZNd06NG0DK
-         s8559/0bw9ivMYvYnlsDVXCMSe6+q/ba4cC7JUYRZ+DVmx7Q/WDvgg4pkyeysQfaHNWP
-         K6/iERyB+UqzJTKk+GMirjARRuZWW0OICs72jY9FpWf4pAItCaOPEZP+dxZePxYao6SX
-         oWK9nlL6flrrGGTVG9Jv4OcnMblu50pN9SaR1IkQD6ArDVgrsDNtoiRKFwOmPWQ1LcRK
-         GZog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3RFURpqRMJP1tniJlzsZP/khS1dRK2eXuF0gEkkIHLI=;
-        b=W+rmJgodw/Tq+wIAbksXtfOE90sBWaYdXszIBNK9CqyhrnF+nARIpONQJAGJctB05J
-         yfCa7bHSq8wzF6ptmftaqsAB/tJs0nZpQhf8dJMwWMET3FEZo4bcHAaVep3dTIF3hwup
-         0GfoQkt/PBAerx2JFQ5sgolJ6BfrINNsQiQKXhG/b/YHoXra2XTorzo+4TgxmDl/71t+
-         wgrg3+ZXTzfSjGmyNg9irnXmuJygh4WEBMimxifOhd+/c6YleHSKzj0X5Hyv8YxETte2
-         FiN99IT0HIXSYXky9kQw67a9+HBsM/YVBO8rFGMA/fHkgP8hLGahCo0uzkeCxVHXMXLX
-         ELYg==
-X-Gm-Message-State: AGRZ1gKlFk2ugdgXJJBNgO891jsSgvLlWaL1tZVYTr4D8zXnoSiXwJ6W
-        FdG6GPBhYCTIE6JhlsUp8gM=
-X-Google-Smtp-Source: AJdET5czLQ/x/hRwmyKaSnnk5Loe3QoU0WZ3QduFpKJgAJL3+2cCeQGgzQUJmzzootX6fRluogijLQ==
-X-Received: by 2002:a62:3a82:: with SMTP id v2mr20327360pfj.174.1542581818696;
-        Sun, 18 Nov 2018 14:56:58 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d6sm24809930pgc.89.2018.11.18.14.56.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 14:56:58 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: add binding documentation for
- adt7475
-To:     Rob Herring <robh@kernel.org>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20181108225607.7521-1-chris.packham@alliedtelesis.co.nz>
- <20181108225607.7521-2-chris.packham@alliedtelesis.co.nz>
- <20181117152949.GA31247@bogus>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <f3a29bc9-dbfc-bfb8-8707-2b67d96c2e04@roeck-us.net>
-Date:   Sun, 18 Nov 2018 14:56:56 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 19 Nov 2018 04:21:35 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53130 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727661AbeKSJVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 04:21:35 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 50DCCAE0B;
+        Sun, 18 Nov 2018 22:59:55 +0000 (UTC)
+Date:   Sun, 18 Nov 2018 23:59:52 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+In-Reply-To: <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm>
+Message-ID: <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181117152949.GA31247@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/17/18 7:29 AM, Rob Herring wrote:
-> On Fri, Nov 09, 2018 at 11:56:06AM +1300, Chris Packham wrote:
->> With the addition of the invert-pwm property the adt7475 needs its own
->> binding documentation rather being captured under trivial-devices.txt.
->>
->> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->> ---
->> Changes in v2:
->> - use pwm-polarity attiribute to indicate normal or inverted polarity.
->>
->>   .../devicetree/bindings/hwmon/adt7475.txt     | 24 +++++++++++++++++++
->>   .../devicetree/bindings/trivial-devices.txt   |  4 ----
->>   2 files changed, 24 insertions(+), 4 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/hwmon/adt7475.txt
->>
->> diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.txt b/Documentation/devicetree/bindings/hwmon/adt7475.txt
->> new file mode 100644
->> index 000000000000..d9212b5e9036
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hwmon/adt7475.txt
->> @@ -0,0 +1,24 @@
->> +*ADT7475 hwmon sensor.
->> +
->> +Required properties:
->> +- compatible: One of
->> +	"adi,adt7473"
->> +	"adi,adt7475"
->> +	"adi,adt7476"
->> +	"adi,adt7490"
->> +
->> +- reg: I2C address
->> +
->> +optional properties:
->> +
->> +- pwm-polarity: This configures the polarity of the PWM. 0
->> +		(PWM_POLARITY_NORMAL) uses logic high for 100% duty cycle. 1
->> +                (PWM_POLARITY_INVERSED) uses logic low for 100% duty cycle.
+On Sat, 17 Nov 2018, Jiri Kosina wrote:
+
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 81d1d5a..9c306e3 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -4215,6 +4215,26 @@
+> >  			Not specifying this option is equivalent to
+> >  			spectre_v2=auto.
+> >  
+> > +	spectre_v2_app2app=
+> > +			[X86] Control mitigation of Spectre variant 2
+> > +		        application to application (indirect branch speculation)
+> > +			vulnerability.
+> > +
+> > +			off    - Unconditionally disable mitigations
+> > +			lite   - Protect tasks which have requested restricted
+> > +				 indirect branch speculation via the
+> > +				 PR_SET_SPECULATION_CTRL prctl(). 
 > 
-> So we're using part of the PWM binding, but none of the rest of it? What
-> is the PWM connection here?
-> The chip has a built-in PWM controller to control fan speeds. PWM frequency
-as well as PWM polarity are configurable. I had suggested to use the terminology
-from Documentation/devicetree/bindings/pwm/pwm.txt. Other than terminology there
-is no connection to a standard pwm controller.
+> Don't we also want to do the same for SECCOMP processess, analogically how 
+> we do it for SSBD?
 
-Another option/possibility would be to use a boolean, such as pwm-polarity-inverted.
-We are open to suggestions.
+IOW, how about patch below on top of your series? Thanks.
 
-> It sounds like this is common for sensors, so this should be documented
-> somewhere common.
-> 
-Sure, no problem. Any suggestion where ?
 
-Thanks,
-Guenter
+From: Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH] x86/speculation: enforce STIBP for SECCOMP tasks in lite mode
+
+If 'lite' mode of app2app protection from spectre_v2 is selected on
+kernel command-line, we are currently applying STIBP protection to
+non-dumpable tasks, and tasks that have explicitly requested such
+protection via
+
+	prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
+
+Let's extend this to cover also SECCOMP tasks (analogically to how we
+apply SSBD protection).
+
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 9 +++++----
+ arch/x86/kernel/cpu/bugs.c                      | 2 ++
+ 2 files changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 102f9a169eec..74f547e5c8f6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4221,10 +4221,11 @@
+ 			vulnerability.
+ 
+ 			off    - Unconditionally disable mitigations
+-			lite   - Protect tasks which are marked non-dumpable
+-				 and tasks which have requested restricted
+-				 indirect branch speculation via the
+-				 PR_SET_SPECULATION_CTRL prctl(). 
++			lite   - Protect tasks which are marked non-dumpable,
++				 tasks which have requested restricted indirect
++				 branch speculation via the
++				 PR_SET_SPECULATION_CTRL prctl() and seccomp
++				 tasks.
+ 			strict - Protect all processes
+ 			auto   - Kernel selects the mode
+ 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index e7f9334f18c0..3ec952108e87 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -863,6 +863,8 @@ void arch_seccomp_spec_mitigate(struct task_struct *task)
+ {
+ 	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
+ 		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
++	if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_LITE)
++		set_task_stibp(task, true);
+ }
+ #endif
+ 
+
+-- 
+Jiri Kosina
+SUSE Labs
+
