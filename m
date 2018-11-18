@@ -2,210 +2,101 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB771C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7947AC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2432080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39FC920869
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BDOwppMy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2432080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="sClac4sm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39FC920869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbeKRXcA (ORCPT
+        id S1727338AbeKSAHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 18:32:00 -0500
-Received: from casper.infradead.org ([85.118.1.10]:60630 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeKRXcA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 18:32:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=c6FvjMeJanF3nc7SPe3ZaCOQIqI7K3AmmcrTVOhfvbE=; b=BDOwppMy2r7fgx0rJkc3lI7kgF
-        PfA7YVF4kxJpFpriqTY7GPH6NBA3XukFjGinNPUK/Im06MQVe5k57uMv18nUVcWzwxZ1VP09eGYHP
-        JrUXZR3lWcbuS66HBhjmO53T0TpeiQc1uzQsV5u7oihHoLVzsbfcFN5bwZi/StTDkgtgKMTO5Smmc
-        lofo+sbhed9RDHUBksnItVBIzZ+zrhZ8XNbtZxOYW6IQpcMlbrbCi0jae59t8/XOi470BIDYutsJm
-        l6lyOZaHtSuSxXFUIFyywizKyCwkN7kQXJcCwz1qX8AXpb7CEVmh/d1sc9hfA/ytEyoRGyIvrlSTU
-        81FUHpbg==;
-Received: from 177.17.134.91.dynamic.adsl.gvt.net.br ([177.17.134.91] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOMrO-0001x3-Oo; Sun, 18 Nov 2018 13:11:35 +0000
-Date:   Sun, 18 Nov 2018 11:11:29 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     NeilBrown <neilb@suse.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, rodrigo.vivi@gmail.com,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        zwisler@kernel.org, Leon Romanovsky <leon@kernel.org>
-Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
- Subsystem Profile
-Message-ID: <20181118111119.0ae5f374@coco.lan>
-In-Reply-To: <87va4wczc5.fsf@notabene.neil.brown.name>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com>
-        <20181115061036.1575223d@silica.lan>
-        <20181115162008.GO3759@mtr-leonro.mtl.com>
-        <CABVU7+twSz3OZx7PTO+bS-wfLfTTjZVhRAnhgtcs6KWwntattw@mail.gmail.com>
-        <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
-        <87va4wczc5.fsf@notabene.neil.brown.name>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Sun, 18 Nov 2018 19:07:07 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:44301 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbeKSAHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 19:07:06 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 6e602381;
+        Sun, 18 Nov 2018 13:40:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=w5v+EyIL9bIKvbXVhNWxQFxWKuQ=; b=sClac4
+        smI3xVrmiex0h8i6aP8kQffeccTJ0aLRBergqusevtvw+SU4xGend0OLm6RjF059
+        mkVwrhTmIzphz+608tdI20JJUtlhjWT1LVnRAvgHlEAqp8XfHNs1QMOVGCa4ay0b
+        dzdrwG/zPDA/4Ch1egm6gihVQTcULV1PoUdbU+wzXNef63jqZB8dng3YxiUppd7G
+        3ihnFLCbSmhAKdtgMhd+OY0X/vkHNYIh/xcEjUKIAMDvS0ze4u1vqhNet69Sl+tE
+        WQhrcQLPmZCr4Zt49wMSSxxALlFa7n5P8VPiav0ukkvxynyNgGoN6BsDY5RZGiaa
+        8uhF1nO+JvZxRvdQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9769d010 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Sun, 18 Nov 2018 13:40:50 +0000 (UTC)
+Received: by mail-ot1-f47.google.com with SMTP id z33so25345366otz.11;
+        Sun, 18 Nov 2018 05:46:42 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKO6CW+M0N8l8NDK3oUnjLuQsoBCM4m1E5CwD3HSUnB+EQSuMQS
+        i+0VZGU9ITvkSGF/ss7ko8mMYPZGhS7Iypji0dg=
+X-Google-Smtp-Source: AJdET5eo8/NS/idvJbrsyEmre84CnFQvNm5fFRQ2PIN2yJg22Ey4WV5uRDXC+k0tMXn4FDfbudxmBIwdQ+d18x+IW5I=
+X-Received: by 2002:a9d:12e3:: with SMTP id g90mr6783221otg.223.1542548801761;
+ Sun, 18 Nov 2018 05:46:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
+ <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+ <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
+ <20181117001718.GA175522@gmail.com>
+In-Reply-To: <20181117001718.GA175522@gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Sun, 18 Nov 2018 14:46:30 +0100
+X-Gmail-Original-Message-ID: <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+Message-ID: <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 10/15] crypto: poly1305 - use structures for key
+ and accumulator
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat, 17 Nov 2018 11:38:50 +1100
-NeilBrown <neilb@suse.com> escreveu:
+Hi Eric,
 
-> On Fri, Nov 16 2018, Dan Williams wrote:
-> 
-> > On Fri, Nov 16, 2018 at 12:37 PM Rodrigo Vivi <rodrigo.vivi@gmail.com> wrote:  
-> >>
-> >> On Thu, Nov 15, 2018 at 8:38 AM Leon Romanovsky <leon@kernel.org> wrote:  
-> >> >
-> >> > On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:  
-> >> > > Em Thu, 15 Nov 2018 09:03:11 +0100
-> >> > > Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
-> >> > >  
-> >> > > > Hi Dan,
-> >> > > >
-> >> > > > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:  
-> >> > > > > Document the basic policies of the libnvdimm subsystem and provide a
-> >> > > > > first example of a Subsystem Profile for others to duplicate and edit.
-> >> > > > >
-> >> > > > > Cc: Ross Zwisler <zwisler@kernel.org>
-> >> > > > > Cc: Vishal Verma <vishal.l.verma@intel.com>
-> >> > > > > Cc: Dave Jiang <dave.jiang@intel.com>
-> >> > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>  
-> >> > > >
-> >> > > > Thanks for your patch!
-> >> > > >  
-> >> > > > > --- /dev/null
-> >> > > > > +++ b/Documentation/nvdimm/subsystem-profile.rst  
-> >> > > >  
-> >> > > > > +Trusted Reviewers
-> >> > > > > +-----------------
-> >> > > > > +Johannes Thumshirn
-> >> > > > > +Toshi Kani
-> >> > > > > +Jeff Moyer
-> >> > > > > +Robert Elliott  
-> >> > > >
-> >> > > > Don't you want to add email addresses?
-> >> > > > Only the first one is listed in MAINTAINERS.  
-> >> > >
-> >> > > IMO, it makes sense to have their e-mails here, in a way that it could
-> >> > > easily be parsed by get_maintainers.pl.  
-> >> >
-> >> > I personally think that list of "trusted reviewers" makes more harm than
-> >> > good. It creates unneeded negative feelings to those who wanted to be in
-> >> > this list, but for any reason they don't. Those reviewers will feel
-> >> > "untrusted".  
-> >>
-> >> I'd like to +1 on this concern here. Besides leaving all the other
-> >> people demotivated.  
-> >
-> > Yes, that's a valid concern, I overlooked that unfortunate interpretation.
-> >  
-> >>
-> >> A small group of trusted reviewers doesn't scale. People will get overloaded.
-> >> Or you won't be able to enforce that all patches need to get Reviews.
-> >>
-> >> Reviews should be coming from everywhere and commiters and maintainers
-> >> deciding on what to trust or re-review.
-> >>
-> >> Also the list is hard to maintain and keep the lists updated.  
-> >
-> > I understand the concern, and as I saw feedback come in I realized
-> > there were more people that I would add to that reviewer list for
-> > libnvdimm.
-> >
-> > Stepping back the end goal is to have an initial list of recommended
-> > people to follow up with directly to seek a second opinion, or help in
-> > cases where a contributor otherwise needs some direction / engagement
-> > that they are not readily receiving from the maintainer. Typically
-> > someone just lurks on the mailing list for a few weeks to get a feel
-> > for who the usual suspects are in the subsystem, but for a new
-> > contributor identifying those individuals may be difficult.
-> >
-> > One of the contributing factors of lack of response to a patchset is
-> > that they are sent with the implicit expectation that the maintainer
-> > will get to eventually, and typically other people feel content to sit
-> > back and watch. If instead a contributor sent a direct mail to a
-> > "trusted reviewer" saying, "Hey, Alice, Bob seems busy can you help me
-> > out?" that seems more likely to rope in additional review help.  
-> 
-> In here is, I think, a real issue that listing "trusted reviewers" might
-> help address.
-> As you say, people don't feel the need to comment - particularly if they
-> don't see anything wrong (often best to insert a bug to encourage
-> responses!).
-> Maybe if we list people, it will make them feel that their opinion is
-> valuable (trusted!) and that will encourage them to Ack or Review a
-> patch.
-> I have found that being given a title of responsibility can change my
-> thinking from "someone should" to "I should".
+On Sat, Nov 17, 2018 at 1:17 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> Do you prefer that this be merged before or after Zinc?  It seems it may still
+> be a while before the community is satisfied with Zinc (and Wireguard which is
+> in the same patchset), and I don't want this blocked unnecessarily...  So on my
+> part I'd prefer to just have this merged as-is.
 
-I heard a similar feedback from some subsystems: giving someone a 
-formal credit may actually help to get more reviews.
+Personally I'd prefer this be merged after Zinc, since there's work to
+be done on adjusting the 20->12 in chacha20. That's not really much of
+a reason though. But maybe we can just sidestep the ordering concern
+all together:
 
-However, as Leon pointed later in this tread:
+What I suspect we should do is make the initial Zinc merge _without_
+those top two patches that replace the crypto api's implementations
+with Zinc, and defer those until after the initial merges. Those
+commits are already written -- so there's no chance it won't happen
+due to laziness or something -- and I think the general merge will go
+a bit more smoothly if we wait until after. (Somebody suggested we do
+it this way at Plumbers, and was actually a bit surprised I had
+already ported the crypto API stuff to Zinc.) This way, Adiantum and
+Zinc aren't potentially co-dependent in their initial merges and we
+can work on the details carefully with each other after both have
+landed. I figure this might make things a little bit less stressful
+for both of us. How would you feel about doing it that?
 
-Em Sun, 18 Nov 2018 09:12:54 +0200
-Leon Romanovsky <leon@kernel.org> escreveu:
-
-> On Fri, Nov 16, 2018 at 03:39:47AM -0800, Mauro Carvalho Chehab wrote:
-> > Em Thu, 15 Nov 2018 11:43:51 -0800
-> > Joe Perches <joe@perches.com> escreveu:
-> >  
-> > > On Thu, 2018-11-15 at 19:40 +0000, Luck, Tony wrote:  
-> > > > > I would recommend to remove this section at all.
-> > > > > New maintainers won't come out of blue, but will be come
-> > > > > from existing community and such individuals for sure will see
-> > > > > and judge by themselves to whom they trust and to whom not.  
-> > > >
-> > > > Perhaps this is more of a hint to contributors than to maintainers
-> > > > (see earlier discussion on who is the target audience for these documents).
-> > > >
-> > > > It would help contributors know some names of useful reviewers (and
-> > > > thus this list should be picked up by scripts/get_maintainer.pl to help
-> > > > the user compose Cc: lists for e-mail patches).  
-> > >
-> > > Trusted reviewers should be specifically listed
-> > > in the MAINTAINERS file with an "R:" entry.
-> > >
-> > > get_maintainers should not look anywhere else.  
-> >
-> > I know that making get_maintainers to look elsewhere can make it more
-> > complex and slower, but IMHO, by having a per-subsystem profile, this is
-> > unavoidable.
-> >
-> > The thing is that touching at a single MAINTAINERS file every time a new
-> > reviewer comes is painful. Also, MAINTAINERS file format doesn't allow
-> > adding free text explaining the criteria for someone to become a
-> > reviewer.  
-> 
-> You are pointing to the actual problem -> someone needs to maintain such
-> lists, Removal of persons from that list won't be easy task too.
-
-While adding new reviewers is easy (someone just need to send a patch,
-with the Acked-by from the reviewer to be included), getting someone 
-removed from it can be very painful (and will likely require some written
-policy about how to do that).
-
-Thanks,
-Mauro
+Jason
