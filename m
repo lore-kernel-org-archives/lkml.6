@@ -2,129 +2,90 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BF5C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 05:01:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56146C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 05:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AEF82080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 05:01:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="y3872g0g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AEF82080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id EDE2720817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 05:10:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDE2720817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeKRPUb (ORCPT
+        id S1726861AbeKRP3R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 10:20:31 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:49952 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbeKRPUb (ORCPT
+        Sun, 18 Nov 2018 10:29:17 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41354 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbeKRP3R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 10:20:31 -0500
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wAI51836017049;
-        Sun, 18 Nov 2018 14:01:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wAI51836017049
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542517269;
-        bh=dQpLK/4cyORAuLT6tU0euQEKA/LcBrscM9+Y7QXyxGk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=y3872g0gcPrJ08CHG2SCOBqaILUGEIcnJufphJKS6nwKkxlywG04tqnmZ6HmC7L0r
-         60EKF16GagynkzMaKqtLf4iXt1mUB0YdVxfOsntEXnADqSEMPwTKG9CODSrnlcDg39
-         LyjVyEfzYCnS5FcCzr5apLjRaYsVf+Ckb4WADkyK2Ar+a2QwfQIH1BypGIFLxh+PHg
-         9A+I8Bbvbts/y2JxhiExX9IQ7fwyvPrmWdyloCDbDJpRqlIrJ3TrGZgKYt71Jo5YLF
-         /UOCLB8zyNfYi6wSYLMeQNsmVVjztVWQE0Uy9fMJP18uRlS9TofuA8q6IjzuUq9v0M
-         vd7XthQhVclDw==
-X-Nifty-SrcIP: [209.85.222.50]
-Received: by mail-ua1-f50.google.com with SMTP id e16so8428395uam.12;
-        Sat, 17 Nov 2018 21:01:08 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJmrv5OBgfrwAiIJxrev1cC2+gYgjrJiGTNpjpYlkgXNjJbemCG
-        z2DHELAFEMmQZgw8n2w5a4eB/qXmR2KSrZ9gvsk=
-X-Google-Smtp-Source: AJdET5dTWHXgttfLhmnqC1xjaELgaCwu4bmirddbriTb2uujr6i88cY9ec2rU8NnCWch+G/twNjCbYGpFKpfV6pvwWY=
-X-Received: by 2002:ab0:849:: with SMTP id b9mr7846850uaf.93.1542517267868;
- Sat, 17 Nov 2018 21:01:07 -0800 (PST)
-MIME-Version: 1.0
-References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
- <1542270435-11181-4-git-send-email-yamada.masahiro@socionext.com> <20181116200109.GC15240@ravnborg.org>
-In-Reply-To: <20181116200109.GC15240@ravnborg.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 18 Nov 2018 14:00:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATefLJcb52N0=p2qAk-N_0hEQDOQinw5+kUiKo7oWFRnQ@mail.gmail.com>
-Message-ID: <CAK7LNATefLJcb52N0=p2qAk-N_0hEQDOQinw5+kUiKo7oWFRnQ@mail.gmail.com>
-Subject: Re: [PATCH 3/8] kbuild: refactor modversions build rules
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 18 Nov 2018 10:29:17 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B5E29148BBD60;
+        Sat, 17 Nov 2018 21:10:09 -0800 (PST)
+Date:   Sat, 17 Nov 2018 21:10:06 -0800 (PST)
+Message-Id: <20181117.211006.376669879094627607.davem@davemloft.net>
+To:     sam@mendozajonas.com
+Cc:     netdev@vger.kernel.org, Justin.Lee1@Dell.com,
+        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH net-next v4 0/6] net/ncsi: Allow enabling multiple
+ packages & channels
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181116045159.4980-1-sam@mendozajonas.com>
+References: <20181116045159.4980-1-sam@mendozajonas.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 17 Nov 2018 21:10:09 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
+From: Samuel Mendoza-Jonas <sam@mendozajonas.com>
+Date: Fri, 16 Nov 2018 15:51:53 +1100
 
+> This series extends the NCSI driver to configure multiple packages
+> and/or channels simultaneously. Since the RFC series this includes a few
+> extra changes to fix areas in the driver that either made this harder or
+> were roadblocks due to deviations from the NCSI specification.
+> 
+> Patches 1 & 2 fix two issues where the driver made assumptions about the
+> capabilities of the NCSI topology.
+> Patches 3 & 4 change some internal semantics slightly to make multi-mode
+> easier.
+> Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration
+> and keeping track of channel states.
+> Patch 6 implements the main multi-package/multi-channel configuration,
+> configured via the Netlink interface.
+> 
+> Readers who have an interesting NCSI setup - especially multi-package
+> with HWA - please test! I think I've covered all permutations but I
+> don't have infinite hardware to test on.
+> 
+> Changes in v2:
+> - Updated use of the channel lock in ncsi_reset_dev(), making the
+> channel invisible and leaving the monitor check to
+> ncsi_stop_channel_monitor().
+> - Fixed ncsi_channel_is_tx() to consider the state of channels in other
+> packages.
+> Changes in v3:
+> - Fixed bisectability bug in patch 1
+> - Consider channels on all packages in a few places when multi-package
+> is enabled.
+> - Avoid doubling up reset operations, and check the current driver state
+> before reset to let any running operations complete.
+> - Reorganise the LSC handler slightly to avoid enabling Tx twice.
+> Changes in v4:
+> - Fix failover in the single-channel case
+> - Better handle ncsi_reset_dev() entry during a current config/suspend
+> operation.
 
-On Sat, Nov 17, 2018 at 5:01 AM Sam Ravnborg <sam@ravnborg.org> wrote:
->
-> Hi Masahiro
->
-> On Thu, Nov 15, 2018 at 05:27:10PM +0900, Masahiro Yamada wrote:
-> > Let $(CC) compile objects into normal files *.o instead of .tmp_*.o
-> > whether CONFIG_MODVERSIONS is enabled or not. This will help simplify
-> > build rules a lot.
->
-> Another approach would be to move more of the build stuff to
-> one or a few build scripts.
-
-Shifting code from Makefile to a shell script
-will be another clean-up.
-
-
-This patch is addressing a different problem.
-
-See this code in Malefile.build
-
-ifdef CONFIG_MODVERSIONS
-objtool_o = $(@D)/.tmp_$(@F)
-else
-objtool_o = $(@)
-endif
-
-
-
-cmd_cc_o_c writes an object into a different file name
-depending CONFIG_MODVERSIONS, which makes difficult
-for other actions to manipulate the object in a
-consistent manner.
-
-I will clarify this in the commit log in v2.
-
-Thanks.
-
-
-
-
-
-> Using build scripts makes is much easier to add comments and
-> still keep it readable.
-> And when the build logic list a set of serialized actions
-> they thay can be included in a build script nicely.
->
-> But that said - I also like the simplifications you made.
-> Everytime you trim the core kbuild files it is a win for
-> readability.
->
->         Sam
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+Series applied.
