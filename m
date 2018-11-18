@@ -2,159 +2,220 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ABDC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38419C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF7A2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:07:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="C4EgATer"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF7A2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 6CE9220815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:10:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE9220815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dei.uc.pt
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727385AbeKSA2I (ORCPT
+        id S1727343AbeKSAam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:28:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46136 "EHLO mail.skyhub.de"
+        Sun, 18 Nov 2018 19:30:42 -0500
+Received: from smtp.dei.uc.pt ([193.137.203.253]:54376 "EHLO smtp.dei.uc.pt"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbeKSA2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:28:07 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542550061;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=FCblXy1zfGJ9TMDbST/OhBpEJBWfMNzg0mu49obGrk4=;
-        b=C4EgATerKrET+s1qknL0Mdub0tZOk3iHdPLnfmQEBv+b8PGOk7GUlIoiZ1XAFECmCuCZ8O
-        oK15I5ZL7+Bj2reIsVcx4p0vMLAnJNKEeHXToff0ro6y5WuIAs3ahlXWy2p7Tp5b6MlmCA
-        pijAvPHrQvoNxE86H3B+lIxdogldxH4=
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id s-IcNytAh2i0; Sun, 18 Nov 2018 15:07:41 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE2B7004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:b700:4d13:ad2:f34e:6de4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 564BC1EC00E8;
-        Sun, 18 Nov 2018 15:07:41 +0100 (CET)
-Date:   Sun, 18 Nov 2018 15:07:35 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v8 01/13] arch/resctrl: Start renaming the rdt files to
- more generic names
-Message-ID: <20181118140735.GC19380@zn.tnic>
-References: <20181116205407.10457-1-babu.moger@amd.com>
- <20181116205407.10457-2-babu.moger@amd.com>
+        id S1726180AbeKSAam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 19:30:42 -0500
+X-Greylist: delayed 305 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Nov 2018 19:30:39 EST
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+        (user=sneves mech=PLAIN bits=0)
+        by smtp.dei.uc.pt (8.15.2/8.15.2) with ESMTPSA id wAIE3vS4007701
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL)
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 14:04:02 GMT
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dei.uc.pt wAIE3vS4007701
+Received: by mail-ed1-f54.google.com with SMTP id x30so18495035edx.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 06:04:02 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLI7zkcy8rxYi9Pr4ScDFYOabENM46/vc08CSTS9ZTckFKlv+4e
+        cJXmEPRh+1jvGbo1CslmxTen+bzhZ4AwXIzab0U=
+X-Google-Smtp-Source: AJdET5fMZ4rTHY1FcJbPU9PQzU3P6tSCG+ujbzfoO/y+ZdtU5YbzQ1HtOe8VmCN0rM9mk2KlZ+ZGySLo/bcxN2Rs5j8=
+X-Received: by 2002:a17:906:1a49:: with SMTP id j9-v6mr14203181ejf.45.1542549837007;
+ Sun, 18 Nov 2018 06:03:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181116205407.10457-2-babu.moger@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   Samuel Neves <sneves@dei.uc.pt>
+Date:   Sun, 18 Nov 2018 14:03:20 +0000
+X-Gmail-Original-Message-ID: <CAEX_ruH=9VHD-8YH2--4mYPq7LD2Ciya2ADeSO=c38s2KaQhUg@mail.gmail.com>
+Message-ID: <CAEX_ruH=9VHD-8YH2--4mYPq7LD2Ciya2ADeSO=c38s2KaQhUg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] x86/fpu: track AVX-512 usage of tasks
+To:     aubrey.li@linux.intel.com, dave.hansen@intel.com,
+        aubrey.li@intel.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="00000000000015e591057af0df23"
+X-FCTUC-DEI-SIC-MailScanner-Information: Please contact helpdesk@dei.uc.pt for more information
+X-FCTUC-DEI-SIC-MailScanner-ID: wAIE3vS4007701
+X-FCTUC-DEI-SIC-MailScanner: Found to be clean
+X-FCTUC-DEI-SIC-MailScanner-SpamCheck: not spam, SpamAssassin (cached,
+        score=-60.1, required 3.252, autolearn=not spam, ALL_TRUSTED -10.00,
+        BAYES_00 -0.10, L_SMTP_AUTH -50.00)
+X-FCTUC-DEI-SIC-MailScanner-From: sneves@dei.uc.pt
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just to state it here on the thread: prefix should be "x86/resctrl" as
-we said earlier. But that will be addressed in the next iteration, as we
-agreed offlist.
+--00000000000015e591057af0df23
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Nov 16, 2018 at 08:54:22PM +0000, Moger, Babu wrote:
-> New generation of AMD processors start supporting RDT(or QOS) features.
-> With more than one vendors supporting these features, it seems more
-> appropriate to rename these files.
-> 
-> Changed intel_rdt to resctrl where applicable.
-> 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> Reviewed-by: Borislav Petkov <bp@suse.de>
-> ---
->  arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} | 0
->  arch/x86/kernel/cpu/Makefile                                | 6 +++---
->  arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c}              | 4 ++--
->  arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h}              | 6 +++---
->  .../cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c}  | 2 +-
->  .../kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c}   | 2 +-
->  .../cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c}  | 6 +++---
->  ..._rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} | 2 +-
->  .../kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} | 4 ++--
->  arch/x86/kernel/process_32.c                                | 2 +-
->  arch/x86/kernel/process_64.c                                | 2 +-
->  11 files changed, 18 insertions(+), 18 deletions(-)
->  rename arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} (100%)
->  rename arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c} (99%)
->  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} (95%)
->  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} (99%)
+On 11/17/18 12:36 AM, Li, Aubrey wrote:
+> On 2018/11/17 7:10, Dave Hansen wrote:
+>> Just to be clear: there are 3 AVX-512 XSAVE states:
+>>
+>>          XFEATURE_OPMASK,
+>>          XFEATURE_ZMM_Hi256,
+>>          XFEATURE_Hi16_ZMM,
+>>
+>> I honestly don't know what XFEATURE_OPMASK does.  It does not appear to
+>> be affected by VZEROUPPER (although VZEROUPPER's SDM documentation isn't
+>> looking too great).
 
-Ok, looking at this more, it looks like this:
+XFEATURE_OPMASK refers to the additional 8 mask registers used in
+AVX512. These are more similar to general purpose registers than
+vector registers, and should not be too relevant here.
 
-ls -l arch/x86/kernel/cpu/resctrl*
- arch/x86/kernel/cpu/resctrl.c
- arch/x86/kernel/cpu/resctrl_ctrlmondata.c
- arch/x86/kernel/cpu/resctrl.h
- arch/x86/kernel/cpu/resctrl_monitor.c
- arch/x86/kernel/cpu/resctrl_pseudo_lock.c
- arch/x86/kernel/cpu/resctrl_pseudo_lock_event.h
- arch/x86/kernel/cpu/resctrl_rdtgroup.c
+>>
+>> But, XFEATURE_ZMM_Hi256 is used for the upper 256 bits of the
+>> registers ZMM0-ZMM15.  Those are AVX-512-only registers.  The only way
+>> to get data into XFEATURE_ZMM_Hi256 state is by using AVX512 instructions.
+>>
+>> XFEATURE_Hi16_ZMM is the same.  The only way to get state in there is
+>> with AVX512 instructions.
+>>
+>> So, first of all, I think you *MUST* check XFEATURE_ZMM_Hi256 and
+>> XFEATURE_Hi16_ZMM.  That's without question.
+>
+> No, XFEATURE_ZMM_Hi256 does not request turbo license 2, so it's less
+> interested to us.
+>
 
-Now, it looks to me like the whole resctrl thing begs for its own dir:
+I think Dave is right, and it's easy enough to check this. See the
+attached program. For the "high current" instruction vpmuludq
+operating on zmm0--zmm3 registers, we have (on a Skylake-SP Xeon Gold
+5120)
 
- arch/x86/kernel/cpu/resctrl/core.c
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c
- arch/x86/kernel/cpu/resctrl/internal.h
- arch/x86/kernel/cpu/resctrl/monitor.c
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c
- arch/x86/kernel/cpu/resctrl/pseudo_lock_event.h
- arch/x86/kernel/cpu/resctrl/rdtgroup.c
+           175,097      core_power.lvl0_turbo_license:u
+                     ( +-  2.18% )
+            41,185      core_power.lvl1_turbo_license:u
+                     ( +-  1.55% )
+        83,928,648      core_power.lvl2_turbo_license:u
+                     ( +-  0.00% )
 
-This way, the whole RDT machinery will be confined to its own directory.
+while for the same code operating on zmm28--zmm31 registers, we have
 
-Hmm.
+           163,507      core_power.lvl0_turbo_license:u
+                     ( +-  6.85% )
+            47,390      core_power.lvl1_turbo_license:u
+                     ( +- 12.25% )
+        83,927,735      core_power.lvl2_turbo_license:u
+                     ( +-  0.00% )
 
--- 
-Regards/Gruss,
-    Boris.
+In other words, the register index does not seem to matter at all for
+turbo license purposes (this makes sense, considering these chips have
+168 vector registers internally; zmm15--zmm31 are simply newly exposed
+architectural registers).
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+We can also see that XFEATURE_Hi16_ZMM does not imply license 1 or 2;
+we may be using xmm15--xmm31 purely for the convenient extra register
+space. For example, cases 4 and 5 of the sample program:
+
+        84,064,239      core_power.lvl0_turbo_license:u
+                     ( +-  0.00% )
+                 0      core_power.lvl1_turbo_license:u
+                 0      core_power.lvl2_turbo_license:u
+
+        84,060,625      core_power.lvl0_turbo_license:u
+                     ( +-  0.00% )
+                 0      core_power.lvl1_turbo_license:u
+                 0      core_power.lvl2_turbo_license:u
+
+So what's most important is the width of the vectors being used, not
+the instruction set or the register index. Second to that is the
+instruction type, namely whether those are "heavy" instructions.
+Neither of these things can be accurately captured by the XSAVE state.
+
+>>
+>> It's probably *possible* to run AVX512 instructions by loading state
+>> into the YMM register and then executing AVX512 instructions that only
+>> write to memory and never to register state.  That *might* allow
+>> XFEATURE_Hi16_ZMM and XFEATURE_ZMM_Hi256 to stay in the init state, but
+>> for the frequency to be affected since AVX512 instructions _are_
+>> executing.  But, there's no way to detect this situation from XSAVE
+>> states themselves.
+>>
+>
+> Andi should have more details on this. FWICT, not all AVX512 instructions
+> has high current, those only touching memory do not cause notable frequency
+> drop.
+
+According to section 15.26 of the Intel optimization reference manual,
+"heavy" instructions consist of floating-point and integer
+multiplication. Moves, adds, logical operations, etc, will request at
+most turbo license 1 when operating on zmm registers.
+
+>
+> Thanks,
+> -Aubrey
+>
+
+--00000000000015e591057af0df23
+Content-Type: text/x-csrc; charset="US-ASCII"; name="turbo.c"
+Content-Disposition: attachment; filename="turbo.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jomy6sz30>
+X-Attachment-Id: f_jomy6sz30
+
+I2luY2x1ZGUgPHN0ZGxpYi5oPgoKI2RlZmluZSBJTlNOX0xPT1BfTE8oaW5zbiwgcmVnKSBkbyB7
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgYXNtIHZvbGF0aWxlKCAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAg
+Im1vdiAkMTw8MjQsJSVyY3g7IiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIFwKICAgICIuYWxpZ24gMzI7IiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAiMToiICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgI2luc24gIiAi
+ICIlJSIgI3JlZyAiMCIgIiwiICIlJSIgI3JlZyAiMCIgIiwiICIlJSIgI3JlZyAiMCIgIjsiICAg
+IFwKICAgICNpbnNuICIgIiAiJSUiICNyZWcgIjEiICIsIiAiJSUiICNyZWcgIjEiICIsIiAiJSUi
+ICNyZWcgIjEiICI7IiAgICBcCiAgICAjaW5zbiAiICIgIiUlIiAjcmVnICIyIiAiLCIgIiUlIiAj
+cmVnICIyIiAiLCIgIiUlIiAjcmVnICIyIiAiOyIgICAgXAogICAgI2luc24gIiAiICIlJSIgI3Jl
+ZyAiMyIgIiwiICIlJSIgI3JlZyAiMyIgIiwiICIlJSIgI3JlZyAiMyIgIjsiICAgIFwKICAgICJk
+ZWMgJSVyY3g7IiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBcCiAgICAiam56IDFiOyIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgXAogICAgOjo6ICJyY3giICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICApOyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBc
+Cn0gd2hpbGUoMCk7CgojZGVmaW5lIElOU05fTE9PUF9ISShpbnNuLCByZWcpIGRvIHsgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKICBhc20gdm9sYXRpbGUoICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAibW92ICQx
+PDwyNCwlJXJjeDsiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgXAogICAgIi5hbGlnbiAzMjsiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIFwKICAgICIxOiIgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcCiAgICAjaW5zbiAiICIgIiUlIiAj
+cmVnICIzMSIgIiwiICIlJSIgI3JlZyAiMzEiICIsIiAiJSUiICNyZWcgIjMxIiAiOyIgXAogICAg
+I2luc24gIiAiICIlJSIgI3JlZyAiMzAiICIsIiAiJSUiICNyZWcgIjMwIiAiLCIgIiUlIiAjcmVn
+ICIzMCIgIjsiIFwKICAgICNpbnNuICIgIiAiJSUiICNyZWcgIjI5IiAiLCIgIiUlIiAjcmVnICIy
+OSIgIiwiICIlJSIgI3JlZyAiMjkiICI7IiBcCiAgICAjaW5zbiAiICIgIiUlIiAjcmVnICIyOCIg
+IiwiICIlJSIgI3JlZyAiMjgiICIsIiAiJSUiICNyZWcgIjI4IiAiOyIgXAogICAgImRlYyAlJXJj
+eDsiICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IFwKICAgICJqbnogMWI7IiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICBcCiAgICA6OjogInJjeCIgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXAogICk7ICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwKfSB3aGls
+ZSgwKTsKCgoKaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiogYXJndikgewogIGludCB4ID0gc3Ry
+dG91bChhcmd2WzFdLCAwLCAxMCk7CiAgYXNtIHZvbGF0aWxlKCJ2emVyb2FsbCIpOwogIHN3aXRj
+aCh4KSB7CiAgY2FzZSAwOgogICAgSU5TTl9MT09QX0xPKHZwbXVsdWRxLCB6bW0pOwogICAgYnJl
+YWs7CiAgY2FzZSAxOgogICAgSU5TTl9MT09QX0hJKHZwbXVsdWRxLCB6bW0pOwogICAgYnJlYWs7
+CiAgY2FzZSAyOgogICAgSU5TTl9MT09QX0xPKHZwbXVsdWRxLCB5bW0pOwogICAgYnJlYWs7CiAg
+Y2FzZSAzOgogICAgSU5TTl9MT09QX0hJKHZwbXVsdWRxLCB5bW0pOwogICAgYnJlYWs7CiAgY2Fz
+ZSA0OgogICAgSU5TTl9MT09QX0xPKHZwbXVsdWRxLCB4bW0pOwogICAgYnJlYWs7CiAgY2FzZSA1
+OgogICAgSU5TTl9MT09QX0hJKHZwbXVsdWRxLCB4bW0pOwogICAgYnJlYWs7CiAgY2FzZSA2Ogog
+ICAgSU5TTl9MT09QX0xPKHZwYWRkcSwgem1tKTsKICAgIGJyZWFrOwogIGNhc2UgNzoKICAgIElO
+U05fTE9PUF9ISSh2cGFkZHEsIHptbSk7CiAgICBicmVhazsKICBjYXNlIDg6CiAgICBJTlNOX0xP
+T1BfTE8odnBhZGRxLCB5bW0pOwogICAgYnJlYWs7CiAgY2FzZSA5OgogICAgSU5TTl9MT09QX0hJ
+KHZwYWRkcSwgeW1tKTsKICAgIGJyZWFrOwogIGNhc2UgMTA6CiAgICBJTlNOX0xPT1BfTE8odnBh
+ZGRxLCB4bW0pOwogICAgYnJlYWs7CiAgY2FzZSAxMToKICAgIElOU05fTE9PUF9ISSh2cGFkZHEs
+IHhtbSk7CiAgICBicmVhazsKICB9CiAgcmV0dXJuIDA7Cn0KCg==
+--00000000000015e591057af0df23--
