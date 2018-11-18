@@ -2,179 +2,164 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB84EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F64C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DDEF2086B
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:24:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UHAokVmi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DDEF2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 125CB20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:28:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 125CB20815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeKSDp2 (ORCPT
+        id S1726959AbeKSDsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 22:45:28 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33659 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbeKSDp2 (ORCPT
+        Sun, 18 Nov 2018 22:48:54 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:49790 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbeKSDsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 22:45:28 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so16494475vsc.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 09:24:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Wytjs4fpH0VD9nKliwqpD+0su5qcPR+2gu7HKTH97n4=;
-        b=UHAokVmiVyoDk/BeC3n4nE1ZmTfQwlityg+VMPmH7l9m7l5dzORebTki/1mZZx2XM5
-         Kx4kz4Ca8Tw1NEtSFySoIVnFyqRpswTZXZWZZnfoAJj5/9Blxagq2kSBvY6sIJ6xidF0
-         +kUe2dGYAi9bu5JcDVZ5+YrVBcpPPrOq/GtZe+SF8whQyyhBKclyOiI/lx6+5uUQxV1u
-         JQHwEPjLR5iVZGT/fK8ZbtC9vt9PGftkPcTLuxKNyg/1koID3jNPurh6lR2Ro7Nb9Zcf
-         B57uTV+qV2qkxJLSRq2wAJ+JoNphZyc8uexXmixKl7sIW8AIt30vS5yaFdfKSRWVzser
-         VbPg==
+        Sun, 18 Nov 2018 22:48:53 -0500
+Received: by mail-io1-f69.google.com with SMTP id s10so8584813iop.16
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 09:28:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Wytjs4fpH0VD9nKliwqpD+0su5qcPR+2gu7HKTH97n4=;
-        b=OgqYmMAlTaoFsTPDPU2wuGrWOkw44074ZoQ+KtwLLzdde2ERTqR/kXSrc5ZE4enKhl
-         M2hiR9f/DZl8vbmceP5S8Y54SFApl4br0mtRQgGwTWyRWwATnCXLQYlQCfxYCIb+zfxK
-         C9rNfWtL5yVMCcK83oozf+6milwtywcs0IxBPI0hxDBmDYshY/tG2fALq3AbAXusr0+a
-         1wbHIoGZDjgtuXw7h2Xi9XqI+3fcH0pJxTvGdliNtpMwCmXz6waW5jyBcTChNdW2DAn7
-         jm4xbaWCtsCmG+vgMMT7l2By+StcP2xjZePk5ou6T9O0YXz8euNEd3HMnYh+OigK0YKv
-         Hbaw==
-X-Gm-Message-State: AGRZ1gJqMzlPg1nkgWMr0kIlIQlt3Ud9SgQOmSyD3+01aoCgEtevQkFb
-        oVq7Ozj8A063ZEUPgZ6TshyJgNRmr1xyiGxpT6yCBQ==
-X-Google-Smtp-Source: AJdET5daWxf4xgmeEWbkDf2VYXZ4xESotBXY/nezqGizEoXG8jOjJSS+VOYBpUxhfq/NdfpaLfvbVQzzBsEIZqRbzFQ=
-X-Received: by 2002:a67:b44:: with SMTP id 65mr7763131vsl.77.1542561877422;
- Sun, 18 Nov 2018 09:24:37 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=+gG2GsqxPiHWn1qQP9mdgcaTp834uqBcVYElfGn++4Q=;
+        b=YR32TKHp051fcKNi4C6autlWqqHcFQ1YrOxjmVdj21G3XYvfSGya4GFQtIFYQhCXl9
+         iFNBHUMg6RqB01KrcKmnv9UWHTr7W/ztN7hSk7TTY6feIqHJbiRJdfsS/ZWn48CLVaZ4
+         oyLdsexouVq4XNI96L9WHN6SefTLom4k8lmwcDxeYRHCEWaEXAg7LB3oCCCGVyUJYBwd
+         hDk534iTZJadcB09JeLgI7/LwqcNPZgATCgkcGw4aCzs93HY/olWh3UWrWZNuq0YPIuB
+         W2l5b2YG9yHfMCGQvNlih9gQq+EDpe1M70aPnocFZjodDclvXTCwlxAOjAZtwuiaBWGg
+         qRkg==
+X-Gm-Message-State: AA+aEWbHHhj7TgB33jpISZkW/E3zIIZBz+PA6khXZRdO78Tntj9iXPz+
+        Z9uI9euGdwD07WBy43B/yeWcDpYyx/uHsr6JfZ4sK1Ta8Qs2
+X-Google-Smtp-Source: AFSGD/W6fM1hCOFUiMnK8D8YlPSEOVkXIXZSHDB3/qnXdD+4nYIajnelHPBVAaQfOkZ6KNRxGfpdfGE+TSpcCSckLvgEZHxdGcuA
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 09:24:36
- -0800 (PST)
-In-Reply-To: <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
-References: <20181118111751.6142-1-christian@brauner.io> <CAKOZuet3s0WxxPgrtrNkq8YiOWhYAiK6yEio6PKVV9J_H4_TSA@mail.gmail.com>
- <CALCETrUd2Y2MmO8Qx8aUvQDOTNiyj35Y7bctPBZe0p2i1EUiLw@mail.gmail.com>
- <CAKOZuev1JUGFWuwsKqS6rXcFMqpCHT1VAG2kwB4O=FHo6DAFiQ@mail.gmail.com>
- <CALCETrVLP_mudJTW6EQpRr5GZ7kfuGci+QCT1uPrOVDTWcod-A@mail.gmail.com>
- <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org> <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
- <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sun, 18 Nov 2018 09:24:36 -0800
-Message-ID: <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a5e:db04:: with SMTP id q4mr4248584iop.30.1542562083160;
+ Sun, 18 Nov 2018 09:28:03 -0800 (PST)
+Date:   Sun, 18 Nov 2018 09:28:03 -0800
+In-Reply-To: <000000000000ebd44005758029c2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000002c9d3057af3b9fb@google.com>
+Subject: Re: KASAN: use-after-free Read in bpf_prog_kallsyms_add
+From:   syzbot <syzbot+ac0311cfc9e80cd2e0e8@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 9:09 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> On Sun, Nov 18, 2018 at 8:49 AM Daniel Colascione <dancol@google.com> wrote:
->>
->> On Sun, Nov 18, 2018 at 8:33 AM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> > On 11/18/18 8:17 AM, Andy Lutomirski wrote:
->> >> On Sun, Nov 18, 2018 at 7:53 AM Daniel Colascione <dancol@google.com> wrote:
->> >>>
->> >>> On Sun, Nov 18, 2018 at 7:38 AM, Andy Lutomirski <luto@kernel.org> wrote:
->> >>>> I fully agree that a more comprehensive, less expensive API for
->> >>>> managing processes would be nice.  But I also think that this patch
->> >>>> (using the directory fd and ioctl) is better from a security
->> >>>> perspective than using a new file in /proc.
->> >>>
->> >>> That's an assertion, not an argument. And I'm not opposed to an
->> >>> operation on the directory FD, now that it's clear Linus has banned
->> >>> "write(2)-as-a-command" APIs. I just insist that we implement the API
->> >>> with a system call instead of a less-reliable ioctl due to the
->> >>> inherent namespace collision issues in ioctl command names.
->> >>
->> >> Linus banned it because of bugs iike the ones in the patch.
->> >>
->> >>>
->> >>>> I have an old patch to make proc directory fds pollable:
->> >>>>
->> >>>> https://lore.kernel.org/patchwork/patch/345098/
->> >>>>
->> >>>> That patch plus the one in this thread might make a nice addition to
->> >>>> the kernel even if we expect something much better to come along
->> >>>> later.
->> >>>
->> >>> I've always commented on that patch. You never addressed my technical
->> >>> objections. Why are you bringing up this patch again as if that
->> >>> discussion had never happened? To review, that patch has various race
->> >>> conditions
->> >>
->> >> I don't think I ever saw that review.
->> >>
->> >>> and even if it were technically correct, it'd be an abuse
->> >>> of directory objects (in what other circumstance do we poll
->> >>> directories?) and not logically generalizable to a model in which we
->> >>> expose process exit status via the exit-monitoring API.
->> >>
->> >> I agree it's weird.  It might be better to have /proc/PID/exit_status
->> >> and make *that* pollable.
->> >>
->> >
->> > If there is a new exit_status file, it could even be more than
->> > 8 bits of exit status:
->> >
->> > See https://lore.kernel.org/lkml/alpine.LSU.2.20.1507091257010.9602@nerf40.vanv.qr/T/#u
->> > and http://austingroupbugs.net/view.php?id=594#c1317
->>
->> First of all, as I discussed in [1], we need to first figure out *who*
->> should have access to the process exit information. FreeBSD appears to
->> make it public without disaster, and if we make exit status public, a
->> lot of problems just disappear.
->
-> I kind of want to go in the other direction of making a lot of process
-> information (especially cmdline) less publicly accessible.
+syzbot has found a reproducer for the following crash on:
 
-Okay. That has nothing to do with exit status. Please address the
-points related to the API we're discussing and that I raised in the
-other thread.
+HEAD commit:    1ce80e0fe98e Merge tag 'fsnotify_for_v4.20-rc3' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11752783400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
+dashboard link: https://syzkaller.appspot.com/bug?extid=ac0311cfc9e80cd2e0e8
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16abd093400000
 
-Assuming we don't broaden exit status readability (which would make a
-lot of things simpler), the exit notification mechanism must work like
-this: if you can see a process in /proc, you should be able to wait on
-it. If you learn that process's exit status through some other means
---- e.g., you're the process's parent, you can ptrace the process, you
-have CAP_WHATEVER_IT_IS_ --- then you should be able to learn the fate
-of the process. Otherwise you just be able to learn that the process
-exited.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ac0311cfc9e80cd2e0e8@syzkaller.appspotmail.com
 
->  Windows has an easy time of it because
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KASAN: use-after-free in __list_add_valid+0x8f/0xac lib/list_debug.c:26
+Read of size 8 at addr ffff8881b97b8560 by task syz-executor3/12896
 
-Windows has an easier time of it because it doesn't use an ad-hoc
-ambient authority permission model. In Windows, if you can open a
-handle to do something, that handle lets you do the thing. Period.
-There's none of this "well, I opened this process FD, but since I
-opened it, the process called setuid, so now I can't get its exit
-status" nonsense. Privilege elevation is always accomplished via a
-separate call to CreateProcessWithToken, which creates a *new* process
-with the elevated privileges. An existing process can't suddenly and
-magically become this special thing that you can't inspect, but that
-has the same PID and identity as this other process that you used to
-be able to inspect. The model is just better, because permission is
-baked into the HANDLE. Now, that ship has sailed. We're stuck with
-setreuid and exec. But let's be clear about what's causing the
-complexity.
+CPU: 1 PID: 12896 Comm: syz-executor3 Not tainted 4.20.0-rc2+ #117
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __list_add_valid+0x8f/0xac lib/list_debug.c:26
+  __list_add_rcu include/linux/rculist.h:52 [inline]
+  list_add_tail_rcu include/linux/rculist.h:101 [inline]
+  bpf_prog_ksym_node_add kernel/bpf/core.c:460 [inline]
+  bpf_prog_kallsyms_add+0x200/0x9b0 kernel/bpf/core.c:491
+  jit_subprogs kernel/bpf/verifier.c:5973 [inline]
+  fixup_call_args kernel/bpf/verifier.c:6023 [inline]
+  bpf_check+0x4fcb/0x6310 kernel/bpf/verifier.c:6404
+  bpf_prog_load+0x113d/0x1cc0 kernel/bpf/syscall.c:1528
+  __do_sys_bpf kernel/bpf/syscall.c:2504 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2466 [inline]
+  __x64_sys_bpf+0x36c/0x520 kernel/bpf/syscall.c:2466
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f6de3718c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000000048 RSI: 0000000020000000 RDI: 0000000000000005
+RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f6de37196d4
+R13: 00000000004bd97c R14: 00000000004cc688 R15: 00000000ffffffff
+
+Allocated by task 12883:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  bpf_prog_alloc+0x16b/0x3e0 kernel/bpf/core.c:89
+  bpf_prog_load+0x435/0x1cc0 kernel/bpf/syscall.c:1482
+  __do_sys_bpf kernel/bpf/syscall.c:2504 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2466 [inline]
+  __x64_sys_bpf+0x36c/0x520 kernel/bpf/syscall.c:2466
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 17:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  __bpf_prog_free kernel/bpf/core.c:146 [inline]
+  bpf_prog_unlock_free include/linux/filter.h:743 [inline]
+  bpf_prog_free_deferred+0x2a4/0x420 kernel/bpf/core.c:1781
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+
+The buggy address belongs to the object at ffff8881b97b8500
+  which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 96 bytes inside of
+  512-byte region [ffff8881b97b8500, ffff8881b97b8700)
+The buggy address belongs to the page:
+page:ffffea0006e5ee00 count:1 mapcount:0 mapping:ffff8881da800940  
+index:0xffff8881b97b8a00
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0006ede848 ffffea0006e6b508 ffff8881da800940
+raw: ffff8881b97b8a00 ffff8881b97b8000 0000000100000005 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881b97b8400: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881b97b8480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8881b97b8500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8881b97b8580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881b97b8600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
