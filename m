@@ -2,273 +2,165 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C52C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 08:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276EAC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 08:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94D0C2075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 08:23:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="CbgQe43W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94D0C2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	by mail.kernel.org (Postfix) with ESMTP id C11BD2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 08:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C11BD2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbeKRSnH (ORCPT
+        id S1726932AbeKRSwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 13:43:07 -0500
-Received: from plaes.org ([188.166.43.21]:41628 "EHLO plaes.org"
+        Sun, 18 Nov 2018 13:52:07 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:21620 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbeKRSnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 13:43:07 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 6837540282;
-        Sun, 18 Nov 2018 08:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1542529408; bh=lvIvPWSqyWpis1qLGU3PqHLECnA5L44sR3mNl1gxsZw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CbgQe43Wcy5Sq2nENBlSTysWcx5uim4KqsVsieHOif/jSbn64EiCo86lg/R3NWada
-         oQaEYoBtfQAsI67MfUVoyG6uwAZJ6+mr5/Qmf4x8F/Kl5jQT+68Zxchx8xSAJrvORk
-         WHcEJQamKdr7agevT0vSNSaqITmdcBPUkQrb7BQ182MokERWfVI+WDKDik+3WFPU0f
-         yOII1OVjc7GhIez2NsCkCTDu1TfmkSzjqwObZa2oy5zlb/t37EeL35JnYvPxGfMttn
-         lHtqwKpuEy4QH4pmX7MD90pQKmOsjLbdaQarIPnVy8GHI7L1GkntsjYoGHZ7r4zD+G
-         oorfnRpr31N9g==
-Date:   Sun, 18 Nov 2018 08:23:27 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-Message-ID: <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
- <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
- <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
+        id S1725875AbeKRSwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 13:52:07 -0500
+Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 72D8AA1107;
+        Sun, 18 Nov 2018 09:32:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp2.mailbox.org ([80.241.60.241])
+        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
+        with ESMTP id 6UG0l63JLQtF; Sun, 18 Nov 2018 09:32:27 +0100 (CET)
+Date:   Sun, 18 Nov 2018 19:32:20 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Kris Van Hees <kris.van.hees@oracle.com>
+Cc:     Brendan Gregg <bgregg@netflix.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [RFC] DTrace based on eBPF and other tracing facilities
+Message-ID: <20181118083220.vxwcy2oq6uln3wa2@yavin>
+References: <201811160602.wAG62uAu005007@aserv0121.oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c6jycfkzpz7gqluq"
 Content-Disposition: inline
-In-Reply-To: <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <201811160602.wAG62uAu005007@aserv0121.oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 09:31:35PM -0600, Larry Finger wrote:
-> On 11/14/18 12:27 PM, Priit Laes wrote:
-> > Kernel library has a common cordic algorithm which is identical
-> > to internally implementatd one, so use it and drop the duplicate
-> > implementation.
-> > 
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
-> > ---
-> >   drivers/net/wireless/broadcom/b43/Kconfig      |  1 +-
-> >   drivers/net/wireless/broadcom/b43/phy_common.c | 47 +-------------------
-> >   drivers/net/wireless/broadcom/b43/phy_common.h |  9 +----
-> >   drivers/net/wireless/broadcom/b43/phy_lp.c     | 13 ++---
-> >   drivers/net/wireless/broadcom/b43/phy_n.c      | 13 ++---
-> >   5 files changed, 15 insertions(+), 68 deletions(-)
-> > 
-> > diff --git a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
-> > index fba8560..3e41457 100644
-> > --- a/drivers/net/wireless/broadcom/b43/Kconfig
-> > +++ b/drivers/net/wireless/broadcom/b43/Kconfig
-> > @@ -4,6 +4,7 @@ config B43
-> >   	select BCMA if B43_BCMA
-> >   	select SSB if B43_SSB
-> >   	select FW_LOADER
-> > +	select CORDIC
-> >   	---help---
-> >   	  b43 is a driver for the Broadcom 43xx series wireless devices.
-> > diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
-> > index 85f2ca9..98c4fa5 100644
-> > --- a/drivers/net/wireless/broadcom/b43/phy_common.c
-> > +++ b/drivers/net/wireless/broadcom/b43/phy_common.c
-> > @@ -604,50 +604,3 @@ void b43_phy_force_clock(struct b43_wldev *dev, bool force)
-> >   #endif
-> >   	}
-> >   }
-> > -
-> > -/* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
-> > -struct b43_c32 b43_cordic(int theta)
-> > -{
-> > -	static const u32 arctg[] = {
-> > -		2949120, 1740967, 919879, 466945, 234379, 117304,
-> > -		  58666,   29335,  14668,   7334,   3667,   1833,
-> > -		    917,     458,    229,    115,     57,     29,
-> > -	};
-> > -	u8 i;
-> > -	s32 tmp;
-> > -	s8 signx = 1;
-> > -	u32 angle = 0;
-> > -	struct b43_c32 ret = { .i = 39797, .q = 0, };
-> > -
-> > -	while (theta > (180 << 16))
-> > -		theta -= (360 << 16);
-> > -	while (theta < -(180 << 16))
-> > -		theta += (360 << 16);
-> > -
-> > -	if (theta > (90 << 16)) {
-> > -		theta -= (180 << 16);
-> > -		signx = -1;
-> > -	} else if (theta < -(90 << 16)) {
-> > -		theta += (180 << 16);
-> > -		signx = -1;
-> > -	}
-> > -
-> > -	for (i = 0; i <= 17; i++) {
-> > -		if (theta > angle) {
-> > -			tmp = ret.i - (ret.q >> i);
-> > -			ret.q += ret.i >> i;
-> > -			ret.i = tmp;
-> > -			angle += arctg[i];
-> > -		} else {
-> > -			tmp = ret.i + (ret.q >> i);
-> > -			ret.q -= ret.i >> i;
-> > -			ret.i = tmp;
-> > -			angle -= arctg[i];
-> > -		}
-> > -	}
-> > -
-> > -	ret.i *= signx;
-> > -	ret.q *= signx;
-> > -
-> > -	return ret;
-> > -}
-> > diff --git a/drivers/net/wireless/broadcom/b43/phy_common.h b/drivers/net/wireless/broadcom/b43/phy_common.h
-> > index 57a1ad8..4213cac 100644
-> > --- a/drivers/net/wireless/broadcom/b43/phy_common.h
-> > +++ b/drivers/net/wireless/broadcom/b43/phy_common.h
-> > @@ -7,13 +7,6 @@
-> >   struct b43_wldev;
-> > -/* Complex number using 2 32-bit signed integers */
-> > -struct b43_c32 { s32 i, q; };
-> > -
-> > -#define CORDIC_CONVERT(value)	(((value) >= 0) ? \
-> > -				 ((((value) >> 15) + 1) >> 1) : \
-> > -				 -((((-(value)) >> 15) + 1) >> 1))
-> > -
-> >   /* PHY register routing bits */
-> >   #define B43_PHYROUTE			0x0C00 /* PHY register routing bits mask */
-> >   #define  B43_PHYROUTE_BASE		0x0000 /* Base registers */
-> > @@ -450,6 +443,4 @@ bool b43_is_40mhz(struct b43_wldev *dev);
-> >   void b43_phy_force_clock(struct b43_wldev *dev, bool force);
-> > -struct b43_c32 b43_cordic(int theta);
-> > -
-> >   #endif /* LINUX_B43_PHY_COMMON_H_ */
-> > diff --git a/drivers/net/wireless/broadcom/b43/phy_lp.c b/drivers/net/wireless/broadcom/b43/phy_lp.c
-> > index 6922cbb..1718e3b 100644
-> > --- a/drivers/net/wireless/broadcom/b43/phy_lp.c
-> > +++ b/drivers/net/wireless/broadcom/b43/phy_lp.c
-> > @@ -23,6 +23,7 @@
-> >   */
-> > +#include <linux/cordic.h>
-> >   #include <linux/slab.h>
-> >   #include "b43.h"
-> > @@ -1780,9 +1781,9 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
-> >   {
-> >   	struct b43_phy_lp *lpphy = dev->phy.lp;
-> >   	u16 buf[64];
-> > -	int i, samples = 0, angle = 0;
-> > +	int i, samples = 0, theta = 0;
-> >   	int rotation = (((36 * freq) / 20) << 16) / 100;
-> > -	struct b43_c32 sample;
-> > +	struct cordic_iq sample;
-> >   	lpphy->tx_tone_freq = freq;
-> > @@ -1798,10 +1799,10 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
-> >   	}
-> >   	for (i = 0; i < samples; i++) {
-> > -		sample = b43_cordic(angle);
-> > -		angle += rotation;
-> > -		buf[i] = CORDIC_CONVERT((sample.i * max) & 0xFF) << 8;
-> > -		buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF);
-> > +		sample = cordic_calc_iq(theta);
-> > +		theta += rotation;
-> > +		buf[i] = CORDIC_FLOAT((sample.i * max) & 0xFF) << 8;
-> > +		buf[i] |= CORDIC_FLOAT((sample.q * max) & 0xFF);
-> >   	}
-> >   	b43_lptab_write_bulk(dev, B43_LPTAB16(5, 0), samples, buf);
-> > diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
-> > index 44ab080..1f9378a 100644
-> > --- a/drivers/net/wireless/broadcom/b43/phy_n.c
-> > +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
-> > @@ -23,6 +23,7 @@
-> >   */
-> > +#include <linux/cordic.h>
-> >   #include <linux/delay.h>
-> >   #include <linux/slab.h>
-> >   #include <linux/types.h>
-> > @@ -1513,7 +1514,7 @@ static void b43_radio_init2055(struct b43_wldev *dev)
-> >   /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/LoadSampleTable */
-> >   static int b43_nphy_load_samples(struct b43_wldev *dev,
-> > -					struct b43_c32 *samples, u16 len) {
-> > +					struct cordic_iq *samples, u16 len) {
-> >   	struct b43_phy_n *nphy = dev->phy.n;
-> >   	u16 i;
-> >   	u32 *data;
-> > @@ -1544,7 +1545,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
-> >   {
-> >   	int i;
-> >   	u16 bw, len, rot, angle;
-> > -	struct b43_c32 *samples;
-> > +	struct cordic_iq *samples;
-> >   	bw = b43_is_40mhz(dev) ? 40 : 20;
-> >   	len = bw << 3;
-> > @@ -1561,7 +1562,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
-> >   		len = bw << 1;
-> >   	}
-> > -	samples = kcalloc(len, sizeof(struct b43_c32), GFP_KERNEL);
-> > +	samples = kcalloc(len, sizeof(struct cordic_iq), GFP_KERNEL);
-> >   	if (!samples) {
-> >   		b43err(dev->wl, "allocation for samples generation failed\n");
-> >   		return 0;
-> > @@ -1570,10 +1571,10 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
-> >   	angle = 0;
-> >   	for (i = 0; i < len; i++) {
-> > -		samples[i] = b43_cordic(angle);
-> > +		samples[i] = cordic_calc_iq(angle);
-> >   		angle += rot;
-> > -		samples[i].q = CORDIC_CONVERT(samples[i].q * max);
-> > -		samples[i].i = CORDIC_CONVERT(samples[i].i * max);
-> > +		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
-> > +		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
-> >   	}
-> >   	i = b43_nphy_load_samples(dev, samples, len);
-> 
-> There is a fundamental flaw in this patch. Routine b43_cordic() takes an
-> angle in degrees scaled by 2^16, whereas cordic_calc_iq() takes an angle in
-> degrees. For a given input, the two routines must get different answers. At
-> a minimum, the calculation of rot would need to remove the left shift of 16.
 
-Thanks for the hint. I modified my "test harness" a bit to plot out values
-from -360 .. 360 and transformed the theta for b43_cordic argument using CORDIC_FIXED macro:
+--c6jycfkzpz7gqluq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-b43_cordic(CORDIC_FIXED(theta));
-cordic_calc_iq(theta);
+On 2018-11-15, Kris Van Hees <kris.van.hees@oracle.com> wrote:
+> A lot of work has been done on various aspects of the tracing infrastruct=
+ure
+> in Linux in the past years and with the further development of BPF a quite
+> powerful execution engine has become available as well.
+>=20
+> One of the difficulties we have experienced in furthering DTrace on Linux=
+ is
+> that we have to duplicate functionality already available in the kernel
+> because that functionality is not easy to make use of.
+>=20
+> In the past year or so we have been working towards changing that.  There=
+ is
+> no point in having multiple projects reinvent the same wheel a couple of =
+times
+> over, especially when there are ways where everyone can benefit from actu=
+ally
+> cooperating.  Our current (lofty) goal is to rework the DTrace implementa=
+tion=20
+> that we currently have to make it more modular and less self-sufficient. =
+ We
+> are envisioning a future for DTrace where we can leverage its strengths i=
+n the
+> areas where it matters most (e.g. very efficient handling of large amount=
+s of
+> kernel probes, well defined and understood D language, user familiarity w=
+ith
+> existing providers, ...) while building on the existing tracing infrastru=
+cture
+> in Linux.  That also means that we can contribute better to existing piec=
+es
+> in the infrastructure and work together with other tracing projects to co=
+ntinue
+> to improve tracing on Linux.
+>=20
+> Ideally we would like to see an infrastructure where any tracers can atta=
+ch
+> actions to any kind of probe source, and have data generated according to=
+ the
+> actions the tracer associated with the probe source when a specific probe
+> fires.  The execution of those actions would be done using BPF.
+>=20
+> We believe that this proposal would be a benefit to all because it allows=
+ us
+> to pool resources in the areas that really need it.  E.g. if we all depen=
+d on
+> BPF as execution engine we invariably work together to make it as solid a=
+s can
+> be.
+>=20
+> Obviously we cannot do this work on our own, and we cannot do it behind c=
+losed
+> doors.  We've created a github repository for the kernel with DTrace adde=
+d in
+> at:
+>=20
+>   https://github.com/ezannoni/dtrace-linux-kernel/tree/master
+>=20
+> We also have a branch there with the most recent BPF-based work:
+>=20
+>   https://github.com/ezannoni/dtrace-linux-kernel/tree/nix/bpf/4.19/helpe=
+rs
+>=20
+> Since most (if not all) tracing tools have similar requirements for what =
+may
+> need to be done when a probe fires, we really want to join forces.
 
-Then I plotted the results and well.. they are not that pretty. While the results give
-identical answers between certain ranges of degrees, the cordic algorithm for b43 seems
-to be broken for certain ranges: (-270..-180 ; -90 .. 0; 90.. 180 and 270..360).
+Have you taken a look at bpftrace[1]? It uses LLVM to compile to BPF
+bytecode and has a DTrace-like syntax. Yes, it's a from-scratch
+reimplementation, but as a user of tracing I don't really mind either
+way (I think most people like DTrace because of how seamlessly all
+aspects of probing work -- but I believe that most of this is a result
+of the DTrace kernel infrastructure more than the user-space tooling).
 
-You can find my test harnesses here:
+I'm not entirely sure how USDT interacts with the current Linux tracing
+tools, but it would be nice if USDT worked on Linux the same way it
+worked on Solaris (though I will admit I haven't played with it much on
+Linux, I'm sure the other tracing folks will be able to comment on this
+far more than myself).
 
-https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
+[1]: https://github.com/iovisor/bpftrace
 
-> 
-> From what I see of the two algorithms, the method is identical once the
-> differences in scaling are handled. Even so, applying this patch to b43
-> leads to a series of B43 error messages followed by a crash in kfree.
-> 
-> Just to add to the level of rejection: NACK.
-> 
-> Larry
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--c6jycfkzpz7gqluq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvxI5AACgkQSnvnv3De
+m5+ahA//WC08iKxtTHnSkkG8/w4fKJs0hSsGX3I5/n403i8L8fIrls1KnDdy8WJh
+mGkncHrSAkKqSI2JBR0r9B9tbKwSwpPBhQuxUOgYdI0i67nExc7QNU9sI7U1Peeb
+GojEdkHrNAdSGwJlY30lUolPkjqfJAGM6mLPLCfLRhFOP3IV37c9V0xu4+38ou54
+d18YLlSGDkJP88sbR6HXL+phOHFSZ1QnXxH+TUw2ggjN4uih2GBQopJHssub2v9l
+IfkG5xrumXaTciNmr4N8bEhWYZF91ZjIje4douOZl3NGonnQS4BCkmzL1DTIvrcj
+MgkWoXE3k5c2J6SvFyUY4KAUSossFEUqZvWbp3u+eLU88T+WKM5qPMUTgYRZXAqX
+46QLDf/NpPoQEWvwhxvjT159PkkkVvAVEr+5tPE0zgwn428vXqrc4kXvyIauCIzc
+hLF/AaS4bcYYD4H9SSyKRcUiHH0OM9stB6zNSS/72tuF4GbPNkdyyKR3Yk+blrWW
+yXV6j+ocwuuCzHBF9i3vqZyQGL7S3xVyhyzhrq++hm4dHLp4LwX2QNPqOjn8TZYp
+N36FvBf8UIUIrjIJZBW43ZC3qgiANDoh45rI6a+pf+f+Khs/8srnsQIalqUzL9HB
+jPRCZuulzCEGc7YpZ/bOcZ/cev3SJtc01wf4iJWxGq2ASxNqUGA=
+=Jgm+
+-----END PGP SIGNATURE-----
+
+--c6jycfkzpz7gqluq--
