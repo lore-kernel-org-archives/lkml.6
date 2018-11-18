@@ -2,99 +2,80 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC867C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3596C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B56B20815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:03:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ADFE2080F
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qtYNPjYk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B56B20815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cc4NBjl/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADFE2080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeKRWXO (ORCPT
+        id S1727166AbeKRWdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 17:23:14 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42117 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbeKRWXO (ORCPT
+        Sun, 18 Nov 2018 17:33:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33936 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbeKRWdd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 17:23:14 -0500
-Received: by mail-pl1-f196.google.com with SMTP id x21-v6so10519515pln.9
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 04:03:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=b1ZYnLYN4ir4UacvVkD3Q/B6raJ1AexezCEPoh1Pabs=;
-        b=qtYNPjYko/dnt43DWz6PBVj872BUtmlIVz3LcNxt9bB0G/E9ONzlE1jjswnx0Kbf9i
-         BDBJ+HONKG2Lc8Yy8nEKFNs13fv85wQcKuigkYRpMSukmJw0iEWlTdsev8wXSqfEHLjU
-         jk/bszc9TWBmm6nWG/B/0WKo/PKYhoC/XO6t2EkHfk4sl1EAMnLzN/oAmURsN9Rnvj8j
-         2Q/9x8NgN07alDXszwY3JD2i3TJTPHLyQecyo5G6zE/DAAxbdXV+7hi69kIFV3xjFyqr
-         ruvBdXg9JYO33UJLVlrx04hEvwyEkKJb3/4pDxNj5k6AFmXhBd3oHkAKrxuwAw6f5ztZ
-         TEGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=b1ZYnLYN4ir4UacvVkD3Q/B6raJ1AexezCEPoh1Pabs=;
-        b=ECo4p/pLH7tt4KxCxVLaqPnLbqyxhdL+Fq2oWgmVRRBcTS7QdWx7Vin9s86aAVbk6D
-         32bB/4NWTByLQbo9qfK1EpJVOmWzAHtSq2glDqFGkUckhj4Wzy1C3i0VXOylnGDzt490
-         fqRsMWW8MlX5Q8FU+e5sCJACq9B2P1P658QuP7Mb2MP0LDsHxJ4+EiRo/pN3D5XIap4K
-         mbD9WfAlzEm78aqLltGAU3aiIXjHH4s5YDiFFScKYHKYnIjFAYoescz1MD85TW2+ApGw
-         G0dl0JYebLhRwdNPwf4FPmfSVX8hB1VSFcjVTJAaL4uuu7oR7tnxpoG5MgYSMLRZ/UWv
-         OD8g==
-X-Gm-Message-State: AGRZ1gJmGJOWk4MHN46ozEFrcaSYpR3RmE2qPtJfx6oeiG9BWvZyuN2J
-        9RGwNzmr8bqfItaAwxmo24M=
-X-Google-Smtp-Source: AJdET5cDQ6utLkkHphvBu58J/8NIsRXNIlEGtv61ACddLjK1bPiOLlR6kHjvoQBAVNbBkJhCUltygw==
-X-Received: by 2002:a17:902:8a88:: with SMTP id p8-v6mr17825829plo.94.1542542585694;
-        Sun, 18 Nov 2018 04:03:05 -0800 (PST)
-Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id i21sm36748495pgm.17.2018.11.18.04.03.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 04:03:04 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     willy@infradead.org, akpm@linux-foundation.org,
-        darrick.wong@oracle.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH] mm/filemap.c: minor optimization in write_iter file operation
-Date:   Sun, 18 Nov 2018 20:02:18 +0800
-Message-Id: <1542542538-11938-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sun, 18 Nov 2018 17:33:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8N2uwu2WwXKm7do23lFv47rcDmbHRiG2vYzjjyHjehg=; b=cc4NBjl/uy7TRdwBnxZywJdm3
+        W0jiYFYyjRvPuWzp3Twd26LsvmvUzdz2W3Q2eL3bhNc+KE+Lgo/4xRnSDpRtQKyYNZlotEOXoXl5X
+        KYJY8i/tS9frWaSh8ci5oVobI/jYFrQhV7nXQLduTmY3AxF10ic71SEE788MfFaPUJciRnUH776ka
+        b6NjqzMayjjMpSkXyL6xESDpMbmY/xnWanwVKU0+S6gUGyoWfYjWayJ2QBGUisS5lBBsWA7eyuyZJ
+        vAa0tpuP6SOMosYmn9Ee3Sbtf4+eIwyEuy6hwVnivoef93O0EJTDS5sJ7EJO7UTiSwxEaVr7ZEy9K
+        PRraEWNjA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOLx0-0007eg-Dw; Sun, 18 Nov 2018 12:13:18 +0000
+Date:   Sun, 18 Nov 2018 04:13:18 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     akpm@linux-foundation.org, darrick.wong@oracle.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/filemap.c: minor optimization in write_iter file
+ operation
+Message-ID: <20181118121318.GC7861@bombadil.infradead.org>
+References: <1542542538-11938-1-git-send-email-laoar.shao@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542542538-11938-1-git-send-email-laoar.shao@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This little adjustment on bitwise operation could make the code a little
-faster.
-As write_iter is used in lots of critical path, so this code change is
-useful for performance.
+On Sun, Nov 18, 2018 at 08:02:18PM +0800, Yafang Shao wrote:
+> This little adjustment on bitwise operation could make the code a little
+> faster.
+> As write_iter is used in lots of critical path, so this code change is
+> useful for performance.
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- mm/filemap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Did you check the before/after code generation with this patch applied?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 81adec8..a65056ea 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2881,7 +2881,8 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
- 	if (iocb->ki_flags & IOCB_APPEND)
- 		iocb->ki_pos = i_size_read(inode);
+$ diff -u before.S after.S
+--- before.S	2018-11-18 07:11:48.031096768 -0500
++++ after.S	2018-11-18 07:11:36.883069103 -0500
+@@ -1,5 +1,5 @@
  
--	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
-+	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) ==
-+	    IOCB_NOWAIT)
- 		return -EINVAL;
+-before.o:     file format elf32-i386
++after.o:     file format elf32-i386
  
- 	count = iov_iter_count(from);
--- 
-1.8.3.1
+ 
+ Disassembly of section .text:
 
+with gcc 8.2.0, I see no difference, indicating that the compiler already
+makes this optimisation.
