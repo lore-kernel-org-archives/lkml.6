@@ -2,111 +2,109 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2197CC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E781C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1A52080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:21:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wo3uqXtn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1A52080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 36FC920817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:23:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36FC920817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeKSGms (ORCPT
+        id S1727703AbeKSGov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 01:42:48 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45446 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727671AbeKSGms (ORCPT
+        Mon, 19 Nov 2018 01:44:51 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:40117 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeKSGov (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 01:42:48 -0500
-Received: by mail-vs1-f66.google.com with SMTP id v10so9217837vsv.12
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 12:21:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DGFDQgKhh1QSPF8UQGe0rotLIIhZZoECh1I7MoF7v6o=;
-        b=Wo3uqXtn1CWKiLdfQaPdgacv7+w4aEgolG7oYeStI2vhxX8AsKXBErrdeqlfoTyKIN
-         jC4Rta4vR2b4NZ0u42EM5A1gOigXbHKb5ENn+YPzfi8+cV95pddfxZhzmoyLL0b7r4hR
-         XPn7TlfJfx/W6EYutmz1Ro2ZBOXBWaRWkW/emkrsWXfspGc7SiqrpDzkl6akMBb0eT8u
-         SRYO8yqBgXuBHmmXbNsuOQ93ia7rCa5RvjD55FIAIPJqUxmk9SCw2BVbZajbE2pLeh1V
-         jEZL7k4SywLxQCmcE3LTKsyRZ996NK6BPHy2STkXneRkSmRC+6aJ2wXD+92364hTvzjj
-         zqCg==
+        Mon, 19 Nov 2018 01:44:51 -0500
+Received: by mail-ua1-f65.google.com with SMTP id n7so10016801uao.7;
+        Sun, 18 Nov 2018 12:23:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DGFDQgKhh1QSPF8UQGe0rotLIIhZZoECh1I7MoF7v6o=;
-        b=JwoETwEBEvt4vbYsA7T5CCfCWxT93nFCEYz1etE3qBExq//qfpsCvAKADq3fTFlxB9
-         ibGGpbIOwynvRO05E+6aXI6cNN3S0JkgvCKJstsu8ca6SZmukF4KBHWQ1xZkQrpFbN/L
-         pGwMkNBrlDTqgyki5WAVzOpQE00sAfOHfYe4bHT53zSzyCSKlGFUw/BprCXH9W+eGtbB
-         nP7vKQTZhC7W0KRU7CX3vUMe6k+sg5ZodmJY1JlX4+ZUyBMssJdLpXghj6VB/GE8yGV8
-         RGGV0cpUoGWrtidCdcdD4umRRznXF2HBeLM4uOLyfFW3vfQEh8MAdCcJIgbr7dgln4Yi
-         UF5Q==
-X-Gm-Message-State: AGRZ1gLBR0Rm4g+edQPz8AUlEAwjBnTm1I15dK+Y2aIc1+M8Y2oIO57C
-        bznrFc6PLB1BmOiMg/uXdZkyPm0yj+jNQh/PwG0Dcg==
-X-Google-Smtp-Source: AJdET5fYZJ13dVyOLn+6McqPG6SK0mnln5sW7z8vNQujZbOk+VuMWvclwNRIvpH2YImD1z92vHkFz82cBKp+xAWNbPI=
-X-Received: by 2002:a67:105:: with SMTP id 5mr7854171vsb.183.1542572492639;
- Sun, 18 Nov 2018 12:21:32 -0800 (PST)
+        bh=1l9eZ/e9RzLUOIi/t/XOyE5aoYvNqElvkQY/X1nbd9U=;
+        b=rXzocli57vStvDNhoBVtOqekLOIXUDbyo+TCa35jIBGaEgUQ6THnXHtsohDjhfHN8m
+         qGP1SuVRvX8p6XwW4QwP1lZfIQjbL7ghyyWOhJLydCLfagRXoTeSWD52zKOz88BmQECi
+         yZ+tn3kOlNkc1P5TeqoFXWdn4N6CaCt99fWUis2z8r/C93VYO5MUisQRMavJiAiWVg0z
+         9VYSlswclce/2P5p1ejZTjL3diWUSfNmE1GBDuYS4+bFOhSvq6OCKy3iXCrPkbsTE6QO
+         e12iXGREMdn/DKke6xNJhncTX4Ybl7WDQswH46RexHPhhjJvfXTVhyBdSc9rEA3wZTEh
+         Da4Q==
+X-Gm-Message-State: AGRZ1gIElDMzB9nC9wl7BnMNpE42X/YaeujmEdk/dMGKTbMxWA/qcnvw
+        LHmTrp3oB0BXL30Vuy/LTHutYn4HlI1m6i7iiTzc8A==
+X-Google-Smtp-Source: AJdET5cuewit9gSD8vLx5MRLZffOXqhe3v2HVv8CIsmW3ZLIXAn3CUNUR5nuJXJEqlw8dYC3o739FaKfSKh0/1BXa3M=
+X-Received: by 2002:a9f:364a:: with SMTP id s10mr7949344uad.78.1542572615555;
+ Sun, 18 Nov 2018 12:23:35 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 12:21:31
- -0800 (PST)
-In-Reply-To: <20181118201514.c5ujdjav6ccodyff@brauner.io>
-References: <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org>
- <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
- <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
- <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
- <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
- <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
- <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
- <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com>
- <20181118190504.ixglsqbn6mxkcdzu@yavin> <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
- <20181118201514.c5ujdjav6ccodyff@brauner.io>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sun, 18 Nov 2018 12:21:31 -0800
-Message-ID: <CAKOZuesXN1qBYKvkTt2StX-07vM0msGvmgqiRvh-+=aaTX4A8Q@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
+References: <20181106222750.12939-1-aaro.koskinen@iki.fi> <CAMuHMdVCWLmyS+rFEQBHFGTpkw2=xk+Ub9VCnaobA+L9vGLOHw@mail.gmail.com>
+In-Reply-To: <CAMuHMdVCWLmyS+rFEQBHFGTpkw2=xk+Ub9VCnaobA+L9vGLOHw@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 18 Nov 2018 21:23:23 +0100
+Message-ID: <CAMuHMdUxTycDXo=i22JLxwv5oMXLQBB5iG2eszH1ewvJ1UVXrQ@mail.gmail.com>
+Subject: Re: [PATCH v2] MAINTAINERS: update OMAP MMC entry
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        ext Tony Lindgren <tony@atomide.com>,
+        "open list:TI ETHERNET SWITCH DRIVER (CPSW)" 
+        <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 12:15 PM, Christian Brauner
-<christian@brauner.io> wrote:
->> That is, I'm proposing an API that looks like this:
->>
->> int process_kill(int procfs_dfd, int signo, const union sigval value)
+On Sun, Nov 18, 2018 at 9:21 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> CC Jarkko (from his last patch)
+
+Dropped. Apparently that address bounces, too.
+
+> On Tue, Nov 6, 2018 at 11:29 PM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> > Jarkko's e-mail address hasn't worked for a long time. We still want
+> > to keep this driver working as it is critical for some of the OMAP boards.
+> > I use and test this driver frequently, so change myself as a maintainer
+> > with "Odd Fixes" status.
+> >
+> > Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> > Acked-by: Tony Lindgren <tony@atomide.com>
+> > ---
+> >  CREDITS     | 4 ++++
+> >  MAINTAINERS | 4 ++--
+> >  2 files changed, 6 insertions(+), 2 deletions(-)
+> >
+> >         v2: Add Jarkko to CREDITS.
+> >
+> >         v1: https://patchwork.kernel.org/patch/10369861/
+> >
+> > diff --git a/CREDITS b/CREDITS
+> > index 5befd2d714d0..84cbec4c6211 100644
+> > --- a/CREDITS
+> > +++ b/CREDITS
+> > @@ -2138,6 +2138,10 @@ E: paul@laufernet.com
+> >  D: Soundblaster driver fixes, ISAPnP quirk
+> >  S: California, USA
+> >
+> > +N: Jarkko Lavinen
+> > +E: jarkko.lavinen@nokia.com
 >
-> I've started a second tree with process_signal(int procpid_dfd, int sig)
+> If this address hasn't worked for a long time, what's the point of adding
+> it to CREDITS?
 
-Thanks.
+That point is still valid, as the address does bounce ;-)
 
-> instead of an ioctl(). Why do you want sigval too?
+Gr{oetje,eeting}s,
 
-API completeness. The sigqueue interface is a superset of kill, and I
-don't want process_kill to do less than any PID-based kill. Maybe
-taking a siginfo_t, like rt_sigqueueinfo does, would be even better in
-that respect, come to think of it.
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
