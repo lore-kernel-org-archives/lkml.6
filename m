@@ -2,74 +2,73 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 526CBC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 01:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7C1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 01:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1955520815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 01:27:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3542E20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 01:28:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUkRF3g7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1955520815
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RCCdR06v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3542E20815
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbeKRLp4 (ORCPT
+        id S1726797AbeKRLrJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 06:45:56 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40885 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbeKRLp4 (ORCPT
+        Sun, 18 Nov 2018 06:47:09 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43949 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725732AbeKRLrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 06:45:56 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so19302731wrt.7
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 17:27:19 -0800 (PST)
+        Sun, 18 Nov 2018 06:47:08 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so10927032wrs.10
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 17:28:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H3hn/C5Zk+OLwaIpm5yuoKo/fuvdbtJb+hViT+Wv8Jc=;
-        b=HUkRF3g7RmkB2r3MWoptoTbdh60KQXyWuF+doVIjuaexgncoRWl/er/Ovt/Vm8P5Mi
-         L/OYRWacHqUCQTiJTSdc0ZIrl5i2E/8UkMpF4qGmbN2N8EqYah1Y7LFyjAz0TN2lidfQ
-         GXQfw2zzyXtCcBYqUgdwhClw0QbPb3/0h9K3o=
+        bh=NHugqHJwL8XvT6GjZJ61qx/oiY/xW4ADJy5QzFAF/rI=;
+        b=RCCdR06vUZxVldN7VROrSFDliCfLTrpioqXRmGpstZnqsA0dRRcJgiIjyKNOe5ZkGt
+         0+txUqHRbHqBEcl6CUD2/SoOMqSdm6Y8XS6vY2ENdvC/qF5W1CH4sz0PDfQNQkU0iXqF
+         o4U4DurRGtn4g8OLPL4KsEcu8cj+ChOx31tHw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=H3hn/C5Zk+OLwaIpm5yuoKo/fuvdbtJb+hViT+Wv8Jc=;
-        b=aMOslXb4BzyIkXvYKejbr4EhTp6xVmKmK3lcOIvdmo6y/Cia/91CI6b6oLMw7UIt9P
-         1IX2abpFj7GUMFby1Dm0ETxDfLUNcpuPFWIHQLTHqa8HCT929xqPFutOMg+xNGbtXaqf
-         zvYZB3itYwKoJcvVoU6QlYxaVQh5qU23X+DdbkWxMINcOC7gXxNA8nKigKJEHlX0LQhl
-         XkkO7XXgXt3WGZMphsb4ShkqGi6dXOe8OiuOHXLn1VOWMNQYF7AuyML8BGDKV52XZ94u
-         FMW/dtX9Mr5aEAxQXGVl1NyQOEOFANypo5Uwk9RriBv4LmfCRGA9BUbgRAMOZgmMVSvU
-         H8EQ==
-X-Gm-Message-State: AA+aEWaf+YT5lYjAWdM3qaA5HlZgZpBoBk0b0Ca2BHZj4Soix/au2+p+
-        rsWiy+OhCLvYKIBC09w9IVzJwQ==
-X-Google-Smtp-Source: AFSGD/UgwqqnTqN7XwoGnHZDjJe1f+Ccz/Ew43+iLQT2xBVUJ75j4a/yb7gUtf00gApehtr2MApVtw==
-X-Received: by 2002:adf:a1d2:: with SMTP id v18mr8001595wrv.87.1542504438433;
-        Sat, 17 Nov 2018 17:27:18 -0800 (PST)
+        bh=NHugqHJwL8XvT6GjZJ61qx/oiY/xW4ADJy5QzFAF/rI=;
+        b=Q2x7XZe5Xpz+F0vPZcEtfhVPR4L///9Eykkfsg69rHEhpL6lvD8UzgcWpIWOKem+pM
+         cFzmEPXjRYdSZ8BnMkBuGvs4qtb1wA4WDVToAyX0oJudQLc040MoI1WQ2lOvUETCdctR
+         YtpqDkjUUptpWknidplj+NufHutUqiSX98F5lC2O/MHsQD80sXaustF/PxU/Wupr1WBz
+         O6y+mRGlz0AeLU8JhdteLw+6i8J/J6rcS0SJc1LrlfONVQvXSYElJxz7OwmKpUedIzfr
+         vihGcIff92QVmgxDnW1xQRQdi57r0udjSJn94Q9zIBR30SwhYBQ3tFUJ9EmrQ7YAvtdn
+         XkrA==
+X-Gm-Message-State: AGRZ1gLCIhxTqyjITybBXHYGioSYRO9q3K3NYn2WsgbwxnCmbOsFMCKT
+        AGoO0b8z7JJGuoRxoMTKqwRZuA==
+X-Google-Smtp-Source: AJdET5cJoPX6jtSiINRoJe6v0fIxCP4hGESs1GZ6pieZ4wxwUwyIUo0GZrvIRLhpJewsC/1o+PDrGQ==
+X-Received: by 2002:adf:a409:: with SMTP id d9-v6mr14185050wra.190.1542504510470;
+        Sat, 17 Nov 2018 17:28:30 -0800 (PST)
 Received: from [192.168.0.40] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id k5-v6sm53853080wre.82.2018.11.17.17.27.17
+        by smtp.googlemail.com with ESMTPSA id j199sm16750656wmf.13.2018.11.17.17.28.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 17:27:17 -0800 (PST)
-Subject: Re: [PATCH v2 0/2] clocksource/meson6_timer: implement ARM delay
- timer
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Cc:     linux-arm-kernel@lists.infradead.org
-References: <20181115224657.14736-1-martin.blumenstingl@googlemail.com>
+        Sat, 17 Nov 2018 17:28:29 -0800 (PST)
+Subject: Re: [PATCH 1/2] clocksource: Demote dbx500 PRCMU clocksource
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Baolin Wang <baolin.wang@linaro.org>
+References: <20181115133203.28567-1-linus.walleij@linaro.org>
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <5ff1a888-cce2-8fd8-a98e-14c3d7c33acf@linaro.org>
-Date:   Sun, 18 Nov 2018 02:27:16 +0100
+Message-ID: <ef535f28-04e3-d638-22da-7e0b64f367da@linaro.org>
+Date:   Sun, 18 Nov 2018 02:28:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181115224657.14736-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20181115133203.28567-1-linus.walleij@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -78,45 +77,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2018 23:46, Martin Blumenstingl wrote:
-> While trying to add support for the ARM TWD Timer and the ARM Global
-> Timer on Meson8, Meson8b and Meson8m2 (ARM Cortex-A5 and Cortex-A9 SoCs)
-> I did a review of the existing driver.
-> Unfortunately I found it hard to review because the pre-processor
-> #defines did not match the names from the public S805 datasheet. Thus
-> patch #1 adjusts these. No functional changes here, this is just
-> preparation work for patch #2.
+On 15/11/2018 14:32, Linus Walleij wrote:
+> Demote the DBx500 PRCMU clocksource to quality 100 and
+> mark it as NONSTOP so it will still be used for
+> timekeeping across suspend/resume.
 > 
-> Using the ARM Global Timer (drivers/clocksource/arm_global_timer.c)
-> would have given us a timer-based delay implementation (so udelay() and
-> friends would use the timer instead of using a loop-based delay
-> implementation). Unfortunately we can't use the ARM Global Timer yet
-> because it's input clock is derived from the CPU clock (which can change
-> once we enable CPU frequency scaling on these SoCs, for which I will be
-> sending patches in the near future).
-> Amlogic's 3.10 kernel uses Timer E as delay timer which (with the
-> current configuration) has a resolution of 1us. So patch #2 uses
-> register_current_timer_delay() to register Timer E as ARM delay timer
-> (which will be especially useful as we have to use udelay() when
-> changing the CPU clocks during DVFS).
+> The Nomadik MTU timer which has higher precision will
+> be used when the system is up and running, thanks to
+> the recent changes properly utilizing the suspend
+> clocksources.
 > 
+> This was discussed back in 2011 when the driver was
+> written, but the infrastructure was not available
+> upstream to use this timer properly. Now the
+> infrastructure is there, so let's finalize the work.
 > 
-> Changes since v1 at [0]:
-> - convert the enums for the input clock (meson6_timera_input_clock and
->   meson6_timere_input_clock) to simple #defines as these are register
->   values and not something driver-internal. All other register values
->   are #defines so it makes sense that these are #defines as well.
-> 
-> 
-> [0] https://patchwork.kernel.org/cover/10658591/
-> 
-> 
-> Martin Blumenstingl (2):
->   clocksource: meson6_timer: use register names from the datasheet
->   clocksource: meson6_timer: implement ARM delay timer
-> 
->  drivers/clocksource/meson6_timer.c | 128 +++++++++++++++++++----------
->  1 file changed, 85 insertions(+), 43 deletions(-)
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
 Both applied, thanks!
 
