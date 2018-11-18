@@ -8,67 +8,67 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04976C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:24:22 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA572075B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D8FC169D4
 	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:24:21 +0000 (UTC)
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id C3E032087A
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:24:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iNQU11Gk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA572075B
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="StG2PVR6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E032087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeKSHpm (ORCPT
+        id S1727810AbeKSHpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 02:45:42 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54375 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727694AbeKSHpm (ORCPT
+        Mon, 19 Nov 2018 02:45:41 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:34028 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727687AbeKSHpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 02:45:42 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r63-v6so3422937wma.4;
-        Sun, 18 Nov 2018 13:24:17 -0800 (PST)
+        Mon, 19 Nov 2018 02:45:40 -0500
+Received: by mail-wm1-f68.google.com with SMTP id f1-v6so4728201wmg.1;
+        Sun, 18 Nov 2018 13:24:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Z2coiUdTpsMAJ+bAjU1EqD4XJbssWadzLXVEGEHao8U=;
-        b=iNQU11GkbPMBQ8E1suWe+CplEdwrmdAb77OWjUzaKVCYa4+jTimkBnHspkv0ac0tpZ
-         u8A/3A36vDSb802cGho8Jmn9lkOoYXcyV8Pk7bfcM95oC/79BGwAatAfKWnyWbtcj/5I
-         9p+wBcqcCs1VrvDkCUYTJJVf9hvaB48IWRjipJQ/ZB6ZcDelrw7ftPIiUqVysJUX8HRR
-         yh8XskDR+nZ5ZopPDNeG+O9wIaJp1dIlo8Yo4qp/lrZbIEBAR8pcxYyEes8h502G3JJb
-         /Gy3yRKQ3mneX3QIKC8yllcS1aXzu6oA8I8D2hupJtHIasuVSVsUwzc/Rr9a5Nrwyu39
-         UBxQ==
+        bh=yYMWIOc1d+rfElJqrVFa6XII7ZMFdv/DJnjqxoqEGUc=;
+        b=StG2PVR6j0Km9GU/OjbmwkIPXRdT44ohyGMxJqRSWHh88wkuskV/g+JYuUjzZCOxKB
+         k+t3Q2DK3VGFPZUvUDG03a0C2GczOz/PRGQXvcCaZJIk78NAbC/FlQsdQXX4d6SrOkgI
+         zUZHJNgbOS3o9yiwXpcoZyYmYYSR0XEOVQhJhKz8OyupN5F761zbH+Lytc/Wohph3VAZ
+         XDqnZKwA2lCsMumplZEJmcvd//2Of8yXhsjzrhAt6raMYOtk0pLYgItjunOPriczHbbb
+         6n4vzM8+g9fLAp41aAivJSz/1jJ+iPHrLIC87TKQlLs7OS3ux9K1q0o7+BoknyD0Avjq
+         NrcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Z2coiUdTpsMAJ+bAjU1EqD4XJbssWadzLXVEGEHao8U=;
-        b=Iu4l9W3SQsp1y03A9D6dMeMHYm2bSvyH+bzcFRmk4hDoiEqofMx8SGhQkL+a3i/yMG
-         Mzf62I2XAla5bNKGPjbF3HCYwVNDje8wPSnBuiC2JltIdutVUaAMZP+c6yyvdr2LUyop
-         KO5k3ygI+tazbOSqGAStf4CBOLd0SBNpjohPn9UjIjuaRDE1/bqNNNsZsBoNu8kaBZkh
-         /4BZAhH92ND95ZnTwTaSvmsYPJPnylqxNjFUC74eiK7SFIyOi9fhKJ/fwIW7NEI2ExJ7
-         WPeXbw/UuZVjRPSIsekTNpHJN7JziADgc2D4zkhcMDGvl77MC5FIEH+7yln7qYKtPji/
-         gMqg==
-X-Gm-Message-State: AGRZ1gL+oo4gDUIzuVOsgzzZFPm/qNdfLhAsaYLDze0MtqgphuU3kLbv
-        IHYhGj253D7c4GaHh9E08M42WxKMBEc=
-X-Google-Smtp-Source: AJdET5eZbaQm7VXurbMiqkau/rAGPybcNS4NWWbk0cxq+93fybNwNuqnEYwAmX6JPCwSlXJvv4s/Cg==
-X-Received: by 2002:a1c:bc82:: with SMTP id m124-v6mr4828701wmf.47.1542576256725;
-        Sun, 18 Nov 2018 13:24:16 -0800 (PST)
+        bh=yYMWIOc1d+rfElJqrVFa6XII7ZMFdv/DJnjqxoqEGUc=;
+        b=tVzYsAJCkjM4TM4iXn3/GIa4UMF3HJNZ+E9YkepKt4Cmexm3qKu1rdCWoBJg7AVuuw
+         +mKvRzj0VvsYnQeJGgHrUFCRrSxYK2fV7x1YiDJB8C1/cRcU4pFs8/7kbzpXUovBMp2b
+         qKEAETpRKo4ZQ0Sp3KhfO5plFob2WktOMa3iXUERIy0in/pnkRXaaMLgB1oQo3zRrRqi
+         PrUjwUMeFMq9N4zxU5CIEvwrzYC2If51VKwiaBsd1SFcktuUZLVbhl1zq5Hj+y6uqZIP
+         kANzII8A5LwIXa802b/RWHTf+9z02ZH+Y+1LM5oj7BikivNGnCrLBSO6z2NA6Q7Yf2xN
+         Jm3A==
+X-Gm-Message-State: AA+aEWbHktVi6DORcYy041F1NGqYSyZkL1bw6fsebF11WKwTz+SJQzNq
+        KHHp63FVyBl3uIWuJ1j5H8HkWV+84hA=
+X-Google-Smtp-Source: AJdET5cq1HM0lUlUKUT8LWW2rVjx2mm2lzaLvukWMnCAHHhNYcVzTBxcO3XR1zk4BdVYzaDCYLS5Ag==
+X-Received: by 2002:a1c:2304:: with SMTP id j4mr4945784wmj.14.1542576255561;
+        Sun, 18 Nov 2018 13:24:15 -0800 (PST)
 Received: from blackbox.darklights.net (p200300DCD717A10029D7537EB9A16C22.dip0.t-ipconnect.de. [2003:dc:d717:a100:29d7:537e:b9a1:6c22])
-        by smtp.googlemail.com with ESMTPSA id d4sm31835649wrp.89.2018.11.18.13.24.15
+        by smtp.googlemail.com with ESMTPSA id d4sm31835649wrp.89.2018.11.18.13.24.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 13:24:16 -0800 (PST)
+        Sun, 18 Nov 2018 13:24:14 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         f.fainelli@gmail.com, andrew@lunn.ch, mark.rutland@arm.com,
         robh+dt@kernel.org, davem@davemloft.net
 Cc:     linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 4/7] net: phy: icplus: use the BIT macro where possible
-Date:   Sun, 18 Nov 2018 22:23:56 +0100
-Message-Id: <20181118212359.32414-5-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/7] net: phy: icplus: keep all ip101a_g functions together
+Date:   Sun, 18 Nov 2018 22:23:55 +0100
+Message-Id: <20181118212359.32414-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181118212359.32414-1-martin.blumenstingl@googlemail.com>
 References: <20181118212359.32414-1-martin.blumenstingl@googlemail.com>
@@ -79,34 +79,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This makes the code consistent by using the BIT() macro instead of
-manual bit-shifting for some of the fields. No functional changes.
+This simply moves ip101a_g_config_init right above
+ip101a_g_config_intr so all functions for the ICPlus IP101A/G PHYs are
+grouped together.
+No functional changes.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/net/phy/icplus.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/phy/icplus.c | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/net/phy/icplus.c b/drivers/net/phy/icplus.c
-index 3d3e9134c762..3ec470adde3d 100644
+index ad87bd3280d7..3d3e9134c762 100644
 --- a/drivers/net/phy/icplus.c
 +++ b/drivers/net/phy/icplus.c
-@@ -36,11 +36,11 @@ MODULE_LICENSE("GPL");
+@@ -162,21 +162,6 @@ static int ip1001_config_init(struct phy_device *phydev)
+ 	return 0;
+ }
  
- /* IP101A/G - IP1001 */
- #define IP10XX_SPEC_CTRL_STATUS		16	/* Spec. Control Register */
--#define IP1001_RXPHASE_SEL		(1<<0)	/* Add delay on RX_CLK */
--#define IP1001_TXPHASE_SEL		(1<<1)	/* Add delay on TX_CLK */
-+#define IP1001_RXPHASE_SEL		BIT(0)	/* Add delay on RX_CLK */
-+#define IP1001_TXPHASE_SEL		BIT(1)	/* Add delay on TX_CLK */
- #define IP1001_SPEC_CTRL_STATUS_2	20	/* IP1001 Spec. Control Reg 2 */
- #define IP1001_APS_ON			11	/* IP1001 APS Mode  bit */
--#define IP101A_G_APS_ON			2	/* IP101A/G APS Mode bit */
-+#define IP101A_G_APS_ON			BIT(1)	/* IP101A/G APS Mode bit */
- #define IP101A_G_IRQ_CONF_STATUS	0x11	/* Conf Info IRQ & Status Reg */
- #define	IP101A_G_IRQ_PIN_USED		BIT(15) /* INTR pin used */
- #define	IP101A_G_NO_IRQ			BIT(11) /* IRQ's inactive */
+-static int ip101a_g_config_init(struct phy_device *phydev)
+-{
+-	int c;
+-
+-	c = ip1xx_reset(phydev);
+-	if (c < 0)
+-		return c;
+-
+-	/* Enable Auto Power Saving mode */
+-	c = phy_read(phydev, IP10XX_SPEC_CTRL_STATUS);
+-	c |= IP101A_G_APS_ON;
+-
+-	return phy_write(phydev, IP10XX_SPEC_CTRL_STATUS, c);
+-}
+-
+ static int ip175c_read_status(struct phy_device *phydev)
+ {
+ 	if (phydev->mdio.addr == 4) /* WAN port */
+@@ -196,6 +181,21 @@ static int ip175c_config_aneg(struct phy_device *phydev)
+ 	return 0;
+ }
+ 
++static int ip101a_g_config_init(struct phy_device *phydev)
++{
++	int c;
++
++	c = ip1xx_reset(phydev);
++	if (c < 0)
++		return c;
++
++	/* Enable Auto Power Saving mode */
++	c = phy_read(phydev, IP10XX_SPEC_CTRL_STATUS);
++	c |= IP101A_G_APS_ON;
++
++	return phy_write(phydev, IP10XX_SPEC_CTRL_STATUS, c);
++}
++
+ static int ip101a_g_config_intr(struct phy_device *phydev)
+ {
+ 	u16 val;
 -- 
 2.19.1
 
