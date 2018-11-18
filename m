@@ -2,142 +2,159 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52677C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ABDC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F372080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CF7A2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:07:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="qFtxy9Et"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F372080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="C4EgATer"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF7A2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbeKSA0W (ORCPT
+        id S1727385AbeKSA2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:26:22 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45210 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbeKSA0W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:26:22 -0500
-Received: by mail-oi1-f196.google.com with SMTP id b141so14229524oii.12
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 06:05:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HdSGCjRZgffsav7sk/SA8962uIMDzhoxqg1M+qofYag=;
-        b=qFtxy9EtTcnDgJVi0xf6NikOOL2FKcnd74M2xYG29OjjUf8vnAWmEM9ORssOWgO4px
-         qV3e84jlGD9g+WdtUM5cvmOpSkpjs+5l4hzl7Be9u0v2Jh2Ha56IlQXlzhuXoSoRV6eW
-         irFxbMDJdnflcknjTTo3aSN+YO5HeyZrDSo3TU9WzRgRu/aRuidFbr9dPPCOM/yUBa/P
-         LbO6xceNoeBR8FwLXDs6yrz/+WAnNlEDnfkZTXqFkMzY9s76AXy+miwFi5TSgVfeiFm7
-         Nvy2cYfCF+tx4YyXnstr1KIAcenEnnKg8zfsG6wwzlnYSFCWuVc1o2lGRqWnjMjVAY+E
-         +OwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HdSGCjRZgffsav7sk/SA8962uIMDzhoxqg1M+qofYag=;
-        b=NMFbMAoxrfJKu6WmO3BrKmTNh6M+4EeOFHAJNA+tHJD4jj06BbTygKJJh8MWutSMtw
-         mOpISEqzl8ivXxhp8VT5DgxkaaAQGcKkDoK446JYlq9L1NsDqWEqT9xB6qr5CUi5DD5X
-         kl7fIMaceVR2Ny8W3BixjTxdFXG3XeLL5i2kEZUdE2OptpSNFdDCtrAFBjokRZ3ieuu9
-         QBXlQSOW1UfQTfMSmzx9CYp2wpHeUNtddG5urE+pobJohEZE41BUh9fq9FnEUzUskORU
-         L9NRIqITuKF1lV1ahvl1hBtVyMnk92WQ+gfZ3RU2qUC+OnIVjY+U8S/bnWc+EdkNsvwK
-         Iksw==
-X-Gm-Message-State: AGRZ1gL6/O9g8OcmAuL+rwc0pebL3xRSE/SJoSQ9jgG6M80FBUFIzL25
-        ne6wEuEVkFrvCD5fv7XeWeZCDanY0ZtqpAJtmz8=
-X-Google-Smtp-Source: AJdET5cuLjDSSGmDaHP4TjWgCbdRaPVgQYI5g7EwjcuT32H48hvvmcpzwVq/BzqcE6iA5a2/i6jyTr6YY/SSnxCzygU=
-X-Received: by 2002:aca:bf55:: with SMTP id p82-v6mr5328762oif.181.1542549956854;
- Sun, 18 Nov 2018 06:05:56 -0800 (PST)
+        Sun, 18 Nov 2018 19:28:08 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46136 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726596AbeKSA2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 19:28:07 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542550061;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=FCblXy1zfGJ9TMDbST/OhBpEJBWfMNzg0mu49obGrk4=;
+        b=C4EgATerKrET+s1qknL0Mdub0tZOk3iHdPLnfmQEBv+b8PGOk7GUlIoiZ1XAFECmCuCZ8O
+        oK15I5ZL7+Bj2reIsVcx4p0vMLAnJNKEeHXToff0ro6y5WuIAs3ahlXWy2p7Tp5b6MlmCA
+        pijAvPHrQvoNxE86H3B+lIxdogldxH4=
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id s-IcNytAh2i0; Sun, 18 Nov 2018 15:07:41 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE2B7004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:b700:4d13:ad2:f34e:6de4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 564BC1EC00E8;
+        Sun, 18 Nov 2018 15:07:41 +0100 (CET)
+Date:   Sun, 18 Nov 2018 15:07:35 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v8 01/13] arch/resctrl: Start renaming the rdt files to
+ more generic names
+Message-ID: <20181118140735.GC19380@zn.tnic>
+References: <20181116205407.10457-1-babu.moger@amd.com>
+ <20181116205407.10457-2-babu.moger@amd.com>
 MIME-Version: 1.0
-References: <20181118135024.30720-1-narmstrong@baylibre.com>
-In-Reply-To: <20181118135024.30720-1-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 18 Nov 2018 15:05:45 +0100
-Message-ID: <CAFBinCB-X0T5mhOkPV=xaKs=RimFZedA8LuqJigD2FfKb28nrg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] Add Amlogic Meson GX SoC Clock Measure Driver
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181116205407.10457-2-babu.moger@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 2:51 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> The Amlogic Meson GX SoCs embeds a clock measurer IP to measure the internal
-> clocks frequencies.
-> The precision is determined by stepping into the duration until the counter
-> overflows.
-> The debugfs shows a pretty summary and each clock can be measured
-> individually aswell.
->
-> This patchset includes the dt-bindings, driver and the DT node added to the
-> meson-gx dtsi.
->
-> Changes since v2 at [2]:
-> - Removed all reference to GX
-> - Added compatibles for meson8/meson8b
-> - Used Martin's suggestions on the divider naming
-> - Added Martin's meson8/meson8b clk id table
-> - Added Martin's fixes to support 32bit SoCs
-thank you for the updates Neil!
+Just to state it here on the thread: prefix should be "x86/resctrl" as
+we said earlier. But that will be addressed in the next iteration, as we
+agreed offlist.
 
-here's the output from Odroid-C1:
-# cat /sys/kernel/debug/meson-clk-msr/measure_summary
- clock                     rate    precision
----------------------------------------------
-ring_osc_out_ee0              0    +/-3125Hz
-ring_osc_out_ee1              0    +/-3125Hz
-ring_osc_out_ee2              0    +/-3125Hz
-a9_ring_osck                  0    +/-3125Hz
-vid_pll               148497596    +/-4807Hz
-clk81                 159372396    +/-5208Hz
-encp                  148497596    +/-4807Hz
-encl                          0    +/-3125Hz
-eth_rmii              125000000    +/-3906Hz
-amclk                         0    +/-3125Hz
-fec_clk_0                     0    +/-3125Hz
-fec_clk_1                     0    +/-3125Hz
-fec_clk_2                     0    +/-3125Hz
-a9_clk_div16           74998438    +/-3125Hz
-hdmi_sys                      0    +/-3125Hz
-rtc_osc_clk_out           32813    +/-3125Hz
-i2s_clk_in_src0               0    +/-3125Hz
-clk_rmii_from_pad             0    +/-3125Hz
-hdmi_ch0_tmds          74248438    +/-3125Hz
-lvds_fifo                     0    +/-3125Hz
-sc_clk_int                    0    +/-3125Hz
-sar_adc                 1140625    +/-3125Hz
-mpll_clk_test_out             0    +/-3125Hz
-audac_clkpi                   0    +/-3125Hz
-vdac                          0    +/-3125Hz
-sdhc_rx                       0    +/-3125Hz
-sdhc_sd                       0    +/-3125Hz
-mali                          0    +/-3125Hz
-hdmi_tx_pixel          74250000    +/-3125Hz
-vdin_meas                     0    +/-3125Hz
-pcm_sclk                      0    +/-3125Hz
-pcm_mclk                      0    +/-3125Hz
-eth_rx_tx                     0    +/-3125Hz
-pwm_d                         0    +/-3125Hz
-pwm_c                  24000000    +/-3125Hz
-pwm_b                         0    +/-3125Hz
-pwm_a                         0    +/-3125Hz
-pcm2_sclk                     0    +/-3125Hz
-ddr_dpll_pt                   0    +/-3125Hz
-pwm_f                         0    +/-3125Hz
-pwm_e                         0    +/-3125Hz
-hcodec                        0    +/-3125Hz
-usb_32k_alt                   0    +/-3125Hz
-gpio                          0    +/-3125Hz
-vid2_pll                      0    +/-3125Hz
-mipi_csi_cfg                  0    +/-3125Hz
+On Fri, Nov 16, 2018 at 08:54:22PM +0000, Moger, Babu wrote:
+> New generation of AMD processors start supporting RDT(or QOS) features.
+> With more than one vendors supporting these features, it seems more
+> appropriate to rename these files.
+> 
+> Changed intel_rdt to resctrl where applicable.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> Reviewed-by: Borislav Petkov <bp@suse.de>
+> ---
+>  arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} | 0
+>  arch/x86/kernel/cpu/Makefile                                | 6 +++---
+>  arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c}              | 4 ++--
+>  arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h}              | 6 +++---
+>  .../cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c}  | 2 +-
+>  .../kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c}   | 2 +-
+>  .../cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c}  | 6 +++---
+>  ..._rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} | 2 +-
+>  .../kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} | 4 ++--
+>  arch/x86/kernel/process_32.c                                | 2 +-
+>  arch/x86/kernel/process_64.c                                | 2 +-
+>  11 files changed, 18 insertions(+), 18 deletions(-)
+>  rename arch/x86/include/asm/{intel_rdt_sched.h => resctrl_sched.h} (100%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.c => resctrl.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt.h => resctrl.h} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_ctrlmondata.c => resctrl_ctrlmondata.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_monitor.c => resctrl_monitor.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock.c => resctrl_pseudo_lock.c} (99%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_pseudo_lock_event.h => resctrl_pseudo_lock_event.h} (95%)
+>  rename arch/x86/kernel/cpu/{intel_rdt_rdtgroup.c => resctrl_rdtgroup.c} (99%)
+
+Ok, looking at this more, it looks like this:
+
+ls -l arch/x86/kernel/cpu/resctrl*
+ arch/x86/kernel/cpu/resctrl.c
+ arch/x86/kernel/cpu/resctrl_ctrlmondata.c
+ arch/x86/kernel/cpu/resctrl.h
+ arch/x86/kernel/cpu/resctrl_monitor.c
+ arch/x86/kernel/cpu/resctrl_pseudo_lock.c
+ arch/x86/kernel/cpu/resctrl_pseudo_lock_event.h
+ arch/x86/kernel/cpu/resctrl_rdtgroup.c
+
+Now, it looks to me like the whole resctrl thing begs for its own dir:
+
+ arch/x86/kernel/cpu/resctrl/core.c
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c
+ arch/x86/kernel/cpu/resctrl/internal.h
+ arch/x86/kernel/cpu/resctrl/monitor.c
+ arch/x86/kernel/cpu/resctrl/pseudo_lock.c
+ arch/x86/kernel/cpu/resctrl/pseudo_lock_event.h
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c
+
+This way, the whole RDT machinery will be confined to its own directory.
+
+Hmm.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
