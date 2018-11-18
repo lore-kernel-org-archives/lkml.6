@@ -2,248 +2,134 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CEEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8A8C04EBC
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39CA820817
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6D0B20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3Im4XHo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CA820817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="UI1iMfCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D0B20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727033AbeKSGFb (ORCPT
+        id S1726512AbeKSGMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 01:05:31 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:41234 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbeKSGFb (ORCPT
+        Mon, 19 Nov 2018 01:12:17 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35186 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725792AbeKSGMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 01:05:31 -0500
-Received: by mail-vs1-f68.google.com with SMTP id t17so16561473vsc.8
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 11:44:21 -0800 (PST)
+        Mon, 19 Nov 2018 01:12:17 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 32-v6so12836814pgu.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 11:51:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fXqGRyHsvfgYCK3d5Yjkq/Ne/bQfG4IZk30JddCOavU=;
-        b=X3Im4XHoBWuBykgR/edcU9qLZ6g9e5ae3ZWNF0HptycD9ZjGoIQ6VjG+HRdAoqddjO
-         mTd0aj6xG5v1Dx38bNJWiHHwnl2WKqftO3/sKaBLAfSRFP1gQQ0R9OggDt3nuEwCsilD
-         8r6jyfX6xsXWFmOi3j9A/otLR4NNS5CN6O8pUMX/ObsXDqheLtxCvYmjHChYaS3jxx/d
-         H97FROqxLOiXvh838KBaIigdN9cnHzcTozHWs71kbLB3lyrtuDJ068v7ghQ15j7apLKt
-         HMPUOT3hooOuBLpz8RKNo0LW/yCcLd9GAw5TB5jmSLkFWWJZvo/4L290CLTvG8N5rsGM
-         KYjQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=zryOOO3i4G0RZadk3n1mevBtzkULwPPOtthGH+PBm4I=;
+        b=UI1iMfCsIpKNUEaClrP4qxd6jGpkNrtTSvORNpl8ffq7HhsLpNZV2pWhvtEGrasle4
+         CvlX8PcVhFFpJ7MU0KJkuze7X8n+UR4PL8Sup2xfRBO5zYrslrkVMLqHAlWhMZwfWApG
+         L8jplictiZaVWuzjnCNzZolaYaMDX8zbzbn3nR55gHah0wtYzf0d8hay1QnJGc/oiSR3
+         XyGoLZu3zHg9+610HWp3pDWmaBhVph/sZN5qq4WYaaJrwEnUwLEVH9x5cric16LT9He4
+         wBMTm8ufWJUZ0TENc2+6G8dLpWS5enrAU/VVZ5/qdmpDm2n7aclUyJ61ezh7TRIJHnWw
+         6dJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fXqGRyHsvfgYCK3d5Yjkq/Ne/bQfG4IZk30JddCOavU=;
-        b=JSMJJ7oC7/uJFmrsi6FTXpqUDuCHoLi0lLdVrwfZow5P+KYVuBZZYbJXkqsRkfN/bh
-         1C7SNhzPWd2l/YIlpK3OF6sxbB/AJRbVAMm8eBNfvGECEt0zr9bG2GibGZ3YzJRiI+iD
-         F4+0uBLBvj+a5lzRs6LTUwW+qqhRgg5+hPUTla5TWg7tVg7qi/A4oEgjF3oqfn39e0AD
-         Z0Rc+YHwHIbS2OW6law5akN2NaDOBB6IUQOFOUclvHKGkHNtHQFQ6qSY2+8sYmnwbt1X
-         Ei46XSk6aD88e7TyVZ4e81/8Hm9ilmBmSewVOaSFpsph4CjJK59RAO7aswA/TspQs69P
-         7nTA==
-X-Gm-Message-State: AGRZ1gLWDobDFcZFexcBSfsUGSlk85zDxkoaOzUnyOcu7kTaiXY5tCGB
-        S9teFiOIksNFel8KoPOrCatuq5gdh+Rjiex825GNCQ==
-X-Google-Smtp-Source: AJdET5eFdjb+LG2RWZzdoZO1YyDXc2E9apsYkmRrrfeGcZEVwUd6XyxRiHxEzlX+0aX0lmB66s7kttSM8JDqOMrwp7s=
-X-Received: by 2002:a67:b44:: with SMTP id 65mr7908390vsl.77.1542570260255;
- Sun, 18 Nov 2018 11:44:20 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zryOOO3i4G0RZadk3n1mevBtzkULwPPOtthGH+PBm4I=;
+        b=EES0sZMHNttrwFMokuapsUQkIQQ+hWvfkwbQF1xbR/aCKCvvPVU7BM13L9aVgo2LeH
+         QykO+UG3hmSGANo8U6RQWARyy8yL4oqNqs9Um4DStuTpX0WpG3eq+K31He8AAE1iA/20
+         CxoF6JnxQxf8CrCGR1JpS/YCbQc9dlOq7GCmcTWAMcMcx0dvMpmms1IALp3rBcm5H/AV
+         unM/nvwLPPmDlDpoBjctqdHcdXFdEvTjzO+etbgqkBwwExX/0BkEyW7D3iVoIwAMKRei
+         z3oOG8YoQ51cWY710S1QI6QiHpPGEFhR/li+o5Sd6x6O3Y0JRJAeE3RFpehZ/7Qfqjoh
+         yC1g==
+X-Gm-Message-State: AGRZ1gIC1M1aCBhZEJ1g7DjuHwzFhmnCoeEtw4s9gPByDlebBhc8fYUH
+        9zGcgeC9Sh5Xz2TQ3wuBc7be9Q==
+X-Google-Smtp-Source: AJdET5cScuGLusCTrcjOlh+d6pQJq7oSLEBkBFsEWOUNHVsM43CU8rW9MP9i196MHHxaHKu5x3x9nQ==
+X-Received: by 2002:a63:1f4e:: with SMTP id q14mr16883743pgm.88.1542570666384;
+        Sun, 18 Nov 2018 11:51:06 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id s86-v6sm76663915pfa.137.2018.11.18.11.51.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 18 Nov 2018 11:51:05 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gOT60-0005sC-O6; Sun, 18 Nov 2018 12:51:04 -0700
+Date:   Sun, 18 Nov 2018 12:51:04 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 14/17] tpm: remove TPM_TRANSMIT_UNLOCKED flag
+Message-ID: <20181118195104.GA21938@ziepe.ca>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-15-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 11:44:19
- -0800 (PST)
-In-Reply-To: <20181118190504.ixglsqbn6mxkcdzu@yavin>
-References: <CAKOZuev1JUGFWuwsKqS6rXcFMqpCHT1VAG2kwB4O=FHo6DAFiQ@mail.gmail.com>
- <CALCETrVLP_mudJTW6EQpRr5GZ7kfuGci+QCT1uPrOVDTWcod-A@mail.gmail.com>
- <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org> <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
- <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
- <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
- <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
- <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
- <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
- <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com> <20181118190504.ixglsqbn6mxkcdzu@yavin>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sun, 18 Nov 2018 11:44:19 -0800
-Message-ID: <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181118124753.18613-15-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 11:05 AM, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2018-11-18, Daniel Colascione <dancol@google.com> wrote:
->> > Here's my point: if we're really going to make a new API to manipulate
->> > processes by their fd, I think we should have at least a decent idea
->> > of how that API will get extended in the future.  Right now, we have
->> > an extremely awkward situation where opening an fd in /proc requires
->> > certain capabilities or uids, and using those fds often also checks
->> > current's capabilities, and the target process may have changed its
->> > own security context, including gaining privilege via SUID, SGID, or
->> > LSM transition rules in the mean time.  This has been a huge source of
->> > security bugs.  It would be nice to have a model for future APIs that
->> > avoids these problems.
->> >
->> > And I didn't say in my proposal that a process's identity should
->> > fundamentally change when it calls execve().  I'm suggesting that
->> > certain operations that could cause a process to gain privilege or
->> > otherwise require greater permission to introspect (mainly execve)
->> > could be handled by invalidating the new process management fds.
->> > Sure, if init re-execs itself, it's still PID 1, but that doesn't
->> > necessarily mean that:
->> >
->> > fd = process_open_management_fd(1);
->> > [init reexecs]
->> > process_do_something(fd);
->> >
->> > needs to work.
->>
->> PID 1 is a bad example here, because it doesn't get recycled. Other
->> PIDs do. The snippet you gave *does* need to work, in general, because
->> if exec invalidates the handle, and you need to reopen by PID to
->> re-establish your right to do something with the process, that process
->> may in fact have died between the invalidation and your reopen, and
->> your reopened FD may refer to some other random process.
->
-> I imagine the error would be -EPERM rather than -ESRCH in this case,
-> which would be incredibly trivial for userspace to differentiate
-> between.
+On Sun, Nov 18, 2018 at 02:47:47PM +0200, Jarkko Sakkinen wrote:
+> Added locking as part of tpm_try_get_ops() and tpm_put_ops() as they are
+> anyway used in most of the call sites except in tpmrm_release() where we
+> take the locks manually.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-chip.c       |  2 ++
+>  drivers/char/tpm/tpm-dev-common.c |  4 +---
+>  drivers/char/tpm/tpm-interface.c  |  8 --------
+>  drivers/char/tpm/tpm.h            |  8 ++------
+>  drivers/char/tpm/tpm2-cmd.c       | 13 ++++---------
+>  drivers/char/tpm/tpm2-space.c     | 15 ++++++---------
+>  6 files changed, 15 insertions(+), 35 deletions(-)
+ 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 32db84683c40..157505b0f755 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -58,6 +58,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>  	if (!chip->ops)
+>  		goto out_lock;
+>  
+> +	mutex_lock(&chip->tpm_mutex);
+>  	return 0;
 
-Why would userspace necessarily see EPERM? The PID might get recycled
-into a different random process that the caller has the ability to
-affect.
+It really isn't appropriate for something called 'get' to be exclusive
+like this.. Call it tpm_try_lock_ops() ?
 
-> If you wish to re-open the path that is also trivial by
-> re-opening through /proc/self/fd/$fd -- which will re-do any permission
-> checks and will guarantee that you are re-opening the same 'struct file'
-> and thus the same 'struct pid'.
+> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> index c7dc54930576..582caefcf19b 100644
+> --- a/drivers/char/tpm/tpm-dev-common.c
+> +++ b/drivers/char/tpm/tpm-dev-common.c
+> @@ -33,7 +33,6 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+>  	struct tpm_header *header = (void *)buf;
+>  	ssize_t ret, len;
+>  
+> -	mutex_lock(&chip->tpm_mutex);
 
-When you reopen via /proc/self/fd, you get a new struct file
-referencing the existing inode, not the same struct file. A new
-reference to the old struct file would just be dup.
+The now implicit locking should be tested for using lockdep calls in
+all places that assume the lock is held by the caller.
 
-Anyway: what other API requires, for correct operation, occasional
-reopening through /proc/self/fd? It's cumbersome, and it doesn't add
-anything. If we invalidate process handles on execve, and processes
-are legally allowed to re-exec themselves for arbitrary reasons at any
-time, that's tantamount to saying that handles might become invalid at
-any time and that all callers must be prepared to go through the
-reopen-and-retry path before any operation.
-
-Why are we making them do that? So that a process can have an open FD
-that represents a process-operation capability? Which capability does
-the open FD represent?
-
-I think when you and Andy must be talking about is an API that looks like this:
-
-int open_process_operation_handle(int procfs_dirfd, int capability_bitmask)
-
-capability_bitmask would have bits like
-
-PROCESS_CAPABILITY_KILL --- send a signal
-PROCESS_CAPABILITY_PTRACE --- attach to a process
-PROCESS_CAPABILITY_READ_EXIT_STATUS --- what it says on the tin
-PROCESS_CAPABILITY_READ_CMDLINE --- etc.
-
-Then you'd have system calls like
-
-int process_kill(int process_capability_fd, int signo, const union sigval data)
-int process_ptrace_attach(int process_capability_fd)
-int process_wait_for_exit(int process_capability_fd, siginfo_t* exit_info)
-
-that worked on these capability bits. If a process execs or does
-something else to change its security capabilities, operations on
-these capability FDs would fail with ESTALE or something and callers
-would have to re-acquire their capabilities.
-
-This approach works fine. It has some nice theoretical properties, and
-could allow for things like nicer privilege separation for debuggers.
-I wouldn't mind something like this getting into the kernel.
-
-I just don't think this model is necessary right now. I want a small
-change from what we have today, one likely to actually make it into
-the tree. And bypassing the capability FDs and just allowing callers
-to operate directly on process *identity* FDs, using privileges in
-effect at the time of all, is at least no worse than what we have now.
-
-That is, I'm proposing an API that looks like this:
-
-int process_kill(int procfs_dfd, int signo, const union sigval value)
-
-If, later, process_kill were to *also* accept process-capability FDs,
-nothing would break.
-
->> The only way around this problem is to have two separate FDs --- one
->> to represent process identity, which *must* be continuous across
->> execve, and the other to represent some specific capability, some
->> ability to do something to that process. It's reasonable to invalidate
->> capability after execve, but it's not reasonable to invalidate
->> identity. In concrete terms, I don't see a big advantage to this
->> separation, and I think a single identity FD combined with
->> per-operation capability checks is sufficient. And much simpler.
->
-> I think that the error separation above would trivially allow user-space
-> to know whether the identity or capability of a process being monitored
-> has changed.
->
-> Currently, all operations on a '/proc/$pid' which you've previously
-> opened and has died will give you -ESRCH.
-
-Not the case. Zombies have died, but profs operations work fine on zombies.
-
->> > Similarly, it seems like
->> > it's probably safe to be able to open an fd that lets you watch the
->> > exit status of a process, have the process call setresuid(), and still
->> > see the exit status.
->>
->> Is it? That's an open question.
->
-> Well, if we consider wait4(2) it seems that this is already the case.
-> If you fork+exec a setuid binary you can definitely see its exit code.
-
-Only if you're the parent. Otherwise, you can't see the process exit
-status unless you pass a ptrace access check and consult
-/proc/pid/stat after the process dies, but before the zombie
-disappears. Random unrelated and unprivileged processes can't see exit
-statuses from distant parts of the system.
-
->> > My POLLERR hack, aside from being ugly,
->> > avoids this particular issue because it merely lets you wait for
->> > something you already could have observed using readdir().
->>
->> Yes. I mentioned this same issue-punting as the motivation behind
->> exithand, initially, just reading EOF on exit.
->
-> One question I have about EOF-on-exit is that if we wish to extend it to
-> allow providing the exit status (which is something we discussed in the
-> original thread), how will multiple-readers be handled in such a
-> scenario?
-> Would we be storing the exit status or siginfo in the
-> equivalent of a locked memfd?
-
-Yes, that's what I have in mind. A siginfo_t is small enough that we
-could just store it as a blob allocated off the procfs inode or
-something like that without bothering with a shmfs file. You'd be able
-to read(2) the exit status as many times as you wanted.
+Jason
