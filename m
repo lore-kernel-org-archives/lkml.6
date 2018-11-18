@@ -5,59 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4A0C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09526C04EBC
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA20020815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C700F20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMdvQ+1A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA20020815
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sElgiw+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C700F20815
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeKSAi5 (ORCPT
+        id S1727839AbeKSAi7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:38:57 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46418 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbeKSAi4 (ORCPT
+        Sun, 18 Nov 2018 19:38:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37218 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeKSAi6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:38:56 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so16422987wrt.13;
-        Sun, 18 Nov 2018 06:18:29 -0800 (PST)
+        Sun, 18 Nov 2018 19:38:58 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j10so15080725wru.4;
+        Sun, 18 Nov 2018 06:18:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NggC/1+6qSPNQtKp73ctTtSG3tW6ForFq+KhieOiSrc=;
-        b=RMdvQ+1AkD0QLtnYBoQMeFMg5GMD+J5cEbSqa9VP28a/BuSlVx7kslaDnr62vMv3IX
-         OaEdBxw1ddYvXtZEm3QaGvG7qdfv5JINNPHVgnwF3ZyeLJfpi+Ly+yHA5AfNXI5MLlmP
-         RijO+rB33LaC9H8cDrJX5/pqSE9jldekpJbW/32YH6StJAaaz8EBnuynwAqcmb3D5hTo
-         McPnYGJp06/tJsCJCNsrNSxq9pJgNZWf2ysJPiwa3mx2NyntUGk1Oma6x2uxr4+Vvpab
-         JAvlTcZ/KDOfEC1bXju8/Q6FzYqTs2L3CEtal1CSKnln3GvNDh8D4ustYKC10krKnv4G
-         GDJg==
+        bh=oGuO4g5d4BywTnSWFeiSH0OPNxp/zYl7PCyVPQHD8Yk=;
+        b=sElgiw+hYJBO0PQjhcVYNlAGxyhgXBSR7WiYFdMLsvlqK58H/fJpY8jKVD6U5SqR88
+         IkPgmL/m9qXuwAhdPa2E8wkHH2pM/QffmRJvkV8nP1bq+BPG/gN41gVeNz4wNnM6q/EE
+         9v5h2xtaaJizv9S8qOrTe5TpYwOy8gNfWFIs8V9MpGAphLWnJbtAF9dNmfE6K80GJmW/
+         Ac4oyuxJk1x11ksjB/j14WDZzdSiIF8NannGCgRRZhfRNi52QvMwyIbm7R/NRxgEO21g
+         QJ1P3Eyjs/UAD0M5PkMwjtBbMmfrEf7PsCaLqXfRSlXfgnweX6LpYGxXe0IDmPPGe6GW
+         WQYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=NggC/1+6qSPNQtKp73ctTtSG3tW6ForFq+KhieOiSrc=;
-        b=oEStRJBfC8L47TMKJebyDbxLSsuS7SpU9N/8IbdJq5NAEFj4IouJaoNmJlehjD1bXs
-         riK3x4xebTQ5bj8921iSMoPn2Ks9e/qk3/4oDBq79d+T/eTrAg06YusMnX7FryfRk3qs
-         vZOIPESYbOmAEx2zqlB4zZWyTmWyTE4c/aqGQ0OEStWBsHXgyf22Y6r+EOIX4bLRymCV
-         ETi6DRwK1cpTAidvAVtYtCkxy3fLNzakArvuaz69t4wSE4IUwyBr30Rt9GsibnkIjDtF
-         dWIYBDdHEqx5Gkpml8gfovOZ2+CQ8m3XtoKW/2xoCQvY9CGeBNzUoQkSwzJwDSxdgoDC
-         ugMQ==
-X-Gm-Message-State: AGRZ1gLVinEpqdXELuRGs+MKFNRIY0KHpSntIf1TEp+HoWJ8vdHtDkbR
-        r0Ktd49scjJNEE7Di8gxNUu0CkWxDvg=
-X-Google-Smtp-Source: AJdET5cq/fmr3jN9xT7tct7iIUpA1P3FOAXxQXKSKalU8K3p+kOTk9RgnzX7A2Wvvt93JIqhNqy14Q==
-X-Received: by 2002:adf:bb44:: with SMTP id x4mr15674859wrg.24.1542550708118;
-        Sun, 18 Nov 2018 06:18:28 -0800 (PST)
+        bh=oGuO4g5d4BywTnSWFeiSH0OPNxp/zYl7PCyVPQHD8Yk=;
+        b=QXvGAobcxppQvTuy6xn+wJbwtvJMUn6aMI2mOxgb3mbv3hb7jRGgOrH52WqVLtg52h
+         womXGEstKsBNnFJUJCZzOjoThp6p12TSoaxdFByI0SVuw8MS8Ae8rt6oA4d8rmyCBfyO
+         fb9wnGoM61UcQJSZBHZiOydAAw6ket6jLRaNeQDdT+aF0+hi9tJMShyJsaW4CfGadPTH
+         u3MNPcEKM8NtOziEdx0stih9s9MV1L5KXXMwySqjtDb0r3Jci+TKkXw0rlcfAq7t8wag
+         WU0KeFo1qMToF+GqS4DoNUdlgI98iPxThAAoSBLa4ccOXxvNrSYl27tdvQgKNwC5dJvk
+         2IKg==
+X-Gm-Message-State: AA+aEWZwVr56y4PVWb7SuY1G7vsYeuRYYaignxR9RyPB85U5Qbqu26Uq
+        tFmjt4e6qDOOXm0k4HwgeLwr4qrwfgk=
+X-Google-Smtp-Source: AFSGD/UiZb28HJFBCaBxFmvxj87YRZJRXFPZ2ob5bOSngZaTCMSzkM6/d/ZiAXMYnhXwTt+McL2dkw==
+X-Received: by 2002:adf:fe11:: with SMTP id n17mr12730881wrr.329.1542550709892;
+        Sun, 18 Nov 2018 06:18:29 -0800 (PST)
 Received: from ThinkPad.home ([185.219.176.209])
-        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.26
+        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 18 Nov 2018 06:18:27 -0800 (PST)
+        Sun, 18 Nov 2018 06:18:29 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -72,9 +73,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v2 06/14] dt-bindings: timer: Add Allwinner suniv timer
-Date:   Sun, 18 Nov 2018 17:17:05 +0300
-Message-Id: <64b7dbecd4479e0078ad0252af1218cbb4b2b409.1542546735.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v2 07/14] clocksource: sun4i: add a compatible for suniv
+Date:   Sun, 18 Nov 2018 17:17:06 +0300
+Message-Id: <9edf969f763ecb7433a9d56adfc36cf8a0ec998d.1542546735.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1542546735.git.mesihkilinc@gmail.com>
 References: <cover.1542546735.git.mesihkilinc@gmail.com>
@@ -83,30 +84,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatible string for Allwinner suniv timer which is similar to
-sun4i timer.
+The suniv (new F-series) chip has a timer with less functionality than
+the A10 timer, e.g. it has only 3 channels.
 
+Add a new compatible for it. As we didn't use the extra channels on A10
+either now, the code needn't to be changed.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clocksource/sun4i_timer.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt b/Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt
-index 5c2e235..9c02a4b 100644
---- a/Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/allwinner,sun4i-timer.txt
-@@ -2,7 +2,10 @@ Allwinner A1X SoCs Timer Controller
- 
- Required properties:
- 
--- compatible : should be "allwinner,sun4i-a10-timer"
-+- compatible: should be "allwinner,<soc-familiy>-<soc-name>-timer" to identify
-+	      Allwinner SoCs timer such as:
-+              "allwinner,sun4i-a10-timer"
-+              "allwinner,suniv-f1c100s-timer"
- - reg : Specifies base physical address and size of the registers.
- - interrupts : The interrupt of the first timer
- - clocks: phandle to the source clock (usually a 24 MHz fixed clock)
+diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
+index 6e0180a..6b57187 100644
+--- a/drivers/clocksource/sun4i_timer.c
++++ b/drivers/clocksource/sun4i_timer.c
+@@ -218,3 +218,5 @@ static int __init sun4i_timer_init(struct device_node *node)
+ }
+ TIMER_OF_DECLARE(sun4i, "allwinner,sun4i-a10-timer",
+ 		       sun4i_timer_init);
++TIMER_OF_DECLARE(suniv, "allwinner,suniv-f1c100s-timer",
++		       sun4i_timer_init);
 -- 
 2.7.4
 
