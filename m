@@ -2,225 +2,112 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C439EC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 16:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3E5C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 16:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED552080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 16:06:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED552080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BD9D2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 16:18:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oH4C6WEm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD9D2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeKSC1I (ORCPT
+        id S1727500AbeKSCiw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 21:27:08 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55812 "EHLO mail.bootlin.com"
+        Sun, 18 Nov 2018 21:38:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726746AbeKSC1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 21:27:07 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2EE5E207B0; Sun, 18 Nov 2018 17:06:26 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 95F54206D8;
-        Sun, 18 Nov 2018 17:06:25 +0100 (CET)
-Date:   Sun, 18 Nov 2018 17:06:24 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
-        Alban Bedel <albeu@free.fr>, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 02/25] mtd: add support for reading MTD devices via
- the nvmem API
-Message-ID: <20181118170624.33daaaf9@bbrezillon>
-In-Reply-To: <20181113140133.17385-3-brgl@bgdev.pl>
-References: <20181113140133.17385-1-brgl@bgdev.pl>
-        <20181113140133.17385-3-brgl@bgdev.pl>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726746AbeKSCiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 21:38:51 -0500
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B9682087A
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 16:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542557889;
+        bh=5RS+IIM8wK/4OBumQsai9zq8KId55KB/3RxydSWNf/s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oH4C6WEm5xkko+vSJB+nPBaqaZ4rTky184L4zXQ652C4Zgdqvw3lfV8GP8uD9B0YR
+         si6ZAFZmkWbeysJ0Q5kRmiLSN7C7pWmUbiqk4D34mSkRB14VDj2CPJTwqVekNaln0J
+         GJ+Jglc19iQfRza9H/Cx/7e8SdAUE5QuJSOwxc8Q=
+Received: by mail-wr1-f45.google.com with SMTP id e3-v6so29498728wrs.5
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 08:18:09 -0800 (PST)
+X-Gm-Message-State: AGRZ1gL5QicD6rh3afAgnrMRwKqb3R5B9Uz/zghiad5y9tJL/YgRg+G3
+        yvb3gitkhBzfEwPvuE1vqj+KvWT+iPGGomg1ADPaew==
+X-Google-Smtp-Source: AJdET5dU+f5ryhLIpeMaHh3+O5udGgg3dAyIcYPKp3BgeICBvRfiJ/Hu9Bh6B/ouYNv5tU0kNfN43h2rxcygw1QC6r4=
+X-Received: by 2002:adf:90af:: with SMTP id i44-v6mr14502486wri.77.1542557887990;
+ Sun, 18 Nov 2018 08:18:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181118111751.6142-1-christian@brauner.io> <CAKOZuet3s0WxxPgrtrNkq8YiOWhYAiK6yEio6PKVV9J_H4_TSA@mail.gmail.com>
+ <CALCETrUd2Y2MmO8Qx8aUvQDOTNiyj35Y7bctPBZe0p2i1EUiLw@mail.gmail.com> <CAKOZuev1JUGFWuwsKqS6rXcFMqpCHT1VAG2kwB4O=FHo6DAFiQ@mail.gmail.com>
+In-Reply-To: <CAKOZuev1JUGFWuwsKqS6rXcFMqpCHT1VAG2kwB4O=FHo6DAFiQ@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sun, 18 Nov 2018 08:17:55 -0800
+X-Gmail-Original-Message-ID: <CALCETrVLP_mudJTW6EQpRr5GZ7kfuGci+QCT1uPrOVDTWcod-A@mail.gmail.com>
+Message-ID: <CALCETrVLP_mudJTW6EQpRr5GZ7kfuGci+QCT1uPrOVDTWcod-A@mail.gmail.com>
+Subject: Re: [PATCH] proc: allow killing processes via file descriptors
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Christian Brauner <christian@brauner.io>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 15:01:10 +0100
-Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Sun, Nov 18, 2018 at 7:53 AM Daniel Colascione <dancol@google.com> wrote:
+>
+> On Sun, Nov 18, 2018 at 7:38 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> > I fully agree that a more comprehensive, less expensive API for
+> > managing processes would be nice.  But I also think that this patch
+> > (using the directory fd and ioctl) is better from a security
+> > perspective than using a new file in /proc.
+>
+> That's an assertion, not an argument. And I'm not opposed to an
+> operation on the directory FD, now that it's clear Linus has banned
+> "write(2)-as-a-command" APIs. I just insist that we implement the API
+> with a system call instead of a less-reliable ioctl due to the
+> inherent namespace collision issues in ioctl command names.
 
-> From: Alban Bedel <albeu@free.fr>
-> 
-> Allow drivers that use the nvmem API to read data stored on MTD devices.
-> For this the mtd devices are registered as read-only NVMEM providers.
-> 
-> We don't support device tree systems for now.
-> 
-> Signed-off-by: Alban Bedel <albeu@free.fr>
-> [Bartosz:
->   - include linux/nvmem-provider.h
->   - set the name of the nvmem provider
->   - set no_of_node to true in nvmem_config
->   - don't check the return value of nvmem_unregister() - it cannot fail
->   - tweaked the commit message]
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Linus banned it because of bugs iike the ones in the patch.
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+>
+> > I have an old patch to make proc directory fds pollable:
+> >
+> > https://lore.kernel.org/patchwork/patch/345098/
+> >
+> > That patch plus the one in this thread might make a nice addition to
+> > the kernel even if we expect something much better to come along
+> > later.
+>
+> I've always commented on that patch. You never addressed my technical
+> objections. Why are you bringing up this patch again as if that
+> discussion had never happened? To review, that patch has various race
+> conditions
 
-To the person taking this patch (Greg?): I'll need an immutable tag,
-just in case we end up with other changes in mtdcore.c for this release.
+I don't think I ever saw that review.
 
-> ---
->  drivers/mtd/Kconfig     |  1 +
->  drivers/mtd/mtdcore.c   | 56 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/mtd/mtd.h |  2 ++
->  3 files changed, 59 insertions(+)
-> 
-> diff --git a/drivers/mtd/Kconfig b/drivers/mtd/Kconfig
-> index c77f537323ec..efbe7a6f1d8f 100644
-> --- a/drivers/mtd/Kconfig
-> +++ b/drivers/mtd/Kconfig
-> @@ -1,5 +1,6 @@
->  menuconfig MTD
->  	tristate "Memory Technology Device (MTD) support"
-> +	imply NVMEM
->  	help
->  	  Memory Technology Devices are flash, RAM and similar chips, often
->  	  used for solid state file systems on embedded devices. This option
-> diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
-> index 97ac219c082e..5f1053d995b0 100644
-> --- a/drivers/mtd/mtdcore.c
-> +++ b/drivers/mtd/mtdcore.c
-> @@ -41,6 +41,7 @@
->  #include <linux/reboot.h>
->  #include <linux/leds.h>
->  #include <linux/debugfs.h>
-> +#include <linux/nvmem-provider.h>
->  
->  #include <linux/mtd/mtd.h>
->  #include <linux/mtd/partitions.h>
-> @@ -488,6 +489,50 @@ int mtd_pairing_groups(struct mtd_info *mtd)
->  }
->  EXPORT_SYMBOL_GPL(mtd_pairing_groups);
->  
-> +static int mtd_nvmem_reg_read(void *priv, unsigned int offset,
-> +			      void *val, size_t bytes)
-> +{
-> +	struct mtd_info *mtd = priv;
-> +	size_t retlen;
-> +	int err;
-> +
-> +	err = mtd_read(mtd, offset, bytes, &retlen, val);
-> +	if (err && err != -EUCLEAN)
-> +		return err;
-> +
-> +	return retlen == bytes ? 0 : -EIO;
-> +}
-> +
-> +static int mtd_nvmem_add(struct mtd_info *mtd)
-> +{
-> +	struct nvmem_config config = {};
-> +
-> +	config.dev = &mtd->dev;
-> +	config.name = mtd->name;
-> +	config.owner = THIS_MODULE;
-> +	config.reg_read = mtd_nvmem_reg_read;
-> +	config.size = mtd->size;
-> +	config.word_size = 1;
-> +	config.stride = 1;
-> +	config.read_only = true;
-> +	config.root_only = true;
-> +	config.no_of_node = true;
-> +	config.priv = mtd;
-> +
-> +	mtd->nvmem = nvmem_register(&config);
-> +	if (IS_ERR(mtd->nvmem)) {
-> +		/* Just ignore if there is no NVMEM support in the kernel */
-> +		if (PTR_ERR(mtd->nvmem) == -ENOSYS) {
-> +			mtd->nvmem = NULL;
-> +		} else {
-> +			dev_err(&mtd->dev, "Failed to register NVMEM device\n");
-> +			return PTR_ERR(mtd->nvmem);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static struct dentry *dfs_dir_mtd;
->  
->  /**
-> @@ -570,6 +615,11 @@ int add_mtd_device(struct mtd_info *mtd)
->  	if (error)
->  		goto fail_added;
->  
-> +	/* Add the nvmem provider */
-> +	error = mtd_nvmem_add(mtd);
-> +	if (error)
-> +		goto fail_nvmem_add;
-> +
->  	if (!IS_ERR_OR_NULL(dfs_dir_mtd)) {
->  		mtd->dbg.dfs_dir = debugfs_create_dir(dev_name(&mtd->dev), dfs_dir_mtd);
->  		if (IS_ERR_OR_NULL(mtd->dbg.dfs_dir)) {
-> @@ -595,6 +645,8 @@ int add_mtd_device(struct mtd_info *mtd)
->  	__module_get(THIS_MODULE);
->  	return 0;
->  
-> +fail_nvmem_add:
-> +	device_unregister(&mtd->dev);
->  fail_added:
->  	of_node_put(mtd_get_of_node(mtd));
->  	idr_remove(&mtd_idr, i);
-> @@ -637,6 +689,10 @@ int del_mtd_device(struct mtd_info *mtd)
->  		       mtd->index, mtd->name, mtd->usecount);
->  		ret = -EBUSY;
->  	} else {
-> +		/* Try to remove the NVMEM provider */
-> +		if (mtd->nvmem)
-> +			nvmem_unregister(mtd->nvmem);
-> +
->  		device_unregister(&mtd->dev);
->  
->  		idr_remove(&mtd_idr, mtd->index);
-> diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-> index cd0be91bdefa..545070c2ee64 100644
-> --- a/include/linux/mtd/mtd.h
-> +++ b/include/linux/mtd/mtd.h
-> @@ -25,6 +25,7 @@
->  #include <linux/notifier.h>
->  #include <linux/device.h>
->  #include <linux/of.h>
-> +#include <linux/nvmem-provider.h>
->  
->  #include <mtd/mtd-abi.h>
->  
-> @@ -341,6 +342,7 @@ struct mtd_info {
->  	struct device dev;
->  	int usecount;
->  	struct mtd_debug_info dbg;
-> +	struct nvmem_device *nvmem;
->  };
->  
->  int mtd_ooblayout_ecc(struct mtd_info *mtd, int section,
+> and even if it were technically correct, it'd be an abuse
+> of directory objects (in what other circumstance do we poll
+> directories?) and not logically generalizable to a model in which we
+> expose process exit status via the exit-monitoring API.
 
+I agree it's weird.  It might be better to have /proc/PID/exit_status
+and make *that* pollable.
