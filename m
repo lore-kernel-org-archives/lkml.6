@@ -2,189 +2,129 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84CDAC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323AFC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0582075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:23:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC4A02075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:24:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="U2BGPfQQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0582075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="eTROMYFs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4A02075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727332AbeKSHpL (ORCPT
+        id S1727604AbeKSHph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 02:45:11 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40349 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbeKSHpL (ORCPT
+        Mon, 19 Nov 2018 02:45:37 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44511 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726322AbeKSHpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 02:45:11 -0500
-Received: by mail-pf1-f196.google.com with SMTP id i12so543600pfo.7
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 13:23:48 -0800 (PST)
+        Mon, 19 Nov 2018 02:45:36 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j17-v6so29919772wrq.11;
+        Sun, 18 Nov 2018 13:24:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rE62Ef+4dHkuH75TyOH6t0fLDXeniDPQYQgw6wqiYFY=;
-        b=U2BGPfQQdFHJ3dfzOuZViQfrZ8z0uRhPzrK5Ql/HgGhjZDX88KPGbRoJ3ekfKIJdZN
-         uiyff2CkYyokP8PRY0uX4CwpXuX56mqj2+3xTm8a872dTiTWFqMkTnR9dWGMQGUZ1WGg
-         K/n3JeySc/lO9ZK91Ewpf+88Ei/bYWKnIW8OHswz8xsxlCdb2chMZZulHX291zhTUIlC
-         uMoapM7qTFrzxXmXLolwN8x/SLQ1YRdFTCJxfskJmXLmrp8P+OvtMQriRkPTgaaenJLb
-         WYCCcRsQaZfEL4np59TQeifPyVRsnbcDK6gITeaVS4o+qSUKtWoh4dUeHs2ZCJkDJeZN
-         vtgA==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r9klZ8isTv81ubFhK6yKYWbH2hgQVv1AZordoOIelDY=;
+        b=eTROMYFsabZYrcne2ofIJz4wz0Keb6OItr2le61G49An9Pu1DzzAMWQpgaawVN23K/
+         xyIvQ6RSjwEK3KY+qYF9wXNoSUkfws91v+8MnsDqymCzVvLghQWHhmCPE7cmw3a5G3Bw
+         h6qZSIXKBhzNpQOPQJJWlxlSxd9xAMREsE1cmTj9wbR6Drz62XAMixtlDvV/w3c+zhCh
+         lbycduCBYYcjUGwD9aRWD3mEsdZ5rPDWjU9lbWkvNwL7ShCTBuxd3hgP6Z52RrjPnQEV
+         HagggPCJhQ+adfNpjJJUnFpaH/gqhivO9dxd2RLgxpIpDSllDRqu7zR4qBnI3Hju14sU
+         W8qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rE62Ef+4dHkuH75TyOH6t0fLDXeniDPQYQgw6wqiYFY=;
-        b=UnBIiZ46rqWXNXx7/+yteVbv8k8Mz5G83XiOXYpi/B8T+XE6SsEjsqvmGHrn+8JbmZ
-         ueHqthS0n5eI/KHCrEU7nEJbEMTZ5Ox0efE83ExP+jvjYd80fw82FnzkEsH7myfW0Xlu
-         Jtx/Ba8nJ8NxH8jq/WAf6/VK9TCmZeDl1+3UPorCajQYkN324SUMxDvyPtkSH8J1h/MQ
-         69F/PupOZU/Oi45sVERR4PiO6L4kvjuqC+htGimssuEtY82t10ODgGykA4HzdyUTAnLG
-         txDXt10LhO2uT5U0J1khNJuM4SI0c4A+NN/OjPH5ZEj33A5Us8nWNMnwgfkz9a6CXzcw
-         9/cg==
-X-Gm-Message-State: AGRZ1gKnrHK8M3Kt2Z+YKtqKIm7crTUlBYv3IOEb6tk7QlADq5nslW74
-        V9ww+7shzqhl98ZA3pP66zBj4Q==
-X-Google-Smtp-Source: AJdET5cF+VBv9MeR6yyJv5vI+tBcew6H8eTWvjqkSV7y0dxlKOyJKPomYJVcTej7I6zqElv1yLcF7w==
-X-Received: by 2002:a62:4194:: with SMTP id g20-v6mr16104848pfd.44.1542576227746;
-        Sun, 18 Nov 2018 13:23:47 -0800 (PST)
-Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
-        by smtp.gmail.com with ESMTPSA id d65-v6sm57082110pfc.144.2018.11.18.13.23.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 18 Nov 2018 13:23:46 -0800 (PST)
-Date:   Sun, 18 Nov 2018 22:23:37 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-Message-ID: <20181118212336.53hh3qbjughrtc2l@brauner.io>
-References: <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
- <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
- <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
- <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
- <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com>
- <20181118190504.ixglsqbn6mxkcdzu@yavin>
- <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
- <608F2959-800D-46EE-A7CD-8C972ACD2F02@amacapital.net>
- <20181118204317.seaztq7fqmysucns@brauner.io>
- <CAKOZueuWzu2GuJ-w3yb01P9uyO1WniKG+i=BUsweVdA-KgEjhw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=r9klZ8isTv81ubFhK6yKYWbH2hgQVv1AZordoOIelDY=;
+        b=MGqpf89LgGymT2dSuYV5EMsNprqwK3xqrFaWMSIjyqSJdvq1dk5vp6ot/Te7jqL0tw
+         0dXzk3k1QPGzvmpKaz58+QYWFglLmi2gULtG2pCMf8WZC87m60Dkl823OQs8zFkPXeba
+         Xz1WNIkkSg5ydefdUAhvsK7QgfJ9+yHgZzLwi7JQOAn0uOJS5xBTXrVMi7185X1E0T1H
+         mbbW1Yb7BTwNe95xxLFIl0ZHJ+CQf7KX9gmYlYI8DD5Y/IEstuVklZEB2eAcC8Ue11i0
+         mfR71P3veImbXHlKID0Y+WLT11nsb3h4OPXZDbCu7ir5K8ezLm79EnkQercEOG8J/F3W
+         Jqvw==
+X-Gm-Message-State: AA+aEWYIQZcyzVa/YyYXaUEadpC1zm9+Z5ElnfcpDU3QDYL204TLqu7e
+        dC/KJLlqJWbJW+5lHf9mpGMkOD5gwlg=
+X-Google-Smtp-Source: AFSGD/WkfnQ7Ve7CU8uhoPLUDvigBnxNXWUUFunDh9PI59GFvhojtfESdZe9tEFnXLejrmoWbIKpHQ==
+X-Received: by 2002:adf:d112:: with SMTP id a18mr3164784wri.17.1542576251882;
+        Sun, 18 Nov 2018 13:24:11 -0800 (PST)
+Received: from blackbox.darklights.net (p200300DCD717A10029D7537EB9A16C22.dip0.t-ipconnect.de. [2003:dc:d717:a100:29d7:537e:b9a1:6c22])
+        by smtp.googlemail.com with ESMTPSA id d4sm31835649wrp.89.2018.11.18.13.24.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Nov 2018 13:24:10 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        f.fainelli@gmail.com, andrew@lunn.ch, mark.rutland@arm.com,
+        robh+dt@kernel.org, davem@davemloft.net
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/7] IP101GR: devicetree based configuration of SEL_INTR32
+Date:   Sun, 18 Nov 2018 22:23:52 +0100
+Message-Id: <20181118212359.32414-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKOZueuWzu2GuJ-w3yb01P9uyO1WniKG+i=BUsweVdA-KgEjhw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 12:54:10PM -0800, Daniel Colascione wrote:
-> On Sun, Nov 18, 2018 at 12:43 PM, Christian Brauner
-> <christian@brauner.io> wrote:
-> > On Sun, Nov 18, 2018 at 01:28:41PM -0700, Andy Lutomirski wrote:
-> >>
-> >>
-> >> > On Nov 18, 2018, at 12:44 PM, Daniel Colascione <dancol@google.com> wrote:
-> >> >
-> >>
-> >> >
-> >> > That is, I'm proposing an API that looks like this:
-> >> >
-> >> > int process_kill(int procfs_dfd, int signo, const union sigval value)
-> >> >
-> >> > If, later, process_kill were to *also* accept process-capability FDs,
-> >> > nothing would break.
-> >>
-> >> Except that this makes it ambiguous to the caller as to whether their current creds are considered.  So it would need to be a different syscall or at least a flag.  Otherwise a lot of those nice theoretical properties go away.
-> >
-> > I can add a flag argument
-> > int process_signal(int procfs_dfd, int signo, siginfo_t *info, int flags)
-> > The way I see it process_signal() should be equivalent to kill(pid, signal) for now.
-> > That is siginfo_t is cleared and set to:
-> >
-> > info.si_signo = sig;
-> > info.si_errno = 0;
-> > info.si_code = SI_USER;
-> > info.si_pid = task_tgid_vnr(current);
-> > info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
-> 
-> That makes sense. I just don't want to get into a situation where
-> callers feel that they *have* to use the PID-based APIs to send a
-> signal because process_kill doesn't offer some bit of functionality.
+The IP101GR is a 32-pin QFN package variant of the IP101G/IP101GA
+Ethernet PHY. Due to it's limited amount of pins the RXER (receive
+error) and INTR32 (interrupt) functions share pin 21.
 
-Yeah.
+The goal of this series is:
+- some small cleanups in patches 3, 4 and 5
+- allowing the kernel to detect IRQ floods on boards where the IP101GR
+  is configured in RXER mode but the RXER line is configured on the
+  host SoC as interrupt line (patch 6)
+- configuration of the SEL_INTR32 register so we can use the interrupt
+  function on boards where the RXER/INTR32 pin (pin 21) is routed to
+  one of the host SoC's interrupt inputs (patches 1, 2, 7)
 
-> 
-> Are you imagining something like requiring info t be NULL unless flags
-> contains some "I have a siginfo_t" value?
+A use-case where this is needed is the Endless Mini (EC-100). I have
+tested my changes on that board. This also confirms that Heiner
+Kallweit's recent icplus.c PHY driver changes are working (at least on
+my setup).
 
-Well, I was actually thinking about something like:
+This series is based on net-next commit 7c460cf9cd1a ("net: aquantia:
+fix spelling mistake "specfield" -> "specified"")
 
-/**
- *  sys_process_signal - send a signal to a process trough a process file descriptor
- *  @fd: the file descriptor of the process
- *  @sig: signal to be sent
- *  @info: the signal info
- *  @flags: future flags to be passed
- */
-SYSCALL_DEFINE4(process_signal, int, fd, int, sig, siginfo_t __user *, info,
-		int, flags)
-{
-	struct pid *pid;
-	struct fd *f;
-	kernel_siginfo_t kinfo;
 
-	/* Do not allow users to pass garbage. */
-	if (flags)
-		return -EINVAL;
+Changes since v1 at [0]:
+- collected Andrew's Reviewed-by's (thank you!)
+- updated description of patch #2 to explain why two properties were
+  added instead of adding an "this is a IP101GR" property
+- validate that there's no conflicting configuration in patch #7
+- rebased on top of latest net-next
 
-	int ret = __copy_siginfo_from_user(sig, &kinfo, info);
-	if (unlikely(ret))
-		return ret;
 
-	/* For now, enforce that caller's creds are used. */
-	kinfo.si_pid = task_tgid_vnr(current);
-	kinfo.si_uid = from_kuid_munged(current_user_ns(), current_uid());
+[0] https://patchwork.ozlabs.org/cover/999371/
 
-	if (signal_impersonates_kernel(kinfo))
-		return -EPERM;
 
-	f = fdget(fd);
-	if (!f.file)
-		return -EBADF;
+Martin Blumenstingl (7):
+  dt-bindings: vendor-prefix: add prefix for IC Plus Corp.
+  dt-bindings: net: phy: add bindings for the IC Plus Corp. IP101A/G
+    PHYs
+  net: phy: icplus: keep all ip101a_g functions together
+  net: phy: icplus: use the BIT macro where possible
+  net: phy: icplus: rename IP101A_G_NO_IRQ to IP101A_G_IRQ_ALL_MASK
+  net: phy: icplus: implement .did_interrupt for IP101A/G
+  net: phy: icplus: allow configuring the interrupt function on IP101GR
 
-	pid = f.file->private_data;
-	if (!pid)
-		return -EBADF;
+ .../bindings/net/icplus-ip101ag.txt           |  19 +++
+ .../devicetree/bindings/vendor-prefixes.txt   |   1 +
+ drivers/net/phy/icplus.c                      | 135 +++++++++++++++---
+ 3 files changed, 135 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/icplus-ip101ag.txt
 
-	return kill_pid_info(sig, kinfo, pid);
-}
+-- 
+2.19.1
 
-> 
-> BTW: passing SI_USER to rt_sigqueueinfo *should* as long as the
-> passed-in si_pid and si_uid match what the kernel would set them to in
-> the kill(2) case. The whole point of SI_USER is that the recipient
-> knows that it can trust the origin information embedded in the
-> siginfo_t in the signal handler. If the kernel verifies that a signal
-> sender isn't actually lying, why not let people send SI_USER with
-> rt_sigqueueinfo?
