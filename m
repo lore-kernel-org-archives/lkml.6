@@ -2,197 +2,156 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59014C43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 07:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA9DC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 07:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207BA2075B
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 07:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207BA2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F08E2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 07:49:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E7ls5kEI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F08E2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbeKRSIL (ORCPT
+        id S1727245AbeKRSJB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 13:08:11 -0500
-Received: from mga05.intel.com ([192.55.52.43]:23819 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725915AbeKRSIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 13:08:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2018 23:48:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,247,1539673200"; 
-   d="scan'208";a="107221212"
-Received: from kaczmarx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.89])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Nov 2018 23:48:35 -0800
-Date:   Sun, 18 Nov 2018 09:48:32 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-Message-ID: <20181118074832.GG5897@linux.intel.com>
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
+        Sun, 18 Nov 2018 13:09:01 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40727 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbeKRSJB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 13:09:01 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y16so44147818qki.7;
+        Sat, 17 Nov 2018 23:49:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mmUp9bVLzAjLxvxpuGqKyizUS3hwC0JQZLZ/D3xx8Dw=;
+        b=E7ls5kEIfXFrL+O3NSrT0/OjSCJW5QTbXrKomsxzn2oupTGH3ZXPKGoQgkbSU8B5Zl
+         gkc+zA/bX4ToSOFH2H5o6CtP4ricuUiCt2wanR+G6FwpSQOBW3YqB07UnpSrjYVgaH9L
+         bIJlxpteq/vKIBBFHQdhciAJI7S0R4RQG3wd7Lk+SzhND9BeAx77n7nUVXQx5KdcEo3V
+         suJgNmxMeltBkBRyRUxPQ+qYIFc1ZF/O/4h+UoJUTgM+gG3V0dlSfSlKhW8T/GatjXQD
+         1Yp0kRC12IXkvaMP11VbHXkIvMeaXLe9Wc+4XDsFVSx4QSWlbZWXdcLNkeIww6Ur8c5r
+         R9sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mmUp9bVLzAjLxvxpuGqKyizUS3hwC0JQZLZ/D3xx8Dw=;
+        b=JkFQMLPcPOK10JKkrcygm/4pgmaPk9aI8xSy9LNUrsTJQaNz4dhCz256TkVgqL+c8Q
+         H7h0M/BnCJbtKY/GLaiX5wAkxfZU8m/bD9HyWOYk8X6e1uCBll2JhsZsGj16ZUf94mR5
+         HNaQokNfO2QW0vX/YPkHMk7gHfGEej8pjSVSMFatCLey7bRue8y26Fu//UUGTpt9IA8c
+         wkr/9i8icEJghemmgejDMjOnEP0zeO+U3TNnvc1Hd3o+wNF8mPENSq1UhY8jd9wNskMU
+         uPPxv4QlCvy11QXMSp5he221FB3NndjVY4OXfl1NXSEB9Z4tzdIJns7g2GFp2rlw3Tw2
+         VQqw==
+X-Gm-Message-State: AGRZ1gIafhudGwv188me4r8qeIqF2rA5MgIzq9Wm6Ev+XHRXo5Ah44AG
+        mFtfmH88iAENfLXZ6ox9PYO6tg+BLLIVBChJtGE=
+X-Google-Smtp-Source: AJdET5d3ZByMLTrTWsR1nu6Ai5Phm/hGfev7RqCiKZlcFDEKSwvvy/6aIFstM0swTZP2DkMUIuQ3wpj/VhhKU76VdPc=
+X-Received: by 2002:a37:41d2:: with SMTP id o201mr16064899qka.24.1542527368265;
+ Sat, 17 Nov 2018 23:49:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181117185715.25198-1-ard.biesheuvel@linaro.org>
+In-Reply-To: <20181117185715.25198-1-ard.biesheuvel@linaro.org>
+From:   Y Song <ys114321@gmail.com>
+Date:   Sun, 18 Nov 2018 07:48:59 +0000
+Message-ID: <CAH3MdRX5MYv-QQGj25APd4-17syF3Vc_f0AWpEgUoL46qbHrGQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] bpf: permit JIT allocations to be served outside the
+ module region
+To:     ard.biesheuvel@linaro.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        rick.p.edgecombe@intel.com, eric.dumazet@gmail.com,
+        jannh@google.com, Kees Cook <keescook@chromium.org>,
+        jeyu@kernel.org, arnd@arndb.de, catalin.marinas@arm.com,
+        will.deacon@arm.com, mark.rutland@arm.com, ralf@linux-mips.org,
+        paul.burton@mips.com, jhogan@kernel.org, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au,
+        David Miller <davem@davemloft.net>,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 09:51:51AM -0800, Tadeusz Struk wrote:
-> Currently to read a response from the TPM device an application needs
-> provide big enough buffer for the whole response and read it in one go.
-> The application doesn't know how big the response it beforehand so it
-> always needs to maintain a 4K buffer and read the max (4K).
-> In case if the user of the TSS library doesn't provide big enough
-> buffer the TCTI spec says that the library should set the required
-> size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
-> application could allocate a bigger buffer and call receive again.
-> To make it possible in the TSS library, this requires being able to do
-> partial reads from the driver.
-> The library would read the 10 bytes header first to get the actual size
-> of the response from the header, and then read the rest of the response.
-> 
-> This patch adds support for partial reads, i.e. the user can read the
-> response in one or multiple reads, until the whole response is consumed.
-> The user can also read only part of the response and ignore
-> the rest by issuing a new write to send a new command.
-> 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-> ---
-> The usecase is implemented in this TSS commit:
-> https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
-> 
-> Changes in v4:
->  - Use unsigned type for response_pending as it will never be negative.
->  - Rebased on top of name change data_pending to transmit_result patch.
-> 
-> Changes in v3:
->  - Remove link to usecase implemented in TSS out of the commit message.
->  - Update the conddition in tpm_common_poll() to take into account
->    the partial_data also.
-> 
-> Changes in v2:
->  - Allow writes after only partial response is consumed to maintain
->    backwords compatibility.
-> ---
->  drivers/char/tpm/tpm-dev-common.c |   41 ++++++++++++++++++++++++++++---------
->  drivers/char/tpm/tpm-dev.h        |    2 ++
->  2 files changed, 33 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-> index 67a70e2fde7f..0544733e1b6d 100644
-> --- a/drivers/char/tpm/tpm-dev-common.c
-> +++ b/drivers/char/tpm/tpm-dev-common.c
-> @@ -64,6 +64,7 @@ static void tpm_timeout_work(struct work_struct *work)
->  
->  	mutex_lock(&priv->buffer_mutex);
->  	priv->transmit_result = 0;
-> +	priv->partial_data = 0;
->  	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
->  	mutex_unlock(&priv->buffer_mutex);
->  	wake_up_interruptible(&priv->async_wait);
-> @@ -90,22 +91,39 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
->  	ssize_t ret_size = 0;
->  	int rc;
->  
-> -	del_singleshot_timer_sync(&priv->user_read_timer);
-> -	flush_work(&priv->timeout_work);
->  	mutex_lock(&priv->buffer_mutex);
-> +	if (priv->transmit_result || priv->partial_data) {
-> +		if (*off == 0)
-> +			priv->partial_data = priv->transmit_result;
-> +
-> +		ret_size = min_t(ssize_t, size, priv->partial_data);
-> +		if (ret_size <= 0) {
+On Sat, Nov 17, 2018 at 6:58 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> On arm64, modules are allocated from a 128 MB window which is close to
+> the core kernel, so that relative direct branches are guaranteed to be
+> in range (except in some KASLR configurations). Also, module_alloc()
+> is in charge of allocating KASAN shadow memory when running with KASAN
+> enabled.
+>
+> This means that the way BPF reuses module_alloc()/module_memfree() is
+> undesirable on arm64 (and potentially other architectures as well),
+> and so this series refactors BPF's use of those functions to permit
+> architectures to change this behavior.
+>
+> Patch #1 fixes a bug introduced during the merge window, where the new
+> alloc/free tracking does not account for memory that is freed by some
+> arch code.
+>
+> Patch #2 refactors the freeing path so that architectures can switch to
+> something other than module_memfree().
+>
+> Patch #3 does the same for module_alloc().
+>
+> Patch #4 implements the new alloc/free overrides for arm64
 
-When ret_size < 0? Shouldn't this be just "if (!ret_size)"?
+Except a minor comment, the whole patch set looks good to me.
+Acked-by: Yonghong Song <yhs@fb.com>
 
-> +			ret_size = 0;
-> +			priv->transmit_result = 0;
-> +			priv->partial_data = 0;
-> +			goto out;
-> +		}
->  
-> -	if (priv->transmit_result) {
-> -		ret_size = min_t(ssize_t, size, priv->transmit_result);
-> -		if (ret_size > 0) {
-> -			rc = copy_to_user(buf, priv->data_buffer, ret_size);
-> -			memset(priv->data_buffer, 0, priv->transmit_result);
-> -			if (rc)
-> -				ret_size = -EFAULT;
-> +		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-> +		if (rc) {
-> +			memset(priv->data_buffer, 0, TPM_BUFSIZE);
-> +			priv->partial_data = 0;
-> +			ret_size = -EFAULT;
-> +		} else {
-> +			memset(priv->data_buffer + *off, 0, ret_size);
-> +			priv->partial_data -= ret_size;
-> +			*off += ret_size;
->  		}
->  
->  		priv->transmit_result = 0;
->  	}
->  
-> +out:
-> +	if (!priv->partial_data) {
-> +		*off = 0;
-> +		del_singleshot_timer_sync(&priv->user_read_timer);
-> +		flush_work(&priv->timeout_work);
-> +	}
->  	mutex_unlock(&priv->buffer_mutex);
->  	return ret_size;
->  }
-> @@ -150,6 +168,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
->  		goto out;
->  	}
->  
-> +	priv->partial_data = 0;
-> +	*off = 0;
-> +
->  	/*
->  	 * If in nonblocking mode schedule an async job to send
->  	 * the command return the size.
-> @@ -184,7 +205,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
->  
->  	poll_wait(file, &priv->async_wait, wait);
->  
-> -	if (priv->transmit_result)
-> +	if (priv->transmit_result || priv->partial_data)
->  		mask = EPOLLIN | EPOLLRDNORM;
->  	else
->  		mask = EPOLLOUT | EPOLLWRNORM;
-> diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-> index 3ff1dc9f3d75..714a4419d392 100644
-> --- a/drivers/char/tpm/tpm-dev.h
-> +++ b/drivers/char/tpm/tpm-dev.h
-> @@ -11,6 +11,8 @@ struct file_priv {
->  
->  	/* Holds the resul of the last successful call to tpm_transmit() */
->  	size_t transmit_result;
-> +	/* Holds the count how much of the response is still unread */
-> +	size_t partial_data;
-
-I'm otherwise happy how this look like but why call it partial_data.
-You cannot really tell from the name anything about its contents as
-data is very abstract term.
-
-BTW, why you need the new variable anyway and not just decrease the
-variable where the length is original stored?
-
-/Jarkko
+>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Cc: Eric Dumazet <eric.dumazet@gmail.com>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Kees Cook <keescook@chromium.org>
+>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Paul Burton <paul.burton@mips.com>
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> Cc: Paul Mackerras <paulus@samba.org>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+>
+> Ard Biesheuvel (4):
+>   bpf: account for freed JIT allocations in arch code
+>   net/bpf: refactor freeing of executable allocations
+>   bpf: add __weak hook for allocating executable memory
+>   arm64/bpf: don't allocate BPF JIT programs in module memory
+>
+>  arch/arm64/net/bpf_jit_comp.c     | 11 ++++++++++
+>  arch/mips/net/bpf_jit.c           |  7 ++-----
+>  arch/powerpc/net/bpf_jit_comp.c   |  7 ++-----
+>  arch/powerpc/net/bpf_jit_comp64.c | 12 +++--------
+>  arch/sparc/net/bpf_jit_comp_32.c  |  7 ++-----
+>  kernel/bpf/core.c                 | 22 ++++++++++----------
+>  6 files changed, 31 insertions(+), 35 deletions(-)
+>
+> --
+> 2.17.1
+>
