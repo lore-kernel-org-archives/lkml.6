@@ -2,85 +2,87 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF7DEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854B0C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B9DB2080F
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AFA82080F
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:12:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="FQz6BEBd";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="CSUEf4Bl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B9DB2080F
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="RMs4Pqfk";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="sUNoUOBC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AFA82080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeKRUaz (ORCPT
+        id S1727622AbeKRUbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 15:30:55 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:36316 "EHLO
+        Sun, 18 Nov 2018 15:31:51 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:36344 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726496AbeKRUax (ORCPT
+        by vger.kernel.org with ESMTP id S1726626AbeKRUaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 15:30:53 -0500
+        Sun, 18 Nov 2018 15:30:55 -0500
 Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA6XnV016036;
-        Sun, 18 Nov 2018 02:10:43 -0800
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA6m2T016126;
+        Sun, 18 Nov 2018 02:10:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type; s=proofpoint;
- bh=IU5xWtnQbDKlW2AMf56bgygAy4p4gNuRR8ruv0c9cKQ=;
- b=FQz6BEBdDcliFu+cMjHQpsg7diupt3AmRtnjbE6/LY+rFtwnvYgwX2WOztR8pt0IHRGC
- O8lC1reKtnMBkfJq+oXu0g7Db+Z7pSs/8jI/68xMrC5Bw/Hw1z4Wa5sDxcbIawCnzHYp
- AAfEyoBJmp3b6z4ZXpLPAQqA/GiWWf8kfTKOVRRYeDseS6aiV3prZxfz45CnMUk4JwqK
- oMwnVSBihl6dswJCFH7mb3PYoBPhzoYj2PE6tNX9oDEX/b+gjjXRpPYztbJSh4zXXfWm
- yLC45S6rlvxQQfD/JEauPgFOv2cQKKSyfg2rVUmiLPDU8h8NuE1ZlEQfpzuel3WPCM6q 5Q== 
+ subject : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=proofpoint;
+ bh=HLqWJ82NMnJk1pCLtj8tgQyR/RsmqhSbhukHMirKJbA=;
+ b=RMs4Pqfk0b+IdZo0y3HmNuYZuIow3ysqtE+EZvMUx9FtVagKFprZqCO6ry19tL1r5hOR
+ NbC4rx4HMYwFzFqkb95kKBsklNJ3uMApxN4DOv8Ru53cj9D7S9Id1NCZxyOC0Jjxu9M6
+ 3W4zuIDcGkypZiAbAAIjRrYSjE9D7sDiSk1dlj7qlmkZi6Ma6L7YU4Wt2wc16MxPLtHC
+ oNZc6R/uUf7BankyQVGwqUM9mQvSVJlf1Xrcr1o1fzVMdIR8eNOdJBfUZrT05kQO0ccA
+ wDq3UFqsIFrKp0v5EAxyW0tCDnfCGEavRNb14xj7wD+JqPiHhRTLI8PV9I0VNwpQNo3e hQ== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp0088.outbound.protection.outlook.com [216.32.181.88])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2ntge14vft-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 18 Nov 2018 02:10:43 -0800
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp0180.outbound.protection.outlook.com [216.32.180.180])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2ntge14vga-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Sun, 18 Nov 2018 02:10:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IU5xWtnQbDKlW2AMf56bgygAy4p4gNuRR8ruv0c9cKQ=;
- b=CSUEf4BlWo/CKLRn9+EFx8EDyCGpWgOUirsLcgteWgIc3uYYCf+4Vj4Qh+/4McevnzwvBvVkhWOvvY0Vfime+6FVPUMVR+Xg+ub7Aj53oQvWspupDeYQqftMdlz55081Olulm7lwgf8DefUKibb6vjSj9PiJYJRjNKxEspodKfY=
-Received: from BYAPR07CA0011.namprd07.prod.outlook.com (2603:10b6:a02:bc::24)
- by SN6PR07MB5181.namprd07.prod.outlook.com (2603:10b6:805:6c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.23; Sun, 18 Nov
- 2018 10:10:40 +0000
-Received: from DM3NAM05FT018.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::204) by BYAPR07CA0011.outlook.office365.com
- (2603:10b6:a02:bc::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.21 via Frontend
- Transport; Sun, 18 Nov 2018 10:10:40 +0000
+ bh=HLqWJ82NMnJk1pCLtj8tgQyR/RsmqhSbhukHMirKJbA=;
+ b=sUNoUOBCOqLbSuEiqZPqndxuD+92YD25TcnWXMh85oI8FcH+UOdNs2Ft2o7/wJzNExVFvH2nhLlP5gFAjsB91LeOVGi0hAhv+qn5CdD7Ec9oT5c55OWHiJ0wbxkYouegh7EG+vzgin1cfYuVHo0TpEEwSkpnPMV0iNw8GyckA9M=
+Received: from CY1PR07CA0017.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::27) by SN1PR07MB4111.namprd07.prod.outlook.com
+ (2603:10b6:802:30::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.26; Sun, 18 Nov
+ 2018 10:10:47 +0000
+Received: from CO1NAM05FT010.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::208) by CY1PR07CA0017.outlook.office365.com
+ (2a01:111:e400:c60a::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.20 via Frontend
+ Transport; Sun, 18 Nov 2018 10:10:47 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- DM3NAM05FT018.mail.protection.outlook.com (10.152.98.127) with Microsoft SMTP
+ CO1NAM05FT010.mail.protection.outlook.com (10.152.96.117) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:39 +0000
+ 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:43 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5I029622
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5O029622
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Sun, 18 Nov 2018 02:10:38 -0800
+        Sun, 18 Nov 2018 02:10:42 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Sun, 18 Nov 2018 11:10:40 +0100
+ 15.0.1367.3; Sun, 18 Nov 2018 11:10:42 +0100
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:39 +0100
+ 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:42 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAaxY030887;
-        Sun, 18 Nov 2018 10:10:36 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAcOt031155;
+        Sun, 18 Nov 2018 10:10:38 GMT
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAZga030825;
-        Sun, 18 Nov 2018 10:10:35 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAcvX031111;
+        Sun, 18 Nov 2018 10:10:38 GMT
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     <devicetree@vger.kernel.org>
 CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
@@ -89,60 +91,63 @@ CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
         <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
         <pjez@cadence.com>, <kurahul@cadence.com>,
         "Pawel Laszczak" <pawell@cadence.com>
-Subject: [RFC PATCH v2 00/15]  Introduced new Cadence USBSS DRD Driver
-Date:   Sun, 18 Nov 2018 10:08:56 +0000
-Message-ID: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+Subject: [RFC PATCH v2 06/15] usb:cdns3: Adds Host support
+Date:   Sun, 18 Nov 2018 10:09:02 +0000
+Message-ID: <1542535751-16079-7-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
+In-Reply-To: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(39860400002)(346002)(136003)(2980300002)(199004)(189003)(36092001)(6916009)(16586007)(42186006)(316002)(54906003)(356004)(6666004)(50466002)(36756003)(4326008)(86362001)(4720700003)(478600001)(87636003)(26005)(26826003)(14444005)(107886003)(51416003)(5660300001)(426003)(126002)(476003)(2616005)(336012)(50226002)(486006)(8676002)(217873002)(186003)(246002)(2351001)(7636002)(8936002)(47776003)(305945005)(2906002)(48376002)(105596002)(106466001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB5181;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT018;1:YTl30p8dQ4xHMz+S96/vJq3d6H/h+dk/PPlUnpekhzNgLnGxNEfNMJiscPmDHEuyZHC9+Z7UQCF7tNqS6Hp4whbLUZxSRfV9RoTzLXvMwkfvEsg0Vf8qxwxqN5DGGJtw
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(136003)(396003)(2980300002)(36092001)(199004)(189003)(2616005)(126002)(476003)(26826003)(478600001)(47776003)(36756003)(51416003)(2351001)(8936002)(87636003)(217873002)(11346002)(16586007)(316002)(42186006)(486006)(246002)(8676002)(86362001)(446003)(50226002)(4720700003)(6916009)(6666004)(54906003)(356004)(2906002)(426003)(50466002)(5660300001)(186003)(26005)(48376002)(6346003)(14444005)(336012)(105596002)(106466001)(305945005)(4326008)(7636002)(76176011)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB4111;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT010;1:cFhnbc3uqYDz0USn8kGfBhyWZ6but+5kKuZpHNaGjm6bVrCWr5Scsla+VQXSoWigc0pFydtrELIoMeXmzl/U6KrVdh4VEgeR/lr1s1wiWRH+WONaFW6x+rIyMaGQauMu
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 5cb2189f-868d-4c8b-df0c-08d64d3e17ce
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN6PR07MB5181;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5181;3:8RMSHeoGmYnH1E4M6KEg+z/x1/8qzLhyPCFCJHKuLPUbt9xxLmnfmQ76pzbt5wFKO1anEEblwbCan6CczgsliWsv3HnuA93pPKlEVaXpxi1vWHbrTTlEAW4OrYbr5h7RldOGc9xE3V+Xp/pDfqjp7g8vR1PUEDtRU/y2vmYyxgIs2DA0P/9jAknXnw/e38DTTh3p17omi0SwI5zsRxGmMtyKepEhgOienFux7mbCezjqYwviZ3eyXE+uBL1df7Ntrth9chm7NPHizGJi6xs8Ow+8UglUfG1lf2TGl57NQIrkJrhYJ5OSUT5mBHJvmEt3Qzs6dlFK0xyfHkWIzGFL1oxX9RDaqevNcpSMSY2UtQM=;25:mD6+8Utq+GCXm8I4ju6B4qE/h5e22FQf5iJQzqa+5a4itAHUIXy6TnSpdIzQSD6ln5IHx/swjnFXhnIKScTFP3Hprz+ctZakPRTOklQssrW4IpHhvRXmQc58Bth0b2be5swxmGZZpjKk8k2O//XVtcLZd/sr72KczqVN44F+MbbUj4Ra7VBM7yGJXVoJNyyFQ7BqyFL8dI51KFCb0aR6c/egrT2W55JmqMGSSbs46JyPbuZl6kkmTGjr2hO0Wcq8W/VVU82lxOwU5iI2tlb2w4R9FrEWGYcmKXM9MaNqE3mHhE7R5Objfuoo/uY8B5fRiMoXP1KNub1+ZDOqyti/gw==
-X-MS-TrafficTypeDiagnostic: SN6PR07MB5181:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5181;31:l0bFPvfh2o7+BFsy+lDUs7CPTA02hZc4gKo4rdwemm7gA9vtqXqIcC8CvGK0st9ebUNzM1l7+R6c+wkFPzDJDgv1vuQP276IK1+hD5sbHQCENV2EkKzkje8O7/UnysOs+ECW6dL/iDvbiZ7oD6ufVKCn2nfWk3AuFu3KN0nEcfNm21/y+0OAjonrPRxuStXzT1jW36Ga4XpMwedeauKLNh7KGaxBslbB907igFYTdZc=;20:x7fScjA4Rxd5MU3Pm98rdspetPWawRExgNqBr4CN6lWJxLNqBK43Fl+a955NhAB8NwhIDkce78e3Pp8C5JFMzlNo+b6XjN86J0XFkbAqyqLFKn2O3I5Hq8ITVYbtk90WouNIYx+FueK8ciTqhTUSMY0CfyooAIf3R97qi1b36t+tkOolCJfkLRpCycx6bMu1hsaqqv6S/0b13Xl370CORE7wHu7LZkJFGA9zRPeZoOByMZpMoYI2nInXXhD38/YmnTvBn5Z2d1dxpnDvWtSdw02TAyf1yKBnVrwjuoJ+TKyvULNMuwm93ElnT+imSohM0gOiv3sA7E9wXb+c0V5uGD94JUfP4nWKEX96A78Yi/FIYUyGR2MWERwbUxCnf7IFAJ3uTmb1prwkJt8FMFfE7QwitksENlbUdyINoqhk0roMFk9c/u3c1H3zrfQBmsJHH36cjA5xuSubrZoNrUfG76oMvZ8kTLoCoXz7X2ihPYDjY7bO6YsXott49FX/ALKt
-X-Microsoft-Antispam-PRVS: <SN6PR07MB5181B35E8F79493A487D7F98DDDF0@SN6PR07MB5181.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
+X-MS-Office365-Filtering-Correlation-Id: 7fdd9f0f-1bbe-465d-d0ca-08d64d3e1b99
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN1PR07MB4111;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB4111;3:Rdks9An4qZl7cDwNZwgIsXPElD8kt7AbnyfGKYYhVU3LQRkoWCwUpWxJbkfrAPqVglyIpNav/Jt51eO5JepyobGpIfCvYtefI9uOD3snPI+vzjJKkkOozQuIV6v6kbqohIQe/mHQOLJ5gj2sS4JO69+g02APP4WDTAsFSJDIBSYifGSancVlX8Rj7M3owszKYB4oWiIihCzR2iA0Eed3ps38NHw8iO4b+kC9YXHCC0+BdTzRAIcCPO0Oztol8tes6/wXN/0HZ1lbJPIqlqsAJq/aHFq7txkXyNb3k2zvO3hwidkDzlMcdJslHgJsWdK/okH091txpuz8kHUx6thg+QxItgkXPm5RWIoDekCUtAM=;25:MS8s/f4axwKEjOlm39sVo2ynk0Tql/T/UdVOK11Ix5Kd6hfMPevTBycGG5o9KxJQXAlKWmkm8DQzyY0M5B0XNuSBJfylQ8NS/FxjGxhKVJ8QgJadH7TINsB3uemIyA6WsU9b/lx8YpvB14nuTXD44pe8xzKDSDzalHhQNY5xCVrQ99yJpjTgV2oe0znXaI++9oxWUuQXMr+CUzBGvAsZ2/+5Ge8jPVwTdBVk0QaCTd9+WBDnoHiWqpUpRX0tkmTSKlWv0gr2ANvV9M1w2BrXmbvOENEzOm5QJzmOKYL7+DQCLAsWot3SsnQgT4DR5JY8KJYFeZpjF69zV3mMfkSPoQ==
+X-MS-TrafficTypeDiagnostic: SN1PR07MB4111:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB4111;31:uGXsOK8zvi2hRmC+w7c64RKcWuTT1SuXAF8Sg5NWouQurSA4/U959OT4Oov1GCG+eHlYA6CJROz94FuICKNJBTAfs0e+PWm1w0DlwqtrmdYfMBXQ5qavdh1bpxSM6M2fNp1b0EvqJydvWgLbLcnsHM/2Dz2vNEREvdaDsasf8y3YLtMRdrZJMjhFa7g/iGPla4Tnm4ccJz2S+ryIAZdanHnAHhkGzDvxGXE413SbBew=;20:XIi9EpFeLuTv5iSqTDIv0kriCJe+wVlZtDL6O/tY4fcPDtD7uoVAnKvDSM/AXhvqKisIUICrgQOTbTC8isQSIp2z0ilVXSaqBen6P9rIOmKJIFNoRGRGyv+ni7gUKfGlY48Za/lvi5ELYp7YlbnQa6YTxMrsNW4GWa7Eu3yy3b1P5grLJHH843+8y9XMvKkLkKhkwnQBRvh0aHGtI8pCN1baZv49S6LQfxsreq2O+MNfRNcsDDpl8hCj0AeATplSsbDg1teVbkBirF3mWG2uUi7wuqztq988VmBDZxkv5lKWi3GlnV9j3dhTk3Eu0E4bykoG/rFMn/VfjKAvwwOC3ZN/7Y11Xj9Njsdbz+xHs5EIXY4DFOYy3zQnuwit6JskArKXouhtTR8SItpGPqbmnvCg+1+tPko+8HHcRkvYThi+ot1lBcGXuNPDB9qqUqo0N1LEYQacBiDNr/M00BtA1nRTiANyq06ZgxKCg0z5hbXb+cGjaN/urrTGMXkidj6p
+X-Microsoft-Antispam-PRVS: <SN1PR07MB4111A466248BEE66C8F76AF8DDDF0@SN1PR07MB4111.namprd07.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231415)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR07MB5181;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB5181;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5181;4:WHJfQK9uOU2/fGGYja3Uyula2unllMU9seC8vHezPDt6x37SfkxeUsT3bbcn/kMmmNa7teSLVcJ8BgtrHWePau/UkvNq0POwJO01zAhKNjW8VKi6cPwKoX8kH94nv3EDrMG35zFzF9dXMtDmtiAqR22SNtc74i8NTfV/Zo/RALwaCWaNv4IJdtIXmlHPihkMJYRMI1yFqi4J7RzqJFGrOX32AIDvmdZasR5liHP0sk4SqXax/DA9XTEWqeh0Zob/3riKkzWjJFHuXDTLS5eb7wbhWZNsI4tMHN9eo1XO5rrTNFY8JFSAmGzxnDTtBGUO
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93003095)(3231431)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN1PR07MB4111;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB4111;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB4111;4:ULdkWdyP5qkY9W5ZcRIvHS+bppwmY8uOm5Y+OS5HqU6CahAndjCGIt2dLv7OBhN2TQUvzc7oL3vrgpYTTDYCfomiAHkKEpSCoOGP5Pp+XVDPXeTgoTbuXw6SfGc5mF7Cs6Nro4iwXI6wLpCtklyM2CAGOC0/+jXjSGTRZZ/ChdPZvyZuysqwRDBKXouex53hxUd9YVjC2UtZgwoSU4uyk6xiLoNPkqg2SHHl4QXroFdw067Bq7+9n336wnZ8qUfbKx74jqHIJwLpakdrSfMH1w==
 X-Forefront-PRVS: 0860FE717F
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB5181;23:qFrT9lMLra6I0Lln3r9kLmMB5s268Cnzj9oNkQpPC?=
- =?us-ascii?Q?M24vn23wj7W8nSCp30bOtUNXi7xkgTFY5OTbf+RdSszJpZxQ09qTSK6lQgy4?=
- =?us-ascii?Q?K+RoFQtO8XNysLjOOaqocYLTtlguVEKA4tKgJrZH9ZbdlylHxroTlaAzhyPr?=
- =?us-ascii?Q?ZOFJktQ+oPUZ0uW0Yr5GYQfo5fhHHuucHHc9wYEt4pciFXM0SKXEnMfCnJFw?=
- =?us-ascii?Q?sQdqOG/8RdoaHl1wTW25UjSKaeL3s3qL5FuH7M4p8DyCACNQ/sFKjCzd9NbJ?=
- =?us-ascii?Q?lWGxUIqMtzA1XBkvKyqalwL8ZNz851kNQoOs8TMP/H8JP0NTK+iJFYpO2/7U?=
- =?us-ascii?Q?2EWA+rnvnwNzDLvvlt4Dj9g7OC3OPTK6pP0FyTO2rDk3BjYtl2/qf4Ek4gRb?=
- =?us-ascii?Q?7ZPpjYYQlzZ9rvsCnjb5c8bCr49RRyL9rPpftuzhg1mK/KhTEl9K9PNbezDQ?=
- =?us-ascii?Q?bIloFDHSsqdaWcD2wDAgkkIQeZ+zCjrIksPVhrI1HG9epprilWAZTYSnW6Us?=
- =?us-ascii?Q?sIpXsI8OU4GGeV2WphBB+QSy+m8Q0hq1rOJxng4UCe1xHlIU4lp7Wwe3uuTq?=
- =?us-ascii?Q?dJY4phww2SId/85CdvelkioHk12xXBPo8KIIOdSrxRk+6zdvbsobNLv9uKQp?=
- =?us-ascii?Q?jx43vB0NwSuHWYOyPH0sC6okGSU18ykaKXqXcCSAgOaj5f0T/i4SkPJ7qd8P?=
- =?us-ascii?Q?wb3VNZ7bdqMANFYyL0jY1G98u86idcq3mxKWjod3sRxN9dX4oPfPXMR9eooz?=
- =?us-ascii?Q?OyS0FRSWqRIVeJaZDAj/GlcPk/W4vUiFq5zqG2ODi44YA7uDWiCK82a/hoam?=
- =?us-ascii?Q?PAQg6yW+VkkrqXY6OwRa6hSlTZwX+eWxhis3o26mHELDhEnHQ2xrKv40OzHJ?=
- =?us-ascii?Q?6JJUSSRQefGO1Vb9z1MXDWCjQ2UnXksi1pdDCLb6qdODUg/1NpBjDFk/gxLV?=
- =?us-ascii?Q?rA8J4l5STCC5SzGTeicXV+yLwIDoTT43MqmbtcnRGWMts1d6JuWPDjAjFuXv?=
- =?us-ascii?Q?mkexgaChjjioIp0GW5ADlAFsjtapqkNOkczqlCDuZ3a5tok7FYcnHe0ALRTV?=
- =?us-ascii?Q?nPcXQsWm7ggDrttHaVIjQYGz9DzFbWRaw0i5eKqSgp4eObDoQ=3D=3D?=
-X-Microsoft-Antispam-Message-Info: Y4nwxVjviItme8uaBxPsx/gGfdvJMaJ/qM4QEcRGfzBubCTZc+gjLc1todMPoXkeq3mPa+pnJNlyM1129RDpPLDCr7Ku5HyajCdtbOXJ8tQQ9mqtiQKsqsDF2cRoK3EjqpP0bBrTdiZx2oPWbRn4YQ6/NY1kUjV7VzXTcps2OFI/4uvw8Wa1LoL2Zo1e4UuN6NGzrTJxg8j3AEJ8GRc2oDwqQ6X2UYtw8wQflPxBnSdN/WfxuT8e8NMWJX2GVx5g5z0AUTOUGizFNiL5ZrKpHSJbTkFhpSVkfN5ZZ0uIv4mZej7GW4DX8TnQwMzBvVQuw+Q9Lc4lecweesJ955aF2SLFks9dy26qsFCg8LQeoIA=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5181;6:AzsGXmaedP+8Ol+KhYl42PtHcbUcNL7leDApn+kE+EPkxrFscBL4xW9o4jY+DjzeyWnUUi1KT+0XLuG5Mvt/h6i90oVtEB6JriQxCZkel6vA6ASamIJdl4ETGuHVq0uwSr2ccnC02vW+bWPV1S1vMzvy93MjTgIcVJNVt6MeTZ28PFF/8QYCpoaYMpiwFYiq9rDr3AHX7Gx5zUQ97EihCVsprDM8bLE06DiR3+AoO2l+MdCVffX7DpTuVKzO9PGYFh+S2vsThj2l2lpnPxcGFfOWGzh85TDJzjoo2V3lvVCR+uGJwiwCE18G4L9Id6mHlsJLXtli+QILIVc05KXllwlU7rzbPFUAWkG/6K1RRJWpc+lASyrON7EQR0iHUvTLj/bb3hhvjuNn9gSpUK6gZscQgxiKlJ1ATJqQD7OoBrSKZi2Ggv5R7slq/vZ3x7osO36yM1GQU8J0OmC2xU5gvg==;5:OmEZRXgOyxJ7KyKZnwq2acvePNmcqW03OUFJkZ2mI5LXNn1iYWJn6JGklPLhINcb/0mS1FdqWoRYZh5iALv5YKS8E76l93H0j5WdM+JwtDwKi46+Mm2jebKZ9UztK0tTnYBMq1YEIgVim9vnWDhaEV1K1RP1jtgkA3gaECRowiA=;7:duepZtWNUBVUqIF0DwjgiwXbIhHUmBFVk0izdkKC1h9ot9oHVVTwovIN0z29nDVU4Ib5XQOdUSFcAJeWjbI5L0hTljlMWaVdnExyxMaEtfECXjPSCvzzWMJ9TYsNfuIuw0IUofSsyCDhvQtYMwtkRQ==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR07MB4111;23:vL7l0ePhpH2kVlmvVrfivpoKNuMuQPvuHPsTpP2GN?=
+ =?us-ascii?Q?g1JmCFKd8T2FrTfYALBBL9l2GRLgHZVKSncBHWxsiTHTT6NMvqu1FJL83pG7?=
+ =?us-ascii?Q?WjUoZF1k+HzcZYEESXfe15qQjDRiC9h8kEZvspsljpz6KmrhLr3LBwTWTqtn?=
+ =?us-ascii?Q?gQQ0LGbz+x01WupoYjYMLHxuVfII3s3lDw95/rEcJdauph0qFwQQ1QDuXkN9?=
+ =?us-ascii?Q?8ugJvlqikSLs3uM1MwIcsXTUFhgAmXMS3a3+N2keROBQzOfERqnzVRZYj2Sx?=
+ =?us-ascii?Q?i+skFolpsKM97s8sPBSI1jT5dAUUktchTGbQroI/5sgg4B/NY7PPsVlLPdrI?=
+ =?us-ascii?Q?iyfZGkvPyUTLwFIfmUhVsDGicKJQrPhvHT29Axjo/gpOsbjLXLhXwODWFJTF?=
+ =?us-ascii?Q?duHujR0eJ7OpzHgZQt6uo2lQAkDbYjbSGn0LPBZZ39uO5rmv0/AKMUew3WXN?=
+ =?us-ascii?Q?Z8XYpNB0+dDwoF7hanXplSy0Qf79jdQ+MU4HmcCGCsiGb1V73l1HvizsYPXO?=
+ =?us-ascii?Q?nq8iWai9DQH6jxgBnOfzH65nfM+1llnSSH9LEn5KOGinLppX09SUXdDAdeed?=
+ =?us-ascii?Q?NyY6Pfe7MXvbKd+z4/Zhc1HA2JiLjH8fdCLOcZvzE5YKoE0PQPLLWF+0AmpO?=
+ =?us-ascii?Q?8pmlzaVyCxFZe1AdDbF3X6ZXhbwoa/tusBNSCrFTIkFqXMu2M2K8CWliciER?=
+ =?us-ascii?Q?6/4qS5NJLObheJ7RUvo5wGM0NeV+hocYtOXYktH6YYj3d+9IrUjqNfl7i/Q9?=
+ =?us-ascii?Q?oeiyHr3dOjjDccwA4wAtwMoEjHLXBSkgF4Om9RBAxAg+k4/05cI+80ClEQF6?=
+ =?us-ascii?Q?IFUsgRQvln80d8P9zNeEMAKcYeAUlH+u4y7gNh/8JtWSGupLGV0UDatdzkq6?=
+ =?us-ascii?Q?SruMK2FgQf3CQ6AggpUCics5uCs97xncbUpu/z5vjGwLb4+RV5xI8Fwfv+A7?=
+ =?us-ascii?Q?O179MV15rLJVVUO8t+68kEeGso1kQm2iUNPqjXDAnzr0SZ1/nQFRgPr4/Nle?=
+ =?us-ascii?Q?kB2TAvIDbVCdKPh3i74xQ8HI2RUmWEZ5Di/4cPrYCk4Zz9KhUItPbwtiAKrS?=
+ =?us-ascii?Q?u8FAt0AMx7jEPmaLgZTEqaXCJa0C2WyTu5aStBQCYIYZ1uTCOj0NJoRU+8KT?=
+ =?us-ascii?Q?hg+hE/akeEZXQJoezxjjXqgDg+II5hHk+exMAhgvyDqhTr0JJaIBj1/krBjY?=
+ =?us-ascii?Q?lDZ5krvSIx6br0=3D?=
+X-Microsoft-Antispam-Message-Info: Dw1k7VgtuZdEWbUIchTgpi+x4n26Dm8daF+dhN0aJSxzuxDaAe199TqudZZ5D86mQU+4R5l6E0KOFOJmvVVODgEIhAiWIkf+FMA/uPKXsI3nvUZyMxNB1xbPZOAmB5/e3ts/uKLZ5VpqHQ9J+lw5c+8PKO7bCKrQYYzHpAaTzLictERH/WfnZLEH9Brc9AmOuzt/KT5VBpi1l5lUEmIIdA+Wy5OkZANLe7hPKq8Up4MUeWZs5W4jVh/Uv2W2UXf8h85ewz8W2TQcVR6BUErsOe6VGvg5zoi3flHF4X2PjMe3+4uRiNGv+raeqN1BHFNA/SC75ZaC0stGZ10wqOkwrMRpUttqYXVOJ8yWwtCOIc4=
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB4111;6:imXT15WF7bDdwwVsEvk6izBEtFJfk7qz76FGv7/jpUpYSq7eNY5Ae5+NB+oTn78X+5/u61M2zaUn7Hgg440MesMoN2Sp6j+n+iBACdGnsb1IH3S0K+UAzAQNCf3b0SjZqmMIbzKM+9CKHAOSj4+nuk9W3++WYBfYbeE/9k8ULBQUlUDmTxIBlD6kJL2GiQxUKstSm3a61LlOkt/qOPtGUvkPc1O9oY8pRIWi4RIgC8D08HrroFRow8+asj3WBod3AIDBjOCZ6YTKGB6Ob7yyYvLp8Fg6aTMrnTE8xayK9zmevF6s5yBB+mps5dngKFgXpLDGMxjJ5JJghqy7vngzoKnIG+USsEaV/8siYrMFNKzC6BlIJsKevAGhoq60/83XHp5jByzvmQVJ6GulryjRKqOz/qDecyhnaRQBMfEfkfM23YdI0n7eM5mYC/kKwnkCAQR8BOKuU2oH+awFGEMGXw==;5:shYQgXD2y4Kik7A8cnPIDics6LSnSdGtevVvA9DAl9/wkRd8P2OioAU2NWvz+HoU5nPu2dzBpIFAfiDlWB8cIDCTVAK64TU19MKAs8xWIbLF2b4TXLs2M3vWsKJMsDeltFXBmjwmmDWsonfEz09GfZIebs+uxVCrxqtnbwsUcGA=;7:IYV1s4Uax/E6zvMZf+u0yqhlHezUQC1IdC+u1Ijr2Cgx8xKvv4928P5CjQzikYOHbdx9vEtEGhKMWZzk+b8osviWvtcIxZrJ5B6oi2xc2cDPKtTkg4YwMKb9XxpqL/h1DsB1SKm8yKVAFoKlbifZ7Q==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB5181;20:PdClikwsUj1ZaaMp4UtY6jMyfK475MCL12RLgkPQBw366WBQIUKBEM/JRitg5wZ2UJcn/HYhcBS6b562FEwGAmZ9MbvMwWgceV8PAhwu7sxcscbVH3WouyFTCwhXF6Sbf137wOsO8YykskRqu5zTpVVD1rjTTtMDvKa/pJwmBfH0JnnaGpK9B+YIeEk4kdhx5PqqaflQx9B72nwW6XU6UZ2mfccqPInA4rzQYOozBnF1A8W6sqzAl+rg4F0oMyCh
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB4111;20:nFFqVqsLGD+K7IoSA6PdhGNe4cTjY8jkQbnet3n3Mr/DUz4ItqjNVLmInKFPvZhG+6y5cSvUijAJ80LZm7HeH1qM3wr2jbopJXN+xGzcnmkqopxpmw8vl7w6HfrlI4PldNXcy2Gx0AVFWbazCP8V1MtmDHXJZnMxDNF5455A6LN34DRQ2AyvWUaRrf0Nw9FRvxY3N+ageI62z1wN3oyhH4+XL6+M/WYv04lO7vyAwr9IwoyOl6w/lVJdYNsnnpGk
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:39.6779
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:43.2754
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cb2189f-868d-4c8b-df0c-08d64d3e17ce
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fdd9f0f-1bbe-465d-d0ca-08d64d3e1b99
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB5181
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB4111
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
  a:mx-sanjose5.Cadence.COM include:mktomail.com
@@ -152,111 +157,396 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=913 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1811180096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set introduce new Cadence USBSS DRD driver
-to linux kernel.
+Patch adds host-export.h and host.c file and mplements functions that
+allow to initialize, start and stop XHCI host driver.
 
-The Cadence USBSS DRD Driver s a highly
-configurable IP Core which can be
-instantiated as Dual-Role Device (DRD),
-Peripheral Only and Host Only (XHCI)
-configurations.
-
-The current driver has been validated with
-FPGA burned. We have support for PCIe
-bus, which is used on FPGA prototyping.
-
-The host site of USBSS controller is compliance
-with XHCI specification, so it works with
-standard XHCI linux driver.
-
-Changes since v1:
- - Reorganize patch 3, 5, 6 as suggested by Roger Quadros.
- - Remove inline in debug.c file according with Joe Perches suggestion.
- - Fix condition with no effect in drd.c file.
- - Remove compiler warning generated by sh4-linux-gnu-gcc.
- - Fix bug with xhci_suspend/resume undefined, that appeared for PM disabled.
- - Add CONFIG_OF support in core.c file and dt-binding documentation.
- - Add template function related to CONFIG_PM configuration option.
- - Fix bug: CONFIG_USB_CDNS3_DEVICE instead of CONFIG_USB_CDNS3_
- - Correct depend on condition in Kconfig as suggested by Roger Quadros.
- - Remove Config options from cdns3_pci_wrap.c as suggested by Roger Quadros.
- - Replace dev_info with dev_dbg in cdns3_pci_wrap.c file as suggested by Roger.
- - Change cdns3_role to cnds3_get_current_role_driver as suggested by Roger.
- - Addressed other review comments from Roger.
- - Fix issues with ENABLE_U1/U2 Set/Clear_Fature request.
- - Fix issues with Cycle State bit.
- - Some other minor code changes related to readability.
-
-TODO:
- - Test isochronous transfer with some class or tester.
- - Test changing role according to ID pin.
- - Resolve issue related with shared on-chip buffer for OUT direction.
- - Add tracepoint. 
- - Implement suspend/resume functionality.
-
+Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
-
-Pawel Laszczak (15):
-  usb:cdns3: add pci to platform driver wrapper.
-  usb:cdns3: Device side header file.
-  dt-bindings: add binding for USBSS-DRD controller.
-  usb:cdns3: Driver initialization code.
-  usb:cdns3: Added DRD support
-  usb:cdns3: Adds Host support
-  usb:cdns3: Adds Device mode support - initialization.
-  usb:cdns3: Implements device operations part of the API
-  usb:cdns3: EpX operations part of the API
-  usb:cdns3: Ep0 operations part of the API
-  usb:cdns3: Implements ISR functionality.
-  usb:cdns3: Adds enumeration related function.
-  usb:cdns3: Adds transfer related function.
-  usb:cdns3: Adds debugging function.
-  usb:cdns3: Feature for changing role
-
- .../devicetree/bindings/usb/cdns3-usb.txt     |   17 +
- drivers/usb/Kconfig                           |    2 +
- drivers/usb/Makefile                          |    2 +
- drivers/usb/cdns3/Kconfig                     |   44 +
- drivers/usb/cdns3/Makefile                    |    7 +
- drivers/usb/cdns3/cdns3-pci-wrap.c            |  157 ++
- drivers/usb/cdns3/core.c                      |  434 +++++
- drivers/usb/cdns3/core.h                      |  100 +
- drivers/usb/cdns3/debug.c                     |  128 ++
- drivers/usb/cdns3/debugfs.c                   |   93 +
- drivers/usb/cdns3/drd.c                       |  229 +++
- drivers/usb/cdns3/drd.h                       |  125 ++
- drivers/usb/cdns3/ep0.c                       |  859 +++++++++
- drivers/usb/cdns3/gadget-export.h             |   27 +
- drivers/usb/cdns3/gadget.c                    | 1665 +++++++++++++++++
- drivers/usb/cdns3/gadget.h                    | 1104 +++++++++++
- drivers/usb/cdns3/host-export.h               |   30 +
- drivers/usb/cdns3/host.c                      |  256 +++
- 18 files changed, 5279 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/cdns3-usb.txt
- create mode 100644 drivers/usb/cdns3/Kconfig
- create mode 100644 drivers/usb/cdns3/Makefile
- create mode 100644 drivers/usb/cdns3/cdns3-pci-wrap.c
- create mode 100644 drivers/usb/cdns3/core.c
- create mode 100644 drivers/usb/cdns3/core.h
- create mode 100644 drivers/usb/cdns3/debug.c
- create mode 100644 drivers/usb/cdns3/debugfs.c
- create mode 100644 drivers/usb/cdns3/drd.c
- create mode 100644 drivers/usb/cdns3/drd.h
- create mode 100644 drivers/usb/cdns3/ep0.c
- create mode 100644 drivers/usb/cdns3/gadget-export.h
- create mode 100644 drivers/usb/cdns3/gadget.c
- create mode 100644 drivers/usb/cdns3/gadget.h
+ drivers/usb/cdns3/Kconfig       |  10 ++
+ drivers/usb/cdns3/Makefile      |   1 +
+ drivers/usb/cdns3/core.c        |   7 +-
+ drivers/usb/cdns3/host-export.h |  30 ++++
+ drivers/usb/cdns3/host.c        | 256 ++++++++++++++++++++++++++++++++
+ 5 files changed, 302 insertions(+), 2 deletions(-)
  create mode 100644 drivers/usb/cdns3/host-export.h
  create mode 100644 drivers/usb/cdns3/host.c
 
+diff --git a/drivers/usb/cdns3/Kconfig b/drivers/usb/cdns3/Kconfig
+index eb22a8692991..d92bc3d68eb0 100644
+--- a/drivers/usb/cdns3/Kconfig
++++ b/drivers/usb/cdns3/Kconfig
+@@ -10,6 +10,16 @@ config USB_CDNS3
+ 
+ if USB_CDNS3
+ 
++config USB_CDNS3_HOST
++        bool "Cadence USB3 host controller"
++        depends on USB_XHCI_HCD
++        help
++          Say Y here to enable host controller functionality of the
++          cadence driver.
++
++          Host controller is compliance with XHCI so it will use
++          standard XHCI driver.
++
+ config USB_CDNS3_PCI_WRAP
+ 	tristate "PCIe-based Platforms"
+ 	depends on USB_PCI && ACPI
+diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+index e779b2a2f8eb..976117ba67ff 100644
+--- a/drivers/usb/cdns3/Makefile
++++ b/drivers/usb/cdns3/Makefile
+@@ -2,4 +2,5 @@ obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
+ obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
+ 
+ cdns3-y					:= core.o drd.o
++cdns3-$(CONFIG_USB_CDNS3_HOST)          += host.o
+ cdns3-pci-y		 		:= cdns3-pci-wrap.o
+diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+index dbee4325da7f..4cb820be9ff3 100644
+--- a/drivers/usb/cdns3/core.c
++++ b/drivers/usb/cdns3/core.c
+@@ -17,6 +17,7 @@
+ 
+ #include "gadget.h"
+ #include "core.h"
++#include "host-export.h"
+ #include "drd.h"
+ 
+ static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+@@ -98,7 +99,8 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
+ 	}
+ 
+ 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+-		//TODO: implements host initialization
++		if (cdns3_host_init(cdns))
++			dev_info(dev, "doesn't support host\n");
+ 	}
+ 
+ 	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+@@ -142,7 +144,7 @@ static irqreturn_t cdns3_irq(int irq, void *data)
+ 
+ static void cdns3_remove_roles(struct cdns3 *cdns)
+ {
+-	//TODO: implements this function
++	cdns3_host_remove(cdns);
+ }
+ 
+ static int cdns3_do_role_switch(struct cdns3 *cdns, enum cdns3_roles role)
+@@ -410,6 +412,7 @@ static struct platform_driver cdns3_driver = {
+ 
+ static int __init cdns3_driver_platform_register(void)
+ {
++	cdns3_host_driver_init();
+ 	return platform_driver_register(&cdns3_driver);
+ }
+ module_init(cdns3_driver_platform_register);
+diff --git a/drivers/usb/cdns3/host-export.h b/drivers/usb/cdns3/host-export.h
+new file mode 100644
+index 000000000000..f8f3b230b472
+--- /dev/null
++++ b/drivers/usb/cdns3/host-export.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Cadence USBSS DRD Driver -Host Export APIs
++ *
++ * Copyright (C) 2017 NXP
++ *
++ * Authors: Peter Chen <peter.chen@nxp.com>
++ */
++#ifndef __LINUX_CDNS3_HOST_EXPORT
++#define __LINUX_CDNS3_HOST_EXPORT
++
++#ifdef CONFIG_USB_CDNS3_HOST
++
++int cdns3_host_init(struct cdns3 *cdns);
++void cdns3_host_remove(struct cdns3 *cdns);
++void cdns3_host_driver_init(void);
++
++#else
++
++static inline int cdns3_host_init(struct cdns3 *cdns)
++{
++	return -ENXIO;
++}
++
++static inline void cdns3_host_remove(struct cdns3 *cdns) { }
++static inline void cdns3_host_driver_init(void) {}
++
++#endif /* CONFIG_USB_CDNS3_HOST */
++
++#endif /* __LINUX_CDNS3_HOST_EXPORT */
+diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
+new file mode 100644
+index 000000000000..0dd47976cb28
+--- /dev/null
++++ b/drivers/usb/cdns3/host.c
+@@ -0,0 +1,256 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Cadence USBSS DRD Driver - host side
++ *
++ * Copyright (C) 2018 Cadence Design Systems.
++ * Copyright (C) 2018 NXP
++ *
++ * Authors: Peter Chen <peter.chen@nxp.com>
++ *	    Pawel Laszczak <pawell@cadence.com>
++ */
++
++#include <linux/kernel.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/dma-mapping.h>
++#include <linux/usb.h>
++#include <linux/usb/hcd.h>
++#include <linux/pm_runtime.h>
++#include <linux/usb/of.h>
++
++#include "../host/xhci.h"
++#include "core.h"
++#include "host-export.h"
++
++static struct hc_driver __read_mostly xhci_cdns3_hc_driver;
++
++static void xhci_cdns3_quirks(struct device *dev, struct xhci_hcd *xhci)
++{
++	/*
++	 * As of now platform drivers don't provide MSI support so we ensure
++	 * here that the generic code does not try to make a pci_dev from our
++	 * dev struct in order to setup MSI
++	 */
++	xhci->quirks |= XHCI_PLAT;
++}
++
++static int xhci_cdns3_setup(struct usb_hcd *hcd)
++{
++	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
++	u32 command;
++	int ret;
++
++	ret = xhci_gen_setup(hcd, xhci_cdns3_quirks);
++	if (ret)
++		return ret;
++
++	/* set usbcmd.EU3S */
++	command = readl(&xhci->op_regs->command);
++	command |= CMD_PM_INDEX;
++	writel(command, &xhci->op_regs->command);
++
++	return 0;
++}
++
++static const struct xhci_driver_overrides xhci_cdns3_overrides __initconst = {
++	.extra_priv_size = sizeof(struct xhci_hcd),
++	.reset = xhci_cdns3_setup,
++};
++
++struct cdns3_host {
++	struct device dev;
++	struct usb_hcd *hcd;
++};
++
++static irqreturn_t cdns3_host_irq(struct cdns3 *cdns)
++{
++	struct device *dev = cdns->host_dev;
++	struct usb_hcd	*hcd;
++
++	if (dev)
++		hcd = dev_get_drvdata(dev);
++	else
++		return IRQ_NONE;
++
++	if (hcd)
++		return usb_hcd_irq(cdns->irq, hcd);
++	else
++		return IRQ_NONE;
++}
++
++static void cdns3_host_release(struct device *dev)
++{
++	struct cdns3_host *host = container_of(dev, struct cdns3_host, dev);
++
++	kfree(host);
++}
++
++static int cdns3_host_start(struct cdns3 *cdns)
++{
++	struct cdns3_host *host;
++	struct device *dev;
++	struct device *sysdev;
++	struct xhci_hcd	*xhci;
++	int ret;
++
++	host = kzalloc(sizeof(*host), GFP_KERNEL);
++	if (!host)
++		return -ENOMEM;
++
++	dev = &host->dev;
++	dev->release = cdns3_host_release;
++	dev->parent = cdns->dev;
++	dev_set_name(dev, "xhci-cdns3");
++	cdns->host_dev = dev;
++	ret = device_register(dev);
++	if (ret)
++		goto err1;
++
++	sysdev = cdns->dev;
++	/* Try to set 64-bit DMA first */
++	if (WARN_ON(!sysdev->dma_mask))
++		/* Platform did not initialize dma_mask */
++		ret = dma_coerce_mask_and_coherent(sysdev,
++						   DMA_BIT_MASK(64));
++	else
++		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(64));
++
++	/* If setting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
++	if (ret) {
++		ret = dma_set_mask_and_coherent(sysdev, DMA_BIT_MASK(32));
++		if (ret)
++			return ret;
++	}
++
++	pm_runtime_set_active(dev);
++	pm_runtime_no_callbacks(dev);
++	pm_runtime_enable(dev);
++	host->hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
++				     dev_name(dev), NULL);
++	if (!host->hcd) {
++		ret = -ENOMEM;
++		goto err2;
++	}
++
++	host->hcd->regs = cdns->xhci_regs;
++	host->hcd->rsrc_start = cdns->xhci_res->start;
++	host->hcd->rsrc_len = resource_size(cdns->xhci_res);
++
++	device_wakeup_enable(host->hcd->self.controller);
++	xhci = hcd_to_xhci(host->hcd);
++
++	xhci->main_hcd = host->hcd;
++	xhci->shared_hcd = __usb_create_hcd(&xhci_cdns3_hc_driver, sysdev, dev,
++					    dev_name(dev), host->hcd);
++	if (!xhci->shared_hcd) {
++		ret = -ENOMEM;
++		goto err3;
++	}
++
++	host->hcd->tpl_support = of_usb_host_tpl_support(sysdev->of_node);
++	xhci->shared_hcd->tpl_support = host->hcd->tpl_support;
++	ret = usb_add_hcd(host->hcd, 0, IRQF_SHARED);
++	if (ret)
++		goto err4;
++
++	ret = usb_add_hcd(xhci->shared_hcd, 0, IRQF_SHARED);
++	if (ret)
++		goto err5;
++
++	device_set_wakeup_capable(dev, true);
++
++	return 0;
++
++err5:
++	usb_remove_hcd(host->hcd);
++err4:
++	usb_put_hcd(xhci->shared_hcd);
++err3:
++	usb_put_hcd(host->hcd);
++err2:
++	device_del(dev);
++err1:
++	put_device(dev);
++	cdns->host_dev = NULL;
++	return ret;
++}
++
++static void cdns3_host_stop(struct cdns3 *cdns)
++{
++	struct device *dev = cdns->host_dev;
++	struct xhci_hcd	*xhci;
++	struct usb_hcd	*hcd;
++
++	if (dev) {
++		hcd = dev_get_drvdata(dev);
++		xhci = hcd_to_xhci(hcd);
++		usb_remove_hcd(xhci->shared_hcd);
++		usb_remove_hcd(hcd);
++		synchronize_irq(cdns->irq);
++		usb_put_hcd(xhci->shared_hcd);
++		usb_put_hcd(hcd);
++		cdns->host_dev = NULL;
++		pm_runtime_set_suspended(dev);
++		pm_runtime_disable(dev);
++		device_del(dev);
++		put_device(dev);
++	}
++}
++
++#if CONFIG_PM
++static int cdns3_host_suspend(struct cdns3 *cdns, bool do_wakeup)
++{
++	struct device *dev = cdns->host_dev;
++	struct xhci_hcd	*xhci;
++
++	if (!dev)
++		return 0;
++
++	xhci = hcd_to_xhci(dev_get_drvdata(dev));
++	return xhci_suspend(xhci, do_wakeup);
++}
++
++static int cdns3_host_resume(struct cdns3 *cdns, bool hibernated)
++{
++	struct device *dev = cdns->host_dev;
++	struct xhci_hcd	*xhci;
++
++	if (!dev)
++		return 0;
++
++	xhci = hcd_to_xhci(dev_get_drvdata(dev));
++	return xhci_resume(xhci, hibernated);
++}
++#endif /* CONFIG_PM */
++
++int cdns3_host_init(struct cdns3 *cdns)
++{
++	struct cdns3_role_driver *rdrv;
++
++	rdrv = devm_kzalloc(cdns->dev, sizeof(*rdrv), GFP_KERNEL);
++	if (!rdrv)
++		return -ENOMEM;
++
++	rdrv->start	= cdns3_host_start;
++	rdrv->stop	= cdns3_host_stop;
++	rdrv->irq	= cdns3_host_irq;
++#if CONFIG_PM
++	rdrv->suspend	= cdns3_host_suspend;
++	rdrv->resume	= cdns3_host_resume;
++#endif /* CONFIG_PM */
++	rdrv->name	= "host";
++	cdns->roles[CDNS3_ROLE_HOST] = rdrv;
++
++	return 0;
++}
++
++void cdns3_host_remove(struct cdns3 *cdns)
++{
++	cdns3_host_stop(cdns);
++}
++
++void __init cdns3_host_driver_init(void)
++{
++	xhci_init_driver(&xhci_cdns3_hc_driver, &xhci_cdns3_overrides);
++}
 -- 
 2.17.1
 
