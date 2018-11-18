@@ -2,450 +2,147 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56275C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:08:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC97C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058222080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:08:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058222080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id ABCBE2086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 20:09:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABCBE2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbeKSG3h (ORCPT
+        id S1727547AbeKSGaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 01:29:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55451 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbeKSG3h (ORCPT
+        Mon, 19 Nov 2018 01:30:17 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:37137 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727385AbeKSGaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 01:29:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gOTMg-0000Xm-0H; Sun, 18 Nov 2018 21:08:18 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gOTMd-0000l1-Lb; Sun, 18 Nov 2018 21:08:15 +0100
-Date:   Sun, 18 Nov 2018 21:08:15 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
- imx: Configure output to GPIO in disabled state
-Message-ID: <20181118200815.a6hkokt3otfm4yl4@pengutronix.de>
-References: <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <20181115152545.GA8611@ulmo>
- <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
- <20181116095124.GA28631@ulmo>
- <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
- <20181116122445.GA25386@ulmo>
+        Mon, 19 Nov 2018 01:30:16 -0500
+Received: by mail-it1-f197.google.com with SMTP id y86so5815077ita.2
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 12:09:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=0yxo2skjGjzZRUTefV6PFpzDK+NUq9sZBZPVoAy3rOg=;
+        b=m+KSUCMSBpErWL+i3jBjpTzQ9+TBIPkj3kTKKSKULPKVik/2C+vqDXo2nSDzaN1z2D
+         4k+HTHOVII9sUzCq9+LnzJGVeFAlX6ql4zuye7RmNhFA60i9AHKL+TJptx8nCexa+zwG
+         9zi98hqPVO5nirnUsvag5sgyGo4QTah5aHsUnQQjaqWWRIjas7dD2v+WG8QAbY1v/jxa
+         0/UvRE0156wUHe/y4AXh1faCHkd5kF9TCw9LUP3H5TW4wECA36xQEjNLZLqOmN0cWEvF
+         Rs2eoTa5LDDSHmi6Rf0zyCUWY/AduLUzx01ZMB8l+OktuJhaAMMtQKR4elfgiTDOSYwx
+         i8DQ==
+X-Gm-Message-State: AGRZ1gJ4s5YX/iX+9oRi6B7yU6W7XxQ/aXamMuafwk5zdA2mOctKkyLZ
+        y3eJ2Y51y9w3wZYoc9+rvVF4PPIAYu2melGAhBsuwsl+4Dx0
+X-Google-Smtp-Source: AJdET5ehMShQrDv1aN/IvEKqGerwVT5Xi39lXets3pr0pAAF8lzOM7KlsjGjDiagvNRGncAdx4PSQQpXzNz6AJzmSMHH3jZqGvRh
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181116122445.GA25386@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a24:cc04:: with SMTP id x4-v6mr5467824itf.14.1542571743017;
+ Sun, 18 Nov 2018 12:09:03 -0800 (PST)
+Date:   Sun, 18 Nov 2018 12:09:03 -0800
+In-Reply-To: <0000000000001c2b95057ad0935b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c881ea057af5f8a6@google.com>
+Subject: Re: kernel BUG at arch/x86/mm/physaddr.c:LINE! (2)
+From:   syzbot <syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com>
+To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Thierry,
+syzbot has found a reproducer for the following crash on:
 
-On Fri, Nov 16, 2018 at 01:24:45PM +0100, Thierry Reding wrote:
-> On Fri, Nov 16, 2018 at 11:39:29AM +0100, Uwe Kleine-König wrote:
-> > On Fri, Nov 16, 2018 at 10:51:24AM +0100, Thierry Reding wrote:
-> > > On Thu, Nov 15, 2018 at 09:37:33PM +0100, Uwe Kleine-König wrote:
-> > > > On Thu, Nov 15, 2018 at 04:25:45PM +0100, Thierry Reding wrote:
-> > > > > On Wed, Nov 14, 2018 at 10:51:20PM +0100, Uwe Kleine-König wrote:
-> > > > > > On Wed, Nov 14, 2018 at 12:34:49PM +0100, Thierry Reding wrote:
-> > > > > > > On Fri, Nov 09, 2018 at 05:55:55PM +0100, Uwe Kleine-König wrote:
-> > > > > > > > On Fri, Nov 09, 2018 at 02:24:42PM +0000, Vokáč Michal wrote:
-> > > > > > > > > On 8.11.2018 20:18, Uwe Kleine-König wrote:
-> > > > > > > > > > Taking your example with the backlight device you specify an "init" and
-> > > > > > > > > > a "default" pinctrl and only "default" contains the muxing for the PWM
-> > > > > > > > > > pin everything should be as smooth as necessary: The pwm is only muxed
-> > > > > > > > > > when the backlight device is successfully bound.
-> > > > > > > > > 
-> > > > > > > > > Have you tried that Uwe? The bad news is I tested that before and now
-> > > > > > > > > again and it does not work like that. We already discussed that earlier.
-> > > > > > > > 
-> > > > > > > > The key is that the pinmux setting for the PWM pin should be part of the
-> > > > > > > > bl pinctrl, not the pwm pinctrl. Then "default" is only setup when the
-> > > > > > > > bl device is successfully bound which is after the bl's .probe callback
-> > > > > > > > called pwm_apply().
-> > > > > > > 
-> > > > > > > No, that's not at all correct. Pinmux settings should reside with the
-> > > > > > > consumer of the pin. In this case, the PWM is the consumer of the pin,
-> > > > > > > whereas the backlight is the consumer of the *PWM*.
-> > > > > > 
-> > > > > > This is news to me. Adding Linus W. to Cc, maybe he can comment?!
-> > > > > > 
-> > > > > > Grepping through the arm device trees it really seems common to put the
-> > > > > > pinctrl for the pwm pin into the pwm device. I didn't search in depth,
-> > > > > > but I didn't find a counter example.
-> > > > > > 
-> > > > > > For GPIOs it is common that the pinmuxing is included in the GPIO's
-> > > > > > consumer pinctrl. Ditto for mdio busses whose pinctrl is included in the
-> > > > > > ethernet pinctrl.
-> > > > > 
-> > > > > GPIO is different from PWM in that the GPIO is already the pin itself
-> > > > > and is otherwise generic. So typically you put the pinmuxing options
-> > > > > into the device tree node for the consumer of the GPIO, because it is
-> > > > > only when the consumer uses the GPIO that you need to configure that
-> > > > > pin as GPIO.
-> > > > > 
-> > > > > For PWM, however, the PWM consumer is only the consumer of the PWM, but
-> > > > > the PWM device itself is the real consumer of the pin that outputs the
-> > > > > PWM signal. So the PWM determines when the pinmux states need to be
-> > > > > applied, whereas the consumer of the PWM only deals with the PWM.
-> > > > > 
-> > > > > For MDIO busses, I think they are usually part of, and driven by, the
-> > > > > ethernet controller, so again it makes sense to put the pinmux into the
-> > > > > node of the ethernet controller, because the ethernet controller is the
-> > > > > user of the pins.
-> > > > 
-> > > > Maybe it was a bad idea to broaden the discussion to talk about gpios
-> > > > and ethernet stuff here. I'd still consider it a valid construct to put
-> > > > the pwm pin into the backlight's pinctrl unless Linux W. disagrees.
-> > > 
-> > > But why? The backlight doesn't care about the specific pinmuxing of the
-> > > PWM pin. All it cares about is the PWM signal. That's the level of
-> > > abstraction that the PWM consumer expects, anything lower level belongs
-> > > in the PWM driver.
-> > 
-> > The backlight driver cares about the PWM pin muxing because if it's
-> > wrongly muxed the backlight doesn't work as intended.
-> 
-> It shouldn't care about that. It should only care about the PWM and the
-> PWM should make sure that the pin is correctly muxed because otherwise
-> it can't work as expected.
-> 
-> > > > > > > The problem with making the PWM mode the "default" pinctrl state is that
-> > > > > > > the default state will be applied before the driver is even probed. That
-> > > > > > > makes it unsuitable for this case. I think what we really want here is
-> > > > > > > explicitly "active" and "inactive" states for pinctrl where the PWM
-> > > > > > > driver controls when exactly each state is applied.
-> > > > > > 
-> > > > > > Note that this problem goes away nicely if the pwm pin is attached to
-> > > > > > the backlight. Because it's the backlight's driver that "knows" when the
-> > > > > > pwm is configured correctly and so the already existing mechanisms that
-> > > > > > setup the mux when the bl is correctly probed do the right thing at the
-> > > > > > right time.
-> > > > > 
-> > > > > Actually that's not exactly true. The default pinctrl state will be
-> > > > > applied before the driver's ->probe() implementation, so the pinctrl
-> > > > > state will be active some time before even the backlight driver gets
-> > > > > around to setting up the PWM. If you look at drivers/base/dd.c you'll
-> > > > > see that really_probe() calls pinctrl_bind_pins() before calling the
-> > > > > driver's ->probe() and will select the default state (unless there's
-> > > > > also an "init" state defined, in which case that will get applied and
-> > > > > only after successful probe will the default state be selected).
-> > > > > 
-> > > > > So if you use only a default state, then you could even get into a
-> > > > > situation where ->probe() return -EPROBE_DEFER and it would potentially
-> > > > > take several seconds before the driver is reprobed, during which time
-> > > > > the pinmux will already be set up but the PWM not configured properly
-> > > > > and potentially outputting the wrong level.
-> > > > 
-> > > > If you reread my suggestion to Michal completely you will notice I got
-> > > > that right.
-> > > > 
-> > > > > > > This solves the problem quite nicely because by default the pinctrl
-> > > > > > > state isn't touched. For the case where the bootloader didn't initialize
-> > > > > > > the PWM pin at all, the driver core won't do anything and keep it at the
-> > > > > > > 100k pull-up default.
-> > > > > > 
-> > > > > > Ditto if the pwm pinctrl is attached to the consumer without having to
-> > > > > > introduce new pwm-specific stuff.
-> > > > > 
-> > > > > Well yes, but you'd obviously also have to avoid using the "default"
-> > > > > state, otherwise you'd run into the issues that I described above.
-> > > > 
-> > > > I'd need "default" and "init", right.
-> > > > 
-> > > > > > > > > > No I meant the pwm. Well, it's as easy as that: Whenever with your
-> > > > > > > > > > approach you configure the pin as GPIO with the output set to low,
-> > > > > > > > > > instead configure the pwm with duty_cycle to zero (or disable it).
-> > > > > > > > > > Whenever with your approach you configure the pin as GPIO with the
-> > > > > > > > > > output set to high, configure the pwm with duty_cycle to 100%. (Keeping
-> > > > > > > > > > out inverted PWMs for the ease of discussion, but the procedure can be
-> > > > > > > > > > adapted accordingly.) The only difference then is that with your
-> > > > > > > > > > approach you already "know" in pwm-imx's .probe the idle level and can
-> > > > > > > > > > configure the GPIO accordingly. With my approach you just have to wait
-> > > > > > > > > > until the first pwm_apply which (as described above) works just as well.
-> > > > > > > > > 
-> > > > > > > > > While here I am quite confident you are talking about kernel code, right?
-> > > > > > > > > If yes, then your approach is clear to me.
-> > > > > > > > > 
-> > > > > > > > > The problem is I am quite sure your approach does not solve the cases
-> > > > > > > > > the pinctrl solution does. And according to my tests so far it does not
-> > > > > > > > > work at all because the "init" and "default" states does not work as you
-> > > > > > > > > are saying.
-> > > > > > > > 
-> > > > > > > > That's as pointed out above, because you're looking at the pwm's pinctrl
-> > > > > > > > and I at the pwm-consumer's pinctrl.
-> > > > > > > > 
-> > > > > > > > Note that a sysfs consumer cannot be operated smoothly here, because
-> > > > > > > > there is no pinctrl node to add the PWM mode to that only gets active
-> > > > > > > > after the first configuration. This however is something that should not
-> > > > > > > > be addressed in the imx driver but in the pwm core (if at all).
-> > > > > > > 
-> > > > > > > With the pinctrl-based solution outlined above you can even operate a
-> > > > > > > sysfs consumer properly. The pinctrl states are where they belong, with
-> > > > > > > the PWM device and therefore they can be properly set when the PWM is
-> > > > > > > used, rather than waiting for a PWM consumer to muck with the pinmux.
-> > > > > > > 
-> > > > > > > Note how all the pieces are suddenly falling into place. In my
-> > > > > > > experience that's usually a good indication that you're on the right
-> > > > > > > track.
-> > > > > > 
-> > > > > > OK, sysfs is the only point where the "put pinctrl stuff into the pwm
-> > > > > > core (or driver)" is superior to the already existing and otherwise
-> > > > > > completely working status quo. (Apart from bugs that need fixing in
-> > > > > > your scenario, too.)
-> > > > > 
-> > > > > Nope, sorry. It's superior in all of the other cases as well. You've
-> > > > > said elsewhere already that the prerequisite for the current solution to
-> > > > > support inverse polarity with the i.MX driver is to keep the driver
-> > > > > running, even after the PWM is no longer used. Sorry but that's just not
-> > > > > an option for me.
-> > > > 
-> > > > You want that after pwm_disable() the pin still keeps the idle level. As
-> > > > the hardware doesn't provide this feature "as is" something has to be
-> > > > done about it. This can be reached either by operating the pin as PWM
-> > > > with 0% duty cycle or by switching to GPIO that is configured to the
-> > > > desired level. From the PWM driver's POV the first is the more natural,
-> > > > as this can be accomplished with the registers this driver cares about
-> > > > anyhow.
-> > > 
-> > > We've been over this before. Yes, as long as you operate the pin as PWM
-> > > it's okay to just actively drive it. But once you no longer use the pin,
-> > > why would you want to still actively drive it?
-> > 
-> > This is because you say the pin should keep its level as inactive even
-> > though that's not what the hardware does without keeping care.
-> > 
-> > I say this is strange: The consumer specifies if the pwm should be
-> > inverted or not because the pwm alone doesn't know that. Then with the
-> > consumer gone *you* want the pwm to "remember" its last user requested
-> > inversion and so the pin should stay at 1.
-> > 
-> > To answer your question: I don't want to actively drive the pin when the
-> > user is gone. That's a requirement comming from you.
-> 
-> That's not actually what I'm suggesting. What I'm saying is that the PWM
-> should not actively drive the pin at all.
+HEAD commit:    1ce80e0fe98e Merge tag 'fsnotify_for_v4.20-rc3' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fd0893400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
+dashboard link: https://syzkaller.appspot.com/bug?extid=6c0effb5877f6b0344e2
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1312062b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131bd093400000
 
-I'm a tad annoyed and grumpy here. We're discussing since quite some
-time about what is the right thing to do on pwm_disable(). Up to now I
-understood you that it should make the pin drive the inactive level.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6c0effb5877f6b0344e2@syzkaller.appspotmail.com
 
-Thinking a bit about this it doesn't really matter for the consumer if
-the pin stays in the idle level because there is a pull into the right
-direction and the PWM is high-Z or if the PWM pulls actively in the
-right direction. Also for pwm_config(pwm, 0, 100) the PWM could disable
-its output in the presence of a pull, so the property says true that the
-effects of pwm_config(pwm, 0, 100) and pwm_disable(pwm) should be the
-same. And so my claim that pwm_disable is a part of the API that
-doesn't give any value stays true.
+audit: type=1800 audit(1542571519.564:30): pid=5852 uid=0 auid=4294967295  
+ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
+comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:27!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 6007 Comm: syz-executor386 Not tainted 4.20.0-rc2+ #338
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:__phys_addr+0xb5/0x120 arch/x86/mm/physaddr.c:27
+Code: 08 4c 89 e3 31 ff 48 d3 eb 48 89 de e8 b4 bb 45 00 48 85 db 75 0f e8  
+7a ba 45 00 4c 89 e0 5b 41 5c 41 5d 5d c3 e8 6b ba 45 00 <0f> 0b e8 64 ba  
+45 00 48 c7 c7 10 20 47 89 48 b8 00 00 00 00 00 fc
+RSP: 0018:ffff8881c3567410 EFLAGS: 00010093
+RAX: ffff8881d32b4080 RBX: 0000000000000001 RCX: ffffffff8139cd5c
+RDX: 0000000000000000 RSI: ffffffff8139cd75 RDI: 0000000000000007
+RBP: ffff8881c3567428 R08: ffff8881d32b4080 R09: ffffed103b5c5b67
+R10: ffffed103b5c5b67 R11: ffff8881dae2db3b R12: 0000408005dd6000
+R13: 0000000000000000 R14: 0000000000000010 R15: ffff8881c3567ab8
+FS:  0000000001f9e880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000203e8008 CR3: 00000001c24cd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  virt_to_head_page include/linux/mm.h:658 [inline]
+  virt_to_cache mm/slab.c:399 [inline]
+  kfree+0x7b/0x230 mm/slab.c:3813
+  vivid_vid_cap_s_selection+0x2c31/0x38e0  
+drivers/media/platform/vivid/vivid-vid-cap.c:1006
+  vidioc_s_selection+0xa4/0xc0 drivers/media/platform/vivid/vivid-core.c:352
+  v4l_s_selection+0xba/0x140 drivers/media/v4l2-core/v4l2-ioctl.c:2197
+  __video_do_ioctl+0x8b1/0x1050 drivers/media/v4l2-core/v4l2-ioctl.c:2853
+  video_usercopy+0x5c1/0x1760 drivers/media/v4l2-core/v4l2-ioctl.c:3035
+  video_ioctl2+0x2c/0x33 drivers/media/v4l2-core/v4l2-ioctl.c:3079
+  v4l2_ioctl+0x154/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:696
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x4442c9
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b d8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fff0d831768 EFLAGS: 00000207 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002e0 RCX: 00000000004442c9
+RDX: 0000000020000000 RSI: 00000000c040565f RDI: 0000000000000005
+RBP: 00000000006ce018 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 0000000000000000 R11: 0000000000000207 R12: 0000000000401fd0
+R13: 0000000000402060 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 57f6f02b74dd3e8e ]---
+RIP: 0010:__phys_addr+0xb5/0x120 arch/x86/mm/physaddr.c:27
+Code: 08 4c 89 e3 31 ff 48 d3 eb 48 89 de e8 b4 bb 45 00 48 85 db 75 0f e8  
+7a ba 45 00 4c 89 e0 5b 41 5c 41 5d 5d c3 e8 6b ba 45 00 <0f> 0b e8 64 ba  
+45 00 48 c7 c7 10 20 47 89 48 b8 00 00 00 00 00 fc
+RSP: 0018:ffff8881c3567410 EFLAGS: 00010093
+RAX: ffff8881d32b4080 RBX: 0000000000000001 RCX: ffffffff8139cd5c
+RDX: 0000000000000000 RSI: ffffffff8139cd75 RDI: 0000000000000007
+RBP: ffff8881c3567428 R08: ffff8881d32b4080 R09: ffffed103b5c5b67
+R10: ffffed103b5c5b67 R11: ffff8881dae2db3b R12: 0000408005dd6000
+R13: 0000000000000000 R14: 0000000000000010 R15: ffff8881c3567ab8
+FS:  0000000001f9e880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000203e8008 CR3: 00000001c24cd000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-> That's my entire point here.
-> If the device gets out of boot, nobody is actively driving the pin
-> either, so it has that 100k pull-up to make sure it is high by default,
-> which in turn causes the backlight to remain off. I'm saying that that
-> is exactly the state that the pin should be put back into when nobody is
-> using the PWM.
-> 
-> So in other words I'm saying that that pin should be passively driven by
-> that 100k pull-up if it is not actively used by the PWM.
-> 
-> What you are saying is that either we actively drive irrespective of
-> whether there are any users, or that we leave it undefined what we do
-> with a pin when it is no longer used. I think those are both wrong
-> because the former doesn't allow you to properly shut down the system
-> and the latter gives you undefined results, which is pretty useless
-> because it is completely non-deterministic.
-
-I think shut down doesn't matter because on shutdown the backlight
-driver doesn't release the pwm and so it continues to keep the intended
-level.
-
-> > If it was my decision, I'd say: If the backlight driver calls
-> > 
-> > 	pwm_config(pwm, 0, 100);
-> > 	pwm_disable(pwm);
-> > 
-> > I'd interpret that as: The consumer doesn't use the pin any more, so I'm
-> > not bound to keep the pin at a certain level. If however after
-> > pwm_disable the consumer is still considered to use the pin, then
-> > implementing it the same way as pwm_config(pwm, 0, 100) is the right
-> > thing to do. This applies then to all pwm implementations and so should
-> > be solved in the pwm core, not in the imx driver. In this case the
-> > concept of "disabling a PWM" can go away completely.
-> 
-> But again, why should PWMs be special? You turn off all other resources
-> when you no longer need them, right? If you power your panel with a
-> regulator, then when the panel is disabled you want to disable the
-> regulator, right? Similarily if you don't use your I2C controller you
-> want to turn off the clock that drives it, right? This is the same for
-> any resource in your system: if you no longer need it, disable it. The
-> fact that "disabling" the PWM is not straightforward on i.MX doesn't
-> mean that we should simply ignore it.
-
-I don't say we should ignore it. I say we shouldn't disable the hardware
-if the consumer calls pwm_disable() if disabling the hardware results in
-a state that shouldn't happen on pwm_disable().
-
-Also note, that there are two different "disable" you are talking about.
-One is disable in the sense of "pwm_disable". This is about the pwm to
-stop oscillating. And the other is about unsetting the enable bit in a
-control register and stopping the input clock. Even though both usually
-go hand in hand, if you still have requirements on the hardware state
-after pwm_disable that are not given if you disable the hardware it is
-stupid to require to disable the hardware and then implement something
-else on top to undo this unwanted result.
-
-> > In another mail you wrote:
-> > > Your example of keeping an LED in the current state is actually an
-> > > example of where the consumer still needs it. As long as you want to use
-> > > the LED you need to keep the LED driver around, and as long as the LED
-> > > driver is around you have a consumer for the PWM.
-> > 
-> > With an analog reasoning I'd say: As long as the backlight driver cares
-> > about the backlight being off, it should not disable (or put) the PWM.
-> 
-> It shouldn't put the PWM because it still needs it. But it should be
-> totally fine to disable it. Disabling a PWM should result in the PWM not
-> outputting any power.
-> 
-> > > > Also note this is similar in the pwm-bcm-kona driver that doesn't seem
-> > > > to have the concept of "disable" at all. kona_pwmc_disable() just sets
-> > > > up 0% duty cycle. In my eyes this is an argument that is good enough to
-> > > > at least nack the imx-specific implementation of that pinctrl stuff.
-> > > 
-> > > It's not a good enough argument for me. It's certainly possible that not
-> > > all PWM driver can be made to behave exactly as needed. pwm-bcm-kona
-> > > might be one of those, but that doesn't mean that everybody else should
-> > > be restricted to the same behaviour. If we can make i.MX behave exactly
-> > > right, then we should do that.
-> > 
-> > And if we can make the imx-specific implementation right in a generic
-> > way in the pwm core that might help the bcm-kona driver for free.
-> 
-> It may, but we don't know that.
-
-Look at the .disable callback of the bcm-kona driver. The way it is
-written together with the comments in it makes it obvious that this
-driver also actively drives the pin after disable.
-
-> Look, I'm not generally opposed to do this in the core, but I'm not
-> going to implement it in the core until I'm convinced that it is
-> useful in a large number of cases. One or two are not large numbers.
-
-Last time I suggested to implement this is in the core you said: "So I
-try not to attempt genericity until there are at least two or more
-use-cases that can be the basis for a generic solution." Now that I
-found a 2nd driver that can benefit you suddenly request "a large number
-of cases".
-
-I believe one reason for Linux being as good as it is today is, that
-usually with this kind of scenario things are done in the generic way
-even if there is only a single user up to now. And even if this solution
-doesn't 100% satisfies the needs for the next user, it is much easier
-for the next one to adapt and adopt generic code than to first cut it
-out from a hardware driver. And until the second user appears the
-separation helps to better understand the code because it is not bound
-to a hardware driver that a reviewer might not know.
-
-> > > > If the pinctrl idea is implemented in the pwm core, I won't object.
-> > > 
-> > > Let me see if I get this straight: you're not objecting to the idea of
-> > > implementing the pinctrl solution, your only objection is to put it in
-> > > the i.MX driver?
-> > 
-> > Given that the pinctrl solution is a generic solution that might help
-> > other drivers, too, I think it should not go into the imx specific
-> > driver just because for now this is the only driver that might benefit
-> > from it.
-> > 
-> > I still don't think it's the best solution for the imx problem but as I
-> > care more for imx in general than for pwm in general I'm interested in
-> > keeping the imx driver focused to the imx specific parts. I won't repeat
-> > the advantages of putting generic stuff into a generic location instead
-> > of its first user.
-> 
-> We can debate this for another few weeks, but I don't think you're going
-> to be able to convince me, so let's cut this short: pinctrl support goes
-> in the i.MX driver for now. Let's move on.
-
-OK, you're taking out your maintainer's club. That's sad because I'm
-convinced you're forcing a solution that is not optimal. I accept that
-the pinctrl stuff solves the problem, but I'm sure it's wrong to put it
-into a hardware driver.
- 
-> > > > > > Also dts writes don't need to lookup the needed GPIO numbers and pinctrl.
-> > > > > 
-> > > > > Just to clarify: I don't think that we need to get the GPIO number
-> > > > > involved in this case, because we don't have to reconfigure the pin as
-> > > > > GPIO to make this work. The only reason that Michal's proposal did that
-> > > > > is because that was believed to be necessary. But if the pin can just be
-> > > > > configured with a 100k pull-up, that's enough to pull the pin high when
-> > > > > we need it.
-> > > > 
-> > > > Unless the gpio happens to be configured as output at the wrong value.
-> > > > Further I'm not sure if the pwm in disabled state actively pulls to 0
-> > > > and if in this state the PU of the pin is good enough to ensure a one
-> > > > here. That would need verification first.
-> > > 
-> > > The idea is to *not* configure the GPIO as output and output the wrong
-> > > value. The idea is to not use the GPIO at all and instead use whatever
-> > > the hardware default is that makes it such that the backlight is off by
-> > > default at boot.
-> > 
-> > Which might be possible with Lothar's idea for some machines, but not
-> > for all users of the pwm-imx driver.
-> > 
-> > Also note that you don't include the poor souls where there is no
-> > hardware pullup into the right direction.
-> 
-> The poor souls should speak up and then we can look into finding a good
-> solution for them. I'm pretty sure there must be some equivalent that
-> can be used for other users.
-
-I think one of the boards that I'm working with has an enabled backlight
-at power on until the bootloader actively drives the related pwm to
-the right level (either using the pwm or the gpio function of the pin).
-I will double check that but assuming that is right, just disabling the
-output won't work here.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
