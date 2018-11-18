@@ -2,101 +2,99 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D78DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 11:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC867C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 076C020815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 11:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B56B20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:03:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="p1K5+xKH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 076C020815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qtYNPjYk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B56B20815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeKRWNI (ORCPT
+        id S1727297AbeKRWXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 17:13:08 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33464 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbeKRWNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 17:13:08 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542541979;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=LpswiqpyDdmIVYcCxoiyfMxBU6eW/IQJJlqgvKbipHk=;
-        b=p1K5+xKHixk/9qLRXceitpCBxeW57opgo1qyfSzyk//giXLBvMPcswD0klk/CmpxlXqHfE
-        evw6DxVbwWngULSd+/IwyYThXaPxAIc5chDtESUL6dX3+uXPPZ2ClmxDY4hENz0H+97TeK
-        r4kWMlH/DcFtZ+OGqjj3DyzSicoK1jc=
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id MaikabFO5jU8; Sun, 18 Nov 2018 12:52:59 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE2B7004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:b700:4d13:ad2:f34e:6de4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DDAAD1EC014B;
-        Sun, 18 Nov 2018 12:52:56 +0100 (CET)
-Date:   Sun, 18 Nov 2018 12:52:51 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     lijiang <lijiang@redhat.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, akpm@linux-foundation.org, dyoung@redhat.com,
-        bhe@redhat.com
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-Message-ID: <20181118115251.GB19380@zn.tnic>
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com>
- <20181114112600.GD13926@zn.tnic>
- <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
- <20181115103959.GB26448@zn.tnic>
- <c3347d48-aa32-e8e4-c99b-baf2e6a21dc2@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c3347d48-aa32-e8e4-c99b-baf2e6a21dc2@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 18 Nov 2018 17:23:14 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42117 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbeKRWXO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 17:23:14 -0500
+Received: by mail-pl1-f196.google.com with SMTP id x21-v6so10519515pln.9
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 04:03:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=b1ZYnLYN4ir4UacvVkD3Q/B6raJ1AexezCEPoh1Pabs=;
+        b=qtYNPjYko/dnt43DWz6PBVj872BUtmlIVz3LcNxt9bB0G/E9ONzlE1jjswnx0Kbf9i
+         BDBJ+HONKG2Lc8Yy8nEKFNs13fv85wQcKuigkYRpMSukmJw0iEWlTdsev8wXSqfEHLjU
+         jk/bszc9TWBmm6nWG/B/0WKo/PKYhoC/XO6t2EkHfk4sl1EAMnLzN/oAmURsN9Rnvj8j
+         2Q/9x8NgN07alDXszwY3JD2i3TJTPHLyQecyo5G6zE/DAAxbdXV+7hi69kIFV3xjFyqr
+         ruvBdXg9JYO33UJLVlrx04hEvwyEkKJb3/4pDxNj5k6AFmXhBd3oHkAKrxuwAw6f5ztZ
+         TEGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=b1ZYnLYN4ir4UacvVkD3Q/B6raJ1AexezCEPoh1Pabs=;
+        b=ECo4p/pLH7tt4KxCxVLaqPnLbqyxhdL+Fq2oWgmVRRBcTS7QdWx7Vin9s86aAVbk6D
+         32bB/4NWTByLQbo9qfK1EpJVOmWzAHtSq2glDqFGkUckhj4Wzy1C3i0VXOylnGDzt490
+         fqRsMWW8MlX5Q8FU+e5sCJACq9B2P1P658QuP7Mb2MP0LDsHxJ4+EiRo/pN3D5XIap4K
+         mbD9WfAlzEm78aqLltGAU3aiIXjHH4s5YDiFFScKYHKYnIjFAYoescz1MD85TW2+ApGw
+         G0dl0JYebLhRwdNPwf4FPmfSVX8hB1VSFcjVTJAaL4uuu7oR7tnxpoG5MgYSMLRZ/UWv
+         OD8g==
+X-Gm-Message-State: AGRZ1gJmGJOWk4MHN46ozEFrcaSYpR3RmE2qPtJfx6oeiG9BWvZyuN2J
+        9RGwNzmr8bqfItaAwxmo24M=
+X-Google-Smtp-Source: AJdET5cDQ6utLkkHphvBu58J/8NIsRXNIlEGtv61ACddLjK1bPiOLlR6kHjvoQBAVNbBkJhCUltygw==
+X-Received: by 2002:a17:902:8a88:: with SMTP id p8-v6mr17825829plo.94.1542542585694;
+        Sun, 18 Nov 2018 04:03:05 -0800 (PST)
+Received: from localhost.localdomain ([203.100.54.194])
+        by smtp.gmail.com with ESMTPSA id i21sm36748495pgm.17.2018.11.18.04.03.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Nov 2018 04:03:04 -0800 (PST)
+From:   Yafang Shao <laoar.shao@gmail.com>
+To:     willy@infradead.org, akpm@linux-foundation.org,
+        darrick.wong@oracle.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: [PATCH] mm/filemap.c: minor optimization in write_iter file operation
+Date:   Sun, 18 Nov 2018 20:02:18 +0800
+Message-Id: <1542542538-11938-1-git-send-email-laoar.shao@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 11:25:55AM +0800, lijiang wrote:
-> For the pci mmconfig issue, it should be good enough that the e820 reserved region
-> [mem 0x0000000078000000-0x000000008fffffff] is only passed to the second kernel, but
-> the pci mmconfig region is not the same in another machine.
+This little adjustment on bitwise operation could make the code a little
+faster.
+As write_iter is used in lots of critical path, so this code change is
+useful for performance.
 
-Yes. And now the question is, *which* reserved regions need to be mapped
-for the second kernel to function properly? How do we figure that out?
+Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+---
+ mm/filemap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> A simple case, hotplug a pci network card and use the ssh/nfs to dump the vmcore.
-> If the pci mmconfig region is not reserved in kdump kernel, the pci hotplug device
-> could not be recognized. So the pci network card won't work.
-
-Yes that's a good example; put *that* example in your commit message.
-
-> Here, there is an example about SME kdump. Maybe it can help to better understand.
-
-You keep pasting that and I've read it already. And you keep repeating
-that the reserved regions need to be mapped in the second kernel and I'm
-asking, how do we determine *which* regions should we pass to the second
-kernel?
-
-If we should pass *all* reserved regions, why?
-
-IOW, I'm looking for the *why* first.
-
-Thx.
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 81adec8..a65056ea 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2881,7 +2881,8 @@ inline ssize_t generic_write_checks(struct kiocb *iocb, struct iov_iter *from)
+ 	if (iocb->ki_flags & IOCB_APPEND)
+ 		iocb->ki_pos = i_size_read(inode);
+ 
+-	if ((iocb->ki_flags & IOCB_NOWAIT) && !(iocb->ki_flags & IOCB_DIRECT))
++	if ((iocb->ki_flags & (IOCB_NOWAIT | IOCB_DIRECT)) ==
++	    IOCB_NOWAIT)
+ 		return -EINVAL;
+ 
+ 	count = iov_iter_count(from);
 -- 
-Regards/Gruss,
-    Boris.
+1.8.3.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
