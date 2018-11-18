@@ -2,101 +2,117 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7947AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A72EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FC920869
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D9322080F
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:50:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="sClac4sm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39FC920869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Iw+HBFNK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D9322080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeKSAHH (ORCPT
+        id S1727359AbeKSAKx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:07:07 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:44301 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbeKSAHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:07:06 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 6e602381;
-        Sun, 18 Nov 2018 13:40:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=w5v+EyIL9bIKvbXVhNWxQFxWKuQ=; b=sClac4
-        smI3xVrmiex0h8i6aP8kQffeccTJ0aLRBergqusevtvw+SU4xGend0OLm6RjF059
-        mkVwrhTmIzphz+608tdI20JJUtlhjWT1LVnRAvgHlEAqp8XfHNs1QMOVGCa4ay0b
-        dzdrwG/zPDA/4Ch1egm6gihVQTcULV1PoUdbU+wzXNef63jqZB8dng3YxiUppd7G
-        3ihnFLCbSmhAKdtgMhd+OY0X/vkHNYIh/xcEjUKIAMDvS0ze4u1vqhNet69Sl+tE
-        WQhrcQLPmZCr4Zt49wMSSxxALlFa7n5P8VPiav0ukkvxynyNgGoN6BsDY5RZGiaa
-        8uhF1nO+JvZxRvdQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9769d010 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Sun, 18 Nov 2018 13:40:50 +0000 (UTC)
-Received: by mail-ot1-f47.google.com with SMTP id z33so25345366otz.11;
-        Sun, 18 Nov 2018 05:46:42 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKO6CW+M0N8l8NDK3oUnjLuQsoBCM4m1E5CwD3HSUnB+EQSuMQS
-        i+0VZGU9ITvkSGF/ss7ko8mMYPZGhS7Iypji0dg=
-X-Google-Smtp-Source: AJdET5eo8/NS/idvJbrsyEmre84CnFQvNm5fFRQ2PIN2yJg22Ey4WV5uRDXC+k0tMXn4FDfbudxmBIwdQ+d18x+IW5I=
-X-Received: by 2002:a9d:12e3:: with SMTP id g90mr6783221otg.223.1542548801761;
- Sun, 18 Nov 2018 05:46:41 -0800 (PST)
+        Sun, 18 Nov 2018 19:10:53 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50188 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeKSAKx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 19:10:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 125so746866wmh.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 05:50:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5oqMaE58KJdtAAjHlJsIRYArgxrB3RL6oevITiwMj3A=;
+        b=Iw+HBFNKIskKqipsG7ntNfOFJSepOep+4WZUoq8ECwM8c/pzeYEzqEq7DFEvpvsvor
+         2W6B/FBJcufzE1dyoLIiGRCTXYZvJRp/ficS9DeY2sNnBYojh0SUksufecxmTFeqhLqs
+         Fdboj9KPCHZeUVt6avLXrEWIKgr4O0W29rJ8IR3TzCrVwGzkA/o2eDaPfwavUgBSxgWQ
+         BU/PY8s3wet8M3z6se2auPBXg8H9q7aeAOeJxKh10D3wWTpR+0IKPwb9p7wi0FJhYLCW
+         Riz/wq6fBpOJIkF/jXKnhFcT7xqz+1huUFSbX6woGxzn1Kxrwwd2QMUSQrX2S7YziDFT
+         CVFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5oqMaE58KJdtAAjHlJsIRYArgxrB3RL6oevITiwMj3A=;
+        b=jqbjlPweqkRK5lBsXh7Ow9fK7hnDW7q8h418O2CYGzMa5iYThb19KW5fN+4+q5Xmiu
+         F6PbrPeHFLL9yFCDFJWDqO//1TR3sa4bMsn5BfprHwlzU7mQw2bzVQ+Wd/3R2Tc4Uask
+         NiXcywH3RQG3oRf7hU1OMAxkHqr+zWt7VKsruDer0UBTXc1crnqDZ8OPzU6Qh8OqX5sU
+         aMa8xD5idUV7VCvYm49HhjWoOQMN40TGkt8PnsxxQbZVpqdoAjDElXf4jOzcOJwWlodW
+         iILKBLsSJdY3lZYHX3dnJPddso1a7Ll9xhAJEqxZCnqMOgOEIrUSL7Ow2q2PvlGQf5KL
+         LH3w==
+X-Gm-Message-State: AA+aEWYtRhxJYJGZDLEfYnLFKJq5OQ49HcI8xYYFQq8Be6bh5cEJY/hW
+        7HCpILFsQqTPufkGOeWnHgtIcw==
+X-Google-Smtp-Source: AJdET5c/QhO7q7TNqaz9svmhbKscDdxGVLeX7Hq2rFDNU9cOVSc3Hd81OAkbRe0XdEV+8RevoLN9HA==
+X-Received: by 2002:a1c:930d:: with SMTP id v13-v6mr4376558wmd.26.1542549028635;
+        Sun, 18 Nov 2018 05:50:28 -0800 (PST)
+Received: from bender.home (lfbn-nic-1-84-209.w2-15.abo.wanadoo.fr. [2.15.173.209])
+        by smtp.gmail.com with ESMTPSA id y9sm4491721wrq.55.2018.11.18.05.50.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 18 Nov 2018 05:50:27 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Add Amlogic Meson GX SoC Clock Measure Driver
+Date:   Sun, 18 Nov 2018 14:50:21 +0100
+Message-Id: <20181118135024.30720-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
- <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com>
-In-Reply-To: <20181117001718.GA175522@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Sun, 18 Nov 2018 14:46:30 +0100
-X-Gmail-Original-Message-ID: <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
-Message-ID: <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 10/15] crypto: poly1305 - use structures for key
- and accumulator
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+The Amlogic Meson GX SoCs embeds a clock measurer IP to measure the internal
+clocks frequencies.
+The precision is determined by stepping into the duration until the counter
+overflows.
+The debugfs shows a pretty summary and each clock can be measured
+individually aswell.
 
-On Sat, Nov 17, 2018 at 1:17 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> Do you prefer that this be merged before or after Zinc?  It seems it may still
-> be a while before the community is satisfied with Zinc (and Wireguard which is
-> in the same patchset), and I don't want this blocked unnecessarily...  So on my
-> part I'd prefer to just have this merged as-is.
+This patchset includes the dt-bindings, driver and the DT node added to the
+meson-gx dtsi.
 
-Personally I'd prefer this be merged after Zinc, since there's work to
-be done on adjusting the 20->12 in chacha20. That's not really much of
-a reason though. But maybe we can just sidestep the ordering concern
-all together:
+Changes since v2 at [2]:
+- Removed all reference to GX
+- Added compatibles for meson8/meson8b
+- Used Martin's suggestions on the divider naming
+- Added Martin's meson8/meson8b clk id table
+- Added Martin's fixes to support 32bit SoCs
 
-What I suspect we should do is make the initial Zinc merge _without_
-those top two patches that replace the crypto api's implementations
-with Zinc, and defer those until after the initial merges. Those
-commits are already written -- so there's no chance it won't happen
-due to laziness or something -- and I think the general merge will go
-a bit more smoothly if we wait until after. (Somebody suggested we do
-it this way at Plumbers, and was actually a bit surprised I had
-already ported the crypto API stuff to Zinc.) This way, Adiantum and
-Zinc aren't potentially co-dependent in their initial merges and we
-can work on the details carefully with each other after both have
-landed. I figure this might make things a little bit less stressful
-for both of us. How would you feel about doing it that?
+Changes since v1 at [1]:
+- fixed clock names
+- added summary in debugfs and moved indivudual clocks into a subdirectory
+- added the GX table to the match data
 
-Jason
+[1] https://lkml.kernel.org/r/1530624110-4687-1-git-send-email-narmstrong@baylibre.com
+[2] https://lkml.kernel.org/r/20181114131627.17766-1-narmstrong@baylibre.com
+
+Neil Armstrong (3):
+  dt-bindings: amlogic: Add Internal Clock Measurer bindings
+  soc: amlogic: Add Meson Clock Measure driver
+  ARM64: dts: meson-gx: Add Internal Clock Measurer node
+
+ .../bindings/soc/amlogic/clk-measure.txt      |  18 +
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi     |   5 +
+ drivers/soc/amlogic/Kconfig                   |   8 +
+ drivers/soc/amlogic/Makefile                  |   1 +
+ drivers/soc/amlogic/meson-clk-measure.c       | 350 ++++++++++++++++++
+ 5 files changed, 382 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/amlogic/clk-measure.txt
+ create mode 100644 drivers/soc/amlogic/meson-clk-measure.c
+
+-- 
+2.19.1
+
