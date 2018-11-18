@@ -2,123 +2,107 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF1AC43610
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 23:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F907C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 23:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30CA2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 23:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86EC2075B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 23:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ycZvqg/9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30CA2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hco5GoIO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86EC2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeKSJnj (ORCPT
+        id S1728140AbeKSKMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 04:43:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726073AbeKSJnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 04:43:39 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E47220815;
-        Sun, 18 Nov 2018 23:21:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542583318;
-        bh=8bLbxwpovdoYOX+O2eS16D44bdJOgeBteNPJUV+hdwI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ycZvqg/98/cFAX8/5i22O3M4J9vaqRdQH0zkxwMi908797RoX9viL74pSAAgCpRfq
-         i095VR9KX24FznaNHoHGxQU/c1Nf+exGMTIaFpmFBe1Zl0Sory5uMSK7h3+FkcC8SO
-         sIXWFcQVI8U9tGmyFObqMHRZfI5ryyhxOyprrDBc=
-Date:   Sun, 18 Nov 2018 18:21:57 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-Message-ID: <20181118232157.GA1711@sasha-vm>
-References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
- <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
- <20181116161957.GG1706@sasha-vm>
- <20181118073618.GD5897@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181118073618.GD5897@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 19 Nov 2018 05:12:18 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51877 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726950AbeKSKMS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 05:12:18 -0500
+Received: by mail-wm1-f68.google.com with SMTP id w7-v6so3583692wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 15:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=vbz3WMnXKGCpjcsYeVzgqx6iuaeUu09p1Ftbl7aIV38=;
+        b=hco5GoIOavU0oF4E/ae6ci+OAQCOhAkLdcalGYGEedT9oTUdjhfghIIwCHyj3yMEyD
+         rFDS/STLieTuSyQfDRgMxI8BK+80uRydnS5GwMtgHmS2iBrOHC8JVBJZNEcdDScSKOe4
+         h9M4eHwISAtdaVuzwIw7e4SQSVs1DbfCji40c69YWqzoMaECOYv9uq+LphYIMVk7Fr8t
+         SpsKi70Ae+m7g9wOSsuERPRA9Rj0UjR7Zgj1BCwu6wsTrQWGRIX1Q6Xp2jX76pnZPxae
+         ScAbe3OwOQd1UQ1e5lSTP0DYvf+ik3f5Va0444hdV1TnBZtuo8O73r49TRTPLYqUYIrd
+         0qCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vbz3WMnXKGCpjcsYeVzgqx6iuaeUu09p1Ftbl7aIV38=;
+        b=RkKlqC3fagDEvccJ+xU+V5DFTwGC09Tmciw3t4HSqXAdEuBO5D1T7esVZbSU/bolL5
+         HY9Iui9ik8Fi0WmdTklKRpKwtUkCdTqNbKYt8DYH2yP//8JE5amxFCJuT4rdKhMWwpI4
+         jIyTSnER3rRMRbXpdd4qJoZR/Vkx+c5AAkiq1Lq5Aw56oHFMZ7CKR1iYLvot6XYvbDAY
+         ut5SIGNZ6E1rZ4i5BxjvfOFHAKUv84VEP8KBp3Dt8DE5RvcoF1eDcF/FBPqA2OzadyLD
+         lTErpNZeB2hW0GQwNDwoxBhrQysrcXtQe71pcXRVjEk4gVBX1DGtzUPRVA7mtzILMzJ4
+         VmYw==
+X-Gm-Message-State: AGRZ1gLNGvGt/gELw4JMwl+0wAalOXdmMQQhXUsM5Qr3EXckcFiRi6q0
+        TK6fxOea84fxPC12PK9m4wdAl7QSFSI=
+X-Google-Smtp-Source: AFSGD/WKW3DUkmesBaOx3eJ34/c8gIBEqXfrJ5Gv78JwOuPB+IKlQckU+fPCT0PmkJ76Bpvjkpwbew==
+X-Received: by 2002:a1c:6283:: with SMTP id w125-v6mr5566594wmb.117.1542585032802;
+        Sun, 18 Nov 2018 15:50:32 -0800 (PST)
+Received: from qg-desktop-d00 (cpc83989-pool15-2-0-cust601.15-1.cable.virginm.net. [82.4.42.90])
+        by smtp.gmail.com with ESMTPSA id t137-v6sm10348223wmt.0.2018.11.18.15.50.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 18 Nov 2018 15:50:32 -0800 (PST)
+Received: from daniel-robson by qg-desktop-d00 with local (Exim 4.91)
+        (envelope-from <daniel-robson@qg-desktop-d00>)
+        id 1gOWpj-0004cJ-BA; Sun, 18 Nov 2018 23:50:31 +0000
+From:   danielijrobson@gmail.com
+To:     danielijrobson@gmail.com
+Cc:     akpm@linux-foundation.org, dbueso@suse.de,
+        manfred@colorfullife.com, ebiederm@xmission.com,
+        mike.kravetz@oracle.com, linux@dominikbrodowski.net,
+        viro@zeniv.linux.org.uk, ebiggers@google.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ipc/shm.c: removed 'int err' from shm_get_policy()
+Date:   Sun, 18 Nov 2018 23:49:11 +0000
+Message-Id: <20181118234911.17697-1-danielijrobson@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 09:36:18AM +0200, Jarkko Sakkinen wrote:
->On Fri, Nov 16, 2018 at 11:19:57AM -0500, Sasha Levin wrote:
->> On Fri, Nov 16, 2018 at 02:38:32PM +0200, Jarkko Sakkinen wrote:
->> > Always call tpm2_flush_space() on failure in tpm_try_transmit() so that
->> > the volatile memory of the TPM gets cleared. If /dev/tpm0 does not have
->> > sufficient permissions (usually it has), this could lead to the leakage
->> > of TPM objects. Through /dev/tpmrm0 this issue does not raise any new
->> > security concerns.
->> >
->> > Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
->> > Cc: stable@vger.kernel.org
->> > Fixes: 745b361e989a ("tpm:tpm: infrastructure for TPM spaces")
->> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->>
->> Hi Jarkko,
->>
->> This patch seems to depend on previous patches in this series, but those
->> were not tagged for stable. Do they also need to be backported? If so,
->> can you tag them as such?
->
->Hi
->
->Is that the preferred approach?
->
->I've usually followed this workflow:
->
->1. Mark patches with a fix to a regression with the fixes tag.
->2. If a merge conflict raises, I'll locate the deps.
->
->I've done it this way because often patches can depend on patches
->outside the patch set. Anyway, I'm open to change my workflow if
->that is required.
->
->/Jarkko
+From: Daniel Robson <danielijrobson@gmail.com>
 
-Hi Jarkko,
+removed unneeded variable in shm_get_policy()
 
-There's no "preferred" approach really. I try to warn about cases like
-this early because the response rates to Greg's "FAILED" email seem to
-be low - by the time they are sent out people are done with that code
-and have moved on.
+Signed-off-by: Daniel Robson <danielijrobson@gmail.com>
+---
+ ipc/shm.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-In this scenario, for exmaple, this patch would not apply to any stable
-tree because it depends on a previous patch in this series that was not
-tagged for stable. My hopes are that if I warn you about this early you
-can work around this (for example, by marking that prior patch for
-stable as well) so you won't need to deal with this patch again in a few
-weeks.
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 0842411cb0e9..2cb493214108 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -461,11 +461,10 @@ static int shm_set_policy(struct vm_area_struct *vma, struct mempolicy *new)
+ {
+ 	struct file *file = vma->vm_file;
+ 	struct shm_file_data *sfd = shm_file_data(file);
+-	int err = 0;
+ 
+ 	if (sfd->vm_ops->set_policy)
+-		err = sfd->vm_ops->set_policy(vma, new);
+-	return err;
++		return sfd->vm_ops->set_policy(vma, new);
++	return 0;
+ }
+ 
+ static struct mempolicy *shm_get_policy(struct vm_area_struct *vma,
+-- 
+2.18.0
 
-There's no need to change anything about your flow if it works for you.
-
---
-Thanks,
-Sasha
