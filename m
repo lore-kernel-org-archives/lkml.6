@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB818C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84C1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B56020869
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABBFC20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 14:18:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gM08RfzR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B56020869
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yo2E4Lbr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABBFC20815
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbeKSAjB (ORCPT
+        id S1727969AbeKSAjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 19:39:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52554 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727421AbeKSAjA (ORCPT
+        Sun, 18 Nov 2018 19:39:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41209 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeKSAjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 19:39:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id r11-v6so2816264wmb.2;
-        Sun, 18 Nov 2018 06:18:32 -0800 (PST)
+        Sun, 18 Nov 2018 19:39:02 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so645790wrs.8;
+        Sun, 18 Nov 2018 06:18:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nOWCmF7nU3ccya4YN9rbWAijBsLEbSVxqe2kT30yoK8=;
-        b=gM08RfzRh7oxMGyyvxU7Nb+mwt8uopmtlJcbDXbuw5O/7gun4iV8O8lUXigBvmWwUG
-         0X0i3KN44ezJ5kMY2DYzzsu5X6nllr939V3VMBKt6G4oJne+UJ+ixl0aoUYxmpSG9ACW
-         ARc6Qeg4AtVM50uJ4/Woaye1d0HqJhhEh8iJdFPnzExh7hlJXG7agEOeVN0+ORbhvqUd
-         8iOwOkAkPcMmCEDA4N65wWBJfHApYx6nhTUFuZhf9yp8PUTMqMb8Bh9rk7mx8IcRmQ9t
-         lemcSglmwd8RL497od4RIVFf6RtskrHJwdP4D6JAN4+rUHD/C1klbG+Q+7yd9jBeyDk+
-         7WRw==
+        bh=Xu7tw3hMoHQOvn1iK3m+Q2vz8pwKTqStprFDM6Xgq1g=;
+        b=Yo2E4LbrQyhK97AQI7z5/bqdXWwiPK5qHe6RWcvCWl6Kw9cQEk+7zZSPKHsbjGbUsk
+         /pJSj67BUi5AAzWP8I/l4VOdm+0uEBV2SWvvdbn1ImqjERj7GqnZkGCQ4XWirgvJaNlE
+         4XDtN9zbpZHJawKM4iMOTzBEroK7vlmVMlOMwUoUL7n1SSXi+gxoXUeiyU1hEsN8mABG
+         bfTreFAAx1WcwqNkRUxR5sQqTOekdzy4PHyY8oOBpiYozq9Chhpb2gpu7MKZHImd4HkA
+         v7Mteh6eC4GvvwtuHGZsFdRKFoHBCtlA4nXpZH/HkE267Wn3C7WKMZ+wQS+uBS46F4sN
+         l2yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nOWCmF7nU3ccya4YN9rbWAijBsLEbSVxqe2kT30yoK8=;
-        b=j9+zvcX/WBSAVq+mlWg5sVjSsoO9IShBk/Q0QrK7x8bgAEgeTz7O31Wq0B2A677K9x
-         Ld85ZIT/GmxUk5GAxjWTyDur9PsZawYNo93yvnt0UB5aZ5sl2buaFtCvciSYrno4swO/
-         WHSfZa6HbYu2KLPCz4Oq8ljldqJNNPNlk9qhDBdW13JJ1aqFKBmpwsi50Yizcw+CzAm+
-         h7yXCllukohTTSYLT3PCg/cqcxqvC03DABB3eJ+paD+Vg9CZ/5u++1dOA4kGdB80FPNp
-         T2xnM9f5tHlK2v0Ko8I3R2D79l+hEnaXPTwOlqnXfF9NZbVqwAN/pVFeAi81ssDDyNXE
-         WqHA==
-X-Gm-Message-State: AA+aEWYjOQzl4/NNQyCnFKcYPDyGYl4PSoLFRnfFSo4NMrXLu1S1mkRg
-        bHd72kVJ/y9xixh66L3cHSWO7z7zkpQ=
-X-Google-Smtp-Source: AJdET5dzgXfJvWLPs/9AKObcoIH/A1ISLaEEO/kKPV1MZ1mpcIefoTpNAXD/K7WtMZJBN2Z1rYBGxw==
-X-Received: by 2002:a1c:5788:: with SMTP id l130-v6mr4306653wmb.60.1542550711887;
-        Sun, 18 Nov 2018 06:18:31 -0800 (PST)
+        bh=Xu7tw3hMoHQOvn1iK3m+Q2vz8pwKTqStprFDM6Xgq1g=;
+        b=Xf6VuROdAqQF/KVQnEkUX57EHHA23SygRP7xZjlsE5DjJQA15S+7a66obOEwdpvXNc
+         y3xdqrzNibQkYgGn0rrCNHq3wGGgzmPLO6dqwY0eXiawgrqu67kygp7CE07VZy6xltAK
+         GbvIvma0zv7elmBOGGZRZzfs06K3HGv0chwudX6QN2uDWGVb7CF+WJtL0vdurY5cbSiO
+         PfFLOLmF/nmzkp+c0rq9O+vamDj/RO+P+h4h89IXygbIbX05Qz0RFgdFx0NvZebeNtvn
+         7bgd+H9q9g2I3J2Z9LriyzpGRwmEnJ1fPmCXZKbwNgYt81VfKsTAON/gfU0xEp2wOEZQ
+         2IAw==
+X-Gm-Message-State: AGRZ1gLWxP+hPfO7hUejo4nB+E2oByz9mFC1qgq+bFZFkTjXGemchRyW
+        ZJBtox+6aWnUB1nT9y0JcqQ2oKtaCxk=
+X-Google-Smtp-Source: AJdET5drRZyaoUj+oRtrwP5TlR566/kACuA+hKmYzMciamLXhomsM1i8qzYhAGUwTm6FUUDMixDzSA==
+X-Received: by 2002:a5d:4cc6:: with SMTP id c6-v6mr14832444wrt.75.1542550713632;
+        Sun, 18 Nov 2018 06:18:33 -0800 (PST)
 Received: from ThinkPad.home ([185.219.176.209])
-        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.29
+        by smtp.gmail.com with ESMTPSA id d4sm29814412wrp.89.2018.11.18.06.18.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 18 Nov 2018 06:18:31 -0800 (PST)
+        Sun, 18 Nov 2018 06:18:33 -0800 (PST)
 From:   Mesih Kilinc <mesihkilinc@gmail.com>
 To:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc:     Mesih Kilinc <mesihkilinc@gmail.com>,
         Icenowy Zheng <icenowy@aosc.io>,
         Rob Herring <robh+dt@kernel.org>,
         Julian Calaby <julian.calaby@gmail.com>
-Subject: [RFC PATCH v2 08/14] clocksource/drivers/sun4i: register as sched_clock on suniv
-Date:   Sun, 18 Nov 2018 17:17:07 +0300
-Message-Id: <6f4773bdef8979bff71e958c9ca2c832c68ada0d.1542546735.git.mesihkilinc@gmail.com>
+Subject: [RFC PATCH v2 09/14] dt-bindings: pinctrl: Add Allwinner suniv F1C100s pinctrl
+Date:   Sun, 18 Nov 2018 17:17:08 +0300
+Message-Id: <d54a4f7e2f33742145394bc2d8c3afb4013b860d.1542546735.git.mesihkilinc@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1542546735.git.mesihkilinc@gmail.com>
 References: <cover.1542546735.git.mesihkilinc@gmail.com>
@@ -83,31 +83,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The suniv chip (newer F-series Allwinner SoCs) is based on ARM926EJ-S
-CPU, thus it has no architecture timer.
+Add compatible string for Allwinner suniv F1C100s SoC's pinctrl.
 
-Register sun4i_timer as sched_clock on it.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 ---
- drivers/clocksource/sun4i_timer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clocksource/sun4i_timer.c b/drivers/clocksource/sun4i_timer.c
-index 6b57187..65f38f6 100644
---- a/drivers/clocksource/sun4i_timer.c
-+++ b/drivers/clocksource/sun4i_timer.c
-@@ -186,7 +186,8 @@ static int __init sun4i_timer_init(struct device_node *node)
- 	 */
- 	if (of_machine_is_compatible("allwinner,sun4i-a10") ||
- 	    of_machine_is_compatible("allwinner,sun5i-a13") ||
--	    of_machine_is_compatible("allwinner,sun5i-a10s"))
-+	    of_machine_is_compatible("allwinner,sun5i-a10s") ||
-+	    of_machine_is_compatible("allwinner,suniv-f1c100s"))
- 		sched_clock_register(sun4i_timer_sched_read, 32,
- 				     timer_of_rate(&to));
+diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+index 258a464..5086734 100644
+--- a/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sunxi-pinctrl.txt
+@@ -7,6 +7,7 @@ the pins includes drive strength and pull-up.
  
+ Required properties:
+ - compatible: Should be one of the following (depending on your SoC):
++  "allwinner,suniv-f1c100s-pinctrl"
+   "allwinner,sun4i-a10-pinctrl"
+   "allwinner,sun5i-a10s-pinctrl"
+   "allwinner,sun5i-a13-pinctrl"
 -- 
 2.7.4
 
