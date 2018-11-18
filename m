@@ -2,99 +2,90 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 360E6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC05C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E398220817
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:42:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E398220817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D0D020817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:43:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0D020817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726072AbeKSGDu (ORCPT
+        id S1726872AbeKSGEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 01:03:50 -0500
-Received: from smtprelay0166.hostedemail.com ([216.40.44.166]:48881 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725805AbeKSGDt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 01:03:49 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 3ED8D180278B7;
-        Sun, 18 Nov 2018 19:42:39 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: join11_16e4a221e5f2f
-X-Filterd-Recvd-Size: 2520
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Sun, 18 Nov 2018 19:42:37 +0000 (UTC)
-Message-ID: <0d630c2b5d234eb4131b8021b345edbf080b2c52.camel@perches.com>
-Subject: Re: [PATCH] staging: greybus: Parenthesis alignment
-From:   Joe Perches <joe@perches.com>
-To:     Cristian Sicilia <sicilia.cristian@gmail.com>,
-        Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        David Lin <dtwlin@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        linux-kernel@vger.kernel.org
-Date:   Sun, 18 Nov 2018 11:42:35 -0800
-In-Reply-To: <1542569289-19899-1-git-send-email-sicilia.cristian@gmail.com>
-References: <1542569289-19899-1-git-send-email-sicilia.cristian@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Mon, 19 Nov 2018 01:04:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57786 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbeKSGEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 01:04:36 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A40D2207B0; Sun, 18 Nov 2018 20:43:25 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6045020510;
+        Sun, 18 Nov 2018 20:43:25 +0100 (CET)
+Date:   Sun, 18 Nov 2018 20:43:24 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        Michal Simek <michals@xilinx.com>
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181118204324.373ca9cc@bbrezillon>
+In-Reply-To: <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-18 at 20:28 +0100, Cristian Sicilia wrote:
-> Some parameters are aligned with parentheses.
-> Some parentheses are opened at end of line.
+On Thu, 15 Nov 2018 09:34:16 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
-Given the very long identifier lengths, I wouldn't
-consider many of these appropriate.
+> Hi Boris & Miquel,
+> 
+> I am updating the driver by addressing your comments, and I have one concern,  especially in anfc_read_page_hwecc(), 
+> there I am checking for erased pages bit flips.
+> Since Arasan NAND controller doesn't have multibit error detection beyond 24-bit( it can correct up to 24 bit),
+> i.e. there is no indication from controller to detect uncorrectable error beyond 24bit.
 
-80 column line lengths and long identifiers don't
-play well together.
+Do you mean that you can't detect uncorrectable errors, or just that
+it's not 100% sure to detect errors above max_strength?
 
-> diff --git a/drivers/staging/greybus/audio_codec.c b/drivers/staging/greybus/audio_codec.c
+> So I took some error count as default value(MULTI_BIT_ERR_CNT  16, I put this based on the error count that 
+> I got while reading erased page on Micron device).
+> And during a page read, will just read the error count register and compare this value with the default error count(16) and if it is more 
+> Than default then I am checking for erased page bit flips.
 
-[]
-> @@ -70,7 +70,7 @@ static int gbaudio_module_enable_tx(struct gbaudio_codec_info *codec,
->  		i2s_port = 0;	/* fixed for now */
->  		cportid = data->connection->hd_cport_id;
->  		ret = gb_audio_apbridgea_register_cport(data->connection,
-> -						i2s_port, cportid,
-> +							i2s_port, cportid,
->  						AUDIO_APBRIDGEA_DIRECTION_TX);
+Hm, that's wrong, especially if you set ecc_strength to something > 16.
 
-But if you are going to do this for multiple line
-statements, please fix all the line continuations of
-the statement, not just the first.
+> I am doubting that this will not work in all cases.
 
->  		if (ret) {
->  			dev_err_ratelimited(module->dev,
-> @@ -160,7 +160,7 @@ static int gbaudio_module_disable_tx(struct gbaudio_module_info *module, int id)
->  		i2s_port = 0;	/* fixed for now */
->  		cportid = data->connection->hd_cport_id;
->  		ret = gb_audio_apbridgea_unregister_cport(data->connection,
-> -						i2s_port, cportid,
-> +							  i2s_port, cportid,
->  						AUDIO_APBRIDGEA_DIRECTION_TX);
+It definitely doesn't.
 
-etc...
+> In my case it is just working because the error count that it got on an erased page is 16.
+> Could you please suggest a way to do detect erased_page bit flips when reading a page with HW-ECC?.
 
+I'm a bit lost. Is the problem only about bitflips in erase pages, or
+is it also impacting reads of written pages that lead to uncorrectable
+errors.
 
-
+Don't you have a bit (or several bits) reporting when the ECC engine
+was not able to correct data? I you do, you should base the "detect
+bitflips in erase pages" logic on this information.  
