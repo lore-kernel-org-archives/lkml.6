@@ -7,82 +7,82 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3079C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7D1C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7DB2080F
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6575A20817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="P5Y7POIc";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="hw8HbTXK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F7DB2080F
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="iNVSV40W";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="FVx6u+kX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6575A20817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727589AbeKRUbG (ORCPT
+        id S1727490AbeKRUbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 15:31:06 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:41298 "EHLO
+        Sun, 18 Nov 2018 15:31:02 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:41290 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727332AbeKRUbE (ORCPT
+        by vger.kernel.org with ESMTP id S1727396AbeKRUbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 15:31:04 -0500
+        Sun, 18 Nov 2018 15:31:01 -0500
 Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA8q7E007702;
-        Sun, 18 Nov 2018 02:10:51 -0800
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA8s11007707;
+        Sun, 18 Nov 2018 02:10:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=Ri0rRoCuzi5Zwr6rL2q84TLb34WtlpwOf1ixAbyJhXk=;
- b=P5Y7POIcio1Df7c07gUew2Kx/qBt0VG1rpCpGHTpybtzKby5zCXw4BaF7YBQFjbzwVkZ
- OVd6PbLp04zmySAbAtp3OJvq6+fBnyvHgfPpwjTY7lePCXyQVJIzIi3KS36LoXkdHtat
- IyFvkWOOHJB5OOnh50ayC1DiUG5vSe+uE3/JBJfBJ8617RDLcp91fntODkoVAw4RJzlX
- 3FoQ9oURfFaSrpetnCVmrPt+4DlXA5Cq3YrvcKNzPC7I//UD2gIma6wV7n/3nIcNQbNc
- NpEzD4PtTRuKxA3y89mkMmYurhD1+BQZjWmrG5dNQWYJhFlM48Ktmq9YJc0YC8y+xyd3 yA== 
+ bh=lLT6DWDd9d4HDaKp5Agdoe8QUzpo1jFgC0ux9DmSz1g=;
+ b=iNVSV40WVhfYe5olYT0xRRGy95adhgkZVqAlYCiS8bzBZTWWH34NnM1JSy5fQL4ARbTE
+ qE9EVEgdDMt2gE6qEvjko4s9wYERXYokxm0hGivaOY5m8oTXcFtXIxkrA+oSVBiOU8FO
+ T6jlCpFUd0FU06KHZk+1Z4R8WchTgE3551J1ARhUJ14ksxlKm9wpO1TRhrong1CwLmR5
+ O1AUgTzbhqwygVk2wYH9AppSVznJC6Zs79PTCVCqrL7VjAZRdw4uejR7F73UDd0SO5fS
+ 5/BO65o2CVPO5+tTeq3N84GFEtCe+5aiZeQhekC1V5+zUHQJdonr+bMXUq/UYQW743AY WA== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp0118.outbound.protection.outlook.com [216.32.181.118])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2ntff7w450-1
+Received: from nam05-by2-obe.outbound.protection.outlook.com (mail-by2nam05lp0248.outbound.protection.outlook.com [216.32.181.248])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2ntff7w44w-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 18 Nov 2018 02:10:50 -0800
+        Sun, 18 Nov 2018 02:10:49 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ri0rRoCuzi5Zwr6rL2q84TLb34WtlpwOf1ixAbyJhXk=;
- b=hw8HbTXKXUI2o9yxbaOrJp3ZqNyXucezc1ripe6al7GZyIdqLVfEGZKFRHwb+miqGkHpjH3D2CQFrZY1uxK3XEVEnhBLSfymEairVu2m1Fi6Z2/N2yjcgypXrFCR9lfSSj5qpN8GkN8sEZz+eIVz3q7HVb69+wH/FzFOQnTN8K8=
-Received: from CO2PR07CA0063.namprd07.prod.outlook.com (2603:10b6:100::31) by
- SN1PR0701MB1870.namprd07.prod.outlook.com (2a01:111:e400:517b::20) with
+ bh=lLT6DWDd9d4HDaKp5Agdoe8QUzpo1jFgC0ux9DmSz1g=;
+ b=FVx6u+kXBcoQ7xXgb+qTcLAQ8Z1h/yK7sc0qHvGLJo97Kdl5HKg0mr64TbeG3palCQYMdDTy8JJanm7pz39EMnWEss9rLGTJjgRp9ZlLNIrWMGxsjHc6+4QmgnWsTWClHr6iCrUby1bTNpEwXZVl6ZKYUpzsSXqCvsmEsdP+yd4=
+Received: from BYAPR07CA0060.namprd07.prod.outlook.com (2603:10b6:a03:60::37)
+ by BL0PR07MB4100.namprd07.prod.outlook.com (2603:10b6:207:4c::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.26; Sun, 18 Nov
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.28; Sun, 18 Nov
  2018 10:10:47 +0000
-Received: from DM3NAM05FT042.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e51::202) by CO2PR07CA0063.outlook.office365.com
- (2603:10b6:100::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.22 via Frontend
- Transport; Sun, 18 Nov 2018 10:10:47 +0000
+Received: from CO1NAM05FT032.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e50::205) by BYAPR07CA0060.outlook.office365.com
+ (2603:10b6:a03:60::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.21 via Frontend
+ Transport; Sun, 18 Nov 2018 10:10:46 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- DM3NAM05FT042.mail.protection.outlook.com (10.152.98.156) with Microsoft SMTP
+ CO1NAM05FT032.mail.protection.outlook.com (10.152.96.144) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:46 +0000
+ 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:42 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5U029622
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5N029622
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Sun, 18 Nov 2018 02:10:45 -0800
+        Sun, 18 Nov 2018 02:10:41 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Sun, 18 Nov 2018 11:10:44 +0100
+ 15.0.1367.3; Sun, 18 Nov 2018 11:10:41 +0100
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:44 +0100
+ 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:41 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAexH032166;
-        Sun, 18 Nov 2018 10:10:40 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAcc0030983;
+        Sun, 18 Nov 2018 10:10:38 GMT
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAeAY032123;
-        Sun, 18 Nov 2018 10:10:40 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAbr5030960;
+        Sun, 18 Nov 2018 10:10:37 GMT
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     <devicetree@vger.kernel.org>
 CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
@@ -91,9 +91,9 @@ CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
         <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
         <pjez@cadence.com>, <kurahul@cadence.com>,
         "Pawel Laszczak" <pawell@cadence.com>
-Subject: [RFC PATCH v2 12/15] usb:cdns3: Adds enumeration related function.
-Date:   Sun, 18 Nov 2018 10:09:08 +0000
-Message-ID: <1542535751-16079-13-git-send-email-pawell@cadence.com>
+Subject: [RFC PATCH v2 05/15] usb:cdns3: Added DRD support
+Date:   Sun, 18 Nov 2018 10:09:01 +0000
+Message-ID: <1542535751-16079-6-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1542535751-16079-1-git-send-email-pawell@cadence.com>
 References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
@@ -101,54 +101,55 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39850400004)(396003)(136003)(376002)(346002)(2980300002)(199004)(189003)(36092001)(356004)(486006)(51416003)(76176011)(50226002)(8936002)(186003)(26005)(126002)(86362001)(2906002)(426003)(446003)(11346002)(6666004)(4326008)(336012)(4744004)(476003)(2616005)(6916009)(107886003)(4720700003)(47776003)(8676002)(246002)(36756003)(7636002)(5660300001)(54906003)(16586007)(478600001)(305945005)(106466001)(26826003)(105596002)(42186006)(87636003)(316002)(50466002)(217873002)(48376002)(14444005)(2351001)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR0701MB1870;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT042;1:YII8wd/a4EoFRCSoGFM6rSQ7bfh1yKmP8yzbQUsgDDqqqPx48NqG5iGKXTto0ZX1gPYkOjN7ITa8XUf4O3ib1NASbVZJp1Leb+ZvvTURN3ZaVdKYkIEmWzAGud1nKjso
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(39860400002)(136003)(346002)(376002)(396003)(2980300002)(199004)(189003)(36092001)(2351001)(107886003)(4326008)(47776003)(6916009)(14444005)(16586007)(42186006)(4720700003)(316002)(217873002)(54906003)(76176011)(5660300001)(336012)(51416003)(2906002)(246002)(478600001)(126002)(476003)(486006)(50226002)(87636003)(48376002)(446003)(26826003)(2616005)(8936002)(11346002)(36756003)(50466002)(356004)(105596002)(186003)(6666004)(7636002)(8676002)(106466001)(26005)(86362001)(4744004)(426003)(305945005)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR07MB4100;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT032;1:GfTqsyXaDaITA02bb5BboHxCPlyOPdzSk25DjAzNVe5suiHNzOvc8kKndGY2zq29RX+adMueNSeflQDMdn8f/5o9jqopaEX9lrUhUKLXWsJotcTkyOoTnnSZhgpAVSrM
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ed79e2ba-3de0-4c21-e49b-08d64d3e1be0
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN1PR0701MB1870;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0701MB1870;3:3IgVhbvGQF7/83WVQb6qc1dyjo8BHOurWh2nPzPs+wG+5cIu4XEfbA0B5WK2h9jfxWhYBrdzf9imy54zgeWMWyx/EUu+/icBWTq+KFU8YfJtJtstY7TbjDcSvXrqig3noOvXxcRz8Dc1wl2Sdeyxcq5JwXyxw9l0phD7XXumBcaSrEBAGsPYkiiB4kTZQEhubfoYDfutCQ3sjymsEjQ908uof4C/xhP2g/Wl3GUbklalfwc8Rb+3y5ZXzfL+Yp+A8vYEdBcqPE5j+yVnzoWJgWJPEVYarO4FRSWCWGP22urgPkviIxLSdDbYfLxX6pfOVqEwtV0fwzWceI+sqB4HEhlzkhPWn9ZvPi0g0Wg21XY=;25:Ek0861f01ivLBTodiGYpvYGusi9JLMjcr/gIWEuJkjL9aW7envYsq35ziojjFW5ivLIpOAshB9NVSL7osKG7yTkzlmOJiwPXkR66+owWvTEUwNFfvIXqsRyJsxurZnHWGDzUGzdn9znkCMYd0DxD6jU7WL8x9lztY042KJmqmSTOO9wEvFCjylqKHCvrxYcppk+pvZd2kOtIo61I3XMHDRpHQgyNyqUKjfIQR+1FrCF8viKevKDj3MvZXxX7CSFg+TwoHt7zF7fJ34Z5Y9HOalRjWJ+/gcfTiarf6hFKc4FBW0d1tk/HkkCfSqnhXQZOVk6tJUqsc1tfs0Ubaul+IjYWlcVUZm0QcJOAo8rDznY=
-X-MS-TrafficTypeDiagnostic: SN1PR0701MB1870:
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0701MB1870;31:sq5UJFgchVw5QMk6jJUr1hxivFCIGzMBjo7QA3Xjb9ZcFO2bQ4fEY8ECSkMK5ekC+G4ZEKHIcyEWoPpCmVFws0YXbxZzb9O1KmaQHvS1pApFA+O4Qzcm0FYscKpucY/mhT5/uggBeGDroAjYk1PW2DrfwhwoLee6e0PVsx9FmZCTRNKeVtLv1ZqKLStqQ+oD4coa8YU3JqF0t8xD/3ZKevvj1H9mVl6elNq1AopwSlk=;20:P0x/QWxr5OmpUDtHJrvckZDXnrMZUjKKN45Ws44rqZ+XeWc8t6u8kOHQPxZnDroTsoUdHZfG3yDjdG7FEZXLCAbvYfy8zn3hLWWLCetTjlH5sCvY5aw7Qx5v4NaQ0FdNdcp2cwuKsRPJ0AMfXYihsmWkLQuhpo544gzcKth3eRxcOm0vwiuMvuVruQZQiSkYhbiHF2dg39nHLG+m89wFcxN1Q1Oe3Jubsm4F4hQ6VkkEh/qtgiJMdARiaGYPHyYWG+SqJPPOTIKgQzmxf58G5RM2h7Xq9uOHPW0GgFzIUrfdcji+LWlpqvsaI31Z5nhHJLLyCa9a/0uhzMePHL76vpE+aQeXSrVv1+tGYXxgZ6B4DpJy2YeH1ya3MDabuVbeIfyyB2kyaDVBfKdte/qzKLxobN2U2ChGHdGjdfCYHIo6xQcJgFdrS0rj8gVaftf4YSkZ1LGbGzQexxcT1Re64NXCiVYPPIdxxWrbLQBpIbQb64ogePnKFe9s1aylNLJT
-X-Microsoft-Antispam-PRVS: <SN1PR0701MB18705AF50B071C3206540380DDDF0@SN1PR0701MB1870.namprd07.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(72806322054110)(185117386973197);
+X-MS-Office365-Filtering-Correlation-Id: 67b66638-9a9a-4464-b4a7-08d64d3e1b60
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BL0PR07MB4100;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4100;3:fdaRYUnB60rNuTNqbbOYli+ZxYpOY8G/ajPjquwMdi72tOhcTT7P1szgjYbFehiG2AduCxGEWyigh4Ew5qWdhL6ScB3bA54cA7NsgZLIcstpOOt4bPRPFsKHZNQQ76EmuPzWGMc0pjICI9ZjENNoiku4bxCPT07jfVaZ914AWjGjGs6wXHIT43G5YWLPey+rD5MQrf0FXREOqkGTiC8FWI1tHYDl2+Fz2801lcOXhDZW7cUo84OU9uXoMhanwbeGAB1lr2whss24wKtXZaHHUXcZ8Jy2R5l9QarsRB0zFp5E6uNVStFg6vmfEeV2jqPxl2aJ+0Uh5x0lhzv700z3fuGy6ExwOHK9TnL41QdNuyk=;25:GMQrWFBPzm60b6ni+lot3i2xTocxE4UM4OnZ0VvRQQE4piwGiaMsQsNOfnf/BuUvbm2dmH1SduFy4u23rM9dwCgDTr66f9Nl6yvwTmYF6sI18uRuUCrZnvwQs1jrmHPiT00O3Rqa6iqFpMmuZvGuLvpc0JSelhddhvGv7/UYBCNZTf0eai9vb9Y0EVrkkg6QNPPlZRpAk8M4sPFHAgfSY9gm9NSHuDFsu9pjbdNPOsjE4J9JrpNO12466poQ9YmlRkha8j0valbE2HNjh5N0vyWgTCcqzakOUS8nc09Lf1TDYdA9HWvo5uG4M5hVspx9OKRw6krVTM6Ez9svyJNqS+OkiaRawTZvB1f3T6pCigc=
+X-MS-TrafficTypeDiagnostic: BL0PR07MB4100:
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4100;31:8/FhQXo6vfVr8J01V/tWJWTtstpYeEw2GXLfBmqT4Ns9li0kkJ0hXgQPB9cMCt33VcQVSWNibxO8/UD7c3zWkr0jwx+0Hcp9D4WMdmiTlSWB1S9vQJY2TwdjhyMqRCPSi/zgpNXdFOzROFUwdX5jSimBfYAVmHHbLmbfsWq84d5mRcN7PvZFmygVeAbuIwgPsHy6/ZyeQ6ay6WeX1QFuka47gqHKtHcTt0ed0tt/eek=;20:85TNvtUfuMf9BlpJUr9iBLB+DsrUFN+N6BQx6VJ6aGENGQlQV+IYum6D4j0iO4DQz2Ke7lBIXBrWSH2Jlqnc04s91eah/x5lJCD0av0JyjtGRFz0uMrziElKKjUYQTpdVyxwT19ghONbEnwJAH/cg7P+ITsG7/69jLiu+UBiRsqB24VkotCyWLyRsG5zgDop8yc018bWiyxe/E4yYRN8o36gIuDWkEWMPHHpWQemeJJCzVV6Thq0mcnUmMoYKxDT0yG42URFzXZ6R9gslQQjmj//dWngYv5uAJYhSHN5+yWhzNsYzRVe8DYeRf2ENL8dG3YgHjpdnBsIU1X64rYlJGk6rb3aYYaavVd76QXxeEh7Wwd/rcJC+AJOc0yCRcSV5b00jIgR0C8yB0SvZseJRujNCMjC0TbM0ryCcEGX0HU/wiVI91xeEXXR1yvC8Xjw2SP8JhO+s6vjHp8DuNlUtLiy+OCgrmTVCV4CM1bt2j/m2PdaEsY4yKhg/pojhvJ1
+X-Microsoft-Antispam-PRVS: <BL0PR07MB410045E907C5A568496362E6DDDF0@BL0PR07MB4100.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231415)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN1PR0701MB1870;BCL:0;PCL:0;RULEID:;SRVR:SN1PR0701MB1870;
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0701MB1870;4:yoaeGGvx8pqfZhEHZz1URzxW+7z0WH+exKiE1kY/RMsO6UJUt3OKk1Zl/nwVMaZZ/bq58BotAUItoBUbrGb2qnO1Hri9Bn0gwiXjNkGoLck0BSfK++bThgn/Duj9f6IIzzq0aTKz47S0u4LGKofRntUbaVndTWphMmYKkdYa7zQp62PAid2+twVFdR1b5SRULV23ex5pZ1Jw/joPwX+lmnNdqNoav+XiBPwQdPj1ZZsdOW56HEIV3okavv6h1WTnIZq22pKr28bNnXO+v3Lw1bBomBf/vElzJtkAWO/B1kyboU/4/Lqeu8gCRCf14WtvVqjVrMkwSWZQNdFFppWJLtf3Vu9bPAr2YUg52NF5YVM=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231415)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BL0PR07MB4100;BCL:0;PCL:0;RULEID:;SRVR:BL0PR07MB4100;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4100;4:XFnXvk+N5AcnRhcSVh0SB6Z51lfWfjPcBDXBmI/W9BLuTKQSEQGcH0pVJWUnzXi/dquSKb94MNSzNVPOW0mFzxvzJ8kv/BtbCmesfHqI5icLFJGHjVU7EcP5SZvwfuQ6aDMzpytCxEITe2x8TkDQh3uDD4KOA0Tm9EXYk18eg9VW0Z/CTMGSxn9xjrAKH7QMNtbpTPnqR7+OKDtvOE0ePJhqml10cjtqF1/hnhWNKBKXepPRJhBGu5q/25y1+6xtHLrBsv7XcvGCVXlCDQYYY93EwNRuTg+9jTeHEN1KhAY6sTjhb+SrG0iFD/Hpf41S
 X-Forefront-PRVS: 0860FE717F
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR0701MB1870;23:Iim2ZTlJCzt/v6VtRkf6fC77++aDaXC6Dd94naO?=
- =?us-ascii?Q?mB0RIGYES9NkWfcVEYaDNgBBJPIEC/Uhr15OgIunmO3Q3YgcdDFyg0u7ki5a?=
- =?us-ascii?Q?WE5UnW3hM/U0y8AqRncDBVTYtbjdft9TUaudN6fxkHWgbJHkRVM2OjychEvY?=
- =?us-ascii?Q?W3OP/V/kta4WTQ3apTkmQm5XyuX39JF9P3LLYXgpV1XgDvTJAEUSAndvXaem?=
- =?us-ascii?Q?4uH2qKVHL3BTQd9pUxdjoow5qIbCoiyH8QMfEAiTEr1FMumJ+5D/8c3BA1Ro?=
- =?us-ascii?Q?z6jWy/1yzmXRe3FXFA12tfV35wg3iCYg659bZgRCYikNtgc2n6QD/Rj2ylcO?=
- =?us-ascii?Q?XzYSom8k4UQRimqtTkVj+ALifhzRkecefaLFmIZCA3vCcT9u5u6/qKnk6i4p?=
- =?us-ascii?Q?l6jdq7xYEWegn0m25A7mowcwEhNnnftwTlFZqrNkY4gV8NP6rGWyv+hiLPUk?=
- =?us-ascii?Q?JlGXU1YIm7g4u7pi0O2oGnDxvgZLU6qlUSdEqHVMNW2j0vwJefMzJXtqzm+G?=
- =?us-ascii?Q?2lbkKDSY/SlXSProYJOPjUtBHxR+1Ff4rWUG65mIPbYOWSbnTRHZYDhX7wVs?=
- =?us-ascii?Q?LZdbFTFvxRMOP08cHfK/ovyKX/EOl3JdhmSdJQ1DWfxRBf4Nulc2yuQZnn1T?=
- =?us-ascii?Q?yulqXc8HSmZYuK4d8N4OPPluCz1kbXZLonDXqLphmeVdzSDuMYol/dVz+KHS?=
- =?us-ascii?Q?KOpms+JdFDC8w9KKebwmvAVNM/VVSZ6qbFoPDANBDUifi97oxycBM8PRBHV2?=
- =?us-ascii?Q?F0uCWHTKr2AKscUGuZWS9CyEMHav8XKBnYxWLT7xTskD1yTYEpyQoUFoWvwt?=
- =?us-ascii?Q?SR8XIMqh8D5ink833ungjkDCufoMLgevDA+6eK94BjtUssImz//Iworl8t6d?=
- =?us-ascii?Q?NACUQCevet8oIm7YY7Bo7DMebv2c3Uw3Vbz+V3XBAsnrClNvzfBu9qeZgJyz?=
- =?us-ascii?Q?v1tx/tg8S0aIhvXYpIfWwJJ5i4S/8p5SaA92xGSVR/2PEtw8XDYXcE5267+F?=
- =?us-ascii?Q?N6WSlu461HNrik/xHRqk2bIjULcgHPxUm22uIEABZguKF4yKBetIWaTZQ6tB?=
- =?us-ascii?Q?atsGK0dt7sxriLHT5sbTijhU57FQY6upJCcGYXDP7o1CsXWLmn8rrNTkFqG4?=
- =?us-ascii?Q?zAbrgN/AGXTFJepuLeEiYdlNETVT80m0p5HDGyq162lDF6pKKtKgmhVQX4iJ?=
- =?us-ascii?Q?/QF+g1iBTxSlW852Mon4TarF3jM+I1kq+zEtx?=
-X-Microsoft-Antispam-Message-Info: mr490MLaOY1BzANyASLF1CLCk7mhPKNLa338pUSaadkvRGjaVNOB/KmHmk7qojpThDFuJ4j2GCnRILD9hnwU8NXN6r7pMLW/9ujamGcVyZHz5JjSHRoZgzApqVzBE7Ym+moNklB6Hz7t1gp209B7KlEYkFnx3ctYuCo4+6whsZklTHUVhXvFXSmck3ZLnqgly44AY0yKAQebD+4oXzF9w55+NaN8kxSsPltT9d2d+Z2ex+gV/eKbG0nNbZgm8BXDLKC6pY11WsjBjEBsgkfv5HQWCsAd3TtPGjwSAqYvfTQLMaoiimjtBjJXHB7sez3D928AXZ4yEUFZzkskbo5pP+6FgjeITuZFpU8JjnkY53k=
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0701MB1870;6:K3+qCxDlqkKnw6Lyjt/h3uUAMqD5day1UJrtAc1fkT/CEr8QFQbQNRWITJqMPunOFR8ZCNoZH0CFw4EHMbGiOCJzdE6G446Y59tkFo1oiCtJgfsuJLfRP/8zlDVCJ8YzssKH3v3S67euGpCbP1MrlBQqQkSAdQ2x60sQtSKYhCZiiuDJrESl5Iz+PPLoGCugNunSrAUovMsjQJgsZEYkd1+qKwJ+rFAMeAButwHAUe1l2YFUY1Fh64ECKoGCVHYUfo5sk5kcwhXbJNhTuy1xPKaPzKgGvPGokuY4pn6ESbYL8UE5JOZjCzVu9DOb8uvAYa83yX2v1iOCJyx+HOqxShDDx94PNcvd8aH5Fh0+xzYB5g7ZWfhK025WVIwOTyrVjpMNgh4gg50NvgY5JiJE4zpXdzSakma8HOC0ke5SS0wkNka9vaXw73vADHlquBFSzbZUEgfE/k4cP/JluS+qag==;5:KgNjIa0IngOLTS6Wm56+c9HmvNhiFm4nZBP9WcaTy7ZtkXLLRL/9Dnp3kctt7chhGYYnknEfvgXGmhbuwPkj+4RDkVrxuJU8W/oNMIzzGymeDutZBerSH8P+IEl4GjrisIjrRNPzb4Pqc+BzNqOw05M7Z18vyFCL58XwhAstFbo=;7:/3FCiOCPYFarPGy+31imNAnHtgo6GgCOnilurATJrWUVe+M4ebyYbrHI2EzEi9DOMet62CLD0H5uutYGgQTY7L4J/vod5r0gdWAypp5QujMzUyy5dw79tClwt+TFv8fpTFxihp9hkjjwnjuQWdcHjg==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR07MB4100;23:kJTQOl/6lAxwH6PkivWS9zQPuEiOFDOkxUGXCFAUC?=
+ =?us-ascii?Q?eVDU9BGdGr7C9glhFfq6qBQX0AoOVMGXVabFABf49cUhyIIiRlrplRbNTnhi?=
+ =?us-ascii?Q?GqBLpBMTr2VYnKg7P8LCD+21XsKDCpUMY3j2dpS+m+XISEAn735Fr0F99eit?=
+ =?us-ascii?Q?TCU+46mumqUcySlsy6wh93PdJmPUKoqsvLZNs3qQGorbDb4TFiBGeHEirnKW?=
+ =?us-ascii?Q?iYme/1TBsCivKaUMcSmjKOXO06uD+DXBdJoflhO1yIRdlRsOt/AJKkeeJEjc?=
+ =?us-ascii?Q?tFVdQEZUmPC4U+7rMtCEMcvwgno2r0yBTHKj/IbKVRfzGUPgkmdxqG2Tej5S?=
+ =?us-ascii?Q?FSptjciVwWORZIRin57rHwmS5ZMMv0tgHqjJq5Yclw3TaW6XJB5QJc6933hY?=
+ =?us-ascii?Q?/zK3sPQZwnZUJSJ2R143kosUdze6zWJrRV9Re8TU72w88ieLS+vTHTSSbVzO?=
+ =?us-ascii?Q?//jK2fQhutBM+f6aYCpffZ4X+X9LXdRQB5RIfKh5xrfF25bRQkNE6NbhzTsu?=
+ =?us-ascii?Q?8YyjuGXUvbE1oo2S9CycufmEIEGyuUemj19niV5QJuTI32gYnEtUTtksdd3V?=
+ =?us-ascii?Q?ZjgqpvnSzDIpo9Jf48tRs7M6/xpH2sC53XFIB0k2cOAHGhGdD/vbLYl3mbnr?=
+ =?us-ascii?Q?ARl9P6iRorfisZNaPetAooMXT4Sv66Hq7cHaXnEI922x6rtRpj9R2xL44O7j?=
+ =?us-ascii?Q?zHvnQ5iYeIcv2caJmANs9meaXyctp7Plzdui/rANvtLETNQ3qHUbDxFOIR+D?=
+ =?us-ascii?Q?4eznhDA/4oootiQM5HdpP0SGUQTVWmzCf1FjtavYs2PXQpo6Z/qPkmtmYt5A?=
+ =?us-ascii?Q?3HnBBRDMZKV72P5g4L1BQfop6cbT1Dh3o80jG8cjcwwrWgvNaLXwU/iSRnzJ?=
+ =?us-ascii?Q?JGO0CDazItAtHtN6EyDQF1g20/ZpkW7tgDYiZKrOhSlMtOiqZ1+pPNDSzPYr?=
+ =?us-ascii?Q?06CNopSVrsFzWxoEh/JTasQHLg/iUnXkbBcu0VlFa5yyFToOK2ayEseLulyb?=
+ =?us-ascii?Q?ILVG/WyFDw5LvFdB3BLctdh45yYOKx1CoEZAF8ORmvdr0xeDLoC0Gy2FlkBG?=
+ =?us-ascii?Q?Xy8nRghVq+Zi3etCmrN0gboX4CLJX5r/NM2WRVPSf020wQPEdS4IKIxmrK/p?=
+ =?us-ascii?Q?m3funwZAkeLsc5NzmLdlrtQQXQEc9k4oC2eGOM+GDa9pHrVItXkUF4limWSS?=
+ =?us-ascii?Q?yxtZPMpNkWnxU7emJ4RsCBupDbCru3KtLNbSGPYKtkNng+UT5tRPEwqIZ3Mh?=
+ =?us-ascii?Q?EJRoz0NOvGMaeZpn3f46azlaE/Nywk2HCRi+C5F?=
+X-Microsoft-Antispam-Message-Info: BXJKlpNVCLcY5N51oxyEeTHpmCHoNkxUvjfWzW403iGzXf0P3AzYbVtI4cjqKBK0tlJ6wUGhRE0T8skOu2atMmpKtHBBdwMHj4xeOuHr+4UYxFA6i2eMuQd6AWmzsI8VdOyzWRfN5k6kx3I+KaT7vT9GxIn//x8ZeDpf0fbO84UIR97widhFZwoRmBkNiVKHsZciY5unVrEWdRQdt2Pr9cA3TtGe6fJVyzkEJFqUu2E6WHFocRk8K0I/cdosTO/YKYQsgEgyohvUsqRO2q15ruzRPcadjmvxDpaGDURVVF9uVUZMsMtOQE3OOoxMNA/9ulRKbnvggT+xQ5lIVgNhp15uSkq7vOZeMl3o/6YFRDY=
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4100;6:ZVR9wC66gbq2hkGl5XiXQi+CymXJd9jj00POyox8sKepv1OfdbaIPsTp1sjRqYE6u6MNm4hLOxZWSXTvpuo2g5Qtgzk/ZMnZxZMmTjSg+vcdCox0xub5UO3+00BeoDb+0rfvQX2lAu3Scdc7ohk/bFTlHEIW6h98oZMMgN/8mJMC78K69U+hE7doTPxhhCr1ujOzmWTBXRTlI3/IpeipZgDT2rnGKmnb+dJ+rxdjRQ4gKeuqa5Kfv9TjyZg//uQfyPBEt4FOsZiDz1ODzA91u7GxKVxwKe01M+Pnxx56JzgtwfbiB//9KC+7HDKJZzAGZC0wuvDjNpGDkbkmWU0MVz1Abtrn4AEQI0PuPvzuuvZdrij3sDBVP5d/bTT5vWORlWqp8P50k1UInFexTS7mMWbMnNez/bkzBT5W0bH/YzWwZghchH4CYWP4d70aoJ2GCaY/q62wd0NkIOWiJtF9UA==;5:m6nNr/TWNjxNDHTXE2/DBnfxbuWqRq6f1vxJx83MDQZ8UeI+UaA+4C17/aXjrYJ41+jIeSeCV30lhxG6VxhBLU7k9hUDYKWCkAsvpiwsm+PsC17QfHOwba1OiVRMWemGMMf2XpjX+YRmFDpM+1vOIuz34FGX7dBl+zsYsse5IGw=;7:f1+Nm2bnMnB+c59NZJBVBs+qtmTmSWIy0VvRmqZQ6AaoFgNuKUKQPLqcksEYdlhmqMo9QGKq/J1MizI0FlccAINNJElxvMVEcQGp//CTEY84DuM/WjPmsCgU1BvNbI/UlStyaN5LuWMBfWYnOmHxTw==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR0701MB1870;20:lY3tEl/pdURczK7wTOtXxEEh+0XOqQS8kDW+Z93qTH7FvwWO67KUb0DuCWuYnJUbR3dn5KuMdOJK7VlIHyk6L1jY6omPZ7lfwXVl6rs+wMkWYOfd9h6TiunXxkXAZQJIaKk4UOcS+e7g1h/R5HfWcHYwPZUSEHR9Z6DLF6c9kXBMVH0kbjIFy4+Lmd8Ymgf0FIwFAU5yp5Q6Jadw100a4SBSs0tYCysP+BuqKJ1DgzwuBP8MfJ3wQXZtxMnI6QJP
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR07MB4100;20:G7il4bb7xGjYyHmwSGc2MuGq44fJc8ZZfVBCvQ/nuTeQjLDqiFboimkfGrIbI9dgcmMncc+vOla0W0cNlfiL3NCcyN52bdjLbjBDFb7vcubcVie+n5LxhsLwD7CgNrx6R7SdkryfnzHNkOMSluLXmJbyxcYICWi5pctTAqIdfsrbntX/6vrPM7/0Y5SQY2vMd/qDIhmlkwzsUrhtM3+t5ZaGN+1bO8K+nuSaMlQBRg6uJz2OEDf0camSg1jJhhG4
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:46.4757
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:42.8699
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed79e2ba-3de0-4c21-e49b-08d64d3e1be0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67b66638-9a9a-4464-b4a7-08d64d3e1b60
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR0701MB1870
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR07MB4100
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
  a:mx-sanjose5.Cadence.COM include:mktomail.com
@@ -159,723 +160,476 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=962 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1811180097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch implements a set of function related to enumeration process.
-Some standard requests are handled on controller driver level and
-other are delegated to gadget core driver.
-All class requests are delegated to gadget core driver.
+Patch adds supports for detecting Host/Device mode.
+Controller has additional OTG register that allow
+implement even whole OTG functionality.
+At this moment patch adds support only for detecting
+the appropriate mode based on strap pins and ID pin.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/cdns3/ep0.c    | 491 ++++++++++++++++++++++++++++++++++++-
- drivers/usb/cdns3/gadget.c | 119 +++++++++
- drivers/usb/cdns3/gadget.h |   4 +
- 3 files changed, 610 insertions(+), 4 deletions(-)
+ drivers/usb/cdns3/Makefile |   2 +-
+ drivers/usb/cdns3/core.c   |  27 +++--
+ drivers/usb/cdns3/drd.c    | 229 +++++++++++++++++++++++++++++++++++++
+ drivers/usb/cdns3/drd.h    | 122 ++++++++++++++++++++
+ 4 files changed, 372 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/usb/cdns3/drd.c
+ create mode 100644 drivers/usb/cdns3/drd.h
 
-diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
-index eb92fd234bd7..6f33d98f7684 100644
---- a/drivers/usb/cdns3/ep0.c
-+++ b/drivers/usb/cdns3/ep0.c
-@@ -10,6 +10,7 @@
-  *	    Peter Chen <peter.chen@nxp.com>
-  */
+diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
+index 02d25b23c5d3..e779b2a2f8eb 100644
+--- a/drivers/usb/cdns3/Makefile
++++ b/drivers/usb/cdns3/Makefile
+@@ -1,5 +1,5 @@
+ obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
+ obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
  
-+#include <linux/usb/composite.h>
+-cdns3-y					:= core.o
++cdns3-y					:= core.o drd.o
+ cdns3-pci-y		 		:= cdns3-pci-wrap.o
+diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+index f9055d4da67f..dbee4325da7f 100644
+--- a/drivers/usb/cdns3/core.c
++++ b/drivers/usb/cdns3/core.c
+@@ -17,6 +17,7 @@
+ 
  #include "gadget.h"
+ #include "core.h"
++#include "drd.h"
  
- static struct usb_endpoint_descriptor cdns3_gadget_ep0_desc = {
-@@ -52,9 +53,31 @@ static void cdns3_ep0_run_transfer(struct cdns3_device *priv_dev,
- 		writel(EP_CMD_ERDY, &priv_dev->regs->ep_cmd);
- }
- 
-+/**
-+ * cdns3_ep0_delegate_req - Returns status of handling setup packet
-+ * Setup is handled by gadget driver
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns zero on success or negative value on failure
-+ */
-+static int cdns3_ep0_delegate_req(struct cdns3_device *priv_dev,
-+				  struct usb_ctrlrequest *ctrl_req)
-+{
-+	int ret;
-+
-+	spin_unlock(&priv_dev->lock);
-+	priv_dev->setup_pending = 1;
-+	ret = priv_dev->gadget_driver->setup(&priv_dev->gadget, ctrl_req);
-+	priv_dev->setup_pending = 0;
-+	spin_lock(&priv_dev->lock);
-+	return ret;
-+}
-+
- static void cdns3_prepare_setup_packet(struct cdns3_device *priv_dev)
+ static inline struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
  {
--	//TODO: Implements this function
-+	priv_dev->ep0_data_dir = 0;
-+	cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma, 8, 0);
- }
- 
- static void cdns3_set_hw_configuration(struct cdns3_device *priv_dev)
-@@ -90,9 +113,431 @@ static void cdns3_set_hw_configuration(struct cdns3_device *priv_dev)
+@@ -57,8 +58,10 @@ static inline void cdns3_role_stop(struct cdns3 *cdns)
+ static enum cdns3_roles cdns3_get_role(struct cdns3 *cdns)
+ {
+ 	if (cdns->roles[CDNS3_ROLE_HOST] && cdns->roles[CDNS3_ROLE_GADGET]) {
+-		//TODO: implements selecting device/host mode
+-		return CDNS3_ROLE_HOST;
++		if (cdns3_is_host(cdns))
++			return CDNS3_ROLE_HOST;
++		if (cdns3_is_device(cdns))
++			return CDNS3_ROLE_GADGET;
  	}
- }
+ 	return cdns->roles[CDNS3_ROLE_HOST]
+ 		? CDNS3_ROLE_HOST
+@@ -124,6 +127,12 @@ static irqreturn_t cdns3_irq(int irq, void *data)
+ 	struct cdns3 *cdns = data;
+ 	irqreturn_t ret = IRQ_NONE;
  
-+/**
-+ * cdns3_req_ep0_set_configuration - Handling of SET_CONFIG standard USB request
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
++	if (cdns->dr_mode == USB_DR_MODE_OTG) {
++		ret = cdns3_drd_irq(cdns);
++		if (ret == IRQ_HANDLED)
++			return ret;
++	}
++
+ 	/* Handle device/host interrupt */
+ 	if (cdns->role != CDNS3_ROLE_END)
+ 		ret = cdns3_get_current_role_driver(cdns)->irq(cdns);
+@@ -176,11 +185,8 @@ static void cdns3_role_switch(struct work_struct *work)
+ 
+ 	cdns = container_of(work, struct cdns3, role_switch_wq);
+ 
+-	//TODO: implements this functions.
+-	//host = cdns3_is_host(cdns);
+-	//device = cdns3_is_device(cdns);
+-	host = 1;
+-	device = 0;
++	host = cdns3_is_host(cdns);
++	device = cdns3_is_device(cdns);
+ 
+ 	if (host)
+ 		role = CDNS3_ROLE_HOST;
+@@ -194,6 +200,12 @@ static void cdns3_role_switch(struct work_struct *work)
+ 	pm_runtime_get_sync(cdns->dev);
+ 	cdns3_role_stop(cdns);
+ 
++	if (cdns->desired_dr_mode != cdns->current_dr_mode) {
++		cdns3_drd_update_mode(cdns);
++		host = cdns3_is_host(cdns);
++		device = cdns3_is_device(cdns);
++	}
++
+ 	if (host) {
+ 		if (cdns->roles[CDNS3_ROLE_HOST])
+ 			cdns3_do_role_switch(cdns, CDNS3_ROLE_HOST);
+@@ -287,6 +299,7 @@ static int cdns3_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err2;
+ 
++	ret = cdns3_drd_init(cdns);
+ 	if (ret)
+ 		goto err2;
+ 
+diff --git a/drivers/usb/cdns3/drd.c b/drivers/usb/cdns3/drd.c
+new file mode 100644
+index 000000000000..ac741c80e776
+--- /dev/null
++++ b/drivers/usb/cdns3/drd.c
+@@ -0,0 +1,229 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Cadence USBSS DRD Driver.
 + *
-+ * Returns 0 if success, 0x7FFF on deferred status stage, error code on error
++ * Copyright (C) 2018 Cadence.
++ *
++ * Author: Pawel Laszczak <pawell@cadence.com
++ *
 + */
-+static int cdns3_req_ep0_set_configuration(struct cdns3_device *priv_dev,
-+					   struct usb_ctrlrequest *ctrl_req)
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
++#include <linux/delay.h>
++#include <linux/usb/otg.h>
++
++#include "gadget.h"
++#include "drd.h"
++
++/**
++ * cdns3_set_mode - change mode of OTG Core
++ * @cdns: pointer to context structure
++ * @mode: selected mode from cdns_role
++ */
++void cdns3_set_mode(struct cdns3 *cdns, enum usb_dr_mode mode)
 +{
-+	enum usb_device_state device_state = priv_dev->gadget.state;
-+	struct cdns3_endpoint *priv_ep, *temp_ep;
-+	u32 config = le16_to_cpu(ctrl_req->wValue);
-+	int result = 0;
++	u32 reg;
 +
-+	switch (device_state) {
-+	case USB_STATE_ADDRESS:
-+		/* Configure non-control EPs */
-+		list_for_each_entry_safe(priv_ep, temp_ep,
-+					 &priv_dev->ep_match_list,
-+					 ep_match_pending_list)
-+			cdns3_ep_config(priv_ep);
-+
-+		result = cdns3_ep0_delegate_req(priv_dev, ctrl_req);
-+
-+		if (result)
-+			return result;
-+
-+		if (config) {
-+			cdns3_set_hw_configuration(priv_dev);
-+		} else {
-+			cdns3_gadget_unconfig(priv_dev);
-+			usb_gadget_set_state(&priv_dev->gadget,
-+					     USB_STATE_ADDRESS);
-+		}
++	cdns->current_dr_mode = mode;
++	switch (mode) {
++	case USB_DR_MODE_PERIPHERAL:
++		dev_info(cdns->dev, "Set controller to Gadget mode\n");
++		writel(OTGCMD_DEV_BUS_REQ | OTGCMD_OTG_DIS,
++		       &cdns->otg_regs->cmd);
 +		break;
-+	case USB_STATE_CONFIGURED:
-+		result = cdns3_ep0_delegate_req(priv_dev, ctrl_req);
++	case USB_DR_MODE_HOST:
++		dev_info(cdns->dev, "Set controller to Host mode\n");
++		writel(OTGCMD_HOST_BUS_REQ | OTGCMD_OTG_DIS,
++		       &cdns->otg_regs->cmd);
++		break;
++	case USB_DR_MODE_OTG:
++		dev_info(cdns->dev, "Set controller to OTG mode\n");
++		reg = readl(&cdns->otg_regs->ctrl1);
++		reg |= OTGCTRL1_IDPULLUP;
++		writel(reg, &cdns->otg_regs->ctrl1);
 +
-+		if (!config && !result) {
-+			cdns3_gadget_unconfig(priv_dev);
-+			usb_gadget_set_state(&priv_dev->gadget,
-+					     USB_STATE_ADDRESS);
-+		}
++		/* wait until valid ID (ID_VALUE) can be sampled (50ms). */
++		mdelay(50);
 +		break;
 +	default:
-+		result = -EINVAL;
++		cdns->current_dr_mode = USB_DR_MODE_UNKNOWN;
++		dev_err(cdns->dev, "Unsupported mode of operation %d\n", mode);
++		return;
 +	}
-+
-+	return result;
 +}
 +
-+/**
-+ * cdns3_req_ep0_set_address - Handling of SET_ADDRESS standard USB request
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns 0 if success, error code on error
-+ */
-+static int cdns3_req_ep0_set_address(struct cdns3_device *priv_dev,
-+				     struct usb_ctrlrequest *ctrl_req)
++static int cdns3_otg_get_id(struct cdns3 *cdns)
 +{
-+	enum usb_device_state device_state = priv_dev->gadget.state;
-+	u32 reg;
-+	u32 addr;
++	int id;
 +
-+	addr = le16_to_cpu(ctrl_req->wValue);
++	id = readl(&cdns->otg_regs->sts) & OTGSTS_ID_VALUE;
++	dev_dbg(cdns->dev, "OTG ID: %d", id);
++	return id;
++}
 +
-+	if (addr > DEVICE_ADDRESS_MAX) {
-+		dev_err(&priv_dev->dev,
-+			"Device address (%d) cannot be greater than %d\n",
-+			addr, DEVICE_ADDRESS_MAX);
-+		return -EINVAL;
-+	}
++int cdns3_is_host(struct cdns3 *cdns)
++{
++	if (cdns->current_dr_mode == USB_DR_MODE_HOST)
++		return 1;
++	else if (cdns->current_dr_mode == USB_DR_MODE_OTG)
++		if (!cdns3_otg_get_id(cdns))
++			return 1;
 +
-+	if (device_state == USB_STATE_CONFIGURED) {
-+		dev_err(&priv_dev->dev, "USB device already configured\n");
-+		return -EINVAL;
-+	}
++	return 0;
++}
 +
-+	reg = readl(&priv_dev->regs->usb_cmd);
-+
-+	writel(reg | USB_CMD_FADDR(addr) | USB_CMD_SET_ADDR,
-+	       &priv_dev->regs->usb_cmd);
-+
-+	usb_gadget_set_state(&priv_dev->gadget,
-+			     (addr ? USB_STATE_ADDRESS : USB_STATE_DEFAULT));
-+
-+	cdns3_prepare_setup_packet(priv_dev);
-+
-+	writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
++int cdns3_is_device(struct cdns3 *cdns)
++{
++	if (cdns->current_dr_mode == USB_DR_MODE_PERIPHERAL)
++		return 1;
++	else if (cdns->current_dr_mode == USB_DR_MODE_OTG)
++		if (cdns3_otg_get_id(cdns))
++			return 1;
 +
 +	return 0;
 +}
 +
 +/**
-+ * cdns3_req_ep0_get_status - Handling of GET_STATUS standard USB request
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns 0 if success, error code on error
++ * cdns3_otg_disable_irq - Disable all OTG interrupts
++ * @cdns: Pointer to controller context structure
 + */
-+static int cdns3_req_ep0_get_status(struct cdns3_device *priv_dev,
-+				    struct usb_ctrlrequest *ctrl)
++static void cdns3_otg_disable_irq(struct cdns3 *cdns)
 +{
-+	__le16 *response_pkt;
-+	u16 usb_status = 0;
-+	u32 recip;
-+	u32 reg;
-+
-+	recip = ctrl->bRequestType & USB_RECIP_MASK;
-+
-+	switch (recip) {
-+	case USB_RECIP_DEVICE:
-+		/* self powered */
-+		usb_status |= priv_dev->gadget.is_selfpowered;
-+
-+		if (priv_dev->gadget.speed != USB_SPEED_SUPER)
-+			break;
-+
-+		reg = readl(&priv_dev->regs->usb_sts);
-+
-+		if (priv_dev->u1_allowed)
-+			usb_status |= BIT(USB_DEV_STAT_U1_ENABLED);
-+
-+		if (priv_dev->u2_allowed)
-+			usb_status |= BIT(USB_DEV_STAT_U2_ENABLED);
-+
-+		if (priv_dev->wake_up_flag)
-+			usb_status |= BIT(USB_DEVICE_REMOTE_WAKEUP);
-+		break;
-+	case USB_RECIP_INTERFACE:
-+		return cdns3_ep0_delegate_req(priv_dev, ctrl);
-+	case USB_RECIP_ENDPOINT:
-+		/* check if endpoint is stalled */
-+		cdns3_select_ep(priv_dev, ctrl->wIndex);
-+		if (EP_STS_STALL(readl(&priv_dev->regs->ep_sts)))
-+			usb_status =  BIT(USB_ENDPOINT_HALT);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	response_pkt = (__le16 *)priv_dev->setup;
-+	*response_pkt = cpu_to_le16(usb_status);
-+
-+	cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma,
-+			       sizeof(*response_pkt), 1);
-+	return 0;
++	writel(0, &cdns->otg_regs->ien);
 +}
 +
-+static int cdns3_ep0_feature_handle_device(struct cdns3_device *priv_dev,
-+					   struct usb_ctrlrequest *ctrl,
-+					   int set)
++/**
++ * cdns3_otg_enable_irq - enable id and sess_valid interrupts
++ * @cdns: Pointer to controller context structure
++ */
++static void cdns3_otg_enable_irq(struct cdns3 *cdns)
 +{
-+	enum usb_device_state state;
-+	enum usb_device_speed speed;
++	writel(OTGIEN_ID_CHANGE_INT | OTGIEN_VBUSVALID_RISE_INT |
++	       OTGIEN_VBUSVALID_FALL_INT, &cdns->otg_regs->ien);
++}
++
++/**
++ * cdns3_init_otg_mode - initialize drd controller
++ * @cdns: Pointer to controller context structure
++ *
++ * Returns 0 on success otherwise negative errno
++ */
++static void cdns3_init_otg_mode(struct cdns3 *cdns)
++{
++	cdns3_otg_disable_irq(cdns);
++	/* clear all interrupts */
++	writel(~0, &cdns->otg_regs->ivect);
++
++	cdns3_set_mode(cdns, USB_DR_MODE_OTG);
++
++	cdns3_otg_enable_irq(cdns);
++}
++
++/**
++ * cdns3_drd_update_mode - initialize mode of operation
++ * @cdns: Pointer to controller context structure
++ *
++ * Returns 0 on success otherwise negative errno
++ */
++int cdns3_drd_update_mode(struct cdns3 *cdns)
++{
 +	int ret = 0;
-+	u32 wValue;
-+	u32 wIndex;
-+	u16 tmode;
 +
-+	wValue = le16_to_cpu(ctrl->wValue);
-+	wIndex = le16_to_cpu(ctrl->wIndex);
-+	state = priv_dev->gadget.state;
-+	speed = priv_dev->gadget.speed;
-+
-+	switch (ctrl->wValue) {
-+	case USB_DEVICE_REMOTE_WAKEUP:
-+		priv_dev->wake_up_flag = !!set;
++	switch (cdns->desired_dr_mode) {
++	case USB_DR_MODE_PERIPHERAL:
++		cdns3_set_mode(cdns, USB_DR_MODE_PERIPHERAL);
 +		break;
-+	case USB_DEVICE_U1_ENABLE:
-+		if (state != USB_STATE_CONFIGURED || speed != USB_SPEED_SUPER)
-+			return -EINVAL;
-+
-+		priv_dev->u1_allowed = !!set;
++	case USB_DR_MODE_HOST:
++		cdns3_set_mode(cdns, USB_DR_MODE_HOST);
 +		break;
-+	case USB_DEVICE_U2_ENABLE:
-+		if (state != USB_STATE_CONFIGURED || speed != USB_SPEED_SUPER)
-+			return -EINVAL;
-+
-+		priv_dev->u2_allowed = !!set;
++	case USB_DR_MODE_OTG:
++		cdns3_init_otg_mode(cdns);
 +		break;
-+	case USB_DEVICE_LTM_ENABLE:
-+		ret = -EINVAL;
-+		break;
-+	case USB_DEVICE_TEST_MODE:
-+		if (state != USB_STATE_CONFIGURED || speed > USB_SPEED_HIGH)
-+			return -EINVAL;
++	default:
++		dev_err(cdns->dev, "Unsupported mode of operation %d\n",
++			cdns->dr_mode);
++		return -EINVAL;
++	}
 +
-+		tmode = le16_to_cpu(ctrl->wIndex);
++	return ret;
++}
 +
-+		if (!set || (tmode & 0xff) != 0)
-+			return -EINVAL;
++irqreturn_t cdns3_drd_irq(struct cdns3 *cdns)
++{
++	irqreturn_t ret = IRQ_NONE;
++	u32 reg;
 +
-+		switch (tmode >> 8) {
-+		case TEST_J:
-+		case TEST_K:
-+		case TEST_SE0_NAK:
-+		case TEST_PACKET:
-+			cdns3_set_register_bit(&priv_dev->regs->usb_cmd,
-+					       USB_CMD_STMODE |
-+					       USB_STS_TMODE_SEL(tmode - 1));
-+			break;
-+		default:
++	if (cdns->dr_mode != USB_DR_MODE_OTG)
++		return ret;
++
++	reg = readl(&cdns->otg_regs->ivect);
++	if (!reg)
++		return ret;
++
++	if (reg & OTGIEN_ID_CHANGE_INT) {
++		int id = cdns3_otg_get_id(cdns);
++
++		dev_dbg(cdns->dev, "OTG IRQ: new ID: %d\n",
++			cdns3_otg_get_id(cdns));
++
++		if (id)
++			cdns->role = CDNS3_ROLE_GADGET;
++		else
++			cdns->role = CDNS3_ROLE_HOST;
++
++		queue_work(system_freezable_wq, &cdns->role_switch_wq);
++
++		ret = IRQ_HANDLED;
++	}
++
++	writel(~0, &cdns->otg_regs->ivect);
++	return IRQ_HANDLED;
++}
++
++int cdns3_drd_init(struct cdns3 *cdns)
++{
++	enum usb_dr_mode dr_mode;
++	int ret = 0;
++	u32 state;
++
++	state = OTGSTS_STRAP(readl(&cdns->otg_regs->sts));
++
++	dr_mode = cdns->dr_mode;
++	if (state == OTGSTS_STRAP_HOST) {
++		dev_info(cdns->dev, "Controller strapped to HOST\n");
++		dr_mode = USB_DR_MODE_HOST;
++		if (cdns->dr_mode != USB_DR_MODE_HOST &&
++		    cdns->dr_mode != USB_DR_MODE_OTG)
 +			ret = -EINVAL;
-+		}
-+		break;
-+	default:
-+		ret = -EINVAL;
++	} else if (state == OTGSTS_STRAP_GADGET) {
++		dev_info(cdns->dev, "Controller strapped to PERIPHERAL\n");
++		dr_mode = USB_DR_MODE_PERIPHERAL;
++		if (cdns->dr_mode != USB_DR_MODE_PERIPHERAL &&
++		    cdns->dr_mode != USB_DR_MODE_OTG)
++			ret = -EINVAL;
 +	}
 +
-+	return ret;
-+}
-+
-+static int cdns3_ep0_feature_handle_intf(struct cdns3_device *priv_dev,
-+					 struct usb_ctrlrequest *ctrl,
-+					 int set)
-+{
-+	u32 wValue;
-+	int ret = 0;
-+
-+	wValue = le16_to_cpu(ctrl->wValue);
-+
-+	switch (wValue) {
-+	case USB_INTRF_FUNC_SUSPEND:
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int cdns3_ep0_feature_handle_endpoint(struct cdns3_device *priv_dev,
-+					     struct usb_ctrlrequest *ctrl,
-+					     int set)
-+{
-+	struct cdns3_endpoint *priv_ep;
-+	int ret = 0;
-+	u8 index;
-+
-+	if (!(ctrl->wIndex &  ~USB_DIR_IN))
-+		return 0;
-+
-+	index = cdns3_ep_addr_to_index(ctrl->wIndex);
-+	priv_ep = priv_dev->eps[index];
-+
-+	cdns3_select_ep(priv_dev, ctrl->wIndex);
-+
-+	if (le16_to_cpu(ctrl->wValue) != USB_ENDPOINT_HALT)
-+		return -EINVAL;
-+
-+	if (set) {
-+		writel(EP_CMD_SSTALL, &priv_dev->regs->ep_cmd);
-+		priv_ep->flags |= EP_STALL;
-+	} else {
-+		struct usb_request *request;
-+
-+		if (priv_dev->eps[index]->flags & EP_WEDGE) {
-+			cdns3_select_ep(priv_dev, 0x00);
-+			return 0;
-+		}
-+
-+		writel(EP_CMD_CSTALL | EP_CMD_EPRST, &priv_dev->regs->ep_cmd);
-+
-+		/* wait for EPRST cleared */
-+		ret = cdns3_handshake(&priv_dev->regs->ep_cmd,
-+				      EP_CMD_EPRST, 0, 100);
-+		if (ret)
-+			return -EINVAL;
-+
-+		priv_ep->flags &= ~EP_STALL;
-+
-+		request = cdns3_next_request(&priv_ep->request_list);
-+		if (request)
-+			cdns3_ep_run_transfer(priv_ep, request);
-+	}
-+	return ret;
-+}
-+
-+/**
-+ * cdns3_req_ep0_handle_feature -
-+ * Handling of GET/SET_FEATURE standard USB request
-+ *
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ * @set: must be set to 1 for SET_FEATURE request
-+ *
-+ * Returns 0 if success, error code on error
-+ */
-+static int cdns3_req_ep0_handle_feature(struct cdns3_device *priv_dev,
-+					struct usb_ctrlrequest *ctrl,
-+					int set)
-+{
-+	int ret = 0;
-+	u32 recip;
-+
-+	recip = ctrl->bRequestType & USB_RECIP_MASK;
-+
-+	switch (recip) {
-+	case USB_RECIP_DEVICE:
-+		ret = cdns3_ep0_feature_handle_device(priv_dev, ctrl, set);
-+		break;
-+	case USB_RECIP_INTERFACE:
-+		ret = cdns3_ep0_feature_handle_intf(priv_dev, ctrl, set);
-+		break;
-+	case USB_RECIP_ENDPOINT:
-+		ret = cdns3_ep0_feature_handle_endpoint(priv_dev, ctrl, set);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (!ret)
-+		writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
-+
-+	return ret;
-+}
-+
-+/**
-+ * cdns3_req_ep0_set_sel - Handling of SET_SEL standard USB request
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns 0 if success, error code on error
-+ */
-+static int cdns3_req_ep0_set_sel(struct cdns3_device *priv_dev,
-+				 struct usb_ctrlrequest *ctrl_req)
-+{
-+	if (priv_dev->gadget.state < USB_STATE_ADDRESS)
-+		return -EINVAL;
-+
-+	if (ctrl_req->wLength != 6) {
-+		dev_err(&priv_dev->dev, "Set SEL should be 6 bytes, got %d\n",
-+			ctrl_req->wLength);
-+		return -EINVAL;
-+	}
-+
-+	priv_dev->ep0_data_dir = 0;
-+	cdns3_ep0_run_transfer(priv_dev, priv_dev->setup_dma, 6, 1);
-+	return 0;
-+}
-+
-+/**
-+ * cdns3_req_ep0_set_isoch_delay -
-+ * Handling of GET_ISOCH_DELAY standard USB request
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns 0 if success, error code on error
-+ */
-+static int cdns3_req_ep0_set_isoch_delay(struct cdns3_device *priv_dev,
-+					 struct usb_ctrlrequest *ctrl_req)
-+{
-+	if (ctrl_req->wIndex || ctrl_req->wLength)
-+		return -EINVAL;
-+
-+	priv_dev->isoch_delay = ctrl_req->wValue;
-+	writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
-+	return 0;
-+}
-+
-+/**
-+ * cdns3_ep0_standard_request - Handling standard USB requests
-+ * @priv_dev: extended gadget object
-+ * @ctrl_req: pointer to received setup packet
-+ *
-+ * Returns 0 if success, error code on error
-+ */
-+static int cdns3_ep0_standard_request(struct cdns3_device *priv_dev,
-+				      struct usb_ctrlrequest *ctrl_req)
-+{
-+	int ret;
-+
-+	switch (ctrl_req->bRequest) {
-+	case USB_REQ_SET_ADDRESS:
-+		ret = cdns3_req_ep0_set_address(priv_dev, ctrl_req);
-+		break;
-+	case USB_REQ_SET_CONFIGURATION:
-+		ret = cdns3_req_ep0_set_configuration(priv_dev, ctrl_req);
-+		break;
-+	case USB_REQ_GET_STATUS:
-+		ret = cdns3_req_ep0_get_status(priv_dev, ctrl_req);
-+		break;
-+	case USB_REQ_CLEAR_FEATURE:
-+		ret = cdns3_req_ep0_handle_feature(priv_dev, ctrl_req, 0);
-+		break;
-+	case USB_REQ_SET_FEATURE:
-+		ret = cdns3_req_ep0_handle_feature(priv_dev, ctrl_req, 1);
-+		break;
-+	case USB_REQ_SET_SEL:
-+		ret = cdns3_req_ep0_set_sel(priv_dev, ctrl_req);
-+		break;
-+	case USB_REQ_SET_ISOCH_DELAY:
-+		ret = cdns3_req_ep0_set_isoch_delay(priv_dev, ctrl_req);
-+		break;
-+	default:
-+		ret = cdns3_ep0_delegate_req(priv_dev, ctrl_req);
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
- static void __pending_setup_status_handler(struct cdns3_device *priv_dev)
- {
--	//TODO: Implements this function
-+	struct usb_request *request = priv_dev->pending_status_request;
-+
-+	if (priv_dev->status_completion_no_call && request &&
-+	    request->complete) {
-+		request->complete(priv_dev->gadget.ep0, request);
-+		priv_dev->status_completion_no_call = 0;
-+	}
-+}
-+
-+void cdns3_pending_setup_status_handler(struct work_struct *work)
-+{
-+	struct cdns3_device *priv_dev = container_of(work, struct cdns3_device,
-+			pending_status_wq);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&priv_dev->lock, flags);
-+	__pending_setup_status_handler(priv_dev);
-+	spin_unlock_irqrestore(&priv_dev->lock, flags);
- }
- 
- /**
-@@ -101,12 +546,50 @@ static void __pending_setup_status_handler(struct cdns3_device *priv_dev)
-  */
- static void cdns3_ep0_setup_phase(struct cdns3_device *priv_dev)
- {
--	//TODO: Implements this function.
-+	struct usb_ctrlrequest *ctrl = priv_dev->setup;
-+	int result;
-+
-+	if ((ctrl->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD)
-+		result = cdns3_ep0_standard_request(priv_dev, ctrl);
-+	else
-+		result = cdns3_ep0_delegate_req(priv_dev, ctrl);
-+
-+	if (result != 0 && result != USB_GADGET_DELAYED_STATUS) {
-+		dev_dbg(&priv_dev->dev, "STALL for ep0\n");
-+		/* set_stall on ep0 */
-+		cdns3_select_ep(priv_dev, 0x00);
-+		writel(EP_CMD_SSTALL, &priv_dev->regs->ep_cmd);
-+		writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
-+	}
- }
- 
- static void cdns3_transfer_completed(struct cdns3_device *priv_dev)
- {
--	//TODO: Implements this function
-+	if (priv_dev->ep0_request) {
-+		usb_gadget_unmap_request_by_dev(priv_dev->sysdev,
-+						priv_dev->ep0_request,
-+						priv_dev->ep0_data_dir);
-+
-+		priv_dev->ep0_request->actual =
-+			TRB_LEN(le32_to_cpu(priv_dev->trb_ep0->length));
-+
-+		dev_dbg(&priv_dev->dev, "Ep0 completion length %d\n",
-+			priv_dev->ep0_request->actual);
-+		list_del_init(&priv_dev->ep0_request->list);
-+	}
-+
-+	if (priv_dev->ep0_request &&
-+	    priv_dev->ep0_request->complete) {
-+		spin_unlock(&priv_dev->lock);
-+		priv_dev->ep0_request->complete(priv_dev->gadget.ep0,
-+						priv_dev->ep0_request);
-+
-+		priv_dev->ep0_request = NULL;
-+		spin_lock(&priv_dev->lock);
-+	}
-+
-+	cdns3_prepare_setup_packet(priv_dev);
-+	writel(EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
- }
- 
- /**
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 309202474e57..0202ff5f6c90 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -70,6 +70,30 @@ static u8 cdns3_ep_reg_pos_to_index(int i)
- 	return ((i / 16) + (((i % 16) - 2) * 2));
- }
- 
-+/**
-+ * cdns3_ep_addr_to_index - Macro converts endpoint address to
-+ * index of endpoint object in cdns3_device.eps[] container
-+ * @ep_addr: endpoint address for which endpoint object is required
-+ *
-+ * Remember that endpoint container doesn't contain default endpoint
-+ */
-+u8 cdns3_ep_addr_to_index(u8 ep_addr)
-+{
-+	return (((ep_addr & 0x7F) - 1) + ((ep_addr & USB_DIR_IN) ? 1 : 0));
-+}
-+
-+/**
-+ * cdns3_ep_addr_to_bit_pos - Macro converts endpoint address to
-+ * bit position in ep_ists register
-+ * @ep_addr: endpoint address for which bit position is required
-+ *
-+ * Remember that endpoint container doesn't contain default endpoint
-+ */
-+static u32 cdns3_ep_addr_to_bit_pos(u8 ep_addr)
-+{
-+	return (1 << (ep_addr & 0x7F)) << ((ep_addr & 0x80) ? 16 : 0);
-+}
-+
- /**
-  * cdns3_next_request - returns next request from list
-  * @list: list containing requests
-@@ -464,6 +488,99 @@ static irqreturn_t cdns3_irq_handler_thread(struct cdns3 *cdns)
- 	return ret;
- }
- 
-+/**
-+ * cdns3_ep_onchip_buffer_alloc - Try to allocate onchip buf for EP
-+ *
-+ * The real allocation will occur during write to EP_CFG register,
-+ * this function is used to check if the 'size' allocation is allowed.
-+ *
-+ * @priv_dev: extended gadget object
-+ * @size: the size (KB) for EP would like to allocate
-+ * @is_in: the direction for EP
-+ *
-+ * Return 0 if the later allocation is allowed or negative value on failure
-+ */
-+static int cdns3_ep_onchip_buffer_alloc(struct cdns3_device *priv_dev,
-+					int size, int is_in)
-+{
-+	if (is_in) {
-+		priv_dev->onchip_mem_allocated_size += size;
-+	} else if (!priv_dev->out_mem_is_allocated) {
-+		 /* ALL OUT EPs are shared the same chunk onchip memory */
-+		priv_dev->onchip_mem_allocated_size += size;
-+		priv_dev->out_mem_is_allocated = 1;
-+	}
-+
-+	if (priv_dev->onchip_mem_allocated_size > CDNS3_ONCHIP_BUF_SIZE) {
-+		priv_dev->onchip_mem_allocated_size -= size;
-+		return -EPERM;
-+	} else {
-+		return 0;
-+	}
-+}
-+
-+/**
-+ * cdns3_ep_config Configure hardware endpoint
-+ * @priv_ep: extended endpoint object
-+ */
-+void cdns3_ep_config(struct cdns3_endpoint *priv_ep)
-+{
-+	bool is_iso_ep = (priv_ep->type == USB_ENDPOINT_XFER_ISOC);
-+	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
-+	u32 bEndpointAddress = priv_ep->num | priv_ep->dir;
-+	u32 interrupt_mask = EP_STS_EN_TRBERREN;
-+	u32 max_packet_size = 0;
-+	u32 ep_cfg = 0;
-+	int ret;
-+
-+	if (priv_ep->type == USB_ENDPOINT_XFER_INT) {
-+		ep_cfg = EP_CFG_EPTYPE(USB_ENDPOINT_XFER_INT);
-+	} else if (priv_ep->type == USB_ENDPOINT_XFER_BULK) {
-+		ep_cfg = EP_CFG_EPTYPE(USB_ENDPOINT_XFER_BULK);
-+	} else {
-+		ep_cfg = EP_CFG_EPTYPE(USB_ENDPOINT_XFER_ISOC);
-+		interrupt_mask = 0xFFFFFFFF;
-+	}
-+
-+	switch (priv_dev->gadget.speed) {
-+	case USB_SPEED_FULL:
-+		max_packet_size = is_iso_ep ? 1023 : 64;
-+		break;
-+	case USB_SPEED_HIGH:
-+		max_packet_size = is_iso_ep ? 1024 : 512;
-+		break;
-+	case USB_SPEED_SUPER:
-+		max_packet_size = 1024;
-+		break;
-+	default:
-+		//all other speed are not supported
-+		return;
-+	}
-+
-+	ret = cdns3_ep_onchip_buffer_alloc(priv_dev, CDNS3_EP_BUF_SIZE,
-+					   priv_ep->dir);
 +	if (ret) {
-+		dev_err(&priv_dev->dev, "onchip mem is full, ep is invalid\n");
-+		return;
++		dev_err(cdns->dev, "Incorrect DRD configuration\n");
++		return ret;
 +	}
 +
-+	ep_cfg |= EP_CFG_MAXPKTSIZE(max_packet_size) |
-+		  EP_CFG_BUFFERING(CDNS3_EP_BUF_SIZE - 1) |
-+		  EP_CFG_MAXBURST(priv_ep->endpoint.maxburst);
++	//Updating DR mode according to strap.
++	cdns->dr_mode = dr_mode;
++	cdns->desired_dr_mode = dr_mode;
++	cdns->current_dr_mode = USB_DR_MODE_UNKNOWN;
 +
-+	cdns3_select_ep(priv_dev, bEndpointAddress);
++	dev_info(cdns->dev, "Controller Device ID: %08lx, Revision ID: %08lx\n",
++		 CDNS_RID(readl(&cdns->otg_regs->rid)),
++		 CDNS_DID(readl(&cdns->otg_regs->did)));
 +
-+	writel(ep_cfg, &priv_dev->regs->ep_cfg);
-+	writel(interrupt_mask, &priv_dev->regs->ep_sts_en);
++	state = readl(&cdns->otg_regs->sts);
++	if (OTGSTS_OTG_NRDY(state) != 0) {
++		dev_err(cdns->dev, "Cadence USB3 OTG device not ready\n");
++		return -ENODEV;
++	}
 +
-+	dev_dbg(&priv_dev->dev, "Configure %s: with val %08x\n",
-+		priv_ep->name, ep_cfg);
++	ret = cdns3_drd_update_mode(cdns);
 +
-+	/* enable interrupt for selected endpoint */
-+	cdns3_set_register_bit(&priv_dev->regs->ep_ien,
-+			       cdns3_ep_addr_to_bit_pos(bEndpointAddress));
++	return ret;
 +}
+diff --git a/drivers/usb/cdns3/drd.h b/drivers/usb/cdns3/drd.h
+new file mode 100644
+index 000000000000..0faa7520ecac
+--- /dev/null
++++ b/drivers/usb/cdns3/drd.h
+@@ -0,0 +1,122 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Cadence USB3 DRD part of USBSS driver
++ *
++ * Copyright (C) 2018 Cadence.
++ *
++ * Author: Pawel Laszczak <pawell@cadence.com>
++ */
++#ifndef __LINUX_CDNS3_DRD
++#define __LINUX_CDNS3_DRD
 +
- /* Find correct direction for HW endpoint according to description */
- static int cdns3_ep_dir_is_correct(struct usb_endpoint_descriptor *desc,
- 				   struct cdns3_endpoint *priv_ep)
-@@ -1104,6 +1221,8 @@ static int __cdns3_gadget_init(struct cdns3 *cdns)
- 	priv_dev->is_connected = 0;
- 
- 	spin_lock_init(&priv_dev->lock);
-+	INIT_WORK(&priv_dev->pending_status_wq,
-+		  cdns3_pending_setup_status_handler);
- 
- 	priv_dev->in_standby_mode = 1;
- 
-diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
-index 8c2f363f9340..db8c6cb9f2a5 100644
---- a/drivers/usb/cdns3/gadget.h
-+++ b/drivers/usb/cdns3/gadget.h
-@@ -1070,14 +1070,18 @@ struct cdns3_device {
- 
- int cdns3_handshake(void __iomem *ptr, u32 mask, u32 done, int usec);
- void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
-+void cdns3_pending_setup_status_handler(struct work_struct *work);
- int cdns3_init_ep0(struct cdns3_device *priv_dev);
- void cdns3_ep0_config(struct cdns3_device *priv_dev);
-+void cdns3_ep_config(struct cdns3_endpoint *priv_ep);
- void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, int dir);
- void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
- void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable);
- struct usb_request *cdns3_next_request(struct list_head *list);
-+void cdns3_gadget_unconfig(struct cdns3_device *priv_dev);
- int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
- 			  struct usb_request *request);
-+u8 cdns3_ep_addr_to_index(u8 ep_addr);
- int cdns3_gadget_ep_set_wedge(struct usb_ep *ep);
- int cdns3_gadget_ep_set_halt(struct usb_ep *ep, int value);
- struct usb_request *cdns3_gadget_ep_alloc_request(struct usb_ep *ep,
++#include <linux/usb/otg.h>
++#include <linux/phy/phy.h>
++#include "core.h"
++
++/*  DRD register interface. */
++struct cdns3_otg_regs {
++	__le32 did;
++	__le32 rid;
++	__le32 capabilities;
++	__le32 reserved1;
++	__le32 cmd;
++	__le32 sts;
++	__le32 state;
++	__le32 reserved2;
++	__le32 ien;
++	__le32 ivect;
++	__le32 refclk;
++	__le32 tmr;
++	__le32 reserved3[4];
++	__le32 simulate;
++	__le32 override;
++	__le32 susp_ctrl;
++	__le32 reserved4;
++	__le32 anasts;
++	__le32 adp_ramp_time;
++	__le32 ctrl1;
++	__le32 ctrl2;
++};
++
++/* CDNS_RID - bitmasks */
++#define CDNS_RID(p)			((p) & GENMASK(15, 0))
++
++/* CDNS_VID - bitmasks */
++#define CDNS_DID(p)			((p) & GENMASK(31, 0))
++
++/* OTGCMD - bitmasks */
++/* "Request the bus for Device mode. */
++#define OTGCMD_DEV_BUS_REQ	BIT(0)
++/* Request the bus for Host mode */
++#define OTGCMD_HOST_BUS_REQ		BIT(1)
++/* Enable OTG mode. */
++#define OTGCMD_OTG_EN			BIT(2)
++/* Disable OTG mode */
++#define OTGCMD_OTG_DIS			BIT(3)
++/*"Configure OTG as A-Device. */
++#define OTGCMD_A_DEV_EN			BIT(4)
++/*"Configure OTG as A-Device. */
++#define OTGCMD_A_DEV_DIS		BIT(5)
++/* Drop the bus for Device mod	e. */
++#define OTGCMD_DEV_BUS_DROP		BIT(8)
++/* Drop the bus for Host mode*/
++#define OTGCMD_HOST_BUS_DROP		BIT(9)
++/* Power Down USBSS-DEV. */
++#define OTGCMD_DEV_POWER_OFF		BIT(11)
++/* Power Down CDNSXHCI. */
++#define OTGCMD_HOST_POWER_OFF		BIT(12)
++
++/* OTGIEN - bitmasks */
++/* ID change interrupt enable */
++#define OTGIEN_ID_CHANGE_INT		BIT(0)
++/* Vbusvalid fall detected interrupt enable.*/
++#define OTGIEN_VBUSVALID_RISE_INT	BIT(4)
++/* Vbusvalid fall detected interrupt enable */
++#define OTGIEN_VBUSVALID_FALL_INT	BIT(5)
++
++/* OTGSTS - bitmasks */
++/*
++ * Current value of the ID pin. It is only valid when idpullup in
++ *  OTGCTRL1_TYPE register is set to '1'.
++ */
++#define OTGSTS_ID_VALUE			BIT(0)
++/* Current value of the vbus_valid */
++#define OTGSTS_VBUS_VALID		BIT(1)
++/* Current value of the b_sess_vld */
++#define OTGSTS_SESSION_VALID		BIT(2)
++/*Device mode is active*/
++#define OTGSTS_DEV_ACTIVE		BIT(3)
++/* Host mode is active. */
++#define OTGSTS_HOST_ACTIVE		BIT(4)
++/* OTG Controller not ready. */
++#define OTGSTS_OTG_NRDY_MASK		BIT(11)
++#define OTGSTS_OTG_NRDY(p)		((p) & OTGSTS_OTG_NRDY_MASK)
++/*
++ * Value of the strap pins.
++ * 000 - no default configuration
++ * 010 - Controller initiall configured as Host
++ * 100 - Controller initially configured as Device
++ */
++#define OTGSTS_STRAP(p)			(((p) & GENMASK(14, 12)) >> 12)
++#define OTGSTS_STRAP_NO_DEFAULT_CFG	0x00
++#define OTGSTS_STRAP_HOST_OTG		0x01
++#define OTGSTS_STRAP_HOST		0x02
++#define OTGSTS_STRAP_GADGET		0x04
++/* Host mode is turned on. */
++#define OTGSTSE_XHCI_READYF		BIT(26)
++/* "Device mode is turned on .*/
++#define OTGSTS_DEV_READY		BIT(27)
++
++/* OTGREFCLK - bitmasks */
++#define OTGREFCLK_STB_CLK_SWITCH_EN	BIT(31)
++
++/* OTGCTRL1 - bitmasks */
++#define OTGCTRL1_IDPULLUP		BIT(24)
++
++int cdns3_is_host(struct cdns3 *cdns);
++int cdns3_is_device(struct cdns3 *cdns);
++int cdns3_drd_init(struct cdns3 *cdns);
++int cdns3_drd_update_mode(struct cdns3 *cdns);
++irqreturn_t cdns3_drd_irq(struct cdns3 *cdns);
++
++#endif /* __LINUX_CDNS3_DRD */
 -- 
 2.17.1
 
