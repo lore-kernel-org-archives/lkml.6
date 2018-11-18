@@ -2,120 +2,98 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE70C169D4
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E71C04EBC
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D43D20815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D43D20815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 09B6F20869
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 12:48:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lUpGZwsl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B6F20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeKRXIv (ORCPT
+        id S1727482AbeKRXJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 18:08:51 -0500
-Received: from mga03.intel.com ([134.134.136.65]:32696 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726180AbeKRXIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 18:08:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 04:48:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,248,1539673200"; 
-   d="scan'208";a="107258496"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.142])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Nov 2018 04:48:30 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside tpm2_commit_space()
-Date:   Sun, 18 Nov 2018 14:47:37 +0200
-Message-Id: <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+        Sun, 18 Nov 2018 18:09:02 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33137 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbeKRXJC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 18:09:02 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i20so18883396otl.0;
+        Sun, 18 Nov 2018 04:48:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ns+w7vPsQF/7Gjc0K/zh7OiyvZkiW2ry6BSvr0gAWIg=;
+        b=lUpGZwslwu3v68JPkowwTsHjOLcSNUKBG+pVg8rgBIVTQL9/BWQbAB2MBm2T1mImV3
+         ojnG9nwmVLyXJvMUjJBeLDaEhBFaF8Nu8aIX6lCp8/WjfnBucy+r3CDU4HknbguoUaOh
+         sUxIoosqaLaftpZJKff80WuhtM24/UOzw2gaYb3UwRLfumx6MKEuNcrt7Os1oV35u9MB
+         zvbEZ1WoMrZOE4XIkjvFFq4ZHkCmKyhCcpKBhMYlzRmseXB3E8qTWNS6cMwdoHKJK/ns
+         D3OuNbM1HbLXm2Q7aBicTcpV/rfuYUVUUlgFfTGECg9/FaksacNZPg4a/NSBkREN+vbv
+         7vuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ns+w7vPsQF/7Gjc0K/zh7OiyvZkiW2ry6BSvr0gAWIg=;
+        b=tu/7oNpC1UmtMPY/iqzeCgcEopnOJq9Sh2JRoCAurVgGkKZcHh8dn62i9sBrJzRk2n
+         2bVzqneW+vc00fe4AWqELjnVLPFU7eY4eEj/35GY+QdSyAhVeDxfbthzRwM0/VkHmh6c
+         cxfeOVeEEYjO6HMVY9povYkIPtKHooi0okkEWbIjOajUANElb80r5IGMtrR5Q9B3+ov8
+         AO8I2Ak11iyx5gh3nVXOax9hdtmEXCqyP4L9HnRVsy9caaIlgHCgcrbaxY7knWnyduwi
+         D/q8As9y0kLJdoKLoVBiXM+3vja5SzV8x+Q5aWHaIAa4efFUHXYXkWgsOUY2ZlBwbQxf
+         gt/w==
+X-Gm-Message-State: AGRZ1gKfdZuYiccoV/MDc88qAFDrCWsm/4mQ6KCeMr8Wcvtmv1Hc3W0G
+        YcXbN+Iov+oWz2C1lVkZZSi93qQnHrDKx7SIQMo=
+X-Google-Smtp-Source: AJdET5fNR65uQ1n8xXqxF+WALChR/ORnIyy8aPV2n9PbVFQAwJWdIPAqeTl7TqwZWTAMsQ5FZsLG0b6zYY6eu4jL/kQ=
+X-Received: by 2002:a9d:3408:: with SMTP id v8mr11429291otb.237.1542545327911;
+ Sun, 18 Nov 2018 04:48:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com> <1541516257-16157-3-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1541516257-16157-3-git-send-email-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 18 Nov 2018 13:48:37 +0100
+Message-ID: <CAFBinCDQ0G-yt8a6rwpVDa6FJHr1f=VEkAX3LT95ZR+9bWAekw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: meson-gxbb: Fix HDMI PLL for GXL SoCs
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The error logging for tpm2_commit_space() is in a wrong place. This
-commit moves it inside that function.
+Hi Neil,
 
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm-interface.c | 2 --
- drivers/char/tpm/tpm2-space.c    | 9 ++++++---
- 2 files changed, 6 insertions(+), 5 deletions(-)
+On Tue, Nov 6, 2018 at 3:59 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> In an attempt to better describe the HDMI PLL, a single DCO clock was
+> left for GXBB and GXL, but the GXL DCO does not have a pre-multiplier.
+>
+> This patch adds back a GXL specific HDMI PLL DCO with xtal as parent.
+according to the public S905X datasheet (from Khadas)
+HHI_HDMI_PLL_CNTL2[31:30] describe the OD_FB
+the 32-bit SoCs probably have an OD_FB as well and it seems that the
+formula for the PLL with OD_FB is:
+  in * m / n >> od << od_fb
+(however, I must admit that I'm not sure where od_fb fits in best:
+before the PLL DCO - like OD is after the PLL DCO, or part of the PLL
+DCO)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 64510ed81b46..7ac6ada8428c 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	}
- 
- 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
--	if (rc)
--		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
- 
- out:
- 	/* may fail but do not override previous error value in rc */
-diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-index 1131a8e7b79b..5ecc73988f7c 100644
---- a/drivers/char/tpm/tpm2-space.c
-+++ b/drivers/char/tpm/tpm2-space.c
-@@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	rc = tpm2_save_space(chip);
- 	if (rc) {
- 		tpm2_flush_space(chip);
--		return rc;
-+		goto out;
- 	}
- 
- 	*bufsiz = be32_to_cpu(header->length);
-@@ -526,4 +526,7 @@ int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
- 	memcpy(space->session_buf, chip->work_space.session_buf, PAGE_SIZE);
- 
- 	return 0;
-+out:
-+	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-+	return rc;
- }
--- 
-2.19.1
+so this is more of a question than a suggestion/feedback:
+do you know whether the datasheet is correct and there's really a
+programmable multiplier (called OD_FB)?
+do you have more details on that topic?
 
+
+Regards
+Martin
