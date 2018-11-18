@@ -7,82 +7,82 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9CEC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DB8C43610
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B5F2080F
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA5120869
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 10:11:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="tTj7q0Xi";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="sQwznuVQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22B5F2080F
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="CImbAyFM";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="h/WH5TSb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA5120869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbeKRUbC (ORCPT
+        id S1727568AbeKRUbE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 15:31:02 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:41282 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727374AbeKRUbC (ORCPT
+        Sun, 18 Nov 2018 15:31:04 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:36426 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727330AbeKRUbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 15:31:02 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA8s12007707;
-        Sun, 18 Nov 2018 02:10:56 -0800
+        Sun, 18 Nov 2018 15:31:03 -0500
+Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAIA6qt9016172;
+        Sun, 18 Nov 2018 02:10:51 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=G4WTivoVWNC8CzhOVrnihtRPizlwoQD21JVx9xHSCJg=;
- b=tTj7q0XiG7bKryXi+P6Jx5r7ccuz6veXZQu2M6ADAP2ALX2HwXs9IMlLpzKSGK7CRcaW
- UbiQCEBWB/NVoLUg+GGpUk+hR7V1hJebFYNm183qm7tXN9zgnsXPk974SNZekZO9hp2s
- dHMT1pcvBlkBH/VbdlFw29QNG/J7HvbxPIDBwu/MbGYScw+zNBwcF8ctuQJ4HA3yCVEJ
- RQLK8v4AICP6Q3vkW74/h4p5EFeaY8Eko8mK9phUaqZQNB6VjrF8wc+kflTQzd4coss+
- yU6CfQTGmhSzVuT8ZQdaKF8ITkZdmonlGo2d5tr86m1GEZlbLLbZ1TtrL8+jv35o2nQF Eg== 
+ bh=vNZYT0SK8/988waVE7XtXpo7nb57FIsXrJgh1vBsHpM=;
+ b=CImbAyFMT4s/psAf6hrzh4fRgWMlBgk662fMijQarfMseW7TNuOySMPF+fXdKWI3PsUq
+ i9Ycz5C/oOuGob+5wPbB61duEHmJKjaeF/4QQkf+J8oCFn3Wk3IO+gxLTK3OthP7LYP4
+ HYlgCsO2Lhqs5wpAyKPBR4i9sGRYz5ySJ3r6KaJDEk73HwaGev5ntCtS1PnKAdI8TqPs
+ URHZXyEJTED/rQhgOHN49w9q9IDzMt72XHHB2VO0nyWkiWv+XKTK3NtVKCu5QHUgb3eD
+ OtQNfa+iLYNF/fUSLUydDEgddETcNSjFacxYACYhzdUZebeU2bLmNPpd8ZTTRJskDBer jg== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam03-by2-obe.outbound.protection.outlook.com (mail-by2nam03lp0048.outbound.protection.outlook.com [216.32.180.48])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2ntff7w460-1
+Received: from nam01-by2-obe.outbound.protection.outlook.com (mail-by2nam01lp0183.outbound.protection.outlook.com [216.32.181.183])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2ntge14vge-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Sun, 18 Nov 2018 02:10:56 -0800
+        Sun, 18 Nov 2018 02:10:51 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G4WTivoVWNC8CzhOVrnihtRPizlwoQD21JVx9xHSCJg=;
- b=sQwznuVQMCWInTFi1uQMh1ipKvZIvnU4fNuXBEs+tGKVu4pYoHMekyX/B9cKYWZPfWs2HsUHS1XJCTU7qC9UOO41stqLyj18i/a3Akw2lRe4bRXnt8tC79hJMzxjoIx2lHNGeJ+TTAfTzv1KiDGKYdDqRzZVNDYVOgPyy7CJ8/w=
-Received: from DM5PR07CA0068.namprd07.prod.outlook.com (2603:10b6:4:ad::33) by
- BLUPR0701MB1858.namprd07.prod.outlook.com (2a01:111:e400:5165::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.23; Sun, 18 Nov
- 2018 10:10:52 +0000
-Received: from CO1NAM05FT025.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::200) by DM5PR07CA0068.outlook.office365.com
- (2603:10b6:4:ad::33) with Microsoft SMTP Server (version=TLS1_2,
+ bh=vNZYT0SK8/988waVE7XtXpo7nb57FIsXrJgh1vBsHpM=;
+ b=h/WH5TSbNjnHCERe2BNipGgCdoHoDiXfDK7Tx4j+swbPr9GIbacZdYYqCYNA4wIgCCZj1MER20DmUBhz5dOU0yyy3nuosLyNA4npGqUy/TzUO34xyJgp3vnmMmTwey6QHUrZW4plmeBB8YukdH9jMiKpizM5s6FXaAoq/5SErJg=
+Received: from CY1PR07CA0028.namprd07.prod.outlook.com
+ (2a01:111:e400:c60a::38) by BYAPR07MB5175.namprd07.prod.outlook.com
+ (2603:10b6:a03:6d::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.26; Sun, 18 Nov
+ 2018 10:10:49 +0000
+Received: from BY2NAM05FT011.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::201) by CY1PR07CA0028.outlook.office365.com
+ (2a01:111:e400:c60a::38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.20 via Frontend
- Transport; Sun, 18 Nov 2018 10:10:51 +0000
+ Transport; Sun, 18 Nov 2018 10:10:49 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- CO1NAM05FT025.mail.protection.outlook.com (10.152.96.133) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:47 +0000
+ BY2NAM05FT011.mail.protection.outlook.com (10.152.100.148) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.3 via Frontend Transport; Sun, 18 Nov 2018 10:10:45 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5W029622
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAb5S029622
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Sun, 18 Nov 2018 02:10:46 -0800
+        Sun, 18 Nov 2018 02:10:44 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Sun, 18 Nov 2018 11:10:44 +0100
+ 15.0.1367.3; Sun, 18 Nov 2018 11:10:43 +0100
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:44 +0100
+ 15.0.1367.3 via Frontend Transport; Sun, 18 Nov 2018 11:10:43 +0100
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAfpR032414;
-        Sun, 18 Nov 2018 10:10:41 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wAIAAdMH031818;
+        Sun, 18 Nov 2018 10:10:39 GMT
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAfB8032388;
-        Sun, 18 Nov 2018 10:10:41 GMT
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wAIAAdmp031769;
+        Sun, 18 Nov 2018 10:10:39 GMT
 From:   Pawel Laszczak <pawell@cadence.com>
 To:     <devicetree@vger.kernel.org>
 CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
@@ -91,9 +91,9 @@ CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
         <nm@ti.com>, <sureshp@cadence.com>, <peter.chen@nxp.com>,
         <pjez@cadence.com>, <kurahul@cadence.com>,
         "Pawel Laszczak" <pawell@cadence.com>
-Subject: [RFC PATCH v2 14/15] usb:cdns3: Adds debugging function.
-Date:   Sun, 18 Nov 2018 10:09:10 +0000
-Message-ID: <1542535751-16079-15-git-send-email-pawell@cadence.com>
+Subject: [RFC PATCH v2 10/15] usb:cdns3: Ep0 operations part of the API
+Date:   Sun, 18 Nov 2018 10:09:06 +0000
+Message-ID: <1542535751-16079-11-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1542535751-16079-1-git-send-email-pawell@cadence.com>
 References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
@@ -101,53 +101,53 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(39860400002)(396003)(2980300002)(189003)(199004)(36092001)(50466002)(186003)(2351001)(246002)(6916009)(16586007)(7636002)(305945005)(478600001)(87636003)(36756003)(26826003)(48376002)(54906003)(8676002)(5660300001)(11346002)(2616005)(126002)(476003)(47776003)(2906002)(426003)(356004)(6666004)(8936002)(107886003)(336012)(446003)(105596002)(486006)(4720700003)(50226002)(26005)(316002)(42186006)(86362001)(575784001)(106466001)(51416003)(76176011)(217873002)(4326008)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR0701MB1858;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT025;1:vPXnVcdBZ2o5JAq6rW2VR/WX097kYfCsSuo1wYwVjuJHXdeXRDb+hxSdywsHUOSMXaehLpdBY7RUQ4MF9tDDYYuvhTHqpT14I5zwtM5uAYcoMSF9ual3hauMGdVC7ZdP
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(39860400002)(346002)(2980300002)(199004)(189003)(36092001)(4326008)(106466001)(217873002)(2351001)(14444005)(19627235002)(356004)(16586007)(4720700003)(36756003)(105596002)(42186006)(575784001)(6916009)(86362001)(47776003)(6666004)(316002)(54906003)(11346002)(2616005)(126002)(446003)(476003)(486006)(76176011)(336012)(26005)(426003)(186003)(107886003)(2906002)(48376002)(50466002)(305945005)(246002)(7636002)(87636003)(26826003)(478600001)(5660300001)(8936002)(8676002)(50226002)(51416003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5175;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT011;1:jsjv7TgBNdNjcE/5humcTEoikBCDQfuWQm5aNuuxMSsV2iMKYB9dkmeKRMR9Fbaq+t09q43v8zW2Fx0MNugRI1SIm80d0KVFzc9k4aGybXi8aBFKJOMcVYhZeC6jf5fQ
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 598b90f7-6459-496f-3827-08d64d3e1e31
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BLUPR0701MB1858;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0701MB1858;3:zOIYXJspRdbVe4gDj0V+zka6xdOaGCpCcmrfxdSoQ+LR+gqIjp3DReX1uiRi1LW2k1vt4UbDYlpZf4IIeuhPE+fQVVywjb+0x+UT4DDlTEv6MCH58PDlGxCY40G4tWtNP2VKNwMf9SJcSqKi1U8EELkKSbx3JWluN6uDNvTPrEfEC5RzVKogcg7qPzGD5dqY6uZHk4ISDjuUf3bS1KzD8MgfllnmSg7nj5XCtgXFiK+V7TF2e+7lgB2YGOVOYpphe+gj27fGUrkVzU4XwLUv/ZTb9xNm0clYxEY76PQkZLK+o2w24HmqYMSC5m0D9QcPuy4lgvDJ7EpbW7kH1PXcPqKTvJ3X7z0dwsNN44rayPc=;25:PoR83cnhCCXOIP8SOwC/3PWsRsE+eO/FTsVFYEMo9f7ujg1lH/tThK0TgIk6JdBaRtzVyBI5K+ei+j6PQvx9jrNX7vGvMyqVDSCeRKT0rwIbnylg6kd+StGKP9/kyjzp8+fttfHVlJ8aJFpMPolCXb/NgGSVodzWQh1hhLraTfJ3g0qPiCQW18QqoJRFWtmm1dZTy92QP8DQRGWj4hkzv5qW386/H71vj+/9L8lTEKA3xvSDtEJE5xA+hgxDLBpQx9KcQMPNJSso5snbdFwVXVClBF5L1q5N/sVn2oXTz1t+aGEwm993iut6ZfG1wvXxOg/AsB6lsIvZE/CDd5w33YRKZYDNrqGGFrZ9ySPYJ/I=
-X-MS-TrafficTypeDiagnostic: BLUPR0701MB1858:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0701MB1858;31:p1r784d/cAGT4nbHOSYw0am2FqWBidpDoSwgEOHCfNB29Pp8XNfTIHF4qAgMrCXDkzvksfZRlAhTR14167dBvRHGOAAQ2p8sl4yMZh/tKxcB/fnlKzqaKqUzACMGySknr0cwaLA57Doc0RTIfRW56L58yM/62WpRjNp+aR6eiYHE/44ZwCX4VahovRD482Ka0gXw2FEJd+uvQUJ6669zb0o8ExO3NZRhWiUkUhiERQQ=;20:BOpfxzRX6is31siYJICh9xKoaJhpE3y+CD1x4rUmQqdCLNKOiXzwbbS4uSTRhKlqwRPmjm0n1ghv1C3zWglKPd21d8PdyE2/SYrrlHyqc7pG/KE2z8Z5/ewTUiKy6A6CZkZjKCpUL5tHuKZw9UYZBv9giS5qbNaxGC51StIWO+rbkdRbHKv6gJA95v6vLjFAyhjBOVXE9LeufPwjMUilnEbT+Ez5dNaTCqPgDwsualxVucU4Eo2tJRokcMQC8eoX8aJt9uXb0cO3X6GNqo2dTPsrMyWfQvGM8k5k8Oj/lI3X+prFnB1OM+XI3zKQXdLCVz0w7v1VbignnH8VAU1YEtvRL+3wSY3EWTee4mXQmx52lNYDdnXOZEilqBDHSxGk5TDKQHXACF8li+4pMI/h7j779+Nk++GFT5rZR5O7n257dW0HU36hVKVZ39PaxVcZHXCRS5raciE5yXB/YcLdAWn6LemVHJvQbzGXit+i3nTyYbJDEg8aRBiffc2PIvbh
-X-Microsoft-Antispam-PRVS: <BLUPR0701MB185843CD5C8A4ECE034928CADDDF0@BLUPR0701MB1858.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 8d53fae3-c9f9-4fd1-c543-08d64d3e1cd7
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:BYAPR07MB5175;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB5175;3:iOAQ1Ol0QPH/YIBau+wjEmRC/HbhLmeYytiGtVnJrPf5qJZgBznpuz+CsFjPlHd5Fq8plBzX4CLY6cIU/DZdj5lpKqiKs978MgAtFKAEzC97adZZy63UaR1N6JRivH7srjqk2IPdpBCbOIVQOPJqhwiP0EFj8k5CeDmXwXyjhbwXXF34nxZ7Zc2VkMEwJjJ2CIFkWshKQlKBXBnmIQvG/vQQvj2JptzroOB1Hq1J1LtObB+ia3YNst9IoWks0weuzMBdAAbQr4Y2eRnPWVx/iVE0XjTBghCbSe9/yOJgUrNcKQwSnfDeHiX6YZpevTwtjL7sQM9da6JAczaC5qvYpO8uWHl53FbztLxWWK+Gnq4=;25:vGg4KRBJskYxjuyI78XsIKgd04fOM+Kz7vxcGSYY47/8ANUI2fhJLROpxlkm5NYXEzfcfi8G33iq26elJo6suipZ2s2SnGFBaySuTE5IdrkBFQkinrgbbRlzNX/HLLn7ShX4k+waHtiQUfCA8MS5eXdmqvL/W24ykqrk3DTQpFSdz1cbZpp19YuGOoZopibbuTLJX3kLNXDvHhKhqhAwamR/NymH8x7/mkf4w2wVB68vdy4Y4PwVMH2Kx5CADH7xgrPIXXsHQ6CujhdBv+IOixL9fILy+zUNbHZ2KkfTxLbeH44OsGvlbGZOdo5f/MfXwEwqatUYg/ybbZxag9BWpQ==
+X-MS-TrafficTypeDiagnostic: BYAPR07MB5175:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB5175;31:qHRi4fgI2yWWRCdD02eejQToHuas4czWY2lUFjoAJlw2Ue9M9qOCT4M5RbC2EZxb4+g6Wkgwp1apGjIdXXqKkVSRMsQv1BdstZopdTbfDgMPZJ/I9u1VDTZTgj9q4oPuVRSSR6SraX/f+oHavFIk+AcqwAzndF7bwuKX8m7JFZFC24U32AaiDRZOeKWdOj02FzctyAvIKbl5dqAIkggqQrTVvjruech3AkrTbQPulco=;20:xnMAmtp2D2h/4OZ+3evAVIuZBc5aB9dyYd/bQN44iA0H6cH2P/WhtNq+gYLRPS1PjZTKE2+ar6+FsJR+9oquskGdcOd13UqVZwfKLaXlIKJs/67iERWO5ZgmrhlC5oquk6VdxRUs9o1zBJZtqOS8u1qkK627myqloDFaV0G5xsiMvc4TQGV5nfapqHJ7hwcHXeoIFchp+HAaC4gtUxzfpItJrxjISMYZK3kWd+uM/IKbgpDf4lrdn/SxVqMvrjomQhMjJQy+Q6UwELOQpZ9/bbzoNH/49dKQ39it1H/UINpPv3kHN7dZNueJVPlAGo47RSzuDNFK0LJWkEQWF8uRZCeBuCGb/DnkzL8aRRSIyJQ1oLAeammmtt+5HSDZmqHFaMFb0l6JGdo8kVL7A5XvD46bce6vYu3HV51fqlb3RSbqp6i1zRbdtxy1mTOB+6qehM1Mk3CgXXvjm7rjm5rT0im9Bnexm1FL2fgIrab+6G4wn7npNb3DHfMlZmMp/Ghj
+X-Microsoft-Antispam-PRVS: <BYAPR07MB5175B3AF7E2B3F8A224B1678DDDF0@BYAPR07MB5175.namprd07.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93003095)(10201501046)(3002001)(3231415)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BLUPR0701MB1858;BCL:0;PCL:0;RULEID:;SRVR:BLUPR0701MB1858;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0701MB1858;4:xEUBFbbrEuqbkkxrGO5f4BirSqrtkzP7Uwbe0v2uI1QsCD2AxxijhcNgDsr1tAxzQh9ElDQgS1x8Ae5yA8B2a5Um/DCkRE+q5HgbmqXhOr2SZKLQqMI409Nc7gRziYQgi+Yhz32SpkNquLdbmgwWHAGYe+l7xcY4prHMjve0OgYWtqCxUiHuKnMrG3572wNBKvWxc01JKrkJ+6L66byiamVVGoqRBbwNC/sAr+y3PtkmcAiaRFO3D3giNlY8dhvqXP74SNG9Ewjt3nMsX73qyQ==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93003095)(3231415)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB5175;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5175;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB5175;4:N/VVcfxoH58nXV9VGe1f/9iv59u6JE08xKYMwCuS2pqkdfRoxzOCCkwmimh32oU9qUXeFti1vkr/L6AViU4fQBfRBNT2+3cln06VPBjX5ZPg1hIkZ8e5AXRZrHDksZgroKUiXtuY742OPS6czG7hQP0oW9sXNY+pX7oZgzRdAdwCembnhBP4sHANl58HS76fy4BD3JtjN3pqwYoDl5QqslXC4qP9XCC8hDUUWAOl6iUHID03cvuQnG+lvbzWeUZlayl6nUaLuMn6RBDTEj8rNg==
 X-Forefront-PRVS: 0860FE717F
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR0701MB1858;23:tUMOnKFkZLVMzGyXPpvlbgkGv7b+K+EvuUNXFO7?=
- =?us-ascii?Q?662guq8+k/yvgrqiA9Xv9U3B1zfSg5RKXz2pXiHUzUlTiC1mhNZw0q4rtN0F?=
- =?us-ascii?Q?BBehTnrUIM07YJrkixDxsABtN9Euv8DeSOk6+RkmtIVVgV/Ha6Fc087bPyPY?=
- =?us-ascii?Q?G48by3xr9aeZf5znD62wCPOhNkxpcRqWIGcpSqXlqgJGmS6obdyW4ixkokVc?=
- =?us-ascii?Q?VheNroINs8UU8leHmt3EFhaGDMZ/j/qkX4xOYJIfTRtBWMiFWd0gCsGAtPz0?=
- =?us-ascii?Q?OzLuS5utEe8WAafFnBiM+bAf069Og+a26bNcQn77QCNRKEa1xQ1JLaEAgGHW?=
- =?us-ascii?Q?UqJLmexJYSlv29KKcw8DZLEVi+aDHbmD26FoaIW4XBFij1D5KsPvSWuZ6CZk?=
- =?us-ascii?Q?RUkQmvmM8qxAp8QaNojqXhOIVS23h5WKfrAPcaevj57uXvPowVkLAIgV8WlI?=
- =?us-ascii?Q?9LO7XEc4yQrP7MbOMdcOR8uw4S4Kzp7dr2anO/5GWhB8zSng6BXdMQxcIqCB?=
- =?us-ascii?Q?j7LX+dRhyUNbDJp9CiHOymCA019fqITstQPuOFaPVnoz1u8Tfd10pyFzkeSJ?=
- =?us-ascii?Q?WZkKH/aKhi7Q7Vtc0lbJ+znn7QSgBUOls00wDNHtBczWWabNYPRAZx/9qL7w?=
- =?us-ascii?Q?ZVQkRfysLVJptnIa601aT19HhigkMQd/5aqFFp6HXAa2R1D6ASqiY/xYxqZ6?=
- =?us-ascii?Q?UIO5oFiVUfAJQUdZnNvqkzmz9R5LQKK3IEao6lo2+akFBfyLFsEx1cR6RTcW?=
- =?us-ascii?Q?4fU7IIwdSzKA91NzHOQwnXRflava8B9SeAFfL90X01MpEfJzmQMFw8gKibML?=
- =?us-ascii?Q?/HPB9/g9SbmoMy5A8yP3yf3CzPA/33IeWQavWdvphZLIDFrv0+cIUeg71LCX?=
- =?us-ascii?Q?erDSTZkU+Bf5Q0kwWa31jIGZ+tD6a/TSw7RvnNnQZjkpqIHOCtumucDyIPrI?=
- =?us-ascii?Q?oaJQMc4m0BDF6gf4Eqy85lnqcYS97quU5S3CGaDy4qCcbmNEHJv0JGOynBzz?=
- =?us-ascii?Q?SlEi3sVRTNGlJFlDGCz83wb598RTUS0mxOyQwmOhS16HT7MGDjaGsuv/lLYm?=
- =?us-ascii?Q?x3ArtqaqBTQDa7h76wF7CqsDjuNVOxMFVgHBzK+fIcuyzl8J62/OCQ2Tg/UC?=
- =?us-ascii?Q?/MhKcxVPU742jW1sTbYvSSZ7BoR9XukwourZirIwjHLCn8W+mI37ZV5P1pvi?=
- =?us-ascii?Q?gAzMNqTDOTr4IPII=3D?=
-X-Microsoft-Antispam-Message-Info: 7PtDXXS/Q4njIUz0yTymp1WFLSiboKDn14yb7P0Dp2G4OjcOMhIqE/2P8R+j7LRsATNPxq+hCBrXXw4aAT+6Y1i8TKjZPwZ78tuZhcYkXyCRVfTa6CNYzJBNAQCX8QPIx9SlCv20mGjk86cAAp/Y+Jscm8WYYw8vBf21UyKRtxzq6rHJS0/sU+7uc13y8ZkRPlhxH1dmvrYGrSlpiiAGIdrlZoTkw7Og3V2k0qxjU/NVEjMas+1gr084Yv0LdgI3hausWOPAiv2wGC8ikQk+Yqel9yYOGDaeybA2+lzDiDkQReRIuEeFUHCJgMMzvCbab/X7kyM0h5o/QpKaqahAHnfJYMeAaP7SB6NG7LYesmw=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0701MB1858;6:TpovZ/XAWk+XvDRNTErgCHvgUvv+OTs7zhWCeKqmDA0cxIN5VUcjoxOIXuI1w0c+L/vi7eaFcBfAjx/B29dPUvCr1kvU88XHORsSAYGk9VkJTyBmzlsPlFnWAbWBakr8k3trWGv9I/AIm+fGfOLYjzwIb5ygV46H2ebPgR4Ll14rgCf0DCBbXU6MuMTU1U6AU5mzd9P/ofloHMAB01TYykO2chcIaK+8Iinyup/FExEsH5pr/K4MoEGTyKrEGRKu9K2nFd3XxK4dOaodmRBp2sQi7N1DhSgDe4TgUrZ8c7FrXEF9JWuqXByYxFDxeXJbRAlFc4obAi3rEuSXNLbG6MGcQW+d55GMQLIsWu29pchgon4mqfMg6bd3KAU6cxeAgiNW4682tHSJhXfU7JHBx0A3dRJzVVz0WiImtanciI+Xea/ih0jSTYklXN8TUTmzVjpefjUwzDX1NoA2K0sMKtV+dNxug19E/589ZEihVuY=;5:FDp44iWodHxUB26qt2LZeeGj6lxwiJpyV/oZqA/UxqfjFUxZpO0QiAmLmIzspbOEUwfKeNcmUUJXZa5tfUBBAzO9PfvPlW+q/p76E0qWVXXWdYQ8LCKhV0+zCpb/fE7sVZVPP2xiMk8WPr8QKPfYPcxL810FE7gna6LZC3y4ywI=;7:vrIuHEQOKIrqMdNtJZekMWxFzQ/2BKoWtbOfcCK1/jzcftfRUUg8sUgk+EHZWqBdBdv5MfcoCyylz1XKQ8sGEhChutRYwSL+XtPtTzPfeOi3ijWKVvYyl1Qc4ZcbtMbMfBbXV3rRGMO9o8r6MnfwDg==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR07MB5175;23:pmKvpFb2zn7ZWLWFRd2hbfjQeeSfoSavoxMNjcp5O?=
+ =?us-ascii?Q?Brw3/YbtV/KEYs4wgJFI9FEYaoYYbeAnq+Vw1tOBL+3wDkxJTcEPSMAioAr6?=
+ =?us-ascii?Q?Wz4d9kun8ZBv3j6Ww/je82ItEEVRCW0nIU2tA612au7UIFzgYI7Q/Xc+8YPo?=
+ =?us-ascii?Q?avNn0Fn0Q9jrMbKTlxhRdA16lFWd8r4MQD1QP+/NphQrfa20aDb70/mEKjJ2?=
+ =?us-ascii?Q?KEKzqcK0XtZHGShMZ30OvLpiMrWASNguul7lGh2IJVPtxWr8SAzgpUQDob1y?=
+ =?us-ascii?Q?Spje84iUBbsaOeOiPPAOyP4T9RCFx40gstegBxOZIFHFdJn9ugQ2Mqu5IAi4?=
+ =?us-ascii?Q?OCjOxEbiNRk+Lbt+MwXqqWOYjJql1xTezpcVoIsXo1cCmLDqOuE6qzAWaRiz?=
+ =?us-ascii?Q?iwvjg2Dm6CSYarTNyerFcpH7I44CUzP7VZEwnHFGxEcqo7zDh/0VK2x7miCl?=
+ =?us-ascii?Q?+PWihm0vBbI6iYgHfkM7JFJjCSnMf8RUVzQEO7THwAk5FGsbODSyFUVSWUgf?=
+ =?us-ascii?Q?JBBAmabSfrDTP5YHrOqevpsnrtf6fgKQQh9zOKO5lOPANJRcc2HQVZyrdiBC?=
+ =?us-ascii?Q?N3rvwAJcz/LQLAZ1LwUsKTRXEMs1TNeK9styTOr5ynHrs2uA/+Ga/5iCj1pQ?=
+ =?us-ascii?Q?RQA7CwvK0h6ecSgStPE4ExHDdDwu+DYB53DS2E552nG9luJ/Chysktf411Sh?=
+ =?us-ascii?Q?6hvyXxwVWOSsJ07u69Kz4DOGNGT4jjLh4xrZuxe9JG49MVKLsf4ETLo6Sn5l?=
+ =?us-ascii?Q?+3xDJo2G26dlVn4twXVO6CGwEuw6kjEnNzuE5H0wOmoDPKmuRbu7T9cyMyLY?=
+ =?us-ascii?Q?lFKJi7RFRhlWlw7UU4UA/xkYcRfHVhJOcP90ZtdNlqoEsp7UXTxEg5CAdtR/?=
+ =?us-ascii?Q?Lqi2nVIS/tEIifpGiat7pbYWLZ5EoEm7m/atPkrW+gzLA259c1u5qtHirvIp?=
+ =?us-ascii?Q?pQ28G9u4C0WYHz4OXiHfYJv4n6kc3oimH49B2/pu/C4Ar0CwhyjUeRbMWvjs?=
+ =?us-ascii?Q?XYWL+ajib3g/dhKDrw3mDEqXNDhyy3u1rbHeCdr6Fbk8pNfernT4eKW7zDBz?=
+ =?us-ascii?Q?et1qAdyErdJ8B7zNpzGZj3zvL7UjEEoai5ukDOoJ0mVZg0aQ/AYWg+JDNYIA?=
+ =?us-ascii?Q?0iiFAHw0DYkBZtSJLJhbAnQLe8oesXkbY7EizOslm9O1eJcl9R7+chJdzfuT?=
+ =?us-ascii?Q?xx3UWS/hsfMAPhrI6I/j+OrcwAG9mFr5D2i?=
+X-Microsoft-Antispam-Message-Info: GsgRY2JxqyFxnemuV4qGc1/7fAAPH2ipB5qwfr+jVmQLjZTVtayDxVp0t+KJtOlyanQkcoSvJEsi6ZqvnLYePEHMd3Zt8WVKpF6pjBCtae9RGhcmPPqioPWjWV6HxGlYWwBhOZRUxlsQXOL1U1tQpEyg+mKexUrJfyVgOOQTwDp+I7Ra4J9ME/3s5xD7AUuflqk//3EkLlLweq7R/yDbVz2eILJIm7QsdUDIo93QspM/1fxq7wHxF8tjEDv/Cpr7TVbA38VkFzVJz1LJQHOnBPYtqbaFkphxg5vKi/Zog416kt8h6brNMo+518Z+lPHngdHBkjeHYSiBevvK/4FOu/U18CDdIgV7/TZZU44NcA4=
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB5175;6:uRVb7gTHMjhT+bu6Ph5cm78EuttbdsPZWYxEbti3Xlxz010zHmKxIrVj6IDsDznwDldB2QMLfR559Ljx6ESm0hidHiUFQct7k9mZU4oFSoac97baIsX7Gdfxz1NY8wlZpq3ZCpQm+vVChg1Lx3h+F5eXVyt++zwKoVZkQeyu44+uB3T/R2cNqK7vDTD9C0i6mAbZZkSWSVh7vZ32X0XEMdaeJ1thfvqg9KYHbAP1XWzVlrpM+OL38/YKEFhYVTik/RyBjS14+oWoOI3/KRM9reHfGdRcUrj35OqhnA8Bddq+DRihqvUFk9QYfcj2fZLCqQIT22nKnNSC+VI+RtTodpgh2uzQeA9rxvHloBk84FIUZfEYkKklMjOFtXdhWW5xvdxiNCJkVNbaDd1k40rkfXW+v3xx5k91adJ3/R62UFoINeIyApJOeuvydU9tKBR8UzjuxPySQHbmtbBhcxqPYQ==;5:KOAJ3hhiGOG3r7tlg0NLcCjMQWpaibi/HarSYcKgjk+pW4zclkvKS7O0FgP7kQZjWbPQaSfc3xqBfaDpJqs0kqT1N+NS4YcToeUIHyClS4DexmUS1ZTwBtxnoE/6MaOHKEXBXBD/3PhEIZ5D/D65PDt98yNgcZZFXCZke27eRFc=;7:lg3p1DG6LIlEdtz2imQ5NOIK6GYB5AAgj+lULtbnCFuYVOHTXVAPnBvAm2lhn7dhu9yLWNPDOegp2K+6fDT/HE9i6mkyfw1ob90O9TYrWIkmdCBZFtM7+hjpSRouwyVNmjAWigtI5X1QWvbo3HtTLA==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR0701MB1858;20:XmzIh8YoO55OfHIwYzFfhz7bDzdOitK2YT3prKC1nxWiwNbGeoHuVAJJOyujrTahYCBH3ANWm/1jx7Lcvxem0cFmYDiYrFQgjJmTi3iZD3plv62hifaq7XzdYOlicUgwhRASKTWtNglcmUJyXm/eZxG/4H4GpfX5hxzKon0qGjaYgUpMalvMu6vmtBI72LxUMaPLPausrDvZuXtNm9i78IyfiVED2PuG8tTlpAj/jwJhuJl43RLJ77oX5JvUfDHu
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB5175;20:Jj2ZqCjusBpSDwuTnvBsmt5PsxrBHlzyGEOH3l1HkFdwbzB4N68dvN1gRg8bwjkR0qs2ci1iQaoGjLg0tFMm1Ymeu4wQTgFpdMzmXL7JhyZLIg372u8bLXNLsiQX+u1rxdf85lwXlwJ+K78uaGxdaakAM24SHyAA4fNrs1mUp+ILGKjE2bkmck/v+hqp9FVAJbiR/ZNJb1cWza/iKmI2GrPYhMnyyrP3x2leuhfJfncRkMlsFDn6QZO5wD+ZXM7u
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:47.6230
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Nov 2018 10:10:45.3748
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 598b90f7-6459-496f-3827-08d64d3e1e31
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d53fae3-c9f9-4fd1-c543-08d64d3e1cd7
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR0701MB1858
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5175
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 a:mx-sanjose2.Cadence.COM a:mx-sanjose4.Cadence.COM
  a:mx-sanjose5.Cadence.COM include:mktomail.com
@@ -158,250 +158,295 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018
 X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
  priorityscore=1501 malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0
  spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811180097
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811180096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch implements some function used for debugging driver.
+Patch implements related to default endpoint callback functions
+defined in usb_ep_ops object
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/cdns3/Makefile |   4 +-
- drivers/usb/cdns3/debug.c  | 128 +++++++++++++++++++++++++++++++++++++
- drivers/usb/cdns3/ep0.c    |   3 +
- drivers/usb/cdns3/gadget.c |  12 ++++
- drivers/usb/cdns3/gadget.h |  13 +++-
- 5 files changed, 157 insertions(+), 3 deletions(-)
- create mode 100644 drivers/usb/cdns3/debug.c
+ drivers/usb/cdns3/ep0.c    | 191 ++++++++++++++++++++++++++++++++++++-
+ drivers/usb/cdns3/gadget.c |   8 ++
+ drivers/usb/cdns3/gadget.h |  10 ++
+ 3 files changed, 207 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/cdns3/Makefile b/drivers/usb/cdns3/Makefile
-index bea6173bf37f..34e60d03c4ec 100644
---- a/drivers/usb/cdns3/Makefile
-+++ b/drivers/usb/cdns3/Makefile
-@@ -2,6 +2,6 @@ obj-$(CONFIG_USB_CDNS3)			+= cdns3.o
- obj-$(CONFIG_USB_CDNS3_PCI_WRAP)	+= cdns3-pci.o
+diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
+index ca1795467155..d05169e73631 100644
+--- a/drivers/usb/cdns3/ep0.c
++++ b/drivers/usb/cdns3/ep0.c
+@@ -18,11 +18,185 @@ static struct usb_endpoint_descriptor cdns3_gadget_ep0_desc = {
+ 	.bmAttributes =	USB_ENDPOINT_XFER_CONTROL,
+ };
  
- cdns3-y					:= core.o drd.o
--cdns3-$(CONFIG_USB_CDNS3_GADGET)	+= gadget.o ep0.o
--cdns3-$(CONFIG_USB_CDNS3_HOST)          += host.o
-+cdns3-$(CONFIG_USB_CDNS3_GADGET)	+= gadget.o ep0.o debug.o
-+cdns3-$(CONFIG_USB_CDNS3_HOST)		+= host.o
- cdns3-pci-y		 		:= cdns3-pci-wrap.o
-diff --git a/drivers/usb/cdns3/debug.c b/drivers/usb/cdns3/debug.c
-new file mode 100644
-index 000000000000..b9a779b35789
---- /dev/null
-+++ b/drivers/usb/cdns3/debug.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Cadence USBSS DRD Driver.
-+ *
-+ * Copyright (C) 2018 Cadence.
-+ *
-+ * Author: Pawel Laszczak <pawell@cadence.com>
-+ */
-+
-+#include "gadget.h"
-+
-+static char *cdns3_decode_ep_irq(u32 ep_sts, const char *ep_name)
-+{
-+	static char str[256];
-+	int ret;
-+
-+	ret = sprintf(str, "IRQ for %s: %08x ", ep_name, ep_sts);
-+
-+	if (ep_sts & EP_STS_SETUP)
-+		ret += sprintf(str + ret, "SETUP ");
-+	if (ep_sts & EP_STS_IOC)
-+		ret += sprintf(str + ret, "IOC ");
-+	if (ep_sts & EP_STS_ISP)
-+		ret += sprintf(str + ret, "ISP ");
-+	if (ep_sts & EP_STS_DESCMIS)
-+		ret += sprintf(str + ret, "DESCMIS ");
-+	if (ep_sts & EP_STS_STREAMR)
-+		ret += sprintf(str + ret, "STREAMR ");
-+	if (ep_sts & EP_STS_MD_EXIT)
-+		ret += sprintf(str + ret, "MD_EXIT ");
-+	if (ep_sts & EP_STS_TRBERR)
-+		ret += sprintf(str + ret, "TRBERR ");
-+	if (ep_sts & EP_STS_NRDY)
-+		ret += sprintf(str + ret, "NRDY ");
-+	if (ep_sts & EP_STS_PRIME)
-+		ret += sprintf(str + ret, "PRIME ");
-+	if (ep_sts & EP_STS_SIDERR)
-+		ret += sprintf(str + ret, "SIDERRT ");
-+	if (ep_sts & EP_STS_OUTSMM)
-+		ret += sprintf(str + ret, "OUTSMM ");
-+	if (ep_sts & EP_STS_ISOERR)
-+		ret += sprintf(str + ret, "ISOERR ");
-+	if (ep_sts & EP_STS_IOT)
-+		ret += sprintf(str + ret, "IOT ");
-+
-+	return str;
-+}
-+
-+char *cdns3_decode_epx_irq(struct cdns3_endpoint *priv_ep)
-+{
-+	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
-+
-+	return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
-+				   priv_ep->name);
-+}
-+
-+char *cdns3_decode_ep0_irq(struct cdns3_device *priv_dev, int dir)
-+{
-+	if (dir)
-+		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
-+					   "ep0IN");
-+	else
-+		return cdns3_decode_ep_irq(readl(&priv_dev->regs->ep_sts),
-+					   "ep0OUT");
-+}
-+
-+void cdns3_dbg_setup(struct cdns3_device *priv_dev)
-+{
-+	struct usb_ctrlrequest *setup = priv_dev->setup;
-+
-+	dev_dbg(&priv_dev->dev,
-+		"SETUP BRT: %02x BR: %02x V: %04x I: %04x L: %04x\n",
-+		setup->bRequestType,
-+		setup->bRequest,
-+		le16_to_cpu(setup->wValue),
-+		le16_to_cpu(setup->wIndex),
-+		le16_to_cpu(setup->wLength));
-+}
-+
 +/**
-+ * Debug a transfer ring.
-+ *
-+ * Prints out all TRBs in the endpoint ring, even those after the Link TRB.
-+ *.
++ * cdns3_ep0_run_transfer - Do transfer on default endpoint hardware
++ * @priv_dev: extended gadget object
++ * @dma_addr: physical address where data is/will be stored
++ * @length: data length
++ * @erdy: set it to 1 when ERDY packet should be sent -
++ *        exit from flow control state
 + */
-+void cdns3_dbg_ring(struct cdns3_device *priv_dev,
-+		    struct cdns3_endpoint *priv_ep)
++static void cdns3_ep0_run_transfer(struct cdns3_device *priv_dev,
++				   dma_addr_t dma_addr,
++				   unsigned int length, int erdy)
 +{
-+	u64 addr = priv_ep->trb_pool_dma;
-+	struct cdns3_trb *trb;
-+	int i;
++	struct cdns3_usb_regs __iomem *regs = priv_dev->regs;
 +
-+	for (i = 0; i < TRBS_PER_SEGMENT; ++i) {
-+		trb = &priv_ep->trb_pool[i];
-+		dev_dbg(&priv_dev->dev, "@%016llx %08x %08x %08x\n", addr,
-+			le32_to_cpu(trb->buffer),
-+			le32_to_cpu(trb->length),
-+			le32_to_cpu(trb->control));
-+		addr += sizeof(*trb);
++	priv_dev->trb_ep0->buffer = TRB_BUFFER(dma_addr);
++	priv_dev->trb_ep0->length = TRB_LEN(length);
++	priv_dev->trb_ep0->control = TRB_CYCLE | TRB_IOC | TRB_TYPE(TRB_NORMAL);
++
++	cdns3_select_ep(priv_dev,
++			priv_dev->ep0_data_dir ? USB_DIR_IN : USB_DIR_OUT);
++
++	writel(EP_STS_TRBERR, &regs->ep_sts);
++	writel(EP_TRADDR_TRADDR(priv_dev->trb_ep0_dma), &regs->ep_traddr);
++
++	dev_dbg(&priv_dev->dev, "//Ding Dong ep0%s\n",
++		priv_dev->ep0_data_dir ? "IN" : "OUT");
++
++	/* TRB should be prepared before starting transfer */
++	writel(EP_CMD_DRDY, &regs->ep_cmd);
++
++	if (erdy)
++		writel(EP_CMD_ERDY, &priv_dev->regs->ep_cmd);
++}
++
+ static void cdns3_prepare_setup_packet(struct cdns3_device *priv_dev)
+ {
+ 	//TODO: Implements this function
+ }
+ 
++static void cdns3_set_hw_configuration(struct cdns3_device *priv_dev)
++{
++	struct cdns3_endpoint *priv_ep;
++	struct usb_request *request;
++	struct usb_ep *ep;
++	int result = 0;
++
++	if (priv_dev->hw_configured_flag)
++		return;
++
++	writel(USB_CONF_CFGSET, &priv_dev->regs->usb_conf);
++	writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL, &priv_dev->regs->ep_cmd);
++
++	cdns3_set_register_bit(&priv_dev->regs->usb_conf,
++			       USB_CONF_U1EN | USB_CONF_U2EN);
++
++	/* wait until configuration set */
++	result = cdns3_handshake(&priv_dev->regs->usb_sts,
++				 USB_STS_CFGSTS_MASK, 1, 100);
++
++	priv_dev->hw_configured_flag = 1;
++	cdns3_enable_l1(priv_dev, 1);
++
++	list_for_each_entry(ep, &priv_dev->gadget.ep_list, ep_list) {
++		if (ep->enabled) {
++			priv_ep = ep_to_cdns3_ep(ep);
++			request = cdns3_next_request(&priv_ep->request_list);
++			if (request)
++				cdns3_ep_run_transfer(priv_ep, request);
++		}
 +	}
 +}
 +
-+void cdns3_dbg_ring_ptrs(struct cdns3_device *priv_dev,
-+			 struct cdns3_endpoint *priv_ep)
++/**
++ * cdns3_gadget_ep0_enable
++ * Function shouldn't be called by gadget driver,
++ * endpoint 0 is allways active
++ */
++static int cdns3_gadget_ep0_enable(struct usb_ep *ep,
++				   const struct usb_endpoint_descriptor *desc)
 +{
-+	struct cdns3_trb *trb;
-+
-+	trb = &priv_ep->trb_pool[priv_ep->dequeue];
-+	dev_dbg(&priv_dev->dev,
-+		"Ring deq index: %d, trb: %p (virt), 0x%llx (dma)\n",
-+		priv_ep->dequeue, trb,
-+		(unsigned long long)cdns3_trb_virt_to_dma(priv_ep, trb));
-+
-+	trb = &priv_ep->trb_pool[priv_ep->enqueue];
-+	dev_dbg(&priv_dev->dev,
-+		"Ring enq index: %d, trb: %p (virt), 0x%llx (dma)\n",
-+		priv_ep->enqueue, trb,
-+		(unsigned long long)cdns3_trb_virt_to_dma(priv_ep, trb));
++	return -EINVAL;
 +}
 +
-+void cdns3_dbg_ep_rings(struct cdns3_device *priv_dev,
-+			struct cdns3_endpoint *priv_ep)
++/**
++ * cdns3_gadget_ep0_disable
++ * Function shouldn't be called by gadget driver,
++ * endpoint 0 is allways active
++ */
++static int cdns3_gadget_ep0_disable(struct usb_ep *ep)
 +{
-+	dev_dbg(&priv_dev->dev, "Endpoint ring %s:\n", priv_ep->name);
-+
-+	cdns3_dbg_ring_ptrs(priv_dev, priv_ep);
-+	cdns3_dbg_ring(priv_dev, priv_ep);
++	return -EINVAL;
 +}
-diff --git a/drivers/usb/cdns3/ep0.c b/drivers/usb/cdns3/ep0.c
-index 6f33d98f7684..8807cb02d7b7 100644
---- a/drivers/usb/cdns3/ep0.c
-+++ b/drivers/usb/cdns3/ep0.c
-@@ -605,12 +605,15 @@ void cdns3_check_ep0_interrupt_proceed(struct cdns3_device *priv_dev, int dir)
- 	cdns3_select_ep(priv_dev, 0 | (dir ? USB_DIR_IN : USB_DIR_OUT));
- 	ep_sts_reg = readl(&regs->ep_sts);
- 
-+	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_ep0_irq(priv_dev, dir));
 +
- 	__pending_setup_status_handler(priv_dev);
- 
- 	if ((ep_sts_reg & EP_STS_SETUP) && dir == 0) {
- 		struct usb_ctrlrequest *setup = priv_dev->setup;
- 
- 		writel(EP_STS_SETUP | EP_STS_IOC | EP_STS_ISP, &regs->ep_sts);
-+		cdns3_dbg_setup(priv_dev);
- 
- 		priv_dev->ep0_data_dir = setup->bRequestType & USB_DIR_IN;
- 		cdns3_ep0_setup_phase(priv_dev);
-diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
-index 911d9b8c1c8f..97bdb292eaf2 100644
---- a/drivers/usb/cdns3/gadget.c
-+++ b/drivers/usb/cdns3/gadget.c
-@@ -122,6 +122,14 @@ void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep)
- 	writel(ep, &priv_dev->regs->ep_sel);
- }
- 
-+dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
-+				 struct cdns3_trb *trb)
++/**
++ * cdns3_gadget_ep0_set_halt
++ * @ep: pointer to endpoint zero object
++ * @value: 1 for set stall, 0 for clear stall
++ *
++ * Returns 0
++ */
++static int cdns3_gadget_ep0_set_halt(struct usb_ep *ep, int value)
 +{
-+	u32 offset = (char *)trb - (char *)priv_ep->trb_pool;
++	/* TODO */
++	return 0;
++}
 +
-+	return priv_ep->trb_pool_dma + offset;
++/**
++ * cdns3_gadget_ep0_queue Transfer data on endpoint zero
++ * @ep: pointer to endpoint zero object
++ * @request: pointer to request object
++ * @gfp_flags: gfp flags
++ *
++ * Returns 0 on success, error code elsewhere
++ */
++static int cdns3_gadget_ep0_queue(struct usb_ep *ep,
++				  struct usb_request *request,
++				  gfp_t gfp_flags)
++{
++	struct cdns3_endpoint *priv_ep = ep_to_cdns3_ep(ep);
++	struct cdns3_device *priv_dev = priv_ep->cdns3_dev;
++	unsigned long flags;
++	int erdy_sent = 0;
++	int ret = 0;
++
++	dev_dbg(&priv_dev->dev, "Queue to Ep0%s L: %d\n",
++		priv_dev->ep0_data_dir ? "IN" : "OUT",
++		request->length);
++
++	/* send STATUS stage */
++	if (request->length == 0 && request->zero == 0) {
++		spin_lock_irqsave(&priv_dev->lock, flags);
++		cdns3_select_ep(priv_dev, 0x00);
++
++		erdy_sent = !priv_dev->hw_configured_flag;
++		cdns3_set_hw_configuration(priv_dev);
++
++		if (!erdy_sent)
++			writel(EP_CMD_ERDY | EP_CMD_REQ_CMPL,
++			       &priv_dev->regs->ep_cmd);
++
++		cdns3_prepare_setup_packet(priv_dev);
++		request->actual = 0;
++		priv_dev->status_completion_no_call = true;
++		priv_dev->pending_status_request = request;
++		spin_unlock_irqrestore(&priv_dev->lock, flags);
++
++		/*
++		 * Since there is no completion interrupt for status stage,
++		 * it needs to call ->completion in software after
++		 * ep0_queue is back.
++		 */
++		queue_work(system_freezable_wq, &priv_dev->pending_status_wq);
++		return 0;
++	}
++
++	spin_lock_irqsave(&priv_dev->lock, flags);
++	if (!list_empty(&priv_ep->request_list)) {
++		dev_err(&priv_dev->dev,
++			"can't handle multiple requests for ep0\n");
++		spin_unlock_irqrestore(&priv_dev->lock, flags);
++		return -EOPNOTSUPP;
++	}
++
++	ret = usb_gadget_map_request_by_dev(priv_dev->sysdev, request,
++					    priv_dev->ep0_data_dir);
++	if (ret) {
++		spin_unlock_irqrestore(&priv_dev->lock, flags);
++		dev_err(&priv_dev->dev, "failed to map request\n");
++		return -EINVAL;
++	}
++
++	priv_dev->ep0_request = request;
++	list_add_tail(&request->list, &priv_ep->request_list);
++	cdns3_ep0_run_transfer(priv_dev, request->dma, request->length, 1);
++	spin_unlock_irqrestore(&priv_dev->lock, flags);
++
++	return ret;
 +}
 +
  /**
-  * cdns3_allocate_trb_pool - Allocates TRB's pool for selected endpoint
-  * @priv_ep:  endpoint object
-@@ -438,6 +446,8 @@ int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
- 		trb->control |= first_pcs;
+  * cdns3_gadget_ep_set_wedge Set wedge on selected endpoint
+  * @ep: endpoint object
+@@ -41,6 +215,17 @@ int cdns3_gadget_ep_set_wedge(struct usb_ep *ep)
+ 	return 0;
+ }
  
- 	priv_req->on_ring = 1;
++const struct usb_ep_ops cdns3_gadget_ep0_ops = {
++	.enable = cdns3_gadget_ep0_enable,
++	.disable = cdns3_gadget_ep0_disable,
++	.alloc_request = cdns3_gadget_ep_alloc_request,
++	.free_request = cdns3_gadget_ep_free_request,
++	.queue = cdns3_gadget_ep0_queue,
++	.dequeue = cdns3_gadget_ep_dequeue,
++	.set_halt = cdns3_gadget_ep0_set_halt,
++	.set_wedge = cdns3_gadget_ep_set_wedge,
++};
 +
-+	cdns3_dbg_ep_rings(priv_dev, priv_ep);
- arm:
- 	/* arm transfer on selected endpoint */
- 	cdns3_select_ep(priv_ep->cdns3_dev, address);
-@@ -547,6 +557,8 @@ static int cdns3_check_ep_interrupt_proceed(struct cdns3_endpoint *priv_ep)
- 	cdns3_select_ep(priv_dev, priv_ep->endpoint.address);
- 	ep_sts_reg = readl(&regs->ep_sts);
+ /**
+  * cdns3_ep0_config - Configures default endpoint
+  * @priv_dev: extended gadget object
+@@ -62,6 +247,9 @@ void cdns3_ep0_config(struct cdns3_device *priv_dev)
+ 		priv_dev->ep0_request = NULL;
+ 	}
  
-+	dev_dbg(&priv_dev->dev, "%s\n", cdns3_decode_epx_irq(priv_ep));
++	priv_dev->u1_allowed = 0;
++	priv_dev->u2_allowed = 0;
 +
- 	if (ep_sts_reg & EP_STS_TRBERR)
- 		writel(EP_STS_TRBERR, &regs->ep_sts);
+ 	priv_dev->gadget.ep0->maxpacket = max_packet_size;
+ 	cdns3_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(max_packet_size);
  
+@@ -106,8 +294,7 @@ int cdns3_init_ep0(struct cdns3_device *priv_dev)
+ 	sprintf(ep0->name, "ep0");
+ 
+ 	/* fill linux fields */
+-	//TODO: implements cdns3_gadget_ep0_ops object
+-	//ep0->endpoint.ops = &cdns3_gadget_ep0_ops;
++	ep0->endpoint.ops = &cdns3_gadget_ep0_ops;
+ 	ep0->endpoint.maxburst = 1;
+ 	usb_ep_set_maxpacket_limit(&ep0->endpoint, ENDPOINT0_MAX_PACKET_LIMIT);
+ 	ep0->endpoint.address = 0;
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index 1f2a434486dc..c965da16c0c8 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -188,6 +188,14 @@ static void cdns3_ep_stall_flush(struct cdns3_endpoint *priv_ep)
+ 	priv_ep->flags |= EP_STALL;
+ }
+ 
++void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable)
++{
++	if (enable)
++		writel(USB_CONF_L1EN, &priv_dev->regs->usb_conf);
++	else
++		writel(USB_CONF_L1DS, &priv_dev->regs->usb_conf);
++}
++
+ /**
+  * cdns3_gadget_giveback - call struct usb_request's ->complete callback
+  * @priv_ep: The endpoint to whom the request belongs to
 diff --git a/drivers/usb/cdns3/gadget.h b/drivers/usb/cdns3/gadget.h
-index db8c6cb9f2a5..db5ab6b6c969 100644
+index a4be288b34cb..224f6b830bc9 100644
 --- a/drivers/usb/cdns3/gadget.h
 +++ b/drivers/usb/cdns3/gadget.h
-@@ -1089,5 +1089,16 @@ struct usb_request *cdns3_gadget_ep_alloc_request(struct usb_ep *ep,
- void cdns3_gadget_ep_free_request(struct usb_ep *ep,
- 				  struct usb_request *request);
- int cdns3_gadget_ep_dequeue(struct usb_ep *ep, struct usb_request *request);
--
-+dma_addr_t cdns3_trb_virt_to_dma(struct cdns3_endpoint *priv_ep,
-+				 struct cdns3_trb *trb);
-+
-+char *cdns3_decode_epx_irq(struct cdns3_endpoint *priv_ep);
-+char *cdns3_decode_ep0_irq(struct cdns3_device *priv_dev, int dir);
-+void cdns3_dbg_ring(struct cdns3_device *priv_dev,
-+		    struct cdns3_endpoint *priv_ep);
-+void cdns3_dbg_ring_ptrs(struct cdns3_device *priv_dev,
-+			 struct cdns3_endpoint *priv_ep);
-+void cdns3_dbg_ep_rings(struct cdns3_device *priv_dev,
-+			struct cdns3_endpoint *priv_ep);
-+void cdns3_dbg_setup(struct cdns3_device *priv_dev);
+@@ -1068,11 +1068,21 @@ struct cdns3_device {
+ 	struct usb_request		*pending_status_request;
+ };
+ 
++int cdns3_handshake(void __iomem *ptr, u32 mask, u32 done, int usec);
+ void cdns3_set_register_bit(void __iomem *ptr, u32 mask);
+ int cdns3_init_ep0(struct cdns3_device *priv_dev);
+ void cdns3_ep0_config(struct cdns3_device *priv_dev);
+ void cdns3_select_ep(struct cdns3_device *priv_dev, u32 ep);
++void cdns3_enable_l1(struct cdns3_device *priv_dev, int enable);
++struct usb_request *cdns3_next_request(struct list_head *list);
++int cdns3_ep_run_transfer(struct cdns3_endpoint *priv_ep,
++			  struct usb_request *request);
+ int cdns3_gadget_ep_set_wedge(struct usb_ep *ep);
+ int cdns3_gadget_ep_set_halt(struct usb_ep *ep, int value);
++struct usb_request *cdns3_gadget_ep_alloc_request(struct usb_ep *ep,
++						  gfp_t gfp_flags);
++void cdns3_gadget_ep_free_request(struct usb_ep *ep,
++				  struct usb_request *request);
++int cdns3_gadget_ep_dequeue(struct usb_ep *ep, struct usb_request *request);
+ 
  #endif /* __LINUX_CDNS3_GADGET */
 -- 
 2.17.1
