@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E024DC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD55EC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A65A520817
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94FAD20815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="EJ6wAmzL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65A520817
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="uvwj89TP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94FAD20815
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbeKROpd (ORCPT
+        id S1727182AbeKROph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 09:45:33 -0500
-Received: from mail-qk1-f179.google.com ([209.85.222.179]:36078 "EHLO
-        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbeKROpd (ORCPT
+        Sun, 18 Nov 2018 09:45:37 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42582 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726978AbeKROpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 09:45:33 -0500
-Received: by mail-qk1-f179.google.com with SMTP id o125so43848437qkf.3
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 20:26:32 -0800 (PST)
+        Sun, 18 Nov 2018 09:45:36 -0500
+Received: by mail-qk1-f194.google.com with SMTP id m5so43850422qka.9
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 20:26:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=usp-br.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=CuHvWVwiKJSFYNf5+Mm4ozf+aLuV7qBvdXA+1sM3Rfc=;
-        b=EJ6wAmzLVZ9qfZl87QDutieN+lONJJGZ+5u8l4ls7WgqWKqoGBhW9wssjNIhk2eO/V
-         274ldl5zwLpkyy1l3vS4IM5AjxGNeqOfZdQlR24sY+64bbbSxRaJ50yCmwpNN2O4y/Uo
-         EuuvPRi4zRFfNtL7gxxMbnQta1VF1NjvSdQz6avu2+N71nO2G3N4vYM6KeebTht61ExJ
-         JXULGmZ+XWfjzP2pXY86pBqXRnA7CYZ9qWC/CNWoyIHWocsTBe3haJK5mL8QwCN+M1hp
-         Y++psItCwI0NZc4dCtx3Wrh1GgI9bRwGfT6ww2djr+Wio5SVPgVuo78PUGvSoY6Dsrq9
-         adQw==
+        bh=N7SE5k2/kjJlroE/hqa7PLw1ubwrNoiXTEWaxQ/jVx4=;
+        b=uvwj89TPt4Vz2zNB3MJepCQYIRyg9kyolqdmOzvUlLNywL9ktKvo21COnbvKmrtPac
+         y+dXtAm08z43OgC7iKGu6trN1tget4IG73wg6fKgWcROj9vPtQfU8B6VzgOTzMfnmVgE
+         I63RKZvY2rl99aMiuMDF8/Y0i3tNW8dgWVQWAvvgmNF+J+bf7ILb41CJPBLCGtvuetTm
+         DVEwA865My0c22oMadQfaMLMsYjp/MJh1EUavlZCvkO1PgKLhOmSdDcLz4qOHOs6xcrm
+         vriISTBoEQqbUfZtcqQkaUtyqg2/4ZMzj0Yi1ldKMHp0OHz+8Jl1zEGzqZre6JRR6WYL
+         l7KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=CuHvWVwiKJSFYNf5+Mm4ozf+aLuV7qBvdXA+1sM3Rfc=;
-        b=nxCaj5ZivCX46un372RGEOxwTEPX/rqQYzc6ztzkrnZhfdP6ZAUKp7+Us1DsQ9fDkC
-         w2xRZz9xfmyYeNBVyWCoC/+dStDKJo7WserYohqgs7AibXJPNRAmI+MCjRYomHCBXhmO
-         RWbzzEqEtOfwB7fQeeG/ZrEXPusWEtOrP6E+X/smjc2Ppn4sbLFx23Y4LNtfE61CXaIC
-         imhNdDwhIL1fUgJmmxVwDrLmhQJUgwhrRqz0x68hVl2VFVtZVLaBaRwTwN7Lgt7cyUsF
-         M4lNi7iIylJPbVBDPNF4gKVRPV8tvo8VR+rw5Px8zEbWIp0UgAZ1HbwBxXrQTy0+yKIT
-         qwTA==
-X-Gm-Message-State: AGRZ1gLYRg7+67uD/ITqXs7pnbmUQEcOQllFIy2lM/QdnyO/v+HstaNh
-        ALsZqgGnedbyk5++bBHt4x/SMw==
-X-Google-Smtp-Source: AJdET5e1GbB2sju49GlT6ggVvTcu3L/M4ReK3U/cDVhtFRadi8bgyE7BUa720AMiyhsc4TLqdqUEfA==
-X-Received: by 2002:a0c:f313:: with SMTP id j19mr16650232qvl.200.1542515191449;
-        Sat, 17 Nov 2018 20:26:31 -0800 (PST)
+        bh=N7SE5k2/kjJlroE/hqa7PLw1ubwrNoiXTEWaxQ/jVx4=;
+        b=b37pw5c9BaTaw9eZ+GiXfueKICZznot9vDYt+nsMBgDpKaCvJO+kjABGCrcPZu3AjH
+         FvkWO6OqpvDMTnf10OgsTwUCjdGbSjIyfP3NOikKX0k7wSPqrBNzTG4jDTmB3nZVtSDH
+         IjLd2GNwLWrPoJ5nhM4ulKLj2YyJJ2gecS7fx5GoR3MtYj9g/D9H6jLgissa6cbAQRby
+         10xgWUvdCPyvlhwy8DYJqQZFEth8IhBCFvX2YJQbq+5AwgG8h02Lf8b//P37IdCKIEgY
+         5MjXviaRZB2/V+dZkRwVjbzTZ6VLIQCZqBz0JgAJbFOlOM1VIC2eb0PrbC2Uw+aXS+YN
+         oCiA==
+X-Gm-Message-State: AGRZ1gIuY4RDqp4jUjQDOQdNW9kXYrMwxXiHzMSmT24RWeVKvxx4QStk
+        RXdLWvWapJXLOFOQyp3iEh41hg==
+X-Google-Smtp-Source: AJdET5eVr79WfHlHYTwUofNKvCstmNQvNRi7iWO7TUkvGvQSvCtZCqAyTZwg9nL+mpEcUGiBrfl35A==
+X-Received: by 2002:a37:8882:: with SMTP id k124mr15806046qkd.1.1542515195685;
+        Sat, 17 Nov 2018 20:26:35 -0800 (PST)
 Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id b6sm16112350qtq.29.2018.11.17.20.26.27
+        by smtp.gmail.com with ESMTPSA id b6sm16112350qtq.29.2018.11.17.20.26.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 20:26:31 -0800 (PST)
+        Sat, 17 Nov 2018 20:26:35 -0800 (PST)
 From:   Matheus Tavares <matheus.bernardino@usp.br>
 To:     Lars-Peter Clausen <lars@metafoo.de>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
@@ -71,9 +71,9 @@ Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandru Ardelean <alexandru.ardelean@analog.com>,
         kernel-usp@googlegroups.com, victorcolombo@gmail.com
-Subject: [PATCH v2 5/7] staging:iio:ad2s90: Replace license text w/ SPDX identifier
-Date:   Sun, 18 Nov 2018 02:25:38 -0200
-Message-Id: <20181118042540.12697-6-matheus.bernardino@usp.br>
+Subject: [PATCH v2 6/7] staging:iio:ad2s90: Add comment to device state mutex
+Date:   Sun, 18 Nov 2018 02:25:39 -0200
+Message-Id: <20181118042540.12697-7-matheus.bernardino@usp.br>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181118042540.12697-1-matheus.bernardino@usp.br>
 References: <20181118042540.12697-1-matheus.bernardino@usp.br>
@@ -82,39 +82,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the license boilerplate text at the top of ad2s90.c
-and, instead, adds the SPDX GPL-2.0 license identifier, which solves the
-checkpatch.pl warning:
-"WARNING: Missing or malformed SPDX-License-Identifier tag in line 1".
+From: Victor Colombo <victorcolombo@gmail.com>
 
+Fix the checkpatch.pl issue:
+"CHECK: struct mutex definition without comment".
+
+Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
 Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
 ---
 Changes in v2:
- - Changed GPL-2.0-only identifier to GPL-2.0
- - Removed license boilerplate text
- - Rewritten patch message to reflect these modifications
+ - Patch added in v2
 
- drivers/staging/iio/resolver/ad2s90.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/staging/iio/resolver/ad2s90.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index fe90f2056bff..9aa229ba47e7 100644
+index 9aa229ba47e7..f04dc5dede00 100644
 --- a/drivers/staging/iio/resolver/ad2s90.c
 +++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -1,12 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * ad2s90.c simple support for the ADI Resolver to Digital Converters: AD2S90
-  *
-  * Copyright (c) 2010-2010 Analog Devices Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-  */
- #include <linux/types.h>
- #include <linux/mutex.h>
+@@ -22,7 +22,7 @@
+ #define AD2S90_MAX_SPI_FREQ_HZ  830000
+ 
+ struct ad2s90_state {
+-	struct mutex lock;
++	struct mutex lock; /* lock to protect rx buffer */
+ 	struct spi_device *sdev;
+ 	u8 rx[2] ____cacheline_aligned;
+ };
 -- 
 2.18.0
 
