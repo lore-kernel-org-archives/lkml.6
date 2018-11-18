@@ -2,139 +2,110 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA6C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AFEC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF2520815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:49:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF2520815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6646520817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:56:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6DDwmjO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6646520817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeKSILQ (ORCPT
+        id S1727686AbeKSISV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 03:11:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44472 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725826AbeKSILQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 03:11:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8DC7EAE87;
-        Sun, 18 Nov 2018 21:49:45 +0000 (UTC)
-Date:   Sun, 18 Nov 2018 22:49:44 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        stable@vger.kernel.org
-Subject: Re: STIBP by default.. Revert?
-In-Reply-To: <CAHk-=wg-9FUGU=grF4gKDq1sm1m39Jbs3A_iyLbSSntU47ncwg@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1811182222230.21108@cbobk.fhfr.pm>
-References: <CAHk-=wg-9FUGU=grF4gKDq1sm1m39Jbs3A_iyLbSSntU47ncwg@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 19 Nov 2018 03:18:21 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44371 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeKSISU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 03:18:20 -0500
+Received: by mail-pg1-f195.google.com with SMTP id t13so4246095pgr.11;
+        Sun, 18 Nov 2018 13:56:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BW9epYEWupYIO3kISzbjhYwXT2QVOuAB2tefKT6BTOg=;
+        b=C6DDwmjOnK0eW1263LLuHaTg9LmgmetQd/J5aLGGYM2I6pAxMXUECXfSF6m17fw1Ro
+         lYRkuIEJG+oZwqk4BBbFfBwLYTfsYJ0a2XhmQ0kn83Tjq/+O+VV7Yb2wVebjT7zSsvyI
+         IxuZYH74gz4Lrl6YBZVEbV9439s1tIPoupK4Vl+Mf9tCtbodx+5J81bDwufjF+n/4XBt
+         6fMSPnXXA656ynTHn/R7IUbgaQfu+n9B4MEgOB0QhxzeWb18+fv86AWNhE8I0xulS8ol
+         ltLkGfQh/8U1viQLRTPJElbSFHyItzbC1XtIBIxNpf0iYZne1oS0Lo+Ys6EQ0+PeOaRc
+         LBrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BW9epYEWupYIO3kISzbjhYwXT2QVOuAB2tefKT6BTOg=;
+        b=htij+s0TRdFPy5AP5/+Pbl0DHfY/YeuyM20QcqAPoI+8KZ1gd+kMl65MeuGDd+Lwx4
+         5d4CvBUkl6SfyfyOsw8YzMWcIXSh8QVLXvZ2h4uM8odbTBo2OnKodTkaKAsh6MecoVCn
+         CDEJHCaCkR0nib/yEDTHnoSslLUvEsDcY0S+0S9xiAvOgdW5Y+honCaKlhvzK6RvBU6r
+         g34l8eCILmMtdXVU2pTA1SvwL0mmzBwwxhySn3cWgEb6Jgtl41aypcQ6zs1w9SQMYXmV
+         eX4sjMPleO+HacC8sit87tfKftVLsAMdcbo/tJDrMaHhkuZ0P6GqDFO13N8A674uvIiL
+         ydkQ==
+X-Gm-Message-State: AA+aEWYEt5SMMLwMmOvuXKQmor134lv8W28+bJE3rDB7T5ySjyzwQGwL
+        ybFsFMZ56WSkCfx15neFrPF6OiUg
+X-Google-Smtp-Source: AJdET5fC8gUIlRndhgYBx8/ObaOm+wULn1WySymrGDxmcFrlVFvex6UnBwiG2kRocdghLfUPdNKFxA==
+X-Received: by 2002:a62:8893:: with SMTP id l141mr6985162pfd.1.1542578210902;
+        Sun, 18 Nov 2018 13:56:50 -0800 (PST)
+Received: from localhost.localdomain (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
+        by smtp.gmail.com with ESMTPSA id j64-v6sm9733422pfc.43.2018.11.18.13.56.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Nov 2018 13:56:50 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] Coupled-regulators follow up
+Date:   Mon, 19 Nov 2018 00:56:15 +0300
+Message-Id: <20181118215619.21518-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 18 Nov 2018, Linus Torvalds wrote:
+Hi,
 
-> This was marked for stable, and honestly, nowhere in the discussion
-> did I see any mention of just *how* bad the performance impact of this
-> was.
+This is a follow up to [0].
 
-Frankly, I ran some benchmarks myself, and am seeing very, very 
-varying/noisy results, which were rather inconclusive across the 
-individual workloads.
+What's changed in v2:
 
-The article someone pointed me to at Phoronix yesterday also was talking 
-about something between 3% and 20% IIRC.
+  - The "Use ww_mutex for regulators locking" patch compiles now for the
+    drivers that are touching "rdev's" mutex, in a result regulator_[un]lock()
+    functions are public now.
 
-> When performance goes down by 50% on some loads, people need to start
-> asking themselves whether it was worth it. It's apparently better to
-> just disable SMT entirely, which is what security-conscious people do
-> anyway.
-> 
-> So why do that STIBP slow-down by default when the people who *really*
-> care already disabled SMT?
+  - Added new patch to the series ("Keep regulators-list locked while
+    traversing the list") which further firms regulators locking.
 
-BTW for them, there is no impact at all. And they probably did it because 
-of crypto libraries being implemented in a way that their observable 
-operation depends on value of the secrets (tlbleed etc), but this is being 
-fixed in the said crypto code.
+  - Changed commit description of the "Change regulator-coupled-max-spread
+    property" patch, saying that it's fine to change the binding because
+    property doesn't have any users yet. That was requested by Rob Herring
+    in the review comment to v1.
 
-STIBP is only activated on systems with HT on; plus odds are that people 
-who don't care about spectrev2 already have 'nospectre_v2' on their 
-command-line, so they are fine as well.
+[0] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=69250
 
-> I think we should use the same logic as for L1TF: we default to
-> something that doesn't kill performance. Warn once about it, and let
-> the  crazy people say "I'd rather take a 50% performance hit than
-> worry about a theoretical issue".
+Dmitry Osipenko (3):
+  regulator: core: Use ww_mutex for regulators locking
+  regulator: core: Properly handle case where supply is the couple
+  regulator: core: Keep regulators-list locked while traversing the list
 
-So, I think it's as theoretical as any other spectrev2 (only with the 
-extra "HT" condition added on top).
-
-Namely, I think that scenarios such as "one browser tab's javascript is 
-attacking other browser's tab private data on a sibling" is rather a 
-practical one, I've seen such demos (not with the sibling condition being 
-in place, but I don't think that matters that much). The same likely holds 
-for server threads serving individual requests in separate threads, etc 
-(but yeah, you need to have proper gadgets there in place already in 
-server's .text, which makes it much less practical).
-
-For L1TF, the basic argument AFAICS was, that the default situation is 
-"only special people care about strict isolation between VMs". But this is 
-isolation between individual processess.
-
-Tim is currently working [1] on a patchset on top of my original 
-STIBP-enabling commit, that will make STIBP to be used in much smaller 
-number of cases (taking prctl()-based aproach as one of the possible ones, 
-similarly as we did for SSBD), and as I indicated in that thread, I think 
-it should be really considered for this -rc cycle still if it lands in tip 
-in a reasonable future.
-
-To conclude -- I am quite happy that this finally started to move 
-(although it's sad that some of it is due to clickbaity article titles, 
-but whatever), as Intel didn't really provide any patch / guidance (*) in 
-past ~1 year to those who care about spectrev2 isolation on HT, which is 
-something I wasn't really feeling comfortable with, and that's why I 
-submitted the patch.
-
-If we make it opt-in (on kernel cmdline) and issue big fat warning if not 
-mitigated, fine, but then we're bit incosistent how we deal with 
-cross-core (IBPB) and cross-thread (STIBP) spectrev2 security in the 
-kernel code.
-
-If we take Tim's aproach, even better -- there would be means available to 
-make system secure, although not sacrifying performance by default.
-
-I would not prefer going the plain revert path though, as that leaves no 
-other option to mitigate rather than turning SMT off, which might possibly 
-have even *worse* performance numbers depending on workload.
-
-[1] https://lore.kernel.org/lkml/?q=cover.1542418936.git.tim.c.chen%40linux.intel.com
-
-(*) no code to implement STIBP sanely, no recommendation about turning SMT 
-    off at least for some workloads
-
-Thanks,
+ drivers/regulator/core.c              | 425 ++++++++++++++++++++------
+ drivers/regulator/da9210-regulator.c  |   4 +-
+ drivers/regulator/stpmic1_regulator.c |   4 +-
+ drivers/regulator/wm8350-regulator.c  |   4 +-
+ include/linux/regulator/driver.h      |   6 +-
+ 5 files changed, 339 insertions(+), 104 deletions(-)
 
 -- 
-Jiri Kosina
-SUSE Labs
+2.19.1
 
