@@ -2,192 +2,89 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ABB1C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8626C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C24920817
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7910220817
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 17:44:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uga8K6Kc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C24920817
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t62GgSZn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7910220817
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbeKSEFW (ORCPT
+        id S1727341AbeKSEFk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 23:05:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbeKSEFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 23:05:21 -0500
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 482B2208E3
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 17:44:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542563068;
-        bh=HA98euqYy3wEgON3mmY8TFT9et9Xln146bQy9GbsbMI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=uga8K6KcFlGl/mx8jabRYAiry78uryKEqpdtVmfyGyRvhOmVTxstF1+w0Rq9ZFe/0
-         zvaHKHaAh1KoVwNAV4jwOZYLWl4EwSFK3eHv/OXmdjOovF35ia/qgb9pMS3yFKtwIp
-         TXY7Ceq972D8ndfZ38owKZ8mRnl59ng/vQqXglI4=
-Received: by mail-wr1-f48.google.com with SMTP id x10so951153wrs.8
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 09:44:28 -0800 (PST)
-X-Gm-Message-State: AA+aEWYXT4qCNsNSXahnVWLpYUFbfh7p+uSZu9JWGyufpIz//SEeL1GH
-        fWCGenK7q0BwnzCa4OSwG0I2rKnd1KGb3pUn6MD/Qg==
-X-Google-Smtp-Source: AFSGD/UxgZkaxfK38dmVQLWXKyiib6XBsbGn86BdsisTENB3rjFnMWRUAIbPbDTe2/roaFfWRIP7Cg47BnqcbCxjCmI=
-X-Received: by 2002:a5d:5541:: with SMTP id g1mr2387353wrw.330.1542563066707;
- Sun, 18 Nov 2018 09:44:26 -0800 (PST)
+        Sun, 18 Nov 2018 23:05:40 -0500
+Received: from casper.infradead.org ([85.118.1.10]:40838 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726481AbeKSEFj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 23:05:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=IBaf8UKoKb8i5X/Utt5shApEYwHG0VQ8RHFC2geJvdw=; b=t62GgSZnzjlia+GI9ryw13MbhZ
+        Tj9X5l8rt29Hhg2LWyk2V/cHgkUlRPUis1jDe3uOnXtfnihR7RSzaZ6hmkNwbx/O01s1ftMkUiHsk
+        NLFoRpSbdJP3lacCbOo68bs5NshVpSB7fM9no4I3B/l1FOlq/NJ6/eh+Oq1sowcZ7seeKYgIVDWpz
+        CIRCdl2YweL53rrvGzQt/oBQ3BzDFoX124qnR55NlTXjeLyMBgJ7Ak+Bqwtu6EgHLvY8kjIpxTltX
+        IP0r05YUHS6Ndqb/3xN9LSRS4ww4Y5vps37uUke8kExGM8h43MXspp61m8pFHsd4TXtfsqOSKQ9gx
+        Bg74DtrQ==;
+Received: from 177.17.134.91.dynamic.adsl.gvt.net.br ([177.17.134.91] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOR7h-000821-Jj; Sun, 18 Nov 2018 17:44:42 +0000
+Date:   Sun, 18 Nov 2018 15:44:35 -0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>, stfrench@microsoft.com,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook:
+ Subsystem Profile
+Message-ID: <20181118154435.04166423@coco.lan>
+In-Reply-To: <CAPcyv4iVKYCdOvbwBFboR_z-Fr-8NyALkvAGCReR8EW2Y0iNmw@mail.gmail.com>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <9f6aece0-da64-78b5-0eda-fe039fc1ad09@gmail.com>
+        <20181116040442.3a5ee3b9@silica.lan>
+        <CAPcyv4iw78jzLQmX6foUMpVUB4ZSE2ExYhjTd87X2xraaZrkPA@mail.gmail.com>
+        <20181118105829.7388cc7d@coco.lan>
+        <CAPcyv4hX_B5HZ8Cj8VmjeeteZVkn-Ax8avAcUwUQqzH6J67ryA@mail.gmail.com>
+        <CAPcyv4g0wKdLqDr9R3euzNrzNH5v18GJpBJeEGP4Pg+d8VMD2A@mail.gmail.com>
+        <CAPcyv4iVKYCdOvbwBFboR_z-Fr-8NyALkvAGCReR8EW2Y0iNmw@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-References: <20181118111751.6142-1-christian@brauner.io> <CAKOZuet3s0WxxPgrtrNkq8YiOWhYAiK6yEio6PKVV9J_H4_TSA@mail.gmail.com>
- <CALCETrUd2Y2MmO8Qx8aUvQDOTNiyj35Y7bctPBZe0p2i1EUiLw@mail.gmail.com> <20181118174148.nvkc4ox2uorfatbm@brauner.io>
-In-Reply-To: <20181118174148.nvkc4ox2uorfatbm@brauner.io>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sun, 18 Nov 2018 09:44:15 -0800
-X-Gmail-Original-Message-ID: <CALCETrXJrk3Jys_T6P=PxO4JY=H-1e9hcMVyBxQJvMRYf=5vfQ@mail.gmail.com>
-Message-ID: <CALCETrXJrk3Jys_T6P=PxO4JY=H-1e9hcMVyBxQJvMRYf=5vfQ@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 9:42 AM Christian Brauner <christian@brauner.io> wrote:
->
-> On Sun, Nov 18, 2018 at 07:38:09AM -0800, Andy Lutomirski wrote:
-> > On Sun, Nov 18, 2018 at 5:59 AM Daniel Colascione <dancol@google.com> wrote:
-> > >
-> > > I had been led to believe that the proposal would be a comprehensive
-> > > process API, not an ioctl basically equivalent to my previous patch.
-> > > If you had a more comprehensive proposal, please just share it on LKML
-> > > instead of limiting the discussion to those able to attend these
-> > > various conferences. If there's some determined opposition to a
-> > > general new process API, this opposition needs a fair and full airing,
-> > > as not everyone can attend these conferences.
-> > >
-> > > On Sun, Nov 18, 2018 at 3:17 AM, Christian Brauner <christian@brauner.io> wrote:
-> > > > With this patch an open() call on /proc/<pid> will give userspace a handle
-> > > > to struct pid of the process associated with /proc/<pid>. This allows to
-> > > > maintain a stable handle on a process.
-> > > > I have been discussing various approaches extensively during technical
-> > > > conferences this year culminating in a long argument with Eric at Linux
-> > > > Plumbers. The general consensus was that having a handle on a process
-> > > > will be something that is very simple and easy to maintain
-> > >
-> > > ioctls are the opposite of "easy to maintain". Their
-> > > file-descriptor-specific behavior makes it difficult to use the things
-> > > safely. If you want to take this approach, please make a new system
-> > > call. An ioctl is just a system call with a very strange spelling and
-> > > unfortunate collision semantics.
-> > >
-> > > > with the
-> > > > option of being extensible via a more advanced api if the need arises.
-> > >
-> > > The need *has* arisen; see my exithand patch.
-> > >
-> > > > I
-> > > > believe that this patch is the most simple, dumb, and therefore
-> > > > maintainable solution.
-> > > >
-> > > > The need for this has arisen in order to reliably kill a process without
-> > > > running into issues of the pid being recycled as has been described in the
-> > > > rejected patch [1].
-> > >
-> > > That patch was not "rejected". It was tabled pending the more
-> > > comprehensive process API proposal that was supposed to have emerged.
-> > > This patch is just another variant of the sort of approach we
-> > > discussed on that patch's thread here. As I mentioned on that thread,
-> > > the right approach option is a new system call, not an ioctl.
-> > >
-> > >  To fulfill the need described in that patchset a new
-> > > > ioctl() PROC_FD_SIGNAL is added. It can be used to send signals to a
-> > > > process via a file descriptor:
-> > > >
-> > > > int fd = open("/proc/1234", O_DIRECTORY | O_CLOEXEC);
-> > > > ioctl(fd, PROC_FD_SIGNAL, SIGKILL);
-> > > > close(fd);
-> > > >
-> > > > Note, the stable handle will allow us to carefully extend this feature in
-> > > > the future.
-> > >
-> > > We still need the ability to synchronously wait on a process's death,
-> > > as in my patch set. I will be refreshing that patch set.
-> >
-> > I fully agree that a more comprehensive, less expensive API for
-> > managing processes would be nice.  But I also think that this patch
-> > (using the directory fd and ioctl) is better from a security
-> > perspective than using a new file in /proc.
-> >
-> > I have an old patch to make proc directory fds pollable:
-> >
-> > https://lore.kernel.org/patchwork/patch/345098/
-> >
-> > That patch plus the one in this thread might make a nice addition to
-> > the kernel even if we expect something much better to come along
-> > later.
->
-> I agree. Eric's point was to make the first implementation of this as
-> simple as possible that's why this patch is intentionally almost
-> trivial. And I like it for its simplicity.
->
-> I had a more comprehensive API proposal of which open(/proc/<pid>) was a
-> part. I didn't send out alongside this patch as Eric clearly prefered to
-> only have the /proc/<pid> part. Here is the full proposal as I intended
-> to originally send it out:
->
-> The gist is to have file descriptors for processes which is obviously not a new
-> idea. This has been done before in other OSes and it has been tried before in
-> Linux [2], [3] (Thanks to Kees for pointing out these patches.). So I want to
-> make it very clear that I'm not laying claim to this being my or even a novel
-> idea in any way. However, I want to diverge from previous approaches with my
-> suggestion. (Though I can't be sure that there's not something similar in other
-> OSes already.)
->
-> One of the main motivations for having procfds is to have a race-free way of
-> configuring, starting, polling, and killing a process. Basically, a process
-> lifecycle api if you want to think about it that way. The api should also be
-> easily extendable in the future to avoid running into the limitations we
-> currently see with the clone*() syscall(s) again.
->
-> One of the crucial points of the api is to *separate the configuration
-> of a process through a procfd from actually creating the process*.
-> This is a crucial property expressed in the open*() system calls. First, get a
-> stable handle on an object then allow for ways to configure it. As such the
-> procfd api shares the same insight with Al's and David's new mount api.
-> (Fwiw, Andy also pointed out similarities with posix_spawn().)
-> What I envisioned was to have the following syscalls (multiple name suggestions):
->
-> 1. int process_open / proc_open / procopen
-> 2. int process_config / proc_config / procconfig or ioctl()-based
-> 3. int process_info / proc_info / procinfo or ioctl()-based
-> 4. int process_manage / proc_manage / procmanage or ioctl()-based
+Em Sun, 18 Nov 2018 09:34:01 -0800
+Dan Williams <dan.j.williams@intel.com> escreveu:
 
-Emails crossed :(
+> On Sun, Nov 18, 2018 at 9:31 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > On Sun, Nov 18, 2018 at 9:31 AM Dan Williams <dan.j.williams@intel.com> wrote:  
+> [..]
+> > > True, will remove. What's the point of stating daily active hours when we already have "Resubmit Cadence" (I think I'll rename it "Follow Cadence") measured in multiple days / weeks.  
+> 
+> Apologies, fumble-fingered that last mail. I meant to say "Follow-up
+> Cadence", and that include a maintainer preference for private pings,
+> or full patch set to be sent again to the list.
 
-For process management, I generally like this, although we might do
-better if we make execve() effectively invalidate the handle.  Then we
-avoid a bunch of nasty permission issues.  For process *creation*, we
-have the problem that libc authors feel that they can't safely use fds
-at all.  There was a proposal for "high fds" a long time back to solve
-that.  We might finally need to do something like that.
+Yeah, "Follow-up Cadence" sounds a way better.
+
+Thanks,
+Mauro
