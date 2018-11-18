@@ -2,2599 +2,394 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B556AC43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1699CC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:36:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE212080C
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:29:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904B52080C
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 19:36:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ttTOBcq8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE212080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGMulZRk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904B52080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbeKSFu4 (ORCPT
+        id S1726499AbeKSF5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 00:50:56 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41889 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbeKSFuz (ORCPT
+        Mon, 19 Nov 2018 00:57:06 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37412 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeKSF5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 00:50:55 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so1115184wrs.8
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 11:29:42 -0800 (PST)
+        Mon, 19 Nov 2018 00:57:05 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 40so25812023oth.4;
+        Sun, 18 Nov 2018 11:35:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JTAjTf3japk+hWcIXKWTP9qKG6TaVdQmCFFwxmqFRPM=;
-        b=ttTOBcq80MaETogGVGpNSVclEdHcBgMWeIGSAGoeg5LTBmI/3YXJEpVMfK4K/vcMGk
-         7CAhbe83izWne9JgyfXTf77hR20C/SiD/9uDZkFBlHJ+5yIPBYp+drxUhh7dvXCJIZhA
-         vhP/fHl+JpLA0MKrE1cu/At05JXyNmmRoa1BgA6oadFenir7kjoXgG6v+YqmcQGe3S+z
-         OiuwlWhei905USab9hrBGkcGZ8ZQaWO37hmAc2jP4JKjE2HtMUoCWmqigrJ3/5J4xzDl
-         RWKhE5RIkcY5FAq48QZImLwmynQcTdfjFmvhwXYcxIggUKaqdmj5xRDkB/42csW1JuY9
-         YK4g==
+        h=sender:from:subject:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language;
+        bh=s+NNnct2IJGmIUrNgaz8ix2VFknPNnqkrN45qKqKZQ4=;
+        b=KGMulZRkmfpp67m+a9AR19UOvPGeXwHHgoO5LodgdUQ9WJ3JD44h1lf0dzaHvltShU
+         oiZK+eCQ6+zNSEUok1kdGWQ+FnTio+cfvWJkxbshB3fbPdEepad/AKtzrTqJP71hnAmU
+         scPb+qtmB9iQOi5wjkyF7V6dUnSh9joJkml3iZJ8fzQyB45xazyOXs3z+/zchHcXzzMn
+         fYg9naPjgulqHSg09y9rN/yb6bjGrlIfooq1Jywu+L7a6i9+NV59jLDYQ464i6KNIZK5
+         VTQEi8TRKtuVWLGp8l4BH0I+7iRPj3KAHKSfhoQ/4oBVrnpRm4BW45P6GYWb3aSwkIoW
+         FuEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JTAjTf3japk+hWcIXKWTP9qKG6TaVdQmCFFwxmqFRPM=;
-        b=PUBUX+dT9fWBZO+y2r3/Xerdy+XX9YppoKPMOvXRmoWbpr0DQV+cdK/UE3evlAF90y
-         v0YGetKr6VZsNIov3/ZmpCmt25QEvV1tb3hUhWaHJNHzuFu7X/phXPStgJmp7nC9r7jG
-         BsDwB7qpfCNHuK4NdDMb5oiq8IzmA+SyBVVozRamsGzcSOQ22Cc2tPk8sdHpSSIAicK1
-         THvVlJ+Z86irbI3LE6N7QjBYqn7z3IPCKeeni/jvumBIpl38VId6D3RjCYfjn1BeTcuc
-         X1AgJXHo2J36nylKPUV7V/1Hstrccn+UJdjNF/7gX28MRCuAclyVBuDiNW0c1/QTEl66
-         mT8Q==
-X-Gm-Message-State: AA+aEWYd2rpEH5nSRf8qmCZVidVo73ptFzHi+xOyKCcOzwjGdhpmTCW7
-        pURN16Bt7/rjIge3EruRCx0=
-X-Google-Smtp-Source: AFSGD/UO1WmmR/w6knvrwoJ38VmgYS1xm7zA1UMw6EALU+7PG3a3w0UCSpT813Pckmhe56FbRNjAJA==
-X-Received: by 2002:adf:dcd0:: with SMTP id x16mr663982wrm.143.1542569380519;
-        Sun, 18 Nov 2018 11:29:40 -0800 (PST)
-Received: from localhost (host102-98-dynamic.181-80-r.retail.telecomitalia.it. [80.181.98.102])
-        by smtp.gmail.com with ESMTPSA id b16sm40350899wrm.41.2018.11.18.11.29.39
+        h=x-gm-message-state:sender:from:subject:to:cc:references:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language;
+        bh=s+NNnct2IJGmIUrNgaz8ix2VFknPNnqkrN45qKqKZQ4=;
+        b=BjMkBH7pE2dAlxXQCz3IxidffNVAru6oaOc+lgx+5oCaGr7i9P/AMAaiKvxHQF1KTT
+         WQwIf9EsuexJmaTVi6NRY5HSsGvHN78CHg9d2ORqubYgBZRdO6cgMaM9Z00dNVvD43K/
+         ChkBHpvqpYpP9GFhztxRyKPUfDxB38FDDNXYidsKc/DtLCc90blkHWvw/RTCC/Qlpy9N
+         yBH+gkFIb6QXZsMz3iCeqFiQV985s03XJa51okOGRXvwFkFJlzQJ/6sanL10/xF+u8TI
+         T8VLkzwkPGgWM82lP5HMdgrbfDx9rirnhvIfr9KzSiGLB7W6o395e3969vVjnqc4w1s2
+         Xd8A==
+X-Gm-Message-State: AGRZ1gJBZOYziFTd3sYgS3pU+yNJnc0gKbjsO/xlaBZd0AkFGf2G30OH
+        x1vbsF3vlATG5Yw1HLF+Y79NOTvu
+X-Google-Smtp-Source: AJdET5d3csLZvJZMojhVGO+KpBRsDodUvmjEPvBbEOfI8lAL7NE3gJpofizKZTN43E/t5E4lYraxQg==
+X-Received: by 2002:a9d:3408:: with SMTP id v8mr12111708otb.237.1542569756536;
+        Sun, 18 Nov 2018 11:35:56 -0800 (PST)
+Received: from [192.168.1.104] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id p203sm20826582oic.49.2018.11.18.11.35.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 11:29:39 -0800 (PST)
-From:   Cristian Sicilia <sicilia.cristian@gmail.com>
-To:     Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        David Lin <dtwlin@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        "Bryan O'Donoghue" <pure.logic@nexus-software.ie>,
-        Cristian Sicilia <sicilia.cristian@gmail.com>,
+        Sun, 18 Nov 2018 11:35:55 -0800 (PST)
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Varsha Rao <rvarsha016@gmail.com>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: greybus: Parenthesis alignment
-Date:   Sun, 18 Nov 2018 20:28:07 +0100
-Message-Id: <1542569289-19899-1-git-send-email-sicilia.cristian@gmail.com>
-X-Mailer: git-send-email 2.7.4
+References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
+ <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
+ <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
+ <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
+Message-ID: <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
+Date:   Sun, 18 Nov 2018 13:35:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
+Content-Type: multipart/mixed;
+ boundary="------------A4EEE76D88D7EF2499287287"
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some parameters are aligned with parentheses.
-Some parentheses are opened at end of line.
+This is a multi-part message in MIME format.
+--------------A4EEE76D88D7EF2499287287
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
+On 11/18/18 2:23 AM, Priit Laes wrote:
+> On Sat, Nov 17, 2018 at 09:31:35PM -0600, Larry Finger wrote:
+>> On 11/14/18 12:27 PM, Priit Laes wrote:
+>>> Kernel library has a common cordic algorithm which is identical
+>>> to internally implementatd one, so use it and drop the duplicate
+>>> implementation.
+>>>
+>>> Signed-off-by: Priit Laes <plaes@plaes.org>
+>>> ---
+>>>    drivers/net/wireless/broadcom/b43/Kconfig      |  1 +-
+>>>    drivers/net/wireless/broadcom/b43/phy_common.c | 47 +-------------------
+>>>    drivers/net/wireless/broadcom/b43/phy_common.h |  9 +----
+>>>    drivers/net/wireless/broadcom/b43/phy_lp.c     | 13 ++---
+>>>    drivers/net/wireless/broadcom/b43/phy_n.c      | 13 ++---
+>>>    5 files changed, 15 insertions(+), 68 deletions(-)
+>>>
+>>> diff --git a/drivers/net/wireless/broadcom/b43/Kconfig b/drivers/net/wireless/broadcom/b43/Kconfig
+>>> index fba8560..3e41457 100644
+>>> --- a/drivers/net/wireless/broadcom/b43/Kconfig
+>>> +++ b/drivers/net/wireless/broadcom/b43/Kconfig
+>>> @@ -4,6 +4,7 @@ config B43
+>>>    	select BCMA if B43_BCMA
+>>>    	select SSB if B43_SSB
+>>>    	select FW_LOADER
+>>> +	select CORDIC
+>>>    	---help---
+>>>    	  b43 is a driver for the Broadcom 43xx series wireless devices.
+>>> diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
+>>> index 85f2ca9..98c4fa5 100644
+>>> --- a/drivers/net/wireless/broadcom/b43/phy_common.c
+>>> +++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+>>> @@ -604,50 +604,3 @@ void b43_phy_force_clock(struct b43_wldev *dev, bool force)
+>>>    #endif
+>>>    	}
+>>>    }
+>>> -
+>>> -/* http://bcm-v4.sipsolutions.net/802.11/PHY/Cordic */
+>>> -struct b43_c32 b43_cordic(int theta)
+>>> -{
+>>> -	static const u32 arctg[] = {
+>>> -		2949120, 1740967, 919879, 466945, 234379, 117304,
+>>> -		  58666,   29335,  14668,   7334,   3667,   1833,
+>>> -		    917,     458,    229,    115,     57,     29,
+>>> -	};
+>>> -	u8 i;
+>>> -	s32 tmp;
+>>> -	s8 signx = 1;
+>>> -	u32 angle = 0;
+>>> -	struct b43_c32 ret = { .i = 39797, .q = 0, };
+>>> -
+>>> -	while (theta > (180 << 16))
+>>> -		theta -= (360 << 16);
+>>> -	while (theta < -(180 << 16))
+>>> -		theta += (360 << 16);
+>>> -
+>>> -	if (theta > (90 << 16)) {
+>>> -		theta -= (180 << 16);
+>>> -		signx = -1;
+>>> -	} else if (theta < -(90 << 16)) {
+>>> -		theta += (180 << 16);
+>>> -		signx = -1;
+>>> -	}
+>>> -
+>>> -	for (i = 0; i <= 17; i++) {
+>>> -		if (theta > angle) {
+>>> -			tmp = ret.i - (ret.q >> i);
+>>> -			ret.q += ret.i >> i;
+>>> -			ret.i = tmp;
+>>> -			angle += arctg[i];
+>>> -		} else {
+>>> -			tmp = ret.i + (ret.q >> i);
+>>> -			ret.q -= ret.i >> i;
+>>> -			ret.i = tmp;
+>>> -			angle -= arctg[i];
+>>> -		}
+>>> -	}
+>>> -
+>>> -	ret.i *= signx;
+>>> -	ret.q *= signx;
+>>> -
+>>> -	return ret;
+>>> -}
+>>> diff --git a/drivers/net/wireless/broadcom/b43/phy_common.h b/drivers/net/wireless/broadcom/b43/phy_common.h
+>>> index 57a1ad8..4213cac 100644
+>>> --- a/drivers/net/wireless/broadcom/b43/phy_common.h
+>>> +++ b/drivers/net/wireless/broadcom/b43/phy_common.h
+>>> @@ -7,13 +7,6 @@
+>>>    struct b43_wldev;
+>>> -/* Complex number using 2 32-bit signed integers */
+>>> -struct b43_c32 { s32 i, q; };
+>>> -
+>>> -#define CORDIC_CONVERT(value)	(((value) >= 0) ? \
+>>> -				 ((((value) >> 15) + 1) >> 1) : \
+>>> -				 -((((-(value)) >> 15) + 1) >> 1))
+>>> -
+>>>    /* PHY register routing bits */
+>>>    #define B43_PHYROUTE			0x0C00 /* PHY register routing bits mask */
+>>>    #define  B43_PHYROUTE_BASE		0x0000 /* Base registers */
+>>> @@ -450,6 +443,4 @@ bool b43_is_40mhz(struct b43_wldev *dev);
+>>>    void b43_phy_force_clock(struct b43_wldev *dev, bool force);
+>>> -struct b43_c32 b43_cordic(int theta);
+>>> -
+>>>    #endif /* LINUX_B43_PHY_COMMON_H_ */
+>>> diff --git a/drivers/net/wireless/broadcom/b43/phy_lp.c b/drivers/net/wireless/broadcom/b43/phy_lp.c
+>>> index 6922cbb..1718e3b 100644
+>>> --- a/drivers/net/wireless/broadcom/b43/phy_lp.c
+>>> +++ b/drivers/net/wireless/broadcom/b43/phy_lp.c
+>>> @@ -23,6 +23,7 @@
+>>>    */
+>>> +#include <linux/cordic.h>
+>>>    #include <linux/slab.h>
+>>>    #include "b43.h"
+>>> @@ -1780,9 +1781,9 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
+>>>    {
+>>>    	struct b43_phy_lp *lpphy = dev->phy.lp;
+>>>    	u16 buf[64];
+>>> -	int i, samples = 0, angle = 0;
+>>> +	int i, samples = 0, theta = 0;
+>>>    	int rotation = (((36 * freq) / 20) << 16) / 100;
+>>> -	struct b43_c32 sample;
+>>> +	struct cordic_iq sample;
+>>>    	lpphy->tx_tone_freq = freq;
+>>> @@ -1798,10 +1799,10 @@ static void lpphy_start_tx_tone(struct b43_wldev *dev, s32 freq, u16 max)
+>>>    	}
+>>>    	for (i = 0; i < samples; i++) {
+>>> -		sample = b43_cordic(angle);
+>>> -		angle += rotation;
+>>> -		buf[i] = CORDIC_CONVERT((sample.i * max) & 0xFF) << 8;
+>>> -		buf[i] |= CORDIC_CONVERT((sample.q * max) & 0xFF);
+>>> +		sample = cordic_calc_iq(theta);
+>>> +		theta += rotation;
+>>> +		buf[i] = CORDIC_FLOAT((sample.i * max) & 0xFF) << 8;
+>>> +		buf[i] |= CORDIC_FLOAT((sample.q * max) & 0xFF);
+>>>    	}
+>>>    	b43_lptab_write_bulk(dev, B43_LPTAB16(5, 0), samples, buf);
+>>> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+>>> index 44ab080..1f9378a 100644
+>>> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
+>>> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+>>> @@ -23,6 +23,7 @@
+>>>    */
+>>> +#include <linux/cordic.h>
+>>>    #include <linux/delay.h>
+>>>    #include <linux/slab.h>
+>>>    #include <linux/types.h>
+>>> @@ -1513,7 +1514,7 @@ static void b43_radio_init2055(struct b43_wldev *dev)
+>>>    /* http://bcm-v4.sipsolutions.net/802.11/PHY/N/LoadSampleTable */
+>>>    static int b43_nphy_load_samples(struct b43_wldev *dev,
+>>> -					struct b43_c32 *samples, u16 len) {
+>>> +					struct cordic_iq *samples, u16 len) {
+>>>    	struct b43_phy_n *nphy = dev->phy.n;
+>>>    	u16 i;
+>>>    	u32 *data;
+>>> @@ -1544,7 +1545,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
+>>>    {
+>>>    	int i;
+>>>    	u16 bw, len, rot, angle;
+>>> -	struct b43_c32 *samples;
+>>> +	struct cordic_iq *samples;
+>>>    	bw = b43_is_40mhz(dev) ? 40 : 20;
+>>>    	len = bw << 3;
+>>> @@ -1561,7 +1562,7 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
+>>>    		len = bw << 1;
+>>>    	}
+>>> -	samples = kcalloc(len, sizeof(struct b43_c32), GFP_KERNEL);
+>>> +	samples = kcalloc(len, sizeof(struct cordic_iq), GFP_KERNEL);
+>>>    	if (!samples) {
+>>>    		b43err(dev->wl, "allocation for samples generation failed\n");
+>>>    		return 0;
+>>> @@ -1570,10 +1571,10 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
+>>>    	angle = 0;
+>>>    	for (i = 0; i < len; i++) {
+>>> -		samples[i] = b43_cordic(angle);
+>>> +		samples[i] = cordic_calc_iq(angle);
+>>>    		angle += rot;
+>>> -		samples[i].q = CORDIC_CONVERT(samples[i].q * max);
+>>> -		samples[i].i = CORDIC_CONVERT(samples[i].i * max);
+>>> +		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
+>>> +		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
+>>>    	}
+>>>    	i = b43_nphy_load_samples(dev, samples, len);
+>>
+>> There is a fundamental flaw in this patch. Routine b43_cordic() takes an
+>> angle in degrees scaled by 2^16, whereas cordic_calc_iq() takes an angle in
+>> degrees. For a given input, the two routines must get different answers. At
+>> a minimum, the calculation of rot would need to remove the left shift of 16.
+> 
+> Thanks for the hint. I modified my "test harness" a bit to plot out values
+> from -360 .. 360 and transformed the theta for b43_cordic argument using CORDIC_FIXED macro:
+> 
+> b43_cordic(CORDIC_FIXED(theta));
+> cordic_calc_iq(theta);
+> 
+> Then I plotted the results and well.. they are not that pretty. While the results give
+> identical answers between certain ranges of degrees, the cordic algorithm for b43 seems
+> to be broken for certain ranges: (-270..-180 ; -90 .. 0; 90.. 180 and 270..360).
+> 
+> You can find my test harnesses here:
+> 
+> https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
+
+I found a problem with the b43 implementation. The local variables for that 
+routine includes
+
+         u32 angle = 0;
+
+If one looks further down in the algorithm, if the reduced value of "theta" is 
+less than 0, then "angle" should be negative. That causes the calculation to 
+blow up. This explains why some ranges of angles got the same result for both 
+routines. When that declaration is changed to "int angle = 0", the two routines 
+give the same answer for all inputs.
+
+My test setup has a hardware failure, thus I cannot test your patch, but I now 
+believe it to be correct. Thus your first and third patches may be annotated with
+ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
+
+One thing that should be done is to fix the error in the b43 code for stable as 
+it was introduced in 2.6.34. I propose adding the attached patched to your 
+series placed between your current 2nd and 3rd patches so that the old kernels 
+get fixed. Of course, your 3rd patch will need to be revised. If all 4 of the 
+patches get submitted together there will be no problems with the timing. My 
+change will exist for seconds in the mainline kernel, but it will get propagated 
+back through stable.
+
+Thanks,
+
+Larry
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------A4EEE76D88D7EF2499287287
+Content-Type: text/x-patch;
+ name="0001-b43-Fix-error-in-cordic-routine.patch"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: attachment;
+ filename="0001-b43-Fix-error-in-cordic-routine.patch"
+
+From b42ae73ef7505de93e4c66fb9f66930e3f3d969a Mon Sep 17 00:00:00 2001
+From: Larry Finger <Larry.Finger@lwfinger.net>
+Date: Sun, 18 Nov 2018 13:15:07 -0600
+Subject: [PATCH] b43: Fix error in cordic routine
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To: kvalo@codeaurora.org
+Cc: linux-wireless@vger.kernel.org
+
+The cordic routine for calculating sines and cosines that was added in
+commit 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
+contains an error whereby a quantity declared u32 can in fact go negative.
+
+This problem was detected by Priit Laes who is switching b43 to use the
+routine in the library functions of the kernel.
+
+Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
+Reported-by: Priit Laes <plaes@plaes.org>
+Cc: Rafał Miłecki <zajec5@gmail.com>
+Cc: Stable <stable@vger.kernel.org> # 2.6.34
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
 ---
- drivers/staging/greybus/arche-platform.c       |   6 +-
- drivers/staging/greybus/audio_codec.c          |   8 +-
- drivers/staging/greybus/audio_manager_module.c |  55 +++++----
- drivers/staging/greybus/audio_manager_sysfs.c  |  22 ++--
- drivers/staging/greybus/audio_module.c         |  34 +++---
- drivers/staging/greybus/audio_topology.c       |  70 ++++++------
- drivers/staging/greybus/bootrom.c              |  25 +++--
- drivers/staging/greybus/camera.c               |  20 ++--
- drivers/staging/greybus/connection.c           |  82 +++++++-------
- drivers/staging/greybus/control.c              |  54 ++++-----
- drivers/staging/greybus/es2.c                  |  71 ++++++------
- drivers/staging/greybus/gpio.c                 |  40 +++----
- drivers/staging/greybus/hid.c                  |  26 +++--
- drivers/staging/greybus/i2c.c                  |  21 ++--
- drivers/staging/greybus/module.c               |  19 ++--
- drivers/staging/greybus/operation.c            | 149 +++++++++++++------------
- drivers/staging/greybus/svc.c                  | 100 ++++++++---------
- 17 files changed, 413 insertions(+), 389 deletions(-)
+ drivers/net/wireless/broadcom/b43/phy_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 4c36e88..9e2fe3d 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -78,9 +78,9 @@ static void arche_platform_set_state(struct arche_platform_drvdata *arche_pdata,
- }
- 
- /* Requires arche_pdata->wake_lock is held by calling context */
--static void arche_platform_set_wake_detect_state(
--				struct arche_platform_drvdata *arche_pdata,
--				enum svc_wakedetect_state state)
-+static void
-+arche_platform_set_wake_detect_state(struct arche_platform_drvdata *arche_pdata,
-+				     enum svc_wakedetect_state state)
- {
- 	arche_pdata->wake_detect_state = state;
- }
-diff --git a/drivers/staging/greybus/audio_codec.c b/drivers/staging/greybus/audio_codec.c
-index 08746c8..d62f91f 100644
---- a/drivers/staging/greybus/audio_codec.c
-+++ b/drivers/staging/greybus/audio_codec.c
-@@ -70,7 +70,7 @@ static int gbaudio_module_enable_tx(struct gbaudio_codec_info *codec,
- 		i2s_port = 0;	/* fixed for now */
- 		cportid = data->connection->hd_cport_id;
- 		ret = gb_audio_apbridgea_register_cport(data->connection,
--						i2s_port, cportid,
-+							i2s_port, cportid,
- 						AUDIO_APBRIDGEA_DIRECTION_TX);
- 		if (ret) {
- 			dev_err_ratelimited(module->dev,
-@@ -160,7 +160,7 @@ static int gbaudio_module_disable_tx(struct gbaudio_module_info *module, int id)
- 		i2s_port = 0;	/* fixed for now */
- 		cportid = data->connection->hd_cport_id;
- 		ret = gb_audio_apbridgea_unregister_cport(data->connection,
--						i2s_port, cportid,
-+							  i2s_port, cportid,
- 						AUDIO_APBRIDGEA_DIRECTION_TX);
- 		if (ret) {
- 			dev_err_ratelimited(module->dev,
-@@ -205,7 +205,7 @@ static int gbaudio_module_enable_rx(struct gbaudio_codec_info *codec,
- 		i2s_port = 0;	/* fixed for now */
- 		cportid = data->connection->hd_cport_id;
- 		ret = gb_audio_apbridgea_register_cport(data->connection,
--						i2s_port, cportid,
-+							i2s_port, cportid,
- 						AUDIO_APBRIDGEA_DIRECTION_RX);
- 		if (ret) {
- 			dev_err_ratelimited(module->dev,
-@@ -295,7 +295,7 @@ static int gbaudio_module_disable_rx(struct gbaudio_module_info *module, int id)
- 		i2s_port = 0;	/* fixed for now */
- 		cportid = data->connection->hd_cport_id;
- 		ret = gb_audio_apbridgea_unregister_cport(data->connection,
--						i2s_port, cportid,
-+							  i2s_port, cportid,
- 						AUDIO_APBRIDGEA_DIRECTION_RX);
- 		if (ret) {
- 			dev_err_ratelimited(module->dev,
-diff --git a/drivers/staging/greybus/audio_manager_module.c b/drivers/staging/greybus/audio_manager_module.c
-index 52342e8..150fb2c 100644
---- a/drivers/staging/greybus/audio_manager_module.c
-+++ b/drivers/staging/greybus/audio_manager_module.c
-@@ -25,8 +25,8 @@ struct gb_audio_manager_module_attribute {
- 			 const char *buf, size_t count);
- };
- 
--static ssize_t gb_audio_module_attr_show(
--	struct kobject *kobj, struct attribute *attr, char *buf)
-+static ssize_t gb_audio_module_attr_show(struct kobject *kobj,
-+					 struct attribute *attr, char *buf)
- {
- 	struct gb_audio_manager_module_attribute *attribute;
- 	struct gb_audio_manager_module *module;
-@@ -70,9 +70,10 @@ static void gb_audio_module_release(struct kobject *kobj)
- 	kfree(module);
- }
- 
--static ssize_t gb_audio_module_name_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_name_show(struct gb_audio_manager_module *module,
-+			  struct gb_audio_manager_module_attribute *attr,
-+			  char *buf)
- {
- 	return sprintf(buf, "%s", module->desc.name);
- }
-@@ -80,9 +81,10 @@ static ssize_t gb_audio_module_name_show(
- static struct gb_audio_manager_module_attribute gb_audio_module_name_attribute =
- 	__ATTR(name, 0664, gb_audio_module_name_show, NULL);
- 
--static ssize_t gb_audio_module_vid_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_vid_show(struct gb_audio_manager_module *module,
-+			 struct gb_audio_manager_module_attribute *attr,
-+			 char *buf)
- {
- 	return sprintf(buf, "%d", module->desc.vid);
- }
-@@ -90,9 +92,10 @@ static ssize_t gb_audio_module_vid_show(
- static struct gb_audio_manager_module_attribute gb_audio_module_vid_attribute =
- 	__ATTR(vid, 0664, gb_audio_module_vid_show, NULL);
- 
--static ssize_t gb_audio_module_pid_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_pid_show(struct gb_audio_manager_module *module,
-+			 struct gb_audio_manager_module_attribute *attr,
-+			 char *buf)
- {
- 	return sprintf(buf, "%d", module->desc.pid);
- }
-@@ -100,9 +103,10 @@ static ssize_t gb_audio_module_pid_show(
- static struct gb_audio_manager_module_attribute gb_audio_module_pid_attribute =
- 	__ATTR(pid, 0664, gb_audio_module_pid_show, NULL);
- 
--static ssize_t gb_audio_module_intf_id_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_intf_id_show(struct gb_audio_manager_module *module,
-+			     struct gb_audio_manager_module_attribute *attr,
-+			     char *buf)
- {
- 	return sprintf(buf, "%d", module->desc.intf_id);
- }
-@@ -111,9 +115,10 @@ static struct gb_audio_manager_module_attribute
- 					gb_audio_module_intf_id_attribute =
- 	__ATTR(intf_id, 0664, gb_audio_module_intf_id_show, NULL);
- 
--static ssize_t gb_audio_module_ip_devices_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_ip_devices_show(struct gb_audio_manager_module *module,
-+				struct gb_audio_manager_module_attribute *attr,
-+				char *buf)
- {
- 	return sprintf(buf, "0x%X", module->desc.ip_devices);
- }
-@@ -122,9 +127,10 @@ static struct gb_audio_manager_module_attribute
- 					gb_audio_module_ip_devices_attribute =
- 	__ATTR(ip_devices, 0664, gb_audio_module_ip_devices_show, NULL);
- 
--static ssize_t gb_audio_module_op_devices_show(
--	struct gb_audio_manager_module *module,
--	struct gb_audio_manager_module_attribute *attr, char *buf)
-+static ssize_t
-+gb_audio_module_op_devices_show(struct gb_audio_manager_module *module,
-+				struct gb_audio_manager_module_attribute *attr,
-+				char *buf)
- {
- 	return sprintf(buf, "0x%X", module->desc.op_devices);
- }
-@@ -180,10 +186,11 @@ static void send_add_uevent(struct gb_audio_manager_module *module)
- 	kobject_uevent_env(&module->kobj, KOBJ_ADD, envp);
- }
- 
--int gb_audio_manager_module_create(
--	struct gb_audio_manager_module **module,
--	struct kset *manager_kset,
--	int id, struct gb_audio_manager_module_descriptor *desc)
-+int
-+gb_audio_manager_module_create(struct gb_audio_manager_module **module,
-+			       struct kset *manager_kset,
-+			       int id,
-+			       struct gb_audio_manager_module_descriptor *desc)
- {
- 	int err;
- 	struct gb_audio_manager_module *m;
-diff --git a/drivers/staging/greybus/audio_manager_sysfs.c b/drivers/staging/greybus/audio_manager_sysfs.c
-index 283fbed..ab882cc 100644
---- a/drivers/staging/greybus/audio_manager_sysfs.c
-+++ b/drivers/staging/greybus/audio_manager_sysfs.c
-@@ -11,9 +11,9 @@
- #include "audio_manager.h"
- #include "audio_manager_private.h"
- 
--static ssize_t manager_sysfs_add_store(
--	struct kobject *kobj, struct kobj_attribute *attr,
--	const char *buf, size_t count)
-+static ssize_t manager_sysfs_add_store(struct kobject *kobj,
-+				       struct kobj_attribute *attr,
-+				       const char *buf, size_t count)
- {
- 	struct gb_audio_manager_module_descriptor desc = { {0} };
- 
-@@ -36,9 +36,9 @@ static ssize_t manager_sysfs_add_store(
- static struct kobj_attribute manager_add_attribute =
- 	__ATTR(add, 0664, NULL, manager_sysfs_add_store);
- 
--static ssize_t manager_sysfs_remove_store(
--	struct kobject *kobj, struct kobj_attribute *attr,
--	const char *buf, size_t count)
-+static ssize_t manager_sysfs_remove_store(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  const char *buf, size_t count)
- {
- 	int id;
- 
-@@ -57,9 +57,9 @@ static ssize_t manager_sysfs_remove_store(
- static struct kobj_attribute manager_remove_attribute =
- 	__ATTR(remove, 0664, NULL, manager_sysfs_remove_store);
- 
--static ssize_t manager_sysfs_dump_store(
--	struct kobject *kobj, struct kobj_attribute *attr,
--	const char *buf, size_t count)
-+static ssize_t manager_sysfs_dump_store(struct kobject *kobj,
-+					struct kobj_attribute *attr,
-+					const char *buf, size_t count)
- {
- 	int id;
- 
-@@ -81,8 +81,8 @@ static ssize_t manager_sysfs_dump_store(
- static struct kobj_attribute manager_dump_attribute =
- 	__ATTR(dump, 0664, NULL, manager_sysfs_dump_store);
- 
--static void manager_sysfs_init_attribute(
--		struct kobject *kobj, struct kobj_attribute *kattr)
-+static void manager_sysfs_init_attribute(struct kobject *kobj,
-+					 struct kobj_attribute *kattr)
- {
- 	int err;
- 
-diff --git a/drivers/staging/greybus/audio_module.c b/drivers/staging/greybus/audio_module.c
-index d065334..51c9548 100644
---- a/drivers/staging/greybus/audio_module.c
-+++ b/drivers/staging/greybus/audio_module.c
-@@ -18,7 +18,7 @@
-  */
- 
- static int gbaudio_request_jack(struct gbaudio_module_info *module,
--				  struct gb_audio_jack_event_request *req)
-+				struct gb_audio_jack_event_request *req)
- {
- 	int report;
- 	struct snd_jack *jack = module->headset_jack.jack;
-@@ -26,8 +26,8 @@ static int gbaudio_request_jack(struct gbaudio_module_info *module,
- 
- 	if (!jack) {
- 		dev_err_ratelimited(module->dev,
--			"Invalid jack event received:type: %u, event: %u\n",
--			req->jack_attribute, req->event);
-+				    "Invalid jack event received:type: %u, event: %u\n",
-+				    req->jack_attribute, req->event);
- 		return -EINVAL;
- 	}
- 
-@@ -50,8 +50,8 @@ static int gbaudio_request_jack(struct gbaudio_module_info *module,
- 	report = req->jack_attribute & module->jack_mask;
- 	if (!report) {
- 		dev_err_ratelimited(module->dev,
--			"Invalid jack event received:type: %u, event: %u\n",
--			req->jack_attribute, req->event);
-+				    "Invalid jack event received:type: %u, event: %u\n",
-+				    req->jack_attribute, req->event);
- 		return -EINVAL;
- 	}
- 
-@@ -74,8 +74,8 @@ static int gbaudio_request_button(struct gbaudio_module_info *module,
- 
- 	if (!btn_jack) {
- 		dev_err_ratelimited(module->dev,
--			"Invalid button event received:type: %u, event: %u\n",
--			req->button_id, req->event);
-+				    "Invalid button event received:type: %u, event: %u\n",
-+				    req->button_id, req->event);
- 		return -EINVAL;
- 	}
- 
-@@ -174,9 +174,10 @@ static int gbaudio_codec_request_handler(struct gb_operation *op)
- 	return ret;
- }
- 
--static int gb_audio_add_mgmt_connection(struct gbaudio_module_info *gbmodule,
--				struct greybus_descriptor_cport *cport_desc,
--				struct gb_bundle *bundle)
-+static
-+int gb_audio_add_mgmt_connection(struct gbaudio_module_info *gbmodule,
-+				 struct greybus_descriptor_cport *cport_desc,
-+				 struct gb_bundle *bundle)
- {
- 	struct gb_connection *connection;
- 
-@@ -198,9 +199,10 @@ static int gb_audio_add_mgmt_connection(struct gbaudio_module_info *gbmodule,
- 	return 0;
- }
- 
--static int gb_audio_add_data_connection(struct gbaudio_module_info *gbmodule,
--				struct greybus_descriptor_cport *cport_desc,
--				struct gb_bundle *bundle)
-+static
-+int gb_audio_add_data_connection(struct gbaudio_module_info *gbmodule,
-+				 struct greybus_descriptor_cport *cport_desc,
-+				 struct gb_bundle *bundle)
- {
- 	struct gb_connection *connection;
- 	struct gbaudio_data_connection *dai;
-@@ -210,8 +212,8 @@ static int gb_audio_add_data_connection(struct gbaudio_module_info *gbmodule,
- 		return -ENOMEM;
- 
- 	connection = gb_connection_create_offloaded(bundle,
--					le16_to_cpu(cport_desc->id),
--					GB_CONNECTION_FLAG_CSD);
-+						    le16_to_cpu(cport_desc->id),
-+						    GB_CONNECTION_FLAG_CSD);
- 	if (IS_ERR(connection)) {
- 		devm_kfree(gbmodule->dev, dai);
- 		return PTR_ERR(connection);
-@@ -317,7 +319,7 @@ static int gb_audio_probe(struct gb_bundle *bundle,
- 	ret = gbaudio_tplg_parse_data(gbmodule, topology);
- 	if (ret) {
- 		dev_err(dev, "%d:Error while parsing topology data\n",
--			  ret);
-+			ret);
- 		goto free_topology;
- 	}
- 	gbmodule->topology = topology;
-diff --git a/drivers/staging/greybus/audio_topology.c b/drivers/staging/greybus/audio_topology.c
-index b710783..9c21ef5 100644
---- a/drivers/staging/greybus/audio_topology.c
-+++ b/drivers/staging/greybus/audio_topology.c
-@@ -24,9 +24,9 @@ struct gbaudio_ctl_pvt {
- 	struct gb_audio_ctl_elem_info *info;
- };
- 
--static struct gbaudio_module_info *find_gb_module(
--					struct gbaudio_codec_info *codec,
--					char const *name)
-+static
-+struct gbaudio_module_info *find_gb_module(struct gbaudio_codec_info *codec,
-+					   char const *name)
- {
- 	int dev_id, ret;
- 	char begin[NAME_SIZE];
-@@ -158,7 +158,7 @@ static const char **gb_generate_enum_strings(struct gbaudio_module_info *gb,
- }
- 
- static int gbcodec_mixer_ctl_info(struct snd_kcontrol *kcontrol,
--		     struct snd_ctl_elem_info *uinfo)
-+				  struct snd_ctl_elem_info *uinfo)
- {
- 	unsigned int max;
- 	const char *name;
-@@ -209,7 +209,7 @@ static int gbcodec_mixer_ctl_info(struct snd_kcontrol *kcontrol,
- }
- 
- static int gbcodec_mixer_ctl_get(struct snd_kcontrol *kcontrol,
--	struct snd_ctl_elem_value *ucontrol)
-+				 struct snd_ctl_elem_value *ucontrol)
- {
- 	int ret;
- 	struct gb_audio_ctl_elem_info *info;
-@@ -271,7 +271,7 @@ static int gbcodec_mixer_ctl_get(struct snd_kcontrol *kcontrol,
- }
- 
- static int gbcodec_mixer_ctl_put(struct snd_kcontrol *kcontrol,
--			      struct snd_ctl_elem_value *ucontrol)
-+				 struct snd_ctl_elem_value *ucontrol)
- {
- 	int ret = 0;
- 	struct gb_audio_ctl_elem_info *info;
-@@ -347,7 +347,7 @@ static int gbcodec_mixer_ctl_put(struct snd_kcontrol *kcontrol,
-  * of DAPM related sequencing, etc.
-  */
- static int gbcodec_mixer_dapm_ctl_info(struct snd_kcontrol *kcontrol,
--		     struct snd_ctl_elem_info *uinfo)
-+				       struct snd_ctl_elem_info *uinfo)
- {
- 	int platform_max, platform_min;
- 	struct gbaudio_ctl_pvt *data;
-@@ -378,7 +378,7 @@ static int gbcodec_mixer_dapm_ctl_info(struct snd_kcontrol *kcontrol,
- }
- 
- static int gbcodec_mixer_dapm_ctl_get(struct snd_kcontrol *kcontrol,
--	struct snd_ctl_elem_value *ucontrol)
-+				      struct snd_ctl_elem_value *ucontrol)
- {
- 	int ret;
- 	struct gb_audio_ctl_elem_info *info;
-@@ -427,7 +427,7 @@ static int gbcodec_mixer_dapm_ctl_get(struct snd_kcontrol *kcontrol,
- }
- 
- static int gbcodec_mixer_dapm_ctl_put(struct snd_kcontrol *kcontrol,
--			      struct snd_ctl_elem_value *ucontrol)
-+				      struct snd_ctl_elem_value *ucontrol)
- {
- 	int ret, wi, max, connect;
- 	unsigned int mask, val;
-@@ -501,7 +501,7 @@ static int gbcodec_mixer_dapm_ctl_put(struct snd_kcontrol *kcontrol,
- 	.private_value = (unsigned long)data}
- 
- static int gbcodec_event_spk(struct snd_soc_dapm_widget *w,
--					struct snd_kcontrol *k, int event)
-+			     struct snd_kcontrol *k, int event)
- {
- 	/* Ensure GB speaker is connected */
- 
-@@ -509,7 +509,7 @@ static int gbcodec_event_spk(struct snd_soc_dapm_widget *w,
- }
- 
- static int gbcodec_event_hp(struct snd_soc_dapm_widget *w,
--					struct snd_kcontrol *k, int event)
-+			    struct snd_kcontrol *k, int event)
- {
- 	/* Ensure GB module supports jack slot */
- 
-@@ -517,7 +517,7 @@ static int gbcodec_event_hp(struct snd_soc_dapm_widget *w,
- }
- 
- static int gbcodec_event_int_mic(struct snd_soc_dapm_widget *w,
--					struct snd_kcontrol *k, int event)
-+				 struct snd_kcontrol *k, int event)
- {
- 	/* Ensure GB module supports jack slot */
- 
-@@ -664,7 +664,7 @@ static int gbaudio_tplg_create_enum_kctl(struct gbaudio_module_info *gb,
- 
- 	/* debug enum info */
- 	dev_dbg(gb->dev, "Max:%d, name_length:%d\n", gbe->max,
--		 le16_to_cpu(gb_enum->names_length));
-+		le16_to_cpu(gb_enum->names_length));
- 	for (i = 0; i < gbe->max; i++)
- 		dev_dbg(gb->dev, "src[%d]: %s\n", i, gbe->texts[i]);
- 
-@@ -873,7 +873,7 @@ static int gbaudio_tplg_create_enum_ctl(struct gbaudio_module_info *gb,
- 
- 	/* debug enum info */
- 	dev_dbg(gb->dev, "Max:%d, name_length:%d\n", gbe->max,
--		 le16_to_cpu(gb_enum->names_length));
-+		le16_to_cpu(gb_enum->names_length));
- 	for (i = 0; i < gbe->max; i++)
- 		dev_dbg(gb->dev, "src[%d]: %s\n", i, gbe->texts[i]);
- 
-@@ -884,8 +884,8 @@ static int gbaudio_tplg_create_enum_ctl(struct gbaudio_module_info *gb,
- }
- 
- static int gbaudio_tplg_create_mixer_ctl(struct gbaudio_module_info *gb,
--					     struct snd_kcontrol_new *kctl,
--					     struct gb_audio_control *ctl)
-+					 struct snd_kcontrol_new *kctl,
-+					 struct gb_audio_control *ctl)
- {
- 	struct gbaudio_ctl_pvt *ctldata;
- 
-@@ -905,8 +905,8 @@ static int gbaudio_tplg_create_mixer_ctl(struct gbaudio_module_info *gb,
- }
- 
- static int gbaudio_tplg_create_wcontrol(struct gbaudio_module_info *gb,
--					     struct snd_kcontrol_new *kctl,
--					     struct gb_audio_control *ctl)
-+					struct snd_kcontrol_new *kctl,
-+					struct gb_audio_control *ctl)
- {
- 	int ret;
- 
-@@ -923,7 +923,6 @@ static int gbaudio_tplg_create_wcontrol(struct gbaudio_module_info *gb,
- 		break;
- 	default:
- 		return -EINVAL;
--
- 	}
- 
- 	dev_dbg(gb->dev, "%s:%d DAPM control created, ret:%d\n", ctl->name,
-@@ -1086,9 +1085,10 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
- 	case snd_soc_dapm_switch:
- 		*dw = (struct snd_soc_dapm_widget)
- 			SND_SOC_DAPM_SWITCH_E(w->name, SND_SOC_NOPM, 0, 0,
--					    widget_kctls, gbaudio_widget_event,
--					    SND_SOC_DAPM_PRE_PMU |
--					    SND_SOC_DAPM_POST_PMD);
-+					      widget_kctls,
-+					      gbaudio_widget_event,
-+					      SND_SOC_DAPM_PRE_PMU |
-+					      SND_SOC_DAPM_POST_PMD);
- 		break;
- 	case snd_soc_dapm_pga:
- 		*dw = (struct snd_soc_dapm_widget)
-@@ -1100,16 +1100,16 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
- 	case snd_soc_dapm_mixer:
- 		*dw = (struct snd_soc_dapm_widget)
- 			SND_SOC_DAPM_MIXER_E(w->name, SND_SOC_NOPM, 0, 0, NULL,
--					   0, gbaudio_widget_event,
--					   SND_SOC_DAPM_PRE_PMU |
--					   SND_SOC_DAPM_POST_PMD);
-+					     0, gbaudio_widget_event,
-+					     SND_SOC_DAPM_PRE_PMU |
-+					     SND_SOC_DAPM_POST_PMD);
- 		break;
- 	case snd_soc_dapm_mux:
- 		*dw = (struct snd_soc_dapm_widget)
- 			SND_SOC_DAPM_MUX_E(w->name, SND_SOC_NOPM, 0, 0,
--					 widget_kctls, gbaudio_widget_event,
--					 SND_SOC_DAPM_PRE_PMU |
--					 SND_SOC_DAPM_POST_PMD);
-+					   widget_kctls, gbaudio_widget_event,
-+					   SND_SOC_DAPM_PRE_PMU |
-+					   SND_SOC_DAPM_POST_PMD);
- 		break;
- 	case snd_soc_dapm_aif_in:
- 		*dw = (struct snd_soc_dapm_widget)
-@@ -1145,7 +1145,7 @@ static int gbaudio_tplg_create_widget(struct gbaudio_module_info *module,
- }
- 
- static int gbaudio_tplg_process_kcontrols(struct gbaudio_module_info *module,
--				   struct gb_audio_control *controls)
-+					  struct gb_audio_control *controls)
- {
- 	int i, csize, ret;
- 	struct snd_kcontrol_new *dapm_kctls;
-@@ -1215,7 +1215,7 @@ static int gbaudio_tplg_process_kcontrols(struct gbaudio_module_info *module,
- }
- 
- static int gbaudio_tplg_process_widgets(struct gbaudio_module_info *module,
--				   struct gb_audio_widget *widgets)
-+					struct gb_audio_widget *widgets)
- {
- 	int i, ret, w_size;
- 	struct snd_soc_dapm_widget *dapm_widgets;
-@@ -1264,7 +1264,7 @@ static int gbaudio_tplg_process_widgets(struct gbaudio_module_info *module,
- }
- 
- static int gbaudio_tplg_process_routes(struct gbaudio_module_info *module,
--				   struct gb_audio_route *routes)
-+				       struct gb_audio_route *routes)
- {
- 	int i, ret;
- 	struct snd_soc_dapm_route *dapm_routes;
-@@ -1300,8 +1300,8 @@ static int gbaudio_tplg_process_routes(struct gbaudio_module_info *module,
- 		}
- 		dapm_routes->control =
- 			gbaudio_map_controlid(module,
--						      curr->control_id,
--						      curr->index);
-+					      curr->control_id,
-+					      curr->index);
- 		if ((curr->control_id !=  GBAUDIO_INVALID_ID) &&
- 		    !dapm_routes->control) {
- 			dev_err(module->dev, "%d:%d:%d:%d - Invalid control\n",
-@@ -1325,7 +1325,7 @@ static int gbaudio_tplg_process_routes(struct gbaudio_module_info *module,
- }
- 
- static int gbaudio_tplg_process_header(struct gbaudio_module_info *module,
--				 struct gb_audio_topology *tplg_data)
-+				       struct gb_audio_topology *tplg_data)
- {
- 	/* fetch no. of kcontrols, widgets & routes */
- 	module->num_controls = tplg_data->num_controls;
-@@ -1351,7 +1351,7 @@ static int gbaudio_tplg_process_header(struct gbaudio_module_info *module,
- }
- 
- int gbaudio_tplg_parse_data(struct gbaudio_module_info *module,
--			       struct gb_audio_topology *tplg_data)
-+			    struct gb_audio_topology *tplg_data)
- {
- 	int ret;
- 	struct gb_audio_control *controls;
-diff --git a/drivers/staging/greybus/bootrom.c b/drivers/staging/greybus/bootrom.c
-index e85ffae..402e636 100644
---- a/drivers/staging/greybus/bootrom.c
-+++ b/drivers/staging/greybus/bootrom.c
-@@ -86,7 +86,8 @@ static void gb_bootrom_timedout(struct work_struct *work)
- }
- 
- static void gb_bootrom_set_timeout(struct gb_bootrom *bootrom,
--			enum next_request_type next, unsigned long timeout)
-+				   enum next_request_type next,
-+				   unsigned long timeout)
- {
- 	bootrom->next_request = next;
- 	schedule_delayed_work(&bootrom->dwork, msecs_to_jiffies(timeout));
-@@ -175,7 +176,7 @@ static int find_firmware(struct gb_bootrom *bootrom, u8 stage)
- 		 firmware_name);
- 
- 	rc = request_firmware(&bootrom->fw, firmware_name,
--		&connection->bundle->dev);
-+			      &connection->bundle->dev);
- 	if (rc) {
- 		dev_err(&connection->bundle->dev,
- 			"failed to find %s firmware (%d)\n", firmware_name, rc);
-@@ -274,7 +275,7 @@ static int gb_bootrom_get_firmware(struct gb_operation *op)
- 
- 	if (offset >= fw->size || size > fw->size - offset) {
- 		dev_warn(dev, "bad firmware request (offs = %u, size = %u)\n",
--				offset, size);
-+			 offset, size);
- 		ret = -EINVAL;
- 		goto unlock;
- 	}
-@@ -387,15 +388,15 @@ static int gb_bootrom_get_version(struct gb_bootrom *bootrom)
- 				sizeof(response));
- 	if (ret) {
- 		dev_err(&bundle->dev,
--				"failed to get protocol version: %d\n",
--				ret);
-+			"failed to get protocol version: %d\n",
-+			ret);
- 		return ret;
- 	}
- 
- 	if (response.major > request.major) {
- 		dev_err(&bundle->dev,
--				"unsupported major protocol version (%u > %u)\n",
--				response.major, request.major);
-+			"unsupported major protocol version (%u > %u)\n",
-+			response.major, request.major);
- 		return -ENOTSUPP;
- 	}
- 
-@@ -403,13 +404,13 @@ static int gb_bootrom_get_version(struct gb_bootrom *bootrom)
- 	bootrom->protocol_minor = response.minor;
- 
- 	dev_dbg(&bundle->dev, "%s - %u.%u\n", __func__, response.major,
--			response.minor);
-+		response.minor);
- 
- 	return 0;
- }
- 
- static int gb_bootrom_probe(struct gb_bundle *bundle,
--					const struct greybus_bundle_id *id)
-+			    const struct greybus_bundle_id *id)
- {
- 	struct greybus_descriptor_cport *cport_desc;
- 	struct gb_connection *connection;
-@@ -428,8 +429,8 @@ static int gb_bootrom_probe(struct gb_bundle *bundle,
- 		return -ENOMEM;
- 
- 	connection = gb_connection_create(bundle,
--						le16_to_cpu(cport_desc->id),
--						gb_bootrom_request_handler);
-+					  le16_to_cpu(cport_desc->id),
-+					  gb_bootrom_request_handler);
- 	if (IS_ERR(connection)) {
- 		ret = PTR_ERR(connection);
- 		goto err_free_bootrom;
-@@ -466,7 +467,7 @@ static int gb_bootrom_probe(struct gb_bundle *bundle,
- 				NULL, 0);
- 	if (ret) {
- 		dev_err(&connection->bundle->dev,
--				"failed to send AP READY: %d\n", ret);
-+			"failed to send AP READY: %d\n", ret);
- 		goto err_cancel_timeout;
- 	}
- 
-diff --git a/drivers/staging/greybus/camera.c b/drivers/staging/greybus/camera.c
-index c6d6543..e7870e4 100644
---- a/drivers/staging/greybus/camera.c
-+++ b/drivers/staging/greybus/camera.c
-@@ -782,9 +782,11 @@ static ssize_t gb_camera_op_capabilities(void *priv, char *data, size_t len)
- 	return capabilities_len;
- }
- 
--static int gb_camera_op_configure_streams(void *priv, unsigned int *nstreams,
--		unsigned int *flags, struct gb_camera_stream *streams,
--		struct gb_camera_csi_params *csi_params)
-+static int
-+gb_camera_op_configure_streams(void *priv, unsigned int *nstreams,
-+			       unsigned int *flags,
-+			       struct gb_camera_stream *streams,
-+			       struct gb_camera_csi_params *csi_params)
- {
- 	struct gb_camera *gcam = priv;
- 	struct gb_camera_stream_config *gb_streams;
-@@ -841,8 +843,8 @@ static int gb_camera_op_configure_streams(void *priv, unsigned int *nstreams,
- }
- 
- static int gb_camera_op_capture(void *priv, u32 request_id,
--		unsigned int streams, unsigned int num_frames,
--		size_t settings_size, const void *settings)
-+				unsigned int streams, unsigned int num_frames,
-+				size_t settings_size, const void *settings)
- {
- 	struct gb_camera *gcam = priv;
- 
-@@ -869,7 +871,7 @@ static const struct gb_camera_ops gb_cam_ops = {
-  */
- 
- static ssize_t gb_camera_debugfs_capabilities(struct gb_camera *gcam,
--		char *buf, size_t len)
-+					      char *buf, size_t len)
- {
- 	struct gb_camera_debugfs_buffer *buffer =
- 		&gcam->debugfs.buffers[GB_CAMERA_DEBUGFS_BUFFER_CAPABILITIES];
-@@ -905,7 +907,7 @@ static ssize_t gb_camera_debugfs_capabilities(struct gb_camera *gcam,
- }
- 
- static ssize_t gb_camera_debugfs_configure_streams(struct gb_camera *gcam,
--		char *buf, size_t len)
-+						   char *buf, size_t len)
- {
- 	struct gb_camera_debugfs_buffer *buffer =
- 		&gcam->debugfs.buffers[GB_CAMERA_DEBUGFS_BUFFER_STREAMS];
-@@ -999,7 +1001,7 @@ static ssize_t gb_camera_debugfs_configure_streams(struct gb_camera *gcam,
- };
- 
- static ssize_t gb_camera_debugfs_capture(struct gb_camera *gcam,
--		char *buf, size_t len)
-+					 char *buf, size_t len)
- {
- 	unsigned int request_id;
- 	unsigned int streams_mask;
-@@ -1040,7 +1042,7 @@ static ssize_t gb_camera_debugfs_capture(struct gb_camera *gcam,
- }
- 
- static ssize_t gb_camera_debugfs_flush(struct gb_camera *gcam,
--		char *buf, size_t len)
-+				       char *buf, size_t len)
- {
- 	struct gb_camera_debugfs_buffer *buffer =
- 		&gcam->debugfs.buffers[GB_CAMERA_DEBUGFS_BUFFER_FLUSH];
-diff --git a/drivers/staging/greybus/connection.c b/drivers/staging/greybus/connection.c
-index 56ae305..eda96420 100644
---- a/drivers/staging/greybus/connection.c
-+++ b/drivers/staging/greybus/connection.c
-@@ -26,7 +26,7 @@ static bool gb_connection_cport_in_use(struct gb_interface *intf, u16 cport_id)
- 
- 	list_for_each_entry(connection, &hd->connections, hd_links) {
- 		if (connection->intf == intf &&
--				connection->intf_cport_id == cport_id)
-+		    connection->intf_cport_id == cport_id)
- 			return true;
- 	}
- 
-@@ -74,7 +74,7 @@ gb_connection_hd_find(struct gb_host_device *hd, u16 cport_id)
-  * received on the bundle.
-  */
- void greybus_data_rcvd(struct gb_host_device *hd, u16 cport_id,
--			u8 *data, size_t length)
-+		       u8 *data, size_t length)
- {
- 	struct gb_connection *connection;
- 
-@@ -114,7 +114,7 @@ static void gb_connection_init_name(struct gb_connection *connection)
- 	}
- 
- 	snprintf(connection->name, sizeof(connection->name),
--			"%u/%u:%u", hd_cport_id, intf_id, cport_id);
-+		 "%u/%u:%u", hd_cport_id, intf_id, cport_id);
- }
- 
- /*
-@@ -142,10 +142,10 @@ static void gb_connection_init_name(struct gb_connection *connection)
-  */
- static struct gb_connection *
- _gb_connection_create(struct gb_host_device *hd, int hd_cport_id,
--				struct gb_interface *intf,
--				struct gb_bundle *bundle, int cport_id,
--				gb_request_handler_t handler,
--				unsigned long flags)
-+		      struct gb_interface *intf,
-+		      struct gb_bundle *bundle, int cport_id,
-+		      gb_request_handler_t handler,
-+		      unsigned long flags)
- {
- 	struct gb_connection *connection;
- 	int ret;
-@@ -226,35 +226,35 @@ _gb_connection_create(struct gb_host_device *hd, int hd_cport_id,
- 
- struct gb_connection *
- gb_connection_create_static(struct gb_host_device *hd, u16 hd_cport_id,
--					gb_request_handler_t handler)
-+			    gb_request_handler_t handler)
- {
- 	return _gb_connection_create(hd, hd_cport_id, NULL, NULL, 0, handler,
--					GB_CONNECTION_FLAG_HIGH_PRIO);
-+				     GB_CONNECTION_FLAG_HIGH_PRIO);
- }
- 
- struct gb_connection *
- gb_connection_create_control(struct gb_interface *intf)
- {
- 	return _gb_connection_create(intf->hd, -1, intf, NULL, 0, NULL,
--					GB_CONNECTION_FLAG_CONTROL |
--					GB_CONNECTION_FLAG_HIGH_PRIO);
-+				     GB_CONNECTION_FLAG_CONTROL |
-+				     GB_CONNECTION_FLAG_HIGH_PRIO);
- }
- 
- struct gb_connection *
- gb_connection_create(struct gb_bundle *bundle, u16 cport_id,
--					gb_request_handler_t handler)
-+		     gb_request_handler_t handler)
- {
- 	struct gb_interface *intf = bundle->intf;
- 
- 	return _gb_connection_create(intf->hd, -1, intf, bundle, cport_id,
--					handler, 0);
-+				     handler, 0);
- }
- EXPORT_SYMBOL_GPL(gb_connection_create);
- 
- struct gb_connection *
- gb_connection_create_flags(struct gb_bundle *bundle, u16 cport_id,
--					gb_request_handler_t handler,
--					unsigned long flags)
-+			   gb_request_handler_t handler,
-+			   unsigned long flags)
- {
- 	struct gb_interface *intf = bundle->intf;
- 
-@@ -262,13 +262,13 @@ gb_connection_create_flags(struct gb_bundle *bundle, u16 cport_id,
- 		flags &= ~GB_CONNECTION_FLAG_CORE_MASK;
- 
- 	return _gb_connection_create(intf->hd, -1, intf, bundle, cport_id,
--					handler, flags);
-+				     handler, flags);
- }
- EXPORT_SYMBOL_GPL(gb_connection_create_flags);
- 
- struct gb_connection *
- gb_connection_create_offloaded(struct gb_bundle *bundle, u16 cport_id,
--					unsigned long flags)
-+			       unsigned long flags)
- {
- 	flags |= GB_CONNECTION_FLAG_OFFLOADED;
- 
-@@ -285,10 +285,10 @@ static int gb_connection_hd_cport_enable(struct gb_connection *connection)
- 		return 0;
- 
- 	ret = hd->driver->cport_enable(hd, connection->hd_cport_id,
--					connection->flags);
-+				       connection->flags);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to enable host cport: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 		return ret;
- 	}
- 
-@@ -306,7 +306,7 @@ static void gb_connection_hd_cport_disable(struct gb_connection *connection)
- 	ret = hd->driver->cport_disable(hd, connection->hd_cport_id);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to disable host cport: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 	}
- }
- 
-@@ -321,7 +321,7 @@ static int gb_connection_hd_cport_connected(struct gb_connection *connection)
- 	ret = hd->driver->cport_connected(hd, connection->hd_cport_id);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to set connected state: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 		return ret;
- 	}
- 
-@@ -339,7 +339,7 @@ static int gb_connection_hd_cport_flush(struct gb_connection *connection)
- 	ret = hd->driver->cport_flush(hd, connection->hd_cport_id);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to flush host cport: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 		return ret;
- 	}
- 
-@@ -369,7 +369,7 @@ static int gb_connection_hd_cport_quiesce(struct gb_connection *connection)
- 					GB_CONNECTION_CPORT_QUIESCE_TIMEOUT);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to quiesce host cport: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 		return ret;
- 	}
- 
-@@ -387,7 +387,7 @@ static int gb_connection_hd_cport_clear(struct gb_connection *connection)
- 	ret = hd->driver->cport_clear(hd, connection->hd_cport_id);
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to clear host cport: %d\n",
--				connection->name, ret);
-+			connection->name, ret);
- 		return ret;
- 	}
- 
-@@ -423,11 +423,11 @@ gb_connection_svc_connection_create(struct gb_connection *connection)
- 	}
- 
- 	ret = gb_svc_connection_create(hd->svc,
--			hd->svc->ap_intf_id,
--			connection->hd_cport_id,
--			intf->interface_id,
--			connection->intf_cport_id,
--			cport_flags);
-+				       hd->svc->ap_intf_id,
-+				       connection->hd_cport_id,
-+				       intf->interface_id,
-+				       connection->intf_cport_id,
-+				       cport_flags);
- 	if (ret) {
- 		dev_err(&connection->hd->dev,
- 			"%s: failed to create svc connection: %d\n",
-@@ -491,8 +491,8 @@ gb_connection_control_disconnecting(struct gb_connection *connection)
- 	ret = gb_control_disconnecting_operation(control, cport_id);
- 	if (ret) {
- 		dev_err(&connection->hd->dev,
--				"%s: failed to send disconnecting: %d\n",
--				connection->name, ret);
-+			"%s: failed to send disconnecting: %d\n",
-+			connection->name, ret);
- 	}
- }
- 
-@@ -531,16 +531,16 @@ gb_connection_control_disconnected(struct gb_connection *connection)
- }
- 
- static int gb_connection_shutdown_operation(struct gb_connection *connection,
--						u8 phase)
-+					    u8 phase)
- {
- 	struct gb_cport_shutdown_request *req;
- 	struct gb_operation *operation;
- 	int ret;
- 
- 	operation = gb_operation_create_core(connection,
--						GB_REQUEST_TYPE_CPORT_SHUTDOWN,
--						sizeof(*req), 0, 0,
--						GFP_KERNEL);
-+					     GB_REQUEST_TYPE_CPORT_SHUTDOWN,
-+					     sizeof(*req), 0, 0,
-+					     GFP_KERNEL);
- 	if (!operation)
- 		return -ENOMEM;
- 
-@@ -569,14 +569,14 @@ static int gb_connection_cport_shutdown(struct gb_connection *connection,
- 			return 0;
- 
- 		ret = drv->cport_shutdown(hd, connection->hd_cport_id, phase,
--						GB_OPERATION_TIMEOUT_DEFAULT);
-+					  GB_OPERATION_TIMEOUT_DEFAULT);
- 	} else {
- 		ret = gb_connection_shutdown_operation(connection, phase);
- 	}
- 
- 	if (ret) {
- 		dev_err(&hd->dev, "%s: failed to send cport shutdown (phase %d): %d\n",
--				connection->name, phase, ret);
-+			connection->name, phase, ret);
- 		return ret;
- 	}
- 
-@@ -602,14 +602,14 @@ gb_connection_cport_shutdown_phase_2(struct gb_connection *connection)
-  * DISCONNECTING.
-  */
- static void gb_connection_cancel_operations(struct gb_connection *connection,
--						int errno)
-+					    int errno)
- 	__must_hold(&connection->lock)
- {
- 	struct gb_operation *operation;
- 
- 	while (!list_empty(&connection->operations)) {
- 		operation = list_last_entry(&connection->operations,
--						struct gb_operation, links);
-+					    struct gb_operation, links);
- 		gb_operation_get(operation);
- 		spin_unlock_irq(&connection->lock);
- 
-@@ -631,7 +631,7 @@ static void gb_connection_cancel_operations(struct gb_connection *connection,
-  */
- static void
- gb_connection_flush_incoming_operations(struct gb_connection *connection,
--						int errno)
-+					int errno)
- 	__must_hold(&connection->lock)
- {
- 	struct gb_operation *operation;
-@@ -640,7 +640,7 @@ gb_connection_flush_incoming_operations(struct gb_connection *connection,
- 	while (!list_empty(&connection->operations)) {
- 		incoming = false;
- 		list_for_each_entry(operation, &connection->operations,
--								links) {
-+				    links) {
- 			if (gb_operation_is_incoming(operation)) {
- 				gb_operation_get(operation);
- 				incoming = true;
-diff --git a/drivers/staging/greybus/control.c b/drivers/staging/greybus/control.c
-index 35f945a..a9e8b60 100644
---- a/drivers/staging/greybus/control.c
-+++ b/drivers/staging/greybus/control.c
-@@ -15,7 +15,6 @@
- #define GB_CONTROL_VERSION_MAJOR	0
- #define GB_CONTROL_VERSION_MINOR	1
- 
--
- static int gb_control_get_version(struct gb_control *control)
- {
- 	struct gb_interface *intf = control->connection->intf;
-@@ -32,15 +31,15 @@ static int gb_control_get_version(struct gb_control *control)
- 				sizeof(response));
- 	if (ret) {
- 		dev_err(&intf->dev,
--				"failed to get control-protocol version: %d\n",
--				ret);
-+			"failed to get control-protocol version: %d\n",
-+			ret);
- 		return ret;
- 	}
- 
- 	if (response.major > request.major) {
- 		dev_err(&intf->dev,
--				"unsupported major control-protocol version (%u > %u)\n",
--				response.major, request.major);
-+			"unsupported major control-protocol version (%u > %u)\n",
-+			response.major, request.major);
- 		return -ENOTSUPP;
- 	}
- 
-@@ -48,13 +47,13 @@ static int gb_control_get_version(struct gb_control *control)
- 	control->protocol_minor = response.minor;
- 
- 	dev_dbg(&intf->dev, "%s - %u.%u\n", __func__, response.major,
--			response.minor);
-+		response.minor);
- 
- 	return 0;
- }
- 
- static int gb_control_get_bundle_version(struct gb_control *control,
--						struct gb_bundle *bundle)
-+					 struct gb_bundle *bundle)
- {
- 	struct gb_interface *intf = control->connection->intf;
- 	struct gb_control_bundle_version_request request;
-@@ -69,8 +68,8 @@ static int gb_control_get_bundle_version(struct gb_control *control,
- 				&response, sizeof(response));
- 	if (ret) {
- 		dev_err(&intf->dev,
--				"failed to get bundle %u class version: %d\n",
--				bundle->id, ret);
-+			"failed to get bundle %u class version: %d\n",
-+			bundle->id, ret);
- 		return ret;
- 	}
- 
-@@ -78,7 +77,7 @@ static int gb_control_get_bundle_version(struct gb_control *control,
- 	bundle->class_minor = response.minor;
- 
- 	dev_dbg(&intf->dev, "%s - %u: %u.%u\n", __func__, bundle->id,
--			response.major, response.minor);
-+		response.major, response.minor);
- 
- 	return 0;
- }
-@@ -112,7 +111,7 @@ int gb_control_get_manifest_size_operation(struct gb_interface *intf)
- 				NULL, 0, &response, sizeof(response));
- 	if (ret) {
- 		dev_err(&connection->intf->dev,
--				"failed to get manifest size: %d\n", ret);
-+			"failed to get manifest size: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -149,16 +148,16 @@ int gb_control_disconnected_operation(struct gb_control *control, u16 cport_id)
- }
- 
- int gb_control_disconnecting_operation(struct gb_control *control,
--					u16 cport_id)
-+				       u16 cport_id)
- {
- 	struct gb_control_disconnecting_request *request;
- 	struct gb_operation *operation;
- 	int ret;
- 
- 	operation = gb_operation_create_core(control->connection,
--					GB_CONTROL_TYPE_DISCONNECTING,
--					sizeof(*request), 0, 0,
--					GFP_KERNEL);
-+					     GB_CONTROL_TYPE_DISCONNECTING,
-+					     sizeof(*request), 0, 0,
-+					     GFP_KERNEL);
- 	if (!operation)
- 		return -ENOMEM;
- 
-@@ -168,7 +167,7 @@ int gb_control_disconnecting_operation(struct gb_control *control,
- 	ret = gb_operation_request_send_sync(operation);
- 	if (ret) {
- 		dev_err(&control->dev, "failed to send disconnecting: %d\n",
--				ret);
-+			ret);
- 	}
- 
- 	gb_operation_put(operation);
-@@ -182,9 +181,10 @@ int gb_control_mode_switch_operation(struct gb_control *control)
- 	int ret;
- 
- 	operation = gb_operation_create_core(control->connection,
--					GB_CONTROL_TYPE_MODE_SWITCH,
--					0, 0, GB_OPERATION_FLAG_UNIDIRECTIONAL,
--					GFP_KERNEL);
-+					     GB_CONTROL_TYPE_MODE_SWITCH,
-+					     0, 0,
-+					     GB_OPERATION_FLAG_UNIDIRECTIONAL,
-+					     GFP_KERNEL);
- 	if (!operation)
- 		return -ENOMEM;
- 
-@@ -400,7 +400,7 @@ int gb_control_interface_hibernate_abort(struct gb_control *control)
- }
- 
- static ssize_t vendor_string_show(struct device *dev,
--			struct device_attribute *attr, char *buf)
-+				  struct device_attribute *attr, char *buf)
- {
- 	struct gb_control *control = to_gb_control(dev);
- 
-@@ -409,7 +409,7 @@ static ssize_t vendor_string_show(struct device *dev,
- static DEVICE_ATTR_RO(vendor_string);
- 
- static ssize_t product_string_show(struct device *dev,
--			struct device_attribute *attr, char *buf)
-+				   struct device_attribute *attr, char *buf)
- {
- 	struct gb_control *control = to_gb_control(dev);
- 
-@@ -455,8 +455,8 @@ struct gb_control *gb_control_create(struct gb_interface *intf)
- 	connection = gb_connection_create_control(intf);
- 	if (IS_ERR(connection)) {
- 		dev_err(&intf->dev,
--				"failed to create control connection: %ld\n",
--				PTR_ERR(connection));
-+			"failed to create control connection: %ld\n",
-+			PTR_ERR(connection));
- 		kfree(control);
- 		return ERR_CAST(connection);
- 	}
-@@ -485,8 +485,8 @@ int gb_control_enable(struct gb_control *control)
- 	ret = gb_connection_enable_tx(control->connection);
- 	if (ret) {
- 		dev_err(&control->connection->intf->dev,
--				"failed to enable control connection: %d\n",
--				ret);
-+			"failed to enable control connection: %d\n",
-+			ret);
- 		return ret;
- 	}
- 
-@@ -547,8 +547,8 @@ int gb_control_add(struct gb_control *control)
- 	ret = device_add(&control->dev);
- 	if (ret) {
- 		dev_err(&control->dev,
--				"failed to register control device: %d\n",
--				ret);
-+			"failed to register control device: %d\n",
-+			ret);
- 		return ret;
- 	}
- 
-diff --git a/drivers/staging/greybus/es2.c b/drivers/staging/greybus/es2.c
-index b4e3d6a..8df47e9 100644
---- a/drivers/staging/greybus/es2.c
-+++ b/drivers/staging/greybus/es2.c
-@@ -18,7 +18,6 @@
- #include "greybus_trace.h"
- #include "connection.h"
- 
--
- /* Default timeout for USB vendor requests. */
- #define ES2_USB_CTRL_TIMEOUT	500
- 
-@@ -216,7 +215,7 @@ static int output_async(struct es2_ap_dev *es2, void *req, u16 size, u8 cmd)
- }
- 
- static int output(struct gb_host_device *hd, void *req, u16 size, u8 cmd,
--		     bool async)
-+		  bool async)
- {
- 	struct es2_ap_dev *es2 = hd_to_es2(hd);
- 
-@@ -227,7 +226,7 @@ static int output(struct gb_host_device *hd, void *req, u16 size, u8 cmd,
- }
- 
- static int es2_cport_in_enable(struct es2_ap_dev *es2,
--				struct es2_cport_in *cport_in)
-+			       struct es2_cport_in *cport_in)
- {
- 	struct urb *urb;
- 	int ret;
-@@ -239,7 +238,7 @@ static int es2_cport_in_enable(struct es2_ap_dev *es2,
- 		ret = usb_submit_urb(urb, GFP_KERNEL);
- 		if (ret) {
- 			dev_err(&es2->usb_dev->dev,
--					"failed to submit in-urb: %d\n", ret);
-+				"failed to submit in-urb: %d\n", ret);
- 			goto err_kill_urbs;
- 		}
- 	}
-@@ -256,7 +255,7 @@ static int es2_cport_in_enable(struct es2_ap_dev *es2,
- }
- 
- static void es2_cport_in_disable(struct es2_ap_dev *es2,
--				struct es2_cport_in *cport_in)
-+				 struct es2_cport_in *cport_in)
- {
- 	struct urb *urb;
- 	int i;
-@@ -487,7 +486,7 @@ static void message_cancel(struct gb_message *message)
- }
- 
- static int es2_cport_allocate(struct gb_host_device *hd, int cport_id,
--				unsigned long flags)
-+			      unsigned long flags)
- {
- 	struct es2_ap_dev *es2 = hd_to_es2(hd);
- 	struct ida *id_map = &hd->cport_id_map;
-@@ -501,7 +500,7 @@ static int es2_cport_allocate(struct gb_host_device *hd, int cport_id,
- 	}
- 
- 	if (flags & GB_CONNECTION_FLAG_OFFLOADED &&
--			flags & GB_CONNECTION_FLAG_CDSI1) {
-+	    flags & GB_CONNECTION_FLAG_CDSI1) {
- 		if (es2->cdsi1_in_use) {
- 			dev_err(&hd->dev, "CDSI1 already in use\n");
- 			return -EBUSY;
-@@ -561,16 +560,16 @@ static int cport_enable(struct gb_host_device *hd, u16 cport_id,
- 	req->flags = cpu_to_le32(connection_flags);
- 
- 	dev_dbg(&hd->dev, "%s - cport = %u, flags = %02x\n", __func__,
--			cport_id, connection_flags);
-+		cport_id, connection_flags);
- 
- 	ret = usb_control_msg(udev, usb_sndctrlpipe(udev, 0),
--				GB_APB_REQUEST_CPORT_FLAGS,
--				USB_DIR_OUT | USB_TYPE_VENDOR |
--				USB_RECIP_INTERFACE, cport_id, 0,
--				req, sizeof(*req), ES2_USB_CTRL_TIMEOUT);
-+			      GB_APB_REQUEST_CPORT_FLAGS,
-+			      USB_DIR_OUT | USB_TYPE_VENDOR |
-+			      USB_RECIP_INTERFACE, cport_id, 0,
-+			      req, sizeof(*req), ES2_USB_CTRL_TIMEOUT);
- 	if (ret != sizeof(*req)) {
- 		dev_err(&udev->dev, "failed to set cport flags for port %d\n",
--				cport_id);
-+			cport_id);
- 		if (ret >= 0)
- 			ret = -EIO;
- 
-@@ -596,7 +595,7 @@ static int es2_cport_connected(struct gb_host_device *hd, u16 cport_id)
- 			NULL, ES2_ARPC_CPORT_TIMEOUT);
- 	if (ret) {
- 		dev_err(dev, "failed to set connected state for cport %u: %d\n",
--				cport_id, ret);
-+			cport_id, ret);
- 		return ret;
- 	}
- 
-@@ -622,7 +621,7 @@ static int es2_cport_flush(struct gb_host_device *hd, u16 cport_id)
- }
- 
- static int es2_cport_shutdown(struct gb_host_device *hd, u16 cport_id,
--				u8 phase, unsigned int timeout)
-+			      u8 phase, unsigned int timeout)
- {
- 	struct es2_ap_dev *es2 = hd_to_es2(hd);
- 	struct device *dev = &es2->usb_dev->dev;
-@@ -640,7 +639,7 @@ static int es2_cport_shutdown(struct gb_host_device *hd, u16 cport_id,
- 			&result, ES2_ARPC_CPORT_TIMEOUT + timeout);
- 	if (ret) {
- 		dev_err(dev, "failed to send shutdown over cport %u: %d (%d)\n",
--				cport_id, ret, result);
-+			cport_id, ret, result);
- 		return ret;
- 	}
- 
-@@ -648,7 +647,7 @@ static int es2_cport_shutdown(struct gb_host_device *hd, u16 cport_id,
- }
- 
- static int es2_cport_quiesce(struct gb_host_device *hd, u16 cport_id,
--				size_t peer_space, unsigned int timeout)
-+			     size_t peer_space, unsigned int timeout)
- {
- 	struct es2_ap_dev *es2 = hd_to_es2(hd);
- 	struct device *dev = &es2->usb_dev->dev;
-@@ -669,7 +668,7 @@ static int es2_cport_quiesce(struct gb_host_device *hd, u16 cport_id,
- 			&result, ES2_ARPC_CPORT_TIMEOUT + timeout);
- 	if (ret) {
- 		dev_err(dev, "failed to quiesce cport %u: %d (%d)\n",
--				cport_id, ret, result);
-+			cport_id, ret, result);
- 		return ret;
- 	}
- 
-@@ -846,7 +845,7 @@ static void cport_in_callback(struct urb *urb)
- 
- 	if (cport_id_valid(hd, cport_id)) {
- 		greybus_data_rcvd(hd, cport_id, urb->transfer_buffer,
--							urb->actual_length);
-+				  urb->actual_length);
- 	} else {
- 		dev_err(dev, "invalid cport id %u received\n", cport_id);
- 	}
-@@ -1083,14 +1082,14 @@ static void apb_log_get(struct es2_ap_dev *es2, char *buf)
- 
- 	do {
- 		retval = usb_control_msg(es2->usb_dev,
--					usb_rcvctrlpipe(es2->usb_dev, 0),
--					GB_APB_REQUEST_LOG,
--					USB_DIR_IN | USB_TYPE_VENDOR |
--					USB_RECIP_INTERFACE,
--					0x00, 0x00,
--					buf,
--					APB1_LOG_MSG_SIZE,
--					ES2_USB_CTRL_TIMEOUT);
-+					 usb_rcvctrlpipe(es2->usb_dev, 0),
-+					 GB_APB_REQUEST_LOG,
-+					 USB_DIR_IN | USB_TYPE_VENDOR |
-+					 USB_RECIP_INTERFACE,
-+					 0x00, 0x00,
-+					 buf,
-+					 APB1_LOG_MSG_SIZE,
-+					 ES2_USB_CTRL_TIMEOUT);
- 		if (retval > 0)
- 			kfifo_in(&es2->apb_log_fifo, buf, retval);
- 	} while (retval > 0);
-@@ -1116,7 +1115,7 @@ static int apb_log_poll(void *data)
- }
- 
- static ssize_t apb_log_read(struct file *f, char __user *buf,
--				size_t count, loff_t *ppos)
-+			    size_t count, loff_t *ppos)
- {
- 	struct es2_ap_dev *es2 = file_inode(f)->i_private;
- 	ssize_t ret;
-@@ -1153,8 +1152,8 @@ static void usb_log_enable(struct es2_ap_dev *es2)
- 		return;
- 	/* XXX We will need to rename this per APB */
- 	es2->apb_log_dentry = debugfs_create_file("apb_log", 0444,
--						gb_debugfs_get(), es2,
--						&apb_log_fops);
-+						  gb_debugfs_get(), es2,
-+						  &apb_log_fops);
- }
- 
- static void usb_log_disable(struct es2_ap_dev *es2)
-@@ -1170,7 +1169,7 @@ static void usb_log_disable(struct es2_ap_dev *es2)
- }
- 
- static ssize_t apb_log_enable_read(struct file *f, char __user *buf,
--				size_t count, loff_t *ppos)
-+				   size_t count, loff_t *ppos)
- {
- 	struct es2_ap_dev *es2 = file_inode(f)->i_private;
- 	int enable = !IS_ERR_OR_NULL(es2->apb_log_task);
-@@ -1181,7 +1180,7 @@ static ssize_t apb_log_enable_read(struct file *f, char __user *buf,
- }
- 
- static ssize_t apb_log_enable_write(struct file *f, const char __user *buf,
--				size_t count, loff_t *ppos)
-+				    size_t count, loff_t *ppos)
- {
- 	int enable;
- 	ssize_t retval;
-@@ -1274,7 +1273,7 @@ static int ap_probe(struct usb_interface *interface,
- 	}
- 
- 	hd = gb_hd_create(&es2_driver, &udev->dev, ES2_GBUF_MSG_SIZE_MAX,
--				num_cports);
-+			  num_cports);
- 	if (IS_ERR(hd)) {
- 		usb_put_dev(udev);
- 		return PTR_ERR(hd);
-@@ -1409,9 +1408,9 @@ static int ap_probe(struct usb_interface *interface,
- 
- 	/* XXX We will need to rename this per APB */
- 	es2->apb_log_enable_dentry = debugfs_create_file("apb_log_enable",
--							0644,
--							gb_debugfs_get(), es2,
--							&apb_log_enable_fops);
-+							 0644,
-+							 gb_debugfs_get(), es2,
-+							 &apb_log_enable_fops);
- 
- 	INIT_LIST_HEAD(&es2->arpcs);
- 	spin_lock_init(&es2->arpc_lock);
-diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
-index b1d46980..4de40fe 100644
---- a/drivers/staging/greybus/gpio.c
-+++ b/drivers/staging/greybus/gpio.c
-@@ -46,6 +46,7 @@ struct gb_gpio_controller {
- 	unsigned int		irq_default_type;
- 	struct mutex		irq_lock;
- };
-+
- #define gpio_chip_to_gb_gpio_controller(chip) \
- 	container_of(chip, struct gb_gpio_controller, chip)
- #define irq_data_to_gpio_chip(d) (d->domain->host_data)
-@@ -74,7 +75,7 @@ static int gb_gpio_activate_operation(struct gb_gpio_controller *ggc, u8 which)
- 
- 	request.which = which;
- 	ret = gb_operation_sync(ggc->connection, GB_GPIO_TYPE_ACTIVATE,
--				 &request, sizeof(request), NULL, 0);
-+				&request, sizeof(request), NULL, 0);
- 	if (ret) {
- 		gbphy_runtime_put_autosuspend(gbphy_dev);
- 		return ret;
-@@ -86,7 +87,7 @@ static int gb_gpio_activate_operation(struct gb_gpio_controller *ggc, u8 which)
- }
- 
- static void gb_gpio_deactivate_operation(struct gb_gpio_controller *ggc,
--					u8 which)
-+					 u8 which)
- {
- 	struct gbphy_device *gbphy_dev = ggc->gbphy_dev;
- 	struct device *dev = &gbphy_dev->dev;
-@@ -95,7 +96,7 @@ static void gb_gpio_deactivate_operation(struct gb_gpio_controller *ggc,
- 
- 	request.which = which;
- 	ret = gb_operation_sync(ggc->connection, GB_GPIO_TYPE_DEACTIVATE,
--				 &request, sizeof(request), NULL, 0);
-+				&request, sizeof(request), NULL, 0);
- 	if (ret) {
- 		dev_err(dev, "failed to deactivate gpio %u\n", which);
- 		goto out_pm_put;
-@@ -108,7 +109,7 @@ static void gb_gpio_deactivate_operation(struct gb_gpio_controller *ggc,
- }
- 
- static int gb_gpio_get_direction_operation(struct gb_gpio_controller *ggc,
--					u8 which)
-+					   u8 which)
- {
- 	struct device *dev = &ggc->gbphy_dev->dev;
- 	struct gb_gpio_get_direction_request request;
-@@ -133,7 +134,7 @@ static int gb_gpio_get_direction_operation(struct gb_gpio_controller *ggc,
- }
- 
- static int gb_gpio_direction_in_operation(struct gb_gpio_controller *ggc,
--					u8 which)
-+					  u8 which)
- {
- 	struct gb_gpio_direction_in_request request;
- 	int ret;
-@@ -147,7 +148,7 @@ static int gb_gpio_direction_in_operation(struct gb_gpio_controller *ggc,
- }
- 
- static int gb_gpio_direction_out_operation(struct gb_gpio_controller *ggc,
--					u8 which, bool value_high)
-+					   u8 which, bool value_high)
- {
- 	struct gb_gpio_direction_out_request request;
- 	int ret;
-@@ -162,7 +163,7 @@ static int gb_gpio_direction_out_operation(struct gb_gpio_controller *ggc,
- }
- 
- static int gb_gpio_get_value_operation(struct gb_gpio_controller *ggc,
--					u8 which)
-+				       u8 which)
- {
- 	struct device *dev = &ggc->gbphy_dev->dev;
- 	struct gb_gpio_get_value_request request;
-@@ -214,7 +215,7 @@ static void gb_gpio_set_value_operation(struct gb_gpio_controller *ggc,
- }
- 
- static int gb_gpio_set_debounce_operation(struct gb_gpio_controller *ggc,
--					u8 which, u16 debounce_usec)
-+					  u8 which, u16 debounce_usec)
- {
- 	struct gb_gpio_set_debounce_request request;
- 	int ret;
-@@ -257,7 +258,7 @@ static void _gb_gpio_irq_unmask(struct gb_gpio_controller *ggc, u8 hwirq)
- }
- 
- static void _gb_gpio_irq_set_type(struct gb_gpio_controller *ggc,
--					u8 hwirq, u8 type)
-+				  u8 hwirq, u8 type)
- {
- 	struct device *dev = &ggc->gbphy_dev->dev;
- 	struct gb_gpio_irq_type_request request;
-@@ -589,10 +590,10 @@ static void gb_gpio_irqchip_remove(struct gb_gpio_controller *ggc)
-  * before calling this function.
-  */
- static int gb_gpio_irqchip_add(struct gpio_chip *chip,
--			 struct irq_chip *irqchip,
--			 unsigned int first_irq,
--			 irq_flow_handler_t handler,
--			 unsigned int type)
-+			       struct irq_chip *irqchip,
-+			       unsigned int first_irq,
-+			       irq_flow_handler_t handler,
-+			       unsigned int type)
- {
- 	struct gb_gpio_controller *ggc;
- 	unsigned int offset;
-@@ -607,8 +608,8 @@ static int gb_gpio_irqchip_add(struct gpio_chip *chip,
- 	ggc->irq_handler = handler;
- 	ggc->irq_default_type = type;
- 	ggc->irqdomain = irq_domain_add_simple(NULL,
--					ggc->line_max + 1, first_irq,
--					&gb_gpio_domain_ops, chip);
-+					       ggc->line_max + 1, first_irq,
-+					       &gb_gpio_domain_ops, chip);
- 	if (!ggc->irqdomain) {
- 		ggc->irqchip = NULL;
- 		return -EINVAL;
-@@ -648,9 +649,10 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
- 	if (!ggc)
- 		return -ENOMEM;
- 
--	connection = gb_connection_create(gbphy_dev->bundle,
--					  le16_to_cpu(gbphy_dev->cport_desc->id),
--					  gb_gpio_request_handler);
-+	connection =
-+		gb_connection_create(gbphy_dev->bundle,
-+				     le16_to_cpu(gbphy_dev->cport_desc->id),
-+				     gb_gpio_request_handler);
- 	if (IS_ERR(connection)) {
- 		ret = PTR_ERR(connection);
- 		goto exit_ggc_free;
-@@ -703,7 +705,7 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
- 		goto exit_line_free;
- 
- 	ret = gb_gpio_irqchip_add(gpio, irqc, 0,
--				   handle_level_irq, IRQ_TYPE_NONE);
-+				  handle_level_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(&gbphy_dev->dev, "failed to add irq chip: %d\n", ret);
- 		goto exit_line_free;
-diff --git a/drivers/staging/greybus/hid.c b/drivers/staging/greybus/hid.c
-index 04053ff..d58a183 100644
---- a/drivers/staging/greybus/hid.c
-+++ b/drivers/staging/greybus/hid.c
-@@ -49,8 +49,8 @@ static int gb_hid_get_report_desc(struct gb_hid *ghid, char *rdesc)
- 		return ret;
- 
- 	ret = gb_operation_sync(ghid->connection, GB_HID_TYPE_GET_REPORT_DESC,
--				 NULL, 0, rdesc,
--				 le16_to_cpu(ghid->hdesc.wReportDescLength));
-+				NULL, 0, rdesc,
-+				le16_to_cpu(ghid->hdesc.wReportDescLength));
- 
- 	gb_pm_runtime_put_autosuspend(ghid->bundle);
- 
-@@ -86,7 +86,7 @@ static int gb_hid_get_report(struct gb_hid *ghid, u8 report_type, u8 report_id,
- 	request.report_id = report_id;
- 
- 	ret = gb_operation_sync(ghid->connection, GB_HID_TYPE_GET_REPORT,
--				 &request, sizeof(request), buf, len);
-+				&request, sizeof(request), buf, len);
- 
- 	gb_pm_runtime_put_autosuspend(ghid->bundle);
- 
-@@ -211,17 +211,21 @@ static void gb_hid_init_reports(struct gb_hid *ghid)
- 	struct hid_report *report;
- 
- 	list_for_each_entry(report,
--		&hid->report_enum[HID_INPUT_REPORT].report_list, list)
-+			    &hid->report_enum[HID_INPUT_REPORT].report_list,
-+			    list)
- 		gb_hid_init_report(ghid, report);
- 
- 	list_for_each_entry(report,
--		&hid->report_enum[HID_FEATURE_REPORT].report_list, list)
-+			    &hid->report_enum[HID_FEATURE_REPORT].report_list,
-+			    list)
- 		gb_hid_init_report(ghid, report);
- }
- 
--static int __gb_hid_get_raw_report(struct hid_device *hid,
--		unsigned char report_number, __u8 *buf, size_t count,
--		unsigned char report_type)
-+static int
-+__gb_hid_get_raw_report(struct hid_device *hid,
-+			unsigned char report_number, __u8 *buf,
-+			size_t count,
-+			unsigned char report_type)
- {
- 	struct gb_hid *ghid = hid->driver_data;
- 	int ret;
-@@ -259,8 +263,8 @@ static int __gb_hid_output_raw_report(struct hid_device *hid, __u8 *buf,
- }
- 
- static int gb_hid_raw_request(struct hid_device *hid, unsigned char reportnum,
--			       __u8 *buf, size_t len, unsigned char rtype,
--			       int reqtype)
-+			      __u8 *buf, size_t len, unsigned char rtype,
-+			      int reqtype)
- {
- 	switch (reqtype) {
- 	case HID_REQ_GET_REPORT:
-@@ -440,7 +444,7 @@ static int gb_hid_probe(struct gb_bundle *bundle,
- 		return -ENOMEM;
- 
- 	connection = gb_connection_create(bundle, le16_to_cpu(cport_desc->id),
--						gb_hid_request_handler);
-+					  gb_hid_request_handler);
- 	if (IS_ERR(connection)) {
- 		ret = PTR_ERR(connection);
- 		goto err_free_ghid;
-diff --git a/drivers/staging/greybus/i2c.c b/drivers/staging/greybus/i2c.c
-index 58a37de..7bb85a75 100644
---- a/drivers/staging/greybus/i2c.c
-+++ b/drivers/staging/greybus/i2c.c
-@@ -107,7 +107,7 @@ gb_i2c_operation_create(struct gb_connection *connection,
- 
- 	/* Response consists only of incoming data */
- 	operation = gb_operation_create(connection, GB_I2C_TYPE_TRANSFER,
--				request_size, data_in_size, GFP_KERNEL);
-+					request_size, data_in_size, GFP_KERNEL);
- 	if (!operation)
- 		return NULL;
- 
-@@ -137,7 +137,7 @@ gb_i2c_operation_create(struct gb_connection *connection,
- }
- 
- static void gb_i2c_decode_response(struct i2c_msg *msgs, u32 msg_count,
--				struct gb_i2c_transfer_response *response)
-+				   struct gb_i2c_transfer_response *response)
- {
- 	struct i2c_msg *msg = msgs;
- 	u8 *data;
-@@ -164,7 +164,7 @@ static bool gb_i2c_expected_transfer_error(int errno)
- }
- 
- static int gb_i2c_transfer_operation(struct gb_i2c_device *gb_i2c_dev,
--					struct i2c_msg *msgs, u32 msg_count)
-+				     struct i2c_msg *msgs, u32 msg_count)
- {
- 	struct gb_connection *connection = gb_i2c_dev->connection;
- 	struct device *dev = &gb_i2c_dev->gbphy_dev->dev;
-@@ -199,7 +199,7 @@ static int gb_i2c_transfer_operation(struct gb_i2c_device *gb_i2c_dev,
- }
- 
- static int gb_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
--		int msg_count)
-+			      int msg_count)
- {
- 	struct gb_i2c_device *gb_i2c_dev;
- 
-@@ -211,8 +211,8 @@ static int gb_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- #if 0
- /* Later */
- static int gb_i2c_smbus_xfer(struct i2c_adapter *adap,
--			u16 addr, unsigned short flags, char read_write,
--			u8 command, int size, union i2c_smbus_data *data)
-+			     u16 addr, unsigned short flags, char read_write,
-+			     u8 command, int size, union i2c_smbus_data *data)
- {
- 	struct gb_i2c_device *gb_i2c_dev;
- 
-@@ -249,7 +249,7 @@ static int gb_i2c_device_setup(struct gb_i2c_device *gb_i2c_dev)
- }
- 
- static int gb_i2c_probe(struct gbphy_device *gbphy_dev,
--			 const struct gbphy_device_id *id)
-+			const struct gbphy_device_id *id)
- {
- 	struct gb_connection *connection;
- 	struct gb_i2c_device *gb_i2c_dev;
-@@ -260,9 +260,10 @@ static int gb_i2c_probe(struct gbphy_device *gbphy_dev,
- 	if (!gb_i2c_dev)
- 		return -ENOMEM;
- 
--	connection = gb_connection_create(gbphy_dev->bundle,
--					  le16_to_cpu(gbphy_dev->cport_desc->id),
--					  NULL);
-+	connection =
-+		gb_connection_create(gbphy_dev->bundle,
-+				     le16_to_cpu(gbphy_dev->cport_desc->id),
-+				     NULL);
- 	if (IS_ERR(connection)) {
- 		ret = PTR_ERR(connection);
- 		goto exit_i2cdev_free;
-diff --git a/drivers/staging/greybus/module.c b/drivers/staging/greybus/module.c
-index 894d02e..b251a53 100644
---- a/drivers/staging/greybus/module.c
-+++ b/drivers/staging/greybus/module.c
-@@ -9,10 +9,9 @@
- #include "greybus.h"
- #include "greybus_trace.h"
- 
--
- static ssize_t eject_store(struct device *dev,
--				struct device_attribute *attr,
--				const char *buf, size_t len)
-+			   struct device_attribute *attr,
-+			   const char *buf, size_t len)
- {
- 	struct gb_module *module = to_gb_module(dev);
- 	struct gb_interface *intf;
-@@ -48,7 +47,7 @@ static ssize_t eject_store(struct device *dev,
- static DEVICE_ATTR_WO(eject);
- 
- static ssize_t module_id_show(struct device *dev,
--				struct device_attribute *attr, char *buf)
-+			      struct device_attribute *attr, char *buf)
- {
- 	struct gb_module *module = to_gb_module(dev);
- 
-@@ -57,7 +56,7 @@ static ssize_t module_id_show(struct device *dev,
- static DEVICE_ATTR_RO(module_id);
- 
- static ssize_t num_interfaces_show(struct device *dev,
--				struct device_attribute *attr, char *buf)
-+				   struct device_attribute *attr, char *buf)
- {
- 	struct gb_module *module = to_gb_module(dev);
- 
-@@ -88,7 +87,7 @@ struct device_type greybus_module_type = {
- };
- 
- struct gb_module *gb_module_create(struct gb_host_device *hd, u8 module_id,
--					size_t num_interfaces)
-+				   size_t num_interfaces)
- {
- 	struct gb_interface *intf;
- 	struct gb_module *module;
-@@ -117,7 +116,7 @@ struct gb_module *gb_module_create(struct gb_host_device *hd, u8 module_id,
- 		intf = gb_interface_create(module, module_id + i);
- 		if (!intf) {
- 			dev_err(&module->dev, "failed to create interface %u\n",
--					module_id + i);
-+				module_id + i);
- 			goto err_put_interfaces;
- 		}
- 		module->interfaces[i] = intf;
-@@ -149,8 +148,8 @@ static void gb_module_register_interface(struct gb_interface *intf)
- 	if (ret) {
- 		if (intf->type != GB_INTERFACE_TYPE_DUMMY) {
- 			dev_err(&module->dev,
--					"failed to activate interface %u: %d\n",
--					intf_id, ret);
-+				"failed to activate interface %u: %d\n",
-+				intf_id, ret);
- 		}
- 
- 		gb_interface_add(intf);
-@@ -164,7 +163,7 @@ static void gb_module_register_interface(struct gb_interface *intf)
- 	ret = gb_interface_enable(intf);
- 	if (ret) {
- 		dev_err(&module->dev, "failed to enable interface %u: %d\n",
--				intf_id, ret);
-+			intf_id, ret);
- 		goto err_interface_deactivate;
- 	}
- 
-diff --git a/drivers/staging/greybus/operation.c b/drivers/staging/greybus/operation.c
-index c462b1c..d66be9e 100644
---- a/drivers/staging/greybus/operation.c
-+++ b/drivers/staging/greybus/operation.c
-@@ -31,7 +31,7 @@ static DECLARE_WAIT_QUEUE_HEAD(gb_operation_cancellation_queue);
- static DEFINE_SPINLOCK(gb_operations_lock);
- 
- static int gb_operation_response_send(struct gb_operation *operation,
--					int errno);
-+				      int errno);
- 
- /*
-  * Increment operation active count and add to connection list unless the
-@@ -202,7 +202,7 @@ gb_operation_find_outgoing(struct gb_connection *connection, u16 operation_id)
- 	spin_lock_irqsave(&connection->lock, flags);
- 	list_for_each_entry(operation, &connection->operations, links)
- 		if (operation->id == operation_id &&
--				!gb_operation_is_incoming(operation)) {
-+		    !gb_operation_is_incoming(operation)) {
- 			gb_operation_get(operation);
- 			found = true;
- 			break;
-@@ -307,8 +307,9 @@ static void gb_operation_timeout(struct timer_list *t)
- }
- 
- static void gb_operation_message_init(struct gb_host_device *hd,
--				struct gb_message *message, u16 operation_id,
--				size_t payload_size, u8 type)
-+				      struct gb_message *message,
-+				      u16 operation_id,
-+				      size_t payload_size, u8 type)
- {
- 	struct gb_operation_msg_hdr *header;
- 
-@@ -358,7 +359,7 @@ static void gb_operation_message_init(struct gb_host_device *hd,
-  */
- static struct gb_message *
- gb_operation_message_alloc(struct gb_host_device *hd, u8 type,
--				size_t payload_size, gfp_t gfp_flags)
-+			   size_t payload_size, gfp_t gfp_flags)
- {
- 	struct gb_message *message;
- 	struct gb_operation_msg_hdr *header;
-@@ -366,7 +367,7 @@ gb_operation_message_alloc(struct gb_host_device *hd, u8 type,
- 
- 	if (message_size > hd->buffer_size_max) {
- 		dev_warn(&hd->dev, "requested message size too big (%zu > %zu)\n",
--				message_size, hd->buffer_size_max);
-+			 message_size, hd->buffer_size_max);
- 		return NULL;
- 	}
- 
-@@ -465,7 +466,7 @@ static u8 gb_operation_errno_map(int errno)
- }
- 
- bool gb_operation_response_alloc(struct gb_operation *operation,
--					size_t response_size, gfp_t gfp)
-+				 size_t response_size, gfp_t gfp)
- {
- 	struct gb_host_device *hd = operation->connection->hd;
- 	struct gb_operation_msg_hdr *request_header;
-@@ -516,8 +517,8 @@ EXPORT_SYMBOL_GPL(gb_operation_response_alloc);
-  */
- static struct gb_operation *
- gb_operation_create_common(struct gb_connection *connection, u8 type,
--				size_t request_size, size_t response_size,
--				unsigned long op_flags, gfp_t gfp_flags)
-+			   size_t request_size, size_t response_size,
-+			   unsigned long op_flags, gfp_t gfp_flags)
- {
- 	struct gb_host_device *hd = connection->hd;
- 	struct gb_operation *operation;
-@@ -572,9 +573,9 @@ gb_operation_create_common(struct gb_connection *connection, u8 type,
-  */
- struct gb_operation *
- gb_operation_create_flags(struct gb_connection *connection,
--				u8 type, size_t request_size,
--				size_t response_size, unsigned long flags,
--				gfp_t gfp)
-+			  u8 type, size_t request_size,
-+			  size_t response_size, unsigned long flags,
-+			  gfp_t gfp)
- {
- 	struct gb_operation *operation;
- 
-@@ -587,8 +588,8 @@ gb_operation_create_flags(struct gb_connection *connection,
- 		flags &= GB_OPERATION_FLAG_USER_MASK;
- 
- 	operation = gb_operation_create_common(connection, type,
--						request_size, response_size,
--						flags, gfp);
-+					       request_size, response_size,
-+					       flags, gfp);
- 	if (operation)
- 		trace_gb_operation_create(operation);
- 
-@@ -598,22 +599,23 @@ EXPORT_SYMBOL_GPL(gb_operation_create_flags);
- 
- struct gb_operation *
- gb_operation_create_core(struct gb_connection *connection,
--				u8 type, size_t request_size,
--				size_t response_size, unsigned long flags,
--				gfp_t gfp)
-+			 u8 type, size_t request_size,
-+			 size_t response_size, unsigned long flags,
-+			 gfp_t gfp)
- {
- 	struct gb_operation *operation;
- 
- 	flags |= GB_OPERATION_FLAG_CORE;
- 
- 	operation = gb_operation_create_common(connection, type,
--						request_size, response_size,
--						flags, gfp);
-+					       request_size, response_size,
-+					       flags, gfp);
- 	if (operation)
- 		trace_gb_operation_create_core(operation);
- 
- 	return operation;
- }
-+
- /* Do not export this function. */
- 
- size_t gb_operation_get_payload_size_max(struct gb_connection *connection)
-@@ -626,7 +628,7 @@ EXPORT_SYMBOL_GPL(gb_operation_get_payload_size_max);
- 
- static struct gb_operation *
- gb_operation_create_incoming(struct gb_connection *connection, u16 id,
--				u8 type, void *data, size_t size)
-+			     u8 type, void *data, size_t size)
- {
- 	struct gb_operation *operation;
- 	size_t request_size;
-@@ -639,9 +641,9 @@ gb_operation_create_incoming(struct gb_connection *connection, u16 id,
- 		flags |= GB_OPERATION_FLAG_UNIDIRECTIONAL;
- 
- 	operation = gb_operation_create_common(connection, type,
--						request_size,
--						GB_REQUEST_TYPE_INVALID,
--						flags, GFP_ATOMIC);
-+					       request_size,
-+					       GB_REQUEST_TYPE_INVALID,
-+					       flags, GFP_ATOMIC);
- 	if (!operation)
- 		return NULL;
- 
-@@ -716,9 +718,9 @@ static void gb_operation_sync_callback(struct gb_operation *operation)
-  * or a negative errno.
-  */
- int gb_operation_request_send(struct gb_operation *operation,
--				gb_operation_callback callback,
--				unsigned int timeout,
--				gfp_t gfp)
-+			      gb_operation_callback callback,
-+			      unsigned int timeout,
-+			      gfp_t gfp)
- {
- 	struct gb_connection *connection = operation->connection;
- 	struct gb_operation_msg_hdr *header;
-@@ -790,7 +792,7 @@ EXPORT_SYMBOL_GPL(gb_operation_request_send);
-  * operation.
-  */
- int gb_operation_request_send_sync_timeout(struct gb_operation *operation,
--						unsigned int timeout)
-+					   unsigned int timeout)
- {
- 	int ret;
- 
-@@ -819,13 +821,13 @@ EXPORT_SYMBOL_GPL(gb_operation_request_send_sync_timeout);
-  * allocate the response message if necessary.
-  */
- static int gb_operation_response_send(struct gb_operation *operation,
--					int errno)
-+				      int errno)
- {
- 	struct gb_connection *connection = operation->connection;
- 	int ret;
- 
- 	if (!operation->response &&
--			!gb_operation_is_unidirectional(operation)) {
-+	    !gb_operation_is_unidirectional(operation)) {
- 		if (!gb_operation_response_alloc(operation, 0, GFP_KERNEL))
- 			return -ENOMEM;
- 	}
-@@ -867,7 +869,7 @@ static int gb_operation_response_send(struct gb_operation *operation,
-  * This function is called when a message send request has completed.
-  */
- void greybus_message_sent(struct gb_host_device *hd,
--					struct gb_message *message, int status)
-+			  struct gb_message *message, int status)
- {
- 	struct gb_operation *operation = message->operation;
- 	struct gb_connection *connection = operation->connection;
-@@ -895,7 +897,7 @@ void greybus_message_sent(struct gb_host_device *hd,
- 	} else if (status || gb_operation_is_unidirectional(operation)) {
- 		if (gb_operation_result_set(operation, status)) {
- 			queue_work(gb_operation_completion_wq,
--					&operation->work);
-+				   &operation->work);
- 		}
- 	}
- }
-@@ -908,9 +910,10 @@ EXPORT_SYMBOL_GPL(greybus_message_sent);
-  * This is called in interrupt context, so just copy the incoming
-  * data into the request buffer and handle the rest via workqueue.
-  */
--static void gb_connection_recv_request(struct gb_connection *connection,
--				const struct gb_operation_msg_hdr *header,
--				void *data, size_t size)
-+static void
-+gb_connection_recv_request(struct gb_connection *connection,
-+			   const struct gb_operation_msg_hdr *header,
-+			   void *data, size_t size)
- {
- 	struct gb_operation *operation;
- 	u16 operation_id;
-@@ -921,7 +924,7 @@ static void gb_connection_recv_request(struct gb_connection *connection,
- 	type = header->type;
- 
- 	operation = gb_operation_create_incoming(connection, operation_id,
--						type, data, size);
-+						 type, data, size);
- 	if (!operation) {
- 		dev_err(&connection->hd->dev,
- 			"%s: can't create incoming operation\n",
-@@ -952,9 +955,10 @@ static void gb_connection_recv_request(struct gb_connection *connection,
-  * This is called in interrupt context, so just copy the incoming
-  * data into the response buffer and handle the rest via workqueue.
-  */
--static void gb_connection_recv_response(struct gb_connection *connection,
--				const struct gb_operation_msg_hdr *header,
--				void *data, size_t size)
-+static void
-+gb_connection_recv_response(struct gb_connection *connection,
-+			    const struct gb_operation_msg_hdr *header,
-+			    void *data, size_t size)
- {
- 	struct gb_operation *operation;
- 	struct gb_message *message;
-@@ -966,16 +970,16 @@ static void gb_connection_recv_response(struct gb_connection *connection,
- 
- 	if (!operation_id) {
- 		dev_err_ratelimited(&connection->hd->dev,
--				"%s: invalid response id 0 received\n",
--				connection->name);
-+				    "%s: invalid response id 0 received\n",
-+				    connection->name);
- 		return;
- 	}
- 
- 	operation = gb_operation_find_outgoing(connection, operation_id);
- 	if (!operation) {
- 		dev_err_ratelimited(&connection->hd->dev,
--				"%s: unexpected response id 0x%04x received\n",
--				connection->name, operation_id);
-+				    "%s: unexpected response id 0x%04x received\n",
-+				    connection->name, operation_id);
- 		return;
- 	}
- 
-@@ -984,18 +988,18 @@ static void gb_connection_recv_response(struct gb_connection *connection,
- 	message_size = sizeof(*header) + message->payload_size;
- 	if (!errno && size > message_size) {
- 		dev_err_ratelimited(&connection->hd->dev,
--				"%s: malformed response 0x%02x received (%zu > %zu)\n",
--				connection->name, header->type,
--				size, message_size);
-+				    "%s: malformed response 0x%02x received (%zu > %zu)\n",
-+				    connection->name, header->type,
-+				    size, message_size);
- 		errno = -EMSGSIZE;
- 	} else if (!errno && size < message_size) {
- 		if (gb_operation_short_response_allowed(operation)) {
- 			message->payload_size = size - sizeof(*header);
- 		} else {
- 			dev_err_ratelimited(&connection->hd->dev,
--					"%s: short response 0x%02x received (%zu < %zu)\n",
--					connection->name, header->type,
--					size, message_size);
-+					    "%s: short response 0x%02x received (%zu < %zu)\n",
-+					    connection->name, header->type,
-+					    size, message_size);
- 			errno = -EMSGSIZE;
- 		}
- 	}
-@@ -1022,22 +1026,22 @@ static void gb_connection_recv_response(struct gb_connection *connection,
-  * with, it's effectively dropped).
-  */
- void gb_connection_recv(struct gb_connection *connection,
--				void *data, size_t size)
-+			void *data, size_t size)
- {
- 	struct gb_operation_msg_hdr header;
- 	struct device *dev = &connection->hd->dev;
- 	size_t msg_size;
- 
- 	if (connection->state == GB_CONNECTION_STATE_DISABLED ||
--			gb_connection_is_offloaded(connection)) {
-+	    gb_connection_is_offloaded(connection)) {
- 		dev_warn_ratelimited(dev, "%s: dropping %zu received bytes\n",
--				connection->name, size);
-+				     connection->name, size);
- 		return;
- 	}
- 
- 	if (size < sizeof(header)) {
- 		dev_err_ratelimited(dev, "%s: short message received\n",
--				connection->name);
-+				    connection->name);
- 		return;
- 	}
- 
-@@ -1046,19 +1050,19 @@ void gb_connection_recv(struct gb_connection *connection,
- 	msg_size = le16_to_cpu(header.size);
- 	if (size < msg_size) {
- 		dev_err_ratelimited(dev,
--				"%s: incomplete message 0x%04x of type 0x%02x received (%zu < %zu)\n",
--				connection->name,
--				le16_to_cpu(header.operation_id),
--				header.type, size, msg_size);
-+				    "%s: incomplete message 0x%04x of type 0x%02x received (%zu < %zu)\n",
-+				    connection->name,
-+				    le16_to_cpu(header.operation_id),
-+				    header.type, size, msg_size);
- 		return;		/* XXX Should still complete operation */
- 	}
- 
- 	if (header.type & GB_MESSAGE_TYPE_RESPONSE) {
- 		gb_connection_recv_response(connection,	&header, data,
--						msg_size);
-+					    msg_size);
- 	} else {
- 		gb_connection_recv_request(connection, &header, data,
--						msg_size);
-+					   msg_size);
- 	}
- }
- 
-@@ -1079,7 +1083,7 @@ void gb_operation_cancel(struct gb_operation *operation, int errno)
- 
- 	atomic_inc(&operation->waiters);
- 	wait_event(gb_operation_cancellation_queue,
--			!gb_operation_is_active(operation));
-+		   !gb_operation_is_active(operation));
- 	atomic_dec(&operation->waiters);
- }
- EXPORT_SYMBOL_GPL(gb_operation_cancel);
-@@ -1106,7 +1110,7 @@ void gb_operation_cancel_incoming(struct gb_operation *operation, int errno)
- 
- 	atomic_inc(&operation->waiters);
- 	wait_event(gb_operation_cancellation_queue,
--			!gb_operation_is_active(operation));
-+		   !gb_operation_is_active(operation));
- 	atomic_dec(&operation->waiters);
- }
- 
-@@ -1134,9 +1138,9 @@ void gb_operation_cancel_incoming(struct gb_operation *operation, int errno)
-  * If there is an error, the response buffer is left alone.
-  */
- int gb_operation_sync_timeout(struct gb_connection *connection, int type,
--				void *request, int request_size,
--				void *response, int response_size,
--				unsigned int timeout)
-+			      void *request, int request_size,
-+			      void *response, int response_size,
-+			      unsigned int timeout)
- {
- 	struct gb_operation *operation;
- 	int ret;
-@@ -1187,8 +1191,9 @@ EXPORT_SYMBOL_GPL(gb_operation_sync_timeout);
-  * the request as actually reached the remote end of the connection.
-  */
- int gb_operation_unidirectional_timeout(struct gb_connection *connection,
--				int type, void *request, int request_size,
--				unsigned int timeout)
-+					int type, void *request,
-+					int request_size,
-+					unsigned int timeout)
- {
- 	struct gb_operation *operation;
- 	int ret;
-@@ -1197,9 +1202,9 @@ int gb_operation_unidirectional_timeout(struct gb_connection *connection,
- 		return -EINVAL;
- 
- 	operation = gb_operation_create_flags(connection, type,
--					request_size, 0,
--					GB_OPERATION_FLAG_UNIDIRECTIONAL,
--					GFP_KERNEL);
-+					      request_size, 0,
-+					      GB_OPERATION_FLAG_UNIDIRECTIONAL,
-+					      GFP_KERNEL);
- 	if (!operation)
- 		return -ENOMEM;
- 
-@@ -1222,17 +1227,19 @@ EXPORT_SYMBOL_GPL(gb_operation_unidirectional_timeout);
- int __init gb_operation_init(void)
- {
- 	gb_message_cache = kmem_cache_create("gb_message_cache",
--				sizeof(struct gb_message), 0, 0, NULL);
-+					     sizeof(struct gb_message), 0, 0,
-+					     NULL);
- 	if (!gb_message_cache)
- 		return -ENOMEM;
- 
- 	gb_operation_cache = kmem_cache_create("gb_operation_cache",
--				sizeof(struct gb_operation), 0, 0, NULL);
-+					       sizeof(struct gb_operation), 0,
-+					       0, NULL);
- 	if (!gb_operation_cache)
- 		goto err_destroy_message_cache;
- 
- 	gb_operation_completion_wq = alloc_workqueue("greybus_completion",
--				0, 0);
-+						     0, 0);
- 	if (!gb_operation_completion_wq)
- 		goto err_destroy_operation_cache;
- 
-diff --git a/drivers/staging/greybus/svc.c b/drivers/staging/greybus/svc.c
-index a2bb7e1..42511c8 100644
---- a/drivers/staging/greybus/svc.c
-+++ b/drivers/staging/greybus/svc.c
-@@ -20,11 +20,10 @@ struct gb_svc_deferred_request {
- 	struct gb_operation *operation;
- };
- 
--
- static int gb_svc_queue_deferred_request(struct gb_operation *operation);
- 
- static ssize_t endo_id_show(struct device *dev,
--			struct device_attribute *attr, char *buf)
-+			    struct device_attribute *attr, char *buf)
- {
- 	struct gb_svc *svc = to_gb_svc(dev);
- 
-@@ -33,7 +32,7 @@ static ssize_t endo_id_show(struct device *dev,
- static DEVICE_ATTR_RO(endo_id);
- 
- static ssize_t ap_intf_id_show(struct device *dev,
--			struct device_attribute *attr, char *buf)
-+			       struct device_attribute *attr, char *buf)
- {
- 	struct gb_svc *svc = to_gb_svc(dev);
- 
-@@ -147,9 +146,10 @@ static int gb_svc_pwrmon_rail_count_get(struct gb_svc *svc, u8 *value)
- 	return 0;
- }
- 
--static int gb_svc_pwrmon_rail_names_get(struct gb_svc *svc,
--		struct gb_svc_pwrmon_rail_names_get_response *response,
--		size_t bufsize)
-+static int
-+gb_svc_pwrmon_rail_names_get(struct gb_svc *svc,
-+			     struct gb_svc_pwrmon_rail_names_get_response *response,
-+			     size_t bufsize)
- {
- 	int ret;
- 
-@@ -304,8 +304,8 @@ int gb_svc_intf_vsys_set(struct gb_svc *svc, u8 intf_id, bool enable)
- 		type = GB_SVC_TYPE_INTF_VSYS_DISABLE;
- 
- 	ret = gb_operation_sync(svc->connection, type,
--			&request, sizeof(request),
--			&response, sizeof(response));
-+				&request, sizeof(request),
-+				&response, sizeof(response));
- 	if (ret < 0)
- 		return ret;
- 	if (response.result_code != GB_SVC_INTF_VSYS_OK)
-@@ -327,8 +327,8 @@ int gb_svc_intf_refclk_set(struct gb_svc *svc, u8 intf_id, bool enable)
- 		type = GB_SVC_TYPE_INTF_REFCLK_DISABLE;
- 
- 	ret = gb_operation_sync(svc->connection, type,
--			&request, sizeof(request),
--			&response, sizeof(response));
-+				&request, sizeof(request),
-+				&response, sizeof(response));
- 	if (ret < 0)
- 		return ret;
- 	if (response.result_code != GB_SVC_INTF_REFCLK_OK)
-@@ -350,8 +350,8 @@ int gb_svc_intf_unipro_set(struct gb_svc *svc, u8 intf_id, bool enable)
- 		type = GB_SVC_TYPE_INTF_UNIPRO_DISABLE;
- 
- 	ret = gb_operation_sync(svc->connection, type,
--			&request, sizeof(request),
--			&response, sizeof(response));
-+				&request, sizeof(request),
-+				&response, sizeof(response));
- 	if (ret < 0)
- 		return ret;
- 	if (response.result_code != GB_SVC_INTF_UNIPRO_OK)
-@@ -368,15 +368,15 @@ int gb_svc_intf_activate(struct gb_svc *svc, u8 intf_id, u8 *intf_type)
- 	request.intf_id = intf_id;
- 
- 	ret = gb_operation_sync_timeout(svc->connection,
--			GB_SVC_TYPE_INTF_ACTIVATE,
--			&request, sizeof(request),
--			&response, sizeof(response),
--			SVC_INTF_ACTIVATE_TIMEOUT);
-+					GB_SVC_TYPE_INTF_ACTIVATE,
-+					&request, sizeof(request),
-+					&response, sizeof(response),
-+					SVC_INTF_ACTIVATE_TIMEOUT);
- 	if (ret < 0)
- 		return ret;
- 	if (response.status != GB_SVC_OP_SUCCESS) {
- 		dev_err(&svc->dev, "failed to activate interface %u: %u\n",
--				intf_id, response.status);
-+			intf_id, response.status);
- 		return -EREMOTEIO;
- 	}
- 
-@@ -430,14 +430,14 @@ int gb_svc_dme_peer_get(struct gb_svc *svc, u8 intf_id, u16 attr, u16 selector,
- 				&response, sizeof(response));
- 	if (ret) {
- 		dev_err(&svc->dev, "failed to get DME attribute (%u 0x%04x %u): %d\n",
--				intf_id, attr, selector, ret);
-+			intf_id, attr, selector, ret);
- 		return ret;
- 	}
- 
- 	result = le16_to_cpu(response.result_code);
- 	if (result) {
- 		dev_err(&svc->dev, "UniPro error while getting DME attribute (%u 0x%04x %u): %u\n",
--				intf_id, attr, selector, result);
-+			intf_id, attr, selector, result);
- 		return -EREMOTEIO;
- 	}
- 
-@@ -465,14 +465,14 @@ int gb_svc_dme_peer_set(struct gb_svc *svc, u8 intf_id, u16 attr, u16 selector,
- 				&response, sizeof(response));
- 	if (ret) {
- 		dev_err(&svc->dev, "failed to set DME attribute (%u 0x%04x %u %u): %d\n",
--				intf_id, attr, selector, value, ret);
-+			intf_id, attr, selector, value, ret);
- 		return ret;
- 	}
- 
- 	result = le16_to_cpu(response.result_code);
- 	if (result) {
- 		dev_err(&svc->dev, "UniPro error while setting DME attribute (%u 0x%04x %u %u): %u\n",
--				intf_id, attr, selector, value, result);
-+			intf_id, attr, selector, value, result);
- 		return -EREMOTEIO;
- 	}
- 
-@@ -480,9 +480,9 @@ int gb_svc_dme_peer_set(struct gb_svc *svc, u8 intf_id, u16 attr, u16 selector,
- }
- 
- int gb_svc_connection_create(struct gb_svc *svc,
--				u8 intf1_id, u16 cport1_id,
--				u8 intf2_id, u16 cport2_id,
--				u8 cport_flags)
-+			     u8 intf1_id, u16 cport1_id,
-+			     u8 intf2_id, u16 cport2_id,
-+			     u8 cport_flags)
- {
- 	struct gb_svc_conn_create_request request;
- 
-@@ -513,13 +513,13 @@ void gb_svc_connection_destroy(struct gb_svc *svc, u8 intf1_id, u16 cport1_id,
- 				&request, sizeof(request), NULL, 0);
- 	if (ret) {
- 		dev_err(&svc->dev, "failed to destroy connection (%u:%u %u:%u): %d\n",
--				intf1_id, cport1_id, intf2_id, cport2_id, ret);
-+			intf1_id, cport1_id, intf2_id, cport2_id, ret);
- 	}
- }
- 
- /* Creates bi-directional routes between the devices */
- int gb_svc_route_create(struct gb_svc *svc, u8 intf1_id, u8 dev1_id,
--			       u8 intf2_id, u8 dev2_id)
-+			u8 intf2_id, u8 dev2_id)
- {
- 	struct gb_svc_route_create_request request;
- 
-@@ -545,7 +545,7 @@ void gb_svc_route_destroy(struct gb_svc *svc, u8 intf1_id, u8 intf2_id)
- 				&request, sizeof(request), NULL, 0);
- 	if (ret) {
- 		dev_err(&svc->dev, "failed to destroy route (%u %u): %d\n",
--				intf1_id, intf2_id, ret);
-+			intf1_id, intf2_id, ret);
- 	}
- }
- 
-@@ -648,8 +648,8 @@ static int gb_svc_version_request(struct gb_operation *op)
- 
- 	if (op->request->payload_size < sizeof(*request)) {
- 		dev_err(&svc->dev, "short version request (%zu < %zu)\n",
--				op->request->payload_size,
--				sizeof(*request));
-+			op->request->payload_size,
-+			sizeof(*request));
- 		return -EINVAL;
- 	}
- 
-@@ -657,7 +657,7 @@ static int gb_svc_version_request(struct gb_operation *op)
- 
- 	if (request->major > GB_SVC_VERSION_MAJOR) {
- 		dev_warn(&svc->dev, "unsupported major version (%u > %u)\n",
--				request->major, GB_SVC_VERSION_MAJOR);
-+			 request->major, GB_SVC_VERSION_MAJOR);
- 		return -ENOTSUPP;
- 	}
- 
-@@ -845,8 +845,8 @@ static int gb_svc_hello(struct gb_operation *op)
- 
- 	if (op->request->payload_size < sizeof(*hello_request)) {
- 		dev_warn(&svc->dev, "short hello request (%zu < %zu)\n",
--				op->request->payload_size,
--				sizeof(*hello_request));
-+			 op->request->payload_size,
-+			 sizeof(*hello_request));
- 		return -EINVAL;
- 	}
- 
-@@ -877,7 +877,7 @@ static int gb_svc_hello(struct gb_operation *op)
- }
- 
- static struct gb_interface *gb_svc_interface_lookup(struct gb_svc *svc,
--							u8 intf_id)
-+						    u8 intf_id)
- {
- 	struct gb_host_device *hd = svc->hd;
- 	struct gb_module *module;
-@@ -889,7 +889,7 @@ static struct gb_interface *gb_svc_interface_lookup(struct gb_svc *svc,
- 		num_interfaces = module->num_interfaces;
- 
- 		if (intf_id >= module_id &&
--				intf_id < module_id + num_interfaces) {
-+		    intf_id < module_id + num_interfaces) {
- 			return module->interfaces[intf_id - module_id];
- 		}
- 	}
-@@ -938,8 +938,8 @@ static void gb_svc_process_hello_deferred(struct gb_operation *operation)
- 
- 	if (ret)
- 		dev_warn(&svc->dev,
--			"power mode change failed on AP to switch link: %d\n",
--			ret);
-+			 "power mode change failed on AP to switch link: %d\n",
-+			 ret);
- }
- 
- static void gb_svc_process_module_inserted(struct gb_operation *operation)
-@@ -961,17 +961,17 @@ static void gb_svc_process_module_inserted(struct gb_operation *operation)
- 	flags = le16_to_cpu(request->flags);
- 
- 	dev_dbg(&svc->dev, "%s - id = %u, num_interfaces = %zu, flags = 0x%04x\n",
--			__func__, module_id, num_interfaces, flags);
-+		__func__, module_id, num_interfaces, flags);
- 
- 	if (flags & GB_SVC_MODULE_INSERTED_FLAG_NO_PRIMARY) {
- 		dev_warn(&svc->dev, "no primary interface detected on module %u\n",
--				module_id);
-+			 module_id);
- 	}
- 
- 	module = gb_svc_module_lookup(svc, module_id);
- 	if (module) {
- 		dev_warn(&svc->dev, "unexpected module-inserted event %u\n",
--				module_id);
-+			 module_id);
- 		return;
- 	}
- 
-@@ -1007,7 +1007,7 @@ static void gb_svc_process_module_removed(struct gb_operation *operation)
- 	module = gb_svc_module_lookup(svc, module_id);
- 	if (!module) {
- 		dev_warn(&svc->dev, "unexpected module-removed event %u\n",
--				module_id);
-+			 module_id);
- 		return;
- 	}
- 
-@@ -1066,7 +1066,7 @@ static void gb_svc_process_intf_mailbox_event(struct gb_operation *operation)
- 	mailbox = le32_to_cpu(request->mailbox);
- 
- 	dev_dbg(&svc->dev, "%s - id = %u, result = 0x%04x, mailbox = 0x%08x\n",
--			__func__, intf_id, result_code, mailbox);
-+		__func__, intf_id, result_code, mailbox);
- 
- 	intf = gb_svc_interface_lookup(svc, intf_id);
- 	if (!intf) {
-@@ -1140,7 +1140,7 @@ static int gb_svc_intf_reset_recv(struct gb_operation *op)
- 
- 	if (request->payload_size < sizeof(*reset)) {
- 		dev_warn(&svc->dev, "short reset request received (%zu < %zu)\n",
--				request->payload_size, sizeof(*reset));
-+			 request->payload_size, sizeof(*reset));
- 		return -EINVAL;
- 	}
- 	reset = request->payload;
-@@ -1157,14 +1157,14 @@ static int gb_svc_module_inserted_recv(struct gb_operation *op)
- 
- 	if (op->request->payload_size < sizeof(*request)) {
- 		dev_warn(&svc->dev, "short module-inserted request received (%zu < %zu)\n",
--				op->request->payload_size, sizeof(*request));
-+			 op->request->payload_size, sizeof(*request));
- 		return -EINVAL;
- 	}
- 
- 	request = op->request->payload;
- 
- 	dev_dbg(&svc->dev, "%s - id = %u\n", __func__,
--			request->primary_intf_id);
-+		request->primary_intf_id);
- 
- 	return gb_svc_queue_deferred_request(op);
- }
-@@ -1176,14 +1176,14 @@ static int gb_svc_module_removed_recv(struct gb_operation *op)
- 
- 	if (op->request->payload_size < sizeof(*request)) {
- 		dev_warn(&svc->dev, "short module-removed request received (%zu < %zu)\n",
--				op->request->payload_size, sizeof(*request));
-+			 op->request->payload_size, sizeof(*request));
- 		return -EINVAL;
- 	}
- 
- 	request = op->request->payload;
- 
- 	dev_dbg(&svc->dev, "%s - id = %u\n", __func__,
--			request->primary_intf_id);
-+		request->primary_intf_id);
- 
- 	return gb_svc_queue_deferred_request(op);
- }
-@@ -1209,7 +1209,7 @@ static int gb_svc_intf_mailbox_event_recv(struct gb_operation *op)
- 
- 	if (op->request->payload_size < sizeof(*request)) {
- 		dev_warn(&svc->dev, "short mailbox request received (%zu < %zu)\n",
--				op->request->payload_size, sizeof(*request));
-+			 op->request->payload_size, sizeof(*request));
- 		return -EINVAL;
- 	}
- 
-@@ -1254,7 +1254,7 @@ static int gb_svc_request_handler(struct gb_operation *op)
- 
- 	if (ret) {
- 		dev_warn(&svc->dev, "unexpected request 0x%02x received (state %u)\n",
--				type, svc->state);
-+			 type, svc->state);
- 		return ret;
- 	}
- 
-@@ -1329,10 +1329,10 @@ struct gb_svc *gb_svc_create(struct gb_host_device *hd)
- 	svc->hd = hd;
- 
- 	svc->connection = gb_connection_create_static(hd, GB_SVC_CPORT_ID,
--						gb_svc_request_handler);
-+						      gb_svc_request_handler);
- 	if (IS_ERR(svc->connection)) {
- 		dev_err(&svc->dev, "failed to create connection: %ld\n",
--				PTR_ERR(svc->connection));
-+			PTR_ERR(svc->connection));
- 		goto err_put_device;
- 	}
- 
+diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
+index 85f2ca989565..ef3ffa5ad466 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_common.c
++++ b/drivers/net/wireless/broadcom/b43/phy_common.c
+@@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
+ 	u8 i;
+ 	s32 tmp;
+ 	s8 signx = 1;
+-	u32 angle = 0;
++	s32 angle = 0;
+ 	struct b43_c32 ret = { .i = 39797, .q = 0, };
+ 
+ 	while (theta > (180 << 16))
 -- 
-2.7.4
+2.16.4
 
+
+--------------A4EEE76D88D7EF2499287287--
