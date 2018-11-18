@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C55C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED674C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D43820815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42122086B
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 04:26:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="SH/7FFKF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D43820815
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="TTYvO4L9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42122086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbeKROp0 (ORCPT
+        id S1727094AbeKROp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 09:45:26 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34991 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbeKROpZ (ORCPT
+        Sun, 18 Nov 2018 09:45:29 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40892 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727038AbeKROp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 09:45:25 -0500
-Received: by mail-qk1-f195.google.com with SMTP id w204so43872386qka.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 20:26:23 -0800 (PST)
+        Sun, 18 Nov 2018 09:45:28 -0500
+Received: by mail-qk1-f194.google.com with SMTP id y16so43866254qki.7
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 20:26:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=usp-br.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1TSPSfPbTrHQYU6brU0H9TGwCLOV4/4bEV+zwplIAXc=;
-        b=SH/7FFKFziUtWWLrsr5KjYVbtZpgZ2GLZea3lGjEFbDMFhN7C4zugOtyue6dEDN3KI
-         5C6GEjLbaZwFRTXYBfj39PFVGKC/ljEfpUlDx0rZuHLW52yD1k5uJhMVJjViH1x33kmx
-         Dfz7pxk2ux0ctvs+Xq53pGXkpsjgpPN/gitwFHrfnSe2dhqdosppZb1/uXTPQGfO9tLt
-         CG/u5XamG/FfNlhhf98n27LGJB9v6MoFrWRGMR+WSbqKmZBWhLBOPPZO8spUH2cPsDvV
-         CdaIYgXRaV/Bx0EqDgOGU0LsbjnhCkxo1bU1UkDZP5LQjt+9Me7X+BFjraF98eh2NJiB
-         qEsQ==
+        bh=LbTCHeHGilCnfPYHT4tj0WlGCcK4WPxi/1Koox5eezY=;
+        b=TTYvO4L9TcRHBUUw2NnvzLiUiM3++li0s4a7l/VOBv/6bAH987r2kgUZTvtYFJumC1
+         UZy91qqULKSAqYS7er192QUFA+Ti3kKn4PrCqc0WRTkFrTOWJWHNPbqVuQdONeZRt4mT
+         pdxQI3CpZMm854UoKowpiJdiRQAmw6WGn0HKrTwxKQCASX9MYIJ/aPQo/VydLkvaGyaB
+         ea4PCOASYqGNHsYBnkuS64WMIG4TqlTdaDu/M0OH342KyoOw6IfvjlVAYQTWzmnn+WKC
+         CJ2GvZKGI+S+FypjbCpeSdslYANH4uAI3ZoIOfVykmAUNS6HqYd5R8T9gB+uVbNCTIjB
+         T78A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1TSPSfPbTrHQYU6brU0H9TGwCLOV4/4bEV+zwplIAXc=;
-        b=NcFJfw3Mm4Aa5sqA2427ocdmgODsmIxBmNqRzKTMZKuUjCxJXBTz9GOE9/PLZJcv8I
-         MO6P9uTNi6xeliRnQ6JXhRUY5D2FgSjfWPoh39rpEbf/urPf1s4/xEey3B4ILF9gpSEr
-         hT7SLMCxJxDK9Z+IC5rEU1RGWyHahVz4BvslWldElXXdxUhp8m9N9FQha0nPU2ljTPmk
-         sS6553uCvMTatDA5+doYDf2/3v7+oVcR4MgDCu69e/6jiPFTm3/pgrlW9ZdSeoG9hzVb
-         tBF/9BoxDV4BnmpeDAdGwi3WPCVGYtXi//sWeFQhJVAFLkQ4zY58aAqcbOZ4fD6q1Th1
-         5GLQ==
-X-Gm-Message-State: AGRZ1gLJTCxhL2JUaIgu8ZtRUe3MwvtJ+2bYXbayjz/E+Xxg0Rq5W9uZ
-        eOapP/TA40dVFiQbn52kBZu00A==
-X-Google-Smtp-Source: AJdET5fnj3tspDjNf4I8oKfqnzGiVqBWXy7Qr9Ym1PqslmPrs6UwvXwJmPKF8xKvqWT2t+lBu5HjyQ==
-X-Received: by 2002:a0c:d174:: with SMTP id c49mr16315537qvh.231.1542515183357;
-        Sat, 17 Nov 2018 20:26:23 -0800 (PST)
+        bh=LbTCHeHGilCnfPYHT4tj0WlGCcK4WPxi/1Koox5eezY=;
+        b=uY6lKsWyJEq63e0E1gRhEYf3qvEXksOLUvFmhe83EzwKw4kje0Knu9hmhwqrzU9TmP
+         0W2bkql0qJtaSdcwh0p7SxSemQBnSoDGjr4IIIYlxo3Og8bHu+bm1amj/L0ze86CdOIF
+         uiw8N3jJ6UoHuOm4jL+IYR0mDvvwAmMcu6w7Eo9ki2Va0u86pW5k2e0eenF7ttMFpmsk
+         izR7M/TzY4gbM86YoSBaPl8gBRcYmAhSwcbzOT9Gfs9yTJVZPxzjefG6ufsZ0PPNbNGL
+         sN66YrEcclcU44CKs5nSbJQ3nBjXoDq8Zw1rQUsQGM+sz27JwsxuKcRQHa8MmTuc6YPW
+         CpbQ==
+X-Gm-Message-State: AGRZ1gJ99BZe0gA4tlV/qCr4PwGyHmnwl6hVZURoBrtVUt7TFN8Y9sgj
+        DVgx9luQlD7BNJxboPp18t/MCQ==
+X-Google-Smtp-Source: AJdET5cj17K9hOJ2qdLJcjLj5wyrp0r54jer/usB4snabjxxPT/OptGG0AG3DMR4u3kDF/hJOzUtjA==
+X-Received: by 2002:ac8:22ca:: with SMTP id g10mr16745011qta.105.1542515187492;
+        Sat, 17 Nov 2018 20:26:27 -0800 (PST)
 Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id b6sm16112350qtq.29.2018.11.17.20.26.19
+        by smtp.gmail.com with ESMTPSA id b6sm16112350qtq.29.2018.11.17.20.26.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 20:26:22 -0800 (PST)
+        Sat, 17 Nov 2018 20:26:27 -0800 (PST)
 From:   Matheus Tavares <matheus.bernardino@usp.br>
 To:     Lars-Peter Clausen <lars@metafoo.de>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
@@ -71,9 +71,9 @@ Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexandru Ardelean <alexandru.ardelean@analog.com>,
         kernel-usp@googlegroups.com, victorcolombo@gmail.com
-Subject: [PATCH v2 3/7] staging:iio:ad2s90: Add max frequency check at probe
-Date:   Sun, 18 Nov 2018 02:25:36 -0200
-Message-Id: <20181118042540.12697-4-matheus.bernardino@usp.br>
+Subject: [PATCH v2 4/7] dt-bindings:iio:resolver: Add docs for ad2s90
+Date:   Sun, 18 Nov 2018 02:25:37 -0200
+Message-Id: <20181118042540.12697-5-matheus.bernardino@usp.br>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181118042540.12697-1-matheus.bernardino@usp.br>
 References: <20181118042540.12697-1-matheus.bernardino@usp.br>
@@ -82,59 +82,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+This patch adds the device tree binding documentation for the ad2s90
+resolver-to-digital converter.
 
-This patch adds a max frequency check at the beginning of ad2s90_probe
-function so that when it is set to a value above 0.83Mhz, dev_err is
-called with an appropriate message and -EINVAL is returned.
-
-The defined limit is 0.83Mhz instead of 2Mhz, which is the chip's max
-frequency as specified in the datasheet, because, as also specified in
-the datasheet, a 600ns delay is expected between the application of a
-logic LO to CS and the application of SCLK. Since the delay is not
-implemented in the spi code, to satisfy it, SCLK's period should be at
-most 2 * 600ns, so the max frequency should be 1 / (2 * 6e-7), which
-gives roughly 830000Hz.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
 ---
 Changes in v2:
- - Correctly credit Alexandru as the patch's author
+ - Rewritten 'spi-cpol and spi-cpha' item to say that the device can
+ work in either mode (0,0) or (1,1) and explain how they should be
+ specified in DT.
 
- drivers/staging/iio/resolver/ad2s90.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ .../bindings/iio/resolver/ad2s90.txt          | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/resolver/ad2s90.txt
 
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index 913d6fad2d4d..fe90f2056bff 100644
---- a/drivers/staging/iio/resolver/ad2s90.c
-+++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -19,6 +19,12 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
- 
-+/*
-+ * Although chip's max frequency is 2Mhz, it needs 600ns between CS and the
-+ * first falling edge of SCLK, so frequency should be at most 1 / (2 * 6e-7)
-+ */
-+#define AD2S90_MAX_SPI_FREQ_HZ  830000
+diff --git a/Documentation/devicetree/bindings/iio/resolver/ad2s90.txt b/Documentation/devicetree/bindings/iio/resolver/ad2s90.txt
+new file mode 100644
+index 000000000000..594417539938
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/resolver/ad2s90.txt
+@@ -0,0 +1,28 @@
++Analog Devices AD2S90 Resolver-to-Digital Converter
 +
- struct ad2s90_state {
- 	struct mutex lock;
- 	struct spi_device *sdev;
-@@ -78,6 +84,12 @@ static int ad2s90_probe(struct spi_device *spi)
- 	struct iio_dev *indio_dev;
- 	struct ad2s90_state *st;
- 
-+	if (spi->max_speed_hz > AD2S90_MAX_SPI_FREQ_HZ) {
-+		dev_err(&spi->dev, "SPI CLK, %d Hz exceeds %d Hz\n",
-+			spi->max_speed_hz, AD2S90_MAX_SPI_FREQ_HZ);
-+		return -EINVAL;
-+	}
++https://www.analog.com/en/products/ad2s90.html
 +
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
- 	if (!indio_dev)
- 		return -ENOMEM;
++Required properties:
++  - compatible: should be "adi,ad2s90"
++  - reg: SPI chip select number for the device
++  - spi-max-frequency: set maximum clock frequency, must be 830000
++  - spi-cpol and spi-cpha:
++        Either SPI mode (0,0) or (1,1) must be used, so specify none or both of
++        spi-cpha, spi-cpol.
++
++Note about max frequency:
++    Chip's max frequency, as specified in its datasheet, is 2Mhz. But a 600ns
++    delay is expected between the application of a logic LO to CS and the
++    application of SCLK, as also specified. And since the delay is not
++    implemented in the spi code, to satisfy it, SCLK's period should be at most
++    2 * 600ns, so the max frequency should be 1 / (2 * 6e-7), which gives
++    roughly 830000Hz.
++
++Example:
++resolver@0 {
++	compatible = "adi,ad2s90";
++	reg = <0>;
++	spi-max-frequency = <830000>;
++	spi-cpol;
++	spi-cpha;
++};
 -- 
 2.18.0
 
