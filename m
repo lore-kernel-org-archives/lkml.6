@@ -2,125 +2,139 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEE2C43441
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BA6C43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D58D20815
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:38:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="ynES27Hd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D58D20815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 2BF2520815
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 21:49:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BF2520815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbeKSH7n (ORCPT
+        id S1727614AbeKSILQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 02:59:43 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:33900 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726499AbeKSH7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 02:59:43 -0500
-Received: by mail-it1-f195.google.com with SMTP id x124so5781624itd.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 13:38:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BxQfJW2kQdDn9A8wc85LDvFA3SC8nq6Od4NzrYEAoJQ=;
-        b=ynES27HdNbD0PVHV7e69Z6p+PkDuc3Z3O9gikWL42ver/F7A+g6u2hZMRjufdP7dCe
-         cs4RL2LRIRynYY4zOPoIo7SU6BFAoFzjR/By2L+BUpgQGqbMVSgiQnNx/3oMWjmZOlzp
-         WpDy1x1a45njNNjwaBpgE7n861BD2GhnBQxOGXg6ECn7fKT6X9lamyepvTOji12OxXyU
-         Bb0Bwfd6lZB8CZvngiaUbGma6MCc1vgFFiiSMRHh3qFdMGzg737BZUW4M7zjjAFsLGB0
-         oH5LRN9QLjL5/jMdFy07SDZK4lB2SCU18Ta09viWiGTchdPY7U6fTMO/7edvQ20jBBmc
-         Vx9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BxQfJW2kQdDn9A8wc85LDvFA3SC8nq6Od4NzrYEAoJQ=;
-        b=e5Xk2sEo0MtrfeQyw+kbgVnLxzWfcejqa2Zb7Iu0GneP/NxW2X1BxUlF3HCubDFJs9
-         6hQZEF6OjLviAqeiGk86tDAnox9wIzEe+hascYzdlD74OuFq0BeXmP3NOaqIXFl2Tjvt
-         U/Xx3wqqDRRLDp0WJ/9BlKUUSTB7QjmTw9qhIWd+wRK67UHutAFPB5i78Cz6QZUxq4f2
-         YNQ7Q264gKhNCVdX/K0He30tlLRxfKe5sCMAsA8FC5unhNglKy0de6+JieFzipTyV1tb
-         /A18iMcrWCTG2Yk6OcpxcKPBMHwrAjBBRiVcmuPw2b4LI6TD0CS5ctFxROUzW7aFlTZQ
-         TPNQ==
-X-Gm-Message-State: AA+aEWbns5yKn31fPc9dqOH0WhT+KJAB/csMhWt2EnCGty1pxV6BovjD
-        32BXfBTx4JRiPrUV1a7mkDh9PdVI46sdOySS4Va2/Q==
-X-Google-Smtp-Source: AFSGD/VEIjaT9N/As1AsNw4gk8J1eUCLRva679IbhP/2U4zsXGR6nh3xazg3mo0p+3ZqZBKyy+rWtX6gWNN51bkCooo=
-X-Received: by 2002:a24:28d2:: with SMTP id h201mr2453929ith.136.1542577096014;
- Sun, 18 Nov 2018 13:38:16 -0800 (PST)
+        Mon, 19 Nov 2018 03:11:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44472 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725826AbeKSILQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 03:11:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8DC7EAE87;
+        Sun, 18 Nov 2018 21:49:45 +0000 (UTC)
+Date:   Sun, 18 Nov 2018 22:49:44 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        stable@vger.kernel.org
+Subject: Re: STIBP by default.. Revert?
+In-Reply-To: <CAHk-=wg-9FUGU=grF4gKDq1sm1m39Jbs3A_iyLbSSntU47ncwg@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1811182222230.21108@cbobk.fhfr.pm>
+References: <CAHk-=wg-9FUGU=grF4gKDq1sm1m39Jbs3A_iyLbSSntU47ncwg@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181118123504.83082-1-tmaimon77@gmail.com> <20181118123504.83082-2-tmaimon77@gmail.com>
-In-Reply-To: <20181118123504.83082-2-tmaimon77@gmail.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Sun, 18 Nov 2018 13:38:05 -0800
-Message-ID: <CAOesGMjUJ1+qmbPWcVFm1F_F0fcdg-54YY6o4iK=PYWoAuEczA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] spi: npcm: fix uninitialized 'val' warning in
- receive function
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, yuenn@google.com,
-        venture@google.com, brendanhiggins@google.com,
-        avifishman70@gmail.com, Joel Stanley <joel@jms.id.au>,
-        linux-spi@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 4:36 AM Tomer Maimon <tmaimon77@gmail.com> wrote:
->
-> Fix uninitialized 'val' warning receive function, send function
-> has been modify to be aligned with the receive function.
->
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> ---
->  drivers/spi/spi-npcm-pspi.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-> index 6dae91091143..f75df49ab84e 100644
-> --- a/drivers/spi/spi-npcm-pspi.c
-> +++ b/drivers/spi/spi-npcm-pspi.c
-> @@ -199,11 +199,11 @@ static void npcm_pspi_send(struct npcm_pspi *priv)
->         wsize = min(bytes_per_word(priv->bits_per_word), priv->tx_bytes);
->         priv->tx_bytes -= wsize;
->
-> -       if (priv->tx_buf) {
-> -               if (wsize == 1)
-> -                       iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-> +       if (priv->tx_buf && wsize) {
+On Sun, 18 Nov 2018, Linus Torvalds wrote:
 
-In general, doing an early:
-        if (!condition)
-                return;
+> This was marked for stable, and honestly, nowhere in the discussion
+> did I see any mention of just *how* bad the performance impact of this
+> was.
 
-is a pattern we prefer in the kernel. Setting up the assumptions at
-the beginning of the function makes it easier to follow the code flow,
-and saves a level of indentation.
+Frankly, I ran some benchmarks myself, and am seeing very, very 
+varying/noisy results, which were rather inconclusive across the 
+individual workloads.
 
-It's a matter of taste though, and this function has only one level.
-So, either way is OK. Just mentioning it.
+The article someone pointed me to at Phoronix yesterday also was talking 
+about something between 3% and 20% IIRC.
 
->                 if (wsize == 2)
->                         iowrite16(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
-> +               else
-> +                       iowrite8(*priv->tx_buf, NPCM_PSPI_DATA + priv->base);
+> When performance goes down by 50% on some loads, people need to start
+> asking themselves whether it was worth it. It's apparently better to
+> just disable SMT entirely, which is what security-conscious people do
+> anyway.
+> 
+> So why do that STIBP slow-down by default when the people who *really*
+> care already disabled SMT?
 
-I think this is broken? If wsize is something else than 1 or 2, you'll
-do a one-byte write but advance the buffer pointer with a different
-amount.
+BTW for them, there is no impact at all. And they probably did it because 
+of crypto libraries being implemented in a way that their observable 
+operation depends on value of the secrets (tlbleed etc), but this is being 
+fixed in the said crypto code.
 
-It'll be fairly tricky to debug if this ever happens (it shouldn't,
-but still). This is why I added a WARN_ON_ONCE() in my patch instead.
+STIBP is only activated on systems with HT on; plus odds are that people 
+who don't care about spectrev2 already have 'nospectre_v2' on their 
+command-line, so they are fine as well.
 
+> I think we should use the same logic as for L1TF: we default to
+> something that doesn't kill performance. Warn once about it, and let
+> the  crazy people say "I'd rather take a 50% performance hit than
+> worry about a theoretical issue".
 
--Olof
+So, I think it's as theoretical as any other spectrev2 (only with the 
+extra "HT" condition added on top).
+
+Namely, I think that scenarios such as "one browser tab's javascript is 
+attacking other browser's tab private data on a sibling" is rather a 
+practical one, I've seen such demos (not with the sibling condition being 
+in place, but I don't think that matters that much). The same likely holds 
+for server threads serving individual requests in separate threads, etc 
+(but yeah, you need to have proper gadgets there in place already in 
+server's .text, which makes it much less practical).
+
+For L1TF, the basic argument AFAICS was, that the default situation is 
+"only special people care about strict isolation between VMs". But this is 
+isolation between individual processess.
+
+Tim is currently working [1] on a patchset on top of my original 
+STIBP-enabling commit, that will make STIBP to be used in much smaller 
+number of cases (taking prctl()-based aproach as one of the possible ones, 
+similarly as we did for SSBD), and as I indicated in that thread, I think 
+it should be really considered for this -rc cycle still if it lands in tip 
+in a reasonable future.
+
+To conclude -- I am quite happy that this finally started to move 
+(although it's sad that some of it is due to clickbaity article titles, 
+but whatever), as Intel didn't really provide any patch / guidance (*) in 
+past ~1 year to those who care about spectrev2 isolation on HT, which is 
+something I wasn't really feeling comfortable with, and that's why I 
+submitted the patch.
+
+If we make it opt-in (on kernel cmdline) and issue big fat warning if not 
+mitigated, fine, but then we're bit incosistent how we deal with 
+cross-core (IBPB) and cross-thread (STIBP) spectrev2 security in the 
+kernel code.
+
+If we take Tim's aproach, even better -- there would be means available to 
+make system secure, although not sacrifying performance by default.
+
+I would not prefer going the plain revert path though, as that leaves no 
+other option to mitigate rather than turning SMT off, which might possibly 
+have even *worse* performance numbers depending on workload.
+
+[1] https://lore.kernel.org/lkml/?q=cover.1542418936.git.tim.c.chen%40linux.intel.com
+
+(*) no code to implement STIBP sanely, no recommendation about turning SMT 
+    off at least for some workloads
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
