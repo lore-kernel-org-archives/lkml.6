@@ -2,115 +2,153 @@ Return-Path: <SRS0=OQvN=N5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAAFC04EBC
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BAADC43441
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A732080F
-	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:02:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A732080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EBEF52080F
+	for <linux-kernel@archiver.kernel.org>; Sun, 18 Nov 2018 13:03:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WD6+eFoV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEF52080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727288AbeKRXWa (ORCPT
+        id S1727324AbeKRXYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 18:22:30 -0500
-Received: from mga04.intel.com ([192.55.52.120]:47204 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbeKRXWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 18:22:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 05:02:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,248,1539673200"; 
-   d="scan'208";a="107260292"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.142])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Nov 2018 05:02:05 -0800
-Date:   Sun, 18 Nov 2018 15:02:03 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181118130203.GA18934@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <20181118071548.GA4795@linux.intel.com>
+        Sun, 18 Nov 2018 18:24:09 -0500
+Received: from casper.infradead.org ([85.118.1.10]:60454 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeKRXYJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 18:24:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=BE0OTLBHMNGZbynVK1HUaCVTmTsCUQDzO5jMFbOvL6Y=; b=WD6+eFoVY4jFKSLJaX/FK4f9qU
+        vbXHJV0hjey2sF+7S9XhGeyzlxfnJHnNGvkbIuY6ElukhCJbtbyJ7SBNuyyVv7/hL8h/B5mbV+ut+
+        BtDd8TyeRraqRP5VPoUd92UeltlV/89+nFO+kivDjIYv1PxDnpSrPH0Kew16/v49qIm9El7osyZMj
+        aPZpt5iRA+4J9HLPNO/R4BeNgSnKpW720Qxs7ILAAAaYBVTmCQcL4kgr51JE8a69MiO/kezSWvRLu
+        obXQc5tE1CQZ0n9SiItrxQcdHr7wnskFJiBYjZaWJUVmT8FA6dByh5+Oawb0Qb28g4j/5Kk98KbEJ
+        /mxM5lpw==;
+Received: from 177.17.134.91.dynamic.adsl.gvt.net.br ([177.17.134.91] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOMjZ-0001oF-9a; Sun, 18 Nov 2018 13:03:39 +0000
+Date:   Sun, 18 Nov 2018 11:03:24 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     rodrigo.vivi@gmail.com,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zwisler@kernel.org
+Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
+ Subsystem Profile
+Message-ID: <20181118110324.543edbd8@coco.lan>
+In-Reply-To: <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com>
+        <20181115061036.1575223d@silica.lan>
+        <20181115162008.GO3759@mtr-leonro.mtl.com>
+        <CABVU7+twSz3OZx7PTO+bS-wfLfTTjZVhRAnhgtcs6KWwntattw@mail.gmail.com>
+        <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118071548.GA4795@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 09:15:48AM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
-> > Hi all-
-> > 
-> > The people working on SGX enablement are grappling with a somewhat
-> > annoying issue: the x86 EENTER instruction is used from user code and
-> > can, as part of its normal-ish operation, raise an exception.  It is
-> > also highly likely to be used from a library, and signal handling in
-> > libraries is unpleasant at best.
-> > 
-> > There's been some discussion of adding a vDSO entry point to wrap
-> > EENTER and do something sensible with the exceptions, but I'm
-> > wondering if a more general mechanism would be helpful.
+Em Fri, 16 Nov 2018 15:44:45 -0800
+Dan Williams <dan.j.williams@intel.com> escreveu:
+
+> On Fri, Nov 16, 2018 at 12:37 PM Rodrigo Vivi <rodrigo.vivi@gmail.com> wrote:
+> >
+> > On Thu, Nov 15, 2018 at 8:38 AM Leon Romanovsky <leon@kernel.org> wrote:  
+> > >
+> > > On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:  
+> > > > Em Thu, 15 Nov 2018 09:03:11 +0100
+> > > > Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
+> > > >  
+> > > > > Hi Dan,
+> > > > >
+> > > > > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:  
+> > > > > > Document the basic policies of the libnvdimm subsystem and provide a
+> > > > > > first example of a Subsystem Profile for others to duplicate and edit.
+> > > > > >
+> > > > > > Cc: Ross Zwisler <zwisler@kernel.org>
+> > > > > > Cc: Vishal Verma <vishal.l.verma@intel.com>
+> > > > > > Cc: Dave Jiang <dave.jiang@intel.com>
+> > > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>  
+> > > > >
+> > > > > Thanks for your patch!
+> > > > >  
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/nvdimm/subsystem-profile.rst  
+> > > > >  
+> > > > > > +Trusted Reviewers
+> > > > > > +-----------------
+> > > > > > +Johannes Thumshirn
+> > > > > > +Toshi Kani
+> > > > > > +Jeff Moyer
+> > > > > > +Robert Elliott  
+> > > > >
+> > > > > Don't you want to add email addresses?
+> > > > > Only the first one is listed in MAINTAINERS.  
+> > > >
+> > > > IMO, it makes sense to have their e-mails here, in a way that it could
+> > > > easily be parsed by get_maintainers.pl.  
+> > >
+> > > I personally think that list of "trusted reviewers" makes more harm than
+> > > good. It creates unneeded negative feelings to those who wanted to be in
+> > > this list, but for any reason they don't. Those reviewers will feel
+> > > "untrusted".  
+> >
+> > I'd like to +1 on this concern here. Besides leaving all the other
+> > people demotivated.  
 > 
-> I haven't really followed all of this discussion because I've been busy
-> working on the patch set but for me all of these approaches look awfully
-> complicated.
+> Yes, that's a valid concern, I overlooked that unfortunate interpretation.
 > 
-> I'll throw my own suggestion and apologize if this has been already
-> suggested and discarded: return-to-AEP.
+> >
+> > A small group of trusted reviewers doesn't scale. People will get overloaded.
+> > Or you won't be able to enforce that all patches need to get Reviews.
+> >
+> > Reviews should be coming from everywhere and commiters and maintainers
+> > deciding on what to trust or re-review.
+> >
+> > Also the list is hard to maintain and keep the lists updated.  
 > 
-> My idea is to do just a small extension to SGX AEX handling. At the
-> moment hardware will RAX, RBX and RCX with ERESUME parameters. We can
-> fill extend this by filling other three spare registers with exception
-> information.
+> I understand the concern, and as I saw feedback come in I realized
+> there were more people that I would add to that reviewer list for
+> libnvdimm.
 > 
-> AEP handler can then do whatever it wants to do with this information
-> or just do ERESUME.
+> Stepping back the end goal is to have an initial list of recommended
+> people to follow up with directly to seek a second opinion, or help in
+> cases where a contributor otherwise needs some direction / engagement
+> that they are not readily receiving from the maintainer. Typically
+> someone just lurks on the mailing list for a few weeks to get a feel
+> for who the usual suspects are in the subsystem, but for a new
+> contributor identifying those individuals may be difficult.
+> 
+> One of the contributing factors of lack of response to a patchset is
+> that they are sent with the implicit expectation that the maintainer
+> will get to eventually, and typically other people feel content to sit
+> back and watch. If instead a contributor sent a direct mail to a
+> "trusted reviewer" saying, "Hey, Alice, Bob seems busy can you help me
+> out?" that seems more likely to rope in additional review help.
 
-A correction here. In practice this will add a requirement to have a bit
-more complicated AEP code (check the regs for exceptions) than before
-and not just bytes for ENCLU.
+Hmm.. Perhaps the subsystem profile should point to IRC channels if any?
+Several subsystems use them in order to provide newbies some directions
+and to discuss other development issues.
 
-e.g. AEP handler should be along the lines
-
-1. #PF (or #UD or) happens. Kernel fills the registers when it cannot
-   handle the exception and returns back to user space i.e. to the
-   AEP handler.
-2. Check the registers containing exception information. If they have
-   been filled, take whatever actions user space wants to take.
-3. Otherwise, just ERESUME.
-
-From my point of view this is making the AEP parameter useful. Its
-standard use is just weird (always point to a place just containing
-ENCLU bytes, why the heck it even exists).
-
-/Jarkko
+Thanks,
+Mauro
