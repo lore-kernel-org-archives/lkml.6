@@ -2,106 +2,98 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA75C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E6CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01D302089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IGpQKqMk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01D302089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0004A208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0004A208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbeKSXVw (ORCPT
+        id S1728963AbeKSXVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:21:52 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36742 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728903AbeKSXVv (ORCPT
+        Mon, 19 Nov 2018 18:21:54 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46787 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728724AbeKSXVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:21:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=5ODMqUXIxXlq8NQaGVEI5LGykRgTtYVNr5q1ok1UGiQ=; b=IGpQKqMkciwDKHo7ruv/LuIQU
-        R43GWF+/4wGRLhswNCXDNsb3Qq4Z+SGGAZbaoSBN3AdPkwxiGGyK/PlFQRE3H2biKgaXMQlDZgjQs
-        EP11ipfPrnYPDrDKXDQ5yEL/xft9VcnlD/nHtLo1GE9XEbZdstxoGlz5gluhVwKiFIqSpNJOfvLdt
-        Lp2Vi6i2RqvfmeFcu2PTKPRMO0UMNOOGietR5lSuAQ5vZNIXiNFOd77P7WfenX1VImWCYu+ZGksE5
-        gCdtS5v41FnhSPyUb2ClKsyDz58UeTI0+YTdQk0zdgtSc/fMBfX5nnRJSqaAyd8/+reROxKtQfHbU
-        YbPQedCoQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOj7w-0001gt-Nj; Mon, 19 Nov 2018 12:58:08 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 41F0020298BFC; Mon, 19 Nov 2018 13:58:07 +0100 (CET)
-Date:   Mon, 19 Nov 2018 13:58:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] perf/core: Add macro to test for event exclusion
- flags
-Message-ID: <20181119125807.GD9761@hirez.programming.kicks-ass.net>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
+        Mon, 19 Nov 2018 18:21:54 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gOj80-000520-9y; Mon, 19 Nov 2018 13:58:12 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gOj7z-0005mK-6o; Mon, 19 Nov 2018 13:58:11 +0100
+Date:   Mon, 19 Nov 2018 13:58:11 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v6 1/6] clk: Add of_clk_get_by_name_optional() function
+Message-ID: <20181119125811.6bujcow5wf4hvfz4@pengutronix.de>
+References: <20181116145937.27660-1-phil.edworthy@renesas.com>
+ <20181116145937.27660-2-phil.edworthy@renesas.com>
+ <20181116160128.pkuya6rwqm4schdn@pengutronix.de>
+ <20181116161122.hhvslbzdujxpk3up@pengutronix.de>
+ <TY1PR01MB17697C2C8BCE98009EBDECF7F5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <20181119104603.qzuvpoha622l4xvy@pengutronix.de>
+ <TY1PR01MB17695E8ED56BBC03AAA7FD8FF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TY1PR01MB17695E8ED56BBC03AAA7FD8FF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 10:24:04AM +0000, Andrew Murray wrote:
-> Add a macro that tests if any of the perf event exclusion flags
-> are set on a given event.
+Hello Phil,
 
-It is in fact an inline function, not a CPP macro.
+On Mon, Nov 19, 2018 at 12:53:46PM +0000, Phil Edworthy wrote:
+> On 19 November 2018 10:46 Uwe Kleine-König wrote:
+> > On Mon, Nov 19, 2018 at 10:41:42AM +0000, Phil Edworthy wrote:
+> > > btw, do we need to add of_clk_get_by_name_optional()? I only added it
+> > > as a counterpart to of_clk_get_by_name(), but it may not be needed.
+> > 
+> > I don't need it. Given that it is easy to add when someone has a need, I'd say,
+> > skip it for now.
+> 
+> I'm wondering if we actually need clk_get_optional(). For me at least, I just
+> want devm_clk_get_optional(). That would get rid of the arch patches.
 
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->  include/linux/perf_event.h | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 53c500f..89ee7fa 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
->  extern void
->  perf_log_lost_samples(struct perf_event *event, u64 lost);
->  
-> +static inline bool event_has_exclude_flags(struct perf_event *event)
-> +{
-> +	struct perf_event_attr *attr = &event->attr;
-> +
-> +	return attr->exclude_idle || attr->exclude_user ||
-> +	       attr->exclude_kernel || attr->exclude_hv ||
-> +	       attr->exclude_guest || attr->exclude_host;
-> +}
-> +
->  static inline bool is_sampling_event(struct perf_event *event)
->  {
->  	return event->attr.sample_period != 0;
-> -- 
-> 2.7.4
-> 
+Given that clk_get_optional will be that simple, it can live in
+linux/clk.h for all implementors of the clk API, then you don't have to
+care about different archs. (Unless I'm missing something.)
+
+I don't think it's a good idea to drop clk_get_optional even if you'd
+have to provide arch-specific stuff.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
