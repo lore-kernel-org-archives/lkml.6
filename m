@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5867C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA0EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870F72080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 870F72080F
+	by mail.kernel.org (Postfix) with ESMTP id 3078D2086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3078D2086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728133AbeKSLWj (ORCPT
+        id S1728034AbeKSLWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:39 -0500
+        Mon, 19 Nov 2018 06:22:35 -0500
 Received: from mx.socionext.com ([202.248.49.38]:40700 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727622AbeKSLWh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:37 -0500
+        id S1725904AbeKSLWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:22:34 -0500
 Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
   by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:39 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id EA8B8180111;
-        Mon, 19 Nov 2018 10:00:39 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:39 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id EFBE2180111;
+        Mon, 19 Nov 2018 10:00:38 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:38 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 686CC40387;
-        Mon, 19 Nov 2018 10:00:39 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 6644E403AB;
+        Mon, 19 Nov 2018 10:00:38 +0900 (JST)
 Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 44E6B120455;
-        Mon, 19 Nov 2018 10:00:39 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 46B75120455;
+        Mon, 19 Nov 2018 10:00:38 +0900 (JST)
 From:   Sugaya Taichi <sugaya.taichi@socionext.com>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 09/14] serial: Add Milbeaut M10V serial control
-Date:   Mon, 19 Nov 2018 10:01:14 +0900
-Message-Id: <1542589274-13878-10-git-send-email-sugaya.taichi@socionext.com>
+Subject: [PATCH 08/14] dt-bindings: serial: Add Milbeaut M10V serial description
+Date:   Mon, 19 Nov 2018 10:01:13 +0900
+Message-Id: <1542589274-13878-9-git-send-email-sugaya.taichi@socionext.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
 References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
@@ -61,687 +61,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Milbeaut M10V serial control.
+Add DT bindings document for Milbeaut M10V serial.
 
 Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 ---
- drivers/tty/serial/Kconfig       |  24 ++
- drivers/tty/serial/Makefile      |   1 +
- drivers/tty/serial/m10v_usio.c   | 605 +++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/serial_core.h |   3 +
- 4 files changed, 633 insertions(+)
- create mode 100644 drivers/tty/serial/m10v_usio.c
+ .../devicetree/bindings/serial/milbeaut-uart.txt   | 23 ++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/serial/milbeaut-uart.txt
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 32886c3..cd28a7e 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1529,6 +1529,30 @@ config SERIAL_OWL_CONSOLE
- 	  Say 'Y' here if you wish to use Actions Semiconductor S500/S900 UART
- 	  as the system console.
- 
-+config SERIAL_M10V_USIO
-+	tristate "M10V USIO/UART serial port support"
-+	depends on ARCH_MILBEAUT
-+	default y
-+	select SERIAL_CORE
-+	help
-+	  This selects the USIO/UART IP found in Socionext Milbeaut M10V.
-+
-+config SERIAL_M10V_USIO_PORTS
-+	int "Maximum number of CSIO/UART ports (1-8)"
-+	range 1 8
-+	depends on SERIAL_M10V_USIO
-+	default "4"
-+
-+config SERIAL_M10V_USIO_CONSOLE
-+	bool "Support for console on M10V USIO/UART serial port"
-+	depends on SERIAL_M10V_USIO=y
-+	select SERIAL_CORE_CONSOLE
-+	help
-+	  Say 'Y' here if you wish to use a USIO/UART of Socionext Milbeaut
-+	  M10V as the system console (the system console is the device which
-+	  receives all kernel messages and warnings and which allows logins in
-+	  single user mode).
-+
- endmenu
- 
- config SERIAL_MCTRL_GPIO
-diff --git a/drivers/tty/serial/Makefile b/drivers/tty/serial/Makefile
-index daac675..5ea46bc 100644
---- a/drivers/tty/serial/Makefile
-+++ b/drivers/tty/serial/Makefile
-@@ -89,6 +89,7 @@ obj-$(CONFIG_SERIAL_MVEBU_UART)	+= mvebu-uart.o
- obj-$(CONFIG_SERIAL_PIC32)	+= pic32_uart.o
- obj-$(CONFIG_SERIAL_MPS2_UART)	+= mps2-uart.o
- obj-$(CONFIG_SERIAL_OWL)	+= owl-uart.o
-+obj-$(CONFIG_SERIAL_M10V_USIO)   += m10v_usio.o
- 
- # GPIOLIB helpers for modem control lines
- obj-$(CONFIG_SERIAL_MCTRL_GPIO)	+= serial_mctrl_gpio.o
-diff --git a/drivers/tty/serial/m10v_usio.c b/drivers/tty/serial/m10v_usio.c
+diff --git a/Documentation/devicetree/bindings/serial/milbeaut-uart.txt b/Documentation/devicetree/bindings/serial/milbeaut-uart.txt
 new file mode 100644
-index 0000000..3abb465
+index 0000000..19d1480
 --- /dev/null
-+++ b/drivers/tty/serial/m10v_usio.c
-@@ -0,0 +1,605 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ */
-+
-+#if defined(CONFIG_SERIAL_M10V_USIO_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-+#define SUPPORT_SYSRQ
-+#endif
-+
-+#include <linux/clk.h>
-+#include <linux/console.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/platform_device.h>
-+#include <linux/serial_core.h>
-+#include <linux/tty.h>
-+#include <linux/tty_flip.h>
-+
-+
-+#define USIO_NAME		"sn-usio-uart"
-+#define USIO_UART_DEV_NAME	"ttyUSI"
-+
-+static struct uart_port usio_ports[CONFIG_SERIAL_M10V_USIO_PORTS];
-+
-+#define RX	0
-+#define TX	1
-+static int usio_irq[CONFIG_SERIAL_M10V_USIO_PORTS][2];
-+
-+#define SN_USIO_REG_SMR		0
-+#define SN_USIO_REG_SCR		1
-+#define SN_USIO_REG_ESCR	2
-+#define SN_USIO_REG_SSR		3
-+#define SN_USIO_REG_DR		4
-+#define SN_USIO_REG_BGR		6
-+#define SN_USIO_REG_FCR		12
-+#define SN_USIO_REG_FBYTE	14
-+
-+#define SN_USIO_SMR_SOE		BIT(0)
-+#define SN_USIO_SMR_SBL		BIT(3)
-+#define SN_USIO_SCR_TXE		BIT(0)
-+#define SN_USIO_SCR_RXE		BIT(1)
-+#define SN_USIO_SCR_TBIE	BIT(2)
-+#define SN_USIO_SCR_TIE		BIT(3)
-+#define SN_USIO_SCR_RIE		BIT(4)
-+#define SN_USIO_SCR_UPCL	BIT(7)
-+#define SN_USIO_ESCR_L_8BIT	0
-+#define SN_USIO_ESCR_L_5BIT	1
-+#define SN_USIO_ESCR_L_6BIT	2
-+#define SN_USIO_ESCR_L_7BIT	3
-+#define SN_USIO_ESCR_P		BIT(3)
-+#define SN_USIO_ESCR_PEN	BIT(4)
-+#define SN_USIO_ESCR_FLWEN	BIT(7)
-+#define SN_USIO_SSR_TBI		BIT(0)
-+#define SN_USIO_SSR_TDRE	BIT(1)
-+#define SN_USIO_SSR_RDRF	BIT(2)
-+#define SN_USIO_SSR_ORE		BIT(3)
-+#define SN_USIO_SSR_FRE		BIT(4)
-+#define SN_USIO_SSR_PE		BIT(5)
-+#define SN_USIO_SSR_REC		BIT(7)
-+#define SN_USIO_SSR_BRK		BIT(8)
-+#define SN_USIO_FCR_FE1		BIT(0)
-+#define SN_USIO_FCR_FE2		BIT(1)
-+#define SN_USIO_FCR_FCL1	BIT(2)
-+#define SN_USIO_FCR_FCL2	BIT(3)
-+#define SN_USIO_FCR_FSET	BIT(4)
-+#define SN_USIO_FCR_FTIE	BIT(9)
-+#define SN_USIO_FCR_FDRQ	BIT(10)
-+#define SN_USIO_FCR_FRIIE	BIT(11)
-+
-+static void usio_stop_tx(struct uart_port *port)
-+{
-+	writew(readw(port->membase + SN_USIO_REG_FCR) & ~SN_USIO_FCR_FTIE,
-+	       port->membase + SN_USIO_REG_FCR);
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) & ~SN_USIO_SCR_TBIE,
-+	       port->membase + SN_USIO_REG_SCR);
-+}
-+
-+static void usio_tx_chars(struct uart_port *port)
-+{
-+	struct circ_buf *xmit = &port->state->xmit;
-+	int count;
-+
-+	writew(readw(port->membase + SN_USIO_REG_FCR) & ~SN_USIO_FCR_FTIE,
-+	       port->membase + SN_USIO_REG_FCR);
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) &
-+	       ~(SN_USIO_SCR_TIE | SN_USIO_SCR_TBIE),
-+	       port->membase + SN_USIO_REG_SCR);
-+
-+	if (port->x_char) {
-+		writew(port->x_char, port->membase + SN_USIO_REG_DR);
-+		port->icount.tx++;
-+		port->x_char = 0;
-+		return;
-+	}
-+	if (uart_circ_empty(xmit) || uart_tx_stopped(port)) {
-+		usio_stop_tx(port);
-+		return;
-+	}
-+
-+	count = port->fifosize -
-+		(readw(port->membase + SN_USIO_REG_FBYTE) & 0xff);
-+
-+	do {
-+		writew(xmit->buf[xmit->tail], port->membase + SN_USIO_REG_DR);
-+
-+		xmit->tail = (xmit->tail + 1) & (UART_XMIT_SIZE - 1);
-+		port->icount.tx++;
-+		if (uart_circ_empty(xmit))
-+			break;
-+
-+	} while (--count > 0);
-+
-+	writew(readw(port->membase + SN_USIO_REG_FCR) & ~SN_USIO_FCR_FDRQ,
-+	       port->membase + SN_USIO_REG_FCR);
-+
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) | SN_USIO_SCR_TBIE,
-+	       port->membase + SN_USIO_REG_SCR);
-+
-+	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
-+		uart_write_wakeup(port);
-+
-+	if (uart_circ_empty(xmit))
-+		usio_stop_tx(port);
-+}
-+
-+static void usio_start_tx(struct uart_port *port)
-+{
-+	u16 fcr = readw(port->membase + SN_USIO_REG_FCR);
-+
-+	writew(fcr | SN_USIO_FCR_FTIE, port->membase + SN_USIO_REG_FCR);
-+	if (!(fcr & SN_USIO_FCR_FDRQ))
-+		return;
-+
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) | SN_USIO_SCR_TBIE,
-+	       port->membase + SN_USIO_REG_SCR);
-+
-+	if (readb(port->membase + SN_USIO_REG_SSR) & SN_USIO_SSR_TBI)
-+		usio_tx_chars(port);
-+}
-+
-+static void usio_stop_rx(struct uart_port *port)
-+{
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) & ~SN_USIO_SCR_RIE,
-+	       port->membase + SN_USIO_REG_SCR);
-+}
-+
-+static void usio_enable_ms(struct uart_port *port)
-+{
-+	writeb(readb(port->membase + SN_USIO_REG_SCR) |
-+	       SN_USIO_SCR_RIE | SN_USIO_SCR_RXE,
-+	       port->membase + SN_USIO_REG_SCR);
-+}
-+
-+static void usio_rx_chars(struct uart_port *port)
-+{
-+	struct tty_port *ttyport = &port->state->port;
-+	unsigned long flag = 0;
-+	char ch = 0;
-+	u8 status;
-+	int max_count = 2;
-+
-+	while (max_count--) {
-+		status = readb(port->membase + SN_USIO_REG_SSR);
-+
-+		if (!(status & SN_USIO_SSR_RDRF))
-+			break;
-+
-+		if (!(status & (SN_USIO_SSR_ORE | SN_USIO_SSR_FRE |
-+				SN_USIO_SSR_PE))) {
-+			ch = readw(port->membase + SN_USIO_REG_DR);
-+			flag = TTY_NORMAL;
-+			port->icount.rx++;
-+			if (uart_handle_sysrq_char(port, ch))
-+				continue;
-+			uart_insert_char(port, status, SN_USIO_SSR_ORE,
-+					 ch, flag);
-+			continue;
-+		}
-+		if (status & SN_USIO_SSR_PE)
-+			port->icount.parity++;
-+		if (status & SN_USIO_SSR_ORE)
-+			port->icount.overrun++;
-+		status &= port->read_status_mask;
-+		if (status & SN_USIO_SSR_BRK) {
-+			flag = TTY_BREAK;
-+			ch = 0;
-+		} else
-+			if (status & SN_USIO_SSR_PE) {
-+				flag = TTY_PARITY;
-+				ch = 0;
-+			} else
-+				if (status & SN_USIO_SSR_FRE) {
-+					flag = TTY_FRAME;
-+					ch = 0;
-+				}
-+		if (flag)
-+			uart_insert_char(port, status, SN_USIO_SSR_ORE,
-+					 ch, flag);
-+
-+		writeb(readb(port->membase + SN_USIO_REG_SSR) | SN_USIO_SSR_REC,
-+			port->membase + SN_USIO_REG_SSR);
-+
-+		max_count = readw(port->membase + SN_USIO_REG_FBYTE) >> 8;
-+		writew(readw(port->membase + SN_USIO_REG_FCR) |
-+		       SN_USIO_FCR_FE2 | SN_USIO_FCR_FRIIE,
-+		port->membase + SN_USIO_REG_FCR);
-+	}
-+
-+	tty_flip_buffer_push(ttyport);
-+}
-+
-+static irqreturn_t usio_rx_irq(int irq, void *dev_id)
-+{
-+	struct uart_port *port = dev_id;
-+
-+	spin_lock(&port->lock);
-+	usio_rx_chars(port);
-+	spin_unlock(&port->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t usio_tx_irq(int irq, void *dev_id)
-+{
-+	struct uart_port *port = dev_id;
-+
-+	spin_lock(&port->lock);
-+	if (readb(port->membase + SN_USIO_REG_SSR) & SN_USIO_SSR_TBI)
-+		usio_tx_chars(port);
-+	spin_unlock(&port->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static unsigned int usio_tx_empty(struct uart_port *port)
-+{
-+	return (readb(port->membase + SN_USIO_REG_SSR) & SN_USIO_SSR_TBI) ?
-+		TIOCSER_TEMT : 0;
-+}
-+
-+static void usio_set_mctrl(struct uart_port *port, unsigned int mctrl)
-+{
-+}
-+
-+static unsigned int usio_get_mctrl(struct uart_port *port)
-+{
-+	return TIOCM_CAR | TIOCM_DSR | TIOCM_CTS;
-+
-+}
-+
-+static void usio_break_ctl(struct uart_port *port, int break_state)
-+{
-+}
-+
-+static int usio_startup(struct uart_port *port)
-+{
-+	const char *portname = to_platform_device(port->dev)->name;
-+	unsigned long flags;
-+	int ret, index = port->line;
-+	unsigned char  escr;
-+
-+	ret = request_irq(usio_irq[index][RX], usio_rx_irq, 0, portname, port);
-+	if (ret)
-+		return ret;
-+	ret = request_irq(usio_irq[index][TX], usio_tx_irq, 0, portname, port);
-+	if (ret) {
-+		free_irq(usio_irq[index][RX], port);
-+		return ret;
-+	}
-+
-+	escr = readb(port->membase + SN_USIO_REG_ESCR);
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable"))
-+		escr |= SN_USIO_ESCR_FLWEN;
-+	spin_lock_irqsave(&port->lock, flags);
-+	writeb(0, port->membase + SN_USIO_REG_SCR);
-+	writeb(escr, port->membase + SN_USIO_REG_ESCR);
-+	writeb(SN_USIO_SCR_UPCL, port->membase + SN_USIO_REG_SCR);
-+	writeb(SN_USIO_SSR_REC, port->membase + SN_USIO_REG_SSR);
-+	writew(0, port->membase + SN_USIO_REG_FCR);
-+	writew(SN_USIO_FCR_FCL1 | SN_USIO_FCR_FCL2,
-+	       port->membase + SN_USIO_REG_FCR);
-+	writew(SN_USIO_FCR_FE1 | SN_USIO_FCR_FE2 | SN_USIO_FCR_FRIIE,
-+	       port->membase + SN_USIO_REG_FCR);
-+	writew(0, port->membase + SN_USIO_REG_FBYTE);
-+	writew(BIT(12), port->membase + SN_USIO_REG_FBYTE);
-+
-+	writeb(SN_USIO_SCR_TXE  | SN_USIO_SCR_RIE | SN_USIO_SCR_TBIE |
-+	       SN_USIO_SCR_RXE, port->membase + SN_USIO_REG_SCR);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	return 0;
-+}
-+
-+static void usio_shutdown(struct uart_port *port)
-+{
-+	int index = port->line;
-+
-+	free_irq(usio_irq[index][RX], port);
-+	free_irq(usio_irq[index][TX], port);
-+}
-+
-+static void usio_set_termios(struct uart_port *port, struct ktermios *termios,
-+			     struct ktermios *old)
-+{
-+	unsigned int escr, smr = SN_USIO_SMR_SOE;
-+	unsigned long flags, baud, quot;
-+
-+	switch (termios->c_cflag & CSIZE) {
-+	case CS5:
-+		escr = SN_USIO_ESCR_L_5BIT;
-+		break;
-+	case CS6:
-+		escr = SN_USIO_ESCR_L_6BIT;
-+		break;
-+	case CS7:
-+		escr = SN_USIO_ESCR_L_7BIT;
-+		break;
-+	case CS8:
-+	default:
-+		escr = SN_USIO_ESCR_L_8BIT;
-+		break;
-+	}
-+
-+	if (termios->c_cflag & CSTOPB)
-+		smr |= SN_USIO_SMR_SBL;
-+
-+	if (termios->c_cflag & PARENB) {
-+		escr |= SN_USIO_ESCR_PEN;
-+		if (termios->c_cflag & PARODD)
-+			escr |= SN_USIO_ESCR_P;
-+	}
-+	/* Set hard flow control */
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable") ||
-+			(termios->c_cflag & CRTSCTS))
-+		escr |= SN_USIO_ESCR_FLWEN;
-+
-+	baud = uart_get_baud_rate(port, termios, old, 0, port->uartclk);
-+	if (baud > 1)
-+		quot = port->uartclk / baud - 1;
-+	else
-+		quot = 0;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+	uart_update_timeout(port, termios->c_cflag, baud);
-+	port->read_status_mask = SN_USIO_SSR_ORE | SN_USIO_SSR_RDRF |
-+				 SN_USIO_SSR_TDRE;
-+	if (termios->c_iflag & INPCK)
-+		port->read_status_mask |= SN_USIO_SSR_FRE | SN_USIO_SSR_PE;
-+
-+	port->ignore_status_mask = 0;
-+	if (termios->c_iflag & IGNPAR)
-+		port->ignore_status_mask |= SN_USIO_SSR_FRE | SN_USIO_SSR_PE;
-+	if ((termios->c_iflag & IGNBRK) && (termios->c_iflag & IGNPAR))
-+		port->ignore_status_mask |= SN_USIO_SSR_ORE;
-+	if ((termios->c_cflag & CREAD) == 0)
-+		port->ignore_status_mask |= SN_USIO_SSR_RDRF;
-+
-+	writeb(0, port->membase + SN_USIO_REG_SCR);
-+	writeb(SN_USIO_SCR_UPCL, port->membase + SN_USIO_REG_SCR);
-+	writeb(SN_USIO_SSR_REC, port->membase + SN_USIO_REG_SSR);
-+	writew(0, port->membase + SN_USIO_REG_FCR);
-+	writeb(smr, port->membase + SN_USIO_REG_SMR);
-+	writeb(escr, port->membase + SN_USIO_REG_ESCR);
-+	writew(quot, port->membase + SN_USIO_REG_BGR);
-+	writew(0, port->membase + SN_USIO_REG_FCR);
-+	writew(SN_USIO_FCR_FCL1 | SN_USIO_FCR_FCL2 | SN_USIO_FCR_FE1 |
-+	       SN_USIO_FCR_FE2 | SN_USIO_FCR_FRIIE,
-+	       port->membase + SN_USIO_REG_FCR);
-+	writew(0, port->membase + SN_USIO_REG_FBYTE);
-+	writew(BIT(12), port->membase + SN_USIO_REG_FBYTE);
-+	writeb(SN_USIO_SCR_RIE | SN_USIO_SCR_RXE | SN_USIO_SCR_TBIE |
-+	       SN_USIO_SCR_TXE, port->membase + SN_USIO_REG_SCR);
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+static const char *usio_type(struct uart_port *port)
-+{
-+	return ((port->type == PORT_SN_USIO) ? USIO_NAME : NULL);
-+}
-+
-+static void usio_config_port(struct uart_port *port, int flags)
-+{
-+	if (flags & UART_CONFIG_TYPE)
-+		port->type = PORT_SN_USIO;
-+}
-+
-+static const struct uart_ops usio_ops = {
-+	.tx_empty	= usio_tx_empty,
-+	.set_mctrl	= usio_set_mctrl,
-+	.get_mctrl	= usio_get_mctrl,
-+	.stop_tx	= usio_stop_tx,
-+	.start_tx	= usio_start_tx,
-+	.stop_rx	= usio_stop_rx,
-+	.enable_ms	= usio_enable_ms,
-+	.break_ctl	= usio_break_ctl,
-+	.startup	= usio_startup,
-+	.shutdown	= usio_shutdown,
-+	.set_termios	= usio_set_termios,
-+	.type		= usio_type,
-+	.config_port	= usio_config_port,
-+};
-+
-+#ifdef CONFIG_SERIAL_M10V_USIO_CONSOLE
-+
-+static void usio_console_putchar(struct uart_port *port, int c)
-+{
-+	while (!(readb(port->membase + SN_USIO_REG_SSR) & SN_USIO_SSR_TDRE))
-+		cpu_relax();
-+
-+	writew(c, port->membase + SN_USIO_REG_DR);
-+}
-+
-+static void usio_console_write(struct console *co, const char *s,
-+			       unsigned int count)
-+{
-+	struct uart_port *port = &usio_ports[co->index];
-+
-+	uart_console_write(port, s, count, usio_console_putchar);
-+}
-+
-+static int __init usio_console_setup(struct console *co, char *options)
-+{
-+	struct uart_port *port;
-+	int baud = 115200;
-+	int parity = 'n';
-+	int flow = 'n';
-+	int bits = 8;
-+
-+	if (co->index >= CONFIG_SERIAL_M10V_USIO_PORTS)
-+		return -ENODEV;
-+
-+	port = &usio_ports[co->index];
-+	if (!port->membase)
-+		return -ENODEV;
-+
-+
-+	if (options)
-+		uart_parse_options(options, &baud, &parity, &bits, &flow);
-+
-+	if (of_property_read_bool(port->dev->of_node, "uart-flow-enable"))
-+		flow = 'r';
-+
-+	return uart_set_options(port, co, baud, parity, bits, flow);
-+}
-+
-+
-+static struct uart_driver usio_uart_driver;
-+static struct console usio_console = {
-+	.name   = USIO_UART_DEV_NAME,
-+	.write  = usio_console_write,
-+	.device = uart_console_device,
-+	.setup  = usio_console_setup,
-+	.flags  = CON_PRINTBUFFER,
-+	.index  = -1,
-+	.data   = &usio_uart_driver,
-+};
-+
-+static int __init usio_console_init(void)
-+{
-+	register_console(&usio_console);
-+	return 0;
-+}
-+console_initcall(usio_console_init);
-+
-+#define USIO_CONSOLE	(&usio_console)
-+#else
-+#define USIO_CONSOLE	NULL
-+#endif
-+
-+
-+static struct  uart_driver usio_uart_driver = {
-+	.owner		= THIS_MODULE,
-+	.driver_name	= USIO_NAME,
-+	.dev_name	= USIO_UART_DEV_NAME,
-+	.cons           = USIO_CONSOLE,
-+	.nr		= CONFIG_SERIAL_M10V_USIO_PORTS,
-+};
-+
-+static int usio_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk = devm_clk_get(&pdev->dev, 0);
-+	struct uart_port *port;
-+	struct resource *res;
-+	int index = 0;
-+	int ret;
-+
-+	if (IS_ERR(clk)) {
-+		dev_err(&pdev->dev, "Missing clock\n");
-+		return PTR_ERR(clk);
-+	}
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Clock enable failed: %d\n", ret);
-+		return ret;
-+	}
-+	of_property_read_u32(pdev->dev.of_node, "index", &index);
-+	port = &usio_ports[index];
-+
-+	port->private_data = (void *)clk;
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (res == NULL) {
-+		dev_err(&pdev->dev, "Missing regs\n");
-+		ret = -ENODEV;
-+		goto failed;
-+	}
-+	port->mapbase = res->start;
-+	port->membase = ioremap(res->start, (res->end - res->start + 1));
-+	port->membase = devm_ioremap(&pdev->dev, res->start,
-+				resource_size(res));
-+
-+	ret = platform_get_irq_byname(pdev, "rx");
-+	usio_irq[index][RX] = ret;
-+
-+	ret = platform_get_irq_byname(pdev, "tx");
-+	usio_irq[index][TX] = ret;
-+
-+	port->irq = usio_irq[index][RX];
-+	port->uartclk = clk_get_rate(clk);
-+	port->fifosize = 128;
-+	port->iotype = UPIO_MEM32;
-+	port->flags = UPF_BOOT_AUTOCONF | UPF_SPD_VHI;
-+	port->line = index;
-+	port->ops = &usio_ops;
-+	port->dev = &pdev->dev;
-+
-+	ret = uart_add_one_port(&usio_uart_driver, port);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Adding port failed: %d\n", ret);
-+		goto failed1;
-+	}
-+	return 0;
-+
-+failed1:
-+	iounmap(port->membase);
-+
-+failed:
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+
-+	return ret;
-+}
-+
-+static int usio_remove(struct platform_device *pdev)
-+{
-+	struct uart_port *port = &usio_ports[pdev->id];
-+	struct clk *clk = port->private_data;
-+
-+	uart_remove_one_port(&usio_uart_driver, port);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
-+
-+	return 0;
-+}
-+
-+#define usio_suspend NULL
-+#define usio_resume NULL
-+
-+static const struct of_device_id m10v_usio_dt_ids[] = {
-+	{ .compatible = "socionext,milbeaut-m10v-usio-uart" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, m10v_usio_dt_ids);
-+
-+static struct platform_driver usio_driver = {
-+	.probe          = usio_probe,
-+	.remove         = usio_remove,
-+	.suspend        = usio_suspend,
-+	.resume         = usio_resume,
-+	.driver         = {
-+		.name   = USIO_NAME,
-+		.of_match_table = m10v_usio_dt_ids,
-+	},
-+};
-+
-+static int __init usio_init(void)
-+{
-+	int ret = uart_register_driver(&usio_uart_driver);
-+
-+	if (ret) {
-+		pr_err("%s: uart registration failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+	ret = platform_driver_register(&usio_driver);
-+	if (ret) {
-+		uart_unregister_driver(&usio_uart_driver);
-+		pr_err("%s: drv registration failed: %d\n", __func__, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit usio_exit(void)
-+{
-+	platform_driver_unregister(&usio_driver);
-+	uart_unregister_driver(&usio_uart_driver);
-+}
-+
-+module_init(usio_init);
-+module_exit(usio_exit);
-+
-+MODULE_AUTHOR("SOCIONEXT");
-+MODULE_DESCRIPTION("SN_USIO/UART Driver");
-+MODULE_LICENSE("GPL");
-+
-diff --git a/include/uapi/linux/serial_core.h b/include/uapi/linux/serial_core.h
-index dce5f9d..984df0d 100644
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@ -281,4 +281,7 @@
- /* MediaTek BTIF */
- #define PORT_MTK_BTIF	117
- 
-+/* Socionext UART */
-+#define PORT_SN_USIO    118
-+
- #endif /* _UAPILINUX_SERIAL_CORE_H */
++++ b/Documentation/devicetree/bindings/serial/milbeaut-uart.txt
+@@ -0,0 +1,23 @@
++Socionext Milbeaut UART controller
++
++Required properties:
++- index: must be 0
++- compatible: should be "socionext,milbeaut-m10v-usio-uart".
++- reg: offset and length of the register set for the device.
++- interrupts: two interrupts specifier.
++- clocks: phandle to the input clock.
++- interrupt-names: should be "rx", "tx".
++
++Optional properties:
++- uart-flow-enable: flow control enable.
++
++Example:
++	usio1: usio_uart@1e700010 {
++		index = <0>;
++		compatible = "socionext,milbeaut-m10v-usio-uart";
++		reg = <0x1e700010 0x10>;
++		interrupts = <0 141 0x4>, <0 149 0x4>;
++		interrupt-names = "rx", "tx";
++		clocks = <&hclk>;
++		uart-flow-enable;
++	};
 -- 
 1.9.1
 
