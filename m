@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F79C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D325C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F17DC20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74392086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTr1HOMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F17DC20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFwGpJMT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74392086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731167AbeKTC5r (ORCPT
+        id S1730437AbeKTC5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:57:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56590 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:57:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731102AbeKTC5q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:57:46 -0500
+        id S1730510AbeKTC5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:57:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 875432089F;
-        Mon, 19 Nov 2018 16:33:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F06ED2086A;
+        Mon, 19 Nov 2018 16:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645218;
-        bh=eDz9yOCw/i4g4BljvVfTyeK8knJvcVG7VKXnt8QhAVY=;
+        s=default; t=1542645221;
+        bh=JAeIoby5ROMa+T2ngl8lp9LGZwjmFXUFzfuMiOzaWyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FTr1HOMvKvCy6l/JBqatTvwFBHqlSJymijqbxkXdqzWdssAy5rHSutqPovE6T42I+
-         KYuUITUDUvaLogSCVZ6qoHFv7VR26T4gCC5xnMD/p9QPGQBaaG1cARb37moWfA5cRY
-         aZSRgCOP1OnvPlxYl5ETOuP18le1oMH3wffV5JIY=
+        b=FFwGpJMTt7NDXmUMs76UVMDire5Cts1cee1FSHT2tA52Ak5kkzprU1JKtTVMFZyJQ
+         tq+R2kVy8vyeV2N95qKFAN/WQm91h8bGcBZ65Xtqe5eZEzq7UrOUP3XkHBsgxfBYTk
+         ukk9Y3ATO4UvB/Vtc5X4HzeOrwF94awkJAKTyktQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 064/205] fuse: Fix use-after-free in fuse_dev_do_read()
-Date:   Mon, 19 Nov 2018 17:26:11 +0100
-Message-Id: <20181119162628.575127199@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH 4.19 082/205] clk: sunxi-ng: h6: fix bus clocks divider position
+Date:   Mon, 19 Nov 2018 17:26:29 +0100
+Message-Id: <20181119162631.040244018@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,50 +62,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit bc78abbd55dd28e2287ec6d6502b842321a17c87 upstream.
+commit 2852bfbf4f168fec27049ad9ed20941fc9e84b95 upstream.
 
-We may pick freed req in this way:
+The bus clocks (AHB/APB) on Allwinner H6 have their second divider start
+at bit 8, according to the user manual and the BSP code. However,
+currently the divider offset is incorrectly set to 16, thus the divider
+is not correctly read and the clock frequency is not correctly calculated.
 
-[cpu0]                                  [cpu1]
-fuse_dev_do_read()                      fuse_dev_do_write()
-   list_move_tail(&req->list, ...);     ...
-   spin_unlock(&fpq->lock);             ...
-   ...                                  request_end(fc, req);
-   ...                                    fuse_put_request(fc, req);
-   if (test_bit(FR_INTERRUPTED, ...))
-         queue_interrupt(fiq, req);
+Fix this bit offset on all affected bus clocks in ccu-sun50i-h6.
 
-Fix that by keeping req alive until we finish all manipulations.
-
-Reported-by: syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
-Cc: <stable@vger.kernel.org> # v4.2
+Cc: stable@vger.kernel.org # v4.17.y
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1311,12 +1311,14 @@ static ssize_t fuse_dev_do_read(struct f
- 		goto out_end;
- 	}
- 	list_move_tail(&req->list, &fpq->processing);
-+	__fuse_get_request(req);
- 	spin_unlock(&fpq->lock);
- 	set_bit(FR_SENT, &req->flags);
- 	/* matches barrier in request_wait_answer() */
- 	smp_mb__after_atomic();
- 	if (test_bit(FR_INTERRUPTED, &req->flags))
- 		queue_interrupt(fiq, req);
-+	fuse_put_request(fc, req);
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -224,7 +224,7 @@ static SUNXI_CCU_MP_WITH_MUX(psi_ahb1_ah
+ 			     psi_ahb1_ahb2_parents,
+ 			     0x510,
+ 			     0, 5,	/* M */
+-			     16, 2,	/* P */
++			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
  
- 	return reqsize;
+@@ -233,19 +233,19 @@ static const char * const ahb3_apb1_apb2
+ 						       "pll-periph0" };
+ static SUNXI_CCU_MP_WITH_MUX(ahb3_clk, "ahb3", ahb3_apb1_apb2_parents, 0x51c,
+ 			     0, 5,	/* M */
+-			     16, 2,	/* P */
++			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
+ 
+ static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", ahb3_apb1_apb2_parents, 0x520,
+ 			     0, 5,	/* M */
+-			     16, 2,	/* P */
++			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
+ 
+ static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", ahb3_apb1_apb2_parents, 0x524,
+ 			     0, 5,	/* M */
+-			     16, 2,	/* P */
++			     8, 2,	/* P */
+ 			     24, 2,	/* mux */
+ 			     0);
  
 
 
