@@ -2,358 +2,152 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5175C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC1CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DACF2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DACF2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 830682080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830682080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbeKTIow (ORCPT
+        id S1730576AbeKTIpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:44:52 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:51978 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeKTIow (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:44:52 -0500
-Received: by mail-io1-f69.google.com with SMTP id x10so5810058ioj.18
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:19:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=lKAtMnR6VuTYuTcCMM2aGPupN2Ipjircn7xyei6Tq9o=;
-        b=omafRAuUj/6gmXntDqrab4jrqbEPlWcR/HfQFmNn9Sp/CJoItRfHxMb7oMk2iNv4Zb
-         Et13+5BFo+QRRu745Sv/eAf15ZJ83Su0BH1djql0tfsNAiA7sZR/2Y4YHnLG+xYXtDBV
-         MQT38TQ1EQZgAyurMiRo7vhYT0hdUXNC6/qZy9RnXV1ZVzru695979d5zx7X8P9vMswA
-         Se8uxUCNj/pnbovnc7UiYYfOvUaPZxuSQNOCb+xDOoCmWMmQun7Dq5x7ETZJGUh2PSc6
-         lcbcR1lW+h5oYzuf6lOsWFHlvpXwmy0aHD6hvwJXj4y5v34nloY6CkbKqQphI59hqY1G
-         7/Yg==
-X-Gm-Message-State: AGRZ1gL8HueR3KXG89XAm7SsE418IXt06/fnSoM14Fk05wFoRksuCFHJ
-        hLawj4oXJCP/LYXzIGEqPkQNmJf7nKzYVg5JmmBuwt8TP3Ic
-X-Google-Smtp-Source: AFSGD/VIxoUHWnTcgMu6zUZbqBtzX+xA+EeW7zFRO5doKVCGOSdCbJcFpuTuxZoVxpSgEhgo5wmXt0vss2qcJL4UuhPBLKN5t/cw
+        Tue, 20 Nov 2018 03:45:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42031 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725722AbeKTIpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:45:44 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 479BC20791; Mon, 19 Nov 2018 23:19:56 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 038AF20510;
+        Mon, 19 Nov 2018 23:19:55 +0100 (CET)
+Date:   Mon, 19 Nov 2018 23:19:54 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+Message-ID: <20181119231954.333699f4@bbrezillon>
+In-Reply-To: <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+        <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+        <20181119151009.490413d9@bbrezillon>
+        <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+        <20181119154338.2dfa7a5a@bbrezillon>
+        <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
+        <20181119162127.71d0665d@bbrezillon>
+        <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-Received: by 2002:a24:153:: with SMTP id 80-v6mr8262938itk.19.1542665944225;
- Mon, 19 Nov 2018 14:19:04 -0800 (PST)
-Date:   Mon, 19 Nov 2018 14:19:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009ce9ee057b0be7f8@google.com>
-Subject: WARNING in update_load_avg
-From:   syzbot <syzbot+20fddccabc274e99398e@syzkaller.appspotmail.com>
-To:     andy.shevchenko@gmail.com, bp@alien8.de, douly.fnst@cn.fujitsu.com,
-        hpa@zytor.com, konrad.wilk@oracle.com, len.brown@intel.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, puwen@hygon.cn,
-        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, ville.syrjala@linux.intel.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, 19 Nov 2018 23:11:31 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-syzbot found the following crash on:
+> On 11/19/2018 04:21 PM, Boris Brezillon wrote:
+> > On Mon, 19 Nov 2018 16:12:41 +0100
+> > Marek Vasut <marek.vasut@gmail.com> wrote:
+> >   
+> >> On 11/19/2018 03:43 PM, Boris Brezillon wrote:  
+> >>> On Mon, 19 Nov 2018 15:14:07 +0100
+> >>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>     
+> >>>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:    
+> >>>>> On Mon, 19 Nov 2018 14:49:31 +0100
+> >>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>       
+> >>>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:      
+> >>>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> >>>>>>> ---
+> >>>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+> >>>>>>>  1 file changed, 33 insertions(+)
+> >>>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>
+> >>>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>> new file mode 100644
+> >>>>>>> index 0000000..8286cc8
+> >>>>>>> --- /dev/null
+> >>>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>> @@ -0,0 +1,33 @@
+> >>>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+> >>>>>>> +----------------------------------------------------
+> >>>>>>> +
+> >>>>>>> +Required properties:
+> >>>>>>> +- compatible: should be "renesas,rpc-r8a77995"
+> >>>>>>> +- #address-cells: should be 1
+> >>>>>>> +- #size-cells: should be 0
+> >>>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
+> >>>>>>> +       mapping area
+> >>>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> >>>>>>> +- interrupts: interrupt line connected to the RPC SPI controller        
+> >>>>>>
+> >>>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
+> >>>>>> look in the bindings ?      
+> >>>>>
+> >>>>> Not sure this approach is still accepted, but that's how we solved the
+> >>>>> problem for the flexcom block [1].
+> >>>>>
+> >>>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt      
+> >>>>
+> >>>> That looks pretty horrible.
+> >>>>
+> >>>> In U-Boot we check whether the device hanging under the controller node
+> >>>> is JEDEC SPI flash or CFI flash and based on that decide what the config
+> >>>> of the controller should be (SPI or HF). Not sure that's much better,but
+> >>>> at least it doesn't need extra nodes which do not really represent any
+> >>>> kind of real hardware.
+> >>>>    
+> >>>
+> >>> The subnodes are not needed, you can just have a property that tells in
+> >>> which mode the controller is supposed to operate, and the MFD would
+> >>> create a sub-device that points to the same device_node.    
+> >>
+> >> Do you even need a dedicated property ? I think you can decide purely on
+> >> what node is hanging under the controller (jedec spi nor or cfi nor).  
+> > 
+> > Yes, that could work if they have well-known compatibles. As soon as
+> > people start using flash-specific compats (like some people do for
+> > their SPI NORs) it becomes a maintenance burden.  
+> 
+> Which, on this controller, is very likely never gonna happen. Once it
+> does , we can add a custom property.
+> 
+> >>> Or we can have
+> >>> a single driver that decides what to declare (a spi_controller or flash
+> >>> controller), but you'd still have to decide where to place this
+> >>> driver...    
+> >>
+> >> I'd definitely prefer a single driver.
+> >>  
+> > 
+> > Where would you put this driver? I really don't like the idea of having
+> > MTD drivers spread over the tree. Don't know what's Mark's opinion on
+> > this matter.  
+> 
+> Well, it's both CFI (hyperflash) and SF (well, SPI flash) controller, so
+> where would this go ?
+> 
 
-HEAD commit:    cddaf02bcb73 tg3: optionally use eth_platform_get_mac_addr..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15810d33400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
-dashboard link: https://syzkaller.appspot.com/bug?extid=20fddccabc274e99398e
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10272c5d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157bd093400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+20fddccabc274e99398e@syzkaller.appspotmail.com
-
-IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-syz-executor496 (6238) used greatest stack depth: 15648 bytes left
-WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015 rq_clock_task  
-kernel/sched/sched.h:1015 [inline]
-WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015 cfs_rq_clock_task  
-kernel/sched/fair.c:4283 [inline]
-WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015  
-update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
-==================================================================
-BUG: KASAN: stack-out-of-bounds in lookup_object lib/debugobjects.c:157  
-[inline]
-BUG: KASAN: stack-out-of-bounds in debug_object_deactivate+0x3a8/0x450  
-lib/debugobjects.c:543
-Kernel panic - not syncing: panic_on_warn set ...
-Read of size 8 at addr ffff8881dae000e0 by task syz-executor496/6371
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc2+ #302
-
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x55c kernel/panic.c:188
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:rq_clock_task kernel/sched/sched.h:1015 [inline]
-RIP: 0010:cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
-RIP: 0010:update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
-Code: e8 fc e1 69 00 e9 8b f8 ff ff 48 8d 7a 18 be ff ff ff ff 48 89 95 30  
-fb ff ff e8 52 e5 07 00 48 8b 95 30 fb ff ff 85 c0 75 29 <0f> 0b 48 b8 00  
-00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 80 3c 01
-RSP: 0018:ffff8881daf07238 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: ffff8881b3b487c0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000086
-RBP: ffff8881daf07750 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8881daf2d850 R12: ffff8881bf344bc0
-R13: ffff8881daf07728 R14: 0000000000000000 R15: ffff8881b3b48930
-  update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
-  run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-  </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
-Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 33 22 e6 f9 48 8b 45 d8 e9 ca  
-fe ff ff 48 89 df e8 22 22 e6 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
-00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-RSP: 0018:ffff8881d9b27cb8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1103b364f9b RCX: 0000000000000000
-RDX: 1ffffffff12a3f71 RSI: 0000000000000001 RDI: ffffffff8951fb88
-RBP: ffff8881d9b27cb8 R08: ffff8881d9b14340 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d9b27d78
-R13: ffffffff8a1640e0 R14: 0000000000000000 R15: 0000000000000001
-  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
-  default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
-  cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
-  start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-CPU: 0 PID: 6371 Comm: syz-executor496 Not tainted 4.20.0-rc2+ #302
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.20.0-rc2+ #302 Not tainted
-------------------------------------------------------
-swapper/1/0 is trying to acquire lock:
-00000000cee8b2f6 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
-kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-000000008d358a10 (&rq->lock){-.-.}, at: rq_lock_irqsave  
-kernel/sched/sched.h:1110 [inline]
-000000008d358a10 (&rq->lock){-.-.}, at:  
-update_blocked_averages+0x156/0x1e00 kernel/sched/fair.c:7381
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1126 [inline]
-        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9768
-        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
-        copy_process+0x25b8/0x87a0 kernel/fork.c:1887
-        _do_fork+0x1cb/0x11d0 kernel/fork.c:2216
-        kernel_thread+0x34/0x40 kernel/fork.c:2275
-        rest_init+0x28/0x372 init/main.c:409
-        arch_call_rest_init+0xe/0x1b
-        start_kernel+0x9f0/0xa2b init/main.c:745
-        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xdc/0x1490 kernel/sched/core.c:1965
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2129
-        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
-        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:236
-        console_unlock+0x811/0x1190 kernel/printk/printk.c:2432
-        vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        check_stack_usage kernel/exit.c:755 [inline]
-        do_exit.cold.18+0x57/0x16f kernel/exit.c:916
-        do_group_exit+0x177/0x440 kernel/exit.c:970
-        __do_sys_exit_group kernel/exit.c:981 [inline]
-        __se_sys_exit_group kernel/exit.c:979 [inline]
-        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 ((console_sem).lock){-.-.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-        console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-        console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-        vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        __warn+0x9e/0x1d0 kernel/panic.c:522
-        report_bug+0x254/0x2d0 lib/bug.c:186
-        fixup_bug arch/x86/kernel/traps.c:178 [inline]
-        do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-        do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-        invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-        rq_clock_task kernel/sched/sched.h:1015 [inline]
-        cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
-        update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
-        update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
-        run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
-        __do_softirq+0x308/0xb7e kernel/softirq.c:292
-        invoke_softirq kernel/softirq.c:373 [inline]
-        irq_exit+0x17f/0x1c0 kernel/softirq.c:413
-        exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-        smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
-        apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-        native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
-        arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
-        default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
-        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-        default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-        do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
-        cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
-        start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &p->pi_lock --> &rq->lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&rq->lock);
-                                lock(&p->pi_lock);
-                                lock(&rq->lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-1 lock held by swapper/1/0:
-  #0: 000000008d358a10 (&rq->lock){-.-.}, at: rq_lock_irqsave  
-kernel/sched/sched.h:1110 [inline]
-  #0: 000000008d358a10 (&rq->lock){-.-.}, at:  
-update_blocked_averages+0x156/0x1e00 kernel/sched/fair.c:7381
-
-stack backtrace:
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc2+ #302
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2347 [inline]
-  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-  console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-  console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-  vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-  printk+0xa7/0xcf kernel/printk/printk.c:1997
-  __warn+0x9e/0x1d0 kernel/panic.c:522
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:rq_clock_task kernel/sched/sched.h:1015 [inline]
-RIP: 0010:cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
-RIP: 0010:update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
-Code: e8 fc e1 69 00 e9 8b f8 ff ff 48 8d 7a 18 be ff ff ff ff 48 89 95 30  
-fb ff ff e8 52 e5 07 00 48 8b 95 30 fb ff ff 85 c0 75 29 <0f> 0b 48 b8 00  
-00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 80 3c 01
-RSP: 0018:ffff8881daf07238 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: ffff8881b3b487c0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000086
-RBP: ffff8881daf07750 R08: 0000000000000000 R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8881daf2d850 R12: ffff8881bf344bc0
-R13: ffff8881daf07728 R14: 0000000000000000 R15: ffff8881b3b48930
-  update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
-  run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
-  ? inte
-Lost 38 message(s)!
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-
-The buggy address belongs to the page:
-page:ffffea00076b8000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000001000(reserved)
-raw: 02fffc0000001000 ffffea00076b8008 ffffea00076b8008 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881dadfff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8881dae00000: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-> ffff8881dae00080: f1 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 00 00 00
-                                                        ^
-  ffff8881dae00100: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
-  ffff8881dae00180: f1 f8 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 6371 Comm: syz-executor496 Tainted: G    B              
-4.20.0-rc2+ #302
-Shutting down cpus with NMI
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+The spi-mem layer is in drivers/spi/ so it could go in drivers/spi/
+(spi-mem controller) or drivers/mtd/ (CFI controller). Looks like you
+didn't closely follow what has happened in the spi-nor subsystem
+lately :P.
