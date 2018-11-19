@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60409C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D19C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6A1208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42E5920C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChlacaAe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6A1208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhKpMiaH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42E5920C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731605AbeKTC7V (ORCPT
+        id S1731618AbeKTC7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58718 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:20 -0500
+        id S1730350AbeKTC7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84F8920C01;
-        Mon, 19 Nov 2018 16:35:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F31472145D;
+        Mon, 19 Nov 2018 16:35:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645312;
-        bh=r0cNOc/Jn3Ob5GI1E5d4h0ufTq1gQ6OMrns43VRVIO8=;
+        s=default; t=1542645314;
+        bh=Fus11B3F8EGUTQyovU8NrAQk+J8Zl282LU+12YMYkuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ChlacaAeImikqbC63OPpPNAJuGnNNCaT1af1xC7s5FFmUxpRMnxMlDXH7b8x/pW0s
-         QOQlLD/iLUDWCdwNjxnxsJo5fkmPTjBS4a3CX5QLWyseWS4xvBJB8I1wLIhX/i9G6t
-         T1M1Wa9rN2mTb0ozMU3uiexowF3kHVcpRXz1QeoY=
+        b=BhKpMiaHZk5hhRS79NIynjxZbOIbT9LS5+dP1DCeSeZ24FmZpUUE/Dq9gukUr/uAV
+         RvovpYGOkRLKG//v2bo/2JshPaiVuwcQW0ICGx+VqkAHmK2Oy40SOSf5GvO2h4Pjh5
+         qz19zEZfCFBZCip7HGFD6Tvex8AwbHQxCvYimcl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.19 117/205] of, numa: Validate some distance map rules
-Date:   Mon, 19 Nov 2018 17:27:04 +0100
-Message-Id: <20181119162635.575209689@linuxfoundation.org>
+        stable@vger.kernel.org, GwanYeong Kim <gy741.kim@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Borislav Petkov <bp@suse.de>,
+        Alok Kataria <akataria@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.19 118/205] x86/cpu/vmware: Do not trace vmware_sched_clock()
+Date:   Mon, 19 Nov 2018 17:27:05 +0100
+Message-Id: <20181119162635.743730364@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,80 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Garry <john.garry@huawei.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 89c38422e072bb453e3045b8f1b962a344c3edea upstream.
+commit 15035388439f892017d38b05214d3cda6578af64 upstream.
 
-Currently the NUMA distance map parsing does not validate the distance
-table for the distance-matrix rules 1-2 in [1].
+When running function tracing on a Linux guest running on VMware
+Workstation, the guest would crash. This is due to tracing of the
+sched_clock internal call of the VMware vmware_sched_clock(), which
+causes an infinite recursion within the tracing code (clock calls must
+not be traced).
 
-However the arch NUMA code may enforce some of these rules, but not all.
-Such is the case for the arm64 port, which does not enforce the rule that
-the distance between separates nodes cannot equal LOCAL_DISTANCE.
+Make vmware_sched_clock() not traced by ftrace.
 
-The patch adds the following rules validation:
-- distance of node to self equals LOCAL_DISTANCE
-- distance of separate nodes > LOCAL_DISTANCE
-
-This change avoids a yet-unresolved crash reported in [2].
-
-A note on dealing with symmetrical distances between nodes:
-
-Validating symmetrical distances between nodes is difficult. If it were
-mandated in the bindings that every distance must be recorded in the
-table, then it would be easy. However, it isn't.
-
-In addition to this, it is also possible to record [b, a] distance only
-(and not [a, b]). So, when processing the table for [b, a], we cannot
-assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
-distance may not be present in the table and current distance would be
-default at REMOTE_DISTANCE.
-
-As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
-for b > a. This policy is different to kernel ACPI SLIT validation, which
-allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
-the distance debug message is dropped as it may be misleading (for a distance
-which is later overwritten).
-
-Some final notes on semantics:
-
-- It is implied that it is the responsibility of the arch NUMA code to
-  reset the NUMA distance map for an error in distance map parsing.
-
-- It is the responsibility of the FW NUMA topology parsing (whether OF or
-  ACPI) to enforce NUMA distance rules, and not arch NUMA code.
-
-[1] Documents/devicetree/bindings/numa.txt
-[2] https://www.spinics.net/lists/arm-kernel/msg683304.html
-
-Cc: stable@vger.kernel.org # 4.7
-Signed-off-by: John Garry <john.garry@huawei.com>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 80e9a4f21fd7c ("x86/vmware: Add paravirt sched clock")
+Reported-by: GwanYeong Kim <gy741.kim@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: Alok Kataria <akataria@vmware.com>
+CC: GwanYeong Kim <gy741.kim@gmail.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: virtualization@lists.linux-foundation.org
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181109152207.4d3e7d70@gandalf.local.home
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/of_numa.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/vmware.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/of/of_numa.c
-+++ b/drivers/of/of_numa.c
-@@ -115,9 +115,14 @@ static int __init of_numa_parse_distance
- 		distance = of_read_number(matrix, 1);
- 		matrix++;
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -77,7 +77,7 @@ static __init int setup_vmw_sched_clock(
+ }
+ early_param("no-vmw-sched-clock", setup_vmw_sched_clock);
  
-+		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
-+		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
-+			pr_err("Invalid distance[node%d -> node%d] = %d\n",
-+			       nodea, nodeb, distance);
-+			return -EINVAL;
-+		}
-+
- 		numa_set_distance(nodea, nodeb, distance);
--		pr_debug("distance[node%d -> node%d] = %d\n",
--			 nodea, nodeb, distance);
+-static unsigned long long vmware_sched_clock(void)
++static unsigned long long notrace vmware_sched_clock(void)
+ {
+ 	unsigned long long ns;
  
- 		/* Set default distance of node B->A same as A->B */
- 		if (nodeb > nodea)
 
 
