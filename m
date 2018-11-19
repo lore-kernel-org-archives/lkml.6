@@ -2,136 +2,100 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C4EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E991FC4161B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5F7208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:17:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SikSsYbx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5F7208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BCE0F20671
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:18:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE0F20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729317AbeKSXkp (ORCPT
+        id S1729328AbeKSXlh convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:40:45 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32838 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729208AbeKSXkp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:40:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=k+puHK7Mryz/fAkkjP+c7+vOaynj1dr6Er2mBy+twh0=; b=SikSsYbxuItx
-        63uK5h3quF5nLhC2hnP/Cl7utqZpptV2pmFXT0OB7wMm/btzIen89qrKcN0+8IjHxRBTmV9LECPXh
-        vsLj1R6TZYB3nV8iVEzxNT3OEAlerHJjdh5GR0opA4ihQ9DNWKx+iNg203f516oukMkTCzUhNxPyI
-        8zf44=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gOjQJ-0000As-LC; Mon, 19 Nov 2018 13:17:07 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 38B9E1125031; Mon, 19 Nov 2018 13:17:07 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Change regulator-coupled-max-spread property" to the regulator tree
-In-Reply-To: 
-Message-Id: <20181119131707.38B9E1125031@debutante.sirena.org.uk>
-Date:   Mon, 19 Nov 2018 13:17:07 +0000 (GMT)
+        Mon, 19 Nov 2018 18:41:37 -0500
+Received: from mga02.intel.com ([134.134.136.20]:48839 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729206AbeKSXlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:41:37 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 05:18:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="97429762"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Nov 2018 05:18:00 -0800
+Received: from fmsmsx158.amr.corp.intel.com (10.18.116.75) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 19 Nov 2018 05:18:00 -0800
+Received: from lcsmsx153.ger.corp.intel.com (10.186.165.228) by
+ fmsmsx158.amr.corp.intel.com (10.18.116.75) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 19 Nov 2018 05:18:00 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
+ LCSMSX153.ger.corp.intel.com ([169.254.8.194]) with mapi id 14.03.0415.000;
+ Mon, 19 Nov 2018 15:17:57 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Nayna Jain" <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v9 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Thread-Topic: [PATCH v9 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Thread-Index: AQHUfz1kjDc6O/MrFEGwY/E2owDDkKVWI+9QgADIXQCAAChmIA==
+Date:   Mon, 19 Nov 2018 13:17:56 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA230D9@hasmsx108.ger.corp.intel.com>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-17-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA225B9@hasmsx108.ger.corp.intel.com>
+ <20181119124822.GB8755@linux.intel.com>
+In-Reply-To: <20181119124822.GB8755@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWIyNDVmOTctMTQ0Mi00NWFhLTgxOTYtYmY5Njk3NTQ2MDQxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNXVSQ09yUndMUUlya3J2SFBCT1p2RGJ1UEhZT3luWE9MUDJyc08xbmJSd1pjNGV1T2tQVGZDOVpcL0tCQmhETDUifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
 
-   regulator: Change regulator-coupled-max-spread property
+> 
+> On Sun, Nov 18, 2018 at 10:52:46PM +0000, Winkler, Tomas wrote:
+> > This is still NACK from my side
+> 
+> Last time you spoke about tboot intervention but I don't see why as even
+> sending a single command is not atomic in the true sense of the word i.e. if
+> there was a problem that would already affect the existing code and would
+> essentially mean that tboot itself is broken.
+So I've consulted the issue, I wasn't not correct in the description. Tboot cannot acquire  the locality, unless the host driver relinquish it,
+so the issue is opposite, driver is expected to relinquish the locality for tboot to work correctly. This is current status, other behavior will need a different implementation on both sides. 
 
-has been applied to the regulator tree at
+Hopes that clears the question.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From a8d8ee437ea0bf21f840f33ca87f8e1641727aae Mon Sep 17 00:00:00 2001
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Mon, 19 Nov 2018 00:56:16 +0300
-Subject: [PATCH] regulator: Change regulator-coupled-max-spread property
-
-Redefine binding for regulator-coupled-max-spread property in a way that
-max-spread values are defined per regulator couple instead of defining
-single max-spread for the whole group of coupled regulators.
-
-With that change the following regulators coupling configuration will be
-possible:
-
-regA: regulatorA {
-	regulator-coupled-with = <&regB &regC>;
-	regulator-coupled-max-spread = <100000 300000>;
-};
-
-regB: regulatorB {
-	regulator-coupled-with = <&regA &regC>;
-	regulator-coupled-max-spread = <100000 200000>;
-};
-
-regC: regulatorC {
-	regulator-coupled-with = <&regA &regB>;
-	regulator-coupled-max-spread = <300000 200000>;
-};
-
-Note that the regulator-coupled-max-spread property does not have any
-users yet, hence it's okay to change the binding.
-
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
-index ca96f70bd2de..e3a7a7a0316b 100644
---- a/Documentation/devicetree/bindings/regulator/regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/regulator.txt
-@@ -79,8 +79,9 @@ Optional properties:
- - regulator-coupled-with: Regulators with which the regulator
-   is coupled. The linkage is 2-way - all coupled regulators should be linked
-   with each other. A regulator should not be coupled with its supplier.
--- regulator-coupled-max-spread: Max spread between voltages of coupled regulators
--  in microvolts.
-+- regulator-coupled-max-spread: Array of maximum spread between voltages of
-+  coupled regulators in microvolts, each value in the array relates to the
-+  corresponding couple specified by the regulator-coupled-with property.
- 
- Deprecated properties:
- - regulator-compatible: If a regulator chip contains multiple
--- 
-2.19.0.rc2
+Thanks
 
