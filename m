@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37C3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CE2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3EF208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A6B120989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNwLdLpy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3EF208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EROJ67TY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6B120989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbeKTC6z (ORCPT
+        id S1731497AbeKTC65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58084 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbeKTC6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:54 -0500
+        id S1731471AbeKTC65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCC012086A;
-        Mon, 19 Nov 2018 16:34:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7CD208E3;
+        Mon, 19 Nov 2018 16:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645286;
-        bh=BsjeKUoshADpGip1m65xVQB5Y/IyX85SRWwBVw1ube8=;
+        s=default; t=1542645288;
+        bh=dasKqEteFCDk4wLISQYshgaQ5sIrrjYVij4ZcZBiTaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sNwLdLpyWs0DEIJyuZysu28n4j6vetLGaBag3CMpgBVrFfc7YAAlX1+Fom4PiBvEV
-         p5SugpNh7XHRoHAqINYrjWxKNqrCCTLr0VKUQukPzW6GipIopQz5PXamyNMEIc7kVc
-         K90ua4sg//ClPIINc591jHLpEpuIwbFgYzPwrsqc=
+        b=EROJ67TYHCPRUbmvcSpAq2gd+whNva5+gIZNU/8TR3ZGow6vTNX14BSj9IRfqv9bA
+         esFHd6kjFWdZW+MgdWwZfJFs0jz3wV1gXsP52qeUw79U6K4HiD28EpRjImWdpFEfd/
+         3Qya6ao877Zl9/EJ7SWAp3Km5RvU+E+QnIsY0rDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 069/205] arm64: dts: stratix10: Support Ethernet Jumbo frame
-Date:   Mon, 19 Nov 2018 17:26:16 +0100
-Message-Id: <20181119162629.420817982@linuxfoundation.org>
+Subject: [PATCH 4.19 070/205] arm64: dts: stratix10: fix multicast filtering
+Date:   Mon, 19 Nov 2018 17:26:17 +0100
+Message-Id: <20181119162629.560906951@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,64 +63,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit a27460c9768ee19949c5b91f3d959ccd88c2a64a upstream
+commit fd5ba6ee3187617287fb9cb187e3d6b3631210a3 upstream
 
-Properly specify the RX and TX FIFO size which is important
-for Jumbo frames.
-Update the max-frame-size to support Jumbo frames.
+On Stratix 10, the EMAC has 256 hash buckets for multicast filtering. This
+needs to be specified in DTS, otherwise the stmmac driver defaults to 64
+buckets and initializes the filter incorrectly. As a result, e.g. valid
+IPv6 multicast traffic ends up being dropped.
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 78cd6a9d8e15 ("arm64: dts: Add base stratix 10 dtsi")
+Cc: stable@vger.kernel.org
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi      | 6 ++++++
- arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts | 2 +-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index bc6c141d7372..003677e273a5 100644
+index 003677e273a5..5089aa64088f 100644
 --- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
 +++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -137,6 +137,8 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC0_CLK>;
+@@ -139,6 +139,7 @@
  			clock-names = "stmmaceth";
-+			tx-fifo-depth = <16384>;
-+			rx-fifo-depth = <16384>;
+ 			tx-fifo-depth = <16384>;
+ 			rx-fifo-depth = <16384>;
++			snps,multicast-filter-bins = <256>;
  			status = "disabled";
  		};
  
-@@ -150,6 +152,8 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC1_CLK>;
+@@ -154,6 +155,7 @@
  			clock-names = "stmmaceth";
-+			tx-fifo-depth = <16384>;
-+			rx-fifo-depth = <16384>;
+ 			tx-fifo-depth = <16384>;
+ 			rx-fifo-depth = <16384>;
++			snps,multicast-filter-bins = <256>;
  			status = "disabled";
  		};
  
-@@ -163,6 +167,8 @@
- 			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			clocks = <&clkmgr STRATIX10_EMAC2_CLK>;
+@@ -169,6 +171,7 @@
  			clock-names = "stmmaceth";
-+			tx-fifo-depth = <16384>;
-+			rx-fifo-depth = <16384>;
+ 			tx-fifo-depth = <16384>;
+ 			rx-fifo-depth = <16384>;
++			snps,multicast-filter-bins = <256>;
  			status = "disabled";
  		};
  
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-index 6edc4fa9fd42..7c661753bfaf 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10_socdk.dts
-@@ -76,7 +76,7 @@
- 	phy-mode = "rgmii";
- 	phy-handle = <&phy0>;
- 
--	max-frame-size = <3800>;
-+	max-frame-size = <9000>;
- 
- 	mdio0 {
- 		#address-cells = <1>;
 -- 
 2.17.1
 
