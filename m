@@ -2,52 +2,50 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC88BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FF9FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A772B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 250B7208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ymhyYulU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A772B20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAjwRCpL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250B7208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731511AbeKTC67 (ORCPT
+        id S1731521AbeKTC7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58174 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731471AbeKTC67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:59 -0500
+        id S1730350AbeKTC7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 060DD208E4;
-        Mon, 19 Nov 2018 16:34:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DE50208E3;
+        Mon, 19 Nov 2018 16:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645291;
-        bh=+sdL92XKTVUZWHt5QzS/KJSwUaZqvQK6NBTbz44Umc4=;
+        s=default; t=1542645294;
+        bh=W9bUMhrtQS0cSbmvvQ10TWY1y5RyMeih2FoJAqgiQFY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ymhyYulUMiLMANCHHNJu9Sme/Cv0aKkU1KpQLLoOdny8Y+Fq0JJhePqyrkqUPiTN1
-         K5YbRlDAAVcibhl/b5DDyF4BbXOP5ZW6nHCKkSf7JoHhKVi4GNlb3m0+BjdEznT9nW
-         Y6bjpi+cQ1HZxBzkHHyvM8tuVVeuX3GNJUEaMeMU=
+        b=AAjwRCpLy4U13Yw+5PGYvK/07xK9TW7UD0CWDQo6Xg3JDFSzsGfMJ3r6dgfMEgqU1
+         klVCigojuuYdNxf4uyznwnMHvEcvPYoLsfFusDh+oYM81ptxRbdw1iZyJMNnRTKx6M
+         ZooMYjfiQF0Jwzb64dwUuF/jFmIvaAr6MEWk8e50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/205] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-Date:   Mon, 19 Nov 2018 17:26:18 +0100
-Message-Id: <20181119162629.765620757@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.19 062/205] scsi: qla2xxx: Fix driver hang when FC-NVMe LUNs are configured
+Date:   Mon, 19 Nov 2018 17:26:09 +0100
+Message-Id: <20181119162628.239806959@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,64 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e2576c8bdfd462c34b8a46c0084e7c30b0851bf4 ]
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-with reboot; e.g. a ~60 second delay between issuing reboot and the
-board power cycling (and in some OS configurations reboot will fail
-and require manual power cycling).
+commit 39553065f77c297239308470ee313841f4e07db4 upstream.
 
-Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-Co-Processor seems to depend on FCLK_DIV3 being operational.
+This patch fixes multiple call for qla_nvme_unregister_remote_port() as part
+of qlt_schedule_session_for_deletion(), Do not call it again during
+qla_nvme_delete()
 
-Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-meson: add fdiv clock gates"), this clock was modeled and left on by
-the bootloader.
+Fixes: e473b3074104 ("scsi: qla2xxx: Add FC-NVMe abort processing")
+Cc: <stable@vger.kernel.org>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-We don't have precise documentation about the SCPI Co-Processor and
-its clock requirement so we are learning things the hard way.
-
-Marking this clock as critical solves the problem but it should not
-be viewed as final solution. Ideally, the SCPI driver should claim
-these clocks. We also depends on some clock hand-off mechanism
-making its way to CCF, to make sure the clock stays on between its
-registration and the SCPI driver probe.
-
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/gxbb.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ drivers/scsi/qla2xxx/qla_nvme.c |    3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 86d3ae58e84c..6435d86118f1 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -522,6 +522,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME:
-+		 * This clock, as fdiv2, is used by the SCPI FW and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) The SCPI generic driver claims and enable all the clocks
-+		 *    it needs
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -660,9 +660,6 @@ void qla_nvme_delete(struct scsi_qla_hos
+ 		    __func__, fcport);
  
--- 
-2.17.1
-
+ 		nvme_fc_set_remoteport_devloss(fcport->nvme_remote_port, 0);
+-		init_completion(&fcport->nvme_del_done);
+-		nvme_fc_unregister_remoteport(fcport->nvme_remote_port);
+-		wait_for_completion(&fcport->nvme_del_done);
+ 	}
+ 
+ 	if (vha->nvme_local_port) {
 
 
