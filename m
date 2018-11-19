@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF79CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F6BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DA820C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C2FB206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qRq/ZU6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DA820C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWk3/tX8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2FB206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390295AbeKTDPi (ORCPT
+        id S2389886AbeKTDPl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:15:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53280 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:15:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:15:38 -0500
+        id S2388976AbeKTDPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:15:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 632C121104;
-        Mon, 19 Nov 2018 16:51:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E21ED206BA;
+        Mon, 19 Nov 2018 16:51:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646284;
-        bh=NFTAlqOm3CNhrPW097BdSYQkk3pTnK0hzBLye1OUn1Y=;
+        s=default; t=1542646287;
+        bh=GLsB5ZtA/tl+z56xkqBjGH1heMcnrSRT3MypvEv3VlE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qRq/ZU6UFY8PBHXftpxBITIq/cwnVlEbnPV0Zzfz/4GJ+c0+xROqFks6JRMQnsjF2
-         0BZKba2dhAbHv6+XSx95coFH+r7P5hnTTBlwmGild3idxMUzp85xV17P+Cq9wJhq1b
-         T/NsYdg/VnX8lfO1Gkk+ZAdMUKrzIhcmdvbBPmvI=
+        b=SWk3/tX84y7NoT5WFgmSlG6x8D4ZnCatsndAdqkiA5Mr3XjdwaoWYCl0PzQfSuXoX
+         rReNFHS5YRiXdWTqUxkfZ+57rnfoyQ7wftrUF5Q+2w4t+gBHtl+tIqqXXOxVxQkBXj
+         UUy8jPjEpk1+4a8oy/GKIZJdrh1aOYFj8EUqfVDk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.14 106/124] efi/arm/libstub: Pack FDT after populating it
-Date:   Mon, 19 Nov 2018 17:29:20 +0100
-Message-Id: <20181119162632.045038306@linuxfoundation.org>
+        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Vicente Bergas <vicencb@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.14 107/124] drm/rockchip: Allow driver to be shutdown on reboot/kexec
+Date:   Mon, 19 Nov 2018 17:29:21 +0100
+Message-Id: <20181119162632.180161006@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,57 +62,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 72a58a63a164b4e9d2d914e65caeb551846883f1 upstream.
+commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5 upstream.
 
-Commit:
+Leaving the DRM driver enabled on reboot or kexec has the annoying
+effect of leaving the display generating transactions whilst the
+IOMMU has been shut down.
 
-  24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
+In turn, the IOMMU driver (which shares its interrupt line with
+the VOP) starts warning either on shutdown or when entering the
+secondary kernel in the kexec case (nothing is expected on that
+front).
 
-increased the allocation size for the FDT image created by the stub to a
-fixed value of 2 MB, to simplify the former code that made several
-attempts with increasing values for the size. This is reasonable
-given that the allocation is of type EFI_LOADER_DATA, which is released
-to the kernel unless it is explicitly memblock_reserve()d by the early
-boot code.
+A cheap way of ensuring that things are nicely shut down is to
+register a shutdown callback in the platform driver.
 
-However, this allocation size leaked into the 'size' field of the FDT
-header metadata, and so the entire allocation remains occupied by the
-device tree binary, even if most of it is not used to store device tree
-information.
-
-So call fdt_pack() to shrink the FDT data structure to its minimum size
-after populating all the fields, so that the remaining memory is no
-longer wasted.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.12+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
-Link: http://lkml.kernel.org/r/20181114175544.12860-4-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Tested-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180805124807.18169-1-marc.zyngier@arm.com
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/libstub/fdt.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -158,6 +158,10 @@ static efi_status_t update_fdt(efi_syste
- 			return efi_status;
- 		}
- 	}
-+
-+	/* shrink the FDT back to its minimum size */
-+	fdt_pack(fdt);
-+
- 	return EFI_SUCCESS;
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
+@@ -425,6 +425,11 @@ static int rockchip_drm_platform_remove(
+ 	return 0;
+ }
  
- fdt_set_fail:
++static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
++{
++	rockchip_drm_platform_remove(pdev);
++}
++
+ static const struct of_device_id rockchip_drm_dt_ids[] = {
+ 	{ .compatible = "rockchip,display-subsystem", },
+ 	{ /* sentinel */ },
+@@ -434,6 +439,7 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
+ static struct platform_driver rockchip_drm_platform_driver = {
+ 	.probe = rockchip_drm_platform_probe,
+ 	.remove = rockchip_drm_platform_remove,
++	.shutdown = rockchip_drm_platform_shutdown,
+ 	.driver = {
+ 		.name = "rockchip-drm",
+ 		.of_match_table = rockchip_drm_dt_ids,
 
 
