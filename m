@@ -2,124 +2,141 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A49C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C062B2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42062086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WvG07yuQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C062B2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fwRx1jqu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bb44EIhS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42062086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbeKSRdt (ORCPT
+        id S1726407AbeKSRd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 12:33:49 -0500
-Received: from mail-eopbgr20088.outbound.protection.outlook.com ([40.107.2.88]:61503
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726079AbeKSRds (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 12:33:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4pqJmDXhKcfcw5q3BcuWv6cxkyhnHnb2X+/J1Mnk/kY=;
- b=WvG07yuQfJPtepwRQ2SX1NvwhpHhgKv36OcZL4qHk+vK0cwBRtHl/E8BmoGXSeIvwwC3ENNV0YP5c7SvOlqtQ3BU0hRw2U9emCfsWoRCT4h2MlhkR18pLmpoz9fjOpywuwe0gtum6C5J52Jdj3VU1/X4ahAq84tBsvrm4+MyObA=
-Received: from DB7PR04MB4009.eurprd04.prod.outlook.com (52.134.107.22) by
- DB7PR04MB6011.eurprd04.prod.outlook.com (20.178.107.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Mon, 19 Nov 2018 07:11:00 +0000
-Received: from DB7PR04MB4009.eurprd04.prod.outlook.com
- ([fe80::6c2f:c491:5101:7e8a]) by DB7PR04MB4009.eurprd04.prod.outlook.com
- ([fe80::6c2f:c491:5101:7e8a%3]) with mapi id 15.20.1339.026; Mon, 19 Nov 2018
- 07:11:00 +0000
-From:   Madalin-cristian Bucur <madalin.bucur@nxp.com>
-To:     David Miller <davem@davemloft.net>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, Roy Pledge <roy.pledge@nxp.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/2] dpaa_eth: add ethtool coalesce control
-Thread-Topic: [PATCH v2 2/2] dpaa_eth: add ethtool coalesce control
-Thread-Index: AQHUe24lC3EXIiTmj0ac6v9A0T9Uk6VTWDiAgANewAA=
-Date:   Mon, 19 Nov 2018 07:11:00 +0000
-Message-ID: <DB7PR04MB400914664928CDCD6797F151ECD80@DB7PR04MB4009.eurprd04.prod.outlook.com>
-References: <1542126591-5114-1-git-send-email-madalin.bucur@nxp.com>
-        <1542126591-5114-3-git-send-email-madalin.bucur@nxp.com>
- <20181116.194219.2027125174407236599.davem@davemloft.net>
-In-Reply-To: <20181116.194219.2027125174407236599.davem@davemloft.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=madalin.bucur@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB6011;6:ChYv2pI7RusXJAvIRIQBKRhVcVQQ0m4Nvqj4+25j3cKefY7JjoQ+T6K0v9G+7WsWvnlodGEd0A0ehzd9wtFKEqNBQd6xxYqffcy2+s9ywsDzUTWPhSlJcWwJR4xqZkJ6jv+QMndo7UOh2wvmbwkzrk9WzvjJ5Yq9Emtio/DEzsg49CTGwOdegZAqZQp4NKVc7MZPXKo6s5sBjp3BfMiOAejyiJK4nLuhCCKFpiebznu6+JKVy+3JcKRn2/namV6rFNmrvF/JKGtF/dSe7hqFpGZseIqD3MXQj3GRxFmDkKIogIoaP6Dzuzbqhh+9FGAYVf5PpBCbqfjvy+uc8R90VnADtcu27fVg3pQxDHYmwIOXhDPvOsFKYVLsqKDQxNRqBOxOCnk60wv8b2iXec6ozsftVrUVJAwRd3FUgjhbk2Ipwoyc4lGxa865iA2G0fodbwPjen1AA/6coxGfU7z5MA==;5:BLpz7j5FpWp2M6kHr2jHjHgTy21dQwqMwqBiR1AdIJkLRenQiKVcyeKY9ZJ4wlTYE3DWx3HYdSD8I62FAEywutzYUVX3AGcJ81E+sE/doO/zqjWETTVIY3W3xtjjdoMcjIdf7eAXZX+6ZFJkZt+oB1+AwTu/gVxjPJqJwH1AtiE=;7:xd2vNJkxOesM9lGS7dcrTSpFr9ajUwxqwvS5aQe4zpVvwbX6XeQ65aRd2MPuZZNJ4JTSzIYBp5VkWWBdqy95JmX7ypnnFYm8rxbxgST/rjdmnGSmVDrqnRGHwBhXBL7KoqO9cMAPJIRQehFERE0a7Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 2b7994f5-101c-49c9-f2a1-08d64dee2903
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB6011;
-x-ms-traffictypediagnostic: DB7PR04MB6011:
-x-microsoft-antispam-prvs: <DB7PR04MB6011F7AA46C834DD8E974791ECD80@DB7PR04MB6011.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231415)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB6011;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB6011;
-x-forefront-prvs: 08617F610C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(366004)(39860400002)(376002)(13464003)(189003)(199004)(71200400001)(71190400001)(478600001)(54906003)(316002)(102836004)(14454004)(97736004)(2906002)(26005)(33656002)(25786009)(256004)(4326008)(6246003)(53936002)(9686003)(105586002)(68736007)(55016002)(106356001)(8676002)(74316002)(186003)(2900100001)(446003)(6116002)(3846002)(6436002)(7736002)(6916009)(486006)(76176011)(7696005)(66066001)(6506007)(99286004)(305945005)(476003)(11346002)(81156014)(5660300001)(8936002)(81166006)(53546011)(86362001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB6011;H:DB7PR04MB4009.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: f3HKMFov5VAws8bJLxXBfMo8yXIRtgYZRGl8n9yq9slZVFDlgydPKNnvKEDluydGv2g4NudKzqkDxyG1ssybgd9XDjadIBWv+YOLYtndjuYoTNouLKQoIXZPJWCbCMW2q20vaFoIm/EEABEUeJLDnWyCxCVZZhrtnrbsx7b/iaivztMFBBcWAn/k3EW8OKGI/+yHcdlU4PZ71sYJq0niF6qd8ulrpYBfVyCjpt6p2MXXY5csqvRfzVEInmNvumr3fSIcneiNE0Me3RahWeqhfV4dZOvXe1IkOd1kFubutxE1gjpiEd/j1gDjqeZlSGxllD0Pocb1/mppG+FBWtSrJFTNY9Qs5e6+11t6q8bfdEc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 19 Nov 2018 12:33:58 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33716 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeKSRd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 12:33:58 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3846F60386; Mon, 19 Nov 2018 07:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542611473;
+        bh=5niH4Ff9WlxydQFvyUv4a7G2G3T9YOh9n9FsKqFxlm8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fwRx1jquG8iUK1YgCayA4tkYyUYPTRcjevaeKihSPzTni/y/wjiwi9MljISdOgNi0
+         1mXseXT4wxm5g2yk0zYINvli2EFutd1HSEiyIkVfp13i7OPnAgyJNPWLElubL7d4/Z
+         WBhjK5UyarUM1Q46j5eRHKZ11ip7DZks7iaBuzVc=
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 647A360AD8;
+        Mon, 19 Nov 2018 07:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542611472;
+        bh=5niH4Ff9WlxydQFvyUv4a7G2G3T9YOh9n9FsKqFxlm8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bb44EIhSnJQDsWTO5u3fwBgCoxEZ0EyGuKoVQeL0JrnofLwWU0cYUUyeHcCDwtzJ6
+         TeLdL5RMw4sUnxecpas8ERWcxclZsr5O8TYVHuHqGlcX6q0LmZ2cLrixCbjde3cygW
+         Xxtjqv3s4qzH+LC9uXDqheb+bBkveNM3GaZ0jZPg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 647A360AD8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f175.google.com with SMTP id d135so47007451qkc.12;
+        Sun, 18 Nov 2018 23:11:12 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJdUQL1GSfcu0+nZKqzdRM6LeZ0eH8Q9m3ET3EIxREtdE6ng0/6
+        nOFMbB5P3cQZYmzwYMlRYYOX0bysCCnjGHM+OdE=
+X-Google-Smtp-Source: AJdET5fQWXryssOArRbHloPb7ncFXu5U4f9ohsXOXMsFl+mmCmlEPjyEFW89kwEAXjYWlw4+402TZiuletvcIJT9nBM=
+X-Received: by 2002:aed:3746:: with SMTP id i64mr19530704qtb.307.1542611471602;
+ Sun, 18 Nov 2018 23:11:11 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b7994f5-101c-49c9-f2a1-08d64dee2903
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 07:11:00.4558
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB6011
+References: <20181108070449.23572-1-shawn.guo@linaro.org> <20181108070449.23572-2-shawn.guo@linaro.org>
+ <5bea0ed8.1c69fb81.8715.38b2@mx.google.com> <20181113034200.GD20049@tiger>
+ <CAL_JsqKu3kf-zrKNtrtZsQEPi0LN_3jqs08i3-8vbSQDVxuRkA@mail.gmail.com> <20181119065503.GB10788@dragon>
+In-Reply-To: <20181119065503.GB10788@dragon>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Mon, 19 Nov 2018 12:40:59 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iGmsLT8UOk+-4zOKkYxJbkhqy=oDw2ZqrXLDCGbF8uTHA@mail.gmail.com>
+Message-ID: <CAFp+6iGmsLT8UOk+-4zOKkYxJbkhqy=oDw2ZqrXLDCGbF8uTHA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
+ USB PHY binding
+To:     shawn.guo@linaro.org
+Cc:     Rob Herring <robh@kernel.org>, kishon <kishon@ti.com>,
+        sallenki@codeaurora.org, anur@codeaurora.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>, vkoul@kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: David Miller <davem@davemloft.net>
-> Sent: Saturday, November 17, 2018 5:42 AM
-> To: Madalin-cristian Bucur <madalin.bucur@nxp.com>
-> Subject: Re: [PATCH v2 2/2] dpaa_eth: add ethtool coalesce control
->=20
-> From: Madalin Bucur <madalin.bucur@nxp.com>
-> Date: Tue, 13 Nov 2018 18:29:51 +0200
->=20
-> > +	for_each_cpu(cpu, cpus) {
-> > +		portal =3D qman_get_affine_portal(cpu);
-> > +		res =3D qman_portal_set_iperiod(portal, period);
-> > +		if (res)
-> > +			return res;
-> > +		res =3D qman_dqrr_set_ithresh(portal, thresh);
-> > +		if (res)
-> > +			return res;
->=20
-> Nope, you can't do it like this.
->=20
-> If any intermediate change fails, you have to unwind all of the
-> changes made up until that point.
->=20
-> Which means you'll have to store the previous setting somewhere
-> and reinstall those saved values in the error path.
+On Mon, Nov 19, 2018 at 12:29 PM Shawn Guo <shawn.guo@linaro.org> wrote:
+>
+> On Sat, Nov 17, 2018 at 09:13:38AM -0600, Rob Herring wrote:
+> <snip>
+> > > > > +- qcom,init-seq:
+> > > > > +    Value type: <u32 array>
+> > > > > +    Definition: Should contain a sequence of <offset value delay> tuples to
+> > > > > +                program 'value' into phy register at 'offset' with 'delay'
+> > > > > +           in us afterwards.
+> > > >
+> > > > If we wanted this type of thing in DT, we'd have a generic binding (or
+> > > > forth).
+> > >
+> > > Right now, this is a qualcomm usb phy specific bindings - first used in
+> > > qcom,usb-hs-phy.txt and I extended it a bit for my phy.  As this is not
+> > > a so good hardware description, I'm a little hesitated to make it
+> > > generic for other platforms to use in general.  What about we put off it
+> > > a little bit until we see more platforms need the same thing?
+> >
+> > I'm not saying I want it generic. Quite the opposite. I don't think we
+> > should have it either generically or vendor specific. The main thing I
+> > have a problem with is the timing information because then we're more
+> > that just data. Without that we're talking about a bunch of properties
+> > for register fields or just raw register values in DT. That becomes
+> > more of a judgement call. There's not too much value in making a
+> > driver translate a bunch of properties just to stuff them into
+> > registers on init. But then just allowing any raw register value to be
+> > in DT could be easily abused.
+>
+> Rob,
+>
+> I agree with your comments.  Honestly, I'm not comfortable with this
+> 'qcom,init-seq' thing in the first impression.  The similar existence in
+> mainline qcom,usb-hs-phy.txt makes me think it might be acceptable with
+> the timing data added.  Okay, I know your position on this now.
+>
+> @Sriharsha,
+>
+> Seeing that 'qcom,init-seq' is being configured with the exactly same
+> values for both HS phys in SoC level dts file (qcs404.dtsi), I think
+> such settings can be moved into driver code as SoC specific data.
+> Unless you have a different view on this, I will do it with v4.
 
-Thank you, I'll come back with a v3.
+phy-qcom-qmp and phy-qcom-qusb2 have been maintaining such SoC specific
+init sequences in the drivers if you would like to have pointers from them.
 
-Madalin
+Thanks
+Vivek
+
+>
+> Shawn
+
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
