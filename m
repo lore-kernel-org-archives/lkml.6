@@ -2,390 +2,143 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17632C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7682C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A8D20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A8D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id A87E5208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pwln0nkK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pwln0nkK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87E5208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbeKSV17 (ORCPT
+        id S1728531AbeKSVbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:27:59 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38691 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725911AbeKSV17 (ORCPT
+        Mon, 19 Nov 2018 16:31:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43606 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728080AbeKSVbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:27:59 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAJB3pb7023064;
-        Mon, 19 Nov 2018 12:04:25 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nt9b22e2h-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 19 Nov 2018 12:04:25 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 311F531;
-        Mon, 19 Nov 2018 11:04:25 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1061E26A4;
-        Mon, 19 Nov 2018 11:04:25 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG5NODE2.st.com (10.75.127.14)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 19 Nov 2018 12:04:24
- +0100
-From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-i2c@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] i2c: i2c-stm32f7: add PM Runtime support
-Date:   Mon, 19 Nov 2018 12:04:24 +0100
-Message-ID: <1542625464-4704-1-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Nov 2018 16:31:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 828BC60B26; Mon, 19 Nov 2018 11:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542625705;
+        bh=8OXYrPMTiTW8NDzFvFM0CMJ8a7uuECoJgB97wfy8vcI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Pwln0nkKhACRn4tcNgcoDA/Iq88dgXIChohnyuJpUSUfX5WuJJ9HU9s47LXeQimIx
+         JsxYn85ItMshz5xecSJSA/0PK7wnVOkZwGHTxIlojADqx8m+/SMu40dwryojn9QYDv
+         A13f6ijQL3LWnKAlTv4Jeu9R1Ggusf+fLqIf0PHE=
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 061C860767;
+        Mon, 19 Nov 2018 11:08:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542625705;
+        bh=8OXYrPMTiTW8NDzFvFM0CMJ8a7uuECoJgB97wfy8vcI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Pwln0nkKhACRn4tcNgcoDA/Iq88dgXIChohnyuJpUSUfX5WuJJ9HU9s47LXeQimIx
+         JsxYn85ItMshz5xecSJSA/0PK7wnVOkZwGHTxIlojADqx8m+/SMu40dwryojn9QYDv
+         A13f6ijQL3LWnKAlTv4Jeu9R1Ggusf+fLqIf0PHE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 061C860767
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f175.google.com with SMTP id q1so47795417qkf.13;
+        Mon, 19 Nov 2018 03:08:24 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKC9raqBk8P1x6amYD4t2RSktfVo5AJOW8FODjLE3SD3ZXEviqL
+        pRRoHAfExGE836e7CziqIzatVDH1ZdAGHeOuVNw=
+X-Google-Smtp-Source: AJdET5fGM7cdx2hdIblD7FEUS3UvR2JmF3CXZ0nCLPw7pkhNcj3empMzWx8sdOV6nYGkFv0vijCd3vzHIMJzmfXbRJs=
+X-Received: by 2002:a0c:c60b:: with SMTP id v11mr20960794qvi.198.1542625704255;
+ Mon, 19 Nov 2018 03:08:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_04:,,
- signatures=0
+References: <1542619537-24038-1-git-send-email-todor.tomov@linaro.org>
+In-Reply-To: <1542619537-24038-1-git-send-email-todor.tomov@linaro.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Mon, 19 Nov 2018 16:38:10 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iG3bRoyFtfd60SO9t=upjcH+fQm1NAOMTvMpYnk5dHjFw@mail.gmail.com>
+Message-ID: <CAFp+6iG3bRoyFtfd60SO9t=upjcH+fQm1NAOMTvMpYnk5dHjFw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: msm8996: Add VFE SMMU node
+To:     todor.tomov@linaro.org
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        "robh+dt" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PM Runtime API to enable/disable clock
+Hi Todor,
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v2:
-       * missing define
-    v1:
-       * Initial
----
----
- drivers/i2c/busses/i2c-stm32f7.c | 144 +++++++++++++++++++++++++++------------
- 1 file changed, 101 insertions(+), 43 deletions(-)
+On Mon, Nov 19, 2018 at 2:57 PM Todor Tomov <todor.tomov@linaro.org> wrote:
+>
+> Add VFE SMMU node.
+>
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+> ---
+>
+> This patch depends on patchset:
+> https://lore.kernel.org/patchwork/cover/1013166/
+>
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 13bb964..a4d087e5 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -950,6 +950,23 @@
+>                         };
+>                 };
+>
+> +               vfe_smmu: arm,smmu@da0000 {
+> +                       compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
+> +                       reg = <0xda0000 0x10000>;
+> +
+> +                       #global-interrupts = <1>;
+> +                       interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
+> +                       power-domains = <&mmcc MMAGIC_CAMSS_GDSC>;
+> +                       clocks = <&mmcc SMMU_VFE_AHB_CLK>,
+> +                                <&mmcc SMMU_VFE_AXI_CLK>;
+> +                       clock-names = "iface",
+> +                                     "bus";
+> +                       #iommu-cells = <1>;
+> +                       status = "ok";
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 62d023e..3b98b68 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -27,6 +27,8 @@
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- 
-@@ -163,6 +165,8 @@
- #define STM32F7_SCLH_MAX			BIT(8)
- #define STM32F7_SCLL_MAX			BIT(8)
- 
-+#define STM32F7_AUTOSUSPEND_DELAY		(HZ / 100)
-+
- /**
-  * struct stm32f7_i2c_spec - private i2c specification timing
-  * @rate: I2C bus speed (Hz)
-@@ -1545,15 +1549,13 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
- 	i2c_dev->msg_id = 0;
- 	f7_msg->smbus = false;
- 
--	ret = clk_enable(i2c_dev->clk);
--	if (ret) {
--		dev_err(i2c_dev->dev, "Failed to enable clock\n");
-+	ret = pm_runtime_get_sync(i2c_dev->dev);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	ret = stm32f7_i2c_wait_free_bus(i2c_dev);
- 	if (ret)
--		goto clk_free;
-+		goto pm_free;
- 
- 	stm32f7_i2c_xfer_msg(i2c_dev, msgs);
- 
-@@ -1569,8 +1571,9 @@ static int stm32f7_i2c_xfer(struct i2c_adapter *i2c_adap,
- 		ret = -ETIMEDOUT;
- 	}
- 
--clk_free:
--	clk_disable(i2c_dev->clk);
-+pm_free:
-+	pm_runtime_mark_last_busy(i2c_dev->dev);
-+	pm_runtime_put_autosuspend(i2c_dev->dev);
- 
- 	return (ret < 0) ? ret : num;
- }
-@@ -1592,39 +1595,37 @@ static int stm32f7_i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
- 	f7_msg->read_write = read_write;
- 	f7_msg->smbus = true;
- 
--	ret = clk_enable(i2c_dev->clk);
--	if (ret) {
--		dev_err(i2c_dev->dev, "Failed to enable clock\n");
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
- 		return ret;
--	}
- 
- 	ret = stm32f7_i2c_wait_free_bus(i2c_dev);
- 	if (ret)
--		goto clk_free;
-+		goto pm_free;
- 
- 	ret = stm32f7_i2c_smbus_xfer_msg(i2c_dev, flags, command, data);
- 	if (ret)
--		goto clk_free;
-+		goto pm_free;
- 
- 	timeout = wait_for_completion_timeout(&i2c_dev->complete,
- 					      i2c_dev->adap.timeout);
- 	ret = f7_msg->result;
- 	if (ret)
--		goto clk_free;
-+		goto pm_free;
- 
- 	if (!timeout) {
- 		dev_dbg(dev, "Access to slave 0x%x timed out\n", f7_msg->addr);
- 		if (i2c_dev->use_dma)
- 			dmaengine_terminate_all(dma->chan_using);
- 		ret = -ETIMEDOUT;
--		goto clk_free;
-+		goto pm_free;
- 	}
- 
- 	/* Check PEC */
- 	if ((flags & I2C_CLIENT_PEC) && size != I2C_SMBUS_QUICK && read_write) {
- 		ret = stm32f7_i2c_smbus_check_pec(i2c_dev);
- 		if (ret)
--			goto clk_free;
-+			goto pm_free;
- 	}
- 
- 	if (read_write && size != I2C_SMBUS_QUICK) {
-@@ -1649,8 +1650,9 @@ static int stm32f7_i2c_smbus_xfer(struct i2c_adapter *adapter, u16 addr,
- 		}
- 	}
- 
--clk_free:
--	clk_disable(i2c_dev->clk);
-+pm_free:
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
- 	return ret;
- }
- 
-@@ -1676,13 +1678,9 @@ static int stm32f7_i2c_reg_slave(struct i2c_client *slave)
- 	if (ret)
- 		return ret;
- 
--	if (!(stm32f7_i2c_is_slave_registered(i2c_dev))) {
--		ret = clk_enable(i2c_dev->clk);
--		if (ret) {
--			dev_err(dev, "Failed to enable clock\n");
--			return ret;
--		}
--	}
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
-+		return ret;
- 
- 	if (id == 0) {
- 		/* Configure Own Address 1 */
-@@ -1703,7 +1701,7 @@ static int stm32f7_i2c_reg_slave(struct i2c_client *slave)
- 		oar2 &= ~STM32F7_I2C_OAR2_MASK;
- 		if (slave->flags & I2C_CLIENT_TEN) {
- 			ret = -EOPNOTSUPP;
--			goto exit;
-+			goto pm_free;
- 		}
- 
- 		oar2 |= STM32F7_I2C_OAR2_OA2_7(slave->addr);
-@@ -1712,7 +1710,7 @@ static int stm32f7_i2c_reg_slave(struct i2c_client *slave)
- 		writel_relaxed(oar2, i2c_dev->base + STM32F7_I2C_OAR2);
- 	} else {
- 		ret = -ENODEV;
--		goto exit;
-+		goto pm_free;
- 	}
- 
- 	/* Enable ACK */
-@@ -1723,11 +1721,10 @@ static int stm32f7_i2c_reg_slave(struct i2c_client *slave)
- 		STM32F7_I2C_CR1_PE;
- 	stm32f7_i2c_set_bits(base + STM32F7_I2C_CR1, mask);
- 
--	return 0;
--
--exit:
--	if (!(stm32f7_i2c_is_slave_registered(i2c_dev)))
--		clk_disable(i2c_dev->clk);
-+	ret = 0;
-+pm_free:
-+	pm_runtime_mark_last_busy(dev);
-+	pm_runtime_put_autosuspend(dev);
- 
- 	return ret;
- }
-@@ -1745,6 +1742,10 @@ static int stm32f7_i2c_unreg_slave(struct i2c_client *slave)
- 
- 	WARN_ON(!i2c_dev->slave[id]);
- 
-+	ret = pm_runtime_get_sync(i2c_dev->dev);
-+	if (ret < 0)
-+		return ret;
-+
- 	if (id == 0) {
- 		mask = STM32F7_I2C_OAR1_OA1EN;
- 		stm32f7_i2c_clr_bits(base + STM32F7_I2C_OAR1, mask);
-@@ -1755,10 +1756,11 @@ static int stm32f7_i2c_unreg_slave(struct i2c_client *slave)
- 
- 	i2c_dev->slave[id] = NULL;
- 
--	if (!(stm32f7_i2c_is_slave_registered(i2c_dev))) {
-+	if (!(stm32f7_i2c_is_slave_registered(i2c_dev)))
- 		stm32f7_i2c_disable_irq(i2c_dev, STM32F7_I2C_ALL_IRQ_MASK);
--		clk_disable(i2c_dev->clk);
--	}
-+
-+	pm_runtime_mark_last_busy(i2c_dev->dev);
-+	pm_runtime_put_autosuspend(i2c_dev->dev);
- 
- 	return 0;
- }
-@@ -1819,6 +1821,7 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Error: Missing controller clock\n");
- 		return PTR_ERR(i2c_dev->clk);
- 	}
-+
- 	ret = clk_prepare_enable(i2c_dev->clk);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to prepare_enable clock\n");
-@@ -1888,8 +1891,6 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto clk_free;
- 
--	stm32f7_i2c_hw_config(i2c_dev);
--
- 	adap = &i2c_dev->adap;
- 	i2c_set_adapdata(adap, i2c_dev);
- 	snprintf(adap->name, sizeof(adap->name), "STM32F7 I2C(%pa)",
-@@ -1908,18 +1909,35 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
- 					     STM32F7_I2C_TXDR,
- 					     STM32F7_I2C_RXDR);
- 
--	ret = i2c_add_adapter(adap);
--	if (ret)
--		goto clk_free;
--
- 	platform_set_drvdata(pdev, i2c_dev);
- 
--	clk_disable(i2c_dev->clk);
-+	pm_runtime_set_autosuspend_delay(i2c_dev->dev,
-+					 STM32F7_AUTOSUSPEND_DELAY);
-+	pm_runtime_use_autosuspend(i2c_dev->dev);
-+	pm_runtime_set_active(i2c_dev->dev);
-+	pm_runtime_enable(i2c_dev->dev);
-+
-+	pm_runtime_get_noresume(&pdev->dev);
-+
-+	stm32f7_i2c_hw_config(i2c_dev);
-+
-+	ret = i2c_add_adapter(adap);
-+	if (ret)
-+		goto pm_disable;
- 
- 	dev_info(i2c_dev->dev, "STM32F7 I2C-%d bus adapter\n", adap->nr);
- 
-+	pm_runtime_mark_last_busy(i2c_dev->dev);
-+	pm_runtime_put_autosuspend(i2c_dev->dev);
-+
- 	return 0;
- 
-+pm_disable:
-+	pm_runtime_put_noidle(i2c_dev->dev);
-+	pm_runtime_disable(i2c_dev->dev);
-+	pm_runtime_set_suspended(i2c_dev->dev);
-+	pm_runtime_dont_use_autosuspend(i2c_dev->dev);
-+
- clk_free:
- 	clk_disable_unprepare(i2c_dev->clk);
- 
-@@ -1936,12 +1954,51 @@ static int stm32f7_i2c_remove(struct platform_device *pdev)
- 	}
- 
- 	i2c_del_adapter(&i2c_dev->adap);
-+	pm_runtime_get_sync(i2c_dev->dev);
-+
-+	clk_disable_unprepare(i2c_dev->clk);
- 
--	clk_unprepare(i2c_dev->clk);
-+	pm_runtime_put_noidle(i2c_dev->dev);
-+	pm_runtime_disable(i2c_dev->dev);
-+	pm_runtime_set_suspended(i2c_dev->dev);
-+	pm_runtime_dont_use_autosuspend(i2c_dev->dev);
- 
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM
-+static int stm32f7_i2c_runtime_suspend(struct device *dev)
-+{
-+	struct stm32f7_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+
-+	if (!stm32f7_i2c_is_slave_registered(i2c_dev))
-+		clk_disable_unprepare(i2c_dev->clk);
-+
-+	return 0;
-+}
-+
-+static int stm32f7_i2c_runtime_resume(struct device *dev)
-+{
-+	struct stm32f7_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+	int ret;
-+
-+	if (!stm32f7_i2c_is_slave_registered(i2c_dev)) {
-+		ret = clk_prepare_enable(i2c_dev->clk);
-+		if (ret) {
-+			dev_err(dev, "failed to prepare_enable clock\n");
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops stm32f7_i2c_pm_ops = {
-+	SET_RUNTIME_PM_OPS(stm32f7_i2c_runtime_suspend,
-+			   stm32f7_i2c_runtime_resume, NULL)
-+};
-+
- static const struct of_device_id stm32f7_i2c_match[] = {
- 	{ .compatible = "st,stm32f7-i2c", .data = &stm32f7_setup},
- 	{},
-@@ -1952,6 +2009,7 @@ static struct platform_driver stm32f7_i2c_driver = {
- 	.driver = {
- 		.name = "stm32f7-i2c",
- 		.of_match_table = stm32f7_i2c_match,
-+		.pm = &stm32f7_i2c_pm_ops,
- 	},
- 	.probe = stm32f7_i2c_probe,
- 	.remove = stm32f7_i2c_remove,
+No point of adding this status here.
+Rest looks good to me.
+
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+
+Best regards
+Vivek
+
+> +               };
+> +
+>                 agnoc@0 {
+>                         power-domains = <&gcc AGGRE0_NOC_GDSC>;
+>                         compatible = "simple-pm-bus";
+> --
+> 2.7.4
+>
+
+
 -- 
-2.7.4
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
