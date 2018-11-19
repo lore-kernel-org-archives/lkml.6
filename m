@@ -2,69 +2,106 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB3CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04F3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D68208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D68208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B7ED1208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zJQ0Thvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7ED1208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbeKTC4Z (ORCPT
+        id S1730723AbeKTC41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:56:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58466 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730067AbeKTC4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:56:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 93CB1AF71;
-        Mon, 19 Nov 2018 16:32:15 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to phy_select/restore_page functions
-References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
-        <20181008100728.24959-2-quentin.schulz@bootlin.com>
-        <mvm8t1pazea.fsf@suse.de> <20181119151057.GC26852@lunn.ch>
-        <mvm4lcdaynt.fsf@suse.de> <20181119152830.GE26852@lunn.ch>
-        <20181119154005.GA8367@piout.net> <mvmzhu59idl.fsf@suse.de>
-        <20181119161204.GC2393@lunn.ch> <mvmva4t9h8x.fsf@suse.de>
-        <20181119162529.GA31955@lunn.ch>
-X-Yow:  I know how to get the hostesses released!  Give them their own
- television series!
-Date:   Mon, 19 Nov 2018 17:32:14 +0100
-In-Reply-To: <20181119162529.GA31955@lunn.ch> (Andrew Lunn's message of "Mon,
-        19 Nov 2018 17:25:29 +0100")
-Message-ID: <mvmo9al9gfl.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Mon, 19 Nov 2018 21:56:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54658 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730065AbeKTC41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:56:27 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E2642086A;
+        Mon, 19 Nov 2018 16:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542645140;
+        bh=XT0m9EPqQ7fL2Fgk9ulOB82kJflQuxCKS/w6cwajjEY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zJQ0ThvgJk94dSLXNMqgheNjjBBh+ejl8uuAEe7u0izn0WG21YUSw2HJ9GnifigVw
+         gi8VO0QcuoeLo7l6Wixst0YSwzD7y3ZcDH5QEpDVtWyxZJXj5B4077XDDFJ26J/JCO
+         NMowE6Z2PMw4OkgkBk4OagpNsqSPU6S0VT9fBXpw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH 4.19 050/205] serial: sh-sci: Fix could not remove dev_attr_rx_fifo_timeout
+Date:   Mon, 19 Nov 2018 17:25:57 +0100
+Message-Id: <20181119162626.245533965@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
+References: <20181119162616.586062722@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Nov 19 2018, Andrew Lunn <andrew@lunn.ch> wrote:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-> Lock debugging: prove locking correctness
+------------------
 
-404
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Andreas.
+commit 641a41dbba217ee5bd26abe6be77f8cead9cd00e upstream.
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+This patch fixes an issue that the sci_remove() could not remove
+dev_attr_rx_fifo_timeout because uart_remove_one_port() set
+the port->port.type to PORT_UNKNOWN.
+
+Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Fixes: 5d23188a473d ("serial: sh-sci: make RX FIFO parameters tunable via sysfs")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/tty/serial/sh-sci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3102,6 +3102,7 @@ static struct uart_driver sci_uart_drive
+ static int sci_remove(struct platform_device *dev)
+ {
+ 	struct sci_port *port = platform_get_drvdata(dev);
++	unsigned int type = port->port.type;	/* uart_remove_... clears it */
+ 
+ 	sci_ports_in_use &= ~BIT(port->port.line);
+ 	uart_remove_one_port(&sci_uart_driver, &port->port);
+@@ -3112,8 +3113,7 @@ static int sci_remove(struct platform_de
+ 		sysfs_remove_file(&dev->dev.kobj,
+ 				  &dev_attr_rx_fifo_trigger.attr);
+ 	}
+-	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB ||
+-	    port->port.type == PORT_HSCIF) {
++	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF) {
+ 		sysfs_remove_file(&dev->dev.kobj,
+ 				  &dev_attr_rx_fifo_timeout.attr);
+ 	}
+
+
