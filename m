@@ -2,347 +2,164 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 903D6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCB5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45BCE20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:44:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BCE20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 817F620831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Et3dhWPa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817F620831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbeKTAHk (ORCPT
+        id S1728556AbeKTAKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:07:40 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:51362 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727059AbeKTAHj (ORCPT
+        Mon, 19 Nov 2018 19:10:00 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34159 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727332AbeKTAJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:07:39 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 9FABF634C83;
-        Mon, 19 Nov 2018 15:43:57 +0200 (EET)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gOjqH-0000nX-EA; Mon, 19 Nov 2018 15:43:57 +0200
-Date:   Mon, 19 Nov 2018 15:43:57 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v2 4/9] phy: dphy: Add configuration helpers
-Message-ID: <20181119134357.743nskpkqqfkrjux@valkosipuli.retiisi.org.uk>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <4d44460c4ecbd47f4cbd9141c6bf2632b6c21e1e.1541516029.git-series.maxime.ripard@bootlin.com>
+        Mon, 19 Nov 2018 19:09:59 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u6-v6so26182345ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 05:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eKL07o7rMhHLAxJrBlPEYpgLw3cT/dJX6NRCkJ7ifeY=;
+        b=Et3dhWPa9/m8nWSrCSnZajOoBLdpWK2ygMK3ZbMc0RUs94GNEmhZfveozYR1g1uK2R
+         9/1lk/GSyLPEzJw2npYGhtKoqYbyoiSL5zAncmQYbPs1MbEq20qLyKR/HZNJxMRwTcMS
+         wjg8ed4+dLs0uHARWZUx8xj2fcgQ7hwZiUyGM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eKL07o7rMhHLAxJrBlPEYpgLw3cT/dJX6NRCkJ7ifeY=;
+        b=o0/zFLYmtaHXX9mSTMFE53rQH8ka1Aa8evV6kzUS6bARMpWSokz8vEv9xKl4Q1KEoJ
+         bLqb55s1fpuaf0iSmW3JzBR12cbZ4BjTxuVq+icV41lyMW8IO+zyU1HvqLPjXZ3Q1smY
+         dbz/K8ck3HToCYe/lnFBDRmIXFoKFXU587AD+YXcSiT2ZClFjn9H5QAtWDtl8qT/k0by
+         1SKjUw7EiMTC0sITXVYTrLYe/HvDMbfFXhdXIAFhNdDtRpwCrKjcISetLQSFuNR3E9MH
+         UTlVgwEdvfkqH9LB5HCAl8q3m1R8A+DO3Sc32Axbt1THpFBK49CdnDMejj4H+7I3NGo9
+         e/sw==
+X-Gm-Message-State: AA+aEWYF3xJWNs0O1ps2qmKYPQC0eDr7qJ1Uv2pWFTJTJoBRnFhzAs5f
+        dQmYi7IjnLRV5RAc9QrVsGU9a6Q0JHCn2dKQhc7XCw==
+X-Google-Smtp-Source: AFSGD/VcDlfLYJPh+Ev4BpmrnnZ5i0ZFDf6VEDfagIaNehAUehq18zt1hOqKs7xZEkSPqoLeLNE3ZJ5lfKuBU/0ILpQ=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr7013303ljk.4.1542635177786;
+ Mon, 19 Nov 2018 05:46:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4d44460c4ecbd47f4cbd9141c6bf2632b6c21e1e.1541516029.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20181115133201.29092-1-fe@dev.tdt.de> <20181115133201.29092-2-fe@dev.tdt.de>
+In-Reply-To: <20181115133201.29092-2-fe@dev.tdt.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 19 Nov 2018 14:46:06 +0100
+Message-ID: <CACRpkdZx-GgfgfGmB6KmTjzBEMnKyq3pUsHsgaZ1uBooN_sj9g@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] gpio: Add driver for PC Engines APU boards
+To:     fe@dev.tdt.de
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>, piotr.krol@3mdeb.com,
+        Eckert.Florian@googlemail.com, Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86 <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+On Thu, Nov 15, 2018 at 2:32 PM Florian Eckert <fe@dev.tdt.de> wrote:
 
-Apologies for the delayed review. Please see my comments below.
+> Add a new device driver "gpio-apu" which will handle the GPIOs on APU2
+> and APU3 devices from PC Engines.
+>
+> APU2 (https://pcengines.ch/schema/apu2c.pdf page 7):
+> - G32 is "button_reset" connected to the smd-button on the frontpanel
+> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
+> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
+>
+> APU3 (https://pcengines.ch/schema/apu3c.pdf page 7):
+> - G32 is "button_reset" connected to the smd-button on the frontpanel
+> - G50 is "mpcie2_reset" connected to mPCIe2 reset line
+> - G51 is "mpcie3_reset" connected to mPCIe3 reset line
+> - G33 is "simswap" connected to SIM switch IC to swap the SIM between
+>   mPCIe2 and mPCIe3 slot
+>
+> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
 
-On Tue, Nov 06, 2018 at 03:54:16PM +0100, Maxime Ripard wrote:
-> The MIPI D-PHY spec defines default values and boundaries for most of the
-> parameters it defines. Introduce helpers to help drivers get meaningful
-> values based on their current parameters, and validate the boundaries of
-> these parameters if needed.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  drivers/phy/Kconfig               |   8 ++-
->  drivers/phy/Makefile              |   1 +-
->  drivers/phy/phy-core-mipi-dphy.c  | 160 +++++++++++++++++++++++++++++++-
->  include/linux/phy/phy-mipi-dphy.h |   6 +-
->  4 files changed, 175 insertions(+)
->  create mode 100644 drivers/phy/phy-core-mipi-dphy.c
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 60f949e2a684..c87a7d49eaab 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -15,6 +15,14 @@ config GENERIC_PHY
->  	  phy users can obtain reference to the PHY. All the users of this
->  	  framework should select this config.
->  
-> +config GENERIC_PHY_MIPI_DPHY
-> +	bool
-> +	help
-> +	  Generic MIPI D-PHY support.
-> +
-> +	  Provides a number of helpers a core functions for MIPI D-PHY
-> +	  drivers to us.
-> +
->  config PHY_LPC18XX_USB_OTG
->  	tristate "NXP LPC18xx/43xx SoC USB OTG PHY driver"
->  	depends on OF && (ARCH_LPC18XX || COMPILE_TEST)
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 0301e25d07c1..baec59cebbab 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -4,6 +4,7 @@
->  #
->  
->  obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
-> +obj-$(CONFIG_GENERIC_PHY_MIPI_DPHY)	+= phy-core-mipi-dphy.o
->  obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
->  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
->  obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
-> diff --git a/drivers/phy/phy-core-mipi-dphy.c b/drivers/phy/phy-core-mipi-dphy.c
-> new file mode 100644
-> index 000000000000..127ca6960084
-> --- /dev/null
-> +++ b/drivers/phy/phy-core-mipi-dphy.c
-> @@ -0,0 +1,160 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2013 NVIDIA Corporation
-> + * Copyright (C) 2018 Cadence Design Systems Inc.
-> + */
-> +
-> +#include <linux/errno.h>
-> +#include <linux/export.h>
-> +#include <linux/kernel.h>
-> +#include <linux/time64.h>
-> +
-> +#include <linux/phy/phy.h>
-> +#include <linux/phy/phy-mipi-dphy.h>
-> +
-> +/*
-> + * Minimum D-PHY timings based on MIPI D-PHY specification. Derived
-> + * from the valid ranges specified in Section 6.9, Table 14, Page 41
-> + * of the D-PHY specification (v2.1).
+This is looking better and better! Thanks to everyone helping out
+and thanks for your perseverance Florian!
 
-I assume these values are compliant with the earlier spec releases.
+> +config GPIO_APU
+> +       tristate "PC Engines APU2/APU3 GPIO support"
+> +       depends on X86
+> +       select GPIO_GENERIC
 
-> + */
-> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
+Excellent idea.
 
-How about using the bus frequency instead of the pixel clock? Chances are
-that the caller already has that information, instead of calculating it
-here?
+But it seems you are not using this. You would be using
+it if you used bgpio_init() but if I understand correctly this
+driver cannot use that because this GPIO is something like
+one register per pin, correct?
 
-> +				     unsigned int bpp,
-> +				     unsigned int lanes,
-> +				     struct phy_configure_opts_mipi_dphy *cfg)
+Let me suggest:
+
+> +struct apu_gpio_pdata {
+> +       struct platform_device *pdev;
+> +       struct gpio_chip *chip;
+
+Make that a real member of this struct and not a pointer.
+I.e. just remove the "*".
+
+> +static struct apu_gpio_pdata *apu_gpio;
+
+Why a static local? It seems you can just pass around
+the pointer.
+
+> +static int gpio_apu_get_dir(struct gpio_chip *chip, unsigned int offset)
 > +{
-> +	unsigned long hs_clk_rate;
-> +	unsigned long ui;
+> +       u32 val;
 > +
-> +	if (!cfg)
-> +		return -EINVAL;
+> +       spin_lock(&apu_gpio->lock);
 > +
-> +	hs_clk_rate = pixel_clock * bpp / lanes;
-> +	ui = DIV_ROUND_UP(NSEC_PER_SEC, hs_clk_rate);
+> +       val = ~ioread32(apu_gpio->addr[offset]);
+> +       val = (val >> APU_GPIO_BIT_DIR) & 1;
 
-Nanoseconds may not be precise enough for practical computations on these
-values. At 1 GHz, this ends up being precisely 1. At least Intel hardware
-has some more precision, I presume others do, too. How about using
-picoseconds instead?
+I would just:
 
-> +
-> +	cfg->clk_miss = 0;
-> +	cfg->clk_post = 60 + 52 * ui;
-> +	cfg->clk_pre = 8;
-> +	cfg->clk_prepare = 38;
-> +	cfg->clk_settle = 95;
-> +	cfg->clk_term_en = 0;
-> +	cfg->clk_trail = 60;
-> +	cfg->clk_zero = 262;
-> +	cfg->d_term_en = 0;
-> +	cfg->eot = 0;
-> +	cfg->hs_exit = 100;
-> +	cfg->hs_prepare = 40 + 4 * ui;
-> +	cfg->hs_zero = 105 + 6 * ui;
-> +	cfg->hs_settle = 85 + 6 * ui;
-> +	cfg->hs_skip = 40;
-> +
-> +	/*
-> +	 * The MIPI D-PHY specification (Section 6.9, v1.2, Table 14, Page 40)
-> +	 * contains this formula as:
-> +	 *
-> +	 *     T_HS-TRAIL = max(n * 8 * ui, 60 + n * 4 * ui)
-> +	 *
-> +	 * where n = 1 for forward-direction HS mode and n = 4 for reverse-
-> +	 * direction HS mode. There's only one setting and this function does
-> +	 * not parameterize on anything other that ui, so this code will
-> +	 * assumes that reverse-direction HS mode is supported and uses n = 4.
-> +	 */
-> +	cfg->hs_trail = max(4 * 8 * ui, 60 + 4 * 4 * ui);
-> +
-> +	cfg->init = 100000;
-> +	cfg->lpx = 60;
-> +	cfg->ta_get = 5 * cfg->lpx;
-> +	cfg->ta_go = 4 * cfg->lpx;
-> +	cfg->ta_sure = 2 * cfg->lpx;
-> +	cfg->wakeup = 1000000;
-> +
-> +	cfg->hs_clk_rate = hs_clk_rate;
+#include <linux/bits.h>
 
-How about the LP clock?
+val = ~ioread32(apu_gpio->addr[offset]);
+spin_unlock();
 
-Frankly, I have worked with MIPI CSI-2 hardware soon a decade, and the very
-few cases where software has needed to deal with these values has been in
-form of defaults for a receiver, mostly limiting to clk_settle,
-clk_term_en, d_term_en as well as hs_settle. On some hardware, the data
-lane specific values can be at least in theory configured separately on
-different lanes (but perhaps we could ignore that now).
+return !!(val & BIT(APU_GPIO_BIT_DIR));
 
-That doesn't say that it'd be useless to convey these values to the PHY
-though. What I'm a little worried about though is what could be the effect
-of adding support for this for existing drivers? If you have a new driver,
-then there is no chance of regressions.
+This clamps the value to [0,1] in a nice way.
 
-I can't help noticing that many of the above values end up being unused in
-the rest of the patches in the set. I guess that's ok, they come from the
-standard anyway and some hardware may need them to be configured.
-
-Then there's the question of where should these values originate from.
-Some drivers appear to have a need to obtain one of these values via
-firmware, see Documentation/devicetree/bindings/media/samsung-mipi-csis.txt
-. I presume the defaults should be applicable to most cases, and specific
-values would need to be defined in the firmware. That means that the
-defaults have effectively the property of firmware API, meaning that they
-effectively can never be changed. That suggests we should be pretty sure
-the defaults are something that should work for the widest possible set of
-the hardware.
-
-> +	cfg->lanes = lanes;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(phy_mipi_dphy_get_default_config);
-> +
-> +/*
-> + * Validate D-PHY configuration according to MIPI D-PHY specification
-> + * (v1.2, Section Section 6.9 "Global Operation Timing Parameters").
-> + */
-> +int phy_mipi_dphy_config_validate(struct phy_configure_opts_mipi_dphy *cfg)
+> +static int gpio_apu_get_data(struct gpio_chip *chip, unsigned int offset)
 > +{
-> +	unsigned long ui;
+> +       u32 val;
 > +
-> +	if (!cfg)
-> +		return -EINVAL;
+> +       spin_lock(&apu_gpio->lock);
 > +
-> +	ui = DIV_ROUND_UP(NSEC_PER_SEC, cfg->hs_clk_rate);
+> +       val = ioread32(apu_gpio->addr[offset]);
 > +
-> +	if (cfg->clk_miss > 60)
-> +		return -EINVAL;
+> +       spin_unlock(&apu_gpio->lock);
 > +
-> +	if (cfg->clk_post < (60 + 52 * ui))
+> +       return (val >> APU_GPIO_BIT_RD) & 1;
 
-Extra parentheses.
+return !!(val & BIT(APU_GPIO_BIT_RD));
 
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_pre < 8)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_prepare < 38 || cfg->clk_prepare > 95)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_settle < 95 || cfg->clk_settle > 300)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_term_en > 38)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_trail < 60)
-> +		return -EINVAL;
-> +
-> +	if (cfg->clk_prepare + cfg->clk_zero < 300)
-> +		return -EINVAL;
-> +
-> +	if (cfg->d_term_en > 35 + 4 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->eot > 105 + 12 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_exit < 100)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_prepare < 40 + 4 * ui ||
-> +	    cfg->hs_prepare > 85 + 6 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_prepare + cfg->hs_zero < 145 + 10 * ui)
-> +		return -EINVAL;
-> +
-> +	if ((cfg->hs_settle < 85 + 6 * ui) ||
-> +	    (cfg->hs_settle > 145 + 10 * ui))
+> +       return devm_gpiochip_add_data(&pdev->dev, apu_gpio->chip, NULL);
 
-Ditto.
+Instead of passing NULL pas apu_gpio as the last argument and in
+all callbacks you can use:
 
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_skip < 40 || cfg->hs_skip > 55 + 4 * ui)
-> +		return -EINVAL;
-> +
-> +	if (cfg->hs_trail < max(8 * ui, 60 + 4 * ui))
-> +		return -EINVAL;
-> +
-> +	if (cfg->init < 100000)
-> +		return -EINVAL;
-> +
-> +	if (cfg->lpx < 50)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_get != 5 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_go != 4 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->ta_sure < cfg->lpx || cfg->ta_sure > 2 * cfg->lpx)
-> +		return -EINVAL;
-> +
-> +	if (cfg->wakeup < 1000000)
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(phy_mipi_dphy_config_validate);
-> diff --git a/include/linux/phy/phy-mipi-dphy.h b/include/linux/phy/phy-mipi-dphy.h
-> index 0b05932916af..5e3673778afa 100644
-> --- a/include/linux/phy/phy-mipi-dphy.h
-> +++ b/include/linux/phy/phy-mipi-dphy.h
-> @@ -229,4 +229,10 @@ struct phy_configure_opts_mipi_dphy {
->  	unsigned char		lanes;
->  };
->  
-> +int phy_mipi_dphy_get_default_config(unsigned long pixel_clock,
-> +				     unsigned int bpp,
-> +				     unsigned int lanes,
-> +				     struct phy_configure_opts_mipi_dphy *cfg);
-> +int phy_mipi_dphy_config_validate(struct phy_configure_opts_mipi_dphy *cfg);
-> +
->  #endif /* __PHY_MIPI_DPHY_H_ */
+struct apu_gpio_pdata *apu_gpio = gpiochip_get_data(gc);
 
--- 
-Regards,
+To get a pointer to the per-instance state container.
 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Yours,
+Linus Walleij
