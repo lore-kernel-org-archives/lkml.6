@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBC4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13CDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7A12146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C02214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v2WzWCcL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7A12146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yktvNX8K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C02214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387749AbeKTDGx (ORCPT
+        id S2387759AbeKTDG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40836 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732796AbeKTDGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:53 -0500
+        id S1732866AbeKTDGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92E152086A;
-        Mon, 19 Nov 2018 16:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 008832086A;
+        Mon, 19 Nov 2018 16:42:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645762;
-        bh=4z2sZzJJx50sHVM58NtbSOixY6nHYALCmdP+MUDS4fY=;
+        s=default; t=1542645765;
+        bh=0EydS3s6VAB+KAIZK6WfgFzOuWrWQYWeEEOf/5q3msU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v2WzWCcLnczGv47yuLQGl0bsHq4o06FD+iMRnyYh8xVDubJ5IjsDFd/Cz3brVW3bD
-         zi00LuKR0KQgI95vYjzXnft+sXcoNhJfF+CJFR43apVNRbbRLsSRiy8S71i5g6MFAi
-         DNBOG4MuhMVuJ0UiffwM5ib2zHsnkKoUmCfHgzsA=
+        b=yktvNX8KgPrgilBfO+sxi4ax0cjkmKLAGa45hoi1tWQFU1dg8+kn81c4roBz2jEbF
+         2NoT9trmBe9iuITJTYT58cjcPdkDzQpUgbK3TH066gvgiEJvWtx0kjbc14joHXpptf
+         m3wXgR31pDKKfUHx9ANAHWBQ8DEEl13ZmsDeW2Bk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 042/171] scsi: qla2xxx: shutdown chip if reset fail
-Date:   Mon, 19 Nov 2018 17:27:18 +0100
-Message-Id: <20181119162626.637910184@linuxfoundation.org>
+Subject: [PATCH 4.18 043/171] scsi: qla2xxx: Fix duplicate switch database entries
+Date:   Mon, 19 Nov 2018 17:27:19 +0100
+Message-Id: <20181119162626.797480650@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,32 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 1e4ac5d6fe0a4af17e4b6251b884485832bf75a3 upstream.
+commit 732ee9a912cf2d9a50c5f9c4213cdc2f885d6aa6 upstream.
 
-If chip unable to fully initialize, use full shutdown sequence to clear out
-any stale FW state.
+The response data buffer used in switch scan is reused 4 times.  (For example,
+for commands GPN_FT, GNN_FT for FCP and FC-NVME) Before driver reuses this
+buffer, clear it to prevent duplicate entries in our database.
 
-Fixes: e315cd28b9ef ("[SCSI] qla2xxx: Code changes for qla data structure refactoring")
-Cc: stable@vger.kernel.org  #4.10
+Fixes: a4239945b8ad1 ("scsi: qla2xxx: Add switch command to simplify fabric discovery"
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_gs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -6515,7 +6515,7 @@ qla2x00_abort_isp(scsi_qla_host_t *vha)
- 					 * The next call disables the board
- 					 * completely.
- 					 */
--					ha->isp_ops->reset_adapter(vha);
-+					qla2x00_abort_isp_cleanup(vha);
- 					vha->flags.online = 0;
- 					clear_bit(ISP_ABORT_RETRY,
- 					    &vha->dpc_flags);
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -4410,9 +4410,9 @@ int qla24xx_async_gpnft(scsi_qla_host_t
+ 	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
+ 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha) + 2);
+ 
+-	rspsz = sizeof(struct ct_sns_gpnft_rsp) +
+-		((vha->hw->max_fibre_devices - 1) *
+-		    sizeof(struct ct_sns_gpn_ft_data));
++	rspsz = sp->u.iocb_cmd.u.ctarg.rsp_size;
++	memset(sp->u.iocb_cmd.u.ctarg.rsp, 0, sp->u.iocb_cmd.u.ctarg.rsp_size);
++	memset(sp->u.iocb_cmd.u.ctarg.req, 0, sp->u.iocb_cmd.u.ctarg.req_size);
+ 
+ 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
+ 	/* CT_IU preamble  */
 
 
