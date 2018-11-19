@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BE8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906DFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6115621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55D3721104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUF6KiNB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6115621104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpcGvDJT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55D3721104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404575AbeKTDVu (ORCPT
+        id S2404588AbeKTDVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:21:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33324 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403956AbeKTDVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:21:49 -0500
+        id S2403956AbeKTDVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:21:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D845621104;
-        Mon, 19 Nov 2018 16:57:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 733B02146D;
+        Mon, 19 Nov 2018 16:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646654;
-        bh=yRpa3Hh+UugcmEAIHj8BtsgegRs09+Pvt13PKhkl2TQ=;
+        s=default; t=1542646657;
+        bh=DB/mEVuat85eHrkipcG00lbtYKTOC6T0wwgduzRBlRA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hUF6KiNBxsnR6TDnqbhE3Fr8bcoSy9YZLEPvT/YQnFNNPROCW19r2cfSMd+acGSiP
-         bRADHOqD0YYdL/ayXIyatMMDShYZZDpWq8DTXfbrTnAJCDHae1lcE9DSHVf+bLG170
-         5/BNxJv4ReA4AU0R/mF/eisSVJPIa6wHBecBCUS4=
+        b=dpcGvDJTRVNLrxHLXYJ1sYDCi73lUt8ExafYzNbOjtsdGqUsLPuJtkDAHYxyjXFBE
+         O+g5AV/3MmYjaOOBxc28a7hZcGbU9VbaAiLJGjWxC1eo90mtcyTThbJXWtdua3FeBn
+         DlCf31cH0An6kvR8nzVm7X/rJhac2Xh8jmMkPcLg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 040/160] scsi: lpfc: Correct soft lockup when running mds diagnostics
-Date:   Mon, 19 Nov 2018 17:27:59 +0100
-Message-Id: <20181119162635.094683463@linuxfoundation.org>
+Subject: [PATCH 4.4 041/160] signal: Always deliver the kernels SIGKILL and SIGSTOP to a pid namespace init
+Date:   Mon, 19 Nov 2018 17:28:00 +0100
+Message-Id: <20181119162635.218572199@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,60 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
+[ Upstream commit 3597dfe01d12f570bc739da67f857fd222a3ea66 ]
 
-When running an mds diagnostic that passes frames with the switch, soft
-lockups are detected. The driver is in a CQE processing loop and has
-sufficient amount of traffic that it never exits the ring processing routine,
-thus the "lockup".
+Instead of playing whack-a-mole and changing SEND_SIG_PRIV to
+SEND_SIG_FORCED throughout the kernel to ensure a pid namespace init
+gets signals sent by the kernel, stop allowing a pid namespace init to
+ignore SIGKILL or SIGSTOP sent by the kernel.  A pid namespace init is
+only supposed to be able to ignore signals sent from itself and
+children with SIG_DFL.
 
-Cap the number of elements in the work processing routine to 64 elements. This
-ensures that the cpu will be given up and the handler reschedule to process
-additional items.
-
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 921cf9f63089 ("signals: protect cinit from unblocked SIG_DFL signals")
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/lpfc/lpfc_sli.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ kernel/signal.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3485,6 +3485,7 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 	struct hbq_dmabuf *dmabuf;
- 	struct lpfc_cq_event *cq_event;
- 	unsigned long iflag;
-+	int count = 0;
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -991,7 +991,7 @@ static int __send_signal(int sig, struct
  
- 	spin_lock_irqsave(&phba->hbalock, iflag);
- 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
-@@ -3506,16 +3507,22 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 			if (irspiocbq)
- 				lpfc_sli_sp_handle_rspiocb(phba, pring,
- 							   irspiocbq);
-+			count++;
- 			break;
- 		case CQE_CODE_RECEIVE:
- 		case CQE_CODE_RECEIVE_V1:
- 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
- 					      cq_event);
- 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
-+			count++;
- 			break;
- 		default:
- 			break;
- 		}
-+
-+		/* Limit the number of events to 64 to avoid soft lockups */
-+		if (count == 64)
-+			break;
- 	}
- }
+ 	result = TRACE_SIGNAL_IGNORED;
+ 	if (!prepare_signal(sig, t,
+-			from_ancestor_ns || (info == SEND_SIG_FORCED)))
++			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
+ 		goto ret;
  
+ 	pending = group ? &t->signal->shared_pending : &t->pending;
 
 
