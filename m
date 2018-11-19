@@ -2,172 +2,342 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB12C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C38C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4820C20871
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4820C20871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DCDE20684
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DCDE20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeKSStL (ORCPT
+        id S1727105AbeKSSta (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:49:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34112 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 13:49:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36876 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbeKSStL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:49:11 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67A8730820D3;
-        Mon, 19 Nov 2018 08:26:16 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F6B41974E;
-        Mon, 19 Nov 2018 08:25:54 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 16:25:49 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 10/19] block: loop: pass multi-page bvec to iov_iter
-Message-ID: <20181119082548.GD16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-11-ming.lei@redhat.com>
- <20181116004022.GE23828@vader>
+        id S1726175AbeKSSta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:49:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4B37E20CFD; Mon, 19 Nov 2018 09:26:33 +0100 (CET)
+Received: from bootlin.com (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C9C6F2039F;
+        Mon, 19 Nov 2018 09:26:32 +0100 (CET)
+Date:   Mon, 19 Nov 2018 09:26:32 +0100
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH v2 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181119092632.7048bc46@bootlin.com>
+In-Reply-To: <20181109234755.21687-5-grygorii.strashko@ti.com>
+References: <20181109234755.21687-1-grygorii.strashko@ti.com>
+        <20181109234755.21687-5-grygorii.strashko@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116004022.GE23828@vader>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 19 Nov 2018 08:26:16 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:40:22PM -0800, Omar Sandoval wrote:
-> On Thu, Nov 15, 2018 at 04:52:57PM +0800, Ming Lei wrote:
-> > iov_iter is implemented with bvec itererator, so it is safe to pass
-> > multipage bvec to it, and this way is much more efficient than
-> > passing one page in each bvec.
-> > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Shaohua Li <shli@kernel.org>
-> > Cc: linux-raid@vger.kernel.org
-> > Cc: linux-erofs@lists.ozlabs.org
-> > Cc: David Sterba <dsterba@suse.com>
-> > Cc: linux-btrfs@vger.kernel.org
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: Gao Xiang <gaoxiang25@huawei.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: Coly Li <colyli@suse.de>
-> > Cc: linux-bcache@vger.kernel.org
-> > Cc: Boaz Harrosh <ooo@electrozaur.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: cluster-devel@redhat.com
-> 
-> Reviewed-by: Omar Sandoval <osandov@fb.com>
-> 
-> Comments below.
-> 
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  drivers/block/loop.c | 23 ++++++++++++-----------
-> >  1 file changed, 12 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> > index bf6bc35aaf88..a3fd418ec637 100644
-> > --- a/drivers/block/loop.c
-> > +++ b/drivers/block/loop.c
-> > @@ -515,16 +515,16 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
-> >  	struct bio *bio = rq->bio;
-> >  	struct file *file = lo->lo_backing_file;
-> >  	unsigned int offset;
-> > -	int segments = 0;
-> > +	int nr_bvec = 0;
-> >  	int ret;
-> >  
-> >  	if (rq->bio != rq->biotail) {
-> > -		struct req_iterator iter;
-> > +		struct bvec_iter iter;
-> >  		struct bio_vec tmp;
-> >  
-> >  		__rq_for_each_bio(bio, rq)
-> > -			segments += bio_segments(bio);
-> > -		bvec = kmalloc_array(segments, sizeof(struct bio_vec),
-> > +			nr_bvec += bio_bvecs(bio);
-> > +		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
-> >  				     GFP_NOIO);
-> >  		if (!bvec)
-> >  			return -EIO;
-> > @@ -533,13 +533,14 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
-> >  		/*
-> >  		 * The bios of the request may be started from the middle of
-> >  		 * the 'bvec' because of bio splitting, so we can't directly
-> > -		 * copy bio->bi_iov_vec to new bvec. The rq_for_each_segment
-> > +		 * copy bio->bi_iov_vec to new bvec. The bio_for_each_bvec
-> >  		 * API will take care of all details for us.
-> >  		 */
-> > -		rq_for_each_segment(tmp, rq, iter) {
-> > -			*bvec = tmp;
-> > -			bvec++;
-> > -		}
-> > +		__rq_for_each_bio(bio, rq)
-> > +			bio_for_each_bvec(tmp, bio, iter) {
-> > +				*bvec = tmp;
-> > +				bvec++;
-> > +			}
-> 
-> Even if they're not strictly necessary, could you please include the
-> curly braces for __rq_for_each_bio() here?
+Hi Grygorii,
 
-Sure, will do it.
+On Fri, 9 Nov 2018 17:47:54 -0600
+Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 
-> 
-> >  		bvec = cmd->bvec;
-> >  		offset = 0;
-> >  	} else {
-> > @@ -550,11 +551,11 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
-> >  		 */
-> >  		offset = bio->bi_iter.bi_bvec_done;
-> >  		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-> > -		segments = bio_segments(bio);
-> > +		nr_bvec = bio_bvecs(bio);
-> 
-> This scared me for a second, but it's fine to do here because we haven't
-> actually enabled multipage bvecs yet, right?
+>Convert mvebu-cp110-comphy PHY driver to use recently introduced
+>PHY_MODE_ETHERNET and phy_set_mode_ext().
 
-Well, it is fine, all helpers supporting multi-page bvec actually works
-well when it isn't enabled, cause single-page bvec is one special case in
-which multi-page bevc helpers have to deal with.
+Sorry I missed your V2, hopefully I tested the right version this time.
+Tested on MCBin, this works just fine.
 
 Thanks,
-Ming
+
+Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+>Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>---
+> drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 19 +-----
+> drivers/phy/marvell/phy-mvebu-cp110-comphy.c    | 83 ++++++++++++++-----------
+> 2 files changed, 48 insertions(+), 54 deletions(-)
+>
+>diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+>index 7a37a37..731793a 100644
+>--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+>+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+>@@ -1165,28 +1165,13 @@ static void mvpp22_gop_setup_irq(struct mvpp2_port *port)
+>  */
+> static int mvpp22_comphy_init(struct mvpp2_port *port)
+> {
+>-	enum phy_mode mode;
+> 	int ret;
+> 
+> 	if (!port->comphy)
+> 		return 0;
+> 
+>-	switch (port->phy_interface) {
+>-	case PHY_INTERFACE_MODE_SGMII:
+>-	case PHY_INTERFACE_MODE_1000BASEX:
+>-		mode = PHY_MODE_SGMII;
+>-		break;
+>-	case PHY_INTERFACE_MODE_2500BASEX:
+>-		mode = PHY_MODE_2500SGMII;
+>-		break;
+>-	case PHY_INTERFACE_MODE_10GKR:
+>-		mode = PHY_MODE_10GKR;
+>-		break;
+>-	default:
+>-		return -EINVAL;
+>-	}
+>-
+>-	ret = phy_set_mode(port->comphy, mode);
+>+	ret = phy_set_mode_ext(port->comphy, PHY_MODE_ETHERNET,
+>+			       port->phy_interface);
+> 	if (ret)
+> 		return ret;
+> 
+>diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+>index 79b52c3..7dee72b 100644
+>--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+>+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+>@@ -9,6 +9,7 @@
+> #include <linux/iopoll.h>
+> #include <linux/mfd/syscon.h>
+> #include <linux/module.h>
+>+#include <linux/phy.h>
+> #include <linux/phy/phy.h>
+> #include <linux/platform_device.h>
+> #include <linux/regmap.h>
+>@@ -131,26 +132,26 @@ struct mvebu_comhy_conf {
+> 
+> static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
+> 	/* lane 0 */
+>-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
+>-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> 	/* lane 1 */
+>-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_SGMII, 0x1),
+>-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_2500SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> 	/* lane 2 */
+>-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_SGMII, 0x1),
+>-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_2500SGMII, 0x1),
+>-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_10GKR, 0x1),
+>+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+>+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_10GKR, 0x1),
+> 	/* lane 3 */
+>-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_SGMII, 0x2),
+>-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_2500SGMII, 0x2),
+>+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_SGMII, 0x2),
+>+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+> 	/* lane 4 */
+>-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_SGMII, 0x2),
+>-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_2500SGMII, 0x2),
+>-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_10GKR, 0x2),
+>-	MVEBU_COMPHY_CONF(4, 1, PHY_MODE_SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_SGMII, 0x2),
+>+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+>+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_10GKR, 0x2),
+>+	MVEBU_COMPHY_CONF(4, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+> 	/* lane 5 */
+>-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_SGMII, 0x1),
+>-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_2500SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+>+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> };
+> 
+> struct mvebu_comphy_priv {
+>@@ -163,10 +164,12 @@ struct mvebu_comphy_lane {
+> 	struct mvebu_comphy_priv *priv;
+> 	unsigned id;
+> 	enum phy_mode mode;
+>+	int submode;
+> 	int port;
+> };
+> 
+>-static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+>+static int mvebu_comphy_get_mux(int lane, int port,
+>+				enum phy_mode mode, int submode)
+> {
+> 	int i, n = ARRAY_SIZE(mvebu_comphy_cp110_modes);
+> 
+>@@ -177,7 +180,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> 	for (i = 0; i < n; i++) {
+> 		if (mvebu_comphy_cp110_modes[i].lane == lane &&
+> 		    mvebu_comphy_cp110_modes[i].port == port &&
+>-		    mvebu_comphy_cp110_modes[i].mode == mode)
+>+		    mvebu_comphy_cp110_modes[i].mode == submode)
+> 			break;
+> 	}
+> 
+>@@ -187,8 +190,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> 	return mvebu_comphy_cp110_modes[i].mux;
+> }
+> 
+>-static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+>-					     enum phy_mode mode)
+>+static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane)
+> {
+> 	struct mvebu_comphy_priv *priv = lane->priv;
+> 	u32 val;
+>@@ -206,14 +208,14 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> 		 MVEBU_COMPHY_SERDES_CFG0_HALF_BUS |
+> 		 MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xf) |
+> 		 MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xf));
+>-	if (mode == PHY_MODE_10GKR)
+>+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
+> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xe) |
+> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xe);
+>-	else if (mode == PHY_MODE_2500SGMII)
+>+	else if (lane->submode == PHY_INTERFACE_MODE_2500BASEX)
+> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x8) |
+> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x8) |
+> 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
+>-	else if (mode == PHY_MODE_SGMII)
+>+	else if (lane->submode == PHY_INTERFACE_MODE_SGMII)
+> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x6) |
+> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x6) |
+> 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
+>@@ -243,7 +245,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> 	/* refclk selection */
+> 	val = readl(priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
+> 	val &= ~MVEBU_COMPHY_MISC_CTRL0_REFCLK_SEL;
+>-	if (mode == PHY_MODE_10GKR)
+>+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
+> 		val |= MVEBU_COMPHY_MISC_CTRL0_ICP_FORCE;
+> 	writel(val, priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
+> 
+>@@ -261,8 +263,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> 	writel(val, priv->base + MVEBU_COMPHY_LOOPBACK(lane->id));
+> }
+> 
+>-static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
+>-				  enum phy_mode mode)
+>+static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane)
+> {
+> 	struct mvebu_comphy_priv *priv = lane->priv;
+> 	u32 val;
+>@@ -303,13 +304,13 @@ static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
+> 	return 0;
+> }
+> 
+>-static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
+>+static int mvebu_comphy_set_mode_sgmii(struct phy *phy)
+> {
+> 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
+> 	struct mvebu_comphy_priv *priv = lane->priv;
+> 	u32 val;
+> 
+>-	mvebu_comphy_ethernet_init_reset(lane, mode);
+>+	mvebu_comphy_ethernet_init_reset(lane);
+> 
+> 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
+> 	val &= ~MVEBU_COMPHY_RX_CTRL1_CLK8T_EN;
+>@@ -330,7 +331,7 @@ static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
+> 	val |= MVEBU_COMPHY_GEN1_S0_TX_EMPH(0x1);
+> 	writel(val, priv->base + MVEBU_COMPHY_GEN1_S0(lane->id));
+> 
+>-	return mvebu_comphy_init_plls(lane, PHY_MODE_SGMII);
+>+	return mvebu_comphy_init_plls(lane);
+> }
+> 
+> static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+>@@ -339,7 +340,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+> 	struct mvebu_comphy_priv *priv = lane->priv;
+> 	u32 val;
+> 
+>-	mvebu_comphy_ethernet_init_reset(lane, PHY_MODE_10GKR);
+>+	mvebu_comphy_ethernet_init_reset(lane);
+> 
+> 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
+> 	val |= MVEBU_COMPHY_RX_CTRL1_RXCLK2X_SEL |
+>@@ -469,7 +470,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+> 	val |= MVEBU_COMPHY_EXT_SELV_RX_SAMPL(0x1a);
+> 	writel(val, priv->base + MVEBU_COMPHY_EXT_SELV(lane->id));
+> 
+>-	return mvebu_comphy_init_plls(lane, PHY_MODE_10GKR);
+>+	return mvebu_comphy_init_plls(lane);
+> }
+> 
+> static int mvebu_comphy_power_on(struct phy *phy)
+>@@ -479,7 +480,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
+> 	int ret, mux;
+> 	u32 val;
+> 
+>-	mux = mvebu_comphy_get_mux(lane->id, lane->port, lane->mode);
+>+	mux = mvebu_comphy_get_mux(lane->id, lane->port,
+>+				   lane->mode, lane->submode);
+> 	if (mux < 0)
+> 		return -ENOTSUPP;
+> 
+>@@ -492,12 +494,12 @@ static int mvebu_comphy_power_on(struct phy *phy)
+> 	val |= mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
+> 	regmap_write(priv->regmap, MVEBU_COMPHY_SELECTOR, val);
+> 
+>-	switch (lane->mode) {
+>-	case PHY_MODE_SGMII:
+>-	case PHY_MODE_2500SGMII:
+>-		ret = mvebu_comphy_set_mode_sgmii(phy, lane->mode);
+>+	switch (lane->submode) {
+>+	case PHY_INTERFACE_MODE_SGMII:
+>+	case PHY_INTERFACE_MODE_2500BASEX:
+>+		ret = mvebu_comphy_set_mode_sgmii(phy);
+> 		break;
+>-	case PHY_MODE_10GKR:
+>+	case PHY_INTERFACE_MODE_10GKR:
+> 		ret = mvebu_comphy_set_mode_10gkr(phy);
+> 		break;
+> 	default:
+>@@ -517,10 +519,17 @@ static int mvebu_comphy_set_mode(struct phy *phy,
+> {
+> 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
+> 
+>-	if (mvebu_comphy_get_mux(lane->id, lane->port, mode) < 0)
+>+	if (mode != PHY_MODE_ETHERNET)
+>+		return -EINVAL;
+>+
+>+	if (submode == PHY_INTERFACE_MODE_1000BASEX)
+>+		submode = PHY_INTERFACE_MODE_SGMII;
+>+
+>+	if (mvebu_comphy_get_mux(lane->id, lane->port, mode, submode) < 0)
+> 		return -EINVAL;
+> 
+> 	lane->mode = mode;
+>+	lane->submode = submode;
+> 	return 0;
+> }
+> 
+
+
+
+-- 
+Maxime Chevallier, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
