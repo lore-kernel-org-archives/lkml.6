@@ -2,157 +2,119 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F0FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3A0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3207020871
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3207020871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A002206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:48:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A002206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbeKSTI5 (ORCPT
+        id S1727276AbeKSTL2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:08:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35034 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbeKSTI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:08:56 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9A87C308FC4E;
-        Mon, 19 Nov 2018 08:45:58 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8F9CA6090A;
-        Mon, 19 Nov 2018 08:45:27 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 16:45:23 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 14/19] block: enable multipage bvecs
-Message-ID: <20181119084522.GK16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-15-ming.lei@redhat.com>
- <20181116015627.GI23828@vader>
+        Mon, 19 Nov 2018 14:11:28 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:45865 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726859AbeKSTL2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:11:28 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gOfEG-0007FN-EQ; Mon, 19 Nov 2018 09:48:24 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gOfEE-000694-L9; Mon, 19 Nov 2018 09:48:22 +0100
+Date:   Mon, 19 Nov 2018 09:48:22 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
+ imx: Configure output to GPIO in disabled state
+Message-ID: <20181119084822.qljinfgxpjtumojk@pengutronix.de>
+References: <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
+ <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
+ <20181114113449.GB2620@ulmo>
+ <20181114215120.vddykljqyavm64wj@pengutronix.de>
+ <20181115152545.GA8611@ulmo>
+ <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
+ <20181116095124.GA28631@ulmo>
+ <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
+ <20181116122445.GA25386@ulmo>
+ <20181118200815.a6hkokt3otfm4yl4@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181116015627.GI23828@vader>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 19 Nov 2018 08:45:59 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181118200815.a6hkokt3otfm4yl4@pengutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 05:56:27PM -0800, Omar Sandoval wrote:
-> On Thu, Nov 15, 2018 at 04:53:01PM +0800, Ming Lei wrote:
-> > This patch pulls the trigger for multi-page bvecs.
+Hello,
+
+On Sun, Nov 18, 2018 at 09:08:15PM +0100, Uwe Kleine-König wrote:
+> On Fri, Nov 16, 2018 at 01:24:45PM +0100, Thierry Reding wrote:
+> > On Fri, Nov 16, 2018 at 11:39:29AM +0100, Uwe Kleine-König wrote:
+> > > Also note that you don't include the poor souls where there is no
+> > > hardware pullup into the right direction.
 > > 
-> > Now any request queue which supports queue cluster will see multi-page
-> > bvecs.
-> > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Shaohua Li <shli@kernel.org>
-> > Cc: linux-raid@vger.kernel.org
-> > Cc: linux-erofs@lists.ozlabs.org
-> > Cc: David Sterba <dsterba@suse.com>
-> > Cc: linux-btrfs@vger.kernel.org
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: Gao Xiang <gaoxiang25@huawei.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: Coly Li <colyli@suse.de>
-> > Cc: linux-bcache@vger.kernel.org
-> > Cc: Boaz Harrosh <ooo@electrozaur.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: cluster-devel@redhat.com
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  block/bio.c | 24 ++++++++++++++++++------
-> >  1 file changed, 18 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/block/bio.c b/block/bio.c
-> > index 6486722d4d4b..ed6df6f8e63d 100644
-> > --- a/block/bio.c
-> > +++ b/block/bio.c
+> > The poor souls should speak up and then we can look into finding a good
+> > solution for them. I'm pretty sure there must be some equivalent that
+> > can be used for other users.
 > 
-> This comment above __bio_try_merge_page() doesn't make sense after this
-> change:
-> 
->  This is a
->  a useful optimisation for file systems with a block size smaller than the
->  page size.
-> 
-> Can you please get rid of it in this patch?
+> I think one of the boards that I'm working with has an enabled backlight
+> at power on until the bootloader actively drives the related pwm to
+> the right level (either using the pwm or the gpio function of the pin).
+> I will double check that but assuming that is right, just disabling the
+> output won't work here.
 
-I understand __bio_try_merge_page() still works for original cases, so
-looks the optimization for sub-pagesize is still there too, isn't it?
+I just confirmed this. On the board I have in mind the backlight really
+goes on during powerup. One of the first things the bootloader does is
+to ensure the backlight goes off again by actively driving the
+respective pin.
 
-> 
-> > @@ -767,12 +767,24 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
-> >  
-> >  	if (bio->bi_vcnt > 0) {
-> >  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> > -
-> > -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
-> > -			bv->bv_len += len;
-> > -			bio->bi_iter.bi_size += len;
-> > -			return true;
-> > -		}
-> > +		struct request_queue *q = NULL;
-> > +
-> > +		if (page == bv->bv_page && off == (bv->bv_offset + bv->bv_len)
-> > +				&& (off + len) <= PAGE_SIZE)
-> > +			goto merge;
-> 
-> The parentheses around (bv->bv_offset + bv->bv_len) and (off + len) are
-> unnecessary noise.
-> 
-> What's the point of the new (off + len) <= PAGE_SIZE check?
+I fully agree with you this is unfortunate and the hardware team could
+have made the situation smoother if there were a pull up. I guess asking
+them to go back and fix that won't be accepted[1]. So please whatever
+solution you force through, please consider it should work without a
+sane pull and also with the imx SoCs before i.MX6 which cannot disable
+the output driver via pinmux.
 
-Yeah, I don't know why I did it, :-(, the check is absolutely always true.
+Best regards
+Uwe
 
-> 
-> > +
-> > +		if (bio->bi_disk)
-> > +			q = bio->bi_disk->queue;
-> > +
-> > +		/* disable multi-page bvec too if cluster isn't enabled */
-> > +		if (!q || !blk_queue_cluster(q) ||
-> > +		    ((page_to_phys(bv->bv_page) + bv->bv_offset + bv->bv_len) !=
-> > +		     (page_to_phys(page) + off)))
-> 
-> More unnecessary parentheses here.
+[1] Additionally this is a bought display+backlight+touch combo, so the
+    right place to put the pull would be in this unit, because the board
+    designer rightfully says: I won't put a pull up on my board because
+    for the next batch we're maybe switching to the similar display
+    combo that needs an active high signal for the backlight and I won't
+    create another factor 2 for the board variants for stuff that can be
+    fixed in software.
 
-OK.
-
-Thanks,
-Ming
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
