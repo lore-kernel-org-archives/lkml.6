@@ -2,175 +2,204 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6701CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6398EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:57:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F42B20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23B1220817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Q+/N8yZW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F42B20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fp/+JC2A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23B1220817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeKSUSj (ORCPT
+        id S1727619AbeKSUU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:18:39 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:34524 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbeKSUSj (ORCPT
+        Mon, 19 Nov 2018 15:20:57 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:60366 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbeKSUU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:18:39 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id DF67910C150A;
-        Mon, 19 Nov 2018 01:55:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542621331; bh=fJMEuBveQ1OxRCixWZYlecFhkPsXIXTMH03OLXi8Wrw=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Q+/N8yZW+n8OIOjn0d/zVkKIoVR1DEoiXd80xdGzTsIvki8Ug6Dlohcu0xCfPkSc2
-         96EF6QhSd6zsGQYgnwCgwH0qCZI2NmXaQSmML7HpGMn9QNuE9tS4ZIDfXAtxpy5mvL
-         qzBSYvABmIqqPX+sbS408C8j3sQFbhktHxM0rDzdOdD+cPCURPkZdXA5VK4tDOg4D9
-         h8MLgjMbP8lBVPDZvc3nKCB8Qegg672T7+wuX5pdl0fXaLUyHC1r4Efyap4zJt7Q/e
-         z+zDb65q4PNHcJuAJaBIqu0kivLKX2lVbBocOcBBqLs8zBP0vrxxDQND8flKmGrmaz
-         I3Ndw3ACgqlbQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id C6540326D;
-        Mon, 19 Nov 2018 01:55:31 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 19 Nov 2018 01:55:31 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
- 19 Nov 2018 10:55:29 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Topic: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Index: AQHUZgzUjKESBok63Em0jiA3zZIBcaVBTesAgBOe34CAAguUgIAAA0kAgAADeoA=
-Date:   Mon, 19 Nov 2018 09:55:28 +0000
-Message-ID: <e31a11c42c21353963bd75c88493e8158316d469.camel@synopsys.com>
-References: <20181017113020.7551-1-abrodkin@synopsys.com>
-         <C2D7FE5348E1B147BCA15975FBA23075012B0B1A07@US01WEMBX2.internal.synopsys.com>
-         <78ccbb4c-56d0-594b-4032-3eb19202847b@linaro.org>
-         <2c46ab6e-f0a9-4857-9772-f3c714284e98@linaro.org>
-         <dab866a50e66e73f6010de1487b06019887930c8.camel@synopsys.com>
-         <40ada5b3-5824-51fd-501f-ef363f162047@linaro.org>
-In-Reply-To: <40ada5b3-5824-51fd-501f-ef363f162047@linaro.org>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-x-originating-ip: [10.121.8.88]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C983FB360B6B3345A6197B7058D4B82C@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Mon, 19 Nov 2018 15:20:57 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAJ9v9x2044217;
+        Mon, 19 Nov 2018 03:57:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1542621429;
+        bh=5NGcmgrLOUZ1gxJ5u2nRAxeNjcAU3Af6W1bCov0IAf8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Fp/+JC2ApgtXRtLNsYTzDfYZlSZJs3ICYaF6mDnrB5GKa4Cqv3kov8KZCdR7c12iI
+         +c/Tn+EDZnJnirgxvl+W7kjvrarSL1onV6CcSqhmCp2J261Z6jwu482JG4h+5YAF63
+         cGANmpOTlJkui0NjL/cEZsjX9CZS8q4nzFotGIxU=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAJ9v9Ks004674
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 03:57:09 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
+ Nov 2018 03:57:06 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 19 Nov 2018 03:57:06 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAJ9v4Wr020539;
+        Mon, 19 Nov 2018 03:57:04 -0600
+Subject: Re: [PATCH] MMC: OMAP: fix broken MMC on OMAP15XX/OMAP5912/OMAP310
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Ladislav Michl <ladis@linux-mips.org>,
+        <linux-mmc@vger.kernel.org>
+CC:     Andrzej Zaborowski <balrogg@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20181118201919.14401-1-aaro.koskinen@iki.fi>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <ffdad271-943c-f4e7-8ec9-2af5769798a4@ti.com>
+Date:   Mon, 19 Nov 2018 11:58:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <20181118201919.14401-1-aaro.koskinen@iki.fi>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRGFuaWVsLA0KDQpPbiBNb24sIDIwMTgtMTEtMTkgYXQgMTA6NDMgKzAxMDAsIERhbmllbCBM
-ZXpjYW5vIHdyb3RlOg0KPiBPbiAxOS8xMS8yMDE4IDEwOjMxLCBBbGV4ZXkgQnJvZGtpbiB3cm90
-ZToNCj4gPiBIaSBEYW5pZWwsDQo+ID4gDQo+ID4gT24gU3VuLCAyMDE4LTExLTE4IGF0IDAzOjE3
-ICswMTAwLCBEYW5pZWwgTGV6Y2FubyB3cm90ZToNCj4gPiA+IE9uIDA1LzExLzIwMTggMTU6Mzks
-IERhbmllbCBMZXpjYW5vIHdyb3RlOg0KPiA+ID4gPiBPbiAyNC8xMC8yMDE4IDAwOjMzLCBWaW5l
-ZXQgR3VwdGEgd3JvdGU6DQo+ID4gPiA+ID4gT24gMTAvMTcvMjAxOCAwNDozMCBBTSwgQWxleGV5
-IEJyb2RraW4gd3JvdGU6DQo+ID4gPiA+ID4gPiBJdCB0dXJuZWQgb3V0IHdlIHVzZWQgdG8gdXNl
-IGRlZmF1bHQgaW1wbGVtZW50YXRpb24gb2Ygc2NoZWRfY2xvY2soKQ0KPiA+ID4gPiA+ID4gZnJv
-bSBrZXJuZWwvc2NoZWQvY2xvY2suYyB3aGljaCB3YXMgYXMgcHJlY2lzZSBhcyAxL0haLCBpLmUu
-DQo+ID4gPiA+ID4gPiBieSBkZWZhdWx0IHdlIGhhZCAxMCBtc2VjIGdyYW51bGFyaXR5IG9mIHRp
-bWUgbWVhc3VyZW1lbnQuDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IE5vdyBnaXZlbiBBUkMg
-YnVpbHQtaW4gdGltZXJzIGFyZSBjbG9ja2VkIHdpdGggdGhlIHNhbWUgZnJlcXVlbmN5IGFzDQo+
-ID4gPiA+ID4gPiBDUFUgY29yZXMgd2UgbWF5IGdldCBtdWNoIGhpZ2hlciBwcmVjaXNpb24gb2Yg
-dGltZSB0cmFja2luZy4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gVGh1cyB3ZSBzd2l0Y2gg
-dG8gZ2VuZXJpYyBzY2hlZF9jbG9jayB3aGljaCByZWFsbHkgcmVhZHMgQVJDIGhhcmR3YXJlDQo+
-ID4gPiA+ID4gPiBjb3VudGVycy4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gVGhpcyBpcyBl
-c3BlY2lhbGx5IGhlbHBmdWwgZm9yIG1lYXN1cmluZyBzaG9ydCBldmVudHMuDQo+ID4gPiA+ID4g
-PiBUaGF0J3Mgd2hhdCB3ZSB1c2VkIHRvIGhhdmU6DQo+ID4gPiA+ID4gPiAtLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4g
-JCBwZXJmIHN0YXQgL2Jpbi9zaCAtYyAvcm9vdC9sbWJlbmNoLW1hc3Rlci9iaW4vYXJjL2hlbGxv
-ID4gL2Rldi9udWxsDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ICBQZXJmb3JtYW5jZSBjb3Vu
-dGVyIHN0YXRzIGZvciAnL2Jpbi9zaCAtYyAvcm9vdC9sbWJlbmNoLW1hc3Rlci9iaW4vYXJjL2hl
-bGxvJzoNCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gICAgICAgICAgMTAuMDAwMDAwICAgICAg
-dGFzay1jbG9jayAobXNlYykgICAgICAgICAjICAgIDIuODMyIENQVXMgdXRpbGl6ZWQNCj4gPiA+
-ID4gPiA+ICAgICAgICAgICAgICAgICAgMSAgICAgIGNvbnRleHQtc3dpdGNoZXMgICAgICAgICAg
-IyAgICAwLjEwMCBLL3NlYw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAxICAgICAgY3B1
-LW1pZ3JhdGlvbnMgICAgICAgICAgICAjICAgIDAuMTAwIEsvc2VjDQo+ID4gPiA+ID4gPiAgICAg
-ICAgICAgICAgICAgNjMgICAgICBwYWdlLWZhdWx0cyAgICAgICAgICAgICAgICMgICAgMC4wMDYg
-TS9zZWMNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgMzA0OTQ4MCAgICAgIGN5Y2xlcyAgICAgICAg
-ICAgICAgICAgICAgIyAgICAwLjMwNSBHSHoNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgMTA5MTI1
-OSAgICAgIGluc3RydWN0aW9ucyAgICAgICAgICAgICAgIyAgICAwLjM2ICBpbnNuIHBlciBjeWNs
-ZQ0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgMjU2ODI4ICAgICAgYnJhbmNoZXMgICAgICAgICAg
-ICAgICAgICAjICAgMjUuNjgzIE0vc2VjDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgMjcwMjYg
-ICAgICBicmFuY2gtbWlzc2VzICAgICAgICAgICAgICMgICAxMC41MiUgb2YgYWxsIGJyYW5jaGVz
-DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ICAgICAgICAwLjAwMzUzMDY4NyBzZWNvbmRzIHRp
-bWUgZWxhcHNlZA0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiAgICAgICAgMC4wMDAwMDAwMDAg
-c2Vjb25kcyB1c2VyDQo+ID4gPiA+ID4gPiAgICAgICAgMC4wMTAwMDAwMDAgc2Vjb25kcyBzeXMN
-Cj4gPiA+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IEFuZCBub3cgd2UnbGwgc2Vl
-Og0KPiA+ID4gPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0NCj4gPiA+ID4gPiA+ICQgcGVyZiBzdGF0IC9iaW4vc2ggLWMgL3Jvb3Qv
-bG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyA+IC9kZXYvbnVsbA0KPiA+ID4gPiA+ID4gDQo+
-ID4gPiA+ID4gPiAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9iaW4vc2ggLWMgL3Jv
-b3QvbG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyc6DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4g
-PiA+ICAgICAgICAgICAzLjAwNDMyMiAgICAgIHRhc2stY2xvY2sgKG1zZWMpICAgICAgICAgIyAg
-ICAwLjg2NSBDUFVzIHV0aWxpemVkDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICAgIDEgICAg
-ICBjb250ZXh0LXN3aXRjaGVzICAgICAgICAgICMgICAgMC4zMzMgSy9zZWMNCj4gPiA+ID4gPiA+
-ICAgICAgICAgICAgICAgICAgMSAgICAgIGNwdS1taWdyYXRpb25zICAgICAgICAgICAgIyAgICAw
-LjMzMyBLL3NlYw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgIDYzICAgICAgcGFnZS1mYXVs
-dHMgICAgICAgICAgICAgICAjICAgIDAuMDIxIE0vc2VjDQo+ID4gPiA+ID4gPiAgICAgICAgICAg
-IDI5ODY3MzQgICAgICBjeWNsZXMgICAgICAgICAgICAgICAgICAgICMgICAgMC45OTQgR0h6DQo+
-ID4gPiA+ID4gPiAgICAgICAgICAgIDEwODc0NjYgICAgICBpbnN0cnVjdGlvbnMgICAgICAgICAg
-ICAgICMgICAgMC4zNiAgaW5zbiBwZXIgY3ljbGUNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgIDI1
-NTIwOSAgICAgIGJyYW5jaGVzICAgICAgICAgICAgICAgICAgIyAgIDg0Ljk0NyBNL3NlYw0KPiA+
-ID4gPiA+ID4gICAgICAgICAgICAgIDI2MDAyICAgICAgYnJhbmNoLW1pc3NlcyAgICAgICAgICAg
-ICAjICAgMTAuMTklIG9mIGFsbCBicmFuY2hlcw0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiAg
-ICAgICAgMC4wMDM0NzQ4Mjkgc2Vjb25kcyB0aW1lIGVsYXBzZWQNCj4gPiA+ID4gPiA+IA0KPiA+
-ID4gPiA+ID4gICAgICAgIDAuMDAzNTE5MDAwIHNlY29uZHMgdXNlcg0KPiA+ID4gPiA+ID4gICAg
-ICAgIDAuMDAwMDAwMDAwIHNlY29uZHMgc3lzDQo+ID4gPiA+ID4gPiAtLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4gDQo+
-ID4gPiA+ID4gPiBOb3RlIGhvdyBtdWNoIG1vcmUgbWVhbmluZ2Z1bCBpcyB0aGUgc2Vjb25kIG91
-dHB1dCAtIHRpbWUgc3BlbnQgZm9yDQo+ID4gPiA+ID4gPiBleGVjdXRpb24gcHJldHR5IG11Y2gg
-bWF0Y2hlcyBudW1iZXIgb2YgY3ljbGVzIHNwZW50ICh3ZSdyZSBydW5uaW5nDQo+ID4gPiA+ID4g
-PiBAIDFHSHogaGVyZSkuDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
-IEFsZXhleSBCcm9ka2luIDxhYnJvZGtpbkBzeW5vcHN5cy5jb20+DQo+ID4gPiA+ID4gPiBDYzog
-RGFuaWVsIExlemNhbm8gPGRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmc+DQo+ID4gPiA+ID4gPiBD
-YzogVmluZWV0IEd1cHRhIDx2Z3VwdGFAc3lub3BzeXMuY29tPg0KPiA+ID4gPiA+ID4gQ2M6IFRo
-b21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPg0KPiA+ID4gPiA+ID4gLS0tDQo+ID4g
-PiA+ID4gDQo+ID4gPiA+ID4gQWNrZWQtYnk6IFZpbmVldCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lz
-LmNvbT4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBARGFuaWVsIGlzIHRoaXMgZ29pbmcgdmlhIHRp
-bWVyIHRyZWUgb3IgeW91IHdhbnQgbWUgdG8gcGljayBpdCB1cC4NCj4gPiA+ID4gDQo+ID4gPiA+
-IEkgd2lsbCB0YWtlIGNhcmUgb2YgaXQuDQo+ID4gPiANCj4gPiA+IFBsZWFzZSByZXNlbmQgd2l0
-aG91dCB0aGUgYXJjaCBLY29uZmlnIGNoYW5nZQ0KPiA+IA0KPiA+IEknbSB3b25kZXJpbmcgaWYg
-dGhlcmUncyBhIHByb2JsZW0gd2l0aCBhcmMvYXJjL0tjb25maWcgY2hhbmdlIGdvaW5nDQo+ID4g
-dGhyb3VnaCB5b3VyIHRyZWU/IFRoaXMgd2F5IGl0IHdpbGwgYmUgcmVhbGx5IGF0b21pYyBjaGFu
-Z2UgYW5kIGl0IHdpbGwgYmUNCj4gPiBtdWNoIGVhc2llciB0byBiYWNrLXBvcnQgKGFuZCB0aGF0
-J3Mgd2hhdCB3ZSdkIHJlYWxseSBsaWtlIHRvIGhhcHBlbikuDQo+ID4gDQo+ID4gSWYgVmluZWV0
-IGlzIE9LIHdpdGggdGhhdCBJTUhPIGl0J3Mgc2FmZSB0byBrZWVwIGl0IGluIHRoZSBvbmUgYW5k
-IG9ubHkgY29tbWl0Lg0KPiA+IA0KPiA+IE90aGVyd2lzZSBzaG91bGQgSSBqdXN0IHNwbGl0IHRo
-aXMgcGF0Y2ggaW4gMiBhbmQgc3RpbGwgc3VibWl0IHRoZW0gYXMgc2VyaWVzIG9yDQo+ID4gaGF2
-ZSAyIGNvbXBsZXRlbHkgbm90LXJlbGF0ZWQgcGF0Y2hlcyBvbmUgZm9yIHlvdSBhbmQgb25lIGZv
-ciBWaW5lZXQ/DQo+ID4gDQo+ID4gSW4gdGhhdCBjYXNlIGRvIEkgdW5kZXJzdGFuZCBjb3JyZWN0
-bHkgdGhhdCB3ZSBtYXkgZW5hYmxlIEdFTkVSSUNfU0NIRURfQ0xPQ0sNCj4gPiBmb3IgQVJDIGV2
-ZW4gYmVmb3JlIHByb3Bvc2VkIGNoYW5nZSBmb3IgYXJjX3RpbWVyLmMgZ2V0cyBtZXJnZWQgLSBp
-LmUuIHdpdGggbm8NCj4gPiBzcGVjaWFsIEdFTkVSSUNfU0NIRURfQ0xPQ0sgZHJpdmVyIHdlJ2xs
-IHNhZmVseSBmYWxsLWJhY2sgdG8gamlmZmllLWJhc2VkDQo+ID4gc2NoZWQgY2xvY2sgd2hpY2gg
-d2UgYW55d2F5cyB1c2Ugbm93IHdoZW4gR0VORVJJQ19TQ0hFRF9DTE9DSyBpcyBkaXNhYmxlZCwg
-cmlnaHQ/DQo+IA0KPiBUaGUgQVJDJ3MgS2NvbmZpZyBwYXJ0IGRvZXMgbm90IGFwcGx5IG9uIHRp
-cC90aW1lcnMvY29yZS4NCg0KTWF5IEkgaGF2ZSBhIHJlZmVyZW5jZSB0byB0aGF0IHRyZWUgc28g
-SSBtYXkgY2hlY2sgd2hhdCBnZXRzIGluIHRoZSB3YXkgdGhlcmUNCmFuZCB0aGVuIEknbGwganVz
-dCBtb3ZlICJzZWxlY3QgR0VORVJJQ19TQ0hFRF9DTE9DSyIgYSBiaXQgYmVsb3cgc28gdGhlcmUn
-cmUgbm8NCmNsYXNoZXMgYW55IGxvbmdlci4NCg0KLUFsZXhleQ0K
+Aaro,
+
+On 2018-11-18 22:19, Aaro Koskinen wrote:
+> Since v2.6.22 or so there has been reports [1] about OMAP MMC being
+> broken on OMAP15XX based hardware (OMAP5912 and OMAP310). The breakage
+> seems to have been caused by commit 46a6730e3ff9 ("mmc-omap: Fix
+> omap to use MMC_POWER_ON") that changed clock enabling to be done
+> on MMC_POWER_ON. This can happen multiple times in a row, and on 15XX
+> the hardware doesn't seem to like it and the MMC just stops responding.
+> Fix by memorizing the power mode and do the init only when necessary.
+> 
+> Before the patch (on Palm TE):
+> 
+> 	mmc0: new SD card at address b368
+> 	mmcblk0: mmc0:b368 SDC   977 MiB
+> 	mmci-omap mmci-omap.0: command timeout (CMD18)
+> 	mmci-omap mmci-omap.0: command timeout (CMD13)
+> 	mmci-omap mmci-omap.0: command timeout (CMD13)
+> 	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+> 	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+> 	mmcblk0: error -110 requesting status
+> 	mmci-omap mmci-omap.0: command timeout (CMD8)
+> 	mmci-omap mmci-omap.0: command timeout (CMD18)
+> 	mmci-omap mmci-omap.0: command timeout (CMD13)
+> 	mmci-omap mmci-omap.0: command timeout (CMD13)
+> 	mmci-omap mmci-omap.0: command timeout (CMD12) [x 6]
+> 	mmci-omap mmci-omap.0: command timeout (CMD13) [x 6]
+> 	mmcblk0: error -110 requesting status
+> 	mmcblk0: recovery failed!
+> 	print_req_error: I/O error, dev mmcblk0, sector 0
+> 	Buffer I/O error on dev mmcblk0, logical block 0, async page read
+> 	 mmcblk0: unable to read partition table
+> 
+> After the patch:
+> 
+> 	mmc0: new SD card at address b368
+> 	mmcblk0: mmc0:b368 SDC   977 MiB
+> 	 mmcblk0: p1
+> 
+> The patch is based on a fix and analysis done by Ladislav Michl.
+> 
+> Tested on OMAP15XX/OMAP310 (Palm TE), OMAP1710 (Nokia 770)
+> and OMAP2420 (Nokia N810).
+
+Do you know if the DMA is enabled for the MMC? It might not work via
+DMAengine.
+
+> [1] https://marc.info/?t=123175197000003&r=1&w=2
+> 
+> Fixes: 46a6730e3ff9 ("mmc-omap: Fix omap to use MMC_POWER_ON")
+> Reported-by: Ladislav Michl <ladis@linux-mips.org>
+> Reported-by: Andrzej Zaborowski <balrogg@gmail.com>
+> Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+> ---
+>  drivers/mmc/host/omap.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+> index adf32682f27a..c60a7625b1fa 100644
+> --- a/drivers/mmc/host/omap.c
+> +++ b/drivers/mmc/host/omap.c
+> @@ -104,6 +104,7 @@ struct mmc_omap_slot {
+>  	unsigned int		vdd;
+>  	u16			saved_con;
+>  	u16			bus_mode;
+> +	u16			power_mode;
+>  	unsigned int		fclk_freq;
+>  
+>  	struct tasklet_struct	cover_tasklet;
+> @@ -1157,7 +1158,7 @@ static void mmc_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	struct mmc_omap_slot *slot = mmc_priv(mmc);
+>  	struct mmc_omap_host *host = slot->host;
+>  	int i, dsor;
+> -	int clk_enabled;
+> +	int clk_enabled, init_stream;
+>  
+>  	mmc_omap_select_slot(slot, 0);
+>  
+> @@ -1167,6 +1168,7 @@ static void mmc_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  		slot->vdd = ios->vdd;
+>  
+>  	clk_enabled = 0;
+> +	init_stream = 0;
+>  	switch (ios->power_mode) {
+>  	case MMC_POWER_OFF:
+>  		mmc_omap_set_power(slot, 0, ios->vdd);
+> @@ -1174,13 +1176,17 @@ static void mmc_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	case MMC_POWER_UP:
+>  		/* Cannot touch dsor yet, just power up MMC */
+>  		mmc_omap_set_power(slot, 1, ios->vdd);
+> +		slot->power_mode = ios->power_mode;
+>  		goto exit;
+>  	case MMC_POWER_ON:
+>  		mmc_omap_fclk_enable(host, 1);
+>  		clk_enabled = 1;
+>  		dsor |= 1 << 11;
+> +		if (slot->power_mode != MMC_POWER_ON)
+> +			init_stream = 1;
+>  		break;
+>  	}
+> +	slot->power_mode = ios->power_mode;
+>  
+>  	if (slot->bus_mode != ios->bus_mode) {
+>  		if (slot->pdata->set_bus_mode != NULL)
+> @@ -1196,7 +1202,7 @@ static void mmc_omap_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	for (i = 0; i < 2; i++)
+>  		OMAP_MMC_WRITE(host, CON, dsor);
+>  	slot->saved_con = dsor;
+> -	if (ios->power_mode == MMC_POWER_ON) {
+> +	if (init_stream) {
+>  		/* worst case at 400kHz, 80 cycles makes 200 microsecs */
+>  		int usecs = 250;
+>  
+> @@ -1234,6 +1240,7 @@ static int mmc_omap_new_slot(struct mmc_omap_host *host, int id)
+>  	slot->host = host;
+>  	slot->mmc = mmc;
+>  	slot->id = id;
+> +	slot->power_mode = MMC_POWER_UNDEFINED;
+>  	slot->pdata = &host->pdata->slots[id];
+>  
+>  	host->slots[id] = slot;
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
