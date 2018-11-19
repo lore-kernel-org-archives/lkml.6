@@ -2,29 +2,28 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9471DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B13C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 655552086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:23:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 655552086A
+	by mail.kernel.org (Postfix) with ESMTP id D2A732086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:23:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A732086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbeKSLok (ORCPT
+        id S1728039AbeKSLoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:44:40 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49254 "EHLO
+        Mon, 19 Nov 2018 06:44:17 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:49090 "EHLO
         kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeKSLoS (ORCPT
+        with ESMTP id S1727419AbeKSLoR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:44:18 -0500
+        Mon, 19 Nov 2018 06:44:17 -0500
 Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 3A66D29E00; Sun, 18 Nov 2018 20:22:18 -0500 (EST)
+        id 64FEF29DF5; Sun, 18 Nov 2018 20:22:17 -0500 (EST)
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -35,133 +34,97 @@ Cc:     Andreas Schwab <schwab@linux-m68k.org>,
         John Stultz <john.stultz@linaro.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Message-Id: <ad39d0b6a1e7e1f664a5af229da6f95dbe6911e6.1542589838.git.fthain@telegraphics.com.au>
-In-Reply-To: <cover.1542589838.git.fthain@telegraphics.com.au>
-References: <cover.1542589838.git.fthain@telegraphics.com.au>
+Message-Id: <cover.1542589838.git.fthain@telegraphics.com.au>
 From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [RFC PATCH v2 11/14] m68k: mvme147: Convert to clocksource API
+Subject: [RFC PATCH v2 00/14] m68k: Drop arch_gettimeoffset and adopt clocksource API
 Date:   Mon, 19 Nov 2018 12:10:38 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a platform clocksource by adapting the existing arch_gettimeoffset
-implementation.
+This series removes "select ARCH_USES_GETTIMEOFFSET" from arch/m68k
+and converts users of arch_gettimeoffset to the clocksource API.
+Various bugs are fixed along the way.
 
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
+Those platforms which do not actually implement arch_gettimeoffset
+(apollo, q40, sun3, sun3x) use the "jiffies" clocksource by default.
+
+The atari and hp300 platforms have an arch_gettimeoffset() implementation
+which can't readily be converted to a clocksource. Getting a workable
+clocksource on these platforms will require the insight of a platform
+expert.
+
+The difficulty with these patches is the use of the timer interrupt to
+update the counter for the clock source. The timer interrupt handler races
+with clocksource read method, and both of those functions race with the
+timer hardware.
+
+Hence, more testing and code review would be appreciated.
+
 Changed since v1:
- - Moved clk_total access to within the irq lock.
- - Use type u32 for tick counter.
----
- arch/m68k/include/asm/mvme147hw.h |  1 -
- arch/m68k/mvme147/config.c        | 38 ++++++++++++++++++++++++++-----
- 2 files changed, 32 insertions(+), 7 deletions(-)
 
-diff --git a/arch/m68k/include/asm/mvme147hw.h b/arch/m68k/include/asm/mvme147hw.h
-index 9c7ff67c5ffd..7c3dd513128e 100644
---- a/arch/m68k/include/asm/mvme147hw.h
-+++ b/arch/m68k/include/asm/mvme147hw.h
-@@ -66,7 +66,6 @@ struct pcc_regs {
- #define PCC_INT_ENAB		0x08
- 
- #define PCC_TIMER_INT_CLR	0x80
--#define PCC_TIMER_PRELOAD	63936l
- 
- #define PCC_LEVEL_ABORT		0x07
- #define PCC_LEVEL_SERIAL	0x04
-diff --git a/arch/m68k/mvme147/config.c b/arch/m68k/mvme147/config.c
-index 4ef4faa5ed8b..82b53b5ca82b 100644
---- a/arch/m68k/mvme147/config.c
-+++ b/arch/m68k/mvme147/config.c
-@@ -17,6 +17,7 @@
- #include <linux/kernel.h>
- #include <linux/mm.h>
- #include <linux/tty.h>
-+#include <linux/clocksource.h>
- #include <linux/console.h>
- #include <linux/linkage.h>
- #include <linux/init.h>
-@@ -92,6 +93,21 @@ void __init config_mvme147(void)
- 		vme_brdtype = VME_TYPE_MVME147;
- }
- 
-+static u64 mvme147_read_clk(struct clocksource *cs);
-+
-+static struct clocksource mvme147_clk = {
-+	.name   = "pcc",
-+	.rating = 250,
-+	.read   = mvme147_read_clk,
-+	.mask   = CLOCKSOURCE_MASK(32),
-+	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
-+};
-+
-+static u32 clk_total;
-+
-+#define PCC_TIMER_CLOCK_FREQ 160000
-+#define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
-+#define PCC_TIMER_PRELOAD    (0x10000 - PCC_TIMER_CYCLES)
- 
- /* Using pcc tick timer 1 */
- 
-@@ -103,6 +119,7 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- 	local_irq_save(flags);
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
-+	clk_total += PCC_TIMER_CYCLES;
- 	timer_routine(0, NULL);
- 	local_irq_restore(flags);
- 
-@@ -112,32 +129,41 @@ static irqreturn_t mvme147_timer_int (int irq, void *dev_id)
- 
- void mvme147_sched_init (irq_handler_t timer_routine)
- {
--	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, 0, "timer 1",
--			timer_routine))
-+	if (request_irq(PCC_IRQ_TIMER1, mvme147_timer_int, IRQF_TIMER,
-+			"timer 1", timer_routine))
- 		pr_err("Couldn't register timer interrupt\n");
- 
- 	/* Init the clock with a value */
--	/* our clock goes off every 6.25us */
-+	/* The clock counter increments until 0xFFFF then reloads */
- 	m147_pcc->t1_preload = PCC_TIMER_PRELOAD;
- 	m147_pcc->t1_cntrl = 0x0;	/* clear timer */
- 	m147_pcc->t1_cntrl = 0x3;	/* start timer */
- 	m147_pcc->t1_int_cntrl = PCC_TIMER_INT_CLR;  /* clear pending ints */
- 	m147_pcc->t1_int_cntrl = PCC_INT_ENAB|PCC_LEVEL_TIMER1;
-+
-+	clocksource_register_hz(&mvme147_clk, PCC_TIMER_CLOCK_FREQ);
- }
- 
--/* This is always executed with interrupts disabled.  */
- /* XXX There are race hazards in this code XXX */
--u32 mvme147_gettimeoffset(void)
-+static u64 mvme147_read_clk(struct clocksource *cs)
- {
-+	unsigned long flags;
- 	volatile unsigned short *cp = (volatile unsigned short *)0xfffe1012;
- 	unsigned short n;
-+	u32 ticks;
-+
-+	local_irq_save(flags);
- 
- 	n = *cp;
- 	while (n != *cp)
- 		n = *cp;
- 
- 	n -= PCC_TIMER_PRELOAD;
--	return ((unsigned long)n * 25 / 4) * 1000;
-+	ticks = clk_total + n;
-+
-+	local_irq_restore(flags);
-+
-+	return ticks;
- }
- 
- static int bcd2int (unsigned char b)
+ - Dropped patches 1/13 and 2/13. These were a failed attempt to fix
+5cfc8ee0bb51 and 4ad4c76b7afb. By adopting the clocksource API we can fix
+this issue in mainline. By backporting this series we can fix it for -stable
+(for m68k at least).
+
+ - Dropped patch "m68k: hp300: Convert to clocksource API" and added
+patch "m68k: hp300: Remove hp300_gettimeoffset".
+
+ - Added a new patch to address an old m68k bug pointed out by Thomas
+Gleixner. The bug can arise when a timer interrupt handler gets interrupted.
+
+ - Added new patches to address old mvme16x and mvme147 bugs pointed out
+by Thomas Gleixner. The bug could cause the clock to jump backwards.
+
+ - Various other changes summarized in the relevant patches.
+
+
+Finn Thain (14):
+  m68k: Call timer_interrupt() with interrupts disabled
+  m68k: mac: Fix VIA timer counter accesses
+  m68k: mac: Clean up unused timer definitions
+  m68k: apollo, q40, sun3, sun3x: Remove arch_gettimeoffset
+    implementations
+  m68k: Drop ARCH_USES_GETTIMEOFFSET
+  m68k: amiga: Convert to clocksource API
+  m68k: atari: Convert to clocksource API
+  m68k: bvme6000: Convert to clocksource API
+  m68k: hp300: Remove hp300_gettimeoffset()
+  m68k: mac: Convert to clocksource API
+  m68k: mvme147: Convert to clocksource API
+  m68k: mvme147: Handle timer counter overflow
+  m68k: mvme16x: Convert to clocksource API
+  m68k: mvme16x: Handle timer counter overflow
+
+ arch/m68k/Kconfig                 |   1 -
+ arch/m68k/amiga/cia.c             |  10 ++
+ arch/m68k/amiga/config.c          |  46 ++++++---
+ arch/m68k/apollo/config.c         |   7 --
+ arch/m68k/atari/ataints.c         |   4 +-
+ arch/m68k/atari/config.c          |   2 -
+ arch/m68k/atari/time.c            |  65 +++++++++----
+ arch/m68k/bvme6000/config.c       |  70 +++++++++-----
+ arch/m68k/hp300/config.c          |   1 -
+ arch/m68k/hp300/time.c            |  29 ++----
+ arch/m68k/hp300/time.h            |   1 -
+ arch/m68k/include/asm/macints.h   |   3 -
+ arch/m68k/include/asm/mvme147hw.h |   2 +-
+ arch/m68k/mac/config.c            |   3 -
+ arch/m68k/mac/via.c               | 150 ++++++++++++++++++++----------
+ arch/m68k/mvme147/config.c        |  73 ++++++++++-----
+ arch/m68k/mvme16x/config.c        |  97 +++++++++++++------
+ arch/m68k/q40/config.c            |   9 --
+ arch/m68k/q40/q40ints.c           |   7 +-
+ arch/m68k/sun3/config.c           |   2 -
+ arch/m68k/sun3/intersil.c         |   7 --
+ arch/m68k/sun3/sun3ints.c         |   3 +
+ arch/m68k/sun3x/config.c          |   1 -
+ arch/m68k/sun3x/time.c            |  21 ++---
+ arch/m68k/sun3x/time.h            |   1 -
+ 25 files changed, 387 insertions(+), 228 deletions(-)
+
 -- 
 2.18.1
 
