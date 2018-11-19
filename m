@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85D3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D65C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815A520C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E787A20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O7FwisBg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815A520C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aoll1WeT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E787A20C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388161AbeKTDIN (ORCPT
+        id S2388173AbeKTDIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDIM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:12 -0500
+        id S1731911AbeKTDIP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 369232145D;
-        Mon, 19 Nov 2018 16:44:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C45502086A;
+        Mon, 19 Nov 2018 16:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645841;
-        bh=cUTMxFM2jeyytWZRAv7B73kK1g41Ck9AflG/5UmzNPQ=;
+        s=default; t=1542645844;
+        bh=Gah1uTiWSy/Zfq0q/Vmki4bSS/vkMoYzRTDyU4FHsD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O7FwisBgIg1pqaAWBvT9CzgMp+VrbJilk18I04rhdpKFhK/1tBpBKrYrZ4TUAk6dQ
-         uBWKUsAkN6Fljo6MohFXJwAnG49LB8l4Oi2nac1xaZ8KiYrzLNQrb3FJ4Ue2ohdiZ6
-         YLjZZxPj/lFfODQYwgE4JhbtaSmrBui4mT7uBuP0=
+        b=Aoll1WeTJmRxG0Pb64AJaS4gmIx+HqK88To5hfPJ8ucYOBP/Qc/oZmWrf5P2Net0X
+         f2ABD7YhOOTdbmx3O1277Uxvgm5JyZ19rjF55Vossv5GvghI5jOMDQ6tHuCb4PLWkB
+         uVX6FBIfXrG8e8n4uuelJfuXXEfvwfkFYH+mr9f8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.18 108/171] ext4: avoid potential extra brelse in setup_new_flex_group_blocks()
-Date:   Mon, 19 Nov 2018 17:28:24 +0100
-Message-Id: <20181119162635.956715989@linuxfoundation.org>
+Subject: [PATCH 4.18 109/171] ext4: missing !bh check in ext4_xattr_inode_write()
+Date:   Mon, 19 Nov 2018 17:28:25 +0100
+Message-Id: <20181119162636.098020352@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,74 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 9e4028935cca3f9ef9b6a90df9da6f1f94853536 upstream.
+commit eb6984fa4ce2837dcb1f66720a600f31b0bb3739 upstream.
 
-Currently bh is set to NULL only during first iteration of for cycle,
-then this pointer is not cleared after end of using.
-Therefore rollback after errors can lead to extra brelse(bh) call,
-decrements bh counter and later trigger an unexpected warning in __brelse()
+According to Ted Ts'o ext4_getblk() called in ext4_xattr_inode_write()
+should not return bh = NULL
 
-Patch moves brelse() calls in body of cycle to exclude requirement of
-brelse() call in rollback.
+The only time that bh could be NULL, then, would be in the case of
+something really going wrong; a programming error elsewhere (perhaps a
+wild pointer dereference) or I/O error causing on-disk file system
+corruption (although that would be highly unlikely given that we had
+*just* allocated the blocks and so the metadata blocks in question
+probably would still be in the cache).
 
-Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.3+
+Cc: stable@kernel.org # 4.13
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ fs/ext4/xattr.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -607,7 +607,6 @@ handle_bb:
- 		bh = bclean(handle, sb, block);
- 		if (IS_ERR(bh)) {
- 			err = PTR_ERR(bh);
--			bh = NULL;
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1388,6 +1388,12 @@ retry:
+ 		bh = ext4_getblk(handle, ea_inode, block, 0);
+ 		if (IS_ERR(bh))
+ 			return PTR_ERR(bh);
++		if (!bh) {
++			WARN_ON_ONCE(1);
++			EXT4_ERROR_INODE(ea_inode,
++					 "ext4_getblk() return bh = NULL");
++			return -EFSCORRUPTED;
++		}
+ 		ret = ext4_journal_get_write_access(handle, bh);
+ 		if (ret)
  			goto out;
- 		}
- 		overhead = ext4_group_overhead_blocks(sb, group);
-@@ -620,9 +619,9 @@ handle_bb:
- 		ext4_mark_bitmap_end(EXT4_B2C(sbi, group_data[i].blocks_count),
- 				     sb->s_blocksize * 8, bh->b_data);
- 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
-+		brelse(bh);
- 		if (err)
- 			goto out;
--		brelse(bh);
- 
- handle_ib:
- 		if (bg_flags[i] & EXT4_BG_INODE_UNINIT)
-@@ -637,18 +636,16 @@ handle_ib:
- 		bh = bclean(handle, sb, block);
- 		if (IS_ERR(bh)) {
- 			err = PTR_ERR(bh);
--			bh = NULL;
- 			goto out;
- 		}
- 
- 		ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb),
- 				     sb->s_blocksize * 8, bh->b_data);
- 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
-+		brelse(bh);
- 		if (err)
- 			goto out;
--		brelse(bh);
- 	}
--	bh = NULL;
- 
- 	/* Mark group tables in block bitmap */
- 	for (j = 0; j < GROUP_TABLE_COUNT; j++) {
-@@ -687,7 +684,6 @@ handle_ib:
- 	}
- 
- out:
--	brelse(bh);
- 	err2 = ext4_journal_stop(handle);
- 	if (err2 && !err)
- 		err = err2;
 
 
