@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5403FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00216C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13BBE208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEC272147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pylc0Nsc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13BBE208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzMniWC8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEC272147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404064AbeKTDTY (ORCPT
+        id S2404078AbeKTDT1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:19:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58524 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:19:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404054AbeKTDTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:19:23 -0500
+        id S2404054AbeKTDTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:19:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CDCC21104;
-        Mon, 19 Nov 2018 16:55:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 027BF2145D;
+        Mon, 19 Nov 2018 16:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646508;
-        bh=luhLD7/vOK/Y7hThviDfyvMXhh4n56INSeYQ9sOut/g=;
+        s=default; t=1542646511;
+        bh=+TpIQx88guG7x9NcYYLbe+LVW/OMDjcocbgQGvmHY4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pylc0NscJ/p84Hmj37grJ80Nl8HScji8AMDcNvC1IS30YOk1+cVKugqrvui3DVKkt
-         1egfroNhRD8juvTeDRjzIqxY1eZBatWudM3jAoiHo9GxwTB0W5ugEdMBioUp75Wd7X
-         6i39oY4PLcODCqm2Rgfn1cXzyAxmdnwBUWU5QYe4=
+        b=QzMniWC8+XZnNl0NsVNBJIA16eOyv4+kuCEqkeTT8LA02ZSay9kr+Avxc1QHie4cF
+         3dJJRItVFe5Lh2xWVUeYgcYPvCZO1HvrIVzg7LkVcP+EJjXAjBlgeHZhFeDJi8PgfL
+         a4JjrnxtZx6SpE0MzzGYATxclaTIjz23Rm3NYD4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Calmels <jcalmels@nvidia.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.9 67/83] mount: Dont allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
-Date:   Mon, 19 Nov 2018 17:29:33 +0100
-Message-Id: <20181119162625.368362200@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.9 32/83] xtensa: make sure bFLT stack is 16 byte aligned
+Date:   Mon, 19 Nov 2018 17:28:58 +0100
+Message-Id: <20181119162618.850232392@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -62,71 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
+commit 0773495b1f5f1c5e23551843f87b5ff37e7af8f7 upstream.
 
-Jonathan Calmels from NVIDIA reported that he's able to bypass the
-mount visibility security check in place in the Linux kernel by using
-a combination of the unbindable property along with the private mount
-propagation option to allow a unprivileged user to see a path which
-was purposefully hidden by the root user.
+Xtensa ABI requires stack alignment to be at least 16. In noMMU
+configuration ARCH_SLAB_MINALIGN is used to align stack. Make it at
+least 16.
 
-Reproducer:
-  # Hide a path to all users using a tmpfs
-  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
-  root@castiana:~#
+This fixes the following runtime error in noMMU configuration, caused by
+interaction between insufficiently aligned stack and alloca function,
+that results in corruption of on-stack variable in the libc function
+glob:
 
-  # As an unprivileged user, unshare user namespace and mount namespace
-  stgraber@castiana:~$ unshare -U -m -r
-
-  # Confirm the path is still not accessible
-  root@castiana:~# ls /sys/devices/
-
-  # Make /sys recursively unbindable and private
-  root@castiana:~# mount --make-runbindable /sys
-  root@castiana:~# mount --make-private /sys
-
-  # Recursively bind-mount the rest of /sys over to /mnnt
-  root@castiana:~# mount --rbind /sys/ /mnt
-
-  # Access our hidden /sys/device as an unprivileged user
-  root@castiana:~# ls /mnt/devices/
-  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
-  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
-  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
-
-Solve this by teaching copy_tree to fail if a mount turns out to be
-both unbindable and locked.
+ Caught unhandled exception in 'sh' (pid = 47, pc = 0x02d05d65)
+  - should not happen
+  EXCCAUSE is 15
 
 Cc: stable@vger.kernel.org
-Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/xtensa/include/asm/processor.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1788,8 +1788,14 @@ struct mount *copy_tree(struct mount *mn
- 		for (s = r; s; s = next_mnt(s, r)) {
- 			if (!(flag & CL_COPY_UNBINDABLE) &&
- 			    IS_MNT_UNBINDABLE(s)) {
--				s = skip_mnt_tree(s);
--				continue;
-+				if (s->mnt.mnt_flags & MNT_LOCKED) {
-+					/* Both unbindable and locked. */
-+					q = ERR_PTR(-EPERM);
-+					goto out;
-+				} else {
-+					s = skip_mnt_tree(s);
-+					continue;
-+				}
- 			}
- 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
- 			    is_mnt_ns_file(s->mnt.mnt_root)) {
+--- a/arch/xtensa/include/asm/processor.h
++++ b/arch/xtensa/include/asm/processor.h
+@@ -24,7 +24,11 @@
+ # error Linux requires the Xtensa Windowed Registers Option.
+ #endif
+ 
+-#define ARCH_SLAB_MINALIGN	XCHAL_DATA_WIDTH
++/* Xtensa ABI requires stack alignment to be at least 16 */
++
++#define STACK_ALIGN (XCHAL_DATA_WIDTH > 16 ? XCHAL_DATA_WIDTH : 16)
++
++#define ARCH_SLAB_MINALIGN STACK_ALIGN
+ 
+ /*
+  * User space process size: 1 GB.
 
 
