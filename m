@@ -2,127 +2,100 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90EBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AE7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F884208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E565208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOsiIWYM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F884208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elBeBSBf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E565208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390756AbeKTDR3 (ORCPT
+        id S2403901AbeKTDRd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:17:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390361AbeKTDR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:17:28 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 185C420851;
-        Mon, 19 Nov 2018 16:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646394;
-        bh=bHx78wzgh7wIcVS7Jg7BwBktOg6PfW1LMic+gbUbqjQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NOsiIWYMngW0dcSpE8evlo26FKLkVDSZoVm2d+ZFbxGH6NHtua0qSvTd038Py5Kwj
-         A5BWi3u1EL7/WtjVit51rrygsU+cQmFzlV20HEp56IBG7Ey+ijSsyjKDyV+EanbfTv
-         0PFHgSodePI3d+ouUoSy2RL19t01PA1VpkL349Rw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincenzo Maffione <v.maffione@gmail.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/83] e1000: fix race condition between e1000_down() and e1000_watchdog
-Date:   Mon, 19 Nov 2018 17:28:50 +0100
-Message-Id: <20181119162617.196038785@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
-References: <20181119162612.046511542@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 19 Nov 2018 22:17:33 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:44743 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403869AbeKTDRc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:17:32 -0500
+Received: by mail-vk1-f193.google.com with SMTP id h128so6924021vkg.11;
+        Mon, 19 Nov 2018 08:53:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2utPuwtZaCV/BmH5oamaY9JFsO2JnKsPFc89xDdn59s=;
+        b=elBeBSBf3Zl0/mRynD7UsrBRw6KfrNqMca2tnv/vVJsRzHdSBUQhSf/NkBafIpUsJO
+         fvMMHRTPh+UFjBgBKxIJkRzLeWbPBzkw+4nOVhNbcC8EIsebSPiNJ//RCBLjfiv1ooEx
+         s5OjIVB+wkryf1qO4UFtnEfVEBhn6SKZCxc2sq4A4HS/6pLaCW34sFtBO3978QPn5f/n
+         jrXv6FKEfB49BggqUaPqTtb6hWBt0xOEeGSL49+GIk/gNG4Z9rOivy780SXsSGCBAG7J
+         AYt4JojfY8z4Pvh6Mpt6OCJ+WM6/lSv9tWGdzE1sd73pfupkKkV1Quc6LhWttFIqVhWU
+         WqsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2utPuwtZaCV/BmH5oamaY9JFsO2JnKsPFc89xDdn59s=;
+        b=rZTRikSP+j24uKklt9efSBg7gLCKUEy8jcWW3Jx21/Co77mYHndprs45xATvDT2t/D
+         KcbChqjQkEUU6QpJE4QO25sDY3vmdB8s0NRJdNcDoFVsjsh/yuBJnx+NvkJ4o8dMClcF
+         03lL0RrxdMsvXLuroSrd2m6FtFQNqTOeYba/Oaz0M3fPJ2vGoh6i0tH2EIYgsASCLPXT
+         zW5U9gBIDYmTq68zAW9c77g+VIFQSJOVpB/rGgmiaOp+cek/StdIK/oNjfrobR4Yh8wa
+         /rzgBhS/jiujk8yyuvPmKuncZgVYyd07dQrPrRrpx7YhOX54oNgm/C5m00x6eyIa9fLh
+         oqEA==
+X-Gm-Message-State: AGRZ1gJjJNpNZqZ2O5eydPBJR+y8+TcV+cf7NKbfkRYqW2TTarwxb+5f
+        PDROdUKIILpOKAvDBnqBk9vLBFS3UHHs25DMYro=
+X-Google-Smtp-Source: AJdET5dZ7CQPQ4KJW9mM/hQray2H4bTnuMC33GiMtLZADf9s5aJqFPlWISsy5TPD8/16LMLyGPJLrj1LZw9ptDHFTSU=
+X-Received: by 2002:a1f:ac4:: with SMTP id 187mr9150831vkk.31.1542646398411;
+ Mon, 19 Nov 2018 08:53:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com> <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+In-Reply-To: <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+From:   Tyler Baicar <baicar.tyler@gmail.com>
+Date:   Mon, 19 Nov 2018 11:53:05 -0500
+Message-ID: <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns AER
+To:     okaya@kernel.org
+Cc:     mr.nuke.me@gmail.com, helgaas@google.com, austin_bolen@dell.com,
+        alex_gagniuc@dellteam.com, keith.busch@intel.com,
+        Shyam_Iyer@dell.com, lukas@wunner.de, bhelgaas@google.com,
+        rjw@rjwysocki.net, lenb@kernel.org, ruscur@russell.cc,
+        sbobroff@linux.ibm.com, oohall@gmail.com,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Nov 15, 2018 at 8:49 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> On 11/15/2018 3:16 PM, Alexandru Gagniuc wrote:
+> > I've asked around a few people at Dell and they unanimously agree that
+> > _OSC is the correct way to determine ownership of AER. In linux, we
+> > use the result of _OSC to enable AER services, but we use HEST to
+> > determine AER ownership. That's inconsistent. This series drops the
+> > use of HEST in favor of _OSC.
+> >
+> > [1]https://lkml.org/lkml/2018/11/15/62
+>
+> This change breaks the existing systems that rely on the HEST table
+> telling the operating system about firmware first presence.
+>
+> Besides, HEST table has much more granularity about which PCI component
+> needs firmware such as global/device/switch.
+>
+> You should probably circulate these ideas for wider consumption in UEFI
+> forum as UEFI owns the HEST table definition.
 
-------------------
-
-[ Upstream commit 44c445c3d1b4eacff23141fa7977c3b2ec3a45c9 ]
-
-This patch fixes a race condition that can result into the interface being
-up and carrier on, but with transmits disabled in the hardware.
-The bug may show up by repeatedly IFF_DOWN+IFF_UP the interface, which
-allows e1000_watchdog() interleave with e1000_down().
-
-    CPU x                           CPU y
-    --------------------------------------------------------------------
-    e1000_down():
-        netif_carrier_off()
-                                    e1000_watchdog():
-                                        if (carrier == off) {
-                                            netif_carrier_on();
-                                            enable_hw_transmit();
-                                        }
-        disable_hw_transmit();
-                                    e1000_watchdog():
-                                        /* carrier on, do nothing */
-
-Signed-off-by: Vincenzo Maffione <v.maffione@gmail.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/intel/e1000/e1000_main.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000/e1000_main.c b/drivers/net/ethernet/intel/e1000/e1000_main.c
-index dd112aa5cebb..39a09e18c1b7 100644
---- a/drivers/net/ethernet/intel/e1000/e1000_main.c
-+++ b/drivers/net/ethernet/intel/e1000/e1000_main.c
-@@ -521,8 +521,6 @@ void e1000_down(struct e1000_adapter *adapter)
- 	struct net_device *netdev = adapter->netdev;
- 	u32 rctl, tctl;
- 
--	netif_carrier_off(netdev);
--
- 	/* disable receives in the hardware */
- 	rctl = er32(RCTL);
- 	ew32(RCTL, rctl & ~E1000_RCTL_EN);
-@@ -538,6 +536,15 @@ void e1000_down(struct e1000_adapter *adapter)
- 	E1000_WRITE_FLUSH();
- 	msleep(10);
- 
-+	/* Set the carrier off after transmits have been disabled in the
-+	 * hardware, to avoid race conditions with e1000_watchdog() (which
-+	 * may be running concurrently to us, checking for the carrier
-+	 * bit to decide whether it should enable transmits again). Such
-+	 * a race condition would result into transmission being disabled
-+	 * in the hardware until the next IFF_DOWN+IFF_UP cycle.
-+	 */
-+	netif_carrier_off(netdev);
-+
- 	napi_disable(&adapter->napi);
- 
- 	e1000_irq_disable(adapter);
--- 
-2.17.1
-
-
-
+I agree with Sinan, this will break existing systems, and the granularity of the
+HEST definition is more useful than the single bit in _OSC.
