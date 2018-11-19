@@ -2,155 +2,139 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBC4C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9139C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33B120823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:53:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Th6UM8aQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33B120823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id B945520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:54:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B945520823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbeKSXR0 (ORCPT
+        id S1728987AbeKSXSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:17:26 -0500
-Received: from mail-eopbgr1410125.outbound.protection.outlook.com ([40.107.141.125]:51026
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        Mon, 19 Nov 2018 18:18:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40302 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728818AbeKSXRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:17:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T+1FuBRi9T2O9zE0EwqlmKmM+ntcWYy+GVIU8NMAL/M=;
- b=Th6UM8aQ4X6V+NY9ShmuXXoWNlMiyttrWIDHZu1KLlOZtTEuCIYBzzPht1DLE4yQ73jJNr64l5EDRf7K/hsiesei0iIcUgycX3m+kAtpO3WA8VDHyjzmyiPoKrkxZTzcPlEOnAuGgTO3RFev8pG7BsLBmkT1OaRWqPTGttMzFwo=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
- TY1PR01MB1851.jpnprd01.prod.outlook.com (52.133.161.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.28; Mon, 19 Nov 2018 12:53:46 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::7484:f2b6:9b32:2c6%5]) with mapi id 15.20.1294.047; Mon, 19 Nov 2018
- 12:53:46 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v6 1/6] clk: Add of_clk_get_by_name_optional() function
-Thread-Topic: [PATCH v6 1/6] clk: Add of_clk_get_by_name_optional() function
-Thread-Index: AQHUfb0RmyNdBSsmakSgPhksP0TsX6VSj8kAgAACxACABFCrgIAAC2+AgAAg3oA=
-Date:   Mon, 19 Nov 2018 12:53:46 +0000
-Message-ID: <TY1PR01MB17695E8ED56BBC03AAA7FD8FF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20181116145937.27660-1-phil.edworthy@renesas.com>
- <20181116145937.27660-2-phil.edworthy@renesas.com>
- <20181116160128.pkuya6rwqm4schdn@pengutronix.de>
- <20181116161122.hhvslbzdujxpk3up@pengutronix.de>
- <TY1PR01MB17697C2C8BCE98009EBDECF7F5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
- <20181119104603.qzuvpoha622l4xvy@pengutronix.de>
-In-Reply-To: <20181119104603.qzuvpoha622l4xvy@pengutronix.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1851;20:FqwtjNb2N96LCTMxtLZ/xGkMiLscsDG60qchtah9LsC9zHcSn4eJT8Z2y61m7/u9Uw9BH5VhUhOFpQcqzuME/IxfHlSsfHsyfkRaQNvWbvrTpKJwZMNczOQxsTsxVoOOKR2zJqYvj0LpUNKxtN7bQpjzIqkIeQbpo1Lkfv+RBIE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 15a99a6e-129e-4b30-057e-08d64e1e0b71
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1851;
-x-ms-traffictypediagnostic: TY1PR01MB1851:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-microsoft-antispam-prvs: <TY1PR01MB1851F32262ACCA34659FCC53F5D80@TY1PR01MB1851.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231431)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1851;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1851;
-x-forefront-prvs: 08617F610C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(39860400002)(346002)(376002)(199004)(189003)(99286004)(2906002)(93886005)(14454004)(71190400001)(71200400001)(478600001)(102836004)(26005)(3846002)(76176011)(186003)(53546011)(6506007)(25786009)(66066001)(7696005)(6116002)(44832011)(11346002)(476003)(256004)(446003)(486006)(66574009)(105586002)(106356001)(7416002)(2900100001)(5660300001)(74316002)(305945005)(7736002)(6916009)(6436002)(316002)(229853002)(97736004)(81166006)(33656002)(55016002)(4326008)(54906003)(9686003)(8936002)(6246003)(81156014)(8676002)(68736007)(53936002)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1851;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Ul8OzcDuZ8zUNB1znB4WbYbS+eAYergh303Xj+ksPFF+fD9VUR3ZohLWvaLVpb3VFaoLM4Ui1ot+fIB7jD7J1oyg1qq5/Gvjdm3o5r3fEdI4BI7Ja56m/EGrMLWyzEvgRwIBIMMHFKp6vQbb9o3YB/f7l9tLr8UvSB9C6Illb6wyeLuag9EFI6aMtBu+dNd6P01hePkAGMTihDVVz8A0EjWzNVnIMI+IZNmxs1JWaNgoRb60OXTFnvPqDP1RMu3xof1OrLW7oUlL+rHqafImFlSRd0sF/32XboSZPv9lXA2FdB0kcBxI1ue9xhdQzUDBg9YxrZYTMnau673kxr3EGi90V4SFBFvj+C9YVXsllNQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1728886AbeKSXSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:18:16 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A1637AFBB;
+        Mon, 19 Nov 2018 12:54:41 +0000 (UTC)
+Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
+To:     Pavel Machek <pavel@ucw.cz>, Bart Van Assche <bvanassche@acm.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
+References: <20181105204000.129023-1-bvanassche@acm.org>
+ <20181119110428.GE28607@amd>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <47306fcd-8e99-d37f-0537-bc015fefc3ec@suse.cz>
+Date:   Mon, 19 Nov 2018 13:51:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15a99a6e-129e-4b30-057e-08d64e1e0b71
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 12:53:46.5534
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1851
+In-Reply-To: <20181119110428.GE28607@amd>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+On 11/19/18 12:04 PM, Pavel Machek wrote:
+> On Mon 2018-11-05 12:40:00, Bart Van Assche wrote:
+>> This patch suppresses the following sparse warning:
+>>
+>> ./include/linux/slab.h:332:43: warning: dubious: x & !y
+>>
+>> Fixes: 1291523f2c1d ("mm, slab/slub: introduce kmalloc-reclaimable caches")
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Christoph Lameter <cl@linux.com>
+>> Cc: Roman Gushchin <guro@fb.com>
+>> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+>> ---
+>>  include/linux/slab.h | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/slab.h b/include/linux/slab.h
+>> index 918f374e7156..97d0599ddb7b 100644
+>> --- a/include/linux/slab.h
+>> +++ b/include/linux/slab.h
+>> @@ -329,7 +329,7 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
+>>  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
+>>  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
+>>  	 */
+>> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
+>> +	return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
+>>  }
+>>  
+> 
+> What is wrong with && ?
 
-On 19 November 2018 10:46 Uwe Kleine-K=F6nig wrote:
-> On Mon, Nov 19, 2018 at 10:41:42AM +0000, Phil Edworthy wrote:
-> > On 16 November 2018 16:11 Uwe Kleine-K=F6nig wrote:
-> > > On Fri, Nov 16, 2018 at 05:01:28PM +0100, Uwe Kleine-K=F6nig wrote:
-> > > > Other than that I think the patch is fine
-> > >
-> > > Thinking again, I wonder why not just do:
-> > >
-> > > static inline struct clk *clk_get_optional(struct device *dev, const =
-char
-> *id) {
-> > > 	struct clk *c =3D clk_get(dev, id);
-> > >
-> > > 	if (c =3D=3D ERR_PTR(-ENOENT))
-> > > 		return NULL;
-> > > 	else
-> > > 		return c;
-> > > }
-> >
-> > Unfortunately, underneath this __of_clk_get_by_name() returns -EINVAL
-> > when looking for a named clock, and the "clock-names" OF property
-> > can't be found or the name is not in that prop. This is because the
-> > index returned by of_property_match_string() will be an error code and
-> > is then currently always passed to __of_clk_get().
-> >
-> > If, as you said, I split the patches into one that fixes the error
-> > code, and then adds clk_get_optional() like above, it will make more se=
-nse.
->=20
-> Sounds like a good plan.
-Now that I have removed of_clk_get_by_name_optional(), I see that clk_get()
-deals with __of_clk_get_by_name() returning -EINVAL and -ENOENT the same
-way. In both cases, clk_get_sys() will return -ENOENT... i.e. I no longer n=
-eed to
-modify __of_clk_get_by_name().
-All I need is a simple wrapper just as you have outlined above.
+Nothing, it would work and generate the same assembly as '&'. But Andrew
+noted that this code is probably too clever for its own good, and he has
+a point. The single predictable branch is also likely faster than the
+chain of arithmetic calculations anyway. Nobody has actually measured
+it, so I'd go with the easier-to-read variant.
 
-> > btw, do we need to add of_clk_get_by_name_optional()? I only added it
-> > as a counterpart to of_clk_get_by_name(), but it may not be needed.
->=20
-> I don't need it. Given that it is easy to add when someone has a need, I'=
-d say,
-> skip it for now.
-I'm wondering if we actually need clk_get_optional(). For me at least, I ju=
-st
-want devm_clk_get_optional(). That would get rid of the arch patches.
+> If logical and is better done by multiply,
+> that's compiler job, and compiler should be fixed to do it...
 
-Thanks
-Phil
+Multiply was just another way (equivalent to '&&' semantically) to shut
+up sparse warning. But gcc actually emits IMUL in that case, which is
+wasteful, so yeah there's a bug report now:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87954
+
+> 
+> 									Pavel
+> 
+
