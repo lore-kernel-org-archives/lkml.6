@@ -2,114 +2,231 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BAEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B0FC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FE59208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ3+Qc/S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE59208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C8162206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8162206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389394AbeKTDMe (ORCPT
+        id S2389410AbeKTDMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 19 Nov 2018 22:12:35 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:39858 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387988AbeKTDMe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Nov 2018 22:12:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48850 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388538AbeKTDMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:33 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77332206BA;
-        Mon, 19 Nov 2018 16:48:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646101;
-        bh=K9ho3sEv2i7h0HJPBiloRm9kJsUkXwEH+0XUgA/8kPo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZ3+Qc/SIj9jMW3lJqnVhHAfsADv+AfPvtLGYpmhCRd+np6zBjtfP0l2MxoV7HOu9
-         W+0GC6ZEiesu1F5aznF4veAIhEo36qtvqQ7AM8cdWJPGhhq/VEoh6Wuzw16GA1xhjs
-         8+aQV8IpkvhdOnrhtuG3XCuehIEszl7Odp+9OvqU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 007/124] powerpc/nohash: fix undefined behaviour when testing page size support
-Date:   Mon, 19 Nov 2018 17:27:41 +0100
-Message-Id: <20181119162614.376604800@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
-References: <20181119162612.951907286@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: by mail-qk1-f195.google.com with SMTP id q70so32147251qkh.6;
+        Mon, 19 Nov 2018 08:48:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xg6Y6slrTdFIaEN2P3vXaS05djo0SrywOjWqLbprJVs=;
+        b=Zm5F9AsAnG0IjqUvg5uPtpPdXt7QWS5s0Z3DIBmVuqXy+18/8jrhj4kiHUXemb6wmz
+         e+n7IEc5KYWZXS5W/wng5fhegt/u+2TPeHjyYEP1VpYm5DTO0oR9H6Vj9EAwcij9nZHW
+         uNohseIgx4+wg9Li/+Z1N7XJ8Qcc2/c4qNVCIezTMRYisb9ofMNAIr2mP8Rr8sW22H1c
+         06DHa0iJZg3L0XG89Mx+6EgxyZg89eF052lMNqy1vTh9XiomrNmA8JJxKtW6QLlY8gkH
+         uSip6QV3qxeFK+qpSPJITYoU7BSx2thQXtoK4syNqUYziYmDcJVZQpRvABC6hnrCaOKM
+         HOCA==
+X-Gm-Message-State: AGRZ1gLGLqp8E9rW6XGYVVXzqmMjA8XuyXphMPeTQ7apl8PvkViFP+2r
+        0wR/lniNWHMbT3EQV80nSK2MVryuMbCJpan3/IE=
+X-Google-Smtp-Source: AJdET5daOPGsp+adybuSPmk20wC52axHHLfq+lN8Eu0P3yqReMpN6Mmo44ZVMiUZygFhFEAADo2UYUOTi3M0YUVXD2g=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr21493142qte.212.1542646100257;
+ Mon, 19 Nov 2018 08:48:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1542189798-27713-1-git-send-email-firoz.khan@linaro.org> <1542189798-27713-4-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1542189798-27713-4-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 19 Nov 2018 17:48:02 +0100
+Message-ID: <CAK8P3a1jnuabJ+NFm-XAzQ8dk7V991H+YEfTZ2GZjNBovuAoDw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] powerpc: add system call table generation support
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, linuxram@us.ibm.com,
+        Geert Uytterhoeven <geert@linux-m68k.org>, leitao@debian.org,
+        Boqun Feng <boqun.feng@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Nov 14, 2018 at 11:04 AM Firoz Khan <firoz.khan@linaro.org> wrote:
 
-------------------
+> Adding a new table entry consisting of:
+>         - System call number.
+>         - ABI.
+>         - System call name.
+>         - Entry point name.
+>         - Compat entry name, if required.
+>
+> syscallhdr.sh and syscalltbl.sh will generate uapi header-
+> unistd_32/64.h and syscall_table_32/64/c32.h files respect-
+> ively. File syscall_table_32/64/c32.h is included by sys-
+> call.S - the real system call table. Both .sh files will
+> parse the content syscall.tbl to generate the header and
+> table files.
 
-From: Daniel Axtens <dja@axtens.net>
+You don't mention how this handles the SPU, which seems to be the main
+difference from the other architectures.
 
-[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
+> +# The format is:
+> +# <number> <abi> <name> <entry point> <compat entry point> <spu entry point>
+> +#
+> +# The <abi> can be common, 64, or 32 for this file.
+> +#
+> +0      common  restart_syscall                 sys_restart_syscall             sys_restart_syscall
+> +1      common  exit                            sys_exit                        sys_exit
+> +2      common  fork                            ppc_fork                        ppc_fork
+> +3      common  read                            sys_read                        sys_read                                sys_read
+> +4      common  write                           sys_write                       sys_write                               sys_write
+> +5      common  open                            sys_open                        compat_sys_open                         sys_open
+> +6      common  close                           sys_close                       sys_close                               sys_close
+> +7      common  waitpid                         sys_waitpid                     sys_waitpid                             sys_waitpid
+> +8      common  creat                           sys_creat                       sys_creat                               sys_creat
 
-When enumerating page size definitions to check hardware support,
-we construct a constant which is (1U << (def->shift - 10)).
+The SPU syscall is always the same as the 64-bit syscall, so listing it
+explictily in the last column seems to add a lot of duplication, and
+makes the format different from the other architectures.
 
-However, the array of page size definitions is only initalised for
-various MMU_PAGE_* constants, so it contains a number of 0-initialised
-elements with def->shift == 0. This means we end up shifting by a
-very large number, which gives the following UBSan splat:
+Have you considered using the <abi> field (second column) to decide whether
+a syscall is used for SPU or not instead?
 
-================================================================================
-UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
-shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
-Call Trace:
-[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
-[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
-[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
-[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
-[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
-[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
-================================================================================
+I would have done it like
 
-Fix this by first checking if the element exists (shift != 0) before
-constructing the constant.
+|+0      nospu  restart_syscall                 sys_restart_syscall
+         sys_restart_syscall
+|+1      nospu  exit                            sys_exit
+         sys_exit
+|+2      nospu  fork                            ppc_fork
+         ppc_fork
+|+3      common  read                            sys_read
+          sys_read
+|+4      common  write                           sys_write
+          sys_write
+|+5      common  open                            sys_open
+          compat_sys_open
+|+6      common  close                           sys_close
+          sys_close
+...
+|+291    32      fstatat64                       sys_fstatat64
+          sys_fstatat64
+|+291    64      newfstatat                      sys_newfstatat
+|+291    spu      newfstatat                      sys_newfstatat
+...
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/mm/tlb_nohash.c |    3 +++
- 1 file changed, 3 insertions(+)
+with 'nospu' meaning 64+32+compat.
 
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -500,6 +500,9 @@ static void setup_page_sizes(void)
- 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
- 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
- 
-+			if (!def->shift)
-+				continue;
-+
- 			if (tlb1ps & (1U << (def->shift - 10))) {
- 				def->flags |= MMU_PAGE_SIZE_DIRECT;
- 
+> +9      common  link                            sys_link                        sys_link                                sys_link
+> +10     common  unlink                          sys_unlink                      sys_unlink                              sys_unlink
+> +11     common  execve                          sys_execve                      compat_sys_execve
+> +12     common  chdir                           sys_chdir                       sys_chdir                               sys_chdir
+> +13     common  time                            sys_time                        compat_sys_time                         sys_time
+> +14     common  mknod                           sys_mknod                       sys_mknod                               sys_mknod
+> +15     common  chmod                           sys_chmod                       sys_chmod                               sys_chmod
+> +16     common  lchown                          sys_lchown                      sys_lchown                              sys_lchown
+> +17     common  break                           sys_ni_syscall                  sys_ni_syscall
+> +18     32      oldstat                         sys_stat                        sys_ni_syscall
+> +18     64      oldstat                         sys_ni_syscall
 
+'oldstat' seems odd. Your conversion is correct, but the existing
+behavior of not
+providing support for the syscall in compat mode feels wrong. We have four
+calls in this category:
 
+arch/powerpc/include/asm/systbl.h:OLDSYS(stat)
+arch/powerpc/include/asm/systbl.h:OLDSYS(fstat)
+arch/powerpc/include/asm/systbl.h:OLDSYS(lstat)
+arch/powerpc/include/asm/systbl.h:OLDSYS(debug_setcontext)
+
+For the first three, it seems that the 64-bit kernel ought to set
+'__ARCH_WANT_OLD_STAT':
+
+diff --git a/arch/powerpc/include/asm/unistd.h
+b/arch/powerpc/include/asm/unistd.h
+index 96ddce5c76c3..335dfcc47f20 100644
+--- a/arch/powerpc/include/asm/unistd.h
++++ b/arch/powerpc/include/asm/unistd.h
+@@ -42,9 +42,7 @@
+ #define __ARCH_WANT_SYS_OLDUMOUNT
+ #define __ARCH_WANT_SYS_SIGPENDING
+ #define __ARCH_WANT_SYS_SIGPROCMASK
+-#ifdef CONFIG_PPC32
+ #define __ARCH_WANT_OLD_STAT
+-#endif
+ #ifdef CONFIG_PPC64
+ #define __ARCH_WANT_SYS_TIME32
+ #define __ARCH_WANT_SYS_UTIME32
+diff --git a/arch/powerpc/include/uapi/asm/stat.h
+b/arch/powerpc/include/uapi/asm/stat.h
+index afd25f2ff4e8..f64e47b46e4b 100644
+--- a/arch/powerpc/include/uapi/asm/stat.h
++++ b/arch/powerpc/include/uapi/asm/stat.h
+@@ -11,7 +11,7 @@
+
+ #define STAT_HAVE_NSEC 1
+
+-#ifndef __powerpc64__
++#if !defined(__powerpc64__) || defined(__KERNEL__)
+ struct __old_kernel_stat {
+        unsigned short st_dev;
+        unsigned short st_ino;
+
+For debug_setcontext(), I don't even know what that does, or whether the
+omission was intentional, but it seems weird to have one missing syscall
+in the emulation.
+
+> +19     common  lseek                           sys_lseek                       compat_sys_lseek                        sys_lseek
+> +20     common  getpid                          sys_getpid                      sys_getpid                              sys_getpid
+> +21     common  mount                           sys_mount                       compat_sys_mount
+> +22     32      umount                          sys_oldumount                   sys_oldumount
+> +22     64      umount                          sys_ni_syscall
+
+Note: for a future cleanup, I suppose we want to remove the '64' line
+for this one and
+others that simply refer to sys_ni_syscall. Your version keeps the
+generated file
+unchanged, so that that's great for now.
+
+> +31     common  stty                            sys_ni_syscall                  sys_ni_syscall
+> +32     common  gtty                            sys_ni_syscall                  sys_ni_syscall
+
+same here.
+
+> +82     32      select                          ppc_select                      sys_ni_syscall
+> +82     64      select                          sys_ni_syscall
+
+This one again is like 'stat': it lacks a compat handler, which exists in
+arch/powerpc/kernel/syscalls.c, but is disabled in ppc64/compat mode
+for unknown reasons. In this case, it's been like that since the compat
+mode was first added.
+
+> +106    common  stat                            sys_newstat                     compat_sys_newstat                      sys_newstat
+> +107    32      lstat                           sys_newlstat                    compat_sys_newlstat                     sys_newlstat
+> +107    64      lstat                           sys_lstat
+> +108    32      fstat                           sys_newfstat                    compat_sys_newfstat                     sys_newfstat
+> +108    64      fstat                           sys_fstat
+
+Can you explain what is going on here? As far as I can see, those
+should all be 'common'.
+
+       Arnd
