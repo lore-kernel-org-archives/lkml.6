@@ -3,86 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B3DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B673C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8116A20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:59:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8116A20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1FE0720823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE0720823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727310AbeKSTWd (ORCPT
+        id S1727314AbeKSTXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:22:33 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38584 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726475AbeKSTWd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:22:33 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id A45DE808BE; Mon, 19 Nov 2018 09:59:29 +0100 (CET)
-Date:   Mon, 19 Nov 2018 09:59:31 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     shuah@kernel.org
-Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [RFC PATCH v8 1/4] media: Media Device Allocator API
-Message-ID: <20181119085931.GA28607@amd>
-References: <cover.1541109584.git.shuah@kernel.org>
- <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
+        Mon, 19 Nov 2018 14:23:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52116 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726088AbeKSTXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:23:50 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5008A30832D0;
+        Mon, 19 Nov 2018 09:00:50 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7722A5C223;
+        Mon, 19 Nov 2018 09:00:26 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 17:00:22 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 14/19] block: enable multipage bvecs
+Message-ID: <20181119090021.GL16736@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-15-ming.lei@redhat.com>
+ <20181116135308.GK3165@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e474dd16f1d6443c12b1361376193c9d0efcced6.1541109584.git.shuah@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181116135308.GK3165@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 19 Nov 2018 09:00:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 16, 2018 at 02:53:08PM +0100, Christoph Hellwig wrote:
+> > -
+> > -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
+> > -			bv->bv_len += len;
+> > -			bio->bi_iter.bi_size += len;
+> > -			return true;
+> > -		}
+> > +		struct request_queue *q = NULL;
+> > +
+> > +		if (page == bv->bv_page && off == (bv->bv_offset + bv->bv_len)
+> > +				&& (off + len) <= PAGE_SIZE)
+> 
+> How could the page struct be the same, but the range beyond PAGE_SIZE
+> (at least with the existing callers)?
+> 
+> Also no need for the inner btraces, and the && always goes on the
+> first line.
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK.
 
-On Thu 2018-11-01 18:31:30, shuah@kernel.org wrote:
-> From: Shuah Khan <shuah@kernel.org>
->=20
-> Media Device Allocator API to allows multiple drivers share a media devic=
-e.
-> Using this API, drivers can allocate a media device with the shared struct
-> device as the key. Once the media device is allocated by a driver, other
-> drivers can get a reference to it. The media device is released when all
-> the references are released.
+> 
+> > +		if (bio->bi_disk)
+> > +			q = bio->bi_disk->queue;
+> > +
+> > +		/* disable multi-page bvec too if cluster isn't enabled */
+> > +		if (!q || !blk_queue_cluster(q) ||
+> > +		    ((page_to_phys(bv->bv_page) + bv->bv_offset + bv->bv_len) !=
+> > +		     (page_to_phys(page) + off)))
+> > +			return false;
+> > + merge:
+> > +		bv->bv_len += len;
+> > +		bio->bi_iter.bi_size += len;
+> > +		return true;
+> 
+> Ok, this is scary, as it will give differen results depending on when
+> bi_disk is assigned.
 
-Sounds like a ... bad idea?
+It is just merge or not, both can be handled well now.
 
-That's what new "media control" framework is for, no?
+> But then again we shouldn't really do the cluster
+> check here, but rather when splitting the bio for the actual low-level
+> driver.
 
-Why do you need this?
-								Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Yeah, I thought of this way too, but it may cause tons of bio split for
+no-clustering, and there are quite a few scsi devices which require
+to disable clustering.
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+[linux]$ git grep -n DISABLE_CLUSTERING ./drivers/scsi/ | wc -l
+     28
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Or we may introduce bio_split_to_single_page_bvec() to allocate &
+convert to single-page bvec table for non-clustering, will try this
+approach in next version.
 
-iEYEARECAAYFAlvye3MACgkQMOfwapXb+vJA3gCfSzUjvJUuuvii9w4a4BBFlKB4
-cKMAoK05ssILf7b0q6CHzrTZDJfiadMQ
-=u+bp
------END PGP SIGNATURE-----
+> 
+> (and eventually we should kill this clustering setting off in favor
+> of our normal segment limits).
 
---xHFwDpU9dbj6ez1V--
+Yeah, it has been in my post-multi-page todo list already, :-)
+
+thanks,
+Ming
