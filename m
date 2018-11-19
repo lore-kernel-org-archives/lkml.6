@@ -2,253 +2,103 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A6CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A789DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4896620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7819520871
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:58:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eV3WnY0q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4896620823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="YEO/c9ep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7819520871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=landley.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeKSTUp (ORCPT
+        id S1727107AbeKSTVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:20:45 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39185 "EHLO
+        Mon, 19 Nov 2018 14:21:00 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53248 "EHLO
         mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbeKSTUp (ORCPT
+        with ESMTP id S1726972AbeKSTVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:20:45 -0500
-Received: by mail-it1-f194.google.com with SMTP id m15so6359503itl.4;
-        Mon, 19 Nov 2018 00:57:45 -0800 (PST)
+        Mon, 19 Nov 2018 14:21:00 -0500
+Received: by mail-it1-f194.google.com with SMTP id g85so5461005ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 00:58:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IeU7efKc0oRRrZFeOF+jaJp+NqbVOm4cG8IfZD6g/kE=;
-        b=eV3WnY0q2KVGx89YWBrtvHdJkiftshjQn+7/RGMZ2PQVb+styXtUBLhLnG+hUkAfKd
-         jxLJRbnc+ZuP5WlFVNodM/wHzqjaaaXeB01E/DpQzgn8Bg/gqQSobqMqA1FAKfeN/4Xd
-         6quEkIkCP3nRJ2x4XBWTNB0WDrt71RNn4EQjTPSEZmA4Kox1L/MzqcNpJT0J5+IPW68b
-         IPhT76Tz6ub+3BofeJNWAWqr8c6W7SjJpaQOT04/c2s3ujisTB2PaJ4cdlhSrv/oLtAL
-         v63XOL74ufwO4vGKgwCty2mT+0n/NvoHeXDGQQnYscvAHXKWd8L53PRK3l4VcYC1RBnO
-         5r4w==
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0Yna8x0OVq/IIn51r3gUtMjXLP2Jj2b+iJ6cRs6mwJ8=;
+        b=YEO/c9epJjDoet/P2z7O20dZT89DYbc3gx9tUmqMMua2haZBlkqMDfh5hpUy1gYdqC
+         qBi52OzQO0173X60G+fDEIxeHCaDU1NchQ9KxYzbjoSNvgydDBlf/h0JDXAvMbDpRMum
+         nYs8ZXA53OwnwveSpE+uuJu3iQV9eOwMaIAU80+M7peUp7HeGtkiiIodCNaJ2OaqTMNR
+         p73mwKXGaA3T5uo3vr9pXS19F0LcNYVnVoMuNJ/sg4WwQP3ItNagV2fKmYDXn+AFdDsW
+         UhHxTuyO3nANPTdrzMQqTFF2NJYBIbyInkZJTvf0o0lkNHANAYJO/VcTvyC5tFi8hbMl
+         NYqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IeU7efKc0oRRrZFeOF+jaJp+NqbVOm4cG8IfZD6g/kE=;
-        b=sT7H2mfG1EdRpg2kaWA952CUGcDhkff10UXGgl1zPoJ5spnXKrRoHWzsYKvQb6/PwB
-         yiia2owgoIFrTTgLos3vGw1f4KBKXCm4sNNSofPzhoQ/9Mn28j+LKkyWSPZ1u2YGthZW
-         3w3+a8qcymsNYvYJrKXxn1vRBbO7RdAQsuMK6Ai9PhEEF8qMelU2/ycaekU3umOvMopT
-         4WIOBHl+ms99kM96URwe/nXRhtLzqjyXxPVxA4I3RVYHoC5AhzIZWQMu6Dn5T8R0Tday
-         1qUbKf7bUdC/3XbKIw1feYm7vdR9TJC5rSnKd2fqWSBKgszJyFxT8JLGzhatgOaBVgWV
-         yamQ==
-X-Gm-Message-State: AGRZ1gI4bAZfY1ho78O7PIKxiuj1xHQO6RUJhDwhQUQzBeLwaGR/Xjw9
-        cjfzxzsNy3uaSgpThWYK7S7Oa01Y/he+dfdbsTs=
-X-Google-Smtp-Source: AJdET5c/H8eDQqct2PnX2HUAAA/38GKM7Xha702j6bbDNS5rj8vSjF9ZhQ4PBriihu3Ir1EjWUiGbqbMHorTHghL/YI=
-X-Received: by 2002:a05:660c:10b:: with SMTP id w11mr7328336itj.139.1542617865226;
- Mon, 19 Nov 2018 00:57:45 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0Yna8x0OVq/IIn51r3gUtMjXLP2Jj2b+iJ6cRs6mwJ8=;
+        b=tNJZBB2dCMcjpNKW49v0lrUjZ/vvo9oqNBOyJrixTaiHCOdCY8fjEh0MuvGLs+ZKkl
+         9v3A5Klwo1MdJ8fNsoxQLLzRTrFIctEq1+29NSo2zukZ3WOz4usFc12umwWPCQMTewMd
+         POseNQHvzaWxkXd+WXZQXO380JVaGYnNN2g4obtrcMCchu2IH4ol1+vHOty+/u7wrfJc
+         te6zK/E7d3XQF6VAHZ7+O+my8CiswPY+HFURB9V03pP7qxqVC0rCWlIVgm43FDed7MrF
+         BhjMb8dKqwQehPNva8872cMcZl3VRZvTB05o7wXIga60ncGS3PqPKonwMPZcyZ+j2ifk
+         7bRw==
+X-Gm-Message-State: AGRZ1gK0o8tiBhkbEu/tKFpp9oN8ezkRG21W7rUehEc3Lz7Y6K4/HZGa
+        gi9iGx8PaGerzrAmd3/0G+i3OQ==
+X-Google-Smtp-Source: AJdET5cw9diSwrfOoUCP8o9dg15VVkEhQqFOIIjVHD2Cm/erOypBcO0tbo9S5bPlZ7Sqs8RKCTlnwQ==
+X-Received: by 2002:a02:1e4c:: with SMTP id m73mr19384376jad.79.1542617881255;
+        Mon, 19 Nov 2018 00:58:01 -0800 (PST)
+Received: from [192.168.43.100] ([172.58.139.31])
+        by smtp.googlemail.com with ESMTPSA id a134-v6sm16506407itc.33.2018.11.19.00.57.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 00:58:00 -0800 (PST)
+Subject: Re: [PATCH v3 0/3] sh: system call table generation support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     firoz.khan@linaro.org, Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        marcin.juszkiewicz@linaro.org
+References: <1542169930-24118-1-git-send-email-firoz.khan@linaro.org>
+ <0b9aaa2f-9eda-82f1-8d52-b537a8c0c190@landley.net>
+ <CAMuHMdUKPo6Lu0CtWERYkQTKSATqq0QVit-Awcn1O2EsS22iKQ@mail.gmail.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <72faac80-114f-f563-b340-0cdeea2673cd@landley.net>
+Date:   Mon, 19 Nov 2018 02:57:59 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <000000000000b98a67057ad7158a@google.com>
-In-Reply-To: <000000000000b98a67057ad7158a@google.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Mon, 19 Nov 2018 17:57:33 +0900
-Message-ID: <CADvbK_f3CpK=qJFngBGmO3VXFLsJm9=qqZVtxYOeBS8rwE=9Ew@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in __lock_sock
-To:     syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com
-Cc:     davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdUKPo6Lu0CtWERYkQTKSATqq0QVit-Awcn1O2EsS22iKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 4:18 PM syzbot
-<syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    ccda4af0f4b9 Linux 4.20-rc2
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=156cd533400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9276d76e83e3bcde6c99
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com
->
-> netlink: 5 bytes leftover after parsing attributes in process
-> `syz-executor5'.
-> ==================================================================
-> BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
-> kernel/locking/lockdep.c:3218
-> Read of size 8 at addr ffff8881d26d60e0 by task syz-executor1/13725
->
-> CPU: 0 PID: 13725 Comm: syz-executor1 Not tainted 4.20.0-rc2+ #333
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x244/0x39d lib/dump_stack.c:113
->   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
->   kasan_report_error mm/kasan/report.c:354 [inline]
->   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
->   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->   __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
->   lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
->   __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
->   _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
->   spin_lock_bh include/linux/spinlock.h:334 [inline]
->   __lock_sock+0x203/0x350 net/core/sock.c:2253
->   lock_sock_nested+0xfe/0x120 net/core/sock.c:2774
->   lock_sock include/net/sock.h:1492 [inline]
->   sctp_sock_dump+0x122/0xb20 net/sctp/diag.c:324
+On 11/19/18 2:08 AM, Geert Uytterhoeven wrote:
+> On Mon, Nov 19, 2018 at 6:26 AM Rob Landley <rob@landley.net> wrote:
+>> WARNING: CPU: 0 PID: 1 at mm/slub.c:2448 ___slab_alloc.constprop.34+0x196/0x288
+> 
+> https://patchwork.kernel.org/patch/10549883/
 
-static int sctp_sock_dump(struct sctp_transport *tsp, void *p)
-{
-        struct sctp_endpoint *ep = tsp->asoc->ep;
-        struct sctp_comm_param *commp = p;
-        struct sock *sk = ep->base.sk; <--- [1]
-...
-        int err = 0;
+Given that Sato-san is co-maintainer of arch/sh and that was posted in July, why
+is it not upstream yet?
 
-        lock_sock(sk);  <--- [2]
-
-Between [1] and [2], an asoc peeloff may happen, still thinking
-how to avoid this.
-
-
-
->   sctp_for_each_transport+0x2b5/0x370 net/sctp/socket.c:5091
->   sctp_diag_dump+0x3ac/0x660 net/sctp/diag.c:527
->   __inet_diag_dump+0xa8/0x140 net/ipv4/inet_diag.c:1049
->   inet_diag_dump+0x9b/0x110 net/ipv4/inet_diag.c:1065
->   netlink_dump+0x606/0x1080 net/netlink/af_netlink.c:2244
->   __netlink_dump_start+0x59a/0x7c0 net/netlink/af_netlink.c:2352
->   netlink_dump_start include/linux/netlink.h:216 [inline]
->   inet_diag_handler_cmd+0x2ce/0x3f0 net/ipv4/inet_diag.c:1170
->   __sock_diag_cmd net/core/sock_diag.c:232 [inline]
->   sock_diag_rcv_msg+0x31d/0x410 net/core/sock_diag.c:263
->   netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
->   sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:274
->   netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
->   netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
->   netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:631
->   sock_write_iter+0x35e/0x5c0 net/socket.c:900
->   call_write_iter include/linux/fs.h:1857 [inline]
->   do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
->   do_iter_write+0x185/0x5f0 fs/read_write.c:959
->   vfs_writev+0x1f1/0x360 fs/read_write.c:1004
->   do_writev+0x11a/0x310 fs/read_write.c:1039
->   __do_sys_writev fs/read_write.c:1112 [inline]
->   __se_sys_writev fs/read_write.c:1109 [inline]
->   __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x457569
-> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f2cdabbac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-> RDX: 0000000000000001 RSI: 000000002051c000 RDI: 000000000000000e
-> RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2cdabbb6d4
-> R13: 00000000004c33b1 R14: 00000000004d97c8 R15: 00000000ffffffff
->
-> Allocated by task 13672:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->   kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
->   kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
->   sk_prot_alloc+0x69/0x2e0 net/core/sock.c:1463
->   sk_alloc+0x10d/0x1690 net/core/sock.c:1523
->   inet_create+0x509/0x1070 net/ipv4/af_inet.c:321
->   __sock_create+0x536/0x930 net/socket.c:1277
->   sock_create net/socket.c:1317 [inline]
->   __sys_socket+0x106/0x260 net/socket.c:1347
->   __do_sys_socket net/socket.c:1356 [inline]
->   __se_sys_socket net/socket.c:1354 [inline]
->   __x64_sys_socket+0x73/0xb0 net/socket.c:1354
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 13680:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->   __cache_free mm/slab.c:3498 [inline]
->   kmem_cache_free+0x83/0x290 mm/slab.c:3760
->   sk_prot_free net/core/sock.c:1504 [inline]
->   __sk_destruct+0x728/0xa80 net/core/sock.c:1588
->   sk_destruct+0x78/0x90 net/core/sock.c:1596
->   __sk_free+0xcf/0x300 net/core/sock.c:1607
->   sk_free+0x42/0x50 net/core/sock.c:1618
->   sock_put include/net/sock.h:1693 [inline]
->   sctp_close+0x8d4/0xad0 net/sctp/socket.c:1569
->   inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
->   __sock_release+0xd7/0x250 net/socket.c:579
->   sock_close+0x19/0x20 net/socket.c:1141
->   __fput+0x385/0xa30 fs/file_table.c:278
->   ____fput+0x15/0x20 fs/file_table.c:309
->   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->   get_signal+0x1558/0x1980 kernel/signal.c:2347
->   do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
->   exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8881d26d6040
->   which belongs to the cache SCTP(33:syz1) of size 1776
-> The buggy address is located 160 bytes inside of
->   1776-byte region [ffff8881d26d6040, ffff8881d26d6730)
-> The buggy address belongs to the page:
-> page:ffffea000749b580 count:1 mapcount:0 mapping:ffff8881b517f200 index:0x0
-> flags: 0x2fffc0000000200(slab)
-> raw: 02fffc0000000200 ffff8881c6685748 ffffea0007538388 ffff8881b517f200
-> raw: 0000000000000000 ffff8881d26d6040 0000000100000002 ffff8881b6b4e7c0
-> page dumped because: kasan: bad access detected
-> page->mem_cgroup:ffff8881b6b4e7c0
->
-> Memory state around the buggy address:
->   ffff8881d26d5f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->   ffff8881d26d6000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-> > ffff8881d26d6080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                                                         ^
->   ffff8881d26d6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8881d26d6180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+Rob
