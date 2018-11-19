@@ -4,56 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB91C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDF7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2A720C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0975208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuaJXZuE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2A720C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtVMMDjp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0975208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbeKTC7I (ORCPT
+        id S1731557AbeKTC7L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58342 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC7H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:07 -0500
+        id S1730350AbeKTC7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A983208E4;
-        Mon, 19 Nov 2018 16:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40A0E20989;
+        Mon, 19 Nov 2018 16:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645299;
-        bh=EHg9MxQPhMaYW4OZIpGDsIbg71qk+3obzXbTDYIXdYU=;
+        s=default; t=1542645301;
+        bh=hyscv4ZFYFuShAmFHTHKFgFX0hnWG9ErhOpzC4wxSE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iuaJXZuEmIyFliJJkEsLiJm/hH09YZpZBhPVwjTi6F/FARpqBaGNIgy+CRkVbvlrO
-         fDcjqaZHJqDMgKOucd2HkWPzVyGCmdx1xYGQyIA5Ghj3Oh0WlK14Ti+ryfAf7LlxXO
-         4RvHNAXK/tQDCOCmQ9HUhsagVZuTlSnTIt+DSuFQ=
+        b=BtVMMDjphSe6LOql8j4/bEe7aEDtPOTNqDUnfN7twsu4yyn4FqclJcM+dL/GnZ/WT
+         uiXh42x3FfmAVGK93zyR+eyiD7COFrkpT+VSuv3R+Pv5o46n46SLqsULHakxckUn0l
+         JDmJuh4QXE/zDwidiFBwY9xU5gcfH32cAuX3Fd0A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Miller <davem@davemloft.net>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        stable@kernel.org
-Subject: [PATCH 4.19 112/205] perf cs-etm: Correct CPU mode for samples
-Date:   Mon, 19 Nov 2018 17:26:59 +0100
-Message-Id: <20181119162634.771580711@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Sebastien Boisvert <sboisvert@gydle.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.19 113/205] perf stat: Handle different PMU names with common prefix
+Date:   Mon, 19 Nov 2018 17:27:00 +0100
+Message-Id: <20181119162634.922075642@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -71,143 +66,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-commit d6c9c05fe1eb4b213b183d8a1e79416256dc833a upstream.
+commit ea1fa48c055f833eb25f0c33188feecb7002ada5 upstream.
 
-Since commit edeb0c90df35 ("perf tools: Stop fallbacking to kallsyms for
-vdso symbols lookup"), the kernel address cannot be properly parsed to
-kernel symbol with command 'perf script -k vmlinux'.  The reason is
-CoreSight samples is always to set CPU mode as PERF_RECORD_MISC_USER,
-thus it fails to find corresponding map/dso in below flows:
+On s390 the CPU Measurement Facility for counters now supports
+2 PMUs named cpum_cf (CPU Measurement Facility for counters) and
+cpum_cf_diag (CPU Measurement Facility for diagnostic counters)
+for one and the same CPU.
 
-  process_sample_event()
-    `-> machine__resolve()
-	  `-> thread__find_map(thread, sample->cpumode, sample->ip, al);
+Running command
 
-In this flow it needs to pass argument 'sample->cpumode' to tell what's
-the CPU mode, before it always passed PERF_RECORD_MISC_USER but without
-any failure until the commit edeb0c90df35 ("perf tools: Stop fallbacking
-to kallsyms for vdso symbols lookup") has been merged.  The reason is
-even with the wrong CPU mode the function thread__find_map() firstly
-fails to find map but it will rollback to find kernel map for vdso
-symbols lookup.  In the latest code it has removed the fallback code,
-thus if CPU mode is PERF_RECORD_MISC_USER then it cannot find map
-anymore with kernel address.
+ [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+	 -- ~/mytests/cf-tx-events 1
 
-This patch is to correct samples CPU mode setting, it creates a new
-helper function cs_etm__cpu_mode() to tell what's the CPU mode based on
-the address with the info from machine structure; this patch has a bit
-extension to check not only kernel and user mode, but also check for
-host/guest and hypervisor mode.  Finally this patch uses the function in
-instruction and branch samples and also apply in cs_etm__mem_access()
-for a minor polishing.
+ Measuring transactions
+ TX_C_TABORT_NO_SPECIAL: 0 expected:0
+ TX_C_TABORT_SPECIAL: 0 expected:0
+ TX_C_TEND: 1 expected:1
+ TX_NC_TABORT: 11 expected:11
+ TX_NC_TEND: 1 expected:1
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: David Miller <davem@davemloft.net>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@kernel.org # v4.19
-Link: http://lkml.kernel.org/r/1540883908-17018-1-git-send-email-leo.yan@linaro.org
+ Performance counter stats for '/root/mytests/cf-tx-events 1':
+
+  2      tx_c_tend
+
+      0.002120091 seconds time elapsed
+
+      0.000121000 seconds user
+      0.002127000 seconds sys
+
+ [root@s35lp76 perf]#
+
+displays output which is unexpected (and wrong):
+
+  2      tx_c_tend
+
+The test program definitely triggers only one transaction, as shown
+in line 'TX_C_TEND: 1 expected:1'.
+
+This is caused by the following call sequence:
+
+pmu_lookup() scans and installs a PMU.
++--> pmu_aliases() parses all aliases in directory
+		.../<pmu-name>/events/* which are file names.
+     +--> pmu_aliases_parse() Read each file in directory and create
+                      an new alias entry. This is done with
+          +--> perf_pmu__new_alias() and
+	       +--> __perf_pmu__new_alias() which also check for
+	                   identical alias names.
+
+After pmu_aliases() returns, a complete list of event names
+for this pmu has been created. Now function
+
+pmu_add_cpu_aliases()   is called to add the events listed in the json
+|                       files to the alias list of the cpu.
++--> perf_pmu__find_map()  Returns a pointer to the json events.
+
+Now function pmu_add_cpu_aliases() scans through all events listed
+in the JSON files for this CPU.
+Each json event pmu name is compared with the current PMU being
+built up and if they mismatch, the json event is added to the
+current PMUs alias list.
+To avoid duplicate entries the following comparison is done:
+
+	if (!is_arm_pmu_core(name)) {
+	     pname = pe->pmu ? pe->pmu : "cpu";
+	     if (strncmp(pname, name, strlen(pname)))
+		     continue;
+     }
+
+The culprit is the strncmp() function.
+
+Using current s390 PMU naming, the first PMU is 'cpum_cf'
+and a long list of events is added, among them 'tx_c_tend'
+
+When the second PMU named 'cpum_cf_diag' is added, only one event
+named 'CF_DIAG' is added by the pmu_aliases()  function.
+
+Now function pmu_add_cpu_aliases() is invoked for PMU 'cpum_cf_diag'.
+Since the CPUID string is the same for both PMUs, json file events
+for PMU named 'cpum_cf' are added to the PMU 'cpm_cf_diag'
+
+This happens because the strncmp() actually compares:
+
+     strncmp("cpum_cf", "cpum_cf_diag", 6);
+
+The first parameter is the pmu name taken from the event in
+the json file. The second parameter is the pmu name of the PMU
+currently being built.
+They are different, but the length of the compare only tests the
+common prefix and this returns 0(true) when it should return false.
+
+Now all events for PMU cpum_cf are added to the alias list for pmu
+cpum_cf_diag.
+
+Later on in function parse_events_add_pmu() the event 'tx_c_end' is
+searched in all available PMUs and found twice, adding it two
+times to the evsel_list global variable which is the root
+of all events. This results in a counter value of 2 instead
+of 1.
+
+Output with this patch:
+
+ [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+			-- ~/mytests/cf-tx-events 1
+ Measuring transactions
+ TX_C_TABORT_NO_SPECIAL: 0 expected:0
+ TX_C_TABORT_SPECIAL: 0 expected:0
+ TX_C_TEND: 1 expected:1
+ TX_NC_TABORT: 11 expected:11
+ TX_NC_TEND: 1 expected:1
+
+ Performance counter stats for '/root/mytests/cf-tx-events 1':
+
+                  1      tx_c_tend
+
+      0.001815365 seconds time elapsed
+
+      0.000123000 seconds user
+      0.001756000 seconds sys
+
+ [root@s35lp76 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Reviewed-by: Sebastien Boisvert <sboisvert@gydle.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: stable@vger.kernel.org
+Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
+Link: http://lkml.kernel.org/r/20181023151616.78193-1-tmricht@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/cs-etm.c |   39 ++++++++++++++++++++++++++++++---------
- 1 file changed, 30 insertions(+), 9 deletions(-)
+ tools/perf/util/pmu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -244,6 +244,27 @@ static void cs_etm__free(struct perf_ses
- 	zfree(&aux);
- }
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -773,7 +773,7 @@ static void pmu_add_cpu_aliases(struct l
  
-+static u8 cs_etm__cpu_mode(struct cs_etm_queue *etmq, u64 address)
-+{
-+	struct machine *machine;
-+
-+	machine = etmq->etm->machine;
-+
-+	if (address >= etmq->etm->kernel_start) {
-+		if (machine__is_host(machine))
-+			return PERF_RECORD_MISC_KERNEL;
-+		else
-+			return PERF_RECORD_MISC_GUEST_KERNEL;
-+	} else {
-+		if (machine__is_host(machine))
-+			return PERF_RECORD_MISC_USER;
-+		else if (perf_guest)
-+			return PERF_RECORD_MISC_GUEST_USER;
-+		else
-+			return PERF_RECORD_MISC_HYPERVISOR;
-+	}
-+}
-+
- static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
- 			      size_t size, u8 *buffer)
- {
-@@ -258,10 +279,7 @@ static u32 cs_etm__mem_access(struct cs_
- 		return -1;
+ 		if (!is_arm_pmu_core(name)) {
+ 			pname = pe->pmu ? pe->pmu : "cpu";
+-			if (strncmp(pname, name, strlen(pname)))
++			if (strcmp(pname, name))
+ 				continue;
+ 		}
  
- 	machine = etmq->etm->machine;
--	if (address >= etmq->etm->kernel_start)
--		cpumode = PERF_RECORD_MISC_KERNEL;
--	else
--		cpumode = PERF_RECORD_MISC_USER;
-+	cpumode = cs_etm__cpu_mode(etmq, address);
- 
- 	thread = etmq->thread;
- 	if (!thread) {
-@@ -653,7 +671,7 @@ static int cs_etm__synth_instruction_sam
- 	struct perf_sample sample = {.ip = 0,};
- 
- 	event->sample.header.type = PERF_RECORD_SAMPLE;
--	event->sample.header.misc = PERF_RECORD_MISC_USER;
-+	event->sample.header.misc = cs_etm__cpu_mode(etmq, addr);
- 	event->sample.header.size = sizeof(struct perf_event_header);
- 
- 	sample.ip = addr;
-@@ -665,7 +683,7 @@ static int cs_etm__synth_instruction_sam
- 	sample.cpu = etmq->packet->cpu;
- 	sample.flags = 0;
- 	sample.insn_len = 1;
--	sample.cpumode = event->header.misc;
-+	sample.cpumode = event->sample.header.misc;
- 
- 	if (etm->synth_opts.last_branch) {
- 		cs_etm__copy_last_branch_rb(etmq);
-@@ -706,12 +724,15 @@ static int cs_etm__synth_branch_sample(s
- 		u64			nr;
- 		struct branch_entry	entries;
- 	} dummy_bs;
-+	u64 ip;
-+
-+	ip = cs_etm__last_executed_instr(etmq->prev_packet);
- 
- 	event->sample.header.type = PERF_RECORD_SAMPLE;
--	event->sample.header.misc = PERF_RECORD_MISC_USER;
-+	event->sample.header.misc = cs_etm__cpu_mode(etmq, ip);
- 	event->sample.header.size = sizeof(struct perf_event_header);
- 
--	sample.ip = cs_etm__last_executed_instr(etmq->prev_packet);
-+	sample.ip = ip;
- 	sample.pid = etmq->pid;
- 	sample.tid = etmq->tid;
- 	sample.addr = cs_etm__first_executed_instr(etmq->packet);
-@@ -720,7 +741,7 @@ static int cs_etm__synth_branch_sample(s
- 	sample.period = 1;
- 	sample.cpu = etmq->packet->cpu;
- 	sample.flags = 0;
--	sample.cpumode = PERF_RECORD_MISC_USER;
-+	sample.cpumode = event->sample.header.misc;
- 
- 	/*
- 	 * perf report cannot handle events without a branch stack
 
 
