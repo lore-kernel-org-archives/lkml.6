@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEEEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 620C7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 973D8206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B029208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifFaefyZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973D8206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhRP7BwK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B029208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733057AbeKTDEq (ORCPT
+        id S1733069AbeKTDEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:04:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37866 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:04:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732128AbeKTDEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:04:45 -0500
+        id S1732128AbeKTDEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:04:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F32A620831;
-        Mon, 19 Nov 2018 16:40:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8444520831;
+        Mon, 19 Nov 2018 16:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645635;
-        bh=hMt+skiumbRH59AGWyf9LwvRdTKXIdPEC6Y3FCBC2D0=;
+        s=default; t=1542645638;
+        bh=UNC49mJC5dC9PZp0h7Le73w0ENIDENV/TLPPzmcIhfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ifFaefyZ43ePQstXQjDCqvBAvMkB0jW7O1Nr477RjmPmKSfQkJfXQ/Ceu3UEczT7k
-         s7HJYAr0Kr1juV1cNFS5IYfCkEyyIUjT1ZPqD3VSRZPqHJp53I7W/Pisx8VnDxq7Il
-         YZdNpzBQ8tRt/QRJfCrt4+AbbmouKPQO2BRmb2yA=
+        b=JhRP7BwKFNWqEfxp7wjlKyYm3hhMbg7JiDVuqzRj0f/CN7JqdLRN0dylCiKBtdlQd
+         ZhUb8+L0FTDr5xhlNpHDlgEYwOn/b3hf/RQ8UGkeYgajyb9pFq8kg3wrCEpf8qFT6p
+         fTcmixTGGJRhmhR4OD4Rb3iGtBwpEm+WTo8Ag1zQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org,
+        Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 030/171] staging: most: video: fix registration of an empty comp core_component
-Date:   Mon, 19 Nov 2018 17:27:06 +0100
-Message-Id: <20181119162624.652486590@linuxfoundation.org>
+Subject: [PATCH 4.18 031/171] 9p locks: fix glock.client_id leak in do_lock
+Date:   Mon, 19 Nov 2018 17:27:07 +0100
+Message-Id: <20181119162624.809908643@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -61,57 +62,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-[ Upstream commit 1f447e51c0b9e8beeec0917ea5f51930f55e17c9 ]
+[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
 
-Currently we have structrues comp (which is empty) and comp_info being
-used to register and deregister the component.  This mismatch in naming
-occurred from a previous commit that renamed aim_info to comp. Fix this
-to use consistent component naming in line with most/net, most/sound etc.
+the 9p client code overwrites our glock.client_id pointing to a static
+buffer by an allocated string holding the network provided value which
+we do not care about; free and reset the value as appropriate.
 
-This fixes the message two issues, one with a null empty name when
-loading the module:
+This is almost identical to the leak in v9fs_file_getlock() fixed by
+Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
+in v9fs_file_getlock()"), which was returned as an error by a coverity
+false positive -- while we are here attempt to make the code slightly
+more robust to future change of the net/9p/client code and hopefully
+more clear to coverity that there is no problem.
 
-[ 1485.269515] most_core: registered new core component (null)
-
-and an Oops when removing the module:
-
-[ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[ 1485.278648] PGD 0 P4D 0
-[ 1485.279253] Oops: 0002 [#2] SMP PTI
-[ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
-[ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-[ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
-.. etc
-
-Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/most/video/video.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/9p/vfs_file.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/most/video/video.c
-+++ b/drivers/staging/most/video/video.c
-@@ -530,7 +530,7 @@ static int comp_disconnect_channel(struc
- 	return 0;
- }
- 
--static struct core_component comp_info = {
-+static struct core_component comp = {
- 	.name = "video",
- 	.probe_channel = comp_probe_channel,
- 	.disconnect_channel = comp_disconnect_channel,
-@@ -565,7 +565,7 @@ static void __exit comp_exit(void)
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file
+ 			break;
+ 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
+ 			break;
++		/*
++		 * p9_client_lock_dotl overwrites flock.client_id with the
++		 * server message, free and reuse the client name
++		 */
++		if (flock.client_id != fid->clnt->name) {
++			kfree(flock.client_id);
++			flock.client_id = fid->clnt->name;
++		}
  	}
- 	spin_unlock_irq(&list_lock);
  
--	most_deregister_component(&comp_info);
-+	most_deregister_component(&comp);
- 	BUG_ON(!list_empty(&video_devices));
+ 	/* map 9p status to VFS status */
+@@ -235,6 +243,8 @@ out_unlock:
+ 		locks_lock_file_wait(filp, fl);
+ 		fl->fl_type = fl_type;
+ 	}
++	if (flock.client_id != fid->clnt->name)
++		kfree(flock.client_id);
+ out:
+ 	return res;
+ }
+@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file
+ 
+ 	res = p9_client_getlock_dotl(fid, &glock);
+ 	if (res < 0)
+-		return res;
++		goto out;
+ 	/* map 9p lock type to os lock type */
+ 	switch (glock.type) {
+ 	case P9_LOCK_TYPE_RDLCK:
+@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file
+ 			fl->fl_end = glock.start + glock.length - 1;
+ 		fl->fl_pid = -glock.proc_id;
+ 	}
+-	kfree(glock.client_id);
++out:
++	if (glock.client_id != fid->clnt->name)
++		kfree(glock.client_id);
+ 	return res;
  }
  
 
