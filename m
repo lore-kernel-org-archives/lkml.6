@@ -2,168 +2,453 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE10C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36DAE2151B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7D57214E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3cBkpDv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DAE2151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m53kYosb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7D57214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406473AbeKTD22 (ORCPT
+        id S2406482AbeKTD2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42786 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405461AbeKTD21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:27 -0500
+        id S2405461AbeKTD2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA5AE2148E;
-        Mon, 19 Nov 2018 17:04:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D8A72148E;
+        Mon, 19 Nov 2018 17:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647050;
-        bh=Dho72JiBTsD6y49Etbm4brFe57zwnpt4Ha11PDagMwQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u3cBkpDvbhHs4KjCCnTgjzlKICwpCYkSgye/vTu5615CkkR51DahasBJgTsN+rwJD
-         YjwdxZaTOgxzyi6KslB8ZqIz750lVKlcrbCrSSrKojC5HoENLBgQyPlTUvHkVdpiKJ
-         a9HdZmFpKbU8DzYKJeDt4AXyIwEXVn3uDSiwO4yQ=
+        s=default; t=1542647052;
+        bh=iH92D6/JllEQIOn8MURIcCagBh3wVZ4eww1+hpa7Yio=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m53kYosbl6hetk+fENPb7I88KOxkhFqMqrXapvgvadG16YFK8k7h+zsTkdvqNJUZM
+         NtUFAdWhuh9+zWawdngyVl9En46C+NlnfwRjc0+I6QbrmQyCX45k/NtUTqDtZnhI+W
+         TMarC6DglTBZTaOvpH+yMNzrsSq6dzX+29GuVe/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 09/90] selftests: ftrace: Add synthetic event syntax testcase
-Date:   Mon, 19 Nov 2018 17:28:51 +0100
-Message-Id: <20181119162622.305713565@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 3.18 00/90] 3.18.126-stable review
+Date:   Mon, 19 Nov 2018 17:28:42 +0100
+Message-Id: <20181119162620.585061184@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
-References: <20181119162620.585061184@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.126-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-3.18.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 3.18.126-rc1
+X-KernelTest-Deadline: 2018-11-21T16:26+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 3.18.126 release.
+There are 90 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Wed Nov 21 16:25:28 UTC 2018.
+Anything received after that time might be too late.
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.126-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+and the diffstat can be found below.
 
-[ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
+thanks,
 
-Add a testcase to check the syntax and field types for
-synthetic_events interface.
+greg k-h
 
-Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
+-------------
+Pseudo-Shortlog of commits:
 
-Acked-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc |   80 ++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 3.18.126-rc1
 
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-@@ -0,0 +1,80 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test synthetic_events syntax parser
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f synthetic_events ]; then
-+    echo "synthetic event is not supported"
-+    exit_unsupported
-+fi
-+
-+reset_tracer
-+do_reset
-+
-+echo "Test synthetic_events syntax parser"
-+
-+echo > synthetic_events
-+
-+# synthetic event must have a field
-+! echo "myevent" >> synthetic_events
-+echo "myevent u64 var1" >> synthetic_events
-+
-+# synthetic event must be found in synthetic_events
-+grep "myevent[[:space:]]u64 var1" synthetic_events
-+
-+# it is not possible to add same name event
-+! echo "myevent u64 var2" >> synthetic_events
-+
-+# Non-append open will cleanup all events and add new one
-+echo "myevent u64 var2" > synthetic_events
-+
-+# multiple fields with different spaces
-+echo "myevent u64 var1; u64 var2;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ;u64 var2" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+
-+# test field types
-+echo "myevent u32 var" > synthetic_events
-+echo "myevent u16 var" > synthetic_events
-+echo "myevent u8 var" > synthetic_events
-+echo "myevent s64 var" > synthetic_events
-+echo "myevent s32 var" > synthetic_events
-+echo "myevent s16 var" > synthetic_events
-+echo "myevent s8 var" > synthetic_events
-+
-+echo "myevent char var" > synthetic_events
-+echo "myevent int var" > synthetic_events
-+echo "myevent long var" > synthetic_events
-+echo "myevent pid_t var" > synthetic_events
-+
-+echo "myevent unsigned char var" > synthetic_events
-+echo "myevent unsigned int var" > synthetic_events
-+echo "myevent unsigned long var" > synthetic_events
-+grep "myevent[[:space:]]unsigned long var" synthetic_events
-+
-+# test string type
-+echo "myevent char var[10]" > synthetic_events
-+grep "myevent[[:space:]]char\[10\] var" synthetic_events
-+
-+do_reset
-+
-+exit 0
+Mike Kravetz <mike.kravetz@oracle.com>
+    hugetlbfs: fix kernel BUG at fs/hugetlbfs/inode.c:444!
+
+Guenter Roeck <linux@roeck-us.net>
+    configfs: replace strncpy with memcpy
+
+Miklos Szeredi <mszeredi@redhat.com>
+    fuse: fix leaked notify reply
+
+Frank Sorenson <sorenson@redhat.com>
+    sunrpc: correct the computation for page_ptr when truncating
+
+Eric W. Biederman <ebiederm@xmission.com>
+    mount: Prevent MNT_DETACH from disconnecting locked mounts
+
+Eric W. Biederman <ebiederm@xmission.com>
+    mount: Don't allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
+
+Eric W. Biederman <ebiederm@xmission.com>
+    mount: Retest MNT_LOCKED in do_umount
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: fix buffer leak in __ext4_read_dirblock() on error path
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: fix buffer leak in ext4_xattr_move_to_block() on error path
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: release bs.bh before re-using in ext4_xattr_block_find()
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: fix possible leak of sbi->s_group_desc_leak in error path
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: avoid possible double brelse() in add_new_gdb() on error path
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: fix missing cleanup if ext4_alloc_flex_bg_array() fails while resizing
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: avoid buffer leak in ext4_orphan_add() after prior errors
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: fix possible inode leak in the retry loop of ext4_resize_fs()
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: avoid potential extra brelse in setup_new_flex_group_blocks()
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: add missing brelse() add_new_gdb_meta_bg()'s error path
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: add missing brelse() in set_flexbg_block_bitmap()'s error path
+
+Vasily Averin <vvs@virtuozzo.com>
+    ext4: add missing brelse() update_backups()'s error path
+
+H. Peter Anvin (Intel) <hpa@zytor.com>
+    arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
+
+H. Peter Anvin <hpa@zytor.com>
+    termios, tty/tty_baudrate.c: fix buffer overrun
+
+Arnd Bergmann <arnd@arndb.de>
+    mtd: docg3: don't set conflicting BCH_CONST_PARAMS option
+
+Changwei Ge <ge.changwei@h3c.com>
+    ocfs2: fix a misuse a of brelse after failing ocfs2_check_dir_entry
+
+Mikulas Patocka <mpatocka@redhat.com>
+    mach64: fix image corruption due to reading accelerator registers
+
+Mikulas Patocka <mpatocka@redhat.com>
+    mach64: fix display corruption on big endian machines
+
+Ilya Dryomov <idryomov@gmail.com>
+    libceph: bump CEPH_MSG_MAX_DATA_LEN
+
+Krzysztof Kozlowski <krzk@kernel.org>
+    clk: s2mps11: Fix matching when built as module and DT node contains compatible
+
+Max Filippov <jcmvbkbc@gmail.com>
+    xtensa: fix boot parameters address translation
+
+Young_X <YangX92@hotmail.com>
+    cdrom: fix improper type cast, which can leat to information leak.
+
+Dominique Martinet <dominique.martinet@cea.fr>
+    9p: clear dangling pointers in p9stat_free
+
+Marco Felsch <m.felsch@pengutronix.de>
+    media: tvp5150: fix width alignment during set_selection()
+
+Joel Stanley <joel@jms.id.au>
+    powerpc/boot: Ensure _zimage_start is a weak symbol
+
+Dengcheng Zhu <dzhu@wavecomp.com>
+    MIPS: kexec: Mark CPU offline before disabling local IRQ
+
+Nicholas Mc Guire <hofrat@osadl.org>
+    media: pci: cx23885: handle adding to list failure
+
+Tomi Valkeinen <tomi.valkeinen@ti.com>
+    drm/omap: fix memory barrier bug in DMM driver
+
+Daniel Axtens <dja@axtens.net>
+    powerpc/nohash: fix undefined behaviour when testing page size support
+
+Miles Chen <miles.chen@mediatek.com>
+    tty: check name length in tty_find_polling_driver()
+
+Corey Wright <undefined@pobox.com>
+    dm: remove duplicate dm_get_live_table() in __dm_destroy()
+
+Nicolas Pitre <nicolas.pitre@linaro.org>
+    Cramfs: fix abad comparison when wrap-arounds occur
+
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+    media: em28xx: make v4l2-compliance happier by starting sequence on zero
+
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+    media: em28xx: fix input name for Terratec AV 350
+
+Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+    media: em28xx: use a default format if TRY_FMT fails
+
+He Zhe <zhe.he@windriver.com>
+    kgdboc: Passing ekgdboc to command line causes panic
+
+Maciej W. Rozycki <macro@linux-mips.org>
+    TC: Set DMA masks for devices
+
+Wenwen Wang <wang6495@umn.edu>
+    dm ioctl: harden copy_params()'s copy_from_user() from malicious users
+
+Amir Goldstein <amir73il@gmail.com>
+    lockd: fix access beyond unterminated strings in prints
+
+Trond Myklebust <trondmy@gmail.com>
+    nfsd: Fix an Oops in free_session()
+
+Trond Myklebust <trond.myklebust@hammerspace.com>
+    NFSv4.1: Fix the r/wsize checking
+
+He Zhe <zhe.he@windriver.com>
+    printk: Fix panic caused by passing log_buf_len to command line
+
+Steve French <stfrench@microsoft.com>
+    smb3: on kerberos mount if server doesn't specify auth type use krb5
+
+Steve French <stfrench@microsoft.com>
+    smb3: do not attempt cifs operation in smb3 query info error path
+
+Steve French <stfrench@microsoft.com>
+    smb3: allow stats which track session and share reconnects to be reset
+
+Andreas Kemnade <andreas@kemnade.info>
+    w1: omap-hdq: fix missing bus unregister at removal
+
+Eugen Hristev <eugen.hristev@microchip.com>
+    iio: adc: at91: fix wrong channel number in triggered buffer mode
+
+Eugen Hristev <eugen.hristev@microchip.com>
+    iio: adc: at91: fix acking DRDY irq on simple conversions
+
+Arnd Bergmann <arnd@arndb.de>
+    kbuild: fix kernel/bounds.c 'W=1' warning
+
+Eric Biggers <ebiggers@google.com>
+    ima: fix showing large 'violations' or 'runtime_measurements_count'
+
+Ondrej Mosnacek <omosnace@redhat.com>
+    crypto: lrw - Fix out-of bounds access on counter overflow
+
+Eric W. Biederman <ebiederm@xmission.com>
+    signal/GenWQE: Fix sending of SIGKILL
+
+Lukas Czerner <lczerner@redhat.com>
+    ext4: initialize retries variable in ext4_da_write_inline_data_begin()
+
+Al Viro <viro@zeniv.linux.org.uk>
+    gfs2_meta: ->mount() can get NULL dev_name
+
+Jan Kara <jack@suse.cz>
+    jbd2: fix use after free in jbd2_log_do_checkpoint()
+
+Stefan Nuernberger <snu@amazon.com>
+    net/ipv4: defensive cipso option parsing
+
+Eric W. Biederman <ebiederm@xmission.com>
+    signal: Always deliver the kernel's SIGKILL and SIGSTOP to a pid namespace init
+
+James Smart <jsmart2021@gmail.com>
+    scsi: lpfc: Correct soft lockup when running mds diagnostics
+
+Alexandre Belloni <alexandre.belloni@bootlin.com>
+    uio: ensure class is registered before devices
+
+Loic Poulain <loic.poulain@linaro.org>
+    usb: chipidea: Prevent unbalanced IRQ disable
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+
+Finn Thain <fthain@telegraphics.com.au>
+    scsi: esp_scsi: Track residual for PIO transfers
+
+Martin Willi <martin@strongswan.org>
+    ath10k: schedule hardware restart if WMI command times out
+
+Masami Hiramatsu <mhiramat@kernel.org>
+    kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
+
+Ben Hutchings <ben@decadent.org.uk>
+    x86: boot: Fix EFI stub alignment
+
+Lubomir Rintel <lkundrak@v3.sk>
+    x86/olpc: Indicate that legacy PC XO-1 platform should not register RTC
+
+Yu Zhao <yuzhao@google.com>
+    mmc: sdhci-pci-o2micro: Add quirk for O2 Micro dev 0x8620 rev 0x01
+
+Prarit Bhargava <prarit@redhat.com>
+    cpupower: Fix coredump on VMWare
+
+Sanskriti Sharma <sansharm@redhat.com>
+    perf tools: Cleanup trace-event-info 'tdata' leak
+
+Sanskriti Sharma <sansharm@redhat.com>
+    perf tools: Free temporary 'sys' string in read_event_files()
+
+Serhey Popovych <serhe.popovych@gmail.com>
+    tun: Consistently configure generic netdev params via rtnetlink
+
+Omar Sandoval <osandov@fb.com>
+    swim: fix cleanup on setup error
+
+Omar Sandoval <osandov@fb.com>
+    ataflop: fix error handling during setup
+
+Waiman Long <longman@redhat.com>
+    locking/lockdep: Fix debug_locks off performance problem
+
+Masami Hiramatsu <mhiramat@kernel.org>
+    selftests: ftrace: Add synthetic event syntax testcase
+
+Nathan Chancellor <natechancellor@gmail.com>
+    net: qla3xxx: Remove overflowing shift statement
+
+David S. Miller <davem@davemloft.net>
+    sparc: Throttle perf events properly.
+
+David S. Miller <davem@davemloft.net>
+    sparc: Fix single-pcr perf event counter management.
+
+He Zhe <zhe.he@windriver.com>
+    x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
+
+Alex Stanoev <alex@astanoev.com>
+    ALSA: ca0106: Disable IZD on SB0570 DAC to fix audio pops
+
+Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+    pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
+
+Hou Tao <houtao1@huawei.com>
+    jffs2: free jffs2_sb_info through jffs2_kill_sb()
+
+Tang Junhui <tang.junhui.linux@gmail.com>
+    bcache: fix miss key refill->end in writeback
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/alpha/include/asm/termios.h                   |  8 ++-
+ arch/alpha/include/uapi/asm/ioctls.h               |  5 ++
+ arch/alpha/include/uapi/asm/termbits.h             | 17 +++++
+ arch/mips/kernel/crash.c                           |  3 +
+ arch/mips/kernel/machine_kexec.c                   |  3 +
+ arch/powerpc/boot/crt0.S                           |  4 +-
+ arch/powerpc/mm/tlb_nohash.c                       |  3 +
+ arch/sparc/kernel/perf_event.c                     | 26 +++++--
+ arch/x86/boot/tools/build.c                        |  7 ++
+ arch/x86/kernel/check.c                            | 15 ++++
+ arch/x86/platform/olpc/olpc-xo1-rtc.c              |  3 +
+ arch/xtensa/kernel/head.S                          |  7 +-
+ crypto/lrw.c                                       |  7 +-
+ drivers/block/ataflop.c                            | 25 ++++---
+ drivers/block/swim.c                               | 13 +++-
+ drivers/cdrom/cdrom.c                              |  2 +-
+ drivers/clk/clk-s2mps11.c                          | 30 ++++++++
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c           | 11 +++
+ drivers/iio/adc/at91_adc.c                         |  6 +-
+ drivers/md/bcache/btree.c                          |  2 +-
+ drivers/md/dm-ioctl.c                              | 18 ++---
+ drivers/md/dm.c                                    |  1 -
+ drivers/media/i2c/tvp5150.c                        | 14 ++--
+ drivers/media/pci/cx23885/altera-ci.c              | 10 +++
+ drivers/media/usb/em28xx/em28xx-cards.c            |  4 +-
+ drivers/media/usb/em28xx/em28xx-video.c            |  8 ++-
+ drivers/misc/genwqe/card_base.h                    |  2 +-
+ drivers/misc/genwqe/card_dev.c                     |  9 +--
+ drivers/mmc/host/sdhci-pci-o2micro.c               |  3 +
+ drivers/mtd/devices/Kconfig                        |  2 +-
+ drivers/net/ethernet/qlogic/qla3xxx.c              |  2 -
+ drivers/net/tun.c                                  |  2 +
+ drivers/net/wireless/ath/ath10k/wmi.c              |  6 ++
+ drivers/pcmcia/ricoh.h                             | 35 ++++++++++
+ drivers/pcmcia/yenta_socket.c                      |  3 +-
+ drivers/scsi/esp_scsi.c                            |  1 +
+ drivers/scsi/esp_scsi.h                            |  2 +
+ drivers/scsi/lpfc/lpfc_sli.c                       |  7 ++
+ drivers/scsi/mac_esp.c                             |  2 +
+ drivers/tc/tc.c                                    |  8 ++-
+ drivers/tty/serial/kgdboc.c                        |  5 ++
+ drivers/tty/tty_io.c                               |  2 +-
+ drivers/tty/tty_ioctl.c                            |  4 +-
+ drivers/uio/uio.c                                  |  9 +++
+ drivers/usb/chipidea/otg.h                         |  3 +-
+ drivers/video/fbdev/aty/mach64_accel.c             | 28 ++++----
+ drivers/w1/masters/omap_hdq.c                      |  2 +
+ fs/cifs/cifs_debug.c                               |  3 +
+ fs/cifs/cifs_spnego.c                              |  6 +-
+ fs/cifs/inode.c                                    | 10 ++-
+ fs/configfs/symlink.c                              |  2 +-
+ fs/cramfs/inode.c                                  |  3 +-
+ fs/ext4/inline.c                                   |  2 +-
+ fs/ext4/move_extent.c                              |  8 ++-
+ fs/ext4/namei.c                                    |  5 +-
+ fs/ext4/resize.c                                   | 28 ++++----
+ fs/ext4/super.c                                    | 16 ++---
+ fs/ext4/xattr.c                                    |  4 ++
+ fs/fuse/dev.c                                      |  4 +-
+ fs/gfs2/ops_fstype.c                               |  3 +
+ fs/jbd2/checkpoint.c                               |  4 +-
+ fs/jffs2/super.c                                   |  4 +-
+ fs/lockd/host.c                                    |  2 +-
+ fs/namespace.c                                     | 22 ++++--
+ fs/nfs/nfs4client.c                                | 16 +++--
+ fs/ocfs2/dir.c                                     |  3 +-
+ include/linux/ceph/libceph.h                       |  8 ++-
+ include/linux/tc.h                                 |  1 +
+ kernel/bounds.c                                    |  4 +-
+ kernel/kprobes.c                                   | 27 ++++++--
+ kernel/locking/lockdep.c                           |  4 +-
+ kernel/printk/printk.c                             |  7 +-
+ kernel/signal.c                                    |  2 +-
+ lib/debug_locks.c                                  |  2 +-
+ mm/hugetlb.c                                       | 23 +++++--
+ net/9p/protocol.c                                  |  5 ++
+ net/ipv4/cipso_ipv4.c                              | 11 +--
+ net/sunrpc/svc_xprt.c                              |  2 +-
+ net/sunrpc/xdr.c                                   |  5 +-
+ security/integrity/ima/ima_fs.c                    |  6 +-
+ sound/pci/ca0106/ca0106.h                          |  2 +-
+ tools/perf/util/trace-event-info.c                 |  2 +
+ tools/perf/util/trace-event-read.c                 |  5 +-
+ tools/power/cpupower/utils/cpufreq-info.c          |  2 +
+ tools/power/cpupower/utils/helpers/amd.c           |  5 ++
+ .../inter-event/trigger-synthetic-event-syntax.tc  | 80 ++++++++++++++++++++++
+ 87 files changed, 581 insertions(+), 160 deletions(-)
 
 
