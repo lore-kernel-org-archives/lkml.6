@@ -2,115 +2,128 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B42FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7396DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF36F20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:16:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF36F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 33CA420851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:18:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b88b62M+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33CA420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbeKTAjz (ORCPT
+        id S1729439AbeKTAmA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:39:55 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57942 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729267AbeKTAjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:39:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C73B21596;
-        Mon, 19 Nov 2018 06:16:09 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 927533F5AF;
-        Mon, 19 Nov 2018 06:16:08 -0800 (PST)
-Subject: Re: [PATCH] ARM: smp_twd: Remove legacy TWD registration
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181115100659.18256-1-geert+renesas@glider.be>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <450874f4-59b8-dc70-a19b-550c6c6391a9@arm.com>
-Date:   Mon, 19 Nov 2018 14:16:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 19 Nov 2018 19:42:00 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33355 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbeKTAmA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:42:00 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r27so22554866eda.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:18:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T2jd1BqXFqFZ3SG+Q8h9Z9F9RW51tXlkmLap4eUJhzE=;
+        b=b88b62M+cMz3PK6aR3TIxKqoGjKIiRJiXEbdT4WqYL+kwyKv4WWmKlni3/wsSAKN8U
+         SxfKoZWIv/RMcPHXECSJVGlq/v5DrPshPTQnW1fUTWNZSHjgYISgEfN5flcwWpJdIws/
+         mFZYf+SJBRDFSvEOFquSgn2EJMxd9gDra77gQxjpmQwhtiFux/8iNy59h6vIzDzmXFqj
+         +Ct1IYC+2k1Ahn/exqyLZquBri0Im8egiUYQ50WAuRSls2wkR0cL/yKyPcA+LeIMkytm
+         A8UvgdiQU8MhMevmGp/Awy6ZSe3GMIRb5bDflxR/26DMR0FnDpfofR/ZO/P6/GWPxqbF
+         /l8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T2jd1BqXFqFZ3SG+Q8h9Z9F9RW51tXlkmLap4eUJhzE=;
+        b=tBfXmAs7wsxZc9qZqum7TMbcRmXPnsGHbpDnXUbVRKwAp158Qri113cIL9TptNprYy
+         hkDze0MKIsS15N9YosLBpuqAqiJFoSubc4hdOCS1dWTRCXzJuavUXiFXbEdjB8HDQ5v3
+         UyeGZ9LNmL2gwCzSwRQyy0exbRNA0vrdP0jY225+aT2ojAFB15+HYjuCRPKrF+R6np5K
+         6zSPZbrWQvE52OPKiapeWcz51G48ZcZqAGbdNQnsSFsqOLd1Kc1bD0biWo7Iurk08o6r
+         yS+f4WCrT0Y/5Xyv5eF66ScZIoPpZ9oVwlWe4loZOzGUGQMYC+75oUmIlLGYXm/+UxV1
+         cfzQ==
+X-Gm-Message-State: AA+aEWY/WJ7by7npggFNSkmcFOcxrfqrmezy1R2ScvaXG6ku/LkRwD0j
+        aN8OLK9NhUjIzJCz4sadrXSadAbml+QYyvUZw8o=
+X-Google-Smtp-Source: AFSGD/VS7mVvHebfFtOPFUfQ3RkYMTGfBYntxcPnt4zfge+s9oURNgu4W/9LxZO1hHKhAp6/pQpOf/dwrsR2/QiMa/Y=
+X-Received: by 2002:a50:b8e5:: with SMTP id l92mr5313298ede.294.1542637093877;
+ Mon, 19 Nov 2018 06:18:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181115100659.18256-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180927223539.28449-1-hch@lst.de> <20180927223539.28449-6-hch@lst.de>
+ <CAKgT0Ucii29i7S8eCj20D=a+=DeyKxREG0U2DBNRp3jFpgLu_A@mail.gmail.com> <8402ecc9c8ed9c69ad3e91eca4d07a5ab077b22d.camel@kernel.crashing.org>
+In-Reply-To: <8402ecc9c8ed9c69ad3e91eca4d07a5ab077b22d.camel@kernel.crashing.org>
+From:   Ramon Fried <ramon.fried@gmail.com>
+Date:   Mon, 19 Nov 2018 16:18:02 +0200
+Message-ID: <CA+Kvs9kPtTZavq91NXs-7edVO5Fxp8gPO=FD35i9_izAdGMkKw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] dma-direct: always allow dma mask <= physiscal memory size
+To:     benh@kernel.crashing.org
+Cc:     alexander.duyck@gmail.com, hch@lst.de, linux@roeck-us.net,
+        iommu@lists.linux-foundation.org, robin.murphy@arm.com,
+        open list <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2018 10:06, Geert Uytterhoeven wrote:
-> As of commit 7484c727b636a838 ("ARM: realview: delete the RealView board
-> files"), the ARM Timer and Watchdog Unit is instantiated from DT only.
-> Moreover, the driver is selected from ARCH_MULTIPLATFORM platforms only,
-> which implies OF, TIMER_OF, and COMMON_CLK.
-> 
-> Hence remove all unused legacy infrastructure from the driver.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, Oct 9, 2018 at 8:02 AM Benjamin Herrenschmidt
+<benh@kernel.crashing.org> wrote:
+>
+> On Wed, 2018-10-03 at 16:10 -0700, Alexander Duyck wrote:
+> > > -        * Because 32-bit DMA masks are so common we expect every architecture
+> > > -        * to be able to satisfy them - either by not supporting more physical
+> > > -        * memory, or by providing a ZONE_DMA32.  If neither is the case, the
+> > > -        * architecture needs to use an IOMMU instead of the direct mapping.
+> > > -        */
+> > > -       if (mask < phys_to_dma(dev, DMA_BIT_MASK(32)))
+> > > +       u64 min_mask;
+> > > +
+> > > +       if (IS_ENABLED(CONFIG_ZONE_DMA))
+> > > +               min_mask = DMA_BIT_MASK(ARCH_ZONE_DMA_BITS);
+> > > +       else
+> > > +               min_mask = DMA_BIT_MASK(32);
+> > > +
+> > > +       min_mask = min_t(u64, min_mask, (max_pfn - 1) << PAGE_SHIFT);
+> > > +
+> > > +       if (mask >= phys_to_dma(dev, min_mask))
+> > >                  return 0;
+> > > -#endif
+> > >          return 1;
+> > >   }
+> >
+> > So I believe I have run into the same issue that Guenter reported. On
+> > an x86_64 system w/ Intel IOMMU. I wasn't able to complete boot and
+> > all probe attempts for various devices were failing with -EIO errors.
+> >
+> > I believe the last mask check should be "if (mask < phys_to_dma(dev,
+> > min_mask))" not a ">=" check.
+>
+> Right, that test is backwards. I needed to change it here too (powermac
+> with the rest of the powerpc series).
+>
+> Cheers,
+> Ben.
+>
+>
 
-Good cleanup!
-
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Hi, I'm working on a MIPS64 soc with PCIe root complex on it, and it
+appears that this series of patches are causing all PCI drivers that
+request 64bit mask to fail with -5.
+It's broken in 4.19. However, I just checked, it working on master.
+We may need to backport a couple of patches to 4.19. I'm not sure
+though which patches should be backported as there were at least 10
+patches resolving this dma_direct area recently.
+Christoph, Robin.
+Can we ask Greg to backport all these changes ? What do you think ?
 
 Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Ramon.
