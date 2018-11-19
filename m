@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A274CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5A2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6736B2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23D062086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="auM5Irq5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6736B2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5xntIsF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D062086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730661AbeKTC4R (ORCPT
+        id S1730675AbeKTC4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:56:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54404 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:56:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729979AbeKTC4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:56:16 -0500
+        id S1729986AbeKTC4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:56:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EB6820831;
-        Mon, 19 Nov 2018 16:32:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFF1220831;
+        Mon, 19 Nov 2018 16:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645129;
-        bh=eEcTMFjXRsO1BYgsS809GJfgxUbemzV7powiO/zqqnQ=;
+        s=default; t=1542645132;
+        bh=UOUbMG6JTK5p+/RSpta4xzAcdiUEFZPAn9lahf5ysgE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=auM5Irq5sAqCB22kwMF/ZP7E60/OiGfOBPfzZhMBoYTO4pL/U81VEGqBWfQ9FHvtZ
-         SNg58FjAQDLomFlWP0Jpfv9YbXaANRuEXt8F2wl5jhUk0bqslWF/oBGskKvO2E6T01
-         M2W487mPSY7IZggPZgmk4E7s7qm7Krn1yADYZKzo=
+        b=K5xntIsF3Us+O78iK0Rlp5KkiqB+MI/YNQ4ci/vhWu4B7Bu211+ZbX4bbq53FsnGH
+         MTiGxLNgHGXnbyaCkU/vZYaDVZii7jBJoODOYGV1ASfqefZ3i+RiYThGgcAljGEdC7
+         juhdWzsBZ+KmwEhmAPFRWJ38Vt2tuR/4ehm5pDdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3ef5c0d1a5cb0b21e6be@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 047/205] ovl: fix recursive oi->lock in ovl_link()
-Date:   Mon, 19 Nov 2018 17:25:54 +0100
-Message-Id: <20181119162625.748708745@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.19 048/205] ovl: check whiteout in ovl_create_over_whiteout()
+Date:   Mon, 19 Nov 2018 17:25:55 +0100
+Message-Id: <20181119162625.920232189@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,34 +61,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 6cd078702f2f33cb6b19a682de3e9184112f1a46 upstream.
+commit 5e1275808630ea3b2c97c776f40e475017535f72 upstream.
 
-linking a non-copied-up file into a non-copied-up parent results in a
-nested call to mutex_lock_interruptible(&oi->lock). Fix this by copying up
-target parent before ovl_nlink_start(), same as done in ovl_rename().
+Kaixuxia repors that it's possible to crash overlayfs by removing the
+whiteout on the upper layer before creating a directory over it.  This is a
+reproducer:
 
-~/unionmount-testsuite$ ./run --ov -s
-~/unionmount-testsuite$ ln /mnt/a/foo100 /mnt/a/dir100/
+ mkdir lower upper work merge
+ touch lower/file
+ mount -t overlay overlay -olowerdir=lower,upperdir=upper,workdir=work merge
+ rm merge/file
+ ls -al merge/file
+ rm upper/file
+ ls -al merge/
+ mkdir merge/file
 
- WARNING: possible recursive locking detected
- --------------------------------------------
- ln/1545 is trying to acquire lock:
- 00000000bcce7c4c (&ovl_i_lock_key[depth]){+.+.}, at:
-     ovl_copy_up_start+0x28/0x7d
- but task is already holding lock:
- 0000000026d73d5b (&ovl_i_lock_key[depth]){+.+.}, at:
-     ovl_nlink_start+0x3c/0xc1
+Before commencing with a vfs_rename(..., RENAME_EXCHANGE) verify that the
+lookup of "upper" is positive and is a whiteout, and return ESTALE
+otherwise.
 
-[SzM: this seems to be a false positive, but doing the copy-up first is
-harmless and removes the lockdep splat]
-
-Reported-by: syzbot+3ef5c0d1a5cb0b21e6be@syzkaller.appspotmail.com
-Fixes: 5f8415d6b87e ("ovl: persistent overlay inode nlink for...")
-Cc: <stable@vger.kernel.org> # v4.13
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Reported by: kaixuxia <xiakaixu1987@gmail.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e9be9d5e76e3 ("overlay filesystem")
+Cc: <stable@vger.kernel.org> # v3.18
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
@@ -100,16 +94,16 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/overlayfs/dir.c
 +++ b/fs/overlayfs/dir.c
-@@ -663,6 +663,10 @@ static int ovl_link(struct dentry *old,
- 	if (err)
- 		goto out_drop_write;
+@@ -463,6 +463,10 @@ static int ovl_create_over_whiteout(stru
+ 	if (IS_ERR(upper))
+ 		goto out_unlock;
  
-+	err = ovl_copy_up(new->d_parent);
-+	if (err)
-+		goto out_drop_write;
++	err = -ESTALE;
++	if (d_is_negative(upper) || !IS_WHITEOUT(d_inode(upper)))
++		goto out_dput;
 +
- 	if (ovl_is_metacopy_dentry(old)) {
- 		err = ovl_set_redirect(old, false);
- 		if (err)
+ 	newdentry = ovl_create_temp(workdir, cattr);
+ 	err = PTR_ERR(newdentry);
+ 	if (IS_ERR(newdentry))
 
 
