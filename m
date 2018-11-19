@@ -2,38 +2,38 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UPPERCASE_75_100,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11661C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3862CC04EBC
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C30BC2080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30BC2080F
+	by mail.kernel.org (Postfix) with ESMTP id 084832080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 084832080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbeKSLW6 (ORCPT
+        id S1728259AbeKSLW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:58 -0500
-Received: from mx.socionext.com ([202.248.49.38]:40741 "EHLO mx.socionext.com"
+        Mon, 19 Nov 2018 06:22:59 -0500
+Received: from mx.socionext.com ([202.248.49.38]:40749 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728141AbeKSLW5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:57 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 19 Nov 2018 10:01:01 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 07FA1180111;
-        Mon, 19 Nov 2018 10:01:01 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:01:00 +0900
+        id S1728200AbeKSLW7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:22:59 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 19 Nov 2018 10:01:03 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 8C25360062;
+        Mon, 19 Nov 2018 10:01:03 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:01:03 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 9DA0E40387;
-        Mon, 19 Nov 2018 10:01:00 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id EBE1940387;
+        Mon, 19 Nov 2018 10:01:02 +0900 (JST)
 Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 6B6EE120455;
-        Mon, 19 Nov 2018 10:01:00 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id CB13C120455;
+        Mon, 19 Nov 2018 10:01:02 +0900 (JST)
 From:   Sugaya Taichi <sugaya.taichi@socionext.com>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 13/14] ARM: configs: Add Milbeaut M10V defconfig
-Date:   Mon, 19 Nov 2018 10:02:15 +0900
-Message-Id: <1542589336-13925-4-git-send-email-sugaya.taichi@socionext.com>
+Subject: [PATCH 14/14] MAINTAINERS: Add entry to MAINTAINERS for Milbeaut
+Date:   Mon, 19 Nov 2018 10:02:16 +0900
+Message-Id: <1542589336-13925-5-git-send-email-sugaya.taichi@socionext.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com>
 References: <1542589336-13925-1-git-send-email-sugaya.taichi@socionext.com>
@@ -61,384 +61,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the minimal defconfig for the Milbeaut M10V.
+Add entry to MAINTAINERS for Milbeaut that supported minimal drivers.
 
 Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 ---
- arch/arm/configs/milbeaut_m10v_defconfig | 364 +++++++++++++++++++++++++++++++
- 1 file changed, 364 insertions(+)
- create mode 100644 arch/arm/configs/milbeaut_m10v_defconfig
+ MAINTAINERS | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/configs/milbeaut_m10v_defconfig b/arch/arm/configs/milbeaut_m10v_defconfig
-new file mode 100644
-index 0000000..90c22f8
---- /dev/null
-+++ b/arch/arm/configs/milbeaut_m10v_defconfig
-@@ -0,0 +1,364 @@
-+# CONFIG_LOCALVERSION_AUTO is not set
-+CONFIG_DEFAULT_HOSTNAME="mlbel"
-+CONFIG_SYSVIPC=y
-+CONFIG_POSIX_MQUEUE=y
-+CONFIG_FHANDLE=y
-+CONFIG_NO_HZ_FULL=y
-+CONFIG_NO_HZ_FULL_ALL=y
-+CONFIG_NO_HZ_FULL_SYSIDLE=y
-+CONFIG_NO_HZ_FULL_SYSIDLE_SMALL=4
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_BSD_PROCESS_ACCT=y
-+CONFIG_BSD_PROCESS_ACCT_V3=y
-+CONFIG_TASKSTATS=y
-+CONFIG_TASK_DELAY_ACCT=y
-+CONFIG_TASK_XACCT=y
-+CONFIG_TASK_IO_ACCOUNTING=y
-+CONFIG_IKCONFIG=y
-+CONFIG_IKCONFIG_PROC=y
-+CONFIG_CGROUPS=y
-+CONFIG_CGROUP_DEBUG=y
-+CONFIG_CPUSETS=y
-+CONFIG_CGROUP_SCHED=y
-+CONFIG_CFS_BANDWIDTH=y
-+CONFIG_RT_GROUP_SCHED=y
-+CONFIG_NAMESPACES=y
-+CONFIG_USER_NS=y
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_KALLSYMS_ALL=y
-+CONFIG_EMBEDDED=y
-+# CONFIG_COMPAT_BRK is not set
-+CONFIG_SLAB=y
-+CONFIG_PROFILING=y
-+CONFIG_OPROFILE=m
-+CONFIG_MODULES=y
-+CONFIG_MODULE_UNLOAD=y
-+CONFIG_ARCH_MILBEAUT=y
-+CONFIG_ARCH_MILBEAUT_M10V=y
-+# CONFIG_CACHE_L2X0 is not set
-+CONFIG_ARM_ERRATA_754322=y
-+CONFIG_ARM_ERRATA_775420=y
-+# CONFIG_PCI is not set
-+# CONFIG_PCI_DEBUG is not set
-+# CONFIG_PCI_HOST_GENERIC is not set
-+# CONFIG_PCIE_SN_DW_PLAT is not set
-+# CONFIG_PCI_MSI is not set
-+# CONFIG_PCIEPORTBUS is not set
-+# CONFIG_PCIEAER is not set
-+# CONFIG_PCIEASPM is not set
-+CONFIG_SMP=y
-+# CONFIG_ARM_CPU_TOPOLOGY is not set
-+CONFIG_HAVE_ARM_ARCH_TIMER=y
-+CONFIG_VMSPLIT_2G=y
-+CONFIG_PREEMPT=y
-+CONFIG_THUMB2_KERNEL=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_COMPACTION is not set
-+CONFIG_CMA=y
-+# CONFIG_ATAGS is not set
-+CONFIG_ZBOOT_ROM_TEXT=0x0
-+CONFIG_ZBOOT_ROM_BSS=0x0
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_KEXEC=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPUFREQ_DT=y
-+CONFIG_CPU_IDLE=y
-+CONFIG_VFP=y
-+CONFIG_NEON=y
-+CONFIG_KERNEL_MODE_NEON=y
-+CONFIG_PM_RUNTIME=y
-+CONFIG_PM_DEBUG=y
-+CONFIG_WQ_POWER_EFFICIENT_DEFAULT=y
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_PACKET_DIAG=m
-+CONFIG_UNIX=y
-+CONFIG_INET=y
-+CONFIG_IP_MULTICAST=y
-+CONFIG_IP_MROUTE=y
-+CONFIG_IP_PIMSM_V1=y
-+CONFIG_IP_PIMSM_V2=y
-+CONFIG_SYN_COOKIES=y
-+CONFIG_NET_IPVTI=m
-+CONFIG_INET_AH=y
-+CONFIG_INET_ESP=y
-+CONFIG_INET_IPCOMP=y
-+CONFIG_INET_XFRM_MODE_TRANSPORT=m
-+CONFIG_INET_XFRM_MODE_TUNNEL=m
-+CONFIG_INET_XFRM_MODE_BEET=m
-+CONFIG_INET_UDP_DIAG=m
-+CONFIG_TCP_CONG_ADVANCED=y
-+CONFIG_IP_SCTP=m
-+CONFIG_SCTP_COOKIE_HMAC_SHA1=y
-+CONFIG_TIPC=y
-+CONFIG_L2TP=m
-+CONFIG_L2TP_DEBUGFS=m
-+CONFIG_L2TP_V3=y
-+CONFIG_L2TP_IP=y
-+CONFIG_L2TP_ETH=y
-+CONFIG_IPX=m
-+CONFIG_NETLINK_MMAP=y
-+CONFIG_NETLINK_DIAG=y
-+CONFIG_CFG80211=y
-+CONFIG_NL80211_TESTMODE=y
-+CONFIG_CFG80211_DEVELOPER_WARNINGS=y
-+CONFIG_CFG80211_REG_DEBUG=y
-+CONFIG_CFG80211_INTERNAL_REGDB=y
-+CONFIG_CFG80211_WEXT=y
-+CONFIG_MAC80211=y
-+# CONFIG_MAC80211_RC_MINSTREL is not set
-+CONFIG_MAC80211_LEDS=y
-+CONFIG_RFKILL=y
-+CONFIG_RFKILL_INPUT=y
-+CONFIG_RFKILL_REGULATOR=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DEVTMPFS_MOUNT=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_SIZE_MBYTES=16
-+CONFIG_MTD=y
-+CONFIG_MTD_BLOCK=y
-+CONFIG_MTD_M25P80=y
-+CONFIG_MTD_NAND=y
-+CONFIG_MTD_NAND_CDN_HPNFC=y
-+CONFIG_MTD_NAND_CDN_HPNFC_DT=y
-+CONFIG_MTD_NAND_PLATFORM=y
-+CONFIG_MTD_SPI_NOR=y
-+CONFIG_MTD_UBI=y
-+CONFIG_MTD_UBI_BEB_LIMIT=3
-+CONFIG_BLK_DEV_LOOP=y
-+CONFIG_BLK_DEV_LOOP_MIN_COUNT=2
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_SCSI=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_NETDEVICES=y
-+CONFIG_MACVLAN=y
-+CONFIG_TUN=y
-+CONFIG_VETH=y
-+# CONFIG_NET_CADENCE is not set
-+# CONFIG_NET_VENDOR_BROADCOM is not set
-+# CONFIG_NET_VENDOR_CIRRUS is not set
-+# CONFIG_NET_VENDOR_FARADAY is not set
-+# CONFIG_NET_VENDOR_INTEL is not set
-+# CONFIG_NET_VENDOR_MARVELL is not set
-+# CONFIG_NET_VENDOR_MICREL is not set
-+# CONFIG_NET_VENDOR_NATSEMI is not set
-+CONFIG_R8169=y
-+# CONFIG_NET_VENDOR_SEEQ is not set
-+# CONFIG_NET_VENDOR_SMSC is not set
-+# CONFIG_NET_SOCIONEXT_OGMA=y
-+# CONFIG_NET_VENDOR_STMICRO is not set
-+# CONFIG_NET_VENDOR_WIZNET is not set
-+CONFIG_REALTEK_PHY=y
-+CONFIG_MWIFIEX=m
-+CONFIG_MWIFIEX_SDIO=m
-+CONFIG_INPUT_POLLDEV=y
-+# CONFIG_INPUT_MOUSEDEV is not set
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+CONFIG_SERIO_LIBPS2=y
-+CONFIG_LEGACY_PTY_COUNT=4
-+# CONFIG_DEVKMEM is not set
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_DEPRECATED_OPTIONS is not set
-+CONFIG_SERIAL_8250_CONSOLE=y
-+# CONFIG_SERIAL_8250_DMA is not set
-+CONFIG_SERIAL_8250_EXTENDED=y
-+CONFIG_SERIAL_8250_DW=y
-+CONFIG_SERIAL_OF_PLATFORM=y
-+CONFIG_SERIAL_M10V_USIO=y
-+CONFIG_SERIAL_M10V_USIO_CONSOLE=y
-+# CONFIG_HW_RANDOM is not set
-+# CONFIG_I2C is not set
-+# CONFIG_I2C_BOARDINFO is not set
-+# CONFIG_I2C_COMPAT is not set
-+# CONFIG_I2C_CHARDEV is not set
-+# CONFIG_I2C_MUX is not set
-+# CONFIG_I2C_HELPER_AUTO is not set
-+# CONFIG_I2C_ALGOBIT is not set
-+# CONFIG_I2C_SNI_M10V is not set
-+CONFIG_SPI=y
-+# CONFIG_SPI_SN_USIO=y
-+#CONFIG_SPI_SNI is not set
-+#CONFIG_SPI_SPIDEV is not set
-+CONFIG_GPIOLIB=y
-+CONFIG_GPIO_SYSFS=y
-+CONFIG_GPIO_PCA953X=y
-+CONFIG_GPIO_PCA953X_IRQ=y
-+# CONFIG_HWMON is not set
-+CONFIG_WATCHDOG=y
-+CONFIG_SOFT_WATCHDOG=m
-+CONFIG_REGULATOR=y
-+CONFIG_REGULATOR_DEBUG=y
-+CONFIG_REGULATOR_S6AP412=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_CONTROLLER=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
-+CONFIG_VIDEO_ADV_DEBUG=y
-+CONFIG_MEDIA_USB_SUPPORT=y
-+CONFIG_USB_VIDEO_CLASS=y
-+# CONFIG_USB_GSPCA is not set
-+CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_SOC_CAMERA=y
-+CONFIG_SOC_CAMERA_PLATFORM=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+CONFIG_V4L_TEST_DRIVERS=y
-+CONFIG_VIDEO_VIVID=m
-+CONFIG_VIDEO_VIVID_MAX_DEVS=64
-+CONFIG_FB=y
-+# CONFIG_VGA_ARB is not set
-+# CONFIG_USB is not set
-+# CONFIG_USB_ANNOUNCE_NEW_DEVICES is not set
-+# CONFIG_USB_MON is not set
-+# CONFIG_USB_XHCI_HCD is not set
-+# CONFIG_USB_EHCI_HCD is not set
-+# CONFIG_USB_EHCI_ROOT_HUB_TT is not set
-+# CONFIG_USB_EHCI_HCD_PLATFORM is not set
-+# CONFIG_USB_OHCI_HCD is not set
-+# CONFIG_USB_OHCI_HCD_PCI is not set
-+# CONFIG_USB_OHCI_HCD_PLATFORM is not set
-+# CONFIG_USB_STORAGE is not set
-+# CONFIG_USB_SERIAL is not set
-+# CONFIG_USB_SERIAL_GENERIC is not set
-+# CONFIG_USB_SERIAL_CP210X is not set
-+# CONFIG_USB_SERIAL_FTDI_SIO is not set
-+# CONFIG_USB_SERIAL_PL2303 is not set
-+# CONFIG_USB_ULPI is not set
-+# CONFIG_USB_GADGET is not set
-+# CONFIG_USB_DWC3 is not set
-+# CONFIG_USB_DWC3_PCI is not set
-+# CONFIG_USB_DWC3_OTG is not set
-+# CONFIG_USB_DWC3_SN is not set
-+# CONFIG_USB_DWC3_OF_SIMPLE is not set
-+# CONFIG_USB_GADGET_SN_LAP is not set
-+# CONFIG_USB_CONFIGFS is not set
-+# CONFIG_USB_CONFIGFS_ACM is not set
-+# CONFIG_USB_CONFIGFS_MASS_STORAGE is not set
-+# CONFIG_USB_CONFIGFS_F_MTP is not set
-+# CONFIG_USB_CONFIGFS_F_UVC is not set
-+# CONFIG_USB_CONFIGFS_UEVENT is not set
-+# CONFIG_MMC is not set
-+# CONFIG_MMC_SDHCI is not set
-+# CONFIG_MMC_SDHCI_PLTFM is not set
-+# CONFIG_MMC_SDHCI_F_SDH30 is not set
-+# CONFIG_MMC_SDHCI_F_EMMC50 is not set
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_LEDS_GPIO=y
-+CONFIG_LEDS_TRIGGER_TIMER=y
-+CONFIG_LEDS_TRIGGER_HEARTBEAT=y
-+CONFIG_RTC_CLASS=y
-+# CONFIG_RTC_HCTOSYS is not set
-+# CONFIG_RTC_SYSTOHC is not set
-+CONFIG_RTC_DEBUG=y
-+CONFIG_RTC_DRV_RX8025=y
-+CONFIG_DMADEVICES=y
-+CONFIG_MB86S7X_HDMAC=y
-+CONFIG_MB8AC0300_XDMAC=y
-+CONFIG_UIO=y
-+CONFIG_UIO_SNI=y
-+# CONFIG_IOMMU_SUPPORT is not set
-+CONFIG_PWM=y
-+# CONFIG_PWM_SYSFS is not set
-+CONFIG_PWM_M10V=y
-+CONFIG_RESET_CONTROLLER=y
-+CONFIG_EXFAT=y
-+CONFIG_EXT4_FS=y
-+# CONFIG_EXT4_USE_FOR_EXT23 is not set
-+# CONFIG_XFS_FS is not set
-+CONFIG_FANOTIFY=y
-+CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-+CONFIG_QUOTA=y
-+CONFIG_AUTOFS4_FS=y
-+# CONFIG_FUSE_FS is not set
-+CONFIG_FSCACHE=y
-+CONFIG_FSCACHE_STATS=y
-+CONFIG_FSCACHE_HISTOGRAM=y
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_FAT_DEFAULT_CODEPAGE=932
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+CONFIG_UBIFS_FS=y
-+CONFIG_UBIFS_FS_ADVANCED_COMPR=y
-+CONFIG_ROMFS_FS=y
-+CONFIG_ROMFS_BACKED_BY_BOTH=y
-+CONFIG_NFS_FS=m
-+CONFIG_NLS_CODEPAGE_437=y
-+CONFIG_NLS_CODEPAGE_737=y
-+CONFIG_NLS_CODEPAGE_775=y
-+CONFIG_NLS_CODEPAGE_850=y
-+CONFIG_NLS_CODEPAGE_852=y
-+CONFIG_NLS_CODEPAGE_855=y
-+CONFIG_NLS_CODEPAGE_857=y
-+CONFIG_NLS_CODEPAGE_860=y
-+CONFIG_NLS_CODEPAGE_861=y
-+CONFIG_NLS_CODEPAGE_862=y
-+CONFIG_NLS_CODEPAGE_863=y
-+CONFIG_NLS_CODEPAGE_864=y
-+CONFIG_NLS_CODEPAGE_865=y
-+CONFIG_NLS_CODEPAGE_866=y
-+CONFIG_NLS_CODEPAGE_869=y
-+CONFIG_NLS_CODEPAGE_936=y
-+CONFIG_NLS_CODEPAGE_950=y
-+CONFIG_NLS_CODEPAGE_932=y
-+CONFIG_NLS_CODEPAGE_949=y
-+CONFIG_NLS_CODEPAGE_874=y
-+CONFIG_NLS_ISO8859_8=y
-+CONFIG_NLS_CODEPAGE_1250=y
-+CONFIG_NLS_CODEPAGE_1251=y
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+CONFIG_NLS_ISO8859_2=y
-+CONFIG_NLS_ISO8859_3=y
-+CONFIG_NLS_ISO8859_4=y
-+CONFIG_NLS_ISO8859_5=y
-+CONFIG_NLS_ISO8859_6=y
-+CONFIG_NLS_ISO8859_7=y
-+CONFIG_NLS_ISO8859_9=y
-+CONFIG_NLS_ISO8859_13=y
-+CONFIG_NLS_ISO8859_14=y
-+CONFIG_NLS_ISO8859_15=y
-+CONFIG_NLS_KOI8_R=y
-+CONFIG_NLS_KOI8_U=y
-+CONFIG_NLS_MAC_ROMAN=y
-+CONFIG_NLS_MAC_CELTIC=y
-+CONFIG_NLS_MAC_CENTEURO=y
-+CONFIG_NLS_MAC_CROATIAN=y
-+CONFIG_NLS_MAC_CYRILLIC=y
-+CONFIG_NLS_MAC_GAELIC=y
-+CONFIG_NLS_MAC_GREEK=y
-+CONFIG_NLS_MAC_ICELAND=y
-+CONFIG_NLS_MAC_INUIT=y
-+CONFIG_NLS_MAC_ROMANIAN=y
-+CONFIG_NLS_MAC_TURKISH=y
-+CONFIG_NLS_UTF8=y
-+CONFIG_IPCU_FS=y
-+# CONFIG_TEST_IPCU_FS is not set
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DYNAMIC_DEBUG=y
-+CONFIG_DEBUG_INFO=y
-+#CONFIG_DEBUG_INFO_REDUCED is not set
-+CONFIG_DEBUG_FS=y
-+CONFIG_DEBUG_GIC_BL=y
-+CONFIG_HEADERS_CHECK=y
-+CONFIG_DEBUG_SECTION_MISMATCH=y
-+CONFIG_DEBUG_MEMORY_INIT=y
-+# CONFIG_DEBUG_PREEMPT is not set
-+CONFIG_RCU_TORTURE_TEST=m
-+CONFIG_RCU_CPU_STALL_TIMEOUT=60
-+CONFIG_KGDB=y
-+CONFIG_DEBUG_USER=y
-+CONFIG_DEBUG_LL=y
-+CONFIG_DEBUG_LL_MILBEAUT_UART=y
-+CONFIG_EARLY_PRINTK=y
-+# CONFIG_EARLY_PRINTK_DIRECT is not set
-+CONFIG_KEYS=y
-+CONFIG_ENCRYPTED_KEYS=y
-+CONFIG_SECURITY=y
-+# CONFIG_CRYPTO_ANSI_CPRNG is not set
-+# CONFIG_CRYPTO_HW is not set
-+CONFIG_FONTS=y
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0abecc5..31dd29f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1782,6 +1782,15 @@ F:	drivers/watchdog/sama5d4_wdt.c
+ X:	drivers/input/touchscreen/atmel_mxt_ts.c
+ X:	drivers/net/wireless/atmel/
+ 
++ARM/MILBEAUT ARCHITECTURE
++M:	Taichi Sugaya <sugaya.taichi@socionext.com>
++M:	Takao Orito <orito.takao@socionext.com>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	arch/arm/boot/dts/milbeaut*
++F:	arch/arm/mach-milbeaut/
++N:	milbeaut
++
+ ARM/MIOA701 MACHINE SUPPORT
+ M:	Robert Jarzmik <robert.jarzmik@free.fr>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
 -- 
 1.9.1
 
