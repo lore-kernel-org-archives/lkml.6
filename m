@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8F0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41ABC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD152146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CA922151B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvzizNHT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD152146D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="haMJMFZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA922151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406324AbeKTD15 (ORCPT
+        id S2406337AbeKTD2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:27:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42132 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405677AbeKTD14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:27:56 -0500
+        id S2405677AbeKTD17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:27:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDA132151B;
-        Mon, 19 Nov 2018 17:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65EA4214E0;
+        Mon, 19 Nov 2018 17:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647019;
-        bh=hqwuZ5rflfz/+UYNCvGdhPP5qbPNoGi5vTdreNe2078=;
+        s=default; t=1542647022;
+        bh=k0+E98OgBtWPU65Mg5OGeIN+VU7L4uOElPxluRoaho0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fvzizNHT4X8Z+2d/l1WPo3RkrSoQcy0TXFG9CJO0XL/o+wG1KSAgy1fubeuD12LNG
-         TDzy7oNw3CMid3fQHcvGM2ge+R17f/Nzb2yzcdX13wLfVQ9c/5UsMfk6v+3Q1edruK
-         dkuVq8oaW8y/FP/NMm1br6OH95IH+IUmZrDJKac0=
+        b=haMJMFZl4X93x+gVKJO+WnLc1iT67gumP4DsW72l0M2vNtW9Y7v0nIOhEHq10En5R
+         wLXiNDUAIIIMJYarQb55/Pyk6RJloaLhtEVTyMAcX7EeMDPjaj/1httEHkkmXIq+kV
+         lNWUhT3Au+VMWyrHCxRH5/NtglXSVrhYjd3kWVWM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Hou Tao <houtao1@huawei.com>,
-        Richard Weinberger <richard@nod.at>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 3.18 02/90] jffs2: free jffs2_sb_info through jffs2_kill_sb()
-Date:   Mon, 19 Nov 2018 17:28:44 +0100
-Message-Id: <20181119162620.974539807@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 20/90] kprobes: Return error if we fail to reuse kprobe instead of BUG_ON()
+Date:   Mon, 19 Nov 2018 17:29:02 +0100
+Message-Id: <20181119162624.245927188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,41 +68,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Tao <houtao1@huawei.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-commit 92e2921f7eee63450a5f953f4b15dc6210219430 upstream.
+[ Upstream commit 819319fc93461c07b9cdb3064f154bd8cfd48172 ]
 
-When an invalid mount option is passed to jffs2, jffs2_parse_options()
-will fail and jffs2_sb_info will be freed, but then jffs2_sb_info will
-be used (use-after-free) and freeed (double-free) in jffs2_kill_sb().
+Make reuse_unused_kprobe() to return error code if
+it fails to reuse unused kprobe for optprobe instead
+of calling BUG_ON().
 
-Fix it by removing the buggy invocation of kfree() when getting invalid
-mount options.
-
-Fixes: 92abc475d8de ("jffs2: implement mount option parsing and compression overriding")
-Cc: stable@kernel.org
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Naveen N . Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/153666124040.21306.14150398706331307654.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/jffs2/super.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ kernel/kprobes.c |   27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -285,10 +285,8 @@ static int jffs2_fill_super(struct super
- 	sb->s_fs_info = c;
+--- a/kernel/kprobes.c
++++ b/kernel/kprobes.c
+@@ -665,9 +665,10 @@ static void unoptimize_kprobe(struct kpr
+ }
  
- 	ret = jffs2_parse_options(c, data);
--	if (ret) {
--		kfree(c);
+ /* Cancel unoptimizing for reusing */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
+ 	struct optimized_kprobe *op;
++	int ret;
+ 
+ 	BUG_ON(!kprobe_unused(ap));
+ 	/*
+@@ -681,8 +682,12 @@ static void reuse_unused_kprobe(struct k
+ 	/* Enable the probe again */
+ 	ap->flags &= ~KPROBE_FLAG_DISABLED;
+ 	/* Optimize it again (remove from op->list) */
+-	BUG_ON(!kprobe_optready(ap));
++	ret = kprobe_optready(ap);
 +	if (ret)
- 		return -EINVAL;
--	}
++		return ret;
++
+ 	optimize_kprobe(ap);
++	return 0;
+ }
  
- 	/* Initialize JFFS2 superblock locks, the further initialization will
- 	 * be done later */
+ /* Remove optimized instructions */
+@@ -893,11 +898,16 @@ static void __disarm_kprobe(struct kprob
+ #define kprobe_disarmed(p)			kprobe_disabled(p)
+ #define wait_for_kprobe_optimizer()		do {} while (0)
+ 
+-/* There should be no unused kprobes can be reused without optimization */
+-static void reuse_unused_kprobe(struct kprobe *ap)
++static int reuse_unused_kprobe(struct kprobe *ap)
+ {
++	/*
++	 * If the optimized kprobe is NOT supported, the aggr kprobe is
++	 * released at the same time that the last aggregated kprobe is
++	 * unregistered.
++	 * Thus there should be no chance to reuse unused kprobe.
++	 */
+ 	printk(KERN_ERR "Error: There should be no unused kprobe here.\n");
+-	BUG_ON(kprobe_unused(ap));
++	return -EINVAL;
+ }
+ 
+ static void free_aggr_kprobe(struct kprobe *p)
+@@ -1275,9 +1285,12 @@ static int register_aggr_kprobe(struct k
+ 			goto out;
+ 		}
+ 		init_aggr_kprobe(ap, orig_p);
+-	} else if (kprobe_unused(ap))
++	} else if (kprobe_unused(ap)) {
+ 		/* This probe is going to die. Rescue it */
+-		reuse_unused_kprobe(ap);
++		ret = reuse_unused_kprobe(ap);
++		if (ret)
++			goto out;
++	}
+ 
+ 	if (kprobe_gone(ap)) {
+ 		/*
 
 
