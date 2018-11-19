@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B35C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CC3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA1221104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA7EA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVBTjL/J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA1221104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh+5ZVxD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7EA2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390547AbeKTDQb (ORCPT
+        id S2390559AbeKTDQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:16:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390534AbeKTDQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:16:30 -0500
+        id S2389724AbeKTDQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25494206BA;
-        Mon, 19 Nov 2018 16:52:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AC38208E3;
+        Mon, 19 Nov 2018 16:52:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646336;
-        bh=MgxcbQUFEoErDCLgYPF7lzAB5iY3WorPGnGaHPaLnE4=;
+        s=default; t=1542646339;
+        bh=eokEFmhFl4ScfdBzvMQwhvHlXkvdxbQtYScsawRczns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aVBTjL/JYy2/RBotFtsMQCm73DSHSs4z8RcIoDwuvnfYJmBmanvCtg+7ZqahjBeB8
-         eKmVpUsQSdcIIshkZMcNzs0iLIOOgur1kDpL1T42Uz8JhxTo26cU0BN9ZXIyeZnIe3
-         0LcuFQ3D1uQyODVuE81e4YcLyBZTjIQPabCXiy/Q=
+        b=uh+5ZVxDIj8UNd3G6ozmxfdLZocMUFZpYD9ebO8qukKMQ1JVFQyuw1Q/Gu9lDSjin
+         BRWT50xjf4bxRpfFhrpq2WLax2gjJ6HlhCQbk9VdwrtQVETMc61zEXy964gm+BBcPl
+         dW8RK0AgItf2RJqUkXAGK6gV9bTdGblLz8QzfLnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.14 119/124] drm/i915/execlists: Force write serialisation into context image vs execution
-Date:   Mon, 19 Nov 2018 17:29:33 +0100
-Message-Id: <20181119162633.662498749@linuxfoundation.org>
+        stable@vger.kernel.org, Stefano Stabellini <stefanos@xilinx.com>,
+        Juergen Gross <jgross@suse.com>, Jeff.Kubascik@dornerworks.com,
+        Jarvis.Roach@dornerworks.com, Nathan.Studer@dornerworks.com,
+        vkuznets@redhat.com, boris.ostrovsky@oracle.com,
+        julien.grall@arm.com
+Subject: [PATCH 4.14 120/124] CONFIG_XEN_PV breaks xen_create_contiguous_region on ARM
+Date:   Mon, 19 Nov 2018 17:29:34 +0100
+Message-Id: <20181119162633.797817212@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,63 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Stefano Stabellini <stefanos@xilinx.com>
 
-commit 0a823e8fd4fd67726697854578f3584ee3a49b1d upstream.
+commit f9005571701920551bcf54a500973fb61f2e1eda upstream.
 
-Ensure that the writes into the context image are completed prior to the
-register mmio to trigger execution. Although previously we were assured
-by the SDM that all writes are flushed before an uncached memory
-transaction (our mmio write to submit the context to HW for execution),
-we have empirical evidence to believe that this is not actually the
-case.
+xen_create_contiguous_region has now only an implementation if
+CONFIG_XEN_PV is defined. However, on ARM we never set CONFIG_XEN_PV but
+we do have an implementation of xen_create_contiguous_region which is
+required for swiotlb-xen to work correctly (although it just sets
+*dma_handle).
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108656
-References: https://bugs.freedesktop.org/show_bug.cgi?id=108315
-References: https://bugs.freedesktop.org/show_bug.cgi?id=106887
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Acked-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181108081740.25615-1-chris@chris-wilson.co.uk
-Cc: stable@vger.kernel.org
-(cherry picked from commit 987abd5c62f92ee4970b45aa077f47949974e615)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+[backport: remove change to xen_remap_pfn]
+
+Cc: <stable@vger.kernel.org> # 4.12
+Fixes: 16624390816c ("xen: create xen_create/destroy_contiguous_region() stubs for PVHVM only builds")
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+CC: Jeff.Kubascik@dornerworks.com
+CC: Jarvis.Roach@dornerworks.com
+CC: Nathan.Studer@dornerworks.com
+CC: vkuznets@redhat.com
+CC: boris.ostrovsky@oracle.com
+CC: jgross@suse.com
+CC: julien.grall@arm.com
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_lrc.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ include/xen/xen-ops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_lrc.c
-+++ b/drivers/gpu/drm/i915/intel_lrc.c
-@@ -325,7 +325,8 @@ static u64 execlists_update_context(stru
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -40,7 +40,7 @@ int xen_setup_shutdown_event(void);
  
- 	reg_state[CTX_RING_TAIL+1] = intel_ring_set_tail(rq->ring, rq->tail);
+ extern unsigned long *xen_contiguous_bitmap;
  
--	/* True 32b PPGTT with dynamic page allocation: update PDP
-+	/*
-+	 * True 32b PPGTT with dynamic page allocation: update PDP
- 	 * registers and point the unallocated PDPs to scratch page.
- 	 * PML4 is allocated during ppgtt init, so this is not needed
- 	 * in 48-bit mode.
-@@ -333,6 +334,17 @@ static u64 execlists_update_context(stru
- 	if (ppgtt && !i915_vm_is_48bit(&ppgtt->base))
- 		execlists_update_context_pdps(ppgtt, reg_state);
- 
-+	/*
-+	 * Make sure the context image is complete before we submit it to HW.
-+	 *
-+	 * Ostensibly, writes (including the WCB) should be flushed prior to
-+	 * an uncached write such as our mmio register access, the empirical
-+	 * evidence (esp. on Braswell) suggests that the WC write into memory
-+	 * may not be visible to the HW prior to the completion of the UC
-+	 * register write and that we may begin execution from the context
-+	 * before its image is complete leading to invalid PD chasing.
-+	 */
-+	wmb();
- 	return ce->lrc_desc;
- }
- 
+-#ifdef CONFIG_XEN_PV
++#if defined(CONFIG_XEN_PV) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+ 				unsigned int address_bits,
+ 				dma_addr_t *dma_handle);
 
 
