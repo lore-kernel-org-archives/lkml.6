@@ -2,138 +2,108 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A7FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 510A8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABD9320851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABD9320851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 19EBC20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XH4Fw31B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19EBC20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbeKTAeD (ORCPT
+        id S1729505AbeKTAeG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:34:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55352 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727324AbeKTAeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:34:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 65821AF68;
-        Mon, 19 Nov 2018 14:10:17 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 15:10:16 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        pifang@redhat.com, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, aarcange@redhat.com,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181119141016.GO22247@dhcp22.suse.cz>
-References: <20181115083055.GD23831@dhcp22.suse.cz>
- <20181115131211.GP2653@MiWiFi-R3L-srv>
- <20181115131927.GT23831@dhcp22.suse.cz>
- <20181115133840.GR2653@MiWiFi-R3L-srv>
- <20181115143204.GV23831@dhcp22.suse.cz>
- <20181116012433.GU2653@MiWiFi-R3L-srv>
- <20181116091409.GD14706@dhcp22.suse.cz>
- <20181119105202.GE18471@MiWiFi-R3L-srv>
- <20181119124033.GJ22247@dhcp22.suse.cz>
- <20181119125121.GK22247@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119125121.GK22247@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 19 Nov 2018 19:34:06 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38875 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727324AbeKTAeG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:34:06 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so6917678pfi.5
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:10:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wSdV+/zcx8UY8cUfVujyWK2lZLqqr7izfcTZ3/Ms6VU=;
+        b=XH4Fw31BKY5CuHoTi49/Ooq89/lBj811lMzAE26n23vEeOsX3f0W44OBq8Lat+yuFA
+         VDGPmRhdsnC3cN58sumta1R1oM14YAvFdoEdvZ3AuCpVJACxdFpP1nwuh0ohX8K9tFkp
+         Fig7F9oY4agDl8xPNtqWThfpxdMUmRg7BwF3EwL26ssmblU1H7eBeCP+/X+xMPYrcPJT
+         cyfF99gE34WGCUEXH76sO5BuiC8qLYU/ZzxfOssM2roPebA0///WTbhmuU7J/bKP8ww8
+         7jHayXbkwuNV+uKOETkd4Bt39QWHHOqZyJeUd2cNqKJ6bHBFEqMIy+qUptx1TZd91Jyh
+         RKtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wSdV+/zcx8UY8cUfVujyWK2lZLqqr7izfcTZ3/Ms6VU=;
+        b=mzKpJ0A3JltVjbmLJ7NdMoRy0OynflInRkoPvwBiDdoUoCpfPm+lCHgxfCVQu9xUkW
+         4Oxk3nas5AYSQD8pWsWw1m5moY5uHzIyZ4UFrUYhGWH5pufyM7xV4o1mchuYKyhbweQ7
+         mCZAA8+6tPowVzfs/KLRFQ9eFBRhoM3EFDmPpCw9j0mGassl5Vh/QJkzdmCBasNYVy/V
+         Q7h7beXYLErEJ9/lIHukOzovqsveSkRClYgr7JQRIx4QlvdJle68wZvljYFYsa16LA7r
+         UX9j7cWjVKwzYxjGr+kHEWTC4S5oOA/VQlVJ89qrFP4Epc0GFiraL++Pw50oOCwDwVnP
+         a2gA==
+X-Gm-Message-State: AGRZ1gKciujYgVgNFRJ0W0uQnIThbCHB1oXLTU5ab5jbGu9n57lMd7cB
+        +T+aFUgM3JkhGOidG7LFbBs=
+X-Google-Smtp-Source: AJdET5cdnpdUK/IzseBvk724owqQifc9ccn/dTq3RvN3ilhxOzWfaPP4c8mo0vUAcwprAydmIKB9jQ==
+X-Received: by 2002:a63:101d:: with SMTP id f29mr20392076pgl.38.1542636621915;
+        Mon, 19 Nov 2018 06:10:21 -0800 (PST)
+Received: from ubuntu.localdomain ([104.238.150.158])
+        by smtp.gmail.com with ESMTPSA id q25sm44413708pgb.2.2018.11.19.06.10.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 06:10:21 -0800 (PST)
+From:   Muchun Song <smuchun@gmail.com>
+To:     john.stultz@linaro.org, tglx@linutronix.de, sboyd@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] timers: Make the lower-level timer function first call than higher-level
+Date:   Mon, 19 Nov 2018 22:10:03 +0800
+Message-Id: <20181119141003.6470-1-smuchun@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-11-18 13:51:21, Michal Hocko wrote:
-> On Mon 19-11-18 13:40:33, Michal Hocko wrote:
-> > On Mon 19-11-18 18:52:02, Baoquan He wrote:
-> > [...]
-> > 
-> > There are few stacks directly in the offline path but those should be
-> > OK.
-> > The real culprit seems to be the swap in code
-> > 
-> > > [  +1.734416] CPU: 255 PID: 5558 Comm: stress Tainted: G             L    4.20.0-rc2+ #7
-> > > [  +0.007927] Hardware name:  9008/IT91SMUB, BIOS BLXSV512 03/22/2018
-> > > [  +0.006297] Call Trace:
-> > > [  +0.002537]  dump_stack+0x46/0x60
-> > > [  +0.003386]  __migration_entry_wait.cold.65+0x5/0x14
-> > > [  +0.005043]  do_swap_page+0x84e/0x960
-> > > [  +0.003727]  ? arch_tlb_finish_mmu+0x29/0xc0
-> > > [  +0.006412]  __handle_mm_fault+0x933/0x1330
-> > > [  +0.004265]  handle_mm_fault+0xc4/0x250
-> > > [  +0.003915]  __do_page_fault+0x2b7/0x510
-> > > [  +0.003990]  do_page_fault+0x2c/0x110
-> > > [  +0.003729]  ? page_fault+0x8/0x30
-> > > [  +0.003462]  page_fault+0x1e/0x30
-> > 
-> > There are many traces to this path. We are 
-> > 	/*
-> > 	 * Once page cache replacement of page migration started, page_count
-> > 	 * *must* be zero. And, we don't want to call wait_on_page_locked()
-> > 	 * against a page without get_page().
-> > 	 * So, we use get_page_unless_zero(), here. Even failed, page fault
-> > 	 * will occur again.
-> > 	 */
-> > 	if (!get_page_unless_zero(page))
-> > 		goto out;
-> > 	pte_unmap_unlock(ptep, ptl);
-> > 	wait_on_page_locked(page);
-> > 
-> > taking a reference to the page under the migration. I have to think
-> > about this much more but I suspec this is just calling for a problem.
-> > 
-> > Cc migration experts. For you background information. We are seeing
-> > memory offline not being able to converge because few heavily used pages
-> > fail to migrate away - e.g. http://lkml.kernel.org/r/20181116012433.GU2653@MiWiFi-R3L-srv
-> > A debugging page to dump stack for these pages http://lkml.kernel.org/r/20181116091409.GD14706@dhcp22.suse.cz
-> > shows that references are taken from the swap in code (above). How are
-> > we supposed to converge when the swapin code waits for the migration to
-> > finish with the reference count elevated?
-> 
-> Just to clarify. This is not only about swapin obviously. Any caller of
-> __migration_entry_wait is affected the same way AFAICS.
+The elements of the heads array are a linked list of timer events that
+expire at the current time. And it can contain up to LVL_DEPTH levels
+and the lower the level represents the smaller the time granularity.
 
-In other words. Why cannot we do the following?
+Now the result is that the function, which will be called when the timer
+expires, in the higher-level is called first than the lower-level function.
+I think it might be better to call the lower-level timer function first
+than the higher-level function. Because the lower-level has the smaller
+granularity and delay has less impact on higher-level. So fix it.
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f7e4bfdc13b7..7ccab29bcf9a 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -324,19 +324,9 @@ void __migration_entry_wait(struct mm_struct *mm, pte_t *ptep,
- 		goto out;
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ kernel/time/timer.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/time/timer.c b/kernel/time/timer.c
+index fa49cd753dea..7c757b27aa58 100644
+--- a/kernel/time/timer.c
++++ b/kernel/time/timer.c
+@@ -1674,12 +1674,13 @@ static inline void __run_timers(struct timer_base *base)
+ 	base->must_forward_clk = false;
  
- 	page = migration_entry_to_page(entry);
--
--	/*
--	 * Once page cache replacement of page migration started, page_count
--	 * *must* be zero. And, we don't want to call wait_on_page_locked()
--	 * against a page without get_page().
--	 * So, we use get_page_unless_zero(), here. Even failed, page fault
--	 * will occur again.
--	 */
--	if (!get_page_unless_zero(page))
--		goto out;
- 	pte_unmap_unlock(ptep, ptl);
--	wait_on_page_locked(page);
--	put_page(page);
-+	page_lock(page);
-+	page_unlock(page);
- 	return;
- out:
- 	pte_unmap_unlock(ptep, ptl);
+ 	while (time_after_eq(jiffies, base->clk)) {
++		int i;
+ 
+ 		levels = collect_expired_timers(base, heads);
+ 		base->clk++;
+ 
+-		while (levels--)
+-			expire_timers(base, heads + levels);
++		for (i = 0; i < levels; i++)
++			expire_timers(base, heads + i);
+ 	}
+ 	base->running_timer = NULL;
+ 	raw_spin_unlock_irq(&base->lock);
 -- 
-Michal Hocko
-SUSE Labs
+2.17.1
+
