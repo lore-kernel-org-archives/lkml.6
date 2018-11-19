@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF84FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129AEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1969213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF4222148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmYKOH9i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1969213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXDm6E1p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4222148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbeKTDCd (ORCPT
+        id S1732496AbeKTDCj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34874 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732476AbeKTDCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:32 -0500
+        id S1732476AbeKTDCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D054821104;
-        Mon, 19 Nov 2018 16:38:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AE7E20989;
+        Mon, 19 Nov 2018 16:38:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645503;
-        bh=I5cFxRQIipu7RaxgwizV27fD7aYPf4nR138n6cnlq9c=;
+        s=default; t=1542645505;
+        bh=rgOK3BIZaq0IEDCcf3XFisQ7OMob6jzmXE4uZgiCDyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QmYKOH9iJuUtuFeWkI8vKO6NOutG0kMWFbvzEXGsdbBJyAgfMwSgqudYuC+Cd98D8
-         RdcqfPtNwJByKC//9ik840zRjMvSoQcUtFCtpzaPAJnbNthmb+9jSJCcAVG6dBMP9z
-         T993jSiM2aONwHmVmr1bZDSGh68tMkugVyU99mAc=
+        b=dXDm6E1phaJXM7uflFUCL7vOOGFW9t0PVpuEPjN6C0m5Pl2YtP0tolvLRY1UI4jeB
+         D6y7gtNhcDg7LqLmHtYcWVcDaVMKdm9qxdAeY+sFZ2zpO7yfB/ZFCN76SaO/9MuJcx
+         RIpG2vRHI/qqX2wZUeOAdex5vL4M40XZN3bObV7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Timothy Baldwin <timbaldwin@fastmail.co.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.19 149/205] mount: Prevent MNT_DETACH from disconnecting locked mounts
-Date:   Mon, 19 Nov 2018 17:27:36 +0100
-Message-Id: <20181119162638.527699019@linuxfoundation.org>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Benjamin Coddington <bcodding@redhat.com>
+Subject: [PATCH 4.19 150/205] mnt: fix __detach_mounts infinite loop
+Date:   Mon, 19 Nov 2018 17:27:37 +0100
+Message-Id: <20181119162638.599154127@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,105 +63,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Benjamin Coddington <bcodding@redhat.com>
 
-commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
+commit 1e9c75fb9c47a75a9aec0cd17db5f6dc36b58e00 upstream.
 
-Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
-> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
->
->   Mounts that come as a single unit from more privileged mount are locked
->   together and may not be separated in a less privileged mount namespace.
->
-> However they can:
->
-> 1. Create a mount namespace.
-> 2. In the mount namespace open a file descriptor to the parent of a mount point.
-> 3. Destroy the mount namespace.
-> 4. Use the file descriptor to look under the mount point.
->
-> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
->
-> The setup:
->
-> $ sudo sysctl kernel.unprivileged_userns_clone=1
-> kernel.unprivileged_userns_clone = 1
-> $ mkdir -p A/B/Secret
-> $ sudo mount -t tmpfs hide A/B
->
->
-> "Secret" is indeed hidden as expected:
->
-> $ ls -lR A
-> A:
-> total 0
-> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
->
-> A/B:
-> total 0
->
->
-> The attack revealing "Secret":
->
-> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
-> /proc/self/fd/4/:
-> total 0
-> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
->
-> /proc/self/fd/4/B:
-> total 0
-> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
->
-> /proc/self/fd/4/B/Secret:
-> total 0
+Since commit ff17fa561a04 ("d_invalidate(): unhash immediately")
+immediately unhashes the dentry, we'll never return the mountpoint in
+lookup_mountpoint(), which can lead to an unbreakable loop in
+d_invalidate().
 
-I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
-disconnecting all of the mounts in a mount namespace.  Fix this by
-factoring drop_mounts out of drop_collected_mounts and passing
-0 instead of UMOUNT_SYNC.
+I have reports of NFS clients getting into this condition after the server
+removes an export of an existing mount created through follow_automount(),
+but I suspect there are various other ways to produce this problem if we
+hunt down users of d_invalidate().  For example, it is possible to get into
+this state by using XFS' d_invalidate() call in xfs_vn_unlink():
 
-There are two possible behavior differences that result from this.
-- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
-  the vfsmounts being unmounted.  This effects the lazy rcu walk by
-  kicking the walk out of rcu mode and forcing it to be a non-lazy
-  walk.
-- No longer disconnecting locked mounts will keep some mounts around
-  longer as they stay because the are locked to other mounts.
+truncate -s 100m img{1,2}
 
-There are only two users of drop_collected mounts: audit_tree.c and
-put_mnt_ns.
+mkfs.xfs -q -n version=ci img1
+mkfs.xfs -q -n version=ci img2
 
-In audit_tree.c the mounts are private and there are no rcu lazy walks
-only calls to iterate_mounts. So the changes should have no effect
-except for a small timing effect as the connected mounts are disconnected.
+mkdir -p /mnt/xfs
+mount img1 /mnt/xfs
 
-In put_mnt_ns there may be references from process outside the mount
-namespace to the mounts.  So the mounts remaining connected will
-be the bug fix that is needed.  That rcu walks are allowed to continue
-appears not to be a problem especially as the rcu walk change was about
-an implementation detail not about semantics.
+mkdir /mnt/xfs/sub1
+mount img2 /mnt/xfs/sub1
 
+cat > /mnt/xfs/sub1/foo &
+umount -l /mnt/xfs/sub1
+mount img2 /mnt/xfs/sub1
+
+mount --make-private /mnt/xfs
+
+mkdir /mnt/xfs/sub2
+mount --move /mnt/xfs/sub1 /mnt/xfs/sub2
+rmdir /mnt/xfs/sub1
+
+Fix this by moving the check for an unlinked dentry out of the
+detach_mounts() path.
+
+Fixes: ff17fa561a04 ("d_invalidate(): unhash immediately")
 Cc: stable@vger.kernel.org
-Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
-Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Reviewed-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Eric W. Biederman <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/namespace.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1794,7 +1794,7 @@ void drop_collected_mounts(struct vfsmou
- {
- 	namespace_lock();
- 	lock_mount_hash();
--	umount_tree(real_mount(mnt), UMOUNT_SYNC);
-+	umount_tree(real_mount(mnt), 0);
- 	unlock_mount_hash();
- 	namespace_unlock();
- }
+@@ -695,9 +695,6 @@ static struct mountpoint *lookup_mountpo
+ 
+ 	hlist_for_each_entry(mp, chain, m_hash) {
+ 		if (mp->m_dentry == dentry) {
+-			/* might be worth a WARN_ON() */
+-			if (d_unlinked(dentry))
+-				return ERR_PTR(-ENOENT);
+ 			mp->m_count++;
+ 			return mp;
+ 		}
+@@ -711,6 +708,9 @@ static struct mountpoint *get_mountpoint
+ 	int ret;
+ 
+ 	if (d_mountpoint(dentry)) {
++		/* might be worth a WARN_ON() */
++		if (d_unlinked(dentry))
++			return ERR_PTR(-ENOENT);
+ mountpoint:
+ 		read_seqlock_excl(&mount_lock);
+ 		mp = lookup_mountpoint(dentry);
 
 
