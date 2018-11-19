@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8344EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3F2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A43D214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6237A2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo9UB6Wj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A43D214C1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bigL4NeA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6237A2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404515AbeKTDVf (ORCPT
+        id S2404528AbeKTDVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:21:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33014 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404158AbeKTDVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:21:34 -0500
+        id S2403956AbeKTDVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:21:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F7DC206BA;
-        Mon, 19 Nov 2018 16:57:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F30021104;
+        Mon, 19 Nov 2018 16:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646639;
-        bh=y9u+PBWpanrmry/0/xGm5lC1G6mNWjUnjFJWayjBTDw=;
+        s=default; t=1542646641;
+        bh=4BDPqXgOI21Q0kAbAx+EfIDdm6f8G0BtJ+L/+m+pO6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jo9UB6WjkDb5HlHLJP1dqaxgGRCOWVxqgxnpubk4GtF9vV8ZD0Fn6ha4+FzM82YSy
-         0J+ZLjt2/ZR60T3nUHff/1JTxqu/BPn1qQqaI0luU5kgLwi06i9O7YACrvBy6xbHFE
-         edGMCE2e/wYE1wqv7s985Q0hJwE3sqI8rDfy8Eug=
+        b=bigL4NeAsJu0UP2XkBeFigQEYTXMfYXupE2lA1yvs9i2/EZ0BgTleso6f3qzPGiXI
+         bvyq/jblyw+egz6SCAO6jga0B3T4dQ5UBGW2sZZvlmW02qr4QXMTGu4K0xlMTvCDXJ
+         91kQYTmXf1LmSPHwVqDD0FK2nrw6pnXV2NH1Yujo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org,
+        syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 034/160] tpm: suppress transmit cmd error logs when TPM 1.2 is disabled/deactivated
-Date:   Mon, 19 Nov 2018 17:27:53 +0100
-Message-Id: <20181119162634.248839079@linuxfoundation.org>
+Subject: [PATCH 4.4 035/160] ext4: fix argument checking in EXT4_IOC_MOVE_EXT
+Date:   Mon, 19 Nov 2018 17:27:54 +0100
+Message-Id: <20181119162634.359380147@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,66 +64,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Javier Martinez Canillas <javierm@redhat.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-[ Upstream commit 0d6d0d62d9505a9816716aa484ebd0b04c795063 ]
+[ Upstream commit f18b2b83a727a3db208308057d2c7945f368e625 ]
 
-For TPM 1.2 chips the system setup utility allows to set the TPM device in
-one of the following states:
+If the starting block number of either the source or destination file
+exceeds the EOF, EXT4_IOC_MOVE_EXT should return EINVAL.
 
-  * Active: Security chip is functional
-  * Inactive: Security chip is visible, but is not functional
-  * Disabled: Security chip is hidden and is not functional
+Also fixed the helper function mext_check_coverage() so that if the
+logical block is beyond EOF, make it return immediately, instead of
+looping until the block number wraps all the away around.  This takes
+long enough that if there are multiple threads trying to do pound on
+an the same inode doing non-sensical things, it can end up triggering
+the kernel's soft lockup detector.
 
-When choosing the "Inactive" state, the TPM 1.2 device is enumerated and
-registered, but sending TPM commands fail with either TPM_DEACTIVATED or
-TPM_DISABLED depending if the firmware deactivated or disabled the TPM.
-
-Since these TPM 1.2 error codes don't have special treatment, inactivating
-the TPM leads to a very noisy kernel log buffer that shows messages like
-the following:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting to read a pcr value
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-  tpm tpm0: A TPM error (6) occurred attempting get random
-
-Let's just suppress error log messages for the TPM_{DEACTIVATED,DISABLED}
-return codes, since this is expected when the TPM 1.2 is set to Inactive.
-
-In that case the kernel log is cleaner and less confusing for users, i.e:
-
-  tpm_tis 00:05: 1.2 TPM (device-id 0x0, rev-id 78)
-  tpm tpm0: TPM is disabled/deactivated (0x6)
-  ima: No TPM chip found, activating TPM-bypass! (rc=6)
-
-Reported-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reported-by: syzbot+c61979f6f2cba5cb3c06@syzkaller.appspotmail.com
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/char/tpm/tpm-interface.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ext4/move_extent.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -415,7 +415,8 @@ ssize_t tpm_transmit_cmd(struct tpm_chip
- 	header = cmd;
- 
- 	err = be32_to_cpu(header->return_code);
--	if (err != 0 && desc)
-+	if (err != 0 && err != TPM_ERR_DISABLED && err != TPM_ERR_DEACTIVATED
-+	    && desc)
- 		dev_err(&chip->dev, "A TPM error (%d) occurred %s\n", err,
- 			desc);
- 
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -526,9 +526,13 @@ mext_check_arguments(struct inode *orig_
+ 			orig_inode->i_ino, donor_inode->i_ino);
+ 		return -EINVAL;
+ 	}
+-	if (orig_eof < orig_start + *len - 1)
++	if (orig_eof <= orig_start)
++		*len = 0;
++	else if (orig_eof < orig_start + *len - 1)
+ 		*len = orig_eof - orig_start;
+-	if (donor_eof < donor_start + *len - 1)
++	if (donor_eof <= donor_start)
++		*len = 0;
++	else if (donor_eof < donor_start + *len - 1)
+ 		*len = donor_eof - donor_start;
+ 	if (!*len) {
+ 		ext4_debug("ext4 move extent: len should not be 0 "
 
 
