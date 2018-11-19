@@ -2,81 +2,124 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF15C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BA7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E863420851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:51:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E863420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C44020831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C44020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729957AbeKTCPE (ORCPT
+        id S1729919AbeKTCQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:15:04 -0500
-Received: from mga02.intel.com ([134.134.136.20]:9647 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729762AbeKTCPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:15:03 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 07:51:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109534754"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 07:51:00 -0800
-Date:   Mon, 19 Nov 2018 17:50:59 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Stefan Berger <stefanb@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 15/17] tpm: introduce tpm_chip_start() and
- tpm_chip_stop()
-Message-ID: <20181119155059.GA13298@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-16-jarkko.sakkinen@linux.intel.com>
- <1406ac79-992e-256f-f361-da412a04c856@linux.ibm.com>
+        Mon, 19 Nov 2018 21:16:01 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41081 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729762AbeKTCQB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:16:01 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 189so49304113qkj.8;
+        Mon, 19 Nov 2018 07:52:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o+5bJn4B66njPBzARi8LUL9emGuyKZAzXJwIQjlDvtM=;
+        b=lBeuZt+b4+fODvHY8iGs0U4C4EIwr4Lm9tMlPin/V7HgBrvtq34amWwfcT6bAP6ybC
+         eECS8GYuWJFes6cgMdgO0DNgq/FcpdZ8g7uNFP0rPiw5C3Mi7A1FbGfun/DBAGZ0PFUh
+         KxhyGsmvcBvGYfOtIZuT9O95NVbX+ny4aCtlZgkauSaV2WIeoziFOMkXh1tQTSQT6t1u
+         a/FeIlQ51k/Lse8jQHgj6U+yVII+GzhrHCwwcMRIcPMeyC9uVxmajAXQoMMVKKXCb+UZ
+         f+dgnXN2m69KvXEhGTyGGYnyZU6ShCVf4UxWE27eQjqt49wWhWMQkkkGKts+n0T39Gj2
+         cHSw==
+X-Gm-Message-State: AGRZ1gIvZ/q8TwZl2i4uuux6WCiNlZhX860X8/xSSxXfhwAKfcqYbUQZ
+        LsgdirbZDLtRe8toUM2RbpR3rFZ3mXEP/8fOO5g=
+X-Google-Smtp-Source: AJdET5cHmp/1dPcEYWWI7tbPZ6Do3MOei8PyXIbAgc68MwufxSav+3VqTvU3aV64CpGFlwtyfyVVC8eiHkrFWwRpg40=
+X-Received: by 2002:a0c:dc0f:: with SMTP id s15mr21441655qvk.40.1542642721554;
+ Mon, 19 Nov 2018 07:52:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1406ac79-992e-256f-f361-da412a04c856@linux.ibm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542262461-29024-1-git-send-email-firoz.khan@linaro.org> <1542262461-29024-2-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1542262461-29024-2-git-send-email-firoz.khan@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 19 Nov 2018 16:51:44 +0100
+Message-ID: <CAK8P3a2CuryCoZKaOXz=nH_WTAZ7VneNoUYHkKFDLQNQvrkWUg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] mips: add __NR_syscalls along with __NR_Linux_syscalls
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:13:54AM -0500, Stefan Berger wrote:
-> 
-> > +}
-> > +
-> > +/**
-> > + * tpm_chip_stop() - power off the TPM
-> > + * @chip:	a TPM chip to use
-> > + * @flags:	TPM transmit flags
-> > + *
-> > + * Return:
-> > + * * The response length	- OK
-> > + * * -errno			- A system error
-> 
-> This function returns void!
+On Thu, Nov 15, 2018 at 7:14 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> The 2nd option will be the recommended one. For that, I
+> added the __NR_syscalls macro in uapi/asm/unistd.h along
+> with __NR_Linux_syscalls. The macro __NR_syscalls also
+> added for making the name convention same across all
+> architecture. While __NR_syscalls isn't strictly part of
+> the uapi, having it as part of the generated header to
+> simplifies the implementation. We also need to enclose
+> this macro with #ifdef __KERNEL__ to avoid side effects.
 
-Sorry, my bad.
+I fear this doesn't work the way you hoped:
 
-/Jarkko
+> --- a/arch/mips/include/uapi/asm/unistd.h
+> +++ b/arch/mips/include/uapi/asm/unistd.h
+> @@ -391,16 +391,19 @@
+>  #define __NR_rseq                      (__NR_Linux + 367)
+>  #define __NR_io_pgetevents             (__NR_Linux + 368)
+>
+> +#ifdef __KERNEL__
+> +#define __NR_syscalls                  368
+> +#endif
+
+We now have three different definitions of __NR_syscalls,
+one for each ABI. User space previously saw the correct
+one (now it doesn't see any, but that's ok).
+
+>  /*
+>   * Offset of the last Linux o32 flavoured syscall
+>   */
+> -#define __NR_Linux_syscalls            368
+> +#define __NR_Linux_syscalls            __NR_syscalls
+
+so this part part again is ok.
+
+>  #endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
+>
+>  #define __NR_O32_Linux                 4000
+> -#define __NR_O32_Linux_syscalls                368
+> +#define __NR_O32_Linux_syscalls                __NR_syscalls
+
+but this part is not: Now __NR_O32_Linux_syscalls is defined
+to __NR_syscalls, which may be one of the three values.
+Any usage of __NR_O32_Linux_syscalls in a 64-bit kernel
+is then clearly wrong.
+
+>  #endif /* _MIPS_SIM == _MIPS_SIM_NABI32 */
+>
+>  #define __NR_N32_Linux                 6000
+> -#define __NR_N32_Linux_syscalls                332
+> +#define __NR_N32_Linux_syscalls                __NR_syscalls
+
+Same for this one.
+
+       Arnd
