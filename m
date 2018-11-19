@@ -7,91 +7,102 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBFBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:54:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F268EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB8620831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:54:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A84E020831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:55:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wgpzjYhB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CB8620831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="cxvJQHc1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84E020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730542AbeKTGSw (ORCPT
+        id S1730632AbeKTGU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:18:52 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33891 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730116AbeKTGSu (ORCPT
+        Tue, 20 Nov 2018 01:20:57 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46246 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730412AbeKTGU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:18:50 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j2so5005245wrw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:53:40 -0800 (PST)
+        Tue, 20 Nov 2018 01:20:56 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so50699911qkf.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:55:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MGyvvUrLG82fyYZI4kKXDmZmitZhSzKwNdI1JTjnMNI=;
-        b=wgpzjYhB9KCvpMdiIQl1LAIGVOa0d88LslNrEvSx6oQ8YRD5gBVfl2PXUOSWQHidbB
-         U9B/VaofemuoReM7cY21NFLWGME9Ga5Vp/cW43LBfl76onO7VEGRyVv4INA20YU643vI
-         +goVhoQOM9yirVWP9fdC2zb6ApjrRmpV4NoiscfHpqvAXr5+01DIiy62zaGNO+Zw1cZw
-         6Hk2T3+fliNHRXbT8GpXIDur++mNlKSZVZHQLewQNhV6eOhdDWdMraqGE4UAfZuWe0IU
-         tIk1FqCrYXYtd0JIgoeOn81nkPWYBFWGlhYnKU82gHN+Q8tnL1JCMHZ8p84iFCsUQK5y
-         WLOw==
+        bh=RSd0YY79CZ2ofVk0lazuSeMJcWSSybR1ELoxeT+ta+0=;
+        b=cxvJQHc1Z0RO/Nq9lluPFDjUTIeDltnH6lEusRZEACIVBxeawF8cueOhz1AYtIxTR9
+         WpEW4/qJ/f5uoUP+qj5N4qsQx0dwMJOkbCuaBoxfqY5yn6tjn76Z8hr5m9oXFg98Vk3q
+         4v4XDPxj7DsGkqMFzP6LymdT5i+zw0Pb+L8qkXboan0jmZfcSETZwOQaempQCQ0lKlcV
+         WXHGx3iGVs4urIDHaRVUoFjkmOQ+m4MZeNPAAzhxXFY8489kH40PCgx9KR7nD3zcmhTP
+         8g44s/syYZntgcgNy21lYRC2i8r7SCbk8WwcfW1PjtuZV/kNeWmaVLxsJHpZBLcN+yMG
+         96aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MGyvvUrLG82fyYZI4kKXDmZmitZhSzKwNdI1JTjnMNI=;
-        b=IAZDG5D/ubW3aSvSVLUMYGWEPfaw3pbGLhHq8K7aHssXteYX/BAfKt48Ja0xdlsHbs
-         dVxoSZr/+0mnVk/MtVrz2bCcdZoWkK5DcXr9Id1b4F7dTpjrHZFX0ptzuI8pj9jx2tOF
-         2RzZ/xNxOsdFAmrneQHTMeVWHayfGzV3XQUzBsVeIgMjN99jTGoRWLYs3cMjjt1/fo3t
-         Q1JlYyy29pDnEc+Q1KrX94ipGZfNP7lmrDRij/zbsGxuFWqyxF7s2XawG4B9mve7mGps
-         v+ibM5QiePBgvLx9ivg8q1C/gNLrd7K9efJjCDFO1OD5UwX//pE0yMrFfEzOZeOYbVph
-         oltg==
-X-Gm-Message-State: AGRZ1gJG+n5fv9+pphwInpJPo8q8yHqfdVz11hIfSI5ju7292JzDCW8P
-        RmoRTPwZ4wARODSJ5sp5f/WM3Q==
-X-Google-Smtp-Source: AJdET5dB/xCF63N+/t+cPwyHSuqbEa00oxxh+gEdgCLMczOO6t4X+QZY9TOu/iY1JF5p04XAVF6vCA==
-X-Received: by 2002:a5d:5745:: with SMTP id q5-v6mr18857097wrw.161.1542657219652;
-        Mon, 19 Nov 2018 11:53:39 -0800 (PST)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id i16sm22954132wmd.28.2018.11.19.11.53.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Nov 2018 11:53:38 -0800 (PST)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     davem@davemloft.net, ebiggers@kernel.org,
-        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2 03/11] crypto: CRYPTO_STATS should depend on CRYPTO_USER
-Date:   Mon, 19 Nov 2018 19:53:22 +0000
-Message-Id: <1542657210-37739-4-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542657210-37739-1-git-send-email-clabbe@baylibre.com>
-References: <1542657210-37739-1-git-send-email-clabbe@baylibre.com>
+        bh=RSd0YY79CZ2ofVk0lazuSeMJcWSSybR1ELoxeT+ta+0=;
+        b=DuFKLCW1JG/E0eS78hcBbNqc0bAjDAziDqf1HkughuMC1QWwXyoRdHxshq6UlhVa9x
+         XdljWiWpYF2BNsWmX+HRbPxCRS6kiuPy/yKBYFVRLHEn/3EkQqaBkkwgy9rVtslb+Fjf
+         ofD1qt7pY4YyIq0sivAt1/J/9tjSTScKjzFm8N0F5OIrUbsLB2RKKjfqdOVQRTnxRBKz
+         hnhdSC55ArsZAt3+My/6NTnfAaYFJTcg3wtKXW3vjay/kJ7CWzU0eVZsAQoO7bCKPnGL
+         C7rvmzoXmcNeJmuTN5hOmyDQMsNRwnm3ExyDlKunktAGotYwLl+l055HtUZ9zMQ3OpgN
+         PeCg==
+X-Gm-Message-State: AGRZ1gLlIbPM0HdJe+/5gOrXaGRDLCzeG5qr08XkpacFVut9WhYVZO80
+        eVFDOzB05PS3mNxKEVh44QtVwA7UkVo=
+X-Google-Smtp-Source: AJdET5dCwbvRc5rgvFihUMliFBl9M8ebiyjRkWfZArg9XXyduGTUO0LPEYBZjMUlFislmzCMc0bvhw==
+X-Received: by 2002:a37:a5d1:: with SMTP id o200mr21353218qke.328.1542657345902;
+        Mon, 19 Nov 2018 11:55:45 -0800 (PST)
+Received: from localhost.localdomain (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id r24sm27409959qtr.2.2018.11.19.11.55.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 11:55:45 -0800 (PST)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     bjorn.andersson@linaro.org
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] mfd: qcom_rpm: write fw_version to CTRL_REG
+Date:   Mon, 19 Nov 2018 14:53:17 -0500
+Message-Id: <20181119195317.22617-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114224201.16225-1-jonathan@marek.ca>
+References: <20181114224201.16225-1-jonathan@marek.ca>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CRYPTO_STATS is using CRYPTO_USER stuff, so it should depends on it.
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- crypto/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This is required as part of the initialization sequence on certain SoCs.
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 62dbd1a99fa3..a2f1b4a86b92 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1829,6 +1829,7 @@ config CRYPTO_USER_API_AEAD
+If these registers are not initialized, the hardware can be unresponsive.
+This fixes the driver on apq8060 (HP TouchPad device).
+
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+v2: updated the commit message to be more descriptive
+
+I think its important to note that the downstream driver does this for
+all versions, so it is safe to add this.
+
+ drivers/mfd/qcom_rpm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/mfd/qcom_rpm.c b/drivers/mfd/qcom_rpm.c
+index 52fafea06067..8d420c37b2a6 100644
+--- a/drivers/mfd/qcom_rpm.c
++++ b/drivers/mfd/qcom_rpm.c
+@@ -638,6 +638,10 @@ static int qcom_rpm_probe(struct platform_device *pdev)
+ 		return -EFAULT;
+ 	}
  
- config CRYPTO_STATS
- 	bool "Crypto usage statistics for User-space"
-+	depends on CRYPTO_USER
- 	help
- 	  This option enables the gathering of crypto stats.
- 	  This will collect:
++	writel(fw_version[0], RPM_CTRL_REG(rpm, 0));
++	writel(fw_version[1], RPM_CTRL_REG(rpm, 1));
++	writel(fw_version[2], RPM_CTRL_REG(rpm, 2));
++
+ 	dev_info(&pdev->dev, "RPM firmware %u.%u.%u\n", fw_version[0],
+ 							fw_version[1],
+ 							fw_version[2]);
 -- 
-2.18.1
+2.17.1
 
