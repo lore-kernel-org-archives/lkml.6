@@ -2,405 +2,217 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC99C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E508C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35A24208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:08:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A24208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F7392086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7392086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbeKSMaZ (ORCPT
+        id S1728039AbeKSMfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 07:30:25 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:65498 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727033AbeKSMaZ (ORCPT
+        Mon, 19 Nov 2018 07:35:15 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:33576 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726861AbeKSMfP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 07:30:25 -0500
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="48342706"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 19 Nov 2018 10:08:18 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 63DB74B714D6;
-        Mon, 19 Nov 2018 10:08:17 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 19 Nov 2018 10:08:20 +0800
-Date:   Mon, 19 Nov 2018 10:08:11 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v11 4/5] x86/boot: Dig out SRAT table from RSDP and find
- immovable memory
-Message-ID: <20181119020811.GC2336@localhost.localdomain>
-References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
- <20181112094645.4879-5-fanc.fnst@cn.fujitsu.com>
- <20181116111654.GC20313@zn.tnic>
+        Mon, 19 Nov 2018 07:35:15 -0500
+X-UUID: 5b64fd3af3f843a8a87d757951c2d0b1-20181119
+X-UUID: 5b64fd3af3f843a8a87d757951c2d0b1-20181119
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 151653256; Mon, 19 Nov 2018 10:12:50 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 19 Nov
+ 2018 10:12:49 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 19 Nov 2018 10:12:48 +0800
+Message-ID: <1542593568.24219.5.camel@mhfsdcap03>
+Subject: Re: [v3, PATCH 2/2] dt-binding: mediatek-dwmac: add binding
+ document for MediaTek MT2712 DWMAC
+From:   biao huang <biao.huang@mediatek.com>
+To:     Sean Wang <sean.wang@kernel.org>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Nelson Chang =?UTF-8?Q?=28=E5=BC=B5=E5=AE=B6=E7=A5=A5=29?= 
+        <nelson.chang@mediatek.com>, "andrew@lunn.ch" <andrew@lunn.ch>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Liguo Zhang =?UTF-8?Q?=28=E5=BC=A0=E7=AB=8B=E5=9B=BD=29?= 
+        <Liguo.Zhang@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        "joabreu@synopsys.com" <joabreu@synopsys.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Honghui Zhang =?UTF-8?Q?=28=E5=BC=A0=E6=B4=AA=E8=BE=89=29?= 
+        <Honghui.Zhang@mediatek.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Mon, 19 Nov 2018 10:12:48 +0800
+In-Reply-To: <CAGp9LzrHm-ympV2zAKZKcEfA25aJp8BSS+=01B6G=sP_HiSSdA@mail.gmail.com>
+References: <1542359926-28800-1-git-send-email-biao.huang@mediatek.com>
+         <1542359926-28800-2-git-send-email-biao.huang@mediatek.com>
+         <CAGp9LzrHm-ympV2zAKZKcEfA25aJp8BSS+=01B6G=sP_HiSSdA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181116111654.GC20313@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 63DB74B714D6.AE01B
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 12:16:54PM +0100, Borislav Petkov wrote:
->On Mon, Nov 12, 2018 at 05:46:44PM +0800, Chao Fan wrote:
->> To avoid KASLR extracting kernel on movable memory, slove the
->						      ^^^^^
->
->Please introduce a spellchecker into your patch creation workflow.
+Dear Sean,
 
-OK.
+	Thanks for your detailed comments~
 
->
->> conflict between KASLR and movable_node feature, dig the SRAT tables
->
->s/dig/determine/ or "compute SRAT table's address" or so.
->
->Also, replace "dig" with a more suitable verb in all your patches.
-
-How about "search RSDP pointer"
->
->> from RSDP pointer. Walk the SRAT tables and store the immovable
->> memory regions in immovable_mem[].
->
->		"... in an array called immovable_mem[]."
-
-Looks good.
-
->
->> There are three methods to get RSDP pointer: KEXEC condition,
->> EFI confition, BIOS condition.
->
->"condition" is not the right word here.
->
->> If KEXEC add 'acpi_rsdp' to cmdline, use it.
->> Otherwise, parse EFI table for RSDP.
->> Then, search memory for RSDP.
->> 
->> Imitate from ACPI code, based on acpi_os_get_root_pointer().
->> Process: RSDP->RSDT/XSDT->ACPI root table->SRAT.
->
->What?!
->
->This looks like a comment you've added as a note for yourself but not
->part of the final commit message. If you wanna explain the process, then
->write it out in plain english as if you're explaining it to someone who
->doesn't know what you're doing.
-
-OK.
-
->
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/Makefile |   4 +
->>  arch/x86/boot/compressed/acpitb.c | 139 ++++++++++++++++++++++++++++++
->>  arch/x86/boot/compressed/kaslr.c  |   4 -
->>  arch/x86/boot/compressed/misc.h   |  15 ++++
->>  4 files changed, 158 insertions(+), 4 deletions(-)
->> 
->> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
->> index 466f66c8a7f8..b51f7629b8ef 100644
->> --- a/arch/x86/boot/compressed/Makefile
->> +++ b/arch/x86/boot/compressed/Makefile
->> @@ -84,6 +84,10 @@ ifdef CONFIG_X86_64
->>  	vmlinux-objs-y += $(obj)/pgtable_64.o
->>  endif
->>  
->> +#if (defined CONFIG_MEMORY_HOTREMOVE) && (defined CONFIG_RANDOMIZE_BASE)
->> +vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
->> +#endif
->
->Right, as previously pointed out, this needs that CONFIG_ symbol and
->then you can save yourself most (if not all) of the ifdeffery in the
->rest of the patchset.
-
-That makes sense, I will do that.
-
->
->> +
->>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
->>  
->>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
->> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
->> index 5cfb4efa5a19..161f21a7fb3b 100644
->> --- a/arch/x86/boot/compressed/acpitb.c
->> +++ b/arch/x86/boot/compressed/acpitb.c
->> @@ -14,6 +14,11 @@
->>  #define BOOT_STRING
->>  #include "../string.h"
->>  
->> +#ifdef CONFIG_MEMORY_HOTREMOVE
->> +/* Store the immovable memory regions */
->> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
->> +#endif
->> +
->>  /* Search EFI table for RSDP table. */
->>  static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->>  {
->> @@ -226,3 +231,137 @@ static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
->>  	}
->>  #endif
->>  }
->> +
->> +/*
->> + * Used to dig RSDP table from EFI table or BIOS.
->> + * If RSDP table found in EFI table, use it. Or search BIOS.
->> + * Based on acpi_os_get_root_pointer().
->> + */
->> +static acpi_physical_address get_rsdp_addr(void)
->> +{
->> +	acpi_physical_address pa = 0;
->> +
->> +	get_acpi_rsdp(&pa);
->> +
->> +	if (!pa)
->> +		efi_get_rsdp_addr(&pa);
->> +
->> +	if (!pa)
->> +		bios_get_rsdp_addr(&pa);
->> +
->> +	return pa;
->> +}
->> +
->> +static struct acpi_table_header *get_acpi_srat_table(void)
->> +{
->> +	acpi_physical_address acpi_table;
->> +	acpi_physical_address root_table;
->> +	struct acpi_table_header *header;
->> +	struct acpi_table_rsdp *rsdp;
->> +	bool acpi_use_rsdt = false;
->> +	char *signature;
->> +	char arg[10];
->> +	u8 *entry;
->> +	u32 count;
->> +	u32 size;
->> +	int i, j;
->> +	int ret;
->> +	u32 len;
->> +
->> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
->> +	if (!rsdp)
->> +		return NULL;
->> +
->> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
->> +	if (ret == 4 && !strncmp(arg, "rsdt", 4))
->> +		acpi_use_rsdt = true;
->> +
->> +	/* Get RSDT or XSDT from RSDP. */
->> +	if (!acpi_use_rsdt &&
->> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
->> +		root_table = rsdp->xsdt_physical_address;
->> +		size = ACPI_XSDT_ENTRY_SIZE;
->> +	} else {
->> +		root_table = rsdp->rsdt_physical_address;
->> +		size = ACPI_RSDT_ENTRY_SIZE;
->> +	}
->
->Reorganize that code here to get rid of acpi_use_rsdt.
-
-OK.
-
->
->> +
->> +	/* Get ACPI root table from RSDT or XSDT.*/
->> +	header = (struct acpi_table_header *)root_table;
->> +	len = header->length;
->
->No checking of that header pointer before dereffing it?
->
->If it is NUL, that gives you a very nasty bug to try to debug in the
->early code.
->
->> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
->
->Uuh, no checking for count wrapping around here due to wrong len? That
->would give you a *lot* of looping below if it wraps.
->
->IOW, you need to verify all those values before doing arithmetic with
->them - it is early code and it is BIOS - there's no trusting it.
-
-I will add the check.
-
->
->Also, it is not "count" but "num_entries" or so.
->
->> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
->> +
->> +	for (i = 0; i < count; i++) {
->
->That variable i is not needed, right?
->
->	while (num_entries--)
->
->?
-
-Yes
-
->
->> +		u64 address64;
->> +
->> +		if (size == ACPI_RSDT_ENTRY_SIZE)
->> +			acpi_table = ((acpi_physical_address)
->> +				      (*ACPI_CAST_PTR(u32, entry)));
->> +		else {
->> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
->> +			acpi_table = (acpi_physical_address) address64;
->> +		}
->> +
->> +		if (acpi_table) {
->
->Now can acpi_table be NUL here?
->
-
-Thank you,
-I will change all of these.
-
-Thanks,
-Chao Fan
-
->> +			header = (struct acpi_table_header *)acpi_table;
->> +			signature = header->signature;
->> +
->> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
->> +				return header;
->> +		}
->> +		entry += size;
->> +	}
->> +	return NULL;
->> +}
->> +
->> +/*
->> + * According to ACPI table, filter the immvoable memory regions
->					  ^^^^^^^^^
->Typo.
->
->> + * and store them in immovable_mem[].
->> + */
->> +void get_immovable_mem(void)
->> +{
->> +	struct acpi_table_header *table_header;
->> +	struct acpi_subtable_header *table;
->> +	struct acpi_srat_mem_affinity *ma;
->> +	unsigned long table_end;
->> +	char arg[10];
->> +	int i = 0;
->> +	int ret;
->> +
->> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
->> +	if (ret == 3 && !strncmp(arg, "off", 3))
->> +		return;
->> +
->> +	if (!cmdline_find_option_bool("movable_node"))
->> +		return;
->> +
->> +	table_header = get_acpi_srat_table();
->> +	if (!table_header)
->> +		return;
->> +
->> +	table_end = (unsigned long)table_header + table_header->length;
->> +
->> +	table = (struct acpi_subtable_header *)
->> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
->> +
->> +	while (((unsigned long)table) +
->> +		       sizeof(struct acpi_subtable_header) < table_end) {
->> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
->> +			ma = (struct acpi_srat_mem_affinity *)table;
->> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> +				immovable_mem[i].start = ma->base_address;
->> +				immovable_mem[i].size = ma->length;
->> +				i++;
->> +			}
->> +
->> +			if (i >= MAX_NUMNODES*2) {
->> +				debug_putstr("Too many immovable memory regions, aborted.\n");
->
->"..., aborting."
->
->> +				break;
->> +			}
->> +		}
->> +		table = (struct acpi_subtable_header *)
->> +			((unsigned long)table + table->length);
->> +	}
->> +	num_immovable_mem = i;
->> +}
->> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
->> index 9ed9709d9947..b251572e77af 100644
->> --- a/arch/x86/boot/compressed/kaslr.c
->> +++ b/arch/x86/boot/compressed/kaslr.c
->> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
->>  #define KASLR_COMPRESSED_BOOT
->>  #include "../../lib/kaslr.c"
->>  
->> -struct mem_vector {
->> -	unsigned long long start;
->> -	unsigned long long size;
->> -};
->>  
->>  /* Only supporting at most 4 unusable memmap regions with kaslr */
->>  #define MAX_MEMMAP_REGIONS	4
->> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
->> index a1d5918765f3..4a3645fda0ed 100644
->> --- a/arch/x86/boot/compressed/misc.h
->> +++ b/arch/x86/boot/compressed/misc.h
->> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
->>  			    unsigned long *output,
->>  			    unsigned long output_size,
->>  			    unsigned long *virt_addr);
->> +struct mem_vector {
->> +	unsigned long long start;
->> +	unsigned long long size;
->> +};
->> +
->>  /* cpuflags.c */
->>  bool has_cpuflag(int flag);
->>  #else
->> @@ -116,3 +121,13 @@ static inline void console_init(void)
->>  void set_sev_encryption_mask(void);
->>  
->>  #endif
->> +
->> +/* acpitb.c */
->> +#ifdef CONFIG_RANDOMIZE_BASE
->> +int num_immovable_mem;
->> +#ifdef CONFIG_MEMORY_HOTREMOVE
->> +/* Store the amount of immovable memory regions */
->
->Above says "regions" but define below is "TABLES". Hmmm?
->
->> +#define ACPI_MAX_TABLES                128
->> +void get_immovable_mem(void);
->> +#endif
->> +#endif
->> -- 
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+On Sat, 2018-11-17 at 08:21 +0800, Sean Wang wrote:
+> On Fri, Nov 16, 2018 at 1:19 AM Biao Huang <biao.huang@mediatek.com> wrote:
+> >
+> > The commit adds the device tree binding documentation for the MediaTek DWMAC
+> > found on MediaTek MT2712.
+> >
+> > Change-Id: I3728666bf65927164bd82fa8dddb90df8270bd44
+> 
+> Drop change-id
+sorry, I forgot it. will remove in next version.
+> 
+> > Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/net/mediatek-dwmac.txt     |   77 ++++++++++++++++++++
+> >  1 file changed, 77 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> > new file mode 100644
+> > index 0000000..7fd56e0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> > @@ -0,0 +1,77 @@
+> > +MediaTek DWMAC glue layer controller
+> > +
+> > +This file documents platform glue layer for stmmac.
+> > +Please see stmmac.txt for the other unchanged properties.
+> > +
+> > +The device node has following properties.
+> > +
+> > +Required properties:
+> > +- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
+> > +- reg:  Address and length of the register set for the device
+> > +- interrupts:  Should contain the MAC interrupts
+> > +- interrupt-names: Should contain a list of interrupt names corresponding to
+> > +       the interrupts in the interrupts property, if available.
+> > +       Should be "macirq" for the main MAC IRQ
+> > +- clocks: Must contain a phandle for each entry in clock-names.
+> > +- clock-names: The name of the clock listed in the clocks property. These are
+> > +       "axi", "apb", "mac_ext", "mac_parent", "ptp_ref", "ptp_parent", "ptp_top"
+> > +       for MT2712 SoC
+> 
+> About not including these parent clocks to the controller, you can
+> refer to assigned-clocks, assigned-clock-parents, assigned-clock-rates
+> noted in Documentation/devicetree/bindings/clock/clock-bindings.txt to
+> determine what speed these MUXs should be run at and see [1] as the
+> example how applied in dts.
+> 
+> [1]
+> https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/mt7623.dtsi#L660
+> 
+Got it, I'll remove parent info to dts.
+> > +- mac-address: See ethernet.txt in the same directory
+> > +- phy-mode: See ethernet.txt in the same directory
+> > +
+> > +Optional properties:
+> > +- tx-delay: TX clock delay macro value. Range is 0~31. Default is 0.
+> > +       It should be defined for rgmii/rgmii-rxid/mii interface.
+> > +- rx-delay: RX clock delay macro value. Range is 0~31. Default is 0.
+> > +       It should be defined for rgmii/rgmii-txid/mii/rmii interface.
+> > +- fine-tune: This property will select coarse-tune delay or fine delay
+> > +       for rgmii interface.
+> what is the property's type?
+> 
+ok, property type info will be added in next version.
+> > +       If fine-tune delay is enabled, tx-delay/rx-delay is 170+/-50ps
+> > +       per stage.
+> > +       Else coarse-tune delay is enabled, tx-delay/rx-delay is 0.55+/-0.2ns
+> > +       per stage.
+> > +       This property do not apply to non-rgmii PHYs.
+> > +       Only coarse-tune delay is supported for mii/rmii PHYs.
+> > +- rmii-rxc: Reference clock of rmii is from external PHYs,
+> what is the property's type?
+> 
+got it.
+> > +       and it can be connected to TXC or RXC pin on MT2712 SoC.
+> > +       If ref_clk <--> TXC, disable it.
+> > +       Else ref_clk <--> RXC, enable it.
+> > +- txc-inverse: Inverse tx clock for mii/rgmii.
+> what is the property's type?
+> 
+> > +       Inverse tx clock inside MAC relative to reference clock for rmii,
+> > +       and it rarely happen.
+> > +- rxc-inverse: Inverse rx clock for mii/rgmii interfaces.
+> what is the property's type?
+> 
+got it.
+> > +       Inverse reference clock for rmii.
+> 
+> If these optional properties look like generic enough, it would be
+> good that place them to stmmac.txt. Otherwise, they should be added
+> "mediatek," as the prefix string for these vendor-specific things.
+> 
+it's mediatek-specific, and the prefix string will be added in next
+version.
+> > +
+> > +Example:
+> > +       eth: ethernet@1101c000 {
+> > +               compatible = "mediatek,mt2712-gmac";
+> > +               reg = <0 0x1101c000 0 0x1300>;
+> > +               interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
+> > +               interrupt-names = "macirq";
+> > +               phy-mode ="rgmii-id";
+> > +               mac-address = [00 55 7b b5 7d f7];
+> > +               clock-names = "axi",
+> > +                             "apb",
+> > +                             "mac_ext",
+> > +                             "mac_parent",
+> > +                             "ptp_ref",
+> > +                             "ptp_parent",
+> > +                             "ptp_top";
+> > +               clocks = <&pericfg CLK_PERI_GMAC>,
+> > +                        <&pericfg CLK_PERI_GMAC_PCLK>,
+> > +                        <&topckgen CLK_TOP_ETHER_125M_SEL>,
+> > +                        <&topckgen CLK_TOP_ETHERPLL_125M>,
+> > +                        <&topckgen CLK_TOP_ETHER_50M_SEL>,
+> > +                        <&topckgen CLK_TOP_APLL1_D3>,
+> > +                        <&topckgen CLK_TOP_APLL1>;
+> > +               snps,txpbl = <32>;
+> > +               snps,rxpbl = <32>;
+> > +               snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
+> > +               snps,reset-active-low;
+> > +               tx-delay = <9>;
+> > +               rx-delay = <9>;
+> > +               fine-tune;
+> > +               rmii-rxc;
+> > +               txc-inverse;
+> > +               rxc-inverse;
+> > +       };
+> > --
+> > 1.7.9.5
+> >
+> >
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
