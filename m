@@ -4,49 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8C1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCCBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C80214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C869C214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="deQvN4yT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C80214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQIAEXf7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C869C214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404973AbeKTDXM (ORCPT
+        id S2404572AbeKTDXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35082 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbeKTDXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:10 -0500
+        id S2403980AbeKTDXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F07C214D9;
-        Mon, 19 Nov 2018 16:58:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DE5D2148E;
+        Mon, 19 Nov 2018 16:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646735;
-        bh=iXbt385+ukAPqhbfKw5rqxjWHXZCUMG2B5zFMk6H/wM=;
+        s=default; t=1542646737;
+        bh=WahMsRuBxL2nAPrJ4ZMmfi3Zbuo215R7x1p6PJeM/dw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=deQvN4yTMIIlRIpyGQ4uIFJjKXnFL76lInB60wYkN0NQo7D47furqQHIX8nWcDYdw
-         5jJgvxkhPb5eUMatTzPmkxzRrG9UWwzk1NOuJgb9Q9o4hZaP+Sflwp4n+/xcIb/bwN
-         7i4h30KZrlqR4Y+se90/XxgLRKRzXFLHMPVAmRlE=
+        b=iQIAEXf7HXCBHUOfkQqU/5Hruijzv54TORRb7r3O6Nlu7z7C8xBOPKl0L55weOZfY
+         HEmNobmpW2V2bdQsLDVNQqVaVm/8neHBmTFQmUodwcSiiwDh8Du8KTJtnKuA2MO6Se
+         6EG6lHPw/08Fn3tP82tlOafzFEeURy8a+v1iB1AI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 023/160] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
-Date:   Mon, 19 Nov 2018 17:27:42 +0100
-Message-Id: <20181119162632.836253635@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.4 064/160] smb3: do not attempt cifs operation in smb3 query info error path
+Date:   Mon, 19 Nov 2018 17:28:23 +0100
+Message-Id: <20181119162637.594941192@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,61 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Hewitt <christianshewitt@gmail.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
+commit 1e77a8c204c9d1b655c61751b8ad0fde22421dbb upstream.
 
-This patch adds the device ID for the AMPAK AP6335 combo module used
-in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
-chip identifies itself as BCM4339, while Bluetooth identifies itself
-as BCM4335 (rev C0):
+If backupuid mount option is sent, we can incorrectly retry
+(on access denied on query info) with a cifs (FindFirst) operation
+on an smb3 mount which causes the server to force the session close.
 
-```
-[    4.864248] Bluetooth: hci0: BCM: chip id 86
-[    4.866388] Bluetooth: hci0: BCM: features 0x2f
-[    4.889317] Bluetooth: hci0: BCM4335C0
-[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
-[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
-```
+We set backup intent on open so no need for this fallback.
 
-Output from hciconfig:
+See kernel bugzilla 201435
 
-```
-hci0:	Type: Primary  Bus: UART
-	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
-	UP RUNNING
-	RX bytes:7567 acl:234 sco:0 events:386 errors:0
-	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
-	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
-	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
-	Link policy: RSWITCH SNIFF
-	Link mode: SLAVE ACCEPT
-	Name: 'HUB'
-	Class: 0x0c0000
-	Service Classes: Rendering, Capturing
-	Device Class: Miscellaneous,
-	HCI Version: 4.0 (0x6)  Revision: 0x10c
-	LMP Version: 4.0 (0x6)  Subversion: 0x6109
-	Manufacturer: Broadcom Corporation (15)
-```
-
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/bluetooth/btbcm.c |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/bluetooth/btbcm.c
-+++ b/drivers/bluetooth/btbcm.c
-@@ -270,6 +270,7 @@ static const struct {
- 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
- 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
- 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
-+	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
- 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
- 	{ }
- };
+---
+ fs/cifs/inode.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -756,7 +756,15 @@ cifs_get_inode_info(struct inode **inode
+ 	} else if (rc == -EREMOTE) {
+ 		cifs_create_dfs_fattr(&fattr, sb);
+ 		rc = 0;
+-	} else if (rc == -EACCES && backup_cred(cifs_sb)) {
++	} else if ((rc == -EACCES) && backup_cred(cifs_sb) &&
++		   (strcmp(server->vals->version_string, SMB1_VERSION_STRING)
++		      == 0)) {
++			/*
++			 * For SMB2 and later the backup intent flag is already
++			 * sent if needed on open and there is no path based
++			 * FindFirst operation to use to retry with
++			 */
++
+ 			srchinf = kzalloc(sizeof(struct cifs_search_info),
+ 						GFP_KERNEL);
+ 			if (srchinf == NULL) {
 
 
