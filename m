@@ -2,160 +2,153 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5413C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB74FC4161D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B223A2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B223A2080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 919A52080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 919A52080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731039AbeKTHvH (ORCPT
+        id S1731061AbeKTHvO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:51:07 -0500
-Received: from mx2.mailbox.org ([80.241.60.215]:40756 "EHLO mx2.mailbox.org"
+        Tue, 20 Nov 2018 02:51:14 -0500
+Received: from mga05.intel.com ([192.55.52.43]:58023 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbeKTHvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:51:07 -0500
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id D8CC8A24DF;
-        Mon, 19 Nov 2018 22:25:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id nSyCXggi8Ycz; Mon, 19 Nov 2018 22:25:28 +0100 (CET)
-Date:   Tue, 20 Nov 2018 08:25:19 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-Message-ID: <20181119212519.yqh7qldznqwct3dv@yavin>
-References: <20181119103241.5229-1-christian@brauner.io>
- <20181119103241.5229-3-christian@brauner.io>
- <20181119202857.k5zw742xjfrw677j@yavin>
- <20181119205518.btew3vxwgva4w3zh@brauner.io>
- <20181119211810.73ptfhnwdmkngfi4@yavin>
- <20181119212126.u2nkijmula6wcfqi@brauner.io>
+        id S1730141AbeKTHvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:51:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:25:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
+   d="scan'208";a="109618991"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 13:25:41 -0800
+Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 19 Nov 2018 13:25:40 -0800
+Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
+ fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 19 Nov 2018 13:25:40 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
+ LCSMSX154.ger.corp.intel.com ([169.254.7.79]) with mapi id 14.03.0415.000;
+ Mon, 19 Nov 2018 23:25:23 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Nayna Jain" <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
+ tpm2_commit_space()
+Thread-Topic: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
+ tpm2_commit_space()
+Thread-Index: AQHUfz0HV9TuDcLLJkegLXS35AC8EqVXnOgQ
+Date:   Mon, 19 Nov 2018 21:25:22 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA23561@hasmsx108.ger.corp.intel.com>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzAxYWQwMDYtNzFiZC00YTcwLWI4MTctYTYzZjJkYzE1MDllIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiakY4NEhrY2JYV2xkYndOTm1HdmlcL3YyXC9JYjFFRHlcL2U3UUhiQlFVcHk0N0FiNmY3dzZYTk1DZ1B0OVN1XC8xNzEifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zpidgantrji2nrnp"
-Content-Disposition: inline
-In-Reply-To: <20181119212126.u2nkijmula6wcfqi@brauner.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zpidgantrji2nrnp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
-> On Tue, Nov 20, 2018 at 08:18:10AM +1100, Aleksa Sarai wrote:
-> > On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
-> > > On Tue, Nov 20, 2018 at 07:28:57AM +1100, Aleksa Sarai wrote:
-> > > > On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
-> > > > > +	if (info) {
-> > > > > +		ret =3D __copy_siginfo_from_user(sig, &kinfo, info);
-> > > > > +		if (unlikely(ret))
-> > > > > +			goto err;
-> > > > > +		/*
-> > > > > +		 * Not even root can pretend to send signals from the kernel.
-> > > > > +		 * Nor can they impersonate a kill()/tgkill(), which adds
-> > > > > +		 * source info.
-> > > > > +		 */
-> > > > > +		ret =3D -EPERM;
-> > > > > +		if ((kinfo.si_code >=3D 0 || kinfo.si_code =3D=3D SI_TKILL) &&
-> > > > > +		    (task_pid(current) !=3D pid))
-> > > > > +			goto err;
-> > > > > +	} else {
-> > > > > +		prepare_kill_siginfo(sig, &kinfo);
-> > > > > +	}
-> > > >=20
-> > > > I wonder whether we should also have a pidns restriction here, since
-> > > > currently it isn't possible for a container process using a pidns to
-> > > > signal processes outside its pidns. AFAICS, this isn't done through=
- an
-> > > > explicit check -- it's a side-effect of processes in a pidns not be=
-ing
-> > > > able to address non-descendant-pidns processes.
-> > > >=20
-> > > > But maybe it's reasonable to allow sending a procfd to a different =
-pidns
-> > > > and the same operations working on it? If we extend the procfd API =
-to
-> > >=20
-> > > No, I don't think so. I really don't want any fancy semantics in here.
-> > > Fancy doesn't get merged and fancy is hard to maintain. So we should =
-do
-> > > something like:
-> > >=20
-> > > if (proc_pid_ns() !=3D current_pid_ns)
-> > > 	return EINVAL
-> >=20
-> > This isn't quite sufficient. The key thing is that you have to be in an
-> > *ancestor* (or same) pidns, not the *same* pidns. Ideally you can re-use
-> > the check already in pidns_get_parent, and expose it. It would be
-> > something as trivial as:
-> >=20
-> > bool pidns_is_descendant(struct pid_namespace *ns,
-> >                          struct pid_namespace *ancestor)
-> > {
-> >     for (;;) {
-> >         if (!ns)
-> >             return false;
-> >         if (ns =3D=3D ancestor)
-> >             break;
-> >         ns =3D ns->parent;
-> >     }
-> >     return true;
-> > }
->=20
-> That can be done without a loop by comparing the level counter for the
-> two pid namespaces.
+> 
+> The error logging for tpm2_commit_space() is in a wrong place. This commit
+> moves it inside that function.
+> 
+> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> ---
+>  drivers/char/tpm/tpm-interface.c | 2 --
+>  drivers/char/tpm/tpm2-space.c    | 9 ++++++---
+>  2 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
+> interface.c
+> index 64510ed81b46..7ac6ada8428c 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> *chip,
+>  	}
+> 
+>  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> -	if (rc)
+> -		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+> 
+>  out:
+>  	/* may fail but do not override previous error value in rc */ diff --git
+> a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c index
+> 1131a8e7b79b..5ecc73988f7c 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip,
+> struct tpm_space *space,
+>  	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+>  	if (rc) {
+>  		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>  	}
+> 
+>  	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+>  	if (rc) {
+>  		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>  	}
+> 
+>  	rc = tpm2_save_space(chip);
+>  	if (rc) {
+>  		tpm2_flush_space(chip);
+> -		return rc;
+> +		goto out;
+>  	}
+> 
+>  	*bufsiz = be32_to_cpu(header->length); @@ -526,4 +526,7 @@ int
+> tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+>  	memcpy(space->session_buf, chip->work_space.session_buf,
+> PAGE_SIZE);
+> 
+>  	return 0;
+> +out:
+Maybe 'out' is too positive name for an error-only exit point? 
+or you can use if (rc) ... dev_err()
+> +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
+> +	return rc;
+>  }
+> --
+> 2.19.1
 
-If so, we can refactor how pidns_get_parent() and family work. :P
-
-But yes, I agree with doing the above check.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---zpidgantrji2nrnp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvzKj4ACgkQSnvnv3De
-m5+vyQ/9GOPT3/WkZ6fIioaCLZF1BAQUrF/fxKBg37g2IgUNZPQM0AQ7bj7JF0Up
-kEdujH6PGyCgbvU3xPwPzcL1o/imFH4/007apqvo6zKfXKG5CpYVFlFa+AEVKX0w
-FYjsv7MHvnM2xaVLnt9/0UWdckzg6G0jtpDPYoDNMjrRdzhppNVl39iJhfovZehe
-4f7FA/jPncrsX+NWxlhhWvilkCE1M5c7C7jZI4Eye7SLVSvK/PdJqqzvaMkWx+up
-J8Jt3wFyWIdKg2DYrwaoJuYmlVuVObydSEy/fswqlY/7S25Ddp3Le1zBFYj/o3p0
-khnVBWf/KAwRe7Dkiv9XXuchMsMu6P8SfsmvWFLLbRV6HKzYS0JJU5blRabcEHuS
-oboBw7LyK3vBmV34xpiXRw7LtI3Vm43zsLuc6WxBep8FeL0arCjTzdiMcu0f890q
-qoxttlsZXG3FksoQFnxnzzQBUSEjL9GW1LtJ/Ldcyh4PbyC4B2mb84hEtzKVT9Xr
-FIzRz1XHe4KoL2jfn+w09mena4lla6e9FGLyxavTAf0psObZwzF8kIKgn+gGQUjG
-dVHFYNJpV1sfltcl+dG+x8Vl79IKgIaqwMRqqncxlbmNAFxn9PUsInVKGKY1C+O7
-U1pBphPN85Yo3ciAKo4IRMR6AQMwCY4IUCjNgPtMHelZiVihZ7o=
-=kRaK
------END PGP SIGNATURE-----
-
---zpidgantrji2nrnp--
