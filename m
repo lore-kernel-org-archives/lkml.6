@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC79C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58518C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888842089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239D22089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vk7vJrCy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888842089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9aAVXj8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239D22089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389423AbeKTDMg (ORCPT
+        id S2389435AbeKTDMj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48920 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387988AbeKTDMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:35 -0500
+        id S2387988AbeKTDMi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 063662089F;
-        Mon, 19 Nov 2018 16:48:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91E23206BA;
+        Mon, 19 Nov 2018 16:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646103;
-        bh=p0Bus2c2+aUTD5U1K+f3LH5H52m59QMQKGaMOoJNmvU=;
+        s=default; t=1542646106;
+        bh=RVv+wnPDQK9tiTY7W8AiWIpXoAKofjNgI80uHQ5MgT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vk7vJrCy+vDJUpIzEL/bgftfPd8om4J9Dx+MCLbj+FJ9id78+imSS/w75zIo72XFd
-         xFNnfHjz+tqDTdDm7lZkfbIO2DL+5FqRAftRV3A+Y0mraNE8F/p6x0v/eekuPKkYoI
-         7C2aYhZ07xkLIbbIWWPiUwwyh1MoRHYhsmsjgkVI=
+        b=L9aAVXj8z/uiN8uL5W2wIdG8wrE4w+Ei1kjYp6RV9X3PzQf9HHVQD4dPujrK9CSbI
+         0JjI/42q6gny6zB4g2aDtn6tarqXDCuK/BErgpwsjx//P/35V7Dy2VCVcmuEZl41SA
+         H42Wy6y0U64nQmgjAgoLWT1QWWBr7oAa+IhC6Au8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 008/124] powerpc/mm: Dont report hugepage tables as memory leaks when using kmemleak
-Date:   Mon, 19 Nov 2018 17:27:42 +0100
-Message-Id: <20181119162614.607102173@linuxfoundation.org>
+Subject: [PATCH 4.14 009/124] drm/omap: fix memory barrier bug in DMM driver
+Date:   Mon, 19 Nov 2018 17:27:43 +0100
+Message-Id: <20181119162614.755335278@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,62 +63,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 803d690e68f0c5230183f1a42c7d50a41d16e380 ]
+[ Upstream commit 538f66ba204944470a653a4cccc5f8befdf97c22 ]
 
-When a process allocates a hugepage, the following leak is
-reported by kmemleak. This is a false positive which is
-due to the pointer to the table being stored in the PGD
-as physical memory address and not virtual memory pointer.
+A DMM timeout "timed out waiting for done" has been observed on DRA7
+devices. The timeout happens rarely, and only when the system is under
+heavy load.
 
-unreferenced object 0xc30f8200 (size 512):
-  comm "mmap", pid 374, jiffies 4872494 (age 627.630s)
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace:
-    [<e32b68da>] huge_pte_alloc+0xdc/0x1f8
-    [<9e0df1e1>] hugetlb_fault+0x560/0x8f8
-    [<7938ec6c>] follow_hugetlb_page+0x14c/0x44c
-    [<afbdb405>] __get_user_pages+0x1c4/0x3dc
-    [<b8fd7cd9>] __mm_populate+0xac/0x140
-    [<3215421e>] vm_mmap_pgoff+0xb4/0xb8
-    [<c148db69>] ksys_mmap_pgoff+0xcc/0x1fc
-    [<4fcd760f>] ret_from_syscall+0x0/0x38
+Debugging showed that the timeout can be made to happen much more
+frequently by optimizing the DMM driver, so that there's almost no code
+between writing the last DMM descriptors to RAM, and writing to DMM
+register which starts the DMM transaction.
 
-See commit a984506c542e2 ("powerpc/mm: Don't report PUDs as
-memory leaks when using kmemleak") for detailed explanation.
+The current theory is that a wmb() does not properly ensure that the
+data written to RAM is observable by all the components in the system.
 
-To fix that, this patch tells kmemleak to ignore the allocated
-hugepage table.
+This DMM timeout has caused interesting (and rare) bugs as the error
+handling was not functioning properly (the error handling has been fixed
+in previous commits):
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+ * If a DMM timeout happened when a GEM buffer was being pinned for
+   display on the screen, a timeout error would be shown, but the driver
+   would continue programming DSS HW with broken buffer, leading to
+   SYNCLOST floods and possible crashes.
+
+ * If a DMM timeout happened when other user (say, video decoder) was
+   pinning a GEM buffer, a timeout would be shown but if the user
+   handled the error properly, no other issues followed.
+
+ * If a DMM timeout happened when a GEM buffer was being released, the
+   driver does not even notice the error, leading to crashes or hang
+   later.
+
+This patch adds wmb() and readl() calls after the last bit is written to
+RAM, which should ensure that the execution proceeds only after the data
+is actually in RAM, and thus observable by DMM.
+
+The read-back should not be needed. Further study is required to understand
+if DMM is somehow special case and read-back is ok, or if DRA7's memory
+barriers do not work correctly.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/hugetlbpage.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/powerpc/mm/hugetlbpage.c
-+++ b/arch/powerpc/mm/hugetlbpage.c
-@@ -19,6 +19,7 @@
- #include <linux/moduleparam.h>
- #include <linux/swap.h>
- #include <linux/swapops.h>
-+#include <linux/kmemleak.h>
- #include <asm/pgtable.h>
- #include <asm/pgalloc.h>
- #include <asm/tlb.h>
-@@ -110,6 +111,8 @@ static int __hugepte_alloc(struct mm_str
- 		for (i = i - 1 ; i >= 0; i--, hpdp--)
- 			*hpdp = __hugepd(0);
- 		kmem_cache_free(cachep, new);
-+	} else {
-+		kmemleak_ignore(new);
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -273,6 +273,17 @@ static int dmm_txn_commit(struct dmm_txn
  	}
- 	spin_unlock(&mm->page_table_lock);
- 	return 0;
+ 
+ 	txn->last_pat->next_pa = 0;
++	/* ensure that the written descriptors are visible to DMM */
++	wmb();
++
++	/*
++	 * NOTE: the wmb() above should be enough, but there seems to be a bug
++	 * in OMAP's memory barrier implementation, which in some rare cases may
++	 * cause the writes not to be observable after wmb().
++	 */
++
++	/* read back to ensure the data is in RAM */
++	readl(&txn->last_pat->next_pa);
+ 
+ 	/* write to PAT_DESCR to clear out any pending transaction */
+ 	dmm_write(dmm, 0x0, reg[PAT_DESCR][engine->id]);
 
 
