@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F9FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48189C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EF8214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10D8C214E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjerWx14"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EF8214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1WmlP5D5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10D8C214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406408AbeKTD2P (ORCPT
+        id S2406423AbeKTD2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42508 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405461AbeKTD2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:14 -0500
+        id S2405461AbeKTD2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 081842146D;
-        Mon, 19 Nov 2018 17:03:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F3AD2146D;
+        Mon, 19 Nov 2018 17:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647037;
-        bh=xjlLZepVAiXOIulbj7oEikX6D1viJTxa5gVdxyEGxIY=;
+        s=default; t=1542647040;
+        bh=8lv1CtcWnRwiumeq5by8XfJhrCrRS+Er6HSYZd+l3xA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QjerWx14Nqn8c1+hldsW5Wz98zzXMIqA9Nm29EjwItMfKjRQcQuvMUzur9Ot1G9zv
-         Rqyk3P+0Yh7EGIYgjZ3EA4rBeblTurRztwrZoCQUvTpU8ZtlLqB+KY7NC6h3CTnAsh
-         QvgVMRJpRNkOk7KPEF/HGT3uINuzckeMDU7tHiyA=
+        b=1WmlP5D5VKfAeOwesGGsIaYwwSXKuwKnM5q/uuLSixLEyRfCncJ/imAAKxGzg1Uso
+         72E7iVqerqeUqfrkoEpe+QSoXif6CVhcN446bW1qG2E27QXhV+cDkbYSiDrmBTQ2/L
+         dQjvBYmsJ1eJ7kbS5OLvaQwG5JrrZBQHxrVM9xtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alex Stanoev <alex@astanoev.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 3.18 04/90] ALSA: ca0106: Disable IZD on SB0570 DAC to fix audio pops
-Date:   Mon, 19 Nov 2018 17:28:46 +0100
-Message-Id: <20181119162621.411777297@linuxfoundation.org>
+        stable@vger.kernel.org, He Zhe <zhe.he@windriver.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kstewart@linuxfoundation.org, pombredanne@nexb.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 3.18 05/90] x86/corruption-check: Fix panic in memory_corruption_check() when boot option without value is provided
+Date:   Mon, 19 Nov 2018 17:28:47 +0100
+Message-Id: <20181119162621.586624454@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,51 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alex Stanoev <alex@astanoev.com>
+From: He Zhe <zhe.he@windriver.com>
 
-commit ac237c28d5ac1b241d58b1b7b4b9fa10efb22fb5 upstream.
+commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
 
-The Creative Audigy SE (SB0570) card currently exhibits an audible pop
-whenever playback is stopped or resumed, or during silent periods of an
-audio stream. Initialise the IZD bit to the 0 to eliminate these pops.
+memory_corruption_check[{_period|_size}]()'s handlers do not check input
+argument before passing it to kstrtoul() or simple_strtoull(). The argument
+would be a NULL pointer if each of the kernel parameters, without its
+value, is set in command line and thus cause the following panic.
 
-The Infinite Zero Detection (IZD) feature on the DAC causes the output
-to be shunted to Vcap after 2048 samples of silence. This discharges the
-AC coupling capacitor through the output and causes the aforementioned
-pop/click noise.
+PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
+[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
+...
+[    0.000000] Call Trace
+[    0.000000]  ? set_corruption_check+0x21/0x49
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
-The behaviour of the IZD bit is described on page 15 of the WM8768GEDS
-datasheet: "With IZD=1, applying MUTE for 1024 consecutive input samples
-will cause all outputs to be connected directly to VCAP. This also
-happens if 2048 consecutive zero input samples are applied to all 6
-channels, and IZD=0. It will be removed as soon as any channel receives
-a non-zero input". I believe the second sentence might be referring to
-IZD=1 instead of IZD=0 given the observed behaviour of the card.
+This patch adds checks to prevent the panic.
 
-This change should make the DAC initialisation consistent with
-Creative's Windows driver, as this popping persists when initialising
-the card in Linux and soft rebooting into Windows, but is not present on
-a cold boot to Windows.
-
-Signed-off-by: Alex Stanoev <alex@astanoev.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
+Cc: stable@vger.kernel.org
+Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/ca0106/ca0106.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/check.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
---- a/sound/pci/ca0106/ca0106.h
-+++ b/sound/pci/ca0106/ca0106.h
-@@ -582,7 +582,7 @@
- #define SPI_PL_BIT_R_R		(2<<7)	/* right channel = right */
- #define SPI_PL_BIT_R_C		(3<<7)	/* right channel = (L+R)/2 */
- #define SPI_IZD_REG		2
--#define SPI_IZD_BIT		(1<<4)	/* infinite zero detect */
-+#define SPI_IZD_BIT		(0<<4)	/* infinite zero detect */
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -30,6 +30,11 @@ static __init int set_corruption_check(c
+ 	ssize_t ret;
+ 	unsigned long val;
  
- #define SPI_FMT_REG		3
- #define SPI_FMT_BIT_RJ		(0<<0)	/* right justified mode */
++	if (!arg) {
++		pr_err("memory_corruption_check config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -44,6 +49,11 @@ static __init int set_corruption_check_p
+ 	ssize_t ret;
+ 	unsigned long val;
+ 
++	if (!arg) {
++		pr_err("memory_corruption_check_period config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -58,6 +68,11 @@ static __init int set_corruption_check_s
+ 	char *end;
+ 	unsigned size;
+ 
++	if (!arg) {
++		pr_err("memory_corruption_check_size config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	size = memparse(arg, &end);
+ 
+ 	if (*end == '\0')
 
 
