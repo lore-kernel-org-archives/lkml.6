@@ -2,49 +2,54 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8C1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1010CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFF521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5FEC2147D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v6t6d0MB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFF521104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qe++hhvU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5FEC2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbeKTDH0 (ORCPT
+        id S2387924AbeKTDH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41514 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:25 -0500
+        id S1732866AbeKTDH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D86B2145D;
-        Mon, 19 Nov 2018 16:43:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC65D2086A;
+        Mon, 19 Nov 2018 16:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645793;
-        bh=AzhC7F3DvSdH7pit1EsB+rRKBTvBUCiGvtZYkyevgx0=;
+        s=default; t=1542645796;
+        bh=YRdQ526lVBSNq1NaPFax6qc45we582bqDqFQBFS2Hcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=v6t6d0MBvhwnM3WOEDPUAbNr4S9HIWVR4T8lnZS0WGKLehZCpMGNLDtPeXocCgZSm
-         1KAK1KDSipCpxLVintN9Rj182OCM6/75xXM7+6VLrWYEZlbbUol4R4tUgywGiH7aVH
-         /FhxB9YYtbMqhQW7DInH/SNjpSrfekZr0H7J/2BY=
+        b=qe++hhvUI2Qs5715ULIXy2wT6ahcBLl+Ot3vYAaWBrau/85e32D7wpJg0YMW6O1tT
+         TZ0XdxWUxa+s8mOBRRdgrmLE7LS6ai+jsjlLLSU+FG00kOwvpuIXls/DmZpsxoeKPz
+         7A2FOUOf3YGWTrxkKRDt6JyDKEDsu5Va+UH8pXeY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.18 092/171] hwmon: (core) Fix double-free in __hwmon_device_register()
-Date:   Mon, 19 Nov 2018 17:28:08 +0100
-Message-Id: <20181119162633.841840635@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Sebastien Boisvert <sboisvert@gydle.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 4.18 093/171] perf stat: Handle different PMU names with common prefix
+Date:   Mon, 19 Nov 2018 17:28:09 +0100
+Message-Id: <20181119162633.968247728@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,132 +67,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Osipenko <digetx@gmail.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-commit 74e3512731bd5c9673176425a76a7cc5efa8ddb6 upstream.
+commit ea1fa48c055f833eb25f0c33188feecb7002ada5 upstream.
 
-Fix double-free that happens when thermal zone setup fails, see KASAN log
-below.
+On s390 the CPU Measurement Facility for counters now supports
+2 PMUs named cpum_cf (CPU Measurement Facility for counters) and
+cpum_cf_diag (CPU Measurement Facility for diagnostic counters)
+for one and the same CPU.
 
-==================================================================
-BUG: KASAN: double-free or invalid-free in __hwmon_device_register+0x5dc/0xa7c
+Running command
 
-CPU: 0 PID: 132 Comm: kworker/0:2 Tainted: G    B             4.19.0-rc8-next-20181016-00042-gb52cd80401e9-dirty #41
-Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-Workqueue: events deferred_probe_work_func
-Backtrace:
-[<c0110540>] (dump_backtrace) from [<c0110944>] (show_stack+0x20/0x24)
-[<c0110924>] (show_stack) from [<c105cb08>] (dump_stack+0x9c/0xb0)
-[<c105ca6c>] (dump_stack) from [<c02fdaec>] (print_address_description+0x68/0x250)
-[<c02fda84>] (print_address_description) from [<c02fd4ac>] (kasan_report_invalid_free+0x68/0x88)
-[<c02fd444>] (kasan_report_invalid_free) from [<c02fc85c>] (__kasan_slab_free+0x1f4/0x200)
-[<c02fc668>] (__kasan_slab_free) from [<c02fd0c0>] (kasan_slab_free+0x14/0x18)
-[<c02fd0ac>] (kasan_slab_free) from [<c02f9c6c>] (kfree+0x90/0x294)
-[<c02f9bdc>] (kfree) from [<c0b41bbc>] (__hwmon_device_register+0x5dc/0xa7c)
-[<c0b415e0>] (__hwmon_device_register) from [<c0b421e8>] (hwmon_device_register_with_info+0xa0/0xa8)
-[<c0b42148>] (hwmon_device_register_with_info) from [<c0b42324>] (devm_hwmon_device_register_with_info+0x74/0xb4)
-[<c0b422b0>] (devm_hwmon_device_register_with_info) from [<c0b4481c>] (lm90_probe+0x414/0x578)
-[<c0b44408>] (lm90_probe) from [<c0aeeff4>] (i2c_device_probe+0x35c/0x384)
-[<c0aeec98>] (i2c_device_probe) from [<c08776cc>] (really_probe+0x290/0x3e4)
-[<c087743c>] (really_probe) from [<c0877a2c>] (driver_probe_device+0x80/0x1c4)
-[<c08779ac>] (driver_probe_device) from [<c0877da8>] (__device_attach_driver+0x104/0x11c)
-[<c0877ca4>] (__device_attach_driver) from [<c0874dd8>] (bus_for_each_drv+0xa4/0xc8)
-[<c0874d34>] (bus_for_each_drv) from [<c08773b0>] (__device_attach+0xf0/0x15c)
-[<c08772c0>] (__device_attach) from [<c0877e24>] (device_initial_probe+0x1c/0x20)
-[<c0877e08>] (device_initial_probe) from [<c08762f4>] (bus_probe_device+0xdc/0xec)
-[<c0876218>] (bus_probe_device) from [<c0876a08>] (deferred_probe_work_func+0xa8/0xd4)
-[<c0876960>] (deferred_probe_work_func) from [<c01527c4>] (process_one_work+0x3dc/0x96c)
-[<c01523e8>] (process_one_work) from [<c01541e0>] (worker_thread+0x4ec/0x8bc)
-[<c0153cf4>] (worker_thread) from [<c015b238>] (kthread+0x230/0x240)
-[<c015b008>] (kthread) from [<c01010bc>] (ret_from_fork+0x14/0x38)
-Exception stack(0xcf743fb0 to 0xcf743ff8)
-3fa0:                                     00000000 00000000 00000000 00000000
-3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+ [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+	 -- ~/mytests/cf-tx-events 1
 
-Allocated by task 132:
- kasan_kmalloc.part.1+0x58/0xf4
- kasan_kmalloc+0x90/0xa4
- kmem_cache_alloc_trace+0x90/0x2a0
- __hwmon_device_register+0xbc/0xa7c
- hwmon_device_register_with_info+0xa0/0xa8
- devm_hwmon_device_register_with_info+0x74/0xb4
- lm90_probe+0x414/0x578
- i2c_device_probe+0x35c/0x384
- really_probe+0x290/0x3e4
- driver_probe_device+0x80/0x1c4
- __device_attach_driver+0x104/0x11c
- bus_for_each_drv+0xa4/0xc8
- __device_attach+0xf0/0x15c
- device_initial_probe+0x1c/0x20
- bus_probe_device+0xdc/0xec
- deferred_probe_work_func+0xa8/0xd4
- process_one_work+0x3dc/0x96c
- worker_thread+0x4ec/0x8bc
- kthread+0x230/0x240
- ret_from_fork+0x14/0x38
-   (null)
+ Measuring transactions
+ TX_C_TABORT_NO_SPECIAL: 0 expected:0
+ TX_C_TABORT_SPECIAL: 0 expected:0
+ TX_C_TEND: 1 expected:1
+ TX_NC_TABORT: 11 expected:11
+ TX_NC_TEND: 1 expected:1
 
-Freed by task 132:
- __kasan_slab_free+0x12c/0x200
- kasan_slab_free+0x14/0x18
- kfree+0x90/0x294
- hwmon_dev_release+0x1c/0x20
- device_release+0x4c/0xe8
- kobject_put+0xac/0x11c
- device_unregister+0x2c/0x30
- __hwmon_device_register+0xa58/0xa7c
- hwmon_device_register_with_info+0xa0/0xa8
- devm_hwmon_device_register_with_info+0x74/0xb4
- lm90_probe+0x414/0x578
- i2c_device_probe+0x35c/0x384
- really_probe+0x290/0x3e4
- driver_probe_device+0x80/0x1c4
- __device_attach_driver+0x104/0x11c
- bus_for_each_drv+0xa4/0xc8
- __device_attach+0xf0/0x15c
- device_initial_probe+0x1c/0x20
- bus_probe_device+0xdc/0xec
- deferred_probe_work_func+0xa8/0xd4
- process_one_work+0x3dc/0x96c
- worker_thread+0x4ec/0x8bc
- kthread+0x230/0x240
- ret_from_fork+0x14/0x38
-   (null)
+ Performance counter stats for '/root/mytests/cf-tx-events 1':
 
-Cc: <stable@vger.kernel.org> # v4.15+
-Fixes: 47c332deb8e8 ("hwmon: Deal with errors from the thermal subsystem")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+  2      tx_c_tend
+
+      0.002120091 seconds time elapsed
+
+      0.000121000 seconds user
+      0.002127000 seconds sys
+
+ [root@s35lp76 perf]#
+
+displays output which is unexpected (and wrong):
+
+  2      tx_c_tend
+
+The test program definitely triggers only one transaction, as shown
+in line 'TX_C_TEND: 1 expected:1'.
+
+This is caused by the following call sequence:
+
+pmu_lookup() scans and installs a PMU.
++--> pmu_aliases() parses all aliases in directory
+		.../<pmu-name>/events/* which are file names.
+     +--> pmu_aliases_parse() Read each file in directory and create
+                      an new alias entry. This is done with
+          +--> perf_pmu__new_alias() and
+	       +--> __perf_pmu__new_alias() which also check for
+	                   identical alias names.
+
+After pmu_aliases() returns, a complete list of event names
+for this pmu has been created. Now function
+
+pmu_add_cpu_aliases()   is called to add the events listed in the json
+|                       files to the alias list of the cpu.
++--> perf_pmu__find_map()  Returns a pointer to the json events.
+
+Now function pmu_add_cpu_aliases() scans through all events listed
+in the JSON files for this CPU.
+Each json event pmu name is compared with the current PMU being
+built up and if they mismatch, the json event is added to the
+current PMUs alias list.
+To avoid duplicate entries the following comparison is done:
+
+	if (!is_arm_pmu_core(name)) {
+	     pname = pe->pmu ? pe->pmu : "cpu";
+	     if (strncmp(pname, name, strlen(pname)))
+		     continue;
+     }
+
+The culprit is the strncmp() function.
+
+Using current s390 PMU naming, the first PMU is 'cpum_cf'
+and a long list of events is added, among them 'tx_c_tend'
+
+When the second PMU named 'cpum_cf_diag' is added, only one event
+named 'CF_DIAG' is added by the pmu_aliases()  function.
+
+Now function pmu_add_cpu_aliases() is invoked for PMU 'cpum_cf_diag'.
+Since the CPUID string is the same for both PMUs, json file events
+for PMU named 'cpum_cf' are added to the PMU 'cpm_cf_diag'
+
+This happens because the strncmp() actually compares:
+
+     strncmp("cpum_cf", "cpum_cf_diag", 6);
+
+The first parameter is the pmu name taken from the event in
+the json file. The second parameter is the pmu name of the PMU
+currently being built.
+They are different, but the length of the compare only tests the
+common prefix and this returns 0(true) when it should return false.
+
+Now all events for PMU cpum_cf are added to the alias list for pmu
+cpum_cf_diag.
+
+Later on in function parse_events_add_pmu() the event 'tx_c_end' is
+searched in all available PMUs and found twice, adding it two
+times to the evsel_list global variable which is the root
+of all events. This results in a counter value of 2 instead
+of 1.
+
+Output with this patch:
+
+ [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+			-- ~/mytests/cf-tx-events 1
+ Measuring transactions
+ TX_C_TABORT_NO_SPECIAL: 0 expected:0
+ TX_C_TABORT_SPECIAL: 0 expected:0
+ TX_C_TEND: 1 expected:1
+ TX_NC_TABORT: 11 expected:11
+ TX_NC_TEND: 1 expected:1
+
+ Performance counter stats for '/root/mytests/cf-tx-events 1':
+
+                  1      tx_c_tend
+
+      0.001815365 seconds time elapsed
+
+      0.000123000 seconds user
+      0.001756000 seconds sys
+
+ [root@s35lp76 perf]#
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Reviewed-by: Sebastien Boisvert <sboisvert@gydle.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: stable@vger.kernel.org
+Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
+Link: http://lkml.kernel.org/r/20181023151616.78193-1-tmricht@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwmon/hwmon.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ tools/perf/util/pmu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -631,8 +631,10 @@ __hwmon_device_register(struct device *d
- 				if (info[i]->config[j] & HWMON_T_INPUT) {
- 					err = hwmon_thermal_add_sensor(dev,
- 								hwdev, j);
--					if (err)
--						goto free_device;
-+					if (err) {
-+						device_unregister(hdev);
-+						goto ida_remove;
-+					}
- 				}
- 			}
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -779,7 +779,7 @@ static void pmu_add_cpu_aliases(struct l
+ 
+ 		if (!is_arm_pmu_core(name)) {
+ 			pname = pe->pmu ? pe->pmu : "cpu";
+-			if (strncmp(pname, name, strlen(pname)))
++			if (strcmp(pname, name))
+ 				continue;
  		}
-@@ -640,8 +642,6 @@ __hwmon_device_register(struct device *d
  
- 	return hdev;
- 
--free_device:
--	device_unregister(hdev);
- free_hwmon:
- 	kfree(hwdev);
- ida_remove:
 
 
