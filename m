@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2968C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53942C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6118B20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1975C20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSkZ0oZM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6118B20C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcJYJ0TG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1975C20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731357AbeKTC6Z (ORCPT
+        id S1731368AbeKTC61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57448 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57508 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729995AbeKTC6Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:24 -0500
+        id S1729995AbeKTC60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90C5620989;
-        Mon, 19 Nov 2018 16:34:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DE8721104;
+        Mon, 19 Nov 2018 16:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645256;
-        bh=7daFSTSY5Qplippo1mxOEhOIAbsntXDS7CuqWV1xqZs=;
+        s=default; t=1542645258;
+        bh=pg0wOZ2O93KrWKnGL8ZFgKfUpRoNO7kGc4Ez2xsFUDg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JSkZ0oZMq2nPMyExg2uuJGgwgaXMofPshjoTz2Trodve93WmZULj6eUegvgEbS9xr
-         xfVfZ/vqhFmNsBw2G54c1owNnzdJ4RnqmskBeW/W3Q5BWBF6QRd3WKe7G2zZ23w59L
-         /PmAgdmhI8AsIoTib/qbCtOO29iwz9ifYS0zHoFM=
+        b=YcJYJ0TGHODIYKM0bVa616J5KqVbLeHfWSkp9QNWpU8Bn10co7W/NWwpx67I+0h4p
+         gNLkkuWV0Pv53/LIAp/k9znlo8ta/rAH5Uf0Q8hvqlPwHsf9ntyJPBrjfDuReqtqyC
+         1yAAjD+/iI7KF9E/DaViHjfXUCgdv3UAR1smEwko=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -44,9 +44,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         John Garry <john.garry@huawei.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 094/205] crypto: hisilicon - Fix NULL dereference for same dst and src
-Date:   Mon, 19 Nov 2018 17:26:41 +0100
-Message-Id: <20181119162632.554193194@linuxfoundation.org>
+Subject: [PATCH 4.19 095/205] crypto: hisilicon - Fix reference after free of memories on error path
+Date:   Mon, 19 Nov 2018 17:26:42 +0100
+Message-Id: <20181119162632.718350821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -66,70 +66,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Garry <john.garry@huawei.com>
 
-commit 68a031d22c57b94870ba13513c9d93b8a8119ab2 upstream.
+commit 0b0cf6af3f3151c26c27e8e51def5527091c3e69 upstream.
 
-When the source and destination addresses for the cipher are the same, we
-will get a NULL dereference from accessing the split destination
-scatterlist memories, as shown:
+coccicheck currently warns of the following issues in the driver:
+drivers/crypto/hisilicon/sec/sec_algs.c:864:51-66: ERROR: reference preceded by free on line 812
+drivers/crypto/hisilicon/sec/sec_algs.c:864:40-49: ERROR: reference preceded by free on line 813
+drivers/crypto/hisilicon/sec/sec_algs.c:861:8-24: ERROR: reference preceded by free on line 814
+drivers/crypto/hisilicon/sec/sec_algs.c:860:41-51: ERROR: reference preceded by free on line 815
+drivers/crypto/hisilicon/sec/sec_algs.c:867:7-18: ERROR: reference preceded by free on line 816
 
-[   56.565719] tcrypt:
-[   56.565719] testing speed of async ecb(aes) (hisi_sec_aes_ecb) encryption
-[   56.574683] tcrypt: test 0 (128 bit key, 16 byte blocks):
-[   56.587585] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-[   56.596361] Mem abort info:
-[   56.599151]   ESR = 0x96000006
-[   56.602196]   Exception class = DABT (current EL), IL = 32 bits
-[   56.608105]   SET = 0, FnV = 0
-[   56.611149]   EA = 0, S1PTW = 0
-[   56.614280] Data abort info:
-[   56.617151]   ISV = 0, ISS = 0x00000006
-[   56.620976]   CM = 0, WnR = 0
-[   56.623930] user pgtable: 4k pages, 48-bit VAs, pgdp = (____ptrval____)
-[   56.630533] [0000000000000000] pgd=0000041fc7e4d003, pud=0000041fcd9bf003, pmd=0000000000000000
-[   56.639224] Internal error: Oops: 96000006 [#1] PREEMPT SMP
-[   56.644782] Modules linked in: tcrypt(+)
-[   56.648695] CPU: 21 PID: 2326 Comm: insmod Tainted: G        W         4.19.0-rc6-00001-g3fabfb8-dirty #716
-[   56.658420] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT17 Nemo 2.0 RC0 10/05/2018
-[   56.667537] pstate: 20000005 (nzCv daif -PAN -UAO)
-[   56.672322] pc : sec_alg_skcipher_crypto+0x318/0x748
-[   56.677274] lr : sec_alg_skcipher_crypto+0x178/0x748
-[   56.682224] sp : ffff0000118e3840
-[   56.685525] x29: ffff0000118e3840 x28: ffff841fbb3f8118
-[   56.690825] x27: 0000000000000000 x26: 0000000000000000
-[   56.696125] x25: ffff841fbb3f8080 x24: ffff841fbadc0018
-[   56.701425] x23: ffff000009119000 x22: ffff841fbb24e280
-[   56.706724] x21: ffff841ff212e780 x20: ffff841ff212e700
-[   56.712023] x19: 0000000000000001 x18: ffffffffffffffff
-[   56.717322] x17: 0000000000000000 x16: 0000000000000000
-[   56.722621] x15: ffff0000091196c8 x14: 72635f7265687069
-[   56.727920] x13: 636b735f676c615f x12: ffff000009119940
-[   56.733219] x11: 0000000000000000 x10: 00000000006080c0
-[   56.738519] x9 : 0000000000000000 x8 : ffff841fbb24e480
-[   56.743818] x7 : ffff841fbb24e500 x6 : ffff841ff00cdcc0
-[   56.749117] x5 : 0000000000000010 x4 : 0000000000000000
-[   56.754416] x3 : ffff841fbb24e380 x2 : ffff841fbb24e480
-[   56.759715] x1 : 0000000000000000 x0 : ffff000008f682c8
-[   56.765016] Process insmod (pid: 2326, stack limit = 0x(____ptrval____))
-[   56.771702] Call trace:
-[   56.774136]  sec_alg_skcipher_crypto+0x318/0x748
-[   56.778740]  sec_alg_skcipher_encrypt+0x10/0x18
-[   56.783259]  test_skcipher_speed+0x2a0/0x700 [tcrypt]
-[   56.788298]  do_test+0x18f8/0x48c8 [tcrypt]
-[   56.792469]  tcrypt_mod_init+0x60/0x1000 [tcrypt]
-[   56.797161]  do_one_initcall+0x5c/0x178
-[   56.800985]  do_init_module+0x58/0x1b4
-[   56.804721]  load_module+0x1da4/0x2150
-[   56.808456]  __se_sys_init_module+0x14c/0x1e8
-[   56.812799]  __arm64_sys_init_module+0x18/0x20
-[   56.817231]  el0_svc_common+0x60/0xe8
-[   56.820880]  el0_svc_handler+0x2c/0x80
-[   56.824615]  el0_svc+0x8/0xc
-[   56.827483] Code: a94c87a3 910b2000 f87b7842 f9004ba2 (b87b7821)
-[   56.833564] ---[ end trace 0f63290590e93d94 ]---
-Segmentation fault
+It would appear than on certain error paths that we may attempt reference-
+after-free some memories.
 
-Fix this by only accessing these memories when we have different src and
-dst.
+This patch fixes those issues. The solution doesn't look perfect, but
+having same memories free'd possibly from separate functions makes it
+tricky.
 
 Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
 Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
@@ -139,48 +90,57 @@ Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/hisilicon/sec/sec_algs.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/crypto/hisilicon/sec/sec_algs.c |   21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
 --- a/drivers/crypto/hisilicon/sec/sec_algs.c
 +++ b/drivers/crypto/hisilicon/sec/sec_algs.c
-@@ -732,6 +732,7 @@ static int sec_alg_skcipher_crypto(struc
- 	int *splits_in_nents;
- 	int *splits_out_nents = NULL;
- 	struct sec_request_el *el, *temp;
-+	bool split = skreq->src != skreq->dst;
+@@ -808,13 +808,6 @@ static int sec_alg_skcipher_crypto(struc
+ 	 * more refined but this is unlikely to happen so no need.
+ 	 */
  
- 	mutex_init(&sec_req->lock);
- 	sec_req->req_base = &skreq->base;
-@@ -750,7 +751,7 @@ static int sec_alg_skcipher_crypto(struc
+-	/* Cleanup - all elements in pointer arrays have been coppied */
+-	kfree(splits_in_nents);
+-	kfree(splits_in);
+-	kfree(splits_out_nents);
+-	kfree(splits_out);
+-	kfree(split_sizes);
+-
+ 	/* Grab a big lock for a long time to avoid concurrency issues */
+ 	mutex_lock(&queue->queuelock);
+ 
+@@ -829,13 +822,13 @@ static int sec_alg_skcipher_crypto(struc
+ 	     (!queue->havesoftqueue ||
+ 	      kfifo_avail(&queue->softqueue) > steps)) ||
+ 	    !list_empty(&ctx->backlog)) {
++		ret = -EBUSY;
+ 		if ((skreq->base.flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
+ 			list_add_tail(&sec_req->backlog_head, &ctx->backlog);
+ 			mutex_unlock(&queue->queuelock);
+-			return -EBUSY;
++			goto out;
+ 		}
+ 
+-		ret = -EBUSY;
+ 		mutex_unlock(&queue->queuelock);
+ 		goto err_free_elements;
+ 	}
+@@ -844,7 +837,15 @@ static int sec_alg_skcipher_crypto(struc
  	if (ret)
- 		goto err_free_split_sizes;
+ 		goto err_free_elements;
  
--	if (skreq->src != skreq->dst) {
-+	if (split) {
- 		sec_req->len_out = sg_nents(skreq->dst);
- 		ret = sec_map_and_split_sg(skreq->dst, split_sizes, steps,
- 					   &splits_out, &splits_out_nents,
-@@ -785,8 +786,9 @@ static int sec_alg_skcipher_crypto(struc
- 					       split_sizes[i],
- 					       skreq->src != skreq->dst,
- 					       splits_in[i], splits_in_nents[i],
--					       splits_out[i],
--					       splits_out_nents[i], info);
-+					       split ? splits_out[i] : NULL,
-+					       split ? splits_out_nents[i] : 0,
-+					       info);
- 		if (IS_ERR(el)) {
- 			ret = PTR_ERR(el);
- 			goto err_free_elements;
-@@ -854,7 +856,7 @@ err_free_elements:
- 				 crypto_skcipher_ivsize(atfm),
- 				 DMA_BIDIRECTIONAL);
- err_unmap_out_sg:
--	if (skreq->src != skreq->dst)
-+	if (split)
- 		sec_unmap_sg_on_err(skreq->dst, steps, splits_out,
- 				    splits_out_nents, sec_req->len_out,
- 				    info->dev);
+-	return -EINPROGRESS;
++	ret = -EINPROGRESS;
++out:
++	/* Cleanup - all elements in pointer arrays have been copied */
++	kfree(splits_in_nents);
++	kfree(splits_in);
++	kfree(splits_out_nents);
++	kfree(splits_out);
++	kfree(split_sizes);
++	return ret;
+ 
+ err_free_elements:
+ 	list_for_each_entry_safe(el, temp, &sec_req->elements, head) {
 
 
