@@ -2,115 +2,138 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB59C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DAAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C25D2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:16:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rnxKAR54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C25D2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 12BE72087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:16:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BE72087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbeKSLiW (ORCPT
+        id S1727647AbeKSLij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:38:22 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34183 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeKSLiV (ORCPT
+        Mon, 19 Nov 2018 06:38:39 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:44185 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726235AbeKSLij (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:38:21 -0500
-Received: by mail-vs1-f67.google.com with SMTP id y27so16869060vsi.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 17:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EPU6gbT3pzQrwTTd8Uz3Co5fUAroN8ixZhgPdxLuYjM=;
-        b=rnxKAR54MFMWcCZ1EtHph8FbuJdVh1C/lit2WN2VLiiewXNRmfF9BywkMpvlOCU63c
-         DwVoZUohnofTzUAk5S6nNzJpRkn4ItiHP32XFtELs0Ag424jZAr4f+YU/O7NdxK1g6QI
-         hhgXF902usEZFCEZJjoLrROf9qvzcn9bIVe+3279kDWM07xeqWFWEI/mISZTa16Xhgwx
-         Pk8XwJ8hxLMlu1wKRkpEYKS5MLSST/W20CALCJHXie0mHK4dwEMgJGSy6NuJFQXPuIT0
-         J4CeyI5PMWybiW74J3j6cxuReUpCI9gUbVMZSZux85uU9ASSu/mCvJ9jrPtxMoZgn0Vd
-         4kdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EPU6gbT3pzQrwTTd8Uz3Co5fUAroN8ixZhgPdxLuYjM=;
-        b=Xr5K7gya19S6A3HNzgLjtU3qGOAreKrEktsKOZoFWmdYaPT+Waz7yIn9J46483SmvP
-         yQHfdl4lTJ+81u656aXgey+fAx2cnGnmJXiy2tfxrxDyd6zVQuZVGhgVAAQNoVRvtpG2
-         dBfLITT4pCXvshPcpkj0hfKriQ5jG1lUqan7Q4c7aFckwoVchtgQR56Y/KjxervqaVFr
-         a9+QOwA61/hCKsE/Gk5FjmDSGecbly4/dXE94ONFBi9AHDQOc0DAAfwtkhkN2Y4Cjq13
-         TNmHDAy4M7916Oj8wd66EGS8Z7ZJDYXb2bxu6NB5yH2xL4JrXV6lyyVF79kfOsulvjNo
-         IVwQ==
-X-Gm-Message-State: AGRZ1gIZoHnXohqXhKTxoGuKrVUiBWqgaPneDhkNTI/y4aS0R28GCwCw
-        1GhjnbtGVzS6CgQ1B4V24QMt8kFDAV9VyB69AjHgxw==
-X-Google-Smtp-Source: AJdET5errPWpIE/JthOrrstbJtQyA8+nm9GHPN4CToIkKsFWo2Tir/rd58YMee8U+rdl9kyMPS28n8b6+aNKPXJQ4Sw=
-X-Received: by 2002:a67:6e87:: with SMTP id j129mr8412454vsc.171.1542590184754;
- Sun, 18 Nov 2018 17:16:24 -0800 (PST)
+        Mon, 19 Nov 2018 06:38:39 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="48339614"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 19 Nov 2018 09:16:39 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 900BC4B7117F;
+        Mon, 19 Nov 2018 09:16:40 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 19 Nov 2018 09:16:43 +0800
+Date:   Mon, 19 Nov 2018 09:16:34 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdlien from kexec
+Message-ID: <20181119011634.GA2336@localhost.localdomain>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
+ <20181112174343.mvjri2okwboew2nw@gabell>
+ <20181113021218.GD7453@localhost.localdomain>
+ <20181113161111.6jwm36fpxk5xjtn5@gabell>
+ <20181113175413.GL10502@zn.tnic>
+ <20181113200615.7dypqvhimxzlloek@gabell>
+ <20181113215156.GP10502@zn.tnic>
+ <20181114061215.GC2875@localhost.localdomain>
+ <20181114183016.GI13926@zn.tnic>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 17:16:23
- -0800 (PST)
-In-Reply-To: <CAKOZueve_r5h9_B2YV5RzJYjTf-yS5uZfAbz+Ftqy5jFSk6Xdw@mail.gmail.com>
-References: <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org>
- <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
- <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
- <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
- <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
- <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
- <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
- <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com>
- <20181118190504.ixglsqbn6mxkcdzu@yavin> <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
- <20181119000928.h2wp2rn2pnlfysp7@yavin> <CAKOZueve_r5h9_B2YV5RzJYjTf-yS5uZfAbz+Ftqy5jFSk6Xdw@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sun, 18 Nov 2018 17:16:23 -0800
-Message-ID: <CAKOZuevHoEAZdnQmuGiwpLcfxSBq3M8T0ZeQFG+Do2aCFcZfQQ@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181114183016.GI13926@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 900BC4B7117F.AA91E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 4:53 PM, Daniel Colascione <dancol@google.com> wrote:
->> Sure, I'd propose that ptrace_may_access() is what we should use for
->> operation permission checks.
+On Wed, Nov 14, 2018 at 07:30:17PM +0100, Borislav Petkov wrote:
+>On Wed, Nov 14, 2018 at 02:12:16PM +0800, Chao Fan wrote:
+>> But isdigit() would be redefine, so:
+>> 
+>> diff --git a/include/linux/ctype.h b/include/linux/ctype.h
+>> index 363b004426db..aba01c385232 100644
+>> --- a/include/linux/ctype.h
+>> +++ b/include/linux/ctype.h
+>> @@ -23,10 +23,12 @@ extern const unsigned char _ctype[];
+>>  #define isalnum(c)     ((__ismask(c)&(_U|_L|_D)) != 0)
+>>  #define isalpha(c)     ((__ismask(c)&(_U|_L)) != 0)
+>>  #define iscntrl(c)     ((__ismask(c)&(_C)) != 0)
+>> +#ifndef BOOT_STRING
+>>  static inline int isdigit(int c)
+>>  {
+>>         return '0' <= c && c <= '9';
+>>  }
+>> +#endif
+>>  #define isgraph(c)     ((__ismask(c)&(_P|_U|_L|_D)) != 0)
+>>  #define islower(c)     ((__ismask(c)&(_L)) != 0)
+>>  #define isprint(c)     ((__ismask(c)&(_P|_U|_L|_D|_SP)) != 0)
+>> 
+>> Now I can make it.
+>> I wonder whether this is OK to cover isdigit() with 'BOOT_STRING' tag.
 >
-> The tricky part is that ptrace_may_access takes a struct task. We want
-> logic that's *like* ptrace_may_access, but that works posthumously.
-> It's especially tricky because there's an LSM hook that lets
-> __ptrace_may_access do arbitrary things. And we can't just run that
-> hook upon process death, since *after* a process dies, a process
-> holding an exithand FD (or whatever we call it) may pass that FD to
-> another process, and *that* process can read(2) from it.
->
-> Another option is doing the exithand access check at open time. I
-> think that's probably fine, and it would make things a lot simpler.
-> But if we use this option, we should understand what we're doing, and
-> get some security-conscious people to think through the implications.
+>See the beginning of arch/x86/boot/compressed/kaslr.c for a possible way
+>to disable boot/ctype.h
 
-A ptrace check is also probably too strict. Yama's ptrace_scope
-feature will block ptrace between unrelated processes within a single
-user context, but applying this restriction to exit code monitoring
-seems too severe to me.
+I have done this with BOOT_CTYPE_H.
+So misc.c can only use isdigit() and isxdigit() in
+include/linux/ctype.h.
+
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 8dd1d5ccae58..e51713fe3add 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -12,6 +12,7 @@
+  * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
+  */
+
++#define BOOT_CTYPE_H
+ #include "misc.h"
+ #include "error.h"
+ #include "pgtable.h"
+@@ -426,3 +427,7 @@ void fortify_panic(const char *name)
+ {
+        error("detected buffer overflow");
+ }
++
++#ifdef BOOT_STRING
++#include "../../../../lib/kstrtox.c"
++#endif
+
+This looks better than before.
+
+Thanks,
+Chao Fan
+
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
+
