@@ -2,128 +2,230 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F76C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26486C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEF92086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E046020870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bfsZvvLn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEF92086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="INq2Ntk3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E046020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731276AbeKTIHM (ORCPT
+        id S1731247AbeKTIJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:07:12 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:46820 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731258AbeKTIHL (ORCPT
+        Tue, 20 Nov 2018 03:09:56 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42025 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731082AbeKTIJz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:07:11 -0500
-Received: by mail-vs1-f68.google.com with SMTP id r14so18675498vsc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 13:41:34 -0800 (PST)
+        Tue, 20 Nov 2018 03:09:55 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 64so11001120pfr.9
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 13:44:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GU3TnvgcFfbK+HKMP9elr0xQDZ3OfrM2HTww2/am9rc=;
-        b=bfsZvvLnHLB9a/UrM7/uN7JgQQtTF61We8C39OTZcoZAcIaKn5hsmtj4BZLCP2U6o/
-         QT3T2vV5ohtX9uLul5dv1OuMy3+gE5JZaE9RIXXJBMy5y77IrTsba0Fl4u2bT4PtqUs2
-         g+L+btPKhftoHl/GUZHzSBHmPJqXKEcjZXkcAWkXXo0OkIV2p9vVAr95jn1KgclGeEqp
-         Tz18uDjZuMfq5m3XGj3o7ocFagAg/qMjgGY+eID2xw81tDr4wkFiEzkGMo52ZR95D6eW
-         fyyJ7UsqAgtHiQf88zXEmSuWqvKuGZCDuU932P8JBH78sVle4/m2QGy57csHPUUJVUSC
-         CBwQ==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=59SpcEBGDTbUjAhoGBNRiCVTfP9hvpXi6ZEQUqtN9nY=;
+        b=INq2Ntk3CQHQPQkFepGAlZvnyrBuSstFBnmaYDtVq3Aq02ZY8V/bXtKIvBheMz/SOe
+         wvthbhxD+N3oKo4wZnlRMS7LOvuloFEIcHcfa3e/5csf9NRCHNDYOWzzmxeRrXvfNgQj
+         eXd9ETe8bsn3j3RDc95VNAaZ2Ikx0jTr8NMxM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GU3TnvgcFfbK+HKMP9elr0xQDZ3OfrM2HTww2/am9rc=;
-        b=gNfUbkfVJvMdmqk0pSxAkcUU/y/VBPvWDtKM2cCsapP4L/4o65KkoWnXeeY1cryUAt
-         2uDp1tuh95/Y5r5QuRo8pAiuuFypzIMHLPDqc9pg6Ys/tK6CqP4bT4EGU0PSoWavSDaH
-         uqckFL0Nn3POvv5A990WdW4k2h9vULcRv+7C3szuLZ/t6IgQSN+2p/1lKB9fA5XrIP6P
-         8NS5VVGIPwoDCPfJ//ekGrlOaknHpsfS/3fJZD07sXo85ItKGHLReFYIJdnwD7ImYDf/
-         Xb67Jk3WopeItmngQoP394tOV+i96xgPRDhC5Mk//KExi28xm3Q7NM+9DEsG+TPHniFr
-         oZgQ==
-X-Gm-Message-State: AGRZ1gKFrbeTdsoeyAj9oZYAIYl3QBlm/ewLqE1seqsVl+0Ndqx5zSN+
-        0CDqXCy/Tx4DhUvLgVK8zSpp43Ec9F+gwz+wKNTvhA==
-X-Google-Smtp-Source: AJdET5eOAfCOE/LEzGElLqooWV4XAdRxU2EEVPbbcGXJ+0Vz5GyqYsUYvVcid2Hl2uMk+VcgtBT//tTw0m+aD4s7N2U=
-X-Received: by 2002:a67:6346:: with SMTP id x67mr9699500vsb.114.1542663693374;
- Mon, 19 Nov 2018 13:41:33 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=59SpcEBGDTbUjAhoGBNRiCVTfP9hvpXi6ZEQUqtN9nY=;
+        b=ctCYgGNRr+J6MDbgWxtWQ0LsFQVKSJqiV/zb4ljBgvUZnQdwldGuEeoQ0h6gHpODfR
+         Rp0eq6C4kDmGWltwpgRDGdMDMxzbA/l/WpTLWCLyORe8mDdUpNRw8d9Y3MI1hbsO+3zo
+         eEXd0hD0dDVnUpqE7hl/TRfqxf8BR//liiHlQjpMSFsNlcP85U/hBN/ED3MlhDcphOXs
+         loBWNIyZk2lgRJ90aQXk7PsGcY+UXFfuP2A7ITKGuYNZJ7SG/tp7mBE/iuhsfrACxPYE
+         GfmHcnVRtIbdS0W3MwxT2ygKCS/xTZW+0BZxLOrRT3tPg2P18jfM+2/dfXtJ3M8b2DxX
+         pc2w==
+X-Gm-Message-State: AGRZ1gLda1t8INUDMM9bHRTX9UE2++mXOqzw5L268ROZO4lUxh77UxuC
+        fLb0KwL+2BKP9KtRmWOx/B6+Sw==
+X-Google-Smtp-Source: AJdET5ex+V19mmP/60+6bs0oyIH4ge5EMxTJRIiRbAppKSHzaE8n7FIcrIDLfspY9vtPwWhule6rog==
+X-Received: by 2002:a63:c503:: with SMTP id f3mr21104270pgd.431.1542663857331;
+        Mon, 19 Nov 2018 13:44:17 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id u69sm35162091pfj.116.2018.11.19.13.44.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 13:44:16 -0800 (PST)
+Date:   Mon, 19 Nov 2018 13:44:15 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Loic Poulain <loic.poulain@linaro.org>
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Dmitry Grinberg <dmitrygr@google.com>
+Subject: Re: [PATCH v2 1/3] Bluetooth: Add quirk for reading BD_ADDR from
+ fwnode property
+Message-ID: <20181119214415.GQ22824@google.com>
+References: <20181030004415.237101-1-mka@chromium.org>
+ <20181030004415.237101-2-mka@chromium.org>
 MIME-Version: 1.0
-References: <20181119103241.5229-1-christian@brauner.io> <20181119103241.5229-3-christian@brauner.io>
- <20181119202857.k5zw742xjfrw677j@yavin> <20181119205518.btew3vxwgva4w3zh@brauner.io>
- <20181119211810.73ptfhnwdmkngfi4@yavin> <20181119212126.u2nkijmula6wcfqi@brauner.io>
- <CAKOZuevEx6CbcxrR8eVZrUXDcN5y1GPsXdSoHfQteSQKypx0qw@mail.gmail.com> <20181119213722.z54huio5g4kuldxk@brauner.io>
-In-Reply-To: <20181119213722.z54huio5g4kuldxk@brauner.io>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 19 Nov 2018 13:41:21 -0800
-Message-ID: <CAKOZueup5L9Fd=tTK5g1415x0muLP_cPkxf4o26-kCPtH_caqw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181030004415.237101-2-mka@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 1:37 PM Christian Brauner <christian@brauner.io> wrote:
->
-> On Mon, Nov 19, 2018 at 01:26:22PM -0800, Daniel Colascione wrote:
-> > On Mon, Nov 19, 2018 at 1:21 PM, Christian Brauner <christian@brauner.io> wrote:
-> > > That can be done without a loop by comparing the level counter for the
-> > > two pid namespaces.
-> > >
-> > >>
-> > >> And you can rewrite pidns_get_parent to use it. So you would instead be
-> > >> doing:
-> > >>
-> > >>     if (pidns_is_descendant(proc_pid_ns, task_active_pid_ns(current)))
-> > >>         return -EPERM;
-> > >>
-> > >> (Or you can just copy the 5-line loop into procfd_signal -- though I
-> > >> imagine we'll need this for all of the procfd_* APIs.)
-> >
-> > Why is any of this even necessary? Why does the child namespace we're
-> > considering even have a file descriptor to its ancestor's procfs? If
->
-> Because you can send file descriptors between processes and container
-> runtimes tend to do that.
+Hi Marcel,
 
-Right. But why *would* a container runtime send one of these procfs
-FDs to a container?
+is this in line with what you suggested at
+https://lore.kernel.org/patchwork/patch/992280/#1183789 ?
 
-> > it has one of these FDs, it can already *read* all sorts of
-> > information it really shouldn't be able to acquire, so the additional
-> > ability to send a signal (subject to the usual permission checks)
-> > feels like sticking a finger in a dike that's already well-perforated.
-> > IMHO, we shouldn't bother with this check. The patch would be simpler
-> > without it.
->
-> We will definitely not allow signaling processes in an ancestor pid
-> namespace! That is a security issue! I can imagine container runtimes
-> killing their monitoring process etc. pp. Not happening, unless someone
-> with deep expertise in signals can convince me otherwise.
+Thanks
 
-If parent namespace procfs FDs or mounts really can leak into child
-namespaces as easily as Aleksa says, then I don't mind adding the
-check. I was under the impression that if you find yourself in this
-situation, you already have a big problem.
+Matthias
+
+On Mon, Oct 29, 2018 at 05:44:13PM -0700, Matthias Kaehlcke wrote:
+> Add HCI_QUIRK_USE_BDADDR_PROPERTY to allow controllers to retrieve
+> the public Bluetooth address from the firmware node property
+> 'local-bd-address'. If quirk is set and the property does not exist
+> or is invalid the controller is marked as unconfigured.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+> Changes in v2:
+> - added check for return value of ->setup()
+> - only read BD_ADDR from the property if it isn't assigned yet. This
+>   is needed to support configuration from user space
+> - refactored the branch of the new quirk to get rid of 'bd_addr_set'
+> - added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
+> ---
+>  include/net/bluetooth/hci.h | 12 ++++++++++
+>  net/bluetooth/hci_core.c    | 45 +++++++++++++++++++++++++++++++++++++
+>  net/bluetooth/mgmt.c        |  6 +++--
+>  3 files changed, 61 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> index c36dc1e20556..fbba43e9bef5 100644
+> --- a/include/net/bluetooth/hci.h
+> +++ b/include/net/bluetooth/hci.h
+> @@ -158,6 +158,18 @@ enum {
+>  	 */
+>  	HCI_QUIRK_INVALID_BDADDR,
+>  
+> +	/* When this quirk is set, the public Bluetooth address
+> +	 * initially reported by HCI Read BD Address command
+> +	 * is considered invalid. The public BD Address can be
+> +	 * specified in the fwnode property 'local-bd-address'.
+> +	 * If this property does not exist or is invalid controller
+> +	 * configuration is required before this device can be used.
+> +	 *
+> +	 * This quirk can be set before hci_register_dev is called or
+> +	 * during the hdev->setup vendor callback.
+> +	 */
+> +	HCI_QUIRK_USE_BDADDR_PROPERTY,
+> +
+>  	/* When this quirk is set, the duplicate filtering during
+>  	 * scanning is based on Bluetooth devices addresses. To allow
+>  	 * RSSI based updates, restart scanning if needed.
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index 7352fe85674b..d4149005a661 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/rfkill.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/crypto.h>
+> +#include <linux/property.h>
+>  #include <asm/unaligned.h>
+>  
+>  #include <net/bluetooth/bluetooth.h>
+> @@ -1355,6 +1356,36 @@ int hci_inquiry(void __user *arg)
+>  	return err;
+>  }
+>  
+> +/**
+> + * hci_dev_get_bd_addr_from_property - Get the Bluetooth Device Address
+> + *				       (BD_ADDR) for a HCI device from
+> + *				       a firmware node property.
+> + * @hdev:	The HCI device
+> + *
+> + * Search the firmware node for 'local-bd-address'.
+> + *
+> + * All-zero BD addresses are rejected, because those could be properties
+> + * that exist in the firmware tables, but were not updated by the firmware. For
+> + * example, the DTS could define 'local-bd-address', with zero BD addresses.
+> + */
+> +static int hci_dev_get_bd_addr_from_property(struct hci_dev *hdev)
+> +{
+> +	struct fwnode_handle *fwnode = dev_fwnode(hdev->dev.parent);
+> +	bdaddr_t ba;
+> +	int ret;
+> +
+> +	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
+> +					    (u8 *)&ba, sizeof(ba));
+> +	if (ret < 0)
+> +		return ret;
+> +	if (!bacmp(&ba, BDADDR_ANY))
+> +		return -ENODATA;
+> +
+> +	hdev->public_addr = ba;
+> +
+> +	return 0;
+> +}
+> +
+>  static int hci_dev_do_open(struct hci_dev *hdev)
+>  {
+>  	int ret = 0;
+> @@ -1422,6 +1453,20 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+>  		if (hdev->setup)
+>  			ret = hdev->setup(hdev);
+>  
+> +		if (ret)
+> +			goto setup_failed;
+> +
+> +		if (test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) {
+> +			if (!bacmp(&hdev->public_addr, BDADDR_ANY))
+> +				hci_dev_get_bd_addr_from_property(hdev);
+> +
+> +			if (!bacmp(&hdev->public_addr, BDADDR_ANY) ||
+> +			    !hdev->set_bdaddr ||
+> +			    hdev->set_bdaddr(hdev, &hdev->public_addr))
+> +				hci_dev_set_flag(hdev, HCI_UNCONFIGURED);
+> +		}
+> +
+> +setup_failed:
+>  		/* The transport driver can set these quirks before
+>  		 * creating the HCI device or in its setup callback.
+>  		 *
+> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+> index ccce954f8146..fae84353d030 100644
+> --- a/net/bluetooth/mgmt.c
+> +++ b/net/bluetooth/mgmt.c
+> @@ -551,7 +551,8 @@ static bool is_configured(struct hci_dev *hdev)
+>  	    !hci_dev_test_flag(hdev, HCI_EXT_CONFIGURED))
+>  		return false;
+>  
+> -	if (test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) &&
+> +	if ((test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) ||
+> +	     test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) &&
+>  	    !bacmp(&hdev->public_addr, BDADDR_ANY))
+>  		return false;
+>  
+> @@ -566,7 +567,8 @@ static __le32 get_missing_options(struct hci_dev *hdev)
+>  	    !hci_dev_test_flag(hdev, HCI_EXT_CONFIGURED))
+>  		options |= MGMT_OPTION_EXTERNAL_CONFIG;
+>  
+> -	if (test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) &&
+> +	if ((test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) ||
+> +	     test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) &&
+>  	    !bacmp(&hdev->public_addr, BDADDR_ANY))
+>  		options |= MGMT_OPTION_PUBLIC_ADDRESS;
+>  
