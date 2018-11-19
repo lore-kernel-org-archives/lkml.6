@@ -2,164 +2,101 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 746A7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8404C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B1D22089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:21:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1D22089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EA5320871
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:25:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA5320871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeKSToI (ORCPT
+        id S1727403AbeKSTsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:44:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57646 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726988AbeKSToH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:44:07 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CDC13308339D;
-        Mon, 19 Nov 2018 09:21:04 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8333F5C70B;
-        Mon, 19 Nov 2018 09:20:45 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 17:20:41 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 18/19] block: kill QUEUE_FLAG_NO_SG_MERGE
-Message-ID: <20181119092040.GP16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-19-ming.lei@redhat.com>
- <20181116135803.GN3165@lst.de>
+        Mon, 19 Nov 2018 14:48:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58612 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727084AbeKSTsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:48:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6671BABA1;
+        Mon, 19 Nov 2018 09:25:15 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 293271E0D8A; Mon, 19 Nov 2018 10:25:15 +0100 (CET)
+Date:   Mon, 19 Nov 2018 10:25:15 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Subject: Re: [PATCH] udf: fix dvd mounting error
+Message-ID: <20181119092515.GA16427@quack2.suse.cz>
+References: <20181115122600.15821-1-sudipm.mukherjee@gmail.com>
+ <20181116125633.GG24157@quack2.suse.cz>
+ <20181116143314.qn7jmtyz4ad4bax6@debian>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116135803.GN3165@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 19 Nov 2018 09:21:05 +0000 (UTC)
+In-Reply-To: <20181116143314.qn7jmtyz4ad4bax6@debian>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 02:58:03PM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 15, 2018 at 04:53:05PM +0800, Ming Lei wrote:
-> > Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
-> > physical segment number is mainly figured out in blk_queue_split() for
-> > fast path, and the flag of BIO_SEG_VALID is set there too.
+On Fri 16-11-18 14:33:14, Sudip Mukherjee wrote:
+> > From e1a7680b960fe25821f2419b4c0b1215f8ab2f9b Mon Sep 17 00:00:00 2001
+> > From: Jan Kara <jack@suse.cz>
+> > Date: Fri, 16 Nov 2018 13:43:17 +0100
+> > Subject: [PATCH] udf: Allow mounting volumes with incorrect identification
+> >  strings
 > > 
-> > Now only blk_recount_segments() and blk_recalc_rq_segments() use this
-> > flag.
+> > Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+> > started to be more strict when checking whether converted strings are
+> > properly formatted. Sudip reports that there are DVDs where the volume
+> > identification string is actually too long - UDF reports:
 > > 
-> > Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
-> > is set in blk_queue_split().
+> > [  632.309320] UDF-fs: incorrect dstring lengths (32/32)
 > > 
-> > For another user of blk_recalc_rq_segments():
+> > during mount and fails the mount. This is mostly harmless failure as we
+> > don't need volume identification (and even less volume set
+> > identification) for anything. So just truncate the volume identification
+> > string if it is too long and replace it with 'Invalid' if we just cannot
+> > convert it for other reasons. This keeps slightly incorrect media still
+> > mountable.
 > > 
-> > - run in partial completion branch of blk_update_request, which is an unusual case
-> > 
-> > - run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
-> > since dm-rq is the only user.
-> > 
-> > Multi-page bvec is enabled now, QUEUE_FLAG_NO_SG_MERGE doesn't make sense any more.
-> > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Shaohua Li <shli@kernel.org>
-> > Cc: linux-raid@vger.kernel.org
-> > Cc: linux-erofs@lists.ozlabs.org
-> > Cc: David Sterba <dsterba@suse.com>
-> > Cc: linux-btrfs@vger.kernel.org
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: Gao Xiang <gaoxiang25@huawei.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: Coly Li <colyli@suse.de>
-> > Cc: linux-bcache@vger.kernel.org
-> > Cc: Boaz Harrosh <ooo@electrozaur.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: cluster-devel@redhat.com
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > CC: stable@vger.kernel.org
+> > Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+> > Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> > Signed-off-by: Jan Kara <jack@suse.cz>
 > > ---
-> >  block/blk-merge.c      | 31 ++++++-------------------------
-> >  block/blk-mq-debugfs.c |  1 -
-> >  block/blk-mq.c         |  3 ---
-> >  drivers/md/dm-table.c  | 13 -------------
-> >  include/linux/blkdev.h |  1 -
-> >  5 files changed, 6 insertions(+), 43 deletions(-)
-> > 
-> > diff --git a/block/blk-merge.c b/block/blk-merge.c
-> > index 153a659fde74..06be298be332 100644
-> > --- a/block/blk-merge.c
-> > +++ b/block/blk-merge.c
-> > @@ -351,8 +351,7 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
-> >  EXPORT_SYMBOL(blk_queue_split);
-> >  
-> >  static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
-> > -					     struct bio *bio,
-> > -					     bool no_sg_merge)
-> > +					     struct bio *bio)
-> >  {
-> >  	struct bio_vec bv, bvprv = { NULL };
-> >  	int cluster, prev = 0;
-> > @@ -379,13 +378,6 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
-> >  	nr_phys_segs = 0;
-> >  	for_each_bio(bio) {
-> >  		bio_for_each_bvec(bv, bio, iter) {
-> > -			/*
-> > -			 * If SG merging is disabled, each bio vector is
-> > -			 * a segment
-> > -			 */
-> > -			if (no_sg_merge)
-> > -				goto new_segment;
-> > -
-> >  			if (prev && cluster) {
-> >  				if (seg_size + bv.bv_len
-> >  				    > queue_max_segment_size(q))
-> > @@ -420,27 +412,16 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
-> >  
-> >  void blk_recalc_rq_segments(struct request *rq)
-> >  {
-> > -	bool no_sg_merge = !!test_bit(QUEUE_FLAG_NO_SG_MERGE,
-> > -			&rq->q->queue_flags);
-> > -
-> > -	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio,
-> > -			no_sg_merge);
-> > +	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio);
 > 
-> Can we rename __blk_recalc_rq_segments to blk_recalc_rq_segments
-> can kill the old blk_recalc_rq_segments now?
+> It works perfectly. Thanks.
+> 
+> Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Sure.
+Thanks for testing!
 
-Thanks,
-Ming
+> > -	if (ret < 0)
+> > -		goto out_bh;
+> > -
+> > -	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
+> > +	if (ret < 0) {
+> > +		strcpy(UDF_SB(sb)->s_volume_ident, "Invalid");
+> 
+> Just a suggestion. Even on failed cases, having the volume identification
+> as "Invalid" might confuse the users. Since you have a maximum limit as 31
+> maybe something more meaningful like "No Name" ?
+
+I agree something long might be better. I think 'InvalidName' might be
+better than 'No Name'. Thanks for suggestion.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
