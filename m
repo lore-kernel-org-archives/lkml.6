@@ -6,49 +6,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BD1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828D2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 345A0208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49E6D20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaaMwfHM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345A0208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7WB9xKD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49E6D20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbeKTDCs (ORCPT
+        id S1732543AbeKTDCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35150 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731835AbeKTDCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:47 -0500
+        id S1731835AbeKTDCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A61662148E;
-        Mon, 19 Nov 2018 16:38:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CE46208E3;
+        Mon, 19 Nov 2018 16:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645517;
-        bh=tB776zwBpUfcsOIZD3N570CHJEWaV8kpgOTZRrOySS4=;
+        s=default; t=1542645519;
+        bh=4fyc9u0/7ANmefmwIYnyL0MGNa6Z0fNTfM/dkjR+h4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BaaMwfHMBiGL4ak7rxZSHJRRvvP6BhEpi6Fe2bpCmj+ugBEtWaQ7B9RN0EHlIh6JR
-         7UGnvYysf7FTiUlx4AjL3h+6X3F9mkKBPbWWLcB/gWR3BQRgnVeNlXcB1gYHvuwrL7
-         5wQam2ywnd4YmNvXR4T5OqPQaxr8l13UKnYG5RFM=
+        b=g7WB9xKD4u9rBw2tjvFNCKDY4YGo6gHmc8cuELzcgMMf6Ncd4NkZgIpUDlW+uyN6/
+         jhyh+X9AnXMTZ3tCtQRGzg9RjfkZvNmG6YSUzfKU3eihO9+QqSchO87jDGEA83cLcu
+         4YkGvt+IRvtvG8hKPBAwpO/rfEhVjho4NApsjJlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dennis <dennis.nezic@utoronto.ca>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Peter Nowee <peter.nowee@gmail.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.19 185/205] drm/i915: Use the correct crtc when sanitizing plane mapping
-Date:   Mon, 19 Nov 2018 17:28:12 +0100
-Message-Id: <20181119162641.548293417@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergii Romantsov <sergii.romantsov@globallogic.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Matthew Auld <matthew.auld@intel.com>
+Subject: [PATCH 4.19 194/205] drm/i915: Mark up GTT sizes as u64
+Date:   Mon, 19 Nov 2018 17:28:21 +0100
+Message-Id: <20181119162642.210949895@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -66,218 +64,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 9b27390139dbe0dc10d1899545248862fe826b61 upstream.
+commit c58281056a8b26d5d9dc15c19859a7880835ef44 upstream.
 
-When we decide that a plane is attached to the wrong pipe we try
-to turn off said plane. However we are passing around the crtc we
-think that the plane is supposed to be using rather than the crtc
-it is currently using. That doesn't work all that well because
-we may have to do vblank waits etc. and the other pipe might
-not even be enabled here. So let's pass the plane's current crtc to
-intel_plane_disable_noatomic() so that it can its job correctly.
+Since we use a 64b virtual GTT irrespective of the system, we want to
+ensure that the GTT computations remains 64b even on 32b systems,
+including treatment of huge virtual pages.
 
-To do that semi-cleanly we also have to change the plane readout
-to record the plane's visibility into the bitmasks of the crtc
-where the plane is currently enabled rather than to the crtc
-we want to use for the plane.
+No code generation changes on 64b:
 
-One caveat here is that our active_planes bitmask will get confused
-if both planes are enabled on the same pipe. Fortunately we can use
-plane_mask to reconstruct active_planes sufficiently since
-plane_mask still has the same meaning (is the plane visible?)
-during readout. We also have to do the same during the initial
-plane readout as the second plane could clear the active_planes
-bit the first plane had already set.
-
-v2: Rely on fixup_active_planes() to populate active_planes fully (Daniel)
-    Add Daniel's proposed comment to better document why we do this
-    Drop the redundant intel_set_plane_visible() call
-
-Cc: stable@vger.kernel.org # fcba862e8428 drm/i915: Have plane->get_hw_state() return the current pipe
+Reported-by: Sergii Romantsov <sergii.romantsov@globallogic.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108282
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Cc: stable@vger.kernel.org
-Cc: Dennis <dennis.nezic@utoronto.ca>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Tested-by: Dennis <dennis.nezic@utoronto.ca>
-Tested-by: Peter Nowee <peter.nowee@gmail.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105637
-Fixes: b1e01595a66d ("drm/i915: Redo plane sanitation during readout")
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181003145017.4527-1-ville.syrjala@linux.intel.com
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-(cherry picked from commit 62358aa4ee86481ce044bef04859820e1bc7c1d9)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Reviewed-by: Matthew Auld <matthew.auld@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181025091823.20571-1-chris@chris-wilson.co.uk
+(cherry picked from commit 9125963a9494253fa5a29cc1b4169885d2be7042)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_display.c |   78 ++++++++++++++++++++---------------
- 1 file changed, 46 insertions(+), 32 deletions(-)
+ drivers/gpu/drm/i915/i915_gem_gtt.c           |    2 +-
+ drivers/gpu/drm/i915/i915_gem_gtt.h           |    6 +++---
+ drivers/gpu/drm/i915/selftests/huge_pages.c   |    2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |    6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -2754,20 +2754,33 @@ intel_set_plane_visible(struct intel_crt
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@ -1768,7 +1768,7 @@ static void gen6_dump_ppgtt(struct i915_
+ 			if (i == 4)
+ 				continue;
  
- 	plane_state->base.visible = visible;
+-			seq_printf(m, "\t\t(%03d, %04d) %08lx: ",
++			seq_printf(m, "\t\t(%03d, %04d) %08llx: ",
+ 				   pde, pte,
+ 				   (pde * GEN6_PTES + pte) * PAGE_SIZE);
+ 			for (i = 0; i < 4; i++) {
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.h
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.h
+@@ -42,9 +42,9 @@
+ #include "i915_selftest.h"
+ #include "i915_timeline.h"
  
--	/* FIXME pre-g4x don't work like this */
--	if (visible) {
-+	if (visible)
- 		crtc_state->base.plane_mask |= drm_plane_mask(&plane->base);
--		crtc_state->active_planes |= BIT(plane->id);
--	} else {
-+	else
- 		crtc_state->base.plane_mask &= ~drm_plane_mask(&plane->base);
--		crtc_state->active_planes &= ~BIT(plane->id);
--	}
+-#define I915_GTT_PAGE_SIZE_4K BIT(12)
+-#define I915_GTT_PAGE_SIZE_64K BIT(16)
+-#define I915_GTT_PAGE_SIZE_2M BIT(21)
++#define I915_GTT_PAGE_SIZE_4K	BIT_ULL(12)
++#define I915_GTT_PAGE_SIZE_64K	BIT_ULL(16)
++#define I915_GTT_PAGE_SIZE_2M	BIT_ULL(21)
  
- 	DRM_DEBUG_KMS("%s active planes 0x%x\n",
- 		      crtc_state->base.crtc->name,
- 		      crtc_state->active_planes);
- }
+ #define I915_GTT_PAGE_SIZE I915_GTT_PAGE_SIZE_4K
+ #define I915_GTT_MAX_PAGE_SIZE I915_GTT_PAGE_SIZE_2M
+--- a/drivers/gpu/drm/i915/selftests/huge_pages.c
++++ b/drivers/gpu/drm/i915/selftests/huge_pages.c
+@@ -549,7 +549,7 @@ static int igt_mock_ppgtt_misaligned_dma
+ 			err = igt_check_page_sizes(vma);
  
-+static void fixup_active_planes(struct intel_crtc_state *crtc_state)
-+{
-+	struct drm_i915_private *dev_priv = to_i915(crtc_state->base.crtc->dev);
-+	struct drm_plane *plane;
-+
-+	/*
-+	 * Active_planes aliases if multiple "primary" or cursor planes
-+	 * have been used on the same (or wrong) pipe. plane_mask uses
-+	 * unique ids, hence we can use that to reconstruct active_planes.
-+	 */
-+	crtc_state->active_planes = 0;
-+
-+	drm_for_each_plane_mask(plane, &dev_priv->drm,
-+				crtc_state->base.plane_mask)
-+		crtc_state->active_planes |= BIT(to_intel_plane(plane)->id);
-+}
-+
- static void intel_plane_disable_noatomic(struct intel_crtc *crtc,
- 					 struct intel_plane *plane)
- {
-@@ -2777,6 +2790,7 @@ static void intel_plane_disable_noatomic
- 		to_intel_plane_state(plane->base.state);
- 
- 	intel_set_plane_visible(crtc_state, plane_state, false);
-+	fixup_active_planes(crtc_state);
- 
- 	if (plane->id == PLANE_PRIMARY)
- 		intel_pre_disable_primary_noatomic(&crtc->base);
-@@ -2795,7 +2809,6 @@ intel_find_initial_plane_obj(struct inte
- 	struct drm_i915_gem_object *obj;
- 	struct drm_plane *primary = intel_crtc->base.primary;
- 	struct drm_plane_state *plane_state = primary->state;
--	struct drm_crtc_state *crtc_state = intel_crtc->base.state;
- 	struct intel_plane *intel_plane = to_intel_plane(primary);
- 	struct intel_plane_state *intel_state =
- 		to_intel_plane_state(plane_state);
-@@ -2885,10 +2898,6 @@ valid_fb:
- 	plane_state->fb = fb;
- 	plane_state->crtc = &intel_crtc->base;
- 
--	intel_set_plane_visible(to_intel_crtc_state(crtc_state),
--				to_intel_plane_state(plane_state),
--				true);
--
- 	atomic_or(to_intel_plane(primary)->frontbuffer_bit,
- 		  &obj->frontbuffer_bits);
- }
-@@ -15365,17 +15374,6 @@ void i830_disable_pipe(struct drm_i915_p
- 	POSTING_READ(DPLL(pipe));
- }
- 
--static bool intel_plane_mapping_ok(struct intel_crtc *crtc,
--				   struct intel_plane *plane)
--{
--	enum pipe pipe;
--
--	if (!plane->get_hw_state(plane, &pipe))
--		return true;
--
--	return pipe == crtc->pipe;
--}
--
- static void
- intel_sanitize_plane_mapping(struct drm_i915_private *dev_priv)
- {
-@@ -15387,13 +15385,20 @@ intel_sanitize_plane_mapping(struct drm_
- 	for_each_intel_crtc(&dev_priv->drm, crtc) {
- 		struct intel_plane *plane =
- 			to_intel_plane(crtc->base.primary);
-+		struct intel_crtc *plane_crtc;
-+		enum pipe pipe;
-+
-+		if (!plane->get_hw_state(plane, &pipe))
-+			continue;
- 
--		if (intel_plane_mapping_ok(crtc, plane))
-+		if (pipe == crtc->pipe)
- 			continue;
- 
- 		DRM_DEBUG_KMS("%s attached to the wrong pipe, disabling plane\n",
- 			      plane->base.name);
--		intel_plane_disable_noatomic(crtc, plane);
-+
-+		plane_crtc = intel_get_crtc_for_pipe(dev_priv, pipe);
-+		intel_plane_disable_noatomic(plane_crtc, plane);
- 	}
- }
- 
-@@ -15565,23 +15570,32 @@ void i915_redisable_vga(struct drm_i915_
- }
- 
- /* FIXME read out full plane state for all planes */
--static void readout_plane_state(struct intel_crtc *crtc)
-+static void readout_plane_state(struct drm_i915_private *dev_priv)
- {
--	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
--	struct intel_crtc_state *crtc_state =
--		to_intel_crtc_state(crtc->base.state);
- 	struct intel_plane *plane;
-+	struct intel_crtc *crtc;
- 
--	for_each_intel_plane_on_crtc(&dev_priv->drm, crtc, plane) {
-+	for_each_intel_plane(&dev_priv->drm, plane) {
- 		struct intel_plane_state *plane_state =
- 			to_intel_plane_state(plane->base.state);
--		enum pipe pipe;
-+		struct intel_crtc_state *crtc_state;
-+		enum pipe pipe = PIPE_A;
- 		bool visible;
- 
- 		visible = plane->get_hw_state(plane, &pipe);
- 
-+		crtc = intel_get_crtc_for_pipe(dev_priv, pipe);
-+		crtc_state = to_intel_crtc_state(crtc->base.state);
-+
- 		intel_set_plane_visible(crtc_state, plane_state, visible);
- 	}
-+
-+	for_each_intel_crtc(&dev_priv->drm, crtc) {
-+		struct intel_crtc_state *crtc_state =
-+			to_intel_crtc_state(crtc->base.state);
-+
-+		fixup_active_planes(crtc_state);
-+	}
- }
- 
- static void intel_modeset_readout_hw_state(struct drm_device *dev)
-@@ -15613,13 +15627,13 @@ static void intel_modeset_readout_hw_sta
- 		if (crtc_state->base.active)
- 			dev_priv->active_crtcs |= 1 << crtc->pipe;
- 
--		readout_plane_state(crtc);
--
- 		DRM_DEBUG_KMS("[CRTC:%d:%s] hw state readout: %s\n",
- 			      crtc->base.base.id, crtc->base.name,
- 			      enableddisabled(crtc_state->base.active));
- 	}
- 
-+	readout_plane_state(dev_priv);
-+
- 	for (i = 0; i < dev_priv->num_shared_dpll; i++) {
- 		struct intel_shared_dpll *pll = &dev_priv->shared_dplls[i];
- 
+ 			if (vma->page_sizes.gtt != I915_GTT_PAGE_SIZE_4K) {
+-				pr_err("page_sizes.gtt=%u, expected %lu\n",
++				pr_err("page_sizes.gtt=%u, expected %llu\n",
+ 				       vma->page_sizes.gtt, I915_GTT_PAGE_SIZE_4K);
+ 				err = -EINVAL;
+ 			}
+--- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
+@@ -1337,7 +1337,7 @@ static int igt_gtt_reserve(void *arg)
+ 		GEM_BUG_ON(!drm_mm_node_allocated(&vma->node));
+ 		if (vma->node.start != total ||
+ 		    vma->node.size != 2*I915_GTT_PAGE_SIZE) {
+-			pr_err("i915_gem_gtt_reserve (pass 1) placement failed, found (%llx + %llx), expected (%llx + %lx)\n",
++			pr_err("i915_gem_gtt_reserve (pass 1) placement failed, found (%llx + %llx), expected (%llx + %llx)\n",
+ 			       vma->node.start, vma->node.size,
+ 			       total, 2*I915_GTT_PAGE_SIZE);
+ 			err = -EINVAL;
+@@ -1386,7 +1386,7 @@ static int igt_gtt_reserve(void *arg)
+ 		GEM_BUG_ON(!drm_mm_node_allocated(&vma->node));
+ 		if (vma->node.start != total ||
+ 		    vma->node.size != 2*I915_GTT_PAGE_SIZE) {
+-			pr_err("i915_gem_gtt_reserve (pass 2) placement failed, found (%llx + %llx), expected (%llx + %lx)\n",
++			pr_err("i915_gem_gtt_reserve (pass 2) placement failed, found (%llx + %llx), expected (%llx + %llx)\n",
+ 			       vma->node.start, vma->node.size,
+ 			       total, 2*I915_GTT_PAGE_SIZE);
+ 			err = -EINVAL;
+@@ -1430,7 +1430,7 @@ static int igt_gtt_reserve(void *arg)
+ 		GEM_BUG_ON(!drm_mm_node_allocated(&vma->node));
+ 		if (vma->node.start != offset ||
+ 		    vma->node.size != 2*I915_GTT_PAGE_SIZE) {
+-			pr_err("i915_gem_gtt_reserve (pass 3) placement failed, found (%llx + %llx), expected (%llx + %lx)\n",
++			pr_err("i915_gem_gtt_reserve (pass 3) placement failed, found (%llx + %llx), expected (%llx + %llx)\n",
+ 			       vma->node.start, vma->node.size,
+ 			       offset, 2*I915_GTT_PAGE_SIZE);
+ 			err = -EINVAL;
 
 
