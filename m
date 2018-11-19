@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEE8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8073C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 252DB21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B2E121104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2CjnncjO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 252DB21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sD4iiFdo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B2E121104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390885AbeKTDSL (ORCPT
+        id S2390892AbeKTDSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:18:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56938 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:18:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390145AbeKTDSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:18:09 -0500
+        id S2390145AbeKTDSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:18:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42811206BA;
-        Mon, 19 Nov 2018 16:53:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2EE420851;
+        Mon, 19 Nov 2018 16:53:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646435;
-        bh=1GLuASTKNTcVkMlDbXH6Q+b5J0XWv8l3DEcb8Cr0ssc=;
+        s=default; t=1542646438;
+        bh=Wh1iL7Nh0gKm1H7wDj3Au//WRYDh/Qd9OiBA3ha7qd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2CjnncjO8g7u1JoOKXPlRlwmna8ltlEmVf+kK5aZpgWWhtxs77pGeAY/uVcSc7KNP
-         O3IPdCoF6MYoZnHa9bQ/hOFT8M+ALBb4xDi9h/l81Xsm3993jmn4bMpujpVBiujttd
-         3BDaynK4quP6+qMa+lB6c2rqAvtOpvG1XitT94FQ=
+        b=sD4iiFdolKcIczcj2jBGYLLhjj3URn09PFwZXyKZXZziIo/ufiogPpRVZSk7lFx72
+         7k2RyB3WRmS3fL8qS1nk9mQOjbN89ZAq6/0HzXl8WzPrmG43/Y10yKTvgYAjd46JVc
+         fHDWuANj7qzDpT/YSgE35pz/70koMjbM5PXc2ddU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.9 41/83] reset: hisilicon: fix potential NULL pointer dereference
-Date:   Mon, 19 Nov 2018 17:29:07 +0100
-Message-Id: <20181119162620.632317174@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 42/83] vhost/scsi: truncate T10 PI iov_iter to prot_bytes
+Date:   Mon, 19 Nov 2018 17:29:08 +0100
+Message-Id: <20181119162620.824987501@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -63,42 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-commit e9a2310fb689151166df7fd9971093362d34bd79 upstream.
+commit 4542d623c7134bc1738f8a68ccb6dd546f1c264f upstream.
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+Commands with protection information included were not truncating the
+protection iov_iter to the number of protection bytes in the command.
+This resulted in vhost_scsi mis-calculating the size of the protection
+SGL in vhost_scsi_calc_sgls(), and including both the protection and
+data SG entries in the protection SGL.
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
-
-This code was detected with the help of Coccinelle.
-
+Fixes: 09b13fa8c1a1 ("vhost/scsi: Add ANY_LAYOUT support in vhost_scsi_handle_vq")
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 09b13fa8c1a1093e9458549ac8bb203a7c65c62a
 Cc: stable@vger.kernel.org
-Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/hisilicon/reset.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/vhost/scsi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -109,9 +109,8 @@ struct hisi_reset_controller *hisi_reset
- 		return NULL;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rstc->membase = devm_ioremap(&pdev->dev,
--				res->start, resource_size(res));
--	if (!rstc->membase)
-+	rstc->membase = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rstc->membase))
- 		return NULL;
- 
- 	spin_lock_init(&rstc->lock);
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -999,7 +999,8 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 				prot_bytes = vhost32_to_cpu(vq, v_req_pi.pi_bytesin);
+ 			}
+ 			/*
+-			 * Set prot_iter to data_iter, and advance past any
++			 * Set prot_iter to data_iter and truncate it to
++			 * prot_bytes, and advance data_iter past any
+ 			 * preceeding prot_bytes that may be present.
+ 			 *
+ 			 * Also fix up the exp_data_len to reflect only the
+@@ -1008,6 +1009,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 			if (prot_bytes) {
+ 				exp_data_len -= prot_bytes;
+ 				prot_iter = data_iter;
++				iov_iter_truncate(&prot_iter, prot_bytes);
+ 				iov_iter_advance(&data_iter, prot_bytes);
+ 			}
+ 			tag = vhost64_to_cpu(vq, v_req_pi.tag);
 
 
