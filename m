@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7960EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B5C0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2681621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32472145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DHvGbdrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2681621104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2GDrYPuH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32472145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387546AbeKTDGM (ORCPT
+        id S2387559AbeKTDGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39850 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732956AbeKTDGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:11 -0500
+        id S1732956AbeKTDGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A28B721104;
-        Mon, 19 Nov 2018 16:42:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4268B2145D;
+        Mon, 19 Nov 2018 16:42:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645721;
-        bh=64rcto7rDiCJPG6HjSY20+kbjCBKyPhhT1EPF5umGJo=;
+        s=default; t=1542645723;
+        bh=ozgUWiLdVaqSc1MA0QGP5bGZV0M9bGn6RZ92j0JCnFk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DHvGbdrKJliUZ70skEoMcGvbYIPenkZlCIZyf1BB+/4pdtsYH9hZ0T4ZsnRR95Qde
-         PfjCp7593oKcK9Xs5A1rb4aqjiQr66rr+wim0xrT9OMw6faD9UlIIwaDFnKmH/KSt2
-         Y0O6OTVKSQWo1ZNc8XoFeIMmtgDnWuJ/cQhvGkhs=
+        b=2GDrYPuHlZ+wLJIamWhm4012AcbpL156+E0Mb3tSMRfF0HyH7dyoU/UBZIvmq2FQE
+         JH0oR2zForqtjBy1nlgQDAHrCVAe75holrVpkCsc/wGuzIquVemp6pP/y+2jJ9TEBK
+         CKApXBpTxt8vpL249VWOfXkh9bqfyBk1ANzrsE08=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronald Wahl <rwahl@gmx.de>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.18 064/171] clk: at91: Fix division by zero in PLL recalc_rate()
-Date:   Mon, 19 Nov 2018 17:27:40 +0100
-Message-Id: <20181119162630.248762826@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH 4.18 038/171] serial: sh-sci: Fix could not remove dev_attr_rx_fifo_timeout
+Date:   Mon, 19 Nov 2018 17:27:14 +0100
+Message-Id: <20181119162625.987417029@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,37 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ronald Wahl <rwahl@gmx.de>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 0f5cb0e6225cae2f029944cb8c74617aab6ddd49 upstream.
+commit 641a41dbba217ee5bd26abe6be77f8cead9cd00e upstream.
 
-Commit a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached MUL
-and DIV values") removed a check that prevents a division by zero. This
-now causes a stacktrace when booting the kernel on a at91 platform if
-the PLL DIV register contains zero. This commit reintroduces this check.
+This patch fixes an issue that the sci_remove() could not remove
+dev_attr_rx_fifo_timeout because uart_remove_one_port() set
+the port->port.type to PORT_UNKNOWN.
 
-Fixes: a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached...")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ronald Wahl <rwahl@gmx.de>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reported-by: Hiromitsu Yamasaki <hiromitsu.yamasaki.ym@renesas.com>
+Fixes: 5d23188a473d ("serial: sh-sci: make RX FIFO parameters tunable via sysfs")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/at91/clk-pll.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/tty/serial/sh-sci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/at91/clk-pll.c
-+++ b/drivers/clk/at91/clk-pll.c
-@@ -133,6 +133,9 @@ static unsigned long clk_pll_recalc_rate
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -3045,6 +3045,7 @@ static struct uart_driver sci_uart_drive
+ static int sci_remove(struct platform_device *dev)
  {
- 	struct clk_pll *pll = to_clk_pll(hw);
+ 	struct sci_port *port = platform_get_drvdata(dev);
++	unsigned int type = port->port.type;	/* uart_remove_... clears it */
  
-+	if (!pll->div || !pll->mul)
-+		return 0;
-+
- 	return (parent_rate / pll->div) * (pll->mul + 1);
- }
- 
+ 	sci_ports_in_use &= ~BIT(port->port.line);
+ 	uart_remove_one_port(&sci_uart_driver, &port->port);
+@@ -3055,8 +3056,7 @@ static int sci_remove(struct platform_de
+ 		sysfs_remove_file(&dev->dev.kobj,
+ 				  &dev_attr_rx_fifo_trigger.attr);
+ 	}
+-	if (port->port.type == PORT_SCIFA || port->port.type == PORT_SCIFB ||
+-	    port->port.type == PORT_HSCIF) {
++	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF) {
+ 		sysfs_remove_file(&dev->dev.kobj,
+ 				  &dev_attr_rx_fifo_timeout.attr);
+ 	}
 
 
