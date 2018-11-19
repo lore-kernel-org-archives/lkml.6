@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEEEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 936032145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E97A92086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yDUVPg6X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936032145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4cuF0H2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E97A92086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387872AbeKTDHS (ORCPT
+        id S2387886AbeKTDHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41338 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:16 -0500
+        id S1732866AbeKTDHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABC2F2086A;
-        Mon, 19 Nov 2018 16:43:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F87521104;
+        Mon, 19 Nov 2018 16:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645786;
-        bh=sW01/0U6M+HEoddLsDRArGRbmHKdflvHU+zQlcjB0nM=;
+        s=default; t=1542645788;
+        bh=bxsJzvjRR8pyjxLEzgJnYF65ZM/3YJM03cMFLQWNyx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yDUVPg6XFV2MeH0OWXVtctITKbhOCoghVgP6mkrwDZYxvbp7av069KiTHVne2BQ8G
-         K0SkAjiURkpg2kucKoU4t0ouuJRZ5YqKsjVKzrULxFJVCLhhO1xDvmopH6oAdG7wLt
-         Sz2p7E5Bqnwx+twW3OuXCfiBpvcyXNcsPSHhIEk4=
+        b=Q4cuF0H2vAYLL5683h540hI0nrbafVDmwNiU4DRaL7JNKQd7ahpqVoS5AHyJ7qbL6
+         aANjpGjyOzU1T3N/JoY1kxJoJ3+sGgpbk4cKL4BKXzLf9ssR3Z9b3el2/DtJ5QcvwR
+         ZcjemX8VkD6p+v0FcRoGS95rTvMjf9wDxTvWvOdA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.18 089/171] mtd: spi-nor: cadence-quadspi: Return error code in cqspi_direct_read_execute()
-Date:   Mon, 19 Nov 2018 17:28:05 +0100
-Message-Id: <20181119162633.536912550@linuxfoundation.org>
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 4.18 090/171] mtd: nand: Fix nanddev_neraseblocks()
+Date:   Mon, 19 Nov 2018 17:28:06 +0100
+Message-Id: <20181119162633.618048195@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,36 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 91d7b67000c6e9bd605624079fee5a084238ad92 upstream.
+commit d098093ba06eb032057d1aca1c2e45889e099d00 upstream.
 
-We return 0 unconditionally in 'cqspi_direct_read_execute()'.
-However, 'ret' is set to some error codes in several error handling
-paths.
+nanddev_neraseblocks() currently returns the number pages per LUN
+instead of the total number of eraseblocks.
 
-Return 'ret' instead to propagate the error code.
-
-Fixes: ffa639e069fb ("mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads")
+Fixes: 9c3736a3de21 ("mtd: nand: Add core infrastructure to deal with NAND devices")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mtd/nand.h |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -1000,7 +1000,7 @@ static int cqspi_direct_read_execute(str
- err_unmap:
- 	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
- 
--	return 0;
-+	return ret;
+--- a/include/linux/mtd/nand.h
++++ b/include/linux/mtd/nand.h
+@@ -324,9 +324,8 @@ static inline unsigned int nanddev_ntarg
+  */
+ static inline unsigned int nanddev_neraseblocks(const struct nand_device *nand)
+ {
+-	return (u64)nand->memorg.luns_per_target *
+-	       nand->memorg.eraseblocks_per_lun *
+-	       nand->memorg.pages_per_eraseblock;
++	return nand->memorg.ntargets * nand->memorg.luns_per_target *
++	       nand->memorg.eraseblocks_per_lun;
  }
  
- static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
+ /**
 
 
