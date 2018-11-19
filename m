@@ -2,63 +2,49 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF71C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706BFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7742086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:43:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7742086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 17CE72086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:44:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CE72086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726154AbeKSQFa (ORCPT
+        id S1726158AbeKSQHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 11:05:30 -0500
-Received: from mga11.intel.com ([192.55.52.93]:5042 "EHLO mga11.intel.com"
+        Mon, 19 Nov 2018 11:07:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:50880 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeKSQFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 11:05:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 21:42:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,251,1539673200"; 
-   d="scan'208";a="87489973"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Nov 2018 21:42:58 -0800
-Received: from [10.252.19.222] (abudanko-mobl.ccr.corp.intel.com [10.252.19.222])
-        by linux.intel.com (Postfix) with ESMTP id D8E4B580378;
-        Sun, 18 Nov 2018 21:42:53 -0800 (PST)
-Subject: [PATCH v1 2/2]: Documentation/admin-guide: introduce
- perf-security.rst file
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
-References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
-Date:   Mon, 19 Nov 2018 08:42:52 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        id S1725925AbeKSQHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 11:07:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 256D71596;
+        Sun, 18 Nov 2018 21:44:31 -0800 (PST)
+Received: from [10.162.0.72] (unknown [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CE1283F5AF;
+        Sun, 18 Nov 2018 21:44:28 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181114224902.12082-1-keith.busch@intel.com>
+ <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
+ <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
+Message-ID: <b79804b0-32ee-03f9-fa62-a89684d46be6@arm.com>
+Date:   Mon, 19 Nov 2018 11:14:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
+In-Reply-To: <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,103 +54,38 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Implement initial version of perf-security.rst documentation file 
-initially covering security concerns related to PCL/Perf performance 
-monitoring in multiuser environments.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- Documentation/admin-guide/perf-security.rst | 83 +++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+On 11/16/2018 10:25 PM, Dave Hansen wrote:
+> On 11/15/18 10:27 PM, Anshuman Khandual wrote:
+>> Not able to see the patches from this series either on the list or on the
+>> archive (https://lkml.org/lkml/2018/11/15/331). IIRC last time we discussed
+>> about this and the concern which I raised was in absence of a broader NUMA
+>> rework for multi attribute memory it might not a good idea to settle down
+>> and freeze sysfs interface for the user space. 
+> 
 
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-new file mode 100644
-index 000000000000..b9564066e686
---- /dev/null
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -0,0 +1,83 @@
-+.. _perf_security:
-+
-+PCL/Perf security
-+=================
-+
-+Overview
-+--------
-+
-+Usage of Performance Counters for Linux (PCL) [1]_ , [2]_ , [3]_ can impose a
-+considerable risk of leaking sensitive data accessed by monitored processes.
-+The data leakage is possible both in scenarios of direct usage of PCL system
-+call API [2]_ and over data files generated by Perf tool user mode utility
-+(Perf) [3]_ , [4]_ . The risk depends on the nature of data that PCL performance
-+monitoring units (PMU) [2]_ collect and expose for performance analysis.
-+Having that said PCL/Perf performance monitoring is the subject for security
-+access control management [5]_ .
-+
-+PCL/Perf access control
-+-----------------------
-+
-+For the purpose of performing security checks Linux implementation splits
-+processes into two categories [6]_ : a) privileged processes (whose effective
-+user ID is 0, referred to as superuser or root), and b) unprivileged processes
-+(whose effective UID is nonzero). Privileged processes bypass all kernel
-+security permission checks so PCL performance monitoring is fully available to
-+privileged processes without *access*, *scope* and *resource* restrictions.
-+Unprivileged processes are subject to full security permission check based
-+on the process's credentials [5]_ (usually: effective UID, effective GID,
-+and supplementary group list).
-+
-+PCL/Perf unprivileged users
-+---------------------------
-+
-+PCL/Perf *scope* and *access* control for unprivileged processes is governed by
-+perf_event_paranoid [2]_ setting:
-+
-+**-1**:
-+     Impose no *scope* and *access* restrictions on using PCL performance
-+     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
-+     ignored when allocating memory buffers for storing performance data.
-+     This is the least secure mode since allowed monitored *scope* is
-+     maximized and no PCL specific limits are imposed on *resources*
-+     allocated for performance monitoring.
-+
-+**>=0**:
-+     *scope* includes per-process and system wide performance monitoring
-+     but excludes raw tracepoints and ftrace function tracepoints monitoring.
-+     CPU and system events happened when executing either in user or
-+     in kernel space can be monitored and captured for later analysis.
-+     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
-+     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-+
-+**>=1**:
-+     *scope* includes per-process performance monitoring only and excludes
-+     system wide performance monitoring. CPU and system events happened when
-+     executing either in user or in kernel space can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+**>=2**:
-+     *scope* includes per-process performance monitoring only. CPU and system
-+     events happened when executing in user space only can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+**>=3**:
-+     Restrict *access* to PCL performance monitoring for unprivileged processes.
-+     This is the default on Debian and Android [7]_ , [8]_ .
-+
-+Bibliography
-+------------
-+
-+.. [1] `<https://lwn.net/Articles/337493/>`_
-+.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
-+.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
-+.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
-+.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
-+.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
-+.. [7] `<https://lkml.org/lkml/2016/1/11/587>`_
-+.. [8] `<https://android-review.googlesource.com/#/c/234743/>`_
-+
+Hello Dave,
 
+> This *is* the broader NUMA rework.  I think it's just a bit more
+> incremental that what you originally had in mind.
+
+IIUC NUMA re-work in principle involves these functional changes
+
+1. Enumerating compute and memory nodes in heterogeneous environment (short/medium term)
+2. Enumerating memory node attributes as seen from the compute nodes (short/medium term)
+3. Changing core MM to accommodate multi attribute memory (long term)
+
+The first two set of changes can get the user space applications
+moving by identifying the right nodes and their attributes through
+sysfs interface.
+
+> 
+> Did you have an alternative for how you wanted this to look?
+> 
+
+No. I did not get enough time this year to rework on the original
+proposal I had. But will be able to help here to make this interface
+more generic, abstract out these properties which is extensible in
+the future.
+
+- Anshuman
