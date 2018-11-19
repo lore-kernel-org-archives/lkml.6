@@ -2,259 +2,135 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F85C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55C0C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7330620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7330620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 626CF20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:29:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="NfL3c4ny";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="C09f//SS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 626CF20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbeKSWwA (ORCPT
+        id S1728830AbeKSWw7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:52:00 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:60300 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728701AbeKSWwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:52:00 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 66F0AE41B638F;
-        Mon, 19 Nov 2018 20:28:28 +0800 (CST)
-Received: from huawei.com (10.175.102.38) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 19 Nov 2018
- 20:28:21 +0800
-From:   Tan Xiaojun <tanxiaojun@huawei.com>
-To:     <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-        <davem@davemloft.net>, <lipeng321@huawei.com>,
-        <linyunsheng@huawei.com>, <shenjian15@huawei.com>,
-        <tanhuazhong@huawei.com>, <liangfuyun1@huawei.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] net: hns3: add common validation in hclge_dcb
-Date:   Mon, 19 Nov 2018 21:02:15 +0800
-Message-ID: <1542632535-18210-1-git-send-email-tanxiaojun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Nov 2018 17:52:59 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:29404 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728701AbeKSWw7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 17:52:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1542630570; x=1574166570;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=o+LYMg96f7M+YlplGklEC0JdWaJoPPt7r3ACNEbYjiE=;
+  b=NfL3c4nyDMRWv3JPcLAqEE59qMCk8fHXZh6BL5RklL0uzkHNhoZUNIQv
+   RJicGIjcKmt1Ut1b0eoePo7Ckh3ABcvT2qLFXK+mxIC6O7ptaL79OmIAv
+   0ngRM+c9zbUGvX62+PVpEunPLXhHED+k90SnsIsi4qogyQmn+Vpw/3zDD
+   lk8+DcvJEkiN+G59clLgrHblKRp8mzgJ3/CvIOIdl8g9RGliqn4Nhgblc
+   j3T210TafmUNvp8MlgOjXFwcZUnRTjARHwjXa/TywPIsb+qaCyHhZ+Gg0
+   aZbiEEQGQRelcCbo39AGMi8gqeyH1vXP1bjnQGoc+qJJlv6qg3qbLVF1H
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.56,252,1539619200"; 
+   d="scan'208";a="199130012"
+Received: from mail-sn1nam02lp0024.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([216.32.180.24])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Nov 2018 20:29:29 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUpjfmbiLgFAZDOi9p9L7+RKFu1pV2u9OtGeE+vn2M0=;
+ b=C09f//SSBpOAIhy6iOt2UvgUJgsuMg663XsPdvRbFefp4KfQzVFrktJH57EXOaqvwjyQGTuhQPmqa4lKaO2KQxbPhT+s75AMb3rlHYDOHBLeQluc1dwHF0hlYxKbYh1wJbgR0yM2gZV8sLeRJxVCDlrSYl1bWNFH/kf31aP3Xw0=
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
+ SN6PR04MB4157.namprd04.prod.outlook.com (52.135.71.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.20; Mon, 19 Nov 2018 12:29:27 +0000
+Received: from SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::4c22:c9b8:6198:5fd1]) by SN6PR04MB4925.namprd04.prod.outlook.com
+ ([fe80::4c22:c9b8:6198:5fd1%2]) with mapi id 15.20.1339.025; Mon, 19 Nov 2018
+ 12:29:27 +0000
+From:   Avri Altman <Avri.Altman@wdc.com>
+To:     Benjamin Block <bblock@linux.ibm.com>,
+        Christoph Hellwig <hch@lst.de>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "ooo@electrozaur.com" <ooo@electrozaur.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 5/8] bsg: refactor bsg_ioctl
+Thread-Topic: [PATCH 5/8] bsg: refactor bsg_ioctl
+Thread-Index: AQHUecM8NZu7ZpLgHUiBBH4M8t8leKVNwHAAgAlSa1A=
+Date:   Mon, 19 Nov 2018 12:29:27 +0000
+Message-ID: <SN6PR04MB4925E6D8EC8D401B8C947F37FCD80@SN6PR04MB4925.namprd04.prod.outlook.com>
+References: <20181111133211.13926-1-hch@lst.de>
+ <20181111133211.13926-6-hch@lst.de> <20181113140550.GA7222@w530-pk1mzal>
+In-Reply-To: <20181113140550.GA7222@w530-pk1mzal>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Avri.Altman@wdc.com; 
+x-originating-ip: [212.25.79.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR04MB4157;6:07tAGyiplTEISxrpmJkz12FDGYCpbxrP5tICGOCseeIx9/+YUbH14AuzbyTprhaL0OVeitsctvxZCzM/EdFqvrpzbLnokSX1KKaUU34Ssj0tf8ZBzc3MmVCuM4F1WWSxr+PMv0XmLa+MdrjU9saB0ZkPu/ny/UbI3Oi2DwMB4nHkYTgBbn4RTeTor12lyFE4nugUU3Wy1H5Uc6IldWz1uHftUIugmDCcngfPt2qM/MdjM1pQwASG9XvQIf3JfpkAytMxm35CywrQOS1mcW9bwFfWp+YIBep1AMVNC09DSKZ7WdbdgabFK1LOdIy4QuhfSw8LMzeeeqrp6L+Ge6RZCVe1jeRm53IhFdPM2Mc/odDvzwBPGfgLl5dyZmH5SZMAvS6aIJdE1QGim2lWZyFU8rnKafd8DkLQi5TNwZSFIkqKBH9c/rL0+WXExeiQQMXIURM+J8bnMa8T2soCLNgDfg==;5:dRLbU8iTfF5uW4ZdsRIkoMg0wVDVKoHo1RM/6kXMeu85g8hn6+HTwkQo38Zt2NK+DTYqjeYvLRPVrSSVyGLihDx4NBYRxhEv1nRlIm2QEKd/9jB3/lrQ0jP7lNvcXQFHJ8V3WHMoYYO4XLqDq4nrMhbmcbgOSRDAotx9Po/MktM=;7:hExNOulfu5u3Pf3NlN2rE8wXz31Xb0zMH+tPGoq/zTOrY+6W/yp6b14qW+nnzIugFLYoRjRv8zkeEZyO3Mc/bBvd0swS01O/0KHRIGyTVyvDxddTvxjHIUqqr/3JUXPD/FaUwG5D1WekiByFj5BHiA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 898e2ab0-7059-460b-40aa-08d64e1aa5e2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB4157;
+x-ms-traffictypediagnostic: SN6PR04MB4157:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <SN6PR04MB4157B57B30BE825276F65056FCD80@SN6PR04MB4157.namprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN6PR04MB4157;BCL:0;PCL:0;RULEID:;SRVR:SN6PR04MB4157;
+x-forefront-prvs: 08617F610C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(366004)(39860400002)(136003)(346002)(189003)(199004)(256004)(86362001)(33656002)(7736002)(26005)(102836004)(72206003)(6506007)(7696005)(5660300001)(76176011)(14454004)(316002)(74316002)(305945005)(54906003)(110136005)(7416002)(99286004)(229853002)(106356001)(105586002)(2900100001)(6246003)(71190400001)(71200400001)(6436002)(186003)(8676002)(53936002)(55016002)(9686003)(11346002)(4326008)(476003)(486006)(68736007)(25786009)(478600001)(446003)(81156014)(66066001)(81166006)(8936002)(2906002)(3846002)(6116002)(97736004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB4157;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: sZWZAoFjB55T10FZ6k2e9KmdUunTrMoNRZpqKvExT4uASG/Aegb6MAZ4MrskIKz833WG72TXUHqDA9gcOt0br6ctWcoQhRD1yIrVo4SoILTBHgS7P3v5+l1QXyYANC4YLo7La+RU910ViMh3WxzrzG+Fq2jp2oA74hFojF4Hrm/xWr/SpfL3XsiIzXvXaUj8HonfpFT+mwXLsGoBteOj2zC5kQjKxq7M2ycWeHKrD3bpjgCKb3Fw2wFXcfrByuZJX4BPmJ8Tq/ndVOPs2pKTjeync8ozYKRpyc8VcVWMFXk3VJBWMerASoc2KeLGiUVBQZbCBWx9YHX6OdwlaZ1hqkMEUqaoNhr93cQ+APCYQmU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.38]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 898e2ab0-7059-460b-40aa-08d64e1aa5e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 12:29:27.7594
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Before setting tm related configuration to hardware, driver
-needs to check the configuration provided by user is valid.
-Currently hclge_ieee_setets and hclge_setup_tc both implement
-their own checking, which has a lot in common.
 
-This patch addes hclge_dcb_common_validate to do the common
-checking. The checking in hclge_tm_prio_tc_info_update
-and hclge_tm_schd_info_update is unnecessary now, so change
-the return type to void, which removes the need to do error
-handling when one of the checking fails.
+=20
+> On Sun, Nov 11, 2018 at 02:32:08PM +0100, Christoph Hellwig wrote:
+> > Move all actual functionality into helpers, just leaving the dispatch
+> > in this function.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  block/bsg.c | 158 ++++++++++++++++++++++++----------------------------
+> >  1 file changed, 72 insertions(+), 86 deletions(-)
+> >
+>=20
+> Looks fine to me. Did ran the same small test-tool I ran against Jens'
+> patches, nothing broke.
+>=20
+> Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
+> Tested-by: Benjamin Block <bblock@linux.ibm.com>
+Tested-by: Avri Altman <avri.altman@wdc.com>
 
-Also, ets->prio_tc is indexed by user prio and ets->tc_tsa is
-indexed by tc num, so this patch changes them to use different
-index.
-
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 70 +++++++++++++++-------
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 14 +----
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  4 +-
- 3 files changed, 53 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-index e72f724..f6323b2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
-@@ -35,7 +35,9 @@ static int hclge_ieee_ets_to_tm_info(struct hclge_dev *hdev,
- 		}
- 	}
- 
--	return hclge_tm_prio_tc_info_update(hdev, ets->prio_tc);
-+	hclge_tm_prio_tc_info_update(hdev, ets->prio_tc);
-+
-+	return 0;
- }
- 
- static void hclge_tm_info_to_ieee_ets(struct hclge_dev *hdev,
-@@ -70,25 +72,61 @@ static int hclge_ieee_getets(struct hnae3_handle *h, struct ieee_ets *ets)
- 	return 0;
- }
- 
-+static int hclge_dcb_common_validate(struct hclge_dev *hdev, u8 num_tc,
-+				     u8 *prio_tc)
-+{
-+	int i;
-+
-+	if (num_tc > hdev->tc_max) {
-+		dev_err(&hdev->pdev->dev,
-+			"tc num checking failed, %u > tc_max(%u)\n",
-+			num_tc, hdev->tc_max);
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
-+		if (prio_tc[i] >= num_tc) {
-+			dev_err(&hdev->pdev->dev,
-+				"prio_tc[%u] checking failed, %u >= num_tc(%u)\n",
-+				i, prio_tc[i], num_tc);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	for (i = 0; i < hdev->num_alloc_vport; i++) {
-+		if (num_tc > hdev->vport[i].alloc_tqps) {
-+			dev_err(&hdev->pdev->dev,
-+				"allocated tqp(%u) checking failed, %u > tqp(%u)\n",
-+				i, num_tc, hdev->vport[i].alloc_tqps);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int hclge_ets_validate(struct hclge_dev *hdev, struct ieee_ets *ets,
- 			      u8 *tc, bool *changed)
- {
- 	bool has_ets_tc = false;
- 	u32 total_ets_bw = 0;
- 	u8 max_tc = 0;
-+	int ret;
- 	u8 i;
- 
--	for (i = 0; i < HNAE3_MAX_TC; i++) {
--		if (ets->prio_tc[i] >= hdev->tc_max ||
--		    i >= hdev->tc_max)
--			return -EINVAL;
--
-+	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
- 		if (ets->prio_tc[i] != hdev->tm_info.prio_tc[i])
- 			*changed = true;
- 
- 		if (ets->prio_tc[i] > max_tc)
- 			max_tc = ets->prio_tc[i];
-+	}
- 
-+	ret = hclge_dcb_common_validate(hdev, max_tc + 1, ets->prio_tc);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < HNAE3_MAX_TC; i++) {
- 		switch (ets->tc_tsa[i]) {
- 		case IEEE_8021QAZ_TSA_STRICT:
- 			if (hdev->tm_info.tc_info[i].tc_sch_mode !=
-@@ -184,9 +222,7 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
- 	if (ret)
- 		return ret;
- 
--	ret = hclge_tm_schd_info_update(hdev, num_tc);
--	if (ret)
--		return ret;
-+	hclge_tm_schd_info_update(hdev, num_tc);
- 
- 	ret = hclge_ieee_ets_to_tm_info(hdev, ets);
- 	if (ret)
-@@ -305,20 +341,12 @@ static int hclge_setup_tc(struct hnae3_handle *h, u8 tc, u8 *prio_tc)
- 	if (hdev->flag & HCLGE_FLAG_DCB_ENABLE)
- 		return -EINVAL;
- 
--	if (tc > hdev->tc_max) {
--		dev_err(&hdev->pdev->dev,
--			"setup tc failed, tc(%u) > tc_max(%u)\n",
--			tc, hdev->tc_max);
--		return -EINVAL;
--	}
--
--	ret = hclge_tm_schd_info_update(hdev, tc);
-+	ret = hclge_dcb_common_validate(hdev, tc, prio_tc);
- 	if (ret)
--		return ret;
-+		return -EINVAL;
- 
--	ret = hclge_tm_prio_tc_info_update(hdev, prio_tc);
--	if (ret)
--		return ret;
-+	hclge_tm_schd_info_update(hdev, tc);
-+	hclge_tm_prio_tc_info_update(hdev, prio_tc);
- 
- 	ret = hclge_tm_init_hw(hdev);
- 	if (ret)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-index 494e562..00458da 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
-@@ -1259,15 +1259,13 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
- 	return 0;
- }
- 
--int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
-+void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
- {
- 	struct hclge_vport *vport = hdev->vport;
- 	struct hnae3_knic_private_info *kinfo;
- 	u32 i, k;
- 
- 	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
--		if (prio_tc[i] >= hdev->tm_info.num_tc)
--			return -EINVAL;
- 		hdev->tm_info.prio_tc[i] = prio_tc[i];
- 
- 		for (k = 0;  k < hdev->num_alloc_vport; k++) {
-@@ -1275,18 +1273,12 @@ int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
- 			kinfo->prio_tc[i] = prio_tc[i];
- 		}
- 	}
--	return 0;
- }
- 
--int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
-+void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
- {
- 	u8 i, bit_map = 0;
- 
--	for (i = 0; i < hdev->num_alloc_vport; i++) {
--		if (num_tc > hdev->vport[i].alloc_tqps)
--			return -EINVAL;
--	}
--
- 	hdev->tm_info.num_tc = num_tc;
- 
- 	for (i = 0; i < hdev->tm_info.num_tc; i++)
-@@ -1300,8 +1292,6 @@ int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
- 	hdev->hw_tc_map = bit_map;
- 
- 	hclge_tm_schd_info_init(hdev);
--
--	return 0;
- }
- 
- int hclge_tm_init_hw(struct hclge_dev *hdev)
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-index 25eef13..4bd916a 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
-@@ -131,8 +131,8 @@ struct hclge_port_shapping_cmd {
- int hclge_tm_schd_init(struct hclge_dev *hdev);
- int hclge_pause_setup_hw(struct hclge_dev *hdev);
- int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
--int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
--int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
-+void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
-+void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
- int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
- int hclge_tm_map_cfg(struct hclge_dev *hdev);
- int hclge_tm_init_hw(struct hclge_dev *hdev);
--- 
-2.7.4
-
+Tested the scsi pass-through (ufs-bsg) path - nothing is broken.=20
