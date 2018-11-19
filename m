@@ -4,55 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BC5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1C3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08587214F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D56952148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="en6AvTkk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08587214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwkRI3yY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56952148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406968AbeKTDaL (ORCPT
+        id S2406980AbeKTDaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45082 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406208AbeKTDaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:10 -0500
+        id S2406208AbeKTDaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26526214D9;
-        Mon, 19 Nov 2018 17:05:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1C86214DA;
+        Mon, 19 Nov 2018 17:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647152;
-        bh=itGIQI4wCUejqlVwPR+l27f5xG55z8wfYRLpYM8rOrQ=;
+        s=default; t=1542647155;
+        bh=6Xfs7hyOugeosiZoLpLYdlacJpqkJgOzGEZlKGH0lVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=en6AvTkkNJTMd4V4v/tPH/MjYCpteMvq4bMmf5Lcrf1PNZ/K6XZ2UPE+/r+EXYsiR
-         TYC/6h8QH++1ZBBRN6oJlOae9hwPbTOt5w8rydUn9+QETTRtJzy/avtEf7x73OBy88
-         hFSj9EqcBEcBmP5+hb9LSXugZ2ZRRQtYW3v4i6Bw=
+        b=ZwkRI3yY3kwNZv2nwMiFE0VOfq1r6Kay35FSaXOLT1YaHRIHvSdsbvZEah2dEACv4
+         5WJAznd+m/XsPhJ+736I9eW023VGqf9I3Oz5o5JX6AIQ2AUXjVND/+wzSBuESdmill
+         qSlTdU1kUM9qMKHcRrz3v6stcCow1Gcm7+t6fDW8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Haverkamp <haver@linux.vnet.ibm.com>,
-        Joerg-Stephan Vogt <jsvogt@de.ibm.com>,
-        Michael Jung <mijung@gmx.net>,
-        Michael Ruettger <michael@ibmra.de>,
-        Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>,
-        Sebastian Ott <sebott@linux.vnet.ibm.com>,
-        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
-        Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 3.18 32/90] signal/GenWQE: Fix sending of SIGKILL
-Date:   Mon, 19 Nov 2018 17:29:14 +0100
-Message-Id: <20181119162626.068424727@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 3.18 33/90] crypto: lrw - Fix out-of bounds access on counter overflow
+Date:   Mon, 19 Nov 2018 17:29:15 +0100
+Message-Id: <20181119162626.228476726@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -70,112 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
+commit fbe1a850b3b1522e9fc22319ccbbcd2ab05328d2 upstream.
 
-The genweq_add_file and genwqe_del_file by caching current without
-using reference counting embed the assumption that a file descriptor
-will never be passed from one process to another.  It even embeds the
-assumption that the the thread that opened the file will be in
-existence when the process terminates.   Neither of which are
-guaranteed to be true.
+When the LRW block counter overflows, the current implementation returns
+128 as the index to the precomputed multiplication table, which has 128
+entries. This patch fixes it to return the correct value (127).
 
-Therefore replace caching the task_struct of the opener with
-pid of the openers thread group id.  All the knowledge of the
-opener is used for is as the target of SIGKILL and a SIGKILL
-will kill the entire process group.
-
-Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
-signal argument, update it's ownly caller, and use kill_pid
-instead of force_sig.
-
-The work force_sig does in changing signal handling state is not
-relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
-will be killed just with less work, and less confusion.  The work done
-by force_sig is really only needed for handling syncrhonous
-exceptions.
-
-It will still be possible to cause genwqe_device_remove to wait
-8 seconds by passing a file descriptor to another process but
-the possible user after free is fixed.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Cc: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
-Cc: Michael Jung <mijung@gmx.net>
-Cc: Michael Ruettger <michael@ibmra.de>
-Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
-Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
-Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
-Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: 64470f1b8510 ("[CRYPTO] lrw: Liskov Rivest Wagner, a tweakable narrow block cipher mode")
+Cc: <stable@vger.kernel.org> # 2.6.20+
+Reported-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/genwqe/card_base.h |    2 +-
- drivers/misc/genwqe/card_dev.c  |    9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ crypto/lrw.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/misc/genwqe/card_base.h
-+++ b/drivers/misc/genwqe/card_base.h
-@@ -405,7 +405,7 @@ struct genwqe_file {
- 	struct file *filp;
- 
- 	struct fasync_struct *async_queue;
--	struct task_struct *owner;
-+	struct pid *opener;
- 	struct list_head list;		/* entry in list of open files */
- 
- 	spinlock_t map_lock;		/* lock for dma_mappings */
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
- {
- 	unsigned long flags;
- 
--	cfile->owner = current;
-+	cfile->opener = get_pid(task_tgid(current));
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_add(&cfile->list, &cd->file_list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_del(&cfile->list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-+	put_pid(cfile->opener);
- 
- 	return 0;
- }
-@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
- 	return files;
- }
- 
--static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
-+static int genwqe_terminate(struct genwqe_dev *cd)
- {
- 	unsigned int files = 0;
- 	unsigned long flags;
-@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
- 
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_for_each_entry(cfile, &cd->file_list, list) {
--		force_sig(sig, cfile->owner);
-+		kill_pid(cfile->opener, SIGKILL, 1);
- 		files++;
+--- a/crypto/lrw.c
++++ b/crypto/lrw.c
+@@ -132,7 +132,12 @@ static inline int get_index128(be128 *bl
+ 		return x + ffz(val);
  	}
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -1356,7 +1357,7 @@ static int genwqe_inform_and_stop_proces
- 		dev_warn(&pci_dev->dev,
- 			 "[%s] send SIGKILL and wait ...\n", __func__);
  
--		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
-+		rc = genwqe_terminate(cd);
- 		if (rc) {
- 			/* Give kill_timout more seconds to end processes */
- 			for (i = 0; (i < genwqe_kill_timeout) &&
+-	return x;
++	/*
++	 * If we get here, then x == 128 and we are incrementing the counter
++	 * from all ones to all zeros. This means we must return index 127, i.e.
++	 * the one corresponding to key2*{ 1,...,1 }.
++	 */
++	return 127;
+ }
+ 
+ static int crypt(struct blkcipher_desc *d,
 
 
