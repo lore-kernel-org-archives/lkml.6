@@ -2,171 +2,77 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30F9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B34C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD2320851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD2320851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3BE8320851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:20:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BE8320851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730055AbeKTCnn (ORCPT
+        id S1730070AbeKTCoD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:43:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53644 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 21:44:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:3499 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729825AbeKTCnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:43:42 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4EA2530841DE;
-        Mon, 19 Nov 2018 16:19:38 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 88D5119C7B;
-        Mon, 19 Nov 2018 16:19:37 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: add a new Kconfig for POOL_SIZE
-To:     Qian Cai <cai@gmx.us>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux kernel <linux-kernel@vger.kernel.org>, arnd@arndb.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-References: <20181118082255.1275-1-cai@gmx.us>
- <alpine.DEB.2.21.1811181919170.9459@nanos.tec.linutronix.de>
- <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
- <alpine.DEB.2.21.1811190904450.9459@nanos.tec.linutronix.de>
- <trinity-0de3e85e-8526-4004-b346-3b64dd89bc78-1542634057117@msvc-mesg-gmx021>
- <44517d7f-c34f-1424-d0db-601e590c626d@redhat.com>
- <1542640658.12945.41.camel@gmx.us>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFgsZGsBEAC3l/RVYISY3M0SznCZOv8aWc/bsAgif1H8h0WPDrHnwt1jfFTB26EzhRea
- XQKAJiZbjnTotxXq1JVaWxJcNJL7crruYeFdv7WUJqJzFgHnNM/upZuGsDIJHyqBHWK5X9ZO
- jRyfqV/i3Ll7VIZobcRLbTfEJgyLTAHn2Ipcpt8mRg2cck2sC9+RMi45Epweu7pKjfrF8JUY
- r71uif2ThpN8vGpn+FKbERFt4hW2dV/3awVckxxHXNrQYIB3I/G6mUdEZ9yrVrAfLw5M3fVU
- CRnC6fbroC6/ztD40lyTQWbCqGERVEwHFYYoxrcGa8AzMXN9CN7bleHmKZrGxDFWbg4877zX
- 0YaLRypme4K0ULbnNVRQcSZ9UalTvAzjpyWnlnXCLnFjzhV7qsjozloLTkZjyHimSc3yllH7
- VvP/lGHnqUk7xDymgRHNNn0wWPuOpR97J/r7V1mSMZlni/FVTQTRu87aQRYu3nKhcNJ47TGY
- evz/U0ltaZEU41t7WGBnC7RlxYtdXziEn5fC8b1JfqiP0OJVQfdIMVIbEw1turVouTovUA39
- Qqa6Pd1oYTw+Bdm1tkx7di73qB3x4pJoC8ZRfEmPqSpmu42sijWSBUgYJwsziTW2SBi4hRjU
- h/Tm0NuU1/R1bgv/EzoXjgOM4ZlSu6Pv7ICpELdWSrvkXJIuIwARAQABzR9Mb25nbWFuIExv
- bmcgPGxsb25nQHJlZGhhdC5jb20+wsF/BBMBAgApBQJYLGRrAhsjBQkJZgGABwsJCAcDAgEG
- FQgCCQoLBBYCAwECHgECF4AACgkQbjBXZE7vHeYwBA//ZYxi4I/4KVrqc6oodVfwPnOVxvyY
- oKZGPXZXAa3swtPGmRFc8kGyIMZpVTqGJYGD9ZDezxpWIkVQDnKM9zw/qGarUVKzElGHcuFN
- ddtwX64yxDhA+3Og8MTy8+8ZucM4oNsbM9Dx171bFnHjWSka8o6qhK5siBAf9WXcPNogUk4S
- fMNYKxexcUayv750GK5E8RouG0DrjtIMYVJwu+p3X1bRHHDoieVfE1i380YydPd7mXa7FrRl
- 7unTlrxUyJSiBc83HgKCdFC8+ggmRVisbs+1clMsK++ehz08dmGlbQD8Fv2VK5KR2+QXYLU0
- rRQjXk/gJ8wcMasuUcywnj8dqqO3kIS1EfshrfR/xCNSREcv2fwHvfJjprpoE9tiL1qP7Jrq
- 4tUYazErOEQJcE8Qm3fioh40w8YrGGYEGNA4do/jaHXm1iB9rShXE2jnmy3ttdAh3M8W2OMK
- 4B/Rlr+Awr2NlVdvEF7iL70kO+aZeOu20Lq6mx4Kvq/WyjZg8g+vYGCExZ7sd8xpncBSl7b3
- 99AIyT55HaJjrs5F3Rl8dAklaDyzXviwcxs+gSYvRCr6AMzevmfWbAILN9i1ZkfbnqVdpaag
- QmWlmPuKzqKhJP+OMYSgYnpd/vu5FBbc+eXpuhydKqtUVOWjtp5hAERNnSpD87i1TilshFQm
- TFxHDzbOwU0EWCxkawEQALAcdzzKsZbcdSi1kgjfce9AMjyxkkZxcGc6Rhwvt78d66qIFK9D
- Y9wfcZBpuFY/AcKEqjTo4FZ5LCa7/dXNwOXOdB1Jfp54OFUqiYUJFymFKInHQYlmoES9EJEU
- yy+2ipzy5yGbLh3ZqAXyZCTmUKBU7oz/waN7ynEP0S0DqdWgJnpEiFjFN4/ovf9uveUnjzB6
- lzd0BDckLU4dL7aqe2ROIHyG3zaBMuPo66pN3njEr7IcyAL6aK/IyRrwLXoxLMQW7YQmFPSw
- drATP3WO0x8UGaXlGMVcaeUBMJlqTyN4Swr2BbqBcEGAMPjFCm6MjAPv68h5hEoB9zvIg+fq
- M1/Gs4D8H8kUjOEOYtmVQ5RZQschPJle95BzNwE3Y48ZH5zewgU7ByVJKSgJ9HDhwX8Ryuia
- 79r86qZeFjXOUXZjjWdFDKl5vaiRbNWCpuSG1R1Tm8o/rd2NZ6l8LgcK9UcpWorrPknbE/pm
- MUeZ2d3ss5G5Vbb0bYVFRtYQiCCfHAQHO6uNtA9IztkuMpMRQDUiDoApHwYUY5Dqasu4ZDJk
- bZ8lC6qc2NXauOWMDw43z9He7k6LnYm/evcD+0+YebxNsorEiWDgIW8Q/E+h6RMS9kW3Rv1N
- qd2nFfiC8+p9I/KLcbV33tMhF1+dOgyiL4bcYeR351pnyXBPA66ldNWvABEBAAHCwWUEGAEC
- AA8FAlgsZGsCGwwFCQlmAYAACgkQbjBXZE7vHeYxSQ/+PnnPrOkKHDHQew8Pq9w2RAOO8gMg
- 9Ty4L54CsTf21Mqc6GXj6LN3WbQta7CVA0bKeq0+WnmsZ9jkTNh8lJp0/RnZkSUsDT9Tza9r
- GB0svZnBJMFJgSMfmwa3cBttCh+vqDV3ZIVSG54nPmGfUQMFPlDHccjWIvTvyY3a9SLeamaR
- jOGye8MQAlAD40fTWK2no6L1b8abGtziTkNh68zfu3wjQkXk4kA4zHroE61PpS3oMD4AyI9L
- 7A4Zv0Cvs2MhYQ4Qbbmafr+NOhzuunm5CoaRi+762+c508TqgRqH8W1htZCzab0pXHRfywtv
- 0P+BMT7vN2uMBdhr8c0b/hoGqBTenOmFt71tAyyGcPgI3f7DUxy+cv3GzenWjrvf3uFpxYx4
- yFQkUcu06wa61nCdxXU/BWFItryAGGdh2fFXnIYP8NZfdA+zmpymJXDQeMsAEHS0BLTVQ3+M
- 7W5Ak8p9V+bFMtteBgoM23bskH6mgOAw6Cj/USW4cAJ8b++9zE0/4Bv4iaY5bcsL+h7TqQBH
- Lk1eByJeVooUa/mqa2UdVJalc8B9NrAnLiyRsg72Nurwzvknv7anSgIkL+doXDaG21DgCYTD
- wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
- weim8xU=
-Organization: Red Hat
-Message-ID: <0c6a79c8-dde2-dee9-efb0-5cf3d1b3949e@redhat.com>
-Date:   Mon, 19 Nov 2018 11:19:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729865AbeKTCoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:44:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 08:19:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
+   d="scan'208";a="87614176"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Nov 2018 08:19:59 -0800
+Date:   Mon, 19 Nov 2018 09:16:42 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc:     bhelgaas@google.com, okaya@kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2 2/2] PCI: pciehp: Add HXT quirk for Command Completed
+ errata
+Message-ID: <20181119161642.GA26595@localhost.localdomain>
+References: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
+ <5e88860c8426df537c5a5f2d0e6add6df8955a0f.1541574331.git.shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <1542640658.12945.41.camel@gmx.us>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 19 Nov 2018 16:19:38 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5e88860c8426df537c5a5f2d0e6add6df8955a0f.1541574331.git.shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2018 10:17 AM, Qian Cai wrote:
-> On Mon, 2018-11-19 at 09:51 -0500, Waiman Long wrote:
->> On 11/19/2018 08:27 AM, Qian Cai wrote:
->>> On 11/19/18 at 3:09 AM, Thomas Gleixner wrote:
->>>
->>>> Qian,
->>>>
->>>> On Sun, 18 Nov 2018, Qian Cai wrote:
->>>>>> On Nov 18, 2018, at 1:21 PM, Thomas Gleixner <tglx@linutronix.de>
->>>>>> wrote:
->>>>>> On Sun, 18 Nov 2018, Qian Cai wrote:
->>>>>>> As the results, systems have 60+ CPUs with both timer and workqueue
->>>>>>> objects enabled could trigger "ODEBUG: Out of memory. ODEBUG
->>>>>>> disabled".
->>>>>>>
->>>>>>> Hence, add a new Kconfig option so users could adjust
->>>>>>> ODEBUG_POOL_SIZE
->>>>>>> accordingly if either timer or workqueue objects are selected.
->>>>>> why do we need a config option, when the required number can be
->>>>>> deduced
->>>>>> already from the active CONFIG_DEBUG_OBJECTS_* and NR_CPUS?
->>>>>>
->>>>> It because I am worry about the coupling between the implementation
->>>>> details of
->>>>> timers and workqueue objects, and the computation in the code you
->>>>> mentioned
->>>>> here. For example, people could change workqueue.c to have different
->>>>> number
->>>>> of worekqueues initialized during the early boot in the future which is
->>>>> going to
->>>>> affect the required pool size, and I am not sure if people are going to
->>>>> adjust the
->>>>> code in debugobjects.c here as well when they made changes like that.
->>>>>
->>>>> Also, the computation could become so complex depends on lots of config
->>>>> options like perf, hrtimer, and combinations that I have not tested so
->>>>> far which is
->>>>> difficult to exhausted all the possibilities.
->>>>>
->>>>> Hence, I feel like the Kconfig option is more flexible and less error-
->>>>> prone.
->>>> Quite the contrary. Config options are a pain and truly error-prone if you
->>>> want to compile general purpose kernels as distributions do.
->>>>
->>> Ah, I never thought distributions people would
->>> enable those debugging options.
->> Distros like RHEL usually ship two kernels - one for production and one
->> for debug. The debug kernel does have debugobjects enabled.
->>
-> Right, I can remember that now . However, if I understand correctly, since the
-> early static pool size needs to be determined during the compilation time, it
-> depends on the No. CPUs are from the machines that built the distro kernels.
-> Then, when users use those distro kernels, they are not going to have correct
-> the pool size according to the No. CPUs on their test machines.
+On Wed, Nov 07, 2018 at 03:25:05PM +0800, Shunyong Yang wrote:
+> The HXT SD4800 PCI controller does not set the Command Completed
+> bit unless writes to the Slot Command register change "Control"
+> bits.
+> 
+> This patch adds SD4800 to the quirk.
+> 
+> Cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+> 
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index 7dd443aea5a5..91db67963aea 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -920,3 +920,5 @@ static void quirk_cmd_compl(struct pci_dev *pdev)
+>  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
+>  DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_QCOM, 0x0401,
+>  			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
+> +DECLARE_PCI_FIXUP_CLASS_EARLY(PCI_VENDOR_ID_HXT, 0x0401,
+> +			      PCI_CLASS_BRIDGE_PCI, 8, quirk_cmd_compl);
 
-I see your point. Perhaps you can make ODEBUG_POOL_SIZE scales with
-CONFIG_NR_CPUS like
-
-#define ODEBUG_POOL_SIZE    (1024 + CONFIG_NR_CPUS * 2)
-
-CONFIG_NR_CPUS is usually set to a lot higher than the actual number of
-CPUs in a typical system. So you don't want to set the multiplier too high.
-
-Cheers,
-Longman
-
+I guess you're just appending to where this quirk is already defined,
+but why are the quirks even in the core driver instead of pci/quirks.c?
