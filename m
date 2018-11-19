@@ -2,181 +2,147 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25858C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDB6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:54:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27FB20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:53:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="eDvpkynd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27FB20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 73C6320659
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:54:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73C6320659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730652AbeKTFS3 (ORCPT
+        id S1730656AbeKTFSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:18:29 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:33087 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730588AbeKTFS2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:18:28 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so3766129plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:53:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=orlOOr/BaGm17SJPpAirxLsaGVwjrtuMXrDM5zHWlAM=;
-        b=eDvpkyndPb9nHnCbDWhNMRFZo+KUUCjQ3cAGuI97NRsiytg5IiG5PwFWwQN5hawQ7h
-         2S+ZlFoXi2SY9MyNVMhReXKyV7DQe4eyXH+mV5jxVzd0b5FvsX+joGCA9y/bPa377WRB
-         vwKbkAJeBwexOgy1Q5AxeTXiLSpSP2cB/B2mKvoYKhlXNIZ6WTTQ2RQx04TJoisWBtv6
-         AAm4Nw7llyJHLWK/Kw8obScvm0/QSNtRT7XDDaq3v1h8CQJbTpzVR91bFVVkf880NYv8
-         W3K8s/Jub68imUNSsoGkFri6V5wWxwh6GWiESbHN9K3PJr5P2JfTaDsJao4WADuD2b6h
-         QAyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=orlOOr/BaGm17SJPpAirxLsaGVwjrtuMXrDM5zHWlAM=;
-        b=TkR8Bl/PhKiWuGVMWb/HlUU3Sx+2MDFGYk0TNlceMfrURSFip90A45FfI7jz0DaN/l
-         IbfZME2PcmqKffcwPTb3rR9Set8NnJB6fUC4wTCQDtZX9VOoqACQp0ozM9nQdIeeA5jX
-         ozg855Twdz8OoNqbkxPywye6M7jqrbFry23YPnOdq9m4DS2mHwmNj2/vNC/bdpVfqVGL
-         vOKbhGFcaVRdJGk6FQ+klscDmdL4r0Z+PjM5X2Ha83CyzShT1m6hsRbvKA9gmrVp6nrU
-         z9NfXQ2htIpxFp/EmThOwvXugfk4vFp0AW7DtWwZ7I5KEHa8owsR2Ds59RoZ8UuMOyTF
-         Zgzg==
-X-Gm-Message-State: AGRZ1gK0rOoRlbhF3Uj9ekBtCrakeg/BB93+RLwo/kTvlkwGn/+k9A/a
-        Yct6jOktzf6f3DDck10eP5StYQ==
-X-Google-Smtp-Source: AJdET5dxOUhUB98xe6rTqY6BNrXvHa6s+q68yu6OA6hkZlyrpNm7U//bIp/SXUueSN0I32JGtlM0Gw==
-X-Received: by 2002:a17:902:c5:: with SMTP id a63-v6mr23603684pla.201.1542653615215;
-        Mon, 19 Nov 2018 10:53:35 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id g65sm115246778pfa.63.2018.11.19.10.53.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 10:53:34 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gOoft-000563-FM; Mon, 19 Nov 2018 11:53:33 -0700
-Date:   Mon, 19 Nov 2018 11:53:33 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
-        linuxarm@huawei.com, haojian.zhuang@linaro.org,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181119185333.GC4890@ziepe.ca>
-References: <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181119164853.GA4593@redhat.com>
- <20181119182752.GA4890@ziepe.ca>
- <20181119184215.GB4593@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119184215.GB4593@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 20 Nov 2018 00:18:51 -0500
+Received: from mga06.intel.com ([134.134.136.31]:32124 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726425AbeKTFSu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:18:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 10:53:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
+   d="scan'208";a="93283070"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 10:53:58 -0800
+Message-ID: <5815470723f5e97bc26bad42da219598e2775837.camel@linux.intel.com>
+Subject: Re: [mm PATCH v5 4/7] mm: Initialize MAX_ORDER_NR_PAGES at a time
+ instead of doing larger sections
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Date:   Mon, 19 Nov 2018 10:53:58 -0800
+In-Reply-To: <20181110010238.jnabddtfpr5kjhdz@xakep.localdomain>
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+         <154145278583.30046.4918131143612801028.stgit@ahduyck-desk1.jf.intel.com>
+         <20181110010238.jnabddtfpr5kjhdz@xakep.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 01:42:16PM -0500, Jerome Glisse wrote:
-> On Mon, Nov 19, 2018 at 11:27:52AM -0700, Jason Gunthorpe wrote:
-> > On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
-> > 
-> > > Just to comment on this, any infiniband driver which use umem and do
-> > > not have ODP (here ODP for me means listening to mmu notifier so all
-> > > infiniband driver except mlx5) will be affected by same issue AFAICT.
-> > > 
-> > > AFAICT there is no special thing happening after fork() inside any of
-> > > those driver. So if parent create a umem mr before fork() and program
-> > > hardware with it then after fork() the parent might start using new
-> > > page for the umem range while the old memory is use by the child. The
-> > > reverse is also true (parent using old memory and child new memory)
-> > > bottom line you can not predict which memory the child or the parent
-> > > will use for the range after fork().
-> > > 
-> > > So no matter what you consider the child or the parent, what the hw
-> > > will use for the mr is unlikely to match what the CPU use for the
-> > > same virtual address. In other word:
-> > > 
-> > > Before fork:
-> > >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
-> > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> > > 
-> > > Case 1:
-> > >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
-> > >     CPU child:  virtual addr ptr1 -> physical address = 0xDEAD
-> > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> > > 
-> > > Case 2:
-> > >     CPU parent: virtual addr ptr1 -> physical address = 0xBEEF
-> > >     CPU child:  virtual addr ptr1 -> physical address = 0xCAFE
-> > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> > 
-> > IIRC this is solved in IB by automatically calling
-> > madvise(MADV_DONTFORK) before creating the MR.
-> > 
-> > MADV_DONTFORK
-> >   .. This is useful to prevent copy-on-write semantics from changing the
-> >   physical location of a page if the parent writes to it after a
-> >   fork(2) ..
+On Fri, 2018-11-09 at 20:02 -0500, Pavel Tatashin wrote:
+> On 18-11-05 13:19:45, Alexander Duyck wrote:
+> >  	}
+> > -	first_init_pfn = max(zone->zone_start_pfn, first_init_pfn);
+> > +
+> > +	/* If the zone is empty somebody else may have cleared out the zone */
+> > +	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
+> > +						 first_init_pfn)) {
+> > +		pgdat_resize_unlock(pgdat, &flags);
+> > +		pgdat_init_report_one_done();
+> > +		return 0;
 > 
-> This would work around the issue but this is not transparent ie
-> range marked with DONTFORK no longer behave as expected from the
-> application point of view.
+> It would make more sense to add goto to the end of this function and report
+> that in Node X had 0 pages initialized. Otherwise, it will be confusing
+> why some nodes are not initialized during boot. It is simply because
+> they do not have deferred pages left to be initialized.
 
-Do you know what the difference is? The man page really gives no
-hint..
+This part makes sense and will be implemented for v6.
 
-Does it sometimes unmap the pages during fork?
+> 
+> > +	}
+> >  
+> >  	/*
+> > -	 * Initialize and free pages. We do it in two loops: first we initialize
+> > -	 * struct page, than free to buddy allocator, because while we are
+> > -	 * freeing pages we can access pages that are ahead (computing buddy
+> > -	 * page in __free_one_page()).
+> > +	 * Initialize and free pages in MAX_ORDER sized increments so
+> > +	 * that we can avoid introducing any issues with the buddy
+> > +	 * allocator.
+> >  	 */
+> > -	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
+> > -		spfn = max_t(unsigned long, first_init_pfn, spfn);
+> > -		nr_pages += deferred_init_pages(zone, spfn, epfn);
+> > -	}
+> > -	for_each_free_mem_pfn_range_in_zone(i, zone, &spfn, &epfn) {
+> > -		spfn = max_t(unsigned long, first_init_pfn, spfn);
+> > -		deferred_free_pages(spfn, epfn);
+> > -	}
+> > +	while (spfn < epfn)
+> > +		nr_pages += deferred_init_maxorder(&i, zone, &spfn, &epfn);
+> > +
+> >  	pgdat_resize_unlock(pgdat, &flags);
+> >  
+> >  	/* Sanity check that the next zone really is unpopulated */
+> > @@ -1602,9 +1689,9 @@ deferred_grow_zone(struct zone *zone, unsigned int order)
+> >  {
+> 
+> How about order = max(order, max_order)?
 
-I actually wonder if the kernel is a bit broken here, we have the same
-problem with O_DIRECT and other stuff, right?
+I'm not sure what you are getting at here? The "order" variable passed
+is only really used to get the nr_pages_needed, and that value is
+rounded up to PAGES_PER_SECTION which should always be equal to or
+greater than MAX_ORDER pages.
 
-Really, if I have a get_user_pages FOLL_WRITE on a page and we fork,
-then shouldn't the COW immediately be broken during the fork?
+If order is greater than MAX_ORDER we would want to process some number
+of MAX_ORDER sized blocks until we get to the size specified by order.
+If we process it all as one large block it will perform worse as we
+risk pushing page structs out of the cache.
 
-The kernel can't guarentee that an ongoing DMA will not write to those
-pages, and it breaks the fork semantic to write to both processes.
+> >  	unsigned long nr_pages_needed = ALIGN(1 << order, PAGES_PER_SECTION);
+> 
+> 
+> > -	first_init_pfn = max(zone->zone_start_pfn, first_deferred_pfn);
+> > -
+> > -	if (first_init_pfn >= pgdat_end_pfn(pgdat)) {
+> > +	/* If the zone is empty somebody else may have cleared out the zone */
+> > +	if (!deferred_init_mem_pfn_range_in_zone(&i, zone, &spfn, &epfn,
+> > +						 first_deferred_pfn)) {
+> >  		pgdat_resize_unlock(pgdat, &flags);
+> > -		return false;
+> > +		return true;
+> 
+> I am OK to change to true here, please also set
+> pgdat->first_deferred_pfn to ULONG_MAX to indicate that there are no
+> more deferred pages in this node.
 
-> Also it relies on userspace doing the right thing (which is not
-> something i usualy trust :)).
+Done for v6 of the patch set.
 
-Well, if they do it wrong they get to keep all the broken bits :)
+> 
+> Overall, I like this patch, makes things a lot easier, assuming the
+> above is addressed:
+> 
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> 
+> Thank you,
+> Pasha
 
-Jason
