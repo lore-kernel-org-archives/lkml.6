@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29DEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C9EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84F7C21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 800DE21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwQJZ2T9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84F7C21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Thb+Tv40"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 800DE21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733295AbeKTDFl (ORCPT
+        id S1733307AbeKTDFp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39132 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:05:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731409AbeKTDFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:05:40 -0500
+        id S1731409AbeKTDFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:05:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0816A21104;
-        Mon, 19 Nov 2018 16:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90E4E2145D;
+        Mon, 19 Nov 2018 16:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645690;
-        bh=UG9yv+Q+HsGZUtyaw8dRo4zelFwCxjw0KC5AUsVoF68=;
+        s=default; t=1542645693;
+        bh=TRNv0K0/tj8qipmy2CDDKAX6RZALHiFMNg38BA4LBJw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwQJZ2T9aRq3zsplvtQMPEgkKYRI0NSnxvBOdk7crnLKGBw8TBxhIuef+VNiVObmv
-         i/3+PztenOClqEX8JMeEY+qicNxB15XWKE43BKI8qWGUi+J+lu/4rQM7d1Aj9o4VEr
-         sIUjFi2mxdzpDNv6c88k7cYklTEuO1vq2ZbFsPvo=
+        b=Thb+Tv40iXcFbgJn3Hf0Zoib9yHcsR1VqSDDoED95AoQJyjKcpgT5E2lFs7g6BNhK
+         ee0qYA4Ti10d6D6MGcMEy8JhINu/4rLmrfxry+fhzjt7aOoaGL6EUQsQJ1emx/gOHj
+         JTxFVHXe6iow9M/ONNPHSM6xUaBfKZgxdAn5dCZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 053/171] arm64: dts: stratix10: fix multicast filtering
-Date:   Mon, 19 Nov 2018 17:27:29 +0100
-Message-Id: <20181119162628.537344007@linuxfoundation.org>
+Subject: [PATCH 4.18 054/171] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+Date:   Mon, 19 Nov 2018 17:27:30 +0100
+Message-Id: <20181119162628.753423249@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,49 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit fd5ba6ee3187617287fb9cb187e3d6b3631210a3 upstream
+[ Upstream commit e2576c8bdfd462c34b8a46c0084e7c30b0851bf4 ]
 
-On Stratix 10, the EMAC has 256 hash buckets for multicast filtering. This
-needs to be specified in DTS, otherwise the stmmac driver defaults to 64
-buckets and initializes the filter incorrectly. As a result, e.g. valid
-IPv6 multicast traffic ends up being dropped.
+On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+with reboot; e.g. a ~60 second delay between issuing reboot and the
+board power cycling (and in some OS configurations reboot will fail
+and require manual power cycling).
 
-Fixes: 78cd6a9d8e15 ("arm64: dts: Add base stratix 10 dtsi")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+Co-Processor seems to depend on FCLK_DIV3 being operational.
+
+Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+meson: add fdiv clock gates"), this clock was modeled and left on by
+the bootloader.
+
+We don't have precise documentation about the SCPI Co-Processor and
+its clock requirement so we are learning things the hard way.
+
+Marking this clock as critical solves the problem but it should not
+be viewed as final solution. Ideally, the SCPI driver should claim
+these clocks. We also depends on some clock hand-off mechanism
+making its way to CCF, to make sure the clock stays on between its
+registration and the SCPI driver probe.
+
+Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/meson/gxbb.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index 22f88188b0f5..6c8bd13d64b8 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -133,6 +133,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
- 
-@@ -148,6 +149,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
- 
-@@ -163,6 +165,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 177fffb9ebef..902c63209785 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -523,6 +523,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div3_div" },
+ 		.num_parents = 1,
++		/*
++		 * FIXME:
++		 * This clock, as fdiv2, is used by the SCPI FW and is required
++		 * by the platform to operate correctly.
++		 * Until the following condition are met, we need this clock to
++		 * be marked as critical:
++		 * a) The SCPI generic driver claims and enable all the clocks
++		 *    it needs
++		 * b) CCF has a clock hand-off mechanism to make the sure the
++		 *    clock stays on until the proper driver comes along
++		 */
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
  
 -- 
 2.17.1
