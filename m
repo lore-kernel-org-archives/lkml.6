@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB062C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D7B224B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8ACF224B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ugibPUsm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D7B224B3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B3S+fovR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8ACF224B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405960AbeKTD0p (ORCPT
+        id S2405973AbeKTD0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:26:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40392 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:26:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405038AbeKTD0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:26:44 -0500
+        id S2405038AbeKTD0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:26:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D1AF2241B;
-        Mon, 19 Nov 2018 17:02:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5D4E2245E;
+        Mon, 19 Nov 2018 17:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646947;
-        bh=UJslYt45lYRhwWSyBCGUu035X9GjV6WGTfTPFzXNLCU=;
+        s=default; t=1542646950;
+        bh=+NogTXq5+BKdybrjyvcm/d3iDPe58CWRDq4V0ofSERs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ugibPUsmgcKQ0i9rtLtzZXdVvRtIVCCxIb28FjH1FKcKPgHLvf1gS0MAbD5VRjaMA
-         HfPe/cLLy96OYgYqlKxtU/nNmzwd5a25h77Wb5wt2MGoufGKLxgRlJxib5UoiFPBDc
-         3bWmCa862CTRQ7tyONVWE+OmzHyyRDf7vFFcoW+8=
+        b=B3S+fovRR6TPtZWyFNh+2feFaJXEp+1zS4dwjrtK3e6agwjHrJe+M/5x369/XEes6
+         vT1+bofab6tBrmdksLufYk7NnbZhRLP0+AC1eU/rmnYUPs4N/OVv5Hcn+r9mDr1jBp
+         rNggcVQTM4m7D0DuHjG3L9uOj6EEtvQGnUwU0l64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 104/160] 9p locks: fix glock.client_id leak in do_lock
-Date:   Mon, 19 Nov 2018 17:29:03 +0100
-Message-Id: <20181119162641.009417426@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.4 146/160] ext4: release bs.bh before re-using in ext4_xattr_block_find()
+Date:   Mon, 19 Nov 2018 17:29:45 +0100
+Message-Id: <20181119162643.867693899@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,74 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
+commit 45ae932d246f721e6584430017176cbcadfde610 upstream.
 
-the 9p client code overwrites our glock.client_id pointing to a static
-buffer by an allocated string holding the network provided value which
-we do not care about; free and reset the value as appropriate.
+bs.bh was taken in previous ext4_xattr_block_find() call,
+it should be released before re-using
 
-This is almost identical to the leak in v9fs_file_getlock() fixed by
-Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
-in v9fs_file_getlock()"), which was returned as an error by a coverity
-false positive -- while we are here attempt to make the code slightly
-more robust to future change of the net/9p/client code and hopefully
-more clear to coverity that there is no problem.
-
-Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 7e01c8e5420b ("ext3/4: fix uninitialized bs in ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 2.6.26
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/9p/vfs_file.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file
- 			break;
- 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
- 			break;
-+		/*
-+		 * p9_client_lock_dotl overwrites flock.client_id with the
-+		 * server message, free and reuse the client name
-+		 */
-+		if (flock.client_id != fid->clnt->name) {
-+			kfree(flock.client_id);
-+			flock.client_id = fid->clnt->name;
-+		}
- 	}
- 
- 	/* map 9p status to VFS status */
-@@ -235,6 +243,8 @@ out_unlock:
- 		locks_lock_file_wait(filp, fl);
- 		fl->fl_type = fl_type;
- 	}
-+	if (flock.client_id != fid->clnt->name)
-+		kfree(flock.client_id);
- out:
- 	return res;
- }
-@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file
- 
- 	res = p9_client_getlock_dotl(fid, &glock);
- 	if (res < 0)
--		return res;
-+		goto out;
- 	/* map 9p lock type to os lock type */
- 	switch (glock.type) {
- 	case P9_LOCK_TYPE_RDLCK:
-@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file
- 			fl->fl_end = glock.start + glock.length - 1;
- 		fl->fl_pid = glock.proc_id;
- 	}
--	kfree(glock.client_id);
-+out:
-+	if (glock.client_id != fid->clnt->name)
-+		kfree(glock.client_id);
- 	return res;
- }
- 
+---
+ fs/ext4/xattr.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1161,6 +1161,8 @@ ext4_xattr_set_handle(handle_t *handle,
+ 			error = ext4_xattr_block_set(handle, inode, &i, &bs);
+ 		} else if (error == -ENOSPC) {
+ 			if (EXT4_I(inode)->i_file_acl && !bs.s.base) {
++				brelse(bs.bh);
++				bs.bh = NULL;
+ 				error = ext4_xattr_block_find(inode, &i, &bs);
+ 				if (error)
+ 					goto cleanup;
 
 
