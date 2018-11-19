@@ -7,57 +7,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EE8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22401C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DAE3223C7
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C3B22353
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJo+f5jQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAE3223C7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xV6CMBQV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C3B22353
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405478AbeKTDZF (ORCPT
+        id S2405491AbeKTDZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38058 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbeKTDZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:04 -0500
+        id S2404694AbeKTDZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94195223C6;
-        Mon, 19 Nov 2018 17:00:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3715F21731;
+        Mon, 19 Nov 2018 17:00:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646848;
-        bh=vvzgFLEubpjifXJIl1ySMpQ+4TtDndNDoB3RbyhhYIQ=;
+        s=default; t=1542646850;
+        bh=R6mK60ulBnm9ohVNTyY4GQK2r6tyXi6Qr/0v9PPd8bo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJo+f5jQsJmMyD5q7y55C9USvbqKt4i9M/Fgp+IxZnSpSmefFfd+fWHB/uChgQw5m
-         kk//ojen6ub0yLu5rq8VT8h194ZDDI1iVGfbM3qLTZomZAwZuVDYg4EDrIOx0NJgXF
-         7qXAT0MlPwZenJJV/nYawdtdGIxbihQxPLwrgxq4=
+        b=xV6CMBQVzMdd6S2zCNPNJuEP/QX2ccFb1oOt7+xyCYA2v1rC1yOzCjlqVNhL5PxzN
+         32/JmA2uBdicYskz2UoTfGfHa8H/W7uY7adkm9+DtBvsIQhqlINL1kKAs1vDS8Yo6M
+         XLR60/Kev+oq5mSSloXmzMfPhrtmWwclmqRpYLYo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Hector Marco-Gisbert <hecmargi@upv.es>,
-        Ismael Ripoll Ripoll <iripoll@upv.es>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Chen Gang <gang.chen.5i5j@gmail.com>,
+        stable@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Kees Cook <keescook@chromium.org>,
         Michal Hocko <mhocko@suse.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 114/160] mm: refuse wrapped vm_brk requests
-Date:   Mon, 19 Nov 2018 17:29:13 +0100
-Message-Id: <20181119162641.808381922@linuxfoundation.org>
+Subject: [PATCH 4.4 115/160] fs, elf: make sure to page align bss in load_elf_library
+Date:   Mon, 19 Nov 2018 17:29:14 +0100
+Message-Id: <20181119162641.879208238@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -75,59 +70,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit ba093a6d9397da8eafcfbaa7d95bd34255da39a0 upstream.
+commit 24962af7e1041b7e50c1bc71d8d10dc678c556b5 upstream.
 
-The vm_brk() alignment calculations should refuse to overflow.  The ELF
-loader depending on this, but it has been fixed now.  No other unsafe
-callers have been found.
+The current code does not make sure to page align bss before calling
+vm_brk(), and this can lead to a VM_BUG_ON() in __mm_populate() due to
+the requested lenght not being correctly aligned.
 
-Link: http://lkml.kernel.org/r/1468014494-25291-3-git-send-email-keescook@chromium.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Reported-by: Hector Marco-Gisbert <hecmargi@upv.es>
-Cc: Ismael Ripoll Ripoll <iripoll@upv.es>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Chen Gang <gang.chen.5i5j@gmail.com>
+Let us make sure to align it properly.
+
+Kees: only applicable to CONFIG_USELIB kernels: 32-bit and configured
+for libc5.
+
+Link: http://lkml.kernel.org/r/20180705145539.9627-1-osalvador@techadventures.net
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reported-by: syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com
+Tested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Acked-by: Kees Cook <keescook@chromium.org>
 Cc: Michal Hocko <mhocko@suse.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 4.4: adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mmap.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ fs/binfmt_elf.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 39f5fbd07486..dd9205542a86 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2808,16 +2808,18 @@ static inline void verify_mm_writelocked(struct mm_struct *mm)
-  *  anonymous maps.  eventually we may be able to do some
-  *  brk-specific accounting here.
-  */
--static unsigned long do_brk(unsigned long addr, unsigned long len)
-+static unsigned long do_brk(unsigned long addr, unsigned long request)
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma, *prev;
--	unsigned long flags;
-+	unsigned long flags, len;
- 	struct rb_node **rb_link, *rb_parent;
- 	pgoff_t pgoff = addr >> PAGE_SHIFT;
- 	int error;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 2963a23f7a80..f010d6c8dd14 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1214,9 +1214,8 @@ static int load_elf_library(struct file *file)
+ 		goto out_free_ph;
+ 	}
  
--	len = PAGE_ALIGN(len);
-+	len = PAGE_ALIGN(request);
-+	if (len < request)
-+		return -ENOMEM;
- 	if (!len)
- 		return addr;
- 
+-	len = ELF_PAGESTART(eppnt->p_filesz + eppnt->p_vaddr +
+-			    ELF_MIN_ALIGN - 1);
+-	bss = eppnt->p_memsz + eppnt->p_vaddr;
++	len = ELF_PAGEALIGN(eppnt->p_filesz + eppnt->p_vaddr);
++	bss = ELF_PAGEALIGN(eppnt->p_memsz + eppnt->p_vaddr);
+ 	if (bss > len) {
+ 		error = vm_brk(len, bss - len);
+ 		if (BAD_ADDR(error))
 -- 
 2.17.1
 
