@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B95C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66429C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60209214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E3D9214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+qPH5TH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60209214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWwoSRS8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E3D9214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406920AbeKTDaB (ORCPT
+        id S2406931AbeKTDaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44858 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406885AbeKTD37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:59 -0500
+        id S2406252AbeKTDaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFB5D214D9;
-        Mon, 19 Nov 2018 17:05:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 799542148E;
+        Mon, 19 Nov 2018 17:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647142;
-        bh=ZiscjZLnoriEfGRfC+5xPJwlJLc+U4F+RV5jxamGeao=;
+        s=default; t=1542647145;
+        bh=9nyr+Dow2tO742yGXrpfug7RaCHLl+EMPVS0k4tRi6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p+qPH5TH1MFdRp7Q093z9DH16nN979udDc+fzLMlXe+IjUlYafin2xpw9CCoT1hGQ
-         QgD8kUU3OA6xR8fpg3DaEsxL7UGgbG0yHx2gRbKwx6WAGPB4zw5H5uDU3ibJlbDvfJ
-         etYvVaG+ipuFeZaGZsihsF3+B/yKZ3vZvarGDOBk=
+        b=qWwoSRS8PkeZR/h+W5LbBYgfi4gy8Fn67w2dYzqchvU6eLNag/rdKJg/S0tIAF7EP
+         tVR5uCEb6+mDzAIBjGTzl6ZQkSexQ4MoKmKV7nt2MgR7+jeO9r+V8OoubVbqov/Jc4
+         j0Px8bJnj+FgRxnTeA3uUr1rj5qPXruV2H9M+0nM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
-        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 3.18 29/90] jbd2: fix use after free in jbd2_log_do_checkpoint()
-Date:   Mon, 19 Nov 2018 17:29:11 +0100
-Message-Id: <20181119162625.630489115@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 3.18 65/90] libceph: bump CEPH_MSG_MAX_DATA_LEN
+Date:   Mon, 19 Nov 2018 17:29:47 +0100
+Message-Id: <20181119162630.946324038@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,69 +61,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
+commit 94e6992bb560be8bffb47f287194adf070b57695 upstream.
 
-The code cleaning transaction's lists of checkpoint buffers has a bug
-where it increases bh refcount only after releasing
-journal->j_list_lock. Thus the following race is possible:
+If the read is large enough, we end up spinning in the messenger:
 
-CPU0					CPU1
-jbd2_log_do_checkpoint()
-					jbd2_journal_try_to_free_buffers()
-					  __journal_try_to_free_buffer(bh)
-  ...
-  while (transaction->t_checkpoint_io_list)
-  ...
-    if (buffer_locked(bh)) {
+  libceph: osd0 192.168.122.1:6801 io error
+  libceph: osd0 192.168.122.1:6801 io error
+  libceph: osd0 192.168.122.1:6801 io error
 
-<-- IO completes now, buffer gets unlocked -->
+This is a receive side limit, so only reads were affected.
 
-      spin_unlock(&journal->j_list_lock);
-					    spin_lock(&journal->j_list_lock);
-					    __jbd2_journal_remove_checkpoint(jh);
-					    spin_unlock(&journal->j_list_lock);
-					  try_to_free_buffers(page);
-      get_bh(bh) <-- accesses freed bh
-
-Fix the problem by grabbing bh reference before unlocking
-journal->j_list_lock.
-
-Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
-Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
-Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
-CC: stable@vger.kernel.org
-Reviewed-by: Lukas Czerner <lczerner@redhat.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/checkpoint.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/ceph/libceph.h |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/jbd2/checkpoint.c
-+++ b/fs/jbd2/checkpoint.c
-@@ -254,8 +254,8 @@ restart:
- 		bh = jh2bh(jh);
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -67,7 +67,13 @@ struct ceph_options {
  
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
-@@ -336,8 +336,8 @@ restart2:
- 		jh = transaction->t_checkpoint_io_list;
- 		bh = jh2bh(jh);
- 		if (buffer_locked(bh)) {
--			spin_unlock(&journal->j_list_lock);
- 			get_bh(bh);
-+			spin_unlock(&journal->j_list_lock);
- 			wait_on_buffer(bh);
- 			/* the journal_head may have gone by now */
- 			BUFFER_TRACE(bh, "brelse");
+ #define CEPH_MSG_MAX_FRONT_LEN	(16*1024*1024)
+ #define CEPH_MSG_MAX_MIDDLE_LEN	(16*1024*1024)
+-#define CEPH_MSG_MAX_DATA_LEN	(16*1024*1024)
++
++/*
++ * Handle the largest possible rbd object in one message.
++ * There is no limit on the size of cephfs objects, but it has to obey
++ * rsize and wsize mount options anyway.
++ */
++#define CEPH_MSG_MAX_DATA_LEN	(32*1024*1024)
+ 
+ #define CEPH_AUTH_NAME_DEFAULT   "guest"
+ 
 
 
