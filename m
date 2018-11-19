@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E50DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B08C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBDB9206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D28F1208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gi8J+sXk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDB9206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0PYjE8w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28F1208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404638AbeKTDWD (ORCPT
+        id S2404651AbeKTDWG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33580 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33636 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403956AbeKTDWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:02 -0500
+        id S2403956AbeKTDWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A538C208E3;
-        Mon, 19 Nov 2018 16:57:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DE1721104;
+        Mon, 19 Nov 2018 16:57:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646667;
-        bh=hELZ/8+XYZYjjPcuZXGOhXnU2Ln2XyP8DhzA8SZRTM4=;
+        s=default; t=1542646669;
+        bh=kbsx10bazWOhqOdhiTaHSx9F41RUywtFdjILJhXJ7ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gi8J+sXkjzeCJscDQwmmuHxducbCcc80HieHA5N+UuK2e/i6yXoBhvwlc/BK5FY7B
-         BO5/c93exj2Zcmas7nUbJmxAczcePW7teGWW35xVxf5feLSNiWV7zRp0VR3G5YIww/
-         m3MdiQjCB75fMMx4dWViAjkzeIZe9+fzIPL2MVNM=
+        b=X0PYjE8wT0JkGgXFeiMnV2o3nZfPInujRHhrG8xAk1BTqfY5A3whSbKLC5JddidP4
+         fYiv2nRuscQYNGgLhR28HxVAUuj1tCmdOa1vtCr3h2SJWyMD5XDfIuJvhpAfSGyUc5
+         QKUxEiVXqJRGDmS1GCCC1we6fDlbmmHDq8FbY4RE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Jin <joe.jin@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, "Dr. Greg Wettstein" <greg@enjellic.com>,
         Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Christoph Helwig <hch@lst.de>,
-        Dongli Zhang <dongli.zhang@oracle.com>,
-        John Sobecki <john.sobecki@oracle.com>
-Subject: [PATCH 4.4 044/160] xen-swiotlb: use actually allocated size on check physical continuous
-Date:   Mon, 19 Nov 2018 17:28:03 +0100
-Message-Id: <20181119162635.691225630@linuxfoundation.org>
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 4.4 045/160] tpm: Restore functionality to xen vtpm driver.
+Date:   Mon, 19 Nov 2018 17:28:04 +0100
+Message-Id: <20181119162635.854046743@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -66,56 +63,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Dr. Greg Wettstein <greg@wind.enjellic.com>
 
-commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
+commit e487a0f52301293152a6f8c4e217f2a11dd808e3 upstream.
 
-xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
-order of the pages and not size argument (bytes). This is inconsistent with
-range_straddles_page_boundary and memset which use the 'size' value,
-which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
-returned true). And then the call to xen_swiotlb_free_coherent() would
-actually try to exchange the memory with Xen, leading to the kernel
-hitting an BUG (as the hypercall returned an error).
+Functionality of the xen-tpmfront driver was lost secondary to
+the introduction of xenbus multi-page support in commit ccc9d90a9a8b
+("xenbus_client: Extend interface to support multi-page ring").
 
-This patch fixes it by making the 'size' variable be of the same size
-as the amount of memory allocated.
+In this commit pointer to location of where the shared page address
+is stored was being passed to the xenbus_grant_ring() function rather
+then the address of the shared page itself. This resulted in a situation
+where the driver would attach to the vtpm-stubdom but any attempt
+to send a command to the stub domain would timeout.
 
-CC: stable@vger.kernel.org
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Christoph Helwig <hch@lst.de>
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: John Sobecki <john.sobecki@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+A diagnostic finding for this regression is the following error
+message being generated when the xen-tpmfront driver probes for a
+device:
+
+<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+
+<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
+the timeouts
+
+This fix is relevant to all kernels from 4.1 forward which is the
+release in which multi-page xenbus support was introduced.
+
+Daniel De Graaf formulated the fix by code inspection after the
+regression point was located.
+
+Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
+Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/xen/swiotlb-xen.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+[boris: Updated commit message, added Fixes tag]
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: stable@vger.kernel.org # v4.1+
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -310,6 +310,9 @@ xen_swiotlb_alloc_coherent(struct device
- 	*/
- 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+---
+ drivers/char/tpm/xen-tpmfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/char/tpm/xen-tpmfront.c
++++ b/drivers/char/tpm/xen-tpmfront.c
+@@ -201,7 +201,7 @@ static int setup_ring(struct xenbus_devi
+ 		return -ENOMEM;
+ 	}
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
-+
- 	/* On ARM this function returns an ioremap'ped virtual address for
- 	 * which virt_to_phys doesn't return the corresponding physical
- 	 * address. In fact on ARM virt_to_phys only works for kernel direct
-@@ -359,6 +362,9 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
+-	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
++	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
+ 	if (rv < 0)
+ 		return rv;
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + XEN_PAGE_SHIFT);
-+
- 	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
 
 
