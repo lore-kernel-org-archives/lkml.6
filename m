@@ -2,116 +2,288 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02732C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0E4C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCDCA2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2302080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rNozsQPZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDCA2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="nEcYPNjB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2302080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731162AbeKTHwA (ORCPT
+        id S1731179AbeKTHwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:52:00 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18438 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730141AbeKTHv7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:51:59 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf32a8b0000>; Mon, 19 Nov 2018 13:26:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 19 Nov 2018 13:26:26 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Nov 2018 13:26:26 -0800
-Received: from [10.26.11.92] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 19 Nov
- 2018 21:26:25 +0000
-Subject: Re: [PATCH v1 0/4] EMC fixes for Tegra30+
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180830185404.7224-1-digetx@gmail.com>
- <d1f577d8-a944-35b6-89b3-ce4eafdd4808@gmail.com>
- <f0045dbb-c19a-cd5e-2e78-4b68ccc2342d@nvidia.com>
- <6f4eb4a5-e257-4faa-c5fb-12ffe1f5b3aa@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <17936f29-a19f-da3b-c1b0-10128f03058f@nvidia.com>
-Date:   Mon, 19 Nov 2018 21:26:23 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 02:52:10 -0500
+Received: from mail-eopbgr770053.outbound.protection.outlook.com ([40.107.77.53]:43250
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730407AbeKTHvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:51:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LiVXxlvzzDG/UAAyxV6eOJaOydbkAoWvPsdmy6RUIlo=;
+ b=nEcYPNjBseGLT5dtxo5RQ0XfGVjsV0+9VeY9NusB+vboryYpEvoC4TkVHBQivfM9mxe3X8gff11PzcuZwd9v1tIeX03VPq2nV5MEdujoKDNwFtjDYYyZvPpF31JIB8NOLtSA5RV6/NeFe5JCwrKT6jgrGIWBYFMDS7HQ5LhfN/o=
+Received: from SN4PR0201CA0040.namprd02.prod.outlook.com
+ (2603:10b6:803:2e::26) by SN4PR0201MB3519.namprd02.prod.outlook.com
+ (2603:10b6:803:44::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.30; Mon, 19 Nov
+ 2018 21:26:12 +0000
+Received: from SN1NAM02FT008.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::209) by SN4PR0201CA0040.outlook.office365.com
+ (2603:10b6:803:2e::26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.21 via Frontend
+ Transport; Mon, 19 Nov 2018 21:26:12 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ SN1NAM02FT008.mail.protection.outlook.com (10.152.72.119) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
+ via Frontend Transport; Mon, 19 Nov 2018 21:26:12 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3b-0003aF-Dj; Mon, 19 Nov 2018 13:26:11 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3W-0004jW-AK; Mon, 19 Nov 2018 13:26:06 -0800
+Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAJLQ5UM030526;
+        Mon, 19 Nov 2018 13:26:05 -0800
+Received: from [172.19.2.167] (helo=xsjjliang50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3V-0004ik-2Y; Mon, 19 Nov 2018 13:26:05 -0800
+From:   Wendy Liang <wendy.liang@xilinx.com>
+To:     <jassisinghbrar@gmail.com>, <michal.simek@xilinx.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Wendy Liang <wendy.liang@xilinx.com>
+Subject: [PATCH v6 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
+Date:   Mon, 19 Nov 2018 13:26:01 -0800
+Message-ID: <1542662761-31158-3-git-send-email-wendy.liang@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542662761-31158-1-git-send-email-wendy.liang@xilinx.com>
+References: <1542662761-31158-1-git-send-email-wendy.liang@xilinx.com>
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(136003)(396003)(376002)(39860400002)(346002)(2980300002)(438002)(189003)(199004)(8936002)(47776003)(81166006)(15650500001)(81156014)(106466001)(336012)(36756003)(478600001)(50226002)(36386004)(26005)(305945005)(77096007)(186003)(8676002)(50466002)(48376002)(63266004)(476003)(76176011)(2906002)(356004)(6666004)(126002)(107886003)(106002)(14444005)(486006)(7696005)(51416003)(44832011)(316002)(5660300001)(426003)(39060400002)(16586007)(54906003)(110136005)(9786002)(11346002)(446003)(2616005)(4326008)(107986001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3519;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT008;1:8of1XDTBXSYwtnLtZPs4uizvnBriZVFLbtt8MkW7sJjYmCzQg3+GHSrisBqc5wjxooOiIvftcmml5fSkq4Fb+Eeo9nQFc0r+2lL0Ib+3X+Z04ePVfNkJKs1zz8LKUuv6
 MIME-Version: 1.0
-In-Reply-To: <6f4eb4a5-e257-4faa-c5fb-12ffe1f5b3aa@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542662795; bh=pXw8PhKBWLnt5nL+3gxlgaa3jsEk3IZbW8Cvbd2mwPI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=rNozsQPZsrEInZgOWzLYe6ZcHclUC+jsHFkA3Wa6Y7Jq0NMtycTvGy5AAgu1pB2iq
-         lOvYQukyyvMusI+17RQcQO026Nbspe9mpZwWW3V4JYhhqfKppBLv2H0pGZavGA9rAT
-         3BVodaQS6OaRcGNzAwQRjL9guvkoLFTDUp5q4NQdbycTbtHPTxIoz7sF3V8e3FJ5gw
-         WuVGeUp925jcrZOZWcHcR2JoHF2yiACGKT1ptEmkLXirsHr4JCFL7d6KQkgjq7YEoQ
-         LLgfokBrotyvA7cVHg/PMx40gilfqD7Bg7T/BzZ0b6I4nbcfi9UxCHW02SMxap9vuS
-         GaSf2UfOeloDQ==
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: a8b4062d-3df4-4375-1a6c-08d64e65a142
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN4PR0201MB3519;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;3:FsogKbKOguYtw92h/Qm8DL1jk80WE73ksd6OuHN38Bv1w6a4FuRJgUFUQLGGhMdJF7QJ9CxYi3xxyGKLWRXhfDqlJv5RD7qQmCwuvpdEIdAbInh/ORpwnoMR0TEY3RNNUEofuvhs7JNgzsR5QOFt6qbvyeRJQLej/5Y5hXo/zjoXAFnrkd/k9l4Udl+7PUYYbulZOpmHxF/7/OSa/Yo1iUPRIj5FxmheH5umwmtRzo5yQdMr48UWBrGxHPelM+9fMCX7/5S0shbt6vvqAbYelZVCxzO+nEof0IHu5Wy41vtluQdu8uH/uqaonmZrZWj7qzlHwZwgD5Gq9QWyEHu1ldsnJLx0Bgy4jyuymf9U3QM=;25:lKdSeq2fOY756PKkzbG3wlDraKHnELW8Xp6B+gR/HB//2fOG/xvOrOQkdVYKefhQ8/L41OVxiZUSA0bFM81cOQNvVo/tEKdAgSxcWd4ySSDcKRVZaqpN6Gu26y8bKxUXbPh7r+vs+LleNjj5aAfXsXozsvEZ1rcpJTgULAeaGwiVHBy42pN/StnGZXt73f59UDWeFxXkwiGPsYHTlPmAloQPRkOg2BCquLul6wqQpI7xieHve/PlnOjxx4JHcpl0Xp7Etu72AfI875lAXHCqU46nesCpPimMKMqnLQRoPKvW0sA647SmD2l8fel9cMZZUfTUH/sl/uA0NvMuTPaYbA==
+X-MS-TrafficTypeDiagnostic: SN4PR0201MB3519:
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;31:7QeWjyqo+QJyl3Fhq+1CgiFaRQrm4JMRd4rgzJUlbOrff1fW07pJJeHzXQ5ewhszVQmKN6odB/T5euauPIND1MitMkgJW+mYRPgWaDQyHMhrmEb/+xM9IJaUl4/GH5GuME6q+23WdiO4TXSIbpiVByFHJ1giCDQQW7iSsLf833z6P6Fjhov/IT5Emsi9+w2XGQyKCbs6YvL/kwaL5vpycAD0kn+mcqigSsxdtUEq6ig=;20:fRbLixJpJOqMVSbt8RmchKI1cnHXqV1+ebHXWnkEsrYdc4Y+uXNygwk0BHUTVXzlNKSfPV5zOSGdooOsAQPOcVhNjvWdIxcQwVxydpV4T6a/us7E3oywrq5ogXXrUIacS1VZJH4HMahMkyYUEZehBQ6xX5ztvADyrsRqQI5N9q6jv6XYdxL7FlWLojEtg24l/RHfn80lAHBgHTfEhOIEuzJnsgGLi9eoUBvsU2VutjluVBvPvB3vgXpEXtKfmSzvog+pDSh670ilJ3Qe8Ai+f6r0ZIA8UelIsImQpXs7jXyhlzkv1jzqPkiJ2/37q0ZFy7191wX+8hTapH2OHqwpvzbbPhkKnc5Xd8Kv8o6PZncRlKhrBU4aLOvYf/840eBDCFJGUm6xpx8t8af4XnleujA7UOFCeOjLE6CdypD3bkY/4/kLGQPmmO4XmQ12ynWHDnTI2lw5SpOGJQZxPNic1Gv//XbA+h07oMM65UVQL5cE/L+FvCfdt3rUs8P+5N74
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <SN4PR0201MB35199186E51ED941B8BC6E38B0D80@SN4PR0201MB3519.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(10201501046)(3231438)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3519;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3519;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;4:54asR7TVTfdJSAd5MqcP9PQ8e1fubCDbNdk5U4rhM2ivK6QxJIjc2xS1LEPgro+QLItiJSlYmehk54b4n0QXUktmngCgDss79ZL8hBap7QNF1QZ5u/FIcsqHcA5rdiHHqVD/+6WtRQHYrH4e14pYb2ph8qBMBkRgRhImiBAyvSQt/rhM1hoy/SvjbIcQ/pxvS+ocsnwVLJNmWBuXqkLUkk5Qzh4NnwmTuzD+OcbRXH/+X94SkII9s1x+M6i6AWUo/WCIZjBMhD9hQ2QldJ/6lBsH5Ns2YWvuYvEqhJ0GQN9g5F8tZ5UnUm0TQPnVgBIO
+X-Forefront-PRVS: 08617F610C
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3519;23:laUTqzci3sB82iTZCxYeUyz2daWR3C58THqvChs?=
+ =?us-ascii?Q?597AbgTlTfOmpQA2nM7OcFK+hJrwfNF77vPvPpLTNyIZOwqOipri8uBThLZa?=
+ =?us-ascii?Q?WcqOIste+l6e3dGD3VN1CIG6CFxxrP6D8zlyMcvQs83yFL6RTCBmqgsrhuOW?=
+ =?us-ascii?Q?GUiNf0fyt7D1SH/cQXQDes+Ut1auP5ci4i9bVoA2/5xBZZJSTLcZsCNhgMx7?=
+ =?us-ascii?Q?/GF47DFMgT7cNAGJHOl1oAmrQQAy9PoqWBI5ue1U4prD2mU1SkiuUBKAgozO?=
+ =?us-ascii?Q?eqJwCcGKpAZygf0ib8y4HSoa5ZA0Bk/EQ0akath4G7eWYyY9t/8zLjqfsfib?=
+ =?us-ascii?Q?o+UG31ETmfPxg420eH55ddDxtQIHynPJJe0ZIpdr70/mi8YmLyOYPzu00EIi?=
+ =?us-ascii?Q?yenNcwYynqGySCtSqA/Q9FvrX4nRHHBeNNdApMPoA7vdyTIhaYI3UvpSrzX5?=
+ =?us-ascii?Q?N0L3FTxnV5pCQol5oS+ZeJvqsspR6Iq3LQmgTLSuk3S4b+T9zcGRP0hX9mq2?=
+ =?us-ascii?Q?5qscyxERn/K7KOYvwQOBABq9TtX8P5CGFCXrgzZRlwM6owVZplIfVq6XRuVq?=
+ =?us-ascii?Q?7gpXKIOc3SIk+x2oE00DYrv6xcwEoSEnX357adOjRb8MUxHD4Td/miaYN5v3?=
+ =?us-ascii?Q?+N51qUcrPdv3qGRZMyNNeRFmf2DNwDESCbDL16CX28KATj/PPOJIvLaLNg1g?=
+ =?us-ascii?Q?lkrlilafrXQnactAmuS4QThVJI0dEniwEHG5Kgq++G1x732CBNFZmRaBlm6J?=
+ =?us-ascii?Q?38iOjryCh+s9EeNSauoewUJ8j4Z9UygmVyQMr+EJWCMrxy/8BEKDpAQoi1/h?=
+ =?us-ascii?Q?McBxEu7TxNm9sa+A8c52RxeVHWs3URVBtf194gX42Bh6GsmQEXyL1BWO0l4e?=
+ =?us-ascii?Q?eVfa8Mhr2f2B3AIfA7BcB8tyOkMw/40DYX9d83UlT9YYYuMmVmyJbuVoofYr?=
+ =?us-ascii?Q?lRAdsweIhaSaVlTsIx1QCwyeF6XZOX7qpZTjT2eS5VjPES2lIdOOV5yl0XQv?=
+ =?us-ascii?Q?yP/hrA7TYYQOJ0eN/Z6t7iYw7EAaZ23SdBo5qxvG5ugIbGGz+AjWL3nJjrqi?=
+ =?us-ascii?Q?8V6ZuTd3ACGS/2IXfdNvWkFUELF8rR5caylf3kQHYAu/EUveatJ+N/Zw2SuD?=
+ =?us-ascii?Q?5Q+ZF/VA/i3j9I3fbHTCccoMh/x2bFzTRwHOe+btj8yruXyl3QK/yW6acD3E?=
+ =?us-ascii?Q?Kon3/qgWKP8WZiRyARCn0QRzKb3LLJy6EDigeS0s/cvapSXOrbGuogtAHEEb?=
+ =?us-ascii?Q?CyuggRDNbzN9ezXOl7sJPUWU56e8py62/ltnMeW7vLLhIB991Lq1cGD0coaA?=
+ =?us-ascii?Q?hjw=3D=3D?=
+X-Microsoft-Antispam-Message-Info: xpZpPqXJvYdHFhttFZfNLeqBn5QJxx+YZS3naiyqJS/yEhcUyq1lK1EFhchZcuc/v5A9NCFnIwQXW8THCOHEkH/LJ79Fxng0PsqlzIMJteW33rV7/RQkA1QOS9Vtp5clvWXNpvrc7BsmhzHj1Dml83io03De4kBb6G79ME4Em8TylmbqXfvl/tW77lwXe2Wul6wdNLJSY1sawJniR7DtXUd/nNRjz0a+MPHzZf+P5MfmbMv2NGesXgjAmyv69Wfn+Cv63vzGnpJ4YoCwZf3UfSX28awxug/mptegFKtz4sodbLinRrMkM3uANcHKI+0v7/RaKAIJL9ZdqoyGGSOQczPBIZ+/1OegciReCIho8Nk=
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3519;6:rsSlG40Q2D7HfdTLVCObRCZzI5kfx9EQves0WSXsyKuuIRM6zKTwE1ICL1wRIpcr8aZf/1mDm/4BElE9ysXdhWqp0+6JJpBpZltXW5gYbt+ZZQEeBgqJ9KhQvalydzqD2P2rpdmWPpc4X7gYg6oPI1FYYoJixkDzU6KPRDVBfQpDL67+SvGHr4mmo1aN/ncUAQHq0YYorAZuB4ekv+0dw+1ad800oFOijxkDMp+ZXnZj7iJeu6qr/vpXpLVlN81JL2cCSrjZWslcyR/09s9N/j4LTypDwd9B+oQKYqqFlzkipv1YHP3SAib//p7SeNjU7kkTSLVe8mVegwmhIK+Du2+gGVawfM7cG1REolX9fWBytE1HfQN4L5ObM36wltvaiH8OWX8kiW/p4GOcBiv8DiOuvVEP6XFj36n+F9VDAYnnM+eGibTrOwNBSllNrozXXIQogs709bFwSZHZg3CBow==;5:+Gh+TXpOSwshSOiuwZCniNCH2imssLEobIBWctLNwDNB912x8vm/JgCA9bYnDSRjPLRkbYO855BrNxm3yS4EgH+BBYCY0bPQV1RdOaGouDBz0uCGu6cN0e1LVmd0YnfVNwHyPBX+fmnMrogW1I+fObh9RNXK2NUocW9JmoNiewI=;7:EPWaabEU91HvuRFdnGv4LBDPg2wumBSItzKzMnTlaNCSbu8W8T+2ssBXOpKJoEi7mDO82gQI3m4RoIwm+0ZJRkaAQ9DTHmKu1GepAqFaBFeUuVXIa8WSZg+1/ihd3Kl5KMfiQAZL7cfxJCtJ/9Vsqg==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2018 21:26:12.0349
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8b4062d-3df4-4375-1a6c-08d64e65a142
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3519
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Xilinx ZynqMP IPI(Inter Processor Interrupt) is a hardware block
+in ZynqMP SoC used for the communication between various processor
+systems.
 
-On 19/11/2018 17:05, Dmitry Osipenko wrote:
-> On 19.11.2018 18:42, Jon Hunter wrote:
->>
->> On 18/11/2018 22:06, Dmitry Osipenko wrote:
->>> On 30.08.2018 21:54, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> This patch series fixes couple bugs in the memory self-refresh code.
->>>> The EMC / MC state is properly restored after patches being applied,
->>>> please review.
->>>>
->>>> Dmitry Osipenko (4):
->>>>   ARM: tegra: Fix missed EMC registers latching on resume from LP1 on
->>>>     Tegra30+
->>>>   ARM: tegra: Fix DRAM refresh-interval clobbering on resume from LP1 on
->>>>     Tegra30
->>>>   ARM: tegra: Restore memory arbitration on resume from LP1 on Tegra30+
->>>>   ARM: tegra: Clear EMC interrupts on resume from LP1 on Tegra30+
->>>>
->>>>  arch/arm/mach-tegra/iomap.h         |  9 ++++++++
->>>>  arch/arm/mach-tegra/sleep-tegra30.S | 32 +++++++++++++++++++++++++++--
->>>>  2 files changed, 39 insertions(+), 2 deletions(-)
->>>>
->>>
->>> Hello Jon,
->>>
->>> Could you please test these patches using your testing setup? Will be awesome if you could give t-b/r-b to the series, then there should be a better chance that Thierry could apply it eventually ;)
->>
->> Yes I will give them a test and let you know.
-> 
-> Thank you!
+Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+---
+ .../bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt   | 127 +++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
 
-No problem. The tests all passed and so I don't see any issues. I have a
-couple comments.
-
-Cheers
-Jon
-
+diff --git a/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt b/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
+new file mode 100644
+index 0000000..4438432
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
+@@ -0,0 +1,127 @@
++Xilinx IPI Mailbox Controller
++========================================
++
++The Xilinx IPI(Inter Processor Interrupt) mailbox controller is to manage
++messaging between two Xilinx Zynq UltraScale+ MPSoC IPI agents. Each IPI
++agent owns registers used for notification and buffers for message.
++
++               +-------------------------------------+
++               | Xilinx ZynqMP IPI Controller        |
++               +-------------------------------------+
++    +--------------------------------------------------+
++ATF                    |                     |
++                       |                     |
++                       |                     |
++    +--------------------------+             |
++                       |                     |
++                       |                     |
++    +--------------------------------------------------+
++            +------------------------------------------+
++            |  +----------------+   +----------------+ |
++Hardware    |  |  IPI Agent     |   |  IPI Buffers   | |
++            |  |  Registers     |   |                | |
++            |  |                |   |                | |
++            |  +----------------+   +----------------+ |
++            |                                          |
++            | Xilinx IPI Agent Block                   |
++            +------------------------------------------+
++
++
++Controller Device Node:
++===========================
++Required properties:
++--------------------
++IPI agent node:
++- compatible:		Shall be: "xlnx,zynqmp-ipi-mailbox"
++- interrupt-parent:	Phandle for the interrupt controller
++- interrupts:		Interrupt information corresponding to the
++			interrupt-names property.
++- xlnx,ipi-id:		local Xilinx IPI agent ID
++- #address-cells:	number of address cells of internal IPI mailbox nodes
++- #size-cells:		number of size cells of internal IPI mailbox nodes
++
++Internal IPI mailbox node:
++- reg:			IPI buffers address ranges
++- reg-names:		Names of the reg resources. It should have:
++			* local_request_region
++			  - IPI request msg buffer written by local and read
++			    by remote
++			* local_response_region
++			  - IPI response msg buffer written by local and read
++			    by remote
++			* remote_request_region
++			  - IPI request msg buffer written by remote and read
++			    by local
++			* remote_response_region
++			  - IPI response msg buffer written by remote and read
++			    by local
++- #mbox-cells:		Shall be 1. It contains:
++			* tx(0) or rx(1) channel
++- xlnx,ipi-id:		remote Xilinx IPI agent ID of which the mailbox is
++			connected to.
++
++Optional properties:
++--------------------
++- method:              The method of accessing the IPI agent registers.
++                       Permitted values are: "smc" and "hvc". Default is
++                       "smc".
++
++Client Device Node:
++===========================
++Required properties:
++--------------------
++- mboxes:		Standard property to specify a mailbox
++			(See ./mailbox.txt)
++- mbox-names:		List of identifier  strings for each mailbox
++			channel.
++
++Example:
++===========================
++	zynqmp_ipi {
++		compatible = "xlnx,zynqmp-ipi-mailbox";
++		interrupt-parent = <&gic>;
++		interrupts = <0 29 4>;
++		xlnx,ipi-id = <0>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		/* APU<->RPU0 IPI mailbox controller */
++		ipi_mailbox_rpu0: mailbox@ff90400 {
++			reg = <0xff990400 0x20>,
++			      <0xff990420 0x20>,
++			      <0xff990080 0x20>,
++			      <0xff9900a0 0x20>;
++			reg-names = "local_request_region",
++				    "local_response_region",
++				    "remote_request_region",
++				    "remote_response_region";
++			#mbox-cells = <1>;
++			xlnx,ipi-id = <1>;
++		};
++		/* APU<->RPU1 IPI mailbox controller */
++		ipi_mailbox_rpu1: mailbox@ff990440 {
++			reg = <0xff990440 0x20>,
++			      <0xff990460 0x20>,
++			      <0xff990280 0x20>,
++			      <0xff9902a0 0x20>;
++			reg-names = "local_request_region",
++				    "local_response_region",
++				    "remote_request_region",
++				    "remote_response_region";
++			#mbox-cells = <1>;
++			xlnx,ipi-id = <2>;
++		};
++	};
++	rpu0 {
++		...
++		mboxes = <&ipi_mailbox_rpu0 0>,
++			 <&ipi_mailbox_rpu0 1>;
++		mbox-names = "tx", "rx";
++	};
++	rpu1 {
++		...
++		mboxes = <&ipi_mailbox_rpu1 0>,
++			 <&ipi_mailbox_rpu1 1>;
++		mbox-names = "tx", "rx";
++	};
 -- 
-nvpublic
+2.7.4
+
