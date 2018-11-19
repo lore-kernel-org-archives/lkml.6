@@ -2,112 +2,139 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E100C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FF420823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:15:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Wb6MBYuM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FF420823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 4762020823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:16:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4762020823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732012AbeKTJlb (ORCPT
+        id S1732036AbeKTJmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:41:31 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:40925 "EHLO frisell.zx2c4.com"
+        Tue, 20 Nov 2018 04:42:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36612 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730692AbeKTJlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:41:31 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id b7b625ea;
-        Mon, 19 Nov 2018 23:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=DmEy4hyMMU2bsk8BSN+IOFgj+ZQ=; b=Wb6MBY
-        uMiQeu57hdYKhjTQXawAmnwAUij1po/tezOFBEf/KhFMtclWBRQdDxjKCnyJ9uE7
-        hLt9upFU060RjApCughsx/dIwGQFf7aB9t8Y3TPKTj9HSQ8dhuQr8hKOlicMsw1R
-        ppfFFROuMyXRv5XiBj6+SitbPHHHaCJ5WeInGXVLkBS1MZV/RUZGJbm2IXFRKvX/
-        25yHabJ9GCF7yzQ3DuFjup+LJIiS42zPQYiqY1tdDhIo2vvqWlGAai2FjKx1+2UX
-        UkXb1rBcoHZCJsHj6odaCU3jJ+TUH92z3M/zbqYJTxcCOVPoAgWbMu0oczXz+rof
-        Yjy8d8dkEg/zyyJg==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3d632564 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 19 Nov 2018 23:09:26 +0000 (UTC)
-Received: by mail-ot1-f51.google.com with SMTP id 81so27902otj.2;
-        Mon, 19 Nov 2018 15:15:29 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKx7Guhu8a+ZnZw5ydHpfynxlLTZVb2WSz37z+aRH1ahMN8EMe5
-        62UWvjNJzbzjfsnPd6IfN9Yom0I+7Gdj5s1x7bQ=
-X-Google-Smtp-Source: AJdET5faivw9IJhSeKkwQdNKDnOKxTZ/tGyx2pOiIdPmoHMltEcUqrNvGSDYEgEtrC6+x9IKmrTpmwa3TYEHttug/yQ=
-X-Received: by 2002:a9d:12e3:: with SMTP id g90mr10437983otg.223.1542669328537;
- Mon, 19 Nov 2018 15:15:28 -0800 (PST)
+        id S1728979AbeKTJmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:42:50 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0DD7676207;
+        Mon, 19 Nov 2018 23:16:50 +0000 (UTC)
+Received: from sky.random (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A0F515C57B;
+        Mon, 19 Nov 2018 23:16:49 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 18:16:49 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Willy Tarreau <w@1wt.eu>
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+Message-ID: <20181119231649.GI29258@redhat.com>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
+ <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com>
+ <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
+ <20181119193253.GE29258@redhat.com>
+ <4d102977-f516-e0b3-b728-e318e36c1449@intel.com>
 MIME-Version: 1.0
-References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
- <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com> <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
- <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au> <CAHmME9oXAnD0sbO2cKeTtotCMohX2Hu6P=uzA_6u0EWECU9Bpg@mail.gmail.com>
- <20181119225414.GB258711@gmail.com>
-In-Reply-To: <20181119225414.GB258711@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 20 Nov 2018 00:15:17 +0100
-X-Gmail-Original-Message-ID: <CAHmME9okRjuYUiL0D=6ZmtMX6rvxU+0xvy2tva+LetjU9itx8Q@mail.gmail.com>
-Message-ID: <CAHmME9okRjuYUiL0D=6ZmtMX6rvxU+0xvy2tva+LetjU9itx8Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] zinc chacha20 generic implementation using crypto API code
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d102977-f516-e0b3-b728-e318e36c1449@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 19 Nov 2018 23:16:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Mon, Nov 19, 2018 at 01:33:08PM -0800, Dave Hansen wrote:
+> On 11/19/18 11:32 AM, Andrea Arcangeli wrote:
+> > The specs don't say if by making it immune from BTB mistraining, it
+> > also could prevent to mistrain the BTB in order to attack what's
+> > outside the SECCOMP jail. Probably it won't and I doubt we can rely on
+> > it even if some implementation could do that.
+> 
+> I just talked with Andi and Tim about this.  The *current* spec for
+> STIBP[1] states that it bidirectional: setting it on one thread provides
+> mitigation against any threads attacking any other thread on the core.
+                     ^^^                   ^^^
+> 
+> This means that it provides protection for victims being in and out of
+> SECCOMP jail when the attacker is either in or out of SECCOMP jail.
+> 
+> However, the current spec[1], differs from the *original* spec PDF that
+> Intel released last year.  Both are correct in that they describe all
+> current (Intel) implementations of STIBP.  However, the new
+> _description_ of STIBP is stronger than it was originally.
+> 
+> Here's the current description:
+> 
+> > Setting ... STIBP ... on a logical processor prevents the predicted
+> > targets of indirect branches on any logical processor of that core
+                                    ^^^
+> > from being controlled by software that executes (or executed
+> > previously) on another logical processor of the same core.
+                   ^^^^^^^
+> 
+> 1.
+> https://software.intel.com/security-software-guidance/insights/deep-dive-single-thread-indirect-branch-predictors
 
-On Mon, Nov 19, 2018 at 11:54 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> Will v9 include a documentation file for Zinc in Documentation/crypto/?
-> That's been suggested several times.
+I'm not used to official specs in a "insight & deep dive"
+blog-post-like webpage, so I didn't notice this deep dive detail.
 
-I had started writing that there, but then thought that the requested
-information could go in the commit message instead. But I'm guessing
-you're asking again now because you poked into the repo and didn't
-find the Documentation/, so presumably you still want it. I can
-reorganize the presentation of that to be more suitable for
-Documentation/, and I'll have that for v9.
+You use "any" vs "any" but the spec you quoted still says "any" vs
+"another".
 
-> I'd still prefer to see the conversion patches included.  Skipping them would be
-> kicking the can down the road and avoiding issues that will need to be addressed
-> anyway.  Like you, I don't want a "half-baked concoction that will be maybe
-> possibly be replaced 'later'" :-)
+If I shall take the above literally it still means that if I set STIBP
+inside SECCOMP, as long as it's set, it prevents indirect branches of
+all siblings to be controlled from code outside the SECCOMP jail
+running in another sibling (or that run previously in another
+sibling). I.e. the "deep dive" stronger semantics of STIBP just mean
+the code outside SECCOMP cannot attack itself while the code inside
+SECCOMP runs and keeps STIBP set.
 
-Okay, fair enough. Will do.
+So you may want to ask why it wasn't written as your "any" vs "any" email:
 
-> Either way though, it would make things much easier if you at least named the
-> files, structures, constants, etc. "ChaCha" rather than "ChaCha20" from the
-> start where appropriate.  For an example, see the commit "crypto: chacha -
-> prepare for supporting non-20-round variants" on my "adiantum-zinc" branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/commit/?h=adiantum-zinc&id=754af8d7d39f31238114426e39786c84d7cc0f98
-> Then the actual introduction of the 12-round variant is much less noisy.
+Setting ... STIBP ... on a logical processor prevents the predicted
+targets of indirect branches on any logical processor of that core
+from being controlled by software that executes (or executed
+previously) on any logical processor of the same core.
 
-That's a good idea. I'll do it like that. I'll likely order it as what
-we have now (renamed to omit the 20), and then put the 12 stuff on top
-of that, so it's easier to see what's changed in the process. I
-noticed in that branch, you didn't port the assembly to support fewer
-rounds. Shall I follow suite, and then expect patches from you later
-doing that? Or were you expecting me to also port the architecture
-implementations to chacha12 as well?
+A s/another/any/ is still missing to match your exact interpretation,
+otherwise it still seems a gray area and I've no idea why it wasn't
+written as "any" which would clear any risk for misunderstanding and
+instead it kind of uses a word that matches the somewhat more strict
+pdf specs.
 
-Regards,
-Jason
+If this is clarified the concern that remains is that lots of
+potentially performance critical stuff runs under SECCOMP but of
+course it changes everything in terms of possibly enabling STIBP under
+SECCOMP by default, it certainly would make more sense then.
+
+Thanks,
+Andrea
