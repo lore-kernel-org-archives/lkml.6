@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D266AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3DBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B642148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94732148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB9OwtGW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B642148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mA9VuRdm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94732148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388693AbeKTDKF (ORCPT
+        id S2388711AbeKTDKI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45378 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:10:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387731AbeKTDKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:10:05 -0500
+        id S2388694AbeKTDKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:10:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA4B02145D;
-        Mon, 19 Nov 2018 16:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E460214C4;
+        Mon, 19 Nov 2018 16:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645953;
-        bh=AbXz/91jlseJ2ni/N9El8a4AC8bG8AV0ETEhxKEhB8E=;
+        s=default; t=1542645956;
+        bh=DODjuOWXcbL0Xf9dhq+G95nLX6yJRgONrTasYZYJ5i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RB9OwtGWa+Rf+w2xvF317gQg2VmmJSB88vrmjOOMulM4mWuHRv+Zaaks2+Z6X87xX
-         HRMZmtcJGFzy4VQKy2ceypqOFZIghwXH/6kuWxkBLfLvdJCAiQy0rGVEfCgxBZIA3m
-         0ui/oH0oRl3oRT3bqaQ18aQsEYwYic7f/7AQ0dxE=
+        b=mA9VuRdmCZzfIE60w4iwqGsTJ4lrkz1hA54HQNFx8Sg/z4CGesBiYgbMKUYuq7R7X
+         pJBso18LJMH3/1YkSmo2KzqM6pMlVDlTMdpliNU6VpJK8CJU7if5KVmFoDw/cJ/qEY
+         CAqcbN1bzR6ayP6gMNB9C4B06fjWOZQFplKA16v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Akshu Agrawal <akshu.agrawal@amd.com>,
-        Satyajit Sahu <satyajit.sahu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 150/171] drm/amd/powerplay: Enable/Disable NBPSTATE on On/OFF of UVD
-Date:   Mon, 19 Nov 2018 17:29:06 +0100
-Message-Id: <20181119162639.749676489@linuxfoundation.org>
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>
+Subject: [PATCH 4.18 151/171] drm/etnaviv: fix bogus fence complete check in timeout handler
+Date:   Mon, 19 Nov 2018 17:29:07 +0100
+Message-Id: <20181119162639.873025932@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,46 +61,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Akshu Agrawal <akshu.agrawal@amd.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-commit 51ef434a15b450bfbef1e06cc87ee4e98a224486 upstream.
+commit 6fce3a406108ee6c8a61e2a33e52e9198a626ea0 upstream.
 
-We observe black lines (underflow) on display when playing a
-4K video with UVD. On Disabling Low memory P state this issue is
-not seen.
-Multiple runs of power measurement shows no imapct.
+The GPU hardware fences and the job out-fences are on different timelines
+so it's wrong to compare them. Fix this by only looking at the out-fence.
 
-Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
-Signed-off-by: Satyajit Sahu <satyajit.sahu@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Cc: <stable@vger.kernel.org>
+Fixes: 2c83a726d6fb (drm/etnaviv: bring back progress check in job
+                     timeout handler)
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/etnaviv/etnaviv_sched.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
-@@ -1222,14 +1222,17 @@ static int smu8_dpm_force_dpm_level(stru
+--- a/drivers/gpu/drm/etnaviv/etnaviv_sched.c
++++ b/drivers/gpu/drm/etnaviv/etnaviv_sched.c
+@@ -93,7 +93,7 @@ static void etnaviv_sched_timedout_job(s
+ 	 * If the GPU managed to complete this jobs fence, the timout is
+ 	 * spurious. Bail out.
+ 	 */
+-	if (fence_completed(gpu, submit->out_fence->seqno))
++	if (dma_fence_is_signaled(submit->out_fence))
+ 		return;
  
- static int smu8_dpm_powerdown_uvd(struct pp_hwmgr *hwmgr)
- {
--	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating))
-+	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating)) {
-+		smu8_nbdpm_pstate_enable_disable(hwmgr, true, true);
- 		return smum_send_msg_to_smc(hwmgr, PPSMC_MSG_UVDPowerOFF);
-+	}
- 	return 0;
- }
- 
- static int smu8_dpm_powerup_uvd(struct pp_hwmgr *hwmgr)
- {
- 	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating)) {
-+		smu8_nbdpm_pstate_enable_disable(hwmgr, false, true);
- 		return smum_send_msg_to_smc_with_parameter(
- 			hwmgr,
- 			PPSMC_MSG_UVDPowerON,
+ 	/*
 
 
