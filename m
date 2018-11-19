@@ -2,255 +2,87 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EC5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC93C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A38520851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A38520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C890420870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:08:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XvM7FjSc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C890420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbeKTAaM (ORCPT
+        id S1729470AbeKTAcF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:30:12 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37393 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729331AbeKTAaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:30:11 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9682285461310;
-        Mon, 19 Nov 2018 22:06:24 +0800 (CST)
-Received: from localhost.localdomain (10.175.34.53) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 19 Nov 2018 22:06:19 +0800
-From:   Xue Chaojing <xuechaojing@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
-        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
-        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
-        <luoshaokai@huawei.com>
-Subject: [PATCH 2/4] net-next/hinic:add rx checksum offload for HiNIC
-Date:   Mon, 19 Nov 2018 06:12:32 +0000
-Message-ID: <20181119061234.12839-2-xuechaojing@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181119061234.12839-1-xuechaojing@huawei.com>
-References: <20181119061234.12839-1-xuechaojing@huawei.com>
+        Mon, 19 Nov 2018 19:32:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34068 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729362AbeKTAcF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:32:05 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u6-v6so26246718ljd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nu5nr26bjY/1dHgvzWPldKHYw5Qfj36ninisOy4PWlE=;
+        b=XvM7FjSc4iWtgAecR1eb0voL/3nwRBNSS1UlvBajN7aoVvUUi8+LfRgTdnp6AHBiRj
+         NeslHHD7CNG9omRIbQ/kgyIB/r1Sl5QFre0rqDzRTUapPby0RlhY+fctsRMEq3ES0EuV
+         6leJhFPhQcb+dDPIrpFs92+wwCS37yak1P0JA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nu5nr26bjY/1dHgvzWPldKHYw5Qfj36ninisOy4PWlE=;
+        b=K4z/I2v2kC3jFCT7WHjO4QMrYTN6ofsD0mVQgpSI0m7GN1oZBOR8wa5CusM0FHeQyn
+         4BriuqpkZhRNFFbofSyq0mTyWURJMPX4GITQM5FfTTi7gwqtVTuGkM9PyJ0TKvquMh2I
+         mES2RtZK43AOREdakKevEW7jwO1wDhnBxHiv4PRNBb164VXC0RNTLtsOQOVlIhjtFAg0
+         ceG4C91DzuxDLtUAKxUSDmLHVpgahVY2lzC1spAYhDAl5W00OdobhgueGioP6OLuxnE8
+         IVQuHlRV7fcDK0poMiXhfxg2n1kkIB197EG8LJlvxjOkGH+XT648Ogv8IALTN3s6Q8qk
+         j/wA==
+X-Gm-Message-State: AGRZ1gKN/N25SQA8w+mUU2d3eY/DNRLE3V6cmek3C2GROwsTk3IlelZc
+        n7WCdnv+FboXtAZPbF3fOuD8Fw1vg3BdczOR0NZAGg==
+X-Google-Smtp-Source: AJdET5fFeyRT545NVLnlceH6KF+L8P62KPkk/erXqfHQi0bGqIKpdqPg0dZNUU8qJrsxdVdbWjs/zpwFr2UMgv1KJog=
+X-Received: by 2002:a2e:994:: with SMTP id 142-v6mr9996268ljj.120.1542636500244;
+ Mon, 19 Nov 2018 06:08:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.34.53]
-X-CFilter-Loop: Reflected
+References: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
+ <46ee25bb5ac7a7aa0245e2b02e9a0e870ff09551.1541986223.git.ryder.lee@mediatek.com>
+In-Reply-To: <46ee25bb5ac7a7aa0245e2b02e9a0e870ff09551.1541986223.git.ryder.lee@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 19 Nov 2018 15:08:06 +0100
+Message-ID: <CACRpkdbtN3=KM+iDN7wCuHn0WWwedzq=WEyO_dT25uC47V-XXw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] dt-bindings: pinctrl: update bindings for MT7629 SoC
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     sean.wang@kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        weijie.gao@mediatek.com, cheng-hao.luo@mediatek.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to improve performance, this patch adds rx checksum offload
-for the HiNIC driver. Performance test(Iperf) shows more than 80%
-improvement in TCP streams.
+On Mon, Nov 12, 2018 at 2:45 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
 
-Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
----
- .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |  2 ++
- .../net/ethernet/huawei/hinic/hinic_hw_wqe.h  |  4 +++
- .../net/ethernet/huawei/hinic/hinic_main.c    |  8 +++++-
- .../net/ethernet/huawei/hinic/hinic_port.c    | 28 +++++++++++++++++++
- .../net/ethernet/huawei/hinic/hinic_port.h    | 10 +++++++
- drivers/net/ethernet/huawei/hinic/hinic_rx.c  | 24 ++++++++++++++++
- drivers/net/ethernet/huawei/hinic/hinic_rx.h  |  4 +++
- 7 files changed, 79 insertions(+), 1 deletion(-)
+> This updates bindings for MT7629 pinctrl driver.
+>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-index 097b5502603f..d1a7d2522d82 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
-@@ -50,6 +50,8 @@ enum hinic_port_cmd {
- 
- 	HINIC_PORT_CMD_GET_LINK_STATE   = 24,
- 
-+	HINIC_PORT_CMD_SET_RX_CSUM	= 26,
-+
- 	HINIC_PORT_CMD_SET_PORT_STATE   = 41,
- 
- 	HINIC_PORT_CMD_FWCTXT_INIT      = 69,
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-index 9754d6ed5f4a..138941527872 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
-@@ -170,6 +170,10 @@
- 
- #define HINIC_RQ_CQE_STATUS_RXDONE_MASK         0x1
- 
-+#define HINIC_RQ_CQE_STATUS_CSUM_ERR_SHIFT	0
-+
-+#define HINIC_RQ_CQE_STATUS_CSUM_ERR_MASK	0xFFFFU
-+
- #define HINIC_RQ_CQE_STATUS_GET(val, member)    \
- 		(((val) >> HINIC_RQ_CQE_STATUS_##member##_SHIFT) & \
- 		 HINIC_RQ_CQE_STATUS_##member##_MASK)
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index fdf2bdb6b0d0..0179b6bf124c 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -726,6 +726,7 @@ static void set_rx_mode(struct work_struct *work)
- {
- 	struct hinic_rx_mode_work *rx_mode_work = work_to_rx_mode_work(work);
- 	struct hinic_dev *nic_dev = rx_mode_work_to_nic_dev(rx_mode_work);
-+	struct netdev_hw_addr *ha;
- 
- 	netif_info(nic_dev, drv, nic_dev->netdev, "set rx mode work\n");
- 
-@@ -806,7 +807,8 @@ static const struct net_device_ops hinic_netdev_ops = {
- static void netdev_features_init(struct net_device *netdev)
- {
- 	netdev->hw_features = NETIF_F_SG | NETIF_F_HIGHDMA | NETIF_F_IP_CSUM |
--			      NETIF_F_IPV6_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-+			      NETIF_F_IPV6_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-+			      NETIF_F_RXCSUM;
- 
- 	netdev->vlan_features = netdev->hw_features;
- 
-@@ -869,12 +871,16 @@ static int set_features(struct hinic_dev *nic_dev,
- 			netdev_features_t features, bool force_change)
- {
- 	netdev_features_t changed = force_change ? ~0 : pre_features ^ features;
-+	u32 csum_en = HINIC_RX_CSUM_OFFLOAD_EN;
- 	int err = 0;
- 
- 	if (changed & NETIF_F_TSO)
- 		err = hinic_port_set_tso(nic_dev, (features & NETIF_F_TSO) ?
- 					 HINIC_TSO_ENABLE : HINIC_TSO_DISABLE);
- 
-+	if (changed & NETIF_F_RXCSUM)
-+		err = hinic_set_rx_csum_offload(nic_dev, csum_en);
-+
- 	return err;
- }
- 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.c b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-index 7575a7d3bd9f..e9f76e904610 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.c
-@@ -409,3 +409,31 @@ int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state)
- 
- 	return 0;
- }
-+
-+int hinic_set_rx_csum_offload(struct hinic_dev *nic_dev, u32 en)
-+{
-+	struct hinic_checksum_offload rx_csum_cfg = {0};
-+	struct hinic_hwdev *hwdev = nic_dev->hwdev;
-+	struct hinic_hwif *hwif = hwdev->hwif;
-+	struct pci_dev *pdev = hwif->pdev;
-+	u16 out_size;
-+	int err;
-+
-+	if (!hwdev)
-+		return -EINVAL;
-+
-+	rx_csum_cfg.func_id = HINIC_HWIF_FUNC_IDX(hwif);
-+	rx_csum_cfg.rx_csum_offload = en;
-+
-+	err = hinic_port_msg_cmd(hwdev, HINIC_PORT_CMD_SET_RX_CSUM,
-+				 &rx_csum_cfg, sizeof(rx_csum_cfg),
-+				 &rx_csum_cfg, &out_size);
-+	if (err || !out_size || rx_csum_cfg.status) {
-+		dev_err(&pdev->dev,
-+			"Failed to set rx csum offload, ret = %d\n",
-+			rx_csum_cfg.status);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.h b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-index f6e3220fe28f..02d896eed455 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_port.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_port.h
-@@ -183,6 +183,15 @@ struct hinic_tso_config {
- 	u8	resv2[3];
- };
- 
-+struct hinic_checksum_offload {
-+	u8	status;
-+	u8	version;
-+	u8	rsvd0[6];
-+
-+	u16	func_id;
-+	u16	rsvd1;
-+	u32	rx_csum_offload;
-+};
- int hinic_port_add_mac(struct hinic_dev *nic_dev, const u8 *addr,
- 		       u16 vlan_id);
- 
-@@ -213,4 +222,5 @@ int hinic_port_get_cap(struct hinic_dev *nic_dev,
- 
- int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state);
- 
-+int hinic_set_rx_csum_offload(struct hinic_dev *nic_dev, u32 en);
- #endif
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.c b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-index 4c0f7eda1166..93e8f207f6da 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.c
-@@ -89,6 +89,28 @@ static void rxq_stats_init(struct hinic_rxq *rxq)
- 	hinic_rxq_clean_stats(rxq);
- }
- 
-+static void rx_csum(struct hinic_rxq *rxq, u16 cons_idx,
-+		    struct sk_buff *skb)
-+{
-+	struct net_device *netdev = rxq->netdev;
-+	struct hinic_rq_cqe *cqe;
-+	struct hinic_rq *rq;
-+	u32 csum_err;
-+	u32 status;
-+
-+	rq = rxq->rq;
-+	cqe = rq->cqe[cons_idx];
-+	status = be32_to_cpu(cqe->status);
-+	csum_err = HINIC_RQ_CQE_STATUS_GET(status, CSUM_ERR);
-+
-+	if (!(netdev->features & NETIF_F_RXCSUM))
-+		return;
-+
-+	if (!csum_err)
-+		skb->ip_summed = CHECKSUM_UNNECESSARY;
-+	else
-+		skb->ip_summed = CHECKSUM_NONE;
-+}
- /**
-  * rx_alloc_skb - allocate skb and map it to dma address
-  * @rxq: rx queue
-@@ -328,6 +350,8 @@ static int rxq_recv(struct hinic_rxq *rxq, int budget)
- 
- 		rx_unmap_skb(rxq, hinic_sge_to_dma(&sge));
- 
-+		rx_csum(rxq, ci, skb);
-+
- 		prefetch(skb->data);
- 
- 		pkt_len = sge.len;
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_rx.h b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-index 27c9af4b1c12..ab3fabab91b2 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_rx.h
-@@ -23,6 +23,10 @@
- 
- #include "hinic_hw_qp.h"
- 
-+#define HINIC_RX_CSUM_OFFLOAD_EN	0xFFF
-+#define HINIC_RX_CSUM_HW_CHECK_NONE	BIT(7)
-+#define HINIC_RX_CSUM_IPSU_OTHER_ERR	BIT(8)
-+
- struct hinic_rxq_stats {
- 	u64                     pkts;
- 	u64                     bytes;
--- 
-2.17.1
+Patch applied with Sean's and Rob's ACKs.
 
+Yours,
+Linus Walleij
