@@ -2,124 +2,89 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FA1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256FAC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1466220671
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:11:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1466220671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E404920823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:14:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E404920823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbeKTEgd (ORCPT
+        id S1730112AbeKTEir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:36:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38534 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 23:38:47 -0500
+Received: from mga07.intel.com ([134.134.136.100]:60223 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729975AbeKTEgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:36:33 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6DCABC059B78;
-        Mon, 19 Nov 2018 18:11:55 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5FC45D76C;
-        Mon, 19 Nov 2018 18:11:54 +0000 (UTC)
-Subject: Re: [PATCH 3.18 16/90] cpupower: Fix coredump on VMWare
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-References: <20181119162620.585061184@linuxfoundation.org>
- <20181119162623.516060898@linuxfoundation.org>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <c2d0d4ab-a9e5-cc7b-55d9-f99754beff55@redhat.com>
-Date:   Mon, 19 Nov 2018 13:11:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729975AbeKTEir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 23:38:47 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 10:14:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
+   d="scan'208";a="87643713"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Nov 2018 10:14:06 -0800
+Date:   Mon, 19 Nov 2018 11:10:51 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Tyler Baicar <baicar.tyler@gmail.com>, mr.nuke.me@gmail.com,
+        austin_bolen@dell.com, alex_gagniuc@dellteam.com,
+        Shyam_Iyer@dell.com, lukas@wunner.de, bhelgaas@google.com,
+        rjw@rjwysocki.net, lenb@kernel.org, ruscur@russell.cc,
+        sbobroff@linux.ibm.com, oohall@gmail.com,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Message-ID: <20181119181051.GA26707@localhost.localdomain>
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+ <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+ <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+ <20181119165318.GB26595@localhost.localdomain>
+ <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+ <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
+ <20181119174127.GE26595@localhost.localdomain>
+ <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181119162623.516060898@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 19 Nov 2018 18:11:55 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 12:56:56PM -0500, Sinan Kaya wrote:
+> On 11/19/2018 12:41 PM, Keith Busch wrote:
+> > > Still, breaking existing systems that rely on HEST table is not cool.
+> > > I'd rather have users specify "pcie_ports=native" to skip FF rather than
+> > > having broken systems by default to be honest.
+> > The pcie_ports=native work-around ignores FF to potentially unknown
+> > results, though.
+> > 
+> 
+> How about being able to enable/disable FF in BIOS?
+>
+> We can't really turn off firmware first in the kernel without asking help
+> from the firmware.
 
+The _OSC method this patch utilizes is the ACPI spec defined way for
+the kernel to wrest control from firmware. BIOS specific menu settings
+shouldn't be our only recourse when we have a spec authority defining
+generic OS interfaces to accomplish the same thing.
 
-On 11/19/2018 11:28 AM, Greg Kroah-Hartman wrote:
-> 3.18-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Prarit Bhargava <prarit@redhat.com>
-> 
-> [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
+Unless there is a disagreement on the _OSC interpreation, we'd have to
+accept that platforms breaking from this patch are non-compliant.
 
-Greg, as previously mentioned to Sasha, this patch also needs 8c22e2f69592
-("cpupower: Fix AMD Family 0x17 msr_pstate size").  I did not see a message
-indicating that 8c22e2f69592 was also being backported to 3.18-stable.  My
-apologies if I missed it.
-
-P.
-
-
-> 
-> cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
-> (0xC0010064 + state number) set to zero.  As a result fid and did are zero
-> and the crash occurs because of a divide by zero (cof = fid/did).  This
-> can be prevented by checking the enable bit in the PStateDef MSR before
-> calculating cof.  By doing this the value of pstate[i] remains zero and
-> the value can be tested before displaying the active Pstates.
-> 
-> Check the enable bit in the PstateDef register for all supported families
-> and only print out enabled Pstates.
-> 
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Stafford Horne <shorne@gmail.com>
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  tools/power/cpupower/utils/cpufreq-info.c |    2 ++
->  tools/power/cpupower/utils/helpers/amd.c  |    5 +++++
->  2 files changed, 7 insertions(+)
-> 
-> --- a/tools/power/cpupower/utils/cpufreq-info.c
-> +++ b/tools/power/cpupower/utils/cpufreq-info.c
-> @@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int c
->  		printf(_("    Boost States: %d\n"), b_states);
->  		printf(_("    Total States: %d\n"), pstate_no);
->  		for (i = 0; i < pstate_no; i++) {
-> +			if (!pstates[i])
-> +				continue;
->  			if (i < b_states)
->  				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
->  					 "\n"), i, pstates[i]);
-> --- a/tools/power/cpupower/utils/helpers/amd.c
-> +++ b/tools/power/cpupower/utils/helpers/amd.c
-> @@ -103,6 +103,11 @@ int decode_pstates(unsigned int cpu, uns
->  		}
->  		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
->  			return -1;
-> +		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
-> +			continue;
-> +		else if (!pstate.bits.en)
-> +			continue;
-> +
->  		pstates[i] = get_cof(cpu_family, pstate);
->  	}
->  	*no = i;
-> 
-> 
+> Like you said, it causes unpredictable results.
+>
+> There will be two competing software trying to touch the same registers.
