@@ -2,231 +2,123 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B0FC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC79C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8162206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8162206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 888842089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vk7vJrCy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888842089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389410AbeKTDMf (ORCPT
+        id S2389423AbeKTDMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 19 Nov 2018 22:12:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387988AbeKTDMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Nov 2018 22:12:35 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39858 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387988AbeKTDMe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:34 -0500
-Received: by mail-qk1-f195.google.com with SMTP id q70so32147251qkh.6;
-        Mon, 19 Nov 2018 08:48:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xg6Y6slrTdFIaEN2P3vXaS05djo0SrywOjWqLbprJVs=;
-        b=Zm5F9AsAnG0IjqUvg5uPtpPdXt7QWS5s0Z3DIBmVuqXy+18/8jrhj4kiHUXemb6wmz
-         e+n7IEc5KYWZXS5W/wng5fhegt/u+2TPeHjyYEP1VpYm5DTO0oR9H6Vj9EAwcij9nZHW
-         uNohseIgx4+wg9Li/+Z1N7XJ8Qcc2/c4qNVCIezTMRYisb9ofMNAIr2mP8Rr8sW22H1c
-         06DHa0iJZg3L0XG89Mx+6EgxyZg89eF052lMNqy1vTh9XiomrNmA8JJxKtW6QLlY8gkH
-         uSip6QV3qxeFK+qpSPJITYoU7BSx2thQXtoK4syNqUYziYmDcJVZQpRvABC6hnrCaOKM
-         HOCA==
-X-Gm-Message-State: AGRZ1gLGLqp8E9rW6XGYVVXzqmMjA8XuyXphMPeTQ7apl8PvkViFP+2r
-        0wR/lniNWHMbT3EQV80nSK2MVryuMbCJpan3/IE=
-X-Google-Smtp-Source: AJdET5daOPGsp+adybuSPmk20wC52axHHLfq+lN8Eu0P3yqReMpN6Mmo44ZVMiUZygFhFEAADo2UYUOTi3M0YUVXD2g=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr21493142qte.212.1542646100257;
- Mon, 19 Nov 2018 08:48:20 -0800 (PST)
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 063662089F;
+        Mon, 19 Nov 2018 16:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542646103;
+        bh=p0Bus2c2+aUTD5U1K+f3LH5H52m59QMQKGaMOoJNmvU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vk7vJrCy+vDJUpIzEL/bgftfPd8om4J9Dx+MCLbj+FJ9id78+imSS/w75zIo72XFd
+         xFNnfHjz+tqDTdDm7lZkfbIO2DL+5FqRAftRV3A+Y0mraNE8F/p6x0v/eekuPKkYoI
+         7C2aYhZ07xkLIbbIWWPiUwwyh1MoRHYhsmsjgkVI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 008/124] powerpc/mm: Dont report hugepage tables as memory leaks when using kmemleak
+Date:   Mon, 19 Nov 2018 17:27:42 +0100
+Message-Id: <20181119162614.607102173@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+References: <20181119162612.951907286@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <1542189798-27713-1-git-send-email-firoz.khan@linaro.org> <1542189798-27713-4-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1542189798-27713-4-git-send-email-firoz.khan@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 19 Nov 2018 17:48:02 +0100
-Message-ID: <CAK8P3a1jnuabJ+NFm-XAzQ8dk7V991H+YEfTZ2GZjNBovuAoDw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] powerpc: add system call table generation support
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxram@us.ibm.com,
-        Geert Uytterhoeven <geert@linux-m68k.org>, leitao@debian.org,
-        Boqun Feng <boqun.feng@gmail.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 11:04 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> Adding a new table entry consisting of:
->         - System call number.
->         - ABI.
->         - System call name.
->         - Entry point name.
->         - Compat entry name, if required.
->
-> syscallhdr.sh and syscalltbl.sh will generate uapi header-
-> unistd_32/64.h and syscall_table_32/64/c32.h files respect-
-> ively. File syscall_table_32/64/c32.h is included by sys-
-> call.S - the real system call table. Both .sh files will
-> parse the content syscall.tbl to generate the header and
-> table files.
+------------------
 
-You don't mention how this handles the SPU, which seems to be the main
-difference from the other architectures.
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-> +# The format is:
-> +# <number> <abi> <name> <entry point> <compat entry point> <spu entry point>
-> +#
-> +# The <abi> can be common, 64, or 32 for this file.
-> +#
-> +0      common  restart_syscall                 sys_restart_syscall             sys_restart_syscall
-> +1      common  exit                            sys_exit                        sys_exit
-> +2      common  fork                            ppc_fork                        ppc_fork
-> +3      common  read                            sys_read                        sys_read                                sys_read
-> +4      common  write                           sys_write                       sys_write                               sys_write
-> +5      common  open                            sys_open                        compat_sys_open                         sys_open
-> +6      common  close                           sys_close                       sys_close                               sys_close
-> +7      common  waitpid                         sys_waitpid                     sys_waitpid                             sys_waitpid
-> +8      common  creat                           sys_creat                       sys_creat                               sys_creat
+[ Upstream commit 803d690e68f0c5230183f1a42c7d50a41d16e380 ]
 
-The SPU syscall is always the same as the 64-bit syscall, so listing it
-explictily in the last column seems to add a lot of duplication, and
-makes the format different from the other architectures.
+When a process allocates a hugepage, the following leak is
+reported by kmemleak. This is a false positive which is
+due to the pointer to the table being stored in the PGD
+as physical memory address and not virtual memory pointer.
 
-Have you considered using the <abi> field (second column) to decide whether
-a syscall is used for SPU or not instead?
+unreferenced object 0xc30f8200 (size 512):
+  comm "mmap", pid 374, jiffies 4872494 (age 627.630s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<e32b68da>] huge_pte_alloc+0xdc/0x1f8
+    [<9e0df1e1>] hugetlb_fault+0x560/0x8f8
+    [<7938ec6c>] follow_hugetlb_page+0x14c/0x44c
+    [<afbdb405>] __get_user_pages+0x1c4/0x3dc
+    [<b8fd7cd9>] __mm_populate+0xac/0x140
+    [<3215421e>] vm_mmap_pgoff+0xb4/0xb8
+    [<c148db69>] ksys_mmap_pgoff+0xcc/0x1fc
+    [<4fcd760f>] ret_from_syscall+0x0/0x38
 
-I would have done it like
+See commit a984506c542e2 ("powerpc/mm: Don't report PUDs as
+memory leaks when using kmemleak") for detailed explanation.
 
-|+0      nospu  restart_syscall                 sys_restart_syscall
-         sys_restart_syscall
-|+1      nospu  exit                            sys_exit
-         sys_exit
-|+2      nospu  fork                            ppc_fork
-         ppc_fork
-|+3      common  read                            sys_read
-          sys_read
-|+4      common  write                           sys_write
-          sys_write
-|+5      common  open                            sys_open
-          compat_sys_open
-|+6      common  close                           sys_close
-          sys_close
-...
-|+291    32      fstatat64                       sys_fstatat64
-          sys_fstatat64
-|+291    64      newfstatat                      sys_newfstatat
-|+291    spu      newfstatat                      sys_newfstatat
-...
+To fix that, this patch tells kmemleak to ignore the allocated
+hugepage table.
 
-with 'nospu' meaning 64+32+compat.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/mm/hugetlbpage.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-> +9      common  link                            sys_link                        sys_link                                sys_link
-> +10     common  unlink                          sys_unlink                      sys_unlink                              sys_unlink
-> +11     common  execve                          sys_execve                      compat_sys_execve
-> +12     common  chdir                           sys_chdir                       sys_chdir                               sys_chdir
-> +13     common  time                            sys_time                        compat_sys_time                         sys_time
-> +14     common  mknod                           sys_mknod                       sys_mknod                               sys_mknod
-> +15     common  chmod                           sys_chmod                       sys_chmod                               sys_chmod
-> +16     common  lchown                          sys_lchown                      sys_lchown                              sys_lchown
-> +17     common  break                           sys_ni_syscall                  sys_ni_syscall
-> +18     32      oldstat                         sys_stat                        sys_ni_syscall
-> +18     64      oldstat                         sys_ni_syscall
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -19,6 +19,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/kmemleak.h>
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+@@ -110,6 +111,8 @@ static int __hugepte_alloc(struct mm_str
+ 		for (i = i - 1 ; i >= 0; i--, hpdp--)
+ 			*hpdp = __hugepd(0);
+ 		kmem_cache_free(cachep, new);
++	} else {
++		kmemleak_ignore(new);
+ 	}
+ 	spin_unlock(&mm->page_table_lock);
+ 	return 0;
 
-'oldstat' seems odd. Your conversion is correct, but the existing
-behavior of not
-providing support for the syscall in compat mode feels wrong. We have four
-calls in this category:
 
-arch/powerpc/include/asm/systbl.h:OLDSYS(stat)
-arch/powerpc/include/asm/systbl.h:OLDSYS(fstat)
-arch/powerpc/include/asm/systbl.h:OLDSYS(lstat)
-arch/powerpc/include/asm/systbl.h:OLDSYS(debug_setcontext)
-
-For the first three, it seems that the 64-bit kernel ought to set
-'__ARCH_WANT_OLD_STAT':
-
-diff --git a/arch/powerpc/include/asm/unistd.h
-b/arch/powerpc/include/asm/unistd.h
-index 96ddce5c76c3..335dfcc47f20 100644
---- a/arch/powerpc/include/asm/unistd.h
-+++ b/arch/powerpc/include/asm/unistd.h
-@@ -42,9 +42,7 @@
- #define __ARCH_WANT_SYS_OLDUMOUNT
- #define __ARCH_WANT_SYS_SIGPENDING
- #define __ARCH_WANT_SYS_SIGPROCMASK
--#ifdef CONFIG_PPC32
- #define __ARCH_WANT_OLD_STAT
--#endif
- #ifdef CONFIG_PPC64
- #define __ARCH_WANT_SYS_TIME32
- #define __ARCH_WANT_SYS_UTIME32
-diff --git a/arch/powerpc/include/uapi/asm/stat.h
-b/arch/powerpc/include/uapi/asm/stat.h
-index afd25f2ff4e8..f64e47b46e4b 100644
---- a/arch/powerpc/include/uapi/asm/stat.h
-+++ b/arch/powerpc/include/uapi/asm/stat.h
-@@ -11,7 +11,7 @@
-
- #define STAT_HAVE_NSEC 1
-
--#ifndef __powerpc64__
-+#if !defined(__powerpc64__) || defined(__KERNEL__)
- struct __old_kernel_stat {
-        unsigned short st_dev;
-        unsigned short st_ino;
-
-For debug_setcontext(), I don't even know what that does, or whether the
-omission was intentional, but it seems weird to have one missing syscall
-in the emulation.
-
-> +19     common  lseek                           sys_lseek                       compat_sys_lseek                        sys_lseek
-> +20     common  getpid                          sys_getpid                      sys_getpid                              sys_getpid
-> +21     common  mount                           sys_mount                       compat_sys_mount
-> +22     32      umount                          sys_oldumount                   sys_oldumount
-> +22     64      umount                          sys_ni_syscall
-
-Note: for a future cleanup, I suppose we want to remove the '64' line
-for this one and
-others that simply refer to sys_ni_syscall. Your version keeps the
-generated file
-unchanged, so that that's great for now.
-
-> +31     common  stty                            sys_ni_syscall                  sys_ni_syscall
-> +32     common  gtty                            sys_ni_syscall                  sys_ni_syscall
-
-same here.
-
-> +82     32      select                          ppc_select                      sys_ni_syscall
-> +82     64      select                          sys_ni_syscall
-
-This one again is like 'stat': it lacks a compat handler, which exists in
-arch/powerpc/kernel/syscalls.c, but is disabled in ppc64/compat mode
-for unknown reasons. In this case, it's been like that since the compat
-mode was first added.
-
-> +106    common  stat                            sys_newstat                     compat_sys_newstat                      sys_newstat
-> +107    32      lstat                           sys_newlstat                    compat_sys_newlstat                     sys_newlstat
-> +107    64      lstat                           sys_lstat
-> +108    32      fstat                           sys_newfstat                    compat_sys_newfstat                     sys_newfstat
-> +108    64      fstat                           sys_fstat
-
-Can you explain what is going on here? As far as I can see, those
-should all be 'common'.
-
-       Arnd
