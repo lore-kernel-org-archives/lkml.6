@@ -2,181 +2,168 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E93C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17FFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E91B2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75D572080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCtGN4NG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E91B2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VcNgZvq7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75D572080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731468AbeKTIhV (ORCPT
+        id S1731491AbeKTIhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:37:21 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38934 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731256AbeKTIhV (ORCPT
+        Tue, 20 Nov 2018 03:37:22 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33886 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731313AbeKTIhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 03:37:21 -0500
-Received: by mail-wr1-f67.google.com with SMTP id b13so33667479wrx.6;
-        Mon, 19 Nov 2018 14:11:34 -0800 (PST)
+Received: by mail-pl1-f193.google.com with SMTP id f12-v6so15244454plo.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:11:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5Dck1jKnruAxnGiVRmbcWgWiXQ+KB5ToM3dB3un7OJQ=;
-        b=LCtGN4NG3Magzw2HzWRkqPzSPTo5I0aNbEi60M4NCXi5gaA2/XqcvpShH86zDeSR4m
-         j0Mf3+0eNfGyL6HP5t2uKzowAmmNKBtQscoOCFrXkveOOzZBWE5LXH9/SdgQ8TaPDwre
-         99WgdE04BQvrRn4CvJd5a5W/oSDh+TPX2mMbQP+ArT4I0dtIXFRiJdaaqLBiu0exkZ7f
-         F7HPMEDfsX3SwTRx6N31Mpf8KbK0NEQHnph1Voe37gVwP5iJ12j335kVkHHA8+j6tNs9
-         IPujMT5YE1XWlGtOtSbvVkqaRIA7PbBwy3bGki1iDOxMTTKxLTRWqE1uk+s/hRiArd/g
-         cQyg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=x18zujgfCKPt3T5ACkYo8+FKF7H3NMDCTuUkJ/syaNs=;
+        b=VcNgZvq7pV7RWUGxMq60xdZzFKYXEGZh5GSnzr5KOZbm57SP3DWhNJ8le8PAVyvIXp
+         yHY4bkcTj4dVPZZgUWCpVTD8L1olJ5cuQiY7Mtgh+AnGvSmUtdTc77U2fB0AaUdRRCq1
+         b8kll4LiQg7uZfSxlMv/fhb2O4aShkkk1qisgia5ikz+yvjy3JmfaoglIN9FRbLvNX5x
+         3uVVvbcQhsf2Iu8Id6QGnJknSRjXaYLICROUwFZ9NP5yqCB3ppKX4Oqq75gHCPOj6iXi
+         L3Kqks0bXe6fUo/cbagRSq8O5Xg3Y44ezoHudYBtw+HQGwgWqCHhBG+xokCTq8jnul8B
+         s6aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5Dck1jKnruAxnGiVRmbcWgWiXQ+KB5ToM3dB3un7OJQ=;
-        b=cEwvlLqRWe2KbyoSeJZ/CCpYw7m5QKNNcZQkl9yzdH1Gf+XgZJUZ9ST0+Z5+G0GmaS
-         gaMPgps+d6ua/Ce5TFtUA1mrCNR9ZD3KH9z0UvQsmC33GM6iOIi3qmvfpdNaEk4JDq8i
-         wYTg9Luc0MLzxWj8t8x+QD257uz12luhd0G82wpy818VtYYC9J0ibF6xgEH3YMJiPABE
-         5zMFNyqoXpGiIwCLrvp9o7L6Aq8o8No+IlVn+DQomjgnpJuQks6/mmK0P//ma2SHNW8A
-         sfYfKjL7r6xUEvdIyGY4iPgyKeOOMOcdZh1GiXIQA2ANbLI184gTKwATjgNkHhJ3s+ZL
-         i9Xg==
-X-Gm-Message-State: AGRZ1gKXBke+RNwFGwA96lARZFTWiz54ZJkUuO3cUTDobAT+q/QrgNZS
-        RjoYaHie5HVKwo5zyfno26U=
-X-Google-Smtp-Source: AJdET5dSLT+3r2lDV0bJEcXvkDnKp1X0fFUAF8GOr434Di6DcbX7/CnTAstz98qtzMXvTk/gvLwblA==
-X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr19225213wrx.79.1542665493404;
-        Mon, 19 Nov 2018 14:11:33 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id p74sm5430985wmd.29.2018.11.19.14.11.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 14:11:32 -0800 (PST)
-Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
- controller bindings
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        zhengxunli@mxic.com.tw
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
- <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
- <20181119151009.490413d9@bbrezillon>
- <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
- <20181119154338.2dfa7a5a@bbrezillon>
- <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
- <20181119162127.71d0665d@bbrezillon>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
-Date:   Mon, 19 Nov 2018 23:11:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=x18zujgfCKPt3T5ACkYo8+FKF7H3NMDCTuUkJ/syaNs=;
+        b=W0Pg7RCTppRj4Uhi1gkL9v1jq101OBslJnvNKo1Y7lquI2qSVIOcAq1yixtYYHbmVT
+         eFjREJNjrq3tcrsj1xlbcy2iin4+qn04basKx5hGnKyLUvEk2uFcys4Hul0ejyNcXHs/
+         HujTX34hVvDYSvlMOImRVDi610E7FrfA2gTdJnMncL0oenlFAp6q6GY06t4v3hgNrGL9
+         NCMtr1dyKWuzWj8WZln+02dJ4G3+x9ZqpTt/oOJmIAa74l2mMWXLowOspglybDmFg6yw
+         MM2pAcf59MoJSG+uQ0kfZ2UwsJMx5HwohvMMRjcVcEADwDflE2HOmDEGfnRQ9rjmyKhd
+         rItA==
+X-Gm-Message-State: AA+aEWZaCjgM5AFcv6z24r4RGWPWt1fiN3nwP7kSWxtRBouDsYvZ59aE
+        fFqeya6iP803HFAerCF7RRGdpX1pZeQ=
+X-Google-Smtp-Source: AFSGD/XnR2gfdShGgBhwGtHHx1nOciIZyN1xH07gfx0CEBb41tGSV4vNh6DXCDD6450kTnCtd9TY0A==
+X-Received: by 2002:a17:902:43e4:: with SMTP id j91mr3182911pld.147.1542665496347;
+        Mon, 19 Nov 2018 14:11:36 -0800 (PST)
+Received: from [100.112.89.103] ([104.133.8.103])
+        by smtp.gmail.com with ESMTPSA id y11-v6sm6444597pfk.70.2018.11.19.14.11.34
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 19 Nov 2018 14:11:35 -0800 (PST)
+Date:   Mon, 19 Nov 2018 14:11:27 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Yu Zhao <yuzhao@google.com>
+cc:     Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: fix swap offset when replacing shmem page
+In-Reply-To: <20181119010924.177177-1-yuzhao@google.com>
+Message-ID: <alpine.LSU.2.11.1811191343280.17359@eggly.anvils>
+References: <20181119004719.156411-1-yuzhao@google.com> <20181119010924.177177-1-yuzhao@google.com>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-In-Reply-To: <20181119162127.71d0665d@bbrezillon>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2018 04:21 PM, Boris Brezillon wrote:
-> On Mon, 19 Nov 2018 16:12:41 +0100
-> Marek Vasut <marek.vasut@gmail.com> wrote:
+On Sun, 18 Nov 2018, Yu Zhao wrote:
+
+> We used to have a single swap address space with swp_entry_t.val
+> as its radix tree index. This is not the case anymore. Now Each
+> swp_type() has its own address space and should use swp_offset()
+> as radix tree index.
 > 
->> On 11/19/2018 03:43 PM, Boris Brezillon wrote:
->>> On Mon, 19 Nov 2018 15:14:07 +0100
->>> Marek Vasut <marek.vasut@gmail.com> wrote:
->>>   
->>>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:  
->>>>> On Mon, 19 Nov 2018 14:49:31 +0100
->>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
->>>>>     
->>>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:    
->>>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
->>>>>>>
->>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->>>>>>> ---
->>>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
->>>>>>>  1 file changed, 33 insertions(+)
->>>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->>>>>>> new file mode 100644
->>>>>>> index 0000000..8286cc8
->>>>>>> --- /dev/null
->>>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
->>>>>>> @@ -0,0 +1,33 @@
->>>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
->>>>>>> +----------------------------------------------------
->>>>>>> +
->>>>>>> +Required properties:
->>>>>>> +- compatible: should be "renesas,rpc-r8a77995"
->>>>>>> +- #address-cells: should be 1
->>>>>>> +- #size-cells: should be 0
->>>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
->>>>>>> +       mapping area
->>>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
->>>>>>> +- interrupts: interrupt line connected to the RPC SPI controller      
->>>>>>
->>>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
->>>>>> look in the bindings ?    
->>>>>
->>>>> Not sure this approach is still accepted, but that's how we solved the
->>>>> problem for the flexcom block [1].
->>>>>
->>>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt    
->>>>
->>>> That looks pretty horrible.
->>>>
->>>> In U-Boot we check whether the device hanging under the controller node
->>>> is JEDEC SPI flash or CFI flash and based on that decide what the config
->>>> of the controller should be (SPI or HF). Not sure that's much better,but
->>>> at least it doesn't need extra nodes which do not really represent any
->>>> kind of real hardware.
->>>>  
->>>
->>> The subnodes are not needed, you can just have a property that tells in
->>> which mode the controller is supposed to operate, and the MFD would
->>> create a sub-device that points to the same device_node.  
->>
->> Do you even need a dedicated property ? I think you can decide purely on
->> what node is hanging under the controller (jedec spi nor or cfi nor).
+> Signed-off-by: Yu Zhao <yuzhao@google.com>
+
+This fix is a great find, thank you! But completely mis-described!
+And could you do a smaller patch, keeping swap_index, that can go to
+stable without getting into trouble with the recent xarrifications?
+
+Fixes: bde05d1ccd51 ("shmem: replace page if mapping excludes its zone")
+Cc: stable@vger.kernel.org # 3.5+
+
+Seems shmem_replace_page() has been wrong since the day I wrote it:
+good enough to work on swap "type" 0, which is all most people ever use
+(especially those few who need shmem_replace_page() at all), but broken
+once there are any non-0 swp_type bits set in the higher order bits.
+
+> ---
+>  mm/shmem.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 > 
-> Yes, that could work if they have well-known compatibles. As soon as
-> people start using flash-specific compats (like some people do for
-> their SPI NORs) it becomes a maintenance burden.
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index d44991ea5ed4..685faa3e0191 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1509,11 +1509,13 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+>  {
+>  	struct page *oldpage, *newpage;
+>  	struct address_space *swap_mapping;
+> -	pgoff_t swap_index;
+> +	swp_entry_t entry;
 
-Which, on this controller, is very likely never gonna happen. Once it
-does , we can add a custom property.
+Please keep swap_index as well as adding entry.
 
->>> Or we can have
->>> a single driver that decides what to declare (a spi_controller or flash
->>> controller), but you'd still have to decide where to place this
->>> driver...  
->>
->> I'd definitely prefer a single driver.
->>
-> 
-> Where would you put this driver? I really don't like the idea of having
-> MTD drivers spread over the tree. Don't know what's Mark's opinion on
-> this matter.
+>  	int error;
+>  
+> +	VM_BUG_ON(!PageSwapCache(*pagep));
+> +
 
-Well, it's both CFI (hyperflash) and SF (well, SPI flash) controller, so
-where would this go ?
+I'd prefer you to drop that, it has no bearing on this patch;
+we used to have it, along with lots of other VM_BUG_ONs in here,
+but they outlived their usefulness, and don't need reintroducing -
+they didn't help at all to prevent the actual bug you've found.
 
--- 
-Best regards,
-Marek Vasut
+>  	oldpage = *pagep;
+> -	swap_index = page_private(oldpage);
+> +	entry.val = page_private(oldpage);
+
+entry.val = page_private(oldpage);
+swap_index = swp_offset(entry);
+
+>  	swap_mapping = page_mapping(oldpage);
+>  
+>  	/*
+> @@ -1532,7 +1534,7 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+>  	__SetPageLocked(newpage);
+>  	__SetPageSwapBacked(newpage);
+>  	SetPageUptodate(newpage);
+> -	set_page_private(newpage, swap_index);
+> +	set_page_private(newpage, entry.val);
+
+Yes.
+
+>  	SetPageSwapCache(newpage);
+>  
+>  	/*
+> @@ -1540,7 +1542,8 @@ static int shmem_replace_page(struct page **pagep, gfp_t gfp,
+>  	 * a nice clean interface for us to replace oldpage by newpage there.
+>  	 */
+>  	xa_lock_irq(&swap_mapping->i_pages);
+> -	error = shmem_replace_entry(swap_mapping, swap_index, oldpage, newpage);
+> +	error = shmem_replace_entry(swap_mapping, swp_offset(entry),
+> +				    oldpage, newpage);
+
+I'd prefer to omit that hunk, to avoid the xa_lock_irq() in the context;
+the patch is just as good if we keep the swap_index variable.
+
+>  	if (!error) {
+>  		__inc_node_page_state(newpage, NR_FILE_PAGES);
+>  		__dec_node_page_state(oldpage, NR_FILE_PAGES);
+> -- 
+> 2.19.1.1215.g8438c0b245-goog
+
+Thanks,
+Hugh
