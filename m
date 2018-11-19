@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E042C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF33C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 672702086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64BD22147D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcHmGErb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672702086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDmTyvud"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BD22147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387812AbeKTDHH (ORCPT
+        id S2387826AbeKTDHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41116 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:06 -0500
+        id S1732866AbeKTDHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E1342146D;
-        Mon, 19 Nov 2018 16:42:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E062E2145D;
+        Mon, 19 Nov 2018 16:42:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645775;
-        bh=Pu8jryiNqAjP7vexy3mIGic0GozsUxuGMStU4nruyg4=;
+        s=default; t=1542645778;
+        bh=CEvJMbAl05WmzWThdqpNwcPWqUnhzQ0tF8H7dscxKsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IcHmGErbvokQGqrPR04A2oBytp6uma4Aw6OI06OYsdgAv61AYEWqVXxksjLsnPHrm
-         pNIs+X7dRdK1ZgM9SmbvqY3rUJjGfDzUHJSuUbuOUHidYlNebNvfUzwBD/HgifsLa7
-         jMIf9fVISTP9wSXVdEDX9PHMeVvxvUOplKYH7Szg=
+        b=iDmTyvud1dIeOXJCjmcFu/2qTjMUEYPpJcwBMWaLMUK0OaLYHkh8UI10CiwxPPx36
+         Zg/zxn5rxWYXHphvAJgWF+bgSHRcmCnEaVOhKMVWYpSnZYlpHn8jCqFXufKAUXIy2B
+         d9PRF8L1HuanSdCgZpxknI9OAzfJ9IfErW30SpN4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Dan Williams <dan.j.williams@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 085/171] memory_hotplug: cond_resched in __remove_pages
-Date:   Mon, 19 Nov 2018 17:28:01 +0100
-Message-Id: <20181119162632.988943934@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Khoruzhick <vasilykh@arista.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.18 086/171] netfilter: conntrack: fix calculation of next bucket number in early_drop
+Date:   Mon, 19 Nov 2018 17:28:02 +0100
+Message-Id: <20181119162633.113077821@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -65,60 +62,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Hocko <mhocko@suse.com>
+From: Vasily Khoruzhick <vasilykh@arista.com>
 
-commit dd33ad7b251f900481701b2a82d25de583867708 upstream.
+commit f393808dc64149ccd0e5a8427505ba2974a59854 upstream.
 
-We have received a bug report that unbinding a large pmem (>1TB) can
-result in a soft lockup:
+If there's no entry to drop in bucket that corresponds to the hash,
+early_drop() should look for it in other buckets. But since it increments
+hash instead of bucket number, it actually looks in the same bucket 8
+times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
+reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
+most cases.
 
-  NMI watchdog: BUG: soft lockup - CPU#9 stuck for 23s! [ndctl:4365]
-  [...]
-  Supported: Yes
-  CPU: 9 PID: 4365 Comm: ndctl Not tainted 4.12.14-94.40-default #1 SLE12-SP4
-  Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
-  task: ffff9cce7d4410c0 task.stack: ffffbe9eb1bc4000
-  RIP: 0010:__put_page+0x62/0x80
-  Call Trace:
-   devm_memremap_pages_release+0x152/0x260
-   release_nodes+0x18d/0x1d0
-   device_release_driver_internal+0x160/0x210
-   unbind_store+0xb3/0xe0
-   kernfs_fop_write+0x102/0x180
-   __vfs_write+0x26/0x150
-   vfs_write+0xad/0x1a0
-   SyS_write+0x42/0x90
-   do_syscall_64+0x74/0x150
-   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-  RIP: 0033:0x7fd13166b3d0
+Fix it by increasing bucket number instead of hash and rename _hash
+to bucket to avoid future confusion.
 
-It has been reported on an older (4.12) kernel but the current upstream
-code doesn't cond_resched in the hot remove code at all and the given
-range to remove might be really large.  Fix the issue by calling
-cond_resched once per memory section.
-
-Link: http://lkml.kernel.org/r/20181031125840.23982-1-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Johannes Thumshirn <jthumshirn@suse.de>
-Cc: Dan Williams <dan.j.williams@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 3e86638e9a0b ("netfilter: conntrack: consider ct netns in early_drop logic")
+Cc: <stable@vger.kernel.org> # v4.7+
+Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory_hotplug.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/nf_conntrack_core.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -587,6 +587,7 @@ int __remove_pages(struct zone *zone, un
- 	for (i = 0; i < sections_to_remove; i++) {
- 		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -929,19 +929,22 @@ static unsigned int early_drop_list(stru
+ 	return drops;
+ }
  
-+		cond_resched();
- 		ret = __remove_section(zone, __pfn_to_section(pfn), map_offset,
- 				altmap);
- 		map_offset = 0;
+-static noinline int early_drop(struct net *net, unsigned int _hash)
++static noinline int early_drop(struct net *net, unsigned int hash)
+ {
+-	unsigned int i;
++	unsigned int i, bucket;
+ 
+ 	for (i = 0; i < NF_CT_EVICTION_RANGE; i++) {
+ 		struct hlist_nulls_head *ct_hash;
+-		unsigned int hash, hsize, drops;
++		unsigned int hsize, drops;
+ 
+ 		rcu_read_lock();
+ 		nf_conntrack_get_ht(&ct_hash, &hsize);
+-		hash = reciprocal_scale(_hash++, hsize);
++		if (!i)
++			bucket = reciprocal_scale(hash, hsize);
++		else
++			bucket = (bucket + 1) % hsize;
+ 
+-		drops = early_drop_list(net, &ct_hash[hash]);
++		drops = early_drop_list(net, &ct_hash[bucket]);
+ 		rcu_read_unlock();
+ 
+ 		if (drops) {
 
 
