@@ -2,142 +2,112 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85A4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF58C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EDA206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:51:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EDA206BB
+	by mail.kernel.org (Postfix) with ESMTP id 4DA2A20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA2A20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbeKTBPJ (ORCPT
+        id S1729648AbeKTBUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:15:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51672 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 20:20:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37788 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729399AbeKTBPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:15:09 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1729376AbeKTBUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:20:45 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E60630832C7;
-        Mon, 19 Nov 2018 14:51:18 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6914F17F7A;
-        Mon, 19 Nov 2018 14:51:17 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: add a new Kconfig for POOL_SIZE
-To:     Qian Cai <cai@gmx.us>, Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux kernel <linux-kernel@vger.kernel.org>, arnd@arndb.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-References: <20181118082255.1275-1-cai@gmx.us>
- <alpine.DEB.2.21.1811181919170.9459@nanos.tec.linutronix.de>
- <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
- <alpine.DEB.2.21.1811190904450.9459@nanos.tec.linutronix.de>
- <trinity-0de3e85e-8526-4004-b346-3b64dd89bc78-1542634057117@msvc-mesg-gmx021>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <44517d7f-c34f-1424-d0db-601e590c626d@redhat.com>
-Date:   Mon, 19 Nov 2018 09:51:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 30FC180467;
+        Mon, 19 Nov 2018 14:56:55 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43AE81019627;
+        Mon, 19 Nov 2018 14:56:51 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 09:56:50 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
+        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
+        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
+        shenhong09@huawei.com, dm-devel@redhat.com,
+        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
+        bmarzins@redhat.com, sschremm@netapp.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: nvme: allow ANA support to be independent of native multipathing
+Message-ID: <20181119145650.GB13470@redhat.com>
+References: <20181114174746.GA18526@redhat.com>
+ <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+ <20181115174605.GA19782@redhat.com>
+ <20181116091458.GA17267@lst.de>
+ <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
+ <20181116094947.GA19296@lst.de>
+ <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
+ <20181116101752.GA21531@lst.de>
+ <20181116192802.GA30057@redhat.com>
+ <20181119093938.GA11757@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <trinity-0de3e85e-8526-4004-b346-3b64dd89bc78-1542634057117@msvc-mesg-gmx021>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 19 Nov 2018 14:51:18 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119093938.GA11757@lst.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 19 Nov 2018 14:56:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2018 08:27 AM, Qian Cai wrote:
-> On 11/19/18 at 3:09 AM, Thomas Gleixner wrote:
->
->> Qian,
->>
->> On Sun, 18 Nov 2018, Qian Cai wrote:
->>>> On Nov 18, 2018, at 1:21 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
->>>> On Sun, 18 Nov 2018, Qian Cai wrote:
->>>>> As the results, systems have 60+ CPUs with both timer and workqueue
->>>>> objects enabled could trigger "ODEBUG: Out of memory. ODEBUG disabled".
->>>>>
->>>>> Hence, add a new Kconfig option so users could adjust ODEBUG_POOL_SIZE
->>>>> accordingly if either timer or workqueue objects are selected.
->>>> why do we need a config option, when the required number can be deduced
->>>> already from the active CONFIG_DEBUG_OBJECTS_* and NR_CPUS?
->>>>
->>> It because I am worry about the coupling between the implementation details of
->>> timers and workqueue objects, and the computation in the code you mentioned
->>> here. For example, people could change workqueue.c to have different number
->>> of worekqueues initialized during the early boot in the future which is going to
->>> affect the required pool size, and I am not sure if people are going to adjust the
->>> code in debugobjects.c here as well when they made changes like that.
->>>
->>> Also, the computation could become so complex depends on lots of config
->>> options like perf, hrtimer, and combinations that I have not tested so far which is
->>> difficult to exhausted all the possibilities.
->>>
->>> Hence, I feel like the Kconfig option is more flexible and less error-prone.
->> Quite the contrary. Config options are a pain and truly error-prone if you
->> want to compile general purpose kernels as distributions do.
->>
-> Ah, I never thought distributions people would
-> enable those debugging options.
+On Mon, Nov 19 2018 at  4:39am -0500,
+Christoph Hellwig <hch@lst.de> wrote:
 
-Distros like RHEL usually ship two kernels - one for production and one
-for debug. The debug kernel does have debugobjects enabled.
+> On Fri, Nov 16, 2018 at 02:28:02PM -0500, Mike Snitzer wrote:
+> > You rejected the idea of allowing fine-grained control over whether
+> > native NVMe multipathing is enabled or not on a per-namespace basis.
+> > All we have is the coarse-grained nvme_core.multipath=N knob.  Now
+> > you're forecasting removing even that.  Please don't do that.
+> 
+> The whole point is that this hook was intended as a band aid for the
+> hypothetical pre-existing setups.  Not ever for new development.
 
-Cheers,
-Longman
+It pains me that you're marching us towards increased conflict that
+needs resolution through more formal means.  And that now I'm going to
+have to document the timeline of your authoritarian approach to
+stifling another Linux maintainer's freedom to do his job of delivering
+on functionality I've been depended on for many years.
+
+> > Please, PLEASE take v2 of this patch.. please? ;)
+> 
+> See the previous mail for the plan ahead.   I'm sick and tired of you
+> trying to sneak your new developemts back in.
+
+I've only ever posted patches in the open and never has it been with the
+idea of sneaking anything in.  Miscategorizing my actions as such is a
+gross abuse that I will not tolerate.
+
+If we were to confine ourselves to this v2 patch I pleaded with you to
+take: https://lkml.org/lkml/2018/11/17/4
+
+1) Hannes proposed a simplistic patch that didn't account for the fact
+   that NVMe's ana workqueue wouldn't get kicked, his intent was to make
+   ANA work independent of your native multipathing.  (The fact he or I
+   even need to post such patches, to unwind your tight-coupling of ANA
+   and multipathing, speaks to how you've calculatingly undermined any
+   effort to implement proper NVMe multipathing outside of the NVMe
+   driver)
+
+2) ANA and multipathing are completely disjoint on an NVMe spec level.
+   You know this.
+
+SO: will you be taking my v2 patch for 4.21 or not?
+
+Please advise, thanks.
+Mike
