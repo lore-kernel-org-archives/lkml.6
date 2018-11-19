@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CE2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC88BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6B120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A772B20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EROJ67TY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A6B120989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ymhyYulU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A772B20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbeKTC65 (ORCPT
+        id S1731511AbeKTC67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731471AbeKTC65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:57 -0500
+        id S1731471AbeKTC67 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D7CD208E3;
-        Mon, 19 Nov 2018 16:34:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 060DD208E4;
+        Mon, 19 Nov 2018 16:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645288;
-        bh=dasKqEteFCDk4wLISQYshgaQ5sIrrjYVij4ZcZBiTaA=;
+        s=default; t=1542645291;
+        bh=+sdL92XKTVUZWHt5QzS/KJSwUaZqvQK6NBTbz44Umc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EROJ67TYHCPRUbmvcSpAq2gd+whNva5+gIZNU/8TR3ZGow6vTNX14BSj9IRfqv9bA
-         esFHd6kjFWdZW+MgdWwZfJFs0jz3wV1gXsP52qeUw79U6K4HiD28EpRjImWdpFEfd/
-         3Qya6ao877Zl9/EJ7SWAp3Km5RvU+E+QnIsY0rDg=
+        b=ymhyYulUMiLMANCHHNJu9Sme/Cv0aKkU1KpQLLoOdny8Y+Fq0JJhePqyrkqUPiTN1
+         K5YbRlDAAVcibhl/b5DDyF4BbXOP5ZW6nHCKkSf7JoHhKVi4GNlb3m0+BjdEznT9nW
+         Y6bjpi+cQ1HZxBzkHHyvM8tuVVeuX3GNJUEaMeMU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/205] arm64: dts: stratix10: fix multicast filtering
-Date:   Mon, 19 Nov 2018 17:26:17 +0100
-Message-Id: <20181119162629.560906951@linuxfoundation.org>
+Subject: [PATCH 4.19 071/205] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
+Date:   Mon, 19 Nov 2018 17:26:18 +0100
+Message-Id: <20181119162629.765620757@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,49 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit fd5ba6ee3187617287fb9cb187e3d6b3631210a3 upstream
+[ Upstream commit e2576c8bdfd462c34b8a46c0084e7c30b0851bf4 ]
 
-On Stratix 10, the EMAC has 256 hash buckets for multicast filtering. This
-needs to be specified in DTS, otherwise the stmmac driver defaults to 64
-buckets and initializes the filter incorrectly. As a result, e.g. valid
-IPv6 multicast traffic ends up being dropped.
+On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
+with reboot; e.g. a ~60 second delay between issuing reboot and the
+board power cycling (and in some OS configurations reboot will fail
+and require manual power cycling).
 
-Fixes: 78cd6a9d8e15 ("arm64: dts: Add base stratix 10 dtsi")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
+meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
+Co-Processor seems to depend on FCLK_DIV3 being operational.
+
+Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
+meson: add fdiv clock gates"), this clock was modeled and left on by
+the bootloader.
+
+We don't have precise documentation about the SCPI Co-Processor and
+its clock requirement so we are learning things the hard way.
+
+Marking this clock as critical solves the problem but it should not
+be viewed as final solution. Ideally, the SCPI driver should claim
+these clocks. We also depends on some clock hand-off mechanism
+making its way to CCF, to make sure the clock stays on between its
+registration and the SCPI driver probe.
+
+Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/meson/gxbb.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-index 003677e273a5..5089aa64088f 100644
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -139,6 +139,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
- 
-@@ -154,6 +155,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
- 
-@@ -169,6 +171,7 @@
- 			clock-names = "stmmaceth";
- 			tx-fifo-depth = <16384>;
- 			rx-fifo-depth = <16384>;
-+			snps,multicast-filter-bins = <256>;
- 			status = "disabled";
- 		};
+diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
+index 86d3ae58e84c..6435d86118f1 100644
+--- a/drivers/clk/meson/gxbb.c
++++ b/drivers/clk/meson/gxbb.c
+@@ -522,6 +522,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
+ 		.ops = &clk_regmap_gate_ops,
+ 		.parent_names = (const char *[]){ "fclk_div3_div" },
+ 		.num_parents = 1,
++		/*
++		 * FIXME:
++		 * This clock, as fdiv2, is used by the SCPI FW and is required
++		 * by the platform to operate correctly.
++		 * Until the following condition are met, we need this clock to
++		 * be marked as critical:
++		 * a) The SCPI generic driver claims and enable all the clocks
++		 *    it needs
++		 * b) CCF has a clock hand-off mechanism to make the sure the
++		 *    clock stays on until the proper driver comes along
++		 */
++		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
  
 -- 
 2.17.1
