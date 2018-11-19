@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C28C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A03C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDF322360
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5D06223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BbEG1jJ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDF322360
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lE+yBIQ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D06223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405631AbeKTDZi (ORCPT
+        id S2405644AbeKTDZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38840 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbeKTDZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:37 -0500
+        id S2404648AbeKTDZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E35B223CB;
-        Mon, 19 Nov 2018 17:01:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2FE2A223CB;
+        Mon, 19 Nov 2018 17:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646881;
-        bh=8mpjsoKjVP3zPJfBjWT42y++zUMblKEWi1zrw6RUxoY=;
+        s=default; t=1542646883;
+        bh=SVhDpaQrpxUWgKBurBTs68azfHHhucWte0d0WJ2IPdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BbEG1jJ6jGNKj8IceaXwE+1Cm2qMBZenG7Didz15d37wAEGuDFvKPRmc6In2zjjym
-         RgU1SvNns9iz5rNlNsNRAZRsYw7JGakfbvDX9oNqoG+mhMHia4M0tD+H9POl1M3k3h
-         +cC2uybrV/p02s550t+wN/ajeq4nKPdm97Sbuejc=
+        b=lE+yBIQ120hbkMSzB+P3Cixzi1SGJ3m2F1PYjputKC11bs6Tk0q+nCcIZSnmwqX6w
+         oOZBMDN2KyGhMiC13Bu/MNSpl7vJokj2mJVY3J5c8HK4keYhVfwUC/tinwVHkB8G8k
+         NSot39NHYJxaZbqjFWqOkIv/gumpORzcIsJ3fPgc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.4 126/160] libceph: bump CEPH_MSG_MAX_DATA_LEN
-Date:   Mon, 19 Nov 2018 17:29:25 +0100
-Message-Id: <20181119162642.690217403@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 4.4 127/160] mach64: fix display corruption on big endian machines
+Date:   Mon, 19 Nov 2018 17:29:26 +0100
+Message-Id: <20181119162642.751856898@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -61,42 +63,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 94e6992bb560be8bffb47f287194adf070b57695 upstream.
+commit 3c6c6a7878d00a3ac997a779c5b9861ff25dfcc8 upstream.
 
-If the read is large enough, we end up spinning in the messenger:
+The code for manual bit triple is not endian-clean. It builds the variable
+"hostdword" using byte accesses, therefore we must read the variable with
+"le32_to_cpu".
 
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
+The patch also enables (hardware or software) bit triple only if the image
+is monochrome (image->depth). If we want to blit full-color image, we
+shouldn't use the triple code.
 
-This is a receive side limit, so only reads were affected.
-
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
 Cc: stable@vger.kernel.org
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ceph/libceph.h |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/video/fbdev/aty/mach64_accel.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -72,7 +72,13 @@ struct ceph_options {
+--- a/drivers/video/fbdev/aty/mach64_accel.c
++++ b/drivers/video/fbdev/aty/mach64_accel.c
+@@ -344,7 +344,7 @@ void atyfb_imageblit(struct fb_info *inf
+ 		 * since Rage 3D IIc we have DP_HOST_TRIPLE_EN bit
+ 		 * this hwaccelerated triple has an issue with not aligned data
+ 		 */
+-		if (M64_HAS(HW_TRIPLE) && image->width % 8 == 0)
++		if (image->depth == 1 && M64_HAS(HW_TRIPLE) && image->width % 8 == 0)
+ 			pix_width |= DP_HOST_TRIPLE_EN;
+ 	}
  
- #define CEPH_MSG_MAX_FRONT_LEN	(16*1024*1024)
- #define CEPH_MSG_MAX_MIDDLE_LEN	(16*1024*1024)
--#define CEPH_MSG_MAX_DATA_LEN	(16*1024*1024)
-+
-+/*
-+ * Handle the largest possible rbd object in one message.
-+ * There is no limit on the size of cephfs objects, but it has to obey
-+ * rsize and wsize mount options anyway.
-+ */
-+#define CEPH_MSG_MAX_DATA_LEN	(32*1024*1024)
+@@ -381,7 +381,7 @@ void atyfb_imageblit(struct fb_info *inf
+ 	src_bytes = (((image->width * image->depth) + 7) / 8) * image->height;
  
- #define CEPH_AUTH_NAME_DEFAULT   "guest"
- 
+ 	/* manual triple each pixel */
+-	if (info->var.bits_per_pixel == 24 && !(pix_width & DP_HOST_TRIPLE_EN)) {
++	if (image->depth == 1 && info->var.bits_per_pixel == 24 && !(pix_width & DP_HOST_TRIPLE_EN)) {
+ 		int inbit, outbit, mult24, byte_id_in_dword, width;
+ 		u8 *pbitmapin = (u8*)image->data, *pbitmapout;
+ 		u32 hostdword;
+@@ -414,7 +414,7 @@ void atyfb_imageblit(struct fb_info *inf
+ 				}
+ 			}
+ 			wait_for_fifo(1, par);
+-			aty_st_le32(HOST_DATA0, hostdword, par);
++			aty_st_le32(HOST_DATA0, le32_to_cpu(hostdword), par);
+ 		}
+ 	} else {
+ 		u32 *pbitmap, dwords = (src_bytes + 3) / 4;
 
 
