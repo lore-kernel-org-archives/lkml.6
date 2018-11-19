@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73686C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8595AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A75921104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D4C9206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o6EeewL7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A75921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEVidf2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D4C9206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390156AbeKTDPH (ORCPT
+        id S2390170AbeKTDPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:15:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52636 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:15:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:15:06 -0500
+        id S2388976AbeKTDPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:15:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67C34208E4;
-        Mon, 19 Nov 2018 16:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 129B7208E4;
+        Mon, 19 Nov 2018 16:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646253;
-        bh=r484+aF4gE+k/QV5Rb5vTdEl/AJC6NQYq6GvHzy3y/o=;
+        s=default; t=1542646256;
+        bh=2oOj/lT1f9n/n6vgEy5YWB+L7U1y1kyT0XSVFr0HSqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o6EeewL7uDqWkiuT/Y6cv48Xm89LOkMefpftkHHsyr5N0Ne121p2Lc1lZipllXLZP
-         M3AzypXIZT9b1wJ189nYJGE25JOndaziobfI/KPg3+yYZAovgFrGxG72QqynONX1Lr
-         7dmH9pRdVDdjlwuAx4C6qycvvnmW+6bFAvRATvrQ=
+        b=cEVidf2ttpQqhck7pOUJ9JW1ietNPIkc/Q8Vu4/nYxJxT69GYfnfa/DJ1OrEgZgr6
+         vSEUlK4pyy9D2gjxsesvX0+FP1t6rhmHYs0/wMSjjVYBCtYhrZHJcWiVH1H7M+HlCw
+         ARNsMxybTvvyEa8iN2d1Q0b6eF92pq3ppHGNT/ug=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
         "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.14 095/124] sunrpc: correct the computation for page_ptr when truncating
-Date:   Mon, 19 Nov 2018 17:29:09 +0100
-Message-Id: <20181119162630.657960497@linuxfoundation.org>
+Subject: [PATCH 4.14 096/124] nfsd: COPY and CLONE operations require the saved filehandle to be set
+Date:   Mon, 19 Nov 2018 17:29:10 +0100
+Message-Id: <20181119162630.771606575@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -61,46 +61,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Sorenson <sorenson@redhat.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-commit 5d7a5bcb67c70cbc904057ef52d3fcfeb24420bb upstream.
+commit 01310bb7c9c98752cc763b36532fab028e0f8f81 upstream.
 
-When truncating the encode buffer, the page_ptr is getting
-advanced, causing the next page to be skipped while encoding.
-The page is still included in the response, so the response
-contains a page of bogus data.
+Make sure we have a saved filehandle, otherwise we'll oops with a null
+pointer dereference in nfs4_preprocess_stateid_op().
 
-We need to adjust the page_ptr backwards to ensure we encode
-the next page into the correct place.
-
-We saw this triggered when concurrent directory modifications caused
-nfsd4_encode_direct_fattr() to return nfserr_noent, and the resulting
-call to xdr_truncate_encode() corrupted the READDIR reply.
-
-Signed-off-by: Frank Sorenson <sorenson@redhat.com>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/xdr.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/nfsd/nfs4proc.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/sunrpc/xdr.c
-+++ b/net/sunrpc/xdr.c
-@@ -639,11 +639,10 @@ void xdr_truncate_encode(struct xdr_stre
- 		WARN_ON_ONCE(xdr->iov);
- 		return;
- 	}
--	if (fraglen) {
-+	if (fraglen)
- 		xdr->end = head->iov_base + head->iov_len;
--		xdr->page_ptr--;
--	}
- 	/* (otherwise assume xdr->end is already set) */
-+	xdr->page_ptr--;
- 	head->iov_len = len;
- 	buf->len = len;
- 	xdr->p = head->iov_base + head->iov_len;
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1049,6 +1049,9 @@ nfsd4_verify_copy(struct svc_rqst *rqstp
+ {
+ 	__be32 status;
+ 
++	if (!cstate->save_fh.fh_dentry)
++		return nfserr_nofilehandle;
++
+ 	status = nfs4_preprocess_stateid_op(rqstp, cstate, &cstate->save_fh,
+ 					    src_stateid, RD_STATE, src, NULL);
+ 	if (status) {
 
 
