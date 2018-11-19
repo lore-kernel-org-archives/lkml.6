@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB5BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B17C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734BF2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D69920851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFEkqj0E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 734BF2086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vx0T1BEj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D69920851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731988AbeKTJMW (ORCPT
+        id S1732005AbeKTJMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:12:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44784 "EHLO mail.kernel.org"
+        Tue, 20 Nov 2018 04:12:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731784AbeKTJLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:11:39 -0500
+        id S1730419AbeKTJLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:11:37 -0500
 Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A19CF213A2;
-        Mon, 19 Nov 2018 22:45:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3C3320C01;
+        Mon, 19 Nov 2018 22:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542667546;
-        bh=OWzmIJbKZlrQWIvmwPfVwyRPqOV209QY46DfMLZNUOA=;
+        s=default; t=1542667544;
+        bh=hspd7+YSGF4H5UoVQjihTz8YwVIWRwdU+/U2giuzSNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=ZFEkqj0Ec4ya3mcu+hesbJJNIkqLipbtVDM2CS8g4pqVNtHtXMsTivXxNqy4284Zu
-         JMvfuROvw7j1ZlEKyKgrzPhGczeEDNe05mtKyNMjlijTxbYVQ/tLgSkpRvzZ8mvHuG
-         xd55789bIyF933Ftg1y0ad1A+yUWphpyevx3TYdQ=
+        b=vx0T1BEjJ5Oeg0N1oL7EWvX/Jm/T9wrXKsYyo62WEmNyVMBhhQ9NkCNjtO/jG5QJE
+         J7mIZQGlnsyYZRJ80pvGIAywrVW4vTYascBfjoFAPpl/EDCOd/9MxImSe8ETfdXy8y
+         OTiPcnKw25gbX8Mhde3s48Uq5qR/m+qN8znrMPCY=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -45,9 +45,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 06/13] x86/fault: Improve the condition for signalling vs OOPSing
-Date:   Mon, 19 Nov 2018 14:45:30 -0800
-Message-Id: <10e509c43893170e262e82027ea399130ae81159.1542667307.git.luto@kernel.org>
+Subject: [PATCH 04/13] x86/fault: Fold smap_violation() into do_user_addr_fault()
+Date:   Mon, 19 Nov 2018 14:45:28 -0800
+Message-Id: <806c366f6ca861152398ce2c01744d59d9aceb6d.1542667307.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1542667307.git.luto@kernel.org>
 References: <cover.1542667307.git.luto@kernel.org>
@@ -58,56 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__bad_area_nosemaphore() currently checks the X86_PF_USER bit in the
-error code to decide whether to send a signal or to treat the fault
-as a kernel error.  This can cause somewhat erratic behavior.  The
-straightforward cases where the CPL agrees with the hardware USER
-bit are all correct, but the other cases are confusing.
+smap_violation() has a single caller, and the contents are a bit
+nonsensical.  I'm going to fix it, but first let's fold it into its
+caller for ease of comprehension.
 
- - A user instruction accessing a kernel address with supervisor
-   privilege (e.g. a descriptor table access failed).  The USER bit
-   will be clear, and we OOPS.  This is correct, because it indicates
-   a kernel bug, not a user error.
-
- - A user instruction accessing a user address with supervisor
-   privilege (e.g. a descriptor table was incorrectly pointing at
-   user memory).  __bad_area_nosemaphore() will be passed a modified
-   error code with the user bit set, and we will send a signal.
-   Sending the signal will work (because the regs and the entry
-   frame genuinely come from user mode), but we really ought to
-   OOPS, as this event indicates a severe kernel bug.
-
- - A kernel instruction with user privilege (i.e. WRUSS).  This
-   should OOPS or get fixed up.  The current code would instead try
-   send a signal and malfunction.
-
-Change the logic: a signal should be sent if the faulting context is
-user mode *and* the access has user privilege.  Otherwise it's
-either a kernel mode fault or a failed implicit access, either of
-which should end up in no_context().
-
-Note to -stable maintainers: don't backport this unless you backport
-CET.  The bug it fixes is unobservable in current kernels unless
-something is extremely wrong.
+In this particular case, the user_mode(regs) check is incorrect --
+it will cause false positives in the case of a user-initiated
+kernel-privileged access.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/mm/fault.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/fault.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 95d94d48a10d..bd89b6f83aa2 100644
+index 0597342d4a55..c50cd67521b6 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
-@@ -794,7 +794,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
- 	struct task_struct *tsk = current;
+@@ -1148,20 +1148,6 @@ static int fault_in_kernel_space(unsigned long address)
+ 	return address >= TASK_SIZE_MAX;
+ }
  
- 	/* User mode accesses just cause a SIGSEGV */
--	if (error_code & X86_PF_USER) {
-+	if (user_mode(regs) && (error_code & X86_PF_USER)) {
- 		/*
- 		 * It's possible to have interrupts off here:
- 		 */
+-static inline bool smap_violation(int error_code, struct pt_regs *regs)
+-{
+-	if (!cpu_feature_enabled(X86_FEATURE_SMAP))
+-		return false;
+-
+-	if (error_code & X86_PF_USER)
+-		return false;
+-
+-	if (!user_mode(regs) && (regs->flags & X86_EFLAGS_AC))
+-		return false;
+-
+-	return true;
+-}
+-
+ /*
+  * Called for all faults where 'address' is part of the kernel address
+  * space.  Might get called for faults that originate from *code* that
+@@ -1249,10 +1235,13 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 		pgtable_bad(regs, hw_error_code, address);
+ 
+ 	/*
+-	 * Check for invalid kernel (supervisor) access to user
+-	 * pages in the user address space.
++	 * If SMAP is on, check for invalid kernel (supervisor)
++	 * access to user pages in the user address space.
+ 	 */
+-	if (unlikely(smap_violation(hw_error_code, regs))) {
++	if (unlikely(cpu_feature_enabled(X86_FEATURE_SMAP) &&
++		     !(hw_error_code & X86_PF_USER) &&
++		     (user_mode(regs) || !(regs->flags & X86_EFLAGS_AC))))
++	{
+ 		bad_area_nosemaphore(regs, hw_error_code, address);
+ 		return;
+ 	}
 -- 
 2.17.2
 
