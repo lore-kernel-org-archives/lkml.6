@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18172C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83831C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11D12089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BE082089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cPNt0OOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11D12089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NozuR4tL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE082089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389200AbeKTDL5 (ORCPT
+        id S2389210AbeKTDMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48008 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeKTDL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:57 -0500
+        id S2388196AbeKTDL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EAF220831;
-        Mon, 19 Nov 2018 16:47:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2FB7206BA;
+        Mon, 19 Nov 2018 16:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646064;
-        bh=V3GAcFc4AlTgQPTDJGYk4Fy5o+WKNqxivEIu6PUcjJY=;
+        s=default; t=1542646067;
+        bh=kQEEmWgAyV5jakqo8BQiWbCt1lcyBART28v95rDmRr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cPNt0OOeov3Peh3WsrCJZgT7oPCzpK9cZISD2JglbbgRmLZwN3WUp9QEALMxaNek1
-         YszFPPrKv+Vwefn+Im7fOJfs4/TqWuVKHAcCftWJeRsJl0nquVin5pCx2CPWj9TJ6+
-         H38rtkT+Ql+mmnsqdtnIliO7r7QldgZOEzIQYoT4=
+        b=NozuR4tLSUSKMucApticZrcDeRNA1HNVJ7APPYjHWp7jtJbeaH2BSKqTfZG3FzLW0
+         B5vCn/yMo8CVON5FCt8xZ8x9nDXpDl8kMB9yyMYhPVo7ofVI5BZa8j1uSNxn4Yyyac
+         15HM1umHtIRcLiMzpZZUi2l4BqOdkKfJaSZCFsQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        syzbot+d4252148d198410b864f@syzkaller.appspotmail.com,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 022/124] 9p: clear dangling pointers in p9stat_free
-Date:   Mon, 19 Nov 2018 17:27:56 +0100
-Message-Id: <20181119162617.831607482@linuxfoundation.org>
+        stable@vger.kernel.org, Young_X <YangX92@hotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 023/124] cdrom: fix improper type cast, which can leat to information leak.
+Date:   Mon, 19 Nov 2018 17:27:57 +0100
+Message-Id: <20181119162618.057352682@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,43 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Young_X <YangX92@hotmail.com>
 
-[ Upstream commit 62e3941776fea8678bb8120607039410b1b61a65 ]
+commit e4f3aa2e1e67bb48dfbaaf1cad59013d5a5bc276 upstream.
 
-p9stat_free is more of a cleanup function than a 'free' function as it
-only frees the content of the struct; there are chances of use-after-free
-if it is improperly used (e.g. p9stat_free called twice as it used to be
-possible to)
+There is another cast from unsigned long to int which causes
+a bounds check to fail with specially crafted input. The value is
+then used as an index in the slot array in cdrom_slot_status().
 
-Clearing dangling pointers makes the function idempotent and safer to use.
+This issue is similar to CVE-2018-16658 and CVE-2018-10940.
 
-Link: http://lkml.kernel.org/r/1535410108-20650-2-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Young_X <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/9p/protocol.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@ -46,10 +46,15 @@ p9pdu_writef(struct p9_fcall *pdu, int p
- void p9stat_free(struct p9_wstat *stbuf)
- {
- 	kfree(stbuf->name);
-+	stbuf->name = NULL;
- 	kfree(stbuf->uid);
-+	stbuf->uid = NULL;
- 	kfree(stbuf->gid);
-+	stbuf->gid = NULL;
- 	kfree(stbuf->muid);
-+	stbuf->muid = NULL;
- 	kfree(stbuf->extension);
-+	stbuf->extension = NULL;
- }
- EXPORT_SYMBOL(p9stat_free);
+---
+ drivers/cdrom/cdrom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -2441,7 +2441,7 @@ static int cdrom_ioctl_select_disc(struc
+ 		return -ENOSYS;
+ 
+ 	if (arg != CDSL_CURRENT && arg != CDSL_NONE) {
+-		if ((int)arg >= cdi->capacity)
++		if (arg >= cdi->capacity)
+ 			return -EINVAL;
+ 	}
  
 
 
