@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582CAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2534EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2152C2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E17772086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="poQQkpiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2152C2086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVNVRXi1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17772086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbeKTCz7 (ORCPT
+        id S1730579AbeKTC4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53918 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:56:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730554AbeKTCz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:58 -0500
+        id S1730025AbeKTC4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:56:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A4BA20870;
-        Mon, 19 Nov 2018 16:31:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABD4720831;
+        Mon, 19 Nov 2018 16:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645111;
-        bh=fa52zViYd9r+AWfuIW7N4o8GQQsbRRTtQAhuwmpmzpA=;
+        s=default; t=1542645114;
+        bh=mdKyZfKaagV3JDHBsq5e5GASGqyaoC4FWnFEfSKjDYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=poQQkpiGWDwHR6SHXfYmAy8kKFvml5jJGUV6mrnZu+unU8pDot/5Z9P7XIJ2dfkf6
-         P6RGp+5OfmllPHvLm2DHFjkFxiyisJYKI0bLzz2CJWpiAM/K/JRE8PuJrxVDvlbpUS
-         nttBcIp36JzJcDo0ZaoYJiNP7dhA7xmp2TxufJ10=
+        b=WVNVRXi1ENOWfZzQDY/5MPYyFprgpLL2YXbPUWQLSaVbvM59wAC7lQP2H4v3lKku/
+         ZWeiVCW3TIFkCEYhNcSGANDUPTCYNUEXWfLhfDFLOthFmhxLukdjXejiEomF/3CqLE
+         cRUxH2oAhulxuK7C+/s8a7Fr6LlVhLZiwXxqjfqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?S=C3=A9bastien=20Szymanski?= 
-        <sebastien.szymanski@armadeus.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Hugues Fruchet <hugues.fruchet@st.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 040/205] ARM: dts: imx6ull: keep IMX6UL_ prefix for signals on both i.MX6UL and i.MX6ULL
-Date:   Mon, 19 Nov 2018 17:25:47 +0100
-Message-Id: <20181119162624.551378892@linuxfoundation.org>
+Subject: [PATCH 4.19 041/205] media: ov5640: fix mode change regression
+Date:   Mon, 19 Nov 2018 17:25:48 +0100
+Message-Id: <20181119162624.717749308@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,86 +64,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+From: Hugues Fruchet <hugues.fruchet@st.com>
 
-[ Upstream commit 31edaa6e7fd8143085a6a60c564447c07e76ed9f ]
+[ Upstream commit fb98e29ff1ea5a8118265d11f0e03bc8608a49cb ]
 
-Signals available on both i.MX6UL and i.MX6ULL should have the same name
-because it is the case of all others common signals, it avoids to make
-mistakes (use the wrong ones) and it makes writing device tree files
-less complicated. For example:
+fixes: 6949d864776e ("media: ov5640: do not change mode if format or frame interval is unchanged").
 
-imx6ul-imx6ull-board.dtsi:
- ...
- pinctrl_uart5: uart5grp {
-	fsl,pins = <
-		MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX   0x1b0b1
-	 	MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX   0x1b0b1
- 	 >;
- };
+Symptom was fuzzy image because of JPEG default format
+not being changed according to new format selected, fix this.
+Init sequence initialises format to YUV422 UYVY but
+sensor->fmt initial value was set to JPEG, fix this.
 
-imx6ul-board.dts:
- #include <imx6ul.dtsi>
- #include <imx6ul-imx6ull-board.dtsi>
- ...
-
-imx6ull-board.dts:
- #include <imx6ull.dtsi>
- #include <imx6ul-imx6ull-board.dtsi>
- ...
-
-Without this patch, the imx6ull-board.dtb will use
-MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX instead of
-MX6ULL_PAD_UART5_RX_DATA__UART5_DCE_RX and the uart5 will be
-misconfigured.
-
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/imx6ull-pinfunc.h |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ drivers/media/i2c/ov5640.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
---- a/arch/arm/boot/dts/imx6ull-pinfunc.h
-+++ b/arch/arm/boot/dts/imx6ull-pinfunc.h
-@@ -14,14 +14,23 @@
-  * The pin function ID is a tuple of
-  * <mux_reg conf_reg input_reg mux_mode input_val>
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -223,6 +223,7 @@ struct ov5640_dev {
+ 	int power_count;
+ 
+ 	struct v4l2_mbus_framefmt fmt;
++	bool pending_fmt_change;
+ 
+ 	const struct ov5640_mode_info *current_mode;
+ 	enum ov5640_frame_rate current_fr;
+@@ -255,7 +256,7 @@ static inline struct v4l2_subdev *ctrl_t
+  * should be identified and removed to speed register load time
+  * over i2c.
   */
-+/* signals common for i.MX6UL and i.MX6ULL */
-+#undef MX6UL_PAD_UART5_TX_DATA__UART5_DTE_RX
-+#define MX6UL_PAD_UART5_TX_DATA__UART5_DTE_RX                    0x00BC 0x0348 0x0644 0x0 0x6
-+#undef MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX
-+#define MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX                    0x00C0 0x034C 0x0644 0x0 0x7
-+#undef MX6UL_PAD_ENET1_RX_EN__UART5_DCE_RTS
-+#define MX6UL_PAD_ENET1_RX_EN__UART5_DCE_RTS                     0x00CC 0x0358 0x0640 0x1 0x5
-+#undef MX6UL_PAD_ENET1_TX_DATA0__UART5_DTE_RTS
-+#define MX6UL_PAD_ENET1_TX_DATA0__UART5_DTE_RTS                  0x00D0 0x035C 0x0640 0x1 0x6
-+#undef MX6UL_PAD_CSI_DATA02__UART5_DCE_RTS
-+#define MX6UL_PAD_CSI_DATA02__UART5_DCE_RTS                      0x01EC 0x0478 0x0640 0x8 0x7
+-
++/* YUV422 UYVY VGA@30fps */
+ static const struct reg_value ov5640_init_setting_30fps_VGA[] = {
+ 	{0x3103, 0x11, 0, 0}, {0x3008, 0x82, 0, 5}, {0x3008, 0x42, 0, 0},
+ 	{0x3103, 0x03, 0, 0}, {0x3017, 0x00, 0, 0}, {0x3018, 0x00, 0, 0},
+@@ -1968,9 +1969,12 @@ static int ov5640_set_fmt(struct v4l2_su
+ 
+ 	if (new_mode != sensor->current_mode) {
+ 		sensor->current_mode = new_mode;
+-		sensor->fmt = *mbus_fmt;
+ 		sensor->pending_mode_change = true;
+ 	}
++	if (mbus_fmt->code != sensor->fmt.code) {
++		sensor->fmt = *mbus_fmt;
++		sensor->pending_fmt_change = true;
++	}
+ out:
+ 	mutex_unlock(&sensor->lock);
+ 	return ret;
+@@ -2544,10 +2548,13 @@ static int ov5640_s_stream(struct v4l2_s
+ 			ret = ov5640_set_mode(sensor, sensor->current_mode);
+ 			if (ret)
+ 				goto out;
++		}
+ 
++		if (enable && sensor->pending_fmt_change) {
+ 			ret = ov5640_set_framefmt(sensor, &sensor->fmt);
+ 			if (ret)
+ 				goto out;
++			sensor->pending_fmt_change = false;
+ 		}
+ 
+ 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2)
+@@ -2642,9 +2649,14 @@ static int ov5640_probe(struct i2c_clien
+ 		return -ENOMEM;
+ 
+ 	sensor->i2c_client = client;
 +
-+/* signals for i.MX6ULL only */
- #define MX6ULL_PAD_UART1_TX_DATA__UART5_DTE_RX                    0x0084 0x0310 0x0644 0x9 0x4
- #define MX6ULL_PAD_UART1_RX_DATA__UART5_DCE_RX                    0x0088 0x0314 0x0644 0x9 0x5
- #define MX6ULL_PAD_UART1_CTS_B__UART5_DCE_RTS                     0x008C 0x0318 0x0640 0x9 0x3
- #define MX6ULL_PAD_UART1_RTS_B__UART5_DTE_RTS                     0x0090 0x031C 0x0640 0x9 0x4
--#define MX6ULL_PAD_UART5_TX_DATA__UART5_DTE_RX                    0x00BC 0x0348 0x0644 0x0 0x6
--#define MX6ULL_PAD_UART5_RX_DATA__UART5_DCE_RX                    0x00C0 0x034C 0x0644 0x0 0x7
--#define MX6ULL_PAD_ENET1_RX_EN__UART5_DCE_RTS                     0x00CC 0x0358 0x0640 0x1 0x5
--#define MX6ULL_PAD_ENET1_TX_DATA0__UART5_DTE_RTS                  0x00D0 0x035C 0x0640 0x1 0x6
- #define MX6ULL_PAD_ENET2_RX_DATA0__EPDC_SDDO08                    0x00E4 0x0370 0x0000 0x9 0x0
- #define MX6ULL_PAD_ENET2_RX_DATA1__EPDC_SDDO09                    0x00E8 0x0374 0x0000 0x9 0x0
- #define MX6ULL_PAD_ENET2_RX_EN__EPDC_SDDO10                       0x00EC 0x0378 0x0000 0x9 0x0
-@@ -55,7 +64,6 @@
- #define MX6ULL_PAD_CSI_DATA00__ESAI_TX_HF_CLK                     0x01E4 0x0470 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA01__ESAI_RX_HF_CLK                     0x01E8 0x0474 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA02__ESAI_RX_FS                         0x01EC 0x0478 0x0000 0x9 0x0
--#define MX6ULL_PAD_CSI_DATA02__UART5_DCE_RTS                      0x01EC 0x0478 0x0640 0x8 0x7
- #define MX6ULL_PAD_CSI_DATA03__ESAI_RX_CLK                        0x01F0 0x047C 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA04__ESAI_TX_FS                         0x01F4 0x0480 0x0000 0x9 0x0
- #define MX6ULL_PAD_CSI_DATA05__ESAI_TX_CLK                        0x01F8 0x0484 0x0000 0x9 0x0
++	/*
++	 * default init sequence initialize sensor to
++	 * YUV422 UYVY VGA@30fps
++	 */
+ 	fmt = &sensor->fmt;
+-	fmt->code = ov5640_formats[0].code;
+-	fmt->colorspace = ov5640_formats[0].colorspace;
++	fmt->code = MEDIA_BUS_FMT_UYVY8_2X8;
++	fmt->colorspace = V4L2_COLORSPACE_SRGB;
+ 	fmt->ycbcr_enc = V4L2_MAP_YCBCR_ENC_DEFAULT(fmt->colorspace);
+ 	fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
+ 	fmt->xfer_func = V4L2_MAP_XFER_FUNC_DEFAULT(fmt->colorspace);
+@@ -2656,7 +2668,6 @@ static int ov5640_probe(struct i2c_clien
+ 	sensor->current_fr = OV5640_30_FPS;
+ 	sensor->current_mode =
+ 		&ov5640_mode_data[OV5640_30_FPS][OV5640_MODE_VGA_640_480];
+-	sensor->pending_mode_change = true;
+ 
+ 	sensor->ae_target = 52;
+ 
 
 
