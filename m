@@ -2,89 +2,91 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40581C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAB3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE9DD20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:09:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9DD20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 2044220823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:09:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2044220823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbeKSScP (ORCPT
+        id S1726814AbeKSScR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 19 Nov 2018 13:32:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54188 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726348AbeKSScP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Nov 2018 13:32:15 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:37602 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeKSScP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:32:15 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gOecO-0001Pu-Tu; Mon, 19 Nov 2018 09:09:17 +0100
-Date:   Mon, 19 Nov 2018 09:09:16 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Qian Cai <cai@gmx.us>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>, arnd@arndb.de,
-        linux kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] debugobjects: add a new Kconfig for POOL_SIZE
-In-Reply-To: <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
-Message-ID: <alpine.DEB.2.21.1811190904450.9459@nanos.tec.linutronix.de>
-References: <20181118082255.1275-1-cai@gmx.us> <alpine.DEB.2.21.1811181919170.9459@nanos.tec.linutronix.de> <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CBA0881F12;
+        Mon, 19 Nov 2018 08:09:23 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D98F5C63A;
+        Mon, 19 Nov 2018 08:09:04 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 16:09:00 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 07/19] btrfs: use bvec_last_segment to get bio's last
+ page
+Message-ID: <20181119080854.GD16519@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-8-ming.lei@redhat.com>
+ <20181116133710.GF3165@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116133710.GF3165@lst.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 19 Nov 2018 08:09:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Qian,
-
-On Sun, 18 Nov 2018, Qian Cai wrote:
-> > On Nov 18, 2018, at 1:21 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Sun, 18 Nov 2018, Qian Cai wrote:
-> >> As the results, systems have 60+ CPUs with both timer and workqueue
-> >> objects enabled could trigger "ODEBUG: Out of memory. ODEBUG disabled".
-> >> 
-> >> Hence, add a new Kconfig option so users could adjust ODEBUG_POOL_SIZE
-> >> accordingly if either timer or workqueue objects are selected.
-> > 
-> > why do we need a config option, when the required number can be deduced
-> > already from the active CONFIG_DEBUG_OBJECTS_* and NR_CPUS?
-> > 
-> It because I am worry about the coupling between the implementation details of
-> timers and workqueue objects, and the computation in the code you mentioned
-> here. For example, people could change workqueue.c to have different number
-> of worekqueues initialized during the early boot in the future which is going to
-> affect the required pool size, and I am not sure if people are going to adjust the
-> code in debugobjects.c here as well when they made changes like that.
+On Fri, Nov 16, 2018 at 02:37:10PM +0100, Christoph Hellwig wrote:
+> On Thu, Nov 15, 2018 at 04:52:54PM +0800, Ming Lei wrote:
+> > index 2955a4ea2fa8..161e14b8b180 100644
+> > --- a/fs/btrfs/compression.c
+> > +++ b/fs/btrfs/compression.c
+> > @@ -400,8 +400,11 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+> >  static u64 bio_end_offset(struct bio *bio)
+> >  {
+> >  	struct bio_vec *last = bio_last_bvec_all(bio);
+> > +	struct bio_vec bv;
+> >  
+> > -	return page_offset(last->bv_page) + last->bv_len + last->bv_offset;
+> > +	bvec_last_segment(last, &bv);
+> > +
+> > +	return page_offset(bv.bv_page) + bv.bv_len + bv.bv_offset;
 > 
-> Also, the computation could become so complex depends on lots of config
-> options like perf, hrtimer, and combinations that I have not tested so far which is
-> difficult to exhausted all the possibilities.
-> 
-> Hence, I feel like the Kconfig option is more flexible and less error-prone.
+> I don't think we need this.  If last is a multi-page bvec bv_offset
+> will already contain the correct offset from the first page.
 
-Quite the contrary. Config options are a pain and truly error-prone if you
-want to compile general purpose kernels as distributions do.
+Yeah, it is true for this specific case, looks we can drop this patch.
 
-Its not really a problem to have a larger initial static pool which gets
-freed after init anyway. So we can size it generously depending on the
-config options and be done with it.
 
-Thanks,
-
-	tglx
-
+thanks,
+Ming
