@@ -7,56 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F23C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393F5C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C732D20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 012CB208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpGNSEAx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C732D20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="szpTOtfz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 012CB208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbeKTDDn (ORCPT
+        id S1732791AbeKTDDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36414 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731810AbeKTDDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:03:42 -0500
+        id S1731810AbeKTDDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D90B5208E3;
-        Mon, 19 Nov 2018 16:39:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73148208E3;
+        Mon, 19 Nov 2018 16:39:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645572;
-        bh=qD/dhIoZ4RM7yvlSCeA2f0zMK4MCnvXkDyentAywsk0=;
+        s=default; t=1542645574;
+        bh=AML9Mi15wBJTacsKCpM05/GDUS/1n7uLCfWNXDCEdPw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UpGNSEAx/eV+x2KeVD8hncsISYMNNEhTW8ZxX/HuocOIVtC2PUpMdVj+BIe03eWeR
-         j0OSKOyiiAyw1Ihz7lomo1D1aVrbjasUcGuddKX6FRgANv7rM/cYkcrTdAhxFcxadL
-         9UjqBVILBrYcGkhbwtBtVZiQ2tlKjzxmy//lGti4=
+        b=szpTOtfz4dOJyLoWl2mijasR7t9DdXmdl9USrHO+eBXu/gUurOVRGC62BlFWSCs8G
+         MFrPZNFt5MvvrMzV9Ytk7HO2USOR2/CowQ+pcMHB6eVDytgy6jsHJuRiI4+8szIgo2
+         qW3OvfvkzfP+SmTimaECXKBNBusm3Ng4n+p++0aQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Clinton Taylor <clinton.a.taylor@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Ville Syrjala <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Alexander Wilson <alexander.wilson@ncf.edu>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.19 184/205] drm/i915/dp: Link train Fallback on eDP only if fallback link BW can fit panels native mode
-Date:   Mon, 19 Nov 2018 17:28:11 +0100
-Message-Id: <20181119162641.482740014@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.18 001/171] powerpc/traps: restore recoverability of machine_check interrupts
+Date:   Mon, 19 Nov 2018 17:26:37 +0100
+Message-Id: <20181119162619.181439303@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
-References: <20181119162616.586062722@linuxfoundation.org>
+In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
+References: <20181119162618.909354448@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -65,136 +59,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Manasi Navare <manasi.d.navare@intel.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 041444458835d7fb2c9f042598bfe16bf375b15d upstream.
+[ Upstream commit daf00ae71dad8aa05965713c62558aeebf2df48e ]
 
-This patch fixes the original commit c0cfb10d9e1de49 ("drm/i915/edp:
-Do not do link training fallback or prune modes on EDP") that causes
-a blank screen in case of certain eDP panels (Eg: seen on Dell XPS13 9350)
-where first link training fails and a retraining is required by falling
-back to lower link rate/lane count.
-In case of some panels they advertise higher link rate/lane count
-than whats required for supporting the panel's native mode.
-But we always link train at highest link rate/lane count for eDP
-and if that fails we can still fallback to lower link rate/lane count
-as long as the fallback link BW still fits the native mode to avoid
-pruning the panel's native mode yet retraining at fallback values
-to recover from a blank screen.
+commit b96672dd840f ("powerpc: Machine check interrupt is a non-
+maskable interrupt") added a call to nmi_enter() at the beginning of
+machine check restart exception handler. Due to that, in_interrupt()
+always returns true regardless of the state before entering the
+exception, and die() panics even when the system was not already in
+interrupt.
 
-v3:
-* Add const for fixed_mode (Ville)
-v2:
-* Send uevent if link failure on eDP unconditionally
+This patch calls nmi_exit() before calling die() in order to restore
+the interrupt state we had before calling nmi_enter()
 
-Fixes: c0cfb10d9e1d ("drm/i915/edp: Do not do link training fallback or prune modes on EDP")
-Cc: Clinton Taylor <clinton.a.taylor@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: <stable@vger.kernel.org> # v4.17+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107489
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105338
-Signed-off-by: Manasi Navare <manasi.d.navare@intel.com>
-Tested-by: Alexander Wilson <alexander.wilson@ncf.edu>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181009212804.702-1-manasi.d.navare@intel.com
-(cherry picked from commit 1e712535c51ab025ebc776d4405683d81521996d)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes: b96672dd840f ("powerpc: Machine check interrupt is a non-maskable interrupt")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_dp.c               |   30 ++++++++++++++++++++++++++
- drivers/gpu/drm/i915/intel_dp_link_training.c |   26 +++++++---------------
- 2 files changed, 39 insertions(+), 17 deletions(-)
+ arch/powerpc/kernel/traps.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -401,6 +401,22 @@ static bool intel_dp_link_params_valid(s
- 	return true;
- }
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -736,12 +736,17 @@ void machine_check_exception(struct pt_r
+ 	if (check_io_access(regs))
+ 		goto bail;
  
-+static bool intel_dp_can_link_train_fallback_for_edp(struct intel_dp *intel_dp,
-+						     int link_rate,
-+						     uint8_t lane_count)
-+{
-+	const struct drm_display_mode *fixed_mode =
-+		intel_dp->attached_connector->panel.fixed_mode;
-+	int mode_rate, max_rate;
-+
-+	mode_rate = intel_dp_link_required(fixed_mode->clock, 18);
-+	max_rate = intel_dp_max_data_rate(link_rate, lane_count);
-+	if (mode_rate > max_rate)
-+		return false;
-+
-+	return true;
-+}
-+
- int intel_dp_get_link_train_fallback_values(struct intel_dp *intel_dp,
- 					    int link_rate, uint8_t lane_count)
- {
-@@ -410,9 +426,23 @@ int intel_dp_get_link_train_fallback_val
- 				    intel_dp->num_common_rates,
- 				    link_rate);
- 	if (index > 0) {
-+		if (intel_dp_is_edp(intel_dp) &&
-+		    !intel_dp_can_link_train_fallback_for_edp(intel_dp,
-+							      intel_dp->common_rates[index - 1],
-+							      lane_count)) {
-+			DRM_DEBUG_KMS("Retrying Link training for eDP with same parameters\n");
-+			return 0;
-+		}
- 		intel_dp->max_link_rate = intel_dp->common_rates[index - 1];
- 		intel_dp->max_link_lane_count = lane_count;
- 	} else if (lane_count > 1) {
-+		if (intel_dp_is_edp(intel_dp) &&
-+		    !intel_dp_can_link_train_fallback_for_edp(intel_dp,
-+							      intel_dp_max_common_rate(intel_dp),
-+							      lane_count >> 1)) {
-+			DRM_DEBUG_KMS("Retrying Link training for eDP with same parameters\n");
-+			return 0;
-+		}
- 		intel_dp->max_link_rate = intel_dp_max_common_rate(intel_dp);
- 		intel_dp->max_link_lane_count = lane_count >> 1;
- 	} else {
---- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-+++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-@@ -352,22 +352,14 @@ intel_dp_start_link_train(struct intel_d
- 	return;
+-	die("Machine check", regs, SIGBUS);
+-
+ 	/* Must die if the interrupt is not recoverable */
+ 	if (!(regs->msr & MSR_RI))
+ 		nmi_panic(regs, "Unrecoverable Machine check");
  
-  failure_handling:
--	/* Dont fallback and prune modes if its eDP */
--	if (!intel_dp_is_edp(intel_dp)) {
--		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
--			      intel_connector->base.base.id,
--			      intel_connector->base.name,
--			      intel_dp->link_rate, intel_dp->lane_count);
--		if (!intel_dp_get_link_train_fallback_values(intel_dp,
--							     intel_dp->link_rate,
--							     intel_dp->lane_count))
--			/* Schedule a Hotplug Uevent to userspace to start modeset */
--			schedule_work(&intel_connector->modeset_retry_work);
--	} else {
--		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
--			  intel_connector->base.base.id,
--			  intel_connector->base.name,
--			  intel_dp->link_rate, intel_dp->lane_count);
--	}
-+	DRM_DEBUG_KMS("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
-+		      intel_connector->base.base.id,
-+		      intel_connector->base.name,
-+		      intel_dp->link_rate, intel_dp->lane_count);
-+	if (!intel_dp_get_link_train_fallback_values(intel_dp,
-+						     intel_dp->link_rate,
-+						     intel_dp->lane_count))
-+		/* Schedule a Hotplug Uevent to userspace to start modeset */
-+		schedule_work(&intel_connector->modeset_retry_work);
- 	return;
- }
++	if (!nested)
++		nmi_exit();
++
++	die("Machine check", regs, SIGBUS);
++
++	return;
++
+ bail:
+ 	if (!nested)
+ 		nmi_exit();
 
 
