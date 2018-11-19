@@ -2,92 +2,101 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AF6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 587ECC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC8B208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:00:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DC8B208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 2B79D2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:01:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B79D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbeKTCYq (ORCPT
+        id S1729937AbeKTCZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:24:46 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45632 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729825AbeKTCYq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:24:46 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d135so49337386qkc.12;
-        Mon, 19 Nov 2018 08:00:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=etJ06+iczpf28NRoBWJwPxdidTlkeRUxLcwzAMEwHB0=;
-        b=kLsZFK3nOGUZwFMOWboM/hQeVzatfdsdVhHBs0zJL/h3GM4H3ASqFA2NnZqIJj+v87
-         tXwLnLehVV+bbgzTJd9xaf2/WnXTLmSULIaiFw6+VB4kk73PwLJsUby8eGgBeAPOJLgV
-         UcVU8XNmnA9w80/cpuu9xLf8Qqp6ukCefabVAUtWh51L6ZOWlgs3PXHA8e1HTwGB5vgG
-         GqgyBiQxfUTQNHjXNVtpJiVc14vTcl10eEzfvTYIo0Fl2JzU2zwiUP/9FtsMHHWKG5yV
-         u7ePOr4CkgObdYgFCZpm0eBT/Yp+k2fROS4TzRzM0CnHebZzjx1sLva+VJ/iOl9Jj1QG
-         PuOg==
-X-Gm-Message-State: AGRZ1gKgwGxteYivnf4aC/mPHzBNVCSAQtFdk4dw5T3Mm7URO5HF+kyH
-        F8/yRgPIXPgskiOWMMNBRQVjcFuaUupsGsWl11A=
-X-Google-Smtp-Source: AJdET5dw/dqcsuslp95hhoRhcw2RFHknXqo8sA0zV13CqDEv4OTFZfQgEkRmLA5biUs6ZJOABbNE2ZF/Kg1p6SyaV5U=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr21296810qte.212.1542643244719;
- Mon, 19 Nov 2018 08:00:44 -0800 (PST)
-MIME-Version: 1.0
-References: <1542262461-29024-1-git-send-email-firoz.khan@linaro.org> <1542262461-29024-5-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1542262461-29024-5-git-send-email-firoz.khan@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 19 Nov 2018 17:00:28 +0100
-Message-ID: <CAK8P3a1Ee-6unLimZ=0TH0PjdSjwu1naK=U6Jvoi_qvsf5+z7w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] mips: add system call table generation support
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        Mon, 19 Nov 2018 21:25:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:60340 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729825AbeKTCZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:25:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04D7A80D;
+        Mon, 19 Nov 2018 08:01:25 -0800 (PST)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A4403F575;
+        Mon, 19 Nov 2018 08:01:22 -0800 (PST)
+Date:   Mon, 19 Nov 2018 16:01:20 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] perf/core: Add macro to test for event exclusion
+ flags
+Message-ID: <20181119160119.mp6oq6rt5k4fdrd5@lakrids.cambridge.arm.com>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+ <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 7:15 AM Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> The system call tables are in different format in all
-> architecture and it will be difficult to manually add,
-> modify or delete the syscall table entries in the res-
-> pective files. To make it easy by keeping a script and
-> which will generate the uapi header and syscall table
-> file. This change will also help to unify the implemen-
-> tation across all architectures.
+On Fri, Nov 16, 2018 at 10:24:04AM +0000, Andrew Murray wrote:
+> Add a macro that tests if any of the perf event exclusion flags
+> are set on a given event.
+> 
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 
-This looks great to me, just one question:
+Aside from the s/macro/function, or s/macro/helper/, this looks sound to
+me.
 
-> +# The <abi> is always "64" for this file.
-> +#
-> +0      64      read                            sys_read
-> +1      64      write                           sys_write
+Assuming you fix that up here and in subsequent commit messages, for
+this patch feel free to add:
 
-What is the reason for using '64', 'n32', and 'o32' respectively in
-the ABI field
-but use 'common' in other architectures that have a table of entries that are
-all for the same architecture?
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-       Arnd
+Mark.
+
+> ---
+>  include/linux/perf_event.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 53c500f..89ee7fa 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
+>  extern void
+>  perf_log_lost_samples(struct perf_event *event, u64 lost);
+>  
+> +static inline bool event_has_exclude_flags(struct perf_event *event)
+> +{
+> +	struct perf_event_attr *attr = &event->attr;
+> +
+> +	return attr->exclude_idle || attr->exclude_user ||
+> +	       attr->exclude_kernel || attr->exclude_hv ||
+> +	       attr->exclude_guest || attr->exclude_host;
+> +}
+> +
+>  static inline bool is_sampling_event(struct perf_event *event)
+>  {
+>  	return event->attr.sample_period != 0;
+> -- 
+> 2.7.4
+> 
