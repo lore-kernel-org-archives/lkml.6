@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65443C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF4ECC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 300A9206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F742089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQVaF6tK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300A9206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XMKkG3dy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F742089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389305AbeKTDMS (ORCPT
+        id S2389316AbeKTDMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48466 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeKTDMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:17 -0500
+        id S2388196AbeKTDMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9F21206BA;
-        Mon, 19 Nov 2018 16:48:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A77220823;
+        Mon, 19 Nov 2018 16:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646085;
-        bh=vVIptu/O7LlzE8T4zV+KNR7RuRTtrTOF54SoYZtKKj4=;
+        s=default; t=1542646088;
+        bh=4By9Uhll8z5xTZPlUEVA5C7F0OjEqsbGuWbOAynuVbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQVaF6tK1tEtrWzYk9gZKrpMlBmWqZtIkGi+QORmiNdRxdvkEM3CoHcrxxPFA+6Zh
-         3MdXn+ZfRLTRaQdbXiCYLdCCsISHPw/Lpzp6sIFpIoQphI8gvbUXfBeHF5x5hbzitj
-         VglNk8b+//tqnkuqGlFUGY5IKb0b6PGdUGJoIjl0=
+        b=XMKkG3dyNvK+donXUWxcSmXM2sgAeotdUe06okwKuw1Au+uhSZL8+icsAwP2exmCI
+         XZlYr1QhHk8/0F2s1kaV0uh3hxFwdWHh5QYzOcuXnFNg7nPLkdYrHc0JuVAqdFFJBD
+         eVeKl8bPqw6oE+dw1R03+79ikCZYq2XfU7eJe7wE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 003/124] powerpc/mm: Fix page table dump to work on Radix
-Date:   Mon, 19 Nov 2018 17:27:37 +0100
-Message-Id: <20181119162613.631725021@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 030/124] fuse: Fix use-after-free in fuse_dev_do_read()
+Date:   Mon, 19 Nov 2018 17:28:04 +0100
+Message-Id: <20181119162619.403976017@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -62,56 +64,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
+commit bc78abbd55dd28e2287ec6d6502b842321a17c87 upstream.
 
-When we're running on Book3S with the Radix MMU enabled the page table
-dump currently prints the wrong addresses because it uses the wrong
-start address.
+We may pick freed req in this way:
 
-Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
+[cpu0]                                  [cpu1]
+fuse_dev_do_read()                      fuse_dev_do_write()
+   list_move_tail(&req->list, ...);     ...
+   spin_unlock(&fpq->lock);             ...
+   ...                                  request_end(fc, req);
+   ...                                    fuse_put_request(fc, req);
+   if (test_bit(FR_INTERRUPTED, ...))
+         queue_interrupt(fiq, req);
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix that by keeping req alive until we finish all manipulations.
+
+Reported-by: syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
+Cc: <stable@vger.kernel.org> # v4.2
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/mm/dump_linuxpagetables.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -422,12 +422,13 @@ static void walk_pagetables(struct pg_st
- 	unsigned int i;
- 	unsigned long addr;
+---
+ fs/fuse/dev.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1309,12 +1309,14 @@ static ssize_t fuse_dev_do_read(struct f
+ 		goto out_end;
+ 	}
+ 	list_move_tail(&req->list, &fpq->processing);
++	__fuse_get_request(req);
+ 	spin_unlock(&fpq->lock);
+ 	set_bit(FR_SENT, &req->flags);
+ 	/* matches barrier in request_wait_answer() */
+ 	smp_mb__after_atomic();
+ 	if (test_bit(FR_INTERRUPTED, &req->flags))
+ 		queue_interrupt(fiq, req);
++	fuse_put_request(fc, req);
  
-+	addr = st->start_address;
-+
- 	/*
- 	 * Traverse the linux pagetable structure and dump pages that are in
- 	 * the hash pagetable.
- 	 */
--	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
--		addr = KERN_VIRT_START + i * PGDIR_SIZE;
-+	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
- 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
- 			/* pgd exists */
- 			walk_pud(st, pgd, addr);
-@@ -476,9 +477,14 @@ static int ptdump_show(struct seq_file *
- {
- 	struct pg_state st = {
- 		.seq = m,
--		.start_address = KERN_VIRT_START,
- 		.marker = address_markers,
- 	};
-+
-+	if (radix_enabled())
-+		st.start_address = PAGE_OFFSET;
-+	else
-+		st.start_address = KERN_VIRT_START;
-+
- 	/* Traverse kernel page tables */
- 	walk_pagetables(&st);
- 	note_page(&st, 0, 0, 0);
+ 	return reqsize;
+ 
 
 
