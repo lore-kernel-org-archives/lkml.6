@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53942C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EA8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1975C20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2B1A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YcJYJ0TG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1975C20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2LQcusp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2B1A20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731368AbeKTC61 (ORCPT
+        id S1731379AbeKTC6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57508 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729995AbeKTC60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:26 -0500
+        id S1729995AbeKTC63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DE8721104;
-        Mon, 19 Nov 2018 16:34:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAA992089F;
+        Mon, 19 Nov 2018 16:34:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645258;
-        bh=pg0wOZ2O93KrWKnGL8ZFgKfUpRoNO7kGc4Ez2xsFUDg=;
+        s=default; t=1542645261;
+        bh=G+pNqK4iVR0BfxOlfQ3h8qvfii/8eL7CHV8mX9zU6Ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcJYJ0TGHODIYKM0bVa616J5KqVbLeHfWSkp9QNWpU8Bn10co7W/NWwpx67I+0h4p
-         gNLkkuWV0Pv53/LIAp/k9znlo8ta/rAH5Uf0Q8hvqlPwHsf9ntyJPBrjfDuReqtqyC
-         1yAAjD+/iI7KF9E/DaViHjfXUCgdv3UAR1smEwko=
+        b=n2LQcuspDIx/Lrcvr/dAxwXAjDr28zKGXbYXXuIavL5t4kdBNWLwPqzaUUpyNpMgA
+         GBmKdamH2PcVf/pOyM8+HIBOIHhbu/1VETrd8gi8SQvp7L88S+L9UbemBh/dw9OIwD
+         h2G5Ayy7U8C6B7OQtw8nAWVeLibPSDCoX7N1YEAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 095/205] crypto: hisilicon - Fix reference after free of memories on error path
-Date:   Mon, 19 Nov 2018 17:26:42 +0100
-Message-Id: <20181119162632.718350821@linuxfoundation.org>
+        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.19 096/205] vhost/scsi: truncate T10 PI iov_iter to prot_bytes
+Date:   Mon, 19 Nov 2018 17:26:43 +0100
+Message-Id: <20181119162632.815478350@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,83 +63,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: John Garry <john.garry@huawei.com>
+From: Greg Edwards <gedwards@ddn.com>
 
-commit 0b0cf6af3f3151c26c27e8e51def5527091c3e69 upstream.
+commit 4542d623c7134bc1738f8a68ccb6dd546f1c264f upstream.
 
-coccicheck currently warns of the following issues in the driver:
-drivers/crypto/hisilicon/sec/sec_algs.c:864:51-66: ERROR: reference preceded by free on line 812
-drivers/crypto/hisilicon/sec/sec_algs.c:864:40-49: ERROR: reference preceded by free on line 813
-drivers/crypto/hisilicon/sec/sec_algs.c:861:8-24: ERROR: reference preceded by free on line 814
-drivers/crypto/hisilicon/sec/sec_algs.c:860:41-51: ERROR: reference preceded by free on line 815
-drivers/crypto/hisilicon/sec/sec_algs.c:867:7-18: ERROR: reference preceded by free on line 816
+Commands with protection information included were not truncating the
+protection iov_iter to the number of protection bytes in the command.
+This resulted in vhost_scsi mis-calculating the size of the protection
+SGL in vhost_scsi_calc_sgls(), and including both the protection and
+data SG entries in the protection SGL.
 
-It would appear than on certain error paths that we may attempt reference-
-after-free some memories.
-
-This patch fixes those issues. The solution doesn't look perfect, but
-having same memories free'd possibly from separate functions makes it
-tricky.
-
-Fixes: 915e4e8413da ("crypto: hisilicon - SEC security accelerator driver")
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 09b13fa8c1a1 ("vhost/scsi: Add ANY_LAYOUT support in vhost_scsi_handle_vq")
+Signed-off-by: Greg Edwards <gedwards@ddn.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Fixes: 09b13fa8c1a1093e9458549ac8bb203a7c65c62a
+Cc: stable@vger.kernel.org
+Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/hisilicon/sec/sec_algs.c |   21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/vhost/scsi.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/hisilicon/sec/sec_algs.c
-+++ b/drivers/crypto/hisilicon/sec/sec_algs.c
-@@ -808,13 +808,6 @@ static int sec_alg_skcipher_crypto(struc
- 	 * more refined but this is unlikely to happen so no need.
- 	 */
- 
--	/* Cleanup - all elements in pointer arrays have been coppied */
--	kfree(splits_in_nents);
--	kfree(splits_in);
--	kfree(splits_out_nents);
--	kfree(splits_out);
--	kfree(split_sizes);
--
- 	/* Grab a big lock for a long time to avoid concurrency issues */
- 	mutex_lock(&queue->queuelock);
- 
-@@ -829,13 +822,13 @@ static int sec_alg_skcipher_crypto(struc
- 	     (!queue->havesoftqueue ||
- 	      kfifo_avail(&queue->softqueue) > steps)) ||
- 	    !list_empty(&ctx->backlog)) {
-+		ret = -EBUSY;
- 		if ((skreq->base.flags & CRYPTO_TFM_REQ_MAY_BACKLOG)) {
- 			list_add_tail(&sec_req->backlog_head, &ctx->backlog);
- 			mutex_unlock(&queue->queuelock);
--			return -EBUSY;
-+			goto out;
- 		}
- 
--		ret = -EBUSY;
- 		mutex_unlock(&queue->queuelock);
- 		goto err_free_elements;
- 	}
-@@ -844,7 +837,15 @@ static int sec_alg_skcipher_crypto(struc
- 	if (ret)
- 		goto err_free_elements;
- 
--	return -EINPROGRESS;
-+	ret = -EINPROGRESS;
-+out:
-+	/* Cleanup - all elements in pointer arrays have been copied */
-+	kfree(splits_in_nents);
-+	kfree(splits_in);
-+	kfree(splits_out_nents);
-+	kfree(splits_out);
-+	kfree(split_sizes);
-+	return ret;
- 
- err_free_elements:
- 	list_for_each_entry_safe(el, temp, &sec_req->elements, head) {
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -964,7 +964,8 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 				prot_bytes = vhost32_to_cpu(vq, v_req_pi.pi_bytesin);
+ 			}
+ 			/*
+-			 * Set prot_iter to data_iter, and advance past any
++			 * Set prot_iter to data_iter and truncate it to
++			 * prot_bytes, and advance data_iter past any
+ 			 * preceeding prot_bytes that may be present.
+ 			 *
+ 			 * Also fix up the exp_data_len to reflect only the
+@@ -973,6 +974,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
+ 			if (prot_bytes) {
+ 				exp_data_len -= prot_bytes;
+ 				prot_iter = data_iter;
++				iov_iter_truncate(&prot_iter, prot_bytes);
+ 				iov_iter_advance(&data_iter, prot_bytes);
+ 			}
+ 			tag = vhost64_to_cpu(vq, v_req_pi.tag);
 
 
