@@ -2,231 +2,332 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7710C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24427C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 940C920823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBB8420823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:29:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVu7EZSz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940C920823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="SBkrYYnL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB8420823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730430AbeKTEwr (ORCPT
+        id S1730436AbeKTEx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:52:47 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34497 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730346AbeKTEwq (ORCPT
+        Mon, 19 Nov 2018 23:53:59 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40860 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730237AbeKTEx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:52:46 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so8706612pfg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:28:03 -0800 (PST)
+        Mon, 19 Nov 2018 23:53:59 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so1970287pfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:29:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=bOob0epm6z41bmuNDKM3DGgWgU35X4Eqd37XHzurihc=;
-        b=QVu7EZSzvprnZ7jcuYrgKc8+div6LMpdATcOv0i1QNifK32HjDcwoZtrvCTgCdJT80
-         0+DPUH6IUVRHpa9LLAxAhLLgvWyR62xbSYF/3dZKtsLUQcXAMlJ1PWX/ShK4wUSbFNAV
-         gOWQGyZjemiaMLYa2EIwqwrVD0y6Iq8HUsycY=
+        bh=6xsBeI9rXl5TQOqbrywUTjH2xgkQnbLNdlLtaEhG5uc=;
+        b=SBkrYYnLJxj+pmxV3z1ZSqHXfDC61hJr90HO0FTkVpu1mt7/E6zZzjesgjT3UZD7E/
+         9CdrUwzXwA/81G5+6Y5Ku2x0ovcGF8ICHyPdjGy56AwxWLVm+YftKtLbziC0uNhwspUd
+         e9DXXwD/oDvw+a4/fxEgH48m/5kIWnB2Gi1D8BE3KDCsH3ilhUsXG2zguqo3s562+YND
+         5k13h+GDOIps1BzL33a1AgUZRXojLLwLmjjhGTuOxfaLOj+MZaAmDWkCjzvJlRRQJ8yG
+         k80gJVoW7yARJw94aFMBebtFTg3SwiUXZAmeN9qd016ZbaaCA++1Dk2SbRJ/R8/A5Zfg
+         3+SA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bOob0epm6z41bmuNDKM3DGgWgU35X4Eqd37XHzurihc=;
-        b=LbxghWeDQNoKTieU6Ulb4s+NfJBfMWNb6H6Q2wCRRCx/44mLZf0RBEO+LHWqogHdJI
-         BUSWePCtgxpET0gXESH3FneeQi4X/j+vCLC4eI621jE+JJozEwSa0TCG+4/hpoIFP8lq
-         u0jtt91k2K+sLjq9SvccHbAS+Z1NPznm58YTBXRDYIoqiuyrwYCDDa/OMK01aJ/jMYa6
-         XAzOm5QUGiMzL8f0kAjdLVBz0CCumoKL0X66igY9XG5SmzfbM0FutSZyEtzfBZeQVuo0
-         jHYo3FAap77hyJsUWskBA1/B6ku38XOhGQehDdqeyh4pobylgquEqgabzySGwThix6Xz
-         +mRg==
-X-Gm-Message-State: AGRZ1gK7cQsNUvSqGteGyzeyYOu6yY03jB0T7cXbTG311eVZvGP+nbcw
-        00Nc5CPYIU7Y+gk1oOHjTWun6A==
-X-Google-Smtp-Source: AJdET5ePT+dwVXOgpf7ovM/HMJAD24tSvxTFkkWCDK/l5RHN0nBHe+IMpD7nys3vLBy8pRjX1y98/g==
-X-Received: by 2002:a63:5153:: with SMTP id r19mr20972196pgl.281.1542652083298;
-        Mon, 19 Nov 2018 10:28:03 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id w3sm42944675pge.8.2018.11.19.10.28.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 10:28:02 -0800 (PST)
-Date:   Mon, 19 Nov 2018 11:27:59 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Al Grant <Al.Grant@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v1 3/5] perf cs-etm: Support for NO_SYNC packet
-Message-ID: <20181119182759.GA608@xps15>
-References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
- <1541912383-19915-4-git-send-email-leo.yan@linaro.org>
+        bh=6xsBeI9rXl5TQOqbrywUTjH2xgkQnbLNdlLtaEhG5uc=;
+        b=Td0MtHu2fy+gdz3FHTSNSp8NEXq2Ex5myucsyN6/xGwiCl5zxTOrhTQ73FLOKqz7p1
+         6eT1oR0pBNJN9nfcVyiliwS9qGSLc/ktyZDBVdltSm4ZfInM/kEXoS7H7bt34i6ZNMgP
+         6TX7SfY60U27WQgjxoG+uSVgT2dlBfd4zojmm5qSaV+8TIS1NsnwjLu+DTs6wOVRtIix
+         3QdhOV9i9n+mBCzcl57kOZ41uZM21njcD7X1RkD2zK75Gmj0m91quLI+2GBfyKYnveFg
+         ZKRTDuBx6L5nnD2ITx9HAR7LzWdNPKbEJe86/84+HgXt9pVm7ur4SGQqKT9CdIGHezaZ
+         YWLQ==
+X-Gm-Message-State: AGRZ1gLnC0X+NZQRd/wFa7ioU3Ck7Pxhl7UmcjL37KaeK1qaMx3ji6o4
+        cqFp6n49k7YRS/c6fZ8gCHCfRQ==
+X-Google-Smtp-Source: AJdET5dnTaq6kfzxKx4J7OoavCTvMK/ntOHKs3cbYjicpMtWzH+9/MSiBIICB6/FoTvbWgodN/0CyQ==
+X-Received: by 2002:a62:1f5a:: with SMTP id f87-v6mr23298299pff.92.1542652154180;
+        Mon, 19 Nov 2018 10:29:14 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id i4sm38686191pfj.82.2018.11.19.10.29.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 10:29:13 -0800 (PST)
+Date:   Mon, 19 Nov 2018 19:29:05 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119182902.fadw6qiu3eepndm3@brauner.io>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
+ <CAKOZueshQ2DAwUYp+dLpmfYG6FtvCqeRQxH41SjNS+WqY3e0Fw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1541912383-19915-4-git-send-email-leo.yan@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAKOZueshQ2DAwUYp+dLpmfYG6FtvCqeRQxH41SjNS+WqY3e0Fw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:59:41PM +0800, Leo Yan wrote:
-> As described in OpenCSD (CoreSight decoder lib), in the decoding stream
-> it includes one trace element with type OCSD_GEN_TRC_ELEM_NO_SYNC; the
-> element indicates 'either at start of decode, or after overflow / bad
-> packet', we should take it as a signal for the tracing off and this will
-> cause tracing discontinuity.  From the trace dump with 'perf script',
-> sometimes the element OCSD_GEN_TRC_ELEM_NO_SYNC collaborates with
-> element OCSD_GEN_TRC_ELEM_TRACE_ON to show the tracing flow have been
-> turned off and on, in this case the cs-etm code has handled TRACE_ON
-> packet well so we observe the tracing discontinuity; but in another case
-> it only inserts the element OCSD_GEN_TRC_ELEM_NO_SYNC into instructions
-> packets, we miss to handle the case if has only standalone NO_SYNC
-> element and users cannot receive the info for tracing discontinuity.
+On Mon, Nov 19, 2018 at 07:59:24AM -0800, Daniel Colascione wrote:
+> On Mon, Nov 19, 2018 at 2:32 AM, Christian Brauner <christian@brauner.io> wrote:
+> > The kill() syscall operates on process identifiers. After a process has
+> > exited its pid can be reused by another process. If a caller sends a signal
+> > to a reused pid it will end up signaling the wrong process. This issue has
+> > often surfaced and there has been a push [1] to address this problem.
+> >
+> > A prior patch has introduced the ability to get a file descriptor
+> > referencing struct pid by opening /proc/<pid>. This guarantees a stable
+> > handle on a process which can be used to send signals to the referenced
+> > process. Discussion has shown that a dedicated syscall is preferable over
+> > ioctl()s. Thus, the  new syscall procfd_signal() is introduced to solve
+> > this problem. It operates on a process file descriptor.
+> > The syscall takes an additional siginfo_t and flags argument. If siginfo_t
+> > is NULL then procfd_signal() behaves like kill() if it is not NULL it
+> > behaves like rt_sigqueueinfo.
+> > The flags argument is added to allow for future extensions of this syscall.
+> > It currently needs to be passed as 0.
+> >
+> > With this patch a process can be killed via:
+> >
+> >  #define _GNU_SOURCE
+> >  #include <errno.h>
+> >  #include <fcntl.h>
+> >  #include <stdio.h>
+> >  #include <stdlib.h>
+> >  #include <string.h>
+> >  #include <signal.h>
+> >  #include <sys/stat.h>
+> >  #include <sys/syscall.h>
+> >  #include <sys/types.h>
+> >  #include <unistd.h>
+> >
+> >  int main(int argc, char *argv[])
+> >  {
+> >          int ret;
+> >          char buf[1000];
+> >
+> >          if (argc < 2)
+> >                  exit(EXIT_FAILURE);
+> >
+> >          ret = snprintf(buf, sizeof(buf), "/proc/%s", argv[1]);
+> >          if (ret < 0)
+> >                  exit(EXIT_FAILURE);
+> >
+> >          int fd = open(buf, O_DIRECTORY | O_CLOEXEC);
+> >          if (fd < 0) {
+> >                  printf("%s - Failed to open \"%s\"\n", strerror(errno), buf);
+> >                  exit(EXIT_FAILURE);
+> >          }
+> >
+> >          ret = syscall(__NR_procfd_signal, fd, SIGKILL, NULL, 0);
+> >          if (ret < 0) {
+> >                  printf("Failed to send SIGKILL \"%s\"\n", strerror(errno));
+> >                  close(fd);
+> >                  exit(EXIT_FAILURE);
+> >          }
+> >
+> >          close(fd);
+> >
+> >          exit(EXIT_SUCCESS);
+> >  }
+> >
+> > [1]: https://lkml.org/lkml/2018/11/18/130
+> >
+> > Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+> > Cc: Serge Hallyn <serge@hallyn.com>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Andy Lutomirsky <luto@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Oleg Nesterov <oleg@redhat.com>
+> > Cc: Aleksa Sarai <cyphar@cyphar.com>
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Signed-off-by: Christian Brauner <christian@brauner.io>
+> > ---
+> > Changelog:
+> > v1:
+> > - patch introduced
+> > ---
+> >  arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+> >  arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+> >  fs/proc/base.c                         |  6 ++
+> >  include/linux/proc_fs.h                |  1 +
+> >  include/linux/syscalls.h               |  2 +
+> >  kernel/signal.c                        | 76 ++++++++++++++++++++++++--
+> >  6 files changed, 81 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> > index 3cf7b533b3d1..e637eab883e9 100644
+> > --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> > @@ -398,3 +398,4 @@
+> >  384    i386    arch_prctl              sys_arch_prctl                  __ia32_compat_sys_arch_prctl
+> >  385    i386    io_pgetevents           sys_io_pgetevents               __ia32_compat_sys_io_pgetevents
+> >  386    i386    rseq                    sys_rseq                        __ia32_sys_rseq
+> > +387    i386    procfd_signal           sys_procfd_signal               __ia32_sys_procfd_signal
+> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> > index f0b1709a5ffb..e95f6741ab42 100644
+> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> > @@ -343,6 +343,7 @@
+> >  332    common  statx                   __x64_sys_statx
+> >  333    common  io_pgetevents           __x64_sys_io_pgetevents
+> >  334    common  rseq                    __x64_sys_rseq
+> > +335    common  procfd_signal           __x64_sys_procfd_signal
+> >
+> >  #
+> >  # x32-specific system call numbers start at 512 to avoid cache impact
+> > diff --git a/fs/proc/base.c b/fs/proc/base.c
+> > index 6365a4fea314..a12c9de92bd0 100644
+> > --- a/fs/proc/base.c
+> > +++ b/fs/proc/base.c
+> > @@ -3055,6 +3055,12 @@ static const struct file_operations proc_tgid_base_operations = {
+> >         .release        = proc_tgid_release,
+> >  };
+> >
+> > +bool proc_is_procfd(const struct file *file)
+> > +{
+> > +       return d_is_dir(file->f_path.dentry) &&
+> > +              (file->f_op == &proc_tgid_base_operations);
+> > +}
+> > +
+> >  static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+> >  {
+> >         return proc_pident_lookup(dir, dentry,
+> > diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
+> > index d0e1f1522a78..2d53a47fba34 100644
+> > --- a/include/linux/proc_fs.h
+> > +++ b/include/linux/proc_fs.h
+> > @@ -73,6 +73,7 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
+> >                                                     int (*show)(struct seq_file *, void *),
+> >                                                     proc_write_t write,
+> >                                                     void *data);
+> > +extern bool proc_is_procfd(const struct file *file);
+> >
+> >  #else /* CONFIG_PROC_FS */
+> >
+> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> > index 2ac3d13a915b..a5ca8cb84566 100644
+> > --- a/include/linux/syscalls.h
+> > +++ b/include/linux/syscalls.h
+> > @@ -907,6 +907,8 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+> >                           unsigned mask, struct statx __user *buffer);
+> >  asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+> >                          int flags, uint32_t sig);
+> > +asmlinkage long sys_procfd_signal(int fd, int sig, siginfo_t __user *info,
+> > +                                 int flags);
+> >
+> >  /*
+> >   * Architecture-specific system calls
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 9a32bc2088c9..e8a8929de710 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -19,7 +19,9 @@
+> >  #include <linux/sched/task.h>
+> >  #include <linux/sched/task_stack.h>
+> >  #include <linux/sched/cputime.h>
+> > +#include <linux/file.h>
+> >  #include <linux/fs.h>
+> > +#include <linux/proc_fs.h>
+> >  #include <linux/tty.h>
+> >  #include <linux/binfmts.h>
+> >  #include <linux/coredump.h>
+> > @@ -3286,6 +3288,16 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
+> >  }
+> >  #endif
+> >
+> > +static inline void prepare_kill_siginfo(int sig, struct kernel_siginfo *info)
+> > +{
+> > +       clear_siginfo(info);
+> > +       info->si_signo = sig;
+> > +       info->si_errno = 0;
+> > +       info->si_code = SI_USER;
+> > +       info->si_pid = task_tgid_vnr(current);
+> > +       info->si_uid = from_kuid_munged(current_user_ns(), current_uid());
+> > +}
+> > +
+> >  /**
+> >   *  sys_kill - send a signal to a process
+> >   *  @pid: the PID of the process
+> > @@ -3295,16 +3307,68 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
+> >  {
+> >         struct kernel_siginfo info;
+> >
+> > -       clear_siginfo(&info);
+> > -       info.si_signo = sig;
+> > -       info.si_errno = 0;
+> > -       info.si_code = SI_USER;
+> > -       info.si_pid = task_tgid_vnr(current);
+> > -       info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
+> > +       prepare_kill_siginfo(sig, &info);
+> >
+> >         return kill_something_info(sig, &info, pid);
+> >  }
+> >
+> > +/**
+> > + *  sys_procfd_signal - send a signal to a process through a process file
+> > + *                      descriptor
+> > + *  @fd: the file descriptor of the process
+> > + *  @sig: signal to be sent
+> > + *  @info: the signal info
+> > + *  @flags: future flags to be passed
+> > + */
+> > +SYSCALL_DEFINE4(procfd_signal, int, fd, int, sig, siginfo_t __user *, info,
+> > +               int, flags)
+> > +{
+> > +       int ret;
+> > +       struct pid *pid;
+> > +       kernel_siginfo_t kinfo;
+> > +       struct fd f;
+> > +
+> > +       /* Enforce flags be set to 0 until we add an extension. */
+> > +       if (flags)
+> > +               return -EINVAL;
+> > +
+> > +       f = fdget_raw(fd);
+> > +       if (!f.file)
+> > +               return -EBADF;
+> > +
+> > +       ret = -EINVAL;
+> > +       /* Is this a process file descriptor? */
+> > +       if (!proc_is_procfd(f.file))
+> > +               goto err;
+> > +
+> > +       pid = f.file->private_data;
 > 
-> This patch introduces new type CS_ETM_TRACE_OFF to generate packet for
-> receiving element OCSD_GEN_TRC_ELEM_NO_SYNC from decoder; when generate
-> sample, CS_ETM_TRACE_OFF packet has almost the same behaviour with
+> You never addressed my comment on the previous patch about your use of
 
-Here you have used the word "almost", leading me to beleive there are cases
-where the handling of TRACE_ON and NO_SYNC packets differ, but the
-implementation enacts the same behavior for both.
+Sorry, that thread exploded so quickly that I might have missed it.
 
-Mike or Robert, can you confirm that TRACE_ON and NO_SYNC packets should be
-treated the same way?
+> private_data here. Why can't you use the struct pid reference that's
+> already in the inode?
 
-Leo, if handling of the TRACE_ON and NO_SYNC packets is the same then we should
-treat them the same way in cs_etm_decoder__gen_trace_elem_printer(), i.e simply
-call cs_etm_decoder__buffer_trace_on().  That way packet handling in cs-etm.c
-doesn't change.  Otherwise see my comments below.
-
-> CS_ETM_TRACE_ON packet: both of them invokes cs_etm__flush() to generate
-> samples for the previous instructions packet, and in cs_etm__sample() it
-> also needs to generate samples if TRACE_OFF packet is followed by one
-> sequential instructions packet.  This patch also converts the address to
-> 0 for TRACE_OFF packet, this is same with TRACE_ON packet as well.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> ---
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++++++++++
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  7 ++++---
->  tools/perf/util/cs-etm.c                        | 15 +++++++++++----
->  3 files changed, 25 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> index 5efb616..9d52727 100644
-> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> @@ -369,6 +369,14 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
->  }
->  
->  static ocsd_datapath_resp_t
-> +cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
-> +				 const uint8_t trace_chan_id)
-> +{
-> +	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
-> +					     CS_ETM_TRACE_OFF);
-> +}
-> +
-> +static ocsd_datapath_resp_t
->  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
->  				const uint8_t trace_chan_id)
->  {
-> @@ -389,6 +397,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
->  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
->  		break;
->  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
-> +		resp = cs_etm_decoder__buffer_trace_off(decoder,
-> +							trace_chan_id);
-
-If we want to handle NO_SYNC element types, why introduce a "trace_off"
-function?  Wouldn't it make more sense to call it
-cs_etm_decoder__buffer_no_sync() ?
-
->  		decoder->trace_on = false;
->  		break;
->  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
-> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-> index 9351bd1..a38c97c 100644
-> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-> @@ -23,9 +23,10 @@ struct cs_etm_buffer {
->  };
->  
->  enum cs_etm_sample_type {
-> -	CS_ETM_EMPTY = 0,
-> -	CS_ETM_RANGE = 1 << 0,
-> -	CS_ETM_TRACE_ON = 1 << 1,
-> +	CS_ETM_EMPTY		= 0,
-> +	CS_ETM_RANGE		= 1 << 0,
-> +	CS_ETM_TRACE_ON		= 1 << 1,
-> +	CS_ETM_TRACE_OFF	= 1 << 2,
-
-CS_ETM_NO_SYNC, see above comment.  And please don't use indentation.
-
-
->  };
->  
->  enum cs_etm_isa {
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index f4fa877..2a0cef9 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -517,8 +517,9 @@ static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
->  
->  static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
->  {
-> -	/* Returns 0 for the CS_ETM_TRACE_ON packet */
-> -	if (packet->sample_type == CS_ETM_TRACE_ON)
-> +	/* Returns 0 for TRACE_ON and TRACE_OFF packets */
-> +	if (packet->sample_type == CS_ETM_TRACE_ON ||
-> +	    packet->sample_type == CS_ETM_TRACE_OFF)
->  		return 0;
->  
->  	return packet->start_addr;
-> @@ -527,8 +528,9 @@ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
->  static inline
->  u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
->  {
-> -	/* Returns 0 for the CS_ETM_TRACE_ON packet */
-> -	if (packet->sample_type == CS_ETM_TRACE_ON)
-> +	/* Returns 0 for TRACE_ON and TRACE_OFF packets */
-> +	if (packet->sample_type == CS_ETM_TRACE_ON ||
-> +	    packet->sample_type == CS_ETM_TRACE_OFF)
->  		return 0;
->  
->  	return packet->end_addr - packet->last_instr_size;
-> @@ -930,6 +932,10 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
->  		if (etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
->  			generate_sample = true;
->  
-> +		/* Generate sample for tracing off packet */
-> +		if (etmq->prev_packet->sample_type == CS_ETM_TRACE_OFF)
-> +			generate_sample = true;
-> +
->  		/* Generate sample for branch taken packet */
->  		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
->  		    etmq->prev_packet->last_instr_taken_branch)
-> @@ -1085,6 +1091,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
->  					cs_etm__sample(etmq);
->  					break;
->  				case CS_ETM_TRACE_ON:
-> +				case CS_ETM_TRACE_OFF:
->  					/*
->  					 * Discontinuity in trace, flush
->  					 * previous branch stack
-> -- 
-> 2.7.4
-> 
+If that's what people prefer we can probably use that. There was
+precedent for stashing away such data in fs/proc/base.c already for
+various other things including user namespaces and struct mm so I
+followed this model. A prior version of my patch (I didn't send out) did
+retrive the inode via proc_pid() in .open() took an additional reference
+via get_pid() and dropped it in .release(). Do we prefer that?
