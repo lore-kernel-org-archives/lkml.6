@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06ECDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCEAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E2820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7ECC20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY1Bb7FZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E2820870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdNUsozZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7ECC20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730935AbeKTC47 (ORCPT
+        id S1730948AbeKTC5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55416 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:57:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730221AbeKTC47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:56:59 -0500
+        id S1730193AbeKTC5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:57:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D3892086A;
-        Mon, 19 Nov 2018 16:32:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E89502086A;
+        Mon, 19 Nov 2018 16:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645171;
-        bh=r7nwC5Uj7Vcg3i5o7qN8r/s6w1/PLTkS/iuE9gakvYY=;
+        s=default; t=1542645174;
+        bh=y37n2POu0wVDnGWEp4rOO598CCjYLdQZYW8f/Zqwgpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pY1Bb7FZDiR6atfdvtkKLQk7lJEwq03saKHpXdUQQ0veYiDWA7Ci96T+8wpVRJY0L
-         wqEQme7UTu37u6gH/OTl2lOPzQDA3//afJ+xtjDhvIvXIjSVJA8Mmza64tLVtwWcm/
-         +nqfw0yO5akKhPhHOYtPmjdZkwzYY4/5lqecTOv4=
+        b=YdNUsozZ7m2/ZLJJRtAsR2anipUHBp97+bNgnCk+3AiTnSoiCW8b9Jh59Dk026z+s
+         eirlhRqu+B9OHZsZn//plqMQ4yNRLvjDk8CPt0L+anRfxIsGmnXPDuFotsgdmxCCY4
+         iTx18M4B9oiEL4eysAG0UY1Fux6BH59yOM2BWp4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 061/205] scsi: qla2xxx: Fix duplicate switch database entries
-Date:   Mon, 19 Nov 2018 17:26:08 +0100
-Message-Id: <20181119162628.074549631@linuxfoundation.org>
+        stable@vger.kernel.org, Dengcheng Zhu <dzhu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        ralf@linux-mips.org, linux-mips@linux-mips.org,
+        rachel.mozes@intel.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 025/205] MIPS: kexec: Mark CPU offline before disabling local IRQ
+Date:   Mon, 19 Nov 2018 17:25:32 +0100
+Message-Id: <20181119162621.972351080@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,40 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Dengcheng Zhu <dzhu@wavecomp.com>
 
-commit 732ee9a912cf2d9a50c5f9c4213cdc2f885d6aa6 upstream.
+[ Upstream commit dc57aaf95a516f70e2d527d8287a0332c481a226 ]
 
-The response data buffer used in switch scan is reused 4 times.  (For example,
-for commands GPN_FT, GNN_FT for FCP and FC-NVME) Before driver reuses this
-buffer, clear it to prevent duplicate entries in our database.
+After changing CPU online status, it will not be sent any IPIs such as in
+__flush_cache_all() on software coherency systems. Do this before disabling
+local IRQ.
 
-Fixes: a4239945b8ad1 ("scsi: qla2xxx: Add switch command to simplify fabric discovery"
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20571/
+Cc: pburton@wavecomp.com
+Cc: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org
+Cc: rachel.mozes@intel.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/qla2xxx/qla_gs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/mips/kernel/crash.c         |    3 +++
+ arch/mips/kernel/machine_kexec.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -4447,9 +4447,9 @@ int qla24xx_async_gpnft(scsi_qla_host_t
- 	sp->u.iocb_cmd.timeout = qla2x00_async_iocb_timeout;
- 	qla2x00_init_timer(sp, qla2x00_get_async_timeout(vha) + 2);
+--- a/arch/mips/kernel/crash.c
++++ b/arch/mips/kernel/crash.c
+@@ -36,6 +36,9 @@ static void crash_shutdown_secondary(voi
+ 	if (!cpu_online(cpu))
+ 		return;
  
--	rspsz = sizeof(struct ct_sns_gpnft_rsp) +
--		((vha->hw->max_fibre_devices - 1) *
--		    sizeof(struct ct_sns_gpn_ft_data));
-+	rspsz = sp->u.iocb_cmd.u.ctarg.rsp_size;
-+	memset(sp->u.iocb_cmd.u.ctarg.rsp, 0, sp->u.iocb_cmd.u.ctarg.rsp_size);
-+	memset(sp->u.iocb_cmd.u.ctarg.req, 0, sp->u.iocb_cmd.u.ctarg.req_size);
++	/* We won't be sent IPIs any more. */
++	set_cpu_online(cpu, false);
++
+ 	local_irq_disable();
+ 	if (!cpumask_test_cpu(cpu, &cpus_in_crash))
+ 		crash_save_cpu(regs, cpu);
+--- a/arch/mips/kernel/machine_kexec.c
++++ b/arch/mips/kernel/machine_kexec.c
+@@ -118,6 +118,9 @@ machine_kexec(struct kimage *image)
+ 			*ptr = (unsigned long) phys_to_virt(*ptr);
+ 	}
  
- 	ct_sns = (struct ct_sns_pkt *)sp->u.iocb_cmd.u.ctarg.req;
- 	/* CT_IU preamble  */
++	/* Mark offline BEFORE disabling local irq. */
++	set_cpu_online(smp_processor_id(), false);
++
+ 	/*
+ 	 * we do not want to be bothered.
+ 	 */
 
 
