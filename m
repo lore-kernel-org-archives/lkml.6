@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F645C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0437CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B826214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE0BE214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uW3VXjYu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B826214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQaC8VHI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0BE214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388917AbeKTDKu (ORCPT
+        id S2388928AbeKTDKw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46430 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:10:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388013AbeKTDKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:10:49 -0500
+        id S1728538AbeKTDKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:10:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E0082145D;
-        Mon, 19 Nov 2018 16:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7996214C4;
+        Mon, 19 Nov 2018 16:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645997;
-        bh=CRVclSyqqfGyc82kISit45gAkmvDmXX6H/ALA9kNesw=;
+        s=default; t=1542646000;
+        bh=tikoaoc0bd4KP3+WObuFTUHWpK+iP9DX9szqj1hwDEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uW3VXjYuLci1vTE91p2Fu/5CT3CxSUGQLKWEumeyeQZer5k01r4Cz/rxgesxT13Og
-         frArvmVzxcm5RwLJWuJ+VElBTRAJrQQ0/fRJesmMQKoiXuQANJipMzl8w+SYuxVXpR
-         Jt8bkQod2bz+iULMu9LPqcBsMXwq6CM7Zs9cRfqc=
+        b=FQaC8VHIRlC9+PC+hwL1YABqsCy3WenafO6yxfE33p8HNF8UbeyrMYxLcAac16Maa
+         t9FzOuN6xjF7YmoUSp0F5V+ugSEiQxuepEprrwfMWg4UTCJQTKKRqxsPzxK+ShWXAO
+         SkkPgucGii9CqlynsZIGPvAsxXlnw3CqAWZFFyIE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
-        Mika Kuoppala <mika.kuoppala@linux.intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.18 169/171] drm/i915/execlists: Force write serialisation into context image vs execution
-Date:   Mon, 19 Nov 2018 17:29:25 +0100
-Message-Id: <20181119162641.234951667@linuxfoundation.org>
+Subject: [PATCH 4.18 170/171] drm/i915: Fix possible race in intel_dp_add_mst_connector()
+Date:   Mon, 19 Nov 2018 17:29:26 +0100
+Message-Id: <20181119162641.303258040@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,63 +64,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 0a823e8fd4fd67726697854578f3584ee3a49b1d upstream.
+commit 7c4512300cfa5a4dcc8c1c52ae61e3fa4bd11a39 upstream.
 
-Ensure that the writes into the context image are completed prior to the
-register mmio to trigger execution. Although previously we were assured
-by the SDM that all writes are flushed before an uncached memory
-transaction (our mmio write to submit the context to HW for execution),
-we have empirical evidence to believe that this is not actually the
-case.
+This hasn't caused any issues yet that I'm aware of, but as Ville
+Syrjälä pointed out - we need to make sure that
+intel_connector->mst_port is set before initializing MST connectors,
+since in theory we could potentially check intel_connector->mst_port in
+i915_hpd_poll_init_work() after registering the connector but before
+having written it's value.
 
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108656
-References: https://bugs.freedesktop.org/show_bug.cgi?id=108315
-References: https://bugs.freedesktop.org/show_bug.cgi?id=106887
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Acked-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181108081740.25615-1-chris@chris-wilson.co.uk
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: stable@vger.kernel.org
-(cherry picked from commit 987abd5c62f92ee4970b45aa077f47949974e615)
+Link: https://patchwork.freedesktop.org/patch/msgid/20181106213017.14563-2-lyude@redhat.com
+(cherry picked from commit 66a5ab1034be801630816d1fa6cfc30db1a2f0b0)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lrc.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/intel_dp_mst.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_lrc.c
-+++ b/drivers/gpu/drm/i915/intel_lrc.c
-@@ -425,7 +425,8 @@ static u64 execlists_update_context(stru
+--- a/drivers/gpu/drm/i915/intel_dp_mst.c
++++ b/drivers/gpu/drm/i915/intel_dp_mst.c
+@@ -464,6 +464,10 @@ static struct drm_connector *intel_dp_ad
+ 	if (!intel_connector)
+ 		return NULL;
  
- 	reg_state[CTX_RING_TAIL+1] = intel_ring_set_tail(rq->ring, rq->tail);
++	intel_connector->get_hw_state = intel_dp_mst_get_hw_state;
++	intel_connector->mst_port = intel_dp;
++	intel_connector->port = port;
++
+ 	connector = &intel_connector->base;
+ 	ret = drm_connector_init(dev, connector, &intel_dp_mst_connector_funcs,
+ 				 DRM_MODE_CONNECTOR_DisplayPort);
+@@ -474,10 +478,6 @@ static struct drm_connector *intel_dp_ad
  
--	/* True 32b PPGTT with dynamic page allocation: update PDP
-+	/*
-+	 * True 32b PPGTT with dynamic page allocation: update PDP
- 	 * registers and point the unallocated PDPs to scratch page.
- 	 * PML4 is allocated during ppgtt init, so this is not needed
- 	 * in 48-bit mode.
-@@ -433,6 +434,17 @@ static u64 execlists_update_context(stru
- 	if (ppgtt && !i915_vm_is_48bit(&ppgtt->base))
- 		execlists_update_context_pdps(ppgtt, reg_state);
+ 	drm_connector_helper_add(connector, &intel_dp_mst_connector_helper_funcs);
  
-+	/*
-+	 * Make sure the context image is complete before we submit it to HW.
-+	 *
-+	 * Ostensibly, writes (including the WCB) should be flushed prior to
-+	 * an uncached write such as our mmio register access, the empirical
-+	 * evidence (esp. on Braswell) suggests that the WC write into memory
-+	 * may not be visible to the HW prior to the completion of the UC
-+	 * register write and that we may begin execution from the context
-+	 * before its image is complete leading to invalid PD chasing.
-+	 */
-+	wmb();
- 	return ce->lrc_desc;
- }
- 
+-	intel_connector->get_hw_state = intel_dp_mst_get_hw_state;
+-	intel_connector->mst_port = intel_dp;
+-	intel_connector->port = port;
+-
+ 	for_each_pipe(dev_priv, pipe) {
+ 		struct drm_encoder *enc =
+ 			&intel_dp->mst_encoders[pipe]->base.base;
 
 
