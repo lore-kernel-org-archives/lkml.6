@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98903C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8070C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E98E2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DAF52148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfoAvjfa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E98E2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DihVuKu8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DAF52148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404687AbeKTDWN (ORCPT
+        id S2404697AbeKTDWQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33796 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403845AbeKTDWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:12 -0500
+        id S2403845AbeKTDWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B59F2146D;
-        Mon, 19 Nov 2018 16:57:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 849492146D;
+        Mon, 19 Nov 2018 16:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646677;
-        bh=tyu/5Cyo3cakQrnigEPmIMmD/DTF62KjUQkiJn/SWZQ=;
+        s=default; t=1542646680;
+        bh=aQSW9SxCW2ZNa38WFcPEbvByg3hDjaJg5S/JYwXzCwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BfoAvjfapbiuc3U9599FyPHZKmuxjbcEmzLax+b/zWQVCsS8MwJGa2LxMcwwO3vGK
-         JKU3yUJbQJOHV/3hS6g9OO7M63sJyPJxAm7HUFacPiGKk/khpdcLPxbgcbD4nmj7hm
-         hy8ioFf13b+GXgfLrRlQm7nLy5DyUa+LQf94z5Bg=
+        b=DihVuKu8KARsfN/Qfrpr3hJSwRJoAYUjiOxlHxBwXPYh+xwo2jUBvJQy1zxMOTvjt
+         Fz6ND3COwTD52mtDAZzMXwpT/SPw+DsvkMjGwqpCcKa9bjYY3PYLMdRAWBp4WOPzpY
+         M+E+Z1zG2pb9/tyHuilrgONVIN+z2DG107mbQpPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Simon Veith <sveith@amazon.de>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 048/160] net/ipv4: defensive cipso option parsing
-Date:   Mon, 19 Nov 2018 17:28:07 +0100
-Message-Id: <20181119162636.181794770@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.4 049/160] libnvdimm: Hold reference on parent while scheduling async init
+Date:   Mon, 19 Nov 2018 17:28:08 +0100
+Message-Id: <20181119162636.264023428@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -65,66 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Nuernberger <snu@amazon.com>
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
+commit b6eae0f61db27748606cc00dafcfd1e2c032f0a5 upstream.
 
-commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
-a possible infinite loop in the IP option parsing of CIPSO. The fix
-assumes that ip_options_compile filtered out all zero length options and
-that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
-While this assumption currently holds true, add explicit checks for zero
-length and invalid length options to be safe for the future. Even though
-ip_options_compile should have validated the options, the introduction of
-new one-byte options can still confuse this code without the additional
-checks.
+Unlike asynchronous initialization in the core we have not yet associated
+the device with the parent, and as such the device doesn't hold a reference
+to the parent.
 
-Signed-off-by: Stefan Nuernberger <snu@amazon.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Simon Veith <sveith@amazon.de>
-Cc: stable@vger.kernel.org
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In order to resolve that we should be holding a reference on the parent
+until the asynchronous initialization has completed.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 4d88a97aa9e8 ("libnvdimm: ...base ... infrastructure")
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/cipso_ipv4.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/nvdimm/bus.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1582,7 +1582,7 @@ static int cipso_v4_parsetag_loc(const s
-  *
-  * Description:
-  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
-- * to the start of the CIPSO option on success, NULL if one if not found.
-+ * to the start of the CIPSO option on success, NULL if one is not found.
-  *
-  */
- unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-@@ -1592,10 +1592,8 @@ unsigned char *cipso_v4_optptr(const str
- 	int optlen;
- 	int taglen;
- 
--	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
-+	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
- 		switch (optptr[0]) {
--		case IPOPT_CIPSO:
--			return optptr;
- 		case IPOPT_END:
- 			return NULL;
- 		case IPOPT_NOOP:
-@@ -1604,6 +1602,11 @@ unsigned char *cipso_v4_optptr(const str
- 		default:
- 			taglen = optptr[1];
- 		}
-+		if (!taglen || taglen > optlen)
-+			return NULL;
-+		if (optptr[0] == IPOPT_CIPSO)
-+			return optptr;
-+
- 		optlen -= taglen;
- 		optptr += taglen;
+--- a/drivers/nvdimm/bus.c
++++ b/drivers/nvdimm/bus.c
+@@ -158,6 +158,8 @@ static void nd_async_device_register(voi
+ 		put_device(dev);
  	}
+ 	put_device(dev);
++	if (dev->parent)
++		put_device(dev->parent);
+ }
+ 
+ static void nd_async_device_unregister(void *d, async_cookie_t cookie)
+@@ -175,6 +177,8 @@ static void nd_async_device_unregister(v
+ void __nd_device_register(struct device *dev)
+ {
+ 	dev->bus = &nvdimm_bus_type;
++	if (dev->parent)
++		get_device(dev->parent);
+ 	get_device(dev);
+ 	async_schedule_domain(nd_async_device_register, dev,
+ 			&nd_async_domain);
 
 
