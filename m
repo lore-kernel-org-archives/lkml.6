@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57814C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F73C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE1C208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC9E208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sltFSDOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BE1C208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4JP3Ikb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC9E208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389484AbeKTDMt (ORCPT
+        id S2389493AbeKTDMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49268 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387988AbeKTDMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:48 -0500
+        id S2387988AbeKTDMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7E7E208E3;
-        Mon, 19 Nov 2018 16:48:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81CB920823;
+        Mon, 19 Nov 2018 16:48:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646116;
-        bh=PiDqYqJyNikSwNDEtxAmNlFsJtdsNXWuPknd4ys4bFs=;
+        s=default; t=1542646119;
+        bh=gKtmFena5YlXchas9w3gns4rtIsi6/qJHXwltuYxwjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sltFSDObI1cCwK2J7IXYfSylnmbgdPJcq7I8BfTydLRsO33BV022J0XFcLrDAauEw
-         87D97vvygR7gV+M/+wZ9vDC91W4F7wBk5ydaLgpqnA+ms9ROYzovxbLDhHL2gCtgyG
-         KI3syaOwu+z79pK851JKJv63WJkchoxmZm6wVERs=
+        b=j4JP3Ikbi+Ri2lkfXcKU63x4I1n8v1F+6B8tYXPYm/iO5P8gAvW6XxaKzOY7MY44g
+         8+pZvFQOfl+OZZeuz0L8H/jyce+Jx+HvnF6w1Vf+VlCQeb4DIZH7OQ4C8vcQr8acnl
+         Q8i/BQZzuV6vtqqbd8MNMKL81cVeQV4sRNSr9L2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
         Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.14 043/124] clk: rockchip: Fix static checker warning in rockchip_ddrclk_get_parent call
-Date:   Mon, 19 Nov 2018 17:28:17 +0100
-Message-Id: <20181119162621.938637989@linuxfoundation.org>
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 044/124] clk: mvebu: use correct bit for 98DX3236 NAND
+Date:   Mon, 19 Nov 2018 17:28:18 +0100
+Message-Id: <20181119162622.218313680@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,45 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
 
-commit 665636b2940d0897c4130253467f5e8c42eea392 upstream.
+commit 00c5a926af12a9f0236928dab3dc9faf621406a1 upstream.
 
-Fixes the signedness bug returning '(-22)' on the return type by removing the
-sanity checker in rockchip_ddrclk_get_parent(). The function should return
-and unsigned value only and it's safe to remove the sanity checker as the
-core functions that call get_parent like clk_core_get_parent_by_index already
-ensures the validity of the clk index returned (index >= core->num_parents).
+The correct fieldbit value for the NAND PLL reload trigger is 27.
 
-Fixes: a4f182bf81f18 ("clk: rockchip: add new clock-type for the ddrclk")
-Cc: stable@vger.kernel.org
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: commit e120c17a70e5 ("clk: mvebu: support for 98DX3236 SoC")
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-ddr.c |    4 ----
- 1 file changed, 4 deletions(-)
+ drivers/clk/mvebu/clk-corediv.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -80,16 +80,12 @@ static long rockchip_ddrclk_sip_round_ra
- static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
- {
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
--	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
+--- a/drivers/clk/mvebu/clk-corediv.c
++++ b/drivers/clk/mvebu/clk-corediv.c
+@@ -72,7 +72,7 @@ static const struct clk_corediv_desc mve
+ };
  
- 	val = clk_readl(ddrclk->reg_base +
- 			ddrclk->mux_offset) >> ddrclk->mux_shift;
- 	val &= GENMASK(ddrclk->mux_width - 1, 0);
+ static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
+-	{ .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
++	{ .mask = 0x0f, .offset = 6, .fieldbit = 27 }, /* NAND clock */
+ };
  
--	if (val >= num_parents)
--		return -EINVAL;
--
- 	return val;
- }
- 
+ #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
 
 
