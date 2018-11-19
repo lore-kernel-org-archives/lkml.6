@@ -2,91 +2,95 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3C4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68BA4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B36B420851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:14:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DaNwBBQz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36B420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 38C612089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C612089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeKTAiR (ORCPT
+        id S1729483AbeKTAjN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:38:17 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43980 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729443AbeKTAiR (ORCPT
+        Mon, 19 Nov 2018 19:39:13 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:20423 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728252AbeKTAjM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:38:17 -0500
-Received: by mail-lj1-f193.google.com with SMTP id 83-v6so2888120ljf.10
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:14:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m3GcNAesbYzt/DjPftzae5NWWeVX4MMv9QKmjCKn+Nw=;
-        b=DaNwBBQzwhIczw2IVdfPHlNTNREen0lAVQfbfs0R4SX/ob19fJdk3+O5mEeL07Nqaq
-         +mgM8EOHIZ6ygAR4nbmx4Xm3QmVCxMHgfP0zbVQxAuACUzPCA37xZgwK9bOX+J2xsyex
-         prDZmR4QHt6rr3EhbWpAD5FPYf4Hxb0BfVPIo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m3GcNAesbYzt/DjPftzae5NWWeVX4MMv9QKmjCKn+Nw=;
-        b=kmaHVBYWY310elDumjyyfjKsfpa2GBgSstIltsf64tAu8tsJLGezbVy6lFxHGRS7vo
-         qDDD6BBA6n2agkLh57peqHCJQUIH4WqQ6EyZVb6tJs4/zTsi7aCdOVqm+NithT6suW40
-         KtVzsFBQv9GPrcM2WOrtF6yBZrGXxrSJ1tROJaxyemFHXfiKoTbaXaKhivWDEM1ZubHC
-         DbpH4qwGcJjQ+24vHNXJaJYq+BPnkLmYwFsdWKLGxPlFgciPC2SSMNEtJXQQNlXfO+VM
-         rC0qnrBrI/fHEevpJ5fj3D9unfvGJHty3SrNZSWKin9+NIH1rC15QL8rnSv3QqK2LDws
-         0xfA==
-X-Gm-Message-State: AGRZ1gLWGh4SqBECaMLm7RDFbmr+D6+gSWpzUpkWYXMWxPnZ5yG2Hzi3
-        VoSbW4Ws94EUtvDb5wpWSZw1RBTR3or9aUo3kgwrZQ==
-X-Google-Smtp-Source: AJdET5e8z9yClMVWYQvP/2a/3XENephiEN0tFFih5mTAe3LnvutMhJ+vrRqqfrMETNM5DtZSKswc4din/c6uB8qeWzw=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr10710625ljj.9.1542636871397;
- Mon, 19 Nov 2018 06:14:31 -0800 (PST)
+        Mon, 19 Nov 2018 19:39:12 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-112-1WagJuYKPWyp2NEK7jIZzg-1; Mon, 19 Nov 2018 14:15:25 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 19 Nov 2018 14:15:31 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 19 Nov 2018 14:15:31 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christian Brauner' <christian@brauner.io>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "serge@hallyn.com" <serge@hallyn.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "cyphar@cyphar.com" <cyphar@cyphar.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "dancol@google.com" <dancol@google.com>,
+        "timmurray@google.com" <timmurray@google.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: RE: [PATCH] proc: allow killing processes via file descriptors
+Thread-Topic: [PATCH] proc: allow killing processes via file descriptors
+Thread-Index: AQHUfzCMPJnedN49+EaYHywV7sQfyKVXJFlw
+Date:   Mon, 19 Nov 2018 14:15:31 +0000
+Message-ID: <9a269517770e4881b92756d47f17a5fd@AcuMS.aculab.com>
+References: <20181118111751.6142-1-christian@brauner.io>
+In-Reply-To: <20181118111751.6142-1-christian@brauner.io>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20181116220540.17222-1-robh@kernel.org> <20181116220540.17222-4-robh@kernel.org>
-In-Reply-To: <20181116220540.17222-4-robh@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Nov 2018 15:14:19 +0100
-Message-ID: <CACRpkdZnS4BkUJN_rjjPcCQAMDd0_4KZ_LgmYYtmuuBuRg6jgw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MC-Unique: 1WagJuYKPWyp2NEK7jIZzg-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 11:06 PM Rob Herring <robh@kernel.org> wrote:
+From: > Christian Brauner
+> Sent: 18 November 2018 11:18
+> 
+> With this patch an open() call on /proc/<pid> will give userspace a handle
+> to struct pid of the process associated with /proc/<pid>. This allows to
+> maintain a stable handle on a process.
 
-> In preparation to remove the node name pointer from struct device_node,
-> convert printf users to use the %pOFn format specifier.
->
-> Cc: Sean Wang <sean.wang@kernel.org>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-gpio@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+My 3c...
 
-Patch applied with Sean's ACK.
+You need to add a version of fork() that returns an open fd to
+/proc/pid to the parent.
 
-Yours,
-Linus Walleij
+Is it possible to overload fcntl() rather than ioctl() ?
+
+More interestingly what about a 'unique pid' (eg the pid extended to
+(say) 128 bits with a use count) that can be safely put into a /var/run/pid
+file for a daemon and used later in a 'kill' that will only ever
+reference the correct process.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
