@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A40C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EC3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E412A208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDCDB208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAp6sdGS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E412A208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zw0gP6/2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCDB208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732547AbeKTDET (ORCPT
+        id S1732948AbeKTDEW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:04:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37276 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:04:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732923AbeKTDET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:04:19 -0500
+        id S1732582AbeKTDEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:04:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D1C1206BA;
-        Mon, 19 Nov 2018 16:40:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC01208E3;
+        Mon, 19 Nov 2018 16:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645609;
-        bh=jRxWvsQ9alv37xgoUI1vL+6VWm+slxnwfxUg1SJfT9Y=;
+        s=default; t=1542645612;
+        bh=e16mZXpprhloTXPgEaeSyv3yYRj8AcCb8cWe+hoht2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oAp6sdGSaFtXgdeJHMOdhCbXdfoecKeak+meeWUZ6XmVpKgTJNhGu9eYg9ce/jWqb
-         RO1EU7hesib1j8eqdbpTudonHZR8KN2jNjVjyftHAmsluSk8ScDmzCIAvkQYBen2dn
-         Y/aemIK5+GK1eMcNXGBG0f1Hv92vT369ZKoSdrC0=
+        b=Zw0gP6/2yhizshF2EUyYQuy+Aj1jPte87OPLI6hcr77lAtKL2VcIhs5VXP0HIAgfa
+         fEHmGZr0o/RR89iSd49SeQHllhtIeN3Xnio+q2RO9tzHA1nStRElRh7CxMtk2V4jFJ
+         bOVnu1tQY0evQ/XJKxd6QhMF1/uFR/P9mG9+GwaE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+        stable@vger.kernel.org, Rashmica Gupta <rashmica.g@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 021/171] powerpc/boot: Ensure _zimage_start is a weak symbol
-Date:   Mon, 19 Nov 2018 17:26:57 +0100
-Message-Id: <20181119162623.182061032@linuxfoundation.org>
+Subject: [PATCH 4.18 022/171] powerpc/memtrace: Remove memory in chunks
+Date:   Mon, 19 Nov 2018 17:26:58 +0100
+Message-Id: <20181119162623.317693633@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,62 +62,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Rashmica Gupta <rashmica.g@gmail.com>
 
-[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
+[ Upstream commit 3f7daf3d7582dc6628ac40a9045dd1bbd80c5f35 ]
 
-When building with clang crt0's _zimage_start is not marked weak, which
-breaks the build when linking the kernel image:
+When hot-removing memory release_mem_region_adjustable() splits iomem
+resources if they are not the exact size of the memory being
+hot-deleted. Adding this memory back to the kernel adds a new resource.
 
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058 g       .text  0000000000000000 _zimage_start
+Eg a node has memory 0x0 - 0xfffffffff. Hot-removing 1GB from
+0xf40000000 results in the single resource 0x0-0xfffffffff being split
+into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
 
- ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
- (.text+0x58): multiple definition of '_zimage_start';
- arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
+When we hot-add the memory back we now have three resources:
+0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
 
-Clang requires the .weak directive to appear after the symbol is
-declared. The binutils manual says:
+This is an issue if we try to remove some memory that overlaps
+resources. Eg when trying to remove 2GB at address 0xf40000000,
+release_mem_region_adjustable() fails as it expects the chunk of memory
+to be within the boundaries of a single resource. We then get the
+warning: "Unable to release resource" and attempting to use memtrace
+again gives us this error: "bash: echo: write error: Resource
+temporarily unavailable"
 
- This directive sets the weak attribute on the comma separated list of
- symbol names. If the symbols do not already exist, they will be
- created.
+This patch makes memtrace remove memory in chunks that are always the
+same size from an address that is always equal to end_of_memory -
+n*size, for some n. So hotremoving and hotadding memory of different
+sizes will now not attempt to remove memory that spans multiple
+resources.
 
-So it appears this is different with clang. The only reference I could
-see for this was an OpenBSD mailing list post[1].
-
-Changing it to be after the declaration fixes building with Clang, and
-still works with GCC.
-
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058  w      .text	0000000000000000 _zimage_start
-
-Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
-
-[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/boot/crt0.S |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/powernv/memtrace.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -47,8 +47,10 @@ p_end:		.long	_end
- p_pstack:	.long	_platform_stack_top
- #endif
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -119,17 +119,15 @@ static bool memtrace_offline_pages(u32 n
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+ 			  change_memblock_state);
  
--	.weak	_zimage_start
- 	.globl	_zimage_start
-+	/* Clang appears to require the .weak directive to be after the symbol
-+	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
-+	.weak	_zimage_start
- _zimage_start:
- 	.globl	_zimage_start_lib
- _zimage_start_lib:
+-	lock_device_hotplug();
+-	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+-	unlock_device_hotplug();
+ 
+ 	return true;
+ }
+ 
+ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ {
+-	u64 start_pfn, end_pfn, nr_pages;
++	u64 start_pfn, end_pfn, nr_pages, pfn;
+ 	u64 base_pfn;
++	u64 bytes = memory_block_size_bytes();
+ 
+ 	if (!node_spanned_pages(nid))
+ 		return 0;
+@@ -142,8 +140,21 @@ static u64 memtrace_alloc_node(u32 nid,
+ 	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
+ 
+ 	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
+-		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true)
++		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true) {
++			/*
++			 * Remove memory in memory block size chunks so that
++			 * iomem resources are always split to the same size and
++			 * we never try to remove memory that spans two iomem
++			 * resources.
++			 */
++			lock_device_hotplug();
++			end_pfn = base_pfn + nr_pages;
++			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
++				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
++			}
++			unlock_device_hotplug();
+ 			return base_pfn << PAGE_SHIFT;
++		}
+ 	}
+ 
+ 	return 0;
 
 
