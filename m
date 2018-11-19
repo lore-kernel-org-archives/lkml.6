@@ -2,95 +2,159 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D411EC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8A9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF4821780
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6619822353
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wEVyny+f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CF4821780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIS9AiVU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6619822353
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405359AbeKTDYj (ORCPT
+        id S2404993AbeKTDYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37446 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405345AbeKTDYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:38 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2405346AbeKTDYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C062222505
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 17:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C973223CA;
+        Mon, 19 Nov 2018 17:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542646823;
-        bh=4QGrRb/NX/u9ezQIPG+tiTfLwtuWQfaNCdAWB5BxLug=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=wEVyny+f5k/dOwYn8NaIcPRLv6mfKxyDkENQ+RIozuxMzekBPus0FAWcYhmFcUR2s
-         U7pY+sBnhHpwvIOiH5RXeqKiAY5BxeYig65eVaJ3kT1ERLNIf6kIiBMNUq4jmP4nK5
-         JrdKCIb/pEfKNVmSHeZ4yJu3uSHl4Qeyy6i7ZBXI=
-Received: by mail-wm1-f53.google.com with SMTP id p2-v6so5955862wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 09:00:22 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJDAvn61o991cY+hbrztujHLyQpKDhvWQCKOMtPZV13XR3lU9M8
-        9LVC0HKcng+Tma58Wn6EQo1flAwBxe07A21/bQoBhQ==
-X-Google-Smtp-Source: AFSGD/UNnjQIq+s7BTeD/ou1YCY6BdFaRW7hiM9MGLXVsBzfxeC3bRcw3kF1lCJnjYWn9qukh5EbG6ECPPnxb9dnuXU=
-X-Received: by 2002:a1c:f112:: with SMTP id p18mr7384002wmh.83.1542646821041;
- Mon, 19 Nov 2018 09:00:21 -0800 (PST)
-MIME-Version: 1.0
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <20181118071548.GA4795@linux.intel.com> <CALCETrXSpn7QGzPgO1BjMRQ75r2i0kmACrbUM+8PyT+xi3f3Hw@mail.gmail.com>
- <20181119160204.GD13298@linux.intel.com>
-In-Reply-To: <20181119160204.GD13298@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 19 Nov 2018 09:00:08 -0800
-X-Gmail-Original-Message-ID: <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
-Message-ID: <CALCETrWRVgPjnDd-CknskrXfNbke=rSnr_jezszNNWJUM_YJKQ@mail.gmail.com>
-Subject: Re: RFC: userspace exception fixups
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>, nhorman@redhat.com,
-        npmccallum@redhat.com, "Ayoun, Serge" <serge.ayoun@intel.com>,
-        shay.katz-zamir@intel.com, linux-sgx@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        bh=bN2onHJMQco2aXdrf1fFnVmIkYyoWOJiH6Q4yfrg44w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=hIS9AiVUCCNnPrXUPCJFHeo7M/BEcNR1pbJ0lUT6PCvOkqL8wgi3vnbs3pMJfC9C9
+         NysmFLopZxNWorQYJRHY2ON6RoF+eJNUDPTaN8BHXt/e8BT6RZxkI6LZEguiduvjmH
+         QuNHJXX9cvoauEwFWdZBKchQYKOCXrtPzEJSlFX8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+        Mathias Duckeck <m.duckeck@kunbus.de>,
+        Akshay Bhat <akshay.bhat@timesys.com>,
+        Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Subject: [PATCH 4.4 067/160] genirq: Fix race on spurious interrupt detection
+Date:   Mon, 19 Nov 2018 17:28:26 +0100
+Message-Id: <20181119162637.842707470@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
+References: <20181119162630.031306128@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 8:02 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Mon, Nov 19, 2018 at 07:29:36AM -0800, Andy Lutomirski wrote:
-> > 1. The kernel needs some way to know *when* to apply this fixup.
-> > Decoding the instruction stream and doing it to all exceptions that
-> > hit an ENCLU instruction seems like a poor design.
->
-> I'm not sure why you would ever need to do any type of fixup as the idea
-> is to just return to AEP i.e. from chosen exceptions (EPCM, #UD) the AEP
-> would work the same way as for exceptions that the kernel can deal with
-> except filling the exception information to registers.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Sure, but how does the kernel know when to do that and when to send a
-signal?  I don't really like decoding the instruction stream to figure
-it out.
+------------------
+
+From: Lukas Wunner <lukas@wunner.de>
+
+commit 746a923b863a1065ef77324e1e43f19b1a3eab5c upstream.
+
+Commit 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of
+threaded irqs") made detection of spurious interrupts work for threaded
+handlers by:
+
+a) incrementing a counter every time the thread returns IRQ_HANDLED, and
+b) checking whether that counter has increased every time the thread is
+   woken.
+
+However for oneshot interrupts, the commit unmasks the interrupt before
+incrementing the counter.  If another interrupt occurs right after
+unmasking but before the counter is incremented, that interrupt is
+incorrectly considered spurious:
+
+time
+ |  irq_thread()
+ |    irq_thread_fn()
+ |      action->thread_fn()
+ |      irq_finalize_oneshot()
+ |        unmask_threaded_irq()            /* interrupt is unmasked */
+ |
+ |                  /* interrupt fires, incorrectly deemed spurious */
+ |
+ |    atomic_inc(&desc->threads_handled); /* counter is incremented */
+ v
+
+This is observed with a hi3110 CAN controller receiving data at high volume
+(from a separate machine sending with "cangen -g 0 -i -x"): The controller
+signals a huge number of interrupts (hundreds of millions per day) and
+every second there are about a dozen which are deemed spurious.
+
+In theory with high CPU load and the presence of higher priority tasks, the
+number of incorrectly detected spurious interrupts might increase beyond
+the 99,900 threshold and cause disablement of the interrupt.
+
+In practice it just increments the spurious interrupt count. But that can
+cause people to waste time investigating it over and over.
+
+Fix it by moving the accounting before the invocation of
+irq_finalize_oneshot().
+
+[ tglx: Folded change log update ]
+
+Fixes: 1e77d0a1ed74 ("genirq: Sanitize spurious interrupt detection of threaded irqs")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mathias Duckeck <m.duckeck@kunbus.de>
+Cc: Akshay Bhat <akshay.bhat@timesys.com>
+Cc: Casey Fitzpatrick <casey.fitzpatrick@timesys.com>
+Cc: stable@vger.kernel.org # v3.16+
+Link: https://lkml.kernel.org/r/1dfd8bbd16163940648045495e3e9698e63b50ad.1539867047.git.lukas@wunner.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ kernel/irq/manage.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -864,6 +864,9 @@ irq_forced_thread_fn(struct irq_desc *de
+ 
+ 	local_bh_disable();
+ 	ret = action->thread_fn(action->irq, action->dev_id);
++	if (ret == IRQ_HANDLED)
++		atomic_inc(&desc->threads_handled);
++
+ 	irq_finalize_oneshot(desc, action);
+ 	local_bh_enable();
+ 	return ret;
+@@ -880,6 +883,9 @@ static irqreturn_t irq_thread_fn(struct
+ 	irqreturn_t ret;
+ 
+ 	ret = action->thread_fn(action->irq, action->dev_id);
++	if (ret == IRQ_HANDLED)
++		atomic_inc(&desc->threads_handled);
++
+ 	irq_finalize_oneshot(desc, action);
+ 	return ret;
+ }
+@@ -957,8 +963,6 @@ static int irq_thread(void *data)
+ 		irq_thread_check_affinity(desc, action);
+ 
+ 		action_ret = handler_fn(desc, action);
+-		if (action_ret == IRQ_HANDLED)
+-			atomic_inc(&desc->threads_handled);
+ 		if (action_ret == IRQ_WAKE_THREAD)
+ 			irq_wake_secondary(desc, action);
+ 
+
+
