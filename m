@@ -2,143 +2,110 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7682C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF554C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A87E5208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 948DF21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:08:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pwln0nkK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pwln0nkK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87E5208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HgMDSgz7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 948DF21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbeKSVbo (ORCPT
+        id S1728560AbeKSVcG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:31:44 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43606 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728080AbeKSVbo (ORCPT
+        Mon, 19 Nov 2018 16:32:06 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33425 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728540AbeKSVcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:31:44 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 828BC60B26; Mon, 19 Nov 2018 11:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542625705;
-        bh=8OXYrPMTiTW8NDzFvFM0CMJ8a7uuECoJgB97wfy8vcI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Pwln0nkKhACRn4tcNgcoDA/Iq88dgXIChohnyuJpUSUfX5WuJJ9HU9s47LXeQimIx
-         JsxYn85ItMshz5xecSJSA/0PK7wnVOkZwGHTxIlojADqx8m+/SMu40dwryojn9QYDv
-         A13f6ijQL3LWnKAlTv4Jeu9R1Ggusf+fLqIf0PHE=
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 061C860767;
-        Mon, 19 Nov 2018 11:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542625705;
-        bh=8OXYrPMTiTW8NDzFvFM0CMJ8a7uuECoJgB97wfy8vcI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Pwln0nkKhACRn4tcNgcoDA/Iq88dgXIChohnyuJpUSUfX5WuJJ9HU9s47LXeQimIx
-         JsxYn85ItMshz5xecSJSA/0PK7wnVOkZwGHTxIlojADqx8m+/SMu40dwryojn9QYDv
-         A13f6ijQL3LWnKAlTv4Jeu9R1Ggusf+fLqIf0PHE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 061C860767
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qk1-f175.google.com with SMTP id q1so47795417qkf.13;
-        Mon, 19 Nov 2018 03:08:24 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKC9raqBk8P1x6amYD4t2RSktfVo5AJOW8FODjLE3SD3ZXEviqL
-        pRRoHAfExGE836e7CziqIzatVDH1ZdAGHeOuVNw=
-X-Google-Smtp-Source: AJdET5fGM7cdx2hdIblD7FEUS3UvR2JmF3CXZ0nCLPw7pkhNcj3empMzWx8sdOV6nYGkFv0vijCd3vzHIMJzmfXbRJs=
-X-Received: by 2002:a0c:c60b:: with SMTP id v11mr20960794qvi.198.1542625704255;
- Mon, 19 Nov 2018 03:08:24 -0800 (PST)
-MIME-Version: 1.0
-References: <1542619537-24038-1-git-send-email-todor.tomov@linaro.org>
-In-Reply-To: <1542619537-24038-1-git-send-email-todor.tomov@linaro.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Mon, 19 Nov 2018 16:38:10 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iG3bRoyFtfd60SO9t=upjcH+fQm1NAOMTvMpYnk5dHjFw@mail.gmail.com>
-Message-ID: <CAFp+6iG3bRoyFtfd60SO9t=upjcH+fQm1NAOMTvMpYnk5dHjFw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: msm8996: Add VFE SMMU node
-To:     todor.tomov@linaro.org
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 19 Nov 2018 16:32:06 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z11so11067887pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 03:08:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hcrTEn3IZek4MtdyEmTE+H8Qe3S1camCgGNvKmUVN5g=;
+        b=HgMDSgz7lIVkinQSPRcD0hc7uKMliZQy2dYzUBwzn50T/gCRORyT1jXm6M60h9IFFE
+         W41VZW5kwuIinDWx0EpVvKWP0N1ift1G4vn26fAJa1NVA0TrqGhqpvMONck5xLXZRtVu
+         SjXxfQ94tbKbJKEUe7m13/A6YWdmSfo7oAJ+M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hcrTEn3IZek4MtdyEmTE+H8Qe3S1camCgGNvKmUVN5g=;
+        b=YRyVyj5myuZZAAuH8My+PUjyLwvg3e2jnl/NaABtLjGKh1dYPGLUVKiDPZrlzv3pJi
+         Mhye6GJma2ML04iRxB2gN0JnqHxoBakeBI8dyucJRU7Mrj9Wo4oP+nZenpyMBfOCk/Ud
+         hqXyzkgvj+WTJYcKFpcoI5n2I7XoUFjtpLOoFPzzUDYMTFAYcs1Y19ZloW/EqzNtVF8q
+         eWKZFuBtA+TxFphti/Y1fO7nl4unx/fn0V+eel0HwN4rOlGpkUWANJYIvo+zRR02/yZh
+         Z6Bc4opEew6Zauv4zEq/ncmLGRvoLC3FIJ9DtSwEsPnRaooSBDrulROsP/Grp8edXHSe
+         CIjA==
+X-Gm-Message-State: AGRZ1gI37SM9wlAJ2+7pV+mcHATj5BHJzYkU0CcQ31tD6gUzMWzSzVBV
+        o2KlZLj1m5eKgwwnp4M5JK36hw==
+X-Google-Smtp-Source: AJdET5d5xxObNJZbrcPazy5hRYcV7QKciHdrN370vaxeI4POrOkFjT//0qHX4PcmI4RBjzf6s47LHg==
+X-Received: by 2002:a62:a511:: with SMTP id v17-v6mr22366371pfm.18.1542625728236;
+        Mon, 19 Nov 2018 03:08:48 -0800 (PST)
+Received: from localhost.localdomain (61-216-91-114.HINET-IP.hinet.net. [61.216.91.114])
+        by smtp.gmail.com with ESMTPSA id q25sm43906934pgb.2.2018.11.19.03.08.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 19 Nov 2018 03:08:46 -0800 (PST)
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Sriharsha Allenki <sallenki@codeaurora.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shawn Guo <shawn.guo@linaro.org>
+Subject: [PATCH v4 0/2] Add Synopsys High-Speed USB PHY driver for Qualcomm SoCs
+Date:   Mon, 19 Nov 2018 19:08:10 +0800
+Message-Id: <20181119110812.15825-1-shawn.guo@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Todor,
+It's based on a downstream driver from Sriharsha Allenki <sallenki@codeaurora.org>
+that uses USB phy framework, and gets rewrote to adpot generic phy
+framework together with quite some cleanups.
 
-On Mon, Nov 19, 2018 at 2:57 PM Todor Tomov <todor.tomov@linaro.org> wrote:
->
-> Add VFE SMMU node.
->
-> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
-> ---
->
-> This patch depends on patchset:
-> https://lore.kernel.org/patchwork/cover/1013166/
->
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 13bb964..a4d087e5 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -950,6 +950,23 @@
->                         };
->                 };
->
-> +               vfe_smmu: arm,smmu@da0000 {
-> +                       compatible = "qcom,msm8996-smmu-v2", "qcom,smmu-v2";
-> +                       reg = <0xda0000 0x10000>;
-> +
-> +                       #global-interrupts = <1>;
-> +                       interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>,
-> +                                    <GIC_SPI 344 IRQ_TYPE_LEVEL_HIGH>;
-> +                       power-domains = <&mmcc MMAGIC_CAMSS_GDSC>;
-> +                       clocks = <&mmcc SMMU_VFE_AHB_CLK>,
-> +                                <&mmcc SMMU_VFE_AXI_CLK>;
-> +                       clock-names = "iface",
-> +                                     "bus";
-> +                       #iommu-cells = <1>;
-> +                       status = "ok";
+Changes for v4:
+ - Kill device tree property 'qcom,init-seq' by moving the settings
+   into phy driver as device match data.
 
-No point of adding this status here.
-Rest looks good to me.
+Changes for v3:
+ - Use SoC specific compatible "qcom,qcs404-usb-hsphy".
+ - Use OF graph instead of extcon bindings to model the link to USB
+   connector.
 
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Changes for v2:
+ - Add a pointer to phy/phy-bindings.txt for property #phy-cells.
+ - Roll back voltage settings in case function
+   qcom_snps_hsphy_config_regulators() fails in the middle.
+ - Add a comment for init-seq tuple which consists of 3 numbers.
+ - Sort include headers alphabetically.
+ - Sort register definitions in order of offset.
 
-Best regards
-Vivek
+Shawn Guo (1):
+  phy: qualcomm: Add Synopsys High-Speed USB PHY driver
 
-> +               };
-> +
->                 agnoc@0 {
->                         power-domains = <&gcc AGGRE0_NOC_GDSC>;
->                         compatible = "simple-pm-bus";
-> --
-> 2.7.4
->
+Sriharsha Allenki (1):
+  dt-bindings: phy: Add Qualcomm Synopsys High-Speed USB PHY binding
 
+ .../phy/qcom,snps-28nm-usb-hs-phy.txt         |  87 +++
+ drivers/phy/qualcomm/Kconfig                  |  10 +
+ drivers/phy/qualcomm/Makefile                 |   1 +
+ .../phy/qualcomm/phy-qcom-usb-hs-snsp-28nm.c  | 535 ++++++++++++++++++
+ 4 files changed, 633 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-usb-hs-snsp-28nm.c
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.18.0
+
