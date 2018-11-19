@@ -2,342 +2,103 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C38C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5C9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DCDE20684
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DCDE20684
+	by mail.kernel.org (Postfix) with ESMTP id 6FF0B20684
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF0B20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbeKSSta (ORCPT
+        id S1727132AbeKSSuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:49:30 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36876 "EHLO mail.bootlin.com"
+        Mon, 19 Nov 2018 13:50:04 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36958 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbeKSSta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:49:30 -0500
+        id S1726175AbeKSSuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:50:04 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4B37E20CFD; Mon, 19 Nov 2018 09:26:33 +0100 (CET)
-Received: from bootlin.com (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C9C6F2039F;
-        Mon, 19 Nov 2018 09:26:32 +0100 (CET)
-Date:   Mon, 19 Nov 2018 09:26:32 +0100
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tony Lindgren <tony@atomide.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@free-electrons.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v2 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
- mode and submode
-Message-ID: <20181119092632.7048bc46@bootlin.com>
-In-Reply-To: <20181109234755.21687-5-grygorii.strashko@ti.com>
-References: <20181109234755.21687-1-grygorii.strashko@ti.com>
-        <20181109234755.21687-5-grygorii.strashko@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id 3168820D0D; Mon, 19 Nov 2018 09:27:08 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0481C2039F;
+        Mon, 19 Nov 2018 09:27:08 +0100 (CET)
+Date:   Mon, 19 Nov 2018 09:27:07 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v2 01/12] drm/sun4i: sun6i_mipi_dsi: Compute burst mode
+ loop N1 instruction delay
+Message-ID: <20181119082707.kbsw2gyntxxbh6no@flea>
+References: <20181116163916.29621-1-jagan@amarulasolutions.com>
+ <20181116163916.29621-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="e76qeq3cbnztemdd"
+Content-Disposition: inline
+In-Reply-To: <20181116163916.29621-2-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Grygorii,
 
-On Fri, 9 Nov 2018 17:47:54 -0600
-Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+--e76qeq3cbnztemdd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->Convert mvebu-cp110-comphy PHY driver to use recently introduced
->PHY_MODE_ETHERNET and phy_set_mode_ext().
+On Fri, Nov 16, 2018 at 10:09:05PM +0530, Jagan Teki wrote:
+> Loop N1 instruction delay for burst mode lcd panel are
+> computed as per BSP code.
+>=20
+> Reference code is available in BSP (from linux-sunxi
+> drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+>=20
+> dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=3D
+> (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
+> =3D> (((mode->htotal - mode->hdisplay) * 150) /
+>      ((mode->clock / 1000) * 8)) - 50;
+>=20
+> So use the similar computation for loop N1 delay.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-Sorry I missed your V2, hopefully I tested the right version this time.
-Tested on MCBin, this works just fine.
+*why* are you doing this? What is it fixing? on which devices?
 
-Thanks,
+Maxime
 
-Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-
->Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->---
-> drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 19 +-----
-> drivers/phy/marvell/phy-mvebu-cp110-comphy.c    | 83 ++++++++++++++-----------
-> 2 files changed, 48 insertions(+), 54 deletions(-)
->
->diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
->index 7a37a37..731793a 100644
->--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
->+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
->@@ -1165,28 +1165,13 @@ static void mvpp22_gop_setup_irq(struct mvpp2_port *port)
->  */
-> static int mvpp22_comphy_init(struct mvpp2_port *port)
-> {
->-	enum phy_mode mode;
-> 	int ret;
-> 
-> 	if (!port->comphy)
-> 		return 0;
-> 
->-	switch (port->phy_interface) {
->-	case PHY_INTERFACE_MODE_SGMII:
->-	case PHY_INTERFACE_MODE_1000BASEX:
->-		mode = PHY_MODE_SGMII;
->-		break;
->-	case PHY_INTERFACE_MODE_2500BASEX:
->-		mode = PHY_MODE_2500SGMII;
->-		break;
->-	case PHY_INTERFACE_MODE_10GKR:
->-		mode = PHY_MODE_10GKR;
->-		break;
->-	default:
->-		return -EINVAL;
->-	}
->-
->-	ret = phy_set_mode(port->comphy, mode);
->+	ret = phy_set_mode_ext(port->comphy, PHY_MODE_ETHERNET,
->+			       port->phy_interface);
-> 	if (ret)
-> 		return ret;
-> 
->diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
->index 79b52c3..7dee72b 100644
->--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
->+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
->@@ -9,6 +9,7 @@
-> #include <linux/iopoll.h>
-> #include <linux/mfd/syscon.h>
-> #include <linux/module.h>
->+#include <linux/phy.h>
-> #include <linux/phy/phy.h>
-> #include <linux/platform_device.h>
-> #include <linux/regmap.h>
->@@ -131,26 +132,26 @@ struct mvebu_comhy_conf {
-> 
-> static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
-> 	/* lane 0 */
->-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
->-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_2500BASEX, 0x1),
-> 	/* lane 1 */
->-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_SGMII, 0x1),
->-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_2500SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
-> 	/* lane 2 */
->-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_SGMII, 0x1),
->-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_2500SGMII, 0x1),
->-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_10GKR, 0x1),
->+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_2500BASEX, 0x1),
->+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_10GKR, 0x1),
-> 	/* lane 3 */
->-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_SGMII, 0x2),
->-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_2500SGMII, 0x2),
->+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_SGMII, 0x2),
->+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_2500BASEX, 0x2),
-> 	/* lane 4 */
->-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_SGMII, 0x2),
->-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_2500SGMII, 0x2),
->-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_10GKR, 0x2),
->-	MVEBU_COMPHY_CONF(4, 1, PHY_MODE_SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_SGMII, 0x2),
->+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_2500BASEX, 0x2),
->+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_10GKR, 0x2),
->+	MVEBU_COMPHY_CONF(4, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
-> 	/* lane 5 */
->-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_SGMII, 0x1),
->-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_2500SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
->+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
-> };
-> 
-> struct mvebu_comphy_priv {
->@@ -163,10 +164,12 @@ struct mvebu_comphy_lane {
-> 	struct mvebu_comphy_priv *priv;
-> 	unsigned id;
-> 	enum phy_mode mode;
->+	int submode;
-> 	int port;
-> };
-> 
->-static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
->+static int mvebu_comphy_get_mux(int lane, int port,
->+				enum phy_mode mode, int submode)
-> {
-> 	int i, n = ARRAY_SIZE(mvebu_comphy_cp110_modes);
-> 
->@@ -177,7 +180,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
-> 	for (i = 0; i < n; i++) {
-> 		if (mvebu_comphy_cp110_modes[i].lane == lane &&
-> 		    mvebu_comphy_cp110_modes[i].port == port &&
->-		    mvebu_comphy_cp110_modes[i].mode == mode)
->+		    mvebu_comphy_cp110_modes[i].mode == submode)
-> 			break;
-> 	}
-> 
->@@ -187,8 +190,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
-> 	return mvebu_comphy_cp110_modes[i].mux;
-> }
-> 
->-static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
->-					     enum phy_mode mode)
->+static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane)
-> {
-> 	struct mvebu_comphy_priv *priv = lane->priv;
-> 	u32 val;
->@@ -206,14 +208,14 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
-> 		 MVEBU_COMPHY_SERDES_CFG0_HALF_BUS |
-> 		 MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xf) |
-> 		 MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xf));
->-	if (mode == PHY_MODE_10GKR)
->+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
-> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xe) |
-> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xe);
->-	else if (mode == PHY_MODE_2500SGMII)
->+	else if (lane->submode == PHY_INTERFACE_MODE_2500BASEX)
-> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x8) |
-> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x8) |
-> 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
->-	else if (mode == PHY_MODE_SGMII)
->+	else if (lane->submode == PHY_INTERFACE_MODE_SGMII)
-> 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x6) |
-> 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x6) |
-> 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
->@@ -243,7 +245,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
-> 	/* refclk selection */
-> 	val = readl(priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
-> 	val &= ~MVEBU_COMPHY_MISC_CTRL0_REFCLK_SEL;
->-	if (mode == PHY_MODE_10GKR)
->+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
-> 		val |= MVEBU_COMPHY_MISC_CTRL0_ICP_FORCE;
-> 	writel(val, priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
-> 
->@@ -261,8 +263,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
-> 	writel(val, priv->base + MVEBU_COMPHY_LOOPBACK(lane->id));
-> }
-> 
->-static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
->-				  enum phy_mode mode)
->+static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane)
-> {
-> 	struct mvebu_comphy_priv *priv = lane->priv;
-> 	u32 val;
->@@ -303,13 +304,13 @@ static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
-> 	return 0;
-> }
-> 
->-static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
->+static int mvebu_comphy_set_mode_sgmii(struct phy *phy)
-> {
-> 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
-> 	struct mvebu_comphy_priv *priv = lane->priv;
-> 	u32 val;
-> 
->-	mvebu_comphy_ethernet_init_reset(lane, mode);
->+	mvebu_comphy_ethernet_init_reset(lane);
-> 
-> 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
-> 	val &= ~MVEBU_COMPHY_RX_CTRL1_CLK8T_EN;
->@@ -330,7 +331,7 @@ static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
-> 	val |= MVEBU_COMPHY_GEN1_S0_TX_EMPH(0x1);
-> 	writel(val, priv->base + MVEBU_COMPHY_GEN1_S0(lane->id));
-> 
->-	return mvebu_comphy_init_plls(lane, PHY_MODE_SGMII);
->+	return mvebu_comphy_init_plls(lane);
-> }
-> 
-> static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
->@@ -339,7 +340,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
-> 	struct mvebu_comphy_priv *priv = lane->priv;
-> 	u32 val;
-> 
->-	mvebu_comphy_ethernet_init_reset(lane, PHY_MODE_10GKR);
->+	mvebu_comphy_ethernet_init_reset(lane);
-> 
-> 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
-> 	val |= MVEBU_COMPHY_RX_CTRL1_RXCLK2X_SEL |
->@@ -469,7 +470,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
-> 	val |= MVEBU_COMPHY_EXT_SELV_RX_SAMPL(0x1a);
-> 	writel(val, priv->base + MVEBU_COMPHY_EXT_SELV(lane->id));
-> 
->-	return mvebu_comphy_init_plls(lane, PHY_MODE_10GKR);
->+	return mvebu_comphy_init_plls(lane);
-> }
-> 
-> static int mvebu_comphy_power_on(struct phy *phy)
->@@ -479,7 +480,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
-> 	int ret, mux;
-> 	u32 val;
-> 
->-	mux = mvebu_comphy_get_mux(lane->id, lane->port, lane->mode);
->+	mux = mvebu_comphy_get_mux(lane->id, lane->port,
->+				   lane->mode, lane->submode);
-> 	if (mux < 0)
-> 		return -ENOTSUPP;
-> 
->@@ -492,12 +494,12 @@ static int mvebu_comphy_power_on(struct phy *phy)
-> 	val |= mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
-> 	regmap_write(priv->regmap, MVEBU_COMPHY_SELECTOR, val);
-> 
->-	switch (lane->mode) {
->-	case PHY_MODE_SGMII:
->-	case PHY_MODE_2500SGMII:
->-		ret = mvebu_comphy_set_mode_sgmii(phy, lane->mode);
->+	switch (lane->submode) {
->+	case PHY_INTERFACE_MODE_SGMII:
->+	case PHY_INTERFACE_MODE_2500BASEX:
->+		ret = mvebu_comphy_set_mode_sgmii(phy);
-> 		break;
->-	case PHY_MODE_10GKR:
->+	case PHY_INTERFACE_MODE_10GKR:
-> 		ret = mvebu_comphy_set_mode_10gkr(phy);
-> 		break;
-> 	default:
->@@ -517,10 +519,17 @@ static int mvebu_comphy_set_mode(struct phy *phy,
-> {
-> 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
-> 
->-	if (mvebu_comphy_get_mux(lane->id, lane->port, mode) < 0)
->+	if (mode != PHY_MODE_ETHERNET)
->+		return -EINVAL;
->+
->+	if (submode == PHY_INTERFACE_MODE_1000BASEX)
->+		submode = PHY_INTERFACE_MODE_SGMII;
->+
->+	if (mvebu_comphy_get_mux(lane->id, lane->port, mode, submode) < 0)
-> 		return -EINVAL;
-> 
-> 	lane->mode = mode;
->+	lane->submode = submode;
-> 	return 0;
-> }
-> 
-
-
-
--- 
-Maxime Chevallier, Bootlin
-Embedded Linux and kernel engineering
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
 https://bootlin.com
+
+--e76qeq3cbnztemdd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/Jz2wAKCRDj7w1vZxhR
+xaDJAP4i/bU7ARuwyxeR6o5j7V/Cqzn5B9hG3uEfoPH7UGCvpQEAnNfUq8RCoLIV
+u3MSC11YJN5XolzUO0Ae2lWI/69uwgw=
+=TqW6
+-----END PGP SIGNATURE-----
+
+--e76qeq3cbnztemdd--
