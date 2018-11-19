@@ -2,137 +2,240 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB35C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27DDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9503B20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8198020823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:29:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="nViARzlu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9503B20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="L2pAfsSp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8198020823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeKSVvU (ORCPT
+        id S1728697AbeKSVwp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:51:20 -0500
-Received: from plaes.org ([188.166.43.21]:46110 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728518AbeKSVvT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:51:19 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 0657640282;
-        Mon, 19 Nov 2018 11:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1542626877; bh=BejDCY+wpAWZKpndQTQdd4pESffLH2SRwnk73Phj/5U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nViARzlumL2PEk3r29cMAyeGtzrQMOkn3O4/N21+sWrnIUTftIqQ8td7gbBwhuRIp
-         V4xUXGJl5BVhcYBAtZpm2H6jHc31rLxdEv4mvRElwc0k4YdzFA4DuDHIsqyUG2BLkM
-         7hTyUTVIOUCRvhkqNB4vUVVZ+nLMHg31ISscq4ZX7+m/LXlfIpjWUAL5SoJbOzS7Y/
-         ERyQVHo92j5yj1Merbf7WOVkV1/gtT3nB0HgwhAB14pkuhdx2hDcc7dAjbJnSMj7ht
-         ZT8c28X2VPSihfMQfHK95c7a6wA1dcY1f7xCc42X5Z1Ug8a9BjiueEyNw+XKOm/FVw
-         QJg7+QRlGkDFw==
-Date:   Mon, 19 Nov 2018 11:27:55 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-Message-ID: <20181119112755.qtthenx54v3tnok3@plaes.org>
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
- <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
- <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
- <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
- <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
+        Mon, 19 Nov 2018 16:52:45 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:37552 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728553AbeKSVwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:52:44 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7CAA610C1572;
+        Mon, 19 Nov 2018 03:29:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542626964; bh=ae0XlBK1VHd6MNJjzpSZIdKKTGdhQ7Se20K47fSA5+w=;
+        h=From:To:Cc:Subject:Date:From;
+        b=L2pAfsSpSBqex4BGf3OkHsK+S/F1lno0/HmLt5aj6pPLmMTmHzmuEhj8LAhunZOgw
+         eRnw6F6XRIHz9+9hnYTzxPu3bQQrI7Tks2/cHNI3hyBHDPCnpBDM+Qh9E3BnHGfkrg
+         DxwVodMHhnqU0VJiXn+fK/Sa2TTzszYLssGr0VaON3pOBzCsb2Ez2qyk/kUJF6toNC
+         iMFJQ/lDnr2qT15mwuUv7Mvx6XF0p9yRxOT5bTkWAHyZSNFJteSEehgb2V5cskblza
+         MDSyaMw/UxTQY7U8c1BaMspUqhhgPKgUe8vLoJcLqF/5AFq8NodLUmzCi1TrueFL/K
+         IUw0mwLwEIwkA==
+Received: from abrodkin-7480l.internal.synopsys.com (unknown [10.121.8.88])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BF0AF3AC1;
+        Mon, 19 Nov 2018 03:29:22 -0800 (PST)
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-snps-arc@lists.infradead.org,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v3] clocksource/drivers/arc_timer: Utilize generic sched_clock
+Date:   Mon, 19 Nov 2018 14:29:17 +0300
+Message-Id: <20181119112917.4214-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 01:35:57PM -0600, Larry Finger wrote:
-> On 11/18/18 2:23 AM, Priit Laes wrote:
-> > On Sat, Nov 17, 2018 at 09:31:35PM -0600, Larry Finger wrote:
-> > > On 11/14/18 12:27 PM, Priit Laes wrote:
-> > > > Kernel library has a common cordic algorithm which is identical
-> > > > to internally implementatd one, so use it and drop the duplicate
-> > > > implementation.
-> > > > 
-> 
-> My test setup has a hardware failure, thus I cannot test your patch, but I
-> now believe it to be correct. Thus your first and third patches may be
-> annotated with
-> ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
-> 
-> One thing that should be done is to fix the error in the b43 code for stable
-> as it was introduced in 2.6.34. I propose adding the attached patched to
-> your series placed between your current 2nd and 3rd patches so that the old
-> kernels get fixed. Of course, your 3rd patch will need to be revised. If all
-> 4 of the patches get submitted together there will be no problems with the
-> timing. My change will exist for seconds in the mainline kernel, but it will
-> get propagated back through stable.
+It turned out we used to use default implementation of sched_clock()
+from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
+by default we had 10 msec granularity of time measurement.
 
-Thanks!
+Now given ARC built-in timers are clocked with the same frequency as
+CPU cores we may get much higher precision of time tracking.
 
-> From b42ae73ef7505de93e4c66fb9f66930e3f3d969a Mon Sep 17 00:00:00 2001
-> From: Larry Finger <Larry.Finger@lwfinger.net>
-> Date: Sun, 18 Nov 2018 13:15:07 -0600
-> Subject: [PATCH] b43: Fix error in cordic routine
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> To: kvalo@codeaurora.org
-> Cc: linux-wireless@vger.kernel.org
-> 
-> The cordic routine for calculating sines and cosines that was added in
-> commit 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
-> contains an error whereby a quantity declared u32 can in fact go negative.
+Thus we switch to generic sched_clock which really reads ARC hardware
+counters.
 
-It seems to be different commit though:
-commit 6f98e62a9 ("b43: update cordic code to match current specs")
+This is especially helpful for measuring short events.
+That's what we used to have:
+------------------------------>8------------------------
+$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
 
-> This problem was detected by Priit Laes who is switching b43 to use the
-> routine in the library functions of the kernel.
-> 
-> Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
-> Reported-by: Priit Laes <plaes@plaes.org>
-> Cc: Rafa?? Mi??ecki <zajec5@gmail.com>
-> Cc: Stable <stable@vger.kernel.org> # 2.6.34
-> Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-> ---
->  drivers/net/wireless/broadcom/b43/phy_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
-> index 85f2ca989565..ef3ffa5ad466 100644
-> --- a/drivers/net/wireless/broadcom/b43/phy_common.c
-> +++ b/drivers/net/wireless/broadcom/b43/phy_common.c
-> @@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
->  	u8 i;
->  	s32 tmp;
->  	s8 signx = 1;
-> -	u32 angle = 0;
-> +	s32 angle = 0;
->  	struct b43_c32 ret = { .i = 39797, .q = 0, };
->  
->  	while (theta > (180 << 16))
-> -- 
-> 2.16.4
-> 
+ Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
+
+         10.000000      task-clock (msec)         #    2.832 CPUs utilized
+                 1      context-switches          #    0.100 K/sec
+                 1      cpu-migrations            #    0.100 K/sec
+                63      page-faults               #    0.006 M/sec
+           3049480      cycles                    #    0.305 GHz
+           1091259      instructions              #    0.36  insn per cycle
+            256828      branches                  #   25.683 M/sec
+             27026      branch-misses             #   10.52% of all branches
+
+       0.003530687 seconds time elapsed
+
+       0.000000000 seconds user
+       0.010000000 seconds sys
+------------------------------>8------------------------
+
+And now we'll see:
+------------------------------>8------------------------
+$ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
+
+ Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
+
+          3.004322      task-clock (msec)         #    0.865 CPUs utilized
+                 1      context-switches          #    0.333 K/sec
+                 1      cpu-migrations            #    0.333 K/sec
+                63      page-faults               #    0.021 M/sec
+           2986734      cycles                    #    0.994 GHz
+           1087466      instructions              #    0.36  insn per cycle
+            255209      branches                  #   84.947 M/sec
+             26002      branch-misses             #   10.19% of all branches
+
+       0.003474829 seconds time elapsed
+
+       0.003519000 seconds user
+       0.000000000 seconds sys
+------------------------------>8------------------------
+
+Note how much more meaningful is the second output - time spent for
+execution pretty much matches number of cycles spent (we're runnign
+@ 1GHz here).
+
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Vineet Gupta <vgupta@synopsys.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+---
+
+Changes v2 -> v3:
+ * Rebased on top of v4.20-rc3
+ * Moved GENERIC_SCHED_CLOCK to alphabetically-sorted location in
+   arch/arc/Kconfig
+
+Changes v1 -> v2:
+ * Timer read callbacks marked as "notrace"
+ * ARC Timer1 explicitly described as 32-bit one on
+   sched_clock_register() invocation
+
+ arch/arc/Kconfig                |  1 +
+ drivers/clocksource/Kconfig     |  1 +
+ drivers/clocksource/arc_timer.c | 22 ++++++++++++++++++++++
+ 3 files changed, 24 insertions(+)
+
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index c9e2a1323536..74b5a654f664 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -26,6 +26,7 @@ config ARC
+ 	select GENERIC_IRQ_SHOW
+ 	select GENERIC_PCI_IOMAP
+ 	select GENERIC_PENDING_IRQ if SMP
++	select GENERIC_SCHED_CLOCK
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_TRACEHOOK
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 55c77e44bb2d..d9c8a779dd7d 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -290,6 +290,7 @@ config CLKSRC_MPS2
+ 
+ config ARC_TIMERS
+ 	bool "Support for 32-bit TIMERn counters in ARC Cores" if COMPILE_TEST
++	depends on GENERIC_SCHED_CLOCK
+ 	select TIMER_OF
+ 	help
+ 	  These are legacy 32-bit TIMER0 and TIMER1 counters found on all ARC cores
+diff --git a/drivers/clocksource/arc_timer.c b/drivers/clocksource/arc_timer.c
+index 20da9b1d7f7d..b28970ca4a7a 100644
+--- a/drivers/clocksource/arc_timer.c
++++ b/drivers/clocksource/arc_timer.c
+@@ -23,6 +23,7 @@
+ #include <linux/cpu.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
++#include <linux/sched_clock.h>
+ 
+ #include <soc/arc/timers.h>
+ #include <soc/arc/mcip.h>
+@@ -88,6 +89,11 @@ static u64 arc_read_gfrc(struct clocksource *cs)
+ 	return (((u64)h) << 32) | l;
+ }
+ 
++static notrace u64 arc_gfrc_clock_read(void)
++{
++	return arc_read_gfrc(NULL);
++}
++
+ static struct clocksource arc_counter_gfrc = {
+ 	.name   = "ARConnect GFRC",
+ 	.rating = 400,
+@@ -111,6 +117,8 @@ static int __init arc_cs_setup_gfrc(struct device_node *node)
+ 	if (ret)
+ 		return ret;
+ 
++	sched_clock_register(arc_gfrc_clock_read, 64, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_gfrc, arc_timer_freq);
+ }
+ TIMER_OF_DECLARE(arc_gfrc, "snps,archs-timer-gfrc", arc_cs_setup_gfrc);
+@@ -139,6 +147,11 @@ static u64 arc_read_rtc(struct clocksource *cs)
+ 	return (((u64)h) << 32) | l;
+ }
+ 
++static notrace u64 arc_rtc_clock_read(void)
++{
++	return arc_read_rtc(NULL);
++}
++
+ static struct clocksource arc_counter_rtc = {
+ 	.name   = "ARCv2 RTC",
+ 	.rating = 350,
+@@ -170,6 +183,8 @@ static int __init arc_cs_setup_rtc(struct device_node *node)
+ 
+ 	write_aux_reg(AUX_RTC_CTRL, 1);
+ 
++	sched_clock_register(arc_rtc_clock_read, 64, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_rtc, arc_timer_freq);
+ }
+ TIMER_OF_DECLARE(arc_rtc, "snps,archs-timer-rtc", arc_cs_setup_rtc);
+@@ -185,6 +200,11 @@ static u64 arc_read_timer1(struct clocksource *cs)
+ 	return (u64) read_aux_reg(ARC_REG_TIMER1_CNT);
+ }
+ 
++static notrace u64 arc_timer1_clock_read(void)
++{
++	return arc_read_timer1(NULL);
++}
++
+ static struct clocksource arc_counter_timer1 = {
+ 	.name   = "ARC Timer1",
+ 	.rating = 300,
+@@ -209,6 +229,8 @@ static int __init arc_cs_setup_timer1(struct device_node *node)
+ 	write_aux_reg(ARC_REG_TIMER1_CNT, 0);
+ 	write_aux_reg(ARC_REG_TIMER1_CTRL, TIMER_CTRL_NH);
+ 
++	sched_clock_register(arc_timer1_clock_read, 32, arc_timer_freq);
++
+ 	return clocksource_register_hz(&arc_counter_timer1, arc_timer_freq);
+ }
+ 
+-- 
+2.19.1
 
