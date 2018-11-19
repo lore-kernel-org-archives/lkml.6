@@ -2,160 +2,103 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB43BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CF0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9276D20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:37:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9276D20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id CEE3C2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:38:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CTNQlXQX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE3C2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727877AbeKSVBJ (ORCPT
+        id S1727940AbeKSVCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:01:09 -0500
-Received: from www62.your-server.de ([213.133.104.62]:58854 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbeKSVBJ (ORCPT
+        Mon, 19 Nov 2018 16:02:02 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:61879 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeKSVCC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:01:09 -0500
-Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gOgwB-0003ic-UY; Mon, 19 Nov 2018 11:37:51 +0100
-Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gOgwB-0005yq-Ig; Mon, 19 Nov 2018 11:37:51 +0100
-Subject: Re: [PATCH 1/4] bpf: account for freed JIT allocations in arch code
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20181117185715.25198-1-ard.biesheuvel@linaro.org>
- <20181117185715.25198-2-ard.biesheuvel@linaro.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <b37c3411-7950-dcb3-f0c3-6d9f589d36ab@iogearbox.net>
-Date:   Mon, 19 Nov 2018 11:37:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Mon, 19 Nov 2018 16:02:02 -0500
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wAJAcMJh006616
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 19:38:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wAJAcMJh006616
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542623903;
+        bh=+gAI4g5S1M52sVqB21rRM39JgWE2Z6AU3KFfL5ct27U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CTNQlXQXXOxYhIiHEBxOkyQTMLWrZTbjOXJXL4kHJ8/Hj62KJ092nsZlTOX++hT64
+         BxfScaN8QfdTYZYAYdmdmSY3Z+bsWw4fUoGTFWv1iIG9Lp3a819ZFt6N+C1pwSZNeR
+         7DlpZzKabEAbO1IIFxt6uSwyENMu+DXzTC9rQRT6UWJFqvUYsyCrpMxIVovDF0D/2E
+         jP26mmw3tovN7Cc5FJPCfXb4aUdIQBt1BFcJjo983RNKfGFbB92NFk+nhSzuAYmATg
+         i0URAiow9QfI5WoD3C2Qar8OtIqPViYD7iACVqR76HrHBTuxal1ndYOCRRa1CCrNsZ
+         en0jJ6iK27h7w==
+X-Nifty-SrcIP: [209.85.217.42]
+Received: by mail-vs1-f42.google.com with SMTP id y27so17490920vsi.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:38:23 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLp4rI+xWWfUUsZfpyOfg0Tt/edXkhqZkYPbNrb38todOTkEkHB
+        EkMyFx/DjC5+EyPQNO6dqhuVKGuctPr2LSzhyFo=
+X-Google-Smtp-Source: AJdET5dNXkF7//KGo9MfV/qDn6XjJAnWedhPEHFdlDWx0MoPTMrPZXF0iymc2cMO/K3ocw8jIiS4dWQI4g/4Nc1lSY0=
+X-Received: by 2002:a67:a858:: with SMTP id r85mr8739883vse.215.1542623902374;
+ Mon, 19 Nov 2018 02:38:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181117185715.25198-2-ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25134/Mon Nov 19 07:16:12 2018)
+References: <1542349141-7229-2-git-send-email-yamada.masahiro@socionext.com> <201811171831.qhwHC7gp%fengguang.wu@intel.com>
+In-Reply-To: <201811171831.qhwHC7gp%fengguang.wu@intel.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 19 Nov 2018 19:37:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQQE+dexoqsrkxnHNf3J1o83PkHD1vf7RUKYFN1QugBJw@mail.gmail.com>
+Message-ID: <CAK7LNAQQE+dexoqsrkxnHNf3J1o83PkHD1vf7RUKYFN1QugBJw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] build_bug.h: remove all dummy BUILD_BUG_ON stubs for sparse
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/17/2018 07:57 PM, Ard Biesheuvel wrote:
-> Commit ede95a63b5e84 ("bpf: add bpf_jit_limit knob to restrict unpriv
-> allocations") added a call to bpf_jit_uncharge_modmem() to the routine
-> bpf_jit_binary_free() which is called from the __weak bpf_jit_free().
-> This function is overridden by arches, some of which do not call
-> bpf_jit_binary_free() to release the memory, and so the released
-> memory is not accounted for, potentially leading to spurious allocation
-> failures.
-> 
-> So replace the direct calls to module_memfree() in the arch code with
-> calls to bpf_jit_binary_free().
+On Sat, Nov 17, 2018 at 7:56 PM kbuild test robot <lkp@intel.com> wrote:
+>
+> Hi Masahiro,
+>
+> I love your patch! Perhaps something to improve:
+>
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.20-rc2 next-20181116]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Masahiro-Yamada/build_bug-h-remove-negative-array-fallback-for-BUILD_BUG_ON/20181116-190414
+> config: x86_64-allmodconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64
 
-Sorry but this patch is completely buggy, and above description on the
-accounting incorrect as well. Looks like this patch was not tested at all.
 
-The below cBPF JITs that use module_memfree() which you replace with
-bpf_jit_binary_free() are using module_alloc() internally to get the JIT
-image buffer ...
+OK, I was digging into this Sparse warning.
 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/mips/net/bpf_jit.c           | 2 +-
->  arch/powerpc/net/bpf_jit_comp.c   | 2 +-
->  arch/powerpc/net/bpf_jit_comp64.c | 5 +----
->  arch/sparc/net/bpf_jit_comp_32.c  | 2 +-
->  4 files changed, 4 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/mips/net/bpf_jit.c b/arch/mips/net/bpf_jit.c
-> index 4d8cb9bb8365..1b69897274a1 100644
-> --- a/arch/mips/net/bpf_jit.c
-> +++ b/arch/mips/net/bpf_jit.c
-> @@ -1264,7 +1264,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
->  void bpf_jit_free(struct bpf_prog *fp)
->  {
->  	if (fp->jited)
-> -		module_memfree(fp->bpf_func);
-> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
->  
->  	bpf_prog_unlock_free(fp);
->  }
-> diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
-> index d5bfe24bb3b5..a1ea1ea6b40d 100644
-> --- a/arch/powerpc/net/bpf_jit_comp.c
-> +++ b/arch/powerpc/net/bpf_jit_comp.c
-> @@ -683,7 +683,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
->  void bpf_jit_free(struct bpf_prog *fp)
->  {
->  	if (fp->jited)
-> -		module_memfree(fp->bpf_func);
-> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
->  
->  	bpf_prog_unlock_free(fp);
->  }
-> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
-> index 50b129785aee..84c8f013a6c6 100644
-> --- a/arch/powerpc/net/bpf_jit_comp64.c
-> +++ b/arch/powerpc/net/bpf_jit_comp64.c
-> @@ -1024,11 +1024,8 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
->  /* Overriding bpf_jit_free() as we don't set images read-only. */
->  void bpf_jit_free(struct bpf_prog *fp)
->  {
-> -	unsigned long addr = (unsigned long)fp->bpf_func & PAGE_MASK;
-> -	struct bpf_binary_header *bpf_hdr = (void *)addr;
-> -
->  	if (fp->jited)
-> -		bpf_jit_binary_free(bpf_hdr);
-> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
->  
->  	bpf_prog_unlock_free(fp);
->  }
-> diff --git a/arch/sparc/net/bpf_jit_comp_32.c b/arch/sparc/net/bpf_jit_comp_32.c
-> index a5ff88643d5c..01bda6bc9e7f 100644
-> --- a/arch/sparc/net/bpf_jit_comp_32.c
-> +++ b/arch/sparc/net/bpf_jit_comp_32.c
-> @@ -759,7 +759,7 @@ cond_branch:			f_offset = addrs[i + filter[i].jf];
->  void bpf_jit_free(struct bpf_prog *fp)
->  {
->  	if (fp->jited)
-> -		module_memfree(fp->bpf_func);
-> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
->  
->  	bpf_prog_unlock_free(fp);
->  }
-> 
+I suspect this is a bug of Sparse.
 
+I submitted this to disable __builtin_types_compatible_p() for Sparse.
+
+https://lore.kernel.org/patchwork/patch/1013734/
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
