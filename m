@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5D4C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DABC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F51208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878EC20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PBbR0mnO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F51208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0CDhOHQR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878EC20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730166AbeKTCyt (ORCPT
+        id S1730182AbeKTCyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:54:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52184 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:54:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730070AbeKTCys (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:54:48 -0500
+        id S1730018AbeKTCyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:54:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60F832089F;
-        Mon, 19 Nov 2018 16:30:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F00CD20870;
+        Mon, 19 Nov 2018 16:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645041;
-        bh=pwkj6cYBX796QkrEl/OgHwnq4viUpXa8VoQHHZf9wAI=;
+        s=default; t=1542645044;
+        bh=gx+lCOMQzcYnK8MM7gPw6GEdOkCfn8Git+1hggTzjI4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PBbR0mnOQPFLfBaytj1Dn3hYSdt0Hhbce5ZQaDBHjl+DfuUuTszo2ykJdwVOa0Aup
-         04u3gBI8HBnEGh9dF0f4sKavchp8YjhXOxmF9zbxYbjpZ7V/wK7r1KJK4OeuAJdkod
-         RSr8wn3L/cs1OaAg8zJU7v2cyft4kxcTbpcT2mPI=
+        b=0CDhOHQR1obE2cAKyw0i41MEYhkYIJWfQVaoIOeWl49AfpHSrbxmrs3aO5k4OGN4U
+         iBOU+mmu4bJ1OeoYlyoyMYewFUVGBUwcwDYbZiQTHt2vSB60SqjH6zY4cXHFkw6Zow
+         /MDAPEcSfpt+7yRZ1FycpdnHg1PTslXSyogVC8KU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/205] powerpc/nohash: fix undefined behaviour when testing page size support
-Date:   Mon, 19 Nov 2018 17:25:21 +0100
-Message-Id: <20181119162619.718423209@linuxfoundation.org>
+Subject: [PATCH 4.19 015/205] drm/msm/gpu: fix parameters in function msm_gpu_crashstate_capture
+Date:   Mon, 19 Nov 2018 17:25:22 +0100
+Message-Id: <20181119162619.928821741@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,53 +64,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Axtens <dja@axtens.net>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
+[ Upstream commit 6969019f65b43afb6da6a26f1d9e55bbdfeebcd5 ]
 
-When enumerating page size definitions to check hardware support,
-we construct a constant which is (1U << (def->shift - 10)).
+When CONFIG_DEV_COREDUMP isn't defined msm_gpu_crashstate_capture
+doesn't pass the correct parameters.
+drivers/gpu/drm/msm/msm_gpu.c: In function ‘recover_worker’:
+drivers/gpu/drm/msm/msm_gpu.c:479:34: error: passing argument 2 of ‘msm_gpu_crashstate_capture’ from incompatible pointer type [-Werror=incompatible-pointer-types]
+  msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
+                                  ^~~~~~
+drivers/gpu/drm/msm/msm_gpu.c:388:13: note: expected ‘char *’ but argument is of type ‘struct msm_gem_submit *’
+ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
+             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/msm/msm_gpu.c:479:2: error: too many arguments to function ‘msm_gpu_crashstate_capture’
+  msm_gpu_crashstate_capture(gpu, submit, comm, cmd);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/gpu/drm/msm/msm_gpu.c:388:13: note: declared here
+ static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
 
-However, the array of page size definitions is only initalised for
-various MMU_PAGE_* constants, so it contains a number of 0-initialised
-elements with def->shift == 0. This means we end up shifting by a
-very large number, which gives the following UBSan splat:
+In current code the function msm_gpu_crashstate_capture parameters.
 
-================================================================================
-UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
-shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
-Call Trace:
-[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
-[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
-[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
-[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
-[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
-[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
-================================================================================
-
-Fix this by first checking if the element exists (shift != 0) before
-constructing the constant.
-
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Fixes: cdb95931dea3 ("drm/msm/gpu: Add the buffer objects from the submit to the crash dump")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Reviewed-By: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/tlb_nohash.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/msm/msm_gpu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -503,6 +503,9 @@ static void setup_page_sizes(void)
- 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
- 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
- 
-+			if (!def->shift)
-+				continue;
-+
- 			if (tlb1ps & (1U << (def->shift - 10))) {
- 				def->flags |= MMU_PAGE_SIZE_DIRECT;
- 
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -367,8 +367,8 @@ static void msm_gpu_crashstate_capture(s
+ 		msm_gpu_devcoredump_read, msm_gpu_devcoredump_free);
+ }
+ #else
+-static void msm_gpu_crashstate_capture(struct msm_gpu *gpu, char *comm,
+-		char *cmd)
++static void msm_gpu_crashstate_capture(struct msm_gpu *gpu,
++		struct msm_gem_submit *submit, char *comm, char *cmd)
+ {
+ }
+ #endif
 
 
