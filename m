@@ -2,161 +2,175 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF3BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6701CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4333C20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4333C20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F42B20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:55:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Q+/N8yZW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F42B20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbeKSUSa (ORCPT
+        id S1727624AbeKSUSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:18:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34432 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727526AbeKSUSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:18:30 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35C0C30820D3;
-        Mon, 19 Nov 2018 09:55:23 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-67.pek2.redhat.com [10.72.12.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F0465D9CD;
-        Mon, 19 Nov 2018 09:55:18 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 17:55:15 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     lijiang <lijiang@redhat.com>, Bjorn Helgaas <helgaas@kernel.org>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, bhe@redhat.com
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-Message-ID: <20181119095515.GC14045@dhcp-128-65.nay.redhat.com>
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com>
- <20181114112600.GD13926@zn.tnic>
- <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
- <20181115103959.GB26448@zn.tnic>
+        Mon, 19 Nov 2018 15:18:39 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:34524 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbeKSUSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 15:18:39 -0500
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DF67910C150A;
+        Mon, 19 Nov 2018 01:55:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542621331; bh=fJMEuBveQ1OxRCixWZYlecFhkPsXIXTMH03OLXi8Wrw=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=Q+/N8yZW+n8OIOjn0d/zVkKIoVR1DEoiXd80xdGzTsIvki8Ug6Dlohcu0xCfPkSc2
+         96EF6QhSd6zsGQYgnwCgwH0qCZI2NmXaQSmML7HpGMn9QNuE9tS4ZIDfXAtxpy5mvL
+         qzBSYvABmIqqPX+sbS408C8j3sQFbhktHxM0rDzdOdD+cPCURPkZdXA5VK4tDOg4D9
+         h8MLgjMbP8lBVPDZvc3nKCB8Qegg672T7+wuX5pdl0fXaLUyHC1r4Efyap4zJt7Q/e
+         z+zDb65q4PNHcJuAJaBIqu0kivLKX2lVbBocOcBBqLs8zBP0vrxxDQND8flKmGrmaz
+         I3Ndw3ACgqlbQ==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id C6540326D;
+        Mon, 19 Nov 2018 01:55:31 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 19 Nov 2018 01:55:31 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
+ 19 Nov 2018 10:55:29 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: Re: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
+ sched_clock
+Thread-Topic: [PATCH v2] clocksource/drivers/arc_timer: Utilize generic
+ sched_clock
+Thread-Index: AQHUZgzUjKESBok63Em0jiA3zZIBcaVBTesAgBOe34CAAguUgIAAA0kAgAADeoA=
+Date:   Mon, 19 Nov 2018 09:55:28 +0000
+Message-ID: <e31a11c42c21353963bd75c88493e8158316d469.camel@synopsys.com>
+References: <20181017113020.7551-1-abrodkin@synopsys.com>
+         <C2D7FE5348E1B147BCA15975FBA23075012B0B1A07@US01WEMBX2.internal.synopsys.com>
+         <78ccbb4c-56d0-594b-4032-3eb19202847b@linaro.org>
+         <2c46ab6e-f0a9-4857-9772-f3c714284e98@linaro.org>
+         <dab866a50e66e73f6010de1487b06019887930c8.camel@synopsys.com>
+         <40ada5b3-5824-51fd-501f-ef363f162047@linaro.org>
+In-Reply-To: <40ada5b3-5824-51fd-501f-ef363f162047@linaro.org>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+x-originating-ip: [10.121.8.88]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C983FB360B6B3345A6197B7058D4B82C@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115103959.GB26448@zn.tnic>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 19 Nov 2018 09:55:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 at 11:39am, Borislav Petkov wrote:
-> + Bjorn.
-> 
-> On Thu, Nov 15, 2018 at 01:44:07PM +0800, lijiang wrote:
-> > At present, the upstream kernel does not pass the e820 reserved ranges to the
-> > second kernel, which might cause two problems:
-> > 
-> > The first one is the MMCONFIG issue, the PCI MMCONFIG(extended mode) requires
-> > the reserved region otherwise it falls back to legacy mode, which might lead to
-> > the hot-plug device could not be recognized in kdump kernel.
-> 
-> Well, this still doesn't explain it fully. Let's look at a box:
-> 
-> [    0.000000] e820: BIOS-provided physical RAM map:
-> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x00000000000997ff] usable
-> [    0.000000] BIOS-e820: [mem 0x0000000000099800-0x000000000009ffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000065642fff] usable
-> [    0.000000] BIOS-e820: [mem 0x0000000065643000-0x0000000067fb8fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000067fb9000-0x00000000689e8fff] ACPI NVS
-> [    0.000000] BIOS-e820: [mem 0x00000000689e9000-0x0000000068bf5fff] ACPI data
-> [    0.000000] BIOS-e820: [mem 0x0000000068bf6000-0x000000006f7fffff] usable
-> [    0.000000] BIOS-e820: [mem 0x000000006f800000-0x000000008fffffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fd000000-0x00000000fe7fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fec80000-0x00000000fed00fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000ff800000-0x00000001007fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000100800000-0x000000603fffffff] usable
-> 
-> this one has 8 reserved regions. Does that mean that we need to pass
-> them *all* 8 to the second kernel so that MMCONFIG works?
-
-We just copy 1st kernel memmap (/proc/iomem) to be used in 2nd kernel
-e820,  I'm not sure we can get the exact memory range and pass it.
-Because different io devices may have different ranges, it is hard to
-get all the use cases. And there seems no easy way to get them.
-
-Another thing is it is not worth to get the exact info, the 1st kernel
-reserved part is just fine to be reserved as well in 2nd kernel, no 
-side effects.  Actually there might be some obscure use cases we
-do not find which rely those reserved memory ranges so it is better to
-have.
-
-> 
-> Or is it only one reserved region which is needed for MMCONFIG?
-> 
-> Bjorn, do you know what the detection logic should be to map the correct
-> reserved region (or regions) for MMCONFIG?
-> 
-> Now, even if we don't map that reserved region and MMCONFIG falls back
-> to legacy mode, why is that a problem for the kdump kernel? Why does
-> the kdump kernel need the hotplug device? What would be the use case?
-> Hotplug a SATA drive to store the memory dump to it ... or?
-
-According to an old bug report only devices on PCI segment 0 fall back
-to legacy mode, those devices on segment 1 do not fall back, they just
-do not work, and this seems not related to hotplug.
-
-I found the old bug report, copy something here:
-'''
-When doing a kdump, the kdump kernel failed to boot due to not finding /dev/root.  The root drive is on a LSI Megaraid disk.
-
-...
-[    6.869903] input: American Megatrends Inc. Virtual Keyboard and Mouse as /devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.3/1-1.3.1/1-1.3.1:1.1/input/input1
-[    6.885358] generic-usb 0003:046B:FF10.0002: input,hidraw1: USB HID v1.10 Mouse [American Megatrends Inc. Virtual Keyboard and Mouse] on usb-0000:00:1a.0-1.3.1/input1
-[    6.901927] usbcore: registered new interface driver usbhid
-[    6.908145] usbhid: USB HID core driver
-......................Could not find /dev/root.
-Want me to fall back to /dev/disk/by-id/scsi-3600605b0049fac9018513918775bfc13-part4? (Y/n) 
-y
-Waiting for device /dev/disk/by-id/scsi-3600605b0049fac9018513918775bfc13-part4 to appear: ..............................not found -- exiting to /bin/sh
-$
-
-The basic problem is that this device is in PCI segment 1 and the kernel PCI probing cannot find it without all the e820 i/o reservations being present in the e820 table.  And the crash kernel does not have those reservations because the kexec command does not pass i/o reservation via the memmap= command line option. (This problem does not show up for other vendors, as SGI is apparently the only one using extended PCI. The lookup of devices in PCI segment 0 actually fails for everyone, but devices in segment 0 are then found by some legacy lookup method.)  The workaround for this is to fix kexec to pass i/o reserved areas to the crash kernel.  The patch will be attached.
-'''
-
-And here is some old patches in kexec-tools for fixing this:
-http://lists.infradead.org/pipermail/kexec/2013-February/007924.html
-(patch from SGI, later reverted)
-
-http://lists.infradead.org/pipermail/kexec/2014-April/011710.html
-(patch from Chaowang)
-
-But apparently we missed this issue in kexec_file code..
-
-> 
-> > Another one is that the e820 reserved ranges do not setup in kdump kernel, which
-> > could cause kdump can't work in some machines. To know more information, please
-> > refer to the [PATCH 2/2 v6] patch log.
-> 
-> Yah, I still don't understand *why* we need the reserved ranges in the
-> second kernel. Once we've figured out the *why* we can look at the *how*.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
-
-Thanks
-Dave
+SGkgRGFuaWVsLA0KDQpPbiBNb24sIDIwMTgtMTEtMTkgYXQgMTA6NDMgKzAxMDAsIERhbmllbCBM
+ZXpjYW5vIHdyb3RlOg0KPiBPbiAxOS8xMS8yMDE4IDEwOjMxLCBBbGV4ZXkgQnJvZGtpbiB3cm90
+ZToNCj4gPiBIaSBEYW5pZWwsDQo+ID4gDQo+ID4gT24gU3VuLCAyMDE4LTExLTE4IGF0IDAzOjE3
+ICswMTAwLCBEYW5pZWwgTGV6Y2FubyB3cm90ZToNCj4gPiA+IE9uIDA1LzExLzIwMTggMTU6Mzks
+IERhbmllbCBMZXpjYW5vIHdyb3RlOg0KPiA+ID4gPiBPbiAyNC8xMC8yMDE4IDAwOjMzLCBWaW5l
+ZXQgR3VwdGEgd3JvdGU6DQo+ID4gPiA+ID4gT24gMTAvMTcvMjAxOCAwNDozMCBBTSwgQWxleGV5
+IEJyb2RraW4gd3JvdGU6DQo+ID4gPiA+ID4gPiBJdCB0dXJuZWQgb3V0IHdlIHVzZWQgdG8gdXNl
+IGRlZmF1bHQgaW1wbGVtZW50YXRpb24gb2Ygc2NoZWRfY2xvY2soKQ0KPiA+ID4gPiA+ID4gZnJv
+bSBrZXJuZWwvc2NoZWQvY2xvY2suYyB3aGljaCB3YXMgYXMgcHJlY2lzZSBhcyAxL0haLCBpLmUu
+DQo+ID4gPiA+ID4gPiBieSBkZWZhdWx0IHdlIGhhZCAxMCBtc2VjIGdyYW51bGFyaXR5IG9mIHRp
+bWUgbWVhc3VyZW1lbnQuDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IE5vdyBnaXZlbiBBUkMg
+YnVpbHQtaW4gdGltZXJzIGFyZSBjbG9ja2VkIHdpdGggdGhlIHNhbWUgZnJlcXVlbmN5IGFzDQo+
+ID4gPiA+ID4gPiBDUFUgY29yZXMgd2UgbWF5IGdldCBtdWNoIGhpZ2hlciBwcmVjaXNpb24gb2Yg
+dGltZSB0cmFja2luZy4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gVGh1cyB3ZSBzd2l0Y2gg
+dG8gZ2VuZXJpYyBzY2hlZF9jbG9jayB3aGljaCByZWFsbHkgcmVhZHMgQVJDIGhhcmR3YXJlDQo+
+ID4gPiA+ID4gPiBjb3VudGVycy4NCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gVGhpcyBpcyBl
+c3BlY2lhbGx5IGhlbHBmdWwgZm9yIG1lYXN1cmluZyBzaG9ydCBldmVudHMuDQo+ID4gPiA+ID4g
+PiBUaGF0J3Mgd2hhdCB3ZSB1c2VkIHRvIGhhdmU6DQo+ID4gPiA+ID4gPiAtLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4g
+JCBwZXJmIHN0YXQgL2Jpbi9zaCAtYyAvcm9vdC9sbWJlbmNoLW1hc3Rlci9iaW4vYXJjL2hlbGxv
+ID4gL2Rldi9udWxsDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ICBQZXJmb3JtYW5jZSBjb3Vu
+dGVyIHN0YXRzIGZvciAnL2Jpbi9zaCAtYyAvcm9vdC9sbWJlbmNoLW1hc3Rlci9iaW4vYXJjL2hl
+bGxvJzoNCj4gPiA+ID4gPiA+IA0KPiA+ID4gPiA+ID4gICAgICAgICAgMTAuMDAwMDAwICAgICAg
+dGFzay1jbG9jayAobXNlYykgICAgICAgICAjICAgIDIuODMyIENQVXMgdXRpbGl6ZWQNCj4gPiA+
+ID4gPiA+ICAgICAgICAgICAgICAgICAgMSAgICAgIGNvbnRleHQtc3dpdGNoZXMgICAgICAgICAg
+IyAgICAwLjEwMCBLL3NlYw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAxICAgICAgY3B1
+LW1pZ3JhdGlvbnMgICAgICAgICAgICAjICAgIDAuMTAwIEsvc2VjDQo+ID4gPiA+ID4gPiAgICAg
+ICAgICAgICAgICAgNjMgICAgICBwYWdlLWZhdWx0cyAgICAgICAgICAgICAgICMgICAgMC4wMDYg
+TS9zZWMNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgMzA0OTQ4MCAgICAgIGN5Y2xlcyAgICAgICAg
+ICAgICAgICAgICAgIyAgICAwLjMwNSBHSHoNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgMTA5MTI1
+OSAgICAgIGluc3RydWN0aW9ucyAgICAgICAgICAgICAgIyAgICAwLjM2ICBpbnNuIHBlciBjeWNs
+ZQ0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgMjU2ODI4ICAgICAgYnJhbmNoZXMgICAgICAgICAg
+ICAgICAgICAjICAgMjUuNjgzIE0vc2VjDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgMjcwMjYg
+ICAgICBicmFuY2gtbWlzc2VzICAgICAgICAgICAgICMgICAxMC41MiUgb2YgYWxsIGJyYW5jaGVz
+DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+ICAgICAgICAwLjAwMzUzMDY4NyBzZWNvbmRzIHRp
+bWUgZWxhcHNlZA0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiAgICAgICAgMC4wMDAwMDAwMDAg
+c2Vjb25kcyB1c2VyDQo+ID4gPiA+ID4gPiAgICAgICAgMC4wMTAwMDAwMDAgc2Vjb25kcyBzeXMN
+Cj4gPiA+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IEFuZCBub3cgd2UnbGwgc2Vl
+Og0KPiA+ID4gPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0NCj4gPiA+ID4gPiA+ICQgcGVyZiBzdGF0IC9iaW4vc2ggLWMgL3Jvb3Qv
+bG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyA+IC9kZXYvbnVsbA0KPiA+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gPiAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy9iaW4vc2ggLWMgL3Jv
+b3QvbG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyc6DQo+ID4gPiA+ID4gPiANCj4gPiA+ID4g
+PiA+ICAgICAgICAgICAzLjAwNDMyMiAgICAgIHRhc2stY2xvY2sgKG1zZWMpICAgICAgICAgIyAg
+ICAwLjg2NSBDUFVzIHV0aWxpemVkDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAgICAgIDEgICAg
+ICBjb250ZXh0LXN3aXRjaGVzICAgICAgICAgICMgICAgMC4zMzMgSy9zZWMNCj4gPiA+ID4gPiA+
+ICAgICAgICAgICAgICAgICAgMSAgICAgIGNwdS1taWdyYXRpb25zICAgICAgICAgICAgIyAgICAw
+LjMzMyBLL3NlYw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgIDYzICAgICAgcGFnZS1mYXVs
+dHMgICAgICAgICAgICAgICAjICAgIDAuMDIxIE0vc2VjDQo+ID4gPiA+ID4gPiAgICAgICAgICAg
+IDI5ODY3MzQgICAgICBjeWNsZXMgICAgICAgICAgICAgICAgICAgICMgICAgMC45OTQgR0h6DQo+
+ID4gPiA+ID4gPiAgICAgICAgICAgIDEwODc0NjYgICAgICBpbnN0cnVjdGlvbnMgICAgICAgICAg
+ICAgICMgICAgMC4zNiAgaW5zbiBwZXIgY3ljbGUNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgIDI1
+NTIwOSAgICAgIGJyYW5jaGVzICAgICAgICAgICAgICAgICAgIyAgIDg0Ljk0NyBNL3NlYw0KPiA+
+ID4gPiA+ID4gICAgICAgICAgICAgIDI2MDAyICAgICAgYnJhbmNoLW1pc3NlcyAgICAgICAgICAg
+ICAjICAgMTAuMTklIG9mIGFsbCBicmFuY2hlcw0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiAg
+ICAgICAgMC4wMDM0NzQ4Mjkgc2Vjb25kcyB0aW1lIGVsYXBzZWQNCj4gPiA+ID4gPiA+IA0KPiA+
+ID4gPiA+ID4gICAgICAgIDAuMDAzNTE5MDAwIHNlY29uZHMgdXNlcg0KPiA+ID4gPiA+ID4gICAg
+ICAgIDAuMDAwMDAwMDAwIHNlY29uZHMgc3lzDQo+ID4gPiA+ID4gPiAtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ID4gPiA+ID4gDQo+
+ID4gPiA+ID4gPiBOb3RlIGhvdyBtdWNoIG1vcmUgbWVhbmluZ2Z1bCBpcyB0aGUgc2Vjb25kIG91
+dHB1dCAtIHRpbWUgc3BlbnQgZm9yDQo+ID4gPiA+ID4gPiBleGVjdXRpb24gcHJldHR5IG11Y2gg
+bWF0Y2hlcyBudW1iZXIgb2YgY3ljbGVzIHNwZW50ICh3ZSdyZSBydW5uaW5nDQo+ID4gPiA+ID4g
+PiBAIDFHSHogaGVyZSkuDQo+ID4gPiA+ID4gPiANCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6
+IEFsZXhleSBCcm9ka2luIDxhYnJvZGtpbkBzeW5vcHN5cy5jb20+DQo+ID4gPiA+ID4gPiBDYzog
+RGFuaWVsIExlemNhbm8gPGRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmc+DQo+ID4gPiA+ID4gPiBD
+YzogVmluZWV0IEd1cHRhIDx2Z3VwdGFAc3lub3BzeXMuY29tPg0KPiA+ID4gPiA+ID4gQ2M6IFRo
+b21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPg0KPiA+ID4gPiA+ID4gLS0tDQo+ID4g
+PiA+ID4gDQo+ID4gPiA+ID4gQWNrZWQtYnk6IFZpbmVldCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lz
+LmNvbT4NCj4gPiA+ID4gPiANCj4gPiA+ID4gPiBARGFuaWVsIGlzIHRoaXMgZ29pbmcgdmlhIHRp
+bWVyIHRyZWUgb3IgeW91IHdhbnQgbWUgdG8gcGljayBpdCB1cC4NCj4gPiA+ID4gDQo+ID4gPiA+
+IEkgd2lsbCB0YWtlIGNhcmUgb2YgaXQuDQo+ID4gPiANCj4gPiA+IFBsZWFzZSByZXNlbmQgd2l0
+aG91dCB0aGUgYXJjaCBLY29uZmlnIGNoYW5nZQ0KPiA+IA0KPiA+IEknbSB3b25kZXJpbmcgaWYg
+dGhlcmUncyBhIHByb2JsZW0gd2l0aCBhcmMvYXJjL0tjb25maWcgY2hhbmdlIGdvaW5nDQo+ID4g
+dGhyb3VnaCB5b3VyIHRyZWU/IFRoaXMgd2F5IGl0IHdpbGwgYmUgcmVhbGx5IGF0b21pYyBjaGFu
+Z2UgYW5kIGl0IHdpbGwgYmUNCj4gPiBtdWNoIGVhc2llciB0byBiYWNrLXBvcnQgKGFuZCB0aGF0
+J3Mgd2hhdCB3ZSdkIHJlYWxseSBsaWtlIHRvIGhhcHBlbikuDQo+ID4gDQo+ID4gSWYgVmluZWV0
+IGlzIE9LIHdpdGggdGhhdCBJTUhPIGl0J3Mgc2FmZSB0byBrZWVwIGl0IGluIHRoZSBvbmUgYW5k
+IG9ubHkgY29tbWl0Lg0KPiA+IA0KPiA+IE90aGVyd2lzZSBzaG91bGQgSSBqdXN0IHNwbGl0IHRo
+aXMgcGF0Y2ggaW4gMiBhbmQgc3RpbGwgc3VibWl0IHRoZW0gYXMgc2VyaWVzIG9yDQo+ID4gaGF2
+ZSAyIGNvbXBsZXRlbHkgbm90LXJlbGF0ZWQgcGF0Y2hlcyBvbmUgZm9yIHlvdSBhbmQgb25lIGZv
+ciBWaW5lZXQ/DQo+ID4gDQo+ID4gSW4gdGhhdCBjYXNlIGRvIEkgdW5kZXJzdGFuZCBjb3JyZWN0
+bHkgdGhhdCB3ZSBtYXkgZW5hYmxlIEdFTkVSSUNfU0NIRURfQ0xPQ0sNCj4gPiBmb3IgQVJDIGV2
+ZW4gYmVmb3JlIHByb3Bvc2VkIGNoYW5nZSBmb3IgYXJjX3RpbWVyLmMgZ2V0cyBtZXJnZWQgLSBp
+LmUuIHdpdGggbm8NCj4gPiBzcGVjaWFsIEdFTkVSSUNfU0NIRURfQ0xPQ0sgZHJpdmVyIHdlJ2xs
+IHNhZmVseSBmYWxsLWJhY2sgdG8gamlmZmllLWJhc2VkDQo+ID4gc2NoZWQgY2xvY2sgd2hpY2gg
+d2UgYW55d2F5cyB1c2Ugbm93IHdoZW4gR0VORVJJQ19TQ0hFRF9DTE9DSyBpcyBkaXNhYmxlZCwg
+cmlnaHQ/DQo+IA0KPiBUaGUgQVJDJ3MgS2NvbmZpZyBwYXJ0IGRvZXMgbm90IGFwcGx5IG9uIHRp
+cC90aW1lcnMvY29yZS4NCg0KTWF5IEkgaGF2ZSBhIHJlZmVyZW5jZSB0byB0aGF0IHRyZWUgc28g
+SSBtYXkgY2hlY2sgd2hhdCBnZXRzIGluIHRoZSB3YXkgdGhlcmUNCmFuZCB0aGVuIEknbGwganVz
+dCBtb3ZlICJzZWxlY3QgR0VORVJJQ19TQ0hFRF9DTE9DSyIgYSBiaXQgYmVsb3cgc28gdGhlcmUn
+cmUgbm8NCmNsYXNoZXMgYW55IGxvbmdlci4NCg0KLUFsZXhleQ0K
