@@ -2,131 +2,127 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5692C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0352C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:55:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE75C20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1DC620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:55:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WffGZCxw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE75C20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dNqghkty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DC620823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbeKSRFC (ORCPT
+        id S1726254AbeKSRSK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 12:05:02 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48112 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726300AbeKSRE4 (ORCPT
+        Mon, 19 Nov 2018 12:18:10 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36868 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeKSRSK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 12:04:56 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAJ6fotk024359;
-        Mon, 19 Nov 2018 00:41:50 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542609710;
-        bh=eURaIwj5D8+6X+cGH8LJadSMCZfwWyufuqgn2HV+fy4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=WffGZCxwjhPaFl8V73psVI2hYcEgZWnFgJHeGmCqddncngKUexrRBh+PscudSjThP
-         UivSsQ1vMG0vhIIH1gmRha5laWV4/wgOSKaZDzN5xMqacge61fDVOEkLet/okaJVVT
-         FNNDtRZOUsKX07B+19MPgDiQk70WOAo690amFas0=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAJ6foW8052140
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 00:41:50 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
- Nov 2018 00:41:50 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 19 Nov 2018 00:41:49 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAJ6ff3V017078;
-        Mon, 19 Nov 2018 00:41:47 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-CC:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>, Vignesh R <vigneshr@ti.com>,
-        <linux-iio@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] iio: adc: ti_am335x_tscadc: Improve accuracy of measurement
-Date:   Mon, 19 Nov 2018 12:12:36 +0530
-Message-ID: <20181119064236.28902-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119064236.28902-1-vigneshr@ti.com>
-References: <20181119064236.28902-1-vigneshr@ti.com>
+        Mon, 19 Nov 2018 12:18:10 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 80so13397431pge.4
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 22:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8N5KPdeuLrJ2oX5+LNZRUJIrjO04cY2/r7WrlkDx5L4=;
+        b=dNqghktyOKaixevZYPOnjnzf1Kbk/s90iSnUjzsKUWaKt46wCbki6UOk9YHK77XaH4
+         nhq6P3tw71eXDMO0Rrp4Sv1XZKv+KUaSMDeVx/BNQ1BpPRifIMblg1pubc9UC0ARiOQU
+         PHoeFFrPrpZyiUbKW0XzJNPjjPG9O46FEs3aE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8N5KPdeuLrJ2oX5+LNZRUJIrjO04cY2/r7WrlkDx5L4=;
+        b=qCmCWOMwIAxQnD9wPYpEaQE5/BJ/8sfKCqCgvNuAeXjEoLsaw2HLtCH8kOi8PAyB1E
+         w/IQo13KtqLgsHgh+tMEZ3aFaL9RBX0BHb09MYqoqOMUTPLDCNlN7a+YxkunjCIR5XrG
+         gOdHqXq8MQSo+rT+4B0uPnTBS88F3YZtKRn+4995zg9TQiNqug4dbdYH336fGFyMSee8
+         JhXvllNPGjSGjkc/pdlckRvNmjF0i10OMpQmSXJ2ptYLjlbaGfDwywDQC94QTHTKVi1l
+         2in6DuGXkb09Y19I0Up0uKOkLvJQcnhdp0PN/ucQiVSFimoyl4crT+/dVOGIgpcW5qM/
+         zSmg==
+X-Gm-Message-State: AGRZ1gIOsNg1jq3jDLRP0O0muA2ime1BhQLObuNdvA3EvtIGnq+gbxzu
+        TszOU6YjgPlwQ/HbxX92fhYcrg==
+X-Google-Smtp-Source: AJdET5d33cpcBKvZsVddskI3F1pPnC5Wb30BcSxx/c/tbMa2o2O/Tt9j78wpIEwvXVu7gnm4HI2NcQ==
+X-Received: by 2002:aa7:8254:: with SMTP id e20-v6mr21997444pfn.164.1542610527665;
+        Sun, 18 Nov 2018 22:55:27 -0800 (PST)
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net. [61.216.91.114])
+        by smtp.gmail.com with ESMTPSA id p62-v6sm45098407pfp.111.2018.11.18.22.55.24
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 18 Nov 2018 22:55:26 -0800 (PST)
+Date:   Mon, 19 Nov 2018 14:55:06 +0800
+From:   Shawn Guo <shawn.guo@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Sriharsha Allenki <sallenki@codeaurora.org>,
+        Anu Ramanathan <anur@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod <vkoul@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
+ USB PHY binding
+Message-ID: <20181119065503.GB10788@dragon>
+References: <20181108070449.23572-1-shawn.guo@linaro.org>
+ <20181108070449.23572-2-shawn.guo@linaro.org>
+ <5bea0ed8.1c69fb81.8715.38b2@mx.google.com>
+ <20181113034200.GD20049@tiger>
+ <CAL_JsqKu3kf-zrKNtrtZsQEPi0LN_3jqs08i3-8vbSQDVxuRkA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqKu3kf-zrKNtrtZsQEPi0LN_3jqs08i3-8vbSQDVxuRkA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When performing single ended measurements with TSCADC, its recommended
-to set negative input (SEL_INM_SWC_3_0) of ADC step to ADC's VREFN in the
-corresponding STEP_CONFIGx register.
-Also, the positive(SEL_RFP_SWC_2_0) and negative(SEL_RFM_SWC_1_0)
-reference voltage for ADC step needs to be set to VREFP and VREFN
-respectively in STEP_CONFIGx register.
-Without these changes, there may be variation of as much as ~2% in the
-ADC's digital output which is bad for precise measurement.
+On Sat, Nov 17, 2018 at 09:13:38AM -0600, Rob Herring wrote:
+<snip>
+> > > > +- qcom,init-seq:
+> > > > +    Value type: <u32 array>
+> > > > +    Definition: Should contain a sequence of <offset value delay> tuples to
+> > > > +                program 'value' into phy register at 'offset' with 'delay'
+> > > > +           in us afterwards.
+> > >
+> > > If we wanted this type of thing in DT, we'd have a generic binding (or
+> > > forth).
+> >
+> > Right now, this is a qualcomm usb phy specific bindings - first used in
+> > qcom,usb-hs-phy.txt and I extended it a bit for my phy.  As this is not
+> > a so good hardware description, I'm a little hesitated to make it
+> > generic for other platforms to use in general.  What about we put off it
+> > a little bit until we see more platforms need the same thing?
+> 
+> I'm not saying I want it generic. Quite the opposite. I don't think we
+> should have it either generically or vendor specific. The main thing I
+> have a problem with is the timing information because then we're more
+> that just data. Without that we're talking about a bunch of properties
+> for register fields or just raw register values in DT. That becomes
+> more of a judgement call. There's not too much value in making a
+> driver translate a bunch of properties just to stuff them into
+> registers on init. But then just allowing any raw register value to be
+> in DT could be easily abused.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
----
- drivers/iio/adc/ti_am335x_adc.c      | 5 ++++-
- include/linux/mfd/ti_am335x_tscadc.h | 4 ++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Rob,
 
-diff --git a/drivers/iio/adc/ti_am335x_adc.c b/drivers/iio/adc/ti_am335x_adc.c
-index cafb1dcadc48..9d984f2a8ba7 100644
---- a/drivers/iio/adc/ti_am335x_adc.c
-+++ b/drivers/iio/adc/ti_am335x_adc.c
-@@ -142,7 +142,10 @@ static void tiadc_step_config(struct iio_dev *indio_dev)
- 			stepconfig |= STEPCONFIG_MODE_SWCNT;
- 
- 		tiadc_writel(adc_dev, REG_STEPCONFIG(steps),
--				stepconfig | STEPCONFIG_INP(chan));
-+				stepconfig | STEPCONFIG_INP(chan) |
-+				STEPCONFIG_INM_ADCREFM |
-+				STEPCONFIG_RFP_VREFP |
-+				STEPCONFIG_RFM_VREFN);
- 
- 		if (adc_dev->open_delay[i] > STEPDELAY_OPEN_MASK) {
- 			dev_warn(dev, "chan %d open delay truncating to 0x3FFFF\n",
-diff --git a/include/linux/mfd/ti_am335x_tscadc.h b/include/linux/mfd/ti_am335x_tscadc.h
-index b9a53e013bff..483168403ae5 100644
---- a/include/linux/mfd/ti_am335x_tscadc.h
-+++ b/include/linux/mfd/ti_am335x_tscadc.h
-@@ -78,6 +78,8 @@
- #define STEPCONFIG_YNN		BIT(8)
- #define STEPCONFIG_XNP		BIT(9)
- #define STEPCONFIG_YPN		BIT(10)
-+#define STEPCONFIG_RFP(val)	((val) << 12)
-+#define STEPCONFIG_RFP_VREFP	(0x3 << 12)
- #define STEPCONFIG_INM_MASK	(0xF << 15)
- #define STEPCONFIG_INM(val)	((val) << 15)
- #define STEPCONFIG_INM_ADCREFM	STEPCONFIG_INM(8)
-@@ -86,6 +88,8 @@
- #define STEPCONFIG_INP_AN4	STEPCONFIG_INP(4)
- #define STEPCONFIG_INP_ADCREFM	STEPCONFIG_INP(8)
- #define STEPCONFIG_FIFO1	BIT(26)
-+#define STEPCONFIG_RFM(val)	((val) << 23)
-+#define STEPCONFIG_RFM_VREFN	(0x3 << 23)
- 
- /* Delay register */
- #define STEPDELAY_OPEN_MASK	(0x3FFFF << 0)
--- 
-2.19.1
+I agree with your comments.  Honestly, I'm not comfortable with this
+'qcom,init-seq' thing in the first impression.  The similar existence in
+mainline qcom,usb-hs-phy.txt makes me think it might be acceptable with
+the timing data added.  Okay, I know your position on this now.
 
+@Sriharsha,
+
+Seeing that 'qcom,init-seq' is being configured with the exactly same
+values for both HS phys in SoC level dts file (qcs404.dtsi), I think
+such settings can be moved into driver code as SoC specific data.
+Unless you have a different view on this, I will do it with v4.
+
+Shawn
