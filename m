@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E494FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF9BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96AB214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19E02214F1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtCRHv5g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A96AB214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgfEQ/G9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E02214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731894AbeKTJLo (ORCPT
+        id S1731931AbeKTJLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:11:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44958 "EHLO mail.kernel.org"
+        Tue, 20 Nov 2018 04:11:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731840AbeKTJLm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:11:42 -0500
+        id S1731840AbeKTJLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:11:48 -0500
 Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B001D214DB;
-        Mon, 19 Nov 2018 22:45:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9051208E3;
+        Mon, 19 Nov 2018 22:45:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542667549;
-        bh=Ac2RZMxNP8fbsJqvCdTCUjvvTMPVnJvwOguMbOKOZDw=;
+        s=default; t=1542667555;
+        bh=A5a7m/Q1Rkguq0Y6LF8OJibMNs5ERZDtym4XTGjJjmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=qtCRHv5gYKkz8W6GmomO7Chi/PBYpA9KGOiDsmFoS6FMt48kzgPnGkoV4k35xH2s6
-         dMx6cKtaWT1xlzJ10tk38bAPx1tRhY8LwUThOwFHyt5Q4oEr2MAmfq/LMXbzVu+mG9
-         9b77pc7f3EWupUOm+JUl9IT5DJUvBcGvWDPZBtVU=
+        b=MgfEQ/G9fK2xDklLFYnyhKioHMvtgHjSgYD2FytZGdNNBZlro+5xyU+0khF6Yd8UA
+         wOwINrBI8rYOEyzmvlOFtfqjLiUAQ8m77TpVvteEvzORF/UlcHo3UxNmSA+JWULKO+
+         7mcjVaHmCJrCzpEW9VCXNuG/i/c0SaFx29RGwAuI=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -45,9 +45,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 09/13] x86/fault: Remove sw_error_code
-Date:   Mon, 19 Nov 2018 14:45:33 -0800
-Message-Id: <20b7d988a4fd029ced32087acec716564277489d.1542667307.git.luto@kernel.org>
+Subject: [PATCH 10/13] x86/fault: Don't try to recover from an implicit supervisor access
+Date:   Mon, 19 Nov 2018 14:45:34 -0800
+Message-Id: <52a2a4b1187e221074309027c2dac8fa70094770.1542667307.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1542667307.git.luto@kernel.org>
 References: <cover.1542667307.git.luto@kernel.org>
@@ -58,156 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All of the fault handling code now corrently checks user_mode(regs)
-as needed, and nothing depends on the X86_PF_USER bit being munged.
-Get rid of the sw_error code and use hw_error_code everywhere.
+This avoids a situation in which we attempt to apply various fixups
+that are not intended to handle implicit supervisor accesses from
+user mode if we screw up in away that causes this type of fault.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/mm/fault.c | 52 +++++++++++----------------------------------
- 1 file changed, 12 insertions(+), 40 deletions(-)
+ arch/x86/mm/fault.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index a6554110ef62..6e18438c367f 100644
+index 6e18438c367f..092ed6b1df8a 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
-@@ -1217,7 +1217,6 @@ void do_user_addr_fault(struct pt_regs *regs,
- 			unsigned long hw_error_code,
- 			unsigned long address)
- {
--	unsigned long sw_error_code;
- 	struct vm_area_struct *vma;
- 	struct task_struct *tsk;
- 	struct mm_struct *mm;
-@@ -1262,13 +1261,6 @@ void do_user_addr_fault(struct pt_regs *regs,
- 		return;
- 	}
+@@ -653,6 +653,15 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 	unsigned long flags;
+ 	int sig;
  
--	/*
--	 * hw_error_code is literally the "page fault error code" passed to
--	 * the kernel directly from the hardware.  But, we will shortly be
--	 * modifying it in software, so give it a new name.
--	 */
--	sw_error_code = hw_error_code;
--
++	if (user_mode(regs)) {
++		/*
++		 * This is an implicit supervisor-mode access from user
++		 * mode.  Bypass all the kernel-mode recovery code and just
++		 * OOPS.
++		 */
++		goto oops;
++	}
++
+ 	/* Are we prepared to handle this kernel fault? */
+ 	if (fixup_exception(regs, X86_TRAP_PF, error_code, address)) {
+ 		/*
+@@ -738,6 +747,7 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 	if (IS_ENABLED(CONFIG_EFI))
+ 		efi_recover_from_page_fault(address);
+ 
++oops:
  	/*
- 	 * It's safe to allow irq's after cr2 has been saved and the
- 	 * vmalloc fault has been handled.
-@@ -1278,26 +1270,6 @@ void do_user_addr_fault(struct pt_regs *regs,
- 	 */
- 	if (user_mode(regs)) {
- 		local_irq_enable();
--		/*
--		 * Up to this point, X86_PF_USER set in hw_error_code
--		 * indicated a user-mode access.  But, after this,
--		 * X86_PF_USER in sw_error_code will indicate either
--		 * that, *or* an implicit kernel(supervisor)-mode access
--		 * which originated from user mode.
--		 */
--		if (!(hw_error_code & X86_PF_USER)) {
--			/*
--			 * The CPU was in user mode, but the CPU says
--			 * the fault was not a user-mode access.
--			 * Must be an implicit kernel-mode access,
--			 * which we do not expect to happen in the
--			 * user address space.
--			 */
--			pr_warn_once("kernel-mode error from user-mode: %lx\n",
--					hw_error_code);
--
--			sw_error_code |= X86_PF_USER;
--		}
- 		flags |= FAULT_FLAG_USER;
- 	} else {
- 		if (regs->flags & X86_EFLAGS_IF)
-@@ -1306,9 +1278,9 @@ void do_user_addr_fault(struct pt_regs *regs,
- 
- 	perf_sw_event(PERF_COUNT_SW_PAGE_FAULTS, 1, regs, address);
- 
--	if (sw_error_code & X86_PF_WRITE)
-+	if (hw_error_code & X86_PF_WRITE)
- 		flags |= FAULT_FLAG_WRITE;
--	if (sw_error_code & X86_PF_INSTR)
-+	if (hw_error_code & X86_PF_INSTR)
- 		flags |= FAULT_FLAG_INSTRUCTION;
- 
- #ifdef CONFIG_X86_64
-@@ -1321,7 +1293,7 @@ void do_user_addr_fault(struct pt_regs *regs,
- 	 * The vsyscall page does not have a "real" VMA, so do this
- 	 * emulation before we go searching for VMAs.
- 	 */
--	if ((sw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
-+	if ((hw_error_code & X86_PF_INSTR) && is_vsyscall_vaddr(address)) {
- 		if (emulate_vsyscall(regs, address))
- 			return;
- 	}
-@@ -1345,7 +1317,7 @@ void do_user_addr_fault(struct pt_regs *regs,
- 			 * Fault from code in kernel from
- 			 * which we do not expect faults.
- 			 */
--			bad_area_nosemaphore(regs, sw_error_code, address);
-+			bad_area_nosemaphore(regs, hw_error_code, address);
- 			return;
- 		}
- retry:
-@@ -1361,13 +1333,13 @@ void do_user_addr_fault(struct pt_regs *regs,
- 
- 	vma = find_vma(mm, address);
- 	if (unlikely(!vma)) {
--		bad_area(regs, sw_error_code, address);
-+		bad_area(regs, hw_error_code, address);
- 		return;
- 	}
- 	if (likely(vma->vm_start <= address))
- 		goto good_area;
- 	if (unlikely(!(vma->vm_flags & VM_GROWSDOWN))) {
--		bad_area(regs, sw_error_code, address);
-+		bad_area(regs, hw_error_code, address);
- 		return;
- 	}
- 	if (user_mode(regs)) {
-@@ -1378,12 +1350,12 @@ void do_user_addr_fault(struct pt_regs *regs,
- 		 * 32 pointers and then decrements %sp by 65535.)
- 		 */
- 		if (unlikely(address + 65536 + 32 * sizeof(unsigned long) < regs->sp)) {
--			bad_area(regs, sw_error_code, address);
-+			bad_area(regs, hw_error_code, address);
- 			return;
- 		}
- 	}
- 	if (unlikely(expand_stack(vma, address))) {
--		bad_area(regs, sw_error_code, address);
-+		bad_area(regs, hw_error_code, address);
- 		return;
- 	}
- 
-@@ -1392,8 +1364,8 @@ void do_user_addr_fault(struct pt_regs *regs,
- 	 * we can handle it..
- 	 */
- good_area:
--	if (unlikely(access_error(sw_error_code, vma))) {
--		bad_area_access_error(regs, sw_error_code, address, vma);
-+	if (unlikely(access_error(hw_error_code, vma))) {
-+		bad_area_access_error(regs, hw_error_code, address, vma);
- 		return;
- 	}
- 
-@@ -1432,13 +1404,13 @@ void do_user_addr_fault(struct pt_regs *regs,
- 			return;
- 
- 		/* Not returning to user mode? Handle exceptions or die: */
--		no_context(regs, sw_error_code, address, SIGBUS, BUS_ADRERR);
-+		no_context(regs, hw_error_code, address, SIGBUS, BUS_ADRERR);
- 		return;
- 	}
- 
- 	up_read(&mm->mmap_sem);
- 	if (unlikely(fault & VM_FAULT_ERROR)) {
--		mm_fault_error(regs, sw_error_code, address, fault);
-+		mm_fault_error(regs, hw_error_code, address, fault);
- 		return;
- 	}
- 
+ 	 * Oops. The kernel tried to access some bad page. We'll have to
+ 	 * terminate things with extreme prejudice:
 -- 
 2.17.2
 
