@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED5D5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADC5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DB020870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DB020870
+	by mail.kernel.org (Postfix) with ESMTP id 19FFC20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19FFC20823
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbeKSVnp (ORCPT
+        id S1728672AbeKSVnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:43:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50912 "EHLO mx1.suse.de"
+        Mon, 19 Nov 2018 16:43:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50964 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbeKSVno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:43:44 -0500
+        id S1727857AbeKSVnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:43:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64CB5AD43;
-        Mon, 19 Nov 2018 11:20:24 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 12:20:23 +0100
-Message-ID: <s5hd0r171qg.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 73358AE1D;
+        Mon, 19 Nov 2018 11:20:32 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 12:20:32 +0100
+Message-ID: <s5hbm6l71q7.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Connor McAdams" <conmanx360@gmail.com>
 Cc:     <alsa-devel@alsa-project.org>,
@@ -35,9 +35,10 @@ Cc:     <alsa-devel@alsa-project.org>,
         "Jaroslav Kysela" <perex@perex.cz>,
         "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] ALSA: hda/ca0132 - Add new ZxR quirk
-In-Reply-To: <20181116192517.5128-1-conmanx360@gmail.com>
+Subject: Re: [PATCH 2/2] ALSA: hda/ca0132 - fix AE-5 pincfg
+In-Reply-To: <20181116192517.5128-2-conmanx360@gmail.com>
 References: <20181116192517.5128-1-conmanx360@gmail.com>
+        <20181116192517.5128-2-conmanx360@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -48,12 +49,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 20:24:55 +0100,
+On Fri, 16 Nov 2018 20:24:56 +0100,
 Connor McAdams wrote:
 > 
-> This patch adds a new PCI subsys ID for the ZxR, as found and tested by
-> other users. Without a way to know if any Z's use it as well, it keeps
-> the quirk of QUIRK_SBZ and goes through the HDA subsys test function.
+> This patch fixes the pincfg assignment for the AE-5, which was
+> previously using the Recon3D pincfg's by mistake.
 > 
 > Signed-off-by: Connor McAdams <conmanx360@gmail.com>
 
