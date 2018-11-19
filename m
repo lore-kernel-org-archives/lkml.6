@@ -2,120 +2,71 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3BEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A345CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD7520851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:49:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD7520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 741A420851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 741A420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbeKTCN3 (ORCPT
+        id S1729928AbeKTCOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:13:29 -0500
-Received: from foss.arm.com ([217.140.101.70]:60108 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeKTCN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:13:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D77680D;
-        Mon, 19 Nov 2018 07:49:30 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EB923F575;
-        Mon, 19 Nov 2018 07:49:27 -0800 (PST)
-Date:   Mon, 19 Nov 2018 15:49:25 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-Message-ID: <20181119154923.GW3505@e103592.cambridge.arm.com>
-References: <20181118111751.6142-1-christian@brauner.io>
+        Mon, 19 Nov 2018 21:14:15 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49642 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729796AbeKTCOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:14:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3BD21AFF6;
+        Mon, 19 Nov 2018 15:50:15 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        davem@davemloft.net, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to phy_select/restore_page functions
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+        <20181008100728.24959-2-quentin.schulz@bootlin.com>
+        <mvm8t1pazea.fsf@suse.de> <20181119151057.GC26852@lunn.ch>
+        <mvm4lcdaynt.fsf@suse.de> <20181119152830.GE26852@lunn.ch>
+        <20181119154005.GA8367@piout.net>
+X-Yow:  YOW!!  What should the entire human race DO??  Consume a fifth
+ of CHIVAS REGAL, ski NUDE down MT. EVEREST, and have a wild
+ SEX WEEKEND!
+Date:   Mon, 19 Nov 2018 16:50:14 +0100
+In-Reply-To: <20181119154005.GA8367@piout.net> (Alexandre Belloni's message of
+        "Mon, 19 Nov 2018 16:40:05 +0100")
+Message-ID: <mvmzhu59idl.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181118111751.6142-1-christian@brauner.io>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 12:17:51PM +0100, Christian Brauner wrote:
-> With this patch an open() call on /proc/<pid> will give userspace a handle
-> to struct pid of the process associated with /proc/<pid>. This allows to
-> maintain a stable handle on a process.
-> I have been discussing various approaches extensively during technical
-> conferences this year culminating in a long argument with Eric at Linux
-> Plumbers. The general consensus was that having a handle on a process
-> will be something that is very simple and easy to maintain with the
-> option of being extensible via a more advanced api if the need arises. I
-> believe that this patch is the most simple, dumb, and therefore
-> maintainable solution.
-> 
-> The need for this has arisen in order to reliably kill a process without
-> running into issues of the pid being recycled as has been described in the
-> rejected patch [1]. To fulfill the need described in that patchset a new
+On Nov 19 2018, Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
 
-It would certainly be good to fix this.  IIUC, things like pkill(1) are
-a gamble today and can probably kill a process that doesn't fulfil the
-match criteria due to PID recycling.  (If not, I'd certainly like to
-understand how that is prevented.)
+> My first intuition is that he mac driver quentin is using does
+> phy_connect when the interface is opened while macb is doing it at probe
+> time. I didn't investigate but maybe this can help :)
 
-> ioctl() PROC_FD_SIGNAL is added. It can be used to send signals to a
-> process via a file descriptor:
-> 
-> int fd = open("/proc/1234", O_DIRECTORY | O_CLOEXEC);
-> ioctl(fd, PROC_FD_SIGNAL, SIGKILL);
-> close(fd);
-> 
-> Note, the stable handle will allow us to carefully extend this feature in
-> the future.
+The phy probing of macb is very unreliable, perhaps it needs to be
+rewritten.
 
-A concern here would be that an fd-based shadow API may need to be
-created, duplicating the whole PID-based API that already exists.
+Andreas.
 
-However, so long as the PID is stabilised against recycling, an ordinary
-kill() call seems fine as a way to kill the target process, and no new
-API or permission model seems to be needed.
-
-
-It occurs to me that a mechanism for holding a reference on a third
-process already exists: ptrace.
-
-Suppose we were to have something like
-
-	ptrace(PTRACE_MONITOR, pid, 0, 0);
-
-that subscribes the caller for the same set of notifications via wait()
-as the process' real parent gets, and prevents PID recycling until the
-zombie is consumed be everyone who is subscribed.
-
-Multiple PTRACE_MONITOR attachments could be allowed for a given target,
-in addition to the real parent and regular ptrace-parent (if any).
-
-
-There are a couple of wrinkles:
-
- * ptrace() operates on tasks, not processes, so the precise semantics
-of PTRACE_MONITOR attachment would need a bit of thought.
-
- * Odd mechanisms for discovering PIDs, like the unix(7) SCM_CREDENTIALS
-message might need a special variant to get a PTRACE_MONITOR attachment
-along with the message.  This variant behaviour would need to be opt-in
-for the recipient.
-
-
-OTOH, extending ptrace may bring problems of its own :/
-
-Cheers
----Dave
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
