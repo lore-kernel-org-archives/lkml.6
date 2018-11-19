@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7D7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88EFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BFC92148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 706E02145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GB1JNHXD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BFC92148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R42/YPF1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706E02145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389741AbeKTDNf (ORCPT
+        id S2389755AbeKTDNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50420 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388931AbeKTDNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:35 -0500
+        id S2388931AbeKTDNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A039206BA;
-        Mon, 19 Nov 2018 16:49:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE77E213A2;
+        Mon, 19 Nov 2018 16:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646162;
-        bh=oOpbMhBW6E/952B3wy6ZWPGHrNsIBNZuOX2tGP7yj6s=;
+        s=default; t=1542646165;
+        bh=YhiCJbcDvFpyuFaRDSOSvPm6EhVF0xLYei0hf5wZdvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GB1JNHXDjeK6JiNEeV0M5OQ4XwIaqIGAkhBCG6XCw7lorr/lvmJSxbafVGnUTLr0u
-         +QKGQGeebobm15apO32DRH7SVIG5WhNFTqEdaI0OHEWZvlCgYiaVm/UIf6V9Dq1q3E
-         vkD5gezKFH3Ag+vb8kJIoxKz1ymfA4myhfj6tKc8=
+        b=R42/YPF1yxYyfZb5QYGwYs73n8XFgM9bT5pys8TeyN8GMpYdZsb8+y+CgFAYMm3kj
+         WfFkY3BXllOp/WZCVrzk4kmXupEhOAhpstscp84N46b2WCNTWKE2hs6/ESp00q5KOE
+         CfI8RmBOeTfArFwNBOyaDAPrQsbQK5KfN5w48Goc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.14 060/124] ARM: 8809/1: proc-v7: fix Thumb annotation of cpu_v7_hvc_switch_mm
-Date:   Mon, 19 Nov 2018 17:28:34 +0100
-Message-Id: <20181119162625.101781096@linuxfoundation.org>
+        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 061/124] mtd: docg3: dont set conflicting BCH_CONST_PARAMS option
+Date:   Mon, 19 Nov 2018 17:28:35 +0100
+Message-Id: <20181119162625.309215507@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,57 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 6282e916f774e37845c65d1eae9f8c649004f033 upstream.
+commit be2e1c9dcf76886a83fb1c433a316e26d4ca2550 upstream.
 
-Due to what appears to be a copy/paste error, the opening ENTRY()
-of cpu_v7_hvc_switch_mm() lacks a matching ENDPROC(), and instead,
-the one for cpu_v7_smc_switch_mm() is duplicated.
+I noticed during the creation of another bugfix that the BCH_CONST_PARAMS
+option that is set by DOCG3 breaks setting variable parameters for any
+other users of the BCH library code.
 
-Given that it is ENDPROC() that emits the Thumb annotation, the
-cpu_v7_hvc_switch_mm() routine will be called in ARM mode on a
-Thumb2 kernel, resulting in the following splat:
+The only other user we have today is the MTD_NAND software BCH
+implementation (most flash controllers use hardware BCH these days
+and are not affected). I considered removing BCH_CONST_PARAMS entirely
+because of the inherent conflict, but according to the description in
+lib/bch.c there is a significant performance benefit in keeping it.
 
-  Internal error: Oops - undefined instruction: 0 [#1] SMP THUMB2
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc1-00030-g4d28ad89189d-dirty #488
-  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-  PC is at cpu_v7_hvc_switch_mm+0x12/0x18
-  LR is at flush_old_exec+0x31b/0x570
-  pc : [<c0316efe>]    lr : [<c04117c7>]    psr: 00000013
-  sp : ee899e50  ip : 00000000  fp : 00000001
-  r10: eda28f34  r9 : eda31800  r8 : c12470e0
-  r7 : eda1fc00  r6 : eda53000  r5 : 00000000  r4 : ee88c000
-  r3 : c0316eec  r2 : 00000001  r1 : eda53000  r0 : 6da6c000
-  Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+To avoid the immediate problem of the conflict between MTD_NAND_BCH
+and DOCG3, this only sets the constant parameters if MTD_NAND_BCH
+is disabled, which should fix the problem for all cases that
+are affected. This should also work for all stable kernels.
 
-Note the 'ISA ARM' in the last line.
+Note that there is only one machine that actually seems to use the
+DOCG3 driver (arch/arm/mach-pxa/mioa701.c), so most users should have
+the driver disabled, but it almost certainly shows up if we wanted
+to test random kernels on machines that use software BCH in MTD.
 
-Fix this by using the correct name in ENDPROC().
-
-Cc: <stable@vger.kernel.org>
-Fixes: 10115105cb3a ("ARM: spectre-v2: add firmware based hardening")
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: d13d19ece39f ("mtd: docg3: add ECC correction code")
+Cc: stable@vger.kernel.org
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mm/proc-v7.S |    2 +-
+ drivers/mtd/devices/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mm/proc-v7.S
-+++ b/arch/arm/mm/proc-v7.S
-@@ -112,7 +112,7 @@ ENTRY(cpu_v7_hvc_switch_mm)
- 	hvc	#0
- 	ldmfd	sp!, {r0 - r3}
- 	b	cpu_v7_switch_mm
--ENDPROC(cpu_v7_smc_switch_mm)
-+ENDPROC(cpu_v7_hvc_switch_mm)
- #endif
- ENTRY(cpu_v7_iciallu_switch_mm)
- 	mov	r3, #0
+--- a/drivers/mtd/devices/Kconfig
++++ b/drivers/mtd/devices/Kconfig
+@@ -206,7 +206,7 @@ comment "Disk-On-Chip Device Drivers"
+ config MTD_DOCG3
+ 	tristate "M-Systems Disk-On-Chip G3"
+ 	select BCH
+-	select BCH_CONST_PARAMS
++	select BCH_CONST_PARAMS if !MTD_NAND_BCH
+ 	select BITREVERSE
+ 	---help---
+ 	  This provides an MTD device driver for the M-Systems DiskOnChip
 
 
