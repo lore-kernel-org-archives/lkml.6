@@ -7,50 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C64BCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DE5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ED4621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2F482145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qvn4a9Of"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED4621104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTm0PCIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2F482145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388241AbeKTDI3 (ORCPT
+        id S2388253AbeKTDIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43010 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387795AbeKTDI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:28 -0500
+        id S1731911AbeKTDIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 875C920C01;
-        Mon, 19 Nov 2018 16:44:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 402A82086A;
+        Mon, 19 Nov 2018 16:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645857;
-        bh=dI1UPSFfo805wVZNkkEoK02gcI6wVxdmW+UmyfvB5Ww=;
+        s=default; t=1542645859;
+        bh=XvPxJlw4U5adwmlZnIWlL41ecnDNi7QlXhHye2+KJuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qvn4a9OfpgAyeg5deoxbCfhBwsfc9OQbY8NQj07q+of0Y2VSLZAK8T8x9vQlfmqAY
-         UqvLbX7leSoV5sny4XwPzorEti8UGyQAYQQMiOWg6yEviy0TJTVBpFtShYpW8tid94
-         aYao2gNQ2adn8VCf4iuZqcTvnUDjVNErVjdZRJp0=
+        b=KTm0PCIFLIB7/EzdBAZOIJXCiKJRHrU0NQMy3ohvF0+xnRmkdjNQUb4KOdQm6khPe
+         7Zs/09hM9cTtntyvPMMMsoMQ5UEVjaY/kAJsXBOYX7rkPHXEgRhyzqOBPTTRUkjI0A
+         sLHEniD3IO9asHfhNlnru54LgItwBOlJLE2APtZc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        linux-scsi@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "jianchao.wang" <jianchao.w.wang@oracle.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.18 079/171] SCSI: fix queue cleanup race before queue initialization is done
-Date:   Mon, 19 Nov 2018 17:27:55 +0100
-Message-Id: <20181119162632.278437995@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.18 080/171] Revert "powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for CONFIG_SWAP"
+Date:   Mon, 19 Nov 2018 17:27:56 +0100
+Message-Id: <20181119162632.416877913@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -68,87 +62,202 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 8dc765d438f1e42b3e8227b3b09fad7d73f4ec9a upstream.
+commit cc4ebf5c0a3440ed0a32d25c55ebdb6ce5f3c0bc upstream.
 
-c2856ae2f315d ("blk-mq: quiesce queue before freeing queue") has
-already fixed this race, however the implied synchronize_rcu()
-in blk_mq_quiesce_queue() can slow down LUN probe a lot, so caused
-performance regression.
+This reverts commit 4f94b2c7462d9720b2afa7e8e8d4c19446bb31ce.
 
-Then 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
-tried to quiesce queue for avoiding unnecessary synchronize_rcu()
-only when queue initialization is done, because it is usual to see
-lots of inexistent LUNs which need to be probed.
+That commit was buggy, as it used rlwinm instead of rlwimi.
+Instead of fixing that bug, we revert the previous commit in order to
+reduce the dependency between L1 entries and L2 entries
 
-However, turns out it isn't safe to quiesce queue only when queue
-initialization is done. Because when one SCSI command is completed,
-the user of sending command can be waken up immediately, then the
-scsi device may be removed, meantime the run queue in scsi_end_request()
-is still in-progress, so kernel panic can be caused.
-
-In Red Hat QE lab, there are several reports about this kind of kernel
-panic triggered during kernel booting.
-
-This patch tries to address the issue by grabing one queue usage
-counter during freeing one request and the following run queue.
-
-Fixes: 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
-Cc: Andrew Jones <drjones@redhat.com>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: linux-scsi@vger.kernel.org
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: jianchao.wang <jianchao.w.wang@oracle.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 4f94b2c7462d9 ("powerpc/8xx: Use L1 entry APG to handle _PAGE_ACCESSED for CONFIG_SWAP")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c        |    5 ++---
- drivers/scsi/scsi_lib.c |    8 ++++++++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ arch/powerpc/include/asm/mmu-8xx.h |   34 ++++-----------------------
+ arch/powerpc/kernel/head_8xx.S     |   45 ++++++++++++++++++++++---------------
+ arch/powerpc/mm/8xx_mmu.c          |    2 -
+ 3 files changed, 34 insertions(+), 47 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -793,9 +793,8 @@ void blk_cleanup_queue(struct request_qu
- 	 * dispatch may still be in-progress since we dispatch requests
- 	 * from more than one contexts.
- 	 *
--	 * No need to quiesce queue if it isn't initialized yet since
--	 * blk_freeze_queue() should be enough for cases of passthrough
--	 * request.
-+	 * We rely on driver to deal with the race in case that queue
-+	 * initialization isn't done.
+--- a/arch/powerpc/include/asm/mmu-8xx.h
++++ b/arch/powerpc/include/asm/mmu-8xx.h
+@@ -34,20 +34,12 @@
+  * respectively NA for All or X for Supervisor and no access for User.
+  * Then we use the APG to say whether accesses are according to Page rules or
+  * "all Supervisor" rules (Access to all)
+- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
+- * When that bit is not set access is done iaw "all user"
+- * which means no access iaw page rules.
+- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
+- * 0x => No access => 11 (all accesses performed as user iaw page definition)
+- * 10 => No user => 01 (all accesses performed according to page definition)
+- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
++ * Therefore, we define 2 APG groups. lsb is _PMD_USER
++ * 0 => No user => 01 (all accesses performed according to page definition)
++ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
+  * We define all 16 groups so that all other bits of APG can take any value
+  */
+-#ifdef CONFIG_SWAP
+-#define MI_APG_INIT	0xf4f4f4f4
+-#else
+ #define MI_APG_INIT	0x44444444
+-#endif
+ 
+ /* The effective page number register.  When read, contains the information
+  * about the last instruction TLB miss.  When MI_RPN is written, bits in
+@@ -115,20 +107,12 @@
+  * Supervisor and no access for user and NA for ALL.
+  * Then we use the APG to say whether accesses are according to Page rules or
+  * "all Supervisor" rules (Access to all)
+- * We also use the 2nd APG bit for _PAGE_ACCESSED when having SWAP:
+- * When that bit is not set access is done iaw "all user"
+- * which means no access iaw page rules.
+- * Therefore, we define 4 APG groups. lsb is _PMD_USER, 2nd is _PAGE_ACCESSED
+- * 0x => No access => 11 (all accesses performed as user iaw page definition)
+- * 10 => No user => 01 (all accesses performed according to page definition)
+- * 11 => User => 00 (all accesses performed as supervisor iaw page definition)
++ * Therefore, we define 2 APG groups. lsb is _PMD_USER
++ * 0 => No user => 01 (all accesses performed according to page definition)
++ * 1 => User => 00 (all accesses performed as supervisor iaw page definition)
+  * We define all 16 groups so that all other bits of APG can take any value
+  */
+-#ifdef CONFIG_SWAP
+-#define MD_APG_INIT	0xf4f4f4f4
+-#else
+ #define MD_APG_INIT	0x44444444
+-#endif
+ 
+ /* The effective page number register.  When read, contains the information
+  * about the last instruction TLB miss.  When MD_RPN is written, bits in
+@@ -180,12 +164,6 @@
+  */
+ #define SPRN_M_TW	799
+ 
+-/* APGs */
+-#define M_APG0		0x00000000
+-#define M_APG1		0x00000020
+-#define M_APG2		0x00000040
+-#define M_APG3		0x00000060
+-
+ #ifdef CONFIG_PPC_MM_SLICES
+ #include <asm/nohash/32/slice.h>
+ #define SLICE_ARRAY_SIZE	(1 << (32 - SLICE_LOW_SHIFT - 1))
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -354,13 +354,14 @@ _ENTRY(ITLBMiss_cmp)
+ #if defined(ITLB_MISS_KERNEL) || defined(CONFIG_HUGETLB_PAGE)
+ 	mtcr	r12
+ #endif
+-
+-#ifdef CONFIG_SWAP
+-	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
+-#endif
+ 	/* Load the MI_TWC with the attributes for this "segment." */
+ 	mtspr	SPRN_MI_TWC, r11	/* Set segment attributes */
+ 
++#ifdef CONFIG_SWAP
++	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
++	and	r11, r11, r10
++	rlwimi	r10, r11, 0, _PAGE_PRESENT
++#endif
+ 	li	r11, RPN_PATTERN | 0x200
+ 	/* The Linux PTE won't go exactly into the MMU TLB.
+ 	 * Software indicator bits 20 and 23 must be clear.
+@@ -471,14 +472,22 @@ _ENTRY(DTLBMiss_jmp)
+ 	 * above.
  	 */
- 	if (q->mq_ops && blk_queue_init_done(q))
- 		blk_mq_quiesce_queue(q);
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -696,6 +696,12 @@ static bool scsi_end_request(struct requ
- 		 */
- 		scsi_mq_uninit_cmd(cmd);
+ 	rlwimi	r11, r10, 0, _PAGE_GUARDED
+-#ifdef CONFIG_SWAP
+-	/* _PAGE_ACCESSED has to be set. We use second APG bit for that, 0
+-	 * on that bit will represent a Non Access group
+-	 */
+-	rlwinm	r11, r10, 31, _PAGE_ACCESSED >> 1
+-#endif
+ 	mtspr	SPRN_MD_TWC, r11
  
-+		/*
-+		 * queue is still alive, so grab the ref for preventing it
-+		 * from being cleaned up during running queue.
-+		 */
-+		percpu_ref_get(&q->q_usage_counter);
-+
- 		__blk_mq_end_request(req, error);
++	/* Both _PAGE_ACCESSED and _PAGE_PRESENT has to be set.
++	 * We also need to know if the insn is a load/store, so:
++	 * Clear _PAGE_PRESENT and load that which will
++	 * trap into DTLB Error with store bit set accordinly.
++	 */
++	/* PRESENT=0x1, ACCESSED=0x20
++	 * r11 = ((r10 & PRESENT) & ((r10 & ACCESSED) >> 5));
++	 * r10 = (r10 & ~PRESENT) | r11;
++	 */
++#ifdef CONFIG_SWAP
++	rlwinm	r11, r10, 32-5, _PAGE_PRESENT
++	and	r11, r11, r10
++	rlwimi	r10, r11, 0, _PAGE_PRESENT
++#endif
+ 	/* The Linux PTE won't go exactly into the MMU TLB.
+ 	 * Software indicator bits 24, 25, 26, and 27 must be
+ 	 * set.  All other Linux PTE bits control the behavior
+@@ -638,8 +647,8 @@ InstructionBreakpoint:
+  */
+ DTLBMissIMMR:
+ 	mtcr	r12
+-	/* Set 512k byte guarded page and mark it valid and accessed */
+-	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID | M_APG2
++	/* Set 512k byte guarded page and mark it valid */
++	li	r10, MD_PS512K | MD_GUARDED | MD_SVALID
+ 	mtspr	SPRN_MD_TWC, r10
+ 	mfspr	r10, SPRN_IMMR			/* Get current IMMR */
+ 	rlwinm	r10, r10, 0, 0xfff80000		/* Get 512 kbytes boundary */
+@@ -657,8 +666,8 @@ _ENTRY(dtlb_miss_exit_2)
  
- 		if (scsi_target(sdev)->single_lun ||
-@@ -703,6 +709,8 @@ static bool scsi_end_request(struct requ
- 			kblockd_schedule_work(&sdev->requeue_work);
- 		else
- 			blk_mq_run_hw_queues(q, true);
-+
-+		percpu_ref_put(&q->q_usage_counter);
- 	} else {
- 		unsigned long flags;
- 
+ DTLBMissLinear:
+ 	mtcr	r12
+-	/* Set 8M byte page and mark it valid and accessed */
+-	li	r11, MD_PS8MEG | MD_SVALID | M_APG2
++	/* Set 8M byte page and mark it valid */
++	li	r11, MD_PS8MEG | MD_SVALID
+ 	mtspr	SPRN_MD_TWC, r11
+ 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
+ 	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_PRIVILEGED | _PAGE_DIRTY | \
+@@ -676,8 +685,8 @@ _ENTRY(dtlb_miss_exit_3)
+ #ifndef CONFIG_PIN_TLB_TEXT
+ ITLBMissLinear:
+ 	mtcr	r12
+-	/* Set 8M byte page and mark it valid,accessed */
+-	li	r11, MI_PS8MEG | MI_SVALID | M_APG2
++	/* Set 8M byte page and mark it valid */
++	li	r11, MI_PS8MEG | MI_SVALID
+ 	mtspr	SPRN_MI_TWC, r11
+ 	rlwinm	r10, r10, 0, 0x0f800000	/* 8xx supports max 256Mb RAM */
+ 	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_PRIVILEGED | _PAGE_DIRTY | \
+@@ -960,7 +969,7 @@ initial_mmu:
+ 	ori	r8, r8, MI_EVALID	/* Mark it valid */
+ 	mtspr	SPRN_MI_EPN, r8
+ 	li	r8, MI_PS8MEG /* Set 8M byte page */
+-	ori	r8, r8, MI_SVALID | M_APG2	/* Make it valid, APG 2 */
++	ori	r8, r8, MI_SVALID	/* Make it valid */
+ 	mtspr	SPRN_MI_TWC, r8
+ 	li	r8, MI_BOOTINIT		/* Create RPN for address 0 */
+ 	mtspr	SPRN_MI_RPN, r8		/* Store TLB entry */
+@@ -987,7 +996,7 @@ initial_mmu:
+ 	ori	r8, r8, MD_EVALID	/* Mark it valid */
+ 	mtspr	SPRN_MD_EPN, r8
+ 	li	r8, MD_PS512K | MD_GUARDED	/* Set 512k byte page */
+-	ori	r8, r8, MD_SVALID | M_APG2	/* Make it valid and accessed */
++	ori	r8, r8, MD_SVALID	/* Make it valid */
+ 	mtspr	SPRN_MD_TWC, r8
+ 	mr	r8, r9			/* Create paddr for TLB */
+ 	ori	r8, r8, MI_BOOTINIT|0x2 /* Inhibit cache -- Cort */
+--- a/arch/powerpc/mm/8xx_mmu.c
++++ b/arch/powerpc/mm/8xx_mmu.c
+@@ -79,7 +79,7 @@ void __init MMU_init_hw(void)
+ 	for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
+ 		mtspr(SPRN_MD_CTR, ctr | (i << 8));
+ 		mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
+-		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID | M_APG2);
++		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
+ 		mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
+ 		addr += LARGE_PAGE_SIZE_8M;
+ 		mem -= LARGE_PAGE_SIZE_8M;
 
 
