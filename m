@@ -2,92 +2,87 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D20B6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8030C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998A621104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:15:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ijuYgLiU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998A621104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7442C20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:16:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7442C20823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbeKSXiw (ORCPT
+        id S1729306AbeKSXkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:38:52 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34034 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729246AbeKSXiv (ORCPT
+        Mon, 19 Nov 2018 18:40:32 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45940 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729208AbeKSXkb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:38:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so21282567lfc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 05:15:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fz1V6zhigR8EAn2GmOvM1hx5R+S0FIRG7GiekrEHrnA=;
-        b=ijuYgLiUT0agW6JgaOL/ShUfdko9EU9R8jN0MveqD7Or1FeFZBAWfTTvs/mov5qGm2
-         yPzEJgn84ZO5v8ztC19SkWwZ/XWWBnqNN20WRoE7dJI1mhejHhcQM5hq8fzpa4IvgkpZ
-         1yQfRCQFzAJhSpbIFKjljQGKt1815m00+axw0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fz1V6zhigR8EAn2GmOvM1hx5R+S0FIRG7GiekrEHrnA=;
-        b=tcluxHt3oAcHS+PR7ayASvKznNwgaT63+H2JVbwBab7iFt+L6iG8/1+pa/Ersvf0fb
-         0eiIGEex07rZ5j1U2uTjrZWJWZK0pGUlOSZsMYFptAySiHN11Z7AVHwcFnynwrbihy9e
-         tkJScgZxW5hcPqbYBmvDM5L2juygQzSUNPRO/3PBuLbaXrSLqRxkNnhk5csm7KybZC/c
-         xTMnRRW339GFoY1+dqh/MS5tP1UdEv5/5LaxSj6gMQASGn7KR9uZfD9qeXfAyyg9ceHg
-         i9sBsodXCAmgBtnNZxBhO6RCqLKG2zqxlQlx2M6KG3CFJJJbWUhJx0edUe9Wi4xzS19w
-         QA5Q==
-X-Gm-Message-State: AGRZ1gKJv0tRY6+WRC5aI7spgXDB9n/WeIsxit4/a0q1a0I+9kOg2HwP
-        G1bHlAg7EYUiB6tDB30n2c4qLEx6/5U6k+A5XFu+Tg==
-X-Google-Smtp-Source: AJdET5ceR4gYuwoeF1FzM9lymad/TSoRx7VQJwhr7Y7LPmrltgFtJuVRCvWmXW4k2Qv68aog53Rs3t8RFbDAeZI7Dtk=
-X-Received: by 2002:a19:c801:: with SMTP id y1mr10303588lff.53.1542633314219;
- Mon, 19 Nov 2018 05:15:14 -0800 (PST)
+        Mon, 19 Nov 2018 18:40:31 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 09D44808CE; Mon, 19 Nov 2018 14:16:50 +0100 (CET)
+Date:   Mon, 19 Nov 2018 14:16:53 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH v1 7/8] PM / Hibernate: use pfn_to_online_page()
+Message-ID: <20181119131653.GA27556@amd>
+References: <20181119101616.8901-1-david@redhat.com>
+ <20181119101616.8901-8-david@redhat.com>
 MIME-Version: 1.0
-References: <20181115124748.268286-1-pn@denx.de>
-In-Reply-To: <20181115124748.268286-1-pn@denx.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Nov 2018 14:15:02 +0100
-Message-ID: <CACRpkdbBmujFjpu0uyH4vTN8BUfp8Mq0Yt1KWnfTkihQ34pJLA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] Add Actions Semi S700 pinctrl support
-To:     pn@denx.de
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, mp-cs@actions-semi.com,
-        "Thomas C. Liau" <thomas.liau@actions-semi.com>,
-        linux@cubietech.com, saravanan sekar <sravanhome@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
+Content-Disposition: inline
+In-Reply-To: <20181119101616.8901-8-david@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 1:48 PM Parthiban Nallathambi <pn@denx.de> wrote:
 
-> This patchset adds pinctrl support for Actions Semi S700 SoC.
-> Pinmux functions are only accessible for pin groups while pinconf
-> parameters are available for both pin groups and individual pins.
+--PNTmBPCT7hxwcZjr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This v7 patch set applied for v4.21, thanks a *lot* for your work!
+On Mon 2018-11-19 11:16:15, David Hildenbrand wrote:
+> Let's use pfn_to_online_page() instead of pfn_to_page() when checking
+> for saveable pages to not save/restore offline memory sections.
+>=20
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-Let's see if there is some bugs to shake out in the linux-next
-builds, the grunt work is done.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Yours,
-Linus Walleij
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--PNTmBPCT7hxwcZjr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvyt8UACgkQMOfwapXb+vKC6ACeIzp6Bg+hmUwQWwjh+ih57//k
+JAoAoJFh/JwjaBISFtEww2yg/SP3hHMv
+=Xcas
+-----END PGP SIGNATURE-----
+
+--PNTmBPCT7hxwcZjr--
