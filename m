@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8CAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E3D4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8CB7206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 041AA20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="opk4oIuE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8CB7206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVO2rUnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041AA20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732865AbeKTDEE (ORCPT
+        id S1732879AbeKTDEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:04:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36884 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:04:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731915AbeKTDED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:04:03 -0500
+        id S1731915AbeKTDEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:04:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9F0020831;
-        Mon, 19 Nov 2018 16:39:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5CA8F208E3;
+        Mon, 19 Nov 2018 16:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645593;
-        bh=57mFWVHlKvphgGVpV2smToyfJozbhfjsgwwWpJ0GmqY=;
+        s=default; t=1542645595;
+        bh=WjNvhpXLKBs4RPmqqnf5IxLjURDtxIqYJya1LXJdqRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=opk4oIuEW4p3MkNqgpPAzL2bLGApsyYOfCJbc3TIzO/m9CfUSidVD/XDfdTYKaol/
-         qjiyAdnjD/T4QoncHzlZYzJqD9LA9kVGXBeX8+9QiTNdsG5YO38Yal3FK3SFUkPOAd
-         OxsxkAz3Stbg4im1I5cNXS+AEV4qfnMl6vja2KZE=
+        b=hVO2rUnNimprncpqElgs28f2i39oCaX3vyxknpFR/jTV2EcFLc1up06g+AqyZcNKy
+         MkQ4TFCWIRSHjAvcFONXEAXXFNPxmpxelNYNRuSql2rfVVwBMy08kKtlJelxHePIWQ
+         RQHW5fpmqurAqJt3KJ/kLqnr+9KqXjRUVw17BXxM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        SivapiriyanKumarasamy <sivapiriyan.kumarasamy@amd.com>,
-        Anthony Koo <Anthony.Koo@amd.com>,
-        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 016/171] drm/amd/display: fix gamma not being applied
-Date:   Mon, 19 Nov 2018 17:26:52 +0100
-Message-Id: <20181119162622.158378251@linuxfoundation.org>
+Subject: [PATCH 4.18 017/171] drm/hisilicon: hibmc: Do not carry error code in HiBMC framebuffer pointer
+Date:   Mon, 19 Nov 2018 17:26:53 +0100
+Message-Id: <20181119162622.364254211@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -66,82 +63,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: SivapiriyanKumarasamy <sivapiriyan.kumarasamy@amd.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 30049754ab7c4b6148dd3cd64af7d54850604582 ]
+[ Upstream commit 331d880b35a76b5de0eec8cbcecbf615d758a5f9 ]
 
-[WHY]
-Previously night light forced a full update by
-applying a  transfer function update regardless of if it was changed.
-This logic was removed,
+In hibmc_drm_fb_create(), when the call to hibmc_framebuffer_init() fails
+with error, do not store the error code in the HiBMC device frame-buffer
+pointer, as this will be later checked for non-zero value in
+hibmc_fbdev_destroy() when our intention is to check for a valid function
+pointer.
 
-Now gamma surface updates are only applied when there is also a plane
-info update, this does not work in cases such as using the night light
-slider.
+This fixes the following crash:
+[    9.699791] Unable to handle kernel NULL pointer dereference at virtual address 000000000000001a
+[    9.708672] Mem abort info:
+[    9.711489]   ESR = 0x96000004
+[    9.714570]   Exception class = DABT (current EL), IL = 32 bits
+[    9.720551]   SET = 0, FnV = 0
+[    9.723631]   EA = 0, S1PTW = 0
+[    9.726799] Data abort info:
+[    9.729702]   ISV = 0, ISS = 0x00000004
+[    9.733573]   CM = 0, WnR = 0
+[    9.736566] [000000000000001a] user address but active_mm is swapper
+[    9.742987] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[    9.748614] Modules linked in:
+[    9.751694] CPU: 16 PID: 293 Comm: kworker/16:1 Tainted: G        W         4.19.0-rc4-next-20180920-00001-g9b0012c #322
+[    9.762681] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
+[    9.771915] Workqueue: events work_for_cpu_fn
+[    9.776312] pstate: 60000005 (nZCv daif -PAN -UAO)
+[    9.781150] pc : drm_mode_object_put+0x0/0x20
+[    9.785547] lr : hibmc_fbdev_fini+0x40/0x58
+[    9.789767] sp : ffff00000af1bcf0
+[    9.793108] x29: ffff00000af1bcf0 x28: 0000000000000000
+[    9.798473] x27: 0000000000000000 x26: ffff000008f66630
+[    9.803838] x25: 0000000000000000 x24: ffff0000095abb98
+[    9.809203] x23: ffff8017db92fe00 x22: ffff8017d2b13000
+[    9.814568] x21: ffffffffffffffea x20: ffff8017d2f80018
+[    9.819933] x19: ffff8017d28a0018 x18: ffffffffffffffff
+[    9.825297] x17: 0000000000000000 x16: 0000000000000000
+[    9.830662] x15: ffff0000092296c8 x14: ffff00008939970f
+[    9.836026] x13: ffff00000939971d x12: ffff000009229940
+[    9.841391] x11: ffff0000085f8fc0 x10: ffff00000af1b9a0
+[    9.846756] x9 : 000000000000000d x8 : 6620657a696c6169
+[    9.852121] x7 : ffff8017d3340580 x6 : ffff8017d4168000
+[    9.857486] x5 : 0000000000000000 x4 : ffff8017db92fb20
+[    9.862850] x3 : 0000000000002690 x2 : ffff8017d3340480
+[    9.868214] x1 : 0000000000000028 x0 : 0000000000000002
+[    9.873580] Process kworker/16:1 (pid: 293, stack limit = 0x(____ptrval____))
+[    9.880788] Call trace:
+[    9.883252]  drm_mode_object_put+0x0/0x20
+[    9.887297]  hibmc_unload+0x1c/0x80
+[    9.890815]  hibmc_pci_probe+0x170/0x3c8
+[    9.894773]  local_pci_probe+0x3c/0xb0
+[    9.898555]  work_for_cpu_fn+0x18/0x28
+[    9.902337]  process_one_work+0x1e0/0x318
+[    9.906382]  worker_thread+0x228/0x450
+[    9.910164]  kthread+0x128/0x130
+[    9.913418]  ret_from_fork+0x10/0x18
+[    9.917024] Code: a94153f3 a8c27bfd d65f03c0 d503201f (f9400c01)
+[    9.923180] ---[ end trace 2695ffa0af5be375 ]---
 
-[HOW]
-When moving the night light slider we will perform a full update if
-the gamma has changed and there is a surface, even when the surface
-has not changed. Also get stream updates in setgamma prior to
-update planes and stream.
-
-Signed-off-by: SivapiriyanKumarasamy <sivapiriyan.kumarasamy@amd.com>
-Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: d1667b86795a ("drm/hisilicon/hibmc: Add support for frame buffer")
+Signed-off-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
+Signed-off-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/display/dc/core/dc.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc.c
-@@ -1045,9 +1045,6 @@ static enum surface_update_type get_plan
- 		 */
- 		update_flags->bits.bpp_change = 1;
- 
--	if (u->gamma && dce_use_lut(u->plane_info->format))
--		update_flags->bits.gamma_change = 1;
--
- 	if (memcmp(&u->plane_info->tiling_info, &u->surface->tiling_info,
- 			sizeof(union dc_tiling_info)) != 0) {
- 		update_flags->bits.swizzle_change = 1;
-@@ -1064,7 +1061,6 @@ static enum surface_update_type get_plan
- 	if (update_flags->bits.rotation_change
- 			|| update_flags->bits.stereo_format_change
- 			|| update_flags->bits.pixel_format_change
--			|| update_flags->bits.gamma_change
- 			|| update_flags->bits.bpp_change
- 			|| update_flags->bits.bandwidth_change
- 			|| update_flags->bits.output_tf_change)
-@@ -1154,13 +1150,26 @@ static enum surface_update_type det_surf
- 	if (u->coeff_reduction_factor)
- 		update_flags->bits.coeff_reduction_change = 1;
- 
-+	if (u->gamma) {
-+		enum surface_pixel_format format = SURFACE_PIXEL_FORMAT_GRPH_BEGIN;
-+
-+		if (u->plane_info)
-+			format = u->plane_info->format;
-+		else if (u->surface)
-+			format = u->surface->format;
-+
-+		if (dce_use_lut(format))
-+			update_flags->bits.gamma_change = 1;
-+	}
-+
- 	if (update_flags->bits.in_transfer_func_change) {
- 		type = UPDATE_TYPE_MED;
- 		elevate_update_type(&overall_type, type);
- 	}
- 
- 	if (update_flags->bits.input_csc_change
--			|| update_flags->bits.coeff_reduction_change) {
-+			|| update_flags->bits.coeff_reduction_change
-+			|| update_flags->bits.gamma_change) {
- 		type = UPDATE_TYPE_FULL;
- 		elevate_update_type(&overall_type, type);
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
+@@ -122,6 +122,7 @@ static int hibmc_drm_fb_create(struct dr
+ 	hi_fbdev->fb = hibmc_framebuffer_init(priv->dev, &mode_cmd, gobj);
+ 	if (IS_ERR(hi_fbdev->fb)) {
+ 		ret = PTR_ERR(hi_fbdev->fb);
++		hi_fbdev->fb = NULL;
+ 		DRM_ERROR("failed to initialize framebuffer: %d\n", ret);
+ 		goto out_release_fbi;
  	}
 
 
