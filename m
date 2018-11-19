@@ -2,48 +2,49 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9044CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68BFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CCE2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A62214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dbVsFYEM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CCE2147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="etWjIHI9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A62214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403921AbeKTDTl (ORCPT
+        id S2404095AbeKTDTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:19:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58916 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:19:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403856AbeKTDTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:19:41 -0500
+        id S2390607AbeKTDTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:19:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 511F2214C1;
-        Mon, 19 Nov 2018 16:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA693208E3;
+        Mon, 19 Nov 2018 16:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646526;
-        bh=tPXStF3yF430cuLpnsryUd2Aw5A+1NREO8Lj1CqHYaM=;
+        s=default; t=1542646530;
+        bh=6glhkUC3uBac3eA69A7euusnqTc9Ohhj/LHaMKs23wI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dbVsFYEMueruzHMWze8W9+g0G2KeuLVy1V+i4u9urvH/lY9uBYyWTUbKX/7YThoYd
-         9AtyRTuRqiVvEJqLl8/PtaTnxd9/jMHdp5UEm1GusZC7lPJVOjTTtesDI+jlHYgPFs
-         0ks1Xo6NAaE1qUEuZngqIC6C3vvy0pItriJpr2ZQ=
+        b=etWjIHI9B9txpQg4yIBuRzqiwcyhXSSINN4MCIoRdLqnlpTKWebnrMGhEO2h3vfcw
+         9u3LdAAPj7zzp5Kzrbk3YxJpBlAdagdldtSNEWmnts9bwIDJ7Vyp5aKP7MlO6cjg5G
+         5uwH7eGqX0IvfNnaEjCtRS9yGkQngAi0EMXGJko0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.9 37/83] libceph: bump CEPH_MSG_MAX_DATA_LEN
-Date:   Mon, 19 Nov 2018 17:29:03 +0100
-Message-Id: <20181119162619.861653915@linuxfoundation.org>
+        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 28/83] parisc: Fix exported address of os_hpmc handler
+Date:   Mon, 19 Nov 2018 17:28:54 +0100
+Message-Id: <20181119162618.055170007@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -61,42 +62,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+[ Upstream commit 99a3ae51d557d8e38a7aece65678a31f9db215ee ]
 
-commit 94e6992bb560be8bffb47f287194adf070b57695 upstream.
+In the C-code we need to put the physical address of the hpmc handler in
+the interrupt vector table (IVA) in order to get HPMCs working.  Since
+on parisc64 function pointers are indirect (in fact they are function
+descriptors) we instead export the address as variable and not as
+function.
 
-If the read is large enough, we end up spinning in the messenger:
+This reverts a small part of commit f39cce654f9a ("parisc: Add
+cfi_startproc and cfi_endproc to assembly code").
 
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
-
-This is a receive side limit, so only reads were affected.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Helge Deller <deller@gmx.de>
+Cc: <stable@vger.kernel.org>    [4.9+]
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/ceph/libceph.h |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/parisc/kernel/hpmc.S | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -77,7 +77,13 @@ struct ceph_options {
+diff --git a/arch/parisc/kernel/hpmc.S b/arch/parisc/kernel/hpmc.S
+index 407b3aa5aa07..e88f4e7f39f3 100644
+--- a/arch/parisc/kernel/hpmc.S
++++ b/arch/parisc/kernel/hpmc.S
+@@ -84,7 +84,7 @@ END(hpmc_pim_data)
  
- #define CEPH_MSG_MAX_FRONT_LEN	(16*1024*1024)
- #define CEPH_MSG_MAX_MIDDLE_LEN	(16*1024*1024)
--#define CEPH_MSG_MAX_DATA_LEN	(16*1024*1024)
-+
-+/*
-+ * Handle the largest possible rbd object in one message.
-+ * There is no limit on the size of cephfs objects, but it has to obey
-+ * rsize and wsize mount options anyway.
-+ */
-+#define CEPH_MSG_MAX_DATA_LEN	(32*1024*1024)
+ 	.import intr_save, code
+ 	.align 16
+-ENTRY_CFI(os_hpmc)
++ENTRY(os_hpmc)
+ .os_hpmc:
  
- #define CEPH_AUTH_NAME_DEFAULT   "guest"
+ 	/*
+@@ -301,7 +301,6 @@ os_hpmc_6:
+ 	b .
+ 	nop
+ 	.align 16	/* make function length multiple of 16 bytes */
+-ENDPROC_CFI(os_hpmc)
+ .os_hpmc_end:
  
+ 
+-- 
+2.17.1
+
 
 
