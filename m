@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E69C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42062C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2132020831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BDBA208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTVT44AD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2132020831
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeUtxQ6l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BDBA208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389179AbeKTDLw (ORCPT
+        id S2389188AbeKTDLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47926 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389165AbeKTDLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:51 -0500
+        id S2388196AbeKTDLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C87206BA;
-        Mon, 19 Nov 2018 16:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0C6D20823;
+        Mon, 19 Nov 2018 16:47:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646059;
-        bh=6vM8VTpiu7OnQDkmjkItR2kotiU9Pie+zTji6FG2pmU=;
+        s=default; t=1542646062;
+        bh=r2AQDepWWKi/ezpIdEdFr59+7admFLdHSe9ZPyuUjX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DTVT44ADrbrMv8+XBvdvlKp5Gop0qeACj7QpIpXmNBkC10IVgDKqxHVaQDgaDJPB6
-         7jnkXiK7zS+9nz2yZNdzzcUP7O+zk/FvIV5fovioMlbw5kN6DnKuJsYHPi10lEboTi
-         zQcQL/UOw3GFHJnY4iLaY0YCXpcRVajb1RNpHDxo=
+        b=AeUtxQ6lYn0tNXRvzhUgd32hCYoeX1uapoqSX6n4ITaYmYEZSq9x+zovlDSrOlovd
+         +PVvuOn6fTy4m4KiT9HoC6OXW4a8wfhQXYlB85/nrli+w6Q+mP/ESIsC+DjkfjZjKz
+         vBCMVEPfGPSL4q4eex+FkIiibIzidDwcFKuQeZUE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Dominique Martinet <dominique.martinet@cea.fr>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 020/124] staging:iio:ad7606: fix voltage scales
-Date:   Mon, 19 Nov 2018 17:27:54 +0100
-Message-Id: <20181119162617.429169927@linuxfoundation.org>
+Subject: [PATCH 4.14 021/124] 9p locks: fix glock.client_id leak in do_lock
+Date:   Mon, 19 Nov 2018 17:27:55 +0100
+Message-Id: <20181119162617.668955654@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,45 +63,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
+[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
 
-Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
-ad7606: replace range/range_available with corresponding scale").
+the 9p client code overwrites our glock.client_id pointing to a static
+buffer by an allocated string holding the network provided value which
+we do not care about; free and reset the value as appropriate.
 
-The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
-voltage range, which is selectable via the `gpio_range` descriptor.
+This is almost identical to the leak in v9fs_file_getlock() fixed by
+Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
+in v9fs_file_getlock()"), which was returned as an error by a coverity
+false positive -- while we are here attempt to make the code slightly
+more robust to future change of the net/9p/client code and hopefully
+more clear to coverity that there is no problem.
 
-The scales also seem to have been miscomputed, because when they were
-applied to the raw values, the results differ from the expected values.
-After checking the ADC transfer function in the datasheet, these were
-re-computed.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/iio/adc/ad7606.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/9p/vfs_file.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/iio/adc/ad7606.c
-+++ b/drivers/staging/iio/adc/ad7606.c
-@@ -26,9 +26,12 @@
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file
+ 			break;
+ 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
+ 			break;
++		/*
++		 * p9_client_lock_dotl overwrites flock.client_id with the
++		 * server message, free and reuse the client name
++		 */
++		if (flock.client_id != fid->clnt->name) {
++			kfree(flock.client_id);
++			flock.client_id = fid->clnt->name;
++		}
+ 	}
  
- #include "ad7606.h"
+ 	/* map 9p status to VFS status */
+@@ -235,6 +243,8 @@ out_unlock:
+ 		locks_lock_file_wait(filp, fl);
+ 		fl->fl_type = fl_type;
+ 	}
++	if (flock.client_id != fid->clnt->name)
++		kfree(flock.client_id);
+ out:
+ 	return res;
+ }
+@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file
  
--/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
-+/*
-+ * Scales are computed as 5000/32768 and 10000/32768 respectively,
-+ * so that when applied to the raw values they provide mV values
-+ */
- static const unsigned int scale_avail[2][2] = {
--	{0, 38147}, {0, 76294}
-+	{0, 152588}, {0, 305176}
- };
+ 	res = p9_client_getlock_dotl(fid, &glock);
+ 	if (res < 0)
+-		return res;
++		goto out;
+ 	/* map 9p lock type to os lock type */
+ 	switch (glock.type) {
+ 	case P9_LOCK_TYPE_RDLCK:
+@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file
+ 			fl->fl_end = glock.start + glock.length - 1;
+ 		fl->fl_pid = -glock.proc_id;
+ 	}
+-	kfree(glock.client_id);
++out:
++	if (glock.client_id != fid->clnt->name)
++		kfree(glock.client_id);
+ 	return res;
+ }
  
- static int ad7606_reset(struct ad7606_state *st)
 
 
