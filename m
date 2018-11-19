@@ -2,97 +2,162 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA00C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B599C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FBAA20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D520820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="UPFQlysV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FBAA20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="JjGbwxRC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D520820851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731751AbeKTJ5V (ORCPT
+        id S1731956AbeKTJ5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:57:21 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:48171 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726262AbeKTJ5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:57:20 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0eac1a5b;
-        Mon, 19 Nov 2018 23:25:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=cKVEK2BpZngHHw5DaDCv65+IbGA=; b=UPFQly
-        sV5PvA/adwO6oEIlC9gKkVG+lGgzbopMWW37tgROEwtIKPQ5h2vZ3rU45ijA+nuF
-        Mp4PeixVRuDIdPsjHk9nxqbaEhe/P3jsXyl60+rJuVERY5X+JQ1Xjb24GUzqsCN1
-        eRvScZn0lvzQhGjJaL2bCpKwympfMUE5FtpY12ut6muDzOLunKAeNjHunJanQkh8
-        uSlzEAVvvSUb4/6DurOpWY6mXzI+iGx3QFkZuRvmziPdZsQUqa6OLnVJMnSTFKps
-        NVl7U1EEVUE/hOXUaO7gRlqjRTzMFDYbn+rzlRXTko6UHzvm7tFQk6QLA6M0sxHt
-        Yl+cGfcUfRrK/usw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5d5ebf7e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 19 Nov 2018 23:25:12 +0000 (UTC)
-Received: by mail-ot1-f45.google.com with SMTP id g27so40032oth.6;
-        Mon, 19 Nov 2018 15:31:14 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJz/5qzyRpelrsqfAnehK/k3sRpiyAVn0EoQ47DDPHDNsz9p747
-        q4ubL8Fth6pWyjglsgCFBjcU2EsPWDIWvTMq554=
-X-Google-Smtp-Source: AJdET5cGvuGsWIIWxtT+74MKZp2D1tsT9DwqMrFMSlch2KZ3ODxGrFoca0bMYupwOw3zAqPyDMDExZMHyLGYsfcdoGY=
-X-Received: by 2002:a9d:837:: with SMTP id 52mr13699497oty.143.1542670274157;
- Mon, 19 Nov 2018 15:31:14 -0800 (PST)
+        Tue, 20 Nov 2018 04:57:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46969 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731785AbeKTJ5X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:57:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so12348wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 15:31:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=9Dk3vtZfTKpsOhP82stM38iMhvIiS/F1rw7I5UMw61Y=;
+        b=JjGbwxRCSTxUoofE3HMqrLgbDAFHUUtcIVQRKPOWjlEyB/ekA1Iv+N7T4zS4847fOP
+         AjEjA0dNp4+Vs/rBr7B4jbezt4EUAGczO9nHQXxVcBJ/N4UpsO+6aklZQvWcloEeFIZg
+         xvNB98pc1DrlK/TSxNbfjsrhloNKbXVjbUtnizgORDzWe2zohF8f237qNnjKfS+3wcfS
+         sNrH1XhuSBaJFZYWRaT2HF7Uc6iEPXxmJrXCaUQ2LZwKzet/7CT7m4b91kA6TCJ5FwWh
+         mYsZOVHWYRa6kPnF4MEm2ST1snNfvIgXAG/6VJcsUlphJR1QElXDUon85E0ADDhgzYxa
+         fySA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=9Dk3vtZfTKpsOhP82stM38iMhvIiS/F1rw7I5UMw61Y=;
+        b=jNW8RSPW6yXSW7/V7oQ1nu/yhJqn+OpwnZEn/z4dgyBLWSD4xwpmibeEae+FWCJLd/
+         9up9LPEDFbroNPKsF2f/F8pBNafsOO8xKH0L4IjmXGZxUb7vDij/6xYsoKuHqL6BUXpw
+         69/cWsp48Vspp6cK2LbCWYrnjQjMTcNZWHL1HFpgCOq6mPY+fsKaCJqCdEwU8AuB5Mnk
+         MVMoYXxm5gF4P8Ih/jwKKvjN12nGR3wZpjVWa7wn8idSFiG1CSUT2NB/lMHiWE2K1lzL
+         La4Ce4ZfQgZLA7Xm6D5JVbtI5+1Y73y74XjYHVcuU9I/66ugndIxvcsp1X6W7w1MgPQM
+         4n7w==
+X-Gm-Message-State: AA+aEWaG1YepiURA8jh7w6zLiFJSl8eAJclz20w7MKjApFtR3LkXRhzC
+        dlp6ZsC8CsZt7RzN5oGAnVbLIw==
+X-Google-Smtp-Source: AFSGD/WVQsw5YEv/CRcOtwDlqmzSqdu63er9FifUpUzqnmL9+R5rNZoHPJe+uSmrA1J8Qow3Jd4X5Q==
+X-Received: by 2002:adf:ed46:: with SMTP id u6mr7250812wro.262.1542670277961;
+        Mon, 19 Nov 2018 15:31:17 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm22693355wmc.46.2018.11.19.15.31.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 15:31:17 -0800 (PST)
+Message-ID: <5bf347c5.1c69fb81.9c59f.c781@mx.google.com>
+Date:   Mon, 19 Nov 2018 15:31:17 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181105232526.173947-11-ebiggers@kernel.org> <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com> <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
- <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au> <CAHmME9oXAnD0sbO2cKeTtotCMohX2Hu6P=uzA_6u0EWECU9Bpg@mail.gmail.com>
- <20181119225414.GB258711@gmail.com> <CAHmME9okRjuYUiL0D=6ZmtMX6rvxU+0xvy2tva+LetjU9itx8Q@mail.gmail.com>
- <20181119232345.GC258711@gmail.com>
-In-Reply-To: <20181119232345.GC258711@gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Tue, 20 Nov 2018 00:31:02 +0100
-X-Gmail-Original-Message-ID: <CAHmME9o9N0r55i4zHu5p-9wcKPsfVVhRC+kbzx0TYxSTZG5kbQ@mail.gmail.com>
-Message-ID: <CAHmME9o9N0r55i4zHu5p-9wcKPsfVVhRC+kbzx0TYxSTZG5kbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] zinc chacha20 generic implementation using crypto API code
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.18.19-172-gc15e70be568b
+X-Kernelci-Branch: linux-4.18.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
+References: <20181119162618.909354448@linuxfoundation.org>
+Subject: Re: [PATCH 4.18 000/171] 4.18.20-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+stable-rc/linux-4.18.y boot: 125 boots: 0 failed, 105 passed with 18 offlin=
+e, 1 untried/unknown, 1 conflict (v4.18.19-172-gc15e70be568b)
 
-On Tue, Nov 20, 2018 at 12:23 AM Eric Biggers <ebiggers@kernel.org> wrote:
-> It's much better to have the documentation in a permanent location.
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.18.y/kernel/v4.18.19-172-gc15e70be568b/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.18.=
+y/kernel/v4.18.19-172-gc15e70be568b/
 
-Agreed.
+Tree: stable-rc
+Branch: linux-4.18.y
+Git Describe: v4.18.19-172-gc15e70be568b
+Git Commit: c15e70be568b978f9a73051089910dd60a81f2a3
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 66 unique boards, 23 SoC families, 15 builds out of 186
 
-> I actually did add ChaCha12 support to most of the Zinc assembly in
-> "[WIP] crypto: assembly support for ChaCha12"
-> (https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/commit/?h=adiantum-zinc&id=0a7787a515a977e11b680f1752b430ca1744e399).
-> But I skipped AVX-512 and MIPS since I didn't have a way to test those yet,
-> and I haven't ported the changes to your new perl scripts yet.
+Boot Regressions Detected:
 
-Oh, great. If you're playing with this in the context of the WireGuard
-repo, you can run `ARCH=mips make test-qemu -j$(nproc)` (which is
-what's running on https://www.wireguard.com/build-status/ ). For
-AVX-512 testing, I've got a box I'm happy to give you access to, if
-you want to send an SSH key and your employer allows for that kind of
-thing etc. I can have a stab at all of this too if you like.
+arm:
 
-Jason
+    multi_v7_defconfig:
+        imx6q-sabrelite:
+            lab-baylibre: failing since 7 days (last pass: v4.18.17 - first=
+ fail: v4.18.18-351-g3c7d01cd1ddb)
+
+Offline Platforms:
+
+arm:
+
+    omap2plus_defconfig:
+        am335x-boneblack: 1 offline lab
+
+    sunxi_defconfig:
+        sun5i-r8-chip: 1 offline lab
+
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
+
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
+
+    exynos_defconfig:
+        exynos5800-peach-pi: 1 offline lab
+
+    sama5_defconfig:
+        at91-sama5d4_xplained: 1 offline lab
+
+    multi_v7_defconfig:
+        alpine-db: 1 offline lab
+        am335x-boneblack: 1 offline lab
+        at91-sama5d4_xplained: 1 offline lab
+        exynos5800-peach-pi: 1 offline lab
+        socfpga_cyclone5_de0_sockit: 1 offline lab
+        sun5i-r8-chip: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
+
+arm64:
+
+    defconfig:
+        apq8016-sbc: 1 offline lab
+        juno-r2: 1 offline lab
+        meson-gxl-s905d-p230: 1 offline lab
+        meson-gxl-s905x-p212: 1 offline lab
+        mt7622-rfb1: 1 offline lab
+
+Conflicting Boot Failure Detected: (These likely are not failures as other =
+labs are reporting PASS. Needs review.)
+
+arm:
+
+    multi_v7_defconfig:
+        imx6q-sabrelite:
+            lab-baylibre: FAIL
+            lab-collabora: PASS
+
+---
+For more info write to <info@kernelci.org>
