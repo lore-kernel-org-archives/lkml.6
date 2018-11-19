@@ -2,178 +2,243 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B6FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC038C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D283D20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D283D20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6D6DE20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:00:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6DE20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730726AbeKTGVr (ORCPT
+        id S1730544AbeKTGZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:21:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42990 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730687AbeKTGVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:21:46 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJJsSdM004946
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:56:36 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nv0qbqy98-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:56:35 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 19 Nov 2018 19:56:34 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Nov 2018 19:56:30 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJJuSk67930206
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 19:56:28 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B3E04A4054;
-        Mon, 19 Nov 2018 19:56:28 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8BB4FA405C;
-        Mon, 19 Nov 2018 19:56:27 +0000 (GMT)
-Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Nov 2018 19:56:27 +0000 (GMT)
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com, seth.forshee@canonical.com,
-        kexec@lists.infradead.org, Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH 3/3] x86/ima: retry detecting secure boot mode
-Date:   Mon, 19 Nov 2018 14:56:11 -0500
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
-References: <1542657371-7019-1-git-send-email-zohar@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18111919-0020-0000-0000-000002EA70BE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111919-0021-0000-0000-000021399F03
-Message-Id: <1542657371-7019-4-git-send-email-zohar@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=883 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811190178
+        Tue, 20 Nov 2018 01:25:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:64763 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725963AbeKTGZ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:25:28 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 148DC309706C;
+        Mon, 19 Nov 2018 20:00:16 +0000 (UTC)
+Received: from [10.36.116.185] (ovpn-116-185.ams2.redhat.com [10.36.116.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EA89B105706A;
+        Mon, 19 Nov 2018 20:00:04 +0000 (UTC)
+Subject: Re: [PATCH v5] vfio: platform: Add generic reset controller support
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        KVM list <kvm@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181113131508.18246-1-geert+renesas@glider.be>
+ <12064722-6e85-c40c-12c9-7c7d4e1e2677@redhat.com>
+ <CAMuHMdV8UXPVMcQx17rwVrnQ8XnE6jhproTwO4SY=WnPT+2Hyg@mail.gmail.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <85923f50-df2b-3946-7d76-692d6e143276@redhat.com>
+Date:   Mon, 19 Nov 2018 21:00:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdV8UXPVMcQx17rwVrnQ8XnE6jhproTwO4SY=WnPT+2Hyg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 19 Nov 2018 20:00:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The secure boot mode may not be detected on boot for some reason (eg.
-buggy firmware).  This patch attempts one more time to detect the
-secure boot mode.
+Hi Geert,
+On 11/19/18 8:24 PM, Geert Uytterhoeven wrote:
+> Hi Eric,
+> 
+> On Mon, Nov 19, 2018 at 11:52 AM Auger Eric <eric.auger@redhat.com> wrote:
+>> On 11/13/18 2:15 PM, Geert Uytterhoeven wrote:
+>>> Vfio-platform requires dedicated reset support, provided either by ACPI,
+>>> or, on DT platforms, by a device-specific reset driver matching against
+>>> the device's compatible value.
+>>>
+>>> On many SoCs, devices are connected to an SoC-internal reset controller.
+>>> If the reset hierarchy is described in DT using "resets" properties, or
+>>> in lookup tables in platform code, and devices have exactly one
+>>> dedicated reset each, such devices can be reset in a generic way through
+>>> the reset controller subsystem.  Hence add support for this, avoiding
+>>> the need to write device-specific reset drivers for each single device
+>>> on affected SoCs.
+>>>
+>>> Devices that do require a more complex reset procedure can still provide
+>>> a device-specific reset driver, as that takes precedence.
+>>>
+>>> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+>>> becomes a no-op (as in: "No reset function found for device") if reset
+>>> controller support is disabled.
+>>>
+>>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>>> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>>> ---
+>>> This depends on "[PATCH] reset: Add reset_control_get_count()"
+>>> (https://lore.kernel.org/lkml/20181113124744.7769-1-geert+renesas@glider.be/).
+>>>
+>>> v5:
+>>>   - Use reset_control_get_exclusive() instead of rejected
+>>>     reset_control_get_dedicated(), as exclusive already implies a
+>>>     dedicated reset line,
+>>>   - Ensure the device has exactly one reset,
+>>>
+>>> v4:
+>>>   - Add Reviewed-by,
+>>>   - Use new RFC reset_control_get_dedicated() instead of
+>>>     of_reset_control_get_exclusive(), to (a) make it more generic, and
+>>>     (b) make sure the reset returned is really a dedicated reset, and
+>>>     does not affect other devices,
+>>>
+>>> v3:
+>>>   - Add Reviewed-by,
+>>>   - Merge similar checks in vfio_platform_has_reset(),
+>>>
+>>> v2:
+>>>   - Don't store error values in vdev->reset_control,
+>>>   - Use of_reset_control_get_exclusive() instead of
+>>>     __of_reset_control_get(),
+>>>   - Improve description.
+>>> ---
+>>>  drivers/vfio/platform/vfio_platform_common.c  | 29 +++++++++++++++++--
+>>>  drivers/vfio/platform/vfio_platform_private.h |  1 +
+>>>  2 files changed, 28 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+>>> index c0cd824be2b767be..ce2aad8e0a8159f9 100644
+>>> --- a/drivers/vfio/platform/vfio_platform_common.c
+>>> +++ b/drivers/vfio/platform/vfio_platform_common.c
+>>> @@ -18,6 +18,7 @@
+>>>  #include <linux/module.h>
+>>>  #include <linux/mutex.h>
+>>>  #include <linux/pm_runtime.h>
+>>> +#include <linux/reset.h>
+>>>  #include <linux/slab.h>
+>>>  #include <linux/types.h>
+>>>  #include <linux/uaccess.h>
+>>> @@ -113,11 +114,14 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
+>>>       if (VFIO_PLATFORM_IS_ACPI(vdev))
+>>>               return vfio_platform_acpi_has_reset(vdev);
+>>>
+>>> -     return vdev->of_reset ? true : false;
+>>> +     return vdev->of_reset || vdev->reset_control;
+>>>  }
+>>>
+>>>  static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>>>  {
+>>> +     struct reset_control *rstc;
+>>> +     int count;
+>>> +
+>>>       if (VFIO_PLATFORM_IS_ACPI(vdev))
+>>>               return vfio_platform_acpi_has_reset(vdev) ? 0 : -ENOENT;
+>>>
+>>> @@ -128,8 +132,24 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>>>               vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+>>>                                                       &vdev->reset_module);
+>>>       }
+>>> +     if (vdev->of_reset)
+>>> +             return 0;
+>>> +
+>>> +     /* Generic reset handling needs a single, dedicated reset line */
+>>> +     count = reset_control_get_count(vdev->device);
+>>> +     if (count < 0)
+>>> +             return count;
+>>> +
+>>> +     if (count != 1)
+>>> +             return -EINVAL;
+>>>
+>>> -     return vdev->of_reset ? 0 : -ENOENT;
+>>> +     rstc = reset_control_get_exclusive(vdev->device, NULL);
+>>
+>> So I understand the semantics of reset_control_get_exclusive() is now
+>> agreed and this means the reset line is not shared with other devices,
+>> correct?
+> 
+> Yes, it has been clarified that the intended semantics of an exclusive
+> reset are that the reset line is not shared with other devices.
+> However, currently the reset controller subsystem does not enforce this.
+> 
+> Given the clarification, this is something to fix in the reset
+> controller subsystem, and thus orthogonal to this vfio patch.
+> My patch "[PATCH v3] reset: Exclusive resets must be dedicated to a
+> single hardware block"
+> (https://lore.kernel.org/lkml/20181113133520.20889-1-geert+renesas@glider.be/)
+> is meant to fix this.
 
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- arch/x86/kernel/Makefile   |  2 ++
- arch/x86/kernel/ima_arch.c | 46 ++++++++++++++++++++++++++++++++++++++++++++--
- include/linux/ima.h        |  2 +-
- 3 files changed, 47 insertions(+), 3 deletions(-)
+OK thank you for the clarification. So from a functional point of view I
+would consider the above patch is a dependency that needs to be resolved
+before getting this upstreamed.
+> 
+>> A question about the usage of reset_control_get_count(). Why is it an
+>> issue if the count is > 1? Does it check there are several reset lines,
+>> each of then being used for resetting something different or does it
+>> check there are several reset controllers are able to do the reset job?
+>> My point behind is what's the issue as long as one non shared line can
+>> be grabbed with reset_control_get_exclusive().
+> 
+> A device may have multiple resets[*].  If this is the case, a specific
+> procedure (e.g. reset order) may be needed to reset the device fully.
+> Assuming that just asserting the first reset will do the job may lead
+> to failure.
+> Hence the generic method, which is the target of my patch, should only
+> be applied for devices with a single reset.
+> Devices that do require a more complex reset procedure can still provide
+> a device-specific reset driver, as that takes precedence.
+> 
+> [*] git grep "\<resets\>.*=.*," -- "*dts*" gives +200 hits.
 
-diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index f0910a1e1db7..eb51b0e1189c 100644
---- a/arch/x86/kernel/Makefile
-+++ b/arch/x86/kernel/Makefile
-@@ -151,4 +151,6 @@ ifeq ($(CONFIG_X86_64),y)
- 	obj-y				+= vsmp_64.o
- endif
- 
-+ifdef CONFIG_EFI
- obj-$(CONFIG_IMA)			+= ima_arch.o
-+endif
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index 6c248616ee57..e47cd9390ab4 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -7,10 +7,52 @@
- 
- extern struct boot_params boot_params;
- 
-+static enum efi_secureboot_mode get_sb_mode(void)
-+{
-+	efi_char16_t efi_SecureBoot_name[] = L"SecureBoot";
-+	efi_guid_t efi_variable_guid = EFI_GLOBAL_VARIABLE_GUID;
-+	efi_status_t status;
-+	unsigned long size;
-+	u8 secboot;
-+
-+	size = sizeof(secboot);
-+
-+	/* Get variable contents into buffer */
-+	status = efi.get_variable(efi_SecureBoot_name, &efi_variable_guid,
-+				  NULL, &size, &secboot);
-+	if (status == EFI_NOT_FOUND) {
-+		pr_info("ima: secureboot mode disabled\n");
-+		return efi_secureboot_mode_disabled;
-+	}
-+
-+	if (status != EFI_SUCCESS) {
-+		pr_info("ima: secureboot mode unknown\n");
-+		return efi_secureboot_mode_unknown;
-+	}
-+
-+	if (secboot == 0) {
-+		pr_info("ima: secureboot mode disabled\n");
-+		return efi_secureboot_mode_disabled;
-+	}
-+
-+	pr_info("ima: secureboot mode enabled\n");
-+	return efi_secureboot_mode_enabled;
-+}
-+
- bool arch_ima_get_secureboot(void)
- {
--	if (efi_enabled(EFI_BOOT) &&
--		(boot_params.secure_boot == efi_secureboot_mode_enabled))
-+	static enum efi_secureboot_mode sb_mode;
-+	static bool initialized;
-+
-+	if (!initialized && efi_enabled(EFI_BOOT)) {
-+		sb_mode = boot_params.secure_boot;
-+
-+		if (sb_mode == efi_secureboot_mode_unset)
-+			sb_mode = get_sb_mode();
-+		initialized = true;
-+	}
-+
-+	if (sb_mode == efi_secureboot_mode_enabled)
- 		return true;
- 	else
- 		return false;
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 5ab9134d4fd7..b5e16b8c50b7 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -30,7 +30,7 @@ extern void ima_post_path_mknod(struct dentry *dentry);
- extern void ima_add_kexec_buffer(struct kimage *image);
- #endif
- 
--#ifdef CONFIG_X86
-+#if defined(CONFIG_X86) && defined(CONFIG_EFI)
- extern bool arch_ima_get_secureboot(void);
- extern const char * const *arch_get_ima_policy(void);
- #else
--- 
-2.7.5
+OK understood, this fully clarifies.
+> 
+>>> +     if (!IS_ERR(rstc)) {
+>>> +             vdev->reset_control = rstc;
+>>> +             return 0;
+>>> +     }
+>>> +
+>>> +     return PTR_ERR(rstc);
+>>>  }
+>>>
+>>>  static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+>>> @@ -139,6 +159,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+>>>
+>>>       if (vdev->of_reset)
+>>>               module_put(vdev->reset_module);
+>>> +
+>>> +     reset_control_put(vdev->reset_control);
+>>
+>> Most of the drivers use devm_reset_control_get_exclusive(), can't we use
+>> that instead and benefit from the fact the reset_control_put() is called
+>> automatically on driver detach?
+> 
+> Yes, we could use devm_reset_control_get_exclusive() instead.
+> Given we still need manual release of a device-specific reset_module,
+> and a manual call to vfio_iommu_group_put(), it wouldn't simplify the error
+> and removal path much, though, and even lead to confusion.
+Yep I don't have a strong opinion here, as long as the put is done ;-)
 
+With respect to that patch and as long as "[PATCH v3] reset: Exclusive
+resets must be dedicated to a single hardware block" functionality is
+enforced,
+
+Acked-by: Eric Auger <eric.auger@redhat.com>
+
+Thanks
+
+Eric
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
