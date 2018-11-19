@@ -2,50 +2,47 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6ECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0882AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4330821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57682148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bMaje/+v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4330821104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfH6QaCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57682148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388484AbeKTDJW (ORCPT
+        id S2388495AbeKTDJZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:09:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387653AbeKTDJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:21 -0500
+        id S2387653AbeKTDJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:09:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD3422145D;
-        Mon, 19 Nov 2018 16:45:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58A5A2148E;
+        Mon, 19 Nov 2018 16:45:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645910;
-        bh=MZDcTrFeo+L3JAGUJRL1XRM+g6ZcVW1dJ0SJAUyYRic=;
+        s=default; t=1542645912;
+        bh=+bhuifO/Idt2x0nluwL280sX4LFmKX3NkoaMmxDDBCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bMaje/+vQsJUWQoH2ACA94bKDinnSNR6STpEhxBNcYF1gCwjnBsoEKcutEM3b/6ni
-         8RoXXXH4Q/paEwwrPy78caoCJiVMaZ8YL7xqfNPkHre1TOjlua6GcbKIYXU5wM6ba3
-         tN6TN6306iQRLrZF+L7QEONpI8XdmuwabzLjq5+E=
+        b=kfH6QaCZT/HWJlXbaAMV6kIER7WZC005paSNgV8mQiiF5KmOAYEBru2rWFscqr2E6
+         3R+dVzhVHj+o+TECUPrHNE8JFppPlukYxN3c5PHMdADP5OFzwK21+9Tu85v2K9rZuf
+         QugBJPxrpvE3IiYjNnozo6zji8gbrAfhN27P9EPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu@cybertrust.co.jp>
-Subject: [PATCH 4.18 135/171] configfs: replace strncpy with memcpy
-Date:   Mon, 19 Nov 2018 17:28:51 +0100
-Message-Id: <20181119162638.361845410@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH 4.18 136/171] gfs2: Put bitmap buffers in put_super
+Date:   Mon, 19 Nov 2018 17:28:52 +0100
+Message-Id: <20181119162638.438232493@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,41 +60,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit 1823342a1f2b47a4e6f5667f67cd28ab6bc4d6cd upstream.
+commit 10283ea525d30f2e99828978fd04d8427876a7ad upstream.
 
-gcc 8.1.0 complains:
+gfs2_put_super calls gfs2_clear_rgrpd to destroy the gfs2_rgrpd objects
+attached to the resource group glocks.  That function should release the
+buffers attached to the gfs2_bitmap objects (bi_bh), but the call to
+gfs2_rgrp_brelse for doing that is missing.
 
-fs/configfs/symlink.c:67:3: warning:
-	'strncpy' output truncated before terminating nul copying as many
-	bytes from a string as its length
-fs/configfs/symlink.c: In function 'configfs_get_link':
-fs/configfs/symlink.c:63:13: note: length computed here
+When gfs2_releasepage later runs across these buffers which are still
+referenced, it refuses to free them.  This causes the pages the buffers
+are attached to to remain referenced as well.  With enough mount/unmount
+cycles, the system will eventually run out of memory.
 
-Using strncpy() is indeed less than perfect since the length of data to
-be copied has already been determined with strlen(). Replace strncpy()
-with memcpy() to address the warning and optimize the code a little.
+Fix this by adding the missing call to gfs2_rgrp_brelse in
+gfs2_clear_rgrpd.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@cybertrust.co.jp>
+(Also fix a gfs2_rgrp_relse -> gfs2_rgrp_brelse typo in a comment.)
+
+Fixes: 39b0f1e92908 ("GFS2: Don't brelse rgrp buffer_heads every allocation")
+Cc: stable@vger.kernel.org # v4.2+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/configfs/symlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/gfs2/rgrp.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -64,7 +64,7 @@ static void fill_item_path(struct config
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -714,6 +714,7 @@ void gfs2_clear_rgrpd(struct gfs2_sbd *s
  
- 		/* back up enough to print this bus id with '/' */
- 		length -= cur;
--		strncpy(buffer + length,config_item_name(p),cur);
-+		memcpy(buffer + length, config_item_name(p), cur);
- 		*(buffer + --length) = '/';
- 	}
- }
+ 		if (gl) {
+ 			glock_clear_object(gl, rgd);
++			gfs2_rgrp_brelse(rgd);
+ 			gfs2_glock_put(gl);
+ 		}
+ 
+@@ -1136,7 +1137,7 @@ static u32 count_unlinked(struct gfs2_rg
+  * @rgd: the struct gfs2_rgrpd describing the RG to read in
+  *
+  * Read in all of a Resource Group's header and bitmap blocks.
+- * Caller must eventually call gfs2_rgrp_relse() to free the bitmaps.
++ * Caller must eventually call gfs2_rgrp_brelse() to free the bitmaps.
+  *
+  * Returns: errno
+  */
 
 
