@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AEAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0140C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F42D2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC01208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FSciNmN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F42D2086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7IFORVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC01208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730354AbeKTCzU (ORCPT
+        id S1730370AbeKTCzX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52920 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730034AbeKTCzT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:19 -0500
+        id S1730034AbeKTCzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CAA12089F;
-        Mon, 19 Nov 2018 16:31:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2ECD208E3;
+        Mon, 19 Nov 2018 16:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645072;
-        bh=CkRNP8bNz7jFiambCZc5s9CHrh7aHJ6Ixts13NDU6Ww=;
+        s=default; t=1542645075;
+        bh=rf3yE3uXZYf3hC5CVP710s1wE8KKDgA4Bq9gtwVjFpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FSciNmN7vxnyWkOSopLbz2kAV2yr54Jr6FvWUnArkMZ2RYzzWJmw54ivBMKzAs7AV
-         ldQo83wBgItPcaurlQK/nY3897iOTQc+fJngFD1TONQtMIFp22fpX8/CbRBV+wyGpT
-         MSfmzMGFl7fvoamyxTEWG6fblsxYJm27cjA5g6Ps=
+        b=h7IFORVK9jVTgwU1oLVkAnGonaIVxXupe+e+0W1deFcipPDTU6AQCWFtzsFEM1QP2
+         UM/qlMN+4SYdIm0z3lYvkHTFk44A+JWTLs959okCIWEY7jIvbvStFUb098SiebXvsY
+         oV8yYPQ0UaMEKfuOvubKyZamuYEWf+HsXueVa+j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Miles Chen <miles.chen@mediatek.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 008/205] powerpc/eeh: Fix possible null deref in eeh_dump_dev_log()
-Date:   Mon, 19 Nov 2018 17:25:15 +0100
-Message-Id: <20181119162618.550753301@linuxfoundation.org>
+Subject: [PATCH 4.19 009/205] tty: check name length in tty_find_polling_driver()
+Date:   Mon, 19 Nov 2018 17:25:16 +0100
+Message-Id: <20181119162618.726104467@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,37 +62,138 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Miles Chen <miles.chen@mediatek.com>
 
-[ Upstream commit f9bc28aedfb5bbd572d2d365f3095c1becd7209b ]
+[ Upstream commit 33a1a7be198657c8ca26ad406c4d2a89b7162bcc ]
 
-If an error occurs during an unplug operation, it's possible for
-eeh_dump_dev_log() to be called when edev->pdn is null, which
-currently leads to dereferencing a null pointer.
+The issue is found by a fuzzing test.
+If tty_find_polling_driver() recevies an incorrect input such as
+',,' or '0b', the len becomes 0 and strncmp() always return 0.
+In this case, a null p->ops->poll_init() is called and it causes a kernel
+panic.
 
-Handle this by skipping the error log for those devices.
+Fix this by checking name length against zero in tty_find_polling_driver().
 
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+$echo ,, > /sys/module/kgdboc/parameters/kgdboc
+[   20.804451] WARNING: CPU: 1 PID: 104 at drivers/tty/serial/serial_core.c:457
+uart_get_baud_rate+0xe8/0x190
+[   20.804917] Modules linked in:
+[   20.805317] CPU: 1 PID: 104 Comm: sh Not tainted 4.19.0-rc7ajb #8
+[   20.805469] Hardware name: linux,dummy-virt (DT)
+[   20.805732] pstate: 20000005 (nzCv daif -PAN -UAO)
+[   20.805895] pc : uart_get_baud_rate+0xe8/0x190
+[   20.806042] lr : uart_get_baud_rate+0xc0/0x190
+[   20.806476] sp : ffffffc06acff940
+[   20.806676] x29: ffffffc06acff940 x28: 0000000000002580
+[   20.806977] x27: 0000000000009600 x26: 0000000000009600
+[   20.807231] x25: ffffffc06acffad0 x24: 00000000ffffeff0
+[   20.807576] x23: 0000000000000001 x22: 0000000000000000
+[   20.807807] x21: 0000000000000001 x20: 0000000000000000
+[   20.808049] x19: ffffffc06acffac8 x18: 0000000000000000
+[   20.808277] x17: 0000000000000000 x16: 0000000000000000
+[   20.808520] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.808757] x13: ffffffffffffffff x12: 0000000000000001
+[   20.809011] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.809292] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.809549] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.809803] x5 : 0000000080008001 x4 : 0000000000000003
+[   20.810056] x3 : ffffff900853e6b4 x2 : dfffff9000000000
+[   20.810693] x1 : ffffffc06acffad0 x0 : 0000000000000cb0
+[   20.811005] Call trace:
+[   20.811214]  uart_get_baud_rate+0xe8/0x190
+[   20.811479]  serial8250_do_set_termios+0xe0/0x6f4
+[   20.811719]  serial8250_set_termios+0x48/0x54
+[   20.811928]  uart_set_options+0x138/0x1bc
+[   20.812129]  uart_poll_init+0x114/0x16c
+[   20.812330]  tty_find_polling_driver+0x158/0x200
+[   20.812545]  configure_kgdboc+0xbc/0x1bc
+[   20.812745]  param_set_kgdboc_var+0xb8/0x150
+[   20.812960]  param_attr_store+0xbc/0x150
+[   20.813160]  module_attr_store+0x40/0x58
+[   20.813364]  sysfs_kf_write+0x8c/0xa8
+[   20.813563]  kernfs_fop_write+0x154/0x290
+[   20.813764]  vfs_write+0xf0/0x278
+[   20.813951]  __arm64_sys_write+0x84/0xf4
+[   20.814400]  el0_svc_common+0xf4/0x1dc
+[   20.814616]  el0_svc_handler+0x98/0xbc
+[   20.814804]  el0_svc+0x8/0xc
+[   20.822005] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+[   20.826913] Mem abort info:
+[   20.827103]   ESR = 0x84000006
+[   20.827352]   Exception class = IABT (current EL), IL = 16 bits
+[   20.827655]   SET = 0, FnV = 0
+[   20.827855]   EA = 0, S1PTW = 0
+[   20.828135] user pgtable: 4k pages, 39-bit VAs, pgdp = (____ptrval____)
+[   20.828484] [0000000000000000] pgd=00000000aadee003, pud=00000000aadee003, pmd=0000000000000000
+[   20.829195] Internal error: Oops: 84000006 [#1] SMP
+[   20.829564] Modules linked in:
+[   20.829890] CPU: 1 PID: 104 Comm: sh Tainted: G        W         4.19.0-rc7ajb #8
+[   20.830545] Hardware name: linux,dummy-virt (DT)
+[   20.830829] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[   20.831174] pc :           (null)
+[   20.831457] lr : serial8250_do_set_termios+0x358/0x6f4
+[   20.831727] sp : ffffffc06acff9b0
+[   20.831936] x29: ffffffc06acff9b0 x28: ffffff9008d7c000
+[   20.832267] x27: ffffff900969e16f x26: 0000000000000000
+[   20.832589] x25: ffffff900969dfb0 x24: 0000000000000000
+[   20.832906] x23: ffffffc06acffad0 x22: ffffff900969e160
+[   20.833232] x21: 0000000000000000 x20: ffffffc06acffac8
+[   20.833559] x19: ffffff900969df90 x18: 0000000000000000
+[   20.833878] x17: 0000000000000000 x16: 0000000000000000
+[   20.834491] x15: ffffffffffffffff x14: ffffffff00000000
+[   20.834821] x13: ffffffffffffffff x12: 0000000000000001
+[   20.835143] x11: 0101010101010101 x10: ffffff880d59ff5f
+[   20.835467] x9 : ffffff880d59ff5e x8 : ffffffc06acffaf3
+[   20.835790] x7 : 0000000000000000 x6 : ffffff880d59ff5f
+[   20.836111] x5 : c06419717c314100 x4 : 0000000000000007
+[   20.836419] x3 : 0000000000000000 x2 : 0000000000000000
+[   20.836732] x1 : 0000000000000001 x0 : ffffff900969df90
+[   20.837100] Process sh (pid: 104, stack limit = 0x(____ptrval____))
+[   20.837396] Call trace:
+[   20.837566]            (null)
+[   20.837816]  serial8250_set_termios+0x48/0x54
+[   20.838089]  uart_set_options+0x138/0x1bc
+[   20.838570]  uart_poll_init+0x114/0x16c
+[   20.838834]  tty_find_polling_driver+0x158/0x200
+[   20.839119]  configure_kgdboc+0xbc/0x1bc
+[   20.839380]  param_set_kgdboc_var+0xb8/0x150
+[   20.839658]  param_attr_store+0xbc/0x150
+[   20.839920]  module_attr_store+0x40/0x58
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840183]  sysfs_kf_write+0x8c/0xa8
+[   20.840440]  kernfs_fop_write+0x154/0x290
+[   20.840702]  vfs_write+0xf0/0x278
+[   20.840942]  __arm64_sys_write+0x84/0xf4
+[   20.841209]  el0_svc_common+0xf4/0x1dc
+[   20.841471]  el0_svc_handler+0x98/0xbc
+[   20.841713]  el0_svc+0x8/0xc
+[   20.842057] Code: bad PC value
+[   20.842764] ---[ end trace a8835d7de79aaadf ]---
+[   20.843134] Kernel panic - not syncing: Fatal exception
+[   20.843515] SMP: stopping secondary CPUs
+[   20.844289] Kernel Offset: disabled
+[   20.844634] CPU features: 0x0,21806002
+[   20.844857] Memory Limit: none
+[   20.845172] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+Signed-off-by: Miles Chen <miles.chen@mediatek.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/eeh.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/tty/tty_io.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -169,6 +169,11 @@ static size_t eeh_dump_dev_log(struct ee
- 	int n = 0, l = 0;
- 	char buffer[128];
- 
-+	if (!pdn) {
-+		pr_warn("EEH: Note: No error log for absent device.\n");
-+		return 0;
-+	}
-+
- 	n += scnprintf(buf+n, len-n, "%04x:%02x:%02x.%01x\n",
- 		       pdn->phb->global_number, pdn->busno,
- 		       PCI_SLOT(pdn->devfn), PCI_FUNC(pdn->devfn));
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -408,7 +408,7 @@ struct tty_driver *tty_find_polling_driv
+ 	mutex_lock(&tty_mutex);
+ 	/* Search through the tty devices to look for a match */
+ 	list_for_each_entry(p, &tty_drivers, tty_drivers) {
+-		if (strncmp(name, p->name, len) != 0)
++		if (!len || strncmp(name, p->name, len) != 0)
+ 			continue;
+ 		stp = str;
+ 		if (*stp == ',')
 
 
