@@ -7,50 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD20C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23576C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 643B9214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFB9D214ED
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dgtna6a1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643B9214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iNS0odfJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB9D214ED
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407174AbeKTDau (ORCPT
+        id S2407185AbeKTDax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46012 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405988AbeKTDat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:49 -0500
+        id S2405988AbeKTDav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A80C721508;
-        Mon, 19 Nov 2018 17:06:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4084F2148E;
+        Mon, 19 Nov 2018 17:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647191;
-        bh=829Qo0hMxGFkZJsV/I1a+D6oBvOiJ3ucM8z2YUfcYC4=;
+        s=default; t=1542647193;
+        bh=dHOiFI6cfM9pZN/j8cPp1eUElRhV12LNPjdgkkqYJ9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dgtna6a11HO6hvqDfy19uZOL4Eqb9mQOGaxSo5ISq8U7Iw3aNF4/N2F+Z6238Wdbh
-         K4qEob15WDldJGf+W2dAvshivi8ytabzDB2bcqEN3iuq+K0MemcctalJRo6sF3XbA9
-         BnNE9KFVOIzw0KJfXNUo6o/msEn4DqARaVBlj9L0=
+        b=iNS0odfJf4NSUeD50B3j9htApZnwVfccdgcuDFYFxDyZ3Bhpoa9fy8hRIZcq6OAbo
+         qgjuOxFyCA1CXIxCv/SWwFbbKVBnpevYoxXVkYTmsyNQnYlrMpTAK7tPcriJWGTuV1
+         S+t1N7/muftCCda1H9XYg9qj8JcRNPq14530JDRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changwei Ge <ge.changwei@h3c.com>,
-        Changkuo Shi <shi.changkuo@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 68/90] ocfs2: fix a misuse a of brelse after failing ocfs2_check_dir_entry
-Date:   Mon, 19 Nov 2018 17:29:50 +0100
-Message-Id: <20181119162631.333818558@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Timothy Baldwin <timbaldwin@fastmail.co.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 3.18 86/90] mount: Prevent MNT_DETACH from disconnecting locked mounts
+Date:   Mon, 19 Nov 2018 17:30:08 +0100
+Message-Id: <20181119162633.599031421@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -68,54 +63,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Changwei Ge <ge.changwei@h3c.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 29aa30167a0a2e6045a0d6d2e89d8168132333d5 upstream.
+commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
 
-Somehow, file system metadata was corrupted, which causes
-ocfs2_check_dir_entry() to fail in function ocfs2_dir_foreach_blk_el().
+Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
+> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
+>
+>   Mounts that come as a single unit from more privileged mount are locked
+>   together and may not be separated in a less privileged mount namespace.
+>
+> However they can:
+>
+> 1. Create a mount namespace.
+> 2. In the mount namespace open a file descriptor to the parent of a mount point.
+> 3. Destroy the mount namespace.
+> 4. Use the file descriptor to look under the mount point.
+>
+> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
+>
+> The setup:
+>
+> $ sudo sysctl kernel.unprivileged_userns_clone=1
+> kernel.unprivileged_userns_clone = 1
+> $ mkdir -p A/B/Secret
+> $ sudo mount -t tmpfs hide A/B
+>
+>
+> "Secret" is indeed hidden as expected:
+>
+> $ ls -lR A
+> A:
+> total 0
+> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
+>
+> A/B:
+> total 0
+>
+>
+> The attack revealing "Secret":
+>
+> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
+> /proc/self/fd/4/:
+> total 0
+> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
+>
+> /proc/self/fd/4/B:
+> total 0
+> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
+>
+> /proc/self/fd/4/B/Secret:
+> total 0
 
-According to the original design intention, if above happens we should
-skip the problematic block and continue to retrieve dir entry.  But
-there is obviouse misuse of brelse around related code.
+I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
+disconnecting all of the mounts in a mount namespace.  Fix this by
+factoring drop_mounts out of drop_collected_mounts and passing
+0 instead of UMOUNT_SYNC.
 
-After failure of ocfs2_check_dir_entry(), current code just moves to
-next position and uses the problematic buffer head again and again
-during which the problematic buffer head is released for multiple times.
-I suppose, this a serious issue which is long-lived in ocfs2.  This may
-cause other file systems which is also used in a the same host insane.
+There are two possible behavior differences that result from this.
+- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
+  the vfsmounts being unmounted.  This effects the lazy rcu walk by
+  kicking the walk out of rcu mode and forcing it to be a non-lazy
+  walk.
+- No longer disconnecting locked mounts will keep some mounts around
+  longer as they stay because the are locked to other mounts.
 
-So we should also consider about bakcporting this patch into linux
--stable.
+There are only two users of drop_collected mounts: audit_tree.c and
+put_mnt_ns.
 
-Link: http://lkml.kernel.org/r/HK2PR06MB045211675B43EED794E597B6D56E0@HK2PR06MB0452.apcprd06.prod.outlook.com
-Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
-Suggested-by: Changkuo Shi <shi.changkuo@h3c.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+In audit_tree.c the mounts are private and there are no rcu lazy walks
+only calls to iterate_mounts. So the changes should have no effect
+except for a small timing effect as the connected mounts are disconnected.
+
+In put_mnt_ns there may be references from process outside the mount
+namespace to the mounts.  So the mounts remaining connected will
+be the bug fix that is needed.  That rcu walks are allowed to continue
+appears not to be a problem especially as the rcu walk change was about
+an implementation detail not about semantics.
+
+Cc: stable@vger.kernel.org
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dir.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/namespace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -1906,8 +1906,7 @@ static int ocfs2_dir_foreach_blk_el(stru
- 				/* On error, skip the f_pos to the
- 				   next block. */
- 				ctx->pos = (ctx->pos | (sb->s_blocksize - 1)) + 1;
--				brelse(bh);
--				continue;
-+				break;
- 			}
- 			if (le64_to_cpu(de->inode)) {
- 				unsigned char d_type = DT_UNKNOWN;
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1728,7 +1728,7 @@ void drop_collected_mounts(struct vfsmou
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	umount_tree(real_mount(mnt), 0);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
 
 
