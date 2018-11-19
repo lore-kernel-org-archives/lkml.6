@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F350C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472CDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAB182148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4C92148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9AMM0rX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB182148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mV9MU+iJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4C92148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406814AbeKTD3j (ORCPT
+        id S2406827AbeKTD3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44368 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406762AbeKTD3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:38 -0500
+        id S2406762AbeKTD3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C87F214D9;
-        Mon, 19 Nov 2018 17:05:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2601B214DA;
+        Mon, 19 Nov 2018 17:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647121;
-        bh=ZO2c7TpVUlsGo+ptBSNO5fJxpU6K7kE0RhyKz5Bwqy4=;
+        s=default; t=1542647123;
+        bh=IulhjosOKyxX6XWZOThxxzN98EQprnHatfCoRkKK3SM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9AMM0rX0iO/cP4mscS9RNleiu6OXLOgKbv0jVsJ9Q6+p+5I42sP7KLdJv+IrjEMJ
-         IJmj5cM95yHzRekGQ7NuyoRP6EzFOv4MqUDsh3qtUBaToCEWsh8DX4zPT0Ay72bUhN
-         kVg/Bbl/e0QFB/W15iqNY62IambrUUesxUWUeh88=
+        b=mV9MU+iJjwDz8dnAP/q23cfAr7v2p5zS38RtX2338kIDVHIKV23K3LlC+ysJ9IxQj
+         Ut4o7/+qnac6fdTOKHGdZaaXUZM6XB3uj/cticvLOuTTLQXyqC4b4jxB3iVvmP3Keo
+         TlkbKLKWhBjx/ELIVAEEKkhEriCmHmwpAqEmI98s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 57/90] media: pci: cx23885: handle adding to list failure
-Date:   Mon, 19 Nov 2018 17:29:39 +0100
-Message-Id: <20181119162630.015285457@linuxfoundation.org>
+        stable@vger.kernel.org, Dengcheng Zhu <dzhu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        ralf@linux-mips.org, linux-mips@linux-mips.org,
+        rachel.mozes@intel.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 58/90] MIPS: kexec: Mark CPU offline before disabling local IRQ
+Date:   Mon, 19 Nov 2018 17:29:40 +0100
+Message-Id: <20181119162630.131797951@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,65 +64,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Dengcheng Zhu <dzhu@wavecomp.com>
 
-[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
+[ Upstream commit dc57aaf95a516f70e2d527d8287a0332c481a226 ]
 
-altera_hw_filt_init() which calls append_internal() assumes
-that the node was successfully linked in while in fact it can
-silently fail. So the call-site needs to set return to -ENOMEM
-on append_internal() returning NULL and exit through the err path.
+After changing CPU online status, it will not be sent any IPIs such as in
+__flush_cache_all() on software coherency systems. Do this before disabling
+local IRQ.
 
-Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
-
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Dengcheng Zhu <dzhu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20571/
+Cc: pburton@wavecomp.com
+Cc: ralf@linux-mips.org
+Cc: linux-mips@linux-mips.org
+Cc: rachel.mozes@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/pci/cx23885/altera-ci.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/mips/kernel/crash.c         |    3 +++
+ arch/mips/kernel/machine_kexec.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/media/pci/cx23885/altera-ci.c
-+++ b/drivers/media/pci/cx23885/altera-ci.c
-@@ -662,6 +662,10 @@ static int altera_hw_filt_init(struct al
- 		}
+--- a/arch/mips/kernel/crash.c
++++ b/arch/mips/kernel/crash.c
+@@ -34,6 +34,9 @@ static void crash_shutdown_secondary(voi
+ 	if (!cpu_online(cpu))
+ 		return;
  
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->filts_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -696,6 +700,7 @@ err:
- 		     __func__, ret);
++	/* We won't be sent IPIs any more. */
++	set_cpu_online(cpu, false);
++
+ 	local_irq_disable();
+ 	if (!cpu_isset(cpu, cpus_in_crash))
+ 		crash_save_cpu(regs, cpu);
+--- a/arch/mips/kernel/machine_kexec.c
++++ b/arch/mips/kernel/machine_kexec.c
+@@ -95,6 +95,9 @@ machine_kexec(struct kimage *image)
+ 			*ptr = (unsigned long) phys_to_virt(*ptr);
+ 	}
  
- 	kfree(pid_filt);
-+	kfree(inter);
- 
- 	return ret;
- }
-@@ -731,6 +736,10 @@ int altera_ci_init(struct altera_ci_conf
- 		}
- 
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->cis_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -799,6 +808,7 @@ err:
- 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
- 
- 	kfree(state);
-+	kfree(inter);
- 
- 	return ret;
- }
++	/* Mark offline BEFORE disabling local irq. */
++	set_cpu_online(smp_processor_id(), false);
++
+ 	/*
+ 	 * we do not want to be bothered.
+ 	 */
 
 
