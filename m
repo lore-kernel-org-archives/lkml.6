@@ -2,102 +2,71 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2765C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7618C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BB7C2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCsZdeaN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BB7C2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A47C2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A47C2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388120AbeKTDII (ORCPT
+        id S2388135AbeKTDII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 19 Nov 2018 22:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388106AbeKTDIH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:07 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BC182086A;
-        Mon, 19 Nov 2018 16:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645836;
-        bh=lZYNxbBruLP2hr5uQ9ZnSlP9KOgzeB90pehrTl1L5xw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LCsZdeaNv+yLDmClPfuhvBBkhLz1lHOcsUjVW5RT/Pptnr9Cte2HIySPUhSh3ZWBo
-         TgE7YI1cCkyNhrxQVVBn2dxM4+J61bJGu69dMDx/L/4y1iBm9VTxuQ3VLZGk3AoTxg
-         MaHVK/XEpi8wkjgRGV9f1hsChhpampViVfxQ6LV4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.18 106/171] ext4: add missing brelse() in set_flexbg_block_bitmap()s error path
-Date:   Mon, 19 Nov 2018 17:28:22 +0100
-Message-Id: <20181119162635.717732412@linuxfoundation.org>
+Received: from youngberry.canonical.com ([91.189.89.112]:35190 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731911AbeKTDII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:08 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gOmeR-0007sI-Ap; Mon, 19 Nov 2018 16:43:55 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: ene_usb6250: add missing indentation
+Date:   Mon, 19 Nov 2018 16:43:54 +0000
+Message-Id: <20181119164354.17304-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
-References: <20181119162618.909354448@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+From: Colin Ian King <colin.king@canonical.com>
 
-------------------
+There is a missing indentation before the return statement. Add it.
 
-From: Vasily Averin <vvs@virtuozzo.com>
-
-commit cea5794122125bf67559906a0762186cf417099c upstream.
-
-Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
-Cc: stable@kernel.org # 3.3
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- fs/ext4/resize.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/storage/ene_ub6250.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -459,16 +459,18 @@ static int set_flexbg_block_bitmap(struc
+diff --git a/drivers/usb/storage/ene_ub6250.c b/drivers/usb/storage/ene_ub6250.c
+index 4d261e4de9ad..c26129d5b943 100644
+--- a/drivers/usb/storage/ene_ub6250.c
++++ b/drivers/usb/storage/ene_ub6250.c
+@@ -1131,7 +1131,7 @@ static int ms_lib_alloc_writebuf(struct us_data *us)
  
- 		BUFFER_TRACE(bh, "get_write_access");
- 		err = ext4_journal_get_write_access(handle, bh);
--		if (err)
-+		if (err) {
-+			brelse(bh);
- 			return err;
-+		}
- 		ext4_debug("mark block bitmap %#04llx (+%llu/%u)\n",
- 			   first_cluster, first_cluster - start, count2);
- 		ext4_set_bits(bh->b_data, first_cluster - start, count2);
+ 	ms_lib_clear_writebuf(us);
  
- 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
-+		brelse(bh);
- 		if (unlikely(err))
- 			return err;
--		brelse(bh);
- 	}
+-return 0;
++	return 0;
+ }
  
- 	return 0;
-
+ static int ms_lib_force_setlogical_pair(struct us_data *us, u16 logblk, u16 phyblk)
+-- 
+2.19.1
 
