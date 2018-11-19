@@ -2,165 +2,145 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8368C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35226C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 768662154B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F05522154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="nRo9bT/Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768662154B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ps7xNX/H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F05522154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405151AbeKTDX4 (ORCPT
+        id S2405161AbeKTDX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:56 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34915 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405131AbeKTDXz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:55 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t15-v6so6006537wmt.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 08:59:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dnO+KI2zslD6ss3tS/w0B8InB8HwqMSPdTgrBSwIvRw=;
-        b=nRo9bT/YdQmkQZkECAaVZuEw0/7HpDP3kZDW3tmRomIqFozct9haS6Nm57xuB/9rnF
-         qFNJ/+YZiK7tFEWJXODuaBXldeHItg2qeJbKYbcEMh8DleXsl/nnafWRAWvCKjpeN/s9
-         hmiEEyF/k7y5yT4WRp3i1MqLR5HbhpciMWHHRT1nub7jlp1zOCHBGWQeApnE+8XhsOrG
-         76Bg3hzoXTXewjNQgWSW9pgpyC8JpkomOtRMOYnx4HyLSz/xlbKzwzAQJHOXGrJPKrXD
-         ZCNCPiY5bQol0EvRNPCsG8EQ9zF2O0Nk8Hm+j4stN+1xWXnSeCSv+HkBO1hBI089Kli/
-         /aHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dnO+KI2zslD6ss3tS/w0B8InB8HwqMSPdTgrBSwIvRw=;
-        b=VHWkyzBE+kkjlvTdZK6bnLUykvCxtDgYVadmmmESLSX+Zm3dWdcF1uKtO2cL0VbBkz
-         FpuLX7O00k01TQYCRb6DdvXsGHG2FIzoNnAEtjbjbNmz+AIHH3g85bRcJRKUr453RnBh
-         bOrOCLn+Qpp/DfYAU627RVGKia6WS6r0ALqT2j4vTup1q3LRWza+Z5IwNh7mAMjziu2n
-         gAyLFVZZ5T1DJiaV9mKjmIZm2UX3uf9TxEFLkx6VCQcbfyvwATBfGpYIXRmRTNeR9ugx
-         BaEE45nGj0RvDEZXt3CtF7nNRGYjYAb576Pm8XLsGytECymyUDH6IBUQ8edTsIDvnpSr
-         lbSA==
-X-Gm-Message-State: AA+aEWYEKmc/aqTAR7DLKbKbZ4PJGiaUbJ90azpBnjsCW6ZemKrUIi/s
-        /boqGb35eVoM+fH6bnlFW44PhF4iCURAc48JGOSZHA==
-X-Google-Smtp-Source: AJdET5dadd0fqJg2TdztWRlj6ZXlGkLKoFS2ZPDp2Umbo9zkWkGZvHcbdZ5G4Km94PMDMqlYez0i7ANCAXsxBPjOLgs=
-X-Received: by 2002:a1c:110b:: with SMTP id 11mr5052294wmr.83.1542646776903;
- Mon, 19 Nov 2018 08:59:36 -0800 (PST)
+        Mon, 19 Nov 2018 22:23:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404390AbeKTDX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:58 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3350F21527;
+        Mon, 19 Nov 2018 16:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542646782;
+        bh=8011TISb7qbvelh0YlP4ZpN1mLOFBFckXWkbmbng0vo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ps7xNX/HI28BvZciairO1CWJswF5iMczsQvytHd8qf3PruV56aB14KiFdmvs/wpQF
+         lA3HTC7mg2nE/rvl/PqcLalHx0KY9E+vuxz8LOERZIBgeyzBdFvq339jl4RLscR/gM
+         Dk3QxvmPEpANXuH+wmOj7e0QhUz4CUZ7lKVV5YsM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        Omar Sandoval <osandov@fb.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 088/160] btrfs: wait on caching when putting the bg cache
+Date:   Mon, 19 Nov 2018 17:28:47 +0100
+Message-Id: <20181119162639.753476115@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
+References: <20181119162630.031306128@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
- <20181119161917.GF13298@linux.intel.com>
-In-Reply-To: <20181119161917.GF13298@linux.intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 19 Nov 2018 08:59:24 -0800
-Message-ID: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 8:19 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Mon, Nov 19, 2018 at 07:29:25AM -0800, Andy Lutomirski wrote:
-> > On Thu, Nov 15, 2018 at 5:08 PM Jarkko Sakkinen
-> > <jarkko.sakkinen@linux.intel.com> wrote:
-> > >
-> > > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> > > can be used by applications to set aside private regions of code and
-> > > data. The code outside the enclave is disallowed to access the memory
-> > > inside the enclave by the CPU access control.
-> > >
-> > > SGX driver provides a ioctl API for loading and initializing enclaves.
-> > > Address range for enclaves is reserved with mmap() and they are
-> > > destroyed with munmap(). Enclave construction, measurement and
-> > > initialization is done with the provided the ioctl API.
-> > >
-> >
-> > I brought this up a while back, and I think I should re-ask it now
-> > that this driver is getting close to ready:
-> >
-> > As it stands, there's just one SGX character device, and I imagine
-> > that it'll be available to unprivileged applications.  I'm concerned
-> > that this isn't quite what we want.  I certainly think that everyone,
-> > or at least almost everyone, ought to be able to run normal enclaves.
-> > But I think that we should consider restricting who can run specially
-> > privileged enclaves.  In particular, the ability to run enclaves with
-> > the provisioning bit set is somewhat sensitive, since it effectively
-> > allows access to a stable fingerprint of the system.  Before flexible
-> > LC, this wasn't such a big deal, since only Intel's provisioning
-> > enclave could see the key, and Intel's enclave has some degree of
-> > control of what is done with the key.  With flex LC, this protection
-> > is lost.
-> >
-> > But this is maybe more of a big deal than just access to a stable
-> > fingerprint.  The ability to provision a remote attestation protocol
-> > is a key part of running SGX malware, and SGX malware is surely going
-> > to exist some day.  (Sure, Intel will try to block access to the
-> > actual attestation service for malware, but I doubt that Intel will be
-> > able to fully defend it.)
-> >
-> > So I propose that there be a few device nodes.  Maybe
-> > /dev/sgx/unprivilegd and /dev/sgx/provisioning?  The default mode of
-> > the latter could be 0600.  If you've opened the unprivileged node, you
-> > can only run enclaves without any special permission bits set.
->
-> What would the use case for unprivileged i.e. this configuration would
-> mean depending on permissions?
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Everything except the quoting/provisioning code would use the unprivileged node.
+------------------
 
->
-> There would be three types of users:
->
-> 1. Ones that have access to neither of the devices.
-> 2. Ones that have access to unprivileged. Who are these?
+From: Josef Bacik <josef@toxicpanda.com>
 
-Either 0666 (world) or an sgx group.
+commit 3aa7c7a31c26321696b92841d5103461c6f3f517 upstream.
 
-> 3. Ones that have access to provisioning.
+While testing my backport I noticed there was a panic if I ran
+generic/416 generic/417 generic/418 all in a row.  This just happened to
+uncover a race where we had outstanding IO after we destroy all of our
+workqueues, and then we'd go to queue the endio work on those free'd
+workqueues.
 
-Root only.
+This is because we aren't waiting for the caching threads to be done
+before freeing everything up, so to fix this make sure we wait on any
+outstanding caching that's being done before we free up the block group,
+so we're sure to be done with all IO by the time we get to
+btrfs_stop_all_workers().  This fixes the panic I was seeing
+consistently in testing.
 
-The idea here is that, under normal circumstances, provisioning only
-runs once, or at least only runs rarely.  So, rather than the SDK
-running provisioning whenever it feels like doing so (which is the
-current behavior, I imagine, although I haven't looked), there would
-be a privileged program, perhaps a systemd unit that runs when needed,
-that produces the key material needed for remote attestation, and
-non-root users that need attestation would get the keying material
-from the provisioning service.  And the provisioning service could
-implement its own policy.  Ideally, the service wouldn't give the
-sealed keys to users at all but would, instead, just provide the
-entire attestation service over a UNIX socket, which would make
-provisioning capabilities revocable.
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/volumes.c:6112!
+SMP PTI
+Modules linked in:
+CPU: 1 PID: 27165 Comm: kworker/u4:7 Not tainted 4.16.0-02155-g3553e54a578d-dirty #875
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.el7 04/01/2014
+Workqueue: btrfs-cache btrfs_cache_helper
+RIP: 0010:btrfs_map_bio+0x346/0x370
+RSP: 0000:ffffc900061e79d0 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff880071542e00 RCX: 0000000000533000
+RDX: ffff88006bb74380 RSI: 0000000000000008 RDI: ffff880078160000
+RBP: 0000000000000001 R08: ffff8800781cd200 R09: 0000000000503000
+R10: ffff88006cd21200 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: ffff8800781cd200 R15: ffff880071542e00
+FS:  0000000000000000(0000) GS:ffff88007fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000817ffc4 CR3: 0000000078314000 CR4: 00000000000006e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ btree_submit_bio_hook+0x8a/0xd0
+ submit_one_bio+0x5d/0x80
+ read_extent_buffer_pages+0x18a/0x320
+ btree_read_extent_buffer_pages+0xbc/0x200
+ ? alloc_extent_buffer+0x359/0x3e0
+ read_tree_block+0x3d/0x60
+ read_block_for_search.isra.30+0x1a5/0x360
+ btrfs_search_slot+0x41b/0xa10
+ btrfs_next_old_leaf+0x212/0x470
+ caching_thread+0x323/0x490
+ normal_work_helper+0xc5/0x310
+ process_one_work+0x141/0x340
+ worker_thread+0x44/0x3c0
+ kthread+0xf8/0x130
+ ? process_one_work+0x340/0x340
+ ? kthread_bind+0x10/0x10
+ ret_from_fork+0x35/0x40
+RIP: btrfs_map_bio+0x346/0x370 RSP: ffffc900061e79d0
+---[ end trace 827eb13e50846033 ]---
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: disabled
+---[ end Kernel panic - not syncing: Fatal exception
 
-Does this make sense?
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
---Andy
+---
+ fs/btrfs/extent-tree.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -9521,6 +9521,7 @@ void btrfs_put_block_group_cache(struct
+ 
+ 		block_group = btrfs_lookup_first_block_group(info, last);
+ 		while (block_group) {
++			wait_block_group_cache_done(block_group);
+ 			spin_lock(&block_group->lock);
+ 			if (block_group->iref)
+ 				break;
+
+
