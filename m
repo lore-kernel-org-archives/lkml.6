@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95342C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C31C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D946208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5EED20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQQwk/Ih"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D946208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0VprYbQW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5EED20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732585AbeKTDDA (ORCPT
+        id S1732596AbeKTDDD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35456 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731835AbeKTDC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:59 -0500
+        id S1731637AbeKTDDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FCBE20989;
-        Mon, 19 Nov 2018 16:38:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FD1A208E3;
+        Mon, 19 Nov 2018 16:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645530;
-        bh=cdscZSLh9d43Vwj9Xe0SPohKsWQdMckvjGwRytDr1nA=;
+        s=default; t=1542645532;
+        bh=BIg1UwMRC4U61U70Z16GZPjJsjFcyRWNHJNYcSF+Ua4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XQQwk/IhvWHgkvmBQii3plON/Km+j8aCF+uDP/zFHZZN4pObD8pBRXbO1CWZS7IYn
-         6YIhtJdrp9KLZRQeZRFvUrLeTEgtDWKTJePOw2+dT77GZP+DJhjDObKV1B75ebjBN3
-         7djh/z+VTha1bGkbuVgP0twA0t0tcAbRfj4Fmn50=
+        b=0VprYbQWBViNvkQgtXUFU0dA9ZSazOFkw6VxHOUYmR1mYvLBx0y36lNCGk1zuwS44
+         iXTkGozddTqrL+iVHzpjcklsrUFykDEZ1cCsz4vlVMVp4CafyOYLqncAuFamEHHrAf
+         sw6Hb/tlNW/qGmvXtZiLYmUkgMs+n2VtMZfJdgfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
+        Sergii Romantsov <sergii.romantsov@globallogic.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Michal Wajdeczko <michal.wajdeczko@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 198/205] drm/i915: Dont oops during modeset shutdown after lpe audio deinit
-Date:   Mon, 19 Nov 2018 17:28:25 +0100
-Message-Id: <20181119162642.506771617@linuxfoundation.org>
+Subject: [PATCH 4.19 199/205] drm/i915: Mark pin flags as u64
+Date:   Mon, 19 Nov 2018 17:28:26 +0100
+Message-Id: <20181119162642.566427879@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,44 +65,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit 6a8915d0f8cf323e1beb792a33095cf652db4056 upstream.
+commit 0014868b9c3c1dda1de6711cf58c3486fb422d07 upstream.
 
-We deinit the lpe audio device before we call
-drm_atomic_helper_shutdown(), which means the platform device
-may already be gone when it comes time to shut down the crtc.
-As we don't know when the last reference to the platform
-device gets dropped by the audio driver we can't assume that
-the device and its data are still around when turning off the
-crtc. Mark the platform device as gone as soon as we do the
-audio deinit.
+Since the flags are being used to operate on a u64 variable, they too
+need to be marked as such so that the inverses are full width (and not
+zero extended on 32b kernels and bdw+).
 
+Reported-by: Sergii Romantsov <sergii.romantsov@globallogic.com>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
 Cc: stable@vger.kernel.org
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181105194604.6994-1-ville.syrjala@linux.intel.com
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-(cherry picked from commit f45a7977d1140c11f334e01a9f77177ed68e3bfa)
+Reviewed-by: Lionel Landwerlin <lionel.g.landwerlin@intel.com>
+Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181102161232.17742-2-chris@chris-wilson.co.uk
+(cherry picked from commit 83b466b1dc5f0b4d33f0a901e8b00197a8f3582d)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_lpe_audio.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_gem_gtt.h |   24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_lpe_audio.c
-+++ b/drivers/gpu/drm/i915/intel_lpe_audio.c
-@@ -297,8 +297,10 @@ void intel_lpe_audio_teardown(struct drm
- 	lpe_audio_platdev_destroy(dev_priv);
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.h
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.h
+@@ -664,20 +664,20 @@ int i915_gem_gtt_insert(struct i915_addr
+ 			u64 start, u64 end, unsigned int flags);
  
- 	irq_free_desc(dev_priv->lpe_audio.irq);
--}
+ /* Flags used by pin/bind&friends. */
+-#define PIN_NONBLOCK		BIT(0)
+-#define PIN_MAPPABLE		BIT(1)
+-#define PIN_ZONE_4G		BIT(2)
+-#define PIN_NONFAULT		BIT(3)
+-#define PIN_NOEVICT		BIT(4)
++#define PIN_NONBLOCK		BIT_ULL(0)
++#define PIN_MAPPABLE		BIT_ULL(1)
++#define PIN_ZONE_4G		BIT_ULL(2)
++#define PIN_NONFAULT		BIT_ULL(3)
++#define PIN_NOEVICT		BIT_ULL(4)
  
-+	dev_priv->lpe_audio.irq = -1;
-+	dev_priv->lpe_audio.platdev = NULL;
-+}
+-#define PIN_MBZ			BIT(5) /* I915_VMA_PIN_OVERFLOW */
+-#define PIN_GLOBAL		BIT(6) /* I915_VMA_GLOBAL_BIND */
+-#define PIN_USER		BIT(7) /* I915_VMA_LOCAL_BIND */
+-#define PIN_UPDATE		BIT(8)
++#define PIN_MBZ			BIT_ULL(5) /* I915_VMA_PIN_OVERFLOW */
++#define PIN_GLOBAL		BIT_ULL(6) /* I915_VMA_GLOBAL_BIND */
++#define PIN_USER		BIT_ULL(7) /* I915_VMA_LOCAL_BIND */
++#define PIN_UPDATE		BIT_ULL(8)
  
- /**
-  * intel_lpe_audio_notify() - notify lpe audio event
+-#define PIN_HIGH		BIT(9)
+-#define PIN_OFFSET_BIAS		BIT(10)
+-#define PIN_OFFSET_FIXED	BIT(11)
++#define PIN_HIGH		BIT_ULL(9)
++#define PIN_OFFSET_BIAS		BIT_ULL(10)
++#define PIN_OFFSET_FIXED	BIT_ULL(11)
+ #define PIN_OFFSET_MASK		(-I915_GTT_PAGE_SIZE)
+ 
+ #endif
 
 
