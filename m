@@ -2,103 +2,163 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7043C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035E2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F56820831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3F320831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:01:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZN3h4ztk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F56820831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="S0wmaWyP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3F320831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verdurent.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbeKSWXc (ORCPT
+        id S1728711AbeKSWYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:23:32 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50744 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728554AbeKSWXb (ORCPT
+        Mon, 19 Nov 2018 17:24:47 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38500 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbeKSWYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:23:31 -0500
-Received: by mail-wm1-f67.google.com with SMTP id 125so3016850wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:00:06 -0800 (PST)
+        Mon, 19 Nov 2018 17:24:46 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x64so17577971vsa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:01:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HTlL0l7E3B7Y+pB/h4ByjlomxYge4iW3eAh89+cc0B4=;
-        b=ZN3h4ztkpd1NU1aUvno9ovQqzKEyqaG4rz0P/y8/Pn+fkX4mLTC31T9SV1MV0dESuY
-         fzetAzfiqDrnQ0WULVarGZZScr/cyMJg8GjMT161JC81msrAQSPcYMTyP339aNADlog1
-         BwfO5nNVj09Zd7j1iEtdfMavfeYXG+ogjt7lc=
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rXBVrsV5JAHhgnBtG/5FrtfF8E4oWwctFUvnEZc094E=;
+        b=S0wmaWyPgwqd0yW6R6qmj7vQU3fFOn2ItQYwjHGcpxuEKwo6qwfhiNSP6QLtFJ7uIj
+         AQo9ljiuxci+9hvCSbv2KUOv6ocXS/TG46LqQbJF/LC8JJPva+OeCciBvWL/mGYgyM7g
+         6fTRpSIjX3rcYooKmfZRNSEGndD9TdGXyzxkj/C9GGIz+4DP+p8HSY/d/q7dwbH7B64l
+         z/8U4Oo4oyGzHRCMHtOAugxI5Tr2CtSK2yqv6iiGs5HTTQnjF+OVgBoTNs8Hm0SrvnT4
+         f13FsxW/C3O9cZ5/czIDPojzVY68EPPYMc1pG8TgMpws7MTcE+3KX0bo12g3SKkj0Kpa
+         pUHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HTlL0l7E3B7Y+pB/h4ByjlomxYge4iW3eAh89+cc0B4=;
-        b=TbnnR/B1SHbYkLkYI6EKj3Wv48Ng7J0MCEKA4bkcC9VSbNX9Tuwkfl2BeRPoDhFZP4
-         sLmVABqquU+1kY7Y8dPXOB+muzoX61TJymIeDuDm3pdgzlIV7nzPHRURRs2bXtD1O/lX
-         nohDvcEXLBpnuQbcPvpei6U68muAKZgEn1BLrUQ7L2ki/3mTYPe9CoK8iqYHeMmyDIW6
-         TD5F47yxERo05sdyNv73LskM0FC9rb+G/bYoAT5CQSopNpc83xCgHBOYqOeC4nj95H+i
-         g41xxNxRby64zAumwGLeoyHX3UUDmIj84sAeE3IrqeKXXaFsSZGWiBZa/haKb4yoFKqy
-         LU1A==
-X-Gm-Message-State: AGRZ1gId2QWme4p523BpoWEvTXBfoB7vlzyA7vRx+19OopYEmsArJyt6
-        HTPbYcw7X+eNGIpDfwa+9WFSGQ==
-X-Google-Smtp-Source: AFSGD/UyENYG/8iiCK0UH+AiCB8UnHmpx0EPXf+yZM8D5eQlPr/eKbGyc4VBQi9GvitChndd8dS2mQ==
-X-Received: by 2002:a1c:28c6:: with SMTP id o189-v6mr6677704wmo.89.1542628805697;
-        Mon, 19 Nov 2018 04:00:05 -0800 (PST)
-Received: from [192.168.0.40] (51.223.136.77.rev.sfr.net. [77.136.223.51])
-        by smtp.googlemail.com with ESMTPSA id x194-v6sm89823155wmd.41.2018.11.19.04.00.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 04:00:05 -0800 (PST)
-Subject: Re: [PATCH v3] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20181119112917.4214-1-abrodkin@synopsys.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b3bc70ba-5e02-0e46-01e8-9c72aa653a54@linaro.org>
-Date:   Mon, 19 Nov 2018 13:00:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rXBVrsV5JAHhgnBtG/5FrtfF8E4oWwctFUvnEZc094E=;
+        b=ZrrXDCq/K+QBoDJGIvEgX87dShGDIVzhUJCFnxjuw9lQ9SbEaDjd+zFB8x/lZ6L88s
+         vE2/y2zp440DnbaI36Z0dtatxxCZtew+JukbwtUcn3UfrcyxtNl/DGNpypegdVXq+/UR
+         +JfosU/pH8sc+rZrxmeezVJq+xWnbA90MJuZpSFRwcVCBKZJVdvRan+UiDfDMYZ4obUi
+         BlcMx0qilJhfvhzBeK7zkcz2LIDsYdPNTrzu8BGYx4eoD/0hEq0g66aZqXayTEq5XfQl
+         N+7NOaYdm/nFGondpkL0fYCPVr1xom/wuG3nO/3qya4HrqRxwusATRtmRij3NT3H4mcw
+         7LNw==
+X-Gm-Message-State: AGRZ1gJYx/BNNxBz9q3lcU8u6gG228EMKCWOXtnYdBYkee1aHjR+VIS4
+        o6DL6T6b6ynjPGltPo1kG1hBStw+1btWddHr0bsBog==
+X-Google-Smtp-Source: AJdET5d0yO61sGzIgovSEQTrRLL/RJo5Hthi3FvQiPThncEUfXyIH2ziS0Oo4yeqkGhRCIaB8aJRz83n/k63+iTkOTk=
+X-Received: by 2002:a67:e0d4:: with SMTP id m20mr9075403vsl.182.1542628880520;
+ Mon, 19 Nov 2018 04:01:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181119112917.4214-1-abrodkin@synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181109094417.12109-1-vkoul@kernel.org> <20181109094417.12109-3-vkoul@kernel.org>
+In-Reply-To: <20181109094417.12109-3-vkoul@kernel.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Mon, 19 Nov 2018 17:31:08 +0530
+Message-ID: <CAHLCerMiJMsRh20S3KPqgT6XKFLyZF0jG5HVVVW4e8b-RkfSzA@mail.gmail.com>
+Subject: Re: [PATCH v5 02/18] arm64: dts: qcom: qcs404-evb: add dts files for EVBs
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/2018 12:29, Alexey Brodkin wrote:
+On Fri, Nov 9, 2018 at 3:15 PM Vinod Koul <vkoul@kernel.org> wrote:
+>
+> QCS404 has two EVBs, EVB-1000 and EVB-4000. These boards are mostly
+> similar with few differences in the peripherals used.
+>
+> So use a common qcs404-evb.dtsi which contains the common parts and use
+> qcs404-evb-1000.dts and qcs404-evb-4000.dts for diffs
+>
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-[ ... ]
-
->  arch/arc/Kconfig                |  1 +
->  drivers/clocksource/Kconfig     |  1 +
->  drivers/clocksource/arc_timer.c | 22 ++++++++++++++++++++++
->  3 files changed, 24 insertions(+)
-> 
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-
-Can I have an Ack for the arch part ?
-
-Thanks
-  -- Daniel
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
+>  arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts | 11 +++++++++++
+>  arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts | 11 +++++++++++
+>  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi     | 14 ++++++++++++++
+>  4 files changed, 38 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+>
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index a658c07652a7..21d548f02d39 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -8,3 +8,5 @@ dtb-$(CONFIG_ARCH_QCOM) += msm8994-angler-rev-101.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8996-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += msm8998-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += sdm845-mtp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += qcs404-evb-1000.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += qcs404-evb-4000.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+> new file mode 100644
+> index 000000000000..2c14903d808e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +/dts-v1/;
+> +
+> +#include "qcs404-evb.dtsi"
+> +
+> +/ {
+> +       model = "Qualcomm Technologies, Inc. QCS404 EVB 1000";
+> +       compatible = "qcom,qcs404-evb";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+> new file mode 100644
+> index 000000000000..11269ad3de0d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +/dts-v1/;
+> +
+> +#include "qcs404-evb.dtsi"
+> +
+> +/ {
+> +       model = "Qualcomm Technologies, Inc. QCS404 EVB 4000";
+> +       compatible = "qcom,qcs404-evb";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> new file mode 100644
+> index 000000000000..91ecbdf0ecda
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +#include "qcs404.dtsi"
+> +
+> +/ {
+> +       aliases {
+> +               serial0 = &blsp1_uart2;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0";
+> +       };
+> +};
+> --
+> 2.14.4
+>
