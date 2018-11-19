@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80D40C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEA4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 468962148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E88214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnVjsGeJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 468962148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zu6Tar2p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E88214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407008AbeKTDaS (ORCPT
+        id S2407019AbeKTDaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45268 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406208AbeKTDaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:18 -0500
+        id S2405879AbeKTDaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 171212148E;
-        Mon, 19 Nov 2018 17:05:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A464D2146D;
+        Mon, 19 Nov 2018 17:06:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647160;
-        bh=jsSz8OCbNWxkXhbvAy5aqBApAoMHqZ2VRHW7HmUeUVw=;
+        s=default; t=1542647163;
+        bh=mdOLvICvVYHrJIbgmhojurhkDsQGPLprOpmOMUGCKgQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CnVjsGeJz8oUJNR9EPUEOZAouP72aDLo1GODoKclsW7CU4+xedgvT4ipcWqSiPQY+
-         bkubQ6Ltp7s2ehLG8RxK1iwNP7B/iyR164B8353StIJMGp3katPZcG5ThOXDKkZO5A
-         0o5A+TjoNWaC93r2mMGh17Dd0kCRbjjtB2OyMP7c=
+        b=Zu6Tar2pSriXc10Vns67U7oQGu/VE3wc3QpFfVtjHe0mnIyLgPzcbM0LaB16w5ioN
+         EykRWzc5X9OWuplWArb6m5gwwS+JJBpyIKJy1if07DULP5VdrPQKrieC4VO5tadPnY
+         lHsEDcSLvp0faDli2TkvbcYbeSyZyIahtwNkwuoo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 25/90] uio: ensure class is registered before devices
-Date:   Mon, 19 Nov 2018 17:29:07 +0100
-Message-Id: <20181119162625.018148973@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 3.18 67/90] mach64: fix image corruption due to reading accelerator registers
+Date:   Mon, 19 Nov 2018 17:29:49 +0100
+Message-Id: <20181119162631.208925097@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,85 +62,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[ Upstream commit ae61cf5b9913027c6953a79ed3894da4f47061bd ]
+commit c09bcc91bb94ed91f1391bffcbe294963d605732 upstream.
 
-When both uio and the uio drivers are built in the kernel, it is possible
-for a driver to register devices before the uio class is registered.
+Reading the registers without waiting for engine idle returns
+unpredictable values. These unpredictable values result in display
+corruption - if atyfb_imageblit reads the content of DP_PIX_WIDTH with the
+bit DP_HOST_TRIPLE_EN set (from previous invocation), the driver would
+never ever clear the bit, resulting in display corruption.
 
-This may result in a NULL pointer dereference later on in
-get_device_parent() when accessing the class glue_dirs spinlock.
+We don't want to wait for idle because it would degrade performance, so
+this patch modifies the driver so that it never reads accelerator
+registers.
 
-The trace looks like that:
+HOST_CNTL doesn't have to be read, we can just write it with
+HOST_BYTE_ALIGN because no other part of the driver cares if
+HOST_BYTE_ALIGN is set.
 
-Unable to handle kernel NULL pointer dereference at virtual address 00000140
-[...]
-[<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
-[<ffff0000084f56bc>] device_add+0x154/0x6a0
-[<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
-[<ffff0000084f5edc>] device_create+0x54/0x60
-[<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
-[<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
-[<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
-[<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
-[<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
-[<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
-[<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
-[<ffff0000084f81b8>] driver_attach+0x20/0x28
-[<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
-[<ffff0000084f93c0>] driver_register+0x60/0xf8
-[<ffff0000083fb918>] __pci_register_driver+0x40/0x48
+DP_PIX_WIDTH is written in the functions atyfb_copyarea and atyfb_fillrect
+with the default value and in atyfb_imageblit with the value set according
+to the source image data.
 
-Return EPROBE_DEFER in that case so the driver can register the device
-later.
-
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/uio/uio.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/video/fbdev/aty/mach64_accel.c |   22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -249,6 +249,8 @@ static struct class uio_class = {
- 	.dev_groups = uio_groups,
- };
+--- a/drivers/video/fbdev/aty/mach64_accel.c
++++ b/drivers/video/fbdev/aty/mach64_accel.c
+@@ -126,7 +126,7 @@ void aty_init_engine(struct atyfb_par *p
  
-+bool uio_class_registered;
-+
- /*
-  * device functions
-  */
-@@ -771,6 +773,9 @@ static int init_uio_class(void)
- 		printk(KERN_ERR "class_register failed for uio\n");
- 		goto err_class_register;
+ 	/* set host attributes */
+ 	wait_for_fifo(13, par);
+-	aty_st_le32(HOST_CNTL, 0, par);
++	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
+ 
+ 	/* set pattern attributes */
+ 	aty_st_le32(PAT_REG0, 0, par);
+@@ -232,7 +232,8 @@ void atyfb_copyarea(struct fb_info *info
+ 		rotation = rotation24bpp(dx, direction);
  	}
-+
-+	uio_class_registered = true;
-+
- 	return 0;
  
- err_class_register:
-@@ -781,6 +786,7 @@ exit:
+-	wait_for_fifo(4, par);
++	wait_for_fifo(5, par);
++	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
+ 	aty_st_le32(DP_SRC, FRGD_SRC_BLIT, par);
+ 	aty_st_le32(SRC_Y_X, (sx << 16) | sy, par);
+ 	aty_st_le32(SRC_HEIGHT1_WIDTH1, (width << 16) | area->height, par);
+@@ -268,7 +269,8 @@ void atyfb_fillrect(struct fb_info *info
+ 		rotation = rotation24bpp(dx, DST_X_LEFT_TO_RIGHT);
+ 	}
  
- static void release_uio_class(void)
+-	wait_for_fifo(3, par);
++	wait_for_fifo(4, par);
++	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
+ 	aty_st_le32(DP_FRGD_CLR, color, par);
+ 	aty_st_le32(DP_SRC,
+ 		    BKGD_SRC_BKGD_CLR | FRGD_SRC_FRGD_CLR | MONO_SRC_ONE,
+@@ -283,7 +285,7 @@ void atyfb_imageblit(struct fb_info *inf
  {
-+	uio_class_registered = false;
- 	class_unregister(&uio_class);
- 	uio_major_cleanup();
+ 	struct atyfb_par *par = (struct atyfb_par *) info->par;
+ 	u32 src_bytes, dx = image->dx, dy = image->dy, width = image->width;
+-	u32 pix_width_save, pix_width, host_cntl, rotation = 0, src, mix;
++	u32 pix_width, rotation = 0, src, mix;
+ 
+ 	if (par->asleep)
+ 		return;
+@@ -295,8 +297,7 @@ void atyfb_imageblit(struct fb_info *inf
+ 		return;
+ 	}
+ 
+-	pix_width = pix_width_save = aty_ld_le32(DP_PIX_WIDTH, par);
+-	host_cntl = aty_ld_le32(HOST_CNTL, par) | HOST_BYTE_ALIGN;
++	pix_width = par->crtc.dp_pix_width;
+ 
+ 	switch (image->depth) {
+ 	case 1:
+@@ -369,12 +370,11 @@ void atyfb_imageblit(struct fb_info *inf
+ 		mix = FRGD_MIX_D_XOR_S | BKGD_MIX_D;
+ 	}
+ 
+-	wait_for_fifo(6, par);
+-	aty_st_le32(DP_WRITE_MASK, 0xFFFFFFFF, par);
++	wait_for_fifo(5, par);
+ 	aty_st_le32(DP_PIX_WIDTH, pix_width, par);
+ 	aty_st_le32(DP_MIX, mix, par);
+ 	aty_st_le32(DP_SRC, src, par);
+-	aty_st_le32(HOST_CNTL, host_cntl, par);
++	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
+ 	aty_st_le32(DST_CNTL, DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT | rotation, par);
+ 
+ 	draw_rect(dx, dy, width, image->height, par);
+@@ -423,8 +423,4 @@ void atyfb_imageblit(struct fb_info *inf
+ 			aty_st_le32(HOST_DATA0, get_unaligned_le32(pbitmap), par);
+ 		}
+ 	}
+-
+-	/* restore pix_width */
+-	wait_for_fifo(1, par);
+-	aty_st_le32(DP_PIX_WIDTH, pix_width_save, par);
  }
-@@ -800,6 +806,9 @@ int __uio_register_device(struct module
- 	struct uio_device *idev;
- 	int ret = 0;
- 
-+	if (!uio_class_registered)
-+		return -EPROBE_DEFER;
-+
- 	if (!parent || !info || !info->name || !info->version)
- 		return -EINVAL;
- 
 
 
