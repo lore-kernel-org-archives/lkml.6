@@ -2,81 +2,90 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1FAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59854C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522DD20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hwPG6lay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522DD20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2CE992146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:10:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CE992146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729460AbeKTAdp (ORCPT
+        id S1729454AbeKTAd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:33:45 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36374 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729267AbeKTAdp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:33:45 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so2619250lfg.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:10:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6MJhMVhosgyrpYix7xMtSztQRvF5ipcPCD/qbbZuqMk=;
-        b=hwPG6layG6sV7UdNWQ5dJvC7gXsNUfDcg2KLZ5R/lIRrPtImBSL1otT0W31KeRxDeF
-         z0RVIG81AWjGXfvjOfavU4nNu1nmvN1ZGTnhvlBxuznMPCMwguoeEHH3m59zsxRSjCrj
-         ZKdRtcWuaxaL5kSX6fhaM1nc0iQCRiCruxN8Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6MJhMVhosgyrpYix7xMtSztQRvF5ipcPCD/qbbZuqMk=;
-        b=tYRasJTUS+h0I9DaZMLrKt6lh0dCKOn7VReQYl24Cz6j8kDCnLHxdWVNCDFar/FU0u
-         PjqnpiVE+SU05EVAFr/sySb34blmWckVYWB2XIv78qo7qY8buuYfAW8SfFruZ2H0kMSj
-         us01ILbCnzRsE5Qx5cKfhxgOI9T2kHfHnDQrLkx3k3J7X4QqEyDOq3jBTAAHniv4AOp1
-         YV9xc17BtNPhqOd0rejmQRvC+Opvfwh+xgPB4iPMy7MWFm/N2HOTH+iA06KdAcjVYjqL
-         JMbOTv4pMxNO4itg95+Sa7XhvDqfaI4HImAR2nu/O7VSQ7eWczcf70gN1XyoEFWsbGHF
-         B0BA==
-X-Gm-Message-State: AGRZ1gIgAkWBN0AQ7LQLu3DLjteJlBUYZsAlly9B+xEisdokqDdzlVi4
-        s7PoNdcdONRbu5Qt1iDfZxGn0DSLsIvZsvmZMII49jz9UFo=
-X-Google-Smtp-Source: AJdET5dOzy3zYMqUJrws/K+b9UcjM9vEhpxtIP/DluIAZVlGwO4JVCD0PSOf9NE9M3aiZTnDukxsH8ndA3rUUFOmpfQ=
-X-Received: by 2002:a19:8d01:: with SMTP id p1mr10192339lfd.149.1542636599694;
- Mon, 19 Nov 2018 06:09:59 -0800 (PST)
+        Mon, 19 Nov 2018 19:33:56 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:47626 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727324AbeKTAd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:33:56 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9A43120D04; Mon, 19 Nov 2018 15:10:10 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4698F20791;
+        Mon, 19 Nov 2018 15:10:10 +0100 (CET)
+Date:   Mon, 19 Nov 2018 15:10:09 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+Message-ID: <20181119151009.490413d9@bbrezillon>
+In-Reply-To: <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+        <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181116104910.GA10265@hp-pavilion-15-notebook-pc-brajeswar>
-In-Reply-To: <20181116104910.GA10265@hp-pavilion-15-notebook-pc-brajeswar>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Nov 2018 15:09:47 +0100
-Message-ID: <CACRpkdZLGty8zGr3MrxXS4CkcD4oqSOBCEZ6LiUNd8x2goL_3A@mail.gmail.com>
-Subject: Re: [PATCH] drivers/gpio/gpio-grgpio.c: Remove duplicate header
-To:     brajeswar.linux@gmail.com
-Cc:     jrdr.linux@gmail.com,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        sabyasachi.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 11:49 AM Brajeswar Ghosh
-<brajeswar.linux@gmail.com> wrote:
+On Mon, 19 Nov 2018 14:49:31 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-> Remove linux/gpio/driver.h which is included more than once
->
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> On 11/19/2018 11:01 AM, Mason Yang wrote:
+> > Document the bindings used by the Renesas R-Car D3 RPC controller.
+> > 
+> > Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> > ---
+> >  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+> >  1 file changed, 33 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> > new file mode 100644
+> > index 0000000..8286cc8
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> > @@ -0,0 +1,33 @@
+> > +Renesas R-Car D3 RPC controller Device Tree Bindings
+> > +----------------------------------------------------
+> > +
+> > +Required properties:
+> > +- compatible: should be "renesas,rpc-r8a77995"
+> > +- #address-cells: should be 1
+> > +- #size-cells: should be 0
+> > +- reg: should contain 2 entries, one for the registers and one for the direct
+> > +       mapping area
+> > +- reg-names: should contain "rpc_regs" and "dirmap"
+> > +- interrupts: interrupt line connected to the RPC SPI controller  
+> 
+> Do you also plan to support the RPC HF mode ? And if so, how would that
+> look in the bindings ?
 
-Patch applied!
+Not sure this approach is still accepted, but that's how we solved the
+problem for the flexcom block [1].
 
-Thanks.
-Linus Walleij
+[1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt
