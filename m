@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA9CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 221F9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7DE52148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BBA2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zk7ZMQ5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7DE52148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjDsCopO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0BBA2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387415AbeKTDFt (ORCPT
+        id S2387432AbeKTDFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:05:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39288 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:05:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731409AbeKTDFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:05:48 -0500
+        id S1731409AbeKTDFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:05:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B553C206BA;
-        Mon, 19 Nov 2018 16:41:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CF91206BA;
+        Mon, 19 Nov 2018 16:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645698;
-        bh=9nJr4XOdnXdmQ47M9dlJbDKxRmpox0D4a/2HFqfJpVk=;
+        s=default; t=1542645700;
+        bh=oJFcVC7mG9bGV8Pliw9XFj26O6fHKvWjsytPBHJr4bg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zk7ZMQ5N83elWNY073L9qF8RbLq1oMhFtXvF3lLZADx27urWhgS6OnP25oFYQoMpw
-         bKGeToD4Tib0fS5eYGZVumZ2FALCrsndA7nn2zddOWwQRq9RcfKzzTAFhw/xd6rXJq
-         g0pkmxtBKfAWOF7fWHPCKan+Ev29TANeDO+2Bmg8=
+        b=fjDsCopOoG6fiQAPvFvz2akV/eQiU5T30zn7H9KPP+UoxacoHgxElFGbRciftReKe
+         VTGAopaJkhmOnRBAHMhGBtjXKlorjtdrw8BdBtkQOSzgQWvDiI9ojw/9D8us7ng4bf
+         EeeJsFGxdadDBSZculbSCzs4JprrAzmEp3jQjH8U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Howard Chen <howardsoc@google.com>,
+        Minchan Kim <minchan@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 055/171] clk: meson: axg: mark fdiv2 and fdiv3 as critical
-Date:   Mon, 19 Nov 2018 17:27:31 +0100
-Message-Id: <20181119162628.893671097@linuxfoundation.org>
+Subject: [PATCH 4.18 056/171] zram: close udev startup race condition as default groups
+Date:   Mon, 19 Nov 2018 17:27:32 +0100
+Message-Id: <20181119162629.054724501@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,57 +66,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d6ee1e7e9004d3d246cdfa14196989e0a9466c16 ]
+commit fef912bf860e upstream.
+commit 98af4d4df889 upstream.
 
-Similar to gxbb and gxl platforms, axg SCPI Cortex-M co-processor
-uses the fdiv2 and fdiv3 to, among other things, provide the cpu
-clock.
+I got a report from Howard Chen that he saw zram and sysfs race(ie,
+zram block device file is created but sysfs for it isn't yet)
+when he tried to create new zram devices via hotadd knob.
 
-Until clock hand-off mechanism makes its way to CCF and the generic
-SCPI claims platform specific clocks, these clocks must be marked as
-critical to make sure they are never disabled when needed by the
-co-processor.
+v4.20 kernel fixes it by [1, 2] but it's too large size to merge
+into -stable so this patch fixes the problem by registering defualt
+group by Greg KH's approach[3].
 
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This patch should be applied to every stable tree [3.16+] currently
+existing from kernel.org because the problem was introduced at 2.6.37
+by [4].
+
+[1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
+[2] 98af4d4df889, zram: register default groups with device_add_disk()
+[3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
+[4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
+
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Tested-by: Howard Chen <howardsoc@google.com>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/axg.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/block/zram/zram_drv.c | 26 ++++++--------------------
+ 1 file changed, 6 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index bd4dbc696b88..cfd26fd7e404 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -320,6 +320,7 @@ static struct clk_regmap axg_fclk_div2 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div2_div" },
- 		.num_parents = 1,
-+		.flags = CLK_IS_CRITICAL,
- 	},
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index af7cb8e618fe..363b9102ebb0 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1637,6 +1637,11 @@ static const struct attribute_group zram_disk_attr_group = {
+ 	.attrs = zram_disk_attrs,
  };
  
-@@ -344,6 +345,18 @@ static struct clk_regmap axg_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME:
-+		 * This clock, as fdiv2, is used by the SCPI FW and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) The SCPI generic driver claims and enable all the clocks
-+		 *    it needs
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
++static const struct attribute_group *zram_disk_attr_groups[] = {
++	&zram_disk_attr_group,
++	NULL,
++};
++
+ /*
+  * Allocate and initialize new zram device. the function returns
+  * '>= 0' device_id upon success, and negative value otherwise.
+@@ -1717,24 +1722,15 @@ static int zram_add(void)
  
+ 	zram->disk->queue->backing_dev_info->capabilities |=
+ 			(BDI_CAP_STABLE_WRITES | BDI_CAP_SYNCHRONOUS_IO);
++	disk_to_dev(zram->disk)->groups = zram_disk_attr_groups;
+ 	add_disk(zram->disk);
+ 
+-	ret = sysfs_create_group(&disk_to_dev(zram->disk)->kobj,
+-				&zram_disk_attr_group);
+-	if (ret < 0) {
+-		pr_err("Error creating sysfs group for device %d\n",
+-				device_id);
+-		goto out_free_disk;
+-	}
+ 	strlcpy(zram->compressor, default_compressor, sizeof(zram->compressor));
+ 
+ 	zram_debugfs_register(zram);
+ 	pr_info("Added device: %s\n", zram->disk->disk_name);
+ 	return device_id;
+ 
+-out_free_disk:
+-	del_gendisk(zram->disk);
+-	put_disk(zram->disk);
+ out_free_queue:
+ 	blk_cleanup_queue(queue);
+ out_free_idr:
+@@ -1763,16 +1759,6 @@ static int zram_remove(struct zram *zram)
+ 	mutex_unlock(&bdev->bd_mutex);
+ 
+ 	zram_debugfs_unregister(zram);
+-	/*
+-	 * Remove sysfs first, so no one will perform a disksize
+-	 * store while we destroy the devices. This also helps during
+-	 * hot_remove -- zram_reset_device() is the last holder of
+-	 * ->init_lock, no later/concurrent disksize_store() or any
+-	 * other sysfs handlers are possible.
+-	 */
+-	sysfs_remove_group(&disk_to_dev(zram->disk)->kobj,
+-			&zram_disk_attr_group);
+-
+ 	/* Make sure all the pending I/O are finished */
+ 	fsync_bdev(bdev);
+ 	zram_reset_device(zram);
 -- 
 2.17.1
 
