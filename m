@@ -2,171 +2,96 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38374C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66AFC04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB64214C1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E80A2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9AflzgV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB64214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBgyraNy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E80A2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389912AbeKTEGU (ORCPT
+        id S2389712AbeKTEGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:06:20 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35838 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389109AbeKTEGT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:06:19 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so20147718lfc.2;
-        Mon, 19 Nov 2018 09:41:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rFIGnhbbxJlKc/xgO0vXKwYw+G/JysDisiDFhdxpmu8=;
-        b=Q9AflzgVy3pshc/bFJP5B7VEvO4Ssj24P1ua3FSAV2Sjn6WmXucsWjCAxTr4+uQNKh
-         +zwpskzEjsY6EN1fCPqeeLuglqKflA669vngPOvrbOeciIvpjUUfNW/I1nFp8LJMxgbM
-         YH9BMehBcXQCb3N7Eb+BxdgMAahIX4dxM7r0MW9bM0jU3/Xm8pw7dHWYoCsFpun8RvYR
-         mCZbKzqbwZmpqgC/ygvBiG62U2iJaNnniwvRaUHIZAVzy0dGkirkdSsaMinGsy9vkAIk
-         2JX/3hOCG4iMo2rnhHVY48Wbhi5X+qP62Ttfb+bz6hB7dvPqBUehcPSCZBPYxeM3+FXx
-         Pthg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rFIGnhbbxJlKc/xgO0vXKwYw+G/JysDisiDFhdxpmu8=;
-        b=VKmF48g1plqiuxWeMKgJuIuUWPydrm1wQFVNOjS7QAadASxDwpEiU3L/bxHyieEP4r
-         /NVx5Jmf+QVupmZ3Hg3IBz+cGt1evCuntQgOa8lIgBTo2mYneJ+UrY6a+SFiuScerMWS
-         2Wlx9KhRcgz4GrfxvMSd/NNTb7Zia6m6MZMo62+Mj+HjHp7AxgJwX5zRTjF1X4ENFgDR
-         xE0DZiOzJpNEPWdFXgvj30dXQtOTnK/oEhBFEu992QbfARnXbPi6Wlw+to1HYc4/vxs9
-         C2jjxEm4oEXHjZEHH0XFwNYdzJS1Fsw7KAaiimR8Y5DFzBRhK+FoglRzTZTkXhX9su3d
-         kQyg==
-X-Gm-Message-State: AGRZ1gKpRmy+UBKe0p9DZNvK2x+8xGuwsQ0EfENa1TQQppDOScCZEZtV
-        lvja04zh2FUkpejtOqVVR4x1WJhqn7AHVBj0j58=
-X-Google-Smtp-Source: AJdET5d2HXhE6GkMZ1IErSe2C2Zq8xG47FfN8OIaADB+XeRxOQi3mrmOlwByP1Zcs1luUtqjQYtLC4IFRKXyrNyAqWw=
-X-Received: by 2002:a19:d912:: with SMTP id q18mr10709927lfg.24.1542649308760;
- Mon, 19 Nov 2018 09:41:48 -0800 (PST)
+        Mon, 19 Nov 2018 23:06:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389109AbeKTEGy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 23:06:54 -0500
+Received: from [10.80.45.159] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F9DA2145D;
+        Mon, 19 Nov 2018 17:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542649346;
+        bh=pTK755v01/dT2muoZN3qHYXL1n/03ylIcKFKrHyrMh4=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=sBgyraNydUrFJhNaTBjDtbyMXXaBoBb/9Z4A4gTEVrzU5HTLMxDSkINKRzzN+oAWs
+         9eVMdxR3H5iu8tKjCrbWn/acIwDbqzWNffAjqbW4pQ03UNRdAXhcSLrVCHfSiaozPC
+         gnPm4KylS8opnYuOJeSCDiBSOE1AkvRCVlgsmQTY=
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+From:   Sinan Kaya <okaya@kernel.org>
+To:     Keith Busch <keith.busch@intel.com>,
+        Tyler Baicar <baicar.tyler@gmail.com>
+Cc:     mr.nuke.me@gmail.com, helgaas@google.com, austin_bolen@dell.com,
+        alex_gagniuc@dellteam.com, Shyam_Iyer@dell.com, lukas@wunner.de,
+        bhelgaas@google.com, rjw@rjwysocki.net, lenb@kernel.org,
+        ruscur@russell.cc, sbobroff@linux.ibm.com, oohall@gmail.com,
+        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+ <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+ <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+ <20181119165318.GB26595@localhost.localdomain>
+ <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+Message-ID: <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
+Date:   Mon, 19 Nov 2018 12:42:25 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
- <20181116182836.GB17088@rapoport-lnx> <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
- <20181117143742.GB7861@bombadil.infradead.org> <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
- <20181119162623.GA13200@rapoport-lnx>
-In-Reply-To: <20181119162623.GA13200@rapoport-lnx>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Mon, 19 Nov 2018 23:15:15 +0530
-Message-ID: <CAFqt6zbhodAGQz-RCB3C-wt_Mvb9QDmQ8pFeP2EO+ba2k2OccA@mail.gmail.com>
-Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
-To:     rppt@linux.ibm.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 9:56 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Mon, Nov 19, 2018 at 08:43:09PM +0530, Souptick Joarder wrote:
-> > Hi Mike,
-> >
-> > On Sat, Nov 17, 2018 at 8:07 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Sat, Nov 17, 2018 at 12:26:38PM +0530, Souptick Joarder wrote:
-> > > > On Fri, Nov 16, 2018 at 11:59 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > > > > > + * vm_insert_range - insert range of kernel pages into user vma
-> > > > > > + * @vma: user vma to map to
-> > > > > > + * @addr: target user address of this page
-> > > > > > + * @pages: pointer to array of source kernel pages
-> > > > > > + * @page_count: no. of pages need to insert into user vma
-> > > > > > + *
-> > > > > > + * This allows drivers to insert range of kernel pages they've allocated
-> > > > > > + * into a user vma. This is a generic function which drivers can use
-> > > > > > + * rather than using their own way of mapping range of kernel pages into
-> > > > > > + * user vma.
-> > > > >
-> > > > > Please add the return value and context descriptions.
-> > > > >
-> > > >
-> > > > Sure I will wait for some time to get additional review comments and
-> > > > add all of those requested changes in v2.
-> > >
-> > > You could send your proposed wording now which might remove the need
-> > > for a v3 if we end up arguing about the wording.
-> >
-> > Does this description looks good ?
-> >
-> > /**
-> >  * vm_insert_range - insert range of kernel pages into user vma
-> >  * @vma: user vma to map to
-> >  * @addr: target user address of this page
-> >  * @pages: pointer to array of source kernel pages
-> >  * @page_count: number of pages need to insert into user vma
-> >  *
-> >  * This allows drivers to insert range of kernel pages they've allocated
-> >  * into a user vma. This is a generic function which drivers can use
-> >  * rather than using their own way of mapping range of kernel pages into
-> >  * user vma.
-> >  *
-> >  * Context - Process context. Called by mmap handlers.
->
-> Context:
->
-> >  * Return - int error value
->
-> Return:
->
-> >  * 0                    - OK
-> >  * -EINVAL              - Invalid argument
-> >  * -ENOMEM              - No memory
-> >  * -EFAULT              - Bad address
-> >  * -EBUSY               - Device or resource busy
->
-> I don't think that elaborate description of error values is needed, just "0
-> on success and error code otherwise" would be sufficient.
+On 11/19/2018 12:32 PM, Sinan Kaya wrote:
+>>
+>> But we're not using HEST as a fine grain control. We disable native AER
+>> handling if *any* device has FF set in HEST, and that just forces people
+>> to use pcie_ports=native to get around that.
+>>
+> 
+> I don't see *any* in the code.  aer_hest_parse() does the HEST table parsing.
+> It switches to firmware first mode if global flag in HEST is set. Otherwise
+> for each BDF in device, hest_match_pci() is used to do a cross-matching against
+> HEST table contents.
+> 
+> Am I missing something?
 
-/**
- * vm_insert_range - insert range of kernel pages into user vma
- * @vma: user vma to map to
- * @addr: target user address of this page
- * @pages: pointer to array of source kernel pages
- * @page_count: number of pages need to insert into user vma
- *
- * This allows drivers to insert range of kernel pages they've allocated
- * into a user vma. This is a generic function which drivers can use
- * rather than using their own way of mapping range of kernel pages into
- * user vma.
- *
- * Context: Process context. Called by mmap handlers.
- * Return: 0 on success and error code otherwise
- */
+I see. I think you are talking about aer_firmware_first, right?
+
+aer_set_firmware_first() and  pcie_aer_get_firmware_first() seem to do the right
+thing.
+
+aer_firmware_first is probably getting set because events are all routed to a
+single root port and aer_acpi_firmware_first() is used to decide whether AER
+should be initialized or not.
+
+I think I understand what is going on now.
+
+Still, breaking existing systems that rely on HEST table is not cool.
+I'd rather have users specify "pcie_ports=native" to skip FF rather than
+having broken systems by default to be honest.
