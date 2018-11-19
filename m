@@ -7,40 +7,38 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF6EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C02DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9A2A2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A2A2080C
+	by mail.kernel.org (Postfix) with ESMTP id 3441D2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3441D2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729469AbeKTAaM (ORCPT
+        id S1729491AbeKTAaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:30:12 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:37394 "EHLO huawei.com"
+        Mon, 19 Nov 2018 19:30:15 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37392 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729350AbeKTAaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:30:12 -0500
+        id S1729362AbeKTAaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:30:14 -0500
 Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A084A26FAD1D4;
+        by Forcepoint Email with ESMTP id 9BB3A2222C516;
         Mon, 19 Nov 2018 22:06:24 +0800 (CST)
 Received: from localhost.localdomain (10.175.34.53) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 19 Nov 2018 22:06:20 +0800
+ 14.3.408.0; Mon, 19 Nov 2018 22:06:19 +0800
 From:   Xue Chaojing <xuechaojing@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
         <netdev@vger.kernel.org>, <wulike1@huawei.com>,
         <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
         <luoshaokai@huawei.com>
-Subject: [PATCH 3/4] net-next/hinic:fix a bug in set mac address
-Date:   Mon, 19 Nov 2018 06:12:33 +0000
-Message-ID: <20181119061234.12839-3-xuechaojing@huawei.com>
+Subject: [PATCH 1/4] net-next/hinic:replace multiply and division operators
+Date:   Mon, 19 Nov 2018 06:12:31 +0000
+Message-ID: <20181119061234.12839-1-xuechaojing@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181119061234.12839-1-xuechaojing@huawei.com>
-References: <20181119061234.12839-1-xuechaojing@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.175.34.53]
@@ -50,39 +48,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In add_mac_addr(), if the MAC address is a muliticast address,
-it will not be set, which causes the network card fail to receive
-the multicast packet. This patch fixes this bug.
+To improve performance, this patch uses bit operations to replace
+multiply and division operators.
 
 Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
 ---
- drivers/net/ethernet/huawei/hinic/hinic_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../net/ethernet/huawei/hinic/hinic_hw_wq.c   | 43 +++++++++++++------
+ .../net/ethernet/huawei/hinic/hinic_hw_wq.h   |  3 +-
+ 2 files changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-index 0179b6bf124c..6d48dc62a44b 100644
---- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
-+++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
-@@ -600,9 +600,6 @@ static int add_mac_addr(struct net_device *netdev, const u8 *addr)
- 	u16 vid = 0;
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
+index f92f1bf3901a..34859502c932 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
+@@ -74,12 +74,6 @@
+ 			((void *)((cmdq_pages)->shadow_page_vaddr) \
+ 				+ (wq)->block_idx * CMDQ_BLOCK_SIZE)
+ 
+-#define WQE_PAGE_OFF(wq, idx)   (((idx) & ((wq)->num_wqebbs_per_page - 1)) * \
+-					(wq)->wqebb_size)
+-
+-#define WQE_PAGE_NUM(wq, idx)   (((idx) / ((wq)->num_wqebbs_per_page)) \
+-					& ((wq)->num_q_pages - 1))
+-
+ #define WQ_PAGE_ADDR(wq, idx)           \
+ 			((wq)->shadow_block_vaddr[WQE_PAGE_NUM(wq, idx)])
+ 
+@@ -93,6 +87,17 @@
+ 		(((unsigned long)(wqe) - (unsigned long)(wq)->shadow_wqe) \
+ 			/ (wq)->max_wqe_size)
+ 
++static inline int WQE_PAGE_OFF(struct hinic_wq *wq, u16 idx)
++{
++	return (((idx) & ((wq)->num_wqebbs_per_page - 1))
++		<< (wq)->wqebb_size_shift);
++}
++
++static inline int WQE_PAGE_NUM(struct hinic_wq *wq, u16 idx)
++{
++	return (((idx) >> ((wq)->wqebbs_per_page_shift))
++		& ((wq)->num_q_pages - 1));
++}
+ /**
+  * queue_alloc_page - allocate page for Queue
+  * @hwif: HW interface for allocating DMA
+@@ -513,6 +518,7 @@ int hinic_wq_allocate(struct hinic_wqs *wqs, struct hinic_wq *wq,
+ 	struct hinic_hwif *hwif = wqs->hwif;
+ 	struct pci_dev *pdev = hwif->pdev;
+ 	u16 num_wqebbs_per_page;
++	u16 wqebb_size_shift;
  	int err;
  
--	if (!is_valid_ether_addr(addr))
--		return -EADDRNOTAVAIL;
+ 	if (wqebb_size == 0) {
+@@ -530,7 +536,9 @@ int hinic_wq_allocate(struct hinic_wqs *wqs, struct hinic_wq *wq,
+ 		return -EINVAL;
+ 	}
+ 
+-	num_wqebbs_per_page = ALIGN(wq_page_size, wqebb_size) / wqebb_size;
++	wqebb_size_shift = ilog2(wqebb_size);
++	num_wqebbs_per_page = ALIGN(wq_page_size, wqebb_size)
++				>> wqebb_size_shift;
+ 
+ 	if (num_wqebbs_per_page & (num_wqebbs_per_page - 1)) {
+ 		dev_err(&pdev->dev, "num wqebbs per page must be power of 2\n");
+@@ -550,7 +558,8 @@ int hinic_wq_allocate(struct hinic_wqs *wqs, struct hinic_wq *wq,
+ 	wq->q_depth = q_depth;
+ 	wq->max_wqe_size = max_wqe_size;
+ 	wq->num_wqebbs_per_page = num_wqebbs_per_page;
 -
- 	netif_info(nic_dev, drv, netdev, "set mac addr = %02x %02x %02x %02x %02x %02x\n",
- 		   addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
++	wq->wqebbs_per_page_shift = ilog2(num_wqebbs_per_page);
++	wq->wqebb_size_shift = wqebb_size_shift;
+ 	wq->block_vaddr = WQ_BASE_VADDR(wqs, wq);
+ 	wq->shadow_block_vaddr = WQ_BASE_ADDR(wqs, wq);
+ 	wq->block_paddr = WQ_BASE_PADDR(wqs, wq);
+@@ -604,7 +613,9 @@ int hinic_wqs_cmdq_alloc(struct hinic_cmdq_pages *cmdq_pages,
+ 			 u16 q_depth, u16 max_wqe_size)
+ {
+ 	struct pci_dev *pdev = hwif->pdev;
++	u16 num_wqebbs_per_page_shift;
+ 	u16 num_wqebbs_per_page;
++	u16 wqebb_size_shift;
+ 	int i, j, err = -ENOMEM;
  
-@@ -734,6 +731,9 @@ static void set_rx_mode(struct work_struct *work)
+ 	if (wqebb_size == 0) {
+@@ -622,7 +633,9 @@ int hinic_wqs_cmdq_alloc(struct hinic_cmdq_pages *cmdq_pages,
+ 		return -EINVAL;
+ 	}
  
- 	__dev_uc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
- 	__dev_mc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
-+
-+	netdev_for_each_mc_addr(ha, nic_dev->netdev)
-+		add_mac_addr(nic_dev->netdev, ha->addr);
- }
+-	num_wqebbs_per_page = ALIGN(wq_page_size, wqebb_size) / wqebb_size;
++	wqebb_size_shift = ilog2(wqebb_size);
++	num_wqebbs_per_page = ALIGN(wq_page_size, wqebb_size)
++				>> wqebb_size_shift;
  
- static void hinic_set_rx_mode(struct net_device *netdev)
+ 	if (num_wqebbs_per_page & (num_wqebbs_per_page - 1)) {
+ 		dev_err(&pdev->dev, "num wqebbs per page must be power of 2\n");
+@@ -636,6 +649,7 @@ int hinic_wqs_cmdq_alloc(struct hinic_cmdq_pages *cmdq_pages,
+ 		dev_err(&pdev->dev, "Failed to allocate CMDQ page\n");
+ 		return err;
+ 	}
++	num_wqebbs_per_page_shift = ilog2(num_wqebbs_per_page);
+ 
+ 	for (i = 0; i < cmdq_blocks; i++) {
+ 		wq[i].hwif = hwif;
+@@ -647,7 +661,8 @@ int hinic_wqs_cmdq_alloc(struct hinic_cmdq_pages *cmdq_pages,
+ 		wq[i].q_depth = q_depth;
+ 		wq[i].max_wqe_size = max_wqe_size;
+ 		wq[i].num_wqebbs_per_page = num_wqebbs_per_page;
+-
++		wq[i].wqebbs_per_page_shift = num_wqebbs_per_page_shift;
++		wq[i].wqebb_size_shift = wqebb_size_shift;
+ 		wq[i].block_vaddr = CMDQ_BASE_VADDR(cmdq_pages, &wq[i]);
+ 		wq[i].shadow_block_vaddr = CMDQ_BASE_ADDR(cmdq_pages, &wq[i]);
+ 		wq[i].block_paddr = CMDQ_BASE_PADDR(cmdq_pages, &wq[i]);
+@@ -741,7 +756,7 @@ struct hinic_hw_wqe *hinic_get_wqe(struct hinic_wq *wq, unsigned int wqe_size,
+ 
+ 	*prod_idx = MASKED_WQE_IDX(wq, atomic_read(&wq->prod_idx));
+ 
+-	num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) / wq->wqebb_size;
++	num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) >> wq->wqebb_size_shift;
+ 
+ 	if (atomic_sub_return(num_wqebbs, &wq->delta) <= 0) {
+ 		atomic_add(num_wqebbs, &wq->delta);
+@@ -795,7 +810,8 @@ void hinic_return_wqe(struct hinic_wq *wq, unsigned int wqe_size)
+  **/
+ void hinic_put_wqe(struct hinic_wq *wq, unsigned int wqe_size)
+ {
+-	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) / wq->wqebb_size;
++	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size)
++			>> wq->wqebb_size_shift;
+ 
+ 	atomic_add(num_wqebbs, &wq->cons_idx);
+ 
+@@ -813,7 +829,8 @@ void hinic_put_wqe(struct hinic_wq *wq, unsigned int wqe_size)
+ struct hinic_hw_wqe *hinic_read_wqe(struct hinic_wq *wq, unsigned int wqe_size,
+ 				    u16 *cons_idx)
+ {
+-	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) / wq->wqebb_size;
++	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size)
++			>> wq->wqebb_size_shift;
+ 	u16 curr_cons_idx, end_cons_idx;
+ 	int curr_pg, end_pg;
+ 
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
+index 9b66545ba563..0a936cd6709b 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
++++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
+@@ -39,7 +39,8 @@ struct hinic_wq {
+ 	u16             q_depth;
+ 	u16             max_wqe_size;
+ 	u16             num_wqebbs_per_page;
+-
++	u16		wqebbs_per_page_shift;
++	u16		wqebb_size_shift;
+ 	/* The addresses are 64 bit in the HW */
+ 	u64             block_paddr;
+ 	void            **shadow_block_vaddr;
 -- 
 2.17.1
 
