@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4EFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7509DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54482147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD9B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XdhE8+pW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54482147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLLyzca+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DD9B2147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390983AbeKTDSh (ORCPT
+        id S2403948AbeKTDSl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:18:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57544 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:18:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390256AbeKTDSg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:18:36 -0500
+        id S2390256AbeKTDSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:18:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4957206BA;
-        Mon, 19 Nov 2018 16:54:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E1962145D;
+        Mon, 19 Nov 2018 16:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646461;
-        bh=0KBF25V6uuIiAWjujCsWPt+ABKxf3GKAXaqSW1cc1EA=;
+        s=default; t=1542646464;
+        bh=JZyWaoa2scCtGszudxOCPpIKPPI06Arci6tUySQQwEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XdhE8+pWiQTj57W3dxJ/0dxgK4tK8uxEJkIAvrc/lk0bMYTXpFy/HI1PsC2nXD/Ik
-         QG1i3AcdN5ijry/v5CG0WiwpiaW8gUeh4ehdvDvH8Je+lTCtgLrXH5WbRkmj4HfO5S
-         NHNdbSNsoaPDzdsAqLAVI0ghvpJ1U4ZjtolH73rg=
+        b=cLLyzca+kT9yUaN3yOvYwhZPSpd1gvwrafigEeDp0s+W5BFzYMcpvpSHM0q+dQB/n
+         Pq5PAnFpAKHpEJNj+KkBK6GczpcUA3F5wxf6aZ+VQFX5LQv9ZeG4NG7Iqedc3erstP
+         T+BMJPZM5NMKpX82vu7n009AULhExarH2wPHBblM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Robbie Ko <robbieko@synology.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 50/83] Btrfs: fix cur_offset in the error case for nocow
-Date:   Mon, 19 Nov 2018 17:29:16 +0100
-Message-Id: <20181119162622.388614463@linuxfoundation.org>
+Subject: [PATCH 4.9 51/83] Btrfs: fix data corruption due to cloning of eof block
+Date:   Mon, 19 Nov 2018 17:29:17 +0100
+Message-Id: <20181119162622.575776362@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -63,77 +61,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Robbie Ko <robbieko@synology.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 506481b20e818db40b6198815904ecd2d6daee64 upstream.
+commit ac765f83f1397646c11092a032d4f62c3d478b81 upstream.
 
-When the cow_file_range fails, the related resources are unlocked
-according to the range [start..end), so the unlock cannot be repeated in
-run_delalloc_nocow.
+We currently allow cloning a range from a file which includes the last
+block of the file even if the file's size is not aligned to the block
+size. This is fine and useful when the destination file has the same size,
+but when it does not and the range ends somewhere in the middle of the
+destination file, it leads to corruption because the bytes between the EOF
+and the end of the block have undefined data (when there is support for
+discard/trimming they have a value of 0x00).
 
-In some cases (e.g. cur_offset <= end && cow_start != -1), cur_offset is
-not updated correctly, so move the cur_offset update before
-cow_file_range.
+Example:
 
-  kernel BUG at mm/page-writeback.c:2663!
-  Internal error: Oops - BUG: 0 [#1] SMP
-  CPU: 3 PID: 31525 Comm: kworker/u8:7 Tainted: P O
-  Hardware name: Realtek_RTD1296 (DT)
-  Workqueue: writeback wb_workfn (flush-btrfs-1)
-  task: ffffffc076db3380 ti: ffffffc02e9ac000 task.ti: ffffffc02e9ac000
-  PC is at clear_page_dirty_for_io+0x1bc/0x1e8
-  LR is at clear_page_dirty_for_io+0x14/0x1e8
-  pc : [<ffffffc00033c91c>] lr : [<ffffffc00033c774>] pstate: 40000145
-  sp : ffffffc02e9af4f0
-  Process kworker/u8:7 (pid: 31525, stack limit = 0xffffffc02e9ac020)
-  Call trace:
-  [<ffffffc00033c91c>] clear_page_dirty_for_io+0x1bc/0x1e8
-  [<ffffffbffc514674>] extent_clear_unlock_delalloc+0x1e4/0x210 [btrfs]
-  [<ffffffbffc4fb168>] run_delalloc_nocow+0x3b8/0x948 [btrfs]
-  [<ffffffbffc4fb948>] run_delalloc_range+0x250/0x3a8 [btrfs]
-  [<ffffffbffc514c0c>] writepage_delalloc.isra.21+0xbc/0x1d8 [btrfs]
-  [<ffffffbffc516048>] __extent_writepage+0xe8/0x248 [btrfs]
-  [<ffffffbffc51630c>] extent_write_cache_pages.isra.17+0x164/0x378 [btrfs]
-  [<ffffffbffc5185a8>] extent_writepages+0x48/0x68 [btrfs]
-  [<ffffffbffc4f5828>] btrfs_writepages+0x20/0x30 [btrfs]
-  [<ffffffc00033d758>] do_writepages+0x30/0x88
-  [<ffffffc0003ba0f4>] __writeback_single_inode+0x34/0x198
-  [<ffffffc0003ba6c4>] writeback_sb_inodes+0x184/0x3c0
-  [<ffffffc0003ba96c>] __writeback_inodes_wb+0x6c/0xc0
-  [<ffffffc0003bac20>] wb_writeback+0x1b8/0x1c0
-  [<ffffffc0003bb0f0>] wb_workfn+0x150/0x250
-  [<ffffffc0002b0014>] process_one_work+0x1dc/0x388
-  [<ffffffc0002b02f0>] worker_thread+0x130/0x500
-  [<ffffffc0002b6344>] kthread+0x10c/0x110
-  [<ffffffc000284590>] ret_from_fork+0x10/0x40
-  Code: d503201f a9025bb5 a90363b7 f90023b9 (d4210000)
+ $ mkfs.btrfs -f /dev/sdb
+ $ mount /dev/sdb /mnt
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Robbie Ko <robbieko@synology.com>
+ $ export foo_size=$((256 * 1024 + 100))
+ $ xfs_io -f -c "pwrite -S 0x3c 0 $foo_size" /mnt/foo
+ $ xfs_io -f -c "pwrite -S 0xb5 0 1M" /mnt/bar
+
+ $ xfs_io -c "reflink /mnt/foo 0 512K $foo_size" /mnt/bar
+
+ $ od -A d -t x1 /mnt/bar
+ 0000000 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
+ *
+ 0524288 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c
+ *
+ 0786528 3c 3c 3c 3c 00 00 00 00 00 00 00 00 00 00 00 00
+ 0786544 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ *
+ 0790528 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
+ *
+ 1048576
+
+The bytes in the range from 786532 (512Kb + 256Kb + 100 bytes) to 790527
+(512Kb + 256Kb + 4Kb - 1) got corrupted, having now a value of 0x00 instead
+of 0xb5.
+
+This is similar to the problem we had for deduplication that got recently
+fixed by commit de02b9f6bb65 ("Btrfs: fix data corruption when
+deduplicating between different files").
+
+Fix this by not allowing such operations to be performed and return the
+errno -EINVAL to user space. This is what XFS is doing as well at the VFS
+level. This change however now makes us return -EINVAL instead of
+-EOPNOTSUPP for cases where the source range maps to an inline extent and
+the destination range's end is smaller then the destination file's size,
+since the detection of inline extents is done during the actual process of
+dropping file extent items (at __btrfs_drop_extents()). Returning the
+-EINVAL error is done early on and solely based on the input parameters
+(offsets and length) and destination file's size. This makes us consistent
+with XFS and anyone else supporting cloning since this case is now checked
+at a higher level in the VFS and is where the -EINVAL will be returned
+from starting with kernel 4.20 (the VFS changed was introduced in 4.20-rc1
+by commit 07d19dc9fbe9 ("vfs: avoid problematic remapping requests into
+partial EOF block"). So this change is more geared towards stable kernels,
+as it's unlikely the new VFS checks get removed intentionally.
+
+A test case for fstests follows soon, as well as an update to filter
+existing tests that expect -EOPNOTSUPP to accept -EINVAL as well.
+
+CC: <stable@vger.kernel.org> # 4.4+
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/btrfs/ioctl.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1548,12 +1548,11 @@ out_check:
- 	}
- 	btrfs_release_path(path);
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3911,9 +3911,17 @@ static noinline int btrfs_clone_files(st
+ 		goto out_unlock;
+ 	if (len == 0)
+ 		olen = len = src->i_size - off;
+-	/* if we extend to eof, continue to block boundary */
+-	if (off + len == src->i_size)
++	/*
++	 * If we extend to eof, continue to block boundary if and only if the
++	 * destination end offset matches the destination file's size, otherwise
++	 * we would be corrupting data by placing the eof block into the middle
++	 * of a file.
++	 */
++	if (off + len == src->i_size) {
++		if (!IS_ALIGNED(len, bs) && destoff + len < inode->i_size)
++			goto out_unlock;
+ 		len = ALIGN(src->i_size, bs) - off;
++	}
  
--	if (cur_offset <= end && cow_start == (u64)-1) {
-+	if (cur_offset <= end && cow_start == (u64)-1)
- 		cow_start = cur_offset;
--		cur_offset = end;
--	}
- 
- 	if (cow_start != (u64)-1) {
-+		cur_offset = end;
- 		ret = cow_file_range(inode, locked_page, cow_start, end, end,
- 				     page_started, nr_written, 1, NULL);
- 		if (ret)
+ 	if (len == 0) {
+ 		ret = 0;
 
 
