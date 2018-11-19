@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F329C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6265DC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437FD2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B82320831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1m3v1FY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437FD2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sB/76taM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B82320831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730471AbeKTCzn (ORCPT
+        id S1730484AbeKTCzo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53498 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730385AbeKTCzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:40 -0500
+        id S1730457AbeKTCzn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F10E20870;
-        Mon, 19 Nov 2018 16:31:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB40A20831;
+        Mon, 19 Nov 2018 16:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645093;
-        bh=/k8WI06S1VvuBQuya3x8FN7+M2I9r+JEToz28pf06GM=;
+        s=default; t=1542645096;
+        bh=razcwg4QBo6LuIFkBz3GqXXYDUfk5SdVeB3v5+N9b28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1m3v1FYVp2MXl9G1R1YDX/NYEB8kTyFxSrR6U8d715knwJML5m8kMM6F1hPVzBQg
-         gyt0D/ZnsihCoUVTfr7IHR5VZ2uEIWSD8lVZ1JfZEYYbxPehtYRpzv7diBCxrlOzh7
-         k3NvUmJD0ZeEd0S8MDsOTS4yCI3CRVpfXWZWGvRw=
+        b=sB/76taMjuzd6UB3AxnHQinFsjYa3c/v7DbzJCFxX+zIoc0capsucIrCkJrneyMqx
+         13fY/PznnwV7nGLONSvUPunz9FB1Jy0XDNt8mgIOFjI/R3GMhBo8x7HonHZqD9N6hq
+         +pIgbQbnhgOMv7wzM8xPxt3jnyc72FPcecHut3C4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 034/205] staging:iio:ad7606: fix voltage scales
-Date:   Mon, 19 Nov 2018 17:25:41 +0100
-Message-Id: <20181119162623.536053994@linuxfoundation.org>
+Subject: [PATCH 4.19 035/205] drm: rcar-du: Update Gen3 output limitations
+Date:   Mon, 19 Nov 2018 17:25:42 +0100
+Message-Id: <20181119162623.661991257@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,45 +64,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
+[ Upstream commit 2a3181d9cfd6d5aa48f8527708d0c32072072cef ]
 
-Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
-ad7606: replace range/range_available with corresponding scale").
+The R-Car Gen3 DU utilises the VSP1 hardware for memory access. The
+limits on the RPF and WPF in this pipeline are 8190x8190.
 
-The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
-voltage range, which is selectable via the `gpio_range` descriptor.
+Update the supported maximum sizes accordingly.
 
-The scales also seem to have been miscomputed, because when they were
-applied to the raw values, the results differ from the expected values.
-After checking the ADC transfer function in the datasheet, these were
-re-computed.
-
-Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/staging/iio/adc/ad7606.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/iio/adc/ad7606.c
-+++ b/drivers/staging/iio/adc/ad7606.c
-@@ -26,9 +26,12 @@
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -516,12 +516,22 @@ int rcar_du_modeset_init(struct rcar_du_
  
- #include "ad7606.h"
+ 	dev->mode_config.min_width = 0;
+ 	dev->mode_config.min_height = 0;
+-	dev->mode_config.max_width = 4095;
+-	dev->mode_config.max_height = 2047;
+ 	dev->mode_config.normalize_zpos = true;
+ 	dev->mode_config.funcs = &rcar_du_mode_config_funcs;
+ 	dev->mode_config.helper_private = &rcar_du_mode_config_helper;
  
--/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
-+/*
-+ * Scales are computed as 5000/32768 and 10000/32768 respectively,
-+ * so that when applied to the raw values they provide mV values
-+ */
- static const unsigned int scale_avail[2][2] = {
--	{0, 38147}, {0, 76294}
-+	{0, 152588}, {0, 305176}
- };
++	if (rcdu->info->gen < 3) {
++		dev->mode_config.max_width = 4095;
++		dev->mode_config.max_height = 2047;
++	} else {
++		/*
++		 * The Gen3 DU uses the VSP1 for memory access, and is limited
++		 * to frame sizes of 8190x8190.
++		 */
++		dev->mode_config.max_width = 8190;
++		dev->mode_config.max_height = 8190;
++	}
++
+ 	rcdu->num_crtcs = hweight8(rcdu->info->channels_mask);
  
- static int ad7606_reset(struct ad7606_state *st)
+ 	ret = rcar_du_properties_init(rcdu);
 
 
