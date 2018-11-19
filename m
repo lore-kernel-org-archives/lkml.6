@@ -2,160 +2,195 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E72C04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5F2FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3549920823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:21:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3549920823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A91E20684
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:22:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="QqEOua14"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A91E20684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbeKSSog (ORCPT
+        id S1727045AbeKSSpP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:44:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58384 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbeKSSog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:44:36 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EAAC6307D84A;
-        Mon, 19 Nov 2018 08:21:41 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 506B360922;
-        Mon, 19 Nov 2018 08:21:29 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 16:21:25 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
-Message-ID: <20181119082124.GC16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-10-ming.lei@redhat.com>
- <20181116134541.GH3165@lst.de>
+        Mon, 19 Nov 2018 13:45:15 -0500
+Received: from mail-eopbgr680059.outbound.protection.outlook.com ([40.107.68.59]:57901
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726784AbeKSSpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:45:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0K6AevvCTP1X9r3Qet+KycQenOxTjUBYyNENnS9FolA=;
+ b=QqEOua14ltAVkAcde74nrrDcExlJmEka9AOOZ/DkZW0MNej/fGC2GwzbX/vUQ74ETzRCG49UPQyPnxlinnTcn4+mZOoYrFu8gTtjsZ83njLrdUkYpWXZcHJRENjK39PW//WrCgBSHtTAEStfwd3vkmgGiARVuKWTWqd0vNYq198=
+Received: from MWHPR03CA0018.namprd03.prod.outlook.com (2603:10b6:300:117::28)
+ by SN2PR03MB2272.namprd03.prod.outlook.com (2603:10b6:804:d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.23; Mon, 19 Nov
+ 2018 08:22:16 +0000
+Received: from BL2FFO11FD027.protection.gbl (2a01:111:f400:7c09::198) by
+ MWHPR03CA0018.outlook.office365.com (2603:10b6:300:117::28) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.21 via Frontend Transport; Mon, 19 Nov 2018 08:22:15 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BL2FFO11FD027.mail.protection.outlook.com (10.173.161.106) with Microsoft
+ SMTP Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id
+ 15.20.1339.12 via Frontend Transport; Mon, 19 Nov 2018 08:22:15 +0000
+Received: from NWD2HUBCAS9.ad.analog.com (nwd2hubcas9.ad.analog.com [10.64.69.109])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wAJ8MF1i002449
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 19 Nov 2018 00:22:15 -0800
+Received: from NWD2MBX7.ad.analog.com ([fe80::190e:f9c1:9a22:9663]) by
+ NWD2HUBCAS9.ad.analog.com ([fe80::44a2:871b:49ab:ea47%12]) with mapi id
+ 14.03.0210.002; Mon, 19 Nov 2018 03:22:15 -0500
+From:   "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+To:     "lars@metafoo.de" <lars@metafoo.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "jic23@kernel.org" <jic23@kernel.org>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "matheus.bernardino@usp.br" <matheus.bernardino@usp.br>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "victorcolombo@gmail.com" <victorcolombo@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 4/7] dt-bindings:iio:resolver: Add docs for ad2s90
+Thread-Topic: [PATCH v2 4/7] dt-bindings:iio:resolver: Add docs for ad2s90
+Thread-Index: AQHUfvbiVVYSh+4rr0OgCxLqcpvsMqVXF9UA
+Date:   Mon, 19 Nov 2018 08:22:14 +0000
+Message-ID: <563614e00314ba92b9513645a82fde06504a42d5.camel@analog.com>
+References: <20181118042540.12697-1-matheus.bernardino@usp.br>
+         <20181118042540.12697-5-matheus.bernardino@usp.br>
+In-Reply-To: <20181118042540.12697-5-matheus.bernardino@usp.br>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.50.1.244]
+x-adiroutedonprem: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6F27FAEEB594E54AA355D260F1C4BC01@analog.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116134541.GH3165@lst.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 19 Nov 2018 08:21:42 +0000 (UTC)
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(376002)(346002)(2980300002)(438002)(189003)(199004)(8676002)(102836004)(26005)(7736002)(7636002)(6246003)(50466002)(305945005)(118296001)(3846002)(6116002)(6306002)(2900100001)(7696005)(2906002)(336012)(39060400002)(76176011)(486006)(2486003)(23676004)(7416002)(36756003)(8936002)(2501003)(110136005)(54906003)(4001150100001)(2201001)(2616005)(106002)(86362001)(356004)(11346002)(229853002)(478600001)(106466001)(14454004)(316002)(446003)(436003)(4326008)(426003)(47776003)(246002)(476003)(5660300001)(186003)(126002)(138113003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN2PR03MB2272;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD027;1:pZ8ztwEmuK58PG6O5dyxXq2wBn0Tu1xhEboUd9rsL22RDeRIm2vW5Gu+YBv8JR2HmwMS4OKHnEko0dvEvndvCfQVrT6XhCOLIVpgaXJAbZ3dkLT8OunUvGgmwaZ6rHXt
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: cc1ba956-7cdb-4656-c689-08d64df81d2d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN2PR03MB2272;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;3:sov0zHKrIxlfqPwwUr/J4pqD9LqazCQld3UVqHCvLBUbYGvAGwrLv20YpeAdTyiXTc3myWeG2cNGh/jQxbFkTPpiOS7VWrXKz2xjNpUjsniI+jC2qvT73LvEqLLv6blEPC7eLqJHTJ0gGPfIo8F81jKFrOCd1Da97ibq4KgHGkbeKSlBx10bgd2cgRs53phPkUaTkl1NS+Hb2X/cskwu6wAYQaiyELa3YWJ4oTBUvew8oCyk2T6OtXUgOh9EfyF/foz+ApiH9si2XAEw2tFduc8pMpqw1V3kyYqyYkCZKed6FadrmS3LLFW6EC6nGY+BaaUlwVpsrpGek19BX48uRbcmYydsz8D3uFeAPLexSiI=;25:Ut4W89Sl7jNly6NDdzk0DCqJdqOo8OIODT/W0cevZHJxQaV35Z934iPg2Q0g9/eKqAxyfjOgxx5QBPNwKgoXB3xihMMaWRZA6xA8B8FXVu4cHTwS8oakYDJQUusmIdAlMl4ilOZ6upgJ14vdGWvtlPerj4K/n5jGheFx7m0Zj6gZep041W1USFAeEChfIBtaQ9IdTUgXBEzdJVJQA71ReJm+o+PJZl76HCerYBCx8E4KkErGeqgqj+G4UGoBq/sHTThdM+Mipsrz8DRWGgG/YpOuXocSeZLI1JGT/LK+m1mbitbiTICm5ZoEehclENs7AylzUBCWLhhuZe1MlFR3MQ==
+X-MS-TrafficTypeDiagnostic: SN2PR03MB2272:
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;31:+oLISpNcRTA9iPICnFQKlr9GciZ89q5HmbEkbGPKevoJkVYvErLZ7IZecSDCURAUpWlKRGrZQd6DzgU95fgE2B7W+mzrA5yZsTmoZliPuB6Nwt/41zXWfA7b99tpJWYPi6K3gBEAyABXesurb5SPJjetBeQq/m9z835nvXvnen3km8TGxtglUeVJYgyM8R9icmKhqBgKaUSucZfU5AX7Z+VSnmxcchYVdY7pdcFF1+I=;20:Dhd3KxK+udoxDOXk8RbXp6I9a6IrloUok1H1PV3FBijanSHzejMLvq74FQqVMlQUVKBhpe5FL5mGVbBka3CO5uldK1kOa6HWKpyQNYS3SukZgP5eqyggkkpNHXY1jPDGKHPYHJNdfrMoacys6bFNveAQAJM25Stonq41/W8r6LDrRXaeeT89LQuM28tBe+Hr1FxtDgY/xYo11uczGAs5qBYbqV833B3zKhVRAtBO0seqoCbYJIOlOdDESVHEEOmFupSwzOY4r+dR7iUsJyMUCMpFCboMsN/csDcCPqgF9BWCR3EbAm3QqYZkWJM81ZdSb4jzIrjKOVvN9u0fDspwtQoTBlwTA6GOxWIGY268jdyOUd6+826NLJrc3spG2d3ioDgpCqFkO5Gwg7BNCY3PfLDVycbX1s/M+8adhAJk8jjm6YBRQdhspCtvvwhqliMm16DJ4TMXGZNHGZlZnREAaV9P7kfbjY33Wpv9M1iHA8MbuVnKsD4FhEcZXjezRBdk
+X-Microsoft-Antispam-PRVS: <SN2PR03MB227279573207E258BD608EB3F9D80@SN2PR03MB2272.namprd03.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231415)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN2PR03MB2272;BCL:0;PCL:0;RULEID:;SRVR:SN2PR03MB2272;
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;4:F0G6zERBhxkQulXoYt23PHLFkMmar9LX2zgUhkyRFEjYdLHEMM6032rPgoZjUbQWbQGn9xyBF5M8E29f1BE+soju37b1X3MLAkHfsavtodKFFS3NOZ+j7Hb93OifEawE8GgjIa0aOh/dC6RpIrK3BRJYN1wF4XO7cPdsZetarjcI2h5VS4o6W/RIeCHaI7FsB8or6ylnzsoq3Zd4KMzarygDX0pSsc9CUOVbFRpe81k5Et+Ezr9HyG1DYK9qZxZPM7qFbpZJDDnOOfYOJGsiXg==
+X-Forefront-PRVS: 08617F610C
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjJQUjAzTUIyMjcyOzIzOkVPUTE1TmRXaFZWWXBoN0ZvQ1E2YVJXd2VP?=
+ =?utf-8?B?VFBOS3l1dk00dnR5bC84Q1ArSDNuSC9zL1VZbktldmxTazZhQWtNY0taK0Rh?=
+ =?utf-8?B?V3kxY3I1Zm51ekh3WUJKNTYwejREQU1RblAwRGRYa1czb1JIQWs3cVBrV2dP?=
+ =?utf-8?B?am5JcTRIK0lPRVRVQTRhZCtwY3hXVWVkVy8xS0lKSmxYQzhSbHI1QWthUmRa?=
+ =?utf-8?B?cnBxakpqbmtQOXR1UXhYditGbGs5S29mSEdLVkQ3SVM0MjY3MEEybUFCZEFV?=
+ =?utf-8?B?UEFuKzdoZEZPaFUzeXc5YVR1MC9nRDREZW5jRnBPNnhJbXB6UWpGa01YQ1FR?=
+ =?utf-8?B?dmw5eXBGaVZLT3k3WDJtY0U5T2RQbUlOMGxybEFhQlJsbThjNEtvWHFFaGN2?=
+ =?utf-8?B?TjhsUHE5Ty9vMXhER0lkdzlIbWtaWHpCUk1VNDhRR3BwdEU1cWNVZ2hBdmFa?=
+ =?utf-8?B?MVJhSXFkeVBJa1IyT0FRVndEZitUMnptN2hMaitpVmJSZXRKbytjY1Q2d2tn?=
+ =?utf-8?B?ZU1nTzFqN3loUWh6UWpDblVLeS9BU2ZRZjdZU0hjU2xSbFYvZkdaNFk2aXY3?=
+ =?utf-8?B?bmRSOSs3VWVlM1J1R0ZpQzVPTGR0aU9pTTlwSUt1K1UwS0I1cHZtbVNrNUFw?=
+ =?utf-8?B?eDM5aFVYbTlnanF6Skk2NmJFSkNENXkva205cmdibU1TNmp4TlFEcFBXdFB2?=
+ =?utf-8?B?bUJ6SGxqbSswb2dFU0lORWZuTDZiR3drbHJRRHF2cmdEL3EzaWVYbTlOWm5W?=
+ =?utf-8?B?ZHdHNXk4WmJZZWRGT3M4R1dlaUR2cENIRkpQOWk5eWtXT0FlbnVDMTM5M2tT?=
+ =?utf-8?B?N1l0bi9YOUNrbUtHaTdSRk9UcHpXWllPWVhUZWNEUXNNR2tRVWN0RzlhU1Iw?=
+ =?utf-8?B?SCtrY3gzU0RGRVdDSUZDTlJGem80dVFna3F4bHRsNCtGb21ENkJQTEJKWkFi?=
+ =?utf-8?B?YzVMWVo4Z1ZVaHJ1bkZWaS9FanFwOTFRWGhFempvS0pHTnlZUG5CYlFRNkNy?=
+ =?utf-8?B?Qkg5bWdDMGVKYmdzM3EvRmxKY1NwMExiZ0JJNHlhWmw3bXI3cnRnRC93V1Fq?=
+ =?utf-8?B?WFVJUUR2ZXo4S1V4KytBMnJDMWEwdjArcXQxc3JSSXgzQXZMUW95bTM2MVR6?=
+ =?utf-8?B?UXNZK04xRis3eldPRnJBcnI0VGI1WEJVSnRHS2tmSVNnR2Q0d2hzblhyZmUw?=
+ =?utf-8?B?Qkx2M3B4MnpJaFAwSXR2VWVPOE4xOGY2SUExQndWbDhybGhsN09yNG5yK0JI?=
+ =?utf-8?B?OGtKTE92clhhekdNLzFmSnp3RXdOUlgwL2E5dU90aDZRK2FGUWxpL2JOb1RH?=
+ =?utf-8?B?Yk1pTjUzaE41eWJWVGM0SlVLNitJamsrUCtWQTExYi96SWR5YnVRelptdndC?=
+ =?utf-8?B?Y3h0WjBINFJlUGFiYzUvK2ZaOE1KTWJHeG5Nd1liZEZXZkhud0xpNkE2TnZn?=
+ =?utf-8?B?bFRzdndiejVDeklCcGFReHY2di9vTGlqcEE2OWdHTlgrUWNMUThzVUhEWE1L?=
+ =?utf-8?B?bnkzZUhTRWFTc0xOTEpSdDBpL0lWM0NQbWJSRjhEdjVFdmNDZjdtTituaWVy?=
+ =?utf-8?B?R2JNb0tSQk5SMDY4ditNdW1DRm5IVHM4UFZTamh5bmNLc3Z6THdyRUh2Umgw?=
+ =?utf-8?B?eEFGRVVrYWd6eUtjRTJZSmFTamhwUzh2YWd6b2kzS2RoR2hXRXo0MUwvOGI0?=
+ =?utf-8?B?RDFRUTdxNmtVanFZeGt4QzRNNTN6VlpBNmlDUjFvVVp2bFFwUmJpVTlmU2Jz?=
+ =?utf-8?Q?3JV+CN3VBgjxFn9zNRUnpMfZYB66JlU6+eA80=3D?=
+X-Microsoft-Antispam-Message-Info: oneEH9GghjMN+JurjUNKN/GeEgJve86QwRMPNIh58EzntjwicawJgg/RsKZdS+VeyVPX6/GIvLXJNXLbTmdsu+OWvtjpknRnhCQtTY8meTaHG6dGlMyR1YrzR3/yHGxr4OY+Q/WE/RS/hU/yZI5/SUI8WacOzm+XA4oWpSvx1LNWSx0oDz8d5GeGd8XnP8m2sHG3T7SeeOcT8j0/IxRnxIQl0AdrFFQY9dN9W8jZB4DguOgS7prMF5BCa89oYKtKNckc8hNZHDSXpfsHdZi8nmQ9HnI18UlI1jQiRIArPbrqvaT4k6UGjX8qR4jr8QShdYn2jNOoQGgROxMI9kRiOknH8a0Gtm9hJR/u9pRI254=
+X-Microsoft-Exchange-Diagnostics: 1;SN2PR03MB2272;6:SaBDkPjubK4Ez0loNsggNYpvWgBduMOAEyHF34TAR8j7OwHN65L+6YBPkK4LVEV6dEREYOvR7SeoggQAWD+WX1MtS9QWN0SOWEaOE7+aRd0OCz0EPny42jQfe54K0Dqg6Bu71ZUlU+qfN8iUgXf8zTUICV+4fBGVkx1r8/ZMIYUzIUcdhNalHLWQuyMK5yXy7eoGcXhhGqmyY7HDyuvPa5OvVlQzqFwoWFXPqFF8KGSzZUluVrgq3DJIssjEvePa4p1HF5yhz4FGqP+PE+SG3IwaBX6+jESsWKJqAgxaZo08dKrLomg68JHC3Nmg8gZpB0d4TpI+Czw09AqpuXeKvWsssn8OS4XHtcCx/RundCIv2VFhNjDs9/91x9OMzHrnpKmcYCrnpODdc3RCoS/E44hygbvARtl3zfud5DOEFHyGsAxd9wBK5lY57/ZgSRH1ZZiPAUeJ5g0DLV32srrY2g==;5:IxlNwnAk82g/uAP/KibCD1EDh1L3ccSu49ACAJGGTLu650c0zimw4xvQXEePZePu/6OtUXdPWQDJyzFTbsmtvJIA77W1SJp0HdesZt3bdf+/axbPNUQY8qULHBZALiWADJSzP4riS6dCnOXPjbv+Rrm38BnWS0SHPFnzmbGIHUs=;7:RP3mgVq+ww+nopUkNexlTi8XIV8DKMCP3d4nIyj9DmkAZ6YvG80XCenJCFvC6tn2HjcKuZlvQJ9hH/Pc7RmBwzD2d+GaIrQhbUJb+B+34ENqrryfhuMYrVQsBPTpc3OpWCC9bRsvyrtWZxktRqewZQ==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2018 08:22:15.5177
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc1ba956-7cdb-4656-c689-08d64df81d2d
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN2PR03MB2272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 02:45:41PM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 15, 2018 at 04:52:56PM +0800, Ming Lei wrote:
-> > There are still cases in which we need to use bio_bvecs() for get the
-> > number of multi-page segment, so introduce it.
-> 
-> The only user in your final tree seems to be the loop driver, and
-> even that one only uses the helper for read/write bios.
-> 
-> I think something like this would be much simpler in the end:
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index d509902a8046..712511815ac6 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -514,16 +514,18 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  	struct request *rq = blk_mq_rq_from_pdu(cmd);
->  	struct bio *bio = rq->bio;
->  	struct file *file = lo->lo_backing_file;
-> +	struct bvec_iter bvec_iter;
-> +	struct bio_vec tmp;
->  	unsigned int offset;
->  	int nr_bvec = 0;
->  	int ret;
->  
-> +	__rq_for_each_bio(bio, rq)
-> +		bio_for_each_bvec(tmp, bio, bvec_iter)
-> +			nr_bvec++;
-> +
->  	if (rq->bio != rq->biotail) {
-> -		struct bvec_iter iter;
-> -		struct bio_vec tmp;
->  
-> -		__rq_for_each_bio(bio, rq)
-> -			nr_bvec += bio_bvecs(bio);
->  		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
->  				     GFP_NOIO);
->  		if (!bvec)
-> @@ -537,7 +539,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  		 * API will take care of all details for us.
->  		 */
->  		__rq_for_each_bio(bio, rq)
-> -			bio_for_each_bvec(tmp, bio, iter) {
-> +			bio_for_each_bvec(tmp, bio, bvec_iter) {
->  				*bvec = tmp;
->  				bvec++;
->  			}
-> @@ -551,7 +553,6 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  		 */
->  		offset = bio->bi_iter.bi_bvec_done;
->  		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-> -		nr_bvec = bio_bvecs(bio);
->  	}
->  	atomic_set(&cmd->ref, 2);
->  
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index dcad0b69f57a..379440d1ced0 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -200,30 +200,6 @@ static inline unsigned bio_segments(struct bio *bio)
->  	}
->  }
->  
-> -static inline unsigned bio_bvecs(struct bio *bio)
-> -{
-> -	unsigned bvecs = 0;
-> -	struct bio_vec bv;
-> -	struct bvec_iter iter;
-> -
-> -	/*
-> -	 * We special case discard/write same/write zeroes, because they
-> -	 * interpret bi_size differently:
-> -	 */
-> -	switch (bio_op(bio)) {
-> -	case REQ_OP_DISCARD:
-> -	case REQ_OP_SECURE_ERASE:
-> -	case REQ_OP_WRITE_ZEROES:
-> -		return 0;
-> -	case REQ_OP_WRITE_SAME:
-> -		return 1;
-> -	default:
-> -		bio_for_each_bvec(bv, bio, iter)
-> -			bvecs++;
-> -		return bvecs;
-> -	}
-> -}
-> -
->  /*
->   * get a reference to a bio, so it won't disappear. the intended use is
->   * something like:
-
-OK, will do it in next version.
-
-Thanks,
-Ming
+T24gU3VuLCAyMDE4LTExLTE4IGF0IDAyOjI1IC0wMjAwLCBNYXRoZXVzIFRhdmFyZXMgd3JvdGU6
+DQo+IFRoaXMgcGF0Y2ggYWRkcyB0aGUgZGV2aWNlIHRyZWUgYmluZGluZyBkb2N1bWVudGF0aW9u
+IGZvciB0aGUgYWQyczkwDQo+IHJlc29sdmVyLXRvLWRpZ2l0YWwgY29udmVydGVyLg0KPiANCg0K
+T25lIG1pbm9yIGNvbW1lbnQgaW5saW5lLg0KDQo+IFNpZ25lZC1vZmYtYnk6IE1hdGhldXMgVGF2
+YXJlcyA8bWF0aGV1cy5iZXJuYXJkaW5vQHVzcC5icj4NCj4gLS0tDQo+IENoYW5nZXMgaW4gdjI6
+DQo+ICAtIFJld3JpdHRlbiAnc3BpLWNwb2wgYW5kIHNwaS1jcGhhJyBpdGVtIHRvIHNheSB0aGF0
+IHRoZSBkZXZpY2UgY2FuDQo+ICB3b3JrIGluIGVpdGhlciBtb2RlICgwLDApIG9yICgxLDEpIGFu
+ZCBleHBsYWluIGhvdyB0aGV5IHNob3VsZCBiZQ0KPiAgc3BlY2lmaWVkIGluIERULg0KPiANCj4g
+IC4uLi9iaW5kaW5ncy9paW8vcmVzb2x2ZXIvYWQyczkwLnR4dCAgICAgICAgICB8IDI4ICsrKysr
+KysrKysrKysrKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspDQo+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQNCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lp
+by9yZXNvbHZlci9hZDJzOTAudHh0DQo+IA0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2lpby9yZXNvbHZlci9hZDJzOTAudHh0DQo+IGIvRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lpby9yZXNvbHZlci9hZDJzOTAudHh0DQo+IG5ldyBm
+aWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAwMDAwMC4uNTk0NDE3NTM5OTM4DQo+IC0t
+LSAvZGV2L251bGwNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lp
+by9yZXNvbHZlci9hZDJzOTAudHh0DQo+IEBAIC0wLDAgKzEsMjggQEANCj4gK0FuYWxvZyBEZXZp
+Y2VzIEFEMlM5MCBSZXNvbHZlci10by1EaWdpdGFsIENvbnZlcnRlcg0KPiArDQo+ICtodHRwczov
+L3d3dy5hbmFsb2cuY29tL2VuL3Byb2R1Y3RzL2FkMnM5MC5odG1sDQo+ICsNCj4gK1JlcXVpcmVk
+IHByb3BlcnRpZXM6DQo+ICsgIC0gY29tcGF0aWJsZTogc2hvdWxkIGJlICJhZGksYWQyczkwIg0K
+PiArICAtIHJlZzogU1BJIGNoaXAgc2VsZWN0IG51bWJlciBmb3IgdGhlIGRldmljZQ0KPiArICAt
+IHNwaS1tYXgtZnJlcXVlbmN5OiBzZXQgbWF4aW11bSBjbG9jayBmcmVxdWVuY3ksIG11c3QgYmUg
+ODMwMDAwDQo+ICsgIC0gc3BpLWNwb2wgYW5kIHNwaS1jcGhhOg0KPiArICAgICAgICBFaXRoZXIg
+U1BJIG1vZGUgKDAsMCkgb3IgKDEsMSkgbXVzdCBiZSB1c2VkLCBzbyBzcGVjaWZ5IG5vbmUgb3IN
+Cj4gYm90aCBvZg0KPiArICAgICAgICBzcGktY3BoYSwgc3BpLWNwb2wuDQpGb3IgU1BJIHByb3Bl
+cnRpZXMgaXQncyBhIGdvb2QgaWRlYSB0byBhbHNvIHJlZmVyZW5jZSB0aGUgZG9jdW1lbnQgZm9y
+IFNQSQ0KYmluZGluZ3MuDQpTb21ldGhpbmcgbGlrZToNCiAgICBTZWUgZm9yIG1vcmUgZGV0YWls
+czoNCiAgICAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3NwaS9zcGktYnVzLnR4
+dA0KDQo+ICsNCj4gK05vdGUgYWJvdXQgbWF4IGZyZXF1ZW5jeToNCj4gKyAgICBDaGlwJ3MgbWF4
+IGZyZXF1ZW5jeSwgYXMgc3BlY2lmaWVkIGluIGl0cyBkYXRhc2hlZXQsIGlzIDJNaHouIEJ1dCBh
+DQo+IDYwMG5zDQo+ICsgICAgZGVsYXkgaXMgZXhwZWN0ZWQgYmV0d2VlbiB0aGUgYXBwbGljYXRp
+b24gb2YgYSBsb2dpYyBMTyB0byBDUyBhbmQNCj4gdGhlDQo+ICsgICAgYXBwbGljYXRpb24gb2Yg
+U0NMSywgYXMgYWxzbyBzcGVjaWZpZWQuIEFuZCBzaW5jZSB0aGUgZGVsYXkgaXMgbm90DQo+ICsg
+ICAgaW1wbGVtZW50ZWQgaW4gdGhlIHNwaSBjb2RlLCB0byBzYXRpc2Z5IGl0LCBTQ0xLJ3MgcGVy
+aW9kIHNob3VsZCBiZQ0KPiBhdCBtb3N0DQo+ICsgICAgMiAqIDYwMG5zLCBzbyB0aGUgbWF4IGZy
+ZXF1ZW5jeSBzaG91bGQgYmUgMSAvICgyICogNmUtNyksIHdoaWNoDQo+IGdpdmVzDQo+ICsgICAg
+cm91Z2hseSA4MzAwMDBIei4NCj4gKw0KPiArRXhhbXBsZToNCj4gK3Jlc29sdmVyQDAgew0KPiAr
+CWNvbXBhdGlibGUgPSAiYWRpLGFkMnM5MCI7DQo+ICsJcmVnID0gPDA+Ow0KPiArCXNwaS1tYXgt
+ZnJlcXVlbmN5ID0gPDgzMDAwMD47DQo+ICsJc3BpLWNwb2w7DQo+ICsJc3BpLWNwaGE7DQo+ICt9
+Ow0K
