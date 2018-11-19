@@ -2,100 +2,102 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AE7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B280C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E565208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D87220851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elBeBSBf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E565208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l4M8cYBY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D87220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403901AbeKTDRd (ORCPT
+        id S2403914AbeKTDRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:17:33 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:44743 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403869AbeKTDRc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:17:32 -0500
-Received: by mail-vk1-f193.google.com with SMTP id h128so6924021vkg.11;
-        Mon, 19 Nov 2018 08:53:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2utPuwtZaCV/BmH5oamaY9JFsO2JnKsPFc89xDdn59s=;
-        b=elBeBSBf3Zl0/mRynD7UsrBRw6KfrNqMca2tnv/vVJsRzHdSBUQhSf/NkBafIpUsJO
-         fvMMHRTPh+UFjBgBKxIJkRzLeWbPBzkw+4nOVhNbcC8EIsebSPiNJ//RCBLjfiv1ooEx
-         s5OjIVB+wkryf1qO4UFtnEfVEBhn6SKZCxc2sq4A4HS/6pLaCW34sFtBO3978QPn5f/n
-         jrXv6FKEfB49BggqUaPqTtb6hWBt0xOEeGSL49+GIk/gNG4Z9rOivy780SXsSGCBAG7J
-         AYt4JojfY8z4Pvh6Mpt6OCJ+WM6/lSv9tWGdzE1sd73pfupkKkV1Quc6LhWttFIqVhWU
-         WqsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2utPuwtZaCV/BmH5oamaY9JFsO2JnKsPFc89xDdn59s=;
-        b=rZTRikSP+j24uKklt9efSBg7gLCKUEy8jcWW3Jx21/Co77mYHndprs45xATvDT2t/D
-         KcbChqjQkEUU6QpJE4QO25sDY3vmdB8s0NRJdNcDoFVsjsh/yuBJnx+NvkJ4o8dMClcF
-         03lL0RrxdMsvXLuroSrd2m6FtFQNqTOeYba/Oaz0M3fPJ2vGoh6i0tH2EIYgsASCLPXT
-         zW5U9gBIDYmTq68zAW9c77g+VIFQSJOVpB/rGgmiaOp+cek/StdIK/oNjfrobR4Yh8wa
-         /rzgBhS/jiujk8yyuvPmKuncZgVYyd07dQrPrRrpx7YhOX54oNgm/C5m00x6eyIa9fLh
-         oqEA==
-X-Gm-Message-State: AGRZ1gJjJNpNZqZ2O5eydPBJR+y8+TcV+cf7NKbfkRYqW2TTarwxb+5f
-        PDROdUKIILpOKAvDBnqBk9vLBFS3UHHs25DMYro=
-X-Google-Smtp-Source: AJdET5dZ7CQPQ4KJW9mM/hQray2H4bTnuMC33GiMtLZADf9s5aJqFPlWISsy5TPD8/16LMLyGPJLrj1LZw9ptDHFTSU=
-X-Received: by 2002:a1f:ac4:: with SMTP id 187mr9150831vkk.31.1542646398411;
- Mon, 19 Nov 2018 08:53:18 -0800 (PST)
+        Mon, 19 Nov 2018 22:17:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55938 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390358AbeKTDRb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:17:31 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A495020851;
+        Mon, 19 Nov 2018 16:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542646397;
+        bh=BihI3QQbUpR6ckdJdWYOkqkRHyPPoonHSxpfqwU09CA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l4M8cYBYP6ufLJeK///M29ofhIMf1F4Z2waaYSCCmwjMjGd6vpoSqSnUS1NNw7xwW
+         xVzPMMEkHmAKTxJptxRvSCstZZmM65rcEbY6QP7ixlM0GO4eNtGktI9OJ57L4QG9rH
+         g3HlUFD3+sSkHrQcZ8FF6qvXCCdA49MAUlPf+Tn0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 25/83] bna: ethtool: Avoid reading past end of buffer
+Date:   Mon, 19 Nov 2018 17:28:51 +0100
+Message-Id: <20181119162617.475044837@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
+References: <20181119162612.046511542@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20181115231605.24352-1-mr.nuke.me@gmail.com> <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
-In-Reply-To: <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
-From:   Tyler Baicar <baicar.tyler@gmail.com>
-Date:   Mon, 19 Nov 2018 11:53:05 -0500
-Message-ID: <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns AER
-To:     okaya@kernel.org
-Cc:     mr.nuke.me@gmail.com, helgaas@google.com, austin_bolen@dell.com,
-        alex_gagniuc@dellteam.com, keith.busch@intel.com,
-        Shyam_Iyer@dell.com, lukas@wunner.de, bhelgaas@google.com,
-        rjw@rjwysocki.net, lenb@kernel.org, ruscur@russell.cc,
-        sbobroff@linux.ibm.com, oohall@gmail.com,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 8:49 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> On 11/15/2018 3:16 PM, Alexandru Gagniuc wrote:
-> > I've asked around a few people at Dell and they unanimously agree that
-> > _OSC is the correct way to determine ownership of AER. In linux, we
-> > use the result of _OSC to enable AER services, but we use HEST to
-> > determine AER ownership. That's inconsistent. This series drops the
-> > use of HEST in favor of _OSC.
-> >
-> > [1]https://lkml.org/lkml/2018/11/15/62
->
-> This change breaks the existing systems that rely on the HEST table
-> telling the operating system about firmware first presence.
->
-> Besides, HEST table has much more granularity about which PCI component
-> needs firmware such as global/device/switch.
->
-> You should probably circulate these ideas for wider consumption in UEFI
-> forum as UEFI owns the HEST table definition.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-I agree with Sinan, this will break existing systems, and the granularity of the
-HEST definition is more useful than the single bit in _OSC.
+------------------
+
+[ Upstream commit 4dc69c1c1fff2f587f8e737e70b4a4e7565a5c94 ]
+
+Using memcpy() from a string that is shorter than the length copied means
+the destination buffer is being filled with arbitrary data from the kernel
+rodata segment. Instead, use strncpy() which will fill the trailing bytes
+with zeros.
+
+This was found with the future CONFIG_FORTIFY_SOURCE feature.
+
+Cc: Daniel Micay <danielmicay@gmail.com>
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/brocade/bna/bnad_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
+index 31f61a744d66..9473d12ce239 100644
+--- a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
++++ b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
+@@ -541,8 +541,8 @@ bnad_get_strings(struct net_device *netdev, u32 stringset, u8 *string)
+ 		for (i = 0; i < BNAD_ETHTOOL_STATS_NUM; i++) {
+ 			BUG_ON(!(strlen(bnad_net_stats_strings[i]) <
+ 				   ETH_GSTRING_LEN));
+-			memcpy(string, bnad_net_stats_strings[i],
+-			       ETH_GSTRING_LEN);
++			strncpy(string, bnad_net_stats_strings[i],
++				ETH_GSTRING_LEN);
+ 			string += ETH_GSTRING_LEN;
+ 		}
+ 		bmap = bna_tx_rid_mask(&bnad->bna);
+-- 
+2.17.1
+
+
+
