@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DD7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B3DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2234921508
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBB321527
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bcJ/dwN8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2234921508
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnWJGO9R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBB321527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405128AbeKTDXv (ORCPT
+        id S2405141AbeKTDXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35976 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404671AbeKTDXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:50 -0500
+        id S2404671AbeKTDXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74223214ED;
-        Mon, 19 Nov 2018 16:59:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01454214E0;
+        Mon, 19 Nov 2018 16:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646775;
-        bh=G8sHXX+GFIXH7nexmo8j49QbrPyb+HT7cOeJE2TAZBI=;
+        s=default; t=1542646777;
+        bh=jT9dEe2cWN/dJRx6K52neWHdvQmOpfqgE6OcLQX4JQ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcJ/dwN8iSa2Jn7ov61zwoNksRO3HUqOqiXU59+XQWKIXg8hDqkGJ4xmGAsqUy8J8
-         4uH4vO7rMld6vj2HvfwQgtDCeRj3BqTrBWWYyu3oHXB9/wYsuvIQuH+O83M2tJaMHt
-         sfrfQMWXRWXmuR1TYY/Y6sbfR53oVgS8xCfra9XI=
+        b=KnWJGO9R3nK/OojDnV/TP5NAAfE8wFzrJRVdZ+dVOwmwPihGPgdi9oakdI47hFiU9
+         KYlR4RnG6GS3lr/leCDkWAiCkD0GKX5qPiBrmVtu6IxMtHZYEOWvafylajt4CK791y
+         fghHV2l6tr2EOM/3Y6jM7yaKYieDg7TePJTmQ4KA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xu Wen <wen.xu@gatech.edu>,
-        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 085/160] btrfs: locking: Add extra check in btrfs_init_new_buffer() to avoid deadlock
-Date:   Mon, 19 Nov 2018 17:28:44 +0100
-Message-Id: <20181119162639.499685427@linuxfoundation.org>
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 086/160] btrfs: iterate all devices during trim, instead of fs_devices::alloc_list
+Date:   Mon, 19 Nov 2018 17:28:45 +0100
+Message-Id: <20181119162639.583338236@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,131 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Qu Wenruo <wqu@suse.com>
+From: Jeff Mahoney <jeffm@suse.com>
 
-commit b72c3aba09a53fc7c1824250d71180ca154517a7 upstream.
+commit d4e329de5e5e21594df2e0dd59da9acee71f133b upstream.
 
-[BUG]
-For certain crafted image, whose csum root leaf has missing backref, if
-we try to trigger write with data csum, it could cause deadlock with the
-following kernel WARN_ON():
+btrfs_trim_fs iterates over the fs_devices->alloc_list while holding the
+device_list_mutex.  The problem is that ->alloc_list is protected by the
+chunk mutex.  We don't want to hold the chunk mutex over the trim of the
+entire file system.  Fortunately, the ->dev_list list is protected by
+the dev_list mutex and while it will give us all devices, including
+read-only devices, we already just skip the read-only devices.  Then we
+can continue to take and release the chunk mutex while scanning each
+device.
 
-  WARNING: CPU: 1 PID: 41 at fs/btrfs/locking.c:230 btrfs_tree_lock+0x3e2/0x400
-  CPU: 1 PID: 41 Comm: kworker/u4:1 Not tainted 4.18.0-rc1+ #8
-  Workqueue: btrfs-endio-write btrfs_endio_write_helper
-  RIP: 0010:btrfs_tree_lock+0x3e2/0x400
-  Call Trace:
-   btrfs_alloc_tree_block+0x39f/0x770
-   __btrfs_cow_block+0x285/0x9e0
-   btrfs_cow_block+0x191/0x2e0
-   btrfs_search_slot+0x492/0x1160
-   btrfs_lookup_csum+0xec/0x280
-   btrfs_csum_file_blocks+0x2be/0xa60
-   add_pending_csums+0xaf/0xf0
-   btrfs_finish_ordered_io+0x74b/0xc90
-   finish_ordered_fn+0x15/0x20
-   normal_work_helper+0xf6/0x500
-   btrfs_endio_write_helper+0x12/0x20
-   process_one_work+0x302/0x770
-   worker_thread+0x81/0x6d0
-   kthread+0x180/0x1d0
-   ret_from_fork+0x35/0x40
-
-[CAUSE]
-That crafted image has missing backref for csum tree root leaf.  And
-when we try to allocate new tree block, since there is no
-EXTENT/METADATA_ITEM for csum tree root, btrfs consider it's free slot
-and use it.
-
-The extent tree of the image looks like:
-
-  Normal image                      |       This fuzzed image
-  ----------------------------------+--------------------------------
-  BG 29360128                       | BG 29360128
-   One empty slot                   |  One empty slot
-  29364224: backref to UUID tree    | 29364224: backref to UUID tree
-   Two empty slots                  |  Two empty slots
-  29376512: backref to CSUM tree    |  One empty slot (bad type) <<<
-  29380608: backref to D_RELOC tree | 29380608: backref to D_RELOC tree
-  ...                               | ...
-
-Since bytenr 29376512 has no METADATA/EXTENT_ITEM, when btrfs try to
-alloc tree block, it's an valid slot for btrfs.
-
-And for finish_ordered_write, when we need to insert csum, we try to CoW
-csum tree root.
-
-By accident, empty slots at bytenr BG_OFFSET, BG_OFFSET + 8K,
-BG_OFFSET + 12K is already used by tree block COW for other trees, the
-next empty slot is BG_OFFSET + 16K, which should be the backref for CSUM
-tree.
-
-But due to the bad type, btrfs can recognize it and still consider it as
-an empty slot, and will try to use it for csum tree CoW.
-
-Then in the following call trace, we will try to lock the new tree
-block, which turns out to be the old csum tree root which is already
-locked:
-
-btrfs_search_slot() called on csum tree root, which is at 29376512
-|- btrfs_cow_block()
-   |- btrfs_set_lock_block()
-   |  |- Now locks tree block 29376512 (old csum tree root)
-   |- __btrfs_cow_block()
-      |- btrfs_alloc_tree_block()
-         |- btrfs_reserve_extent()
-            | Now it returns tree block 29376512, which extent tree
-            | shows its empty slot, but it's already hold by csum tree
-            |- btrfs_init_new_buffer()
-               |- btrfs_tree_lock()
-                  | Triggers WARN_ON(eb->lock_owner == current->pid)
-                  |- wait_event()
-                     Wait lock owner to release the lock, but it's
-                     locked by ourself, so it will deadlock
-
-[FIX]
-This patch will do the lock_owner and current->pid check at
-btrfs_init_new_buffer().
-So above deadlock can be avoided.
-
-Since such problem can only happen in crafted image, we will still
-trigger kernel warning for later aborted transaction, but with a little
-more meaningful warning message.
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200405
-Reported-by: Xu Wen <wen.xu@gatech.edu>
+Fixes: 499f377f49f ("btrfs: iterate over unused chunk space in FITRIM")
 CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/btrfs/extent-tree.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/fs/btrfs/extent-tree.c
 +++ b/fs/btrfs/extent-tree.c
-@@ -7835,6 +7835,20 @@ btrfs_init_new_buffer(struct btrfs_trans
- 	buf = btrfs_find_create_tree_block(root, bytenr);
- 	if (!buf)
- 		return ERR_PTR(-ENOMEM);
-+
-+	/*
-+	 * Extra safety check in case the extent tree is corrupted and extent
-+	 * allocator chooses to use a tree block which is already used and
-+	 * locked.
-+	 */
-+	if (buf->lock_owner == current->pid) {
-+		btrfs_err_rl(root->fs_info,
-+"tree block %llu owner %llu already locked by pid=%d, extent tree corruption detected",
-+			buf->start, btrfs_header_owner(buf), current->pid);
-+		free_extent_buffer(buf);
-+		return ERR_PTR(-EUCLEAN);
-+	}
-+
- 	btrfs_set_header_generation(buf, trans->transid);
- 	btrfs_set_buffer_lockdep_class(root->root_key.objectid, buf, level);
- 	btrfs_tree_lock(buf);
+@@ -10751,8 +10751,8 @@ int btrfs_trim_fs(struct btrfs_root *roo
+ 	}
+ 
+ 	mutex_lock(&root->fs_info->fs_devices->device_list_mutex);
+-	devices = &root->fs_info->fs_devices->alloc_list;
+-	list_for_each_entry(device, devices, dev_alloc_list) {
++	devices = &root->fs_info->fs_devices->devices;
++	list_for_each_entry(device, devices, dev_list) {
+ 		ret = btrfs_trim_free_extents(device, range->minlen,
+ 					      &group_trimmed);
+ 		if (ret)
 
 
