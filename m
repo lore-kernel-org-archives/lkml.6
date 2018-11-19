@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37F75C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEEEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 010B4206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 973D8206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p46piCNj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010B4206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifFaefyZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 973D8206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbeKTDEn (ORCPT
+        id S1733057AbeKTDEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:04:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37810 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:04:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732128AbeKTDEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:04:42 -0500
+        id S1732128AbeKTDEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:04:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55CE9206BA;
-        Mon, 19 Nov 2018 16:40:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F32A620831;
+        Mon, 19 Nov 2018 16:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645632;
-        bh=/e9e2zKdrmcPysxXfKvXcDgP2zrZfmqOBVeCRNlZQ/E=;
+        s=default; t=1542645635;
+        bh=hMt+skiumbRH59AGWyf9LwvRdTKXIdPEC6Y3FCBC2D0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p46piCNjl0fCIZaw27g9XAcOS8Ves0Sgp9E7CYSHdIElNlRU4Q1oNxrRGMa3kMKf5
-         CdIalIr6IyDXChJWRZ4uciX1fIt4gzfrolC4Za96tBgF4JKAE0aU0c4GDOyg/JsBX/
-         jYnq2gUYbxIS2vudWLLAiuvOHUBeOzgX501siWbg=
+        b=ifFaefyZ43ePQstXQjDCqvBAvMkB0jW7O1Nr477RjmPmKSfQkJfXQ/Ceu3UEczT7k
+         s7HJYAr0Kr1juV1cNFS5IYfCkEyyIUjT1ZPqD3VSRZPqHJp53I7W/Pisx8VnDxq7Il
+         YZdNpzBQ8tRt/QRJfCrt4+AbbmouKPQO2BRmb2yA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 003/171] powerpc/mm: Fix page table dump to work on Radix
-Date:   Mon, 19 Nov 2018 17:26:39 +0100
-Message-Id: <20181119162619.522819221@linuxfoundation.org>
+Subject: [PATCH 4.18 030/171] staging: most: video: fix registration of an empty comp core_component
+Date:   Mon, 19 Nov 2018 17:27:06 +0100
+Message-Id: <20181119162624.652486590@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,56 +61,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
+[ Upstream commit 1f447e51c0b9e8beeec0917ea5f51930f55e17c9 ]
 
-When we're running on Book3S with the Radix MMU enabled the page table
-dump currently prints the wrong addresses because it uses the wrong
-start address.
+Currently we have structrues comp (which is empty) and comp_info being
+used to register and deregister the component.  This mismatch in naming
+occurred from a previous commit that renamed aim_info to comp. Fix this
+to use consistent component naming in line with most/net, most/sound etc.
 
-Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
+This fixes the message two issues, one with a null empty name when
+loading the module:
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[ 1485.269515] most_core: registered new core component (null)
+
+and an Oops when removing the module:
+
+[ 1485.277971] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+[ 1485.278648] PGD 0 P4D 0
+[ 1485.279253] Oops: 0002 [#2] SMP PTI
+[ 1485.279847] CPU: 1 PID: 32629 Comm: modprobe Tainted: P      D WC OE     4.18.0-8-generic #9
+[ 1485.280442] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
+[ 1485.281040] RIP: 0010:most_deregister_component+0x3c/0x70 [most_core]
+.. etc
+
+Fixes: 1b10a0316e2d ("staging: most: video: remove aim designators")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/dump_linuxpagetables.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/staging/most/video/video.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -418,12 +418,13 @@ static void walk_pagetables(struct pg_st
- 	unsigned int i;
- 	unsigned long addr;
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -530,7 +530,7 @@ static int comp_disconnect_channel(struc
+ 	return 0;
+ }
  
-+	addr = st->start_address;
-+
- 	/*
- 	 * Traverse the linux pagetable structure and dump pages that are in
- 	 * the hash pagetable.
- 	 */
--	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
--		addr = KERN_VIRT_START + i * PGDIR_SIZE;
-+	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
- 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
- 			/* pgd exists */
- 			walk_pud(st, pgd, addr);
-@@ -472,9 +473,14 @@ static int ptdump_show(struct seq_file *
- {
- 	struct pg_state st = {
- 		.seq = m,
--		.start_address = KERN_VIRT_START,
- 		.marker = address_markers,
- 	};
-+
-+	if (radix_enabled())
-+		st.start_address = PAGE_OFFSET;
-+	else
-+		st.start_address = KERN_VIRT_START;
-+
- 	/* Traverse kernel page tables */
- 	walk_pagetables(&st);
- 	note_page(&st, 0, 0, 0);
+-static struct core_component comp_info = {
++static struct core_component comp = {
+ 	.name = "video",
+ 	.probe_channel = comp_probe_channel,
+ 	.disconnect_channel = comp_disconnect_channel,
+@@ -565,7 +565,7 @@ static void __exit comp_exit(void)
+ 	}
+ 	spin_unlock_irq(&list_lock);
+ 
+-	most_deregister_component(&comp_info);
++	most_deregister_component(&comp);
+ 	BUG_ON(!list_empty(&video_devices));
+ }
+ 
 
 
