@@ -2,124 +2,256 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39B98C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03004C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F31252086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F31252086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F52120870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DbdjlpXV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F52120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbeKTBcw (ORCPT
+        id S1729713AbeKTBdZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:32:52 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62366 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729528AbeKTBcw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:32:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 07:08:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="87095396"
-Received: from pmwellin-mobl.amr.corp.intel.com (HELO [10.251.10.45]) ([10.251.10.45])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Nov 2018 07:08:44 -0800
-Subject: Re: [PATCH] x86/fpu: Disable BH while while loading FPU registers in
- __fpu__restore_sig()
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-References: <20181107194858.9380-1-bigeasy@linutronix.de>
- <20181107194858.9380-3-bigeasy@linutronix.de> <20181108145721.GC7543@zn.tnic>
- <20181109173521.2m6iijp5wkncgi77@linutronix.de>
- <20181109185202.GF21243@zn.tnic>
- <20181109232521.l2ll2n3coxygkxv4@linutronix.de>
- <20181112155643.vclej44qzg3pmbow@linutronix.de>
- <433cec57-57a9-afff-22f3-68308eda682b@intel.com>
- <20181119114151.e4mbs7ktfjojl3uf@linutronix.de>
- <982af52b-4e39-2b26-a184-2fe13f3d9f61@intel.com>
- <20181119150656.ylbrsvchdyavms4w@linutronix.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <5a319c56-c165-5465-2dc6-4b0e08510abe@intel.com>
-Date:   Mon, 19 Nov 2018 07:08:44 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181119150656.ylbrsvchdyavms4w@linutronix.de>
-Content-Type: text/plain; charset=utf-8
+        Mon, 19 Nov 2018 20:33:25 -0500
+Received: from mail-eopbgr140070.outbound.protection.outlook.com ([40.107.14.70]:9468
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729483AbeKTBdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:33:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AkrAwib479XYiIh28hVEoJaMqd+JgzbOdhz0ZRjT5P4=;
+ b=DbdjlpXVpfteKgOlpMzjem/msb7rO0vU/nTXbsgiGJKyzhai48rLbhbDZnKeYy0mJ9ODDQiGUt8cjSn5C9YmgnTaZxAjxVq+bIzH5tMa9yl4v/jUK2QZlFcfOBG74ypBA4Ad5tt7CLkAr+1ftGDAkYYeIpYwaJAqjioKEh86trg=
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
+ VI1PR04MB3022.eurprd04.prod.outlook.com (10.170.228.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Mon, 19 Nov 2018 15:09:24 +0000
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::bded:8cac:201e:eb8e]) by VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::bded:8cac:201e:eb8e%4]) with mapi id 15.20.1294.045; Mon, 19 Nov 2018
+ 15:09:24 +0000
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        Catalin Horghidan <catalin.horghidan@nxp.com>
+Subject: RE: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
+ ethernet drivers
+Thread-Topic: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
+ ethernet drivers
+Thread-Index: AQHUfP5F6CjK0TC0VUGuagGxPDq736VTH14AgAP6btA=
+Date:   Mon, 19 Nov 2018 15:09:24 +0000
+Message-ID: <VI1PR04MB48809F132A5DFFC71DA5F6BD96D80@VI1PR04MB4880.eurprd04.prod.outlook.com>
+References: <1542298436-23422-1-git-send-email-claudiu.manoil@nxp.com>
+ <1542298436-23422-2-git-send-email-claudiu.manoil@nxp.com>
+ <20181117003002.GC752@lunn.ch>
+In-Reply-To: <20181117003002.GC752@lunn.ch>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=claudiu.manoil@nxp.com; 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3022;6:yUpzRXDm/BZkDa0YzLbbka+HQ0Nuj7uDrNeUKo1deR0AkPxN4Ymepwq5wKcYwc9t2VhESMTu0JZ0C5P5cahGcZIVCnchNdWfxbRRjuYmzXJJ5cejyEOQSmWT/KbNnWDJ1sc9rZh74Wx6gqca9E45Fa3JCVMQAL0eHCmtjaKj+wignneTpkIzAoo6GqOMFXCrCnHpAUaPn3ssBQtu/DGYRawW0Sl910x8tnO1xUUJN7txbDSrFRlTcN2bnMf/fbTVl0OXdqHoJtr5+7DrxarIyCmkQ1DegVzY449BvOio3+BCliWcqf4EHQxq90N+7srhJnJQiLPfqyfTrxbmyQx2BA3FZl0nk5YzUL2/92gFwRhazMN13Xo6gAC/FLKNpJN4aRdSXoOvJJ1jQetEqhmADPYI4+kGIec8Bm+wSK26ULQp+MgGlil33/fzFfHEnUxjazwVQ1izsdUvQ8odhe2pUQ==;5:j3WNmAy1B0x/++STUVHSzbNet4JtPI43z/NOL4mYh5pd8hX7+e0/MCmqodODv+KYMKBEqOT7ryFwXi8Z6Ol5qIlre+7Nlv+En1En9lOV+2A9JC3eBLwlVP9M8fD0c83NMkCi01ZxzSMU5Sfe7ZcxeY7y/gdTkqo973NYprDODCo=;7:8Zgf5UAmyyVQ6gfiHPqiYhSR2tEKwxEVzMN0th67rfhtKPEeHg6IHcMtiqWiPgWlBObZzdtCcNEqfGDlkZFsDZFVQbOqz/D/EG1JIXMWI/0790nfw8S6fGD+byPUq8aiK4OPEVDrYYfrfHPc3prLyQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b262633a-142f-4646-7710-08d64e30fdf6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3022;
+x-ms-traffictypediagnostic: VI1PR04MB3022:
+x-microsoft-antispam-prvs: <VI1PR04MB30227FBC1502CDB6BF3FD03C96D80@VI1PR04MB3022.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3022;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3022;
+x-forefront-prvs: 08617F610C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(396003)(366004)(136003)(199004)(189003)(13464003)(4326008)(26005)(6246003)(186003)(25786009)(53936002)(478600001)(55016002)(106356001)(9686003)(105586002)(6436002)(71200400001)(8936002)(71190400001)(33656002)(81166006)(8676002)(81156014)(66066001)(256004)(14444005)(14454004)(99286004)(7696005)(5660300001)(6506007)(102836004)(76176011)(68736007)(74316002)(7736002)(2900100001)(305945005)(2906002)(86362001)(6916009)(44832011)(229853002)(476003)(6116002)(3846002)(11346002)(54906003)(446003)(316002)(486006)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3022;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tXkaY5OLqK4MQd1KdoW/rTT4tbD/YTEQEjOLgavL4uylEg4jcH7J0CzjrpmHxgE7aNIGKZcY0Chbo2q3eHQQjNvqfGlLvqNJxxImZYSbO1Qzt+22xWOQOfQX5+lrzAYHE1YmFnZwJdBntR56Ty0NEnN4K5kEdHwNpRo1egtghmKTc3e9XBpcO0E6KsdY/7/K/j+JMJeW5pISNDFrEUOJUunatw2OOGDjtWA5cJvoyFWtCNQPWiA4c6d7qnKKGRYMsiUmU7ex5T1u2XVxotYVt2px/up2wXf438KtMM8TG1ZjVph7G0gVEhgmii5vXt8tzn02VWoPZdw0MyXiM+Fzv6RzQAKcp9jH97u3gYa3C64=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b262633a-142f-4646-7710-08d64e30fdf6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 15:09:24.4067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 7:06 AM, Sebastian Andrzej Siewior wrote:
-> On 2018-11-19 07:04:35 [-0800], Dave Hansen wrote:
->> Does the local_bh_disable() itself survive?
-> Not in __fpu__restore_sig(). I do have:
-> | static inline void __fpregs_changes_begin(void)
-> | {
-> |        preempt_disable();
-> |        local_bh_disable();
-> | }
-> 
-> and __fpregs_changes_begin() is introduced as part of the series.
+>-----Original Message-----
+>From: Andrew Lunn <andrew@lunn.ch>
+>Sent: Saturday, November 17, 2018 2:30 AM
+>To: Claudiu Manoil <claudiu.manoil@nxp.com>
+>Cc: David S . Miller <davem@davemloft.net>; netdev@vger.kernel.org; linux-
+>kernel@vger.kernel.org; Alexandru Marginean
+><alexandru.marginean@nxp.com>; Catalin Horghidan
+><catalin.horghidan@nxp.com>
+>Subject: Re: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
+>ethernet drivers
+>
+[...]
+>> +
+>> +static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff=
+ *skb);
+>> +static void enetc_unmap_tx_buff(struct enetc_bdr *tx_ring,
+>> +				struct enetc_tx_swbd *tx_swbd);
+>> +static int enetc_clean_tx_ring(struct enetc_bdr *tx_ring, int budget);
+>> +
+>> +static struct sk_buff *enetc_map_rx_buff_to_skb(struct enetc_bdr *rx_ri=
+ng,
+>> +						int i, u16 size);
+>> +static void enetc_add_rx_buff_to_skb(struct enetc_bdr *rx_ring, int i,
+>> +				     u16 size, struct sk_buff *skb);
+>> +static void enetc_process_skb(struct enetc_bdr *rx_ring, struct sk_buff=
+ *skb);
+>> +static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
+>> +			       struct napi_struct *napi, int work_limit);
+>> +
+>
+>Please try to avoid forward declarations. Move the code around so you
+>don't need them.
+>
 
-OK, so can we just comment *that*, please?  Basically, why do we need botj?
+Maybe I could drop some of these, but...
+For some performance critical functions on the datapath this would be an
+attempt to improve icache hit rate by having the caller function located in
+memory just before it's children (callees).  As you can see, only some perf
+critical functions are forward declared here, for the xmit() and rx/tx clea=
+nup paths.
+Does this make sense to you?  Could you point me to some reading on this to=
+pic otherwise?
+
+>> +static bool enetc_tx_csum(struct sk_buff *skb, union enetc_tx_bd *txbd)
+>> +{
+>> +	int l3_start, l3_hsize;
+>> +	u16 l3_flags, l4_flags;
+>> +
+>> +	if (skb->ip_summed !=3D CHECKSUM_PARTIAL)
+>> +		return false;
+>> +
+>> +	switch (skb->csum_offset) {
+>> +	case offsetof(struct tcphdr, check):
+>> +		l4_flags =3D ENETC_TXBD_L4_TCP;
+>> +		break;
+>> +	case offsetof(struct udphdr, check):
+>> +		l4_flags =3D ENETC_TXBD_L4_UDP;
+>> +		break;
+>> +	default:
+>> +		skb_checksum_help(skb);
+>> +		return false;
+>> +	}
+>> +
+>> +	l3_start =3D skb_network_offset(skb);
+>> +	l3_hsize =3D skb_network_header_len(skb);
+>> +
+>> +	l3_flags =3D 0;
+>> +	if (skb->protocol =3D=3D htons(ETH_P_IPV6))
+>> +		l3_flags =3D ENETC_TXBD_L3_IPV6;
+>
+>Is there no need to do anything with IPv4?
+>
+
+No, 0 for this bit means IPv4. Only UDP and TCP over IPv4 and IPv6 supporte=
+d.
+
+[...]
+
+>> +static void adjust_link(struct net_device *ndev)
+>> +{
+>> +	struct phy_device *phydev =3D ndev->phydev;
+>> +
+>> +	phy_print_status(phydev);
+>
+>You normally need more than that. Maybe later patches add to this?
+>
+
+Yes, later patches.  The first boards will be soon available.
+Once we validate the remaining support for PHYs (including MDIO support whi=
+ch
+is on the todo list) the patches will be available.  Also, we're looking at=
+ phylink too.
+Once we can confirm whether it works on our boards, the driver will be upda=
+ted accordingly.
+
+>> +static int enetc_phy_connect(struct net_device *ndev)
+>> +{
+>> +	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
+>> +	struct phy_device *phydev;
+>> +
+>> +	if (!priv->phy_node)
+>> +		return 0; /* phy-less mode */
+>
+>What are your user-cases for phy-less? If you don't have a PHY it is
+>mostly because you are connected to an Ethernet switch. In that case
+>you use fixed-link, which gives you a phy.
+>
+
+This code path is also reached by the VF driver (via the open() hook which =
+is common to both
+PF and VF drivers, and VFs don't manage PHYs).=20
+Also,  the driver may be exercised in MAC loopback mode (ethtool -K loopbac=
+k on), when the
+PHY nodes are removed.  And it's always good to be able to run the driver o=
+n a simulator or
+an emulator without having to modify it.
+
+[...]
+
+>> +int enetc_pci_probe(struct pci_dev *pdev, const char *name, int sizeof_=
+priv)
+>> +{
+>> +	struct enetc_si *si, *p;
+>> +	struct enetc_hw *hw;
+>> +	size_t alloc_size;
+>> +	int err, len;
+>> +
+>> +	err =3D pci_enable_device_mem(pdev);
+>> +	if (err) {
+>> +		dev_err(&pdev->dev, "device enable failed\n");
+>> +		return err;
+>> +	}
+>> +
+>> +	/* set up for high or low dma */
+>> +	err =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+>> +	if (err) {
+>> +		err =3D dma_set_mask_and_coherent(&pdev->dev,
+>DMA_BIT_MASK(32));
+>> +		if (err) {
+>> +			dev_err(&pdev->dev,
+>> +				"DMA configuration failed: 0x%x\n", err);
+>> +			goto err_dma;
+>> +		}
+>> +	}
+>
+>Humm, i thought drivers were not supposed to do this. The architecture
+>code should be setting masks. But i've not followed all those
+>conversations...
+>
+
+Documentation/DMA-API-HOWTO.txt still states:
+" For correct operation, you must interrogate the kernel in your device
+probe routine to see if the DMA controller on the machine can properly
+support the DMA addressing limitation your device has.  It is good
+style to do this even if your device holds the default setting, [...]"
+
+For the rest of the comments I didn't include in this reply: OK.
+
+Thanks,
+Claudiu
