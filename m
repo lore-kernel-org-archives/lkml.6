@@ -2,103 +2,167 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E70F0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AD0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E185208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:23:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="lkoUrEdX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E185208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 1613320823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:25:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1613320823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730979AbeKTItc (ORCPT
+        id S1731002AbeKTIvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:49:32 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37133 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730005AbeKTItc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:49:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so287236wmc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:23:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fjVmBesFxy9LoDjDwVjkC5jCL2KHXfuj0e0USVLR32Q=;
-        b=lkoUrEdXqJuRBZuNg8kB4eMPobAA0R7dxzEEswObbnCoOH2cxDrxCwhnk+Q0d34Y0q
-         ZzSLivYJgIe/AQwpCDml0M5KIDFRbEvxyU7Ng2cu/O+kAkQR8DzhoYmZrWbYp1nbA4M1
-         0L0H04O5RFz91jgFuN8u8vG8q/4NxUhFRIKpO17+K6KlHRGPRhoT+CaytKCPkiQpSKzN
-         V7d2QeMnsm2BjgUFzZWwoUmnbpJ3jIDKJadbym6PxD/IYtphbB8N9do+QQe/3VYmjDOK
-         zFc5VZ6d87C14G6KmwbxyNil4Zx6NZOmtC7doFNcifHfm9D0HH9MM0b29He0Vr8KSScD
-         92og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fjVmBesFxy9LoDjDwVjkC5jCL2KHXfuj0e0USVLR32Q=;
-        b=QGAqOxRgg/yHhoMGe2IX+lU5koYixqAqdJOW5a+1uRt1C2jM4xZScwhVBNnQcJ6c6U
-         0YFgj8rP5j1h/OBZYEGuNDXB0fLiySzmAnxePK4N7d1wv6p01JZjtfz+GQGy4BA/oO4l
-         nQRfQSHh96H1rlLDLaZGIqX2JcRDA7zlpa6BAnPKz5mQxJqjB2Bu043mrksjmSOLnesr
-         rW+2kj8fkMIEmpHwoWRClKWoFiFZU/x848yfwj3NR4hnUAjHfAJg9JhUe40cwzqSh53U
-         Mx7PefOw5pdmbUR3U7ROlKZlokyXvtGGKq32hFudpBhCjiaj/iBZjPS7KL1c4HW7EGb0
-         +rPg==
-X-Gm-Message-State: AGRZ1gI7vZX78dkWwHq0IkPN2COPdbJDEFmGyc8c892GR4lFZrDe9JZ2
-        gathTkj7H9wWEoTp4yyt7vBjxHqudgTY+H/DYPn7OA==
-X-Google-Smtp-Source: AJdET5eBygkBBRlIv0dpdk5OTuyErbSB3edwOdQNgboh9HTrU7hkOjWPoBxYu+Q26CnI2SY6Q/5kJ4fNZj1cuu76Z+4=
-X-Received: by 2002:a1c:bb42:: with SMTP id l63-v6mr9085525wmf.32.1542666223412;
- Mon, 19 Nov 2018 14:23:43 -0800 (PST)
+        Tue, 20 Nov 2018 03:51:09 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42076 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727317AbeKTIvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:51:08 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EC6C120745; Mon, 19 Nov 2018 23:25:18 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A3F282039F;
+        Mon, 19 Nov 2018 23:25:18 +0100 (CET)
+Date:   Mon, 19 Nov 2018 23:25:17 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+Message-ID: <20181119232517.49b39e25@bbrezillon>
+In-Reply-To: <9e217c7c-6626-d683-2d99-0b7571043b3b@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+        <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+        <20181119151009.490413d9@bbrezillon>
+        <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+        <20181119154338.2dfa7a5a@bbrezillon>
+        <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
+        <20181119162127.71d0665d@bbrezillon>
+        <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
+        <20181119231954.333699f4@bbrezillon>
+        <9e217c7c-6626-d683-2d99-0b7571043b3b@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181119214934.6174-1-yu-cheng.yu@intel.com> <20181119214934.6174-10-yu-cheng.yu@intel.com>
-In-Reply-To: <20181119214934.6174-10-yu-cheng.yu@intel.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Mon, 19 Nov 2018 14:23:32 -0800
-Message-ID: <CALCETrUkXMHcwX8u+mGDD9Vj+iQE7CRMHL7jQnfAT6WXV8SBEQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v6 09/11] x86/vsyscall/32: Add ENDBR32 to vsyscall
- entry point
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 1:55 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
->
-> From: "H.J. Lu" <hjl.tools@gmail.com>
->
-> Add ENDBR32 to vsyscall entry point.
+On Mon, 19 Nov 2018 23:22:45 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-$SUBJECT should be "x86/vdso/32: Add ENDBR32 to __kernel_vsyscall entry point".
+> On 11/19/2018 11:19 PM, Boris Brezillon wrote:
+> > On Mon, 19 Nov 2018 23:11:31 +0100
+> > Marek Vasut <marek.vasut@gmail.com> wrote:
+> >   
+> >> On 11/19/2018 04:21 PM, Boris Brezillon wrote:  
+> >>> On Mon, 19 Nov 2018 16:12:41 +0100
+> >>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>     
+> >>>> On 11/19/2018 03:43 PM, Boris Brezillon wrote:    
+> >>>>> On Mon, 19 Nov 2018 15:14:07 +0100
+> >>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>       
+> >>>>>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:      
+> >>>>>>> On Mon, 19 Nov 2018 14:49:31 +0100
+> >>>>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>>>         
+> >>>>>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:        
+> >>>>>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+> >>>>>>>>>
+> >>>>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> >>>>>>>>> ---
+> >>>>>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+> >>>>>>>>>  1 file changed, 33 insertions(+)
+> >>>>>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>>
+> >>>>>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>> new file mode 100644
+> >>>>>>>>> index 0000000..8286cc8
+> >>>>>>>>> --- /dev/null
+> >>>>>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>> @@ -0,0 +1,33 @@
+> >>>>>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+> >>>>>>>>> +----------------------------------------------------
+> >>>>>>>>> +
+> >>>>>>>>> +Required properties:
+> >>>>>>>>> +- compatible: should be "renesas,rpc-r8a77995"
+> >>>>>>>>> +- #address-cells: should be 1
+> >>>>>>>>> +- #size-cells: should be 0
+> >>>>>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
+> >>>>>>>>> +       mapping area
+> >>>>>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> >>>>>>>>> +- interrupts: interrupt line connected to the RPC SPI controller          
+> >>>>>>>>
+> >>>>>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
+> >>>>>>>> look in the bindings ?        
+> >>>>>>>
+> >>>>>>> Not sure this approach is still accepted, but that's how we solved the
+> >>>>>>> problem for the flexcom block [1].
+> >>>>>>>
+> >>>>>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt        
+> >>>>>>
+> >>>>>> That looks pretty horrible.
+> >>>>>>
+> >>>>>> In U-Boot we check whether the device hanging under the controller node
+> >>>>>> is JEDEC SPI flash or CFI flash and based on that decide what the config
+> >>>>>> of the controller should be (SPI or HF). Not sure that's much better,but
+> >>>>>> at least it doesn't need extra nodes which do not really represent any
+> >>>>>> kind of real hardware.
+> >>>>>>      
+> >>>>>
+> >>>>> The subnodes are not needed, you can just have a property that tells in
+> >>>>> which mode the controller is supposed to operate, and the MFD would
+> >>>>> create a sub-device that points to the same device_node.      
+> >>>>
+> >>>> Do you even need a dedicated property ? I think you can decide purely on
+> >>>> what node is hanging under the controller (jedec spi nor or cfi nor).    
+> >>>
+> >>> Yes, that could work if they have well-known compatibles. As soon as
+> >>> people start using flash-specific compats (like some people do for
+> >>> their SPI NORs) it becomes a maintenance burden.    
+> >>
+> >> Which, on this controller, is very likely never gonna happen. Once it
+> >> does , we can add a custom property.
+> >>  
+> >>>>> Or we can have
+> >>>>> a single driver that decides what to declare (a spi_controller or flash
+> >>>>> controller), but you'd still have to decide where to place this
+> >>>>> driver...      
+> >>>>
+> >>>> I'd definitely prefer a single driver.
+> >>>>    
+> >>>
+> >>> Where would you put this driver? I really don't like the idea of having
+> >>> MTD drivers spread over the tree. Don't know what's Mark's opinion on
+> >>> this matter.    
+> >>
+> >> Well, it's both CFI (hyperflash) and SF (well, SPI flash) controller, so
+> >> where would this go ?
+> >>  
+> > 
+> > The spi-mem layer is in drivers/spi/ so it could go in drivers/spi/
+> > (spi-mem controller) or drivers/mtd/ (CFI controller).  
+> 
+> drivers/mtd is probably a better option, since it's not a generic SPI
+> controller.
+> 
 
---Andy
+No, spi-mem controller drivers should go in drivers/spi/ even if they
+don't implement the generic SPI interface (it's allowed to only
+implement the spi_mem interface).
+
+> 
+
