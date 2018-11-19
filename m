@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 651CBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B6AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E94B208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE492208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xQp3hwQD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E94B208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdPgedBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE492208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732506AbeKTDCm (ORCPT
+        id S1732515AbeKTDCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35034 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731835AbeKTDCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:41 -0500
+        id S1731835AbeKTDCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F74D2147D;
-        Mon, 19 Nov 2018 16:38:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E21F2147D;
+        Mon, 19 Nov 2018 16:38:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645512;
-        bh=fBVLDXEof9mA2gppONTfTj2zR84cbV/mNV9WJL5giGc=;
+        s=default; t=1542645514;
+        bh=38ZbgmQlAGrBWPttMOgxte8Rde3np1pKsVMCR6KW5NU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xQp3hwQD5FEpG2CqI7azm4mgBTvYm9hG+AViZuk28Yd54jMm0UgCr9ypHmIWrM44q
-         dlb+bEXzXLgUG0uDOQ2wWmrWElBNPmBrnQRZMW7r0Dt4hnBVpNucQCMv/ckw+qv7eZ
-         +U6XSAcCv0YyTCpQTHxcewc2JQJHJCVlzHKPX36Y=
+        b=SdPgedBAhpu7YqzJM2UQojsk80lujaf1cDimI/EDBXDihr7+xyp0EksjKMwYrMhnC
+         nAVzwStF2/rZG0mwUMfFH7pZgyiNvbXQh/brRBDtNlunUCfQ3EOW095xjYBRscsYqI
+         d+o8oCmwFSdAHCYMxMcIxgVo+EW3jz4QLDCPf+a0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 152/205] ARM: cpuidle: Dont register the driver when back-end init returns -ENXIO
-Date:   Mon, 19 Nov 2018 17:27:39 +0100
-Message-Id: <20181119162638.774142204@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 143/205] ext4: release bs.bh before re-using in ext4_xattr_block_find()
+Date:   Mon, 19 Nov 2018 17:27:30 +0100
+Message-Id: <20181119162638.024232041@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,71 +61,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 763f191af51f127cf8e69cd361f50bf6180768a5 upstream.
+commit 45ae932d246f721e6584430017176cbcadfde610 upstream.
 
-There's no point to register the cpuidle driver for the current CPU, when
-the initialization of the arch specific back-end data fails by returning
--ENXIO.
+bs.bh was taken in previous ext4_xattr_block_find() call,
+it should be released before re-using
 
-Instead, let's re-order the sequence to its original flow, by first trying
-to initialize the back-end part and then act accordingly on the returned
-error code. Additionally, let's print the error message, no matter of what
-error code that was returned.
-
-Fixes: a0d46a3dfdc3 (ARM: cpuidle: Register per cpuidle device)
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: 4.19+ <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 7e01c8e5420b ("ext3/4: fix uninitialized bs in ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 2.6.26
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpuidle/cpuidle-arm.c |   22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ fs/ext4/xattr.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/cpuidle/cpuidle-arm.c
-+++ b/drivers/cpuidle/cpuidle-arm.c
-@@ -103,13 +103,6 @@ static int __init arm_idle_init_cpu(int
- 		goto out_kfree_drv;
- 	}
- 
--	ret = cpuidle_register_driver(drv);
--	if (ret) {
--		if (ret != -EBUSY)
--			pr_err("Failed to register cpuidle driver\n");
--		goto out_kfree_drv;
--	}
--
- 	/*
- 	 * Call arch CPU operations in order to initialize
- 	 * idle states suspend back-end specific data
-@@ -117,15 +110,20 @@ static int __init arm_idle_init_cpu(int
- 	ret = arm_cpuidle_init(cpu);
- 
- 	/*
--	 * Skip the cpuidle device initialization if the reported
-+	 * Allow the initialization to continue for other CPUs, if the reported
- 	 * failure is a HW misconfiguration/breakage (-ENXIO).
- 	 */
--	if (ret == -ENXIO)
--		return 0;
--
- 	if (ret) {
- 		pr_err("CPU %d failed to init idle CPU ops\n", cpu);
--		goto out_unregister_drv;
-+		ret = ret == -ENXIO ? 0 : ret;
-+		goto out_kfree_drv;
-+	}
-+
-+	ret = cpuidle_register_driver(drv);
-+	if (ret) {
-+		if (ret != -EBUSY)
-+			pr_err("Failed to register cpuidle driver\n");
-+		goto out_kfree_drv;
- 	}
- 
- 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -2405,6 +2405,8 @@ retry_inode:
+ 			error = ext4_xattr_block_set(handle, inode, &i, &bs);
+ 		} else if (error == -ENOSPC) {
+ 			if (EXT4_I(inode)->i_file_acl && !bs.s.base) {
++				brelse(bs.bh);
++				bs.bh = NULL;
+ 				error = ext4_xattr_block_find(inode, &i, &bs);
+ 				if (error)
+ 					goto cleanup;
 
 
