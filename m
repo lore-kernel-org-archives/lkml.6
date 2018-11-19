@@ -2,53 +2,54 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDF7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E6EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0975208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE0C213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtVMMDjp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0975208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/NpqBkI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE0C213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731557AbeKTC7L (ORCPT
+        id S1731570AbeKTC7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:10 -0500
+        id S1730350AbeKTC7N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40A0E20989;
-        Mon, 19 Nov 2018 16:35:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6E8B21104;
+        Mon, 19 Nov 2018 16:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645301;
-        bh=hyscv4ZFYFuShAmFHTHKFgFX0hnWG9ErhOpzC4wxSE8=;
+        s=default; t=1542645304;
+        bh=FRC4Ook9UnTVg/4E4JqWSyXqGm0HmXd5WPx6QrLGgHg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BtVMMDjphSe6LOql8j4/bEe7aEDtPOTNqDUnfN7twsu4yyn4FqclJcM+dL/GnZ/WT
-         uiXh42x3FfmAVGK93zyR+eyiD7COFrkpT+VSuv3R+Pv5o46n46SLqsULHakxckUn0l
-         JDmJuh4QXE/zDwidiFBwY9xU5gcfH32cAuX3Fd0A=
+        b=d/NpqBkIlhUfq058MBq29B37qgx3aQDSaDzQaa9al5vrak5zl4SkxiZtC6JpSd/k4
+         +EAuO22HUFFXke3PZIOl7OQB95v/d8LIf48vrJ7v7YhxklCUF1drUo5DGJGKYtx9M+
+         9pM3Yib6jMAwglSRBWYuknfd6gaFj6Ei6aMMVxTM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Sebastien Boisvert <sboisvert@gydle.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 113/205] perf stat: Handle different PMU names with common prefix
-Date:   Mon, 19 Nov 2018 17:27:00 +0100
-Message-Id: <20181119162634.922075642@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Souvik Banerjee <souvik1997@gmail.com>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 4.19 114/205] perf callchain: Honour the ordering of PERF_CONTEXT_{USER,KERNEL,etc}
+Date:   Mon, 19 Nov 2018 17:27:01 +0100
+Message-Id: <20181119162635.069236405@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -66,155 +67,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: David S. Miller <davem@davemloft.net>
 
-commit ea1fa48c055f833eb25f0c33188feecb7002ada5 upstream.
+commit e9024d519d892b38176cafd46f68a7cdddd77412 upstream.
 
-On s390 the CPU Measurement Facility for counters now supports
-2 PMUs named cpum_cf (CPU Measurement Facility for counters) and
-cpum_cf_diag (CPU Measurement Facility for diagnostic counters)
-for one and the same CPU.
+When processing using 'perf report -g caller', which is the default, we
+ended up reverting the callchain entries received from the kernel, but
+simply reverting throws away the information that tells that from a
+point onwards the addresses are for userspace, kernel, guest kernel,
+guest user, hypervisor.
 
-Running command
+The idea is that if we are walking backwards, for each cluster of
+non-cpumode entries we have to first scan backwards for the next one and
+use that for the cluster.
 
- [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
-	 -- ~/mytests/cf-tx-events 1
+This seems silly and more expensive than it needs to be but it is enough
+for a initial fix.
 
- Measuring transactions
- TX_C_TABORT_NO_SPECIAL: 0 expected:0
- TX_C_TABORT_SPECIAL: 0 expected:0
- TX_C_TEND: 1 expected:1
- TX_NC_TABORT: 11 expected:11
- TX_NC_TEND: 1 expected:1
+The code here is really complicated because it is intimately intertwined
+with the lbr and branch handling, as well as this callchain order,
+further fixes will be needed to properly take into account the cpumode
+in those cases.
 
- Performance counter stats for '/root/mytests/cf-tx-events 1':
+Another problem with ORDER_CALLER is that the NULL "0" IP that is at the
+end of most callchains shows up at the top of the histogram because
+every callchain contains it and with ORDER_CALLER it is the first entry.
 
-  2      tx_c_tend
-
-      0.002120091 seconds time elapsed
-
-      0.000121000 seconds user
-      0.002127000 seconds sys
-
- [root@s35lp76 perf]#
-
-displays output which is unexpected (and wrong):
-
-  2      tx_c_tend
-
-The test program definitely triggers only one transaction, as shown
-in line 'TX_C_TEND: 1 expected:1'.
-
-This is caused by the following call sequence:
-
-pmu_lookup() scans and installs a PMU.
-+--> pmu_aliases() parses all aliases in directory
-		.../<pmu-name>/events/* which are file names.
-     +--> pmu_aliases_parse() Read each file in directory and create
-                      an new alias entry. This is done with
-          +--> perf_pmu__new_alias() and
-	       +--> __perf_pmu__new_alias() which also check for
-	                   identical alias names.
-
-After pmu_aliases() returns, a complete list of event names
-for this pmu has been created. Now function
-
-pmu_add_cpu_aliases()   is called to add the events listed in the json
-|                       files to the alias list of the cpu.
-+--> perf_pmu__find_map()  Returns a pointer to the json events.
-
-Now function pmu_add_cpu_aliases() scans through all events listed
-in the JSON files for this CPU.
-Each json event pmu name is compared with the current PMU being
-built up and if they mismatch, the json event is added to the
-current PMUs alias list.
-To avoid duplicate entries the following comparison is done:
-
-	if (!is_arm_pmu_core(name)) {
-	     pname = pe->pmu ? pe->pmu : "cpu";
-	     if (strncmp(pname, name, strlen(pname)))
-		     continue;
-     }
-
-The culprit is the strncmp() function.
-
-Using current s390 PMU naming, the first PMU is 'cpum_cf'
-and a long list of events is added, among them 'tx_c_tend'
-
-When the second PMU named 'cpum_cf_diag' is added, only one event
-named 'CF_DIAG' is added by the pmu_aliases()  function.
-
-Now function pmu_add_cpu_aliases() is invoked for PMU 'cpum_cf_diag'.
-Since the CPUID string is the same for both PMUs, json file events
-for PMU named 'cpum_cf' are added to the PMU 'cpm_cf_diag'
-
-This happens because the strncmp() actually compares:
-
-     strncmp("cpum_cf", "cpum_cf_diag", 6);
-
-The first parameter is the pmu name taken from the event in
-the json file. The second parameter is the pmu name of the PMU
-currently being built.
-They are different, but the length of the compare only tests the
-common prefix and this returns 0(true) when it should return false.
-
-Now all events for PMU cpum_cf are added to the alias list for pmu
-cpum_cf_diag.
-
-Later on in function parse_events_add_pmu() the event 'tx_c_end' is
-searched in all available PMUs and found twice, adding it two
-times to the evsel_list global variable which is the root
-of all events. This results in a counter value of 2 instead
-of 1.
-
-Output with this patch:
-
- [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
-			-- ~/mytests/cf-tx-events 1
- Measuring transactions
- TX_C_TABORT_NO_SPECIAL: 0 expected:0
- TX_C_TABORT_SPECIAL: 0 expected:0
- TX_C_TEND: 1 expected:1
- TX_NC_TABORT: 11 expected:11
- TX_NC_TEND: 1 expected:1
-
- Performance counter stats for '/root/mytests/cf-tx-events 1':
-
-                  1      tx_c_tend
-
-      0.001815365 seconds time elapsed
-
-      0.000123000 seconds user
-      0.001756000 seconds sys
-
- [root@s35lp76 perf]#
-
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Reviewed-by: Sebastien Boisvert <sboisvert@gydle.com>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
-Link: http://lkml.kernel.org/r/20181023151616.78193-1-tmricht@linux.ibm.com
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Souvik Banerjee <souvik1997@gmail.com>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: stable@vger.kernel.org # 4.19
+Link: https://lkml.kernel.org/n/tip-2wt3ayp6j2y2f2xowixa8y6y@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/util/pmu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/machine.c |   35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -773,7 +773,7 @@ static void pmu_add_cpu_aliases(struct l
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -2140,6 +2140,27 @@ static int resolve_lbr_callchain_sample(
+ 	return 0;
+ }
  
- 		if (!is_arm_pmu_core(name)) {
- 			pname = pe->pmu ? pe->pmu : "cpu";
--			if (strncmp(pname, name, strlen(pname)))
-+			if (strcmp(pname, name))
- 				continue;
- 		}
++static int find_prev_cpumode(struct ip_callchain *chain, struct thread *thread,
++			     struct callchain_cursor *cursor,
++			     struct symbol **parent,
++			     struct addr_location *root_al,
++			     u8 *cpumode, int ent)
++{
++	int err = 0;
++
++	while (--ent >= 0) {
++		u64 ip = chain->ips[ent];
++
++		if (ip >= PERF_CONTEXT_MAX) {
++			err = add_callchain_ip(thread, cursor, parent,
++					       root_al, cpumode, ip,
++					       false, NULL, NULL, 0);
++			break;
++		}
++	}
++	return err;
++}
++
+ static int thread__resolve_callchain_sample(struct thread *thread,
+ 					    struct callchain_cursor *cursor,
+ 					    struct perf_evsel *evsel,
+@@ -2246,6 +2267,12 @@ static int thread__resolve_callchain_sam
+ 	}
  
+ check_calls:
++	if (callchain_param.order != ORDER_CALLEE) {
++		err = find_prev_cpumode(chain, thread, cursor, parent, root_al,
++					&cpumode, chain->nr - first_call);
++		if (err)
++			return (err < 0) ? err : 0;
++	}
+ 	for (i = first_call, nr_entries = 0;
+ 	     i < chain_nr && nr_entries < max_stack; i++) {
+ 		u64 ip;
+@@ -2260,9 +2287,15 @@ check_calls:
+ 			continue;
+ #endif
+ 		ip = chain->ips[j];
+-
+ 		if (ip < PERF_CONTEXT_MAX)
+                        ++nr_entries;
++		else if (callchain_param.order != ORDER_CALLEE) {
++			err = find_prev_cpumode(chain, thread, cursor, parent,
++						root_al, &cpumode, j);
++			if (err)
++				return (err < 0) ? err : 0;
++			continue;
++		}
+ 
+ 		err = add_callchain_ip(thread, cursor, parent,
+ 				       root_al, &cpumode, ip,
 
 
