@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01764C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0E1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD05521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 936032145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3aZBq38"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD05521104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yDUVPg6X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936032145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387861AbeKTDHP (ORCPT
+        id S2387872AbeKTDHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41338 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:14 -0500
+        id S1732866AbeKTDHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1280E2145D;
-        Mon, 19 Nov 2018 16:43:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABC2F2086A;
+        Mon, 19 Nov 2018 16:43:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645783;
-        bh=/ANQPiThJ1R8A7Q3oHWYHN1GYQDGsoK53owWsS5PeGc=;
+        s=default; t=1542645786;
+        bh=sW01/0U6M+HEoddLsDRArGRbmHKdflvHU+zQlcjB0nM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k3aZBq38nL5FG58P9jhPKgqIUUEx6T17QYcd27cpu1YJMCB/y5qoXtspMe2xemGDU
-         vdxCK5EClRPecE3OopwM+JhjU642hCA2awdpki+sxfhMfgxLrU+Bbv/gsImItsJKms
-         fMfqLn1RqH2hfzt9fM8H70oqCTfMzeUjq5DC9cK8=
+        b=yDUVPg6XFV2MeH0OWXVtctITKbhOCoghVgP6mkrwDZYxvbp7av069KiTHVne2BQ8G
+         K0SkAjiURkpg2kucKoU4t0ouuJRZ5YqKsjVKzrULxFJVCLhhO1xDvmopH6oAdG7wLt
+         Sz2p7E5Bqnwx+twW3OuXCfiBpvcyXNcsPSHhIEk4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jarod Wilson <jarod@redhat.com>
-Subject: [PATCH 4.18 088/171] bonding/802.3ad: fix link_failure_count tracking
-Date:   Mon, 19 Nov 2018 17:28:04 +0100
-Message-Id: <20181119162633.379114103@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.18 089/171] mtd: spi-nor: cadence-quadspi: Return error code in cqspi_direct_read_execute()
+Date:   Mon, 19 Nov 2018 17:28:05 +0100
+Message-Id: <20181119162633.536912550@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,53 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jarod Wilson <jarod@redhat.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit ea53abfab960909d622ca37bcfb8e1c5378d21cc upstream.
+commit 91d7b67000c6e9bd605624079fee5a084238ad92 upstream.
 
-Commit 4d2c0cda07448ea6980f00102dc3964eb25e241c set slave->link to
-BOND_LINK_DOWN for 802.3ad bonds whenever invalid speed/duplex values
-were read, to fix a problem with slaves getting into weird states, but
-in the process, broke tracking of link failures, as going straight to
-BOND_LINK_DOWN when a link is indeed down (cable pulled, switch rebooted)
-means we broke out of bond_miimon_inspect()'s BOND_LINK_DOWN case because
-!link_state was already true, we never incremented commit, and never got
-a chance to call bond_miimon_commit(), where slave->link_failure_count
-would be incremented. I believe the simple fix here is to mark the slave
-as BOND_LINK_FAIL, and let bond_miimon_inspect() transition the link from
-_FAIL to either _UP or _DOWN, and in the latter case, we now get proper
-incrementing of link_failure_count again.
+We return 0 unconditionally in 'cqspi_direct_read_execute()'.
+However, 'ret' is set to some error codes in several error handling
+paths.
 
-Fixes: 4d2c0cda0744 ("bonding: speed/duplex update at NETDEV_UP event")
-CC: Mahesh Bandewar <maheshb@google.com>
-CC: David S. Miller <davem@davemloft.net>
-CC: netdev@vger.kernel.org
-CC: stable@vger.kernel.org
-Signed-off-by: Jarod Wilson <jarod@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Return 'ret' instead to propagate the error code.
+
+Fixes: ffa639e069fb ("mtd: spi-nor: cadence-quadspi: Add DMA support for direct mode reads")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/bonding/bond_main.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mtd/spi-nor/cadence-quadspi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -3118,13 +3118,13 @@ static int bond_slave_netdev_event(unsig
- 	case NETDEV_CHANGE:
- 		/* For 802.3ad mode only:
- 		 * Getting invalid Speed/Duplex values here will put slave
--		 * in weird state. So mark it as link-down for the time
-+		 * in weird state. So mark it as link-fail for the time
- 		 * being and let link-monitoring (miimon) set it right when
- 		 * correct speeds/duplex are available.
- 		 */
- 		if (bond_update_speed_duplex(slave) &&
- 		    BOND_MODE(bond) == BOND_MODE_8023AD)
--			slave->link = BOND_LINK_DOWN;
-+			slave->link = BOND_LINK_FAIL;
+--- a/drivers/mtd/spi-nor/cadence-quadspi.c
++++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+@@ -1000,7 +1000,7 @@ static int cqspi_direct_read_execute(str
+ err_unmap:
+ 	dma_unmap_single(nor->dev, dma_dst, len, DMA_DEV_TO_MEM);
  
- 		if (BOND_MODE(bond) == BOND_MODE_8023AD)
- 			bond_3ad_adapter_speed_duplex_changed(slave);
+-	return 0;
++	return ret;
+ }
+ 
+ static ssize_t cqspi_read(struct spi_nor *nor, loff_t from,
 
 
