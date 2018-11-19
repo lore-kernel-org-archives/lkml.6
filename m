@@ -2,160 +2,108 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5916C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B1EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73B2F20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:08:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LzZBnrss"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73B2F20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D80B20823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:09:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D80B20823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732006AbeKTJex (ORCPT
+        id S1732040AbeKTJfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:34:53 -0500
-Received: from casper.infradead.org ([85.118.1.10]:41820 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730860AbeKTJex (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:34:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=mNPrxFplk3fQvtntwXvn6IitRLf+dvH9PsgvUwmY5F0=; b=LzZBnrss/9GX3hgZGFDdkD/28x
-        6Fle7oCVSxiYfIzHEPd8ZWD6hYDkZkeyr1uDnX+aUdH2mQCIu5+AYx86sXvnVarND+eUTr5skVQ2E
-        KVZsM5ikPJed0fAR5CdWcjGGOTnoT4K0utKQFG3F+dhLxUWe0l/6VscI1KI3ynzkn+1NjCCk5GjRI
-        I/U7oUDSVmvz00NsGsXc0oXTiO9ImvVijuD1TyhHwEgFPXphbXhmg6xyODFBatjiveu3qNmP48c0w
-        iTBGTX13A2FRxzbJywltUCIoR/D+UrEzYWNHN2qdkcc/q4sQZ+cx0dJlERDpuaZUdxigZd0zTrkC3
-        n7OIWHLQ==;
-Received: from 177.205.94.246.dynamic.adsl.gvt.net.br ([177.205.94.246] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOsex-0003e6-2A; Mon, 19 Nov 2018 23:08:51 +0000
-Date:   Mon, 19 Nov 2018 21:08:45 -0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     stakanov <stakanov@eclipso.eu>
-Cc:     Takashi Iwai <tiwai@suse.de>,
-        Stakanov Schufter <stakanov@freenet.de>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Message-ID: <20181119210845.38072faf@coco.lan>
-In-Reply-To: <2988162.jBOhpiBzca@roadrunner.suse>
-References: <s5hbm6l5cdi.wl-tiwai@suse.de>
-        <20181119155326.24f6083f@coco.lan>
-        <s5hwop8g88o.wl-tiwai@suse.de>
-        <2988162.jBOhpiBzca@roadrunner.suse>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 20 Nov 2018 04:35:15 -0500
+Received: from mga14.intel.com ([192.55.52.115]:37762 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730860AbeKTJfP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:35:15 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:09:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
+   d="scan'208";a="97554814"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by FMSMGA003.fm.intel.com with ESMTP; 19 Nov 2018 15:09:16 -0800
+Date:   Mon, 19 Nov 2018 16:06:00 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 4/7] node: Add memory caching attributes
+Message-ID: <20181119230600.GC26707@localhost.localdomain>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+ <20181114224921.12123-5-keith.busch@intel.com>
+ <91698cef-cdcd-5143-884f-3da5536e156f@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91698cef-cdcd-5143-884f-3da5536e156f@arm.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 19 Nov 2018 23:59:39 +0100
-stakanov <stakanov@eclipso.eu> escreveu:
+On Mon, Nov 19, 2018 at 09:44:00AM +0530, Anshuman Khandual wrote:
+> On 11/15/2018 04:19 AM, Keith Busch wrote:
+> > System memory may have side caches to help improve access speed. While
+> > the system provided cache is transparent to the software accessing
+> > these memory ranges, applications can optimize their own access based
+> > on cache attributes.
+> 
+> Cache is not a separate memory attribute. It impacts how the real attributes
+> like bandwidth, latency e.g which are already captured in the previous patch.
+> What is the purpose of adding this as a separate attribute ? Can you explain
+> how this is going to help the user space apart from the hints it has already
+> received with bandwidth, latency etc properties.
 
-> In data luned=C3=AC 19 novembre 2018 20:47:19 CET, Takashi Iwai ha scritt=
-o:
-> > On Mon, 19 Nov 2018 18:53:26 +0100,
-> >=20
-> > Mauro Carvalho Chehab wrote: =20
-> > > Could you ask the user to apply the enclosed patch and provide us
-> > > the results of those prints? =20
-> >=20
-> > OK, I built a test kernel in OBS home:tiwai:bsc1116374 repo.  Now it's
-> > available at
-> > =20
-> > https://download.opensuse.org/repositories/home:/tiwai:/bsc1116374/stan=
-dard
-> > /
-> >=20
-> > Stakanov, could you test it and give the kernel messages?
-> >=20
-> >=20
-> > Thanks!
-> >=20
-> > Takashi =20
-> Here we go, I did saw your mail only late, sorry.
->=20
->=20
-> Result of proposed fix (rc3): card has still no function, does not sync, =
-EPG=20
-> works. No sound no picture.=20
+I am not sure I understand the question here. Access bandwidth and latency
+are entirely attributes different than what this patch provides. If the
+system side-caches memory, the associativity, line size, and total size
+can optionally be used by software to improve performance.
+ 
+> > In preparation for such systems, provide a new API for the kernel to
+> > register these memory side caches under the memory node that provides it.
+> 
+> Under target memory node interface /sys/devices/system/node/nodeY/target* ?
 
-This is not a fix. It just adds some new messages that should help to
-explain why the frequency range seems wrong.
+Yes.
+ 
+> > 
+> > The kernel's sysfs representation is modeled from the cpu cacheinfo
+> > attributes, as seen from /sys/devices/system/cpu/cpuX/cache/. Unlike CPU
+> > cacheinfo, though, a higher node's memory cache level is nearer to the
+> > CPU, while lower levels are closer to the backing memory. Also unlike
+> > CPU cache, the system handles flushing any dirty cached memory to the
+> > last level the memory on a power failure if the range is persistent.
+> 
+> Lets assume that a CPU has got four levels of caches L1, L2, L3, L4 before
+> reaching memory. L4 is the backing cache for the memory 
 
->=20
-> entropy@silversurfer:~> uname -a        =20
-> Linux silversurfer 4.20.0-rc3-1.g7e16618-default #1 SMP PREEMPT Mon Nov 1=
-9=20
-> 18:54:15 UTC 2018 (7e16618) x86_64 x86_64 x86_64 GNU/Linux
->=20
-> output of=20
-> entropy@silversurfer:~> sudo dmesg | grep -i b2c2  =20
-> [    4.831163] b2c2-flexcop: B2C2 FlexcopII/II(b)/III digital TV receiver=
- chip=20
-> loaded successfully
-> [    4.862648] b2c2-flexcop: MAC address =3D xx:xx:xx:xx:xx:xx
-> [    5.094173] b2c2-flexcop: found 'ST STV0299 DVB-S' .
-> [    5.094177] b2c2_flexcop_pci 0000:06:06.0: DVB: registering adapter 0=
-=20
-> frontend 0 (ST STV0299 DVB-S)...
-> [    5.094248] b2c2-flexcop: initialization of 'Sky2PC/SkyStar 2 DVB-S re=
-v=20
-> 2.6' at the 'PCI' bus controlled by a 'FlexCopIIb' complete
-> [  121.789236] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
-> frequency 1880000 out of range (950000..2150)
-> [  128.817325] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
-> frequency 1944750 out of range (950000..2150)
+I don't quite understand this question either. The cache doesn't back
+the memory; the system side caches access to memory.
 
-Are you sure you booted the right Kernel? I'm not seeing the new messages
-here that should be printing the tuner and frontend frequency ranges.
+> and L1-L3 is from
+> CPU till the system bus. Hence some of them will be represented as CPU
+> caches and some of them will be represented as memory caches ?
+>
+> /sys/devices/system/cpu/cpuX/cache/ --> L1, L2, L3
+> /sys/devices/system/node/nodeY/target --> L4 
+> 
+> L4 will be listed even if the node is memory only ?
 
->=20
-> sudo lspci -vvv =20
-> 06:06.0 Network controller: Techsan Electronics Co Ltd B2C2 FlexCopII DVB=
- chip=20
-> / Technisat SkyStar2 DVB card (rev 02)
->         Subsystem: Techsan Electronics Co Ltd B2C2 FlexCopII DVB chip /=20
-> Technisat SkyStar2 DVB card
->         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParEr=
-r-=20
-> Stepping- SERR- FastB2B- DisINTx-
->         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dslow >TAbort-=
-=20
-> <TAbort- <MAbort- >SERR- <PERR- INTx-
->         Latency: 32
->         Interrupt: pin A routed to IRQ 20
->         NUMA node: 0
->         Region 0: Memory at fe500000 (32-bit, non-prefetchable) [size=3D6=
-4K]
->         Region 1: I/O ports at b040 [size=3D32]
->         Kernel driver in use: b2c2_flexcop_pci
->         Kernel modules: b2c2_flexcop_pci
->=20
->=20
->=20
->=20
-> _________________________________________________________________
-> ________________________________________________________
-> Ihre E-Mail-Postf=C3=A4cher sicher & zentral an einem Ort. Jetzt wechseln=
- und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
->=20
->=20
-
-
-
-Thanks,
-Mauro
+The system provided memory side caches are independent of the
+CPU. I'm just providing the CPU caches as a more familiar example to
+compare/contrast system memory cache attributes.
