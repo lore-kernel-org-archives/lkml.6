@@ -7,56 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BD7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C50C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB77820C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4262086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWFV7Yfr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB77820C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATA/Qgmt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4262086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388076AbeKTDIA (ORCPT
+        id S2388091AbeKTDID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42310 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:59 -0500
+        id S1731911AbeKTDIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3575521104;
-        Mon, 19 Nov 2018 16:43:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D72EB2086A;
+        Mon, 19 Nov 2018 16:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645828;
-        bh=WvU4THMIjFl9/H8Lfz5KU4pnV/BlCuxQD4uV3uk3Ni0=;
+        s=default; t=1542645831;
+        bh=IHgHSsEbRwnMtzr9JDx6HgV44AXUaDqCRf8ORoU5nuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sWFV7YfrUhhWLKF0LnS9IvArc1p2SsGnYsqPfl33tgwVJqVRzFaNLFcWBkNtGQpOQ
-         LQJyljcK2gpodi9YORQpEE5aw8QJXLObaupDMBm07nQjjr7X2h3pGauhyaoJQPRDdR
-         mK/PMcdrt0pwj/qZfmsXEBMmErFhnxTwpP33FcBo=
+        b=ATA/QgmtHsb0UoERmRTRSY8XOqt69GMqe2Hx3Z6hm14q+wfkGaHU1HQwqTBTKZaAo
+         IB5khm7z5A4zhJ7tOGyJPJcCyughRj883KtBxTpUS8CPlic7EPQbETFBQwdcVlFbhZ
+         KEclauEnfZSKA7KEA39Yuez1uMl12ZjrXGAvdFw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "akataria@vmware.com" <akataria@vmware.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: [PATCH 4.18 104/171] clockevents/drivers/i8253: Add support for PIT shutdown quirk
-Date:   Mon, 19 Nov 2018 17:28:20 +0100
-Message-Id: <20181119162635.431363738@linuxfoundation.org>
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.18 078/171] scsi: qla2xxx: Initialize port speed to avoid setting lower speed
+Date:   Mon, 19 Nov 2018 17:27:54 +0100
+Message-Id: <20181119162632.112139842@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -74,79 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Kelley <mikelley@microsoft.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 35b69a420bfb56b7b74cb635ea903db05e357bec upstream.
+commit f635e48e866ee1a47d2d42ce012fdcc07bf55853 upstream.
 
-Add support for platforms where pit_shutdown() doesn't work because of a
-quirk in the PIT emulation. On these platforms setting the counter register
-to zero causes the PIT to start running again, negating the shutdown.
+This patch initializes port speed so that firmware does not set lower
+operating speed. Setting lower speed in firmware impacts WRITE perfomance.
 
-Provide a global variable that controls whether the counter register is
-zero'ed, which platform specific code can override.
-
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
-Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
-Cc: "jgross@suse.com" <jgross@suse.com>
-Cc: "akataria@vmware.com" <akataria@vmware.com>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>
-Cc: "apw@canonical.com" <apw@canonical.com>
-Cc: vkuznets <vkuznets@redhat.com>
-Cc: "jasowang@redhat.com" <jasowang@redhat.com>
-Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Cc: KY Srinivasan <kys@microsoft.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1541303219-11142-2-git-send-email-mikelley@microsoft.com
+Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Tested-by: Laurence Oberman <loberman@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clocksource/i8253.c |   14 ++++++++++++--
- include/linux/i8253.h       |    1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -20,6 +20,13 @@
- DEFINE_RAW_SPINLOCK(i8253_lock);
- EXPORT_SYMBOL(i8253_lock);
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -4491,6 +4491,7 @@ qla2x00_alloc_fcport(scsi_qla_host_t *vh
+ 	fcport->loop_id = FC_NO_LOOP_ID;
+ 	qla2x00_set_fcport_state(fcport, FCS_UNCONFIGURED);
+ 	fcport->supported_classes = FC_COS_UNSPECIFIED;
++	fcport->fp_speed = PORT_SPEED_UNKNOWN;
  
-+/*
-+ * Handle PIT quirk in pit_shutdown() where zeroing the counter register
-+ * restarts the PIT, negating the shutdown. On platforms with the quirk,
-+ * platform specific code can set this to false.
-+ */
-+bool i8253_clear_counter_on_shutdown __ro_after_init = true;
-+
- #ifdef CONFIG_CLKSRC_I8253
- /*
-  * Since the PIT overflows every tick, its not very useful
-@@ -109,8 +116,11 @@ static int pit_shutdown(struct clock_eve
- 	raw_spin_lock(&i8253_lock);
- 
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
-+
-+	if (i8253_clear_counter_on_shutdown) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
-+	}
- 
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
---- a/include/linux/i8253.h
-+++ b/include/linux/i8253.h
-@@ -21,6 +21,7 @@
- #define PIT_LATCH	((PIT_TICK_RATE + HZ/2) / HZ)
- 
- extern raw_spinlock_t i8253_lock;
-+extern bool i8253_clear_counter_on_shutdown;
- extern struct clock_event_device i8253_clockevent;
- extern void clockevent_i8253_init(bool oneshot);
- 
+ 	fcport->ct_desc.ct_sns = dma_alloc_coherent(&vha->hw->pdev->dev,
+ 		sizeof(struct ct_sns_pkt), &fcport->ct_desc.ct_sns_dma,
 
 
