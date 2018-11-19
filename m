@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906DFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F51C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D3721104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A622147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpcGvDJT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55D3721104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XShPHNjJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67A622147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404588AbeKTDVx (ORCPT
+        id S2404601AbeKTDVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:21:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33374 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403956AbeKTDVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:21:52 -0500
+        id S2403956AbeKTDVy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:21:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 733B02146D;
-        Mon, 19 Nov 2018 16:57:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 036AD208E3;
+        Mon, 19 Nov 2018 16:57:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646657;
-        bh=DB/mEVuat85eHrkipcG00lbtYKTOC6T0wwgduzRBlRA=;
+        s=default; t=1542646659;
+        bh=J1fYLOrrBIvZX1fbAKiGSlFD1fSmXIdBDjYTFPEnXSU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dpcGvDJTRVNLrxHLXYJ1sYDCi73lUt8ExafYzNbOjtsdGqUsLPuJtkDAHYxyjXFBE
-         O+g5AV/3MmYjaOOBxc28a7hZcGbU9VbaAiLJGjWxC1eo90mtcyTThbJXWtdua3FeBn
-         DlCf31cH0An6kvR8nzVm7X/rJhac2Xh8jmMkPcLg=
+        b=XShPHNjJpPKdsrM9lpqVs+Fe3WWF9sKqW6ZJhUm3h718QPZWQ6vzSJoEuYgMeQCYS
+         Lm+JHhTx7QY5Jx+Lx0IoNfbJ23TIL8orj0Uy2VaQsrOcnJcnF4+ISwnUG9jmPFaIOg
+         rArY5S8NPsbiYlqfdcAHTiLM/cNrTuFtjVd35IpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 041/160] signal: Always deliver the kernels SIGKILL and SIGSTOP to a pid namespace init
-Date:   Mon, 19 Nov 2018 17:28:00 +0100
-Message-Id: <20181119162635.218572199@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 042/160] dmaengine: dma-jz4780: Return error if not probed from DT
+Date:   Mon, 19 Nov 2018 17:28:01 +0100
+Message-Id: <20181119162635.368468495@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,36 +63,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit 3597dfe01d12f570bc739da67f857fd222a3ea66 ]
+[ Upstream commit 54f919a04cf221bc1601d1193682d4379dacacbd ]
 
-Instead of playing whack-a-mole and changing SEND_SIG_PRIV to
-SEND_SIG_FORCED throughout the kernel to ensure a pid namespace init
-gets signals sent by the kernel, stop allowing a pid namespace init to
-ignore SIGKILL or SIGSTOP sent by the kernel.  A pid namespace init is
-only supposed to be able to ignore signals sent from itself and
-children with SIG_DFL.
+The driver calls clk_get() with the clock name set to NULL, which means
+that the driver could only work when probed from devicetree. From now
+on, we explicitly require the driver to be probed from devicetree.
 
-Fixes: 921cf9f63089 ("signals: protect cinit from unblocked SIG_DFL signals")
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/signal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/dma-jz4780.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -991,7 +991,7 @@ static int __send_signal(int sig, struct
+--- a/drivers/dma/dma-jz4780.c
++++ b/drivers/dma/dma-jz4780.c
+@@ -750,6 +750,11 @@ static int jz4780_dma_probe(struct platf
+ 	struct resource *res;
+ 	int i, ret;
  
- 	result = TRACE_SIGNAL_IGNORED;
- 	if (!prepare_signal(sig, t,
--			from_ancestor_ns || (info == SEND_SIG_FORCED)))
-+			from_ancestor_ns || (info == SEND_SIG_PRIV) || (info == SEND_SIG_FORCED)))
- 		goto ret;
- 
- 	pending = group ? &t->signal->shared_pending : &t->pending;
++	if (!dev->of_node) {
++		dev_err(dev, "This driver must be probed from devicetree\n");
++		return -EINVAL;
++	}
++
+ 	jzdma = devm_kzalloc(dev, sizeof(*jzdma), GFP_KERNEL);
+ 	if (!jzdma)
+ 		return -ENOMEM;
 
 
