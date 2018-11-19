@@ -7,44 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFE5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD20C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD842151B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 643B9214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4vn2Tc7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD842151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dgtna6a1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 643B9214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436459AbeKTDar (ORCPT
+        id S2407174AbeKTDau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45922 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405988AbeKTDaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:46 -0500
+        id S2405988AbeKTDat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E4EA214DA;
-        Mon, 19 Nov 2018 17:06:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A80C721508;
+        Mon, 19 Nov 2018 17:06:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647188;
-        bh=JbPZ17STDrDiVXKsp6eJQ8FzNe3GltXFFfJetM5cwmc=;
+        s=default; t=1542647191;
+        bh=829Qo0hMxGFkZJsV/I1a+D6oBvOiJ3ucM8z2YUfcYC4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J4vn2Tc7LfarC/S3Fu1y/N2a+f2rmsD6o0VnWbEZhi6CQ8UAnEBeSZByAiVtG8hs7
-         wJR9pGgCzsRRso4TP+vNX3vl8nPlVJ7N0aUaKaR9GMzBzNmdE1iwPkSP/MuofkCSHc
-         HWZrXVU96NEiu83hVJjyrNuZ3B9M84UOePFO46q4=
+        b=Dgtna6a11HO6hvqDfy19uZOL4Eqb9mQOGaxSo5ISq8U7Iw3aNF4/N2F+Z6238Wdbh
+         K4qEob15WDldJGf+W2dAvshivi8ytabzDB2bcqEN3iuq+K0MemcctalJRo6sF3XbA9
+         BnNE9KFVOIzw0KJfXNUo6o/msEn4DqARaVBlj9L0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Calmels <jcalmels@nvidia.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 3.18 85/90] mount: Dont allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
-Date:   Mon, 19 Nov 2018 17:30:07 +0100
-Message-Id: <20181119162633.498774659@linuxfoundation.org>
+        stable@vger.kernel.org, Changwei Ge <ge.changwei@h3c.com>,
+        Changkuo Shi <shi.changkuo@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 68/90] ocfs2: fix a misuse a of brelse after failing ocfs2_check_dir_entry
+Date:   Mon, 19 Nov 2018 17:29:50 +0100
+Message-Id: <20181119162631.333818558@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,71 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Changwei Ge <ge.changwei@h3c.com>
 
-commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
+commit 29aa30167a0a2e6045a0d6d2e89d8168132333d5 upstream.
 
-Jonathan Calmels from NVIDIA reported that he's able to bypass the
-mount visibility security check in place in the Linux kernel by using
-a combination of the unbindable property along with the private mount
-propagation option to allow a unprivileged user to see a path which
-was purposefully hidden by the root user.
+Somehow, file system metadata was corrupted, which causes
+ocfs2_check_dir_entry() to fail in function ocfs2_dir_foreach_blk_el().
 
-Reproducer:
-  # Hide a path to all users using a tmpfs
-  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
-  root@castiana:~#
+According to the original design intention, if above happens we should
+skip the problematic block and continue to retrieve dir entry.  But
+there is obviouse misuse of brelse around related code.
 
-  # As an unprivileged user, unshare user namespace and mount namespace
-  stgraber@castiana:~$ unshare -U -m -r
+After failure of ocfs2_check_dir_entry(), current code just moves to
+next position and uses the problematic buffer head again and again
+during which the problematic buffer head is released for multiple times.
+I suppose, this a serious issue which is long-lived in ocfs2.  This may
+cause other file systems which is also used in a the same host insane.
 
-  # Confirm the path is still not accessible
-  root@castiana:~# ls /sys/devices/
+So we should also consider about bakcporting this patch into linux
+-stable.
 
-  # Make /sys recursively unbindable and private
-  root@castiana:~# mount --make-runbindable /sys
-  root@castiana:~# mount --make-private /sys
-
-  # Recursively bind-mount the rest of /sys over to /mnnt
-  root@castiana:~# mount --rbind /sys/ /mnt
-
-  # Access our hidden /sys/device as an unprivileged user
-  root@castiana:~# ls /mnt/devices/
-  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
-  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
-  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
-
-Solve this by teaching copy_tree to fail if a mount turns out to be
-both unbindable and locked.
-
-Cc: stable@vger.kernel.org
-Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Link: http://lkml.kernel.org/r/HK2PR06MB045211675B43EED794E597B6D56E0@HK2PR06MB0452.apcprd06.prod.outlook.com
+Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
+Suggested-by: Changkuo Shi <shi.changkuo@h3c.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/ocfs2/dir.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1661,8 +1661,14 @@ struct mount *copy_tree(struct mount *mn
- 			struct mount *t = NULL;
- 			if (!(flag & CL_COPY_UNBINDABLE) &&
- 			    IS_MNT_UNBINDABLE(s)) {
--				s = skip_mnt_tree(s);
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -1906,8 +1906,7 @@ static int ocfs2_dir_foreach_blk_el(stru
+ 				/* On error, skip the f_pos to the
+ 				   next block. */
+ 				ctx->pos = (ctx->pos | (sb->s_blocksize - 1)) + 1;
+-				brelse(bh);
 -				continue;
-+				if (s->mnt.mnt_flags & MNT_LOCKED) {
-+					/* Both unbindable and locked. */
-+					q = ERR_PTR(-EPERM);
-+					goto out;
-+				} else {
-+					s = skip_mnt_tree(s);
-+					continue;
-+				}
++				break;
  			}
- 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
- 			    is_mnt_ns_file(s->mnt.mnt_root)) {
+ 			if (le64_to_cpu(de->inode)) {
+ 				unsigned char d_type = DT_UNKNOWN;
 
 
