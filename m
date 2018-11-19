@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B239AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0965BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4B322360
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6E9322360
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1dVTJww"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4B322360
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXIy5zgo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E9322360
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405280AbeKTDYZ (ORCPT
+        id S2405293AbeKTDY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36744 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:24 -0500
+        id S2404390AbeKTDY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01BB221780;
-        Mon, 19 Nov 2018 17:00:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9524A22353;
+        Mon, 19 Nov 2018 17:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646808;
-        bh=orqZ7fB8BejP2tdtJWXdLuRGsHEeRQtsLhXWkwZjIa4=;
+        s=default; t=1542646811;
+        bh=+Kr8Mx8OxrelcekNH/cA5qDIyCk7NjFt93THmdpixgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q1dVTJwwCRC3F7mTQA+twzxjuu/zNmzgsxA+q3+gBblHcNUyFgsMFNak9nH+f9PhI
-         KO0m+8DQn8z1s40nw1VmsDdOEV/BvYAIrYKEzoheNyjB+baUiVKwD8YWHkOtmwTyPC
-         Zd4uI6hr6h9tqmejbTtiSsQG3M+9FaLbb0ZIlo1c=
+        b=MXIy5zgo6ZR0X/NhCHusBZf8DVrbWdrcmc+YDrv7sAciSFT76IgE+pMEJl/cGoJFH
+         cqBfPqtVVNdy+r1EUd2UFHeZMdmNbBypMOznaeJb6WbenR7PrywGdajxebJ59GBesr
+         60p2ZOxexeS9+5rSHnxiwRxVF7qWiKO+9BvoyQjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 097/160] powerpc/nohash: fix undefined behaviour when testing page size support
-Date:   Mon, 19 Nov 2018 17:28:56 +0100
-Message-Id: <20181119162640.504141121@linuxfoundation.org>
+Subject: [PATCH 4.4 098/160] drm/omap: fix memory barrier bug in DMM driver
+Date:   Mon, 19 Nov 2018 17:28:57 +0100
+Message-Id: <20181119162640.582220192@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,53 +63,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Axtens <dja@axtens.net>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
+[ Upstream commit 538f66ba204944470a653a4cccc5f8befdf97c22 ]
 
-When enumerating page size definitions to check hardware support,
-we construct a constant which is (1U << (def->shift - 10)).
+A DMM timeout "timed out waiting for done" has been observed on DRA7
+devices. The timeout happens rarely, and only when the system is under
+heavy load.
 
-However, the array of page size definitions is only initalised for
-various MMU_PAGE_* constants, so it contains a number of 0-initialised
-elements with def->shift == 0. This means we end up shifting by a
-very large number, which gives the following UBSan splat:
+Debugging showed that the timeout can be made to happen much more
+frequently by optimizing the DMM driver, so that there's almost no code
+between writing the last DMM descriptors to RAM, and writing to DMM
+register which starts the DMM transaction.
 
-================================================================================
-UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
-shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
-CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
-Call Trace:
-[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
-[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
-[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
-[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
-[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
-[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
-================================================================================
+The current theory is that a wmb() does not properly ensure that the
+data written to RAM is observable by all the components in the system.
 
-Fix this by first checking if the element exists (shift != 0) before
-constructing the constant.
+This DMM timeout has caused interesting (and rare) bugs as the error
+handling was not functioning properly (the error handling has been fixed
+in previous commits):
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+ * If a DMM timeout happened when a GEM buffer was being pinned for
+   display on the screen, a timeout error would be shown, but the driver
+   would continue programming DSS HW with broken buffer, leading to
+   SYNCLOST floods and possible crashes.
+
+ * If a DMM timeout happened when other user (say, video decoder) was
+   pinning a GEM buffer, a timeout would be shown but if the user
+   handled the error properly, no other issues followed.
+
+ * If a DMM timeout happened when a GEM buffer was being released, the
+   driver does not even notice the error, leading to crashes or hang
+   later.
+
+This patch adds wmb() and readl() calls after the last bit is written to
+RAM, which should ensure that the execution proceeds only after the data
+is actually in RAM, and thus observable by DMM.
+
+The read-back should not be needed. Further study is required to understand
+if DMM is somehow special case and read-back is ok, or if DRA7's memory
+barriers do not work correctly.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/tlb_nohash.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/powerpc/mm/tlb_nohash.c
-+++ b/arch/powerpc/mm/tlb_nohash.c
-@@ -487,6 +487,9 @@ static void setup_page_sizes(void)
- 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
- 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -262,6 +262,17 @@ static int dmm_txn_commit(struct dmm_txn
+ 	}
  
-+			if (!def->shift)
-+				continue;
+ 	txn->last_pat->next_pa = 0;
++	/* ensure that the written descriptors are visible to DMM */
++	wmb();
 +
- 			if (tlb1ps & (1U << (def->shift - 10))) {
- 				def->flags |= MMU_PAGE_SIZE_DIRECT;
++	/*
++	 * NOTE: the wmb() above should be enough, but there seems to be a bug
++	 * in OMAP's memory barrier implementation, which in some rare cases may
++	 * cause the writes not to be observable after wmb().
++	 */
++
++	/* read back to ensure the data is in RAM */
++	readl(&txn->last_pat->next_pa);
  
+ 	/* write to PAT_DESCR to clear out any pending transaction */
+ 	writel(0x0, dmm->base + reg[PAT_DESCR][engine->id]);
 
 
