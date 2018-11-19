@@ -2,157 +2,137 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A24C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552CCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640EB2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9C320823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="S0OchZwj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640EB2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="G4VeVDUx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9C320823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbeKTJBL (ORCPT
+        id S1731551AbeKTJBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:01:11 -0500
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:39716 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730290AbeKTJBL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:01:11 -0500
-Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
-        by m0050102.ppops.net-00190b01. (8.16.0.27/8.16.0.27) with SMTP id wAJMVkfK031411;
-        Mon, 19 Nov 2018 22:35:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=to : cc : from :
- subject : message-id : date : mime-version : content-type :
- content-transfer-encoding; s=jan2016.eng;
- bh=fR7w9eKOfadedwofODg8KMuk3N4I/GM94hsdonx37Jk=;
- b=S0OchZwjwwSVLkvxMl27tPfTEj03e771Tyu0LWwxjhP4bZG04nLWiBt135HoDnjRJ3PJ
- Do040XyaIloT5y9ki4cU8eRRAcjrxuE5VcSL7ITUD4mUi0UOPsqirT7EkvVSJFrx9pil
- 97Yw7EEIa6fU1cILZSa4SfSztxOHEGL/6iD3G65raM+X4y7gokg3A6SE1KejJmSLi5bZ
- pTppc973nulvX47zFTvVJKlnF1TS+B7oTu8P4qndHy2UlziZOsswaZhMyES2k3pwu4A5
- vICkSUkIIVzK2LK4Qc1MauxTHzxiipTFe9XtDC9qSvfNd+abY3pB2DZHwZM0eslE2LNz 4A== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18])
-        by m0050102.ppops.net-00190b01. with ESMTP id 2nuwy6hndr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Nov 2018 22:35:10 +0000
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.21/8.16.0.21) with SMTP id wAJMZ4uF017608;
-        Mon, 19 Nov 2018 17:35:09 -0500
-Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2ntf703f6t-1;
-        Mon, 19 Nov 2018 17:35:09 -0500
-Received: from [0.0.0.0] (prod-ssh-gw02.sanmateo.corp.akamai.com [172.22.187.166])
-        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 641201FCD8;
-        Mon, 19 Nov 2018 22:35:08 +0000 (GMT)
-To:     tglx@linutronix.de
-Cc:     saeedm@mellanox.com, linux-kernel@vger.kernel.org,
-        "Ozen, Gurhan" <guozen@akamai.com>
-From:   Josh Hunt <johunt@akamai.com>
-Subject: vector space exhaustion on 4.14 LTS kernels
-Message-ID: <598457c6-4bea-50f5-efe9-6a2af3405ff5@akamai.com>
-Date:   Mon, 19 Nov 2018 14:35:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 20 Nov 2018 04:01:19 -0500
+Received: from mail-eopbgr740128.outbound.protection.outlook.com ([40.107.74.128]:5984
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730458AbeKTJBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:01:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zeabsPwcl602CqMrbzDy0tqPAkTOfvUu5prgQhswAmE=;
+ b=G4VeVDUx2Ldt/4+iQUedyLPIKoCKod3EXr/7kL16UrYh401EVuWh5LvIcar4+Hn3pcyiGklm9ZjtwQIRP4hdBZ+1bXsYwBO1o12ez58MU7OdPWhb31n57KVeFkw6quxyVR0P1LdFiE75Vcoeg9dtukdSQAHOGE8IqsrdKYRVEgU=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1263.namprd22.prod.outlook.com (10.174.162.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.23; Mon, 19 Nov 2018 22:35:25 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::690f:b86d:7c2:e105]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::690f:b86d:7c2:e105%6]) with mapi id 15.20.1339.027; Mon, 19 Nov 2018
+ 22:35:25 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Firoz Khan <firoz.khan@linaro.org>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>
+Subject: Re: [PATCH v2 4/5] mips: add system call table generation support
+Thread-Topic: [PATCH v2 4/5] mips: add system call table generation support
+Thread-Index: AQHUfKqTsLovwmqgL0iEZ+Fxq0+0M6VXtv0A
+Date:   Mon, 19 Nov 2018 22:35:25 +0000
+Message-ID: <20181119223524.gsvjkf5v24ic7ilj@pburton-laptop>
+References: <1542262461-29024-1-git-send-email-firoz.khan@linaro.org>
+ <1542262461-29024-5-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1542262461-29024-5-git-send-email-firoz.khan@linaro.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811190200
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811190199
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR13CA0012.namprd13.prod.outlook.com
+ (2603:10b6:300:16::22) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1263;6:Q+bDItm706ix8NGdJckzdfToxuFKDLcHn1aueGjxUoNzRMHneCO6ffOtbqvL2bjfjXk9P0Nkp6IJxw0H5tSWY117KqG5Sb658jr5L8htsMovkkfAkrKVstGL+7bqMQl7q4gy8QQJ9lr95vnFxoa4DoWYgjc3S/l0F0RZtHlkNXKQyCvGmLXvFlpvUGda/PcIrkKa1GxoSlDlBEwYzTkHKTEzEFrLqLUqIiWhUC2ug3ByTURc9OeO4MpEv9xAvFe0nCIgQUOzVv78rFeYCh2PZ+0SY3Dxx9zKf76rhJS/XNuMBeZUksopf6O7YdJOQwPJg/ROQ0+HdhnbQ0M5kzmcnwFdxJtEXgU2rh8gNd8rBW9f2jY/swXpJhAYyt5Ifbd0iKrradPEs+sFYLtuJ7B9krmmGkoyYARtcZ+upEzy9b4mszhmxOIT+PFV13vN9nvD8V8wgzIhsOw2ry36gL/MGA==;5:zLG9JO5iZTvyeV5rF5FSSQmTYZ9YUbHOwb7lhRUu0aqDnJsi9Vl4IDrr+F27ZAPtCOMMNu2mIQi5Daq7u2LaA1AObqXcbIojV+2DBf9xGRDg8E1Zz5np7LmWzb1MIGMdtP+VtBphRNghjH/gqb3DdLOulNahcGjGUkS66rpoW4k=;7:hUzxV9iCYR8dAPmfRtxPNxVIbdPCr62LTWnUZSq3A7MUNpHgOBTNbNrM2SEMxox+EgvK4ILT46YxfoYvwDkqSITC6LWm0mLWOAVPG0pC2BZo7fjcUbHokH5LKii4SNk8EorGEdhmA0dA6PmVgYp9HA==
+x-ms-office365-filtering-correlation-id: acc00010-fcea-4c73-b2d8-08d64e6f4c5c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1263;
+x-ms-traffictypediagnostic: MWHPR2201MB1263:
+x-microsoft-antispam-prvs: <MWHPR2201MB1263A24AF51BCD28989F79FCC1D80@MWHPR2201MB1263.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(3231441)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1263;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1263;
+x-forefront-prvs: 08617F610C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(39840400004)(346002)(136003)(396003)(376002)(189003)(199004)(97736004)(229853002)(53936002)(8936002)(8676002)(7736002)(256004)(105586002)(508600001)(305945005)(81166006)(81156014)(66066001)(68736007)(54906003)(4326008)(25786009)(71200400001)(316002)(39060400002)(6486002)(7416002)(58126008)(71190400001)(6512007)(106356001)(5660300001)(9686003)(6916009)(44832011)(11346002)(386003)(6506007)(42882007)(33716001)(6116002)(446003)(33896004)(3846002)(14454004)(6246003)(102836004)(476003)(6436002)(2906002)(2900100001)(99286004)(486006)(1076002)(26005)(76176011)(186003)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1263;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: ItZSU0Au79Ut/af45KQTwuotIfqRLFDtz6A9SAfgr+CeEEZUm3bAoG5ze2eyFiihYauWbaxUyjrgiehDwaqV8RJse3kUZGljtfUI5gs8sm6ZvTOBgbd6noDGF6kw4qjQdBLi8WSc4JUErtt4wmoqx7G3YmP4Dw9ZiKbXnQCWDoOay4Se4nHcAAdE3ODF9uxYkIv+KflLwk+CcYzl1N8lzs0RHaH7/n410xtzL0Z11KPR4Hd7p3d8XK90ll46I/kCSztDWixQjuVWnWd5bbS3T3FQ8vLsMumsyknHp/2aYxULUt1nqlP5B+gBOVN0Bl81ekqtA5lBoW9AnnzgrLTGDlgSgCESighfPIvecqfaMno=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <A2E211591DB73D41806327B2F9F1BA57@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acc00010-fcea-4c73-b2d8-08d64e6f4c5c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 22:35:25.2436
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1263
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas
+Hi Firoz,
 
-We have a class of machines that appear to be exhausting the vector 
-space on cpus 0 and 1 which causes some breakage later on when trying to 
-set the affinity. The boxes are running the 4.14 LTS kernel.
+On Thu, Nov 15, 2018 at 11:44:20AM +0530, Firoz Khan wrote:
+> diff --git a/arch/mips/kernel/syscalls/Makefile b/arch/mips/kernel/syscal=
+ls/Makefile
+> new file mode 100644
+> index 0000000..dc6bbb1
+> --- /dev/null
+> +++ b/arch/mips/kernel/syscalls/Makefile
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +kapi :=3D arch/$(SRCARCH)/include/generated/asm
+> +uapi :=3D arch/$(SRCARCH)/include/generated/uapi/asm
+> +
+> +_dummy :=3D $(shell [ -d '$(uapi)' ] || mkdir -p '$(uapi)')	\
+> +	  $(shell [ -d '$(kapi)' ] || mkdir -p '$(kapi)')
+> +
+> +syscallo32 :=3D $(srctree)/$(src)/syscall_o32.tbl
+> +syscall64 :=3D $(srctree)/$(src)/syscall_64.tbl
+> +syscalln32 :=3D $(srctree)/$(src)/syscall_n32.tbl
+> +syshdr :=3D $(srctree)/$(src)/syscallhdr.sh
+> +systbl :=3D $(srctree)/$(src)/syscalltbl.sh
 
-I instrumented 4.14 and here's what I see:
+Could we go with 'n64' instead of just '64'?
 
-[   28.328849] __assign_irq_vector: irq:512 cpu:0 mask:ff,ffffffff 
-onlinemask:ff,ffffffff vector:0
-[   28.329847] __assign_irq_vector: irq:512 cpu:2 vector:222 cfgvect:0 
-off:14 old_domain:00,00000000 domain:00,00000000 
-vector_search:00,00000004 update
-[   28.329847] default_cpu_mask_to_apicid: irq:512 mask:00,00000004
-...
-[   31.729154] __assign_irq_vector: irq:512 cpu:0 mask:ff,ffffffff 
-onlinemask:ff,ffffffff vector:222
-[   31.729154] __assign_irq_vector: irq:512 cpu:0 mask:ff,ffffffff 
-vector_cpumask:00,00000001 vector:222
-...
-[   31.729154] __assign_irq_vector: irq:512 cpu:2 vector:00,00000004 
-domain:00,00000004 success
-[   31.729154] default_cpu_mask_to_apicid: irq:512 hwirq:512 
-mask:00,00000004
-[   31.729154] apic_set_affinity: irq:512 mask:ff,ffffffff err:0
-...
-[   32.818152] mlx5_irq_set_affinity_hint: 0: irq:512 mask:00,00000001
-...
-[   39.531242] __assign_irq_vector: irq:512 cpu:0 mask:00,00000001 
-onlinemask:ff,ffffffff vector:222
-[   39.531244] __assign_irq_vector: irq:512 cpu:0 mask:00,00000001 
-vector_cpumask:00,00000001 vector:222
-[   39.531245] __assign_irq_vector: irq:512 cpu:0 vector:00,00000001 
-domain:00,00000004
-...
-[   39.531384] __assign_irq_vector: irq:512 cpu:0 vector:37 
-current_vector:37 next_cpu2
-[   39.531385] __assign_irq_vector: irq:512 cpu:128 searched:00,00000001 
-vector:00,00000000 continue
-[   39.531386] apic_set_affinity: irq:512 mask:00,00000001 err:-28
+When we get nanoMIPS support we'll be introducing the p32 ABI, and
+there's a reasonable chance that the equivalent p64 ABI may come along
+in the future. Using 'n64' now would avoid confusion in that case where
+we may have 2 different 64-bit ABIs.
 
-The affinity values:
-
-root@172.25.48.208:/proc/irq/512# grep . *
-affinity_hint:00,00000001
-effective_affinity:00,00000004
-effective_affinity_list:2
-grep: mlx5_comp0@pci:0000:65:00.1: Is a directory
-node:0
-smp_affinity:ff,ffffffff
-smp_affinity_list:0-39
-spurious:count 3
-spurious:unhandled 0
-spurious:last_unhandled 0 ms
-
-I noticed your change, a0c9259dc4e1 "irq/matrix: Spread interrupts on 
-allocation", and this sounds like what we're hitting. Booting 4.19 does 
-not have this problem. I haven't booted 4.15 yet, but can do it to 
-confirm the above commit is what resolves this.
-
-Since 4.14 doesn't have the matrix allocator it's not a trivial 
-backport. I was wondering a) if you agree with my assessment and b) if 
-there's any plans on resolving this on the 4.14 allocator? If not I can 
-attempt to backport the idea to 4.14 to spread the interrupts around on 
-allocation.
-
-Thanks
-Josh
-
-
-
-
-
-
-
+Thanks,
+    Paul
