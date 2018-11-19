@@ -2,110 +2,137 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A18DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED2BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52AC22086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:13:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXgzFDyK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52AC22086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7151E2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:13:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7151E2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbeKTBhI (ORCPT
+        id S1729806AbeKTBhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:37:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48884 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 20:37:16 -0500
+Received: from mga04.intel.com ([192.55.52.120]:23618 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729554AbeKTBhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:37:06 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA7B020831;
-        Mon, 19 Nov 2018 15:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542640393;
-        bh=gio2I3O1hAFb7nVINuclbgJ1W6fbk3FRlykPh+9qQbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GXgzFDyKk/pZlxNICunKEb4Sdaya9sGOXSfsqUvD4+qQyntAHiXyQAztQEtHNGV0D
-         YRlPmoYaRmW91cYkyi5eWTtqQiw9PrUpTuen8cEDYNV3fTlUstRErK5kv9RtiVIgsG
-         KCdy0+7wsq+nI+3MHZNt5Yaz17hS8F8c4jxlNIiM=
-Date:   Mon, 19 Nov 2018 16:13:11 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@osdl.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH] sched: Do not bug in __sched_setscheduler() when pi is
- not used
-Message-ID: <20181119151311.GA5340@kroah.com>
-References: <20170309101842.1449d49a@gandalf.local.home>
- <46a07263-3327-94b6-f6b8-a0a17ae7bfee@broadcom.com>
+        id S1729554AbeKTBhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:37:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 07:13:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="109368805"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2018 07:13:22 -0800
+Received: from [10.252.27.191] (abudanko-mobl.ccr.corp.intel.com [10.252.27.191])
+        by linux.intel.com (Postfix) with ESMTP id 83752580460;
+        Mon, 19 Nov 2018 07:13:17 -0800 (PST)
+Subject: Re: [PATCH v1 2/2]: Documentation/admin-guide: introduce
+ perf-security.rst file
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jonatan Corbet <corbet@lwn.net>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
+References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
+ <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
+ <20181119103337.GZ9761@hirez.programming.kicks-ass.net>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <2a4e0b60-ba52-2d79-ec7d-d9b75f0ae5a1@linux.intel.com>
+Date:   Mon, 19 Nov 2018 18:13:16 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46a07263-3327-94b6-f6b8-a0a17ae7bfee@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181119103337.GZ9761@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 12:55:20PM -0800, Florian Fainelli wrote:
-> On 3/9/17 7:18 AM, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > 
-> > When priority inheritance was added back in 2.6.18 to sched_setscheduler, it
-> > added a path to taking an rt-mutex wait_lock, which is not IRQ safe. As PI
-> > is not a common occurrence, lockdep will likely never trigger if
-> > sched_setscheduler was called from interrupt context. A BUG_ON() was added
-> > to trigger if __sched_setscheduler() was ever called from interrupt context
-> > because there was a possibility to take the wait_lock.
-> > 
-> > Today the wait_lock is irq safe, but the path to taking it in
-> > sched_setscheduler() is the same as the path to taking it from normal
-> > context. The wait_lock is taken with raw_spin_lock_irq() and released with
-> > raw_spin_unlock_irq() which will indiscriminately enable interrupts,
-> > which would be bad in interrupt context.
-> > 
-> > The problem is that normalize_rt_tasks, which is called by triggering the
-> > sysrq nice-all-RT-tasks was changed to call __sched_setscheduler(), and this
-> > is done from interrupt context!
-> > 
-> > Now __sched_setscheduler() takes a "pi" parameter that is used to know if
-> > the priority inheritance should be called or not. As the BUG_ON() only cares
-> > about calling the PI code, it should only bug if called from interrupt
-> > context with the "pi" parameter set to true.
-> > 
-> > Link: http://lkml.kernel.org/r/20170308124654.10e598f2@gandalf.local.home
-> > 
-> > Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> > Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
-> > Fixes: dbc7f069b93a ("sched: Use replace normalize_task() with __sched_setscheduler()")
-> > Cc: Andrew Morton <akpm@osdl.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@elte.hu>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Hi,
+On 19.11.2018 13:33, Peter Zijlstra wrote:
+> On Mon, Nov 19, 2018 at 08:42:52AM +0300, Alexey Budankov wrote:
+>>
+>> Implement initial version of perf-security.rst documentation file 
+>> initially covering security concerns related to PCL/Perf performance 
+>> monitoring in multiuser environments.
 > 
-> Can this patch also be applied to the stable trees? The offending commit
-> was first introduced in 4.2.
+> Ditch the PCL thing. That's not a term used anywhere in the kernel.
 
-What is the git commit id of this patch in Linus's tree?
+Ok. Which is the proper wording to reference to Perf kernel subsystem?
 
-thanks,
+> 
+> Also:
+> 
+>> +PCL/Perf unprivileged users
+>> +---------------------------
+>> +
+>> +PCL/Perf *scope* and *access* control for unprivileged processes is governed by
+>> +perf_event_paranoid [2]_ setting:
+>> +
+>> +**-1**:
+>> +     Impose no *scope* and *access* restrictions on using PCL performance
+>> +     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
+>> +     ignored when allocating memory buffers for storing performance data.
+>> +     This is the least secure mode since allowed monitored *scope* is
+>> +     maximized and no PCL specific limits are imposed on *resources*
+>> +     allocated for performance monitoring.
+>> +
+>> +**>=0**:
+>> +     *scope* includes per-process and system wide performance monitoring
+>> +     but excludes raw tracepoints and ftrace function tracepoints monitoring.
+>> +     CPU and system events happened when executing either in user or
+>> +     in kernel space can be monitored and captured for later analysis.
+>> +     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
+>> +     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
+>> +
+>> +**>=1**:
+>> +     *scope* includes per-process performance monitoring only and excludes
+>> +     system wide performance monitoring. CPU and system events happened when
+>> +     executing either in user or in kernel space can be monitored and
+>> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
+>> +     locking limit is imposed but ignored for unprivileged processes with
+>> +     CAP_IPC_LOCK capability.
+>> +
+>> +**>=2**:
+>> +     *scope* includes per-process performance monitoring only. CPU and system
+>> +     events happened when executing in user space only can be monitored and
+>> +     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
+>> +     locking limit is imposed but ignored for unprivileged processes with
+>> +     CAP_IPC_LOCK capability.
+>> +
+>> +**>=3**:
+>> +     Restrict *access* to PCL performance monitoring for unprivileged processes.
+>> +     This is the default on Debian and Android [7]_ , [8]_ .
+> 
+> that ** crud is unreadable.
 
-greg k-h
+It can be avoided without missing the sense.
+
+"two asterisks: **text** for strong emphasis (boldface)". 
+
+Thanks,
+Alexey
+
+> 
+> http://lkml.kernel.org/r/094556ca-ea87-9c4a-2115-600d2833fb2a@darmarit.de
+> 
