@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 461B6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BDFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBCF214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34E692148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xw6HhPi6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBCF214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9Teo2fJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E692148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406661AbeKTD3I (ORCPT
+        id S2406673AbeKTD3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43712 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405697AbeKTD3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:07 -0500
+        id S2405697AbeKTD3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8230F2148E;
-        Mon, 19 Nov 2018 17:04:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 175A42148E;
+        Mon, 19 Nov 2018 17:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647090;
-        bh=t6nbDjaxbkqHlvYOn97kO2s8z0ptO3o41zSVcB+71Y0=;
+        s=default; t=1542647092;
+        bh=GLOYa2SSigu7WquitjuUdW5zWp6uJ6JUO1ngmqRbZrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xw6HhPi6/5LYkznOhBFNqGf51snqBKXbFOch9R0UV+7yG3Q0D+Wv23CfZ6+k7TGjb
-         q18xvLm1c1fK9myzauvPPP6T1Snlip8fMfjcGfFxqGoDRxx1neqQNLBvOK6B/WCO6o
-         xBZJmf3Joap+tNCf5ifHLhPC9K8w7uvd6qNBXqNc=
+        b=P9Teo2fJiegSO//gKjLndty+uF35rAVpeOUFWg/cVHc0q2fBzn/6UOPLvCo9hNuUa
+         TWaWWsVtwzHfDJJdwBAtngcwjhgiV6iX/9nivr/oI0VwomO9iyAPRABHP5s34aHvIu
+         AxgtqI5hu4p2zc9SJoYAvkwgVrlXWxnaxkO1F/pY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 3.18 46/90] dm ioctl: harden copy_params()s copy_from_user() from malicious users
-Date:   Mon, 19 Nov 2018 17:29:28 +0100
-Message-Id: <20181119162628.273091078@linuxfoundation.org>
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 3.18 47/90] TC: Set DMA masks for devices
+Date:   Mon, 19 Nov 2018 17:29:29 +0100
+Message-Id: <20181119162628.399155066@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,70 +63,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
+commit 3f2aa244ee1a0d17ed5b6c86564d2c1b24d1c96b upstream.
 
-In copy_params(), the struct 'dm_ioctl' is first copied from the user
-space buffer 'user' to 'param_kernel' and the field 'data_size' is
-checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
-up to its 'data' member).  If the check fails, an error code EINVAL will be
-returned.  Otherwise, param_kernel->data_size is used to do a second copy,
-which copies from the same user-space buffer to 'dmi'.  After the second
-copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
-Given that the buffer 'user' resides in the user space, a malicious
-user-space process can race to change the content in the buffer between
-the two copies.  This way, the attacker can inject inconsistent data
-into 'dmi' (versus previously validated 'param_kernel').
+Fix a TURBOchannel support regression with commit 205e1b7f51e4
+("dma-mapping: warn when there is no coherent_dma_mask") that caused
+coherent DMA allocations to produce a warning such as:
 
-Fix redundant copying of 'minimum_data_size' from user-space buffer by
-using the first copy stored in 'param_kernel'.  Also remove the
-'data_size' check after the second copy because it is now unnecessary.
+defxx: v1.11 2014/07/01  Lawrence V. Stefani and others
+tc1: DEFTA at MMIO addr = 0x1e900000, IRQ = 20, Hardware addr = 08-00-2b-a3-a3-29
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at ./include/linux/dma-mapping.h:516 dfx_dev_register+0x670/0x678
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper Not tainted 4.19.0-rc6 #2
+Stack : ffffffff8009ffc0 fffffffffffffec0 0000000000000000 ffffffff80647650
+        0000000000000000 0000000000000000 ffffffff806f5f80 ffffffffffffffff
+        0000000000000000 0000000000000000 0000000000000001 ffffffff8065d4e8
+        98000000031b6300 ffffffff80563478 ffffffff805685b0 ffffffffffffffff
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        0000000000000000 0000000000000009 ffffffff8053efd0 ffffffff806657d0
+        0000000000000000 ffffffff803177f8 0000000000000000 ffffffff806d0000
+        9800000003078000 980000000307b9e0 000000001e900000 ffffffff80067940
+        0000000000000000 ffffffff805d6720 0000000000000204 ffffffff80388df8
+        ffffffff805176c0 ffffffff8004dc78 0000000000000000 ffffffff80067940
+        ...
+Call Trace:
+[<ffffffff8004dc78>] show_stack+0xa0/0x130
+[<ffffffff80067940>] __warn+0x128/0x170
+---[ end trace b1d1e094f67f3bb2 ]---
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+This is because the TURBOchannel bus driver fails to set the coherent
+DMA mask for devices enumerated.
+
+Set the regular and coherent DMA masks for TURBOchannel devices then,
+observing that the bus protocol supports a 34-bit (16GiB) DMA address
+space, by interpreting the value presented in the address cycle across
+the 32 `ad' lines as a 32-bit word rather than byte address[1].  The
+architectural size of the TURBOchannel DMA address space exceeds the
+maximum amount of RAM any actual TURBOchannel system in existence may
+have, hence both masks are the same.
+
+This removes the warning shown above.
+
+References:
+
+[1] "TURBOchannel Hardware Specification", EK-369AA-OD-007B, Digital
+    Equipment Corporation, January 1993, Section "DMA", pp. 1-15 -- 1-17
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20835/
+Fixes: 205e1b7f51e4 ("dma-mapping: warn when there is no coherent_dma_mask")
+Cc: stable@vger.kernel.org # 4.16+
+Cc: Ralf Baechle <ralf@linux-mips.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-ioctl.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/tc/tc.c    |    8 +++++++-
+ include/linux/tc.h |    1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1681,8 +1681,7 @@ static void free_params(struct dm_ioctl
- }
+--- a/drivers/tc/tc.c
++++ b/drivers/tc/tc.c
+@@ -2,7 +2,7 @@
+  *	TURBOchannel bus services.
+  *
+  *	Copyright (c) Harald Koerfgen, 1998
+- *	Copyright (c) 2001, 2003, 2005, 2006  Maciej W. Rozycki
++ *	Copyright (c) 2001, 2003, 2005, 2006, 2018  Maciej W. Rozycki
+  *	Copyright (c) 2005  James Simmons
+  *
+  *	This file is subject to the terms and conditions of the GNU
+@@ -10,6 +10,7 @@
+  *	directory of this archive for more details.
+  */
+ #include <linux/compiler.h>
++#include <linux/dma-mapping.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+ #include <linux/ioport.h>
+@@ -93,6 +94,11 @@ static void __init tc_bus_add_devices(st
+ 		tdev->dev.bus = &tc_bus_type;
+ 		tdev->slot = slot;
  
- static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
--		       int ioctl_flags,
--		       struct dm_ioctl **param, int *param_flags)
-+		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
- {
- 	struct dm_ioctl *dmi;
- 	int secure_data;
-@@ -1730,18 +1729,13 @@ static int copy_params(struct dm_ioctl _
- 		return -ENOMEM;
- 	}
- 
--	if (copy_from_user(dmi, user, param_kernel->data_size))
--		goto bad;
-+	/* Copy from param_kernel (which was already copied from user) */
-+	memcpy(dmi, param_kernel, minimum_data_size);
- 
--data_copied:
--	/*
--	 * Abort if something changed the ioctl data while it was being copied.
--	 */
--	if (dmi->data_size != param_kernel->data_size) {
--		DMERR("rejecting ioctl: data size modified while processing parameters");
-+	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
-+			   param_kernel->data_size - minimum_data_size))
- 		goto bad;
--	}
--
-+data_copied:
- 	/* Wipe the user buffer so we do not return it to userspace */
- 	if (secure_data && clear_user(user, param_kernel->data_size))
- 		goto bad;
++		/* TURBOchannel has 34-bit DMA addressing (16GiB space). */
++		tdev->dma_mask = DMA_BIT_MASK(34);
++		tdev->dev.dma_mask = &tdev->dma_mask;
++		tdev->dev.coherent_dma_mask = DMA_BIT_MASK(34);
++
+ 		for (i = 0; i < 8; i++) {
+ 			tdev->firmware[i] =
+ 				readb(module + offset + TC_FIRM_VER + 4 * i);
+--- a/include/linux/tc.h
++++ b/include/linux/tc.h
+@@ -84,6 +84,7 @@ struct tc_dev {
+ 					   device. */
+ 	struct device	dev;		/* Generic device interface. */
+ 	struct resource	resource;	/* Address space of this device. */
++	u64		dma_mask;	/* DMA addressable range. */
+ 	char		vendor[9];
+ 	char		name[9];
+ 	char		firmware[9];
 
 
