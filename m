@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D28C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 222B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE0FD208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E140820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:32:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1EbF6Obe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE0FD208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8dtCzPK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E140820870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730593AbeKTC4F (ORCPT
+        id S1730604AbeKTC4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:56:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54060 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:56:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbeKTC4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:56:04 -0500
+        id S1729979AbeKTC4G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:56:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D7C82089F;
-        Mon, 19 Nov 2018 16:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E27B82086A;
+        Mon, 19 Nov 2018 16:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645116;
-        bh=x8XAeMM+2C8aRZ7vocr99PbYCoI3iqGKRZCQ03fm2uI=;
+        s=default; t=1542645119;
+        bh=lD+UJknVb8BuBli2x5yOXeTSBQ7c981777BM81llzso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1EbF6Obe/e0dVAqU+zAlLEOpgtWcA9KgEqbRLT0daXM5Su30A/ko1bw5BGoRXDCsx
-         sRcSDltAT9krQP4Zw90XtzpH5BCd7gvGDrWcT0O5yh8WWTW63A12oltKC0M6rLAsUj
-         czcm7NlSrxqLVsE6JK7F6vv4kc1JK7GcPPdhJGB0=
+        b=s8dtCzPK/Jsd+mWSJX7KBzErS47DFabF99FWIRhuhIeq/G+6pT+l3W8Koe/W+jHSS
+         lZMfOMiUdbbXrhA2qppUauFymJTQE9idIXq4w86AnhFkmyAFj0xIGe2PMLQ+HZhn66
+         RE3xWgVY6+xUS4eFEKA9lv5t2ND05otBQUNoz9rw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        syzbot+d4252148d198410b864f@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Huang Rui <ray.huang@amd.com>,
+        Bas Nieuwenhuizen <basni@chromium.org>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/205] 9p: clear dangling pointers in p9stat_free
-Date:   Mon, 19 Nov 2018 17:25:49 +0100
-Message-Id: <20181119162624.920581527@linuxfoundation.org>
+Subject: [PATCH 4.19 043/205] drm/amdgpu: fix integer overflow test in amdgpu_bo_list_create()
+Date:   Mon, 19 Nov 2018 17:25:50 +0100
+Message-Id: <20181119162625.106303938@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,43 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 62e3941776fea8678bb8120607039410b1b61a65 ]
+[ Upstream commit ff30e9e8509cb877dc7cbc776b36c70f5bdd290f ]
 
-p9stat_free is more of a cleanup function than a 'free' function as it
-only frees the content of the struct; there are chances of use-after-free
-if it is improperly used (e.g. p9stat_free called twice as it used to be
-possible to)
+We accidentally left out the size of the amdgpu_bo_list struct.  It
+could lead to memory corruption on 32 bit systems.  You'd have to
+pick the absolute maximum and set "num_entries == 59652323" then size
+would wrap to 16 bytes.
 
-Clearing dangling pointers makes the function idempotent and safer to use.
-
-Link: http://lkml.kernel.org/r/1535410108-20650-2-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Reported-by: syzbot+d4252148d198410b864f@syzkaller.appspotmail.com
+Fixes: 920990cb080a ("drm/amdgpu: allocate the bo_list array after the list")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Huang Rui <ray.huang@amd.com>
+Reviewed-by: Bas Nieuwenhuizen <basni@chromium.org>
+Signed-off-by: Huang Rui <ray.huang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/9p/protocol.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/9p/protocol.c
-+++ b/net/9p/protocol.c
-@@ -46,10 +46,15 @@ p9pdu_writef(struct p9_fcall *pdu, int p
- void p9stat_free(struct p9_wstat *stbuf)
- {
- 	kfree(stbuf->name);
-+	stbuf->name = NULL;
- 	kfree(stbuf->uid);
-+	stbuf->uid = NULL;
- 	kfree(stbuf->gid);
-+	stbuf->gid = NULL;
- 	kfree(stbuf->muid);
-+	stbuf->muid = NULL;
- 	kfree(stbuf->extension);
-+	stbuf->extension = NULL;
- }
- EXPORT_SYMBOL(p9stat_free);
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
+@@ -67,7 +67,8 @@ int amdgpu_bo_list_create(struct amdgpu_
+ 	unsigned i;
+ 	int r;
  
+-	if (num_entries > SIZE_MAX / sizeof(struct amdgpu_bo_list_entry))
++	if (num_entries > (SIZE_MAX - sizeof(struct amdgpu_bo_list))
++				/ sizeof(struct amdgpu_bo_list_entry))
+ 		return -EINVAL;
+ 
+ 	size = sizeof(struct amdgpu_bo_list);
 
 
