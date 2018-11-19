@@ -2,63 +2,81 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAD28C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59D5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE1E62080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1E62080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 8F21E2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:59:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F21E2080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbeKTAWg (ORCPT
+        id S1729435AbeKTAXb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:22:36 -0500
-Received: from verein.lst.de ([213.95.11.211]:38215 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728258AbeKTAWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:22:36 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 6584B68B02; Mon, 19 Nov 2018 14:58:52 +0100 (CET)
-Date:   Mon, 19 Nov 2018 14:58:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arch: switch the default on ARCH_HAS_SG_CHAIN
-Message-ID: <20181119135852.GA16428@lst.de>
-References: <20181109090008.24150-3-hch@lst.de> <mhng-9c1955e1-d7cf-4ee4-8bf8-6bef720c9b98@palmer-si-x1c4>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-9c1955e1-d7cf-4ee4-8bf8-6bef720c9b98@palmer-si-x1c4>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Mon, 19 Nov 2018 19:23:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52194 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728258AbeKTAXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:23:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 69C02AC4B;
+        Mon, 19 Nov 2018 13:59:47 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        Juergen Gross <jgross@suse.com>
+Subject: [PATCH] x86/xen: cleanup includes in arch/x86/xen/spinlock.c
+Date:   Mon, 19 Nov 2018 14:59:45 +0100
+Message-Id: <20181119135945.9985-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 08:52:14AM -0800, Palmer Dabbelt wrote:
-> As far as I can tell, it looks like m68k, mips, and powerpc mention an 
-> IOMMU in their ports, don't set ARCH_HAS_SG_CHAIN, and with this patch set 
-> won't set ARCH_NO_SG_CHAIN.
+arch/x86/xen/spinlock.c includes several headers which are not needed.
+Remove the #includes.
 
-m68k has no iommu, and not operations that operate on a scatterlist.
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/spinlock.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-mips has a trivial iommu driver (jazzdma), but I wrote the current
-instance of it, nad it is fine.
+diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+index 1c8a8816a402..3776122c87cc 100644
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -3,22 +3,17 @@
+  * Split spinlock implementation out into its own file, so it can be
+  * compiled in a FTRACE-compatible way.
+  */
+-#include <linux/kernel_stat.h>
++#include <linux/kernel.h>
+ #include <linux/spinlock.h>
+-#include <linux/debugfs.h>
+-#include <linux/log2.h>
+-#include <linux/gfp.h>
+ #include <linux/slab.h>
+ #include <linux/atomic.h>
+ 
+ #include <asm/paravirt.h>
+ #include <asm/qspinlock.h>
+ 
+-#include <xen/interface/xen.h>
+ #include <xen/events.h>
+ 
+ #include "xen-ops.h"
+-#include "debugfs.h"
+ 
+ static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
+ static DEFINE_PER_CPU(char *, irq_name);
+-- 
+2.16.4
 
-powerpc has various iommu, but actually enables ARCH_HAS_SG_CHAIN
-unconditionally.
-
-> The issue is that I'm not sure how to 
-> determine what constitutes a horrible legacy IOMMU, at least with respect 
-> to not being able to use scatterlist chaining.
-
-It basically means someone is iterating using manual pointer arithmetics
-over a multi-element scatterlist instead of using the sg_next and
-for_each_sg helpers.
