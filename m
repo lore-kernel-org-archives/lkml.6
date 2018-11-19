@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4926C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB90BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8013D21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9250B2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wn1qrUQ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8013D21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I82aHpcp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9250B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388328AbeKTDIs (ORCPT
+        id S2388338AbeKTDIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43492 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388307AbeKTDIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:47 -0500
+        id S2387555AbeKTDIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEF0F2145D;
-        Mon, 19 Nov 2018 16:44:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EB8B2148E;
+        Mon, 19 Nov 2018 16:44:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645876;
-        bh=2rmckKk2gXs2P5UQZzmPadcEJZsOOq6zz5qWftccP3E=;
+        s=default; t=1542645878;
+        bh=GUZkxAIRl/ZY67B353X4suZHCXM1yJf4JqxIHltlwVA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wn1qrUQ2IOWdQaG3jdpOFeYRwwQ6yvHkc7ybpEFXLkH7Oo+L5cPzL9VlNYq2TzQA9
-         q6gW0/OZF6X280DGom5pxhu+gcFx6YSxcSF1mO7487VlgX912evzL/2hYH5AADb7P2
-         DFcGdRQFuGgIGsnPyxaCqEawZwBwqnzEUqIGsqPg=
+        b=I82aHpcpQRFV6MxVkjmlgQ9PNWzU5LMak+egClDT6iFnlGOCEOZCHbrCtdBuvA6Bd
+         sgrHysqtNnaNET3AnI1xnjvqsO3YfLg2JJUpmuok+/DTAK7i56Cu9ppQ4xrPeZPONa
+         kPMMZz6Kbwp7MLtfyBUxqiuKh6wS3RjP3u3ISdRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.18 115/171] ext4: fix possible leak of sbi->s_group_desc_leak in error path
-Date:   Mon, 19 Nov 2018 17:28:31 +0100
-Message-Id: <20181119162636.686438585@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Timothy Baldwin <timbaldwin@fastmail.co.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.18 124/171] mount: Prevent MNT_DETACH from disconnecting locked mounts
+Date:   Mon, 19 Nov 2018 17:28:40 +0100
+Message-Id: <20181119162637.450803492@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,51 +63,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 9e463084cdb22e0b56b2dfbc50461020409a5fd3 upstream.
+commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
 
-Fixes: bfe0a5f47ada ("ext4: add more mount time checks of the superblock")
-Reported-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 4.18
+Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
+> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
+>
+>   Mounts that come as a single unit from more privileged mount are locked
+>   together and may not be separated in a less privileged mount namespace.
+>
+> However they can:
+>
+> 1. Create a mount namespace.
+> 2. In the mount namespace open a file descriptor to the parent of a mount point.
+> 3. Destroy the mount namespace.
+> 4. Use the file descriptor to look under the mount point.
+>
+> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
+>
+> The setup:
+>
+> $ sudo sysctl kernel.unprivileged_userns_clone=1
+> kernel.unprivileged_userns_clone = 1
+> $ mkdir -p A/B/Secret
+> $ sudo mount -t tmpfs hide A/B
+>
+>
+> "Secret" is indeed hidden as expected:
+>
+> $ ls -lR A
+> A:
+> total 0
+> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
+>
+> A/B:
+> total 0
+>
+>
+> The attack revealing "Secret":
+>
+> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
+> /proc/self/fd/4/:
+> total 0
+> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
+>
+> /proc/self/fd/4/B:
+> total 0
+> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
+>
+> /proc/self/fd/4/B/Secret:
+> total 0
+
+I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
+disconnecting all of the mounts in a mount namespace.  Fix this by
+factoring drop_mounts out of drop_collected_mounts and passing
+0 instead of UMOUNT_SYNC.
+
+There are two possible behavior differences that result from this.
+- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
+  the vfsmounts being unmounted.  This effects the lazy rcu walk by
+  kicking the walk out of rcu mode and forcing it to be a non-lazy
+  walk.
+- No longer disconnecting locked mounts will keep some mounts around
+  longer as they stay because the are locked to other mounts.
+
+There are only two users of drop_collected mounts: audit_tree.c and
+put_mnt_ns.
+
+In audit_tree.c the mounts are private and there are no rcu lazy walks
+only calls to iterate_mounts. So the changes should have no effect
+except for a small timing effect as the connected mounts are disconnected.
+
+In put_mnt_ns there may be references from process outside the mount
+namespace to the mounts.  So the mounts remaining connected will
+be the bug fix that is needed.  That rcu walks are allowed to continue
+appears not to be a problem especially as the rcu walk change was about
+an implementation detail not about semantics.
+
+Cc: stable@vger.kernel.org
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/namespace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4053,6 +4053,14 @@ static int ext4_fill_super(struct super_
- 	sbi->s_groups_count = blocks_count;
- 	sbi->s_blockfile_groups = min_t(ext4_group_t, sbi->s_groups_count,
- 			(EXT4_MAX_BLOCK_FILE_PHYS / EXT4_BLOCKS_PER_GROUP(sb)));
-+	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
-+	    le32_to_cpu(es->s_inodes_count)) {
-+		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
-+			 le32_to_cpu(es->s_inodes_count),
-+			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
-+		ret = -EINVAL;
-+		goto failed_mount;
-+	}
- 	db_count = (sbi->s_groups_count + EXT4_DESC_PER_BLOCK(sb) - 1) /
- 		   EXT4_DESC_PER_BLOCK(sb);
- 	if (ext4_has_feature_meta_bg(sb)) {
-@@ -4072,14 +4080,6 @@ static int ext4_fill_super(struct super_
- 		ret = -ENOMEM;
- 		goto failed_mount;
- 	}
--	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
--	    le32_to_cpu(es->s_inodes_count)) {
--		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
--			 le32_to_cpu(es->s_inodes_count),
--			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
--		ret = -EINVAL;
--		goto failed_mount;
--	}
- 
- 	bgl_lock_init(sbi->s_blockgroup_lock);
- 
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1879,7 +1879,7 @@ void drop_collected_mounts(struct vfsmou
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	umount_tree(real_mount(mnt), 0);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
 
 
