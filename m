@@ -2,110 +2,126 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053B7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F0CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93D920851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C93D920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id 5441C20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5441C20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbeKTFaG (ORCPT
+        id S1730125AbeKTFaZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:30:06 -0500
-Received: from p3plsmtpa11-05.prod.phx3.secureserver.net ([68.178.252.106]:42610
-        "EHLO p3plsmtpa11-05.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726115AbeKTFaG (ORCPT
+        Tue, 20 Nov 2018 00:30:25 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:38315 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726115AbeKTFaY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:30:06 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id Ook3gaUhGAqHTOok3g5YIg; Mon, 19 Nov 2018 11:57:52 -0700
-Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
-To:     john.hubbard@gmail.com, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-References: <20181110085041.10071-1-jhubbard@nvidia.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
-Date:   Mon, 19 Nov 2018 13:57:51 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181110085041.10071-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 20 Nov 2018 00:30:24 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAJJ4cJu008801;
+        Mon, 19 Nov 2018 20:05:01 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nt9b24d1n-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 19 Nov 2018 20:05:01 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 304F13A;
+        Mon, 19 Nov 2018 19:04:59 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag2node3.st.com [10.75.127.6])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AEC3A53E5;
+        Mon, 19 Nov 2018 19:04:59 +0000 (GMT)
+Received: from SFHDAG2NODE1.st.com (10.75.127.4) by SFHDAG2NODE3.st.com
+ (10.75.127.6) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 19 Nov
+ 2018 20:04:59 +0100
+Received: from SFHDAG2NODE1.st.com ([fe80::4413:c8c:992b:bb90]) by
+ SFHDAG2NODE1.st.com ([fe80::4413:c8c:992b:bb90%20]) with mapi id
+ 15.00.1347.000; Mon, 19 Nov 2018 20:04:59 +0100
+From:   Denis CIOCCA <denis.ciocca@st.com>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Dominique Martinet" <asmadeus@codewreck.org>
+CC:     "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux@endlessm.com" <linux@endlessm.com>
+Subject: RE: [PATCH] iio: st_sensors: Fix the sleep time for sampling
+Thread-Topic: [PATCH] iio: st_sensors: Fix the sleep time for sampling
+Thread-Index: AQHUf87jF996TGSh6kGbSgzQPMw9KKVXc4KA
+Date:   Mon, 19 Nov 2018 19:04:59 +0000
+Message-ID: <04d0345d6c6c4ac0950ab0676ffd7689@SFHDAG2NODE1.st.com>
+References: <20181119061219.14238-1-jian-hong@endlessm.com>
+In-Reply-To: <20181119061219.14238-1-jian-hong@endlessm.com>
+Accept-Language: it-IT, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfFe+OBCAmnlpJw9wT9GY2cVm7QTMevYwA5awvvA6yPA1fMGXeZIktaiyAcGKXn3Vyxbq0cFw02R8zM8TJN5kQYHA59JQ7g9wLK5pY/KKdx9txGqijmiq
- bvKbOg2rdZrWKbo3GegF6TwYteR29/1K0/wAzzKp82zboSop69FzyoTDFiAjqHyprAJq7+Uj8cJNBXwkhdn3q1bL3LeNXSvGEecHkQ1Q/fWtQjfutOQPklyV
- 5P6nY0N7OEgJm66bWpw7fOf7FjgIYwCZW/YvYWevYipiclfAHxU8UrwKng/s/WOPMyB+pIbjvmBbKl4KKeuaeekvfLERe9QRQl65P/d9aFzJbvlq6lkFFoum
- M+9uXCiVS7nWxQV+ftzFGPVHy41u+dlN4jOEiNyEruHDOQrWuYw=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.50]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John, thanks for the discussion at LPC. One of the concerns we
-raised however was the performance test. The numbers below are
-rather obviously tainted. I think we need to get a better baseline
-before concluding anything...
+Hi Jian,
 
-Here's my main concern:
+Not clear to me why should be + instead of *.
 
-On 11/10/2018 3:50 AM, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
->...
-> ------------------------------------------------------
-> WITHOUT the patch:
-> ------------------------------------------------------
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1): [R(1)][100.0%][r=55.5MiB/s,w=0KiB/s][r=14.2k,w=0 IOPS][eta 00m:00s]
-> reader: (groupid=0, jobs=1): err= 0: pid=1750: Tue Nov  6 20:18:06 2018
->     read: IOPS=13.9k, BW=54.4MiB/s (57.0MB/s)(1024MiB/18826msec)
+ODR is expressed in Hz, so (1/Hz) = period in seconds (1 sample sampling time) [s]
+1000 * (1/Hz) = period in milliseconds (1 sample sampling time) [ms]
+n * 1000 * (1/Hz) = n times period in milliseconds (n times sample sampling time) [ms]
 
-~14000 4KB read IOPS is really, really low for an NVMe disk.
+In your case you assume bootime is in milliseconds. Maybe we can change the comment and use 'number of samples ...'.
 
->    cpu          : usr=2.39%, sys=95.30%, ctx=669, majf=0, minf=72
+Br,
+Denis
 
-CPU is obviously the limiting factor. At these IOPS, it should be far
-less.
-> ------------------------------------------------------
-> OR, here's a better run WITH the patch applied, and you can see that this is nearly as good
-> as the "without" case:
-> ------------------------------------------------------
-> 
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1): [R(1)][100.0%][r=53.2MiB/s,w=0KiB/s][r=13.6k,w=0 IOPS][eta 00m:00s]
-> reader: (groupid=0, jobs=1): err= 0: pid=2521: Tue Nov  6 20:01:33 2018
->     read: IOPS=13.4k, BW=52.5MiB/s (55.1MB/s)(1024MiB/19499msec)
 
-Similar low IOPS.
 
->    cpu          : usr=3.47%, sys=94.61%, ctx=370, majf=0, minf=73
+-----Original Message-----
+From: linux-iio-owner@vger.kernel.org <linux-iio-owner@vger.kernel.org> On Behalf Of Jian-Hong Pan
+Sent: Sunday, November 18, 2018 10:12 PM
+To: Jonathan Cameron <jic23@kernel.org>; Hartmut Knaack <knaack.h@gmx.de>; Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-Stadler <pmeerw@pmeerw.net>; Dominique Martinet <asmadeus@codewreck.org>
+Cc: linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; linux@endlessm.com; Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] iio: st_sensors: Fix the sleep time for sampling
 
-Similar CPU saturation.
+According to the description of st_sensor_settings and st_sensor_data structures' comments:
+- bootime: samples to discard when sensor passing from power-down to power-up.
+- odr: Output data rate of the sensor [Hz].
 
->
+The sleep time should be
+sdata->sensor_settings->bootime + 1000 / sdata->odr ms.
 
-I get nearly 400,000 4KB IOPS on my tiny desktop, which has a 25W
-i7-7500 and a Samsung PM961 128GB NVMe (stock Bionic 4.15 kernel
-and fio version 3.1). Even then, the CPU saturates, so it's not
-necessarily a perfect test. I'd like to see your runs both get to
-"max" IOPS, i.e. CPU < 100%, and compare the CPU numbers. This would
-give the best comparison for making a decision.
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/iio/common/st_sensors/st_sensors_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Can you confirm what type of hardware you're running this test on?
-CPU, memory speed and capacity, and NVMe device especially?
+diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
+index 26fbd1bd9413..6b87ea657a92 100644
+--- a/drivers/iio/common/st_sensors/st_sensors_core.c
++++ b/drivers/iio/common/st_sensors/st_sensors_core.c
+@@ -594,7 +594,7 @@ int st_sensors_read_info_raw(struct iio_dev *indio_dev,
+ 		if (err < 0)
+ 			goto out;
+ 
+-		msleep((sdata->sensor_settings->bootime * 1000) / sdata->odr);
++		msleep(sdata->sensor_settings->bootime + 1000 / sdata->odr);
+ 		err = st_sensors_read_axis_data(indio_dev, ch, val);
+ 		if (err < 0)
+ 			goto out;
+--
+2.11.0
 
-Tom.
