@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85474C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F65C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E8A206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73402148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nD2fp0g8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E8A206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="py3SNsFf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73402148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388991AbeKTDLO (ORCPT
+        id S2389003AbeKTDLQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46964 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:11:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728537AbeKTDLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:12 -0500
+        id S1728537AbeKTDLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D956214DA;
-        Mon, 19 Nov 2018 16:47:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E44C9206BA;
+        Mon, 19 Nov 2018 16:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646020;
-        bh=ptn//N2a/3PjyfusZP2ivZ3GvcSRn6Y39CfGZghsrCw=;
+        s=default; t=1542646023;
+        bh=vOp8xDvdtez+omukhRXvVZfIDZlhe//wVloqM7X5qbU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nD2fp0g8L3MKcs4Dw9GeF6ogE4PNeL5DqPPemZJwdXVDx1n+5ygRjoEhxJILzNg4y
-         vZ/4C0FsII/Jy14zajDIiSSwrUUlkwrXVXO2c03kKadBwlYzyLcEAGQvP3LBKoCSSJ
-         bEmndsLlJNiCN3xqxYigVKukntfm3l0NtbdKCdT8=
+        b=py3SNsFfntjS6srN7k0Xa0uIcAVwAVsLKxuWZh7EJr5W3T3vAEvZ0qyLoiCAZyjqy
+         01ORiMxOCDnWZzaRB2z4yjU2ZOkvPtCrTDd8m6nDnVncmo08VIDQnTmn1tNlGNkUO2
+         qllPZOBMT2StG2ZOOmqNjj/+gI2gRyIk31Cc6Yio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
-        Clint Taylor <clinton.a.taylor@intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
+        stable@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Vidya Srinivas <vidya.srinivas@intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Matt Roper <matthew.d.roper@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.18 162/171] drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
-Date:   Mon, 19 Nov 2018 17:29:18 +0100
-Message-Id: <20181119162640.712321918@linuxfoundation.org>
+Subject: [PATCH 4.18 163/171] drm/i915: Fix error handling for the NV12 fb dimensions check
+Date:   Mon, 19 Nov 2018 17:29:19 +0100
+Message-Id: <20181119162640.805193973@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,60 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Clint Taylor <clinton.a.taylor@intel.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 6503493145cba4413ecd3d4d153faeef4a1e9b85 upstream.
+commit f42f343887016330b321dd40eebc68c7292e4f1b upstream.
 
-HDMI 2.0 594Mhz modes were incorrectly selecting 25.200Mhz Automatic N value
-mode instead of HDMI specification values.
+Let's not leak obj->framebuffer_references when we decide that
+the framebuffer domensions are not suitable for NV12.
 
-V2: Fix 88.2 Hz N value
-
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1540493521-1746-2-git-send-email-clinton.a.taylor@intel.com
-(cherry picked from commit 5a400aa3c562c4a726b4da286e63c96db905ade1)
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Vidya Srinivas <vidya.srinivas@intel.com>
+Fixes: e44134f2673c ("drm/i915: Add NV12 support to intel_framebuffer_init")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181029140031.11765-1-ville.syrjala@linux.intel.com
+Reviewed-by: Matt Roper <matthew.d.roper@intel.com>
+(cherry picked from commit 3b90946fcb6f13b65888c380461793a9dea9d1f4)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_audio.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/i915/intel_display.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -134,6 +134,9 @@ static const struct {
- /* HDMI N/CTS table */
- #define TMDS_297M 297000
- #define TMDS_296M 296703
-+#define TMDS_594M 594000
-+#define TMDS_593M 593407
-+
- static const struct {
- 	int sample_rate;
- 	int clock;
-@@ -154,6 +157,20 @@ static const struct {
- 	{ 176400, TMDS_297M, 18816, 247500 },
- 	{ 192000, TMDS_296M, 23296, 281250 },
- 	{ 192000, TMDS_297M, 20480, 247500 },
-+	{ 44100, TMDS_593M, 8918, 937500 },
-+	{ 44100, TMDS_594M, 9408, 990000 },
-+	{ 48000, TMDS_593M, 5824, 562500 },
-+	{ 48000, TMDS_594M, 6144, 594000 },
-+	{ 32000, TMDS_593M, 5824, 843750 },
-+	{ 32000, TMDS_594M, 3072, 445500 },
-+	{ 88200, TMDS_593M, 17836, 937500 },
-+	{ 88200, TMDS_594M, 18816, 990000 },
-+	{ 96000, TMDS_593M, 11648, 562500 },
-+	{ 96000, TMDS_594M, 12288, 594000 },
-+	{ 176400, TMDS_593M, 35672, 937500 },
-+	{ 176400, TMDS_594M, 37632, 990000 },
-+	{ 192000, TMDS_593M, 23296, 562500 },
-+	{ 192000, TMDS_594M, 24576, 594000 },
- };
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -14383,7 +14383,7 @@ static int intel_framebuffer_init(struct
+ 	     fb->height < SKL_MIN_YUV_420_SRC_H ||
+ 	     (fb->width % 4) != 0 || (fb->height % 4) != 0)) {
+ 		DRM_DEBUG_KMS("src dimensions not correct for NV12\n");
+-		return -EINVAL;
++		goto err;
+ 	}
  
- /* get AUD_CONFIG_PIXEL_CLOCK_HDMI_* value for mode */
+ 	for (i = 0; i < fb->format->num_planes; i++) {
 
 
