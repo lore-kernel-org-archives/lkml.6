@@ -2,136 +2,124 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB67CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FA1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:11:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70F0720671
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:10:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sx78368e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70F0720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1466220671
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:11:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1466220671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbeKTEfR (ORCPT
+        id S1730131AbeKTEgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:35:17 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39458 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729975AbeKTEfQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:35:16 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5-v6so14959653pla.6
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H024FE/5R9+1RH7pcrH8o1llU5cGRF6cB+BVGsKl9OY=;
-        b=sx78368eV39Y6BKvqtE9gYLRkGdjO7wsxmuLgV7Y0nR3o/A0TFsBQwzgJnQPxbbFXO
-         nPhGzxn6T+BInbBneUn6hko5a/ItNZouC97D1auEtSOjfmf3skrDpLiW0mj+96rf9dg2
-         7k3VBt2mALoKwTYqkm8VL+LNlshl8GoD12lCapKZidL6C6GHWA61Xm3Kp3WdfuSq0sDr
-         NK36P0i9U/UrgjRV5br+RtlkbKx81eHOLwpohxGjhHfyzobjjQXTvIXo0YA4i/3NDMVh
-         OHlFzeFySQsCtuYXD2uBB4FG3V/PHIOHS8s2zi+z6gL/58JYlZRhcNo2AjFrsx/ZY3Q0
-         okCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H024FE/5R9+1RH7pcrH8o1llU5cGRF6cB+BVGsKl9OY=;
-        b=q5So+U7bAmIQrZIZ0euUnpO0GENOmmh4/mlRLkRKbnDF5KHNszoNh01+RfCczvw5yD
-         44fBSDyJ3ex83ECTi8ndt//yIlcS+cEwqaO8uA5AN981d8Sl7yqFMhtGLbMDnqncJIg4
-         vARrrBC0S6sLlwfq8YcUwiLt3pNtpaFO7yAxQ0Yqj6PNVvSzGlw0yDF5+RYLHmOqNH3T
-         j1dlShyo4BRiLlImUU8NfFlRjQOXEmgMSs/KRMOvFxlvPGh/YrT54abLEqNBsTsV2TQO
-         sqIbX8YpsxA+FsrktVamKqpTCSByGz3O05VOuj5NQw6Sn9bYpU5N1mxURDBqv7GHxyiU
-         J6Hw==
-X-Gm-Message-State: AGRZ1gIusYd8hVrOONo8Quoceb9i96ZEP7Iex5GJU7o1ixud6WeYo4L2
-        ge039RjKOZUJFmk8oFw2KiYH1h81JVIxK8bH/z3ufA==
-X-Google-Smtp-Source: AJdET5fJ9ko3JekKK/CDxRdU73yhVQv+JXhY6iimGs6TFN84+a5i8BH1IwsdFBFfJKeH4je3UfSkqF1vvOukR2IV+JU=
-X-Received: by 2002:a17:902:7b88:: with SMTP id w8mr16290375pll.320.1542651038769;
- Mon, 19 Nov 2018 10:10:38 -0800 (PST)
+        Mon, 19 Nov 2018 23:36:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38534 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729975AbeKTEgd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 23:36:33 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DCABC059B78;
+        Mon, 19 Nov 2018 18:11:55 +0000 (UTC)
+Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C5FC45D76C;
+        Mon, 19 Nov 2018 18:11:54 +0000 (UTC)
+Subject: Re: [PATCH 3.18 16/90] cpupower: Fix coredump on VMWare
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Stafford Horne <shorne@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+References: <20181119162620.585061184@linuxfoundation.org>
+ <20181119162623.516060898@linuxfoundation.org>
+From:   Prarit Bhargava <prarit@redhat.com>
+Message-ID: <c2d0d4ab-a9e5-cc7b-55d9-f99754beff55@redhat.com>
+Date:   Mon, 19 Nov 2018 13:11:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1542623503-3755-1-git-send-email-yamada.masahiro@socionext.com> <1542623503-3755-2-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1542623503-3755-2-git-send-email-yamada.masahiro@socionext.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 19 Nov 2018 10:10:27 -0800
-Message-ID: <CAKwvOd=dSu-rirP6rY15oLG=i2fj_ca4QvZoxMXBqj0N1pJUPg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] build_bug.h: remove negative-array fallback for BUILD_BUG_ON()
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Kees Cook <keescook@chromium.org>, josh@joshtriplett.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181119162623.516060898@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 19 Nov 2018 18:11:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 2:32 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> The kernel can only be compiled with an optimization option (-O2, -Os,
-> or the currently proposed -Og). Hence, __OPTIMIZE__ is always defined
-> in the kernel source.
->
-> The fallback for the -O0 case is just hypothetical and pointless.
-> Moreover, commit 0bb95f80a38f ("Makefile: Globally enable VLA warning")
-> enabled -Wvla warning. The use of variable length arrays is banned.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
+
+
+On 11/19/2018 11:28 AM, Greg Kroah-Hartman wrote:
+> 3.18-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Prarit Bhargava <prarit@redhat.com>
+> 
+> [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
+
+Greg, as previously mentioned to Sasha, this patch also needs 8c22e2f69592
+("cpupower: Fix AMD Family 0x17 msr_pstate size").  I did not see a message
+indicating that 8c22e2f69592 was also being backported to 3.18-stable.  My
+apologies if I missed it.
+
+P.
+
+
+> 
+> cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
+> (0xC0010064 + state number) set to zero.  As a result fid and did are zero
+> and the crash occurs because of a divide by zero (cof = fid/did).  This
+> can be prevented by checking the enable bit in the PStateDef MSR before
+> calculating cof.  By doing this the value of pstate[i] remains zero and
+> the value can be tested before displaying the active Pstates.
+> 
+> Check the enable bit in the PstateDef register for all supported families
+> and only print out enabled Pstates.
+> 
+> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Stafford Horne <shorne@gmail.com>
+> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > ---
->
-> Changes in v3: None
-> Changes in v2: None
->
->  include/linux/build_bug.h | 14 --------------
->  1 file changed, 14 deletions(-)
->
-> diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-> index 43d1fd5..d415c64 100644
-> --- a/include/linux/build_bug.h
-> +++ b/include/linux/build_bug.h
-> @@ -51,23 +51,9 @@
->   * If you have some code which relies on certain constants being equal, or
->   * some other compile-time-evaluated condition, you should use BUILD_BUG_ON to
->   * detect if someone changes it.
-> - *
-> - * The implementation uses gcc's reluctance to create a negative array, but gcc
-> - * (as of 4.4) only emits that error for obvious cases (e.g. not arguments to
-> - * inline functions).  Luckily, in 4.3 they added the "error" function
-> - * attribute just for this type of case.  Thus, we use a negative sized array
-> - * (should always create an error on gcc versions older than 4.4) and then call
-> - * an undefined function with the error attribute (should always create an
-> - * error on gcc 4.3 and later).  If for some reason, neither creates a
-> - * compile-time error, we'll still have a link-time error, which is harder to
-> - * track down.
->   */
-> -#ifndef __OPTIMIZE__
-> -#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
-> -#else
->  #define BUILD_BUG_ON(condition) \
->         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-> -#endif
->
->  /**
->   * BUILD_BUG - break compile if used.
-> --
-> 2.7.4
->
-
-Yep seems fine.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested an arm64 defconfig with Clang + this patch. Then tested again
-with a `BUILD_BUG_ON(4 != 5)` to verify this still breaks the build.
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-
--- 
-Thanks,
-~Nick Desaulniers
+>  tools/power/cpupower/utils/cpufreq-info.c |    2 ++
+>  tools/power/cpupower/utils/helpers/amd.c  |    5 +++++
+>  2 files changed, 7 insertions(+)
+> 
+> --- a/tools/power/cpupower/utils/cpufreq-info.c
+> +++ b/tools/power/cpupower/utils/cpufreq-info.c
+> @@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int c
+>  		printf(_("    Boost States: %d\n"), b_states);
+>  		printf(_("    Total States: %d\n"), pstate_no);
+>  		for (i = 0; i < pstate_no; i++) {
+> +			if (!pstates[i])
+> +				continue;
+>  			if (i < b_states)
+>  				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
+>  					 "\n"), i, pstates[i]);
+> --- a/tools/power/cpupower/utils/helpers/amd.c
+> +++ b/tools/power/cpupower/utils/helpers/amd.c
+> @@ -103,6 +103,11 @@ int decode_pstates(unsigned int cpu, uns
+>  		}
+>  		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
+>  			return -1;
+> +		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+> +			continue;
+> +		else if (!pstate.bits.en)
+> +			continue;
+> +
+>  		pstates[i] = get_cof(cpu_family, pstate);
+>  	}
+>  	*no = i;
+> 
+> 
