@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F73C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669D8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC9E208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C19120823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4JP3Ikb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC9E208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TuDcYZgy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C19120823
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389493AbeKTDMw (ORCPT
+        id S2389507AbeKTDMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49334 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387988AbeKTDMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:51 -0500
+        id S2387988AbeKTDMy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81CB920823;
-        Mon, 19 Nov 2018 16:48:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22CBB2089F;
+        Mon, 19 Nov 2018 16:48:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646119;
-        bh=gKtmFena5YlXchas9w3gns4rtIsi6/qJHXwltuYxwjA=;
+        s=default; t=1542646121;
+        bh=lNnNIFTlXurI0Ic630M4HX/1RIuiURrhmHdhXEfQC4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j4JP3Ikbi+Ri2lkfXcKU63x4I1n8v1F+6B8tYXPYm/iO5P8gAvW6XxaKzOY7MY44g
-         8+pZvFQOfl+OZZeuz0L8H/jyce+Jx+HvnF6w1Vf+VlCQeb4DIZH7OQ4C8vcQr8acnl
-         Q8i/BQZzuV6vtqqbd8MNMKL81cVeQV4sRNSr9L2k=
+        b=TuDcYZgy7Frzo/6hgWd2+9UWumaVCjOJzhJ2UMMccsrqHmc+ItRwCo0R+9iLO/zGu
+         98tY8BNQIOEyWLcwcDgF86+4w/pcA7uCjniEDvFxv9aDVaVzm+5Uk+kpNp1YFFyGhC
+         QxKlEJi9LuJCPdTNQVs1fVAQIieO9vT9EjAn5Hlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 044/124] clk: mvebu: use correct bit for 98DX3236 NAND
-Date:   Mon, 19 Nov 2018 17:28:18 +0100
-Message-Id: <20181119162622.218313680@linuxfoundation.org>
+        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.14 045/124] media: ov7670: make "xclk" clock optional
+Date:   Mon, 19 Nov 2018 17:28:19 +0100
+Message-Id: <20181119162622.375641329@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,32 +63,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-commit 00c5a926af12a9f0236928dab3dc9faf621406a1 upstream.
+commit 786fa584eda86d6598db3b87c61dc81f68808d11 upstream.
 
-The correct fieldbit value for the NAND PLL reload trigger is 27.
+When the "xclk" clock was added, it was made mandatory. This broke the
+driver on an OLPC plaform which doesn't know such clock. Make it
+optional.
 
-Fixes: commit e120c17a70e5 ("clk: mvebu: support for 98DX3236 SoC")
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Tested on a OLPC XO-1 laptop.
+
+Fixes: 0a024d634cee ("[media] ov7670: get xclk")
+
+Cc: stable@vger.kernel.org # 4.11+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/mvebu/clk-corediv.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/ov7670.c |   30 ++++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
 
---- a/drivers/clk/mvebu/clk-corediv.c
-+++ b/drivers/clk/mvebu/clk-corediv.c
-@@ -72,7 +72,7 @@ static const struct clk_corediv_desc mve
- };
+--- a/drivers/media/i2c/ov7670.c
++++ b/drivers/media/i2c/ov7670.c
+@@ -1612,23 +1612,29 @@ static int ov7670_probe(struct i2c_clien
+ 			info->pclk_hb_disable = true;
+ 	}
  
- static const struct clk_corediv_desc mv98dx3236_corediv_desc[] = {
--	{ .mask = 0x0f, .offset = 6, .fieldbit = 26 }, /* NAND clock */
-+	{ .mask = 0x0f, .offset = 6, .fieldbit = 27 }, /* NAND clock */
- };
+-	info->clk = devm_clk_get(&client->dev, "xclk");
+-	if (IS_ERR(info->clk))
+-		return PTR_ERR(info->clk);
+-	ret = clk_prepare_enable(info->clk);
+-	if (ret)
+-		return ret;
++	info->clk = devm_clk_get(&client->dev, "xclk"); /* optional */
++	if (IS_ERR(info->clk)) {
++		ret = PTR_ERR(info->clk);
++		if (ret == -ENOENT)
++			info->clk = NULL;
++		else
++			return ret;
++	}
++	if (info->clk) {
++		ret = clk_prepare_enable(info->clk);
++		if (ret)
++			return ret;
++		info->clock_speed = clk_get_rate(info->clk) / 1000000;
++		if (info->clock_speed < 10 || info->clock_speed > 48) {
++			ret = -EINVAL;
++			goto clk_disable;
++		}
++	}
  
- #define to_corediv_clk(p) container_of(p, struct clk_corediv, hw)
+ 	ret = ov7670_init_gpio(client, info);
+ 	if (ret)
+ 		goto clk_disable;
+ 
+-	info->clock_speed = clk_get_rate(info->clk) / 1000000;
+-	if (info->clock_speed < 10 || info->clock_speed > 48) {
+-		ret = -EINVAL;
+-		goto clk_disable;
+-	}
+-
+ 	/* Make sure it's an ov7670 */
+ 	ret = ov7670_detect(sd);
+ 	if (ret) {
 
 
