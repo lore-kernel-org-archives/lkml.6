@@ -2,122 +2,133 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF473C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26EBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:09:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8339920851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2F9A2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:09:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oaSQYNQE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8339920851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lystxf8p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F9A2080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731336AbeKTIbU (ORCPT
+        id S1731360AbeKTIfJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:31:20 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33804 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730469AbeKTIbU (ORCPT
+        Tue, 20 Nov 2018 03:35:09 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44244 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731273AbeKTIfJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:31:20 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so8955854pfg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:05:37 -0800 (PST)
+        Tue, 20 Nov 2018 03:35:09 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so27509170lji.11;
+        Mon, 19 Nov 2018 14:09:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=L0ZlTV3enHxCpq4llUtEhjs+hZ9waqlhfC58LgbVFkg=;
-        b=oaSQYNQELdQ7xxWt5PSi3UmGcPSBE25FONuWrsGV7DFSzUfzw9xO6jbaPDnn6XfoGU
-         wgONSXLeqZlWyxdOpbT6YFTeDqhXrd01DUa4TKIk1WLMhtxmLfOuht7vgLF8dCv6CfTQ
-         A0/KZx16FzBfUEBSZ/fOOxcPMsdolAKM28NghaTUZlzpaQLp5Lmg7NO8FN61RwNmOueJ
-         jXofbHYe5jnHcQAxgEr7EsE3Oc0uRHFSZywcp4+EegAL0P0LnxJPz282oYcMUncqIHvF
-         lfeaET0y2cwD/GcyvI4hCU/+E6rkbYy5IOCsEFKI3YEw8AgrL1oODNHxChuacVF0sY7n
-         dlkA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ipXa7Vc/e0hcn/af2fyahPfbdCtUVMRlaoQAaL9VU14=;
+        b=lystxf8p/YyLHNAqQB7SodBZLZhdFCnuswyX7oT9LCWTQ35Yn58w/UV8PVWsmNi2x9
+         x0JRLZebDzlwzc8mPKXbzjzs4ZwAU0qADOf8J2gS3MOaXieuZF2Dhvn6+jFkKIkw+kXO
+         8nej71zb4Etxc/A+524tj31wpSKct4Z6RnECxQWCWBNh5accPqFcMPs4SUryP68yAooO
+         +D/vyP11EMpTZELMRDOH8I0ApnO2FJHb6LVqe2JyctIkMr2cORawIE0twSlFZH/xJQOV
+         1bG0g6Lfr8g8RnR6f6NbRP3z1rSNOlU5mIQPD7wvbm9tie5e+qtKI1rIGMycd6jIedFc
+         EyAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=L0ZlTV3enHxCpq4llUtEhjs+hZ9waqlhfC58LgbVFkg=;
-        b=sdFsb1WpA4GrO+S+B5vQAMdrvf1C5RbqNRx22bVMz0pB+mrJv7k9RCjPgYeuHyww0g
-         iWSPzY/iyZdqo+i4ihTt/zZnKza1eRWsGME3TqP2qqaaMPW+exwYDcr+MSjlI1JrDjSJ
-         NINuHelZhTs6T3RpCO9Yya0Ix/m3v92smqI5XvZvgyL/KS9yFUKi9BZ+OJbwajMCjadX
-         1lZ5rBHALsQdyeVnsUhIwiewdwZTKjrnBTdpMuYEpXQfqsp1493tnJNjPvfjhlXwJ+bo
-         FoLA+X+IXxhRP4WYNoHul/rJsS6TbYqv38E1/h++pCwLxNIhMM3F9cyeygrl4NJDMW/R
-         V0/w==
-X-Gm-Message-State: AGRZ1gJsRYpN/lir75ps3dFAxBgN/Mlvz9GvMZc4MLSt/eK/UKVhICaS
-        MPtB4QSLk09vfcv+YW3AQAUEEYFSV4s=
-X-Google-Smtp-Source: AJdET5eBcOqyoo0vkC4aTuiCySwWH0arYBgvInpEnIYh+OBYm4fQ0XNTUjwdzOCzLz5H+dLIL4BU7Q==
-X-Received: by 2002:a63:2d82:: with SMTP id t124mr21604293pgt.260.1542665136395;
-        Mon, 19 Nov 2018 14:05:36 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id f22-v6sm43154636pfn.177.2018.11.19.14.05.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 14:05:35 -0800 (PST)
-Date:   Mon, 19 Nov 2018 14:05:34 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org
-Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
-In-Reply-To: <20181115090242.GH23831@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1811191404030.150313@chino.kir.corp.google.com>
-References: <20181009083326.GG8528@dhcp22.suse.cz> <20181015150325.GN18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com> <20181016104855.GQ18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810161416540.83080@chino.kir.corp.google.com>
- <20181017070531.GC18839@dhcp22.suse.cz> <alpine.DEB.2.21.1810171256330.60837@chino.kir.corp.google.com> <20181018070031.GW18839@dhcp22.suse.cz> <20181114132306.GX23419@dhcp22.suse.cz> <alpine.DEB.2.21.1811141336010.200345@chino.kir.corp.google.com>
- <20181115090242.GH23831@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ipXa7Vc/e0hcn/af2fyahPfbdCtUVMRlaoQAaL9VU14=;
+        b=sb+/vx5DsPev00p6gRANbicxXIr1oHfyqCLmJNkpwDJWPdJ84Xge8aBWoVLS3ii4FA
+         j3N0QrjOwNd+CYE9SlpwcXvDKgwRVnKlUB93XOHYSgYSgkK5MEQTyXmiZq5ZLce60xnF
+         N7SCen5RHgyv2vekpobDACbm9YE0GSNhhW+RdCPBpqWmqndwd/rDLpnNXXOvMp6muoL9
+         cIGQzr6cBkU0tOQU7McKRrP6R7w2b9zhqn4HAvXcLa8Jv95oi911+feVDC1/MnSmWKIm
+         vEC2cWW38r1NuzI98dpBT9Gj/dF4kNqTIpkNV87CLkSqjzF5sKrHnDQFFI0lWb+kzv9G
+         jrBg==
+X-Gm-Message-State: AGRZ1gJjBGNpkmu2EQiAWJ6J7XSag/VdUsIk8Xgbxh3Qo7qP7lt1KQV9
+        v/9RuvQnSrUpM7TkmXcZLL31yfhh
+X-Google-Smtp-Source: AFSGD/Ud36VkG/8sjBnFhuHIhfRsmn7DzaiooH793H0zh0PboxWjW00vUk2Z6dsOyxVRu/d09CNSeQ==
+X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr5878417ljj.43.1542665362564;
+        Mon, 19 Nov 2018 14:09:22 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
+        by smtp.googlemail.com with ESMTPSA id h85-v6sm5136826ljf.68.2018.11.19.14.09.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 14:09:21 -0800 (PST)
+Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
+ on resume from LP1 on Tegra30
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830185404.7224-1-digetx@gmail.com>
+ <20180830185404.7224-3-digetx@gmail.com>
+ <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cee4398b-edb8-4c9d-7830-6f52fffd6e1c@gmail.com>
+Date:   Tue, 20 Nov 2018 01:09:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018, Michal Hocko wrote:
+On 20.11.2018 0:34, Jon Hunter wrote:
+> 
+> On 30/08/2018 19:54, Dmitry Osipenko wrote:
+>> The DRAM refresh-interval is getting erroneously set to "1" on exiting
+>> from memory self-refreshing mode. The clobbered interval causes the
+>> "refresh request overflow timeout" error raised by the External Memory
+>> Controller on exiting from LP1 on Tegra30.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+>> index 801fe58978ae..99ac9c6dcf7c 100644
+>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+>> @@ -29,7 +29,6 @@
+>>  #define EMC_CFG				0xc
+>>  #define EMC_ADR_CFG			0x10
+>>  #define EMC_TIMING_CONTROL		0x28
+>> -#define EMC_REFRESH			0x70
+>>  #define EMC_NOP				0xdc
+>>  #define EMC_SELF_REF			0xe0
+>>  #define EMC_MRW				0xe8
+>> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
+>>  	cmp	r10, #TEGRA30
+>>  	streq	r1, [r0, #EMC_NOP]
+>>  	streq	r1, [r0, #EMC_NOP]
+>> -	streq	r1, [r0, #EMC_REFRESH]
+>>  
+>>  	emc_device_mask r1, r0
+> 
+> This does look incorrect and it appears Tegra20 has the same bug.
 
-> > The userspace had a single way to determine if thp had been disabled for a 
-> > specific vma and that was broken with your commit.  We have since fixed 
-> > it.  Modifying our software stack to start looking for some field 
-> > somewhere else will not help anybody else that this has affected or will 
-> > affect.  I'm interested in not breaking userspace, not trying a wait and 
-> > see approach to see if anybody else complains once we start looking for 
-> > some other field.  The risk outweighs the reward, it already broke us, and 
-> > I'd prefer not to even open the possibility of breaking anybody else.
-> 
-> I very much agree on "do not break userspace" part but this is kind of
-> gray area. VMA flags are a deep internal implementation detail and
-> nobody should really depend on it for anything important. The original
-> motivation for introducing it was CRIU where it is kind of
-> understandable. I would argue they should find a different way but it is
-> just too late for them.
-> 
-> For this particular case there was no other bug report except for yours
-> and if it is possible to fix it on your end then I would really love to
-> make the a sensible user interface to query the status. If we are going
-> to change the semantic of the exported flag again then we risk yet
-> another breakage.
-> 
-> Therefore I am asking whether changing your particular usecase to a new
-> interface is possible because that would allow to have a longerm
-> sensible user interface rather than another kludge which still doesn't
-> cover all the usecases (e.g. there is no way to reliably query the
-> madvise status after your patch).
-> 
+Indeed.. somehow this doesn't cause any problems on T20. Maybe this affects only specific timing configurations and it's just a luck that "refresh overflow" isn't getting raised.
 
-Providing another interface is great, I have no objection other than 
-emitting another line for every vma on the system for smaps is probably 
-overkill for something as rare as PR_SET_THP_DISABLE.
+> However, looking at the EMC_REFRESH register it appears that bits 5:0
+> are the REFRESH_LO and bits 15:6 are the refresh interval. So this seems
+> to imply the interval is set to 0 and not 1. So maybe the commit message
+> needs to be fixed up.
 
-That said, I think the current handling of the "nh" flag being emitted in 
-smaps is logical and ensures no further userspace breakage.  If that is to 
-be removed, I consider it an unnecessary risk.  That would raised in code 
-review.
+Do you mean that EMC_REFRESH is a fractional value?
+
+> The other question I have, should we be restoring the refresh value here
+> somewhere?
+
+The EMC_REFRESH value isn't altered on enter/exit self-refresh, at least on Tegra30.. very likely it should be the same for other gens.
