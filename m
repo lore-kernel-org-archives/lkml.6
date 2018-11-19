@@ -2,141 +2,536 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A49C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 579AEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42062086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:11:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 053A42087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fwRx1jqu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bb44EIhS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42062086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/EKaOm2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053A42087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbeKSRd6 (ORCPT
+        id S1726289AbeKSRgY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 12:33:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33716 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726079AbeKSRd6 (ORCPT
+        Mon, 19 Nov 2018 12:36:24 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41075 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbeKSRgY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 12:33:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3846F60386; Mon, 19 Nov 2018 07:11:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542611473;
-        bh=5niH4Ff9WlxydQFvyUv4a7G2G3T9YOh9n9FsKqFxlm8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fwRx1jquG8iUK1YgCayA4tkYyUYPTRcjevaeKihSPzTni/y/wjiwi9MljISdOgNi0
-         1mXseXT4wxm5g2yk0zYINvli2EFutd1HSEiyIkVfp13i7OPnAgyJNPWLElubL7d4/Z
-         WBhjK5UyarUM1Q46j5eRHKZ11ip7DZks7iaBuzVc=
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 647A360AD8;
-        Mon, 19 Nov 2018 07:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542611472;
-        bh=5niH4Ff9WlxydQFvyUv4a7G2G3T9YOh9n9FsKqFxlm8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bb44EIhSnJQDsWTO5u3fwBgCoxEZ0EyGuKoVQeL0JrnofLwWU0cYUUyeHcCDwtzJ6
-         TeLdL5RMw4sUnxecpas8ERWcxclZsr5O8TYVHuHqGlcX6q0LmZ2cLrixCbjde3cygW
-         Xxtjqv3s4qzH+LC9uXDqheb+bBkveNM3GaZ0jZPg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 647A360AD8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qk1-f175.google.com with SMTP id d135so47007451qkc.12;
-        Sun, 18 Nov 2018 23:11:12 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJdUQL1GSfcu0+nZKqzdRM6LeZ0eH8Q9m3ET3EIxREtdE6ng0/6
-        nOFMbB5P3cQZYmzwYMlRYYOX0bysCCnjGHM+OdE=
-X-Google-Smtp-Source: AJdET5fQWXryssOArRbHloPb7ncFXu5U4f9ohsXOXMsFl+mmCmlEPjyEFW89kwEAXjYWlw4+402TZiuletvcIJT9nBM=
-X-Received: by 2002:aed:3746:: with SMTP id i64mr19530704qtb.307.1542611471602;
- Sun, 18 Nov 2018 23:11:11 -0800 (PST)
+        Mon, 19 Nov 2018 12:36:24 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c16so20530814lfj.8
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 23:13:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GV8wLt5hHfOL1c0DE6PwdhctUOmSHpPc3OI7fEiFzVo=;
+        b=d/EKaOm2UTUeiE+fj1M0Et7OE+b5+32J1IkMNHIO3wO+FyjA6Qopj41GhDqRo1qr4i
+         bhSu5LE/X2O55xFA3p0ZRnsBQvp6qVOsk05JaG1/5rnChDjGZ0mmTkTyGbAYrED0DFO/
+         3x8AkfEWynPjSuepsLEFgiAKXI6J4NouRW0GY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GV8wLt5hHfOL1c0DE6PwdhctUOmSHpPc3OI7fEiFzVo=;
+        b=k9APgV2yHsXpS+cofmoTAm0DZtkpLQMMuQ3NU21aNv8iibUGJfVnqULw1r5y7kkfNO
+         /7V+mg30ZCw0g7fAjXVlzpKryUTjhdr5pMs77WJSAEqUQZ1h974Gwju2EpZga5gXlr5I
+         FP5MfNHLoBdArJ1AyAVHCyVEXyOEUB45CtyOk+XcZKIELfAvT5ecL8BhQiXbJwKqFcNt
+         TQTpFExhb8z1RZwQ6ut3oIsx55nTyBMbNlIkxOduKOFg6q7guWiqZJZN84uAXAdLwSMy
+         zhH+J6MOuIGHdX31Vdid0Jjln7DHtokExgm0oEivaSojIBUrHRgvdeVXfopdAYRr2lYG
+         nW6w==
+X-Gm-Message-State: AGRZ1gLMBbqrZEXVPqAzdb55ppo3VCo04bmJWlGK06haPYW/qzWfbVSF
+        vky2RjjHooO7xCZeQtxNQpmZJg==
+X-Google-Smtp-Source: AJdET5cBTO3aV07uGlKaNPpLvbs5UQ9feuOmP5ZNZjAKdR7HjmAGExUkumvVDqqCzPv0E4AZTMp8PQ==
+X-Received: by 2002:a19:750a:: with SMTP id y10mr9796997lfe.43.1542611617636;
+        Sun, 18 Nov 2018 23:13:37 -0800 (PST)
+Received: from localhost.localdomain (c-ae7b71d5.014-348-6c756e10.bbcust.telenor.se. [213.113.123.174])
+        by smtp.gmail.com with ESMTPSA id 10sm5531584lff.62.2018.11.18.23.13.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 18 Nov 2018 23:13:35 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Petr Cvek <petr.cvek@tul.cz>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Paul Parsons <lost.distance@yahoo.com>
+Subject: [PATCH 1/5 v7] regulator: gpio: Convert to use descriptors
+Date:   Mon, 19 Nov 2018 08:11:22 +0100
+Message-Id: <20181119071126.8889-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181108070449.23572-1-shawn.guo@linaro.org> <20181108070449.23572-2-shawn.guo@linaro.org>
- <5bea0ed8.1c69fb81.8715.38b2@mx.google.com> <20181113034200.GD20049@tiger>
- <CAL_JsqKu3kf-zrKNtrtZsQEPi0LN_3jqs08i3-8vbSQDVxuRkA@mail.gmail.com> <20181119065503.GB10788@dragon>
-In-Reply-To: <20181119065503.GB10788@dragon>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Mon, 19 Nov 2018 12:40:59 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iGmsLT8UOk+-4zOKkYxJbkhqy=oDw2ZqrXLDCGbF8uTHA@mail.gmail.com>
-Message-ID: <CAFp+6iGmsLT8UOk+-4zOKkYxJbkhqy=oDw2ZqrXLDCGbF8uTHA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
- USB PHY binding
-To:     shawn.guo@linaro.org
-Cc:     Rob Herring <robh@kernel.org>, kishon <kishon@ti.com>,
-        sallenki@codeaurora.org, anur@codeaurora.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>, vkoul@kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 12:29 PM Shawn Guo <shawn.guo@linaro.org> wrote:
->
-> On Sat, Nov 17, 2018 at 09:13:38AM -0600, Rob Herring wrote:
-> <snip>
-> > > > > +- qcom,init-seq:
-> > > > > +    Value type: <u32 array>
-> > > > > +    Definition: Should contain a sequence of <offset value delay> tuples to
-> > > > > +                program 'value' into phy register at 'offset' with 'delay'
-> > > > > +           in us afterwards.
-> > > >
-> > > > If we wanted this type of thing in DT, we'd have a generic binding (or
-> > > > forth).
-> > >
-> > > Right now, this is a qualcomm usb phy specific bindings - first used in
-> > > qcom,usb-hs-phy.txt and I extended it a bit for my phy.  As this is not
-> > > a so good hardware description, I'm a little hesitated to make it
-> > > generic for other platforms to use in general.  What about we put off it
-> > > a little bit until we see more platforms need the same thing?
-> >
-> > I'm not saying I want it generic. Quite the opposite. I don't think we
-> > should have it either generically or vendor specific. The main thing I
-> > have a problem with is the timing information because then we're more
-> > that just data. Without that we're talking about a bunch of properties
-> > for register fields or just raw register values in DT. That becomes
-> > more of a judgement call. There's not too much value in making a
-> > driver translate a bunch of properties just to stuff them into
-> > registers on init. But then just allowing any raw register value to be
-> > in DT could be easily abused.
->
-> Rob,
->
-> I agree with your comments.  Honestly, I'm not comfortable with this
-> 'qcom,init-seq' thing in the first impression.  The similar existence in
-> mainline qcom,usb-hs-phy.txt makes me think it might be acceptable with
-> the timing data added.  Okay, I know your position on this now.
->
-> @Sriharsha,
->
-> Seeing that 'qcom,init-seq' is being configured with the exactly same
-> values for both HS phys in SoC level dts file (qcs404.dtsi), I think
-> such settings can be moved into driver code as SoC specific data.
-> Unless you have a different view on this, I will do it with v4.
+This converts the GPIO regulator driver to use decriptors only.
 
-phy-qcom-qmp and phy-qcom-qusb2 have been maintaining such SoC specific
-init sequences in the drivers if you would like to have pointers from them.
+We have to let go of the array gpio handling: the fetched descriptors
+are handled individually anyway, and the array retrieveal function
+does not make it possible to retrieve each GPIO descriptor with
+unique flags. Instead get them one by one.
 
-Thanks
-Vivek
+We request the "enable" GPIO separately as before, and make sure
+that this line is requested as nonexclusive since enable lines can
+be shared and the regulator core expects this.
 
->
-> Shawn
+Most users of the GPIO regulator are using device tree.
 
+There are two boards in the kernel using the gpio regulator from a
+non-devicetree path: PXA hx4700 and magician. Make sure to switch
+these over to use descriptors as well.
 
+Cc: Philipp Zabel <p.zabel@pengutronix.de> # Magician
+Cc: Petr Cvek <petr.cvek@tul.cz> # Magician
+Cc: Robert Jarzmik <robert.jarzmik@free.fr> # PXA
+Cc: Paul Parsons <lost.distance@yahoo.com> # hx4700
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v6->v7:
+- Resend with the rest.
+ChangeLog v3->v6:
+- Make sure to request the GPIO line nonexclusive as with other
+  regulator GPIOs.
+- Request the voltage controlling GPIOs from the name NULL as
+  only "enable-gpio" is explicitly named.
+- Make sure to delete all unused struct members and assignments
+  in board files.
+- Change numbering to fit the rest of the patches.
+ChangeLog v2->v3:
+- Resending.
+ChangeLog v1->v2:
+- Rebase the patch on the other changes.
+---
+ arch/arm/mach-pxa/hx4700.c               |  23 ++--
+ arch/arm/mach-pxa/magician.c             |  23 ++--
+ drivers/regulator/gpio-regulator.c       | 146 ++++++++---------------
+ include/linux/regulator/gpio-regulator.h |  12 +-
+ 4 files changed, 91 insertions(+), 113 deletions(-)
 
+diff --git a/arch/arm/mach-pxa/hx4700.c b/arch/arm/mach-pxa/hx4700.c
+index b79b757fdd41..51d38d5e776a 100644
+--- a/arch/arm/mach-pxa/hx4700.c
++++ b/arch/arm/mach-pxa/hx4700.c
+@@ -19,6 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/delay.h>
+ #include <linux/fb.h>
++#include <linux/gpio/machine.h>
+ #include <linux/gpio.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+@@ -702,9 +703,7 @@ static struct regulator_init_data bq24022_init_data = {
+ 	.consumer_supplies      = bq24022_consumers,
+ };
+ 
+-static struct gpio bq24022_gpios[] = {
+-	{ GPIO96_HX4700_BQ24022_ISET2, GPIOF_OUT_INIT_LOW, "bq24022_iset2" },
+-};
++static enum gpiod_flags bq24022_gpiod_gflags[] = { GPIOD_OUT_LOW };
+ 
+ static struct gpio_regulator_state bq24022_states[] = {
+ 	{ .value = 100000, .gpios = (0 << 0) },
+@@ -714,12 +713,10 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name = "bq24022",
+ 
+-	.enable_gpio = GPIO72_HX4700_BQ24022_nCHARGE_EN,
+-	.enable_high = 0,
+ 	.enabled_at_boot = 0,
+ 
+-	.gpios = bq24022_gpios,
+-	.nr_gpios = ARRAY_SIZE(bq24022_gpios),
++	.gflags = bq24022_gpiod_gflags,
++	.ngpios = ARRAY_SIZE(bq24022_gpiod_gflags),
+ 
+ 	.states = bq24022_states,
+ 	.nr_states = ARRAY_SIZE(bq24022_states),
+@@ -736,6 +733,17 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", GPIO96_HX4700_BQ24022_ISET2,
++			    NULL, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa", GPIO72_HX4700_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_LOW),
++		{ },
++	},
++};
++
+ /*
+  * StrataFlash
+  */
+@@ -878,6 +886,7 @@ static void __init hx4700_init(void)
+ 	pxa_set_btuart_info(NULL);
+ 	pxa_set_stuart_info(NULL);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(devices, ARRAY_SIZE(devices));
+ 	pwm_add_table(hx4700_pwm_lookup, ARRAY_SIZE(hx4700_pwm_lookup));
+ 
+diff --git a/arch/arm/mach-pxa/magician.c b/arch/arm/mach-pxa/magician.c
+index 14c0f80bc9e7..5d21de79135b 100644
+--- a/arch/arm/mach-pxa/magician.c
++++ b/arch/arm/mach-pxa/magician.c
+@@ -645,9 +645,8 @@ static struct regulator_init_data bq24022_init_data = {
+ 	.consumer_supplies	= bq24022_consumers,
+ };
+ 
+-static struct gpio bq24022_gpios[] = {
+-	{ EGPIO_MAGICIAN_BQ24022_ISET2, GPIOF_OUT_INIT_LOW, "bq24022_iset2" },
+-};
++
++static enum gpiod_flags bq24022_gpiod_gflags[] = { GPIOD_OUT_LOW };
+ 
+ static struct gpio_regulator_state bq24022_states[] = {
+ 	{ .value = 100000, .gpios = (0 << 0) },
+@@ -657,12 +656,10 @@ static struct gpio_regulator_state bq24022_states[] = {
+ static struct gpio_regulator_config bq24022_info = {
+ 	.supply_name		= "bq24022",
+ 
+-	.enable_gpio		= GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
+-	.enable_high		= 0,
+ 	.enabled_at_boot	= 1,
+ 
+-	.gpios			= bq24022_gpios,
+-	.nr_gpios		= ARRAY_SIZE(bq24022_gpios),
++	.gflags = bq24022_gpiod_gflags,
++	.ngpios = ARRAY_SIZE(bq24022_gpiod_gflags),
+ 
+ 	.states			= bq24022_states,
+ 	.nr_states		= ARRAY_SIZE(bq24022_states),
+@@ -679,6 +676,17 @@ static struct platform_device bq24022 = {
+ 	},
+ };
+ 
++static struct gpiod_lookup_table bq24022_gpiod_table = {
++	.dev_id = "gpio-regulator",
++	.table = {
++		GPIO_LOOKUP("gpio-pxa", EGPIO_MAGICIAN_BQ24022_ISET2,
++			    NULL, GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("gpio-pxa", GPIO30_MAGICIAN_BQ24022_nCHARGE_EN,
++			    "enable", GPIO_ACTIVE_LOW),
++		{ },
++	},
++};
++
+ /*
+  * fixed regulator for ads7846
+  */
+@@ -1007,6 +1015,7 @@ static void __init magician_init(void)
+ 	regulator_register_always_on(0, "power", pwm_backlight_supply,
+ 		ARRAY_SIZE(pwm_backlight_supply), 5000000);
+ 
++	gpiod_add_lookup_table(&bq24022_gpiod_table);
+ 	platform_add_devices(ARRAY_AND_SIZE(devices));
+ }
+ 
+diff --git a/drivers/regulator/gpio-regulator.c b/drivers/regulator/gpio-regulator.c
+index b2f5ec4f658a..68a6c861bcad 100644
+--- a/drivers/regulator/gpio-regulator.c
++++ b/drivers/regulator/gpio-regulator.c
+@@ -30,16 +30,15 @@
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/gpio-regulator.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ 
+ struct gpio_regulator_data {
+ 	struct regulator_desc desc;
+ 	struct regulator_dev *dev;
+ 
+-	struct gpio *gpios;
++	struct gpio_desc **gpiods;
+ 	int nr_gpios;
+ 
+ 	struct gpio_regulator_state *states;
+@@ -82,7 +81,7 @@ static int gpio_regulator_set_voltage(struct regulator_dev *dev,
+ 
+ 	for (ptr = 0; ptr < data->nr_gpios; ptr++) {
+ 		state = (target & (1 << ptr)) >> ptr;
+-		gpio_set_value_cansleep(data->gpios[ptr].gpio, state);
++		gpiod_set_value_cansleep(data->gpiods[ptr], state);
+ 	}
+ 	data->state = target;
+ 
+@@ -119,7 +118,7 @@ static int gpio_regulator_set_current_limit(struct regulator_dev *dev,
+ 
+ 	for (ptr = 0; ptr < data->nr_gpios; ptr++) {
+ 		state = (target & (1 << ptr)) >> ptr;
+-		gpio_set_value_cansleep(data->gpios[ptr].gpio, state);
++		gpiod_set_value_cansleep(data->gpiods[ptr], state);
+ 	}
+ 	data->state = target;
+ 
+@@ -138,7 +137,8 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ {
+ 	struct gpio_regulator_config *config;
+ 	const char *regtype;
+-	int proplen, gpio, i;
++	int proplen, i;
++	int ngpios;
+ 	int ret;
+ 
+ 	config = devm_kzalloc(dev,
+@@ -153,59 +153,36 @@ of_get_gpio_regulator_config(struct device *dev, struct device_node *np,
+ 
+ 	config->supply_name = config->init_data->constraints.name;
+ 
+-	if (of_property_read_bool(np, "enable-active-high"))
+-		config->enable_high = true;
+-
+ 	if (of_property_read_bool(np, "enable-at-boot"))
+ 		config->enabled_at_boot = true;
+ 
+ 	of_property_read_u32(np, "startup-delay-us", &config->startup_delay);
+ 
+-	config->enable_gpio = of_get_named_gpio(np, "enable-gpio", 0);
+-	if (config->enable_gpio < 0 && config->enable_gpio != -ENOENT)
+-		return ERR_PTR(config->enable_gpio);
+-
+-	/* Fetch GPIOs. - optional property*/
+-	ret = of_gpio_count(np);
+-	if ((ret < 0) && (ret != -ENOENT))
+-		return ERR_PTR(ret);
+-
+-	if (ret > 0) {
+-		config->nr_gpios = ret;
+-		config->gpios = devm_kcalloc(dev,
+-					config->nr_gpios, sizeof(struct gpio),
+-					GFP_KERNEL);
+-		if (!config->gpios)
++	/* Fetch GPIO init levels */
++	ngpios = gpiod_count(dev, NULL);
++	if (ngpios > 0) {
++		config->gflags = devm_kzalloc(dev,
++					      sizeof(enum gpiod_flags)
++					      * ngpios,
++					      GFP_KERNEL);
++		if (!config->gflags)
+ 			return ERR_PTR(-ENOMEM);
+ 
+-		proplen = of_property_count_u32_elems(np, "gpios-states");
+-		/* optional property */
+-		if (proplen < 0)
+-			proplen = 0;
++		for (i = 0; i < ngpios; i++) {
++			u32 val;
+ 
+-		if (proplen > 0 && proplen != config->nr_gpios) {
+-			dev_warn(dev, "gpios <-> gpios-states mismatch\n");
+-			proplen = 0;
+-		}
++			ret = of_property_read_u32_index(np, "gpios-states", i,
++							 &val);
+ 
+-		for (i = 0; i < config->nr_gpios; i++) {
+-			gpio = of_get_named_gpio(np, "gpios", i);
+-			if (gpio < 0) {
+-				if (gpio != -ENOENT)
+-					return ERR_PTR(gpio);
+-				break;
+-			}
+-			config->gpios[i].gpio = gpio;
+-			config->gpios[i].label = config->supply_name;
+-			if (proplen > 0) {
+-				of_property_read_u32_index(np, "gpios-states",
+-							   i, &ret);
+-				if (ret)
+-					config->gpios[i].flags =
+-							   GPIOF_OUT_INIT_HIGH;
+-			}
++			/* Default to high per specification */
++			if (ret)
++				config->gflags[i] = GPIOD_OUT_HIGH;
++			else
++				config->gflags[i] =
++					val ? GPIOD_OUT_HIGH : GPIOD_OUT_LOW;
+ 		}
+ 	}
++	config->ngpios = ngpios;
+ 
+ 	/* Fetch states. */
+ 	proplen = of_property_count_u32_elems(np, "states");
+@@ -255,7 +232,8 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	struct device_node *np = pdev->dev.of_node;
+ 	struct gpio_regulator_data *drvdata;
+ 	struct regulator_config cfg = { };
+-	int ptr, ret, state;
++	enum gpiod_flags gflags;
++	int ptr, ret, state, i;
+ 
+ 	drvdata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_regulator_data),
+ 			       GFP_KERNEL);
+@@ -275,26 +253,17 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	if (config->nr_gpios != 0) {
+-		drvdata->gpios = kmemdup(config->gpios,
+-					 config->nr_gpios * sizeof(struct gpio),
+-					 GFP_KERNEL);
+-		if (drvdata->gpios == NULL) {
+-			dev_err(&pdev->dev, "Failed to allocate gpio data\n");
+-			ret = -ENOMEM;
+-			goto err_name;
+-		}
+-
+-		drvdata->nr_gpios = config->nr_gpios;
+-		ret = gpio_request_array(drvdata->gpios, drvdata->nr_gpios);
+-		if (ret) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(&pdev->dev,
+-					"Could not obtain regulator setting GPIOs: %d\n",
+-					ret);
+-			goto err_memgpio;
+-		}
++	for (i = 0; i < config->ngpios; i++) {
++		drvdata->gpiods[i] = devm_gpiod_get_index(&pdev->dev,
++							  NULL,
++							  i,
++							  config->gflags[i]);
++		if (IS_ERR(drvdata->gpiods[i]))
++			return PTR_ERR(drvdata->gpiods[i]);
++		/* This is good to know */
++		gpiod_set_consumer_name(drvdata->gpiods[i], drvdata->desc.name);
+ 	}
++	drvdata->nr_gpios = config->ngpios;
+ 
+ 	drvdata->states = kmemdup(config->states,
+ 				  config->nr_states *
+@@ -303,7 +272,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	if (drvdata->states == NULL) {
+ 		dev_err(&pdev->dev, "Failed to allocate state data\n");
+ 		ret = -ENOMEM;
+-		goto err_stategpio;
++		goto err_name;
+ 	}
+ 	drvdata->nr_states = config->nr_states;
+ 
+@@ -330,7 +299,7 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	/* build initial state from gpio init data. */
+ 	state = 0;
+ 	for (ptr = 0; ptr < drvdata->nr_gpios; ptr++) {
+-		if (config->gpios[ptr].flags & GPIOF_OUT_INIT_HIGH)
++		if (config->gflags[ptr] == GPIOD_OUT_HIGH)
+ 			state |= (1 << ptr);
+ 	}
+ 	drvdata->state = state;
+@@ -340,21 +309,19 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 	cfg.driver_data = drvdata;
+ 	cfg.of_node = np;
+ 
+-	if (gpio_is_valid(config->enable_gpio)) {
+-		cfg.ena_gpio = config->enable_gpio;
+-		cfg.ena_gpio_initialized = true;
+-	}
+-	cfg.ena_gpio_invert = !config->enable_high;
+-	if (config->enabled_at_boot) {
+-		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
+-		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+-	} else {
+-		if (config->enable_high)
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_LOW;
+-		else
+-			cfg.ena_gpio_flags |= GPIOF_OUT_INIT_HIGH;
++	/*
++	 * The signal will be inverted by the GPIO core if flagged so in the
++	 * decriptor.
++	 */
++	if (config->enabled_at_boot)
++		gflags = GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE;
++	else
++		gflags = GPIOD_OUT_LOW | GPIOD_FLAGS_BIT_NONEXCLUSIVE;
++
++	cfg.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "enable", gflags);
++	if (IS_ERR(cfg.ena_gpiod)) {
++		ret = PTR_ERR(cfg.ena_gpiod);
++		goto err_memstate;
+ 	}
+ 
+ 	drvdata->dev = regulator_register(&drvdata->desc, &cfg);
+@@ -370,10 +337,6 @@ static int gpio_regulator_probe(struct platform_device *pdev)
+ 
+ err_memstate:
+ 	kfree(drvdata->states);
+-err_stategpio:
+-	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+-err_memgpio:
+-	kfree(drvdata->gpios);
+ err_name:
+ 	kfree(drvdata->desc.name);
+ 	return ret;
+@@ -384,12 +347,7 @@ static int gpio_regulator_remove(struct platform_device *pdev)
+ 	struct gpio_regulator_data *drvdata = platform_get_drvdata(pdev);
+ 
+ 	regulator_unregister(drvdata->dev);
+-
+-	gpio_free_array(drvdata->gpios, drvdata->nr_gpios);
+-
+ 	kfree(drvdata->states);
+-	kfree(drvdata->gpios);
+-
+ 	kfree(drvdata->desc.name);
+ 
+ 	return 0;
+diff --git a/include/linux/regulator/gpio-regulator.h b/include/linux/regulator/gpio-regulator.h
+index 19fbd267406d..49c407afb944 100644
+--- a/include/linux/regulator/gpio-regulator.h
++++ b/include/linux/regulator/gpio-regulator.h
+@@ -21,6 +21,8 @@
+ #ifndef __REGULATOR_GPIO_H
+ #define __REGULATOR_GPIO_H
+ 
++#include <linux/gpio/consumer.h>
++
+ struct regulator_init_data;
+ 
+ enum regulator_type;
+@@ -53,9 +55,9 @@ struct gpio_regulator_state {
+  *			This is used to keep the regulator at
+  *			the default state
+  * @startup_delay:	Start-up time in microseconds
+- * @gpios:		Array containing the gpios needed to control
+- *			the setting of the regulator
+- * @nr_gpios:		Number of gpios
++ * @gflags:		Array of GPIO configuration flags for initial
++ *			states
++ * @ngpios:		Number of GPIOs and configurations available
+  * @states:		Array of gpio_regulator_state entries describing
+  *			the gpio state for specific voltages
+  * @nr_states:		Number of states available
+@@ -74,8 +76,8 @@ struct gpio_regulator_config {
+ 	unsigned enabled_at_boot:1;
+ 	unsigned startup_delay;
+ 
+-	struct gpio *gpios;
+-	int nr_gpios;
++	enum gpiod_flags *gflags;
++	int ngpios;
+ 
+ 	struct gpio_regulator_state *states;
+ 	int nr_states;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.19.1
+
