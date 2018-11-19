@@ -2,113 +2,82 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1C6C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F54C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA6920831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA6920831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 38AFF2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:11:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="otYy1kce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38AFF2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbeKTBdk (ORCPT
+        id S1729764AbeKTBey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:33:40 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32778 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729474AbeKTBdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:33:39 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id CA506E165B257;
-        Mon, 19 Nov 2018 15:09:41 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 19 Nov
- 2018 15:09:34 +0000
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        <stable@vger.kernel.org>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
- <20181116134153.GD4163@linux.intel.com>
- <05c7c936-da58-f386-0a43-69e96d6e18a8@huawei.com>
- <20181118073207.GC5897@linux.intel.com>
- <a259a629-def7-b538-2a54-8ca6bfbe772a@huawei.com>
- <20181119143357.GG8755@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <ed2d769b-2917-7d8b-ff9c-16220fa17833@huawei.com>
-Date:   Mon, 19 Nov 2018 16:09:34 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 19 Nov 2018 20:34:54 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40574 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729392AbeKTBey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:34:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=PW/karcgM4kSkrrHapxyj81pv+/jN6zfGatvHa6BB10=;
+        b=otYy1kceijuuvHxbonE0R+8aFp3ktP9qvcJSemxyUknPEqIQ8WKlYmFr7+CyDTe+tPs05Fo6m11/4/YBfoEYl9pSF4MESC2+M8mAX0BU5A6Ypu/6+rQqp+BVA5KbQSA8IxUGUo09JSch823P0Ti9bJNh9rmUF/SOm0V5T748nec=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gOlCT-0007eG-5E; Mon, 19 Nov 2018 16:10:57 +0100
+Date:   Mon, 19 Nov 2018 16:10:57 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, davem@davemloft.net,
+        f.fainelli@gmail.com, allan.nielsen@microchip.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to
+ phy_select/restore_page functions
+Message-ID: <20181119151057.GC26852@lunn.ch>
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+ <20181008100728.24959-2-quentin.schulz@bootlin.com>
+ <mvm8t1pazea.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <20181119143357.GG8755@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mvm8t1pazea.fsf@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2018 3:33 PM, Jarkko Sakkinen wrote:
-> On Mon, Nov 19, 2018 at 09:14:00AM +0100, Roberto Sassu wrote:
->> On 11/18/2018 8:32 AM, Jarkko Sakkinen wrote:
->>> On Fri, Nov 16, 2018 at 05:06:48PM +0100, Roberto Sassu wrote:
->>>> On 11/16/2018 2:41 PM, Jarkko Sakkinen wrote:
->>>>> On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
->>>>>> This patch protects against data corruption that could happen in the bus,
->>>>>> by checking that that the digest size returned by the TPM during a PCR read
->>>>>> matches the size of the algorithm passed to tpm2_pcr_read().
->>>>>>
->>>>>> This check is performed after information about the PCR banks has been
->>>>>> retrieved.
->>>>>>
->>>>>> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->>>>>> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->>>>>> Cc: stable@vger.kernel.org
->>>>>
->>>>> Missing fixes tag.
->>>>
->>>> Before this patch set, tpm2_pcr_extend() always copied 20 bytes from the
->>>> output sent by the TPM.
->>>>
->>>> Roberto
->>>
->>> Aah, right, of course. Well the patch set is ATM somewhat broken because
->>> this would require a fixes tag that points to a patch insdie the patch
->>> set.
->>>
->>> Probably good way to fix the issue is to just merge this with the
->>> earlier commit.
->>
->> Unfortunately, it is not possible. The exact digest size has been
->> introduced with patch 5/7.
+On Mon, Nov 19, 2018 at 03:57:17PM +0100, Andreas Schwab wrote:
+> On Okt 08 2018, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
 > 
-> I put this in simple terms: if I merge 5/7 the driver will be broken.
-> Any commit in the patch set should not leave the tree in broken state.
-
-Patch 6/7 does not fix patch 5/7. The check in patch 6/7 is not done for
-the PCR read performed by patch 5/7, because the digest sizes are not
-yet available.
-
-Roberto
-
-
-> That implies that 5/7 and 6/7 cannot be separate commits.
+> > The Microsemi PHYs have multiple banks of registers (called pages).
+> > Registers can only be accessed from one page, if we need a register from
+> > another page, we need to switch the page and the registers of all other
+> > pages are not accessible anymore.
+> >
+> > Basically, to read register 5 from page 0, 1, 2, etc., you do the same
+> > phy_read(phydev, 5); but you need to set the desired page beforehand.
+> >
+> > In order to guarantee that two concurrent functions do not change the
+> > page, we need to do some locking per page. This can be achieved with the
+> > use of phy_select_page and phy_restore_page functions but phy_write/read
+> > calls in-between those two functions shall be replaced by their
+> > lock-free alternative __phy_write/read.
+> >
+> > Let's migrate this driver to those functions.
 > 
-> /Jarkko
-> 
+> This has some serious locking problem.
 
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Hi Andreas
+
+Could you be more specific. Are you getting a deadlock? A WARN_ON?
+
+Thanks,
+	Andrew
