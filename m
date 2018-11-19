@@ -2,147 +2,181 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6C5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E93C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F552080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E91B2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:11:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="J2rP3Rz3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F552080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCtGN4NG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E91B2080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731451AbeKTIgc (ORCPT
+        id S1731468AbeKTIhV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:36:32 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:33718 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731256AbeKTIgc (ORCPT
+        Tue, 20 Nov 2018 03:37:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38934 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731256AbeKTIhV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:36:32 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4A76B10C083D;
-        Mon, 19 Nov 2018 14:10:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542665448; bh=qvuNwn2+HKhcUF+O7W2RYsNKvCjpq9BQmfaa4lAaxD0=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=J2rP3Rz3qDjnYz+f2sf2ilDhVXUo8u8b+vNn73pWeIfdVePCGSvKlpaXsQPlJMuri
-         RGuhgIjJKHQINbxUteBYmUHWcwg6JfUCjZ3DMxETU4vV7HzRQQClu8DOEnAFGQ6Sdo
-         gtYLUbvG7RYpgN2ORQFAcLnRN91WrLABUaDxcLIgxyO4Yb1j8QOQJ2B5hjKyMXEy5W
-         UwauNsfxBMrCnRuicrbAIHOeC0ELumbeJ2gSR9vas8uCQbhESqL8oF63YUkqjQF+T3
-         SajupJ+jMNtSnbWBG+qhl2QHs+Hq495Zt19m/oLI8aLuI/Qr5Hv0Iv4Aty8wZOT5mz
-         Np0yvRRZeZt2w==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2DD023844;
-        Mon, 19 Nov 2018 14:10:48 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Mon, 19 Nov 2018 14:10:47 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Mon,
- 19 Nov 2018 23:10:46 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH v3] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Topic: [PATCH v3] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-Thread-Index: AQHUf/s/PX6mUz8Dqkul5tUTbfctiaVXkvAAgAAA1ACAAASngIAAAEkA
-Date:   Mon, 19 Nov 2018 22:10:45 +0000
-Message-ID: <8f613c5cb91c4d94643e317f08d6019abe27638d.camel@synopsys.com>
-References: <20181119112917.4214-1-abrodkin@synopsys.com>
-         <360a492f-58b0-daa4-a450-3cdbfffbeabe@linaro.org>
-         <349be75346aaf03eda8c49dfd90c06e3f916a1e3.camel@synopsys.com>
-         <a400dabc-df12-1854-21c4-8e914ef538d8@linaro.org>
-In-Reply-To: <a400dabc-df12-1854-21c4-8e914ef538d8@linaro.org>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-x-originating-ip: [10.225.15.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <841DFA87AE6526499547E703EBACAA0C@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Tue, 20 Nov 2018 03:37:21 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b13so33667479wrx.6;
+        Mon, 19 Nov 2018 14:11:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5Dck1jKnruAxnGiVRmbcWgWiXQ+KB5ToM3dB3un7OJQ=;
+        b=LCtGN4NG3Magzw2HzWRkqPzSPTo5I0aNbEi60M4NCXi5gaA2/XqcvpShH86zDeSR4m
+         j0Mf3+0eNfGyL6HP5t2uKzowAmmNKBtQscoOCFrXkveOOzZBWE5LXH9/SdgQ8TaPDwre
+         99WgdE04BQvrRn4CvJd5a5W/oSDh+TPX2mMbQP+ArT4I0dtIXFRiJdaaqLBiu0exkZ7f
+         F7HPMEDfsX3SwTRx6N31Mpf8KbK0NEQHnph1Voe37gVwP5iJ12j335kVkHHA8+j6tNs9
+         IPujMT5YE1XWlGtOtSbvVkqaRIA7PbBwy3bGki1iDOxMTTKxLTRWqE1uk+s/hRiArd/g
+         cQyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Dck1jKnruAxnGiVRmbcWgWiXQ+KB5ToM3dB3un7OJQ=;
+        b=cEwvlLqRWe2KbyoSeJZ/CCpYw7m5QKNNcZQkl9yzdH1Gf+XgZJUZ9ST0+Z5+G0GmaS
+         gaMPgps+d6ua/Ce5TFtUA1mrCNR9ZD3KH9z0UvQsmC33GM6iOIi3qmvfpdNaEk4JDq8i
+         wYTg9Luc0MLzxWj8t8x+QD257uz12luhd0G82wpy818VtYYC9J0ibF6xgEH3YMJiPABE
+         5zMFNyqoXpGiIwCLrvp9o7L6Aq8o8No+IlVn+DQomjgnpJuQks6/mmK0P//ma2SHNW8A
+         sfYfKjL7r6xUEvdIyGY4iPgyKeOOMOcdZh1GiXIQA2ANbLI184gTKwATjgNkHhJ3s+ZL
+         i9Xg==
+X-Gm-Message-State: AGRZ1gKXBke+RNwFGwA96lARZFTWiz54ZJkUuO3cUTDobAT+q/QrgNZS
+        RjoYaHie5HVKwo5zyfno26U=
+X-Google-Smtp-Source: AJdET5dSLT+3r2lDV0bJEcXvkDnKp1X0fFUAF8GOr434Di6DcbX7/CnTAstz98qtzMXvTk/gvLwblA==
+X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr19225213wrx.79.1542665493404;
+        Mon, 19 Nov 2018 14:11:33 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id p74sm5430985wmd.29.2018.11.19.14.11.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 14:11:32 -0800 (PST)
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+ <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+ <20181119151009.490413d9@bbrezillon>
+ <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+ <20181119154338.2dfa7a5a@bbrezillon>
+ <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
+ <20181119162127.71d0665d@bbrezillon>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
+Date:   Mon, 19 Nov 2018 23:11:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20181119162127.71d0665d@bbrezillon>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTExLTE5IGF0IDIzOjA5ICswMTAwLCBEYW5pZWwgTGV6Y2FubyB3cm90ZToN
-Cj4gT24gMTkvMTEvMjAxOCAyMjo1MywgQWxleGV5IEJyb2RraW4gd3JvdGU6DQo+ID4gSGkgRGFu
-aWVsLA0KPiA+IA0KPiA+IE9uIE1vbiwgMjAxOC0xMS0xOSBhdCAyMjo1MCArMDEwMCwgRGFuaWVs
-IExlemNhbm8gd3JvdGU6DQo+ID4gPiBPbiAxOS8xMS8yMDE4IDEyOjI5LCBBbGV4ZXkgQnJvZGtp
-biB3cm90ZToNCj4gPiA+ID4gSXQgdHVybmVkIG91dCB3ZSB1c2VkIHRvIHVzZSBkZWZhdWx0IGlt
-cGxlbWVudGF0aW9uIG9mIHNjaGVkX2Nsb2NrKCkNCj4gPiA+ID4gZnJvbSBrZXJuZWwvc2NoZWQv
-Y2xvY2suYyB3aGljaCB3YXMgYXMgcHJlY2lzZSBhcyAxL0haLCBpLmUuDQo+ID4gPiA+IGJ5IGRl
-ZmF1bHQgd2UgaGFkIDEwIG1zZWMgZ3JhbnVsYXJpdHkgb2YgdGltZSBtZWFzdXJlbWVudC4NCj4g
-PiA+ID4gDQo+ID4gPiA+IE5vdyBnaXZlbiBBUkMgYnVpbHQtaW4gdGltZXJzIGFyZSBjbG9ja2Vk
-IHdpdGggdGhlIHNhbWUgZnJlcXVlbmN5IGFzDQo+ID4gPiA+IENQVSBjb3JlcyB3ZSBtYXkgZ2V0
-IG11Y2ggaGlnaGVyIHByZWNpc2lvbiBvZiB0aW1lIHRyYWNraW5nLg0KPiA+ID4gPiANCj4gPiA+
-ID4gVGh1cyB3ZSBzd2l0Y2ggdG8gZ2VuZXJpYyBzY2hlZF9jbG9jayB3aGljaCByZWFsbHkgcmVh
-ZHMgQVJDIGhhcmR3YXJlDQo+ID4gPiA+IGNvdW50ZXJzLg0KPiA+ID4gPiANCj4gPiA+ID4gVGhp
-cyBpcyBlc3BlY2lhbGx5IGhlbHBmdWwgZm9yIG1lYXN1cmluZyBzaG9ydCBldmVudHMuDQo+ID4g
-PiA+IFRoYXQncyB3aGF0IHdlIHVzZWQgdG8gaGF2ZToNCj4gPiA+ID4gLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiA+ID4gJCBwZXJm
-IHN0YXQgL2Jpbi9zaCAtYyAvcm9vdC9sbWJlbmNoLW1hc3Rlci9iaW4vYXJjL2hlbGxvID4gL2Rl
-di9udWxsDQo+ID4gPiA+IA0KPiA+ID4gPiAgUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3Ig
-Jy9iaW4vc2ggLWMgL3Jvb3QvbG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyc6DQo+ID4gPiA+
-IA0KPiA+ID4gPiAgICAgICAgICAxMC4wMDAwMDAgICAgICB0YXNrLWNsb2NrIChtc2VjKSAgICAg
-ICAgICMgICAgMi44MzIgQ1BVcyB1dGlsaXplZA0KPiA+ID4gPiAgICAgICAgICAgICAgICAgIDEg
-ICAgICBjb250ZXh0LXN3aXRjaGVzICAgICAgICAgICMgICAgMC4xMDAgSy9zZWMNCj4gPiA+ID4g
-ICAgICAgICAgICAgICAgICAxICAgICAgY3B1LW1pZ3JhdGlvbnMgICAgICAgICAgICAjICAgIDAu
-MTAwIEsvc2VjDQo+ID4gPiA+ICAgICAgICAgICAgICAgICA2MyAgICAgIHBhZ2UtZmF1bHRzICAg
-ICAgICAgICAgICAgIyAgICAwLjAwNiBNL3NlYw0KPiA+ID4gPiAgICAgICAgICAgIDMwNDk0ODAg
-ICAgICBjeWNsZXMgICAgICAgICAgICAgICAgICAgICMgICAgMC4zMDUgR0h6DQo+ID4gPiA+ICAg
-ICAgICAgICAgMTA5MTI1OSAgICAgIGluc3RydWN0aW9ucyAgICAgICAgICAgICAgIyAgICAwLjM2
-ICBpbnNuIHBlciBjeWNsZQ0KPiA+ID4gPiAgICAgICAgICAgICAyNTY4MjggICAgICBicmFuY2hl
-cyAgICAgICAgICAgICAgICAgICMgICAyNS42ODMgTS9zZWMNCj4gPiA+ID4gICAgICAgICAgICAg
-IDI3MDI2ICAgICAgYnJhbmNoLW1pc3NlcyAgICAgICAgICAgICAjICAgMTAuNTIlIG9mIGFsbCBi
-cmFuY2hlcw0KPiA+ID4gPiANCj4gPiA+ID4gICAgICAgIDAuMDAzNTMwNjg3IHNlY29uZHMgdGlt
-ZSBlbGFwc2VkDQo+ID4gPiA+IA0KPiA+ID4gPiAgICAgICAgMC4wMDAwMDAwMDAgc2Vjb25kcyB1
-c2VyDQo+ID4gPiA+ICAgICAgICAwLjAxMDAwMDAwMCBzZWNvbmRzIHN5cw0KPiA+ID4gPiAtLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+
-ID4gPiANCj4gPiA+ID4gQW5kIG5vdyB3ZSdsbCBzZWU6DQo+ID4gPiA+IC0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gPiA+ICQgcGVy
-ZiBzdGF0IC9iaW4vc2ggLWMgL3Jvb3QvbG1iZW5jaC1tYXN0ZXIvYmluL2FyYy9oZWxsbyA+IC9k
-ZXYvbnVsbA0KPiA+ID4gPiANCj4gPiA+ID4gIFBlcmZvcm1hbmNlIGNvdW50ZXIgc3RhdHMgZm9y
-ICcvYmluL3NoIC1jIC9yb290L2xtYmVuY2gtbWFzdGVyL2Jpbi9hcmMvaGVsbG8nOg0KPiA+ID4g
-PiANCj4gPiA+ID4gICAgICAgICAgIDMuMDA0MzIyICAgICAgdGFzay1jbG9jayAobXNlYykgICAg
-ICAgICAjICAgIDAuODY1IENQVXMgdXRpbGl6ZWQNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAx
-ICAgICAgY29udGV4dC1zd2l0Y2hlcyAgICAgICAgICAjICAgIDAuMzMzIEsvc2VjDQo+ID4gPiA+
-ICAgICAgICAgICAgICAgICAgMSAgICAgIGNwdS1taWdyYXRpb25zICAgICAgICAgICAgIyAgICAw
-LjMzMyBLL3NlYw0KPiA+ID4gPiAgICAgICAgICAgICAgICAgNjMgICAgICBwYWdlLWZhdWx0cyAg
-ICAgICAgICAgICAgICMgICAgMC4wMjEgTS9zZWMNCj4gPiA+ID4gICAgICAgICAgICAyOTg2NzM0
-ICAgICAgY3ljbGVzICAgICAgICAgICAgICAgICAgICAjICAgIDAuOTk0IEdIeg0KPiA+ID4gPiAg
-ICAgICAgICAgIDEwODc0NjYgICAgICBpbnN0cnVjdGlvbnMgICAgICAgICAgICAgICMgICAgMC4z
-NiAgaW5zbiBwZXIgY3ljbGUNCj4gPiA+ID4gICAgICAgICAgICAgMjU1MjA5ICAgICAgYnJhbmNo
-ZXMgICAgICAgICAgICAgICAgICAjICAgODQuOTQ3IE0vc2VjDQo+ID4gPiA+ICAgICAgICAgICAg
-ICAyNjAwMiAgICAgIGJyYW5jaC1taXNzZXMgICAgICAgICAgICAgIyAgIDEwLjE5JSBvZiBhbGwg
-YnJhbmNoZXMNCj4gPiA+ID4gDQo+ID4gPiA+ICAgICAgICAwLjAwMzQ3NDgyOSBzZWNvbmRzIHRp
-bWUgZWxhcHNlZA0KPiA+ID4gPiANCj4gPiA+ID4gICAgICAgIDAuMDAzNTE5MDAwIHNlY29uZHMg
-dXNlcg0KPiA+ID4gPiAgICAgICAgMC4wMDAwMDAwMDAgc2Vjb25kcyBzeXMNCj4gPiA+ID4gLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4g
-PiA+ID4gDQo+ID4gPiA+IE5vdGUgaG93IG11Y2ggbW9yZSBtZWFuaW5nZnVsIGlzIHRoZSBzZWNv
-bmQgb3V0cHV0IC0gdGltZSBzcGVudCBmb3INCj4gPiA+ID4gZXhlY3V0aW9uIHByZXR0eSBtdWNo
-IG1hdGNoZXMgbnVtYmVyIG9mIGN5Y2xlcyBzcGVudCAod2UncmUgcnVubmlnbg0KPiA+ID4gPiBA
-IDFHSHogaGVyZSkuDQo+ID4gPiA+IA0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBBbGV4ZXkgQnJv
-ZGtpbiA8YWJyb2RraW5Ac3lub3BzeXMuY29tPg0KPiA+ID4gPiBDYzogRGFuaWVsIExlemNhbm8g
-PGRhbmllbC5sZXpjYW5vQGxpbmFyby5vcmc+DQo+ID4gPiA+IENjOiBWaW5lZXQgR3VwdGEgPHZn
-dXB0YUBzeW5vcHN5cy5jb20+DQo+ID4gPiA+IENjOiBUaG9tYXMgR2xlaXhuZXIgPHRnbHhAbGlu
-dXRyb25peC5kZT4NCj4gPiA+ID4gLS0tDQo+ID4gPiANCj4gPiA+IEFwcGxpZWQsIHRoYW5rcy4N
-Cj4gPiANCj4gPiBNYXliZSBhIGJpdCB0b28gbGF0ZSBidXQgSSBjb21wbGV0ZWx5IGZvcmdvdCB0
-byBhZGQgc3RhYmxlIHRhZyBpbnRvIENjIGxpc3QuDQo+ID4gQW55IGNoYW5jZSB0byBhZGQgaXQg
-c3RpbGw/DQo+IA0KPiBZZXMsIG5vIHByb2JsZW0sIEkndmUgYWRkZWQgaXQuDQoNCkNvb2wsIHRo
-YW5rcyENCg0KLUFsZXhleQ0K
+On 11/19/2018 04:21 PM, Boris Brezillon wrote:
+> On Mon, 19 Nov 2018 16:12:41 +0100
+> Marek Vasut <marek.vasut@gmail.com> wrote:
+> 
+>> On 11/19/2018 03:43 PM, Boris Brezillon wrote:
+>>> On Mon, 19 Nov 2018 15:14:07 +0100
+>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>   
+>>>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:  
+>>>>> On Mon, 19 Nov 2018 14:49:31 +0100
+>>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>>>     
+>>>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:    
+>>>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+>>>>>>>
+>>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>>>>>>> ---
+>>>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+>>>>>>>  1 file changed, 33 insertions(+)
+>>>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>>>> new file mode 100644
+>>>>>>> index 0000000..8286cc8
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>>>> @@ -0,0 +1,33 @@
+>>>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+>>>>>>> +----------------------------------------------------
+>>>>>>> +
+>>>>>>> +Required properties:
+>>>>>>> +- compatible: should be "renesas,rpc-r8a77995"
+>>>>>>> +- #address-cells: should be 1
+>>>>>>> +- #size-cells: should be 0
+>>>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
+>>>>>>> +       mapping area
+>>>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
+>>>>>>> +- interrupts: interrupt line connected to the RPC SPI controller      
+>>>>>>
+>>>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
+>>>>>> look in the bindings ?    
+>>>>>
+>>>>> Not sure this approach is still accepted, but that's how we solved the
+>>>>> problem for the flexcom block [1].
+>>>>>
+>>>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt    
+>>>>
+>>>> That looks pretty horrible.
+>>>>
+>>>> In U-Boot we check whether the device hanging under the controller node
+>>>> is JEDEC SPI flash or CFI flash and based on that decide what the config
+>>>> of the controller should be (SPI or HF). Not sure that's much better,but
+>>>> at least it doesn't need extra nodes which do not really represent any
+>>>> kind of real hardware.
+>>>>  
+>>>
+>>> The subnodes are not needed, you can just have a property that tells in
+>>> which mode the controller is supposed to operate, and the MFD would
+>>> create a sub-device that points to the same device_node.  
+>>
+>> Do you even need a dedicated property ? I think you can decide purely on
+>> what node is hanging under the controller (jedec spi nor or cfi nor).
+> 
+> Yes, that could work if they have well-known compatibles. As soon as
+> people start using flash-specific compats (like some people do for
+> their SPI NORs) it becomes a maintenance burden.
+
+Which, on this controller, is very likely never gonna happen. Once it
+does , we can add a custom property.
+
+>>> Or we can have
+>>> a single driver that decides what to declare (a spi_controller or flash
+>>> controller), but you'd still have to decide where to place this
+>>> driver...  
+>>
+>> I'd definitely prefer a single driver.
+>>
+> 
+> Where would you put this driver? I really don't like the idea of having
+> MTD drivers spread over the tree. Don't know what's Mark's opinion on
+> this matter.
+
+Well, it's both CFI (hyperflash) and SF (well, SPI flash) controller, so
+where would this go ?
+
+-- 
+Best regards,
+Marek Vasut
