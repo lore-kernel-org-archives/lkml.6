@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A402C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD6AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C8B2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 851272145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3lckgHc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C8B2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8f5NShd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851272145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbeKTDHC (ORCPT
+        id S2387799AbeKTDHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:01 -0500
+        id S1732866AbeKTDHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 287A92086A;
-        Mon, 19 Nov 2018 16:42:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B077721104;
+        Mon, 19 Nov 2018 16:42:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645770;
-        bh=uAhtZhT/AvewU/0/mdm9Nd8QLcBeacvHg7W/sszvVzQ=;
+        s=default; t=1542645773;
+        bh=biL11TeJCGrE9imIP3ObqD8wFAgS/repQVBDgMfSNV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a3lckgHcJWQS20BVAHCcpcVdJAbkoK4xTXxiEQ++1/vI+wRARFqYzPk5RWSyVoiKJ
-         cDA7gK52ML7vckcdDpQ0hXDhZlhRUXaHVzGvkUXenS3VlWHaku/IRR4l3JNSWSzqfR
-         otj9SMNe7+rKasVLyyLa7NzICpTvy50vqsj8/aiY=
+        b=X8f5NShdIKVFfxAvlnqM1cufbyXxCSVKTbe6i80tuBocQtbto5Y3TSUyDYGquJS1C
+         baL+Df/qtp7A37fhWivQIHALSXNhDxuL9KZB1dE2jOSaelVBdHwtmcjyThKo8Uj/Dc
+         rsLMi6z9mku15iqfBLvHOuXB0R8t8Wvr5UPMDwDQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young_X <YangX92@hotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.18 035/171] cdrom: fix improper type cast, which can leat to information leak.
-Date:   Mon, 19 Nov 2018 17:27:11 +0100
-Message-Id: <20181119162625.486955113@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.18 076/171] reset: hisilicon: fix potential NULL pointer dereference
+Date:   Mon, 19 Nov 2018 17:27:52 +0100
+Message-Id: <20181119162631.835971036@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,35 +63,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Young_X <YangX92@hotmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit e4f3aa2e1e67bb48dfbaaf1cad59013d5a5bc276 upstream.
+commit e9a2310fb689151166df7fd9971093362d34bd79 upstream.
 
-There is another cast from unsigned long to int which causes
-a bounds check to fail with specially crafted input. The value is
-then used as an index in the slot array in cdrom_slot_status().
+There is a potential execution path in which function
+platform_get_resource() returns NULL. If this happens,
+we will end up having a NULL pointer dereference.
 
-This issue is similar to CVE-2018-16658 and CVE-2018-10940.
+Fix this by replacing devm_ioremap with devm_ioremap_resource,
+which has the NULL check and the memory region request.
 
-Signed-off-by: Young_X <YangX92@hotmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+This code was detected with the help of Coccinelle.
+
+Cc: stable@vger.kernel.org
+Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/hisilicon/reset.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2441,7 +2441,7 @@ static int cdrom_ioctl_select_disc(struc
- 		return -ENOSYS;
+--- a/drivers/clk/hisilicon/reset.c
++++ b/drivers/clk/hisilicon/reset.c
+@@ -109,9 +109,8 @@ struct hisi_reset_controller *hisi_reset
+ 		return NULL;
  
- 	if (arg != CDSL_CURRENT && arg != CDSL_NONE) {
--		if ((int)arg >= cdi->capacity)
-+		if (arg >= cdi->capacity)
- 			return -EINVAL;
- 	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rstc->membase = devm_ioremap(&pdev->dev,
+-				res->start, resource_size(res));
+-	if (!rstc->membase)
++	rstc->membase = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(rstc->membase))
+ 		return NULL;
  
+ 	spin_lock_init(&rstc->lock);
 
 
