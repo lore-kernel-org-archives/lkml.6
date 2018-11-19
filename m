@@ -2,79 +2,108 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 750E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63722C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44FC120823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:15:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44FC120823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 35B3F2087C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:16:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35B3F2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726914AbeKSSi1 (ORCPT
+        id S1726955AbeKSSjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:38:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51824 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeKSSi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:38:27 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 31699C02835E;
-        Mon, 19 Nov 2018 08:15:34 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 756081974E;
-        Mon, 19 Nov 2018 08:15:13 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 16:15:09 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 08/19] btrfs: move bio_pages_all() to btrfs
-Message-ID: <20181119081507.GA16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-9-ming.lei@redhat.com>
- <20181116002356.GC23828@vader>
+        Mon, 19 Nov 2018 13:39:47 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32776 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726687AbeKSSjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:39:46 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 42754A2F000E7;
+        Mon, 19 Nov 2018 08:16:50 +0000 (GMT)
+Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 19 Nov
+ 2018 08:16:46 +0000
+Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures to
+ tpm_pcr_extend()
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
+References: <20181114153108.12907-1-roberto.sassu@huawei.com>
+ <20181114153108.12907-8-roberto.sassu@huawei.com>
+ <20181116150352.GA3612@linux.intel.com>
+ <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
+ <20181118072745.GA5897@linux.intel.com>
+ <1542603470.4914.55.camel@linux.ibm.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <26519f33-b5d6-c2c6-5179-c43f197f2cbd@huawei.com>
+Date:   Mon, 19 Nov 2018 09:16:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116002356.GC23828@vader>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 19 Nov 2018 08:15:34 +0000 (UTC)
+In-Reply-To: <1542603470.4914.55.camel@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.204.65.144]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:23:56PM -0800, Omar Sandoval wrote:
-> On Thu, Nov 15, 2018 at 04:52:55PM +0800, Ming Lei wrote:
-> > BTRFS is the only user of this helper, so move this helper into
-> > BTRFS, and implement it via bio_for_each_segment_all(), since
-> > bio->bi_vcnt may not equal to number of pages after multipage bvec
-> > is enabled.
+On 11/19/2018 5:57 AM, Mimi Zohar wrote:
+> On Sun, 2018-11-18 at 09:27 +0200, Jarkko Sakkinen wrote:
+>> On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
+>>> On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
+>>>> On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
+>>>>> Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
+>>>>>
+>>>>> This patch modifies the definition of tpm_pcr_extend() to allow other
+>>>>> kernel subsystems to pass a digest for each algorithm supported by the TPM.
+>>>>> All digests are processed by the TPM in one operation.
+>>>>>
+>>>>> If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+>>>>> the TPM driver extends the remaining PCR banks with the first digest
+>>>>> passed as an argument to the function.
+>>>>
+>>>> What is the legit use case for this?
+>>>
+>>> A subset could be chosen for better performance, or when a TPM algorithm
+>>> is not supported by the crypto subsystem.
+>>
+>> Doesn't extending a subset a security concern?
 > 
-> Shouldn't you also get rid of bio_pages_all() in this patch?
+> Right, so instead of extending a subset of the allocated banks, all of
+> the allocated banks need to be extended, even for those banks that a
+> digest was not included.  This is no different than what is being done
+> today.  IMA is currently only calculating the SHA1 hash, padding the
+> digest with 0's, and extending the padded value(s) into all of the
+> allocated banks.
 
-Good catch!
+The caller of tpm_pcr_extend() could pass a subset of the allocated
+banks, but the TPM driver extends all banks as before.
 
-thanks,
-Ming
+Roberto
+
+
+> If there is a vulnerability with the hash algorithm, then any bank
+> extended with the padded/truncated digest would be susceptible.
+> 
+> IMA will need to become TPM 2.0 aware, calculating and extending
+> multiple banks and define a new measurement list format containing the
+> multiple digests.
+> 
+> Mimi
+> 
+
+-- 
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
