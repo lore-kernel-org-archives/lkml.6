@@ -2,93 +2,119 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8CBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3E7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E81D42086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22C352086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l637roip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E81D42086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zdfyiXIJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22C352086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbeKTGR0 (ORCPT
+        id S1730463AbeKTGSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:17:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726397AbeKTGRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:17:25 -0500
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5085220831
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 19:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542657136;
-        bh=YxP4BKo4PjD6PZZwn6g5wblNOazSfdvH7axyG+0UbAw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=l637roiptSM/8kO+A6m7orRNSWxMwf4fCYKJGXew3Wjh1YseIXsJtn0J82MbU/bjA
-         gEFmsByNGbbOk/RdjDCKoBsYFPDvDDJPVV6WG438zdA50vep83YN93by8hb7aUyugP
-         Zc47DtwCM+/TI9DTvb4SzGEC7eIRmwVoM8bma40k=
-Received: by mail-wm1-f52.google.com with SMTP id c126so173987wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:52:16 -0800 (PST)
-X-Gm-Message-State: AA+aEWbgm5OdZCmzgXNiLMMiMrdZZjYlXsO4b3eAhI8ZN73bHJ0tCrSe
-        Ql1YOv9HgryWyNSD7LPpU5NWSuLi5WM6iNM31zSBPg==
-X-Google-Smtp-Source: AJdET5fwsZzd5m4nQQ6UesPgeMlFOvKX6Ynr82EJW67sqYGUjirrAhIzF2e/4yFAdX5zEQQWVI9IhD0BpFQo0aU/qnQ=
-X-Received: by 2002:a1c:110b:: with SMTP id 11mr5521748wmr.83.1542657134867;
- Mon, 19 Nov 2018 11:52:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20181119184556.11479-1-bp@alien8.de>
-In-Reply-To: <20181119184556.11479-1-bp@alien8.de>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 19 Nov 2018 11:52:02 -0800
-X-Gmail-Original-Message-ID: <CALCETrV34q-BP2w8A1s82-a8Hg062=RYzk+SCOa31W7ftsznPA@mail.gmail.com>
-Message-ID: <CALCETrV34q-BP2w8A1s82-a8Hg062=RYzk+SCOa31W7ftsznPA@mail.gmail.com>
-Subject: Re: [PATCH] x86/TSC: Use RDTSCP
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Tom Lendacky <Thomas.Lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 20 Nov 2018 01:18:48 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41698 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTGSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:18:47 -0500
+Received: by mail-wr1-f66.google.com with SMTP id x10so4720988wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:53:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=bGkPooGCLY7EejzQftdYmZ3Q5PrbdQdfVNhjEzuvOHY=;
+        b=zdfyiXIJtAGmkTaNbRTALuwdwLD9vm7FYQ4y4qBlHR7B3iHpf7N1Yw0NpkK5AYgSrC
+         JVXtGXGQElrDkDtr56B8KvxNMYC4hQKc/PGSbyK9IxwbLU99ZxWinTv0W4u8EBMdI6K9
+         D7+DfS6UyN/Tui4qosUHjt930MfsvFhoXNuyDK/tlaAZJKFQsJQeYLfPNIyqz+4vr42k
+         vAbNekidHwtqecnvVk0EpUkA5LZriNHSRMTr3w9F2h1t6XwHeafNjQmbHPOggkY4Gtcg
+         gAEVsrBx5EBt0+A5P4wIC5pE4PRm+Gc86ETWCPuhyIO6a5XsSggLh+2IuPk24v0e+ZLI
+         FeyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bGkPooGCLY7EejzQftdYmZ3Q5PrbdQdfVNhjEzuvOHY=;
+        b=n+Nse0Yfqp3BFO7kcSUFq/KjcLth8aQlFVEZ+2V70kgZ3FYMiaOp29LQm23WF77HTL
+         jy282cyXxeBeaP18vEdDf9O2rjOYCK3gc/HOfO7hOFpFbVWbwuWc2tk8qkAimK4b0uZt
+         fRyurL4HGsrZT7FguHc+SbETh8uqiZz0/ilX0uXeSlcSfklsu8hLB0u33hQGh5A/PtFa
+         42Y7VFK9C5HnLHd17yuUKvNv3X/hzbsWJ+wQoduzpw0LvKFsQn7cvA+9BosWB2vI0fkR
+         khDtAfqMPogJ5alDk57bDj5QwECCRn45Or5IHrPJzFrWJswkNESZiy8DY80a+Hx8W29U
+         IMIg==
+X-Gm-Message-State: AGRZ1gKzl6MVY7aw483gNDamsRT1qYYl4zQm5svSvDREzvlBsOhKaB6H
+        bf8uY3v3KXnkimv3tNm2uoxx8w==
+X-Google-Smtp-Source: AJdET5fsSG4noGpU2TTfHsn65wtqZdHkJ+Ympn49Q5zcuxQ/EzY2BxLYgWzCbtrTBC3213UwJc5dLA==
+X-Received: by 2002:adf:80c8:: with SMTP id 66-v6mr19177609wrl.57.1542657216720;
+        Mon, 19 Nov 2018 11:53:36 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id i16sm22954132wmd.28.2018.11.19.11.53.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 19 Nov 2018 11:53:35 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     davem@davemloft.net, ebiggers@kernel.org,
+        herbert@gondor.apana.org.au, nhorman@tuxdriver.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH v2 00/11] crypto: crypto_user_stat: misc enhancement
+Date:   Mon, 19 Nov 2018 19:53:19 +0000
+Message-Id: <1542657210-37739-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 10:46 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> From: Borislav Petkov <bp@suse.de>
->
-> Currently, the kernel uses
->
->   [LM]FENCE; RDTSC
->
-> in the timekeeping code, to guarantee monotonicity of time where the
-> *FENCE is selected based on vendor.
->
-> Replace that sequence with RDTSCP which is faster or on-par and gives
-> the same guarantees.
->
-> A microbenchmark on Intel shows that the change is on-par.
->
-> On AMD, the change is either on-par with the current LFENCE-prefixed
-> RDTSC and some are slightly better with RDTSCP.
->
-> The comparison is done with the LFENCE-prefixed RDTSC (and not with the
-> MFENCE-prefixed one, as one would normally expect) because all modern
-> AMD families make LFENCE serializing and thus avoid the heavy MFENCE by
-> effectively enabling X86_FEATURE_LFENCE_RDTSC.
->
+Hello
 
-I thought I benchmarked this on Intel at some point and found the
-LFENCE;RDTSC variant to be slightly faster.  But I believe you, so:
+This patchset fixes all reported problem by Eric Biggers.
 
-Acked-by: Andy Lutomirski <luto@kernel.org>
+Regards
+
+Changes since v2:
+- Better locking of crypto_alg via crypto_alg_get/crypto_alg_put
+- remove all intermediate variables in crypto/crypto_user_stat.c
+- splited all internal stats variables into different structures
+
+Corentin Labbe (11):
+  crypto: move crypto_alg_get/crypto_alg_put to linux/crypto.h
+  crypto: crypto_user_stat: made crypto_user_stat optional
+  crypto: CRYPTO_STATS should depend on CRYPTO_USER
+  crypto: crypto_user_stat: convert all stats from u32 to u64
+  crypto: crypto_user_stat: split user space crypto stat structures
+  crypto: tool: getstat: convert user space example to the new
+    crypto_user_stat uapi
+  crypto: crypto_user_stat: fix use_after_free of struct xxx_request
+  crypto: crypto_user_stat: Fix invalid stat reporting
+  crypto: crypto_user_stat: remove intermediate variable
+  crypto: crypto_user_stat: Split stats in multiple structures
+  crypto: crypto_user_stat: rename err_cnt parameter
+
+ crypto/Kconfig                       |   1 +
+ crypto/Makefile                      |   3 +-
+ crypto/ahash.c                       |  23 ++-
+ crypto/algapi.c                      |  10 +-
+ crypto/crypto_user_stat.c            | 160 ++++++------------
+ crypto/internal.h                    |  12 --
+ crypto/rng.c                         |   6 +-
+ include/crypto/acompress.h           |  38 +++--
+ include/crypto/aead.h                |  38 +++--
+ include/crypto/akcipher.h            |  72 ++++----
+ include/crypto/hash.h                |  30 ++--
+ include/crypto/internal/cryptouser.h |  17 ++
+ include/crypto/kpp.h                 |  43 +++--
+ include/crypto/rng.h                 |  22 ++-
+ include/crypto/skcipher.h            |  32 ++--
+ include/linux/crypto.h               | 236 ++++++++++++++++++---------
+ include/uapi/linux/cryptouser.h      | 102 +++++++-----
+ tools/crypto/getstat.c               |  72 ++++----
+ 18 files changed, 525 insertions(+), 392 deletions(-)
+
+-- 
+2.18.1
+
