@@ -2,172 +2,115 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344FFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9931BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2042080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A0F22080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:10:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVmpw3BM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE2042080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GeNmUkdU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A0F22080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731396AbeKTIfd (ORCPT
+        id S1731431AbeKTIfw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:35:33 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40447 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731273AbeKTIfc (ORCPT
+        Tue, 20 Nov 2018 03:35:52 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:39846 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731273AbeKTIfw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:35:32 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so24524441wrt.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:09:46 -0800 (PST)
+        Tue, 20 Nov 2018 03:35:52 -0500
+Received: by mail-wm1-f65.google.com with SMTP id u13-v6so252311wmc.4;
+        Mon, 19 Nov 2018 14:10:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ix5DVTabkihYKI0mNasuj+mbNxbjZy/HjmKnTawTaDA=;
-        b=AVmpw3BMNL4JLrBazsjIZi/5ZthpzXkeFNYa1nW4JmGqbzipeXb4gl3Yp0VZ4PeT2V
-         /IsL2pB5BuXta4ys6p3ZGmJw6StJqfczgLyMvrlhRVlosW7XXPX+sWteCKWvfT7z7kKm
-         Yuhk6yy2TkB0dY+rmZIs13yQGqm1CizAEn5oY=
+        bh=b+zuIv7l9TT3YJiQGVNrsFlOdf3xmq/Rg2jzgeSGEm0=;
+        b=GeNmUkdU3YXV+c/mZJ/2KNr0wuWTIH/HbQpNJGHBd9o5uwuTPIYiS79LjlTPa+J4hD
+         Rmjmm6YL5ipKbe6dXREQN+sCskwTTfcZ9cTIVB7FwmftUGSvS/FiRQRqmNWIsZaqa0Gv
+         x9sbhOZGK9pG/qMGW8nvjVVktUDgQtOf6lE5X8fe80fI1I0vCbTZB3d7IYzW/4loW3E2
+         6Ei8vRv+mcrHG2pEYXkBdjDUr5cHSuGaxhcaFKPAEa5ixaPqCuvAuP+0GcTiwfU6gsKr
+         B5L3oRGK0iOC5YqVo9l2yF3PowtbJ93XAtxws2rRwJn7r2qGzbwx8RE0TYNNl6lWvIE8
+         Jq3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=Ix5DVTabkihYKI0mNasuj+mbNxbjZy/HjmKnTawTaDA=;
-        b=rh0KS1W7jLAEGIpKjVYR02sZV5N2//1PAU03NAX4M3rhFuLCdnE87eI3yoJGe3fE64
-         OZyzruTqBa8wSp/RNITxmLRwvYZwDPQRAUlBroaSaMP2vAh46tqnWdI64Go96CXkHoU5
-         7EFozIwWXELbeDuimALCJM9VZsp9v3HHuguy78cUXqkeBRupCYnZ+uqHGGzYj4vImSf7
-         cpLcKRd8SrBNJdyVhdemJh1gXj8ED83K15ownzy+qtX01RBT0q/4H48j/nb9nxFBLTWt
-         r8opXVGI6FQl02tzY9NcBxWxBVIMkhTwRAJqjNw7/x8co7WpNX2tuTCcg6iqQb57kLSc
-         xGdA==
-X-Gm-Message-State: AGRZ1gJg+Lvem54xodnuBRoXMi9KhYV3bEyy8g8vlmb0/zvbCigmledB
-        41t2wKwzxCDcSVjeLgBP8/fZDQ==
-X-Google-Smtp-Source: AJdET5fZoIaBekUMFIlKswysnnktnAd4bLZ8M4fCs/P5CNcDlZY9NDUR2smMi4JVeLyXUo5OtV1JbA==
-X-Received: by 2002:a5d:6684:: with SMTP id l4mr21635454wru.154.1542665385492;
-        Mon, 19 Nov 2018 14:09:45 -0800 (PST)
-Received: from [192.168.0.40] (98.242.136.77.rev.sfr.net. [77.136.242.98])
-        by smtp.googlemail.com with ESMTPSA id q9sm24179292wrp.0.2018.11.19.14.09.44
+        bh=b+zuIv7l9TT3YJiQGVNrsFlOdf3xmq/Rg2jzgeSGEm0=;
+        b=EnUwYPjaz2H8VTNjA9TIuq473MZcwt6azb2jJRuJobXUtyKU/OWRqo/dQMDHVxRmtk
+         DIyxAgR9ZNJzG1UcoB5o/V3LIs4PSB27VP6N9mGa1XNoupZmIl2kE2eEd5nQjzR74T9e
+         cjRFqaLycUuK1p5+bKHD5CM+Xx3Hg/LvwppZ0rNWThVVzIrZW75xS2UO6ISNdixz0iUp
+         /oUo8Rgs80wVfa2tGGxTdqeG5tUKWg7Y+eMDZWXVIw1oRp6BqMFNd37aUvMgLQHU18RQ
+         wzT14Ew2Tdqfq3OV4rYOr4bZKlL3ZMuaWI/Loo9EJrpkdKQOJTL2/RaAF6UigXXl6VFu
+         yMEw==
+X-Gm-Message-State: AA+aEWZoRQ36Da6sbpmM729Js138ayMnuJYixczUBs98+tG8XCEp+Ni/
+        gNrZWC34zbSFU/QlujMPKsk=
+X-Google-Smtp-Source: AFSGD/Xx7Y9/7nyeE+bKIt/Cxlf7fZgZ1F2vBChF/wu+73kw6SAqBpWAEQ22uLaO7UqwOS75TjjPyQ==
+X-Received: by 2002:a1c:c701:: with SMTP id x1-v6mr8970317wmf.116.1542665406405;
+        Mon, 19 Nov 2018 14:10:06 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id b7sm9898161wrs.47.2018.11.19.14.10.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 14:09:44 -0800 (PST)
-Subject: Re: [PATCH v3] clocksource/drivers/arc_timer: Utilize generic
- sched_clock
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "vineet.gupta1@synopsys.com" <vineet.gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-References: <20181119112917.4214-1-abrodkin@synopsys.com>
- <360a492f-58b0-daa4-a450-3cdbfffbeabe@linaro.org>
- <349be75346aaf03eda8c49dfd90c06e3f916a1e3.camel@synopsys.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <a400dabc-df12-1854-21c4-8e914ef538d8@linaro.org>
-Date:   Mon, 19 Nov 2018 23:09:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 19 Nov 2018 14:10:05 -0800 (PST)
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, tpiepho@impinj.com,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, boris.brezillon@bootlin.com,
+        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+ <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
+ <20181119152735.GB3535@sirena.org.uk>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <cbbc3dba-7f85-c6a3-525f-01eb23e50592@gmail.com>
+Date:   Mon, 19 Nov 2018 23:10:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <349be75346aaf03eda8c49dfd90c06e3f916a1e3.camel@synopsys.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181119152735.GB3535@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/2018 22:53, Alexey Brodkin wrote:
-> Hi Daniel,
+On 11/19/2018 04:27 PM, Mark Brown wrote:
+> On Mon, Nov 19, 2018 at 03:12:00PM +0100, Marek Vasut wrote:
+>> On 11/19/2018 11:01 AM, Mason Yang wrote:
 > 
-> On Mon, 2018-11-19 at 22:50 +0100, Daniel Lezcano wrote:
->> On 19/11/2018 12:29, Alexey Brodkin wrote:
->>> It turned out we used to use default implementation of sched_clock()
->>> from kernel/sched/clock.c which was as precise as 1/HZ, i.e.
->>> by default we had 10 msec granularity of time measurement.
->>>
->>> Now given ARC built-in timers are clocked with the same frequency as
->>> CPU cores we may get much higher precision of time tracking.
->>>
->>> Thus we switch to generic sched_clock which really reads ARC hardware
->>> counters.
->>>
->>> This is especially helpful for measuring short events.
->>> That's what we used to have:
->>> ------------------------------>8------------------------
->>> $ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
->>>
->>>  Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
->>>
->>>          10.000000      task-clock (msec)         #    2.832 CPUs utilized
->>>                  1      context-switches          #    0.100 K/sec
->>>                  1      cpu-migrations            #    0.100 K/sec
->>>                 63      page-faults               #    0.006 M/sec
->>>            3049480      cycles                    #    0.305 GHz
->>>            1091259      instructions              #    0.36  insn per cycle
->>>             256828      branches                  #   25.683 M/sec
->>>              27026      branch-misses             #   10.52% of all branches
->>>
->>>        0.003530687 seconds time elapsed
->>>
->>>        0.000000000 seconds user
->>>        0.010000000 seconds sys
->>> ------------------------------>8------------------------
->>>
->>> And now we'll see:
->>> ------------------------------>8------------------------
->>> $ perf stat /bin/sh -c /root/lmbench-master/bin/arc/hello > /dev/null
->>>
->>>  Performance counter stats for '/bin/sh -c /root/lmbench-master/bin/arc/hello':
->>>
->>>           3.004322      task-clock (msec)         #    0.865 CPUs utilized
->>>                  1      context-switches          #    0.333 K/sec
->>>                  1      cpu-migrations            #    0.333 K/sec
->>>                 63      page-faults               #    0.021 M/sec
->>>            2986734      cycles                    #    0.994 GHz
->>>            1087466      instructions              #    0.36  insn per cycle
->>>             255209      branches                  #   84.947 M/sec
->>>              26002      branch-misses             #   10.19% of all branches
->>>
->>>        0.003474829 seconds time elapsed
->>>
->>>        0.003519000 seconds user
->>>        0.000000000 seconds sys
->>> ------------------------------>8------------------------
->>>
->>> Note how much more meaningful is the second output - time spent for
->>> execution pretty much matches number of cycles spent (we're runnign
->>> @ 1GHz here).
->>>
->>> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Vineet Gupta <vgupta@synopsys.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> ---
->>
->> Applied, thanks.
+>>> +++ b/drivers/spi/spi-renesas-rpc.c
+>>> @@ -0,0 +1,750 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +//
+>>> +// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
+>>> +// Copyright (C) 2018 Macronix International Co., Ltd.
+>>> +//
+>>> +// R-Car D3 RPC SPI/QSPI/Octa driver
+>>> +//
+>>> +// Authors:
+>>> +//	Mason Yang <masonccyang@mxic.com.tw>
+>>> +//
 > 
-> Maybe a bit too late but I completely forgot to add stable tag into Cc list.
-> Any chance to add it still?
+>> Fix multiline comment please.
+> 
+> The SPDX header needs to be C++ style so I push people to make the whole
+> block C++ otherwise it looks messy.
 
-Yes, no problem, I've added it.
-
-
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/Documentation/process/stable-kernel-rules.rst?h=timers/core
-
+OK, I'm not gonna wrestle you on this, but I think it looks horrible ;-)
 
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Best regards,
+Marek Vasut
