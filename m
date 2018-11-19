@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F012C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2568CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47109214ED
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0100214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Frb0GSHT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47109214ED
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ticSXtJi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0100214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406773AbeKTD3c (ORCPT
+        id S2406787AbeKTD3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44180 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406762AbeKTD3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:30 -0500
+        id S2406762AbeKTD3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4A28214D9;
-        Mon, 19 Nov 2018 17:05:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 826CC214D9;
+        Mon, 19 Nov 2018 17:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647113;
-        bh=UI++2Lqopsvn2zJ3d1wRTwfQjTBCU5uMRllw9NluXGw=;
+        s=default; t=1542647116;
+        bh=N2Gcyzys2IrQOm/Wk7KcPEWlE7A+hZ9bTVbY+XLwEJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Frb0GSHT2RGjss3CxfwFbMhmZAOagHnSonujqFvPVcQctF37ruMPhTGAYqacMxmjp
-         swg+7inqhemgvKqd50m2Be+CW5rO/QuWXNYsPzy1Ri4/aYsFWbLDg6IxTGGg84jT8b
-         BntJY0gZeE9NUQJKE6ZlwzR92yWdA514ncrQchNQ=
+        b=ticSXtJitDls78jnxaylpWfQERTy9K4NY2z4HEbl+HOAgt8+qO2ncuhjrRR382+bh
+         Gtrxw/GXjYaqUC3BvNM9Jcm5sZAxZSl1H6NKsz5upXYg8C99hH8G0G11avgwPSUClD
+         orFLqPbKx8TSnjOALYNMZIWD6tuIg+SXrrKghcFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Simon Veith <sveith@amazon.de>,
-        Paul Moore <paul@paul-moore.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 28/90] net/ipv4: defensive cipso option parsing
-Date:   Mon, 19 Nov 2018 17:29:10 +0100
-Message-Id: <20181119162625.433836842@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 55/90] powerpc/nohash: fix undefined behaviour when testing page size support
+Date:   Mon, 19 Nov 2018 17:29:37 +0100
+Message-Id: <20181119162629.742017485@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -65,66 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Nuernberger <snu@amazon.com>
+From: Daniel Axtens <dja@axtens.net>
 
-commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
+[ Upstream commit f5e284803a7206d43e26f9ffcae5de9626d95e37 ]
 
-commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
-a possible infinite loop in the IP option parsing of CIPSO. The fix
-assumes that ip_options_compile filtered out all zero length options and
-that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
-While this assumption currently holds true, add explicit checks for zero
-length and invalid length options to be safe for the future. Even though
-ip_options_compile should have validated the options, the introduction of
-new one-byte options can still confuse this code without the additional
-checks.
+When enumerating page size definitions to check hardware support,
+we construct a constant which is (1U << (def->shift - 10)).
 
-Signed-off-by: Stefan Nuernberger <snu@amazon.com>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Simon Veith <sveith@amazon.de>
-Cc: stable@vger.kernel.org
-Acked-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+However, the array of page size definitions is only initalised for
+various MMU_PAGE_* constants, so it contains a number of 0-initialised
+elements with def->shift == 0. This means we end up shifting by a
+very large number, which gives the following UBSan splat:
+
+================================================================================
+UBSAN: Undefined behaviour in /home/dja/dev/linux/linux/arch/powerpc/mm/tlb_nohash.c:506:21
+shift exponent 4294967286 is too large for 32-bit type 'unsigned int'
+CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-00045-ga604f927b012-dirty #6
+Call Trace:
+[c00000000101bc20] [c000000000a13d54] .dump_stack+0xa8/0xec (unreliable)
+[c00000000101bcb0] [c0000000004f20a8] .ubsan_epilogue+0x18/0x64
+[c00000000101bd30] [c0000000004f2b10] .__ubsan_handle_shift_out_of_bounds+0x110/0x1a4
+[c00000000101be20] [c000000000d21760] .early_init_mmu+0x1b4/0x5a0
+[c00000000101bf10] [c000000000d1ba28] .early_setup+0x100/0x130
+[c00000000101bf90] [c000000000000528] start_here_multiplatform+0x68/0x80
+================================================================================
+
+Fix this by first checking if the element exists (shift != 0) before
+constructing the constant.
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/ipv4/cipso_ipv4.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/powerpc/mm/tlb_nohash.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -1580,7 +1580,7 @@ static int cipso_v4_parsetag_loc(const s
-  *
-  * Description:
-  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
-- * to the start of the CIPSO option on success, NULL if one if not found.
-+ * to the start of the CIPSO option on success, NULL if one is not found.
-  *
-  */
- unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-@@ -1590,10 +1590,8 @@ unsigned char *cipso_v4_optptr(const str
- 	int optlen;
- 	int taglen;
+--- a/arch/powerpc/mm/tlb_nohash.c
++++ b/arch/powerpc/mm/tlb_nohash.c
+@@ -479,6 +479,9 @@ static void setup_page_sizes(void)
+ 		for (psize = 0; psize < MMU_PAGE_COUNT; ++psize) {
+ 			struct mmu_psize_def *def = &mmu_psize_defs[psize];
  
--	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
-+	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
- 		switch (optptr[0]) {
--		case IPOPT_CIPSO:
--			return optptr;
- 		case IPOPT_END:
- 			return NULL;
- 		case IPOPT_NOOP:
-@@ -1602,6 +1600,11 @@ unsigned char *cipso_v4_optptr(const str
- 		default:
- 			taglen = optptr[1];
- 		}
-+		if (!taglen || taglen > optlen)
-+			return NULL;
-+		if (optptr[0] == IPOPT_CIPSO)
-+			return optptr;
++			if (!def->shift)
++				continue;
 +
- 		optlen -= taglen;
- 		optptr += taglen;
- 	}
+ 			if (tlb1ps & (1U << (def->shift - 10))) {
+ 				def->flags |= MMU_PAGE_SIZE_DIRECT;
+ 
 
 
