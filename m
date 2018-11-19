@@ -2,103 +2,127 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA711C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381CCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED95205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01588205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:06:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOBiq0i1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED95205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4tRdiYS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01588205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbeKTEbJ (ORCPT
+        id S1731230AbeKTEbY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:31:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45525 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730065AbeKTC4a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:56:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y4so14054162pgc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 08:32:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=rxuiUkzekigpd/TGuvUA3rcP4FRrmO2rAGerDiV3AiM=;
-        b=YOBiq0i12wDOavCL0tK7kqeVkT924jwkKVDU1IvPaZKQItLk+bt+a4BTpqPUhSAKWZ
-         avkzVzHVkh4ZyhjbQkSY2p86wbYIV8+COOhS90x0EHILhExKRSArLZD+gVPfSLI/MSnj
-         CQOhHVdr2l3yPeg3SgRN6/enCRAMRbrubMsi0PkKiG/xt0BKd1j19mDhD9bkefLPWpd+
-         68gu3/ZVub7qc1WZ9RAMi8cEifCEgEyTh92RoDECQkGVs8wlKDG+d846vRWt6H+kfamX
-         1b+vbX+TqnHsSOZcwSty0Sxo9VkDH6ZdVCXMxLTVyEoPT3cYLNGM7RD4ry/4wBKJRslC
-         0nlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=rxuiUkzekigpd/TGuvUA3rcP4FRrmO2rAGerDiV3AiM=;
-        b=NkXVMnJWIXaHY9cj1m9mBLIa1lO8zsUi5YQFHiRHoYGEleZlM0sWecXSs7YKEgHg3D
-         6TWeyKSePLAqsELG6lwCyFlkzSQskMSI5b2yRD7v6nJ/4b1TXWYUe8wUPVd5GvEMZHtS
-         Gb8VN7ScZHjUZrgHJs7P5m8jmBK9UNDbNDEKZ6AQcXUkKa8weMB7yutyRJRTJIEn/nvh
-         JEWavR+vfwS3BFKh7p9C7/h6t+sgGIHG038gAKBPwnsxkQAY2QJFetGg5FshFHiIwmzb
-         mK0vjsCqk7nWmeIfIQJJYIwpOKwAfraGD9lroH1xxiSV2iUox0w7I/0cBU3TlMx4xK1u
-         /meA==
-X-Gm-Message-State: AGRZ1gIVsPptWB/RD19BkrOLCXNXyC3b08dE7vD+fBjwIYW0iRIJQYxD
-        l1qxm+MH3Kes9ITy8LOP3oQ=
-X-Google-Smtp-Source: AJdET5dMisSGD2LPr8cZfJG+5B+COkZp9m2CreiFqtoR2xPJVOQUtX4Hs4Wo4OOs4Ng6l4IYdl/eGg==
-X-Received: by 2002:a63:ba48:: with SMTP id l8mr20407884pgu.72.1542645142679;
-        Mon, 19 Nov 2018 08:32:22 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([45.251.61.181])
-        by smtp.gmail.com with ESMTPSA id c4sm1260377pfm.151.2018.11.19.08.32.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 08:32:21 -0800 (PST)
-Date:   Mon, 19 Nov 2018 22:02:19 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, Rex.Zhu@amd.com,
-        andrey.grodzovsky@amd.com, leo.liu@amd.com, David.Panariti@amd.com,
-        shirish.s@amd.com
-Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c: Remove duplicate
- header
-Message-ID: <20181119163219.GA26520@hp-pavilion-15-notebook-pc-brajeswar>
+        Mon, 19 Nov 2018 23:31:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54570 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729986AbeKTC4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:56:24 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0303920831;
+        Mon, 19 Nov 2018 16:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542645137;
+        bh=yDNxhn/imvAO1PaIIDwOuXfZnyhKuOxwE/Dwm2g4yY0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=J4tRdiYS58Q5865pS2zr6T/0nF8/kMIUKYr+ZPwvp6UeWPxkvokARy1mf8liIQj2O
+         ijqHOrwcvVI7ZnGK4+cCL8uqYWpWAlmyu1KfjuRyARD21c6OWAZmm912UhbBO7QJaU
+         1tGfROaMnf8B5As37gehCh5i0bZtsVi5PedTAgwU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 023/205] media: pci: cx23885: handle adding to list failure
+Date:   Mon, 19 Nov 2018 17:25:30 +0100
+Message-Id: <20181119162621.527905319@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
+References: <20181119162616.586062722@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove gca/gfx_8_0_enum.h which is included more than once
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+------------------
+
+From: Nicholas Mc Guire <hofrat@osadl.org>
+
+[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
+
+altera_hw_filt_init() which calls append_internal() assumes
+that the node was successfully linked in while in fact it can
+silently fail. So the call-site needs to set return to -ENOMEM
+on append_internal() returning NULL and exit through the err path.
+
+Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
+
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/media/pci/cx23885/altera-ci.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index 3d0f277a6523..4ca1ecf1ffd7 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -44,7 +44,6 @@
- #include "gca/gfx_8_0_d.h"
- #include "gca/gfx_8_0_enum.h"
- #include "gca/gfx_8_0_sh_mask.h"
--#include "gca/gfx_8_0_enum.h"
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -665,6 +665,10 @@ static int altera_hw_filt_init(struct al
+ 		}
  
- #include "dce/dce_10_0_d.h"
- #include "dce/dce_10_0_sh_mask.h"
--- 
-2.17.1
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->filts_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -699,6 +703,7 @@ err:
+ 		     __func__, ret);
+ 
+ 	kfree(pid_filt);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+@@ -733,6 +738,10 @@ int altera_ci_init(struct altera_ci_conf
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->cis_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -801,6 +810,7 @@ err:
+ 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
+ 
+ 	kfree(state);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+
 
