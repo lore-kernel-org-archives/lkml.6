@@ -2,197 +2,193 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5175BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85E3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F2DB20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:39:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F2DB20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B41620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:40:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B41620823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbeKTIEk (ORCPT
+        id S1731223AbeKTIFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:04:40 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:35799 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731020AbeKTIEj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:04:39 -0500
-Received: by mail-io1-f70.google.com with SMTP id n12-v6so32288900ioh.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 13:39:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BtYGSDO4B1hZmVN2oLANc7KOz+6cCS6gl1gTy5bwZuo=;
-        b=f/vANNMaqqDLJKmWrnUDsN4eIQfnumUQY9HzfyP5cKZVeyGjmj8O6uGPqoCRqx6cFu
-         DRKwhn640glYtw8KfWxlXanMAcFAysiAmNM9/gtEX0tYyYi6G1EliJyDMotcKb0V2A93
-         smzj7Gwzu0uQ/YHgMAi5p5Rfy/QORABy19RGPBc3iMfLc+yr251TYMqfLiiNoOqBCHc1
-         cBB5ANVgWyUVBty/oIMgrjLKRtFKlgUJNdCTlNFLsauHmLU+dzRcxxN4EcySGpQG2n4n
-         a0uWDf08BfPiy0yTH4pa7yBniKQKmKqtmEnbnkAZ7C9roo2jP8kLkKGPtFW7speR/hXa
-         wNdw==
-X-Gm-Message-State: AA+aEWaklzQB8tbxuqM1TD2gh+APEvQANQ8kmhq4LKtKcMRidgwIk6Ls
-        q2+EPlw6jTaQJUa78PoMRWZxs/1iDPXw5TIMRpfSZLSfZrE1
-X-Google-Smtp-Source: AFSGD/WDeRMqC06XkOgAMYzmmuU3l2bZhuTewJPgcaPNus9SJIsWAJpxkttc3UyUq2NYQMBZvu81gl1VsR6tYlTkjERqphnRvCNU
+        Tue, 20 Nov 2018 03:05:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40776 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730602AbeKTIFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:05:52 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44DA03097043;
+        Mon, 19 Nov 2018 21:40:15 +0000 (UTC)
+Received: from sky.random (ovpn-120-160.rdu2.redhat.com [10.10.120.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E7C1618E4B;
+        Mon, 19 Nov 2018 21:40:14 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 16:40:14 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Willy Tarreau <w@1wt.eu>
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+Message-ID: <20181119214014.GF29258@redhat.com>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
+ <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com>
+ <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm>
+ <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
+ <20181119193253.GE29258@redhat.com>
+ <nycvar.YFH.7.76.1811192035590.21108@cbobk.fhfr.pm>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7f08:: with SMTP id l8mr13038797ioq.6.1542663542677;
- Mon, 19 Nov 2018 13:39:02 -0800 (PST)
-Date:   Mon, 19 Nov 2018 13:39:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007829c8057b0b58ed@google.com>
-Subject: KASAN: use-after-free Read in tick_sched_handle (3)
-From:   syzbot <syzbot+999bca54de2ee169c021@syzkaller.appspotmail.com>
-To:     fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1811192035590.21108@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 19 Nov 2018 21:40:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Nov 19, 2018 at 08:39:41PM +0100, Jiri Kosina wrote:
+> On Mon, 19 Nov 2018, Andrea Arcangeli wrote:
+> 
+> > Generally speaking the untrusted code that would try to use spectrev2
+> > to attack the other processes is more likely to run inside SECCOMP
+> > jail than outside, so if SECCOMP should be used as a best effort
+> > heuristic to decide when to enable STIBP, it would make more sense to
+> > enable STIBP outside SECCOMP, and not inside. I.e. the exact opposite
+> > of what you're proposing above.
+> 
+> Hmm, that's a very good point. But I actually don't see why both 
+> directions wouldn't be possible real-blackhat-world scenarios. So perhaps 
+> we'd want, under the basic asumption that "SECCOMP should really be 
+> sandboxed from outisde interventions and from causing them from inside as 
+> well", flush on both switch-to-seccomp and switch-from-seccomp?
 
-syzbot found the following crash on:
+STIBP doesn't flush so I don't see how "flush" and "switch" fits the
+STIBP discussion.
 
-HEAD commit:    bae4e109837b mlxsw: spectrum: Expose discard counters via ..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b5e77b400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
-dashboard link: https://syzkaller.appspot.com/bug?extid=999bca54de2ee169c021
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14b7d093400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1487a225400000
+Flush as in IPBP on switch-to-seccomp and switch-from-seccomp? IBPB is
+not going to solve the HT attack and STIBP is only about the HT
+attack. IBPB only solves the user-to-user context switch attack.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+999bca54de2ee169c021@syzkaller.appspotmail.com
+I just don't see SECCOMP as a good fit for a default-on heuristic
+because there would be more arguments to enable STIBP outside seccomp
+than inside and even if you ignore that, SECCOMP is used by pretty
+much everything including wrapping through containers and systemd so
+it would still leave lots of software running with STIBP (and for all
+the wrong reasons too).
 
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-==================================================================
-kasan: CONFIG_KASAN_INLINE enabled
-BUG: KASAN: use-after-free in tick_sched_handle+0x16c/0x180  
-kernel/time/tick-sched.c:164
-Read of size 8 at addr ffff8881c0895a30 by task syz-executor949/6058
-kasan: GPF could be caused by NULL-ptr deref or user memory access
+As opposed the not dumpable was a much better fit for a per-process
+enablement heuristic, because the not dumpable code is more likely to
+be the one that needs protection from attack and it's less likely to
+be the very malicious code that got exploited (or was untrusted to
+begin with like DRM binary blobs or public cloud usages). However like
+mentioned in this thread suid calls can set the non dumpable flag, so
+it's not ideal either. We'd need to track which processes turned off
+the not dumpable flag with SUID_DUMP_DISABLE explicitly.
 
-CPU: 0 PID: 6058 Comm: syz-executor949 Not tainted 4.20.0-rc2+ #303
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-CPU: 1 PID: 2938 Comm: kworker/1:2 Not tainted 4.20.0-rc2+ #303
-Call Trace:
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-  <IRQ>
-Workqueue: ipv6_addrconf addrconf_dad_work
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-RIP: 0010:sk_fullsock include/net/sock.h:2402 [inline]
-RIP: 0010:skb_set_owner_w+0xb4/0x320 net/core/sock.c:1842
-Code: ff df 48 c1 ea 03 80 3c 02 00 0f 85 30 02 00 00 49 8d 7c 24 12 4c 89  
-63 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 cd 01 00 00
-RSP: 0018:ffff8881cb9274a8 EFLAGS: 00010203
-RAX: dffffc0000000000 RBX: ffff8881c2cf4bc0 RCX: ffffffff86273988
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-RDX: 000000000000000e RSI: ffffffff8625bddf RDI: 0000000000000074
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-RBP: ffff8881cb9274d0 R08: ffff8881cb98e280 R09: ffffed103701800c
-R10: ffffed103701800c R11: ffff8881b80c0063 R12: 0000000000000062
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-R13: ffff8881c2cf4bd8 R14: ffff8881c2cf4c20 R15: 0000000000000020
-  tick_sched_handle+0x16c/0x180 kernel/time/tick-sched.c:164
-FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
-CR2: 00007fff57a32ff8 CR3: 00000001cb905000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ndisc_alloc_skb+0x284/0x340 net/ipv6/ndisc.c:419
-  ndisc_send_ns+0x194/0x8e0 net/ipv6/ndisc.c:609
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  addrconf_dad_work+0xbf2/0x1310 net/ipv6/addrconf.c:4077
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-  </IRQ>
+> So if I understand you correctly, what you are proposing here is to keep 
+> the current code, but just switch the default, and make it 
+> runtime/boottime togglable?
 
-Allocated by task 3230256160:
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
-BUG: unable to handle kernel paging request at ffffffff8caa3e08
----[ end trace 6c1017c956f17b9c ]---
-PGD 946d067 P4D 946d067 PUD 946e063 PMD 0
-Thread overran stack, or stack corrupted
-Oops: 0000 [#2] PREEMPT SMP KASAN
-RIP: 0010:sk_fullsock include/net/sock.h:2402 [inline]
-RIP: 0010:skb_set_owner_w+0xb4/0x320 net/core/sock.c:1842
-CPU: 0 PID: 6058 Comm: syz-executor949 Tainted: G      D            
-4.20.0-rc2+ #303
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:201
-Code: 89 e8 44 96 1c fe e9 87 fd ff ff e8 8a b0 a2 fd 90 90 90 90 90 90 90  
-90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 00  
-fa ad 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
-Code: ff df 48 c1 ea 03 80 3c 02 00 0f 85 30 02 00 00 49 8d 7c 24 12 4c 89  
-63 18 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
-89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 cd 01 00 00
-RSP: 0018:ffff8881dae07a38 EFLAGS: 00010006
-RAX: 00000000001f8881 RBX: ffff8881c089cb84 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffff8881dae07a40 RDI: 0000000000003ff0
-RBP: ffff8881dae07a68 R08: ffff8881c1da0080 R09: ffffed103b5c3ef8
-R10: ffffed103b5c3ef8 R11: ffff8881dae1f7c7 R12: ffffea0007022400
-RSP: 0018:ffff8881cb9274a8 EFLAGS: 00010203
-R13: ffff8881c0894b80 R14: ffff8881da802380 R15: ffff8881c089cb80
-FS:  000000000137f880(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffff8caa3e08 CR3: 00000001c3bee000 CR4: 00000000001406f0
-RAX: dffffc0000000000 RBX: ffff8881c2cf4bc0 RCX: ffffffff86273988
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-RDX: 000000000000000e RSI: ffffffff8625bddf RDI: 0000000000000074
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  <IRQ>
-  describe_object mm/kasan/report.c:243 [inline]
-  print_address_description.cold.7+0x15b/0x1ff mm/kasan/report.c:263
-RBP: ffff8881cb9274d0 R08: ffff8881cb98e280 R09: ffffed103701800c
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-R10: ffffed103701800c R11: ffff8881b80c0063 R12: 0000000000000062
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  tick_sched_handle+0x16c/0x180 kernel/time/tick-sched.c:164
-R13: ffff8881c2cf4bd8 R14: ffff8881c2cf4c20 R15: 0000000000000020
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001cb905000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Deciding the default on this stuff is nightmarish, there's no good
+default and the best system-wide default is data and workload
+dependent.
 
+And this is precisly why this should be runtime toggable and not just
+boot-time toggable in my view.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I don't disagree with default disabled, that may be safer to avoid
+breaking workloads near full capacity (same reason for why HT isn't
+disabled by default for L1TF), we've to draw a line somewhere with the
+default.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+The ASLR argument from Tim's patchset cover letter combined with PID
+namespaces should go a long way to mitigate the HT attack too even
+without STIBP.
+
+In my understanding you need to know what's running on the sibling
+thread to derandomize ASLR, otherwise you'd be potentially attacking
+glibc or some lib that yes is always mapped by all processes but it's
+not mapped at the same address in all processes. You need to restrict
+the measurement during ASLR derandomization to the exact time there's
+the target process running in the sibling (any thread of the process
+would be good).
+
+Now assuming there's no pid namespace that prevents to see what's
+running on the sibling thread, it depends on the scheduling jittering
+and on the size and hw hashfn of the BTB (which varies across CPUs)
+how hard it is to derandomize ASLR. According to the original paper,
+some non-Linux OS has many low significant bits of their ASLR not
+randomized and the high bits don't go into the hashfn of the BTB
+(incidentally the ASLR derandomization technique to attack userland is
+apparently not tested for Linux). We should be randomizing all bits
+down to bit 12 (not bit 15), so for us the derandomizing should be 256
+times more expensive? (At least until the day we map .text into
+filesystem THP pagecache...) The more bits randomized that are part of
+the BTB hashfn input, the more computational expensive it becomes to
+derandomize ASLR, the more the random scheduling jittering will
+interfere with the longer measurement, so hopefully the complexity of
+the attack grows more than linearly with the number of random ASLR low
+bits that gets into the BTB hashfn input. This is an optimistic guess
+though.
+
+Overall for on-prem cloud usages where no random malicious code can
+run in the CPU by design, and this is only a post-exploitation
+robustness issue, it doesn't seem a major concern if STIBP is disabled
+if pid namespaces and ASLR have been fully leveraged by default in
+Kubernetes containers. I'm curious to hear other people opinion on
+this too however.
+
+Downstream we always provided ibrs_enabled=2/3 which already implies
+STIBP implicitly enabled at all times too, and that unlike STIBP
+alone, also protects against guest attack on host userland too within
+the same context. It's tunable at runtime. It's not enabled by default
+for similar considerations as above for STIBP. I think it's good to
+give the users the choice to be 100% secure against everything as an
+opt-in (ideally requiring a reboot, that actually helps the evaluation
+of the performance impact, which is obviously workload dependent too).
+
+As an alternative to STIBP it would also be possible to alter the
+scheduler so it never runs different processes in different siblings
+of the same core, unless they can ptrace each other (same exact ptrace
+check as the one to decide if to run IBPB to protect against the
+context switch spectrev2 attack, except it needs to be checked in both
+directions here). This way you could still have zero penalty for all
+kernel builds and all threaded programs etc.. while still retaining
+full security against the HT attack (and IBPB takes care of the rest
+with the same ptrace check). With several containerized single
+threaded workloads it would be slower than STIBP though by leaving all
+siblings idle. However we could also let any process under pid
+namespace to run along with any other processes under pid namespaces
+even if they cannot ptrace each other to take care of that detail. Not
+sure if it's worth it, but it remains a possibility that may perform
+better than STIBP. It would also take care in general of cache attacks
+on non-constant time algorithms etc.. not just spectrev2 HT attack.
+
+Thanks,
+Andrea
