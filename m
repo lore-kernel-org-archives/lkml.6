@@ -2,118 +2,129 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D48CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5681C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022802075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:52:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A48A2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="q91JQnbl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022802075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="XIIRWGCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A48A2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbeKTHR7 (ORCPT
+        id S1730909AbeKTHUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:17:59 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33860 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730828AbeKTHR7 (ORCPT
+        Tue, 20 Nov 2018 02:20:55 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40432 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730852AbeKTHUz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:17:59 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAJKq7Nv049521;
-        Mon, 19 Nov 2018 14:52:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542660727;
-        bh=5yG1qYrNlzd6S5CxrDCFGyJ+WD7xwK29xjX5saMuE48=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=q91JQnblm/W9niWFyC0rxlL/Dxd92k1aoj7wNdu+WmzguBmPEqFJMPjaP/Te2j1IN
-         h4HBQ2tfZyUie2Kx8SL6hWkvYVgEp+tL/nLNb89u8Ca0fGJgpaqsoG1C30dKBehqR2
-         9kBl2+PVURiO47muQHUewSZD0P33jTmZTXj1AzVI=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAJKq7C6105457
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 14:52:07 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
- Nov 2018 14:52:06 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 19 Nov 2018 14:52:06 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAJKq3mp009291;
-        Mon, 19 Nov 2018 14:52:04 -0600
-Subject: Re: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate
- resources
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <stable@vger.kernel.org>
-References: <20181113135051.15308-1-brgl@bgdev.pl>
- <20181113135051.15308-2-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <c092b014-d5cf-f1ad-de91-6696b05cdf17@ti.com>
-Date:   Tue, 20 Nov 2018 02:22:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 02:20:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so2139557pfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 12:55:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ngz/Y1cNLgES/cNFWmCB4diKECGfvsf2JLaGb99AV84=;
+        b=XIIRWGCJDme9RiNStO/ZSsD0CLhn3GHALS0xIAbRh7OUna8y6ytOBfCIzDn/bqSNt/
+         /ksySguTbmnYqtchvFE+0Ah4oDNmSPUPl///BXeDkXwJ+JkqBXAWMcsQlOnXxKLogImJ
+         SSxgzRptXQ9uDimmq0jQTdZKlyEK102NIqbh6cyReQMF+Og2pBmjKuONCrmMrhsY1PeY
+         VPCCeXu7SSUZ+rfj9QiFe5uq/lGjfyl6d5A5oR+sLLNrXbBtLSuPUfpbCNz2DtBbYZxw
+         qrzAayCc5VxE5MI1LL/QQnOAqk05z7CLiOK5TC6dJI/eiKVR/tPaFFJI12Uu19n3d4nV
+         T3zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ngz/Y1cNLgES/cNFWmCB4diKECGfvsf2JLaGb99AV84=;
+        b=r/p3plyiJV6kU6y2Zefkm9bzq0w3IXZgKFKYdF4+qWJ+R/1E2Xp+/inb/xgchyY2yt
+         FAUOtyXNSnT4/hOYq6SAm9w7hB/vE8UVUtsthkHtxGrLGtru5CSyeGWWTWgA0ZNjjd8Q
+         1Kk9IN45i0TQkbSxrCwUz+g+PTcEE+CYMOdGeHhhvwjtZsNW0AOsthwI7okPGzhbeLMF
+         K9iVi/ni0cgsZO7tUVdM6BW451rWSwuV9Ynz9DRR7prtDjvxocmuTauhfNysiCe+5XkV
+         Phx5VIKbteTbEWQ6AtP48jdDCN7z8eVelgGLWgamTt0DhFYeTFVCrjEnI0xeaSvfr14g
+         utOg==
+X-Gm-Message-State: AGRZ1gIRxNUEuauMPYoy2HTmoiAliVZbAN7BRbWJ8Mr4x+geARLNOE6K
+        SIMoCDNjwX9IbqLDqA4XgW5sYA==
+X-Google-Smtp-Source: AJdET5dO2XxRHIVXgerVFzMYlK25ZuK+qJwnz/ty9M+CS65xOphADSY4A5DJ0WKsnEJ0ghvRsLD2HQ==
+X-Received: by 2002:a62:6d83:: with SMTP id i125-v6mr24919112pfc.184.1542660930161;
+        Mon, 19 Nov 2018 12:55:30 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm59403212pfr.55.2018.11.19.12.55.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 12:55:29 -0800 (PST)
+Date:   Mon, 19 Nov 2018 21:55:20 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        serge@hallyn.com, jannh@google.com, luto@kernel.org,
+        akpm@linux-foundation.org, oleg@redhat.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
+        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119205518.btew3vxwgva4w3zh@brauner.io>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
+ <20181119202857.k5zw742xjfrw677j@yavin>
 MIME-Version: 1.0
-In-Reply-To: <20181113135051.15308-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181119202857.k5zw742xjfrw677j@yavin>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Tue, Nov 20, 2018 at 07:28:57AM +1100, Aleksa Sarai wrote:
+> On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
+> > +	if (info) {
+> > +		ret = __copy_siginfo_from_user(sig, &kinfo, info);
+> > +		if (unlikely(ret))
+> > +			goto err;
+> > +		/*
+> > +		 * Not even root can pretend to send signals from the kernel.
+> > +		 * Nor can they impersonate a kill()/tgkill(), which adds
+> > +		 * source info.
+> > +		 */
+> > +		ret = -EPERM;
+> > +		if ((kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL) &&
+> > +		    (task_pid(current) != pid))
+> > +			goto err;
+> > +	} else {
+> > +		prepare_kill_siginfo(sig, &kinfo);
+> > +	}
 > 
-> Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
-> IRQ numbering") the davinci GPIO driver fails to probe if we boot
-> in legacy mode from any of the board files. Since the driver now
-> expects every interrupt to be defined as a separate resource, split
-> the definition in devices-da8xx.c instead of having a single continuous
-> interrupt range.
+> I wonder whether we should also have a pidns restriction here, since
+> currently it isn't possible for a container process using a pidns to
+> signal processes outside its pidns. AFAICS, this isn't done through an
+> explicit check -- it's a side-effect of processes in a pidns not being
+> able to address non-descendant-pidns processes.
 > 
-> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> But maybe it's reasonable to allow sending a procfd to a different pidns
+> and the same operations working on it? If we extend the procfd API to
 
-There are a number of other boards that need such fixing too. And the
-commit in question does not do a good job of explaining why it was
-needed in the first place. The description  just repeats what can be
-inferred by reading the patch.
+No, I don't think so. I really don't want any fancy semantics in here.
+Fancy doesn't get merged and fancy is hard to maintain. So we should do
+something like:
 
+if (proc_pid_ns() != current_pid_ns)
+	return EINVAL
 
-    gpio: davinci: Do not assume continuous IRQ numbering
-
-    Currently the driver assumes that the interrupts are continuous
-    and does platform_get_irq only once and assumes the rest are continuous,
-    instead call platform_get_irq for all the interrupts and store them
-    in an array for later use.
-
-    Signed-off-by: Keerthy <j-keerthy@ti.com>
-    Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> allow process creation this would allow a container to create a process
+> outside its pidns.
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
 
-Can we revert the offending commit instead?
-
-Thanks,
-Sekhar
