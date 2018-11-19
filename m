@@ -2,129 +2,171 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2516C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E30F9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B3A20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B3A20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FD2320851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:19:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD2320851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730041AbeKTCn3 (ORCPT
+        id S1730055AbeKTCnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:43:29 -0500
-Received: from mga11.intel.com ([192.55.52.93]:51398 "EHLO mga11.intel.com"
+        Mon, 19 Nov 2018 21:43:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53644 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbeKTCn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:43:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 08:19:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="101482710"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2018 08:19:18 -0800
-Date:   Mon, 19 Nov 2018 18:19:17 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        nhorman@redhat.com, npmccallum@redhat.com,
-        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
-        haitao.huang@linux.intel.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181119161917.GF13298@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+        id S1729825AbeKTCnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:43:42 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EA2530841DE;
+        Mon, 19 Nov 2018 16:19:38 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88D5119C7B;
+        Mon, 19 Nov 2018 16:19:37 +0000 (UTC)
+Subject: Re: [PATCH] debugobjects: add a new Kconfig for POOL_SIZE
+To:     Qian Cai <cai@gmx.us>, Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux kernel <linux-kernel@vger.kernel.org>, arnd@arndb.de,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+References: <20181118082255.1275-1-cai@gmx.us>
+ <alpine.DEB.2.21.1811181919170.9459@nanos.tec.linutronix.de>
+ <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
+ <alpine.DEB.2.21.1811190904450.9459@nanos.tec.linutronix.de>
+ <trinity-0de3e85e-8526-4004-b346-3b64dd89bc78-1542634057117@msvc-mesg-gmx021>
+ <44517d7f-c34f-1424-d0db-601e590c626d@redhat.com>
+ <1542640658.12945.41.camel@gmx.us>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <0c6a79c8-dde2-dee9-efb0-5cf3d1b3949e@redhat.com>
+Date:   Mon, 19 Nov 2018 11:19:37 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542640658.12945.41.camel@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 19 Nov 2018 16:19:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 07:29:25AM -0800, Andy Lutomirski wrote:
-> On Thu, Nov 15, 2018 at 5:08 PM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> > can be used by applications to set aside private regions of code and
-> > data. The code outside the enclave is disallowed to access the memory
-> > inside the enclave by the CPU access control.
-> >
-> > SGX driver provides a ioctl API for loading and initializing enclaves.
-> > Address range for enclaves is reserved with mmap() and they are
-> > destroyed with munmap(). Enclave construction, measurement and
-> > initialization is done with the provided the ioctl API.
-> >
-> 
-> I brought this up a while back, and I think I should re-ask it now
-> that this driver is getting close to ready:
-> 
-> As it stands, there's just one SGX character device, and I imagine
-> that it'll be available to unprivileged applications.  I'm concerned
-> that this isn't quite what we want.  I certainly think that everyone,
-> or at least almost everyone, ought to be able to run normal enclaves.
-> But I think that we should consider restricting who can run specially
-> privileged enclaves.  In particular, the ability to run enclaves with
-> the provisioning bit set is somewhat sensitive, since it effectively
-> allows access to a stable fingerprint of the system.  Before flexible
-> LC, this wasn't such a big deal, since only Intel's provisioning
-> enclave could see the key, and Intel's enclave has some degree of
-> control of what is done with the key.  With flex LC, this protection
-> is lost.
-> 
-> But this is maybe more of a big deal than just access to a stable
-> fingerprint.  The ability to provision a remote attestation protocol
-> is a key part of running SGX malware, and SGX malware is surely going
-> to exist some day.  (Sure, Intel will try to block access to the
-> actual attestation service for malware, but I doubt that Intel will be
-> able to fully defend it.)
-> 
-> So I propose that there be a few device nodes.  Maybe
-> /dev/sgx/unprivilegd and /dev/sgx/provisioning?  The default mode of
-> the latter could be 0600.  If you've opened the unprivileged node, you
-> can only run enclaves without any special permission bits set.
+On 11/19/2018 10:17 AM, Qian Cai wrote:
+> On Mon, 2018-11-19 at 09:51 -0500, Waiman Long wrote:
+>> On 11/19/2018 08:27 AM, Qian Cai wrote:
+>>> On 11/19/18 at 3:09 AM, Thomas Gleixner wrote:
+>>>
+>>>> Qian,
+>>>>
+>>>> On Sun, 18 Nov 2018, Qian Cai wrote:
+>>>>>> On Nov 18, 2018, at 1:21 PM, Thomas Gleixner <tglx@linutronix.de>
+>>>>>> wrote:
+>>>>>> On Sun, 18 Nov 2018, Qian Cai wrote:
+>>>>>>> As the results, systems have 60+ CPUs with both timer and workqueue
+>>>>>>> objects enabled could trigger "ODEBUG: Out of memory. ODEBUG
+>>>>>>> disabled".
+>>>>>>>
+>>>>>>> Hence, add a new Kconfig option so users could adjust
+>>>>>>> ODEBUG_POOL_SIZE
+>>>>>>> accordingly if either timer or workqueue objects are selected.
+>>>>>> why do we need a config option, when the required number can be
+>>>>>> deduced
+>>>>>> already from the active CONFIG_DEBUG_OBJECTS_* and NR_CPUS?
+>>>>>>
+>>>>> It because I am worry about the coupling between the implementation
+>>>>> details of
+>>>>> timers and workqueue objects, and the computation in the code you
+>>>>> mentioned
+>>>>> here. For example, people could change workqueue.c to have different
+>>>>> number
+>>>>> of worekqueues initialized during the early boot in the future which is
+>>>>> going to
+>>>>> affect the required pool size, and I am not sure if people are going to
+>>>>> adjust the
+>>>>> code in debugobjects.c here as well when they made changes like that.
+>>>>>
+>>>>> Also, the computation could become so complex depends on lots of config
+>>>>> options like perf, hrtimer, and combinations that I have not tested so
+>>>>> far which is
+>>>>> difficult to exhausted all the possibilities.
+>>>>>
+>>>>> Hence, I feel like the Kconfig option is more flexible and less error-
+>>>>> prone.
+>>>> Quite the contrary. Config options are a pain and truly error-prone if you
+>>>> want to compile general purpose kernels as distributions do.
+>>>>
+>>> Ah, I never thought distributions people would
+>>> enable those debugging options.
+>> Distros like RHEL usually ship two kernels - one for production and one
+>> for debug. The debug kernel does have debugobjects enabled.
+>>
+> Right, I can remember that now . However, if I understand correctly, since the
+> early static pool size needs to be determined during the compilation time, it
+> depends on the No. CPUs are from the machines that built the distro kernels.
+> Then, when users use those distro kernels, they are not going to have correct
+> the pool size according to the No. CPUs on their test machines.
 
-What would the use case for unprivileged i.e. this configuration would
-mean depending on permissions?
+I see your point. Perhaps you can make ODEBUG_POOL_SIZE scales with
+CONFIG_NR_CPUS like
 
-There would be three types of users:
+#define ODEBUG_POOL_SIZE    (1024 + CONFIG_NR_CPUS * 2)
 
-1. Ones that have access to neither of the devices.
-2. Ones that have access to unprivileged. Who are these?
-3. Ones that have access to provisioning.
+CONFIG_NR_CPUS is usually set to a lot higher than the actual number of
+CPUs in a typical system. So you don't want to set the multiplier too high.
 
-> We should also consider whether we allow the unprivileged node to run
-> launch enclaves, and, for that matter, whether we allow user code to
-> run launch enclaves at all, given that they're not useful with the
-> current architecture of the driver.
+Cheers,
+Longman
 
-ATM the launch enclave bit is disallowed by the kernel in the current
-patch set. I don't really see any use case to allow them except if we
-want to allow run enclaves in an environment where the MSRs are rdonly.
-
-/Jarkko
