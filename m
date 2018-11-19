@@ -2,308 +2,160 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28226C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B7DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A0A20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:20:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A0A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F36720851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:20:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="O9vpF7wD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F36720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731018AbeKTHqC (ORCPT
+        id S1731033AbeKTHqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:46:02 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51144 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730209AbeKTHqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:46:02 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9898596A0D366;
-        Tue, 20 Nov 2018 05:20:29 +0800 (CST)
-Received: from S00293818-DELL1.china.huawei.com (10.47.88.214) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.408.0; Tue, 20 Nov 2018 05:20:22 +0800
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: [PATCH net-next 1/8] net: hns3: Add debugfs framework registration
-Date:   Mon, 19 Nov 2018 21:18:38 +0000
-Message-ID: <20181119211845.23168-2-salil.mehta@huawei.com>
-X-Mailer: git-send-email 2.8.3
-In-Reply-To: <20181119211845.23168-1-salil.mehta@huawei.com>
-References: <20181119211845.23168-1-salil.mehta@huawei.com>
+        Tue, 20 Nov 2018 02:46:09 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46715 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730798AbeKTHqJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:46:09 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so12196037ply.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 13:20:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Jt+Pnm3pFpw6REz21HA5THfjrEnVfEm5dqNKjiLRLzI=;
+        b=O9vpF7wDjafpSx0sIoHKJGo3/jxsHGLCTyDDqDKVmWH5RXH3AUiocT3H0JUdzBOjkY
+         AO5/SuhGxlo0aBZ5FQSABltd4DPReTUHrTXdSS8X9LWRWqMrz6lOKe2t2jwJFkabRIgZ
+         JrHwhsxRYeoAAHdgX81hkhdkJVVr6kxQKUWL1Ebit5vXq6hlA+Be4zdxu00lpzCEmRbx
+         IGNUhFSFXDrpsY7jB1xVh6Uqedetn1ZhUmDYazg7FbwVPPKw6ShkY5xTg/8UWDgiSdIL
+         2f5S68sTyJg2/f2Muax3TMZACB0VjxwlzTkAOvDQXpJfApvd48AQQP760i8ExvpdFzHP
+         N5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jt+Pnm3pFpw6REz21HA5THfjrEnVfEm5dqNKjiLRLzI=;
+        b=kz+qjSoirVtgGcFQGrHvGuc5L47k0R2kGRLNfObxmYQ6Ldw5mvsaL3rgr8UgoFvEPy
+         BpKAU+jxSrRarPzPmyen2bel0rJNKAwaekc4xClGjsZXZEPa9LpJzlNzt8kOFfOJ5Mqw
+         YABgAyL2MnU0imGmbkpG9QcA/WLdZXpt5sQwKJlYm+opTlHYZ8okyqIbxSjKyVikD+bq
+         +2rX+7SvSEh2XTJQvT+QYCxFNk2F/OPCXifRaCtYHv7N4AaOuzBApm1nRQJlald3DLfS
+         m9G6i/vV8O7FVY6ys54B42r5n3fn/2xOtIViXyOXjtEoLB31A0RoAGNj0uIa7ri1WTMO
+         9wiQ==
+X-Gm-Message-State: AGRZ1gIdfFpj5kMgpTtafOuxeKT27o0HK/CtEum2mCp8RDZOdUz+M5oe
+        fUB2oSYI/hcc5gp46AU0ecVQKw==
+X-Google-Smtp-Source: AJdET5cCc1lqTNTgjq/xn3vhppSvmIMbSpVSOue/FMIZsKC+bYlucr390DSJvyUD5dhRdwEUDOPzMw==
+X-Received: by 2002:a17:902:a988:: with SMTP id bh8-v6mr24128933plb.163.1542662438811;
+        Mon, 19 Nov 2018 13:20:38 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id s144sm40736816pgs.87.2018.11.19.13.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 13:20:38 -0800 (PST)
+Date:   Mon, 19 Nov 2018 22:20:29 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        serge@hallyn.com, jannh@google.com, luto@kernel.org,
+        akpm@linux-foundation.org, oleg@redhat.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
+        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119212027.vtkp7r7srf5ocnr4@brauner.io>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
+ <20181119202857.k5zw742xjfrw677j@yavin>
+ <20181119205518.btew3vxwgva4w3zh@brauner.io>
+ <20181119211810.73ptfhnwdmkngfi4@yavin>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.47.88.214]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181119211810.73ptfhnwdmkngfi4@yavin>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: liuzhongzhu <liuzhongzhu@huawei.com>
+On Tue, Nov 20, 2018 at 08:18:10AM +1100, Aleksa Sarai wrote:
+> On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
+> > On Tue, Nov 20, 2018 at 07:28:57AM +1100, Aleksa Sarai wrote:
+> > > On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
+> > > > +	if (info) {
+> > > > +		ret = __copy_siginfo_from_user(sig, &kinfo, info);
+> > > > +		if (unlikely(ret))
+> > > > +			goto err;
+> > > > +		/*
+> > > > +		 * Not even root can pretend to send signals from the kernel.
+> > > > +		 * Nor can they impersonate a kill()/tgkill(), which adds
+> > > > +		 * source info.
+> > > > +		 */
+> > > > +		ret = -EPERM;
+> > > > +		if ((kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL) &&
+> > > > +		    (task_pid(current) != pid))
+> > > > +			goto err;
+> > > > +	} else {
+> > > > +		prepare_kill_siginfo(sig, &kinfo);
+> > > > +	}
+> > > 
+> > > I wonder whether we should also have a pidns restriction here, since
+> > > currently it isn't possible for a container process using a pidns to
+> > > signal processes outside its pidns. AFAICS, this isn't done through an
+> > > explicit check -- it's a side-effect of processes in a pidns not being
+> > > able to address non-descendant-pidns processes.
+> > > 
+> > > But maybe it's reasonable to allow sending a procfd to a different pidns
+> > > and the same operations working on it? If we extend the procfd API to
+> > 
+> > No, I don't think so. I really don't want any fancy semantics in here.
+> > Fancy doesn't get merged and fancy is hard to maintain. So we should do
+> > something like:
+> > 
+> > if (proc_pid_ns() != current_pid_ns)
+> > 	return EINVAL
+> 
+> This isn't quite sufficient. The key thing is that you have to be in an
+> *ancestor* (or same) pidns, not the *same* pidns. Ideally you can re-use
 
-Add the debugfs framework to the driver and create a debugfs
-command interface for each device.
+See my next mail.
 
-example command:
-"echo queue info > cmd" Query the packet forwarding queue information.
-
-Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
-Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/Makefile  |   2 +-
- drivers/net/ethernet/hisilicon/hns3/hnae3.h   |   1 +
- .../ethernet/hisilicon/hns3/hns3_debugfs.c    | 136 ++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   |  17 ++-
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |   4 +
- 5 files changed, 157 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/Makefile b/drivers/net/ethernet/hisilicon/hns3/Makefile
-index 002534f12b66..d01bf536eb86 100644
---- a/drivers/net/ethernet/hisilicon/hns3/Makefile
-+++ b/drivers/net/ethernet/hisilicon/hns3/Makefile
-@@ -9,6 +9,6 @@ obj-$(CONFIG_HNS3) += hns3vf/
- obj-$(CONFIG_HNS3) += hnae3.o
- 
- obj-$(CONFIG_HNS3_ENET) += hns3.o
--hns3-objs = hns3_enet.o hns3_ethtool.o
-+hns3-objs = hns3_enet.o hns3_ethtool.o hns3_debugfs.o
- 
- hns3-$(CONFIG_HNS3_DCB) += hns3_dcbnl.o
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-index 4a39feaba8b2..f32f075991f5 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-@@ -566,6 +566,7 @@ struct hnae3_handle {
- 	u32 numa_node_mask;	/* for multi-chip support */
- 
- 	u8 netdev_flags;
-+	struct dentry *hnae3_dbgfs;
- };
- 
- #define hnae3_set_field(origin, mask, shift, val) \
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-new file mode 100644
-index 000000000000..9bc6ceb6fbc1
---- /dev/null
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
-@@ -0,0 +1,136 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2018-2019 Hisilicon Limited.
-+
-+#include <linux/debugfs.h>
-+#include <linux/device.h>
-+
-+#include "hnae3.h"
-+#include "hns3_enet.h"
-+
-+#define HNS3_DBG_READ_LEN 256
-+
-+static struct dentry *hns3_dbgfs_root;
-+
-+static void hns3_dbg_help(struct hnae3_handle *h)
-+{
-+	dev_info(&h->pdev->dev, "available commands\n");
-+	dev_info(&h->pdev->dev, "queue info [number]\n");
-+	dev_info(&h->pdev->dev, "dump fd tcam\n");
-+}
-+
-+static ssize_t hns3_dbg_cmd_read(struct file *filp, char __user *buffer,
-+				 size_t count, loff_t *ppos)
-+{
-+	int uncopy_bytes;
-+	char *buf;
-+	int len;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	if (count < HNS3_DBG_READ_LEN)
-+		return -ENOSPC;
-+
-+	buf = kzalloc(HNS3_DBG_READ_LEN, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	len = snprintf(buf, HNS3_DBG_READ_LEN, "%s\n",
-+		       "Please echo help to cmd to get help information");
-+	uncopy_bytes = copy_to_user(buffer, buf, len);
-+
-+	kfree(buf);
-+
-+	if (uncopy_bytes)
-+		return -EFAULT;
-+
-+	return (*ppos = len);
-+}
-+
-+static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
-+				  size_t count, loff_t *ppos)
-+{
-+	struct hnae3_handle *handle = filp->private_data;
-+	char *cmd_buf, *cmd_buf_tmp;
-+	int uncopied_bytes;
-+	int ret = 0;
-+
-+	if (*ppos != 0)
-+		return 0;
-+
-+	cmd_buf = kzalloc(count + 1, GFP_KERNEL);
-+	if (!cmd_buf)
-+		return count;
-+
-+	uncopied_bytes = copy_from_user(cmd_buf, buffer, count);
-+	if (uncopied_bytes) {
-+		kfree(cmd_buf);
-+		return -EFAULT;
-+	}
-+
-+	cmd_buf[count] = '\0';
-+
-+	cmd_buf_tmp = strchr(cmd_buf, '\n');
-+	if (cmd_buf_tmp) {
-+		*cmd_buf_tmp = '\0';
-+		count = cmd_buf_tmp - cmd_buf + 1;
-+	}
-+
-+	if (strncmp(cmd_buf, "help", 4) == 0)
-+		hns3_dbg_help(handle);
-+
-+	if (ret)
-+		hns3_dbg_help(handle);
-+
-+	kfree(cmd_buf);
-+	cmd_buf = NULL;
-+
-+	return count;
-+}
-+
-+static const struct file_operations hns3_dbg_cmd_fops = {
-+	.owner = THIS_MODULE,
-+	.open  = simple_open,
-+	.read  = hns3_dbg_cmd_read,
-+	.write = hns3_dbg_cmd_write,
-+};
-+
-+void hns3_dbg_init(struct hnae3_handle *handle)
-+{
-+	const char *name = pci_name(handle->pdev);
-+	struct dentry *pfile;
-+
-+	handle->hnae3_dbgfs = debugfs_create_dir(name, hns3_dbgfs_root);
-+	if (!handle->hnae3_dbgfs)
-+		return;
-+
-+	pfile = debugfs_create_file("cmd", 0600, handle->hnae3_dbgfs, handle,
-+				    &hns3_dbg_cmd_fops);
-+	if (!pfile) {
-+		debugfs_remove_recursive(handle->hnae3_dbgfs);
-+		handle->hnae3_dbgfs = NULL;
-+		dev_warn(&handle->pdev->dev, "create file for %s fail\n",
-+			 name);
-+	}
-+}
-+
-+void hns3_dbg_uninit(struct hnae3_handle *handle)
-+{
-+	debugfs_remove_recursive(handle->hnae3_dbgfs);
-+	handle->hnae3_dbgfs = NULL;
-+}
-+
-+void hns3_dbg_register_debugfs(const char *debugfs_dir_name)
-+{
-+	hns3_dbgfs_root = debugfs_create_dir(debugfs_dir_name, NULL);
-+	if (!hns3_dbgfs_root) {
-+		pr_warn("Register debugfs for %s fail\n", debugfs_dir_name);
-+		return;
-+	}
-+}
-+
-+void hns3_dbg_unregister_debugfs(void)
-+{
-+	debugfs_remove_recursive(hns3_dbgfs_root);
-+	hns3_dbgfs_root = NULL;
-+}
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 7f81db3df041..d1b2de2ecc89 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -3620,6 +3620,8 @@ static int hns3_client_init(struct hnae3_handle *handle)
- 
- 	hns3_dcbnl_setup(handle);
- 
-+	hns3_dbg_init(handle);
-+
- 	/* MTU range: (ETH_MIN_MTU(kernel default) - 9702) */
- 	netdev->max_mtu = HNS3_MAX_MTU;
- 
-@@ -3676,6 +3678,8 @@ static void hns3_client_uninit(struct hnae3_handle *handle, bool reset)
- 
- 	hns3_put_ring_config(priv);
- 
-+	hns3_dbg_uninit(handle);
-+
- 	priv->ring_data = NULL;
- 
- out_netdev_free:
-@@ -4245,15 +4249,23 @@ static int __init hns3_init_module(void)
- 
- 	INIT_LIST_HEAD(&client.node);
- 
-+	hns3_dbg_register_debugfs(hns3_driver_name);
-+
- 	ret = hnae3_register_client(&client);
- 	if (ret)
--		return ret;
-+		goto err_reg_client;
- 
- 	ret = pci_register_driver(&hns3_driver);
- 	if (ret)
--		hnae3_unregister_client(&client);
-+		goto err_reg_driver;
- 
- 	return ret;
-+
-+err_reg_driver:
-+	hnae3_unregister_client(&client);
-+err_reg_client:
-+	hns3_dbg_unregister_debugfs();
-+	return ret;
- }
- module_init(hns3_init_module);
- 
-@@ -4265,6 +4277,7 @@ static void __exit hns3_exit_module(void)
- {
- 	pci_unregister_driver(&hns3_driver);
- 	hnae3_unregister_client(&client);
-+	hns3_dbg_unregister_debugfs();
- }
- module_exit(hns3_exit_module);
- 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index bbf227ba30f8..4e4b48ba78e3 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -683,4 +683,8 @@ void hns3_dcbnl_setup(struct hnae3_handle *handle);
- static inline void hns3_dcbnl_setup(struct hnae3_handle *handle) {}
- #endif
- 
-+void hns3_dbg_init(struct hnae3_handle *handle);
-+void hns3_dbg_uninit(struct hnae3_handle *handle);
-+void hns3_dbg_register_debugfs(const char *debugfs_dir_name);
-+void hns3_dbg_unregister_debugfs(void);
- #endif
--- 
-2.17.1
+> the check already in pidns_get_parent, and expose it. It would be
+> something as trivial as:
+> 
+> bool pidns_is_descendant(struct pid_namespace *ns,
+>                          struct pid_namespace *ancestor)
+> {
+>     for (;;) {
+>         if (!ns)
+>             return false;
+>         if (ns == ancestor)
+>             break;
+>         ns = ns->parent;
+>     }
+>     return true;
+> }
+> 
+> And you can rewrite pidns_get_parent to use it. So you would instead be
+> doing:
+> 
+>     if (pidns_is_descendant(proc_pid_ns, task_active_pid_ns(current)))
+>         return -EPERM;
+> 
+> (Or you can just copy the 5-line loop into procfd_signal -- though I
+> imagine we'll need this for all of the procfd_* APIs.)
+> 
+> -- 
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> <https://www.cyphar.com/>
 
 
