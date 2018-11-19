@@ -2,103 +2,119 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E5C9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB057C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF0B20684
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FF0B20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id AD0DA20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:27:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0DA20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbeKSSuE (ORCPT
+        id S1727188AbeKSSuo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:50:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:36958 "EHLO mail.bootlin.com"
+        Mon, 19 Nov 2018 13:50:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60320 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726175AbeKSSuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:50:04 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3168820D0D; Mon, 19 Nov 2018 09:27:08 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0481C2039F;
-        Mon, 19 Nov 2018 09:27:08 +0100 (CET)
-Date:   Mon, 19 Nov 2018 09:27:07 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 01/12] drm/sun4i: sun6i_mipi_dsi: Compute burst mode
- loop N1 instruction delay
-Message-ID: <20181119082707.kbsw2gyntxxbh6no@flea>
-References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-2-jagan@amarulasolutions.com>
+        id S1726961AbeKSSuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:50:44 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80DC7307D91A;
+        Mon, 19 Nov 2018 08:27:49 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CB2CF424A;
+        Mon, 19 Nov 2018 08:27:27 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 16:27:23 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 11/19] bcache: avoid to use
+ bio_for_each_segment_all() in bch_bio_alloc_pages()
+Message-ID: <20181119082722.GE16736@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-12-ming.lei@redhat.com>
+ <20181116004402.GF23828@vader>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e76qeq3cbnztemdd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116163916.29621-2-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181116004402.GF23828@vader>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Mon, 19 Nov 2018 08:27:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 15, 2018 at 04:44:02PM -0800, Omar Sandoval wrote:
+> On Thu, Nov 15, 2018 at 04:52:58PM +0800, Ming Lei wrote:
+> > bch_bio_alloc_pages() is always called on one new bio, so it is safe
+> > to access the bvec table directly. Given it is the only kind of this
+> > case, open code the bvec table access since bio_for_each_segment_all()
+> > will be changed to support for iterating over multipage bvec.
+> > 
+> > Cc: Dave Chinner <dchinner@redhat.com>
+> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> > Acked-by: Coly Li <colyli@suse.de>
+> > Cc: Mike Snitzer <snitzer@redhat.com>
+> > Cc: dm-devel@redhat.com
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: Shaohua Li <shli@kernel.org>
+> > Cc: linux-raid@vger.kernel.org
+> > Cc: linux-erofs@lists.ozlabs.org
+> > Cc: David Sterba <dsterba@suse.com>
+> > Cc: linux-btrfs@vger.kernel.org
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: linux-xfs@vger.kernel.org
+> > Cc: Gao Xiang <gaoxiang25@huawei.com>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Theodore Ts'o <tytso@mit.edu>
+> > Cc: linux-ext4@vger.kernel.org
+> > Cc: Coly Li <colyli@suse.de>
+> > Cc: linux-bcache@vger.kernel.org
+> > Cc: Boaz Harrosh <ooo@electrozaur.com>
+> > Cc: Bob Peterson <rpeterso@redhat.com>
+> > Cc: cluster-devel@redhat.com
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  drivers/md/bcache/util.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
+> > index 20eddeac1531..8517aebcda2d 100644
+> > --- a/drivers/md/bcache/util.c
+> > +++ b/drivers/md/bcache/util.c
+> > @@ -270,7 +270,7 @@ int bch_bio_alloc_pages(struct bio *bio, gfp_t gfp_mask)
+> >  	int i;
+> >  	struct bio_vec *bv;
+> >  
+> > -	bio_for_each_segment_all(bv, bio, i) {
+> > +	for (i = 0, bv = bio->bi_io_vec; i < bio->bi_vcnt; bv++) {
+> 
+> This is missing an i++.
 
---e76qeq3cbnztemdd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Good catch, will fix it in next version.
 
-On Fri, Nov 16, 2018 at 10:09:05PM +0530, Jagan Teki wrote:
-> Loop N1 instruction delay for burst mode lcd panel are
-> computed as per BSP code.
->=20
-> Reference code is available in BSP (from linux-sunxi
-> drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
->=20
-> dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=3D
-> (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
-> =3D> (((mode->htotal - mode->hdisplay) * 150) /
->      ((mode->clock / 1000) * 8)) - 50;
->=20
-> So use the similar computation for loop N1 delay.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-
-*why* are you doing this? What is it fixing? on which devices?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---e76qeq3cbnztemdd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/Jz2wAKCRDj7w1vZxhR
-xaDJAP4i/bU7ARuwyxeR6o5j7V/Cqzn5B9hG3uEfoPH7UGCvpQEAnNfUq8RCoLIV
-u3MSC11YJN5XolzUO0Ae2lWI/69uwgw=
-=TqW6
------END PGP SIGNATURE-----
-
---e76qeq3cbnztemdd--
+thanks,
+Ming
