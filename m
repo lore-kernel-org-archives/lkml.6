@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E31BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B95C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3870E214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60209214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMYmem+j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3870E214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+qPH5TH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60209214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406907AbeKTD36 (ORCPT
+        id S2406920AbeKTDaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44794 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406885AbeKTD36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:58 -0500
+        id S2406885AbeKTD37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E0B0214E0;
-        Mon, 19 Nov 2018 17:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFB5D214D9;
+        Mon, 19 Nov 2018 17:05:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647139;
-        bh=YwyLfElg2XRbPcpXgga1efmn6IM1MU1uN/1Qsq9Q4Ps=;
+        s=default; t=1542647142;
+        bh=ZiscjZLnoriEfGRfC+5xPJwlJLc+U4F+RV5jxamGeao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AMYmem+jcfWHr+CulrT5e7jsf/FYv988j2nJnr0ksvOCZ7rMNhT6EXRTvBH4aBL3+
-         M1aX0Z3WgXGi91sffkgEJ94OHRy2TWXMzhXX52lvPD8/PBh0Eu4wKsnhZ5kTymoccr
-         1MqEcJQOUjpC53wWEMhAVY0c07ibI2Z+kn6O76hE=
+        b=p+qPH5TH1MFdRp7Q093z9DH16nN979udDc+fzLMlXe+IjUlYafin2xpw9CCoT1hGQ
+         QgD8kUU3OA6xR8fpg3DaEsxL7UGgbG0yHx2gRbKwx6WAGPB4zw5H5uDU3ibJlbDvfJ
+         etYvVaG+ipuFeZaGZsihsF3+B/yKZ3vZvarGDOBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 3.18 64/90] clk: s2mps11: Fix matching when built as module and DT node contains compatible
-Date:   Mon, 19 Nov 2018 17:29:46 +0100
-Message-Id: <20181119162630.849099345@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 3.18 29/90] jbd2: fix use after free in jbd2_log_do_checkpoint()
+Date:   Mon, 19 Nov 2018 17:29:11 +0100
+Message-Id: <20181119162625.630489115@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,77 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Jan Kara <jack@suse.cz>
 
-commit 8985167ecf57f97061599a155bb9652c84ea4913 upstream.
+commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
 
-When driver is built as module and DT node contains clocks compatible
-(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
-module aliases won't match.
+The code cleaning transaction's lists of checkpoint buffers has a bug
+where it increases bh refcount only after releasing
+journal->j_list_lock. Thus the following race is possible:
 
-The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
-The modalias from driver: platform:s2mps11-clk
+CPU0					CPU1
+jbd2_log_do_checkpoint()
+					jbd2_journal_try_to_free_buffers()
+					  __journal_try_to_free_buffer(bh)
+  ...
+  while (transaction->t_checkpoint_io_list)
+  ...
+    if (buffer_locked(bh)) {
 
-The devices are instantiated by parent's MFD.  However both Device Tree
-bindings and parent define the compatible for clocks devices.  In case
-of module matching this DT compatible will be used.
+<-- IO completes now, buffer gets unlocked -->
 
-The issue will not happen if this is a built-in (no need for module
-matching) or when clocks DT node does not contain compatible (not
-correct from bindings perspective but working for driver).
+      spin_unlock(&journal->j_list_lock);
+					    spin_lock(&journal->j_list_lock);
+					    __jbd2_journal_remove_checkpoint(jh);
+					    spin_unlock(&journal->j_list_lock);
+					  try_to_free_buffers(page);
+      get_bh(bh) <-- accesses freed bh
 
-Note when backporting to stable kernels: adjust the list of device ID
-entries.
+Fix the problem by grabbing bh reference before unlocking
+journal->j_list_lock.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
+Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
+Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
+CC: stable@vger.kernel.org
+Reviewed-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/clk-s2mps11.c |   30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ fs/jbd2/checkpoint.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -285,6 +285,36 @@ static const struct platform_device_id s
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+--- a/fs/jbd2/checkpoint.c
++++ b/fs/jbd2/checkpoint.c
+@@ -254,8 +254,8 @@ restart:
+ 		bh = jh2bh(jh);
  
-+#ifdef CONFIG_OF
-+/*
-+ * Device is instantiated through parent MFD device and device matching is done
-+ * through platform_device_id.
-+ *
-+ * However if device's DT node contains proper clock compatible and driver is
-+ * built as a module, then the *module* matching will be done trough DT aliases.
-+ * This requires of_device_id table.  In the same time this will not change the
-+ * actual *device* matching so do not add .of_match_table.
-+ */
-+static const struct of_device_id s2mps11_dt_match[] = {
-+	{
-+		.compatible = "samsung,s2mps11-clk",
-+		.data = (void *)S2MPS11X,
-+	}, {
-+		.compatible = "samsung,s2mps13-clk",
-+		.data = (void *)S2MPS13X,
-+	}, {
-+		.compatible = "samsung,s2mps14-clk",
-+		.data = (void *)S2MPS14X,
-+	}, {
-+		.compatible = "samsung,s5m8767-clk",
-+		.data = (void *)S5M8767X,
-+	}, {
-+		/* Sentinel */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
-+#endif
-+
- static struct platform_driver s2mps11_clk_driver = {
- 	.driver = {
- 		.name  = "s2mps11-clk",
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
+@@ -336,8 +336,8 @@ restart2:
+ 		jh = transaction->t_checkpoint_io_list;
+ 		bh = jh2bh(jh);
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
 
 
