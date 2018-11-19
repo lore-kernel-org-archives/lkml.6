@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5ACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D022C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFA72086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9F4220851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRsJqw7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAFA72086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibFmcHJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F4220851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbeKTJLw (ORCPT
+        id S1731842AbeKTJLm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:11:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45244 "EHLO mail.kernel.org"
+        Tue, 20 Nov 2018 04:11:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731950AbeKTJLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:11:51 -0500
+        id S1731808AbeKTJLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:11:41 -0500
 Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9276214C4;
-        Mon, 19 Nov 2018 22:45:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACCDD2146D;
+        Mon, 19 Nov 2018 22:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542667559;
-        bh=Gp5ut8Yvjk0UdEW8rghdryCsZib248qHknetthCXLWU=;
+        s=default; t=1542667548;
+        bh=HLpi73lMMNR3GIs+xoNLaTO8Hek5mPQJG2bz+2UXbmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=XRsJqw7+d/4IiCt1/Zc9aQf2gbzShKIodmSW/TqVWktxkcfZQtion4vnkCVqwP9EP
-         hsgPyIL8mk3mqslPZ+OQoTpRf8Tpbxka9yqzgTFNRw3E7XlLDX4UDihZGUWWCpbzAf
-         QSDzuJS9AHnNEFigPVdL903+G7yj3Z4Q7HTNEmpA=
+        b=ibFmcHJBRM+LVXNegWr6gnBNKLd32iwN1smKkPRnFpeBVNUsBWXF9gsl4we2nSXvi
+         MRBqOMXwjG/bOp24C/+zLVZrvocCXxqfPdFlCgUDa6itu7kozmWioCqN6/8Tctwurn
+         V146B2YxIT5+otG3YGou+Q8TzjN9we/6rO1jT/14=
 From:   Andy Lutomirski <luto@kernel.org>
 To:     x86@kernel.org
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -45,9 +45,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 13/13] x86/vsyscall/64: Use X86_PF constants in the simulated #PF error code
-Date:   Mon, 19 Nov 2018 14:45:37 -0800
-Message-Id: <8a87ae30961afd06db65c092aac9af8ad8788c0e.1542667307.git.luto@kernel.org>
+Subject: [PATCH 08/13] x86/fault: Don't set thread.cr2, etc before OOPSing
+Date:   Mon, 19 Nov 2018 14:45:32 -0800
+Message-Id: <d418022aa0fad9cb40467aa7acaf4e95be50ee96.1542667307.git.luto@kernel.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <cover.1542667307.git.luto@kernel.org>
 References: <cover.1542667307.git.luto@kernel.org>
@@ -58,26 +58,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rather than hardcoding 6 with a comment, use the defined constants.
+The fault handling code sets the cr2, trap_nr, and error_code fields
+in thread_struct before OOPSing.  No one reads those fields during
+an OOPS, so remove the code to set them.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 ---
- arch/x86/entry/vsyscall/vsyscall_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/fault.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 85fd85d52ffd..d78bcc03e60e 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -102,7 +102,7 @@ static bool write_ok_or_segv(unsigned long ptr, size_t size)
- 	if (!access_ok(VERIFY_WRITE, (void __user *)ptr, size)) {
- 		struct thread_struct *thread = &current->thread;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index fac931d89c23..a6554110ef62 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -621,10 +621,6 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
+ 	       tsk->comm, address);
+ 	dump_pagetable(address);
  
--		thread->error_code	= 6;  /* user fault, no page, write */
-+		thread->error_code	= X86_PF_USER | X86_PF_WRITE;
- 		thread->cr2		= ptr;
- 		thread->trap_nr		= X86_TRAP_PF;
+-	tsk->thread.cr2		= address;
+-	tsk->thread.trap_nr	= X86_TRAP_PF;
+-	tsk->thread.error_code	= error_code;
+-
+ 	if (__die("Bad pagetable", regs, error_code))
+ 		sig = 0;
  
+@@ -753,10 +749,6 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 	if (task_stack_end_corrupted(tsk))
+ 		printk(KERN_EMERG "Thread overran stack, or stack corrupted\n");
+ 
+-	tsk->thread.cr2		= address;
+-	tsk->thread.trap_nr	= X86_TRAP_PF;
+-	tsk->thread.error_code	= error_code;
+-
+ 	sig = SIGKILL;
+ 	if (__die("Oops", regs, error_code))
+ 		sig = 0;
 -- 
 2.17.2
 
