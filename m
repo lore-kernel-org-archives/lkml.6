@@ -7,56 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72031C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0F2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F1E21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA4AD214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XM7RgjtT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F1E21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oERvZVH7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4AD214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387691AbeKTDGm (ORCPT
+        id S2387707AbeKTDGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40504 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732796AbeKTDGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:41 -0500
+        id S1732796AbeKTDGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BE11214C4;
-        Mon, 19 Nov 2018 16:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C135C2147D;
+        Mon, 19 Nov 2018 16:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645750;
-        bh=NaxEe7eQQvN603rN82BXvhBMLQn0KJrxASrwLffD1Aw=;
+        s=default; t=1542645753;
+        bh=a7G45LUXh1RPNbk+3mx+mGpI2v27ZNuiz57milsLzK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XM7RgjtTSZFOikf0ZhvZpC86SPhvLtry4IexWS8PUM8dqQPgUFGZdDsVX1blpaPG7
-         mW+0J7OUGBS9o2m8pnjp4uRuK416eT6XCrTX5bg76mzBORx4gQveHBZBqAS17fRN70
-         rFmUPMrgNjpiS/ZuYgu7hYhqoo86dA1x+4oa5dH0=
+        b=oERvZVH7fN7Lu8iyQ/IsDgTE4qaXO0sDYVQ2G2xvoTMGDR9Ph0RLhvdHxPBRMxuO2
+         jHGqwgPYVyGFhv/iUzvJdRd8kOsTU/ZvHY+VAB7BQpFrlERTjbFBIpzmUsrHuZlGxq
+         Td3tAPp/xGXD1DCOllmVnLK7jDNeh+qGa3dmuBaA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Elliott <elliott@hpe.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Borislav Petkov <bp@suse.de>, Arnd Bergmann <arnd@arndb.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-edac <linux-edac@vger.kernel.org>,
-        linux-nvdimm@lists.01.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
-        Yazen Ghannam <yazen.ghannam@amd.com>
-Subject: [PATCH 4.18 074/171] acpi/nfit, x86/mce: Validate a MCEs address before using it
-Date:   Mon, 19 Nov 2018 17:27:50 +0100
-Message-Id: <20181119162631.595558208@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.18 039/171] scsi: qla2xxx: Fix incorrect port speed being set for FC adapters
+Date:   Mon, 19 Nov 2018 17:27:15 +0100
+Message-Id: <20181119162626.125237404@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -74,91 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vishal Verma <vishal.l.verma@intel.com>
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-commit e8a308e5f47e545e0d41d0686c00f5f5217c5f61 upstream.
+commit 4c1458df9635c7e3ced155f594d2e7dfd7254e21 upstream.
 
-The NFIT machine check handler uses the physical address from the mce
-structure, and compares it against information in the ACPI NFIT table
-to determine whether that location lies on an NVDIMM. The mce->addr
-field however may not always be valid, and this is indicated by the
-MCI_STATUS_ADDRV bit in the status field.
-
-Export mce_usable_address() which already performs validation for the
-address, and use it in the NFIT handler.
-
-Fixes: 6839a6d96f4e ("nfit: do an ARS scrub on hitting a latent media error")
-Reported-by: Robert Elliott <elliott@hpe.com>
-Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-CC: Arnd Bergmann <arnd@arndb.de>
-Cc: Dan Williams <dan.j.williams@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>
-CC: elliott@hpe.com
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: Len Brown <lenb@kernel.org>
-CC: linux-acpi@vger.kernel.org
-CC: linux-edac <linux-edac@vger.kernel.org>
-CC: linux-nvdimm@lists.01.org
-CC: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC: Ross Zwisler <zwisler@kernel.org>
-CC: stable <stable@vger.kernel.org>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Tony Luck <tony.luck@intel.com>
-CC: x86-ml <x86@kernel.org>
-CC: Yazen Ghannam <yazen.ghannam@amd.com>
-Link: http://lkml.kernel.org/r/20181026003729.8420-2-vishal.l.verma@intel.com
+Fixes: 6246b8a1d26c7c ("[SCSI] qla2xxx: Enhancements to support ISP83xx.")
+Fixes: 1bb395485160d2 ("qla2xxx: Correct iiDMA-update calling conventions.")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/mce.h       |    1 +
- arch/x86/kernel/cpu/mcheck/mce.c |    3 ++-
- drivers/acpi/nfit/mce.c          |    4 ++++
- 3 files changed, 7 insertions(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_mbx.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -217,6 +217,7 @@ static inline int umc_normaddr_to_sysadd
- int mce_available(struct cpuinfo_x86 *c);
- bool mce_is_memory_error(struct mce *m);
- bool mce_is_correctable(struct mce *m);
-+int mce_usable_address(struct mce *m);
- 
- DECLARE_PER_CPU(unsigned, mce_exception_count);
- DECLARE_PER_CPU(unsigned, mce_poll_count);
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -489,7 +489,7 @@ static void mce_report_event(struct pt_r
-  * be somewhat complicated (e.g. segment offset would require an instruction
-  * parser). So only support physical addresses up to page granuality for now.
-  */
--static int mce_usable_address(struct mce *m)
-+int mce_usable_address(struct mce *m)
- {
- 	if (!(m->status & MCI_STATUS_ADDRV))
- 		return 0;
-@@ -509,6 +509,7 @@ static int mce_usable_address(struct mce
- 
- 	return 1;
- }
-+EXPORT_SYMBOL_GPL(mce_usable_address);
- 
- bool mce_is_memory_error(struct mce *m)
- {
---- a/drivers/acpi/nfit/mce.c
-+++ b/drivers/acpi/nfit/mce.c
-@@ -29,6 +29,10 @@ static int nfit_handle_mce(struct notifi
- 	if (!mce_is_memory_error(mce) || mce_is_correctable(mce))
- 		return NOTIFY_DONE;
- 
-+	/* Verify the address reported in the MCE is valid. */
-+	if (!mce_usable_address(mce))
-+		return NOTIFY_DONE;
-+
- 	/*
- 	 * mce->addr contains the physical addr accessed that caused the
- 	 * machine check. We need to walk through the list of NFITs, and see
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -3716,10 +3716,7 @@ qla2x00_set_idma_speed(scsi_qla_host_t *
+ 	mcp->mb[0] = MBC_PORT_PARAMS;
+ 	mcp->mb[1] = loop_id;
+ 	mcp->mb[2] = BIT_0;
+-	if (IS_CNA_CAPABLE(vha->hw))
+-		mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+-	else
+-		mcp->mb[3] = port_speed & (BIT_2|BIT_1|BIT_0);
++	mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+ 	mcp->mb[9] = vha->vp_idx;
+ 	mcp->out_mb = MBX_9|MBX_3|MBX_2|MBX_1|MBX_0;
+ 	mcp->in_mb = MBX_3|MBX_1|MBX_0;
 
 
