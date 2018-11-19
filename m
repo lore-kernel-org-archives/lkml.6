@@ -2,116 +2,84 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87F7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB8AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B44FC20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44FC20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 79D3620851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:30:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="u2EuYM97"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D3620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730762AbeKTGyb (ORCPT
+        id S1730789AbeKTGzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:54:31 -0500
-Received: from mx1.mailbox.org ([80.241.60.212]:42222 "EHLO mx1.mailbox.org"
+        Tue, 20 Nov 2018 01:55:39 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:52383 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728938AbeKTGyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:54:31 -0500
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 1EE31497D9;
-        Mon, 19 Nov 2018 21:29:10 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter04.heinlein-hosting.de (spamfilter04.heinlein-hosting.de [80.241.56.122]) (amavisd-new, port 10030)
-        with ESMTP id mNbkx0gY0nFg; Mon, 19 Nov 2018 21:29:08 +0100 (CET)
-Date:   Tue, 20 Nov 2018 07:28:57 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
-        serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-Message-ID: <20181119202857.k5zw742xjfrw677j@yavin>
-References: <20181119103241.5229-1-christian@brauner.io>
- <20181119103241.5229-3-christian@brauner.io>
+        id S1728938AbeKTGzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:55:39 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 5ad95bd6;
+        Mon, 19 Nov 2018 20:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=AWRGcqde4IOouWBK+AB/ed75Z4c=; b=u2EuYM
+        97JScgVSupOnSV6e74HP3e27LXv/xFJaeEXr3yB7zsskSitJUgooFSIp+3hvYewu
+        mITzuVKobKr7u/r6SdEzLvVSoaow5KOb5Rukt7IpW6fqs/Q2UlMh16dJulG658Wk
+        6VzAAQlpATV18npkFnHr/0oVcXBPsGU8X1VSxSOprKsuNW6lZ567FJgBWAi6AXMo
+        uJXnp4gBamfao3clAyYUjkTiBMg38EWQ7aNYkCimCYjbsC5aCGPPNmSI8SdmtQWr
+        IHROGGvf74ZTaOErH8WmPCpLLz98CoByDqacj9o4ianAkTQEZOdvZVi1EaAKzIrQ
+        EvWps8on9ql5nibw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e25c9c71 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 19 Nov 2018 20:24:15 +0000 (UTC)
+Received: by mail-ot1-f44.google.com with SMTP id u16so28599166otk.8;
+        Mon, 19 Nov 2018 12:30:17 -0800 (PST)
+X-Gm-Message-State: AA+aEWYU10+hQjSixjc+3x/KExHSkFy23rjrQYOuzHDamOvyHIxkyRJF
+        tRGhOLvyU8V8kMEeaeUkYmt1O3ydZAxb+9Mn1jA=
+X-Google-Smtp-Source: AFSGD/V5WGy25oEcw1s4Rl0YIT1JDMVnpGSBjIWmHeQv0isPc8x1zLlOwV1iRxzys3Sv2QPv0aJQdpPZlc2OgOh3ATU=
+X-Received: by 2002:a9d:17ca:: with SMTP id j68mr1702271otj.268.1542659416695;
+ Mon, 19 Nov 2018 12:30:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gtgc45ynebhhjwty"
-Content-Disposition: inline
-In-Reply-To: <20181119103241.5229-3-christian@brauner.io>
+References: <20181015175424.97147-1-ebiggers@kernel.org> <CAHmME9p1aiqWZ4+viaLscO8+qmixdVhMA1MAtMAFEHPG36DcPg@mail.gmail.com>
+ <20181019190411.GB246441@gmail.com> <1f65ce09-93b3-f43e-49d5-9d9d6c0bb9e0@gmail.com>
+ <20181116215249.GA27149@gmail.com> <56883f08-26cb-ecef-5698-1c2948714773@gmail.com>
+ <20181119192821.GA258711@gmail.com> <1e9ec59a-6a2c-3536-0722-c6d96d6714b2@gmail.com>
+In-Reply-To: <1e9ec59a-6a2c-3536-0722-c6d96d6714b2@gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 19 Nov 2018 21:30:05 +0100
+X-Gmail-Original-Message-ID: <CAHmME9pU79WRKWd32ihp2aQgQ1D6Kh+jh2e2sETm8tqjNxgdvg@mail.gmail.com>
+Message-ID: <CAHmME9pU79WRKWd32ihp2aQgQ1D6Kh+jh2e2sETm8tqjNxgdvg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/12] crypto: Adiantum support
+To:     Milan Broz <gmazyland@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Michael Halcrow <mhalcrow@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 9:05 PM Milan Broz <gmazyland@gmail.com> wrote:
+> p.s.
+> Reading the discussion about Zinc/Adiantum - I would perhaps prefer to merge
+> Adiantum first (if it is ready).
+> It is a new feature, I see it as useful cipher alternative for dm-crypt and it can be
+> esily backported without Zinc to older kernels (I am testing it actually this way).
 
---gtgc45ynebhhjwty
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Seems reasonable to me.
 
-On 2018-11-19, Christian Brauner <christian@brauner.io> wrote:
-> +	if (info) {
-> +		ret =3D __copy_siginfo_from_user(sig, &kinfo, info);
-> +		if (unlikely(ret))
-> +			goto err;
-> +		/*
-> +		 * Not even root can pretend to send signals from the kernel.
-> +		 * Nor can they impersonate a kill()/tgkill(), which adds
-> +		 * source info.
-> +		 */
-> +		ret =3D -EPERM;
-> +		if ((kinfo.si_code >=3D 0 || kinfo.si_code =3D=3D SI_TKILL) &&
-> +		    (task_pid(current) !=3D pid))
-> +			goto err;
-> +	} else {
-> +		prepare_kill_siginfo(sig, &kinfo);
-> +	}
-
-I wonder whether we should also have a pidns restriction here, since
-currently it isn't possible for a container process using a pidns to
-signal processes outside its pidns. AFAICS, this isn't done through an
-explicit check -- it's a side-effect of processes in a pidns not being
-able to address non-descendant-pidns processes.
-
-But maybe it's reasonable to allow sending a procfd to a different pidns
-and the same operations working on it? If we extend the procfd API to
-allow process creation this would allow a container to create a process
-outside its pidns.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---gtgc45ynebhhjwty
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvzHQkACgkQSnvnv3De
-m58IwBAAgHKh2abQgnpam0GUxYiHi88rnCgkNIbQ9UCsmfE565c+gUSS9jmJxDmJ
-pbd3pdWcS1zZdRWC3mD75W6bYbnu0OEyKcJbjXXwR2+aK4Z98UJNtWtFPtFpny2T
-U38WVhtyJafQ8GgAQB7WN5SAloUIv8vbMoIlZw5FJzehmks8528fJq4L6zDdc+Cv
-xaB8Cn6MeWAyry5HM5534QTW4uAEdw0MQ8Q+n8H0tjbXPoJ9kLS7JsIbAm+VFTZJ
-Lc4jfnm5VUHkHfCnpurJHBYJTtl6EsumWDAeQPG6hcQ3aBDFRGoWQ3GbrmfRwtqi
-KQgy8SyVZ3RCxK9xJtW2keGMnLPxMaPNL1QWV9rlSPNhSzhbUupyYUKXnnjX9SD8
-KG7V1bNv7CScO34o8gTCIv2wX1PVHRczZdbHTmx5aU78EFKFJmml+DdTR7QYUNb/
-4GvnRCMRSrsewabQKfOroLVkg0lmicPh6SMvGujsfd2QDEenzRWHU9QxHzecXfYl
-qH2Q/+LMa32WRLgG3/sVZLf4Pjy/UHHm/W4I9EkqWLrXjo/87wrMfWjxWCRdLDry
-ongYz/FLqY56phw1ZkCPICh2UF9sCdQ3fOowyGfTDmOlphSsMIuZWfeITOproXS1
-OBL5DWnAtBVP/ZIye1ctHRFF98bak0hIAgvx0YphLHrX9lt5w9g=
-=Euc9
------END PGP SIGNATURE-----
-
---gtgc45ynebhhjwty--
+Jason
