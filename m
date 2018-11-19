@@ -4,48 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CE5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2173C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903DB208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 726CE206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5fPi5xa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903DB208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fR70KEv4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726CE206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390402AbeKTDP7 (ORCPT
+        id S2390413AbeKTDQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:15:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53760 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389340AbeKTDP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:15:59 -0500
+        id S2389340AbeKTDQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B6FE208E3;
-        Mon, 19 Nov 2018 16:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93C4D206BA;
+        Mon, 19 Nov 2018 16:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646305;
-        bh=zDfXCrV9N5MfZYEtgZMBxN+xafpQb8Fk61xMMwv1W/g=;
+        s=default; t=1542646308;
+        bh=2b8SugbGZT/bk7bVMfCgP9w7jKQVqvFZonkmOTH2HFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s5fPi5xaFt273HYr3YpMIAsZKsC2Q2dx5ic0ebXNF+D59KTyvNnZyX00clGSr53zy
-         3LyeFTU6gieov89SX92nGRurNM/xC8HyhA46d86XyQfi+ZqIT0bnR8u5CPH08Cby2h
-         93M8HxE92td5Kc8a6H07raig7RWVjF6ay4qKiyo0=
+        b=fR70KEv4uCyyKJ57QDdXvOjATmWY39FjD2m1Fuo9cVNetE0eiv5P8i46pGE4BogkA
+         BSDor+bVNtDosn+GbkmdeB21zM0OherdYOt4C6M5FJzwrwXK/qSZbfENGvPsVzeGN4
+         lf5x/kMPtbEVCK3YhpPySFU+qXEC4osrFUHiZaKk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.14 113/124] drm/i915: Dont unset intel_connector->mst_port
-Date:   Mon, 19 Nov 2018 17:29:27 +0100
-Message-Id: <20181119162632.963867312@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 078/124] ext4: fix possible inode leak in the retry loop of ext4_resize_fs()
+Date:   Mon, 19 Nov 2018 17:28:52 +0100
+Message-Id: <20181119162628.066897452@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,103 +61,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 80c188695a77eddaa6e8885510ff4ef59fd478c3 upstream.
+commit db6aee62406d9fbb53315fcddd81f1dc271d49fa upstream.
 
-Currently we set intel_connector->mst_port to NULL to signify that the
-MST port has been removed from the system so that we can prevent further
-action on the port such as connector probes, mode probing, etc.
-However, we're going to need access to intel_connector->mst_port in
-order to fixup ->best_encoder() so that it can always return the correct
-encoder for an MST port to prevent legacy DPMS prop changes from
-failing. This should be safe, so instead keep intel_connector->mst_port
-always set and instead just check the status of
-drm_connector->regustered to signify whether or not the connector has
-disappeared from the system.
-
-Changes since v2:
-- Add a comment to mst_port_gone (Jani Nikula)
-- Change mst_port_gone to a u8 instead of a bool, per the kernel bot.
-  Apparently bool is discouraged in structs these days
-Changes since v4:
-- Don't use mst_port_gone at all! Just check if the connector is
-  registered or not - Daniel Vetter
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-4-lyude@redhat.com
-(cherry picked from commit 6ed5bb1fbad34382c8cfe9a9bf737e9a43053df5)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fixes: 1c6bd7173d66 ("ext4: convert file system to meta_bg if needed ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 3.7
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp_mst.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ fs/ext4/resize.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -311,9 +311,8 @@ static int intel_dp_mst_get_ddc_modes(st
- 	struct edid *edid;
- 	int ret;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -2028,6 +2028,10 @@ retry:
+ 		n_blocks_count_retry = 0;
+ 		free_flex_gd(flex_gd);
+ 		flex_gd = NULL;
++		if (resize_inode) {
++			iput(resize_inode);
++			resize_inode = NULL;
++		}
+ 		goto retry;
+ 	}
  
--	if (!intel_dp) {
-+	if (!READ_ONCE(connector->registered))
- 		return intel_connector_update_modes(connector, NULL);
--	}
- 
- 	edid = drm_dp_mst_get_edid(connector, &intel_dp->mst_mgr, intel_connector->port);
- 	ret = intel_connector_update_modes(connector, edid);
-@@ -328,9 +327,10 @@ intel_dp_mst_detect(struct drm_connector
- 	struct intel_connector *intel_connector = to_intel_connector(connector);
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
- 
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return connector_status_disconnected;
--	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr, intel_connector->port);
-+	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr,
-+				      intel_connector->port);
- }
- 
- static void
-@@ -370,7 +370,7 @@ intel_dp_mst_mode_valid(struct drm_conne
- 	int bpp = 24; /* MST uses fixed bpp */
- 	int max_rate, mode_rate, max_lanes, max_link_clock;
- 
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return MODE_ERROR;
- 
- 	max_link_clock = intel_dp_max_link_rate(intel_dp);
-@@ -399,7 +399,7 @@ static struct drm_encoder *intel_mst_ato
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
- 	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
- 
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return NULL;
- 	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
- }
-@@ -491,7 +491,6 @@ static void intel_dp_register_mst_connec
- static void intel_dp_destroy_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
- 					   struct drm_connector *connector)
- {
--	struct intel_connector *intel_connector = to_intel_connector(connector);
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
- 
- 	drm_connector_unregister(connector);
-@@ -499,10 +498,6 @@ static void intel_dp_destroy_mst_connect
- 	if (dev_priv->fbdev)
- 		drm_fb_helper_remove_one_connector(&dev_priv->fbdev->helper,
- 						   connector);
--	/* prevent race with the check in ->detect */
--	drm_modeset_lock(&connector->dev->mode_config.connection_mutex, NULL);
--	intel_connector->mst_port = NULL;
--	drm_modeset_unlock(&connector->dev->mode_config.connection_mutex);
- 
- 	drm_connector_unreference(connector);
- 	DRM_DEBUG_KMS("\n");
 
 
