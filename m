@@ -6,47 +6,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C871AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 057C8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90522214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6D82148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9CD+80u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90522214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n50lA2zD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6D82148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388586AbeKTDJn (ORCPT
+        id S2388599AbeKTDJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44876 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:09:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387628AbeKTDJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:42 -0500
+        id S2387628AbeKTDJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:09:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BE552145D;
-        Mon, 19 Nov 2018 16:45:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0BD12148E;
+        Mon, 19 Nov 2018 16:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645930;
-        bh=p556URG2gJY7EN6w91kT2AqBo+u7cU4ISWkPq0HkAeY=;
+        s=default; t=1542645933;
+        bh=31zvlz65SlQugt/sJGPSkDUl285Bm/aEue0czXPyidQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g9CD+80urScdQ7qG/ySAYjbnU12PCiQrdM2kGh6KimuomYpBjpA3FQDRNUV86RL6Q
-         jqGdQnECtrBs9BUTeKsMo11URAq8bisuYPkSSV32IlQWzUiMDSHE1oQ1jOzOlYqYmC
-         hPKkloElyW6s6+DNApmP8Zta3jkrEQKaSJt+G9KM=
+        b=n50lA2zDa8KkLU0KWTdaPbWMLki/D599rr7VFSQLlMDgLuM5BIZtpibabTpPSwvSG
+         lxr893lARStbOVt4/Zqxc/EL9XumoruT4U8lK3Qpq80ECwhuCJkUIHW5sC1WGAEiqe
+         zYgwlgpa/EBdoCUkjL/JaFKr/QRdIYCQB8KXKos8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.18 143/171] efi/arm/libstub: Pack FDT after populating it
-Date:   Mon, 19 Nov 2018 17:28:59 +0100
-Message-Id: <20181119162639.062309813@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.18 117/171] ext4: fix buffer leak in ext4_xattr_get_block() on error path
+Date:   Mon, 19 Nov 2018 17:28:33 +0100
+Message-Id: <20181119162636.858319375@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,57 +61,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 72a58a63a164b4e9d2d914e65caeb551846883f1 upstream.
+commit ecaaf408478b6fb4d9986f9b6652f3824e374f4c upstream.
 
-Commit:
-
-  24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
-
-increased the allocation size for the FDT image created by the stub to a
-fixed value of 2 MB, to simplify the former code that made several
-attempts with increasing values for the size. This is reasonable
-given that the allocation is of type EFI_LOADER_DATA, which is released
-to the kernel unless it is explicitly memblock_reserve()d by the early
-boot code.
-
-However, this allocation size leaked into the 'size' field of the FDT
-header metadata, and so the entire allocation remains occupied by the
-device tree binary, even if most of it is not used to store device tree
-information.
-
-So call fdt_pack() to shrink the FDT data structure to its minimum size
-after populating all the fields, so that the remaining memory is no
-longer wasted.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.12+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
-Link: http://lkml.kernel.org/r/20181114175544.12860-4-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: dec214d00e0d ("ext4: xattr inode deduplication")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 4.13
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/libstub/fdt.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/xattr.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -158,6 +158,10 @@ static efi_status_t update_fdt(efi_syste
- 			return efi_status;
- 		}
- 	}
-+
-+	/* shrink the FDT back to its minimum size */
-+	fdt_pack(fdt);
-+
- 	return EFI_SUCCESS;
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -2282,8 +2282,10 @@ static struct buffer_head *ext4_xattr_ge
+ 	if (!bh)
+ 		return ERR_PTR(-EIO);
+ 	error = ext4_xattr_check_block(inode, bh);
+-	if (error)
++	if (error) {
++		brelse(bh);
+ 		return ERR_PTR(error);
++	}
+ 	return bh;
+ }
  
- fdt_set_fail:
 
 
