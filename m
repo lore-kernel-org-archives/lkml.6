@@ -2,143 +2,246 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19747C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A40BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEFC22086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="VCOXzGIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEFC22086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
+	by mail.kernel.org (Postfix) with ESMTP id 056A92080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:38:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 056A92080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731897AbeKTJ5Y (ORCPT
+        id S1730981AbeKTKEi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:57:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45545 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbeKTJ5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:57:23 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v6so15082wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 15:31:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=/x029yPmWv5HAI9X0TEEOzxwBnRkzjCL2IaD3JTf7vE=;
-        b=VCOXzGIROM6yDti/GoS7PEBz6O0loJgZBxTdMunie8UuYrXLXG2QKckB46J9bQ9bIS
-         xOsTXyV/rbqxaOotpinwX21DTBvw+VXSsfsoru81UtWRBxl3E55dYKio5TEOZocpHRfv
-         F16mjTX4G265j4fVEYgMyUoKUZyU0Dxm78pDs++Zicv54lszvyp0JaoI8d8c599F/+87
-         8JLL7wu1abeQvbVgZkfHLUKPI0eygvKIgfNft2T4QbzxeykYyTAFq2LVhOpNaGK4w5vP
-         kLhJpJDN8LgSw5e+2ix85bfB+nFJ8ZJv8iT42krzFPebtbEtN43F6zzTHe/Zg/pvoVup
-         jEDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=/x029yPmWv5HAI9X0TEEOzxwBnRkzjCL2IaD3JTf7vE=;
-        b=qstFinbNYFbVmF0n041OMF3T47hUtQeK5YJIB53wYvcy7v8O2M1ylTlblUw5oSJJtc
-         NWYAvabkU9hccGYO9Fxf6Elyu2Tbux9O15IWUID9hyE4nDseM/9nUpJcQIbFD25WL1J+
-         4tw/F5XFEzUn4YycgdgHWLVZgas7DgXWnLlph+37Dvqg0i6sWyj9xm57kzbUjVMHCBFl
-         ylF7U2wuxwJV9DFsgku7cSbgNSsb6GTLLGMHlZpuP/uK1drm0vvK4hU9dfji79sZyVlh
-         LsdLF3DpH6i5PuU9gHBJZjhA5Z62TbTf/DkLXBs7WJU1WFQsana3BsACNB9i8INUDVST
-         H8Yg==
-X-Gm-Message-State: AA+aEWZuUXAVKclFOwGRfLms+86eu8zsSCLAANKo4ngPVKVt4y0VlfvR
-        6NRgRT8h0CVc74AmlcEpY8BC5Q==
-X-Google-Smtp-Source: AFSGD/UDA9LWOX53R+RUNS0Xn5glOWIlJmIrAUfCtMWn4tKfbrFzy+0fZzLm+pyrj9nG6mv1Z1Vwaw==
-X-Received: by 2002:adf:8544:: with SMTP id 62mr9921495wrh.1.1542670277581;
-        Mon, 19 Nov 2018 15:31:17 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id a204sm8351514wmh.23.2018.11.19.15.31.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 15:31:17 -0800 (PST)
-Message-ID: <5bf347c5.1c69fb81.83080.265c@mx.google.com>
-Date:   Mon, 19 Nov 2018 15:31:17 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 20 Nov 2018 05:04:38 -0500
+Received: from mga17.intel.com ([192.55.52.151]:62067 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730079AbeKTKEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:04:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:38:31 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
+   d="gz'50?scan'50,208,50";a="105991001"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Nov 2018 15:38:27 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gOt7a-0005KO-Dz; Tue, 20 Nov 2018 07:38:26 +0800
+Date:   Tue, 20 Nov 2018 07:37:58 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     kbuild-all@01.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
+        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
+        cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <201811200755.avfmktKQ%fengguang.wu@intel.com>
+References: <20181119103241.5229-3-christian@brauner.io>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: boot
-X-Kernelci-Kernel: v4.9.137-83-g4ca3f6d71162
-X-Kernelci-Branch: linux-4.9.y
-X-Kernelci-Tree: stable-rc
-In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
-References: <20181119162612.046511542@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/83] 4.9.138-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: multipart/mixed; boundary="9jxsPFA5p3P2qPhR"
+Content-Disposition: inline
+In-Reply-To: <20181119103241.5229-3-christian@brauner.io>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 59 boots: 0 failed, 43 passed with 16 offline (=
-v4.9.137-83-g4ca3f6d71162)
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.137-83-g4ca3f6d71162/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.137-83-g4ca3f6d71162/
+--9jxsPFA5p3P2qPhR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.137-83-g4ca3f6d71162
-Git Commit: 4ca3f6d71162e660e35f62700d1dd2486feb5e4c
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 36 unique boards, 17 SoC families, 13 builds out of 182
+Hi Christian,
 
-Offline Platforms:
+Thank you for the patch! Yet something to improve:
 
-arm:
+[auto build test ERROR on linus/master]
+[also build test ERROR on v4.20-rc3]
+[cannot apply to next-20181119]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
-    omap2plus_defconfig:
-        am335x-boneblack: 1 offline lab
+url:    https://github.com/0day-ci/linux/commits/Christian-Brauner/proc-allow-signaling-processes-via-file-descriptors/20181120-063836
+config: riscv-tinyconfig (attached as .config)
+compiler: riscv64-linux-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=8.1.0 make.cross ARCH=riscv 
 
-    sunxi_defconfig:
-        sun5i-r8-chip: 1 offline lab
+All errors (new ones prefixed by >>):
 
-    tegra_defconfig:
-        tegra124-jetson-tk1: 1 offline lab
+   kernel/signal.c: In function '__do_sys_procfd_signal':
+>> kernel/signal.c:3341:7: error: implicit declaration of function 'proc_is_procfd'; did you mean 'clockid_to_fd'? [-Werror=implicit-function-declaration]
+     if (!proc_is_procfd(f.file))
+          ^~~~~~~~~~~~~~
+          clockid_to_fd
+   cc1: some warnings being treated as errors
 
-    bcm2835_defconfig:
-        bcm2835-rpi-b: 1 offline lab
+vim +3341 kernel/signal.c
 
-    exynos_defconfig:
-        exynos5800-peach-pi: 1 offline lab
-
-    sama5_defconfig:
-        at91-sama5d4_xplained: 1 offline lab
-
-    multi_v7_defconfig:
-        alpine-db: 1 offline lab
-        am335x-boneblack: 1 offline lab
-        at91-sama5d4_xplained: 1 offline lab
-        exynos5800-peach-pi: 1 offline lab
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-        sun5i-r8-chip: 1 offline lab
-        tegra124-jetson-tk1: 1 offline lab
-
-    socfpga_defconfig:
-        socfpga_cyclone5_de0_sockit: 1 offline lab
-
-arm64:
-
-    defconfig:
-        apq8016-sbc: 1 offline lab
-        juno-r2: 1 offline lab
+  3314	
+  3315	/**
+  3316	 *  sys_procfd_signal - send a signal to a process through a process file
+  3317	 *                      descriptor
+  3318	 *  @fd: the file descriptor of the process
+  3319	 *  @sig: signal to be sent
+  3320	 *  @info: the signal info
+  3321	 *  @flags: future flags to be passed
+  3322	 */
+  3323	SYSCALL_DEFINE4(procfd_signal, int, fd, int, sig, siginfo_t __user *, info,
+  3324			int, flags)
+  3325	{
+  3326		int ret;
+  3327		struct pid *pid;
+  3328		kernel_siginfo_t kinfo;
+  3329		struct fd f;
+  3330	
+  3331		/* Enforce flags be set to 0 until we add an extension. */
+  3332		if (flags)
+  3333			return -EINVAL;
+  3334	
+  3335		f = fdget_raw(fd);
+  3336		if (!f.file)
+  3337			return -EBADF;
+  3338	
+  3339		ret = -EINVAL;
+  3340		/* Is this a process file descriptor? */
+> 3341		if (!proc_is_procfd(f.file))
+  3342			goto err;
+  3343	
+  3344		pid = f.file->private_data;
+  3345		if (!pid)
+  3346			goto err;
+  3347	
+  3348		if (info) {
+  3349			ret = __copy_siginfo_from_user(sig, &kinfo, info);
+  3350			if (unlikely(ret))
+  3351				goto err;
+  3352			/*
+  3353			 * Not even root can pretend to send signals from the kernel.
+  3354			 * Nor can they impersonate a kill()/tgkill(), which adds
+  3355			 * source info.
+  3356			 */
+  3357			ret = -EPERM;
+  3358			if ((kinfo.si_code >= 0 || kinfo.si_code == SI_TKILL) &&
+  3359			    (task_pid(current) != pid))
+  3360				goto err;
+  3361		} else {
+  3362			prepare_kill_siginfo(sig, &kinfo);
+  3363		}
+  3364	
+  3365		ret = kill_pid_info(sig, &kinfo, pid);
+  3366	
+  3367	err:
+  3368		fdput(f);
+  3369		return ret;
+  3370	}
+  3371	
 
 ---
-For more info write to <info@kernelci.org>
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--9jxsPFA5p3P2qPhR
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--9jxsPFA5p3P2qPhR--
