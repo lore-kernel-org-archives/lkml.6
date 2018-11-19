@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B564C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E3DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002E4206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E674A206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRFronLr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002E4206BA
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XvUVWR5i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E674A206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407148AbeKTDfO (ORCPT
+        id S2407164AbeKTDfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:35:14 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33983 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406694AbeKTDfN (ORCPT
+        Mon, 19 Nov 2018 22:35:22 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36697 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406330AbeKTDfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:35:13 -0500
-Received: by mail-pf1-f194.google.com with SMTP id h3so8607500pfg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 09:10:54 -0800 (PST)
+        Mon, 19 Nov 2018 22:35:21 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y6-v6so7309413plt.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 09:11:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=F3x7gsmCQrdY193L+8o0XyGrRzSyIGog/xrqDtj4aF8=;
-        b=MRFronLrFkF3mxUqWASXSlEhrFeGKBOC+ePCWSzY2fiLyjgMiy19jck50Hb20ulxsf
-         jPUPlYE3Gg4ZXGBiVvmn0LzpUW2XvqAbZiOZG0g58WRNFMJavrIeUMLdI8welCynR8Cc
-         8Ytf2vsNY3llgh62aTbCdek4LVWpqQ7fW9Rlw=
+        bh=msmZrhf/K74+1kXoDRizhaHRITIpaWGm8eve2ycximo=;
+        b=XvUVWR5iJoGfyBur4pQiYVPfTmbYbcN53UkzDURDhXtvGbaweiHhrR9lj45xD7PHiU
+         r6u7p1DL9PX6wjBkQyIr1I9MYr4HEWWyLk2WljFbTJ0cv7XRsnFNfB1YMLeJcozCem9k
+         YMyrv2XuTS5bBJLbSBnYsH2Pnd6dMQj8KmjbY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=F3x7gsmCQrdY193L+8o0XyGrRzSyIGog/xrqDtj4aF8=;
-        b=oRnSiZyndjtzMYFIMFqKsyt9o0S8QJXa/3M6YFTj2yYZzhmYXHSSN6y7mM4NScd19t
-         g8TrecKOG48k06m/rX5szUO5MiESA/RD5/8KZp+gcFILPC30xNpz+v0d/qshQm2ub2tt
-         gCv0R8XiGJDqwIg4yOZu2VNt7UHhAi2jpH98P6UcPkG1RUyxk/JfN97gm3flcNRZljOG
-         /XY52qasIebcisAFrGA6svMAw65NBDrk0Jq0rQi+an6c0n4d4QjGSJG9VqF5jMhMw4pw
-         RBiSCl2x9wg0XoYAILlVIRwj1a5C+djfhAKugFQUyhwr8hC8dsotgzqQg65/n4Nl7CoF
-         EbuQ==
-X-Gm-Message-State: AGRZ1gLarpFi8kGC9YKSgOPkbE+6Vb5cP5nw02yeYleDVtSBsV4jzMw8
-        l/8ccEycrC3c66nMKMhLrOQH
-X-Google-Smtp-Source: AJdET5fmdCPKzQOlppGbf5YyBg7l0pUypJx/XOV4eljup8wBYT7ZbyChh2+WVNUwk6NcQDFV5K6n3Q==
-X-Received: by 2002:a62:c583:: with SMTP id j125mr14579462pfg.37.1542647453747;
-        Mon, 19 Nov 2018 09:10:53 -0800 (PST)
+        bh=msmZrhf/K74+1kXoDRizhaHRITIpaWGm8eve2ycximo=;
+        b=GiV3Twv3gulXyMBwo21dqWGfWi9glRO1jUIYGH5S1eBKoj+FF48caRmFjhfGKpgauK
+         jfRBz4f96pY4Yw7rFdanhRoi5QVdAcV6Hpyk+9uaQcOnguvY8n2IuNV/V3ECZn9oNtjn
+         fuTmAPEH2m/dkXdFG9n3Wq6lAW+tCRXyX9RA2ZLWkSji97QmLCtRVVPZxluRi4ato9mt
+         4LD2HZeDvJzdC3C3r9SQ2PYoCJ1fg0bRVd/T2lHhPCmxybMVytKhJzjL6HxmfYQX+QCU
+         95mgjju47q4c2Wm+FpFnMf2x7GGIVgxwTg6yYYez9CAWJ1fpcaZTWyHtItCuIFVH7N9g
+         FXww==
+X-Gm-Message-State: AA+aEWb9KRsccOalomSWxfrJYoRS/Kk8d+lpK9iNnsLx50srR1W9st9g
+        BTYht93fB+/DjhZvb7L1YMPK
+X-Google-Smtp-Source: AFSGD/XIhgB1oQZSo6Ay/XjAS6h7GObjgVIrDye9H1rDOnRYe/6/k4h21gRs2N3iIB3znRmQZNCkrw==
+X-Received: by 2002:a17:902:3281:: with SMTP id z1mr331964plb.296.1542647461970;
+        Mon, 19 Nov 2018 09:11:01 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:631b:44eb:3905:6402:e2fb:2d7])
-        by smtp.gmail.com with ESMTPSA id 186-v6sm46175458pfe.39.2018.11.19.09.10.46
+        by smtp.gmail.com with ESMTPSA id 186-v6sm46175458pfe.39.2018.11.19.09.10.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 09:10:52 -0800 (PST)
+        Mon, 19 Nov 2018 09:11:01 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -64,10 +64,11 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, amit.kucheria@linaro.org,
         linus.walleij@linaro.org, zhao_steven@263.net,
         service@rdamicro.com,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH 01/16] dt-bindings: Add RDA Micro vendor prefix
-Date:   Mon, 19 Nov 2018 22:39:24 +0530
-Message-Id: <20181119170939.19153-2-manivannan.sadhasivam@linaro.org>
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 02/16] dt-bindings: arm: Document RDA8810PL and reference boards
+Date:   Mon, 19 Nov 2018 22:39:25 +0530
+Message-Id: <20181119170939.19153-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
 References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
@@ -81,26 +82,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andreas Färber <afaerber@suse.de>
 
-RDA Microelectronics is a Chinese SoC manufacturer.
+Add bindings for RDA Micro RDA8810PL SoC and below reference boards:
+
+1. Orange Pi 2G-IoT - http://www.orangepi.org/OrangePi2GIOT/
+2. Orange Pi i96 - https://www.96boards.org/product/orangepi-i96/
 
 Cc: service@rdamicro.com
+Cc: zhao_steven@263.net
 Signed-off-by: Andreas Färber <afaerber@suse.de>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/rda.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/rda.txt
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 4b1a2a8fcc16..b15012454d01 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -320,6 +320,7 @@ ralink	Mediatek/Ralink Technology Corp.
- ramtron	Ramtron International
- raspberrypi	Raspberry Pi Foundation
- raydium	Raydium Semiconductor Corp.
-+rda	RDA Microelectronics, Inc.
- realtek Realtek Semiconductor Corp.
- renesas	Renesas Electronics Corporation
- richtek	Richtek Technology Corporation
+diff --git a/Documentation/devicetree/bindings/arm/rda.txt b/Documentation/devicetree/bindings/arm/rda.txt
+new file mode 100644
+index 000000000000..43c80762c428
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/rda.txt
+@@ -0,0 +1,17 @@
++RDA Micro platforms device tree bindings
++----------------------------------------
++
++RDA8810PL SoC
++=============
++
++Required root node properties:
++
++ - compatible :  must contain "rda,8810pl"
++
++
++Boards:
++
++Root node property compatible must contain, depending on board:
++
++ - Orange Pi 2G-IoT: "xunlong,orangepi-2g-iot"
++ - Orange Pi i96: "xunlong,orangepi-i96"
 -- 
 2.17.1
 
