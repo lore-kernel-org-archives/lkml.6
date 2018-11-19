@@ -2,130 +2,121 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12065C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89C4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16E4206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16E4206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id B4B41206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B41206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeKSUjj (ORCPT
+        id S1727844AbeKSUjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:39:39 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58727 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbeKSUjj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:39:39 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAJAGL0L2524174
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 19 Nov 2018 02:16:21 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAJAGLo02524171;
-        Mon, 19 Nov 2018 02:16:21 -0800
-Date:   Mon, 19 Nov 2018 02:16:21 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-6cdce951f7a1d8161910d5cd9bd9e6197bf5cc97@git.kernel.org>
-Cc:     bp@suse.de, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          bp@suse.de, tglx@linutronix.de
-In-Reply-To: <20181107170218.7596-8-bp@alien8.de>
-References: <20181107170218.7596-8-bp@alien8.de>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/microcode] x86/microcode/AMD: Simplify patch family
- detection
-Git-Commit-ID: 6cdce951f7a1d8161910d5cd9bd9e6197bf5cc97
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Mon, 19 Nov 2018 15:39:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726287AbeKSUjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 15:39:47 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EB02308FC5B;
+        Mon, 19 Nov 2018 10:16:37 +0000 (UTC)
+Received: from t460s.redhat.com (ovpn-117-77.ams2.redhat.com [10.36.117.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F3674105706D;
+        Mon, 19 Nov 2018 10:16:34 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v1 1/8] mm: balloon: update comment about isolation/migration/compaction
+Date:   Mon, 19 Nov 2018 11:16:09 +0100
+Message-Id: <20181119101616.8901-2-david@redhat.com>
+In-Reply-To: <20181119101616.8901-1-david@redhat.com>
+References: <20181119101616.8901-1-david@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 19 Nov 2018 10:16:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  6cdce951f7a1d8161910d5cd9bd9e6197bf5cc97
-Gitweb:     https://git.kernel.org/tip/6cdce951f7a1d8161910d5cd9bd9e6197bf5cc97
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Thu, 19 Jul 2018 15:47:07 +0200
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 19 Nov 2018 10:51:05 +0100
+Commit b1123ea6d3b3 ("mm: balloon: use general non-lru movable page
+feature") reworked balloon handling to make use of the general
+non-lru movable page feature. The big comment block in
+balloon_compaction.h contains quite some outdated information. Let's fix
+this.
 
-x86/microcode/AMD: Simplify patch family detection
-
-Instead of traversing the equivalence table, compute the family a patch
-is for, from the processor revision ID in the microcode header.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/20181107170218.7596-8-bp@alien8.de
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 27 +++------------------------
- 1 file changed, 3 insertions(+), 24 deletions(-)
+ include/linux/balloon_compaction.h | 26 +++++++++-----------------
+ 1 file changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index 8f012a7f88c4..b4450374f4b1 100644
---- a/arch/x86/kernel/cpu/microcode/amd.c
-+++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -540,20 +540,6 @@ static u16 __find_equiv_id(unsigned int cpu)
- 	return find_equiv_id(equiv_cpu_table, uci->cpu_sig.sig);
- }
- 
--static u32 find_cpu_family_by_equiv_cpu(u16 equiv_cpu)
--{
--	int i = 0;
--
--	BUG_ON(!equiv_cpu_table);
--
--	while (equiv_cpu_table[i].equiv_cpu != 0) {
--		if (equiv_cpu == equiv_cpu_table[i].equiv_cpu)
--			return equiv_cpu_table[i].installed_cpu;
--		i++;
--	}
--	return 0;
--}
--
- /*
-  * a small, trivial cache of per-family ucode patches
-  */
-@@ -732,7 +718,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 	struct microcode_header_amd *mc_hdr;
- 	unsigned int patch_size, crnt_size;
- 	struct ucode_patch *patch;
--	u32 proc_fam;
-+	u8 patch_fam;
- 	u16 proc_id;
- 
- 	patch_size = verify_patch(family, fw, leftover, false);
-@@ -746,15 +732,8 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
- 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
- 	proc_id	    = mc_hdr->processor_rev_id;
- 
--	proc_fam = find_cpu_family_by_equiv_cpu(proc_id);
--	if (!proc_fam) {
--		pr_err("No patch family for equiv ID: 0x%04x\n", proc_id);
--		return crnt_size;
--	}
--
--	/* check if patch is for the current family */
--	proc_fam = ((proc_fam >> 8) & 0xf) + ((proc_fam >> 20) & 0xff);
--	if (proc_fam != family)
-+	patch_fam = 0xf + (proc_id >> 12);
-+	if (patch_fam != family)
- 		return crnt_size;
- 
- 	if (mc_hdr->nb_dev_id || mc_hdr->sb_dev_id) {
+diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
+index 53051f3d8f25..cbe50da5a59d 100644
+--- a/include/linux/balloon_compaction.h
++++ b/include/linux/balloon_compaction.h
+@@ -4,15 +4,18 @@
+  *
+  * Common interface definitions for making balloon pages movable by compaction.
+  *
+- * Despite being perfectly possible to perform ballooned pages migration, they
+- * make a special corner case to compaction scans because balloon pages are not
+- * enlisted at any LRU list like the other pages we do compact / migrate.
++ * Balloon page migration makes use of the general non-lru movable page
++ * feature.
++ *
++ * page->private is used to reference the responsible balloon device.
++ * page->mapping is used in context of non-lru page migration to reference
++ * the address space operations for page isolation/migration/compaction.
+  *
+  * As the page isolation scanning step a compaction thread does is a lockless
+  * procedure (from a page standpoint), it might bring some racy situations while
+  * performing balloon page compaction. In order to sort out these racy scenarios
+  * and safely perform balloon's page compaction and migration we must, always,
+- * ensure following these three simple rules:
++ * ensure following these simple rules:
+  *
+  *   i. when updating a balloon's page ->mapping element, strictly do it under
+  *      the following lock order, independently of the far superior
+@@ -21,19 +24,8 @@
+  *	      +--spin_lock_irq(&b_dev_info->pages_lock);
+  *	            ... page->mapping updates here ...
+  *
+- *  ii. before isolating or dequeueing a balloon page from the balloon device
+- *      pages list, the page reference counter must be raised by one and the
+- *      extra refcount must be dropped when the page is enqueued back into
+- *      the balloon device page list, thus a balloon page keeps its reference
+- *      counter raised only while it is under our special handling;
+- *
+- * iii. after the lockless scan step have selected a potential balloon page for
+- *      isolation, re-test the PageBalloon mark and the PagePrivate flag
+- *      under the proper page lock, to ensure isolating a valid balloon page
+- *      (not yet isolated, nor under release procedure)
+- *
+- *  iv. isolation or dequeueing procedure must clear PagePrivate flag under
+- *      page lock together with removing page from balloon device page list.
++ *  ii. isolation or dequeueing procedure must remove the page from balloon
++ *      device page list under b_dev_info->pages_lock.
+  *
+  * The functions provided by this interface are placed to help on coping with
+  * the aforementioned balloon page corner case, as well as to ensure the simple
+-- 
+2.17.2
+
