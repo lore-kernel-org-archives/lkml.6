@@ -2,137 +2,125 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2B1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5D4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:44:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07DD821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:42:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DD821104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8AB5B20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:44:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="b//6yQJx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB5B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbeKTFHK (ORCPT
+        id S1726591AbeKTFJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:07:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48704 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbeKTFHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:07:10 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AC48630842AA;
-        Mon, 19 Nov 2018 18:42:22 +0000 (UTC)
-Received: from redhat.com (ovpn-124-1.rdu2.redhat.com [10.10.124.1])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 31E825D73F;
-        Mon, 19 Nov 2018 18:42:18 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 13:42:16 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
-        linuxarm@huawei.com, haojian.zhuang@linaro.org,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181119184215.GB4593@redhat.com>
-References: <20181113002354.GO3695@mtr-leonro.mtl.com>
- <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181119164853.GA4593@redhat.com>
- <20181119182752.GA4890@ziepe.ca>
+        Tue, 20 Nov 2018 00:09:15 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:55886 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTFJP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:09:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=W4F/RCiToGvWpI2Bnh0DlcNycX6dK+otismK5gzKFsI=; b=b//6yQJx7LxjDTbbFtZ8RnXWt
+        fFJz4mUXUofWKnMkxx7agbJBTPRQ35iYp3kEb1yrq+0FW8AzmfiyiFvv56c/rPXVngrqRwjaPm5Of
+        ynJ1f8jbytdj4tnkugWmoqpsYuQZUCotsOOJTC9KndDA0Hk3WmCWlyfR81oqit/kBSO8Y=;
+Received: from pd9e2f5bb.dip0.t-ipconnect.de ([217.226.245.187] helo=aktux)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gOoX1-0007pz-Gt; Mon, 19 Nov 2018 19:44:23 +0100
+Date:   Mon, 19 Nov 2018 19:44:14 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [Letux-kernel] [PATCH 0/5] gnss: sirf: add support for w2sg0004
+ + lna
+Message-ID: <20181119194414.1c7d6887@aktux>
+In-Reply-To: <3487514B-E546-4F11-8C0A-F5B4A8114376@goldelico.com>
+References: <20181118215801.12280-1-andreas@kemnade.info>
+        <3487514B-E546-4F11-8C0A-F5B4A8114376@goldelico.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181119182752.GA4890@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 19 Nov 2018 18:42:23 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/QxG88QwxSvDB+6LkeHZqApT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 11:27:52AM -0700, Jason Gunthorpe wrote:
-> On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
-> 
-> > Just to comment on this, any infiniband driver which use umem and do
-> > not have ODP (here ODP for me means listening to mmu notifier so all
-> > infiniband driver except mlx5) will be affected by same issue AFAICT.
-> > 
-> > AFAICT there is no special thing happening after fork() inside any of
-> > those driver. So if parent create a umem mr before fork() and program
-> > hardware with it then after fork() the parent might start using new
-> > page for the umem range while the old memory is use by the child. The
-> > reverse is also true (parent using old memory and child new memory)
-> > bottom line you can not predict which memory the child or the parent
-> > will use for the range after fork().
-> > 
-> > So no matter what you consider the child or the parent, what the hw
-> > will use for the mr is unlikely to match what the CPU use for the
-> > same virtual address. In other word:
-> > 
-> > Before fork:
-> >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
-> >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> > 
-> > Case 1:
-> >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
-> >     CPU child:  virtual addr ptr1 -> physical address = 0xDEAD
-> >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> > 
-> > Case 2:
-> >     CPU parent: virtual addr ptr1 -> physical address = 0xBEEF
-> >     CPU child:  virtual addr ptr1 -> physical address = 0xCAFE
-> >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> 
-> IIRC this is solved in IB by automatically calling
-> madvise(MADV_DONTFORK) before creating the MR.
-> 
-> MADV_DONTFORK
->   .. This is useful to prevent copy-on-write semantics from changing the
->   physical location of a page if the parent writes to it after a
->   fork(2) ..
+--Sig_/QxG88QwxSvDB+6LkeHZqApT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This would work around the issue but this is not transparent ie
-range marked with DONTFORK no longer behave as expected from the
-application point of view.
+Hi,
 
-Also it relies on userspace doing the right thing (which is not
-something i usualy trust :)).
+On Mon, 19 Nov 2018 09:22:59 +0100
+"H. Nikolaus Schaller" <hns@goldelico.com> wrote:
 
-Cheers,
-Jérôme
+> Hi,
+>=20
+> > Am 18.11.2018 um 22:57 schrieb Andreas Kemnade <andreas@kemnade.info>:
+> >=20
+> > Here is another chapter of the story to get gta04 gnss power
+> > management into the mainline kernel.
+> > There is a w2sg0004 without wakeup line in there, so power state
+> > can only be determined indirectly by looking at the serial data lines.
+> > Then there as also an lna which needs to be powered for real gps
+> > reception. That part needs probably more discussion, since it might
+> > be an idea to have it more generalized since it has nothing todo
+> > with the chip itself. =20
+>=20
+> On the other hand if we follow the "SoC is the spider in the net"
+> way of looking at DTS hierarchy, we have the uart as a child of the
+> SoC and the gnss receiver as a serdev child of the UART. The LNA
+> is even one step more distantly connected to the gnss. So it makes
+> sense to me to have it as a property/reference of the gnss chip's
+> DTS record which is a sibling of the compatible records. So the only
+> place where it can be reasonably processed is the driver.
+>=20
+Or the lna is a child of the gnss receiver. The whole thing
+should probably not be overdesigned, but it does not make sense that
+every gnss chip driver has some lna logic.
+Maybe the regulator should just be stored in the struct
+gnss_device and then drivers/gnss/core.c takes care.
+
+Regards,
+Andreas
+
+--Sig_/QxG88QwxSvDB+6LkeHZqApT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvzBH4ACgkQfb1qx03i
+kyTgPQ//RA8pPeqn1cTeHl9WICut+tS9Hi42qRG7/a+aR2lAz+/FiWc0cJPoF8vO
+h1vTlnCR+NsGC7jT2X/I1RW50isiCmzNTAcPaEBmKj1JbjslowWL29GiG03TibID
+Y7be5v6SiZiDNvCBRkuC5x1zCNAWHOf66/HsQQLsX2FABMgZSGNE9pwpPTSUDbIz
+dBxCYPZl3ax6aRN3eo9kIl3UHvSVGx940VG9tdNl7rCtpWpQYOzedK2OX+ZtQjeI
+b3S2kK1gcQQYsA3dLWHpVnCWujDzoT7/HzuVl2C1jCrJyuyf/cDbHjJpNRoq5gBS
+waZYlTKm9Wzd9M3wFbFE6JjG6DH4JVJZqXTPJ8DJBCy4YgSFpU5NmA+20wpDF6sL
+wp+MzhOS3A+fc9lMAGEC8HPZltXQmRxcilCOR91wYBCAlK0BeY4hXN+Pd5ESiLhG
+Z6sW5wH/fUlUoQ69zu74IXid1NJB2qI6QWX4wtXFMUcfJvCdihja03taMW8qgzLV
+7RstMW0xpWIkNX3uJSAI/gQmGhZQt1nsnZkVX3acq70ZlcIbrjPMm7i0xboesS4J
+SOR804e7EwmZ86r58GmNpsJ5uXbihMlkGtTSWt8nba+hBBztPZVw/SLpsvsbqGET
+Yrr6rVH8rdseHfqLZGxZWEO/woTXOvCGNGS+e1DY2eXBrlt3eCw=
+=7gJ+
+-----END PGP SIGNATURE-----
+
+--Sig_/QxG88QwxSvDB+6LkeHZqApT--
