@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B08C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B48C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D28F1208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6C86214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0PYjE8w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28F1208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l24bqA+/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C86214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404651AbeKTDWG (ORCPT
+        id S2404665AbeKTDWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33636 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403956AbeKTDWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:05 -0500
+        id S2403956AbeKTDWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3DE1721104;
-        Mon, 19 Nov 2018 16:57:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8157206BA;
+        Mon, 19 Nov 2018 16:57:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646669;
-        bh=kbsx10bazWOhqOdhiTaHSx9F41RUywtFdjILJhXJ7ls=;
+        s=default; t=1542646672;
+        bh=FaB3ja4W6D0/7o1+84j67F1IBOFaz3Q1G8zQ5cuOPsk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X0PYjE8wT0JkGgXFeiMnV2o3nZfPInujRHhrG8xAk1BTqfY5A3whSbKLC5JddidP4
-         fYiv2nRuscQYNGgLhR28HxVAUuj1tCmdOa1vtCr3h2SJWyMD5XDfIuJvhpAfSGyUc5
-         QKUxEiVXqJRGDmS1GCCC1we6fDlbmmHDq8FbY4RE=
+        b=l24bqA+/Ci3DHvVfMoW2EmR9kpjd4Nn1Un8ska5JJan5GXtl9q7+YONU7vvqVjYg8
+         pwSb0MJHUhJ07JT7GnW3AJip9/QAVoYWyTsNGhksf1oD//BN3QAjAm4obulyTEbZ6k
+         L5Xgfd+/f1toAT3U2rBTurj8uKL2/p1lIjwEzStk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Dr. Greg Wettstein" <greg@enjellic.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.4 045/160] tpm: Restore functionality to xen vtpm driver.
-Date:   Mon, 19 Nov 2018 17:28:04 +0100
-Message-Id: <20181119162635.854046743@linuxfoundation.org>
+        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
+        Juergen Gross <jgross@suse.com>,
+        Jan Beulich <jbeulich@suse.com>
+Subject: [PATCH 4.4 046/160] xen: fix race in xen_qlock_wait()
+Date:   Mon, 19 Nov 2018 17:28:05 +0100
+Message-Id: <20181119162635.968352681@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,59 +63,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dr. Greg Wettstein <greg@wind.enjellic.com>
+From: Juergen Gross <jgross@suse.com>
 
-commit e487a0f52301293152a6f8c4e217f2a11dd808e3 upstream.
+commit 2ac2a7d4d9ff4e01e36f9c3d116582f6f655ab47 upstream.
 
-Functionality of the xen-tpmfront driver was lost secondary to
-the introduction of xenbus multi-page support in commit ccc9d90a9a8b
-("xenbus_client: Extend interface to support multi-page ring").
+In the following situation a vcpu waiting for a lock might not be
+woken up from xen_poll_irq():
 
-In this commit pointer to location of where the shared page address
-is stored was being passed to the xenbus_grant_ring() function rather
-then the address of the shared page itself. This resulted in a situation
-where the driver would attach to the vtpm-stubdom but any attempt
-to send a command to the stub domain would timeout.
+CPU 1:                CPU 2:                      CPU 3:
+takes a spinlock
+                      tries to get lock
+                      -> xen_qlock_wait()
+frees the lock
+-> xen_qlock_kick(cpu2)
+                        -> xen_clear_irq_pending()
 
-A diagnostic finding for this regression is the following error
-message being generated when the xen-tpmfront driver probes for a
-device:
+takes lock again
+                                                  tries to get lock
+                                                  -> *lock = _Q_SLOW_VAL
+                        -> *lock == _Q_SLOW_VAL ?
+                        -> xen_poll_irq()
+frees the lock
+-> xen_qlock_kick(cpu3)
 
-<3>vtpm vtpm-0: tpm_transmit: tpm_send: error -62
+And cpu 2 will sleep forever.
 
-<3>vtpm vtpm-0: A TPM error (-62) occurred attempting to determine
-the timeouts
+This can be avoided easily by modifying xen_qlock_wait() to call
+xen_poll_irq() only if the related irq was not pending and to call
+xen_clear_irq_pending() only if it was pending.
 
-This fix is relevant to all kernels from 4.1 forward which is the
-release in which multi-page xenbus support was introduced.
-
-Daniel De Graaf formulated the fix by code inspection after the
-regression point was located.
-
-Fixes: ccc9d90a9a8b ("xenbus_client: Extend interface to support multi-page ring")
-Signed-off-by: Dr. Greg Wettstein <greg@enjellic.com>
+Cc: stable@vger.kernel.org
+Cc: Waiman.Long@hp.com
+Cc: peterz@infradead.org
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Jan Beulich <jbeulich@suse.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-[boris: Updated commit message, added Fixes tag]
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: stable@vger.kernel.org # v4.1+
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-
 ---
- drivers/char/tpm/xen-tpmfront.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/xen/spinlock.c |   15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
---- a/drivers/char/tpm/xen-tpmfront.c
-+++ b/drivers/char/tpm/xen-tpmfront.c
-@@ -201,7 +201,7 @@ static int setup_ring(struct xenbus_devi
- 		return -ENOMEM;
- 	}
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -47,17 +47,12 @@ static void xen_qlock_wait(u8 *byte, u8
+ 	if (irq == -1)
+ 		return;
  
--	rv = xenbus_grant_ring(dev, &priv->shr, 1, &gref);
-+	rv = xenbus_grant_ring(dev, priv->shr, 1, &gref);
- 	if (rv < 0)
- 		return rv;
+-	/* clear pending */
+-	xen_clear_irq_pending(irq);
+-	barrier();
++	/* If irq pending already clear it and return. */
++	if (xen_test_irq_pending(irq)) {
++		xen_clear_irq_pending(irq);
++		return;
++	}
+ 
+-	/*
+-	 * We check the byte value after clearing pending IRQ to make sure
+-	 * that we won't miss a wakeup event because of the clearing.
+-	 *
+-	 * The sync_clear_bit() call in xen_clear_irq_pending() is atomic.
+-	 * So it is effectively a memory barrier for x86.
+-	 */
+ 	if (READ_ONCE(*byte) != val)
+ 		return;
  
 
 
