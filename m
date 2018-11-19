@@ -2,120 +2,149 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC68C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:36:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589AF2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:34:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hpALidmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589AF2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BAE62080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:36:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BAE62080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731211AbeKTH7q (ORCPT
+        id S1731159AbeKTICA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:59:46 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18892 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeKTH7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:59:46 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf32c5b0000>; Mon, 19 Nov 2018 13:34:19 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 19 Nov 2018 13:34:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Nov 2018 13:34:11 -0800
-Received: from [10.26.11.92] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 19 Nov
- 2018 21:34:09 +0000
-Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
- on resume from LP1 on Tegra30
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180830185404.7224-1-digetx@gmail.com>
- <20180830185404.7224-3-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
-Date:   Mon, 19 Nov 2018 21:34:06 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 03:02:00 -0500
+Received: from mx1.mailbox.org ([80.241.60.212]:65084 "EHLO mx1.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731054AbeKTICA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:02:00 -0500
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id DD29247DF0;
+        Mon, 19 Nov 2018 22:36:21 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter06.heinlein-hosting.de (spamfilter06.heinlein-hosting.de [80.241.56.125]) (amavisd-new, port 10030)
+        with ESMTP id KnAsQbT9NEvr; Mon, 19 Nov 2018 22:36:20 +0100 (CET)
+Date:   Tue, 20 Nov 2018 08:36:08 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Christian Brauner <christian@brauner.io>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119213608.fym3gpo7fdmyv6rm@yavin>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
+ <20181119202857.k5zw742xjfrw677j@yavin>
+ <20181119205518.btew3vxwgva4w3zh@brauner.io>
+ <20181119211810.73ptfhnwdmkngfi4@yavin>
+ <20181119212126.u2nkijmula6wcfqi@brauner.io>
+ <CAKOZuevEx6CbcxrR8eVZrUXDcN5y1GPsXdSoHfQteSQKypx0qw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180830185404.7224-3-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542663260; bh=8XIYjLvnxyy4KKvJkYuIFmYBSu78w2y0iJXgYVV2ceI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=hpALidmfej4EI+3AZlGRfQ2TcvifzS/mnLa8fiRnD2lOuU5HUro34h8Q3oRJOmYzi
-         CcVc9UVnnycRqkywfuTOj3qBsBeH5rSIfI5aDnhtAJl6X4whXg7KIVgxB+zaaNOneO
-         cimo8hzY4FEbhm0DEaoPbC9Cj60Bs0lb2IuxOas82lcmEgHYv8mEERQhXixi2PB31n
-         rUE4K9x3rHGsdAQT3ZtyKqR7KdAMLEa8IqHZUgoyfpPrGXhEFBuldUIjqhKecCWbxF
-         V9sUCJiXrqYSOCzkeRV21DIwJP6t4hbtwPDjXUoBGvYDqbNoz0CoEAeNbt7zxxgdIl
-         gICy38+A5Uaig==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="thafhy42vzv3dibt"
+Content-Disposition: inline
+In-Reply-To: <CAKOZuevEx6CbcxrR8eVZrUXDcN5y1GPsXdSoHfQteSQKypx0qw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 30/08/2018 19:54, Dmitry Osipenko wrote:
-> The DRAM refresh-interval is getting erroneously set to "1" on exiting
-> from memory self-refreshing mode. The clobbered interval causes the
-> "refresh request overflow timeout" error raised by the External Memory
-> Controller on exiting from LP1 on Tegra30.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-> index 801fe58978ae..99ac9c6dcf7c 100644
-> --- a/arch/arm/mach-tegra/sleep-tegra30.S
-> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-> @@ -29,7 +29,6 @@
->  #define EMC_CFG				0xc
->  #define EMC_ADR_CFG			0x10
->  #define EMC_TIMING_CONTROL		0x28
-> -#define EMC_REFRESH			0x70
->  #define EMC_NOP				0xdc
->  #define EMC_SELF_REF			0xe0
->  #define EMC_MRW				0xe8
-> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
->  	cmp	r10, #TEGRA30
->  	streq	r1, [r0, #EMC_NOP]
->  	streq	r1, [r0, #EMC_NOP]
-> -	streq	r1, [r0, #EMC_REFRESH]
->  
->  	emc_device_mask r1, r0
+--thafhy42vzv3dibt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This does look incorrect and it appears Tegra20 has the same bug.
-However, looking at the EMC_REFRESH register it appears that bits 5:0
-are the REFRESH_LO and bits 15:6 are the refresh interval. So this seems
-to imply the interval is set to 0 and not 1. So maybe the commit message
-needs to be fixed up.
+On 2018-11-19, Daniel Colascione <dancol@google.com> wrote:
+> On Mon, Nov 19, 2018 at 1:21 PM, Christian Brauner <christian@brauner.io>=
+ wrote:
+> > That can be done without a loop by comparing the level counter for the
+> > two pid namespaces.
+> >
+> >>
+> >> And you can rewrite pidns_get_parent to use it. So you would instead be
+> >> doing:
+> >>
+> >>     if (pidns_is_descendant(proc_pid_ns, task_active_pid_ns(current)))
+> >>         return -EPERM;
+> >>
+> >> (Or you can just copy the 5-line loop into procfd_signal -- though I
+> >> imagine we'll need this for all of the procfd_* APIs.)
+>=20
+> Why is any of this even necessary? Why does the child namespace we're
+> considering even have a file descriptor to its ancestor's procfs? If
+> it has one of these FDs, it can already *read* all sorts of
+> information it really shouldn't be able to acquire, so the additional
+> ability to send a signal (subject to the usual permission checks)
+> feels like sticking a finger in a dike that's already well-perforated.
+> IMHO, we shouldn't bother with this check. The patch would be simpler
+> without it.
 
-The other question I have, should we be restoring the refresh value here
-somewhere?
+First of all, currently it isn't possible to signal processes in an
+ancestor pidns. Given the long thread about exit code visibility
+semantics, I'm sure you see why bringing up this question is reasonable.
 
-Cheers
-Jon
+Some people (stupidly) bind-mount / into containers. There were several
+CVEs in both LXC and runc where you could access the host filesystem
+(including the host /proc). I'd prefer to not provide a mechanism for
+such escalations to start sending signals to host processes, since I
+don't see a strong reason why it should be allowed (and allowing it
+would add more cracks to the isolation of pidns).
 
--- 
-nvpublic
+I think there is a huge difference between having read access to /proc
+and being able to use /proc to signal processes which you ordinarily
+would not be able to signal.
+
+And another important point is that of semantics.
+
+If we move forward with procfd_new() and the rest of the API we are
+discussing, I'd argue we'd want to allow passing an nsfs fd to specify
+what pidns we want the process to be created in (for procfd_new()). This
+will obviously require a permission check to make sure we aren't
+creating processes in a parent pidns -- and so for consistency all
+procfd_* operations should have similar checks.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--thafhy42vzv3dibt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvzLMgACgkQSnvnv3De
+m59L2Q/+OJQ7gdLzIpx7d+MQpPjZPGxV0hXnzCPCHpNk0fvNX/88T4V619JUGzEc
+yyeQSLPO6/lAg8PHe4AOVeWRqbVxzPUsamBxbugY24jm4tC2hWA4cEDqWfFtCZyx
+Es19/kiTXrJIlnNIiB6fQ0xZXgTPzhT+XnR3/kyVtKaIFjcwW+9sA08s4mI/nn+w
+0mWN+q/vr5EGsffsMnBj3w9HJNR/aUSvVso+B0fPpABL53Ez9VSHVinBjcRxgrZ0
+S9shLMCZgdBXdgVOiZ1PCda/CoNCVWNFR7BRTiSK+ltoapWFz86KP+9HQr1DL4JX
+pXpYnxAqnwFjQS83DaHt2jIlK1ExQOvPO1zpZ1HXPeZrypiRo2cH7WUnz2unLx9+
+gSxxL8gN8FiVWqIi+kv6iZbnFitMaJbwZNLxd4lm/hxS0XzFXyi38TSX2YYaVx8A
+qqlQ6Eic8cJ8QEC6DCcpsCAvN6NMWrRlXeAKuyCWLhGlb6ylplLwJto+ZKXpa0DI
+6dm/Uy98Oi/J3kKACl1F1uiMPYcfKFMGJ7YSvfQpL96THp/3YNCiR9L73oulYcDC
+TlELJKY+LmZDShft3QwlJ7iKVKXoMez2dsmptIItj105YW3oy+L1WRVDXdZs3nQJ
++fXNDc79x0U/5mtDhDvmCvpko4+VVEZaxTcCGw9vBv49zcsmY0A=
+=BtVO
+-----END PGP SIGNATURE-----
+
+--thafhy42vzv3dibt--
