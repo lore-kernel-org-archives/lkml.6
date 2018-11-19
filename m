@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E881C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE33C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3716B22443
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBCC52243B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpP3SkUP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3716B22443
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Su8INgb0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBCC52243B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405784AbeKTD0J (ORCPT
+        id S2405798AbeKTD0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:26:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39576 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404876AbeKTD0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:26:08 -0500
+        id S2404876AbeKTD0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:26:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D7662241B;
-        Mon, 19 Nov 2018 17:01:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A91042243B;
+        Mon, 19 Nov 2018 17:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646911;
-        bh=Myq0u7+lDhlJwzhkVwomMhFusekpkHxrTCKdQp7J22Q=;
+        s=default; t=1542646914;
+        bh=XP2zu4VcsKOaEMGboS4FBS7Hy6iz1yBKVLQQyu15Xm4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpP3SkUP15AfL//4RksVPuoQbzkW72Iw9w2oD4kAVbO0N6vjqlIryuYwbjSkfaVUM
-         NRcIqlNfKO/d0HkfPRWbv4KYZxuHHXnP9hvJx/hIgnhkpGrsLgfIEB3s0PoPouxIV+
-         aXLqDjOyxScNiNaZjOKt0L2iHveXUCZhf7Balq5Y=
+        b=Su8INgb0gJtI8pPIksR6ThnFM8g9hmBMF21w4Gqx9iNULajQgmTECehFRN751i5pR
+         /axWF27T8/BokziU7yycjfMuib1H0/LHEKyg7YWvw1XvjDAvyUOrYOdnIRm2IhsCm5
+         4hGHnkejO74e9Nz5jF4RM2XtwwjwGYBrd+PIwpFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.4 137/160] ext4: add missing brelse() update_backups()s error path
-Date:   Mon, 19 Nov 2018 17:29:36 +0100
-Message-Id: <20181119162643.372558152@linuxfoundation.org>
+Subject: [PATCH 4.4 138/160] ext4: add missing brelse() in set_flexbg_block_bitmap()s error path
+Date:   Mon, 19 Nov 2018 17:29:37 +0100
+Message-Id: <20181119162643.427903155@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,31 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit ea0abbb648452cdb6e1734b702b6330a7448fcf8 upstream.
+commit cea5794122125bf67559906a0762186cf417099c upstream.
 
-Fixes: ac27a0ec112a ("ext4: initial copy of files from ext3")
+Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
+Cc: stable@kernel.org # 3.3
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 2.6.19
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ext4/resize.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 --- a/fs/ext4/resize.c
 +++ b/fs/ext4/resize.c
-@@ -1095,8 +1095,10 @@ static void update_backups(struct super_
- 			   backup_block, backup_block -
- 			   ext4_group_first_block_no(sb, group));
+@@ -442,16 +442,18 @@ static int set_flexbg_block_bitmap(struc
+ 
  		BUFFER_TRACE(bh, "get_write_access");
--		if ((err = ext4_journal_get_write_access(handle, bh)))
-+		if ((err = ext4_journal_get_write_access(handle, bh))) {
+ 		err = ext4_journal_get_write_access(handle, bh);
+-		if (err)
++		if (err) {
 +			brelse(bh);
- 			break;
+ 			return err;
 +		}
- 		lock_buffer(bh);
- 		memcpy(bh->b_data, data, size);
- 		if (rest)
+ 		ext4_debug("mark block bitmap %#04llx (+%llu/%u)\n", block,
+ 			   block - start, count2);
+ 		ext4_set_bits(bh->b_data, block - start, count2);
+ 
+ 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
++		brelse(bh);
+ 		if (unlikely(err))
+ 			return err;
+-		brelse(bh);
+ 	}
+ 
+ 	return 0;
 
 
