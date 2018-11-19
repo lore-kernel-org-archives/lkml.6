@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A19C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF84FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 858A120989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1969213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z6dElTgB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858A120989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QmYKOH9i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1969213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732461AbeKTDCb (ORCPT
+        id S1732475AbeKTDCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34810 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731529AbeKTDC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:29 -0500
+        id S1732476AbeKTDCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3973820831;
-        Mon, 19 Nov 2018 16:38:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D054821104;
+        Mon, 19 Nov 2018 16:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645500;
-        bh=tjyWBd0n/QO0q7yuzhpqrKl/UpNMWejs1prYNkpK6NY=;
+        s=default; t=1542645503;
+        bh=I5cFxRQIipu7RaxgwizV27fD7aYPf4nR138n6cnlq9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z6dElTgBADCOp2sKo3a7id4sdlqBPnHFl4kD80UObiAS8VW9l7ThCYlO3KZrtc9qW
-         tkvOrscRLJxdcZyAihDmid2bACDUU9wrRX5ifBoIK/+e+KG7qxNFl/NtfnXF9XHQLv
-         plWQ/Ri4pnZ1QYgYA9vtaPsfeBTTNUzxTYSekXT0=
+        b=QmYKOH9iJuUtuFeWkI8vKO6NOutG0kMWFbvzEXGsdbBJyAgfMwSgqudYuC+Cd98D8
+         RdcqfPtNwJByKC//9ik840zRjMvSoQcUtFCtpzaPAJnbNthmb+9jSJCcAVG6dBMP9z
+         T993jSiM2aONwHmVmr1bZDSGh68tMkugVyU99mAc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Calmels <jcalmels@nvidia.com>,
+        stable@vger.kernel.org,
+        Timothy Baldwin <timbaldwin@fastmail.co.uk>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.19 148/205] mount: Dont allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
-Date:   Mon, 19 Nov 2018 17:27:35 +0100
-Message-Id: <20181119162638.453513392@linuxfoundation.org>
+Subject: [PATCH 4.19 149/205] mount: Prevent MNT_DETACH from disconnecting locked mounts
+Date:   Mon, 19 Nov 2018 17:27:36 +0100
+Message-Id: <20181119162638.527699019@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,69 +65,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
+commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
 
-Jonathan Calmels from NVIDIA reported that he's able to bypass the
-mount visibility security check in place in the Linux kernel by using
-a combination of the unbindable property along with the private mount
-propagation option to allow a unprivileged user to see a path which
-was purposefully hidden by the root user.
+Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
+> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
+>
+>   Mounts that come as a single unit from more privileged mount are locked
+>   together and may not be separated in a less privileged mount namespace.
+>
+> However they can:
+>
+> 1. Create a mount namespace.
+> 2. In the mount namespace open a file descriptor to the parent of a mount point.
+> 3. Destroy the mount namespace.
+> 4. Use the file descriptor to look under the mount point.
+>
+> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
+>
+> The setup:
+>
+> $ sudo sysctl kernel.unprivileged_userns_clone=1
+> kernel.unprivileged_userns_clone = 1
+> $ mkdir -p A/B/Secret
+> $ sudo mount -t tmpfs hide A/B
+>
+>
+> "Secret" is indeed hidden as expected:
+>
+> $ ls -lR A
+> A:
+> total 0
+> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
+>
+> A/B:
+> total 0
+>
+>
+> The attack revealing "Secret":
+>
+> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
+> /proc/self/fd/4/:
+> total 0
+> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
+>
+> /proc/self/fd/4/B:
+> total 0
+> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
+>
+> /proc/self/fd/4/B/Secret:
+> total 0
 
-Reproducer:
-  # Hide a path to all users using a tmpfs
-  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
-  root@castiana:~#
+I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
+disconnecting all of the mounts in a mount namespace.  Fix this by
+factoring drop_mounts out of drop_collected_mounts and passing
+0 instead of UMOUNT_SYNC.
 
-  # As an unprivileged user, unshare user namespace and mount namespace
-  stgraber@castiana:~$ unshare -U -m -r
+There are two possible behavior differences that result from this.
+- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
+  the vfsmounts being unmounted.  This effects the lazy rcu walk by
+  kicking the walk out of rcu mode and forcing it to be a non-lazy
+  walk.
+- No longer disconnecting locked mounts will keep some mounts around
+  longer as they stay because the are locked to other mounts.
 
-  # Confirm the path is still not accessible
-  root@castiana:~# ls /sys/devices/
+There are only two users of drop_collected mounts: audit_tree.c and
+put_mnt_ns.
 
-  # Make /sys recursively unbindable and private
-  root@castiana:~# mount --make-runbindable /sys
-  root@castiana:~# mount --make-private /sys
+In audit_tree.c the mounts are private and there are no rcu lazy walks
+only calls to iterate_mounts. So the changes should have no effect
+except for a small timing effect as the connected mounts are disconnected.
 
-  # Recursively bind-mount the rest of /sys over to /mnnt
-  root@castiana:~# mount --rbind /sys/ /mnt
-
-  # Access our hidden /sys/device as an unprivileged user
-  root@castiana:~# ls /mnt/devices/
-  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
-  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
-  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
-
-Solve this by teaching copy_tree to fail if a mount turns out to be
-both unbindable and locked.
+In put_mnt_ns there may be references from process outside the mount
+namespace to the mounts.  So the mounts remaining connected will
+be the bug fix that is needed.  That rcu walks are allowed to continue
+appears not to be a problem especially as the rcu walk change was about
+an implementation detail not about semantics.
 
 Cc: stable@vger.kernel.org
 Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
+Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/namespace.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1734,8 +1734,14 @@ struct mount *copy_tree(struct mount *mn
- 		for (s = r; s; s = next_mnt(s, r)) {
- 			if (!(flag & CL_COPY_UNBINDABLE) &&
- 			    IS_MNT_UNBINDABLE(s)) {
--				s = skip_mnt_tree(s);
--				continue;
-+				if (s->mnt.mnt_flags & MNT_LOCKED) {
-+					/* Both unbindable and locked. */
-+					q = ERR_PTR(-EPERM);
-+					goto out;
-+				} else {
-+					s = skip_mnt_tree(s);
-+					continue;
-+				}
- 			}
- 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
- 			    is_mnt_ns_file(s->mnt.mnt_root)) {
+@@ -1794,7 +1794,7 @@ void drop_collected_mounts(struct vfsmou
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	umount_tree(real_mount(mnt), 0);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
 
 
