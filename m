@@ -7,49 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F65C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BAFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73402148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A19DB2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="py3SNsFf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73402148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qk7He4D3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A19DB2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389003AbeKTDLQ (ORCPT
+        id S2389015AbeKTDLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47014 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:11:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728537AbeKTDLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:15 -0500
+        id S1728537AbeKTDLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E44C9206BA;
-        Mon, 19 Nov 2018 16:47:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88F8E206BA;
+        Mon, 19 Nov 2018 16:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646023;
-        bh=vOp8xDvdtez+omukhRXvVZfIDZlhe//wVloqM7X5qbU=;
+        s=default; t=1542646026;
+        bh=pFxouZyo2nMSuRz19ZvLm7xz8aZ0oKltXap9yCgJZHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=py3SNsFfntjS6srN7k0Xa0uIcAVwAVsLKxuWZh7EJr5W3T3vAEvZ0qyLoiCAZyjqy
-         01ORiMxOCDnWZzaRB2z4yjU2ZOkvPtCrTDd8m6nDnVncmo08VIDQnTmn1tNlGNkUO2
-         qllPZOBMT2StG2ZOOmqNjj/+gI2gRyIk31Cc6Yio=
+        b=Qk7He4D3j7JBTIbv7BM6wOmpbV13LrhpJy7FgyaEVzoftPf7gMkpawwBzX9QYdsyz
+         wuy6Vf1yZu3we1uyWgFB7ZDK6isFC/hIQZaMjdSfN2JcN9mAAwF7uyrBvigsy+8Agb
+         c+kEC9NHMaWlRoRppO0oQyqR55IGaTBuMYc/BxZM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Vidya Srinivas <vidya.srinivas@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Matt Roper <matthew.d.roper@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.18 163/171] drm/i915: Fix error handling for the NV12 fb dimensions check
-Date:   Mon, 19 Nov 2018 17:29:19 +0100
-Message-Id: <20181119162640.805193973@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.18 154/171] drm: panel-orientation-quirks: Add quirk for Acer One 10 (S1003)
+Date:   Mon, 19 Nov 2018 17:29:10 +0100
+Message-Id: <20181119162640.111582315@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -67,38 +62,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit f42f343887016330b321dd40eebc68c7292e4f1b upstream.
+commit 0e8afefd5da4875ddea9aa4ad17a2540a2bf9736 upstream.
 
-Let's not leak obj->framebuffer_references when we decide that
-the framebuffer domensions are not suitable for NV12.
+The Acer One 10 uses a clamshell design with a detachable keyboard.
+As such in normal operating mode, with the keyboard attach the device
+is in landscape mode (and the Acer logo at boot also shows in landscape
+mode).
+
+But the device uses a portrait screen rotated 90 degrees (sigh). This
+commit adds a quirk for this device so that we shown the fbcon the
+right way up and that we hint userspace to also show e.g. plymouth and
+gdm the right way up.
 
 Cc: stable@vger.kernel.org
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Vidya Srinivas <vidya.srinivas@intel.com>
-Fixes: e44134f2673c ("drm/i915: Add NV12 support to intel_framebuffer_init")
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181029140031.11765-1-ville.syrjala@linux.intel.com
-Reviewed-by: Matt Roper <matthew.d.roper@intel.com>
-(cherry picked from commit 3b90946fcb6f13b65888c380461793a9dea9d1f4)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181012101610.29100-1-hdegoede@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_display.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_panel_orientation_quirks.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_display.c
-+++ b/drivers/gpu/drm/i915/intel_display.c
-@@ -14383,7 +14383,7 @@ static int intel_framebuffer_init(struct
- 	     fb->height < SKL_MIN_YUV_420_SRC_H ||
- 	     (fb->width % 4) != 0 || (fb->height % 4) != 0)) {
- 		DRM_DEBUG_KMS("src dimensions not correct for NV12\n");
--		return -EINVAL;
-+		goto err;
- 	}
+--- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
++++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+@@ -30,6 +30,12 @@ struct drm_dmi_panel_orientation_data {
+ 	int orientation;
+ };
  
- 	for (i = 0; i < fb->format->num_planes; i++) {
++static const struct drm_dmi_panel_orientation_data acer_s1003 = {
++	.width = 800,
++	.height = 1280,
++	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
++};
++
+ static const struct drm_dmi_panel_orientation_data asus_t100ha = {
+ 	.width = 800,
+ 	.height = 1280,
+@@ -67,7 +73,13 @@ static const struct drm_dmi_panel_orient
+ };
+ 
+ static const struct dmi_system_id orientation_data[] = {
+-	{	/* Asus T100HA */
++	{	/* Acer One 10 (S1003) */
++		.matches = {
++		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Acer"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "One S1003"),
++		},
++		.driver_data = (void *)&acer_s1003,
++	}, {	/* Asus T100HA */
+ 		.matches = {
+ 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+ 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T100HAN"),
 
 
