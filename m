@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2565C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A462C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BA40223CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E1C6223CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ssNEAf+Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA40223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nn8vJbgK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1C6223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405538AbeKTDZR (ORCPT
+        id S2405550AbeKTDZU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38392 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbeKTDZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:16 -0500
+        id S2404694AbeKTDZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32F8322353;
-        Mon, 19 Nov 2018 17:01:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89418223C8;
+        Mon, 19 Nov 2018 17:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646860;
-        bh=D3+dVYUP8Ibsnwju7Wc0aU4n2KsyD3jj9DmMt4ZoNOE=;
+        s=default; t=1542646863;
+        bh=OBjj70zlwThvv6xlsG4aUwxANvSM2KGvA+Olkvnyakw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ssNEAf+Zplptxhi1+e4OnDierJGvDFcEmX/h075czQcVMI9b70Ow2JwXc7uOnwPZn
-         CO+qdBsRjohcPDhm07kfdjdSqu44/oLePHl4uA1DV/9Ov3/Cdwn0X75S3SXP81TIl+
-         skwUfOXqpG8u+/PZwTa0Pe7VRfWDnSW5YQ0ZLb/0=
+        b=nn8vJbgKQCIHU/r+4tnzU8zxgpnCHP/GQGK6ikOv92xYVOdOhQTkGjqoAANWBD54t
+         INFGMI0vht17QgHoMLaprFxPikU3PrUIwDRkhEP12P9E8DZ3L3+ayWlAn8HMQ597QW
+         tH/VZPyP+vrPFrg+8B98TLraZzQF3oWaiAdPvdgs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Micay <danielmicay@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 119/160] bna: ethtool: Avoid reading past end of buffer
-Date:   Mon, 19 Nov 2018 17:29:18 +0100
-Message-Id: <20181119162642.205083808@linuxfoundation.org>
+Subject: [PATCH 4.4 120/160] MIPS: Loongson-3: Fix CPU UART irq delivery problem
+Date:   Mon, 19 Nov 2018 17:29:19 +0100
+Message-Id: <20181119162642.272355917@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,38 +68,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4dc69c1c1fff2f587f8e737e70b4a4e7565a5c94 ]
+[ Upstream commit d06f8a2f1befb5a3d0aa660ab1c05e9b744456ea ]
 
-Using memcpy() from a string that is shorter than the length copied means
-the destination buffer is being filled with arbitrary data from the kernel
-rodata segment. Instead, use strncpy() which will fill the trailing bytes
-with zeros.
+Masking/unmasking the CPU UART irq in CP0_Status (and redirecting it to
+other CPUs) may cause interrupts be lost, especially in multi-package
+machines (Package-0's UART irq cannot be delivered to others). So make
+mask_loongson_irq() and unmask_loongson_irq() be no-ops.
 
-This was found with the future CONFIG_FORTIFY_SOURCE feature.
+The original problem (UART IRQ may deliver to any core) is also because
+of masking/unmasking the CPU UART irq in CP0_Status. So it is safe to
+remove all of the stuff.
 
-Cc: Daniel Micay <danielmicay@gmail.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20433/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/brocade/bna/bnad_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/mips/loongson64/loongson-3/irq.c | 43 ++-------------------------
+ 1 file changed, 3 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
-index 0e4fdc3dd729..18672ad773fb 100644
---- a/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
-+++ b/drivers/net/ethernet/brocade/bna/bnad_ethtool.c
-@@ -556,8 +556,8 @@ bnad_get_strings(struct net_device *netdev, u32 stringset, u8 *string)
- 		for (i = 0; i < BNAD_ETHTOOL_STATS_NUM; i++) {
- 			BUG_ON(!(strlen(bnad_net_stats_strings[i]) <
- 				   ETH_GSTRING_LEN));
--			memcpy(string, bnad_net_stats_strings[i],
--			       ETH_GSTRING_LEN);
-+			strncpy(string, bnad_net_stats_strings[i],
-+				ETH_GSTRING_LEN);
- 			string += ETH_GSTRING_LEN;
- 		}
- 		bmap = bna_tx_rid_mask(&bnad->bna);
+diff --git a/arch/mips/loongson64/loongson-3/irq.c b/arch/mips/loongson64/loongson-3/irq.c
+index 0f75b6b3d218..53424f2a53f3 100644
+--- a/arch/mips/loongson64/loongson-3/irq.c
++++ b/arch/mips/loongson64/loongson-3/irq.c
+@@ -48,45 +48,8 @@ static struct irqaction cascade_irqaction = {
+ 	.name = "cascade",
+ };
+ 
+-static inline void mask_loongson_irq(struct irq_data *d)
+-{
+-	clear_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
+-	irq_disable_hazard();
+-
+-	/* Workaround: UART IRQ may deliver to any core */
+-	if (d->irq == LOONGSON_UART_IRQ) {
+-		int cpu = smp_processor_id();
+-		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
+-		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
+-		u64 intenclr_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_INTENCLR);
+-		u64 introuter_lpc_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_LPC);
+-
+-		*(volatile u32 *)intenclr_addr = 1 << 10;
+-		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
+-	}
+-}
+-
+-static inline void unmask_loongson_irq(struct irq_data *d)
+-{
+-	/* Workaround: UART IRQ may deliver to any core */
+-	if (d->irq == LOONGSON_UART_IRQ) {
+-		int cpu = smp_processor_id();
+-		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
+-		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
+-		u64 intenset_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_INTENSET);
+-		u64 introuter_lpc_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_LPC);
+-
+-		*(volatile u32 *)intenset_addr = 1 << 10;
+-		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
+-	}
+-
+-	set_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
+-	irq_enable_hazard();
+-}
++static inline void mask_loongson_irq(struct irq_data *d) { }
++static inline void unmask_loongson_irq(struct irq_data *d) { }
+ 
+  /* For MIPS IRQs which shared by all cores */
+ static struct irq_chip loongson_irq_chip = {
+@@ -124,7 +87,7 @@ void __init mach_init_irq(void)
+ 	mips_cpu_irq_init();
+ 	init_i8259_irqs();
+ 	irq_set_chip_and_handler(LOONGSON_UART_IRQ,
+-			&loongson_irq_chip, handle_level_irq);
++			&loongson_irq_chip, handle_percpu_irq);
+ 
+ 	/* setup HT1 irq */
+ 	setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
 -- 
 2.17.1
 
