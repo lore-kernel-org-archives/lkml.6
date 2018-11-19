@@ -7,45 +7,56 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D88C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7ACC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD93C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B65B520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="csL5ZnFU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD93C20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nRvrgPQS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B65B520870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbeKTC6J (ORCPT
+        id S1731296AbeKTC6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57044 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729974AbeKTC6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:07 -0500
+        id S1730491AbeKTC6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23A452089F;
-        Mon, 19 Nov 2018 16:33:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8260C2086A;
+        Mon, 19 Nov 2018 16:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645239;
-        bh=1HUFzHNltnDyyD8aRqV4SWxaEsFuDNaYf68Rz+Hf3S0=;
+        s=default; t=1542645242;
+        bh=ejxoV0wPQfnhrdNHuJrizZZuTIp6MXZa2wSMFnduVLo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=csL5ZnFUChAzVPLUT9QhfpmjGG4wGRVAQZhGIxgp9sn2KJn4OzXzLrxngfR7Llm2R
-         N9swz8ukVyBheJX04bnZhIT+mKsFb/QcK6U7OR8jVlHWirIa7GXRgZfX9cmLNNAIUW
-         XTxhKzhjF3E5i8tZ3VgfAztT1aiPfV1siCa5Xtuc=
+        b=nRvrgPQSZUXumXwdo97UAjRajik05fDDKJV+UzdBVWdHd2uESt5wkWbBWJXpAEnYQ
+         FRYf5DZLOcgkBKb/uB3pUV2afTj9iBSuKZGh4GQRN8p+Yd3xhit8gk15xnr30QNlIw
+         fNa8dQVoy6GRD1hkbRirtRUHOlPK2wthkhRGZ22I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.19 089/205] mach64: fix image corruption due to reading accelerator registers
-Date:   Mon, 19 Nov 2018 17:26:36 +0100
-Message-Id: <20181119162631.957045785@linuxfoundation.org>
+        stable@vger.kernel.org, Omar Avelar <omar.avelar@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Borislav Petkov <bp@suse.de>, Arnd Bergmann <arnd@arndb.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, elliott@hpe.com,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-edac <linux-edac@vger.kernel.org>,
+        linux-nvdimm@lists.01.org, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>, x86-ml <x86@kernel.org>,
+        Yazen Ghannam <yazen.ghannam@amd.com>
+Subject: [PATCH 4.19 090/205] acpi/nfit, x86/mce: Handle only uncorrectable machine checks
+Date:   Mon, 19 Nov 2018 17:26:37 +0100
+Message-Id: <20181119162632.099116739@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,111 +74,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Vishal Verma <vishal.l.verma@intel.com>
 
-commit c09bcc91bb94ed91f1391bffcbe294963d605732 upstream.
+commit 5d96c9342c23ee1d084802dcf064caa67ecaa45b upstream.
 
-Reading the registers without waiting for engine idle returns
-unpredictable values. These unpredictable values result in display
-corruption - if atyfb_imageblit reads the content of DP_PIX_WIDTH with the
-bit DP_HOST_TRIPLE_EN set (from previous invocation), the driver would
-never ever clear the bit, resulting in display corruption.
+The MCE handler for nfit devices is called for memory errors on a
+Non-Volatile DIMM and adds the error location to a 'badblocks' list.
+This list is used by the various NVDIMM drivers to avoid consuming known
+poison locations during IO.
 
-We don't want to wait for idle because it would degrade performance, so
-this patch modifies the driver so that it never reads accelerator
-registers.
+The MCE handler gets called for both corrected and uncorrectable errors.
+Until now, both kinds of errors have been added to the badblocks list.
+However, corrected memory errors indicate that the problem has already
+been fixed by hardware, and the resulting interrupt is merely a
+notification to Linux.
 
-HOST_CNTL doesn't have to be read, we can just write it with
-HOST_BYTE_ALIGN because no other part of the driver cares if
-HOST_BYTE_ALIGN is set.
+As far as future accesses to that location are concerned, it is
+perfectly fine to use, and thus doesn't need to be included in the above
+badblocks list.
 
-DP_PIX_WIDTH is written in the functions atyfb_copyarea and atyfb_fillrect
-with the default value and in atyfb_imageblit with the value set according
-to the source image data.
+Add a check in the nfit MCE handler to filter out corrected mce events,
+and only process uncorrectable errors.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 6839a6d96f4e ("nfit: do an ARS scrub on hitting a latent media error")
+Reported-by: Omar Avelar <omar.avelar@intel.com>
+Signed-off-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: Arnd Bergmann <arnd@arndb.de>
+CC: Dan Williams <dan.j.williams@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>
+CC: elliott@hpe.com
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Len Brown <lenb@kernel.org>
+CC: linux-acpi@vger.kernel.org
+CC: linux-edac <linux-edac@vger.kernel.org>
+CC: linux-nvdimm@lists.01.org
+CC: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+CC: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC: Ross Zwisler <zwisler@kernel.org>
+CC: stable <stable@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Tony Luck <tony.luck@intel.com>
+CC: x86-ml <x86@kernel.org>
+CC: Yazen Ghannam <yazen.ghannam@amd.com>
+Link: http://lkml.kernel.org/r/20181026003729.8420-1-vishal.l.verma@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/aty/mach64_accel.c |   22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ arch/x86/include/asm/mce.h       |    1 +
+ arch/x86/kernel/cpu/mcheck/mce.c |    3 ++-
+ drivers/acpi/nfit/mce.c          |    4 ++--
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/video/fbdev/aty/mach64_accel.c
-+++ b/drivers/video/fbdev/aty/mach64_accel.c
-@@ -127,7 +127,7 @@ void aty_init_engine(struct atyfb_par *p
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -216,6 +216,7 @@ static inline int umc_normaddr_to_sysadd
  
- 	/* set host attributes */
- 	wait_for_fifo(13, par);
--	aty_st_le32(HOST_CNTL, 0, par);
-+	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
+ int mce_available(struct cpuinfo_x86 *c);
+ bool mce_is_memory_error(struct mce *m);
++bool mce_is_correctable(struct mce *m);
  
- 	/* set pattern attributes */
- 	aty_st_le32(PAT_REG0, 0, par);
-@@ -233,7 +233,8 @@ void atyfb_copyarea(struct fb_info *info
- 		rotation = rotation24bpp(dx, direction);
- 	}
- 
--	wait_for_fifo(4, par);
-+	wait_for_fifo(5, par);
-+	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
- 	aty_st_le32(DP_SRC, FRGD_SRC_BLIT, par);
- 	aty_st_le32(SRC_Y_X, (sx << 16) | sy, par);
- 	aty_st_le32(SRC_HEIGHT1_WIDTH1, (width << 16) | area->height, par);
-@@ -269,7 +270,8 @@ void atyfb_fillrect(struct fb_info *info
- 		rotation = rotation24bpp(dx, DST_X_LEFT_TO_RIGHT);
- 	}
- 
--	wait_for_fifo(3, par);
-+	wait_for_fifo(4, par);
-+	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
- 	aty_st_le32(DP_FRGD_CLR, color, par);
- 	aty_st_le32(DP_SRC,
- 		    BKGD_SRC_BKGD_CLR | FRGD_SRC_FRGD_CLR | MONO_SRC_ONE,
-@@ -284,7 +286,7 @@ void atyfb_imageblit(struct fb_info *inf
- {
- 	struct atyfb_par *par = (struct atyfb_par *) info->par;
- 	u32 src_bytes, dx = image->dx, dy = image->dy, width = image->width;
--	u32 pix_width_save, pix_width, host_cntl, rotation = 0, src, mix;
-+	u32 pix_width, rotation = 0, src, mix;
- 
- 	if (par->asleep)
- 		return;
-@@ -296,8 +298,7 @@ void atyfb_imageblit(struct fb_info *inf
- 		return;
- 	}
- 
--	pix_width = pix_width_save = aty_ld_le32(DP_PIX_WIDTH, par);
--	host_cntl = aty_ld_le32(HOST_CNTL, par) | HOST_BYTE_ALIGN;
-+	pix_width = par->crtc.dp_pix_width;
- 
- 	switch (image->depth) {
- 	case 1:
-@@ -370,12 +371,11 @@ void atyfb_imageblit(struct fb_info *inf
- 		mix = FRGD_MIX_D_XOR_S | BKGD_MIX_D;
- 	}
- 
--	wait_for_fifo(6, par);
--	aty_st_le32(DP_WRITE_MASK, 0xFFFFFFFF, par);
-+	wait_for_fifo(5, par);
- 	aty_st_le32(DP_PIX_WIDTH, pix_width, par);
- 	aty_st_le32(DP_MIX, mix, par);
- 	aty_st_le32(DP_SRC, src, par);
--	aty_st_le32(HOST_CNTL, host_cntl, par);
-+	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
- 	aty_st_le32(DST_CNTL, DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT | rotation, par);
- 
- 	draw_rect(dx, dy, width, image->height, par);
-@@ -424,8 +424,4 @@ void atyfb_imageblit(struct fb_info *inf
- 			aty_st_le32(HOST_DATA0, get_unaligned_le32(pbitmap), par);
- 		}
- 	}
--
--	/* restore pix_width */
--	wait_for_fifo(1, par);
--	aty_st_le32(DP_PIX_WIDTH, pix_width_save, par);
+ DECLARE_PER_CPU(unsigned, mce_exception_count);
+ DECLARE_PER_CPU(unsigned, mce_poll_count);
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -534,7 +534,7 @@ bool mce_is_memory_error(struct mce *m)
  }
+ EXPORT_SYMBOL_GPL(mce_is_memory_error);
+ 
+-static bool mce_is_correctable(struct mce *m)
++bool mce_is_correctable(struct mce *m)
+ {
+ 	if (m->cpuvendor == X86_VENDOR_AMD && m->status & MCI_STATUS_DEFERRED)
+ 		return false;
+@@ -544,6 +544,7 @@ static bool mce_is_correctable(struct mc
+ 
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(mce_is_correctable);
+ 
+ static bool cec_add_mce(struct mce *m)
+ {
+--- a/drivers/acpi/nfit/mce.c
++++ b/drivers/acpi/nfit/mce.c
+@@ -25,8 +25,8 @@ static int nfit_handle_mce(struct notifi
+ 	struct acpi_nfit_desc *acpi_desc;
+ 	struct nfit_spa *nfit_spa;
+ 
+-	/* We only care about memory errors */
+-	if (!mce_is_memory_error(mce))
++	/* We only care about uncorrectable memory errors */
++	if (!mce_is_memory_error(mce) || mce_is_correctable(mce))
+ 		return NOTIFY_DONE;
+ 
+ 	/*
 
 
