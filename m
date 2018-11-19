@@ -2,39 +2,42 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15637C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79CBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA66B20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:33:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA66B20851
+	by mail.kernel.org (Postfix) with ESMTP id 85C8A20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C8A20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729294AbeKSX4v (ORCPT
+        id S1727769AbeKTAAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:56:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47090 "EHLO mx1.suse.de"
+        Mon, 19 Nov 2018 19:00:13 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47726 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726189AbeKSX4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:56:51 -0500
+        id S1726189AbeKTAAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:00:13 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7DD53AD48;
-        Mon, 19 Nov 2018 13:33:11 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 14:33:10 +0100 (CET)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 692EEAD48;
+        Mon, 19 Nov 2018 13:36:33 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 14:36:32 +0100 (CET)
 From:   Jiri Kosina <jikos@kernel.org>
-To:     David Herrmann <dh.herrmann@gmail.com>
-cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benjamin.tissoires@redhat.com
-Subject: Re: [PATCH] Revert "HID: uhid: use strlcpy() instead of strncpy()"
-In-Reply-To: <20181114131642.21425-1-dh.herrmann@gmail.com>
-Message-ID: <nycvar.YFH.7.76.1811191432460.21108@cbobk.fhfr.pm>
-References: <20181114131642.21425-1-dh.herrmann@gmail.com>
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
+ l1tf=off
+In-Reply-To: <20181114073229.GC23419@dhcp22.suse.cz>
+Message-ID: <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm>
+References: <20181113184910.26697-1-mhocko@kernel.org> <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm> <20181114073229.GC23419@dhcp22.suse.cz>
 User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -43,53 +46,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018, David Herrmann wrote:
+On Wed, 14 Nov 2018, Michal Hocko wrote:
 
-> This reverts commit 336fd4f5f25157e9e8bd50e898a1bbcd99eaea46.
+> > > +				It also drops the swap size and available
+> > > +				RAM limit restriction.
+> > 
+> > Minor nit: I think this should explicitly mention that those two things 
+> > are related to bare metal mitigation, to avoid any confusion (as otherwise 
+> > the l1tf cmdline parameter is purely about hypervisor mitigations).
 > 
-> Please note that `strlcpy()` does *NOT* do what you think it does.
-> strlcpy() *ALWAYS* reads the full input string, regardless of the
-> 'length' parameter. That is, if the input is not zero-terminated,
-> strlcpy() will *READ* beyond input boundaries. It does this, because it
-> always returns the size it *would* copy if the target was big enough,
-> not the truncated size it actually copied.
+> Do you have any specific wording in mind?
 > 
-> The original code was perfectly fine. The hid device is
-> zero-initialized and the strncpy() functions copied up to n-1
-> characters. The result is always zero-terminated this way.
+> It also drops the swap size and available RAM limit restrictions on both
+> hypervisor and bare metal.
 > 
-> This is the third time someone tried to replace strncpy with strlcpy in
-> this function, and gets it wrong. I now added a comment that should at
-> least make people reconsider.
+> Sounds better?
 > 
-> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-> ---
->  drivers/hid/uhid.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+> > With that
+> > 
+> > 	Acked-by: Jiri Kosina <jkosina@suse.cz>
 > 
-> diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
-> index fefedc0b4dc6..0dfdd0ac7120 100644
-> --- a/drivers/hid/uhid.c
-> +++ b/drivers/hid/uhid.c
-> @@ -496,12 +496,13 @@ static int uhid_dev_create2(struct uhid_device *uhid,
->  		goto err_free;
->  	}
->  
-> -	len = min(sizeof(hid->name), sizeof(ev->u.create2.name));
-> -	strlcpy(hid->name, ev->u.create2.name, len);
-> -	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys));
-> -	strlcpy(hid->phys, ev->u.create2.phys, len);
-> -	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq));
-> -	strlcpy(hid->uniq, ev->u.create2.uniq, len);
-> +	/* @hid is zero-initialized, strncpy() is correct, strlcpy() not */
-> +	len = min(sizeof(hid->name), sizeof(ev->u.create2.name)) - 1;
-> +	strncpy(hid->name, ev->u.create2.name, len);
-> +	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys)) - 1;
-> +	strncpy(hid->phys, ev->u.create2.phys, len);
-> +	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq)) - 1;
-> +	strncpy(hid->uniq, ev->u.create2.uniq, len);
+> Thanks!
 
-Applied, thanks.
+Yes, I think that makes it absolutely clear. Thanks,
 
 -- 
 Jiri Kosina
