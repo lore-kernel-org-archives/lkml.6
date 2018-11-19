@@ -2,149 +2,182 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLACK autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F86C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC872C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF3D20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:43:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Fusmx1QP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TstlcMwx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF3D20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E28120831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E28120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pschenker.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbeKSVGy (ORCPT
+        id S1728071AbeKSVHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:06:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49186 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbeKSVGy (ORCPT
+        Mon, 19 Nov 2018 16:07:17 -0500
+Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:36686 "EHLO
+        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727545AbeKSVHQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:06:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7740F60B73; Mon, 19 Nov 2018 10:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542624219;
-        bh=e5wWvkY3C+z8BgVkIqVTWq69+K4OvJkbIpWMr1aCgKc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Fusmx1QP+7ny4RjsT/dSEHT1aCkA1JaOAd/Juz/TaACxT807jKtiM1sN0iUnqwgQ8
-         lSMfaAv0V2MgVKrpJzvo4iB8kVbxZof6QiEHvi974bJzVuUQs+/TOQp8ZLDChmUdoK
-         bJw23nRagfKg3X86TPe2GScZAL5Almv85Egwn7/w=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7B22F60452;
-        Mon, 19 Nov 2018 10:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542624218;
-        bh=e5wWvkY3C+z8BgVkIqVTWq69+K4OvJkbIpWMr1aCgKc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=TstlcMwxfgA+sG41Phox7hPcL0JqNn/yRuZZycg8SMLP0b4RgNK9Yh1VCDT5ISZp/
-         IoR7E/ThoEN0aljc/Z/X6dPvdEOx5WeMgxKkgKSy9b3gBcGccNVlpzmDwqHH0xgQjt
-         XTb5hTdajFqH+lmq1b0R6HvT0BjtoRBrhADX6JXU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7B22F60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Larry Finger <Larry.Finger@lwfinger.net>
-Cc:     Priit Laes <plaes@plaes.org>, Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
-        <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
-        <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
-        <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
-        <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
-Date:   Mon, 19 Nov 2018 12:43:32 +0200
-In-Reply-To: <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net> (Larry
-        Finger's message of "Sun, 18 Nov 2018 13:35:57 -0600")
-Message-ID: <87lg5pcppn.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Mon, 19 Nov 2018 16:07:16 -0500
+X-Greylist: delayed 1094 seconds by postgrey-1.27 at vger.kernel.org; Mon, 19 Nov 2018 16:07:14 EST
+Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
+        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1gOgkS-000BkY-7w; Mon, 19 Nov 2018 11:25:44 +0100
+Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
+        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1gOgkS-0007f0-0w; Mon, 19 Nov 2018 11:25:44 +0100
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc:     Philippe Schenker <dev@pschenker.ch>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/4] mfd: stmpe: Move ADC related defines to header of mfd
+Date:   Mon, 19 Nov 2018 11:25:25 +0100
+Message-Id: <20181119102528.2830-1-dev@pschenker.ch>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Larry Finger <Larry.Finger@lwfinger.net> writes:
+Move defines that are ADC related to the header of the overlying mfd,
+so they can be used from multiple sub-devices.
 
->>>> @@ -1570,10 +1571,10 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
->>>>    	angle = 0;
->>>>    	for (i = 0; i < len; i++) {
->>>> -		samples[i] = b43_cordic(angle);
->>>> +		samples[i] = cordic_calc_iq(angle);
->>>>    		angle += rot;
->>>> -		samples[i].q = CORDIC_CONVERT(samples[i].q * max);
->>>> -		samples[i].i = CORDIC_CONVERT(samples[i].i * max);
->>>> +		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
->>>> +		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
->>>>    	}
->>>>    	i = b43_nphy_load_samples(dev, samples, len);
->>>
->>> There is a fundamental flaw in this patch. Routine b43_cordic() takes an
->>> angle in degrees scaled by 2^16, whereas cordic_calc_iq() takes an angle in
->>> degrees. For a given input, the two routines must get different answers. At
->>> a minimum, the calculation of rot would need to remove the left shift of 16.
->>
->> Thanks for the hint. I modified my "test harness" a bit to plot out values
->> from -360 .. 360 and transformed the theta for b43_cordic argument
->> using CORDIC_FIXED macro:
->>
->> b43_cordic(CORDIC_FIXED(theta));
->> cordic_calc_iq(theta);
->>
->> Then I plotted the results and well.. they are not that pretty.
->> While the results give
->> identical answers between certain ranges of degrees, the cordic
->> algorithm for b43 seems
->> to be broken for certain ranges: (-270..-180 ; -90 .. 0; 90.. 180 and 270..360).
->>
->> You can find my test harnesses here:
->>
->> https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
->
-> I found a problem with the b43 implementation. The local variables for
-> that routine includes
->
->         u32 angle = 0;
->
-> If one looks further down in the algorithm, if the reduced value of
-> "theta" is less than 0, then "angle" should be negative. That causes
-> the calculation to blow up. This explains why some ranges of angles
-> got the same result for both routines. When that declaration is
-> changed to "int angle = 0", the two routines give the same answer for
-> all inputs.
->
-> My test setup has a hardware failure, thus I cannot test your patch,
-> but I now believe it to be correct. Thus your first and third patches
-> may be annotated with
-> ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
->
-> One thing that should be done is to fix the error in the b43 code for
-> stable as it was introduced in 2.6.34. I propose adding the attached
-> patched to your series placed between your current 2nd and 3rd patches
-> so that the old kernels get fixed. Of course, your 3rd patch will need
-> to be revised. If all 4 of the patches get submitted together there
-> will be no problems with the timing. My change will exist for seconds
-> in the mainline kernel, but it will get propagated back through
-> stable.
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+---
 
-Sorry Larry, I'm not fully understanding what you mean here. So I'm
-going to just drop the whole series and assume that Priit will submit a
-new version. Please let me know if I should do something else.
+Changes in v2:
+ - This is a new added commit. Separate commit for moving the defines out of
+   drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device drivers/mfd/stmpe.c
+ - Pre-fix defines with STMPE_
 
+ drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
+ include/linux/mfd/stmpe.h            | 11 +++++++++
+ 2 files changed, 24 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
+index 2a78e27b4495..c5d9006588a2 100644
+--- a/drivers/input/touchscreen/stmpe-ts.c
++++ b/drivers/input/touchscreen/stmpe-ts.c
+@@ -49,17 +49,6 @@
+ 
+ #define STMPE_IRQ_TOUCH_DET		0
+ 
+-#define SAMPLE_TIME(x)			((x & 0xf) << 4)
+-#define MOD_12B(x)			((x & 0x1) << 3)
+-#define REF_SEL(x)			((x & 0x1) << 1)
+-#define ADC_FREQ(x)			(x & 0x3)
+-#define AVE_CTRL(x)			((x & 0x3) << 6)
+-#define DET_DELAY(x)			((x & 0x7) << 3)
+-#define SETTLING(x)			(x & 0x7)
+-#define FRACTION_Z(x)			(x & 0x7)
+-#define I_DRIVE(x)			(x & 0x1)
+-#define OP_MODE(x)			((x & 0x7) << 1)
+-
+ #define STMPE_TS_NAME			"stmpe-ts"
+ #define XY_MASK				0xfff
+ 
+@@ -213,9 +202,10 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 		return ret;
+ 	}
+ 
+-	adc_ctrl1 = SAMPLE_TIME(ts->sample_time) | MOD_12B(ts->mod_12b) |
+-		REF_SEL(ts->ref_sel);
+-	adc_ctrl1_mask = SAMPLE_TIME(0xff) | MOD_12B(0xff) | REF_SEL(0xff);
++	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
++		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
++	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
++			 STMPE_REF_SEL(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+ 			adc_ctrl1_mask, adc_ctrl1);
+@@ -225,15 +215,17 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+-			ADC_FREQ(0xff), ADC_FREQ(ts->adc_freq));
++			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
+ 	if (ret) {
+ 		dev_err(dev, "Could not setup ADC\n");
+ 		return ret;
+ 	}
+ 
+-	tsc_cfg = AVE_CTRL(ts->ave_ctrl) | DET_DELAY(ts->touch_det_delay) |
+-			SETTLING(ts->settling);
+-	tsc_cfg_mask = AVE_CTRL(0xff) | DET_DELAY(0xff) | SETTLING(0xff);
++	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
++		  STMPE_DET_DELAY(ts->touch_det_delay) |
++		  STMPE_SETTLING(ts->settling);
++	tsc_cfg_mask = STMPE_AVE_CTRL(0xff) | STMPE_DET_DELAY(0xff) |
++		       STMPE_SETTLING(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CFG, tsc_cfg_mask, tsc_cfg);
+ 	if (ret) {
+@@ -242,14 +234,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
+-			FRACTION_Z(0xff), FRACTION_Z(ts->fraction_z));
++			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
+-			I_DRIVE(0xff), I_DRIVE(ts->i_drive));
++			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+@@ -263,7 +255,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
+-			OP_MODE(0xff), OP_MODE(OP_MOD_XYZ));
++			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
+ 	if (ret) {
+ 		dev_err(dev, "Could not set mode\n");
+ 		return ret;
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index 4a827af17e59..c0353f6431f9 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -10,6 +10,17 @@
+ 
+ #include <linux/mutex.h>
+ 
++#define STMPE_SAMPLE_TIME(x)	((x & 0xf) << 4)
++#define STMPE_MOD_12B(x)	((x & 0x1) << 3)
++#define STMPE_REF_SEL(x)	((x & 0x1) << 1)
++#define STMPE_ADC_FREQ(x)	(x & 0x3)
++#define STMPE_AVE_CTRL(x)	((x & 0x3) << 6)
++#define STMPE_DET_DELAY(x)	((x & 0x7) << 3)
++#define STMPE_SETTLING(x)	(x & 0x7)
++#define STMPE_FRACTION_Z(x)	(x & 0x7)
++#define STMPE_I_DRIVE(x)	(x & 0x1)
++#define STMPE_OP_MODE(x)	((x & 0x7) << 1)
++
+ struct device;
+ struct regulator;
+ 
 -- 
-Kalle Valo
+2.19.1
+
