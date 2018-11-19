@@ -7,45 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2995AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4F6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0EB92086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26EDF208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JdrDPIG5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0EB92086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bb+SowxT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EDF208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731425AbeKTC6m (ORCPT
+        id S1731434AbeKTC6o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57782 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbeKTC6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:41 -0500
+        id S1730381AbeKTC6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EDF82086A;
-        Mon, 19 Nov 2018 16:34:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC46720870;
+        Mon, 19 Nov 2018 16:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645272;
-        bh=iihfgzdVniE2bqK9y30TYvWWVNrmXGBcDqyh4LxGCJg=;
+        s=default; t=1542645275;
+        bh=9poaTKq6O26jOGWKIxk5DO7LfzPwahFGUh8eSdFj7tc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JdrDPIG5TOZu8XfikSAUs/IK+YyisW+M+M9tzKjMXaVYu8DCng9gGBDAEG0QHM8mC
-         cjfWfBomJP1YGd3TcLHHdaXnX6RPCSl6GUOecXzUBgqHjOZ6JsQ7Zo0FghQakDYK97
-         AtqknAf/MjQ9rKocepdJyRxRZLiGqugM4oGzfZek=
+        b=Bb+SowxTJqEGFYSWCZWKBRT/vCvcnHWshu62i573ZqW/1BLOA50Xzz7qnm4LBEN0/
+         HyAJqfxePvpATZLE5ourd/cEjSfzYNRrEzWhzSRYpbZsaO7sIlg+l+i89N5OKxBfts
+         eOwDAWEX4qnMDC/+j+N6lnJaFDVLxLA+qTzuG4+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH 4.19 100/205] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-Date:   Mon, 19 Nov 2018 17:26:47 +0100
-Message-Id: <20181119162633.300987367@linuxfoundation.org>
+        stable@vger.kernel.org, Changwei Ge <ge.changwei@h3c.com>,
+        Changkuo Shi <shi.changkuo@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 101/205] ocfs2: fix a misuse a of brelse after failing ocfs2_check_dir_entry
+Date:   Mon, 19 Nov 2018 17:26:48 +0100
+Message-Id: <20181119162633.392139512@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,128 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Changwei Ge <ge.changwei@h3c.com>
 
-commit 832ad0e3da4510fd17f98804abe512ea9a747035 upstream.
+commit 29aa30167a0a2e6045a0d6d2e89d8168132333d5 upstream.
 
-The Keystone QMSS driver is pretty damaged, in the sense that it
-does things like this:
+Somehow, file system metadata was corrupted, which causes
+ocfs2_check_dir_entry() to fail in function ocfs2_dir_foreach_blk_el().
 
-	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
+According to the original design intention, if above happens we should
+skip the problematic block and continue to retrieve dir entry.  But
+there is obviouse misuse of brelse around related code.
 
-where cpu_map is a local variable. As we leave the function, this
-will point to nowhere-land, and things will end-up badly.
+After failure of ocfs2_check_dir_entry(), current code just moves to
+next position and uses the problematic buffer head again and again
+during which the problematic buffer head is released for multiple times.
+I suppose, this a serious issue which is long-lived in ocfs2.  This may
+cause other file systems which is also used in a the same host insane.
 
-Instead, let's use a proper cpumask that gets allocated, giving
-the driver a chance to actually work with things like irqbalance
-as well as have a hypothetical 64bit future.
+So we should also consider about bakcporting this patch into linux
+-stable.
 
-Cc: stable@vger.kernel.org
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Link: http://lkml.kernel.org/r/HK2PR06MB045211675B43EED794E597B6D56E0@HK2PR06MB0452.apcprd06.prod.outlook.com
+Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
+Suggested-by: Changkuo Shi <shi.changkuo@h3c.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/soc/ti/knav_qmss.h       |    4 ++--
- drivers/soc/ti/knav_qmss_acc.c   |   10 +++++-----
- drivers/soc/ti/knav_qmss_queue.c |   22 +++++++++++++++-------
- 3 files changed, 22 insertions(+), 14 deletions(-)
+ fs/ocfs2/dir.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/soc/ti/knav_qmss.h
-+++ b/drivers/soc/ti/knav_qmss.h
-@@ -329,8 +329,8 @@ struct knav_range_ops {
- };
- 
- struct knav_irq_info {
--	int	irq;
--	u32	cpu_map;
-+	int		irq;
-+	struct cpumask	*cpu_mask;
- };
- 
- struct knav_range_info {
---- a/drivers/soc/ti/knav_qmss_acc.c
-+++ b/drivers/soc/ti/knav_qmss_acc.c
-@@ -205,18 +205,18 @@ static int knav_range_setup_acc_irq(stru
- {
- 	struct knav_device *kdev = range->kdev;
- 	struct knav_acc_channel *acc;
--	unsigned long cpu_map;
-+	struct cpumask *cpu_mask;
- 	int ret = 0, irq;
- 	u32 old, new;
- 
- 	if (range->flags & RANGE_MULTI_QUEUE) {
- 		acc = range->acc;
- 		irq = range->irqs[0].irq;
--		cpu_map = range->irqs[0].cpu_map;
-+		cpu_mask = range->irqs[0].cpu_mask;
- 	} else {
- 		acc = range->acc + queue;
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
-+		cpu_mask = range->irqs[queue].cpu_mask;
- 	}
- 
- 	old = acc->open_mask;
-@@ -239,8 +239,8 @@ static int knav_range_setup_acc_irq(stru
- 			acc->name, acc->name);
- 		ret = request_irq(irq, knav_acc_int_handler, 0, acc->name,
- 				  range);
--		if (!ret && cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (!ret && cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
---- a/drivers/soc/ti/knav_qmss_queue.c
-+++ b/drivers/soc/ti/knav_qmss_queue.c
-@@ -118,19 +118,17 @@ static int knav_queue_setup_irq(struct k
- 			  struct knav_queue_inst *inst)
- {
- 	unsigned queue = inst->id - range->queue_base;
--	unsigned long cpu_map;
- 	int ret = 0, irq;
- 
- 	if (range->flags & RANGE_HAS_IRQ) {
- 		irq = range->irqs[queue].irq;
--		cpu_map = range->irqs[queue].cpu_map;
- 		ret = request_irq(irq, knav_queue_int_handler, 0,
- 					inst->irq_name, inst);
- 		if (ret)
- 			return ret;
- 		disable_irq(irq);
--		if (cpu_map) {
--			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
-+		if (range->irqs[queue].cpu_mask) {
-+			ret = irq_set_affinity_hint(irq, range->irqs[queue].cpu_mask);
- 			if (ret) {
- 				dev_warn(range->kdev->dev,
- 					 "Failed to set IRQ affinity\n");
-@@ -1262,9 +1260,19 @@ static int knav_setup_queue_range(struct
- 
- 		range->num_irqs++;
- 
--		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3)
--			range->irqs[i].cpu_map =
--				(oirq.args[2] & 0x0000ff00) >> 8;
-+		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3) {
-+			unsigned long mask;
-+			int bit;
-+
-+			range->irqs[i].cpu_mask = devm_kzalloc(dev,
-+							       cpumask_size(), GFP_KERNEL);
-+			if (!range->irqs[i].cpu_mask)
-+				return -ENOMEM;
-+
-+			mask = (oirq.args[2] & 0x0000ff00) >> 8;
-+			for_each_set_bit(bit, &mask, BITS_PER_LONG)
-+				cpumask_set_cpu(bit, range->irqs[i].cpu_mask);
-+		}
- 	}
- 
- 	range->num_irqs = min(range->num_irqs, range->num_queues);
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -1897,8 +1897,7 @@ static int ocfs2_dir_foreach_blk_el(stru
+ 				/* On error, skip the f_pos to the
+ 				   next block. */
+ 				ctx->pos = (ctx->pos | (sb->s_blocksize - 1)) + 1;
+-				brelse(bh);
+-				continue;
++				break;
+ 			}
+ 			if (le64_to_cpu(de->inode)) {
+ 				unsigned char d_type = DT_UNKNOWN;
 
 
