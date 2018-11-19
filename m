@@ -2,225 +2,102 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE10C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39128C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4B2120823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:31:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IuxNmA/7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XLokIavt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B2120823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 025BE206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:37:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025BE206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726054AbeKSPyN (ORCPT
+        id S1726046AbeKSQAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 10:54:13 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44364 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbeKSPyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 10:54:13 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 334F460764; Mon, 19 Nov 2018 05:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542605502;
-        bh=rJmtezl+uvVVDibL8rXm3iwIAbBSwnyPxr3Tib+s5Wk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IuxNmA/7sbefR7NHRDr/BwqZL9u1x4xajDbIjJHJGgQ3eH9lYLy7LKQ9RcaP5hb3F
-         pdF/KTG3K1pSNarqlYZtAhniaayczGSo4hEFR+zYDURRuHubsKlvPteQmMhv00EJyk
-         oLR8JO108DxSSzZgSKOX9xaOGC9EvfdwGI7WNqq0=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 5C77560764;
-        Mon, 19 Nov 2018 05:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542605501;
-        bh=rJmtezl+uvVVDibL8rXm3iwIAbBSwnyPxr3Tib+s5Wk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=XLokIavtiwWO9Bg05bGuZwbavDnVNxpKuCYmNuRb71XoxEU44rupaaqwaCZqosa9p
-         KeOAT2y4GPhVuRKpAYbMQ7aXdav/oFeFSHnntol2JlHdhHc6YPFSeK5NZUH0tBOAQG
-         CorP1WYo9CXEToFyr9+Qj3q2EHQ2ew1VNw+ixtPM=
+        Mon, 19 Nov 2018 11:00:19 -0500
+Received: from mga05.intel.com ([192.55.52.43]:50437 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725908AbeKSQAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 11:00:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 21:37:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,251,1539673200"; 
+   d="scan'208";a="109409068"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 18 Nov 2018 21:37:47 -0800
+Received: from [10.252.19.222] (abudanko-mobl.ccr.corp.intel.com [10.252.19.222])
+        by linux.intel.com (Postfix) with ESMTP id 8F5C5580378;
+        Sun, 18 Nov 2018 21:37:43 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: [PATCH v1 0/2]: Documentation/admin-guide: introduce
+ perf-security.rst file and extend perf_event_paranoid documentation
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jonatan Corbet <corbet@lwn.net>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
+Organization: Intel Corp.
+Message-ID: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
+Date:   Mon, 19 Nov 2018 08:37:41 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Mon, 19 Nov 2018 11:01:41 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Andy Gross <andy.gross@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v5 14/18] arm64: dts: qcom: qcs404: Add remoteproc nodes
-In-Reply-To: <20181109094417.12109-15-vkoul@kernel.org>
-References: <20181109094417.12109-1-vkoul@kernel.org>
- <20181109094417.12109-15-vkoul@kernel.org>
-Message-ID: <718e105af9caeba834281dcab4aed499@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn/Vinod,
 
-On 2018-11-09 15:14, Vinod Koul wrote:
-> From: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Add the TrustZone based remoteproc nodes and their glink edges for
-> adsp, cdsp and wcss. Enable them for EVB common DTS.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi | 12 +++++
->  arch/arm64/boot/dts/qcom/qcs404.dtsi     | 93 
-> ++++++++++++++++++++++++++++++++
->  2 files changed, 105 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> index db035fef67d9..a39924efebe4 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
-> @@ -21,6 +21,18 @@
->  	};
->  };
-> 
-> +&remoteproc_adsp {
-> +	status = "ok";
-> +};
-> +
-> +&remoteproc_cdsp {
-> +	status = "ok";
-> +};
-> +
-> +&remoteproc_wcss {
-> +	status = "ok";
-> +};
-> +
->  &rpm_requests {
->  	pms405-regulators {
->  		compatible = "qcom,rpm-pms405-regulators";
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> index 46fce264c8fe..06607419c9d6 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -80,6 +80,99 @@
->  		method = "smc";
->  	};
-> 
-> +	remoteproc_adsp: remoteproc-adsp {
-> +		compatible = "qcom,qcs404-adsp-pas";
-> +
-> +		interrupts-extended = <&intc GIC_SPI 293 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +				  "handover", "stop-ack";
-> +
-> +		clocks = <&xo_board>;
-> +		clock-names = "xo";
-> +
-> +		memory-region = <&adsp_fw_mem>;
-> +
-> +		qcom,smem-states = <&adsp_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +
-> +		status = "disabled";
-> +
-> +		glink-edge {
-> +			interrupts = <GIC_SPI 289 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			qcom,remote-pid = <2>;
-> +			mboxes = <&apcs_glb 8>;
-> +
-> +			label = "adsp";
-> +		};
-> +	};
-> +
-> +	remoteproc_cdsp: remoteproc-cdsp {
-> +		compatible = "qcom,qcs404-cdsp-pas";
-> +
-> +		interrupts-extended = <&intc GIC_SPI 229 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&cdsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +				  "handover", "stop-ack";
-> +
-> +		clocks = <&xo_board>;
-> +		clock-names = "xo";
-> +
-> +		memory-region = <&cdsp_fw_mem>;
-> +
-> +		qcom,smem-states = <&cdsp_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +
-> +		status = "disabled";
-> +
-> +		glink-edge {
-> +			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			qcom,remote-pid = <5>;
-> +			mboxes = <&apcs_glb 12>;
-> +
-> +			label = "cdsp";
-> +		};
-> +	};
-> +
-> +	remoteproc_wcss: remoteproc-wcss {
-> +		compatible = "qcom,qcs404-wcss-pas";
-> +
-> +		interrupts-extended = <&intc GIC_SPI 153 IRQ_TYPE_EDGE_RISING>,
-> +				      <&wcss_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> +				      <&wcss_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> +				      <&wcss_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> +				      <&wcss_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> +		interrupt-names = "wdog", "fatal", "ready",
-> +				  "handover", "stop-ack";
+To facilitate informed decision making by system administrators [1]
+to permit and manage access to PCL/Perf [2],[3] performance monitoring 
+for multiple users perf-security.rst document suggested by Thomas Gleixner 
+is introduced [4] that:
 
-I can see that wcss remoteproc uses an additional smp2p interrupt called 
-shutdown-ack
-downstream you may want to skip wcss entry for now till the shutdown-ack 
-gets posted,
-reviewed and merged.
+a) states PCL/Perf access security concerns for multi user environment
+b) refers to base Linux access control and management principles
+c) extends documentation of possible perf_event_paranoid knob settings 
 
-> +
-> +		clocks = <&xo_board>;
-> +		clock-names = "xo";
-> +
-> +		memory-region = <&wlan_fw_mem>;
-> +
-> +		qcom,smem-states = <&wcss_smp2p_out 0>;
-> +		qcom,smem-state-names = "stop";
-> +
-> +		status = "disabled";
-> +
-> +		glink-edge {
-> +			interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			qcom,remote-pid = <1>;
-> +			mboxes = <&apcs_glb 16>;
-> +
-> +			label = "wcss";
-> +		};
-> +	};
-> +
->  	reserved-memory {
->  		#address-cells = <2>;
->  		#size-cells = <2>;
+The file serves as single knowledge source for PCL/Perf security and 
+access control related matter according to decisions, discussion and  
+PoC prototype previously made here [5],[6].
 
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+The file can later be extended with information describing:
+
+a) PCL/Perf usage models and its security implications
+b) PCL/Perf user interface, its changes and related security implications
+c) security related implications of monitoring by a specific PCL PMU [2]
+
+---
+ Alexey Budankov (2):
+	Documentation/admin-guide: update admin-guide index.rst
+	Documentation/admin-guide: introduce perf-security.rst file
+
+ Documentation/admin-guide/index.rst         |  1 +
+ Documentation/admin-guide/perf-security.rst | 83 +++++++++++++++++++++++++++++
+ 2 files changed, 84 insertions(+)
+
+---
+[1] https://marc.info/?l=linux-kernel&m=153815883923913&w=2
+[2] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+[3] https://perf.wiki.kernel.org/index.php/Main_Page
+[4] https://marc.info/?l=linux-kernel&m=153837512226838&w=2
+[5] https://marc.info/?l=linux-kernel&m=153736008310781&w=2
+[6] https://lkml.org/lkml/2018/5/21/156
