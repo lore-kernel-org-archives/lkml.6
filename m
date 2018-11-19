@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB1F0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA582151B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D6E82151B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbXAMSVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FA582151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I6HU+Cf9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6E82151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405061AbeKTDX3 (ORCPT
+        id S2405071AbeKTDXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35506 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbeKTDX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:28 -0500
+        id S2404341AbeKTDXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2424214E0;
-        Mon, 19 Nov 2018 16:59:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55082214E0;
+        Mon, 19 Nov 2018 16:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646753;
-        bh=5Ey/zO5+es0ot1ptFqlEOwZSRZhRUn7c49uDpBkpHHY=;
+        s=default; t=1542646755;
+        bh=tmc7RQzsWnGuVthlpPqUy7AEn5bmWu/WV86Q7XWPnuE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XbXAMSVfA9P7yPLbX3aLEUbOQZuQmG04hKOWrvrAIUi2CcMcIKVA8sOSojWUc0gKX
-         uT2qCqcu41baFeLH0rwCBrmYq7Db1rslmnX1Q7ijjznocJ0hcYVsKuYpsl6YsL9nYJ
-         /ZhfjrJW62OUgemVB/SgbihTETW1cMGV4oPRCg94=
+        b=I6HU+Cf9156gDvOF6q/rlwbzeYU+rouB11Kbya2gJDzbfikMU1Igv63n30s58zjsK
+         tApNsv1O6yGyZaLVVsOuv6bpHh1nNJRhHsyFmsIYG3hdW1T48uAvOKz7K+gBty0B51
+         sH3ROvqKoEdLxonhxLgOfzBixCM2WWxWGMAl77rM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 078/160] media: em28xx: fix input name for Terratec AV 350
-Date:   Mon, 19 Nov 2018 17:28:37 +0100
-Message-Id: <20181119162638.781033654@linuxfoundation.org>
+Subject: [PATCH 4.4 079/160] media: em28xx: make v4l2-compliance happier by starting sequence on zero
+Date:   Mon, 19 Nov 2018 17:28:38 +0100
+Message-Id: <20181119162638.931763270@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,37 +64,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 15644bfa195bd166d0a5ed76ae2d587f719c3dac upstream.
+commit afeaade90db4c5dab93f326d9582be1d5954a198 upstream.
 
-Instead of using a register value, use an AMUX name, as otherwise
-VIDIOC_G_AUDIO would fail.
+The v4l2-compliance tool complains if a video doesn't start
+with a zero sequence number.
+
+While this shouldn't cause any real problem for apps, let's
+make it happier, in order to better check the v4l2-compliance
+differences before and after patchsets.
+
+This is actually an old issue. It is there since at least its
+videobuf2 conversion, e. g. changeset 3829fadc461 ("[media]
+em28xx: convert to videobuf2"), if VB1 wouldn't suffer from
+the same issue.
 
 Cc: stable@vger.kernel.org
-Fixes: 766ed64de554 ("V4L/DVB (11827): Add support for Terratec Grabster AV350")
+Fixes: d3829fadc461 ("[media] em28xx: convert to videobuf2")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/em28xx/em28xx-cards.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/usb/em28xx/em28xx-cards.c
-+++ b/drivers/media/usb/em28xx/em28xx-cards.c
-@@ -2021,13 +2021,13 @@ struct em28xx_board em28xx_boards[] = {
- 		.input           = { {
- 			.type     = EM28XX_VMUX_COMPOSITE1,
- 			.vmux     = TVP5150_COMPOSITE1,
--			.amux     = EM28XX_AUDIO_SRC_LINE,
-+			.amux     = EM28XX_AMUX_LINE_IN,
- 			.gpio     = terratec_av350_unmute_gpio,
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1149,6 +1149,8 @@ static void em28xx_ctrl_notify(struct v4
+ {
+ 	struct em28xx *dev = priv;
  
- 		}, {
- 			.type     = EM28XX_VMUX_SVIDEO,
- 			.vmux     = TVP5150_SVIDEO,
--			.amux     = EM28XX_AUDIO_SRC_LINE,
-+			.amux     = EM28XX_AMUX_LINE_IN,
- 			.gpio     = terratec_av350_unmute_gpio,
- 		} },
- 	},
++	dev->v4l2->field_count = 0;
++
+ 	/*
+ 	 * In the case of non-AC97 volume controls, we still need
+ 	 * to do some setups at em28xx, in order to mute/unmute
 
 
