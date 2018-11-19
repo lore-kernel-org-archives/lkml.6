@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F78C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE23C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7532A21527
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0975221508
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVwwZ7Qz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7532A21527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZOuVPSxG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0975221508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406384AbeKTD2J (ORCPT
+        id S2406394AbeKTD2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405677AbeKTD2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:09 -0500
+        id S2405461AbeKTD2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCFD22146D;
-        Mon, 19 Nov 2018 17:03:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74E742151B;
+        Mon, 19 Nov 2018 17:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647032;
-        bh=yTDQsv2glqw1QuaUEkHdG9IxqHJyT56HJCDPPTpNWlw=;
+        s=default; t=1542647035;
+        bh=TVqR/ZcZqqPtElbvzEZHMoBNgGi3GnH5mImh0iRVV3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BVwwZ7Qzf8puStNBYcCVoMA4W6x+Eybx5j96dzx5sZNXjw8Xhxl1pygAnFTNnmb3W
-         jh7IYboHPmeOwASeJcoZCx7BYSwHFznUjy2qz3zkRbrtySqxa9IB3ia/MLavXrSzxe
-         oeIr2+N38mbZiTnljaLvsgjZ2vys55at589IyPc8=
+        b=ZOuVPSxGw45+pP0ISojaMZwx2UO9gsMJ6uA7fp7+qXzsmoi1UHDEHjzySEMSu+29f
+         GX3TMPp1qe+jmGuUiNJ6NuNO00dDXThD588v3BdQdVHqkPo+MJFPD/SE8i8hQCvBX2
+         rX1pewtWQJcbxrWP4dKnWfu30DjxqcjFRSgaxdRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Peter Chen <peter.chen@nxp.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 24/90] usb: chipidea: Prevent unbalanced IRQ disable
-Date:   Mon, 19 Nov 2018 17:29:06 +0100
-Message-Id: <20181119162624.876415904@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Dominik Brodowski <linux@dominikbrodowski.net>
+Subject: [PATCH 3.18 03/90] pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
+Date:   Mon, 19 Nov 2018 17:28:45 +0100
+Message-Id: <20181119162621.195160955@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -63,35 +63,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Loic Poulain <loic.poulain@linaro.org>
+From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
 
-[ Upstream commit 8b97d73c4d72a2abf58f8e49062a7ee1e5f1334e ]
+commit 95691e3eddc41da2d1cd3cca51fecdfb46bd85bc upstream.
 
-The ChipIdea IRQ is disabled before scheduling the otg work and
-re-enabled on otg work completion. However if the job is already
-scheduled we have to undo the effect of disable_irq int order to
-balance the IRQ disable-depth value.
+Currently, "disable_clkrun" yenta_socket module parameter is only
+implemented for TI CardBus bridges.
+Add also an implementation for Ricoh bridges that have the necessary
+setting documented in publicly available datasheets.
 
-Fixes: be6b0c1bd0be ("usb: chipidea: using one inline function to cover queue work operations")
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Peter Chen <peter.chen@nxp.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Tested on a RL5C476II with a Sunrich C-160 CardBus NIC that doesn't work
+correctly unless the CLKRUN protocol is disabled.
+
+Let's also make it clear in its description that the "disable_clkrun"
+module parameter only works on these two previously mentioned brands of
+CardBus bridges.
+
+Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/usb/chipidea/otg.h |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/chipidea/otg.h
-+++ b/drivers/usb/chipidea/otg.h
-@@ -20,7 +20,8 @@ void ci_handle_vbus_change(struct ci_hdr
- static inline void ci_otg_queue_work(struct ci_hdrc *ci)
- {
- 	disable_irq_nosync(ci->irq);
--	queue_work(ci->wq, &ci->work);
-+	if (queue_work(ci->wq, &ci->work) == false)
-+		enable_irq(ci->irq);
+---
+ drivers/pcmcia/ricoh.h        |   35 +++++++++++++++++++++++++++++++++++
+ drivers/pcmcia/yenta_socket.c |    3 ++-
+ 2 files changed, 37 insertions(+), 1 deletion(-)
+
+--- a/drivers/pcmcia/ricoh.h
++++ b/drivers/pcmcia/ricoh.h
+@@ -119,6 +119,10 @@
+ #define  RL5C4XX_MISC_CONTROL           0x2F /* 8 bit */
+ #define  RL5C4XX_ZV_ENABLE              0x08
+ 
++/* Misc Control 3 Register */
++#define RL5C4XX_MISC3			0x00A2 /* 16 bit */
++#define  RL5C47X_MISC3_CB_CLKRUN_DIS	BIT(1)
++
+ #ifdef __YENTA_H
+ 
+ #define rl_misc(socket)		((socket)->private[0])
+@@ -156,6 +160,35 @@ static void ricoh_set_zv(struct yenta_so
+         }
  }
  
- #endif /* __DRIVERS_USB_CHIPIDEA_OTG_H */
++static void ricoh_set_clkrun(struct yenta_socket *socket, bool quiet)
++{
++	u16 misc3;
++
++	/*
++	 * RL5C475II likely has this setting, too, however no datasheet
++	 * is publicly available for this chip
++	 */
++	if (socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C476 &&
++	    socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C478)
++		return;
++
++	if (socket->dev->revision < 0x80)
++		return;
++
++	misc3 = config_readw(socket, RL5C4XX_MISC3);
++	if (misc3 & RL5C47X_MISC3_CB_CLKRUN_DIS) {
++		if (!quiet)
++			dev_dbg(&socket->dev->dev,
++				"CLKRUN feature already disabled\n");
++	} else if (disable_clkrun) {
++		if (!quiet)
++			dev_info(&socket->dev->dev,
++				 "Disabling CLKRUN feature\n");
++		misc3 |= RL5C47X_MISC3_CB_CLKRUN_DIS;
++		config_writew(socket, RL5C4XX_MISC3, misc3);
++	}
++}
++
+ static void ricoh_save_state(struct yenta_socket *socket)
+ {
+ 	rl_misc(socket) = config_readw(socket, RL5C4XX_MISC);
+@@ -172,6 +205,7 @@ static void ricoh_restore_state(struct y
+ 	config_writew(socket, RL5C4XX_16BIT_IO_0, rl_io(socket));
+ 	config_writew(socket, RL5C4XX_16BIT_MEM_0, rl_mem(socket));
+ 	config_writew(socket, RL5C4XX_CONFIG, rl_config(socket));
++	ricoh_set_clkrun(socket, true);
+ }
+ 
+ 
+@@ -197,6 +231,7 @@ static int ricoh_override(struct yenta_s
+ 	config_writew(socket, RL5C4XX_CONFIG, config);
+ 
+ 	ricoh_set_zv(socket);
++	ricoh_set_clkrun(socket, false);
+ 
+ 	return 0;
+ }
+--- a/drivers/pcmcia/yenta_socket.c
++++ b/drivers/pcmcia/yenta_socket.c
+@@ -26,7 +26,8 @@
+ 
+ static bool disable_clkrun;
+ module_param(disable_clkrun, bool, 0444);
+-MODULE_PARM_DESC(disable_clkrun, "If PC card doesn't function properly, please try this option");
++MODULE_PARM_DESC(disable_clkrun,
++		 "If PC card doesn't function properly, please try this option (TI and Ricoh bridges only)");
+ 
+ static bool isa_probe = 1;
+ module_param(isa_probe, bool, 0444);
 
 
