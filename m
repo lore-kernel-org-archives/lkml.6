@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 167A7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0F0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D43CE214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80B78214E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VogZ1cuk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43CE214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="muvov+9y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B78214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406509AbeKTD2g (ORCPT
+        id S2406523AbeKTD2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406494AbeKTD2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:35 -0500
+        id S2406494AbeKTD2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BFD3214D9;
-        Mon, 19 Nov 2018 17:04:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A6E92146D;
+        Mon, 19 Nov 2018 17:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647058;
-        bh=pozPn9haEuypv2AoQVgEofmtzyq2xEDk9mgIUeQrW8c=;
+        s=default; t=1542647061;
+        bh=KAYOIM3BxHanHeiUM824R3ME1CIPfgzqSb7w4ygfFvg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VogZ1cuk9724aQWSCm2tSD59vlRKVWpxqMcEvGYxmyE/+nVndCkUvF5pP5dggeXaz
-         88JgF7/jMqGesOe4NV0391/aNs4+yidDePXtCcCUn6ZEGD+HKzpCC8trsFEZ6OJS0p
-         FG5fB9/xrW8UZ9bB0VthU4bBLvKYzyaGRyhdMfKM=
+        b=muvov+9ySiB26Xrj1YKqPKw9xolqYdzK8Pr74AeV5kP7EVbBvl+8V7BeblyQsH48k
+         /mlJwk1FhGpDUGwZ3U7J0sKJGdbAE7YYc/COzokzjg9wSGsLqEnlaZYPX0oxEDfxTg
+         FNEdIhKAefQZw6gOMfd80DW1Ed32jeCONPWQDB5M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 35/90] kbuild: fix kernel/bounds.c W=1 warning
-Date:   Mon, 19 Nov 2018 17:29:17 +0100
-Message-Id: <20181119162626.520784156@linuxfoundation.org>
+        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 3.18 36/90] iio: adc: at91: fix acking DRDY irq on simple conversions
+Date:   Mon, 19 Nov 2018 17:29:18 +0100
+Message-Id: <20181119162626.667625701@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -66,54 +65,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
+commit bc1b45326223e7e890053cf6266357adfa61942d upstream.
 
-Building any configuration with 'make W=1' produces a warning:
+When doing simple conversions, the driver did not acknowledge the DRDY irq.
+If this irq status is not acked, it will be left pending, and as soon as a
+trigger is enabled, the irq handler will be called, it doesn't know why
+this status has occurred because no channel is pending, and then it will go
+int a irq loop and board will hang.
+To avoid this situation, read the LCDR after a raw conversion is done.
 
-kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
-
-When also passing -Werror, this prevents us from building any other files.
-Nobody ever calls the function, but we can't make it 'static' either
-since we want the compiler output.
-
-Calling it 'main' instead however avoids the warning, because gcc
-does not insist on having a declaration for main.
-
-Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/bounds.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/iio/adc/at91_adc.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -12,7 +12,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
- 
--void foo(void)
-+int main(void)
- {
- 	/* The enum constants to put into include/generated/bounds.h */
- 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-@@ -22,4 +22,6 @@ void foo(void)
- #endif
- 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
- 	/* End of constants */
-+
-+	return 0;
- }
+--- a/drivers/iio/adc/at91_adc.c
++++ b/drivers/iio/adc/at91_adc.c
+@@ -276,6 +276,8 @@ static void handle_adc_eoc_trigger(int i
+ 		iio_trigger_poll(idev->trig);
+ 	} else {
+ 		st->last_value = at91_adc_readl(st, AT91_ADC_CHAN(st, st->chnb));
++		/* Needed to ACK the DRDY interruption */
++		at91_adc_readl(st, AT91_ADC_LCDR);
+ 		st->done = true;
+ 		wake_up_interruptible(&st->wq_data_avail);
+ 	}
 
 
