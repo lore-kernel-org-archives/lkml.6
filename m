@@ -2,106 +2,142 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB3DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40408C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5A92086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:31:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027C02086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnR4IUMJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5A92086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kvf8Z2I0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027C02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbeKTG4o (ORCPT
+        id S1730776AbeKTG7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:56:44 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37512 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728938AbeKTG4o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:56:44 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u3-v6so12716191pfm.4;
-        Mon, 19 Nov 2018 12:31:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=qsErZEFmxBc/B63p3QJR+myJ+mmlcz/hg4isze/y40c=;
-        b=GnR4IUMJ1nGnUEzQEXhbdvx4BQN4T0qKAvZGoiuGT30Zo8Y/INvlIERaUr6TTOr8UH
-         cGidAx5bDq75LW9BDJ9PdzCwVeSAS6mTX0P+A+Q1/UpP3bl+E914xAbYtTWthkk1RwmU
-         QXVlpBgRfrD7XbFDqT5VZFPHEbkeRUg7d9krxy41VockWd+PjwW21/9JFaDneRzNnAQB
-         GkddmYdgX6agD+nIr0uk2dQLCxlyZ/Wvxtfx2PKJUf+cFptIcGf3D2Ah+SkLVBABSfWq
-         Qna91x/k5MJlbJ51iA6OEBRamKbW8LAKoPtEs0+LNfx79hNl6Aqpw7pXb64APqgxlyih
-         1Dkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qsErZEFmxBc/B63p3QJR+myJ+mmlcz/hg4isze/y40c=;
-        b=YsdZxYATM/eAXUzq7MR/6jWHgu2/fC1t1WXqX/MJeFSb/1/hlu8bdqzdvhjVe67dod
-         RA4tVHKsEP0bnuOD5++y0cxxXXK/05jxWgth/zLZgpbLWIpXD6wpcs6DeFbbLgOI0M6H
-         p2msDf0vmuZR7mZ7RsaNeMguja/rxEVImbi76MdTw6smuS95EdaOdhWg6DzG2mO0kep7
-         jYcF8rPX7FCx0J9uCsuEpe7Piru3O/f2+0tG0hpw0NEOJMrvMB3Q+gbDPLrhGV1mnv16
-         BfEaZkBXSjqi+5ycgq/X29JeKLCtdLA4SzHcoBtnnvknwof+CRY+3tWFd4zvgtauoEZL
-         ANIg==
-X-Gm-Message-State: AGRZ1gJwhHwRVnt8Yi1goxJq4RVEHoX/mz1Ot8Edtob8YasgWCsKW4hH
-        wYuI/R7/wl72cFkK+tpCDQSGzupB
-X-Google-Smtp-Source: AJdET5eHkzNHiv9dlZX32EDSCnC4tIRWJYFkbByje5oCJ7v1JsPjVwWb75sShi9rvJZc6r+p61gJ5g==
-X-Received: by 2002:a63:5153:: with SMTP id r19mr21331516pgl.281.1542659484740;
-        Mon, 19 Nov 2018 12:31:24 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id i63-v6sm6251920pfi.66.2018.11.19.12.31.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 12:31:24 -0800 (PST)
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     jdelvare@suse.com, linux@roeck-us.net
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org
-Subject: [PATCH] Documentation: hwmon: Add descriptions for ina2xx sysfs entries
-Date:   Mon, 19 Nov 2018 12:31:16 -0800
-Message-Id: <20181119203116.25589-1-nicoleotsuka@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Nov 2018 01:59:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728938AbeKTG7P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:59:15 -0500
+Received: from [10.80.45.159] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00FD120851;
+        Mon, 19 Nov 2018 20:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542659635;
+        bh=3uKhecW8K14uBnBMOtnnZLwY/FmqbriVrVCRteZ99aE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Kvf8Z2I02HiExO7+Lci5/WYHgwa/6oGk3SsuNK93xAzRxdm47m8OS5ecrnIeU+ve7
+         qEZFRRrODATU1m1iLbt7yW4QAgJw+znhcP+yVn5Emb5hnYB0jBPfJe0JuYfFhJjS9K
+         G75nldkt9mtUyhq1m5dNmFOG/KifGdqV56GpIup0=
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+To:     Alex_Gagniuc@Dellteam.com, mr.nuke.me@gmail.com,
+        keith.busch@intel.com
+Cc:     baicar.tyler@gmail.com, Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
+        lukas@wunner.de, bhelgaas@google.com, rjw@rjwysocki.net,
+        lenb@kernel.org, ruscur@russell.cc, sbobroff@linux.ibm.com,
+        oohall@gmail.com, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+ <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+ <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+ <20181119165318.GB26595@localhost.localdomain>
+ <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+ <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
+ <20181119174127.GE26595@localhost.localdomain>
+ <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
+ <20181119181051.GA26707@localhost.localdomain>
+ <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
+ <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
+ <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
+ <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
+Date:   Mon, 19 Nov 2018 15:33:52 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few sysfs entries being exposed to user space by the
-ina2xx hwmon driver while not getting explicitly documented. So
-this patch just adds a description section for them.
+On 11/19/2018 3:16 PM, Alex_Gagniuc@Dellteam.com wrote:
+> On 11/19/2018 01:32 PM, Sinan Kaya wrote:
+>> ACPI 6.2:
+>>
+>> 18.3.2.4 PCI Express Root Port AER Structure
+>>
+>> Flags:
+>>
+>> Bit [0] - FIRMWARE_FIRST: If set, this bit indicates to the OSPM that system
+>> firmware will handle errors from this source first.
+>> Bit [1] - GLOBAL: If set, indicates that the settings contained in this
+>> structure apply globally to all PCI Express Devices.
+>> All other bits must be set to zero.
+>>
+>> It doesn't say shall, may or might. It says will.
+> 
+> It says "system firmware will handle errors". It does not say "system
+> firmware owns AER registers". In absence on any descriptor text on the
+> meaning of these tables, this really looks to me like it should be
+> interpreted as a descriptor of APEI error sources, not a mutex on who
+> writes to certain bits-- AER in this case.
 
-Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
----
- Documentation/hwmon/ina2xx | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+True. I was trying to get it out in a rush. I omitted words.
 
-diff --git a/Documentation/hwmon/ina2xx b/Documentation/hwmon/ina2xx
-index b8df81f6d6bc..0f36c021192d 100644
---- a/Documentation/hwmon/ina2xx
-+++ b/Documentation/hwmon/ina2xx
-@@ -62,3 +62,18 @@ bus and shunt voltage conversion times multiplied by the averaging rate. We
- don't touch the conversion times and only modify the number of averages. The
- lower limit of the update_interval is 2 ms, the upper limit is 2253 ms.
- The actual programmed interval may vary from the desired value.
-+
-+General sysfs entries
-+-------------
-+
-+in0_input		Shunt voltage(mV) channel
-+in1_input		Bus voltage(mV) channel
-+curr1_input		Current(mA) measurement channel
-+power1_input		Power(uW) measurement channel
-+shunt_resistor		Shunt resistance(uOhm) channel
-+
-+Sysfs entries for ina226, ina230 and ina231 only
-+-------------
-+
-+update_interval		data conversion time; affects number of samples used
-+			to average results for shunt and bus voltages.
--- 
-2.17.1
+However; table assumes governance about for which entities firmware first
+should be enabled. There is no cross reference to _OSC or permission
+negotiation like _OST.
+
+> 
+> I don't think that is contradictory or inconsistent.
+> I also wasn't able to find any reference to HEST in UEFI 2.7, only in
+> ACPI spec.
+
+You are right. It was a confusion on my side. The right place to look is
+ACPI specification. I was involved in this a couple of years ago. Some pieces
+were in UEFI spec. Other pieces were in ACPI. I guess they got unified
+now.
+
+> 
+>> I think It depends on your PCI topology.
+>>
+>> For other topologies with multiple PCI root complexes, I can see this being
+>> used per root complex flag to indicate which root complex needs firmware first
+>> and which one doesn't.
+> 
+> _OSC is per root bus, so it's already granular enough, right? Why would
+> it depend on PCI topology?
+> 
+
+I was speculating. I don't have the full background on this. Need to consult
+the spec developers.
+
+>> As I said in my previous email, the right place to talk about this is UEFI
+>> forum.
+> 
+> The way I would present the problem to he spec writers is that, although
+> the spec appears to be consistent, we've seen firmware vendors that made
+> the wrong assumptions about HEST/_OSC. Instead of describing AER
+> ownership with _OSC, they attempted to do it with HEST. So we should add
+> an implementation note, or clarification about this.
+
+I agree.
+
+> 
+> Alex
+> 
 
