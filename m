@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E12BC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167A7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F46214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D43CE214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y8ObDh3H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F46214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VogZ1cuk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43CE214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406493AbeKTD2e (ORCPT
+        id S2406509AbeKTD2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42902 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405461AbeKTD2c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:32 -0500
+        id S2406494AbeKTD2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA95D214D9;
-        Mon, 19 Nov 2018 17:04:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BFD3214D9;
+        Mon, 19 Nov 2018 17:04:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647055;
-        bh=6rhgKeQAd/eGpdgi19mL22FJ/S/xrb9WX3YVtKzYMvw=;
+        s=default; t=1542647058;
+        bh=pozPn9haEuypv2AoQVgEofmtzyq2xEDk9mgIUeQrW8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y8ObDh3HRiH2UwD9YR/Dx+6Q1qLLGV82/UV0qSsLtu52F8IkPmZDPhPUvdPuJ287y
-         aAP816iyVD35JvQKtnpwwsZnA2EXSleCpYNThwwvF0zmTtemV3Ujq9IfEFvIKd5B02
-         44tFznEdGhdJGNX+0VwYm6ifPsMVUGD7j0uurJPM=
+        b=VogZ1cuk9724aQWSCm2tSD59vlRKVWpxqMcEvGYxmyE/+nVndCkUvF5pP5dggeXaz
+         88JgF7/jMqGesOe4NV0391/aNs4+yidDePXtCcCUn6ZEGD+HKzpCC8trsFEZ6OJS0p
+         FG5fB9/xrW8UZ9bB0VthU4bBLvKYzyaGRyhdMfKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
-        James Smart <james.smart@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 26/90] scsi: lpfc: Correct soft lockup when running mds diagnostics
-Date:   Mon, 19 Nov 2018 17:29:08 +0100
-Message-Id: <20181119162625.162444940@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 3.18 35/90] kbuild: fix kernel/bounds.c W=1 warning
+Date:   Mon, 19 Nov 2018 17:29:17 +0100
+Message-Id: <20181119162626.520784156@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,60 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Smart <jsmart2021@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 0ef01a2d95fd62bb4f536e7ce4d5e8e74b97a244 ]
+commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
 
-When running an mds diagnostic that passes frames with the switch, soft
-lockups are detected. The driver is in a CQE processing loop and has
-sufficient amount of traffic that it never exits the ring processing routine,
-thus the "lockup".
+Building any configuration with 'make W=1' produces a warning:
 
-Cap the number of elements in the work processing routine to 64 elements. This
-ensures that the cpu will be given up and the handler reschedule to process
-additional items.
+kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When also passing -Werror, this prevents us from building any other files.
+Nobody ever calls the function, but we can't make it 'static' either
+since we want the compiler output.
+
+Calling it 'main' instead however avoids the warning, because gcc
+does not insist on having a declaration for main.
+
+Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/scsi/lpfc/lpfc_sli.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -3441,6 +3441,7 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 	struct hbq_dmabuf *dmabuf;
- 	struct lpfc_cq_event *cq_event;
- 	unsigned long iflag;
-+	int count = 0;
+---
+ kernel/bounds.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/kernel/bounds.c
++++ b/kernel/bounds.c
+@@ -12,7 +12,7 @@
+ #include <linux/log2.h>
+ #include <linux/spinlock_types.h>
  
- 	spin_lock_irqsave(&phba->hbalock, iflag);
- 	phba->hba_flag &= ~HBA_SP_QUEUE_EVT;
-@@ -3462,16 +3463,22 @@ lpfc_sli_handle_slow_ring_event_s4(struc
- 			if (irspiocbq)
- 				lpfc_sli_sp_handle_rspiocb(phba, pring,
- 							   irspiocbq);
-+			count++;
- 			break;
- 		case CQE_CODE_RECEIVE:
- 		case CQE_CODE_RECEIVE_V1:
- 			dmabuf = container_of(cq_event, struct hbq_dmabuf,
- 					      cq_event);
- 			lpfc_sli4_handle_received_buffer(phba, dmabuf);
-+			count++;
- 			break;
- 		default:
- 			break;
- 		}
+-void foo(void)
++int main(void)
+ {
+ 	/* The enum constants to put into include/generated/bounds.h */
+ 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
+@@ -22,4 +22,6 @@ void foo(void)
+ #endif
+ 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
+ 	/* End of constants */
 +
-+		/* Limit the number of events to 64 to avoid soft lockups */
-+		if (count == 64)
-+			break;
- 	}
++	return 0;
  }
- 
 
 
