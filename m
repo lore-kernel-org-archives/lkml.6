@@ -2,126 +2,142 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6CC2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A4DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B50FC20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B50FC20851
+	by mail.kernel.org (Postfix) with ESMTP id B416420851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:30:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B416420851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730616AbeKTJvp (ORCPT
+        id S1731750AbeKTJ45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:51:45 -0500
-Received: from mga09.intel.com ([134.134.136.24]:39191 "EHLO mga09.intel.com"
+        Tue, 20 Nov 2018 04:56:57 -0500
+Received: from mga12.intel.com ([192.55.52.136]:13278 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725722AbeKTJvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:51:45 -0500
+        id S1728349AbeKTJ45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:56:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:25:42 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:30:53 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="275290910"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga005.jf.intel.com with ESMTP; 19 Nov 2018 15:25:41 -0800
-Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
- protection modes
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
+   d="scan'208";a="93340530"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 15:30:53 -0800
+Subject: [PATCH] x86/mm: Drop usage of __flush_tlb_all() in
+ kernel_physical_mapping_init()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     tglx@linutronix.de
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
         Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Willy Tarreau <w@1wt.eu>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
- <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com>
- <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
- <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de>
- <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
- <20181119193253.GE29258@redhat.com>
- <4d102977-f516-e0b3-b728-e318e36c1449@intel.com>
- <20181119231649.GI29258@redhat.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f420095a-e4a7-6483-e250-0eca535905c2@intel.com>
-Date:   Mon, 19 Nov 2018 15:25:41 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org
+Date:   Mon, 19 Nov 2018 15:19:04 -0800
+Message-ID: <154266954452.2939184.974606608701109493.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <20181119231649.GI29258@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 3:16 PM, Andrea Arcangeli wrote:
-> So you may want to ask why it wasn't written as your "any" vs "any" email:
+Commit f77084d96355 "x86/mm/pat: Disable preemption around
+__flush_tlb_all()" addressed a case where __flush_tlb_all() is called
+without preemption being disabled. It also left a warning to catch other
+cases where preemption is not disabled. That warning triggers for the
+memory hotplug path which is also used for persistent memory enabling:
 
-Presumably because the authors really and truly meant what they said.  I
-was not being as careful in my wording as they were.  :)
+ WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
+ RIP: 0010:__flush_tlb_all+0x1b/0x3a
+ [..]
+ Call Trace:
+  phys_pud_init+0x29c/0x2bb
+  kernel_physical_mapping_init+0xfc/0x219
+  init_memory_mapping+0x1a5/0x3b0
+  arch_add_memory+0x2c/0x50
+  devm_memremap_pages+0x3aa/0x610
+  pmem_attach_disk+0x585/0x700 [nd_pmem]
 
-There is nothing in the spec that says that STIBP disables branch
-prediction itself, or that it keeps a thread from influencing *itself*.
+Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
+and Dave confirmed the expectation for TLB flush is for modifying /
+invalidating existing pte entries, but not initial population [2]. Drop
+the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
+expectation that this path is only ever populating empty entries for the
+linear map. Note, at linear map teardown time there is a call to the
+all-cpu flush_tlb_all() to invalidate the removed mappings.
+
+[1]: https://lore.kernel.org/patchwork/patch/1009434/#1193941
+[2]: https://lore.kernel.org/patchwork/patch/1009434/#1194540
+
+Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: <stable@vger.kernel.org>
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ arch/x86/mm/init_64.c |    6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+index 5fab264948c2..de95db8ac52f 100644
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@ -584,7 +584,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 							   paddr_end,
+ 							   page_size_mask,
+ 							   prot);
+-				__flush_tlb_all();
+ 				continue;
+ 			}
+ 			/*
+@@ -627,7 +626,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
+ 		pud_populate(&init_mm, pud, pmd);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
+ 
+ 	update_page_count(PG_LEVEL_1G, pages);
+ 
+@@ -668,7 +666,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 			paddr_last = phys_pud_init(pud, paddr,
+ 					paddr_end,
+ 					page_size_mask);
+-			__flush_tlb_all();
+ 			continue;
+ 		}
+ 
+@@ -680,7 +677,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
+ 		p4d_populate(&init_mm, p4d, pud);
+ 		spin_unlock(&init_mm.page_table_lock);
+ 	}
+-	__flush_tlb_all();
+ 
+ 	return paddr_last;
+ }
+@@ -733,8 +729,6 @@ kernel_physical_mapping_init(unsigned long paddr_start,
+ 	if (pgd_changed)
+ 		sync_global_pgds(vaddr_start, vaddr_end - 1);
+ 
+-	__flush_tlb_all();
+-
+ 	return paddr_last;
+ }
+ 
+
