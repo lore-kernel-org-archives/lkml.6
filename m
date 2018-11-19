@@ -2,157 +2,167 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B30C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:12:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE36C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:12:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DAAC2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A682075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:12:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nO5L3dEg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DAAC2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="oXMSCEVi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A682075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeKTGhM (ORCPT
+        id S1730670AbeKTGhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:37:12 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36023 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729957AbeKTGhM (ORCPT
+        Tue, 20 Nov 2018 01:37:53 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39039 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730214AbeKTGhx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:37:12 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so7135238pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 12:11:58 -0800 (PST)
+        Tue, 20 Nov 2018 01:37:53 -0500
+Received: by mail-oi1-f195.google.com with SMTP id 192-v6so26336921oii.6;
+        Mon, 19 Nov 2018 12:12:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uvRC36rXsNXiZnvvRR40e4FzmmdFK6vqRNz0Zao0K2M=;
-        b=nO5L3dEgm53OeydXNSnYxOhNHwB2KJu3TRJvXtRmJYt7kt3qK31s+d0CyL1V2AepsW
-         HLS6K57IqygFI2omIJZxzr/QJ59Dt6pNAMYH5HG3lA9Zw0GCv36/y5YHmhFD0BUkgPiG
-         T5rExH+g8/UFLKbhUy6yak75l+1NZTkaVhiFjGVK1Wheio4lbHDxkxBr3TgXEFidI5QV
-         ++XkWPzyammbQKtvd1xqRvbQeEUy4utW13WViotpKw0eAu9yi6Og6gUCUjwYHPl66X6S
-         6ZNi50xl9v3/F6C8Emo8SHuYzzueZTBTo/DaTiw2nMELJUkFiiB6SOtzTf39+snTHCbl
-         grtA==
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sWqRt1hx9afwx1pA4ot31NcExm8qubHQTBZSMfxxSbg=;
+        b=oXMSCEVix3pfFdd5P0Bu+TZFKlIUwEZnsgHEJmFKM7r4vHAUvqXOmMWjl1i5JsiJik
+         9vlqosggm0VEraOwSRFAhkMdg0QjsAmSMyf/uZaQyn/ebQ3Lq9Jul4PXh0ZzCSBDih1k
+         DuWKVICETPTsO3RUHIlJsSchT7OrB92ax8+OPXBEVuGt3WotN3CWxQvORG4UPc/5qfnr
+         MvEE/naWr4RQrvBguJjSUrlEDriIV6/xMM6X132548dZIGP0WUIacrPkl8P95x6l+jZC
+         Nw29lvri+CvW9pgZok0LNd6Y/FGvHtvYsSa8GPh3ZvGstgi9eDzOOa1RUwSmylIqxXtD
+         P7iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uvRC36rXsNXiZnvvRR40e4FzmmdFK6vqRNz0Zao0K2M=;
-        b=EkA8g0tSbPDI6w6b51MMNmYalazoR7DV6dFV//2dNDyqjkzJqFZLYTb+nKk4/A9Uj1
-         u8XqVTMKd2bOJ/9p8ha+XpZH5cNy610ev+4jZNKWYiSj5W119jVvPVjNFDpLKiMiYPQl
-         ufCudKX6Ojzd+7e0Kbad+dqDE5u/Ag7Ph0tOVnOoFZF7Exi0T7RpKMus5e06xANpiMBv
-         WqHp/XvqX/R45ysWRGY7wk2xWUV2QleW0bQq+AbnmYhNt4e/QmxzrtxKikm9Su8Tu6GR
-         VfSvy72YAN3flyKaG+KXWDYxOiEgW4Qi4ZPh1MJFePBEgBQDy2wRcWMCVsc5tjPchp/v
-         Zi2A==
-X-Gm-Message-State: AGRZ1gLwsQsjbeuglCoxid26UlD8OjPqXJ+b5kCC+uMBDN2XWWuTQntv
-        yHg+D1G9Sn98PNj+tG6rqFmUPQ==
-X-Google-Smtp-Source: AJdET5dLVXYI0787gY/cnzC5nocCn2FhHx6xqd+eC9wB8gK7UB4tT0WPSZ1GLgM1QoseJ59Kkklu7Q==
-X-Received: by 2002:a63:1204:: with SMTP id h4mr21425509pgl.51.1542658317828;
-        Mon, 19 Nov 2018 12:11:57 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id x27sm56696559pfe.178.2018.11.19.12.11.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 12:11:56 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gOptk-0005xv-3X; Mon, 19 Nov 2018 13:11:56 -0700
-Date:   Mon, 19 Nov 2018 13:11:56 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
-        linuxarm@huawei.com, haojian.zhuang@linaro.org,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181119201156.GG4890@ziepe.ca>
-References: <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181119164853.GA4593@redhat.com>
- <20181119182752.GA4890@ziepe.ca>
- <20181119184215.GB4593@redhat.com>
- <20181119185333.GC4890@ziepe.ca>
- <20181119191721.GC4593@redhat.com>
- <20181119192702.GD4890@ziepe.ca>
- <20181119194631.GE4593@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sWqRt1hx9afwx1pA4ot31NcExm8qubHQTBZSMfxxSbg=;
+        b=ecHc23z1iUstqRbCui74t7UciLsUTBAlv/ErjYV0FKBju9CI0bZ9VwDeWPtIK/w+C/
+         mJaaU2sBYvrKigVgEMhvGbe1M8nOm5DG5GaiEe/a/ulWXun2HT3dTUpQKvNH24aGrGg2
+         LWv6xf6zNQ/B/epmSApuiQq6O+0qKr8xfVveZa/wHZo8Bf9a8K5ekcs1wHXHdwer5YsU
+         LrlrCI5NOCuR0g5+nyf1XwIL4cTDQnzc3B425/bBfUuzN0GIeZ1gA9zeeKq4i69D0JyM
+         l9nk+XPyQtTbDxQMhDYY0oBuQ5XpfagVDzbpm+V3bziYgM5kyyBJ20M41kj5OA+bKuP8
+         qzAg==
+X-Gm-Message-State: AGRZ1gL8jpY2fcKiYmZ4I5sCOWq8HzizsTS4zb6CF2jjja3sMxS1rjQf
+        DQOfjxlrlYQ0MKw/2L5H0gB0OW236AEhgx268xA=
+X-Google-Smtp-Source: AJdET5cLlagfTIEWhSq/UYFQGT8iVWdauWNcWAku3JG9VS5LDnbFgRYo+2yrbEZRKwG+w8UVPzAnaqagE50JoFTpLwU=
+X-Received: by 2002:aca:f0f:: with SMTP id 15mr8162552oip.47.1542658357928;
+ Mon, 19 Nov 2018 12:12:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119194631.GE4593@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1539049990-30810-1-git-send-email-hanjie.lin@amlogic.com> <1539049990-30810-2-git-send-email-hanjie.lin@amlogic.com>
+In-Reply-To: <1539049990-30810-2-git-send-email-hanjie.lin@amlogic.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Mon, 19 Nov 2018 21:12:26 +0100
+Message-ID: <CAFBinCCChD-phwyb3hSzAjBmy09g35ijQa_chJX5HufuVnPjaw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] dt-bindings: PCI: meson: add DT bindings for
+ Amlogic Meson PCIe controller
+To:     hanjie.lin@amlogic.com
+Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
+        yixun.lan@amlogic.com, robh@kernel.org, jianxin.pan@amlogic.com,
+        devicetree@vger.kernel.org, khilman@baylibre.com,
+        shawn.lin@rock-chips.com, pombredanne@nexb.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qiufang.dai@amlogic.com, jian.hu@amlogic.com,
+        liang.yang@amlogic.com, cyrille.pitchen@free-electrons.com,
+        gustavo.pimentel@synopsys.com, carlo@caione.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, jbrunet@baylibre.com,
+        yue.wang@amlogic.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:46:32PM -0500, Jerome Glisse wrote:
+Hello Hanjie, Hello Yue,
 
-> > ?? How can O_DIRECT be fine but RDMA not? They use exactly the same
-> > get_user_pages flow, right? Can we do what O_DIRECT does in RDMA and
-> > be fine too?
-> > 
-> > AFAIK the only difference is the length of the race window. You'd have
-> > to fork and fault during the shorter time O_DIRECT has get_user_pages
-> > open.
-> 
-> Well in O_DIRECT case there is only one page table, the CPU
-> page table and it gets updated during fork() so there is an
-> ordering there and the race window is small.
+sorry for being late with my comment
 
-Not really, in O_DIRECT case there is another 'page table', we just
-call it a DMA scatter/gather list and it is sent directly to the block
-device's DMA HW. The sgl plays exactly the same role as the various HW
-page list data structures that underly RDMA MRs.
+On Tue, Oct 9, 2018 at 3:53 AM Hanjie Lin <hanjie.lin@amlogic.com> wrote:
+>
+> From: Yue Wang <yue.wang@amlogic.com>
+>
+> The Amlogic Meson PCIe host controller is based on the Synopsys DesignWare
+> PCI core. This patch adds documentation for the DT bindings in Meson PCIe
+> controller.
+>
+> Signed-off-by: Yue Wang <yue.wang@amlogic.com>
+> Signed-off-by: Hanjie Lin <hanjie.lin@amlogic.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/pci/amlogic,meson-pcie.txt | 70 ++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+>
+> diff --git a/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> new file mode 100644
+> index 0000000..12b18f8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/amlogic,meson-pcie.txt
+> @@ -0,0 +1,70 @@
+> +Amlogic Meson AXG DWC PCIE SoC controller
+> +
+> +Amlogic Meson PCIe host controller is based on the Synopsys DesignWare PCI core.
+> +It shares common functions with the PCIe DesignWare core driver and
+> +inherits common properties defined in
+> +Documentation/devicetree/bindings/pci/designware-pci.txt.
+> +
+> +Additional properties are described here:
+> +
+> +Required properties:
+> +- compatible:
+> +       should contain "amlogic,axg-pcie" to identify the core.
+> +- reg:
+> +       should contain the configuration address space.
+> +- reg-names: Must be
+> +       - "elbi"        External local bus interface registers
+> +       - "cfg"         Meson specific registers
+> +       - "phy"         Meson PCIE PHY registers
+is this only the PCIe PHY registers or is it the registers of the PHY
+which supports USB3.0 and PCIe?
+buildroot_openlinux_kernel_4.9_fbdev_20180706 uses the following
+registers in the pcie_A node for the "phy" registers:
+0x0 0xff646000 0x0 0x2000
+while the usb3_phy_v2 node uses:
+phy-reg = <0xff646000>;
 
-It is not a page table that matters here, it is if the DMA address of
-the page is active for DMA on HW.
+> +       - "config"      PCIe configuration space
+> +- reset-gpios: The GPIO to generate PCIe PERST# assert and deassert signal.
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +- clock-names: Must include the following entries:
+> +       - "pclk"       PCIe GEN 100M PLL clock
+> +       - "port"       PCIe_x(A or B) RC clock gate
+> +       - "general"    PCIe Phy clock
+> +       - "mipi"       PCIe_x(A or B) 100M ref clock gate
+> +- resets: phandle to the reset lines.
+> +- reset-names: must contain "phy" "port" and "apb"
+> +       - "phy"         Share PHY reset
+> +       - "port"        Port A or B reset
+> +       - "apb"         Share APB reset
+> +- device_type:
+> +       should be "pci". As specified in designware-pcie.txt
+> +
+> +
+> +Example configuration:
+> +
+> +       pcie: pcie@f9800000 {
+> +                       compatible = "amlogic,axg-pcie", "snps,dw-pcie";
+> +                       reg = <0x0 0xf9800000 0x0 0x400000
+> +                                       0x0 0xff646000 0x0 0x2000
+> +                                       0x0 0xff644000 0x0 0x2000
+> +                                       0x0 0xf9f00000 0x0 0x100000>;
+> +                       reg-names = "elbi", "cfg", "phy", "config";
+is the order of the reg-names correct?
+buildroot_openlinux_kernel_4.9_fbdev_20180706 uses 0xff646000 for the
+PHY (instead of 0xff646000) in mesong12a.dtsi and mesong12b.dtsi
 
-Like you say, the only difference is that the race is hopefully small
-with O_DIRECT (though that is not really small, NVMeof for instance
-has windows as large as connection timeouts, if you try hard enough)
 
-So we probably can trigger this trouble with O_DIRECT and fork(), and
-I would call it a bug :(
-
-> > Why? Keep track in each mm if there are any active get_user_pages
-> > FOLL_WRITE pages in the mm, if yes then sweep the VMAs and fix the
-> > issue for the FOLL_WRITE pages.
-> 
-> This has a cost and you don't want to do it for O_DIRECT. I am pretty
-> sure that any such patch to modify fork() code path would be rejected.
-> At least i would not like it and vote against.
-
-I was thinking the incremental cost on top of what John is already
-doing would be very small in the common case and only be triggered in
-cases that matter (which apps should avoid anyhow).
-
-Jason
+Regards
+Martin
