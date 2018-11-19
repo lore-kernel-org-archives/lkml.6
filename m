@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168CDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD73C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A5C2243B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5935E224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLjBpRuL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A5C2243B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DmR3NxcG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5935E224E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405910AbeKTD0e (ORCPT
+        id S2405923AbeKTD0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:26:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40160 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:26:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405392AbeKTD0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:26:34 -0500
+        id S2405038AbeKTD0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:26:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E969622443;
-        Mon, 19 Nov 2018 17:02:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 764B92241B;
+        Mon, 19 Nov 2018 17:02:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646937;
-        bh=NNWi/CBtJ2w+gxI01j6vf06GbiabVcSn6JjtoUvVWhE=;
+        s=default; t=1542646939;
+        bh=pUF9V3uKnBLp1+QeKt1ttjfiScepd20d/z2zoYDyM4M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nLjBpRuLIgI8QO3rsestq9JLII7be/nnHzvWlBS4XAf63b4f/QdWVfEo964V7SjVV
-         mwGPJZ06/2VnFDshtksCuyJorV1EViF2rSLW6e5yTHsyam1ZpVIDb8p0gaFTBC1z1T
-         voJlUQJtdnIy96BIjHINXLHB14Yx9P2k85Nh1I4I=
+        b=DmR3NxcGgSmmHq5pqJN7sEw8nkcqjnq9PeAylfUjrgmTF8PMqAkYFnbLat6Z4+XpN
+         iHASUMALjJt536g+ltI4qcHy/rq/tz/znMu1hp5NMulSdbYnxEdPIAqBs3XeVPxGGP
+         4iQgrXL8C6K5w9EOaOaJhQAfW5/9UibA3YD93EZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.4 110/160] fuse: fix blocked_waitq wakeup
-Date:   Mon, 19 Nov 2018 17:29:09 +0100
-Message-Id: <20181119162641.504370273@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
+Subject: [PATCH 4.4 111/160] fuse: set FR_SENT while locked
+Date:   Mon, 19 Nov 2018 17:29:10 +0100
+Message-Id: <20181119162641.572153424@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,47 +64,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit 908a572b80f6e9577b45e81b3dfe2e22111286b8 upstream.
+commit 4c316f2f3ff315cb48efb7435621e5bfb81df96d upstream.
 
-Using waitqueue_active() is racy.  Make sure we issue a wake_up()
-unconditionally after storing into fc->blocked.  After that it's okay to
-optimize with waitqueue_active() since the first wake up provides the
-necessary barrier for all waiters, not the just the woken one.
+Otherwise fuse_dev_do_write() could come in and finish off the request, and
+the set_bit(FR_SENT, ...) could trigger the WARN_ON(test_bit(FR_SENT, ...))
+in request_end().
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 3c18ef8117f0 ("fuse: optimize wake_up")
-Cc: <stable@vger.kernel.org> # v3.10
+Reported-by: syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
+Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
+Cc: <stable@vger.kernel.org> # v4.2
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fs/fuse/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -402,12 +402,19 @@ static void request_end(struct fuse_conn
- 	if (test_bit(FR_BACKGROUND, &req->flags)) {
- 		spin_lock(&fc->lock);
- 		clear_bit(FR_BACKGROUND, &req->flags);
--		if (fc->num_background == fc->max_background)
-+		if (fc->num_background == fc->max_background) {
- 			fc->blocked = 0;
--
--		/* Wake up next waiter, if any */
--		if (!fc->blocked && waitqueue_active(&fc->blocked_waitq))
- 			wake_up(&fc->blocked_waitq);
-+		} else if (!fc->blocked) {
-+			/*
-+			 * Wake up next waiter, if any.  It's okay to use
-+			 * waitqueue_active(), as we've already synced up
-+			 * fc->blocked with waiters with the wake_up() call
-+			 * above.
-+			 */
-+			if (waitqueue_active(&fc->blocked_waitq))
-+				wake_up(&fc->blocked_waitq);
-+		}
- 
- 		if (fc->num_background == fc->congestion_threshold &&
- 		    fc->connected && fc->bdi_initialized) {
+@@ -1336,8 +1336,8 @@ static ssize_t fuse_dev_do_read(struct f
+ 	}
+ 	list_move_tail(&req->list, &fpq->processing);
+ 	__fuse_get_request(req);
+-	spin_unlock(&fpq->lock);
+ 	set_bit(FR_SENT, &req->flags);
++	spin_unlock(&fpq->lock);
+ 	/* matches barrier in request_wait_answer() */
+ 	smp_mb__after_atomic();
+ 	if (test_bit(FR_INTERRUPTED, &req->flags))
 
 
