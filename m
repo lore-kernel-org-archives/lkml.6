@@ -2,49 +2,51 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5237C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEDDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A911E208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F411F208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:34:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1hkLdye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A911E208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BE42TFpL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F411F208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731459AbeKTC6t (ORCPT
+        id S1731470AbeKTC6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57946 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730381AbeKTC6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:58:48 -0500
+        id S1730381AbeKTC6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D706C2086A;
-        Mon, 19 Nov 2018 16:34:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 584B12086A;
+        Mon, 19 Nov 2018 16:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645281;
-        bh=WTIjHzhxqyA2sdUTX9aUTheKmSc7cYKv7A2EWkFS1rY=;
+        s=default; t=1542645283;
+        bh=/c1Hk+oWdNJuifLRlgWmy6XC9pnW7Xe9Y2gQWYtwXSU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D1hkLdyewq1jfv3VNEOjB+LzlVYRM/NnCpJP7SINInKErdsgXUsbizTxQy0dbSWJB
-         +6iTkj58h4VrT2tLpBBQQ+nOmvYiy4jw60vfnvR4uaZCkxBZmYG9OCK5fHPT4Tq4/e
-         t1vH5HxQ0ot0rznK9ojJqCcE/jjeKYDLchVcashg=
+        b=BE42TFpLs5QxCyetC4jQI7CKKpeQbizLL3fN9O8p85A7x/eB5+r5c6xezLjEFFuXj
+         sFdZVFBebnlCzMeGbW6PAA8KNB+BBR2bW489svr6uVd/UqhTH37bu54N/DF3zH1pbv
+         vYALM7Ke0siPjinM/dedz+kc38v7WF4s1GD2PQZo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
-Subject: [PATCH 4.19 067/205] fuse: set FR_SENT while locked
-Date:   Mon, 19 Nov 2018 17:26:14 +0100
-Message-Id: <20181119162629.039148297@linuxfoundation.org>
+        stable@vger.kernel.org, Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.19 068/205] drm/msm: fix OF child-node lookup
+Date:   Mon, 19 Nov 2018 17:26:15 +0100
+Message-Id: <20181119162629.210195640@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,35 +64,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 4c316f2f3ff315cb48efb7435621e5bfb81df96d upstream.
+commit f9a7082327e26f54067a49cac2316d31e0cc8ba7 upstream.
 
-Otherwise fuse_dev_do_write() could come in and finish off the request, and
-the set_bit(FR_SENT, ...) could trigger the WARN_ON(test_bit(FR_SENT, ...))
-in request_end().
+Use the new of_get_compatible_child() helper to lookup the legacy
+pwrlevels child node instead of using of_find_compatible_node(), which
+searches the entire tree from a given start node and thus can return an
+unrelated (i.e.  non-child) node.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Reported-by: syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
-Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
-Cc: <stable@vger.kernel.org> # v4.2
+This also addresses a potential use-after-free (e.g. after probe
+deferral) as the tree-wide helper drops a reference to its first
+argument (i.e. the probed device's node).
+
+While at it, also fix the related child-node reference leak.
+
+Fixes: e2af8b6b0ca1 ("drm/msm: gpu: Use OPP tables if we can")
+Cc: stable <stable@vger.kernel.org>     # 4.12
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: David Airlie <airlied@linux.ie>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1319,8 +1319,8 @@ static ssize_t fuse_dev_do_read(struct f
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index da1363a0c54d..93d70f4a2154 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -633,8 +633,7 @@ static int adreno_get_legacy_pwrlevels(struct device *dev)
+ 	struct device_node *child, *node;
+ 	int ret;
+ 
+-	node = of_find_compatible_node(dev->of_node, NULL,
+-		"qcom,gpu-pwrlevels");
++	node = of_get_compatible_child(dev->of_node, "qcom,gpu-pwrlevels");
+ 	if (!node) {
+ 		dev_err(dev, "Could not find the GPU powerlevels\n");
+ 		return -ENXIO;
+@@ -655,6 +654,8 @@ static int adreno_get_legacy_pwrlevels(struct device *dev)
+ 			dev_pm_opp_add(dev, val, 0);
  	}
- 	list_move_tail(&req->list, &fpq->processing);
- 	__fuse_get_request(req);
--	spin_unlock(&fpq->lock);
- 	set_bit(FR_SENT, &req->flags);
-+	spin_unlock(&fpq->lock);
- 	/* matches barrier in request_wait_answer() */
- 	smp_mb__after_atomic();
- 	if (test_bit(FR_INTERRUPTED, &req->flags))
+ 
++	of_node_put(node);
++
+ 	return 0;
+ }
+ 
 
 
