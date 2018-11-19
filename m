@@ -2,145 +2,549 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15BCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 216A2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 455542086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C61BA2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="0DbZVIFl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455542086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=concurrentrt.onmicrosoft.com header.i=@concurrentrt.onmicrosoft.com header.b="MR+zO0iV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C61BA2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=concurrent-rt.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbeKTGKZ (ORCPT
+        id S1730272AbeKTGLi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:10:25 -0500
-Received: from mail-eopbgr700079.outbound.protection.outlook.com ([40.107.70.79]:63712
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        Tue, 20 Nov 2018 01:11:38 -0500
+Received: from mail-eopbgr780097.outbound.protection.outlook.com ([40.107.78.97]:18592
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726668AbeKTGKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:10:25 -0500
+        id S1725843AbeKTGLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:11:38 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ d=concurrentrt.onmicrosoft.com; s=selector1-concurrentrt-com02e;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gs0NvFcUJxnHUvsqBpDe00I6FfdfD4FknGEFh4wDtZw=;
- b=0DbZVIFlv50Lcpv8CRz+f286BnQGIkali5/XTuiGU8/S3RNrR3fuptQYpvE12iawXWw20L40d9OlaAatmjP/xiw4xSzGyW+4uYmkYZ3qqvc3W8wAbAtTjy4dpBkPaZqIGP5p3daJqDyRzKZOQNAxY56+prEP2BDi1TXmio39Kkk=
-Received: from BY1PR12MB0406.namprd12.prod.outlook.com (10.162.146.27) by
- BY1PR12MB0469.namprd12.prod.outlook.com (10.162.147.146) with Microsoft SMTP
+ bh=xW10cHfCTL/qBIm0OjTt0Zk/K34Hk56ukZByoWr9MF8=;
+ b=MR+zO0iVSL0uavMADSm/RqEAzq1mNAvRU7EQOt4qQ6bXVI6A8xIEnnEvL8CUL6UKOu0mPBNeNlhV+L9DfSi6KSRTX+smqvkcjD5O8EMMfzGndYZd5DXDt4Bl8ByJ8xzp61RAmAk8kJ9keFeeXdJa7HuIVltMbqFRVfLNancZgvE=
+Received: from DM6PR11MB2570.namprd11.prod.outlook.com (20.176.99.12) by
+ DM6PR11MB2746.namprd11.prod.outlook.com (20.176.99.161) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.25; Mon, 19 Nov 2018 19:45:16 +0000
-Received: from BY1PR12MB0406.namprd12.prod.outlook.com
- ([fe80::94cb:cedf:281:79f2]) by BY1PR12MB0406.namprd12.prod.outlook.com
- ([fe80::94cb:cedf:281:79f2%6]) with mapi id 15.20.1339.026; Mon, 19 Nov 2018
- 19:44:55 +0000
-From:   "Zuo, Jerry" <Jerry.Zuo@amd.com>
-To:     Lyude Paul <lyude@redhat.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-CC:     "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Li, Roman" <Roman.Li@amd.com>, "Cheng, Tony" <Tony.Cheng@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "S, Shirish" <Shirish.S@amd.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] drm/amd/dm: Understand why attaching path/tile
- properties are needed
-Thread-Topic: [PATCH 2/2] drm/amd/dm: Understand why attaching path/tile
- properties are needed
-Thread-Index: AQHUfgOYyVVCIfDxYkK68ANZTiJrdKVXgzAQ
-Date:   Mon, 19 Nov 2018 19:44:55 +0000
-Message-ID: <BY1PR12MB0406A41977791358BD0C0C0DE5D80@BY1PR12MB0406.namprd12.prod.outlook.com>
-References: <20181116232443.1709-1-lyude@redhat.com>
- <20181116232443.1709-3-lyude@redhat.com>
-In-Reply-To: <20181116232443.1709-3-lyude@redhat.com>
-Accept-Language: en-CA, en-US
+ 15.20.1339.25; Mon, 19 Nov 2018 19:46:23 +0000
+Received: from DM6PR11MB2570.namprd11.prod.outlook.com
+ ([fe80::516:620c:3f40:7215]) by DM6PR11MB2570.namprd11.prod.outlook.com
+ ([fe80::516:620c:3f40:7215%5]) with mapi id 15.20.1339.027; Mon, 19 Nov 2018
+ 19:46:23 +0000
+From:   Joe Korty <Joe.Korty@concurrent-rt.com>
+To:     "julia@ni.com" <julia@ni.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joe Korty <Joe.Korty@concurrent-rt.com>
+Subject: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt and
+ later.
+Thread-Topic: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt
+ and later.
+Thread-Index: AQHUgECMj/wXEoj7Wkyq0VvWdFU8Ow==
+Date:   Mon, 19 Nov 2018 19:46:23 +0000
+Message-ID: <20181119194619.GA32121@zipoli.concurrent-rt.com>
+Reply-To: Joe Korty <Joe.Korty@concurrent-rt.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: BN6PR03CA0049.namprd03.prod.outlook.com
+ (2603:10b6:404:4c::11) To DM6PR11MB2570.namprd11.prod.outlook.com
+ (2603:10b6:5:c6::12)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jerry.Zuo@amd.com; 
-x-originating-ip: [165.204.55.250]
+ smtp.mailfrom=Joe.Korty@concurrent-rt.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [12.220.59.2]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR12MB0469;20:f6ZtcW9i12vxo+AYpDkJWtV9Lngt4rV6CAq0eZKVLTzaeCtIoy+vXi7v+6DBAuQyFJbNqRvZnWLI2D62OWgccFKMYKQ+X8wwHTb+5OFhYA6jWnAAEkMGTkFVIU0bda4Kr+wzngmgLe9WgyuoAch4WOi6XPmdrCO4yMZLsq9dDLliDUUeMVqU3M+J5hlFDphu3UHF8VBm3Y8XDCSY4yagJ/bZ47dNm8n1ivu3Nns0Gm78o+5Izx+ysU09hyLn+6eH
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(13464003)(199004)(189003)(53936002)(71200400001)(575784001)(99286004)(71190400001)(4326008)(25786009)(6246003)(54906003)(3846002)(110136005)(6116002)(486006)(11346002)(68736007)(305945005)(2906002)(476003)(446003)(9686003)(86362001)(66066001)(55016002)(7736002)(316002)(5024004)(74316002)(256004)(72206003)(6436002)(186003)(105586002)(106356001)(478600001)(5660300001)(14454004)(26005)(7696005)(76176011)(2501003)(53546011)(2900100001)(229853002)(6506007)(81166006)(8676002)(81156014)(97736004)(102836004)(8936002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR12MB0469;H:BY1PR12MB0406.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 9aadaf73-76e7-4c62-a35c-08d64e577b23
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY1PR12MB0469;
-x-ms-traffictypediagnostic: BY1PR12MB0469:
-x-microsoft-antispam-prvs: <BY1PR12MB046992F1FA3448C114FB7946E5D80@BY1PR12MB0469.namprd12.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;DM6PR11MB2746;6:goG6n2QtCo3pWWe+Yno4GWdmpA/gEIVPMmpFDHqwVjOvqrOkXeKVry/H8T4/Db858BbwZLmBDBrJ4CyGVsu+p3WOg1mBUa8l7jcBbl5Pr040L3oLF4wrRkt2xx+HQ+y5pl7XIstnWsQEqtibO0KkgkbCMbBwIV46e+A3qkpkC/eGNcfnS+0JqqQ4Z7w/o6diOvBjkxlP5oWCHOEmYb5PrHjPF+l2bweNB1E5UbstI/bhzqakjOZtxlyBRSxccYVvnmx8322XAasZxFfxffGDOhdNes83lxaXuL9UB8yG3b19HCPDHPfwPao7PZAUmTPoiJE2ktF/Gpa9a03+i+43EfI9gQhrx/4rrLQz3dBfsnjak/ZMR90h+lhjGmdKRd2omXEx8QdJZiPmqHVZs1J0y/LqN+vaGGOzamifEbpwP+4kos6VRSEu5ynealTO0Uttr5KIfRlO8Sh7u6RD5XyMUA==;5:x/6KFKNLqAQMRJsmqwvUJvJF0GrTEGud3vHdQ6bEl/e72Dy9iRvF+Tv6Kke0BcZniRdwjG6dFUh2mnrLqWQ1vrePSBbGm04zfK+peErPG+8H6W1aUFvsK7P95npj5dtQ5If3m72Ln0xIgqvMKdUFulZDIHt8tbB+PQzCr8J7+W0=;7:mCA0d5Y64aX9PUdQEl47Ps5dQzp0858EARWYy93Ef0G3CTlmx8OtriLkYOiCL41akIfqr5lhU0A4Jrs15NAW7WnOJFH+0EWf0IIfCt6NmMMapw5IfLs9oBTBIgoosR0iKPQB3bhq8bPLpkrIpPoHgQ==
+x-ms-office365-filtering-correlation-id: 9ab33e9b-b577-44f2-bcc3-08d64e57af30
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DM6PR11MB2746;
+x-ms-traffictypediagnostic: DM6PR11MB2746:
+x-microsoft-antispam-prvs: <DM6PR11MB274604D5D9F23B739D1B2C36A0D80@DM6PR11MB2746.namprd11.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231415)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY1PR12MB0469;BCL:0;PCL:0;RULEID:;SRVR:BY1PR12MB0469;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231435)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:DM6PR11MB2746;BCL:0;PCL:0;RULEID:;SRVR:DM6PR11MB2746;
 x-forefront-prvs: 08617F610C
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: TZN6AfIIiCswPEPgNdD5xTzzDhuM23U+HJaXb24kVk+kFKGJAz3H8YqBBsADkuPDlxbezC76+vcQVsxJcHQ19MZJiEdnLj4F5ksj/uG8PmzvKXgg78LjJXoQftL6acECX6+Xk7GHvmMrk/5NnDei0t9+H+1R4tgfGfkRMf4+04lxBS1tMoAP87m4ajOmimHnNs1aQGvnIZg08V/2JVIyc1IprPvSaW53yKR/fTIAS5AydBS92FNHScqSGWFUFyO/d59ZA8ORw6OxInL3ytZg8kWnYgYEf5WOmKx3RADC7SXMdjcU7h6rJdfttx7fYgk3d6RPI3/beMws/gv85BaRUZRPT/9RIevraGlvfXueyGM=
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(136003)(396003)(346002)(376002)(199004)(189003)(2501003)(44832011)(2900100001)(6436002)(66066001)(68736007)(81166006)(81156014)(4744004)(25786009)(6116002)(97736004)(2906002)(1076002)(476003)(71190400001)(486006)(71200400001)(6486002)(3846002)(72206003)(2201001)(7736002)(86362001)(8676002)(186003)(14454004)(3450700001)(26005)(305945005)(33656002)(386003)(6506007)(508600001)(106356001)(6512007)(110136005)(316002)(5660300001)(102836004)(99286004)(14444005)(5024004)(53936002)(8936002)(43066004)(52116002)(105586002)(256004)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR11MB2746;H:DM6PR11MB2570.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: concurrent-rt.com does not
+ designate permitted sender hosts)
+x-microsoft-antispam-message-info: L3BL6xYqlYihPTluDgj+7gilrQY2w1tEvbdfs4qghtgAHdmPS5fow/dEqL9d+hbcka5nIciuxnH2wDYLo04MgbMc8v9lkVmiQFQHiStwrBkEXy0lXt5mL43FdL5TOKk85MEJyt6gnb/TCqHYSZMaFda3TG8Akm8tai6hdHoNnnDbuZ6RFmv0lx1+U93h3W+PdR45R5mHxSYCXIn+CO3LGorEUtDGkZmmTR7CF2Q6UXw5M+CmHzaim7v5Vd7WND5sTiK589Yb/RuFFYZpPX2GL5wYWbwOW6w5GPo4A3pXx0aNW2GEXP+tZXFky8Ll2qhotP1LhrR7OJMVK6W6WUyY5aZSJySlM74f5fbk+iLX51A=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <68CB111ACF90544A8F1E3A1D282BFE14@namprd11.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aadaf73-76e7-4c62-a35c-08d64e577b23
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 19:44:55.3464
+X-OriginatorOrg: concurrent-rt.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ab33e9b-b577-44f2-bcc3-08d64e57af30
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 19:46:23.0844
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB0469
+X-MS-Exchange-CrossTenant-id: 38747689-e6b0-4933-86c0-1116ee3ef93e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2746
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------Original Message-----
-From: Lyude Paul <lyude@redhat.com>=20
-Sent: November 16, 2018 6:25 PM
-To: amd-gfx@lists.freedesktop.org
-Cc: Wentland, Harry <Harry.Wentland@amd.com>; Li, Sun peng (Leo) <Sunpeng.L=
-i@amd.com>; Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christi=
-an <Christian.Koenig@amd.com>; Zhou, David(ChunMing) <David1.Zhou@amd.com>;=
- David Airlie <airlied@linux.ie>; Zuo, Jerry <Jerry.Zuo@amd.com>; Li, Roman=
- <Roman.Li@amd.com>; Cheng, Tony <Tony.Cheng@amd.com>; Daniel Vetter <danie=
-l.vetter@ffwll.ch>; S, Shirish <Shirish.S@amd.com>; dri-devel@lists.freedes=
-ktop.org; linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/amd/dm: Understand why attaching path/tile propert=
-ies are needed
+Hi Julia & the RT team,
 
-Path property is used for userspace to know what MST connector goes to what=
- actual DRM DisplayPort connector, the tiling property is for tiling config=
-urations. Not sure what else there is to figure out.
+The following program might make a good addition to the rt
+test suite.  It tests the reliability of PTRACE_SINGLESTEP.
+It does by default 10,000 ssteps against a simple,
+spinner tracee.  Also by default, it spins off ten of these
+tracer/tracee pairs, all of which are to run concurrently.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 3 ---
- 1 file changed, 3 deletions(-)
+Starting with 4.13-rt, this test occasionally encounters a
+sstep whose waitpid returns a WIFSIGNALED (signal SIGTRAP)
+rather than a WIFSTOPPED.  This usually happens after
+thousands of ssteps have executed.  Having multiple
+tracer/tracee pairs running dramatically increases the
+chances of failure.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/=
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 0cca1809fdcd..1b0d209d8367 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -345,9 +345,6 @@ dm_dp_add_mst_connector(struct drm_dp_mst_topology_mgr =
-*mgr,
- 	drm_connector_attach_encoder(&aconnector->base,
- 				     &aconnector->mst_encoder->base);
-=20
--	/*
--	 * TODO: understand why this one is needed
--	 */
- 	drm_object_attach_property(
- 		&connector->base,
- 		dev->mode_config.path_property,
---
-2.19.1
+The is what the test output looks like for a good run:
 
+  #forks: 10
+  #steps: 10000
+ =20
+  forktest#0/22872: STARTING
+  forktest#7/22879: STARTING
+  forktest#8/22880: STARTING
+  forktest#6/22878: STARTING
+  forktest#5/22877: STARTING
+  forktest#3/22875: STARTING
+  forktest#4/22876: STARTING
+  forktest#9/22882: STARTING
+  forktest#2/22874: STARTING
+  forktest#1/22873: STARTING
+  forktest#0/22872: EXITING, no error
+  forktest#8/22880: EXITING, no error
+  forktest#3/22875: EXITING, no error
+  forktest#7/22879: EXITING, no error
+  forktest#6/22878: EXITING, no error
+  forktest#5/22877: EXITING, no error
+  forktest#2/22874: EXITING, no error
+  forktest#4/22876: EXITING, no error
+  forktest#9/22882: EXITING, no error
+  forktest#1/22873: EXITING, no error
+  All tests PASSED.
+
+This is what the test output looks like for a failing run:
+
+  #forks: 10
+  #steps: 10000
+ =20
+  forktest#0/22906: STARTING
+  forktest#1/22907: STARTING
+  forktest#2/22909: STARTING
+  forktest#3/22911: STARTING
+  forktest#4/22912: STARTING
+  forktest#5/22915: STARTING
+  forktest#6/22916: STARTING
+  forktest#7/22919: STARTING
+  forktest#8/22920: STARTING
+  forktest#9/22923: STARTING
+  forktest#2/22909: EXITING, ERROR: wait on PTRACE_SINGLESTEP #9: wanted ST=
+ATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#5/22915: EXITING, no error
+  forktest#3/22911: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7953: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#0/22906: EXITING, ERROR: wait on PTRACE_SINGLESTEP #5072: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#9/22923: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7992: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#4/22912: EXITING, ERROR: wait on PTRACE_SINGLESTEP #9923: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#1/22907: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7723: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#7/22919: EXITING, ERROR: wait on PTRACE_SINGLESTEP #5036: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#8/22920: EXITING, ERROR: wait on PTRACE_SINGLESTEP #4943: wanted=
+ STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
+  forktest#6/22916: EXITING, no error
+  One or more tests FAILED.
+
+Here are the observations from my testing so far:
+
+  - It has never failed when confined to a single cpu.
+  - It has never failed on !rt kernels.
+  - It has never failed on any kernel prior to 4.13.
+  - More failures than what chance would dictate happen
+    near the end of a test run (ie, if a test of 10,000=20
+    steps is run, the failure will be at the 9,xxx'th step,
+    if 100,000 steps are run, the failure will be at
+    the 9x,xxx'th step).
+
+The above results are from kernels 4.{4,9,11,13,14,19}-rt
+and some !rt's of these as well.
+
+I have yet to see or hear of this bug, if it is a bug,
+giving anyone a problem in a debug session.  It might not
+even be a bug but merely expected behaviour. And of course
+there is the possibility of a misuse of ptrace/waitpid in
+my test program. Its API, after all, is rather convoluted.
+
+Regards,
+Joe
+
+
+
+
+/*
+ * Have a tracer do a bunch of PTRACE_SINGLESTEPs against
+ * a tracee as fast as possible.  Create several of these
+ * tracer/tracee pairs and see if they can be made to
+ * interfere with each other.
+ *
+ * Usage:
+ *   ssdd nforks niters
+ * Where:
+ *   nforks - number of tracer/tracee pairs to fork off.
+ *            default 10.
+ *   niters - number of PTRACE_SINGLESTEP iterations to
+ *            do before declaring success, for each tracer/
+ *            tracee pair set up.  Default 10,000.
+ *
+ * The tracee waits on each PTRACE_SINGLESTEP with a waitpid(2)
+ * and checks that waitpid's return values for correctness.
+ */
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <unistd.h>
+#include <string.h>
+#include <signal.h>
+#include <errno.h>
+
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/ptrace.h>
+
+/* do_wait return values */
+#define STATE_EXITED	1
+#define STATE_STOPPED	2
+#define STATE_SIGNALED	3
+#define STATE_UNKNOWN	4
+#define STATE_ECHILD	5
+#define STATE_EXITED_TSIG	6	/* exited with termination signal */
+#define STATE_EXITED_ERRSTAT	7	/* exited with non-zero status */
+
+char *state_name[] =3D {
+	[STATE_EXITED] =3D "STATE_EXITED",
+	[STATE_STOPPED] =3D "STATE_STOPPED",
+	[STATE_SIGNALED] =3D "STATE_SIGNALED",
+	[STATE_UNKNOWN] =3D "STATE_UNKNOWN",
+	[STATE_ECHILD] =3D "STATE_ECHILD",
+	[STATE_EXITED_TSIG] =3D "STATE_EXITED_TSIG",
+	[STATE_EXITED_ERRSTAT] =3D "STATE_EXITED_ERRSTAT"
+};
+
+const char *get_state_name(int state)
+{
+	if (state < STATE_EXITED || state > STATE_EXITED_ERRSTAT)
+		return "?";
+	return state_name[state];
+}
+
+#define unused __attribute__((unused))
+
+static int got_sigchld;
+
+static int do_wait(pid_t *wait_pid, int *ret_sig)
+{
+	int status, child_status;
+
+	*ret_sig =3D -1; /* initially mark 'nothing returned' */
+
+	while (1) {
+		status =3D waitpid(-1, &child_status, WUNTRACED | __WALL);
+		if (status =3D=3D -1) {
+			if (errno =3D=3D EINTR)
+				continue;
+			if (errno =3D=3D ECHILD) {
+				*wait_pid =3D (pid_t)0;
+				return STATE_ECHILD;
+			}
+			printf("do_wait/%d: EXITING, ERROR: "
+			       "waitpid() returned errno %d\n",
+			       getpid(), errno);
+			exit(1);
+		}
+		break;
+	}
+	*wait_pid =3D (pid_t)status;
+
+	if (WIFEXITED(child_status)) {
+		if (WIFSIGNALED(child_status))
+			return STATE_EXITED_TSIG;
+		if (WEXITSTATUS(child_status))
+			return STATE_EXITED_ERRSTAT;
+		return STATE_EXITED;
+	}
+	if (WIFSTOPPED(child_status)) {
+		*ret_sig =3D WSTOPSIG(child_status);
+		return STATE_STOPPED;
+	}
+	if (WIFSIGNALED(child_status)) {
+		*ret_sig =3D WTERMSIG(child_status);
+		return STATE_SIGNALED;
+	}
+	return STATE_UNKNOWN;
+}
+
+int check_sigchld(void)
+{
+	int i;
+	/*
+	 * The signal is asynchronous so give it some
+	 * time to arrive.
+	 */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(1000); /* 10 msecs */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(2000); /* 20 + 10 =3D 30 msecs */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(4000); /* 40 + 30 =3D 70 msecs */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(8000); /* 80 + 40 =3D 150 msecs */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(16000); /* 160 + 150 =3D 310 msecs */
+	for (i =3D 0; i < 10 && !got_sigchld; i++)
+		usleep(32000); /* 320 + 310 =3D 630 msecs */
+
+	return got_sigchld;
+}
+
+pid_t parent;
+int nforks =3D 10;
+int nsteps =3D 10000;
+
+static void sigchld(int sig, unused siginfo_t * info, unused void *arg)
+{
+	got_sigchld =3D 1;
+}
+
+static void child_process(void)
+{
+	unused volatile int i;
+
+	/* wait for ptrace attach */
+	usleep(100000);
+	while (1)
+		i =3D 0;
+}
+
+static int forktests(int testid)
+{
+	int i, status, ret_sig;
+	long pstatus;
+	pid_t child, wait_pid;
+	struct sigaction act, oact;
+
+	parent =3D getpid();
+	printf("forktest#%d/%d: STARTING\n", testid, parent);
+
+	child =3D fork();
+	if (child =3D=3D -1) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "fork returned errno %d\n", testid, parent, errno);
+		exit(1);
+	}
+	if (!child)
+		child_process();
+
+	act.sa_sigaction =3D sigchld;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags =3D SA_SIGINFO;
+	status =3D sigaction(SIGCHLD, &act, &oact);
+	if (status) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "sigaction returned %d, errno %d\n",
+		       testid, parent, status, errno);
+		exit(1);
+	}
+
+	/* give both our child and parent time to set things up */
+	usleep(125000);
+
+	/*
+	 * Attach to the child.
+	 */
+	pstatus =3D ptrace(PTRACE_ATTACH, child, NULL, NULL);
+	if (pstatus =3D=3D ~0l) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "attach failed.  errno %d\n",
+		       testid, getpid(), errno);
+		exit(1);
+	}
+
+	/*
+	 * The attach should cause the child to receive a signal.
+	 */
+	status =3D do_wait(&wait_pid, &ret_sig);
+	if (wait_pid !=3D child) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "attach: Unexpected wait pid %d\n",
+		       testid, getpid(), wait_pid);
+		exit(1);
+	}
+	if (status !=3D STATE_STOPPED) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "attach: wait on PTRACE_ATTACH returned %d "
+		       "[%s, wanted STATE_STOPPED], signo %d\n",
+		       testid, getpid(), status, get_state_name(status),
+		       ret_sig);
+		exit(1);
+	}
+	else if (!check_sigchld()) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "wait on PTRACE_ATTACH saw a SIGCHLD count of %d, should be 1\n",
+		       testid, getpid(), got_sigchld);
+		exit(1);
+	}
+	got_sigchld =3D 0;
+
+
+	/*
+	 * Generate 'nsteps' PTRACE_SINGLESTEPs, make sure they all actually step
+	 * the tracee.
+	 */
+	for (i =3D 0; i < nsteps; i++) {
+		pstatus =3D ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+
+		if (pstatus) {
+			printf("forktest#%d/%d: EXITING, ERROR: "
+			       "PTRACE_SINGLESTEP #%d: returned status %ld, "
+			       "errno %d, signo %d\n",
+			       testid, getpid(), i, pstatus, errno, ret_sig);
+			exit(1);
+		}
+
+		status =3D do_wait(&wait_pid, &ret_sig);
+		if (wait_pid !=3D child) {
+			printf("forktest#%d/%d: EXITING, ERROR: "
+			       "wait on PTRACE_SINGLESTEP #%d: returned wrong pid %d, "
+			       "expected %d\n",
+			       testid, getpid(), i, wait_pid, child);
+			exit(1);
+		}
+		if (status !=3D STATE_STOPPED) {
+			printf("forktest#%d/%d: EXITING, ERROR: "
+			       "wait on PTRACE_SINGLESTEP #%d: wanted STATE_STOPPED, "
+			       "saw %s instead (and saw signo %d too)\n",
+			       testid, getpid(), i,
+			       get_state_name(status), ret_sig);
+			exit(1);
+		}
+		if (ret_sig !=3D SIGTRAP) {
+			printf("forktest#%d/%d: EXITING, ERROR: "
+			       "wait on PTRACE_SINGLESTEP #%d: returned signal %d, "
+			       "wanted SIGTRAP\n",
+			       testid, getpid(), i, ret_sig);
+			exit(1);
+		}
+		if (!check_sigchld()) {
+			printf("forktest#%d/%d: EXITING, ERROR: "
+			       "wait on PTRACE_SINGLESTEP #%d: no SIGCHLD seen "
+			       "(signal count =3D=3D 0), signo %d\n",
+			       testid, getpid(), i, ret_sig);
+			exit(1);
+		}
+		got_sigchld =3D 0;
+	}
+
+	/*
+	 * We are all done, kill the tracee and wait for it to die.  We test
+	 * the killing results as much as the above attach and sstep results,
+	 * though failure here really isn't the point of this test.
+	 */
+	status =3D kill(child, SIGKILL);
+
+	if (status) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "kill of child %d returned %d\n",
+		       testid, getpid(), child, errno);
+		exit(1);
+	}
+
+	status =3D do_wait(&wait_pid, &ret_sig);
+	if (wait_pid !=3D child) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "kill: Unexpected wait pid %d\n",
+		       testid, getpid(), wait_pid);
+		exit(1);
+	}
+	if (status !=3D STATE_SIGNALED) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "kill: Unexpected child, do_wait status %d "
+		       "[%s, wanted STATE_SIGNALED]\n",
+		       testid, getpid(), status, get_state_name(status));
+		exit(1);
+	}
+	if (ret_sig !=3D SIGKILL) {
+		printf("forktest#%d/%d: EXITING, ERROR: "
+		       "kill: Unexpected child signal %d\n",
+		       testid, getpid(), ret_sig);
+		exit(1);
+	}
+
+	printf("forktest#%d/%d: EXITING, no error\n", testid, parent);
+	exit(0);
+}
+
+int main(int argc, char **argv)
+{
+	int i, ret_sig, status;
+	pid_t child =3D 0, wait_pid;
+	int error =3D 0;
+
+	setbuf(stdout, NULL);
+
+	argc--, argv++;
+	if (argc) {
+		nforks =3D atoi(*argv);
+		argc--, argv++;
+		if (argc)
+			nsteps =3D atoi(*argv);
+	}
+	printf("#forks: %d\n", nforks);
+	printf("#steps: %d\n", nsteps);
+	printf("\n");
+
+	for (i =3D 0; i < nforks; i++) {
+		child =3D fork();
+		if (child =3D=3D -1) {
+			printf("main: fork returned errno %d\n", errno);
+			exit(1);
+		}
+		if (!child)
+			forktests(i);
+	}
+
+	for (i =3D 0; i < nforks; i++) {
+		status =3D do_wait(&wait_pid, &ret_sig);
+		if (status !=3D STATE_EXITED) {
+			if (0) printf("main/%d: ERROR: "
+			       "forktest#%d unexpected do_wait status %d "
+			       "[%s, wanted STATE_EXITED]\n",
+			       getpid(), wait_pid, status,
+			       get_state_name(status));
+			error =3D 1;
+		}
+	}
+
+	printf("%s.\n", error ?
+		"One or more tests FAILED" :
+		"All tests PASSED");
+	exit(error);
+}
