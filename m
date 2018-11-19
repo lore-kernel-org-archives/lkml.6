@@ -7,44 +7,54 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B75C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 233A0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3CD3214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E22F0214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HrkRiwYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3CD3214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkTb3hIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22F0214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404830AbeKTDWj (ORCPT
+        id S2404841AbeKTDWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34360 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404112AbeKTDWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:38 -0500
+        id S2404112AbeKTDWl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E184214C1;
-        Mon, 19 Nov 2018 16:58:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18FE42146D;
+        Mon, 19 Nov 2018 16:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646703;
-        bh=igA0ZeqbQq9lAIPWJrAsxqheFOmjWP0EcnGl/JhxOsQ=;
+        s=default; t=1542646705;
+        bh=ejEnLAznzX3rMoW3x4VUFQ42Q5Oclj07dUfMO3mYKwc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HrkRiwYXpobcbb0eQ2qqqyiWmPI6vOrs1j9tHcCxmx5OBrKb6JaaibWTCDu6WRv/K
-         cxAr5XQ7wI7TQwX7S0Asjy6+VgoGDmqVpaqll87MRBSe2ewIazDYi6ABdfaLFW3RCH
-         /rmWHHFHgKGHR8smJRcMlXqsJev6hVnyZxNu9K7Q=
+        b=qkTb3hIGfSkwJldIhi7E580V9yWkLDFXe6E85zyS6oJBHPgY9UY4KOtNTZ8RYy405
+         V2BpIDfk6sOrPJaNv5TjnRMW7U+BcgAr3dvDfKOXlktU6ObQG5zkslxH2D92MiFXBy
+         YDARGDsOzwrcrQHvrIKvQ8U8sUX8rPKtjv8YyAns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Mimi Zohar <zohar@linux.ibm.com>
-Subject: [PATCH 4.4 057/160] ima: fix showing large violations or runtime_measurements_count
-Date:   Mon, 19 Nov 2018 17:28:16 +0100
-Message-Id: <20181119162636.995045435@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
+        Mihcla Hocko <mhocko@suse.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 058/160] hugetlbfs: dirty pages as they are added to pagecache
+Date:   Mon, 19 Nov 2018 17:28:17 +0100
+Message-Id: <20181119162637.083162484@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,41 +72,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Mike Kravetz <mike.kravetz@oracle.com>
 
-commit 1e4c8dafbb6bf72fb5eca035b861e39c5896c2b7 upstream.
+commit 22146c3ce98962436e401f7b7016a6f664c9ffb5 upstream.
 
-The 12 character temporary buffer is not necessarily long enough to hold
-a 'long' value.  Increase it.
+Some test systems were experiencing negative huge page reserve counts and
+incorrect file block counts.  This was traced to /proc/sys/vm/drop_caches
+removing clean pages from hugetlbfs file pagecaches.  When non-hugetlbfs
+explicit code removes the pages, the appropriate accounting is not
+performed.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+This can be recreated as follows:
+ fallocate -l 2M /dev/hugepages/foo
+ echo 1 > /proc/sys/vm/drop_caches
+ fallocate -l 2M /dev/hugepages/foo
+ grep -i huge /proc/meminfo
+   AnonHugePages:         0 kB
+   ShmemHugePages:        0 kB
+   HugePages_Total:    2048
+   HugePages_Free:     2047
+   HugePages_Rsvd:    18446744073709551615
+   HugePages_Surp:        0
+   Hugepagesize:       2048 kB
+   Hugetlb:         4194304 kB
+ ls -lsh /dev/hugepages/foo
+   4.0M -rw-r--r--. 1 root root 2.0M Oct 17 20:05 /dev/hugepages/foo
+
+To address this issue, dirty pages as they are added to pagecache.  This
+can easily be reproduced with fallocate as shown above.  Read faulted
+pages will eventually end up being marked dirty.  But there is a window
+where they are clean and could be impacted by code such as drop_caches.
+So, just dirty them all as they are added to the pagecache.
+
+Link: http://lkml.kernel.org/r/b5be45b8-5afe-56cd-9482-28384699a049@oracle.com
+Fixes: 6bda666a03f0 ("hugepages: fold find_or_alloc_pages into huge_no_page()")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Mihcla Hocko <mhocko@suse.com>
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- security/integrity/ima/ima_fs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ mm/hugetlb.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -26,14 +26,14 @@
- #include "ima.h"
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3537,6 +3537,12 @@ int huge_add_to_page_cache(struct page *
+ 		return err;
+ 	ClearPagePrivate(page);
  
- static int valid_policy = 1;
--#define TMPBUFLEN 12
++	/*
++	 * set page dirty so that it will not be removed from cache/file
++	 * by non-hugetlbfs specific code paths.
++	 */
++	set_page_dirty(page);
 +
- static ssize_t ima_show_htable_value(char __user *buf, size_t count,
- 				     loff_t *ppos, atomic_long_t *val)
- {
--	char tmpbuf[TMPBUFLEN];
-+	char tmpbuf[32];	/* greater than largest 'long' string value */
- 	ssize_t len;
- 
--	len = scnprintf(tmpbuf, TMPBUFLEN, "%li\n", atomic_long_read(val));
-+	len = scnprintf(tmpbuf, sizeof(tmpbuf), "%li\n", atomic_long_read(val));
- 	return simple_read_from_buffer(buf, count, ppos, tmpbuf, len);
- }
- 
+ 	spin_lock(&inode->i_lock);
+ 	inode->i_blocks += blocks_per_huge_page(h);
+ 	spin_unlock(&inode->i_lock);
 
 
