@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8416C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE15C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E88521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC8562147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iloZMWCY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E88521104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufY/ESbS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8562147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390084AbeKTDOw (ORCPT
+        id S2390095AbeKTDOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:14:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52296 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:14:51 -0500
+        id S2388976AbeKTDOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AFB2206BA;
-        Mon, 19 Nov 2018 16:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADFA820C01;
+        Mon, 19 Nov 2018 16:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646238;
-        bh=efzkDKRhvLWbNG1/MjrLQoc/Mpbzm1sNRxAfVvqvB0k=;
+        s=default; t=1542646241;
+        bh=zj+iYnpA/ndo/eDfJefLKNJ5Ixec5VGQz/tVR9Pjkk8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iloZMWCYx7uSwHcgGjCgvtq98EcJcWalGx4OP239ibJowUTV2qEIj21vivJbXHT9M
-         WJBQDUEjC3HTXqXfzcRyBW8qGeOnQaQCUSoeLYDQ98AETnSSbnyNQJTa1HtHWgHOIR
-         4Nm7HfeC/JBWY20LfgBR5JPsOGt7xFBR+DjqiRPo=
+        b=ufY/ESbS+mDDTY/TWwAIMzwVWaQMroZsLVVo+Rh8z1jgzhyqd4RnAPKJruQOn7z9u
+         wLFIRig0JmXU0ceH0VfF7qHPFDmTpo55XuPyFEyq1EKJNB1GW10IDMH0nc93uirwg/
+         CyDE35GAsXs/wyoO/CKjGOCB0pDLyyh1BO5S++mI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        stable@vger.kernel.org, Jonathan Calmels <jcalmels@nvidia.com>,
         "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.14 090/124] mount: Retest MNT_LOCKED in do_umount
-Date:   Mon, 19 Nov 2018 17:29:04 +0100
-Message-Id: <20181119162630.025478280@linuxfoundation.org>
+Subject: [PATCH 4.14 091/124] mount: Dont allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
+Date:   Mon, 19 Nov 2018 17:29:05 +0100
+Message-Id: <20181119162630.126709341@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,19 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 25d202ed820ee347edec0bf3bf553544556bf64b upstream.
+commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
 
-It was recently pointed out that the one instance of testing MNT_LOCKED
-outside of the namespace_sem is in ksys_umount.
+Jonathan Calmels from NVIDIA reported that he's able to bypass the
+mount visibility security check in place in the Linux kernel by using
+a combination of the unbindable property along with the private mount
+propagation option to allow a unprivileged user to see a path which
+was purposefully hidden by the root user.
 
-Fix that by adding a test inside of do_umount with namespace_sem and
-the mount_lock held.  As it helps to fail fails the existing test is
-maintained with an additional comment pointing out that it may be racy
-because the locks are not held.
+Reproducer:
+  # Hide a path to all users using a tmpfs
+  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
+  root@castiana:~#
+
+  # As an unprivileged user, unshare user namespace and mount namespace
+  stgraber@castiana:~$ unshare -U -m -r
+
+  # Confirm the path is still not accessible
+  root@castiana:~# ls /sys/devices/
+
+  # Make /sys recursively unbindable and private
+  root@castiana:~# mount --make-runbindable /sys
+  root@castiana:~# mount --make-private /sys
+
+  # Recursively bind-mount the rest of /sys over to /mnnt
+  root@castiana:~# mount --rbind /sys/ /mnt
+
+  # Access our hidden /sys/device as an unprivileged user
+  root@castiana:~# ls /mnt/devices/
+  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
+  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
+  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
+
+Solve this by teaching copy_tree to fail if a mount turns out to be
+both unbindable and locked.
 
 Cc: stable@vger.kernel.org
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
 Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
 Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
@@ -85,37 +111,22 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1625,8 +1625,13 @@ static int do_umount(struct mount *mnt,
- 
- 	namespace_lock();
- 	lock_mount_hash();
--	event++;
- 
-+	/* Recheck MNT_LOCKED with the locks held */
-+	retval = -EINVAL;
-+	if (mnt->mnt.mnt_flags & MNT_LOCKED)
-+		goto out;
-+
-+	event++;
- 	if (flags & MNT_DETACH) {
- 		if (!list_empty(&mnt->mnt_list))
- 			umount_tree(mnt, UMOUNT_PROPAGATE);
-@@ -1640,6 +1645,7 @@ static int do_umount(struct mount *mnt,
- 			retval = 0;
- 		}
- 	}
-+out:
- 	unlock_mount_hash();
- 	namespace_unlock();
- 	return retval;
-@@ -1730,7 +1736,7 @@ SYSCALL_DEFINE2(umount, char __user *, n
- 		goto dput_and_out;
- 	if (!check_mnt(mnt))
- 		goto dput_and_out;
--	if (mnt->mnt.mnt_flags & MNT_LOCKED)
-+	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
- 		goto dput_and_out;
- 	retval = -EPERM;
- 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
+@@ -1814,8 +1814,14 @@ struct mount *copy_tree(struct mount *mn
+ 		for (s = r; s; s = next_mnt(s, r)) {
+ 			if (!(flag & CL_COPY_UNBINDABLE) &&
+ 			    IS_MNT_UNBINDABLE(s)) {
+-				s = skip_mnt_tree(s);
+-				continue;
++				if (s->mnt.mnt_flags & MNT_LOCKED) {
++					/* Both unbindable and locked. */
++					q = ERR_PTR(-EPERM);
++					goto out;
++				} else {
++					s = skip_mnt_tree(s);
++					continue;
++				}
+ 			}
+ 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+ 			    is_mnt_ns_file(s->mnt.mnt_root)) {
 
 
