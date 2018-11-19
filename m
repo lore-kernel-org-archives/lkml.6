@@ -2,108 +2,106 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01696C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27561C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6CF620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:08:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Vblzs1Ay"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6CF620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id E936D20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:13:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E936D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730960AbeKTHdy (ORCPT
+        id S1730962AbeKTHic (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:33:54 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:38850 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730805AbeKTHdx (ORCPT
+        Tue, 20 Nov 2018 02:38:32 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39770 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730805AbeKTHib (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:33:53 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAJL7kTq120948;
-        Mon, 19 Nov 2018 15:07:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542661666;
-        bh=lBM+lZ1u1G2UlBcH6Z8P+u6/n6vBOnLzAqDtenckS0E=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Vblzs1AyoD3f2nuDEWEqRK84Q6vX1U9i20u6z0ty8aITbRcY3alnMujmaYfm0wVVq
-         hGAGqRA2pyMUsIZie6Sq2BpWKnPfE8R88Kao6vwWk+pEUPHtTpRLyIsgBbpZ9g9872
-         w8IeX7DGZfys9tXDgJSx4+jY7mp7+r8IBUE0tRLw=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAJL7kO8043919
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 15:07:46 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
- Nov 2018 15:07:46 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 19 Nov 2018 15:07:45 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAJL7gXs003801;
-        Mon, 19 Nov 2018 15:07:43 -0600
-Subject: Re: [PATCH 3/3] ARM: davinci: fix da850-evm boot in legacy mode
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Keerthy <j-keerthy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <stable@vger.kernel.org>
-References: <20181113135051.15308-1-brgl@bgdev.pl>
- <20181113135051.15308-4-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <fc80e910-40fa-bb9c-e3ea-f53387bc055a@ti.com>
-Date:   Tue, 20 Nov 2018 02:37:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 02:38:31 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gOqqb-00033Z-9G; Mon, 19 Nov 2018 22:12:45 +0100
+Date:   Mon, 19 Nov 2018 22:12:44 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jiri Kosina <jikos@kernel.org>
+cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+In-Reply-To: <nycvar.YFH.7.76.1811192153470.21108@cbobk.fhfr.pm>
+Message-ID: <alpine.DEB.2.21.1811192212070.1669@nanos.tec.linutronix.de>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <alpine.DEB.2.21.1811192133240.1669@nanos.tec.linutronix.de>
+ <nycvar.YFH.7.76.1811192153470.21108@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181113135051.15308-4-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bartosz,
-
-
-On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, 19 Nov 2018, Jiri Kosina wrote:
+> On Mon, 19 Nov 2018, Thomas Gleixner wrote:
 > 
-> Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
-> automatic base selection") broke the network support in legacy boot
-> mode for da850-evm since we can no longer request the MDIO clock GPIO.
+> > > @@ -452,12 +542,6 @@ static void __init spectre_v2_select_mitigation(void)
+> > >  	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
+> > >  	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
+> > >  
+> > > -	/* Initialize Indirect Branch Prediction Barrier if supported */
+> > > -	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> > > -		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+> > > -		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
+> > > -	}
+> > > -
+> > >  	/*
+> > >  	 * Retpoline means the kernel is safe because it has no indirect
+> > >  	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
+> > > @@ -474,6 +558,43 @@ static void __init spectre_v2_select_mitigation(void)
+> > >  		pr_info("Enabling Restricted Speculation for firmware calls\n");
+> > >  	}
+> > >  
+> > > +	app2app_mode = SPECTRE_V2_APP2APP_NONE;
+> > > +	if (!boot_cpu_has(X86_FEATURE_IBPB) ||
+> > > +	    !boot_cpu_has(X86_FEATURE_STIBP))
+> > > +		goto set_app2app_mode;
+> > 
+> > So before that change IBPB was usable without STIBP, now not longer. What's
+> > the rationale?
+> > 
+> > This patch changes a gazillion things at once and is completely
+> > unreviewable.
 > 
-> We now have the option to specify the GPIO base manually for davinci,
-> so add the relevant fields to platform data.
+> The patchset actually ties together IBPB and STIBP pretty closely, which 
+> is IMO a good thing; there is no good reason why anone would want just one 
+> of those (or each in a different mode), at least before this magical 
+> coscheduling exists.
 > 
-> Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> But I guess this fact should be documented somewhere.
 
-
-> ---
->  arch/arm/mach-davinci/da850.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-
-Similar changes are needed for other 5 DaVinci SoCs too. Can you do
-those in this patch itself?
+That and it can be split in pieces so it actually becomes reviewable.
 
 Thanks,
-Sekhar
+
+	tglx
