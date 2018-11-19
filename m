@@ -2,112 +2,110 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DF8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:51:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F6BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4593D20671
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:51:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4593D20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 932DF2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:52:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932DF2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729366AbeKTAPd (ORCPT
+        id S1729380AbeKTAPt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:15:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50338 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727310AbeKTAPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:15:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C28A3AF04;
-        Mon, 19 Nov 2018 13:51:50 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 14:51:49 +0100
-From:   Michal Hocko <mhocko@kernel.org>
+        Mon, 19 Nov 2018 19:15:49 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38554 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbeKTAPt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:15:49 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gOjxq-0007tm-DP; Mon, 19 Nov 2018 14:51:46 +0100
+Date:   Mon, 19 Nov 2018 14:51:45 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
-Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
- l1tf=off
-Message-ID: <20181119135149.GN22247@dhcp22.suse.cz>
-References: <20181113184910.26697-1-mhocko@kernel.org>
- <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm>
- <20181114073229.GC23419@dhcp22.suse.cz>
- <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm>
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Willy Tarreau <w@1wt.eu>
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+In-Reply-To: <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
+Message-ID: <alpine.DEB.2.21.1811191451101.1537@nanos.tec.linutronix.de>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm> <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
+ <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-11-18 14:36:32, Jiri Kosina wrote:
-> On Wed, 14 Nov 2018, Michal Hocko wrote:
+On Mon, 19 Nov 2018, Jiri Kosina wrote:
+> On Mon, 19 Nov 2018, Thomas Gleixner wrote:
 > 
-> > > > +				It also drops the swap size and available
-> > > > +				RAM limit restriction.
+> > > On Sat, 17 Nov 2018, Jiri Kosina wrote:
+> > 
+> > > Subject: [PATCH] x86/speculation: enforce STIBP for SECCOMP tasks in lite mode
 > > > 
-> > > Minor nit: I think this should explicitly mention that those two things 
-> > > are related to bare metal mitigation, to avoid any confusion (as otherwise 
-> > > the l1tf cmdline parameter is purely about hypervisor mitigations).
-> > 
-> > Do you have any specific wording in mind?
-> > 
-> > It also drops the swap size and available RAM limit restrictions on both
-> > hypervisor and bare metal.
-> > 
-> > Sounds better?
-> > 
-> > > With that
+> > > If 'lite' mode of app2app protection from spectre_v2 is selected on
+> > > kernel command-line, we are currently applying STIBP protection to
+> > > non-dumpable tasks, and tasks that have explicitly requested such
+> > > protection via
 > > > 
-> > > 	Acked-by: Jiri Kosina <jkosina@suse.cz>
+> > > 	prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
+> > > 
+> > > Let's extend this to cover also SECCOMP tasks (analogically to how we
+> > > apply SSBD protection).
 > > 
-> > Thanks!
+> > Right. And SSBD does not fiddle with dumpable.
+> > 
+> > Willy had concerns about the (ab)use of dumpable so I'm holding off on that
+> > bit for now.
 > 
-> Yes, I think that makes it absolutely clear. Thanks,
+> Yeah. IBPB implementation used to check the dumpability of tasks during 
+> rescheduling, but that went away later.
+> 
+> I still think that ideally that 'app2app' setting would toggle how IBPB is 
+> being used as well, something along the lines:
+> 
+> lite:
+> 	- STIBP for the ones marked via prctl() and SECCOMP with the TIF_ 
+> 	  flag
+> 	- ibpb_needed() returning true for the same
+> 
+> strict:
+> 	- STIBP: as currently implemented
+> 	- ibpb_needed() returning always true
+> 
+> off:
+> 	- neither STIBP nor IBPB applied ever
+> 
+> That's give us also some % of performance lost via IBPB back.
+> 
+> Makes sense?
 
-OK. Here is the incremental diff on top of the patch. I will fold and
-repost later this week. I assume people are still catching up after LPC
-and I do not want to spam them even more.
+Except for the naming convention, yes. See other mail.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a54f2bd39e77..c5aa4b4a797d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2096,7 +2096,8 @@
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
- 				It also drops the swap size and available
--				RAM limit restriction.
-+				RAM limit restriction on both hypervisor and
-+				bare metal.
- 
- 			Default is 'flush'.
- 
-diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
-index b00464a9c09c..2e65e6cb033e 100644
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,7 +405,8 @@ The kernel command line allows to control the L1TF mitigations at boot
- 
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
--		It also drops the swap size and available RAM limit restrictions.
-+		It also drops the swap size and available RAM limit restrictions
-+                on both hypervisor and bare metal.
- 
-   ============  =============================================================
- 
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+	tglx
