@@ -2,73 +2,185 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F573C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5A7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57C4C206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57C4C206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 38B34206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B34206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeKSTtK (ORCPT
+        id S1727606AbeKSTtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 19 Nov 2018 14:49:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:52642 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727558AbeKSTtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Nov 2018 14:49:10 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33689 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbeKSTtK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:49:10 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1gOfoY-0002Nx-Vd; Mon, 19 Nov 2018 10:25:54 +0100
-Message-ID: <1542619553.5139.1.camel@pengutronix.de>
-Subject: Re: [PATCH 0/4] reset: uniphier: Rename from USB3 reset to glue
- reset and add AHCI reset support
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Date:   Mon, 19 Nov 2018 10:25:53 +0100
-In-Reply-To: <1541727727-10821-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1541727727-10821-1-git-send-email-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF8561596;
+        Mon, 19 Nov 2018 01:26:06 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60A4A3F5A0;
+        Mon, 19 Nov 2018 01:26:05 -0800 (PST)
+Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
+To:     Mark Rutland <mark.rutland@arm.com>, peng.hao2@zte.com.cn
+Cc:     julien.thierry@arm.com, andre.przywara@arm.com,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, ard.bieshseuvel@linaro.org,
+        leif.lindholm@linaro.org
+References: <851b61b1-786b-ef64-b8c4-fe6926bdf9f9@arm.com>
+ <201811171058376326562@zte.com.cn> <20181119091020.ejplmzkzo4jd72md@salmiak>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <c259e853-3d0c-1046-f576-fe28ead58ee8@arm.com>
+Date:   Mon, 19 Nov 2018 09:26:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181119091020.ejplmzkzo4jd72md@salmiak>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-09 at 10:42 +0900, Kunihiko Hayashi wrote:
-> This series renames the reset control of core reset included in USB3 glue
-> layer with in the glue layer for generic peripherals to allow other devices
-> to use it.
+On 19/11/2018 09:10, Mark Rutland wrote:
+> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
+>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
+>>>>> Hi,
+>>>>>> When virtual machine starts, hang up.
+>>>>>
+>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
+>>>>> interrupt?
+>>>>>
+>>>>>> The kernel version of guest
+>>>>>> is 4.16. Host support vgic_v3.
+>>>>>
+>>>>> Your host kernel is something recent, I guess?
+>>>>>
+>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
+>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
+>>>>>> correctly, so group is not set.
+>>>>>
+>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
+>>>>> version?) or some other userland tool?
+>>>>>
+>>>>
+>>>> QEMU emulator version 3.0.50 .
+>>>>
+>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
+>>>>>> time.
+>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+>>>>>> interrupt injection failed.
+>>>>>>
+>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>> ---
+>>>>>>   virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> index 9c0dd23..d101000 100644
+>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
+>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
+>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
+>>>>>>
+>>>>>> -    if (irq->group)
+>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>>>>>
+>>>>> This is not the right fix, not only because it basically reverts the
+>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
+>>>>> their configured group).
+>>>>>
+>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
+>>>>> before dist->vgic_model is set, also what value it has?
+>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
+>>>>>
+>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
+>>>>   If the interrupt comes at this time, the interrupt injection fails.
+>>>
+>>> Does that mean that the guest is configuring its interrupts as Group0?
+>>> That sounds wrong, Linux should configure all it's interrupts as
+>>> non-secure group1.
+>>
+>> no, I think that uefi dose this, not linux.
+>> 1. kvm_vgic_vcpu_init 
+>> 2. vgic_create 
+>> 3. kvm_vgic_dist_init 
+>> 4.vgic_mmio_write_group: uefi as guest, write group=0
+>> 5.vgic_mmio_write_group: linux as guest, write group=1
 > 
-> And this series adds support for the core reset included in AHCI glue layer.
+> Is this the same issue fixed by EDK2 commit:
 > 
-> Kunihiko Hayashi (4):
->   dt-bindings: reset: uniphier: Replace the expression of USB3 with
->     generic peripherals
->   reset: uniphier-usb3: Rename to reset-uniphier-glue
->   dt-bindings: reset: uniphier: Add AHCI core reset description
->   reset: uniphier-glue: Add AHCI reset control support in glue layer
+> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
+> 
+> ... where EDK2 would try to use IAR0 rather than IAR1?
+> 
+> The commit messages notes this lead to a boot-time hang.
 
-Thank you, applied to reset/next.
+I doubt it. The EDK2 bug resulted in no interrupt being delivered due to
+the group being set to 1, and the interrupt being acknowledged through
+the Group0 accessor. Also, this was a 32bit special, and 64bit EDK2 was
+just fine.
 
-regards
-Philipp
+What Peng describes here is the guest writing the group as 0, which
+doesn't make much sense (I certainly don't see EDK2 doing that).
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
