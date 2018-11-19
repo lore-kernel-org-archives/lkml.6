@@ -2,215 +2,124 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7857AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFF3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2952520831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:23:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E0020831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:24:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fortanix.onmicrosoft.com header.i=@fortanix.onmicrosoft.com header.b="tmYNYw6f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2952520831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fortanix.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6mQaLBx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E0020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbeKTCrE (ORCPT
+        id S1730029AbeKTCsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:47:04 -0500
-Received: from mail-eopbgr760132.outbound.protection.outlook.com ([40.107.76.132]:6373
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729922AbeKTCrD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:47:03 -0500
+        Mon, 19 Nov 2018 21:48:10 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:35037 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729937AbeKTCsJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:48:09 -0500
+Received: by mail-vs1-f68.google.com with SMTP id e7so18116424vsc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 08:24:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fortanix.onmicrosoft.com; s=selector1-fortanix-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nHURrDjwNrzAZWbxK3KRzRSOwFrgqDORar4vlLT4/So=;
- b=tmYNYw6fT4/XOgFq3hbD2XZd6OOQN85NA0MFgC53RkI61JDNdosrnH2LECkd/2QJH+ZosrByzYqzppet92VECZSL7YefFPdsWOeCui3x0TKefIzhv4RqlTKLsovXFq1glFbiWlNkUJV6ZebKPPTNYmJlySXRYWRTDHBj9N+wu9c=
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (52.135.109.144) by
- SN6PR11MB2733.namprd11.prod.outlook.com (52.135.92.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.26; Mon, 19 Nov 2018 16:22:55 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4cee:6f2d:f3c2:cac7%3]) with mapi id 15.20.1339.026; Mon, 19 Nov 2018
- 16:22:55 +0000
-From:   Jethro Beekman <jethro@fortanix.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>
-CC:     "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "mark.shanahan@intel.com" <mark.shanahan@intel.com>,
-        "luto@amacapital.net" <luto@amacapital.net>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Thread-Topic: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Thread-Index: AQHUfUjfX0aB3m959EWZdPqQBfyo6KVXOHKAgAAVJgA=
-Date:   Mon, 19 Nov 2018 16:22:54 +0000
-Message-ID: <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <20181119150655.GA11843@linux.intel.com>
-In-Reply-To: <20181119150655.GA11843@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MA1PR01CA0120.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:35::14) To SN6PR11MB3167.namprd11.prod.outlook.com
- (2603:10b6:805:c4::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jethro@fortanix.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [122.179.27.42]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR11MB2733;6:RWEoa7K/IGuMSEMPX6uefGzmTN0Z1RU4Tj6LLmAJWkt1oxWlJRKby+If0+u5PNLb5r2M1jGn96P7JqZtSpOj9uVOZBMGoHVs31+NLGkDfh2ca6L/fiv1UCBD7rgxhJCVurtZyEqV7yeoj8zAOwdgas2uZKCXTKpYCnyK7R52fhh/1rD5hnYSPgEJAWFs81ckRE7TzOPNGo595W4HsIjNSowJFWlKRlJfXIS3NJHY9chx3Dp61H5rMs/RuRcj8E2wNAGYkFceq8lNpIixbnl9uPPP141clFzyA2/DUR66SpujvOMh+g64xlAT0ogKQxkwBi5Lv4goblqyIkmK0L+Xyygj6SAkvU5IY9u3WYS+SVLw/rY8r0gGlO86hjGXa+sISYm4IihEx60oiPRKZTGgNhTejlfu3j+HbSoXwEYlDiUDhXzjXg6PPR9/rWAeRrZmVyZjrjd+VWrwH3HfpyV6uQ==;5:jCcnZ3zYFb3lBsWN9CAngtek7Q9vYMC/H37gVuvdbo2/a//UW9JitRQ2fDrQvTkkiDMhCm8n3RlpLQ8UxT/txUIJnGcRyTugJyoSYE/yKk10jwG+sW9U1XIuBbsfzoI2/bVxgh+foDA19BQUHOuqAv4iiJEH88bMwYq+gpYneiM=;7:UciAjyPaPNn/4dzisWNWigXbsWLdWNH6ojH4ZrGXIjwuC8YYa9Zut2U7M9wa2eKn1dMMIgDNUjccg4MTfe4w1MlvDrBE28D+U4+ElViRRmz+nZ5X3MYhe0RfpteE1SybTbyfpVCRZE6QNVJSk90ZVA==
-x-ms-office365-filtering-correlation-id: cb20f4a6-6768-4b51-57e1-08d64e3b425e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(49563074)(7193020);SRVR:SN6PR11MB2733;
-x-ms-traffictypediagnostic: SN6PR11MB2733:
-x-microsoft-antispam-prvs: <SN6PR11MB2733E39B0EC16B9AFA1868FDAAD80@SN6PR11MB2733.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(102415395)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231415)(944501410)(4983020)(52105112)(148016)(149066)(150057)(6041310)(2016111802025)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:SN6PR11MB2733;BCL:0;PCL:0;RULEID:;SRVR:SN6PR11MB2733;
-x-forefront-prvs: 08617F610C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39830400003)(346002)(396003)(366004)(136003)(189003)(199004)(106356001)(11346002)(99936001)(508600001)(86362001)(31696002)(476003)(2616005)(486006)(105586002)(2906002)(6486002)(7736002)(31686004)(7416002)(305945005)(446003)(66066001)(316002)(110136005)(54906003)(229853002)(6436002)(6116002)(3846002)(2501003)(68736007)(5660300001)(4326008)(36756003)(53546011)(97736004)(102836004)(6506007)(25786009)(386003)(81166006)(14454004)(99286004)(8676002)(8936002)(76176011)(53936002)(4001150100001)(52116002)(71190400001)(71200400001)(2900100001)(2201001)(6512007)(6246003)(81156014)(256004)(186003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR11MB2733;H:SN6PR11MB3167.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fortanix.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: I4h9NFCTDH8JdzBxFakkvc26W6jIgBF0b48ZLfXT3FIiSQQ/ygulSPgLrtee7Ir7MNYp8d8sO205NarPT9g9YbumJoNlWg0tQldyYQZgSKmz89Xq721YRl8KFyZpInq1hlTECUFrOXPkaopDi+ydCA67vww4YkjlvKxg/u9QTSP0dvp1NO+b4o4PAgzr/bJoBkILs70X2Oh22OeP0ziAiecQ4Z2dEVp1fZRbtBh3uVChHdtL+nUT8wR62PJ+5rUKP4DuVVYH0LqfxzDR7RyAzOAe7p+RAE5FcEU9TLbI+JheujFcc7ZUctDqhkKYAHjLwL1C69EPK0FFFrY7iWhyA3IJ06c3n++cAquWxs+MtpI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030405050909080903000702"
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=b/dNaTvz6Bhl24QHJ1GX7PHoKH/Ynzj09/enaeXKn6k=;
+        b=L6mQaLBx1jcDiwBhZpdROTnuyCRBdcapfT7uRtrNPM99BCVmZlEH+5YGsDBrT079HI
+         bA15jwju7thTg33v0zQusbxauwrGKIlbqfvAZ/Pgujx2RhN65agYakrPWUl33eX5w7E7
+         CypPXjaEtWtUTJ4I8QQGi50rvp+EOoBuUquBhcg51U0C+c8Yr4+ls0FgV7H3PbtFU0l7
+         cWSSHrhn9h5ZIYVwskRfET1FeFKF3EbqCLTJ3YYDT+bvdyOvHMRXUx7TfcSeBZJqR8M6
+         9s67GrBsr0FUz9aA7Kr6/NFZcCVAYnUrHrG+sypCZoTXQF9e8l+LUfVvW8wVK9cv1glG
+         RPeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=b/dNaTvz6Bhl24QHJ1GX7PHoKH/Ynzj09/enaeXKn6k=;
+        b=oQD3HyJhd2VZvAL0wmqn2elLKfDEjbV+RZEEfwoqx0ed0C2cPwrLeBk2E/pCoRwLlE
+         0M5lwUYtW4uZd6YAnpo5JI/EzJ3LOQdFr4Ed7Al/AQShOjdAgGWTXTRwmDG/Nx7xoKAy
+         vBewK8rp+B6wP8zzEjhrDYgnymstBMNuC1YwPSo0YrbM4PA44yHMjkQIRM6tVXtQSc//
+         XMGzAtLNYj9UA7vVJOpOCPm45GsqcW+TzjM0UmqhDigwRq5JpJIPQoclonmN5m1sF0Q7
+         rwrPpn218+gHdc0U6KZGbYB/MMNl1Ehi4MJ6OnvRCaAALTDebRCYft6e3evpYW9wlLs8
+         IEwA==
+X-Gm-Message-State: AGRZ1gInNI2raBWuaQaxB0Q12XOCNgL2qxvXOmg5QCfzVSg3P03UDjcw
+        1hDP2Kf8NHGyf8eNz+uYmr9FmKc/WYaD6s0fiAVF1w==
+X-Google-Smtp-Source: AJdET5fuwC9FemPQeEUsmu4GvOG/IMwUzq8xLVs/+keTmXetuxjRRdTqKDFUiH4dn895owhJUx2eL5CF4E5+kC98GnA=
+X-Received: by 2002:a67:6346:: with SMTP id x67mr9209047vsb.114.1542644643395;
+ Mon, 19 Nov 2018 08:24:03 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: fortanix.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb20f4a6-6768-4b51-57e1-08d64e3b425e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 16:22:54.7943
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: de7becae-4883-43e8-82c7-7dbdbb988ae6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR11MB2733
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Mon, 19 Nov 2018 08:24:02
+ -0800 (PST)
+In-Reply-To: <20181119105426.GD28607@amd>
+References: <20181031150625.147369-1-dancol@google.com> <20181105132205.138695-1-dancol@google.com>
+ <20181119105426.GD28607@amd>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Mon, 19 Nov 2018 08:24:02 -0800
+Message-ID: <CAKOZueu3RQF4hOSg-0LCNVzJsJ=D_yfXg_uun2tqXW8aSkKykw@mail.gmail.com>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---------------ms030405050909080903000702
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 19, 2018 at 2:54 AM, Pavel Machek <pavel@ucw.cz> wrote:
+> On Mon 2018-11-05 13:22:05, Daniel Colascione wrote:
+>> State explicitly that holding a /proc/pid file descriptor open does
+>> not reserve the PID. Also note that in the event of PID reuse, these
+>> open file descriptors refer to the old, now-dead process, and not the
+>> new one that happens to be named the same numeric PID.
+>>
+>> Signed-off-by: Daniel Colascione <dancol@google.com>
+>> ---
+>>  Documentation/filesystems/proc.txt | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> Moved paragraphed to start of /proc/pid section; added signed-off-by.
+>>
+>> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+>> index 12a5e6e693b6..0b14460f721d 100644
+>> --- a/Documentation/filesystems/proc.txt
+>> +++ b/Documentation/filesystems/proc.txt
+>> @@ -125,6 +125,13 @@ process running on the system, which is named after the process ID (PID).
+>>  The link  self  points  to  the  process reading the file system. Each process
+>>  subdirectory has the entries listed in Table 1-1.
+>>
+>> +Note that an open a file descriptor to /proc/<pid> or to any of its
+>> +contained files or subdirectories does not prevent <pid> being reused
+>> +for some other process in the event that <pid> exits. Operations on
+>
+> "does not" -> "may not"?
+>
+> We want to leave this unspecified, so that we can change it in future.
 
-On 2018-11-19 20:36, Jarkko Sakkinen wrote:
-> Question: should be dissolve the driver completely and move this code t=
-o
-> arch/x86/kernel/cpu/sgx/ (and rename intel_sgx.c as main.c)? Swapping
-> patch removes the possibility to compile this as a module anyway.
-
-No. We should keep the capability to build this as a module for other=20
-users of SGX. What is the swapping patch and why doesn't allow building=20
-as a module?
-
---
-Jethro Beekman | Fortanix
-
-
---------------ms030405050909080903000702
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-Cx8wggUxMIIEGaADAgECAhBdZC9mIseKJlmxx1xn+g00MA0GCSqGSIb3DQEBCwUAMIGXMQsw
-CQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBD
-bGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xODA5MTUwMDAw
-MDBaFw0xOTA5MTUyMzU5NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2pldGhyb0Bmb3J0YW5peC5j
-b20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDRQDOQsroKjy2xAQCXLyqryJt4
-Xwj8hcweJCzOnjILKHIoWlOQ0b9yIbFLIWBRt/9zdxlE5ZabDVHnkIyhcVgtU/BA73e78Wx2
-LOObdg0wfs9U2CVRYhz2EPHFjGvkYKihItt69ye91hj1w7RKCrYC8KZGSZ/+sbkJzQdXVy32
-lxmiNEt17GNRebpkJCaFnznd6C2a8tBAS2Fa/UNyFdEs4eoRoYSKswclRhbe81aVhqY2hjcd
-O6puyyaYp5hkmau2UPih6OpRSOhbe6Tuebceg1yvumoVX3OZtGPS1VdQ+p0bxB0RE6gNs140
-ZKUhrvAJDETuGaaQD4A2/6ksLunjAgMBAAGjggHpMIIB5TAfBgNVHSMEGDAWgBSCr2yM+MX+
-lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUsFUcmGtaJBU7/52LyTYHC/M+LscwDgYDVR0PAQH/
-BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUHAwQGCysGAQQBsjEBAwUC
-MBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEBATArMCkGCCsG
-AQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBL
-hklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlv
-bmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0
-dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNv
-bTAeBgNVHREEFzAVgRNqZXRocm9AZm9ydGFuaXguY29tMA0GCSqGSIb3DQEBCwUAA4IBAQB6
-v3tFEUSGv9+yY4wUjvcMyz3126nJrX5LkfEvrnCEpEiImECuoYvxOYNLYYynell7BQGtTaZg
-shMfDvwpy2isoi3w1AWAfbn6npnSKLzu0BMRvcCPWY8VPmePPizTqXoPkLwgTJfSaWkxMP1u
-rfL9S5NeRdkjwjHklX5IWuwwDu1hsKVZrxSSY2unCtvq67UHWz+z6rG1JQrP2YDfb98xun3y
-eLBNe/LFBNnGISbkT5q6D+e5c0bgzoH9nH4bsw3t8aDqJTfT3BqQdWr4pF05ODzzeOmEqeYE
-qGlD9hIL2AbmTZLjunAnARr6Fv7Sfqt23ptsGkmoZ9ZQNjT3TlwvMIIF5jCCA86gAwIBAgIQ
-apvhODv/K2ufAdXZuKdSVjANBgkqhkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNV
-BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09N
-T0RPIENBIExpbWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
-b3JpdHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMCR0Ix
-GzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UE
-ChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhl
-bnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYhUPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9
-NEjk6vW7rN/5sYFLIP1of3l0NKZ6fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+Ul
-NEQ1/5ErCsHq9x9aU/x1KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2
-qvGlnHJvijjI03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZ
-jrqck39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMBAAGj
-ggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNVHQ4EFgQUgq9s
-jPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-EQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9jcmwuY29tb2Rv
-Y2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEB
-BGUwYzA7BggrBgEFBQcwAoYvaHR0cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRk
-VHJ1c3RDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkq
-hkiG9w0BAQwFAAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+js
-QgwRGiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDcZoFD
-7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwpWZT89RY0wpJO
-+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNmNppI4ZNMUH4Tam85S1j6
-E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade2022O/tUU1gb4jfWCcyvB8czm12F
-gX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztveBdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiO
-SEmIDsS5N5w/8IW1Hva5hEFy6fDAfd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz
-/W3JlHaeI5iKFn4UJu1/cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSa
-m9V1niiCfOBe2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpO
-UvxhcsjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIxggQ1MIIEMQIBATCB
-rDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9E
-TyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yi
-x4omWbHHXGf6DTQwDQYJYIZIAWUDBAIBBQCgggJZMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTExOTE2MjIzNlowLwYJKoZIhvcNAQkEMSIEINEmRNhZ
-5/tnBeuDGgL0fCtV8hyoGexwSjPhSNDpy+O3MGwGCSqGSIb3DQEJDzFfMF0wCwYJYIZIAWUD
-BAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwgb0GCSsGAQQBgjcQBDGBrzCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2Fs
-Zm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBSU0Eg
-Q2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0ECEF1kL2Yix4omWbHH
-XGf6DTQwgb8GCyqGSIb3DQEJEAILMYGvoIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMS
-R3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8g
-Q0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24g
-YW5kIFNlY3VyZSBFbWFpbCBDQQIQXWQvZiLHiiZZscdcZ/oNNDANBgkqhkiG9w0BAQEFAASC
-AQBtDT0PKMb9Ge//kMX+nBrWNRWJ5WGf6aY7gAKXpqMpdWRK5ixNWs6AH2CFsXGc87hziqWy
-0R+j0DfcgSKDlFJNstAkrg5sC6+G0WQYmZbt2XkyyTNKQvm6pDWgn7webpM2OaXivca9TTyE
-961fpnYMHFTkL2Z0psExvINbk4lkRCtjXboatP91oeqe89P6P85z8zJsMigEiMCbcpRb4YOm
-HrvFACGGYOhHQyKIG3BsniVjw60oycyqznHvuv1kVYl3hcTDVByxdVPNG29Rckbl1TFtqWkc
-4wDaXH6Ef7bnChR/nS2SQBuaGp6tfmkYT4zx5S9NYNWCEvQ9AxGeZhJwAAAAAAAA
-
---------------ms030405050909080903000702--
+No. "Does not". I'm sick and tired of procfs behavior being vague and
+unspecified to the point where even kernel developers have an
+incorrect mental model of how it all works. With Christian Brauner's
+good work in place and hopefully my own work to follow, we're moving
+firmly in the direction of procfs handles being struct pid references.
+Instead of waffling further, let's just buy into this model and do the
+best job we can of making it work well.
