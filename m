@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55390C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8F0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC50214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FD152146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:03:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVisua2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC50214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvzizNHT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD152146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406310AbeKTD1y (ORCPT
+        id S2406324AbeKTD15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:27:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42078 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:27:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405677AbeKTD1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:27:53 -0500
+        id S2405677AbeKTD14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:27:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56968214E0;
-        Mon, 19 Nov 2018 17:03:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDA132151B;
+        Mon, 19 Nov 2018 17:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647016;
-        bh=XdLkS/VBoRwLRITJZw1CyLbTNqEGCBWVbQhkn9dszzw=;
+        s=default; t=1542647019;
+        bh=hqwuZ5rflfz/+UYNCvGdhPP5qbPNoGi5vTdreNe2078=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pVisua2tmdJwPiy4ON/i+erULldtxjrZY5dKINcBss4WB732SbvthEfmcmV66wL6e
-         0A0VCYSCjSBUkaorDyoMvDodh4oe7vDDE24UXFvHu4MiQuGAtOeQSzOIVjSGLbPDy8
-         yPVr0rbr/WglRz4D3mr5/1KnLSwixFExevGOKhYs=
+        b=fvzizNHT4X8Z+2d/l1WPo3RkrSoQcy0TXFG9CJO0XL/o+wG1KSAgy1fubeuD12LNG
+         TDzy7oNw3CMid3fQHcvGM2ge+R17f/Nzb2yzcdX13wLfVQ9c/5UsMfk6v+3Q1edruK
+         dkuVq8oaW8y/FP/NMm1br6OH95IH+IUmZrDJKac0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 19/90] x86: boot: Fix EFI stub alignment
-Date:   Mon, 19 Nov 2018 17:29:01 +0100
-Message-Id: <20181119162624.026267991@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Hou Tao <houtao1@huawei.com>,
+        Richard Weinberger <richard@nod.at>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 3.18 02/90] jffs2: free jffs2_sb_info through jffs2_kill_sb()
+Date:   Mon, 19 Nov 2018 17:28:44 +0100
+Message-Id: <20181119162620.974539807@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -63,50 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Hou Tao <houtao1@huawei.com>
 
-[ Upstream commit 9c1442a9d039a1a3302fa93e9a11001c5f23b624 ]
+commit 92e2921f7eee63450a5f953f4b15dc6210219430 upstream.
 
-We currently align the end of the compressed image to a multiple of
-16.  However, the PE-COFF header included in the EFI stub says that
-the file alignment is 32 bytes, and when adding an EFI signature to
-the file it must first be padded to this alignment.
+When an invalid mount option is passed to jffs2, jffs2_parse_options()
+will fail and jffs2_sb_info will be freed, but then jffs2_sb_info will
+be used (use-after-free) and freeed (double-free) in jffs2_kill_sb().
 
-sbsigntool commands warn about this:
+Fix it by removing the buggy invocation of kfree() when getting invalid
+mount options.
 
-  warning: file-aligned section .text extends beyond end of file
-  warning: checksum areas are greater than image size. Invalid section table?
-
-Worse, pesign -at least when creating a detached signature- uses the
-hash of the unpadded file, resulting in an invalid signature if
-padding is required.
-
-Avoid both these problems by increasing alignment to 32 bytes when
-CONFIG_EFI_STUB is enabled.
-
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 92abc475d8de ("jffs2: implement mount option parsing and compression overriding")
+Cc: stable@kernel.org
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+Reviewed-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/boot/tools/build.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/arch/x86/boot/tools/build.c
-+++ b/arch/x86/boot/tools/build.c
-@@ -391,6 +391,13 @@ int main(int argc, char ** argv)
- 		die("Unable to mmap '%s': %m", argv[2]);
- 	/* Number of 16-byte paragraphs, including space for a 4-byte CRC */
- 	sys_size = (sz + 15 + 4) / 16;
-+#ifdef CONFIG_EFI_STUB
-+	/*
-+	 * COFF requires minimum 32-byte alignment of sections, and
-+	 * adding a signature is problematic without that alignment.
-+	 */
-+	sys_size = (sys_size + 1) & ~1;
-+#endif
+---
+ fs/jffs2/super.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -285,10 +285,8 @@ static int jffs2_fill_super(struct super
+ 	sb->s_fs_info = c;
  
- 	/* Patch the setup code with the appropriate size parameters */
- 	buf[0x1f1] = setup_sectors-1;
+ 	ret = jffs2_parse_options(c, data);
+-	if (ret) {
+-		kfree(c);
++	if (ret)
+ 		return -EINVAL;
+-	}
+ 
+ 	/* Initialize JFFS2 superblock locks, the further initialization will
+ 	 * be done later */
 
 
