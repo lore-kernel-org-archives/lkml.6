@@ -7,41 +7,40 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC30C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69771C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C775C208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2161F2147D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8ksvzKg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C775C208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRaQRr9+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2161F2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeKTC72 (ORCPT
+        id S1731654AbeKTC7c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58938 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:28 -0500
+        id S1730350AbeKTC7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF72220C01;
-        Mon, 19 Nov 2018 16:35:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51E972146D;
+        Mon, 19 Nov 2018 16:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645320;
-        bh=sGUH1TyEtOhx69kdLWfx+TJvxzRyoV34xtrpcnSOh/I=;
+        s=default; t=1542645322;
+        bh=+BarRwKgBdNSh3WSeaBQOh5xV7ETk03+4+0ctVw0+9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c8ksvzKgZw12NB2ouDH3WzmZ7CanKkR9nsGQ4rSl8Vp0RFrJD1qNwn+uZD7jFQxDD
-         Q5WcoVR16WvLA7K+H3Sa9rCwM59JhTPDZW6wJUu+44HV5X3eIdXlPPfl6UbODghvoT
-         5JxYI3MnUNPpHDQBItPkNjOapoPihf2hnj9OfqyA=
+        b=bRaQRr9+REQuQ2SlUMSObQakUXH1kAU+oJ9Ua0XCssp/LIevBGMVkHu8Q29Uw2IQL
+         OvZWl38SsbXYyPFfg1jFCr2XQmELT/YznVm2ibAhB8u50vVurV3qDrFJ1WxrRIpo0p
+         Y6XoSQ0ZD/z3kJP8vEUtN4/F4sbB/pg69kZ2d9oQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, "H. Peter Anvin (Intel)" <hpa@zytor.com>,
-        "Cc: Johan Hovold" <johan@kernel.org>,
         Jiri Slaby <jslaby@suse.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Richard Henderson <rth@twiddle.net>,
@@ -51,10 +50,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Kate Stewart <kstewart@linuxfoundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
+        Johan Hovold <johan@kernel.org>,
         Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: [PATCH 4.19 120/205] termios, tty/tty_baudrate.c: fix buffer overrun
-Date:   Mon, 19 Nov 2018 17:27:07 +0100
-Message-Id: <20181119162635.927742775@linuxfoundation.org>
+Subject: [PATCH 4.19 121/205] arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
+Date:   Mon, 19 Nov 2018 17:27:08 +0100
+Message-Id: <20181119162636.039331082@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -72,19 +73,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Peter Anvin <hpa@zytor.com>
+From: H. Peter Anvin (Intel) <hpa@zytor.com>
 
-commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
+commit d0ffb805b729322626639336986bc83fc2e60871 upstream.
 
-On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
-not do any limit checking on the tty_baudrate[] array, and in fact a
-buffer overrun is possible on both architectures. Add a limit check to
-prevent that situation.
+Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
+using arbitrary flags. Because BOTHER is not defined, the general
+Linux code doesn't allow setting arbitrary baud rates, and because
+CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
+drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
 
-This will be followed by a much bigger cleanup/simplification patch.
+Resolve both problems by #defining BOTHER to 037 on Alpha.
+
+However, userspace still needs to know if setting BOTHER is actually
+safe given legacy kernels (does anyone actually care about that on
+Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
+though they use the same structure. Define struct termios2 just for
+compatibility; it is the exact same structure as struct termios. In a
+future patchset, this will be cleaned up so the uapi headers are
+usable from libc.
 
 Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Requested-by: Cc: Johan Hovold <johan@kernel.org>
 Cc: Jiri Slaby <jslaby@suse.com>
 Cc: Al Viro <viro@zeniv.linux.org.uk>
 Cc: Richard Henderson <rth@twiddle.net>
@@ -94,33 +103,91 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Kate Stewart <kstewart@linuxfoundation.org>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: <linux-alpha@vger.kernel.org>
+Cc: <linux-serial@vger.kernel.org>
+Cc: Johan Hovold <johan@kernel.org>
 Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: stable <stable@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_baudrate.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/alpha/include/asm/termios.h       |    8 +++++++-
+ arch/alpha/include/uapi/asm/ioctls.h   |    5 +++++
+ arch/alpha/include/uapi/asm/termbits.h |   17 +++++++++++++++++
+ 3 files changed, 29 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/tty_baudrate.c
-+++ b/drivers/tty/tty_baudrate.c
-@@ -77,7 +77,7 @@ speed_t tty_termios_baud_rate(struct kte
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- }
- EXPORT_SYMBOL(tty_termios_baud_rate);
+--- a/arch/alpha/include/asm/termios.h
++++ b/arch/alpha/include/asm/termios.h
+@@ -73,9 +73,15 @@
+ })
  
-@@ -113,7 +113,7 @@ speed_t tty_termios_input_baud_rate(stru
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- #else	/* IBSHIFT */
- 	return tty_termios_baud_rate(termios);
- #endif	/* IBSHIFT */
+ #define user_termios_to_kernel_termios(k, u) \
+-	copy_from_user(k, u, sizeof(struct termios))
++	copy_from_user(k, u, sizeof(struct termios2))
+ 
+ #define kernel_termios_to_user_termios(u, k) \
++	copy_to_user(u, k, sizeof(struct termios2))
++
++#define user_termios_to_kernel_termios_1(k, u) \
++	copy_from_user(k, u, sizeof(struct termios))
++
++#define kernel_termios_to_user_termios_1(u, k) \
+ 	copy_to_user(u, k, sizeof(struct termios))
+ 
+ #endif	/* _ALPHA_TERMIOS_H */
+--- a/arch/alpha/include/uapi/asm/ioctls.h
++++ b/arch/alpha/include/uapi/asm/ioctls.h
+@@ -32,6 +32,11 @@
+ #define TCXONC		_IO('t', 30)
+ #define TCFLSH		_IO('t', 31)
+ 
++#define TCGETS2		_IOR('T', 42, struct termios2)
++#define TCSETS2		_IOW('T', 43, struct termios2)
++#define TCSETSW2	_IOW('T', 44, struct termios2)
++#define TCSETSF2	_IOW('T', 45, struct termios2)
++
+ #define TIOCSWINSZ	_IOW('t', 103, struct winsize)
+ #define TIOCGWINSZ	_IOR('t', 104, struct winsize)
+ #define	TIOCSTART	_IO('t', 110)		/* start output, like ^Q */
+--- a/arch/alpha/include/uapi/asm/termbits.h
++++ b/arch/alpha/include/uapi/asm/termbits.h
+@@ -26,6 +26,19 @@ struct termios {
+ 	speed_t c_ospeed;		/* output speed */
+ };
+ 
++/* Alpha has identical termios and termios2 */
++
++struct termios2 {
++	tcflag_t c_iflag;		/* input mode flags */
++	tcflag_t c_oflag;		/* output mode flags */
++	tcflag_t c_cflag;		/* control mode flags */
++	tcflag_t c_lflag;		/* local mode flags */
++	cc_t c_cc[NCCS];		/* control characters */
++	cc_t c_line;			/* line discipline (== c_cc[19]) */
++	speed_t c_ispeed;		/* input speed */
++	speed_t c_ospeed;		/* output speed */
++};
++
+ /* Alpha has matching termios and ktermios */
+ 
+ struct ktermios {
+@@ -152,6 +165,7 @@ struct ktermios {
+ #define B3000000  00034
+ #define B3500000  00035
+ #define B4000000  00036
++#define BOTHER    00037
+ 
+ #define CSIZE	00001400
+ #define   CS5	00000000
+@@ -169,6 +183,9 @@ struct ktermios {
+ #define CMSPAR	  010000000000		/* mark or space (stick) parity */
+ #define CRTSCTS	  020000000000		/* flow control */
+ 
++#define CIBAUD	07600000
++#define IBSHIFT	16
++
+ /* c_lflag bits */
+ #define ISIG	0x00000080
+ #define ICANON	0x00000100
 
 
