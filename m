@@ -2,174 +2,106 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473D1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0723C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A01920851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A01920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 7325B20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:04:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7325B20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeKSV11 (ORCPT
+        id S1728467AbeKSV1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:27:27 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:50262 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725911AbeKSV11 (ORCPT
+        Mon, 19 Nov 2018 16:27:48 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41732 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeKSV1s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:27:27 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAJAx52C016310;
-        Mon, 19 Nov 2018 12:03:37 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ntarga8p4-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 19 Nov 2018 12:03:37 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6DEF231;
-        Mon, 19 Nov 2018 11:03:36 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4C28B26A3;
-        Mon, 19 Nov 2018 11:03:36 +0000 (GMT)
-Received: from localhost (10.75.127.46) by SFHDAG5NODE2.st.com (10.75.127.14)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 19 Nov 2018 12:03:35
- +0100
-From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] i2c: i2c-stm32f7: SYSCFG Fast Mode Plus support for I2C STM32F7
-Date:   Mon, 19 Nov 2018 12:03:32 +0100
-Message-ID: <1542625412-4277-3-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542625412-4277-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1542625412-4277-1-git-send-email-pierre-yves.mordret@st.com>
+        Mon, 19 Nov 2018 16:27:48 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 97A818084E; Mon, 19 Nov 2018 12:04:26 +0100 (CET)
+Date:   Mon, 19 Nov 2018 12:04:28 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Christoph Lameter <cl@linux.com>, Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH] slab.h: Avoid using & for logical and of booleans
+Message-ID: <20181119110428.GE28607@amd>
+References: <20181105204000.129023-1-bvanassche@acm.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG5NODE2.st.com
- (10.75.127.14)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_04:,,
- signatures=0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="N1GIdlSm9i+YlY4t"
+Content-Disposition: inline
+In-Reply-To: <20181105204000.129023-1-bvanassche@acm.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Read SYSCFG bindings to set Fast Mode Plus bits if Fast Mode Plus
-speed is selected.
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
-  Version history:
-    v2:
-       * Missing header file inclusion
-    v1:
-       * Initial
----
----
- drivers/i2c/busses/i2c-stm32f7.c | 38 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+--N1GIdlSm9i+YlY4t
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/i2c/busses/i2c-stm32f7.c b/drivers/i2c/busses/i2c-stm32f7.c
-index 62d023e..e9f0c0b 100644
---- a/drivers/i2c/busses/i2c-stm32f7.c
-+++ b/drivers/i2c/busses/i2c-stm32f7.c
-@@ -21,12 +21,14 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/reset.h>
- #include <linux/slab.h>
- 
-@@ -276,6 +278,7 @@ struct stm32f7_i2c_msg {
-  * slave)
-  * @dma: dma data
-  * @use_dma: boolean to know if dma is used in the current transfer
-+ * @regmap: holds SYSCFG phandle for Fast Mode Plus bits
-  */
- struct stm32f7_i2c_dev {
- 	struct i2c_adapter adap;
-@@ -296,6 +299,7 @@ struct stm32f7_i2c_dev {
- 	bool master_mode;
- 	struct stm32_i2c_dma *dma;
- 	bool use_dma;
-+	struct regmap *regmap;
- };
- 
- /**
-@@ -1763,6 +1767,30 @@ static int stm32f7_i2c_unreg_slave(struct i2c_client *slave)
- 	return 0;
- }
- 
-+static int stm32f7_i2c_setup_fm_plus_bits(struct platform_device *pdev,
-+					  struct stm32f7_i2c_dev *i2c_dev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+	u32 reg, mask;
-+
-+	i2c_dev->regmap = syscon_regmap_lookup_by_phandle(np, "st,syscfg-fmp");
-+	if (IS_ERR(i2c_dev->regmap)) {
-+		/* Optional */
-+		return 0;
-+	}
-+
-+	ret = of_property_read_u32_index(np, "st,syscfg-fmp", 1, &reg);
-+	if (ret)
-+		return ret;
-+
-+	ret = of_property_read_u32_index(np, "st,syscfg-fmp", 2, &mask);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(i2c_dev->regmap, reg, mask, mask);
-+}
-+
- static u32 stm32f7_i2c_func(struct i2c_adapter *adap)
- {
- 	return I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR | I2C_FUNC_SLAVE |
-@@ -1828,12 +1856,16 @@ static int stm32f7_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->speed = STM32_I2C_SPEED_STANDARD;
- 	ret = device_property_read_u32(&pdev->dev, "clock-frequency",
- 				       &clk_rate);
--	if (!ret && clk_rate >= 1000000)
-+	if (!ret && clk_rate >= 1000000) {
- 		i2c_dev->speed = STM32_I2C_SPEED_FAST_PLUS;
--	else if (!ret && clk_rate >= 400000)
-+		ret = stm32f7_i2c_setup_fm_plus_bits(pdev, i2c_dev);
-+		if (ret)
-+			goto clk_free;
-+	} else if (!ret && clk_rate >= 400000) {
- 		i2c_dev->speed = STM32_I2C_SPEED_FAST;
--	else if (!ret && clk_rate >= 100000)
-+	} else if (!ret && clk_rate >= 100000) {
- 		i2c_dev->speed = STM32_I2C_SPEED_STANDARD;
-+	}
- 
- 	rst = devm_reset_control_get(&pdev->dev, NULL);
- 	if (IS_ERR(rst)) {
--- 
-2.7.4
+On Mon 2018-11-05 12:40:00, Bart Van Assche wrote:
+> This patch suppresses the following sparse warning:
+>=20
+> ./include/linux/slab.h:332:43: warning: dubious: x & !y
+>=20
+> Fixes: 1291523f2c1d ("mm, slab/slub: introduce kmalloc-reclaimable caches=
+")
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+> ---
+>  include/linux/slab.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 918f374e7156..97d0599ddb7b 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -329,7 +329,7 @@ static __always_inline enum kmalloc_cache_type kmallo=
+c_type(gfp_t flags)
+>  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
+>  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
+>  	 */
+> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
+> +	return type_dma + is_reclaimable * !is_dma * KMALLOC_RECLAIM;
+>  }
+> =20
 
+What is wrong with && ? If logical and is better done by multiply,
+that's compiler job, and compiler should be fixed to do it...
+
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--N1GIdlSm9i+YlY4t
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvymLwACgkQMOfwapXb+vILgACcCPHGg2P5wRydP+BaXyQGRzcL
+OXEAn28w7pdr0BinOx/fa+Yokkt4fC4X
+=Uw60
+-----END PGP SIGNATURE-----
+
+--N1GIdlSm9i+YlY4t--
