@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D325C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34018C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C74392086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9D2820870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFwGpJMT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74392086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaNMMXXJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9D2820870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbeKTC5u (ORCPT
+        id S1731187AbeKTC5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:57:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:57:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730510AbeKTC5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:57:49 -0500
+        id S1730453AbeKTC5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:57:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F06ED2086A;
-        Mon, 19 Nov 2018 16:33:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 915C52089F;
+        Mon, 19 Nov 2018 16:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645221;
-        bh=JAeIoby5ROMa+T2ngl8lp9LGZwjmFXUFzfuMiOzaWyM=;
+        s=default; t=1542645224;
+        bh=0brB0VVVF9XGzmbputXdQCKbqRxyz8Q+lQksTMmwuyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FFwGpJMTt7NDXmUMs76UVMDire5Cts1cee1FSHT2tA52Ak5kkzprU1JKtTVMFZyJQ
-         tq+R2kVy8vyeV2N95qKFAN/WQm91h8bGcBZ65Xtqe5eZEzq7UrOUP3XkHBsgxfBYTk
-         ukk9Y3ATO4UvB/Vtc5X4HzeOrwF94awkJAKTyktQ=
+        b=WaNMMXXJ7GW1XasRPR67HsXJyYsfaGfRTd4NrfkXJDpv1QPgd+gdTRSKmZm/pF4nX
+         hc+lpHPzfb4bGVnzDCGcveFlUrd2JGT1LAxleMjVUL/ADVPtXu7gY3VEwubnsc4d/8
+         HcEwf3BPXKeFV5TZecRXIP82I82q1l/C80j2GPhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 4.19 082/205] clk: sunxi-ng: h6: fix bus clocks divider position
-Date:   Mon, 19 Nov 2018 17:26:29 +0100
-Message-Id: <20181119162631.040244018@linuxfoundation.org>
+        stable@vger.kernel.org, Ziyuan Xu <xzy.xu@rock-chips.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: [PATCH 4.19 083/205] clk: rockchip: fix wrong mmc sample phase shift for rk3328
+Date:   Mon, 19 Nov 2018 17:26:30 +0100
+Message-Id: <20181119162631.149043188@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,59 +63,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Ziyuan Xu <xzy.xu@rock-chips.com>
 
-commit 2852bfbf4f168fec27049ad9ed20941fc9e84b95 upstream.
+commit 82f4b67f018c88a7cc9337f0067ed3d6ec352648 upstream.
 
-The bus clocks (AHB/APB) on Allwinner H6 have their second divider start
-at bit 8, according to the user manual and the BSP code. However,
-currently the divider offset is incorrectly set to 16, thus the divider
-is not correctly read and the clock frequency is not correctly calculated.
+mmc sample shift is 0 for RK3328 referring to the TRM.
+So fix them.
 
-Fix this bit offset on all affected bus clocks in ccu-sun50i-h6.
-
-Cc: stable@vger.kernel.org # v4.17.y
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
+Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c |    8 ++++----
+ drivers/clk/rockchip/clk-rk3328.c |    8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -224,7 +224,7 @@ static SUNXI_CCU_MP_WITH_MUX(psi_ahb1_ah
- 			     psi_ahb1_ahb2_parents,
- 			     0x510,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -813,22 +813,22 @@ static struct rockchip_clk_branch rk3328
+ 	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
+ 	    RK3328_SDMMC_CON0, 1),
+ 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
+-	    RK3328_SDMMC_CON1, 1),
++	    RK3328_SDMMC_CON1, 0),
  
-@@ -233,19 +233,19 @@ static const char * const ahb3_apb1_apb2
- 						       "pll-periph0" };
- static SUNXI_CCU_MP_WITH_MUX(ahb3_clk, "ahb3", ahb3_apb1_apb2_parents, 0x51c,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
+ 	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
+ 	    RK3328_SDIO_CON0, 1),
+ 	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
+-	    RK3328_SDIO_CON1, 1),
++	    RK3328_SDIO_CON1, 0),
  
- static SUNXI_CCU_MP_WITH_MUX(apb1_clk, "apb1", ahb3_apb1_apb2_parents, 0x520,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
+ 	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
+ 	    RK3328_EMMC_CON0, 1),
+ 	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
+-	    RK3328_EMMC_CON1, 1),
++	    RK3328_EMMC_CON1, 0),
  
- static SUNXI_CCU_MP_WITH_MUX(apb2_clk, "apb2", ahb3_apb1_apb2_parents, 0x524,
- 			     0, 5,	/* M */
--			     16, 2,	/* P */
-+			     8, 2,	/* P */
- 			     24, 2,	/* mux */
- 			     0);
+ 	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "clk_sdmmc_ext",
+ 	    RK3328_SDMMC_EXT_CON0, 1),
+ 	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "clk_sdmmc_ext",
+-	    RK3328_SDMMC_EXT_CON1, 1),
++	    RK3328_SDMMC_EXT_CON1, 0),
+ };
  
+ static const char *const rk3328_critical_clocks[] __initconst = {
 
 
