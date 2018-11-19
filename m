@@ -2,136 +2,87 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10684C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF6EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C78CE20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:05:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78CE20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A9A2A2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:06:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9A2A2080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbeKTA3e (ORCPT
+        id S1729469AbeKTAaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:29:34 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15864 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729331AbeKTA3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:29:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 06:05:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="101452753"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2018 06:05:44 -0800
-Date:   Mon, 19 Nov 2018 16:05:43 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rich Felker <dalias@libc.org>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "Ayoun, Serge" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
-Subject: Re: RFC: userspace exception fixups
-Message-ID: <20181119140543.GF8755@linux.intel.com>
-References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
- <20181118071548.GA4795@linux.intel.com>
- <20181118130203.GA18934@linux.intel.com>
- <ce304dba-0b02-02e2-4de8-212cd3bd1876@fortanix.com>
+        Mon, 19 Nov 2018 19:30:12 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37394 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729350AbeKTAaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:30:12 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A084A26FAD1D4;
+        Mon, 19 Nov 2018 22:06:24 +0800 (CST)
+Received: from localhost.localdomain (10.175.34.53) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 19 Nov 2018 22:06:20 +0800
+From:   Xue Chaojing <xuechaojing@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <xuechaojing@huawei.com>,
+        <netdev@vger.kernel.org>, <wulike1@huawei.com>,
+        <chiqijun@huawei.com>, <fy.wang@huawei.com>, <tony.qu@huawei.com>,
+        <luoshaokai@huawei.com>
+Subject: [PATCH 3/4] net-next/hinic:fix a bug in set mac address
+Date:   Mon, 19 Nov 2018 06:12:33 +0000
+Message-ID: <20181119061234.12839-3-xuechaojing@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181119061234.12839-1-xuechaojing@huawei.com>
+References: <20181119061234.12839-1-xuechaojing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ce304dba-0b02-02e2-4de8-212cd3bd1876@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.175.34.53]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 05:17:26AM +0000, Jethro Beekman wrote:
-> On 2018-11-18 18:32, Jarkko Sakkinen wrote:
-> > On Sun, Nov 18, 2018 at 09:15:48AM +0200, Jarkko Sakkinen wrote:
-> > > On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
-> > > > Hi all-
-> > > > 
-> > > > The people working on SGX enablement are grappling with a somewhat
-> > > > annoying issue: the x86 EENTER instruction is used from user code and
-> > > > can, as part of its normal-ish operation, raise an exception.  It is
-> > > > also highly likely to be used from a library, and signal handling in
-> > > > libraries is unpleasant at best.
-> > > > 
-> > > > There's been some discussion of adding a vDSO entry point to wrap
-> > > > EENTER and do something sensible with the exceptions, but I'm
-> > > > wondering if a more general mechanism would be helpful.
-> > > 
-> > > I haven't really followed all of this discussion because I've been busy
-> > > working on the patch set but for me all of these approaches look awfully
-> > > complicated.
-> > > 
-> > > I'll throw my own suggestion and apologize if this has been already
-> > > suggested and discarded: return-to-AEP.
-> > > 
-> > > My idea is to do just a small extension to SGX AEX handling. At the
-> > > moment hardware will RAX, RBX and RCX with ERESUME parameters. We can
-> > > fill extend this by filling other three spare registers with exception
-> > > information.
-> > > 
-> > > AEP handler can then do whatever it wants to do with this information
-> > > or just do ERESUME.
-> > 
-> > A correction here. In practice this will add a requirement to have a bit
-> > more complicated AEP code (check the regs for exceptions) than before
-> > and not just bytes for ENCLU.
-> > 
-> > e.g. AEP handler should be along the lines
-> > 
-> > 1. #PF (or #UD or) happens. Kernel fills the registers when it cannot
-> >     handle the exception and returns back to user space i.e. to the
-> >     AEP handler.
-> > 2. Check the registers containing exception information. If they have
-> >     been filled, take whatever actions user space wants to take.
-> > 3. Otherwise, just ERESUME.
-> > 
-> >  From my point of view this is making the AEP parameter useful. Its
-> > standard use is just weird (always point to a place just containing
-> > ENCLU bytes, why the heck it even exists).
-> 
-> I like this solution. Keeps things simple. One question: when an exception
-> occurs, how does the kernel know whether to set special registers or send a
-> signal?
+In add_mac_addr(), if the MAC address is a muliticast address,
+it will not be set, which causes the network card fail to receive
+the multicast packet. This patch fixes this bug.
 
-Yes, and AFAIK people do in many cases people want to do something else
-than just direct ERESUME in AEP handler so would neither be a major
-bummer for user space. If I remember correctly you have such?
+Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+---
+ drivers/net/ethernet/huawei/hinic/hinic_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-You can check the cases that we have for SIGSEGV (namely EPCM conflict)
-from Sean's patch 08/23.
+diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+index 0179b6bf124c..6d48dc62a44b 100644
+--- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
++++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+@@ -600,9 +600,6 @@ static int add_mac_addr(struct net_device *netdev, const u8 *addr)
+ 	u16 vid = 0;
+ 	int err;
+ 
+-	if (!is_valid_ether_addr(addr))
+-		return -EADDRNOTAVAIL;
+-
+ 	netif_info(nic_dev, drv, netdev, "set mac addr = %02x %02x %02x %02x %02x %02x\n",
+ 		   addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+ 
+@@ -734,6 +731,9 @@ static void set_rx_mode(struct work_struct *work)
+ 
+ 	__dev_uc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
+ 	__dev_mc_sync(nic_dev->netdev, add_mac_addr, remove_mac_addr);
++
++	netdev_for_each_mc_addr(ha, nic_dev->netdev)
++		add_mac_addr(nic_dev->netdev, ha->addr);
+ }
+ 
+ static void hinic_set_rx_mode(struct net_device *netdev)
+-- 
+2.17.1
 
-I'm open for expanding the scope. It is the easy part after there is
-consensus for the handling mechanism :-)
-
-/Jarkko
