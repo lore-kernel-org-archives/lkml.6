@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16590C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA2DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D436520851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 239F2208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOJKXhaU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D436520851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VU+Khu0u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239F2208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390512AbeKTDQW (ORCPT
+        id S2390525AbeKTDQZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:16:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54254 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389669AbeKTDQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:16:22 -0500
+        id S2389669AbeKTDQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30C12206BA;
-        Mon, 19 Nov 2018 16:52:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF9D2206BA;
+        Mon, 19 Nov 2018 16:52:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646328;
-        bh=L/XSPSja3NBIaRnnd7veJefQkUOq7IolOEpkBjKFCLE=;
+        s=default; t=1542646331;
+        bh=GMU+SLFXTQ8zxPdUhXl5EFjF8pSfoWH6R4vWOwooCKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WOJKXhaUyuUGml9cY4qJ0c06UK1J6ep07aNFmREOsGESMvvhVGRZ6MjXWeLQUySWS
-         IYOeTN2OcAIuucj6/CZe3iolw0mmqTcSkKyfuWfWBnSt/JXYW1dNgb2CAnYQ/U0gqJ
-         LC+SZ4SQvGvJ68YXSf1apt6NMkbGLFvsbcN1rPAI=
+        b=VU+Khu0uQqmPYYCZWGiuT6b8J23GUDD+npIl+IjWeI8OLnn73MUOh5K6lWLyBXpXP
+         qkbrjfkW3wNdd5SoYs4L8N5+v8QlQDoWgBxfeggMxAxxEDdoTS7lS75lBpt6iSZz4k
+         LXZABA+vteP1LOX/S5XtDFFiOm+5dDyIrB1Hr80g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
-        Clint Taylor <clinton.a.taylor@intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.14 116/124] drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
-Date:   Mon, 19 Nov 2018 17:29:30 +0100
-Message-Id: <20181119162633.314921704@linuxfoundation.org>
+Subject: [PATCH 4.14 117/124] drm/i915: Dont oops during modeset shutdown after lpe audio deinit
+Date:   Mon, 19 Nov 2018 17:29:31 +0100
+Message-Id: <20181119162633.431695092@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -64,60 +64,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Clint Taylor <clinton.a.taylor@intel.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 6503493145cba4413ecd3d4d153faeef4a1e9b85 upstream.
+commit 6a8915d0f8cf323e1beb792a33095cf652db4056 upstream.
 
-HDMI 2.0 594Mhz modes were incorrectly selecting 25.200Mhz Automatic N value
-mode instead of HDMI specification values.
+We deinit the lpe audio device before we call
+drm_atomic_helper_shutdown(), which means the platform device
+may already be gone when it comes time to shut down the crtc.
+As we don't know when the last reference to the platform
+device gets dropped by the audio driver we can't assume that
+the device and its data are still around when turning off the
+crtc. Mark the platform device as gone as soon as we do the
+audio deinit.
 
-V2: Fix 88.2 Hz N value
-
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1540493521-1746-2-git-send-email-clinton.a.taylor@intel.com
-(cherry picked from commit 5a400aa3c562c4a726b4da286e63c96db905ade1)
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181105194604.6994-1-ville.syrjala@linux.intel.com
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+(cherry picked from commit f45a7977d1140c11f334e01a9f77177ed68e3bfa)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_audio.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/drm/i915/intel_lpe_audio.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -134,6 +134,9 @@ static const struct {
- /* HDMI N/CTS table */
- #define TMDS_297M 297000
- #define TMDS_296M 296703
-+#define TMDS_594M 594000
-+#define TMDS_593M 593407
-+
- static const struct {
- 	int sample_rate;
- 	int clock;
-@@ -154,6 +157,20 @@ static const struct {
- 	{ 176400, TMDS_297M, 18816, 247500 },
- 	{ 192000, TMDS_296M, 23296, 281250 },
- 	{ 192000, TMDS_297M, 20480, 247500 },
-+	{ 44100, TMDS_593M, 8918, 937500 },
-+	{ 44100, TMDS_594M, 9408, 990000 },
-+	{ 48000, TMDS_593M, 5824, 562500 },
-+	{ 48000, TMDS_594M, 6144, 594000 },
-+	{ 32000, TMDS_593M, 5824, 843750 },
-+	{ 32000, TMDS_594M, 3072, 445500 },
-+	{ 88200, TMDS_593M, 17836, 937500 },
-+	{ 88200, TMDS_594M, 18816, 990000 },
-+	{ 96000, TMDS_593M, 11648, 562500 },
-+	{ 96000, TMDS_594M, 12288, 594000 },
-+	{ 176400, TMDS_593M, 35672, 937500 },
-+	{ 176400, TMDS_594M, 37632, 990000 },
-+	{ 192000, TMDS_593M, 23296, 562500 },
-+	{ 192000, TMDS_594M, 24576, 594000 },
- };
+--- a/drivers/gpu/drm/i915/intel_lpe_audio.c
++++ b/drivers/gpu/drm/i915/intel_lpe_audio.c
+@@ -303,8 +303,10 @@ void intel_lpe_audio_teardown(struct drm
+ 	lpe_audio_platdev_destroy(dev_priv);
  
- /* get AUD_CONFIG_PIXEL_CLOCK_HDMI_* value for mode */
+ 	irq_free_desc(dev_priv->lpe_audio.irq);
+-}
+ 
++	dev_priv->lpe_audio.irq = -1;
++	dev_priv->lpe_audio.platdev = NULL;
++}
+ 
+ /**
+  * intel_lpe_audio_notify() - notify lpe audio event
 
 
