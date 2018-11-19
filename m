@@ -2,169 +2,105 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 620FCC04EBF
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E60F9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34B6F2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34B6F2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A17F620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:12:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="kv9OvgbX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A17F620823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeKSQRl (ORCPT
+        id S1726139AbeKSQfR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 11:17:41 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:49799 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725925AbeKSQRk (ORCPT
+        Mon, 19 Nov 2018 11:35:17 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40886 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725998AbeKSQfQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 11:17:40 -0500
-X-UUID: c26780bbb2854b68950f70329f14fc6e-20181119
-X-UUID: c26780bbb2854b68950f70329f14fc6e-20181119
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1250103200; Mon, 19 Nov 2018 13:55:01 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 19 Nov 2018 13:54:59 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 19 Nov 2018 13:54:59 +0800
-Message-ID: <1542606899.32082.15.camel@mtksdaap41>
-Subject: Re: [PATCH v5 04/12] drm/mediatek: Add support for mmsys through a
- pdev
-From:   CK Hu <ck.hu@mediatek.com>
-To:     <matthias.bgg@kernel.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <mturquette@baylibre.com>, <sboyd@codeaurora.org>,
-        <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>, <matthias.bgg@gmail.com>,
-        <sean.wang@mediatek.com>, <sean.wang@kernel.org>,
-        <rdunlap@infradead.org>, <wens@csie.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
-Date:   Mon, 19 Nov 2018 13:54:59 +0800
-In-Reply-To: <20181116125449.23581-5-matthias.bgg@kernel.org>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
-         <20181116125449.23581-5-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 95030AFA72897D3AD0014CE6ABCAA5791A1325FE45B1838E7C5D4DA0196640542000:8
-X-MTK:  N
+        Mon, 19 Nov 2018 11:35:16 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so13350008pgp.7
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 22:12:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=MMUm3eNkpyPQHHD2Gp64vHeM9nQZHTseSiKVjNaXq+Q=;
+        b=kv9OvgbX0jXRr6DOGZLs7A8UmehgZimV9NLWu2CAlxgNvsCt2Zwk1uLg4DQdoT44N+
+         PA+ANHP/bC6ACVmDVQlSSnaF1FfBLcTSGdRApwt0mwRgeVHpQLYJHEnJ5xAg0KyotSde
+         LnrtS9clvePHrqi38c8ALBTKnIqNaeD8zkiGQdHId7uxiQxSZiARwPXx1ebIP7qFKDR3
+         cH51S5qRuM5Sram0DJaQuyDll+qB03BNsIhsrrfUcVERHN6wPJWhUi7qV5hwo3ZBLWvy
+         AzNIvSMWD/ViZ9h/H52tOBGQtP2yIXsKTJf+90dfkfOnxYkktCxsQ2DZus7rGCYD5gMZ
+         ULCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MMUm3eNkpyPQHHD2Gp64vHeM9nQZHTseSiKVjNaXq+Q=;
+        b=leycH7GkThvNEM5gXC+fcDORBFk7zI78U+f4CosarvQPxwQye/jEuPc97jdjhxWvWH
+         yEQf7YEp80VkzZainZdWYcbtZWFYxxqZQ76iPp34NodXXxPeX0KM1WO4NKHR8QB7S3m5
+         UHuwCurTTuTBU4vofFDMk2KluyoULyZ2C+a/xf4Tgmy331zyBhahbsKTtVVbFHuq+3Fg
+         0R4Dorscq7Tp4lz/jw6KWY2h8PbnCZvMPtkoGI0RMe7ZkGL4HEEhuMsFoa/JyQUkaWbm
+         8pUWGHQUUuqRAkBBs2UaeEflnYsPodInAOqyoj1cli6o3aRfNhIzfVH53bdcaRjDdFij
+         vokQ==
+X-Gm-Message-State: AGRZ1gIRT8vg3E3sHiYWnW7HpJldIE6jx5yaRvhs0xJXymRLMTrHtaZ9
+        cVrZxQePblt6TVuUoPj5x+vrAA==
+X-Google-Smtp-Source: AJdET5fcLhsbrVoaCd4D+9vKRfCouJQ7gGNfGwjw0jCEsKlG/K7xq5FmZN1iRE+0MaW17fUaJuMZyA==
+X-Received: by 2002:a62:37c7:: with SMTP id e190-v6mr21206743pfa.145.1542607959782;
+        Sun, 18 Nov 2018 22:12:39 -0800 (PST)
+Received: from endless.endlessm-sf.com (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
+        by smtp.googlemail.com with ESMTPSA id r4sm47469591pgn.54.2018.11.18.22.12.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Nov 2018 22:12:39 -0800 (PST)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dominique Martinet <asmadeus@codewreck.org>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] iio: st_sensors: Fix the sleep time for sampling
+Date:   Mon, 19 Nov 2018 14:12:19 +0800
+Message-Id: <20181119061219.14238-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Matthias:
+According to the description of st_sensor_settings and st_sensor_data
+structures' comments:
+- bootime: samples to discard when sensor passing from power-down to
+power-up.
+- odr: Output data rate of the sensor [Hz].
 
-On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> The MMSYS subsystem includes clocks and drm components.
-> This patch adds an initailization path through a platform device
-> for the clock part, so that both drivers get probed from the same
-> device tree compatible.
+The sleep time should be
+sdata->sensor_settings->bootime + 1000 / sdata->odr ms.
 
-Looks good to me except one coding style preference.
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/iio/common/st_sensors/st_sensors_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: CK Hu <ck.hu@mediatek.com>
-
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c | 23 +++++++++++++++++++++++
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
->  2 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index 99dd612a6683..18fc761ba94f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -199,6 +199,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
->  	.ext_path = mt2701_mtk_ddp_ext,
->  	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
->  	.shadow_register = true,
-> +	.clk_drv_name = "clk-mt2701-mm",
->  };
->  
->  static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
-> @@ -215,6 +216,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
->  	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
->  	.ext_path = mt8173_mtk_ddp_ext,
->  	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
-> +	.clk_drv_name = "clk-mt8173-mm",
->  };
->  
->  static int mtk_drm_kms_init(struct drm_device *drm)
-> @@ -473,6 +475,24 @@ static int mtk_drm_probe(struct platform_device *pdev)
->  	if (IS_ERR(private->config_regs))
->  		return PTR_ERR(private->config_regs);
->  
-> +	/*
-> +	 * For legacy reasons we need to probe the clock driver via
-> +	 * a platfomr device. This is outdated and should not be used
-> +	 * in newer SoCs.
-> +	 */
-> +	if (private->data->clk_drv_name) {
-> +		private->clk_dev = platform_device_register_data(dev,
-> +						private->data->clk_drv_name, -1,
-> +						NULL, 0);
-> +
-> +		if (IS_ERR(private->clk_dev)) {
-> +			pr_err("failed to register %s platform device\n",
-> +						private->data->clk_drv_name);
-
-I would like to align to the right of '('.
-
-Regards,
-CK
-
-> +
-> +			return PTR_ERR(private->clk_dev);
-> +		}
-> +	}
-> +
->  	/* Iterate over sibling DISP function blocks */
->  	for_each_child_of_node(dev->of_node->parent, node) {
->  		const struct of_device_id *of_id;
-> @@ -577,6 +597,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
->  	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
->  		of_node_put(private->comp_node[i]);
->  
-> +	if (private->clk_dev)
-> +		platform_device_unregister(private->clk_dev);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> index ab0adbd7d4ee..515ac4cae922 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> @@ -37,11 +37,13 @@ struct mtk_mmsys_driver_data {
->  	unsigned int third_len;
->  
->  	bool shadow_register;
-> +	const char *clk_drv_name;
->  };
->  
->  struct mtk_drm_private {
->  	struct drm_device *drm;
->  	struct device *dma_dev;
-> +	struct platform_device *clk_dev;
->  
->  	unsigned int num_pipes;
->  
-
+diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
+index 26fbd1bd9413..6b87ea657a92 100644
+--- a/drivers/iio/common/st_sensors/st_sensors_core.c
++++ b/drivers/iio/common/st_sensors/st_sensors_core.c
+@@ -594,7 +594,7 @@ int st_sensors_read_info_raw(struct iio_dev *indio_dev,
+ 		if (err < 0)
+ 			goto out;
+ 
+-		msleep((sdata->sensor_settings->bootime * 1000) / sdata->odr);
++		msleep(sdata->sensor_settings->bootime + 1000 / sdata->odr);
+ 		err = st_sensors_read_axis_data(indio_dev, ch, val);
+ 		if (err < 0)
+ 			goto out;
+-- 
+2.11.0
 
