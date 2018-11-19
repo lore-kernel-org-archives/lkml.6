@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC8CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D99FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55941214F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA9B121508
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wZcDllbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55941214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="teU7r6wn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA9B121508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405090AbeKTDXn (ORCPT
+        id S2405103AbeKTDXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35786 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404684AbeKTDXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:42 -0500
+        id S2405091AbeKTDXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29C6214E0;
-        Mon, 19 Nov 2018 16:59:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4000B214ED;
+        Mon, 19 Nov 2018 16:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646766;
-        bh=X7KdRkvyAHeGfQnIMtV/VuY5Bb68dxZtnpqjg7ssAzA=;
+        s=default; t=1542646768;
+        bh=AF/SHTZ/hWiLRKcNQFL1ZvYb13ehZ8QbWNXLAH4r6cY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wZcDllbFRHFn5+AuCIA1z9HHBtarZVO4sKqM0g5yZ6wko5kPXvAy7gWniufIsjbCA
-         xwNf/l7P+wi3fbN2xJKFU9VOwgPv8wdwRGj3AlDGFx6Avl81LJSBtLD660pHq+bGQ0
-         XPgLYjPB6RfblM/5tNbj1j149IdgQwjVQ8lNhOdw=
+        b=teU7r6wnHijNTZNwrXXjX7HHa4uxwrcIgM5gd46B4dNNencLzmo1kZr1srgd+/OAk
+         I+6A0CwNO+oGip6P96uuhb8eEuoYLJhwDDRIQXS7mRkBVbaHDdIZuFKaklpu8VazNr
+         ATIabfGWQ7mhECP68WwZ+s6IlSsYsFYv1hxNomz4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 4.4 065/160] smb3: on kerberos mount if server doesnt specify auth type use krb5
-Date:   Mon, 19 Nov 2018 17:28:24 +0100
-Message-Id: <20181119162637.675809487@linuxfoundation.org>
+        stable@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>,
+        Johan Hovold <johan@kernel.org>,
+        Thierry Reding <treding@nvidia.com>
+Subject: [PATCH 4.4 083/160] soc/tegra: pmc: Fix child-node lookup
+Date:   Mon, 19 Nov 2018 17:28:42 +0100
+Message-Id: <20181119162639.280242325@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,40 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Steve French <stfrench@microsoft.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 926674de6705f0f1dbf29a62fd758d0977f535d6 upstream.
+commit 1dc6bd5e39a29453bdcc17348dd2a89f1aa4004e upstream.
 
-Some servers (e.g. Azure) do not include a spnego blob in the SMB3
-negotiate protocol response, so on kerberos mounts ("sec=krb5")
-we can fail, as we expected the server to list its supported
-auth types (OIDs in the spnego blob in the negprot response).
-Change this so that on krb5 mounts we default to trying krb5 if the
-server doesn't list its supported protocol mechanisms.
+Fix child-node lookup during probe, which ended up searching the whole
+device tree depth-first starting at the parent rather than just matching
+on its children.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-CC: Stable <stable@vger.kernel.org>
+To make things worse, the parent pmc node could end up being prematurely
+freed as of_find_node_by_name() drops a reference to its first argument.
+
+Fixes: 3568df3d31d6 ("soc: tegra: Add thermal reset (thermtrip) support to PMC")
+Cc: stable <stable@vger.kernel.org>     # 4.0
+Cc: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifs_spnego.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/soc/tegra/pmc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/cifs_spnego.c
-+++ b/fs/cifs/cifs_spnego.c
-@@ -143,8 +143,10 @@ cifs_get_spnego_key(struct cifs_ses *ses
- 		sprintf(dp, ";sec=krb5");
- 	else if (server->sec_mskerberos)
- 		sprintf(dp, ";sec=mskrb5");
--	else
--		goto out;
-+	else {
-+		cifs_dbg(VFS, "unknown or missing server auth type, use krb5\n");
-+		sprintf(dp, ";sec=krb5");
-+	}
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -738,7 +738,7 @@ void tegra_pmc_init_tsense_reset(struct
+ 	if (!pmc->soc->has_tsense_reset)
+ 		return;
  
- 	dp = description + strlen(description);
- 	sprintf(dp, ";uid=0x%x",
+-	np = of_find_node_by_name(pmc->dev->of_node, "i2c-thermtrip");
++	np = of_get_child_by_name(pmc->dev->of_node, "i2c-thermtrip");
+ 	if (!np) {
+ 		dev_warn(dev, "i2c-thermtrip node not found, %s.\n", disabled);
+ 		return;
 
 
