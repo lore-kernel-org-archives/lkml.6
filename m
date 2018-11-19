@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A2FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B01BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB7B2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0418F2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yZHPoKOn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EB7B2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3RZPkOL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0418F2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbeKTDGE (ORCPT
+        id S2387514AbeKTDGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39646 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732645AbeKTDGD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:03 -0500
+        id S1732645AbeKTDGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCC9821104;
-        Mon, 19 Nov 2018 16:41:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7429B21104;
+        Mon, 19 Nov 2018 16:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645713;
-        bh=SbqJM/GyAt4C7UxHwzTLTnnsYvflS7GJkl/euO36DwQ=;
+        s=default; t=1542645716;
+        bh=LW+mn8RM9p5/s8VCx9VVLEroAkBwXSSy3zajjI/pMrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yZHPoKOna6dcizk0ZpoorjF2qEwPc2GsIstgIaiikAn/EoWbg1OEfUL1hV7zJpomt
-         p5hORzOM/LyATouJibBUF0/EWN5v68iCPNUJzX5ADwjSUa/r0qXBvzkmzGoIJZG8Yo
-         ajmUgbExKR38ugmJw9i5rgI+zA1Pmnt11XSDb+yI=
+        b=T3RZPkOL6Ic2dLLCXBOXDBtSoUS6VB+NQsx4GVptF2iX5WLnCHF7K7c9ajIHWJNXg
+         vhksTQCIHrQXp0iUHJxYVf30v8am1xL2rbB4886VUSl3Tm3OxP40YRGtOzXAuMbTyw
+         BWEeV89/B0sb+h5YO2cZ+hK7vRS5FbfI0ML9YGnQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.18 061/171] xtensa: fix boot parameters address translation
-Date:   Mon, 19 Nov 2018 17:27:37 +0100
-Message-Id: <20181119162629.842101700@linuxfoundation.org>
+        stable@vger.kernel.org, Ritesh Raj Sarraf <rrs@researchut.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: [PATCH 4.18 062/171] um: Drop own definition of PTRACE_SYSEMU/_SINGLESTEP
+Date:   Mon, 19 Nov 2018 17:27:38 +0100
+Message-Id: <20181119162629.981173148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -60,43 +62,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Richard Weinberger <richard@nod.at>
 
-commit 40dc948f234b73497c3278875eb08a01d5854d3f upstream.
+commit 0676b957c24bfb6e495449ba7b7e72c5b5d79233 upstream.
 
-The bootloader may pass physical address of the boot parameters structure
-to the MMUv3 kernel in the register a2. Code in the _SetupMMU block in
-the arch/xtensa/kernel/head.S is supposed to map that physical address to
-the virtual address in the configured virtual memory layout.
+32bit UML used to define PTRACE_SYSEMU and PTRACE_SYSEMU_SINGLESTEP
+own its own because many years ago not all libcs had these request codes
+in their UAPI.
+These days PTRACE_SYSEMU/_SINGLESTEP is well known and part of glibc
+and our own define becomes problematic.
 
-This code haven't been updated when additional 256+256 and 512+512
-memory layouts were introduced and it may produce wrong addresses when
-used with these layouts.
+With change c48831d0eebf ("linux/x86: sync sys/ptrace.h with Linux 4.14
+[BZ #22433]") glibc turned PTRACE_SYSEMU/_SINGLESTEP into a enum and
+UML failed to build.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Let's drop our define and rely on the fact that every libc has
+PTRACE_SYSEMU/_SINGLESTEP.
+
+Cc: <stable@vger.kernel.org>
+Cc: Ritesh Raj Sarraf <rrs@researchut.com>
+Reported-and-tested-by: Ritesh Raj Sarraf <rrs@researchut.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/kernel/head.S |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/um/shared/sysdep/ptrace_32.h |   10 ----------
+ 1 file changed, 10 deletions(-)
 
---- a/arch/xtensa/kernel/head.S
-+++ b/arch/xtensa/kernel/head.S
-@@ -88,9 +88,12 @@ _SetupMMU:
- 	initialize_mmu
- #if defined(CONFIG_MMU) && XCHAL_HAVE_PTP_MMU && XCHAL_HAVE_SPANNING_WAY
- 	rsr	a2, excsave1
--	movi	a3, 0x08000000
-+	movi	a3, XCHAL_KSEG_PADDR
-+	bltu	a2, a3, 1f
-+	sub	a2, a2, a3
-+	movi	a3, XCHAL_KSEG_SIZE
- 	bgeu	a2, a3, 1f
--	movi	a3, 0xd0000000
-+	movi	a3, XCHAL_KSEG_CACHED_VADDR
- 	add	a2, a2, a3
- 	wsr	a2, excsave1
- 1:
+--- a/arch/x86/um/shared/sysdep/ptrace_32.h
++++ b/arch/x86/um/shared/sysdep/ptrace_32.h
+@@ -10,20 +10,10 @@
+ 
+ static inline void update_debugregs(int seq) {}
+ 
+-/* syscall emulation path in ptrace */
+-
+-#ifndef PTRACE_SYSEMU
+-#define PTRACE_SYSEMU 31
+-#endif
+-
+ void set_using_sysemu(int value);
+ int get_using_sysemu(void);
+ extern int sysemu_supported;
+ 
+-#ifndef PTRACE_SYSEMU_SINGLESTEP
+-#define PTRACE_SYSEMU_SINGLESTEP 32
+-#endif
+-
+ #define UPT_SYSCALL_ARG1(r) UPT_BX(r)
+ #define UPT_SYSCALL_ARG2(r) UPT_CX(r)
+ #define UPT_SYSCALL_ARG3(r) UPT_DX(r)
 
 
