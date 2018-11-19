@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DAFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F90C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AEC214F1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A344214E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4/Q/2u0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19AEC214F1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I53b4DEp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A344214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406685AbeKTD3N (ORCPT
+        id S2406698AbeKTD3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43820 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405697AbeKTD3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:12 -0500
+        id S2405697AbeKTD3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFF3F214D9;
-        Mon, 19 Nov 2018 17:04:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5001C2148E;
+        Mon, 19 Nov 2018 17:04:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647095;
-        bh=YhFszXDdqkri+ZuSUof6JDN+K5ULojcWRYoHSWC4Baw=;
+        s=default; t=1542647097;
+        bh=EK2wsdX/dYU0HvW/ToQqHYcN4kS3HbqDUy3jiWjAO+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4/Q/2u0UPCtIhp9FtH7zkthotZcRx7X1qDwcG0C0SsO41XvNe1ivPdx4BcXMahre
-         PNp39NQgLJavMrPWVne06vPYP8CLje42lB639bdmSqo3UlzNXtoZaOASD7ObG5dUIL
-         UVuhI8Okpor+UmhrTl2BN0PkW2uOoLuh9LpwmUrg=
+        b=I53b4DEppKL64mjl9dAa8YPVKz+Um5AjvSgE4zf7emM4c3LCPtOruIrSOYnNhIXH/
+         HIBDQfpBYkS2WpaJF2HiPikeDMZzyeyjK3NBlQNUaJo3z17wsW4Yg75+TVUWrgJvW0
+         Q75MIwaTFbnByX1kTay2FCeSgmgf+EvM6wSducG0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, jason.wessel@windriver.com,
-        jslaby@suse.com, He Zhe <zhe.he@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 3.18 48/90] kgdboc: Passing ekgdboc to command line causes panic
-Date:   Mon, 19 Nov 2018 17:29:30 +0100
-Message-Id: <20181119162628.576084176@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 3.18 49/90] media: em28xx: use a default format if TRY_FMT fails
+Date:   Mon, 19 Nov 2018 17:29:31 +0100
+Message-Id: <20181119162628.749178578@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -63,59 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 1bd54d851f50dea6af30c3e6ff4f3e9aab5558f9 upstream.
+commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
 
-kgdboc_option_setup does not check input argument before passing it
-to strlen. The argument would be a NULL pointer if "ekgdboc", without
-its value, is set in command line and thus cause the following panic.
+Follow the V4L2 spec, as warned by v4l2-compliance:
 
-PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-[    0.000000] RIP: 0010:strlen+0x0/0x20
-...
-[    0.000000] Call Trace
-[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-[    0.000000]  ? kgdboc_early_init+0x6/0x1b
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
+	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
 
-This patch adds a check to prevent the panic.
+warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
 
 Cc: stable@vger.kernel.org
-Cc: jason.wessel@windriver.com
-Cc: gregkh@linuxfoundation.org
-Cc: jslaby@suse.com
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -133,6 +133,11 @@ static void kgdboc_unregister_kbd(void)
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1280,9 +1280,9 @@ static int vidioc_try_fmt_vid_cap(struct
  
- static int kgdboc_option_setup(char *opt)
- {
-+	if (!opt) {
-+		pr_err("kgdboc: config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	if (strlen(opt) >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
- 		return -ENOSPC;
+ 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
+ 	if (!fmt) {
+-		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
+-				f->fmt.pix.pixelformat);
+-		return -EINVAL;
++		fmt = &format[0];
++		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
++				f->fmt.pix.pixelformat, fmt->fourcc);
+ 	}
+ 
+ 	if (dev->board.is_em2800) {
 
 
