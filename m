@@ -2,153 +2,178 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB74FC4161D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F1AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 919A52080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 919A52080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 225252080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:26:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Zm8wMmxN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225252080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731061AbeKTHvO convert rfc822-to-8bit (ORCPT
+        id S1731077AbeKTHvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:51:14 -0500
-Received: from mga05.intel.com ([192.55.52.43]:58023 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730141AbeKTHvO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:51:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:25:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="109618991"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 13:25:41 -0800
-Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 19 Nov 2018 13:25:40 -0800
-Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
- fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 19 Nov 2018 13:25:40 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- LCSMSX154.ger.corp.intel.com ([169.254.7.79]) with mapi id 14.03.0415.000;
- Mon, 19 Nov 2018 23:25:23 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Thread-Topic: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
- tpm2_commit_space()
-Thread-Index: AQHUfz0HV9TuDcLLJkegLXS35AC8EqVXnOgQ
-Date:   Mon, 19 Nov 2018 21:25:22 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA23561@hasmsx108.ger.corp.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzAxYWQwMDYtNzFiZC00YTcwLWI4MTctYTYzZjJkYzE1MDllIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiakY4NEhrY2JYV2xkYndOTm1HdmlcL3YyXC9JYjFFRHlcL2U3UUhiQlFVcHk0N0FiNmY3dzZYTk1DZ1B0OVN1XC8xNzEifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 20 Nov 2018 02:51:47 -0500
+Received: from mail-eopbgr720083.outbound.protection.outlook.com ([40.107.72.83]:45344
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730936AbeKTHvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:51:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1wGEDnYyA/XOxZz+rE8btRiLTa470pg9Fg70vY7W4iw=;
+ b=Zm8wMmxNb+QjBVr+S7LVzdPJvpmKC1tBB13sTdu6MgyIJGvrxtqRiAkDKSj+9KfOBU3oU967CV/89zGvyQiIizqKLrygxK+Zu63w3n9/j8YyworGcSBqSwHVbQYG971yfkx+NTKD5SdLkI5uZda7q29JemwpyVQXzJ/8FGIA7p0=
+Received: from BN6PR02CA0048.namprd02.prod.outlook.com (2603:10b6:404:5f::34)
+ by BL0PR02MB4322.namprd02.prod.outlook.com (2603:10b6:208:40::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Mon, 19 Nov
+ 2018 21:26:12 +0000
+Received: from CY1NAM02FT063.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::206) by BN6PR02CA0048.outlook.office365.com
+ (2603:10b6:404:5f::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.23 via Frontend
+ Transport; Mon, 19 Nov 2018 21:26:12 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT063.mail.protection.outlook.com (10.152.75.161) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
+ via Frontend Transport; Mon, 19 Nov 2018 21:26:11 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3b-0003aE-B7; Mon, 19 Nov 2018 13:26:11 -0800
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3W-0004jW-7A; Mon, 19 Nov 2018 13:26:06 -0800
+Received: from xsj-pvapsmtp01 (xsj-mail.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAJLQ3iW028647;
+        Mon, 19 Nov 2018 13:26:03 -0800
+Received: from [172.19.2.167] (helo=xsjjliang50.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <wendy.liang@xilinx.com>)
+        id 1gOr3T-0004ik-Mm; Mon, 19 Nov 2018 13:26:03 -0800
+From:   Wendy Liang <wendy.liang@xilinx.com>
+To:     <jassisinghbrar@gmail.com>, <michal.simek@xilinx.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Wendy Liang <wendy.liang@xilinx.com>
+Subject: [PATCH v6 0/2] Xilinx ZynqMP IPI Mailbox Controller Driver
+Date:   Mon, 19 Nov 2018 13:25:59 -0800
+Message-ID: <1542662761-31158-1-git-send-email-wendy.liang@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(39850400004)(136003)(346002)(2980300002)(438002)(189003)(199004)(36756003)(50226002)(36386004)(39060400002)(2906002)(8936002)(44832011)(478600001)(9786002)(81156014)(81166006)(8676002)(486006)(2616005)(476003)(126002)(4326008)(106002)(5660300001)(110136005)(15650500001)(54906003)(47776003)(426003)(14444005)(316002)(16586007)(48376002)(336012)(6666004)(50466002)(305945005)(77096007)(356004)(26005)(63266004)(107886003)(51416003)(7696005)(186003)(106466001)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL0PR02MB4322;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT063;1:92Bh5UzFIyiIYeFQw+aAf+qvsHtaMRyFvtAU2/sHJEUVdWhCSb03lz7ZF5dkemU26Gqh1qXpWXYAEMCVHsd9ipg25M/wBJz/TrJqDWGo2ZBQV/9e1CnqgZr3YBIJmjId
 MIME-Version: 1.0
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 0ccade3c-8950-46fd-0da7-08d64e65a118
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BL0PR02MB4322;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4322;3:1m4rqgnyBZm1eLbcqU2EDjtI5fG+ua/oBdjXRo+Kh5wCw7PxRPa6E+mj1UpolPEVGK0lwlAJl0ZZdmZvaXa7mhQsX++qnDMHZpvGROatNWwlBZ2eRfliQMyb4r28R4oUBCpzWShBp9zEh37jMqhQpCdvnSP7+a3nwqO/APrQtjkRzUxzarOdbWTZEhveYzYBDxKWcg7x6LgFX5moAuMTFvhOHaoKbUi7FUO2mwiOwtDwMMNI2LRIUMueFKl7z13cprCpRDIQVCbSW3u89bctAfn18dahIYkLePpFme4YdvVpCOiWZK6lAb/1MltwY8byV6l1IzaVIlHrB59pRycy8k+Lb6oakspWLr47n/+R9vI=;25:Ugart+9R/UbNSQ54Bm26lx6yIVw6Oh6J/tkspwG4Si1bAmp0D+M2sCpvQowIweQzZ+pQ8pJKe0vZrFab3INJpAbVPZK5TnQ5elWYQraAgDU+CFt3eZ9WvGUKtoKbH06KeHtIoLSlDKY7DQ2bKZCazSnFlfh1xAZpRp9p0uX8jY4Voi3dKLI9bqZis9OtAPqQifgfJYTfSou6w4ie1924EZRVLOVExonGWxhWjj1PWYJduYnsF2Kos4OdOmzKNbNl/RE8fN8/kRjuszo1ylnOUoGrfZuSIbM7CxiXeoDaXgR3GFahtP9KomctDL04sj35cAgZ9WMVyT32d5W68vJ60g==
+X-MS-TrafficTypeDiagnostic: BL0PR02MB4322:
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4322;31:7vUWs8ItIb0AVWRhIiwSB1ORiLnYGoDOYFPOJYo0d167rpt121J6aLj0oQOtF/nfJwACCB/s2GfGB/oOh7WVtT9spHhB0hxktWgsefhRGY8loql/4jEfsd1ghg0DmUpUJCG8dKZTTl46jmW9eYmG3wZ3TM6RJs/9YIN9zGLgVkTsVdPgaj8BAZvdNKIdC8bTvCjmHdYoeYxUpVSU1FgBSAF7JHHkjGJvxV7qTOszAKk=;20:MXP95GEp9rGa5ytJ02awa8IxuDx3WbxoZIovMEfWPFbfEJwWFMCOJuh4lnZpGigdhnDfm56IVQOVUAErzOaoDdkJPsMt2DAxB7okYcEXPwjg1Cz0erLa6KwqIrJLF9p8ROcCXBheRHikwHSX/L1Qcc6JIGF6HqDCKy/jHEgc4/KAeyfpC1uZPIYE2oBUmt+POdSUBMZ9j5CVZ0yVnIRyBJu0YJ6QL7iBVIWWBh2ludfwfJswWw5qY0Rr9hShY3wW5ek4c60OPf0eOIlYmMyli9m6vEomr8mGVt5/ItVXfD2uHrNKaTMBfn256oUMlf3Sk0RLKOwLwGTfrJKeR7/3ppwF/KAki4JgK/EfAwPySpVZUULRmCkR0clzRR30K1XyxIfgUdVmZGx0oHFxX1WrX2j19fN1BfrU1uXVDkY0g8hdIJO7ejO8ekx9yQgMT1q2J2PtC5Dwzcschmzt0ANUYMoosVEWarwU7LpGKs2oA9wfbqmwKOMRP8LDYUyArIin
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <BL0PR02MB4322A1C7DE4ADFBC47C50A5BB0D80@BL0PR02MB4322.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(788757137089);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BL0PR02MB4322;BCL:0;PCL:0;RULEID:;SRVR:BL0PR02MB4322;
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4322;4:Ja1FPMAvR5Q7ImDtUdASs5AGsVdqZfzAGrdqi1z06qre/+cum1EXvYjM3N1lvOympqZRqlIS97vIrnUrrepMmDaFsGHVfSjlsLITfYPi85W0jU2BsotBC4BirN0MNK+Zc1Kg9nhJ2Qu4+oSQzO2do/Cy+0W+PpwNPxkYseO2QTDMkjSnQxAAM+TPxCyvSkaKeTYXPTPTTLqciiBX6nQDRd+Usx7fjnQf4VjB5VF6xQKQFq7ZoDmQk6RehQ0hRLXA1eYG8lBiezcjzmqT8g9KcPJAEA6GBgPnl9SXeVybAZ2US+rdcGcUpzM5ECM9wTHY
+X-Forefront-PRVS: 08617F610C
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL0PR02MB4322;23:MKuPfHv0m8hSyKH+0iXKCiJRpDlrJdD2Wz1LyWD01?=
+ =?us-ascii?Q?yeghcrfb2E3eFeHsj8bui1Gw6hSl7kVWJZEJ/GPtkirMpIziPsf1E54msqPu?=
+ =?us-ascii?Q?NNoRxqclAmxzXg6UH42860b1n3kfhipszDbixAO0IeFpwGDuEGgCOlySE4Il?=
+ =?us-ascii?Q?V69qGCRJFRyMAV+hzz0Fhgkt2sd7wkzddH0tkGtz3A9hSxqwnH1JQkZefQxM?=
+ =?us-ascii?Q?30FURI9lrVmsZSTMIEAJ0nS41xbv4xdUbsIpfrFzD3FJNcKCBvxbsocHHIQG?=
+ =?us-ascii?Q?/GbflekNewx5UsafojacJBJvQnjaj0ibG3Hjx3pP+WL3q7BfkOTs5/tDM9oH?=
+ =?us-ascii?Q?P5LMLQpDSIXjRbwrws+DWLMY7YAeWWZ0kZG/Mh7lmCmQPAevuLTtYmruA2hO?=
+ =?us-ascii?Q?xNHde+WOwpKtCyI+NtKjmVZMvZN5pG+neXn+BIF23x/4aTc2vGWZJrMCBS14?=
+ =?us-ascii?Q?jsNkdomdQ4ue6tzCgqWUxPt3DgELIoh0Eyh75fvE+S44a8YexPdGHHXj2M9O?=
+ =?us-ascii?Q?zbkGgEa6JfPULGr0Oo7r+m3X6so8S4KhsIe0lVkew6yxvKlP8GZ8xI9InXPt?=
+ =?us-ascii?Q?kiAQvH0x3k4olNPCMPD8AIy7bTMKEHRY3pISudBwBNhVOGw3IRGe0GvPtsHB?=
+ =?us-ascii?Q?BtEXp2fnIvO1uN7CHJ0/9gaW1FxlBPlhLLT4siSVeJfPKRzFJs05TnMDX6CC?=
+ =?us-ascii?Q?6fX1pUtA8X+4TIEygmz76FOAh4Hw6EFTB84nGTK0p/xRHiJPL21AsjbWr9rX?=
+ =?us-ascii?Q?Kw6zIadpvNv89B4+O+ORO/8VBFDTXQAXTtKrFOFkIX608ivqPxHNTC4rFaqo?=
+ =?us-ascii?Q?fDwvj8K+J0elNb3e38XVSV2Iu7iClAusIYW445N4tGFDtQriGhpQ79CdsPoN?=
+ =?us-ascii?Q?RKFksWdbVT9klPg0qQGw9tnKB64bTuedbDw+R9agxE733aJkJoF0Tbj+lfhu?=
+ =?us-ascii?Q?zEa7xHMk08l4B5sLTNnM+dF38SnTydzyfnQG3XOxcb7a5vXPcJRR7oZrk5Qc?=
+ =?us-ascii?Q?6fVgG05d+nDsLx/jwR+hHbHtUMrxGUt642/Zz1nUqw1+3K4+q60lQI4mZDGc?=
+ =?us-ascii?Q?8vwKgVcTocewACrVLnwJKPWlz5xZnWpPreDOXx0kRz/CeecPFZu8/RdD9Y7S?=
+ =?us-ascii?Q?i366u0Ghqz26gYx7L2CYvWhMtgyqHwa?=
+X-Microsoft-Antispam-Message-Info: MbLHAwXInxwU5C3HchJGPKiZhOQmjdz+1vfR13SrxUwB1sAjGdeNurc+pUbGhLf4XFX/uuikyxC+bQq4C0pAqAS0zrc7Qz+zPlU0gJfwGB1yVeC3JClxO613BIbHF0i91jECFG63t/HTJn0Y0OsIZGvs6VvKe7O/q6Hhd12Ls1xLpEVB3Tagamx7qGFolLwnWi9gF4F7ru4qvmy2/Z61unPf6r8jcaG2eK+x5neDlssk9KT7fKTnV7wXp04jtKLSTpt+lU1wFLTby9HpFkWYmo7I+5mttL8Tj4FpNi0qMZT45HxKsjWGtiT3HXkyVWJvahGy4rrbhY731ji95Hrz4HUb44ecjkMsg6RguozL4fc=
+X-Microsoft-Exchange-Diagnostics: 1;BL0PR02MB4322;6:wBDDrf+04wda3di+/bSF3C1UwTTQQIfBmsb9ei0yPZB+ETKSmmMKVmL8dCnanXe5dSq7gwJuZQGodtgd2iUmLskmz4XfF3laJ4BoXLjKgiOdyxqZLTjjI1DNd0jP5pQx3N4EGopqdpziVbHLNqxc3WcsrDUm+/Ph+73xlN20c6SNizu4zQZEzbrNjK+dWaisqeqJlsnD+NrKu5SoR0boIbw67CqZthIPTlZ74FKDzulDTSW5F4Mt2cEihME+pljvlWebRUl3YPD8fh83HjD7EUAgvEAus/UavPLQCwb6mKbzp1vJWYRJxHisjoFCFkZYvHeHq8xRkL8DtO6KB4YW6dXn0VKNpg0LCvQdQZL6HDoZBsp/NbGVY7/YYh69Z7sNDUcjZqB2avIdx/zdW+GOQiZuxYU4MoTNDceB10kmoN9BgwWBr74sapLqwXbeBhGmt5QS7I0DSzOfQCLlUgAVTA==;5:l7nPf0p8EnBg/zWgKCm1ceb1fkMQFch5Mh9Q7GQJx/jppDBep1c2d0QOuREdRd2N6J1hpmR1xFOogiHuemvLi4S+U1IAl13FuuoREFlL4ZClL+vaARQZjSFLPC/8ShBGJ3ScBPMF1/agFtAEalUJJr7p2RZaHYwNFXYxzevQxTc=;7:TRYd8IGvNNl8/j3Hyu6DcOrD87bhkOH2zqIF8pcI/67ri31DKzCk+gKoEU10AWEtdpJCUYSq9ZD6y4EZtK7TbhFK47WJwudP1w6Dk/NOkEdT+zqJmoJnYL0sbXElLgxEc02DOVISzXBlih7Yx/rH2Q==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Nov 2018 21:26:11.7437
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ccade3c-8950-46fd-0da7-08d64e65a118
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB4322
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Introduce mailbox controller driver for ZynqMP IPI(Inter-processor
+interrupt) IP core.
+
+As the device tree bindings have been updated. Do not have "Reviewed-by"
+nor "Acked-by" in the dt-bindings commit.
+
+v6:
+ - dts-binding, remove compatible property from IPI subnode
+
+v5:
+ - fix check patch warning on write a paragraph to describe the kconfig
+   symbol.
+
+v4:
+ - make IPI mailboxes as subnodes to the IPI agent device node to properly
+   describe the hardware.
+
+v3:
+ - add NULL entry to of_device_id of IPI controller
+
+v2:
+ - change SPDX-License-Identifier license text style in .c file
+ - replace xlnx-ipi-ids with xlnx,ipi-ids
 
 
-> 
-> The error logging for tpm2_commit_space() is in a wrong place. This commit
-> moves it inside that function.
-> 
-> Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> ---
->  drivers/char/tpm/tpm-interface.c | 2 --
->  drivers/char/tpm/tpm2-space.c    | 9 ++++++---
->  2 files changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> interface.c
-> index 64510ed81b46..7ac6ada8428c 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
->  	}
-> 
->  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
-> -	if (rc)
-> -		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
-> 
->  out:
->  	/* may fail but do not override previous error value in rc */ diff --git
-> a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c index
-> 1131a8e7b79b..5ecc73988f7c 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip,
-> struct tpm_space *space,
->  	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
->  	if (rc) {
->  		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
->  	}
-> 
->  	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
->  	if (rc) {
->  		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
->  	}
-> 
->  	rc = tpm2_save_space(chip);
->  	if (rc) {
->  		tpm2_flush_space(chip);
-> -		return rc;
-> +		goto out;
->  	}
-> 
->  	*bufsiz = be32_to_cpu(header->length); @@ -526,4 +526,7 @@ int
-> tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
->  	memcpy(space->session_buf, chip->work_space.session_buf,
-> PAGE_SIZE);
-> 
->  	return 0;
-> +out:
-Maybe 'out' is too positive name for an error-only exit point? 
-or you can use if (rc) ... dev_err()
-> +	dev_err(&chip->dev, "%s: error %d\n", __func__, rc);
-> +	return rc;
->  }
-> --
-> 2.19.1
+Wendy Liang (2):
+  mailbox: ZynqMP IPI mailbox controller
+  dt-bindings: mailbox: Add Xilinx IPI Mailbox
+
+ .../bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt   | 127 ++++
+ drivers/mailbox/Kconfig                            |   9 +
+ drivers/mailbox/Makefile                           |   2 +
+ drivers/mailbox/zynqmp-ipi-mailbox.c               | 762 +++++++++++++++++++++
+ include/linux/mailbox/zynqmp-ipi-message.h         |  24 +
+ 5 files changed, 924 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
+ create mode 100644 drivers/mailbox/zynqmp-ipi-mailbox.c
+ create mode 100644 include/linux/mailbox/zynqmp-ipi-message.h
+
+-- 
+2.7.4
 
