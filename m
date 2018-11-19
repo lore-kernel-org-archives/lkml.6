@@ -2,300 +2,269 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A42AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D89BFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162D42080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:54:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A6l652Cb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162D42080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 87E672080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:56:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87E672080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeKSLPx (ORCPT
+        id S1727033AbeKSLRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:15:53 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:34820 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbeKSLPw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:15:52 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d2so6086892ual.2
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 16:53:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=XMrpTzq27oMBdd9mAMCvpReP8LWXh9Cz6YyI2Pj02kk=;
-        b=A6l652CbOFbkGkQdu/XGN4qPXIzXc0rDTk/1K8/LnoElCW6pjCkg3fbyYZOSog/cVL
-         ePsS3Ljo6JA2zLSX2+YvUJSrBnA62wXQia80VqFkGLwRn+93i3tXYoHvWcfrgLFKPu+v
-         lWeEpFqxqKr3cI86m2yfcbK9bIwhp4StzvZd+/l3jU4Na8AVypUcH1vpfJXFWOiVj0om
-         O1HY/T2A4ayTUKfOt8p0wUi5XHNFvRrScerxfHcoxLdUHsmQxqBpasNRDnuQfBHxtxIi
-         C6+6kg+8IxOwxm1sXAsVtlttwYAEwd/8zW32pIGhf58HI/ECQmZ3NwrHom1S5/dd2oXg
-         V7MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=XMrpTzq27oMBdd9mAMCvpReP8LWXh9Cz6YyI2Pj02kk=;
-        b=tVpFfmQg/nnNBPwTUsthwAmUAttDkH82kB8BJMkecxqjhdXWHx8D4Vbhm7lI66h5ji
-         E9r6F3cdlawlmhIrBKP80EmQ/WsyWJZQMTe+REdUKOcy+EZgsf722D77uZzpcqDHXFFc
-         QV7jTadP5zH7swNCOAHAxRV6mxgsxXhRiTwqa27wsVXv1dJhA9zPb/AGzY72IEQpcQCZ
-         Kr3zf0oT0bz2GgH2VFSDsFZntQxsKzdNX1AFOjPDMPGSUJESlQ6lD66UK2AwtskscVaQ
-         DBhksrHhMQ1z061PBNHLiRe4RFFy1Y5/fc3tnG3qcyCfaicVVvz1zyOsVkZ5ibGEMDYq
-         N3zA==
-X-Gm-Message-State: AGRZ1gKXnK98Emno3wRevQMz2jnPeR45wJUE5ckFho8dFwFyL3Oj7NWy
-        TlmXT/0FngLVc6ilN4P2+YilLxj0UeNNeThagauU4Q==
-X-Google-Smtp-Source: AJdET5cer3BH81p8klu2Jg7hBhduWpXzZJYkHoQNrwRyhiUqnlYyPF2Mr3hMuA5jJn0LYBYuBOaaj6I64cA/enZv+0U=
-X-Received: by 2002:ab0:72a:: with SMTP id h39mr9059753uah.11.1542588838292;
- Sun, 18 Nov 2018 16:53:58 -0800 (PST)
+        Mon, 19 Nov 2018 06:17:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37204 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725919AbeKSLRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:17:51 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5FC84AC43;
+        Mon, 19 Nov 2018 00:55:55 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Jonathan Corbet <corbet@lwn.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Date:   Mon, 19 Nov 2018 11:55:46 +1100
+Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Documentation: update path-lookup.md for parallel lookups
+Message-ID: <87k1l9dgx9.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 16:53:57
- -0800 (PST)
-In-Reply-To: <20181119000928.h2wp2rn2pnlfysp7@yavin>
-References: <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org>
- <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
- <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
- <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
- <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
- <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
- <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
- <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com>
- <20181118190504.ixglsqbn6mxkcdzu@yavin> <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
- <20181119000928.h2wp2rn2pnlfysp7@yavin>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Sun, 18 Nov 2018 16:53:57 -0800
-Message-ID: <CAKOZueve_r5h9_B2YV5RzJYjTf-yS5uZfAbz+Ftqy5jFSk6Xdw@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow killing processes via file descriptors
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Christian Brauner <christian@brauner.io>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jan Engelhardt <jengelh@inai.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 4:09 PM, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2018-11-18, Daniel Colascione <dancol@google.com> wrote:
->> On Sun, Nov 18, 2018 at 11:05 AM, Aleksa Sarai <cyphar@cyphar.com> wrote:
->> > On 2018-11-18, Daniel Colascione <dancol@google.com> wrote:
->> >> > Here's my point: if we're really going to make a new API to manipulate
->> >> > processes by their fd, I think we should have at least a decent idea
->> >> > of how that API will get extended in the future.  Right now, we have
->> >> > an extremely awkward situation where opening an fd in /proc requires
->> >> > certain capabilities or uids, and using those fds often also checks
->> >> > current's capabilities, and the target process may have changed its
->> >> > own security context, including gaining privilege via SUID, SGID, or
->> >> > LSM transition rules in the mean time.  This has been a huge source of
->> >> > security bugs.  It would be nice to have a model for future APIs that
->> >> > avoids these problems.
->> >> >
->> >> > And I didn't say in my proposal that a process's identity should
->> >> > fundamentally change when it calls execve().  I'm suggesting that
->> >> > certain operations that could cause a process to gain privilege or
->> >> > otherwise require greater permission to introspect (mainly execve)
->> >> > could be handled by invalidating the new process management fds.
->> >> > Sure, if init re-execs itself, it's still PID 1, but that doesn't
->> >> > necessarily mean that:
->> >> >
->> >> > fd = process_open_management_fd(1);
->> >> > [init reexecs]
->> >> > process_do_something(fd);
->> >> >
->> >> > needs to work.
->> >>
->> >> PID 1 is a bad example here, because it doesn't get recycled. Other
->> >> PIDs do. The snippet you gave *does* need to work, in general, because
->> >> if exec invalidates the handle, and you need to reopen by PID to
->> >> re-establish your right to do something with the process, that process
->> >> may in fact have died between the invalidation and your reopen, and
->> >> your reopened FD may refer to some other random process.
->> >
->> > I imagine the error would be -EPERM rather than -ESRCH in this case,
->> > which would be incredibly trivial for userspace to differentiate
->> > between.
->>
->> Why would userspace necessarily see EPERM? The PID might get recycled
->> into a different random process that the caller has the ability to
->> affect.
->
-> I'm not sure what you're talking about. execve() doesn't change the PID
-> of a process, and in the case we are talking about:
->
->   pidX_handle = open_pid_handle(pidX);
->   [ pidX execs a setuid binary ]
->   do_something(pidX_handle);
->
-> pidX still has the same PID (so PID recycling is irrelevant in this
-> case). The key point is whether do_something() should give you an error
-> in such a state transition, and in that case I would say you'd get
-> -EPERM which would indicate (obviously) insufficient privileges.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-EPERM is the wrong error. All that's happened here is that the process
-has execed itself; you may still have permission to operate on the
-post-execve process. ESTALE is the right error here.
 
-But yes, there is a PID trace. What do you do after getting ESTALE?
-You reopen the handle and retry your operation. How do you open a new
-handle? Unless you're using some awful /proc/self/fd/... hack, you
-reopen by PID. And at that point, you've introduced a PID race again.
-That's why, in my sketch below, I imagined creating the capability
-handle from the process-identity handle and not, as in the snippet
-above, directly from the PID.
+Since this document was written, i_mutex has been replace with
+i_rwsem, and shared locks are utilized to allow lookups in the one
+directory to happen in parallel.
 
->> Anyway: what other API requires, for correct operation, occasional
->> reopening through /proc/self/fd? It's cumbersome, and it doesn't add
->> anything. If we invalidate process handles on execve, and processes
->> are legally allowed to re-exec themselves for arbitrary reasons at any
->> time, that's tantamount to saying that handles might become invalid at
->> any time and that all callers must be prepared to go through the
->> reopen-and-retry path before any operation.
->
-> O_PATH. In container runtimes this is necessary for several reasons to
-> protect against malicious container root filesystems as well as avoiding
-> exposing a dirfd to the container.
->
-> In LXC, O_PATH re-opening is used for /dev/ptmx as well as some other
-> operations. In runc we use it for FIFO re-opening so that we can signal
-> pid1 in a container to execve() into user code.
->
-> So this isn't a new thing.
+So replace i_mutex with i_rwsem, and explain how this is used for
+parallel lookups.
 
-Yuck. I'd still argue that 1) the reopen trick isn't really intended
-as the mainline path for that kernel functionality, and 2) there ought
-to be a way to do what you're describing in a cleaner way. I'd
-classify this approach as a hack. It's one thing to require a hack in
-specialized container initialization code, but it's another to bake it
-into a hopefully-common API for something as fundamental as process
-management, especially when there's a perfectly good alternative that
-doesn't require this hack.
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
 
->> Why are we making them do that? So that a process can have an open FD
->> that represents a process-operation capability? Which capability does
->> the open FD represent?
->
-> The re-opening part was just an argument to show that there isn't a
-> condition where you wouldn't be able to get access to the 'struct pid'.
-> I doubt that anyone would actually need to use this -- since you'd need
-> to pass "/proc/pid/fd/..." to a more privileged process in order to use
-> the re-opening.
->
-> But this also means that we don't need to have a concept of a pidfd that
-> isn't actually associated with a PID but is instead associated with
-> current->mm (which is what you appear to be proposing with the whole
-> "identity fd" concept).
+Just FYI
 
-Not current->mm; that can be shared with clone. struct signal is the
-right long-term identity. It's usually easier to keep the struct pid
-around though, which is exactly what a procfs FD is today: just a
-lightweight handle to a struct pid.
+$ git grep -w i_mutex | wc -l
+262
 
->> I think when you and Andy must be talking about is an API that looks like this:
->>
->> int open_process_operation_handle(int procfs_dirfd, int capability_bitmask)
->>
->> capability_bitmask would have bits like
->>
->> PROCESS_CAPABILITY_KILL --- send a signal
->> PROCESS_CAPABILITY_PTRACE --- attach to a process
->> PROCESS_CAPABILITY_READ_EXIT_STATUS --- what it says on the tin
->> PROCESS_CAPABILITY_READ_CMDLINE --- etc.
->>
->> Then you'd have system calls like
->>
->> int process_kill(int process_capability_fd, int signo, const union sigval data)
->> int process_ptrace_attach(int process_capability_fd)
->> int process_wait_for_exit(int process_capability_fd, siginfo_t* exit_info)
->>
->> that worked on these capability bits. If a process execs or does
->> something else to change its security capabilities, operations on
->> these capability FDs would fail with ESTALE or something and callers
->> would have to re-acquire their capabilities.
->>
->> This approach works fine. It has some nice theoretical properties, and
->> could allow for things like nicer privilege separation for debuggers.
->> I wouldn't mind something like this getting into the kernel.
->
-> Andy might be arguing for this (and as you said, I can see the benefit
-> of doing it this way).
->
-> I'm not convinced that doing permission checks on-open is necessary here
-> -- I get Andy's point about write(2) semantics but I think a new set of
-> proc_* syscalls wouldn't need to follow those semantics. I might be
-> wrong though.
+it was 276 before this patch... so a small improvement.
 
-For now, it's fine to just expose system calls that operate directly
-on the procfs dfd.
+NeilBrown
 
->> I just don't think this model is necessary right now. I want a small
->> change from what we have today, one likely to actually make it into
->> the tree. And bypassing the capability FDs and just allowing callers
->> to operate directly on process *identity* FDs, using privileges in
->> effect at the time of all, is at least no worse than what we have now.
->>
->> That is, I'm proposing an API that looks like this:
->>
->> int process_kill(int procfs_dfd, int signo, const union sigval value)
->>
->> If, later, process_kill were to *also* accept process-capability FDs,
->> nothing would break.
->
-> Again, I think we should agree on whether it's necessary to have both
-> types of fds before we commit to maintaining both APIs forever...
 
-I don't think noting that an API *could* be extended in a certain way
-in the future creates any obligation to decide, immediately, whether
-that extension will ever be needed. Right now, I don't see a reason to
-supply the capability FD API I described. I'm just saying that it
-could be added in a low-friction way if necessary one day.
+ Documentation/filesystems/path-lookup.md | 85 ++++++++++++++++++------
+ 1 file changed, 66 insertions(+), 19 deletions(-)
 
->> >> > Similarly, it seems like
->> >> > it's probably safe to be able to open an fd that lets you watch the
->> >> > exit status of a process, have the process call setresuid(), and still
->> >> > see the exit status.
->> >>
->> >> Is it? That's an open question.
->> >
->> > Well, if we consider wait4(2) it seems that this is already the case.
->> > If you fork+exec a setuid binary you can definitely see its exit code.
->>
->> Only if you're the parent. Otherwise, you can't see the process exit
->> status unless you pass a ptrace access check and consult
->> /proc/pid/stat after the process dies, but before the zombie
->> disappears. Random unrelated and unprivileged processes can't see exit
->> statuses from distant parts of the system.
->
-> Sure, I'd propose that ptrace_may_access() is what we should use for
-> operation permission checks.
+diff --git a/Documentation/filesystems/path-lookup.md b/Documentation/files=
+ystems/path-lookup.md
+index e2edd45c4bc0..06151b178f80 100644
+=2D-- a/Documentation/filesystems/path-lookup.md
++++ b/Documentation/filesystems/path-lookup.md
+@@ -12,6 +12,10 @@ This write-up is based on three articles published at lw=
+n.net:
+ - <https://lwn.net/Articles/650786/> A walk among the symlinks
+=20
+ Written by Neil Brown with help from Al Viro and Jon Corbet.
++It has subsequently been updated to reflect changes in the kernel
++including:
++
++- per-directory parallel name lookup.
+=20
+ Introduction
+ ------------
+@@ -231,37 +235,80 @@ renamed.  If `d_lookup` finds that a rename happened =
+while it
+ unsuccessfully scanned a chain in the hash table, it simply tries
+ again.
+=20
+=2D### inode->i_mutex ###
++### inode->i_rwsem ###
+=20
+=2D`i_mutex` is a mutex that serializes all changes to a particular
++`i_rwsem` is a read/write semaphore that serializes all changes to a parti=
+cular
+ directory.  This ensures that, for example, an `unlink()` and a `rename()`
+ cannot both happen at the same time.  It also keeps the directory
+ stable while the filesystem is asked to look up a name that is not
+=2Dcurrently in the dcache.
++currently in the dcache or, optionally, when the list of entries in a
++directory is being retrieved with `readdir()`.
+=20
+=2DThis has a complementary role to that of `d_lock`: `i_mutex` on a
++This has a complementary role to that of `d_lock`: `i_rwsem` on a
+ directory protects all of the names in that directory, while `d_lock`
+ on a name protects just one name in a directory.  Most changes to the
+=2Ddcache hold `i_mutex` on the relevant directory inode and briefly take
++dcache hold `i_rwsem` on the relevant directory inode and briefly take
+ `d_lock` on one or more the dentries while the change happens.  One
+ exception is when idle dentries are removed from the dcache due to
+=2Dmemory pressure.  This uses `d_lock`, but `i_mutex` plays no role.
++memory pressure.  This uses `d_lock`, but `i_rwsem` plays no role.
+=20
+=2DThe mutex affects pathname lookup in two distinct ways.  Firstly it
+=2Dserializes lookup of a name in a directory.  `walk_component()` uses
++The semaphore affects pathname lookup in two distinct ways.  Firstly it
++prevents changes during lookup of a name in a directory.  `walk_component(=
+)` uses
+ `lookup_fast()` first which, in turn, checks to see if the name is in the =
+cache,
+ using only `d_lock` locking.  If the name isn't found, then `walk_componen=
+t()`
+=2Dfalls back to `lookup_slow()` which takes `i_mutex`, checks again that
++falls back to `lookup_slow()` which takes a shared lock on `i_rwsem`, chec=
+ks again that
+ the name isn't in the cache, and then calls in to the filesystem to get a
+ definitive answer.  A new dentry will be added to the cache regardless of
+ the result.
+=20
+ Secondly, when pathname lookup reaches the final component, it will
+=2Dsometimes need to take `i_mutex` before performing the last lookup so
++sometimes need to take an exclusive lock on `i_rwsem` before performing th=
+e last lookup so
+ that the required exclusion can be achieved.  How path lookup chooses
+=2Dto take, or not take, `i_mutex` is one of the
++to take, or not take, `i_rwsem` is one of the
+ issues addressed in a subsequent section.
+=20
++If two threads attempt to look up the same name at the same time - a
++name that is not yet in the dcache - the shared lock on `i_rwsem` will
++not prevent them both adding new dentries with the same name.  As this
++would result in confusion an extra level of interlocking is used,
++based around a secondary hash table (`in_lookup_hashtable`) and a
++per-dentry flag bit (`DCACHE_PAR_LOOKUP`).
++
++To add a new dentry to the cache while only holding a shared lock on
++`i_rwsem`, a thread must call `d_alloc_parallel()`.  This allocates a
++dentry, stores the required name and parent in it, checks if there
++is already a matching dentry in the primary or secondary hash
++tables, and if not, stores the newly allocated dentry in the secondary
++hash table, with `DCACHE_PAR_LOOKUP` set.
++
++If a matching dentry was found in the primary hash table then that is
++returned and the caller can know that it lost a race with some other
++thread adding the entry.  If no matching dentry is found in either
++cache, the newly allocated dentry is returned and the caller can
++detect this from the presence of `DCACHE_PAR_LOOKUP`.  In this case it
++knows that it has won any race and now is responsible for asking the
++filesystem to perform the lookup and find the matching inode.  When
++the lookup is complete, it must call `d_lookup_done()` which clears
++the flag and does some other house keeping, including removing the
++dentry from the secondary hash table - it will normally have been
++added to the primary hash table already.  Note that a `struct
++waitqueue_head` is passed to `d_alloc_parallel()`, and
++`d_lookup_done()` must be called while this `waitqueue_head` is still
++in scope.
++
++If a matching dentry is found in the secondary hash table,
++`d_alloc_parallel()` has a little more work to do. It first waits for
++`DCACHE_PAR_LOOKUP` to be cleared, using a wait_queue that was passed
++to the instance of `d_alloc_parallel()` that won the race and that
++will be woken by the call to `d_lookup_done()`.  It then checks to see
++if the dentry has now been added to the primary hash table.  If it
++has, the dentry is returned and the caller just sees that it lost any
++race.  If it hasn't been added to the primary hash table, the most
++likely explanation is that some other dentry was added instead using
++`d_splice_alias()`.  In any case, `d_alloc_parallel()` repeats all the
++look ups from the start and will normally return something from the
++primary hash table.
++
+ ### mnt->mnt_count ###
+=20
+ `mnt_count` is a per-CPU reference counter on "`mount`" structures.
+@@ -376,7 +423,7 @@ described.  If it finds a `LAST_NORM` component it firs=
+t calls
+ "`lookup_fast()`" which only looks in the dcache, but will ask the
+ filesystem to revalidate the result if it is that sort of filesystem.
+ If that doesn't get a good result, it calls "`lookup_slow()`" which
+=2Dtakes the `i_mutex`, rechecks the cache, and then asks the filesystem
++takes `i_rwsem`, rechecks the cache, and then asks the filesystem
+ to find a definitive answer.  Each of these will call
+ `follow_managed()` (as described below) to handle any mount points.
+=20
+@@ -408,7 +455,7 @@ of housekeeping around `link_path_walk()` and returns t=
+he parent
+ directory and final component to the caller.  The caller will be either
+ aiming to create a name (via `filename_create()`) or remove or rename
+ a name (in which case `user_path_parent()` is used).  They will use
+=2D`i_mutex` to exclude other changes while they validate and then
++`i_rwsem` to exclude other changes while they validate and then
+ perform their operation.
+=20
+ `path_lookupat()` is nearly as simple - it is used when an existing
+@@ -429,7 +476,7 @@ complexity needed to handle the different subtleties of=
+ O_CREAT (with
+ or without O_EXCL), final "`/`" characters, and trailing symbolic
+ links.  We will revisit this in the final part of this series, which
+ focuses on those symbolic links.  "`do_last()`" will sometimes, but
+=2Dnot always, take `i_mutex`, depending on what it finds.
++not always, take `i_rwsem`, depending on what it finds.
+=20
+ Each of these, or the functions which call them, need to be alert to
+ the possibility that the final component is not `LAST_NORM`.  If the
+@@ -728,12 +775,12 @@ checking the `seq` number of the old exactly mirrors =
+the process of
+ getting a counted reference to the new dentry before dropping that for
+ the old dentry which we saw in REF-walk.
+=20
+=2D### No `inode->i_mutex` or even `rename_lock` ###
++### No `inode->i_rwsem` or even `rename_lock` ###
+=20
+=2DA mutex is a fairly heavyweight lock that can only be taken when it is
++A semaphore is a fairly heavyweight lock that can only be taken when it is
+ permissible to sleep.  As `rcu_read_lock()` forbids sleeping,
+=2D`inode->i_mutex` plays no role in RCU-walk.  If some other thread does
+=2Dtake `i_mutex` and modifies the directory in a way that RCU-walk needs
++`inode->i_rwsem` plays no role in RCU-walk.  If some other thread does
++take `i_rwsem` and modifies the directory in a way that RCU-walk needs
+ to notice, the result will be either that RCU-walk fails to find the
+ dentry that it is looking for, or it will find a dentry which
+ `read_seqretry()` won't validate.  In either case it will drop down to
+@@ -1134,7 +1181,7 @@ and `do_last()`, each of which use the same conventio=
+n as
+ to be followed.
+=20
+ Of these, `do_last()` is the most interesting as it is used for
+=2Dopening a file.  Part of `do_last()` runs with `i_mutex` held and this
++opening a file.  Part of `do_last()` runs with `i_rwsem` held and this
+ part is in a separate function: `lookup_open()`.
+=20
+ Explaining `do_last()` completely is beyond the scope of this article,
+=2D-=20
+2.19.0.216.g2d3b1c576c85
 
-The tricky part is that ptrace_may_access takes a struct task. We want
-logic that's *like* ptrace_may_access, but that works posthumously.
-It's especially tricky because there's an LSM hook that lets
-__ptrace_may_access do arbitrary things. And we can't just run that
-hook upon process death, since *after* a process dies, a process
-holding an exithand FD (or whatever we call it) may pass that FD to
-another process, and *that* process can read(2) from it.
 
-Another option is doing the exithand access check at open time. I
-think that's probably fine, and it would make things a lot simpler.
-But if we use this option, we should understand what we're doing, and
-get some security-conscious people to think through the implications.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvyChIACgkQOeye3VZi
+gbmGfg//aYBm2AF+su3UhJ0yYZhxEtp0aNYRrBikuuTeMxmQQEgaGFfv5/DoTJn7
+2iP1LVpikP77T+nzYq5eEdNnACtgIs3A3a28PUfQeOLMUgw3fTeOh+pkwBfL9Qpd
+kH82iiCot2TKCxS1m9L3pTwT/SS4KvGWgujCIzRFfKwCaY9aUT1xsmUqKACXwWUn
+5goYGlFHDJPE1p4eB+21XOwxLLMKzG9f2ad13YDo1IiKdhqg7cd3Yaqd2bD6OXk4
+jTXR7hgLTB7eP2N1Vj5W99hKdVweqvUueF2ZHHO8ThJRU2H36qZTiBVO0hShAC8o
+L2OwZN1dEKGb63R/Vs+xjpVknMQHbFb0rJDMFbtM/4amkX/EtMAiPnQWi05NvoYS
+O0UR6w+2V9ttSqxj8fDSQbuWzTcTk7LCpdQtoxSM7lzc01Bal/2rPcd1PKiDd0jP
+su3uAZGMdMUmnfGCJm0ullPKkKdagZa748dAvdCvG6JSvskdzj3aJSbOOhFXaNfd
+v0msqM+r8vAIWeFkG/1EQIe2+QdN4oRmIjpWN6PwvgdcBjsnmJoEtGFMqvBdvmXu
+6AnRqXofi5kltobLYHUX2mpbAf66tMikC+ijRoaUAzP0xCiyE2fR6y0VwCo1K361
+DLt9D0mtCgynDHpGiYwgrnIh5dLMC7jjbO7HTbPUr98WM7NBZm4=
+=KBLx
+-----END PGP SIGNATURE-----
+--=-=-=--
