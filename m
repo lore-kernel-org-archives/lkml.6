@@ -2,96 +2,79 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CAEC04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB7BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDBFF2080F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:01:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBFF2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B4D22086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:03:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ds8ssu0v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B4D22086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727761AbeKSLWc (ORCPT
+        id S1727297AbeKSLYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:32 -0500
-Received: from mx.socionext.com ([202.248.49.38]:40685 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727503AbeKSLWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:31 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:35 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id D9125180111;
-        Mon, 19 Nov 2018 10:00:35 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:35 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 3620E40387;
-        Mon, 19 Nov 2018 10:00:35 +0900 (JST)
-Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 15805120455;
-        Mon, 19 Nov 2018 10:00:35 +0900 (JST)
-From:   Sugaya Taichi <sugaya.taichi@socionext.com>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 04/14] dt-bindings: timer: Add Milbeaut M10V timer description
-Date:   Mon, 19 Nov 2018 10:01:09 +0900
-Message-Id: <1542589274-13878-5-git-send-email-sugaya.taichi@socionext.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
+        Mon, 19 Nov 2018 06:24:55 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57784 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbeKSLYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:24:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zarwFY8/rYKpT8HEb383ruGvAwzj654iYYR5hS4DF20=; b=Ds8ssu0vYG7Xok7ykW4VK0tZI
+        sW10EXMxcC/eA5g0IZiE5rTXgIra7d/E7j05gZqX3fI3JAyD2Rt4M5nMQLglXzcsogkHjaY2KfneI
+        mVpm1CLD+AncMb/pSWmoepW2a43Do+0Rpw/H3zwRaL/rcxoXBSUhP5XkClLRjyou0tl2dytUx4oNc
+        l5uQTinv/5TYh/36Tt3JVcvqq7Wh/ZNEoSl1tDMlttHgk446WffPmqhdpeHlZpxTbbONOXI8/qa66
+        T7BwTAkQNRamOUUejN29oOOVGryGiA5xatghBcIR5Z68R6LLHlybQqOcte4gkZkSYEvjQ8NjSFfj1
+        TQIsJDUmw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOXxs-0002Iw-Cl; Mon, 19 Nov 2018 01:03:00 +0000
+Date:   Sun, 18 Nov 2018 17:03:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Yafang Shao <laoar.shao@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, darrick.wong@oracle.com,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm/filemap.c: minor optimization in write_iter file
+ operation
+Message-ID: <20181119010300.GD7861@bombadil.infradead.org>
+References: <1542542538-11938-1-git-send-email-laoar.shao@gmail.com>
+ <20181118121318.GC7861@bombadil.infradead.org>
+ <CALOAHbAfWkAYJPTRfyPmHKSmg7UEhtnamzUVx9xd4oYkqi_x8g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALOAHbAfWkAYJPTRfyPmHKSmg7UEhtnamzUVx9xd4oYkqi_x8g@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add DT bindings document for Milbeaut M10V timer.
+On Sun, Nov 18, 2018 at 11:02:19PM +0800, Yafang Shao wrote:
+> On Sun, Nov 18, 2018 at 8:13 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > Did you check the before/after code generation with this patch applied?
+> 
+> Yes, I did.
+> My oompiler is gcc-4.8.5, a litte old, and with CONFIG_CC_OPTIMIZE_FOR_SIZE on.
+> > with gcc 8.2.0, I see no difference, indicating that the compiler already
+> > makes this optimisation.
+> 
+> Could pls. try set CONFIG_CC_OPTIMIZE_FOR_SIZE on and then compare them again ?
 
-Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
----
- .../bindings/timer/socionext,milbeaut-timer.txt         | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
+Actually it was already on:
 
-diff --git a/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
-new file mode 100644
-index 0000000..ddb1b31
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/socionext,milbeaut-timer.txt
-@@ -0,0 +1,17 @@
-+Milbeaut SoCs Timer Controller
-+
-+Required properties:
-+
-+- compatible : should be "socionext,milbeaut-m10v-timer"
-+- reg : Specifies base physical address and size of the registers.
-+- interrupts : The interrupt of the first timer
-+- clocks: should be "rclk"
-+
-+Example:
-+
-+timer {
-+	compatible = "socionext,milbeaut-m10v-timer";
-+	reg = <0x1e000050 0x10>, <0x1e000060 0x10>;
-+	interrupts = <0 91 4>;
-+	clocks = <&rclk>;
-+};
--- 
-1.9.1
+# CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
 
+I happened to build it in my build-tiny output tree.
