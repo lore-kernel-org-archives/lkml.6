@@ -2,115 +2,96 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B63C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEC0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C77B20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C77B20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B6A4520831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:21:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/3cpRTx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A4520831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729032AbeKSWoT (ORCPT
+        id S1729051AbeKSWo1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:44:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:32934 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbeKSWoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:44:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CAE0188304;
-        Mon, 19 Nov 2018 12:20:50 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-39.brq.redhat.com [10.40.204.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9C7E45C57B;
-        Mon, 19 Nov 2018 12:20:48 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        David Miller <davem@davemloft.net>
-Subject: [PATCH 12/12] perf top: Move perf_top__reset_sample_counters after counts display
-Date:   Mon, 19 Nov 2018 13:20:16 +0100
-Message-Id: <20181119122016.22423-13-jolsa@kernel.org>
-In-Reply-To: <20181119122016.22423-1-jolsa@kernel.org>
-References: <20181119122016.22423-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 19 Nov 2018 12:20:51 +0000 (UTC)
+        Mon, 19 Nov 2018 17:44:27 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36023 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728738AbeKSWo1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 17:44:27 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a16so2367991lfg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:20:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yVSy+uRJIJhKGegpw54bdgZPAeH6fG67Foz3V97ekgc=;
+        b=H/3cpRTxJbpsF7Blh132PgvUO7zD4BkC9pIdNrDv/6ZyP+5kpHoMXSHRDYtRU72L2l
+         8fT9nGCOJTB72/MBWTYF9D8kc98DwrtKmMgDZmsSW64GDsR4lvK8RdKyTNa89seZsc9o
+         4H+IP98Kr3XQ6ffFTF+Dn508Zd1c3hbSq+Bi0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yVSy+uRJIJhKGegpw54bdgZPAeH6fG67Foz3V97ekgc=;
+        b=hxjb8vBWKan7+i3PA48j1xuJlz1XfLeDA7UJYPmMJegXpbwdFCI73JbDd1Hrw33Jiq
+         QedkdIGJJxKbiFH7F9Ssx9tuzPQ+5FRJx15hgoZwuW+SyPomBqSayAhJHcZCQkLV3Mi2
+         EQLO/uDgqL5DFe1PbVdLJ8ekaLT/KhYyR6YvY527kmtVM5Cu2xiX/e1NnB8o7wBjKvPP
+         Qh3j0p6qV0FzD9maOkTr+tF2UV0kVo0qHuDqShBIvERdRLSt9Z1xh3PjfsxFH53ggKhw
+         vyDhQxSd4rFgfBkNE/jUIOCJDOI4BSXAH5dLB3pOiIikbn9Kqbm34uYKC7v5yC/VB6xe
+         VR9g==
+X-Gm-Message-State: AGRZ1gIpX2SagL5Yb/Y/InVULXWZiB9bvIRAT/+mXJNRL2eyPwzsuowB
+        1eGVC6ZugRjU1dHPCmZkNVpv+IOVSzcUOLseERpM1A==
+X-Google-Smtp-Source: AJdET5etmyiRtoTmZXFf1RuIvSprLi3FMZw5RrmbguJQK9SGFlntIlG7AKGYdROswJ1DPjfzvPoQOc239sUJWAKrjXY=
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr11201597lfa.32.1542630057789;
+ Mon, 19 Nov 2018 04:20:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20181113095142.32015-1-benjamin.gaignard@st.com> <20181113095142.32015-3-benjamin.gaignard@st.com>
+In-Reply-To: <20181113095142.32015-3-benjamin.gaignard@st.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 19 Nov 2018 13:20:46 +0100
+Message-ID: <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: stm32: protect configuration registers with
+ a hwspinlock
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move perf_top__reset_sample_counters call right after we display
-the counters so we can see the updated numbers longer.
+On Tue, Nov 13, 2018 at 10:51 AM Benjamin Gaignard
+<benjamin.gaignard@linaro.org> wrote:
 
-Link: http://lkml.kernel.org/n/tip-dqn9jbi0wt939zpk9rydtkc8@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/builtin-top.c       | 4 ----
- tools/perf/ui/browsers/hists.c | 3 +++
- tools/perf/util/top.c          | 1 +
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> If a hwspinlock if defined in device tree use it to protect
+> configuration registers.
+>
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 5d6e30f69d85..af4aaf8edb06 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -273,8 +273,6 @@ static void perf_top__print_sym_table(struct perf_top *top)
- 	perf_top__header_snprintf(top, bf, sizeof(bf));
- 	printf("%s\n", bf);
- 
--	perf_top__reset_sample_counters(top);
--
- 	printf("%-*.*s\n", win_width, win_width, graph_dotted_line);
- 
- 	if (!top->record_opts.overwrite &&
-@@ -573,8 +571,6 @@ static void perf_top__sort_new_samples(void *arg)
- 
- 	if (t->lost || t->drop)
- 		ui_helpline__fpush("Too slow to read ring buffer (change period (-c/-F) or limit CPUs (-C)\n");
--
--	perf_top__reset_sample_counters(t);
- }
- 
- static void stop_top(void)
-diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 36b262c49f51..ffac1d54a3d4 100644
---- a/tools/perf/ui/browsers/hists.c
-+++ b/tools/perf/ui/browsers/hists.c
-@@ -2229,8 +2229,11 @@ static int hists_browser__scnprintf_title(struct hist_browser *browser, char *bf
- 
- 		if (top->zero)
- 			printed += scnprintf(bf + printed, size - printed, " [z]");
-+
-+		perf_top__reset_sample_counters(top);
- 	}
- 
-+
- 	return printed;
- }
- 
-diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
-index 31a8dee9af69..4c8da8c4435f 100644
---- a/tools/perf/util/top.c
-+++ b/tools/perf/util/top.c
-@@ -107,6 +107,7 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
- 					top->evlist->cpus->nr > 1 ? "s" : "");
- 	}
- 
-+	perf_top__reset_sample_counters(top);
- 	return ret;
- }
- 
--- 
-2.17.2
+Patch applied with Alex' ACK.
 
+Out of curiosity: what is it protecting against?
+I would guess simultaneous access from another CPU
+but the commit doesn't say.
+
+Simultaneous access from two CPUs makes it extra important
+that all register access is read-modify-write, so I'd have a second
+check over the code to make sure this is the case.
+
+Yours,
+Linus Walleij
