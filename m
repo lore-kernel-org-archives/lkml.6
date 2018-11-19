@@ -2,108 +2,135 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAE3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16617C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F17A20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:49:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F17A20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DB85420831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB85420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbeKTANV (ORCPT
+        id S1729447AbeKTANl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:13:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50128 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727310AbeKTANV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:13:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C3C91AF04;
-        Mon, 19 Nov 2018 13:49:38 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 14:49:36 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
-        Willy Tarreau <w@1wt.eu>
-Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
- protection modes
-In-Reply-To: <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de>
-Message-ID: <nycvar.YFH.7.76.1811191438290.21108@cbobk.fhfr.pm>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <nycvar.YFH.7.76.1811171044510.21108@cbobk.fhfr.pm> <nycvar.YFH.7.76.1811182358370.21108@cbobk.fhfr.pm>
- <alpine.DEB.2.21.1811191433100.1537@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 19 Nov 2018 19:13:41 -0500
+Received: from mga04.intel.com ([192.55.52.120]:17006 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727310AbeKTANl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:13:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 05:50:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="282350706"
+Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Nov 2018 05:49:57 -0800
+Date:   Mon, 19 Nov 2018 15:49:56 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+Message-ID: <20181119134956.GD8755@linux.intel.com>
+References: <1541962653.3190.7.camel@HansenPartnership.com>
+ <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+ <1541968191.3190.12.camel@HansenPartnership.com>
+ <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
+ <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+ <1541972556.3734.90.camel@linux.ibm.com>
+ <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
+ <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
+ <20181118081833.GH5897@linux.intel.com>
+ <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018, Thomas Gleixner wrote:
-
-> > On Sat, 17 Nov 2018, Jiri Kosina wrote:
-> 
-> > Subject: [PATCH] x86/speculation: enforce STIBP for SECCOMP tasks in lite mode
+On Sun, Nov 18, 2018 at 03:10:06PM +0100, Michael Niewöhner wrote:
+> On Sun, 2018-11-18 at 10:18 +0200, Jarkko Sakkinen wrote:
+> > On Fri, Nov 16, 2018 at 10:06:28PM +0100, Michael Niewöhner wrote:
+> > > On Wed, 2018-11-14 at 21:46 +0100, Michael Niewöhner wrote:
+> > > > Hi all,
+> > > > 
+> > > > I tried that patch mentioned by Mimi but it does not change anything for
+> > > > me.
+> > > > 
+> > > > Then I did some more tests with different kernel configs and finally got
+> > > > TPM
+> > > > working by
+> > > > a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
+> > > > 
+> > > > (initramfs) dmesg | grep -i tpm
+> > > > [    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
+> > > > SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018
+> > > > TPMEventLog=0x97cbb018
+> > > > [    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
+> > > > S06   00001260 AMI 00000000)
+> > > > (initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
+> > > > (initramfs) modprobe tpm_tis
+> > > > [   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > > 
+> > > > b) compiling TPM-support in-kernel and manually bind the ACPI device
+> > > > 
+> > > > (initramfs) dmesg | grep -i tpm
+> > > > [    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
+> > > > SMBIOS
+> > > > 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
+> > > > [    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06
+> > > > 00001260
+> > > > AMI 00000000)
+> > > > (initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
+> > > > [  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > > 
+> > > > 
+> > > > It seems to me, the kernel tries to enable the TPM to early...
+> > > > 
+> > > > 
+> > > > Michael
+> > > 
+> > > Looks like the manual driver bind works more or less but e.g reading hwrng
+> > > does
+> > > not work...
+> > > 
+> > > # echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
+> > > [  148.293302] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
+> > > # cat /sys/devices/virtual/misc/hw_random/rng_current
+> > > tpm-rng-0
+> > > # cat /dev/hwrng >/dev/null 
+> > > cat: /dev/hwrng: Operation not permitted
 > > 
-> > If 'lite' mode of app2app protection from spectre_v2 is selected on
-> > kernel command-line, we are currently applying STIBP protection to
-> > non-dumpable tasks, and tasks that have explicitly requested such
-> > protection via
+> > Can you check with trace-cmd start -p function -l 'tpm*'?
 > > 
-> > 	prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
-> > 
-> > Let's extend this to cover also SECCOMP tasks (analogically to how we
-> > apply SSBD protection).
+> > /Jarkko
 > 
-> Right. And SSBD does not fiddle with dumpable.
 > 
-> Willy had concerns about the (ab)use of dumpable so I'm holding off on that
-> bit for now.
+> Hi Jarko,
+> 
+> what output do you need exactly?
 
-Yeah. IBPB implementation used to check the dumpability of tasks during 
-rescheduling, but that went away later.
+TPM gets added with tpm_add_hwrng() and the callback that is called by
+hwrng subsystem is tpm_hwrng_read().
 
-I still think that ideally that 'app2app' setting would toggle how IBPB is 
-being used as well, something along the lines:
+Obviously the former gets called (can be seen from the sysfs file). Just
+wondering if it ever reaches tpm_hwrng_read().
 
-lite:
-	- STIBP for the ones marked via prctl() and SECCOMP with the TIF_ 
-	  flag
-	- ibpb_needed() returning true for the same
-
-strict:
-	- STIBP: as currently implemented
-	- ibpb_needed() returning always true
-
-off:
-	- neither STIBP nor IBPB applied ever
-
-That's give us also some % of performance lost via IBPB back.
-
-Makes sense?
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+/Jarkko
