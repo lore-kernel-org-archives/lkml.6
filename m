@@ -2,274 +2,212 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFB4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2902FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3672420851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:52:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3672420851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pschenker.ch
+	by mail.kernel.org (Postfix) with ESMTP id E6AD020851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:52:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6AD020851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeKSVPN (ORCPT
+        id S1728102AbeKSVP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:15:13 -0500
-Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:10496 "EHLO
-        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727948AbeKSVPN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:15:13 -0500
-X-Greylist: delayed 1557 seconds by postgrey-1.27 at vger.kernel.org; Mon, 19 Nov 2018 16:15:11 EST
-Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gOgkd-000OCE-Ar; Mon, 19 Nov 2018 11:25:55 +0100
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gOgkd-0007f0-5a; Mon, 19 Nov 2018 11:25:55 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     Philippe Schenker <philippe.schenker@toradex.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>
-Subject: [PATCH v2 4/4] ARM: dts: Add stmpe-adc driver to relevant devicetrees
-Date:   Mon, 19 Nov 2018 11:25:28 +0100
-Message-Id: <20181119102528.2830-4-dev@pschenker.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119102528.2830-1-dev@pschenker.ch>
-References: <20181119102528.2830-1-dev@pschenker.ch>
+        Mon, 19 Nov 2018 16:15:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44932 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727873AbeKSVP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:15:26 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E30B308AA12;
+        Mon, 19 Nov 2018 10:52:10 +0000 (UTC)
+Received: from [10.36.116.185] (ovpn-116-185.ams2.redhat.com [10.36.116.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FB2460BE7;
+        Mon, 19 Nov 2018 10:52:05 +0000 (UTC)
+Subject: Re: [PATCH v5] vfio: platform: Add generic reset controller support
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>, kvm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181113131508.18246-1-geert+renesas@glider.be>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <12064722-6e85-c40c-12c9-7c7d4e1e2677@redhat.com>
+Date:   Mon, 19 Nov 2018 11:52:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181113131508.18246-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 19 Nov 2018 10:52:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
+Hi Geert,
+On 11/13/18 2:15 PM, Geert Uytterhoeven wrote:
+> Vfio-platform requires dedicated reset support, provided either by ACPI,
+> or, on DT platforms, by a device-specific reset driver matching against
+> the device's compatible value.
+> 
+> On many SoCs, devices are connected to an SoC-internal reset controller.
+> If the reset hierarchy is described in DT using "resets" properties, or
+> in lookup tables in platform code, and devices have exactly one
+> dedicated reset each, such devices can be reset in a generic way through
+> the reset controller subsystem.  Hence add support for this, avoiding
+> the need to write device-specific reset drivers for each single device
+> on affected SoCs.
+> 
+> Devices that do require a more complex reset procedure can still provide
+> a device-specific reset driver, as that takes precedence.
+> 
+> Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+> becomes a no-op (as in: "No reset function found for device") if reset
+> controller support is disabled.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> This depends on "[PATCH] reset: Add reset_control_get_count()"
+> (https://lore.kernel.org/lkml/20181113124744.7769-1-geert+renesas@glider.be/).
+> 
+> v5:
+>   - Use reset_control_get_exclusive() instead of rejected
+>     reset_control_get_dedicated(), as exclusive already implies a
+>     dedicated reset line,
+>   - Ensure the device has exactly one reset,
+> 
+> v4:
+>   - Add Reviewed-by,
+>   - Use new RFC reset_control_get_dedicated() instead of
+>     of_reset_control_get_exclusive(), to (a) make it more generic, and
+>     (b) make sure the reset returned is really a dedicated reset, and
+>     does not affect other devices,
+> 
+> v3:
+>   - Add Reviewed-by,
+>   - Merge similar checks in vfio_platform_has_reset(),
+> 
+> v2:
+>   - Don't store error values in vdev->reset_control,
+>   - Use of_reset_control_get_exclusive() instead of
+>     __of_reset_control_get(),
+>   - Improve description.
+> ---
+>  drivers/vfio/platform/vfio_platform_common.c  | 29 +++++++++++++++++--
+>  drivers/vfio/platform/vfio_platform_private.h |  1 +
+>  2 files changed, 28 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+> index c0cd824be2b767be..ce2aad8e0a8159f9 100644
+> --- a/drivers/vfio/platform/vfio_platform_common.c
+> +++ b/drivers/vfio/platform/vfio_platform_common.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/module.h>
+>  #include <linux/mutex.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  #include <linux/uaccess.h>
+> @@ -113,11 +114,14 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
+>  	if (VFIO_PLATFORM_IS_ACPI(vdev))
+>  		return vfio_platform_acpi_has_reset(vdev);
+>  
+> -	return vdev->of_reset ? true : false;
+> +	return vdev->of_reset || vdev->reset_control;
+>  }
+>  
+>  static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>  {
+> +	struct reset_control *rstc;
+> +	int count;
+> +
+>  	if (VFIO_PLATFORM_IS_ACPI(vdev))
+>  		return vfio_platform_acpi_has_reset(vdev) ? 0 : -ENOENT;
+>  
+> @@ -128,8 +132,24 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+>  		vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+>  							&vdev->reset_module);
+>  	}
+> +	if (vdev->of_reset)
+> +		return 0;
+> +
+> +	/* Generic reset handling needs a single, dedicated reset line */
+> +	count = reset_control_get_count(vdev->device);
+> +	if (count < 0)
+> +		return count;
+> +
+> +	if (count != 1)
+> +		return -EINVAL;
+>  
+> -	return vdev->of_reset ? 0 : -ENOENT;
+> +	rstc = reset_control_get_exclusive(vdev->device, NULL);
+So I understand the semantics of reset_control_get_exclusive() is now
+agreed and this means the reset line is not shared with other devices,
+correct?
 
-Activate the stmpe-adc driver as found on Apalis/Colibri iMX6/T30 modules
+A question about the usage of reset_control_get_count(). Why is it an
+issue if the count is > 1? Does it check there are several reset lines,
+each of then being used for resetting something different or does it
+check there are several reset controllers are able to do the reset job?
+My point behind is what's the issue as long as one non shared line can
+be grabbed with reset_control_get_exclusive().
+> +	if (!IS_ERR(rstc)) {
+> +		vdev->reset_control = rstc;
+> +		return 0;
+> +	}
+> +
+> +	return PTR_ERR(rstc);
+>  }
+>  
+>  static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+> @@ -139,6 +159,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+>  
+>  	if (vdev->of_reset)
+>  		module_put(vdev->reset_module);
+> +
+> +	reset_control_put(vdev->reset_control);
+Most of the drivers use devm_reset_control_get_exclusive(), can't we use
+that instead and benefit from the fact the reset_control_put() is called
+automatically on driver detach?
 
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+Thanks
 
-Changes in v2:
- - Put common ADC settings in mfd
-
- arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 ++++++++++++++--------
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 23 +++++++++++++++--------
- arch/arm/boot/dts/tegra30-apalis.dtsi  | 22 ++++++++++++++--------
- arch/arm/boot/dts/tegra30-colibri.dtsi | 22 ++++++++++++++--------
- 4 files changed, 57 insertions(+), 32 deletions(-)
-
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 3dc99dd8dde1..8db476d8978d 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -331,11 +331,18 @@
- 		id = <0>;
- 		blocks = <0x5>;
- 		irq-trigger = <0x1>;
-+		/* 3.25 MHz ADC clock speed */
-+		st,adc-freq = <1>;
-+		/* 12-bit ADC */
-+		st,mod-12b = <1>;
-+		/* internal ADC reference */
-+		st,ref-sel = <0>;
-+		/* ADC converstion time: 80 clocks */
-+		st,sample-time = <4>;
-+		/* forbid to use ADC channels 3-0 (touch) */
- 
- 		stmpe_touchscreen {
- 			compatible = "st,stmpe-ts";
--			/* 3.25 MHz ADC clock speed */
--			st,adc-freq = <1>;
- 			/* 8 sample average control */
- 			st,ave-ctrl = <3>;
- 			/* 7 length fractional part in z */
-@@ -345,17 +352,16 @@
- 			 * current limit value
- 			 */
- 			st,i-drive = <1>;
--			/* 12-bit ADC */
--			st,mod-12b = <1>;
--			/* internal ADC reference */
--			st,ref-sel = <0>;
--			/* ADC converstion time: 80 clocks */
--			st,sample-time = <4>;
- 			/* 1 ms panel driver settling time */
- 			st,settling = <3>;
- 			/* 5 ms touch detect interrupt delay */
- 			st,touch-det-delay = <5>;
- 		};
-+
-+		stmpe_adc {
-+			compatible = "st,stmpe-adc";
-+			st,norequest-mask = <0x0F>;
-+		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 87e15e7cb32b..2e303d79c7f8 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -262,11 +262,18 @@
- 		id = <0>;
- 		blocks = <0x5>;
- 		irq-trigger = <0x1>;
-+		/* 3.25 MHz ADC clock speed */
-+		st,adc-freq = <1>;
-+		/* 12-bit ADC */
-+		st,mod-12b = <1>;
-+		/* internal ADC reference */
-+		st,ref-sel = <0>;
-+		/* ADC converstion time: 80 clocks */
-+		st,sample-time = <4>;
-+		/* forbid to use ADC channels 3-0 (touch) */
- 
- 		stmpe_touchscreen {
- 			compatible = "st,stmpe-ts";
--			/* 3.25 MHz ADC clock speed */
--			st,adc-freq = <1>;
- 			/* 8 sample average control */
- 			st,ave-ctrl = <3>;
- 			/* 7 length fractional part in z */
-@@ -276,17 +283,17 @@
- 			 * current limit value
- 			 */
- 			st,i-drive = <1>;
--			/* 12-bit ADC */
--			st,mod-12b = <1>;
--			/* internal ADC reference */
--			st,ref-sel = <0>;
--			/* ADC converstion time: 80 clocks */
--			st,sample-time = <4>;
- 			/* 1 ms panel driver settling time */
- 			st,settling = <3>;
- 			/* 5 ms touch detect interrupt delay */
- 			st,touch-det-delay = <5>;
- 		};
-+
-+		stmpe_adc {
-+			compatible = "st,stmpe-adc";
-+			/* 3.25 MHz ADC clock speed */
-+			st,norequest-mask = <0x0F>;
-+		};
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 7f112f192fe9..850b0d13549a 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -976,11 +976,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -990,17 +997,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 35af03ca9e90..1f9198bb24ff 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -845,11 +845,18 @@
- 			id = <0>;
- 			blocks = <0x5>;
- 			irq-trigger = <0x1>;
-+			/* 3.25 MHz ADC clock speed */
-+			st,adc-freq = <1>;
-+			/* 12-bit ADC */
-+			st,mod-12b = <1>;
-+			/* internal ADC reference */
-+			st,ref-sel = <0>;
-+			/* ADC converstion time: 80 clocks */
-+			st,sample-time = <4>;
-+			/* forbid to use ADC channels 3-0 (touch) */
- 
- 			stmpe_touchscreen {
- 				compatible = "st,stmpe-ts";
--				/* 3.25 MHz ADC clock speed */
--				st,adc-freq = <1>;
- 				/* 8 sample average control */
- 				st,ave-ctrl = <3>;
- 				/* 7 length fractional part in z */
-@@ -859,17 +866,16 @@
- 				 * current limit value
- 				 */
- 				st,i-drive = <1>;
--				/* 12-bit ADC */
--				st,mod-12b = <1>;
--				/* internal ADC reference */
--				st,ref-sel = <0>;
--				/* ADC converstion time: 80 clocks */
--				st,sample-time = <4>;
- 				/* 1 ms panel driver settling time */
- 				st,settling = <3>;
- 				/* 5 ms touch detect interrupt delay */
- 				st,touch-det-delay = <5>;
- 			};
-+
-+			stmpe_adc {
-+				compatible = "st,stmpe-adc";
-+				st,norequest-mask = <0x0F>;
-+			};
- 		};
- 
- 		/*
--- 
-2.19.1
-
+Eric
+>  }
+>  
+>  static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
+> @@ -218,6 +240,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+>  	} else if (vdev->of_reset) {
+>  		dev_info(vdev->device, "reset\n");
+>  		return vdev->of_reset(vdev);
+> +	} else if (vdev->reset_control) {
+> +		dev_info(vdev->device, "reset\n");
+> +		return reset_control_reset(vdev->reset_control);
+>  	}
+>  
+>  	dev_warn(vdev->device, "no reset function found!\n");
+> diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
+> index 85ffe5d9d1abd94e..a56e80ae5986540b 100644
+> --- a/drivers/vfio/platform/vfio_platform_private.h
+> +++ b/drivers/vfio/platform/vfio_platform_private.h
+> @@ -60,6 +60,7 @@ struct vfio_platform_device {
+>  	const char			*compat;
+>  	const char			*acpihid;
+>  	struct module			*reset_module;
+> +	struct reset_control		*reset_control;
+>  	struct device			*device;
+>  
+>  	/*
+> 
