@@ -2,119 +2,129 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7CB2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B7CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80E6A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792012075B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:31:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iGuXtt15"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80E6A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="e1ovfNl9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792012075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730124AbeKTF4d (ORCPT
+        id S1730292AbeKTF4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:56:33 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:39656 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726436AbeKTF4c (ORCPT
+        Tue, 20 Nov 2018 00:56:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33717 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbeKTF4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=kFvZtKAwH/GQCN1nClozLsRgbXuCdljHmNLW4saMjls=; b=iGuXtt15UArSMUJeULWFTUVdka
-        jR+XJ+Imqw8eFsjClLsTHfvaC8fOCkXd1V6de+xDY3UGmhnKkvAGlCyO+7iciVossLzFZ0lCs0QHV
-        znut9fby8xj5j3hWBkRlJH+foaX4dwyKxa2aNNVl7LgQbkMMHDRtxbZsJ5xRk5t6XdWm2cGbalRxn
-        7nQMzmGhFwYlhnH5rY4idio0VFG1HeH7ox4ZwbA6lPWRx1kk8eseT4aY/gnCJCV37praUYtXS7na3
-        IBL8OSHhuuDuNhJVgQBn8NuEBr30hZHMNpF42bxADyffSVq4DsgZPfaCLlPbr0h35/WCsoXqPPgII
-        fE0kuZog==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOpGY-0004wv-Va; Mon, 19 Nov 2018 19:31:27 +0000
-Subject: Re: Magic Sysrq key option ... What is the option to record the boot
- logs to my hard disk before i issue a reboot command ?
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        AIAMUZZ <muzafsh.113@gmail.com>, linux-kernel@vger.kernel.org
-References: <CAC_t1uu7DDwA6do9sXnNhjcY4T=Q5PhmP2JtejSJ+FfpwJkaeg@mail.gmail.com>
- <20181119184803.GB19377@thunk.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <e901d13d-68e7-c9be-96d6-9f49d3a44ceb@infradead.org>
-Date:   Mon, 19 Nov 2018 11:31:21 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 20 Nov 2018 00:56:44 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so11634055pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:31:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mu6qKRf+9E/4CL62LIsiA9rAeSPSuiYJbFtGi+7TcLE=;
+        b=e1ovfNl9xPKyHeKUy0RoAMQx9TOwkHNmrHtEtzp1GbvW0OVFDnScgvojPTtIkeJ9s6
+         GIP4IrBSB/bMuIYbF2TB3xtiIDqWgl5AmmUj7rkIlOzZhzJxvMpqobR++uuIhcFe4CH5
+         TI3IM6jXvuqNC6ZHJGCaWe+RC1U0GkBGJso3gBzfNrhF3g+gJ3k4h0KmwooRX7LC05H7
+         SHdqggOm2wOQNhhhTwumZZE7j28ND28+Y3a43Sae5gb9wuZFl6GODnh4eMAINVXlt3ee
+         BDC3JkanUS9giILXy1E7Sktnd5cMF0/R6rKYmhlbtK0V7ceru7WtUwtMv2p/jUVpZjWG
+         CrAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mu6qKRf+9E/4CL62LIsiA9rAeSPSuiYJbFtGi+7TcLE=;
+        b=RjXd1n3FZlqKrM82aCwMpQUraMGKgTb65xBvw32QAdmSJdJLoIXyG9UyyESY5Iga3O
+         xiestKw9imjHHapWGmMk8Hlnd2DrkLofS3Lq4rQlHl7bV593+T8IE4jShriwDsp9B5eA
+         vyoAQ/xMeFZQ+SBNbxG4Lu1sLUs3YPMXuVV99IwLstZrG+OQrjjqt2Lzz3AYoXMJG0gx
+         4GxKam1L2yIvvzKEOOVw3WQdF/8O9+WU/XUTLEz+AIa/SsMKNWgzpl6+QYveNag/RnaG
+         UkcgmQ0rDnFPGyUGWwO4oUUKWDeBlgnsMNwbKovhnkB67I5OH/gR87g1b0grabsfU2Pt
+         wc8Q==
+X-Gm-Message-State: AGRZ1gLtrM8uFSYYDRDRXBCJTAx+I+Gpa7Ho4KwrZpuu1mLdE7EmQn0k
+        i2w2oJT8g0ek9L++qHU6xa1uxQ==
+X-Google-Smtp-Source: AJdET5cujqEJprT/UKg6vQryTYtEMMG37SNmU3H/bupbSb4IssigyIsPrygELW+nRCE6l8yyntwsFw==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr21068310pgh.265.1542655900177;
+        Mon, 19 Nov 2018 11:31:40 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id b5sm27377357pfc.150.2018.11.19.11.31.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 11:31:39 -0800 (PST)
+Date:   Mon, 19 Nov 2018 20:31:31 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119193128.hv7z4j52ajrue2jr@brauner.io>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
+ <CAKOZueshQ2DAwUYp+dLpmfYG6FtvCqeRQxH41SjNS+WqY3e0Fw@mail.gmail.com>
+ <20181119182902.fadw6qiu3eepndm3@brauner.io>
+ <87o9ak28nl.fsf@xmission.com>
 MIME-Version: 1.0
-In-Reply-To: <20181119184803.GB19377@thunk.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <87o9ak28nl.fsf@xmission.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 10:48 AM, Theodore Y. Ts'o wrote:
-> On Mon, Nov 19, 2018 at 08:51:17PM +0530, AIAMUZZ wrote:
->> Hi,
->>
->> I have this nagging and frustrating boot freeze i often face on my
->> Deepin OS boot ... Deepin OS i think uses 'journalctl' to record logs
->> on its system.
->>
->> 'journalctl' however seems to record boot logs ONLY for successful
->> boots ... boot logs for instances of boot freezes/hangs that are
->> issued with a ... 'Ctrl+Alt+Del' ... key combination or the ... Magic
->> Sysrq 'b' ... key combination to get out of the frozen/hung machine
->> state are just not aved in the 'journalctl' log ...
->>
->> Is there any option using Magic Sysrq that will enable me to record
->> the failed/frozen/hung boot information to a file for troubleshooting
->> before i reboot the system using the option 'b' ?
->>
->> If not ... Isn't it a good idea to have such an option added to Magic
->> Sysrq options, that can save/record the boot/system logs upto that
->> point, until just before we restart the machines ?
+On Mon, Nov 19, 2018 at 01:02:06PM -0600, Eric W. Biederman wrote:
+> Christian Brauner <christian@brauner.io> writes:
 > 
-> This is a hard problem to solve, because there's no place to store the
-> information, at least not in the general case.  The problem is on an
-> unsuccessful boot, the root file system may not have been mounted yet.
-> Heck, the storage devices might not have been probed at all!
+> > On Mon, Nov 19, 2018 at 07:59:24AM -0800, Daniel Colascione wrote:
+> >> You never addressed my comment on the previous patch about your use of
+> >
+> > Sorry, that thread exploded so quickly that I might have missed it.
+> >
+> >> private_data here. Why can't you use the struct pid reference that's
+> >> already in the inode?
+> >
+> > If that's what people prefer we can probably use that. There was
+> > precedent for stashing away such data in fs/proc/base.c already for
+> > various other things including user namespaces and struct mm so I
+> > followed this model. A prior version of my patch (I didn't send out) did
+> > retrive the inode via proc_pid() in .open() took an additional reference
+> > via get_pid() and dropped it in .release(). Do we prefer that?
 > 
-> If your hardware has a place to store dmesg output across reboots (via
-> one of the CONFIG_PSTORE_* kernel configuration options) then this
-> would be an easy problem --- in fact, it would be the default even
-> with out needing a magic sysrq to request it.  The problem is that
-> most x86 devices do not have hardware capable of supporting
-> CONFIG_PSTORE.  If you have a custom BIOS which doesn't clear memory
-> across a warm reset, that would make things easy.  Unless, unless you
-> are a big cloud company using custom hardware and/or a custom BIOS,
-> life is much more difficult.  :-(
+> If you are using proc/<pid>/ directories as your file descriptors, you
+> don't need to add an open or a release method at all.  The existing file
+> descriptors hold a reference to the inode which holds a reference the
+> the struct pid.
 > 
-> One alternative solution you can use is to simply use a serial
-> console, and have a another computer monitoring the output from the
-> serial console.  This will allow you to see all of the kernel messages
-> during early bootup and afterwards.  So this is also useful for when
-> your X server dies and your system mysteriously reboot; either
-> CONFIG_PSTORE_* hardware or using a serial console might allow you to
-> see the kernel oops message which took out your desktop machine.  (Or
-> in the case of servers, you can cross connect your servers' serial
-> ports so that one server is monitoring another server's serial
-> consoles.)
-> 
-> Cheers,
+> The only time you need to get a reference is when you need a task
+> and kill_pid_info already performs that work for you.
 
-Yes, all of that.
-Having some kind of pstore on x86 would be wonderful.
+Oh, I see what you and Andy are saying now. Sweet, that means we can
+trim down the patch even more. Less code, less headache.
 
-kexec/kdump used to be an option also.  I haven't tried it lately.
+Thanks!
 
--- 
-~Randy
+> 
+> So using proc_pid is all you need to do to get the pid from the existing
+> file descriptors.
+> 
+> Eric
+> 
