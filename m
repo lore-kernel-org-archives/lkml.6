@@ -2,137 +2,180 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F17C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DEFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C72320851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:55:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xctf7CCO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C72320851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id AFE1320851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE1320851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728119AbeKSVTM (ORCPT
+        id S1728167AbeKSVUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:19:12 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:46634 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727728AbeKSVTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:19:12 -0500
-Received: by mail-yw1-f66.google.com with SMTP id t13so8560473ywe.13;
-        Mon, 19 Nov 2018 02:55:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yDHJ9WEAtZrh6l0A43FDDnSkxSeOLqOQXHJ8GFKJQfw=;
-        b=Xctf7CCOacmXbjHIi00dtpD2tLPvfTbFKEBFapYkeJYOl7Tfd8LaILKYAYBX33X0SG
-         /fGCbGGm9rncblUbo4UNKXpFCMk3B2LCyrZ1ypZEPj+EyB5MUe/I/z+K/js4t8DZe3CM
-         WlGr1hwsQBM1W6DU8VBAlVd6PINsLZvL4dzX2mS5YyJZ87rvYD5mVRlCCuF9wuHRULlh
-         ywJKNd2+kFW2fzbbzVpJKdYXtT1QGlZ7fzxcxJPiyatTCbu4nPTmIQHX0V5YaQWy1PiJ
-         GTqzzqLE4KdaLwbV/SAA4hcWyqlPA/f6BVYmyGBwvIk5m6J65NYMdMF5ChYin5kZUCG4
-         fIZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yDHJ9WEAtZrh6l0A43FDDnSkxSeOLqOQXHJ8GFKJQfw=;
-        b=r6pmVc8iHBwLdUDiUKdkCibHQZDcCOXASjVgksAtCOAWghq4Yvnw/GH6nZMCKNSa3P
-         0yFUPz4owLuKHOWbE4jvR3JiCaSNSFgA+LXrrfx9EYuIidmmR15HdOgPzMRp7BkXgLNI
-         jNauxxtXPbQRyVG/Sw10Y8YnjJfgpbP7FF+MBY48XJcCyZA4ABJm37lRBtxo3NHU8+GS
-         EUXGqYTplEM0YTCGwYVQlxkPY2WVe2ZC6u+f1bg3hJRbTX4KWQxKiVCDIM+5lo9AeOOS
-         wnRStontOOY4A2wvQzNgIjmqJ7bOjsdsU+xlFK4INOKrmEC9daDT7gn8sYsbxSVGUMnf
-         RdQw==
-X-Gm-Message-State: AGRZ1gLIy7wPRWgwPdFcJiCGOFd8gUxDZiGSDYwtfrRhtKnO1DVwprS+
-        rlovtiqesqgWr7mMD2B4Zf2T7eGmcvasqqijfNM=
-X-Google-Smtp-Source: AJdET5eRHIafhbpd1Ua7PxzXnPTEWox01a4X9s/miBIR/spca5Edia+2UOLCyr+0CUPEvxBcb4yZHTkGO59GDEVcp60=
-X-Received: by 2002:a81:a40d:: with SMTP id b13-v6mr7114398ywh.345.1542624955349;
- Mon, 19 Nov 2018 02:55:55 -0800 (PST)
+        Mon, 19 Nov 2018 16:20:04 -0500
+Received: from mga05.intel.com ([192.55.52.43]:8499 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727728AbeKSVUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:20:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 02:56:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="gz'50?scan'50,208,50";a="105803738"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Nov 2018 02:56:45 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gOhES-000Aur-HP; Mon, 19 Nov 2018 18:56:44 +0800
+Date:   Mon, 19 Nov 2018 18:56:13 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     kbuild-all@01.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
+        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
+        cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        dancol@google.com, timmurray@google.com,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] proc: allow killing processes via file descriptors
+Message-ID: <201811191808.oI38LhHr%fengguang.wu@intel.com>
+References: <20181118111751.6142-1-christian@brauner.io>
 MIME-Version: 1.0
-References: <20181114121642.1404-1-peron.clem@gmail.com> <20181114121642.1404-2-peron.clem@gmail.com>
- <20181117155140.GA11554@bogus>
-In-Reply-To: <20181117155140.GA11554@bogus>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Mon, 19 Nov 2018 11:55:44 +0100
-Message-ID: <CAJiuCceJTd-h2WDZHtkpeO=-Zqcc2Kf-AY8KV8LrY9NM-BP+jg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ASoC: dt-bindings: add bindings for AK4118 transceiver
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary="SLDf9lqlvOQaIe6s"
+Content-Disposition: inline
+In-Reply-To: <20181118111751.6142-1-christian@brauner.io>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
 
-On Sat, 17 Nov 2018 at 16:51, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Nov 14, 2018 at 01:16:42PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
-> > Document the bindings for AK4118 S/PDIF transceiver
-> >
-> > Signed-off-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
-> > ---
-> >  .../devicetree/bindings/sound/ak4118.txt      | 22 +++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/ak4118.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/sound/ak4118.txt b/Docum=
-entation/devicetree/bindings/sound/ak4118.txt
-> > new file mode 100644
-> > index 000000000000..6e11a2f7404c
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/ak4118.txt
-> > @@ -0,0 +1,22 @@
-> > +AK4118 S/PDIF transceiver
-> > +
-> > +This device supports I2C mode.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible : "asahi-kasei,ak4118"
-> > +- reg : The I2C address of the device for I2C
-> > +- reset-gpios: A GPIO specifier for the reset pin
-> > +- irq-gpios: A GPIO specifier for the IRQ pin
->
-> This should use 'interrupts' instead.
-Yes, this will also simplify the driver.
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> > +
-> > +Example:
-> > +
-> > +&i2c {
-> > +     ak4118: ak4118@13 {
->
-> spdif@13 ? Node names should be based on the class of device, but
-> there's not really one defined for this.
+Hi Christian,
 
-Ok I will use spdif.
+Thank you for the patch! Perhaps something to improve:
 
-Thanks for the comments,
-Clement
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.20-rc3 next-20181116]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
 
->
-> > +             #sound-dai-cells =3D <0>;
-> > +             compatible =3D "asahi-kasei,ak4118";
-> > +             reg =3D <0x13>;
-> > +             reset-gpios =3D <&gpio 0 GPIO_ACTIVE_LOW>
-> > +             irq-gpios =3D <&gpio 1 GPIO_ACTIVE_HIGH>;
-> > +     };
-> > +};
-> > --
-> > 2.19.1
-> >
+url:    https://github.com/0day-ci/linux/commits/Christian-Brauner/proc-allow-killing-processes-via-file-descriptors/20181119-170316
+config: riscv-tinyconfig (attached as .config)
+compiler: riscv64-linux-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=8.1.0 make.cross ARCH=riscv 
+
+All warnings (new ones prefixed by >>):
+
+   ./usr/include/linux/v4l2-controls.h:1105: found __[us]{8,16,32,64} type without #include <linux/types.h>
+>> ./usr/include/linux/procfd.h:8: found __[us]{8,16,32,64} type without #include <linux/types.h>
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICHaV8lsAAy5jb25maWcAhTvbcts4su/zFayZqlNJ7cbj2B5vZk/5AQJBCSuCoAFQsvPC
+UiTGUcWWfHSZSf7+dIO68NLwTu1OMuhGE2j0vVu//fJbxPa79ctst5zPnp9/Rk/VqtrMdtUi
++rp8rv43inWUaReJWLoLQE6Xq/2P3zfL7fyv6Obi6vLi8sNmfh2Nq82qeo74evV1+bSH/cv1
+6pfffoH//QaLL69AavPvyG+7vfnwjEQ+PM3n0bsh5++jTxcfLy4Bl+sskcOS81LaEiB3P49L
+8B/lRBgrdXb36fLj5eUJN2XZ8AQ6LbuRESwuZZZo+FfpmB0DMX+cob/gc7StdvvX80cHRo9F
+VuqstCo/f1hm0pUim5TMDMtUKunurq/wUofPa5XLVJROWBctt9FqvUPCx92p5iw9Hu7XX8/7
+moCSFU4TmweFTOPSstTh1sNiLBJWpK4caesypsTdr+9W61X1vkHbPtqJzHmT4vm8RltbKqG0
+eSyZc4yPSLzCilQOmiDPO2nuo+3+y/bndle9nHk3FJkwEl7N3Jd2pKcN9sFKrBWT2XnN5sxY
+gaDG+zYoKLifLEcsi1Nh+igceDcWE5E5e3xSt3ypNlvqZKPPZQ67dCxRmE7XyzRCJHyAvL0H
+k5CRHI5KI2zppILXI14tN0Ko3AGNTDQ/eVyf6LTIHDOPJP0DVo/xPC9+d7Pt92gHV41mq0W0
+3c1222g2n6/3q91y9XS+s5N8XMKGknGu4VsyG7YOYmWPvOFFZPvcg62PJcCa2+E/S/EATKXk
+3dbIze22s1+O678Qu5nho9IWea6Ns6B57uPVp+ZWPjS6yC0t2CPBx7mGTfg8Thv6ZS3gxV7h
+PC0Sx4iU0a8zSMeggBNvFExMn4OXOgfhkJ9FmWiD0gd/KJZxQdy4i23hLw1FebTcpcBtLgAJ
+DIUzjDfg9TM0OeRVB3TX0JcfCqfAEnrCLE1ppEeb2Dcxklo1afnVVj4QytEQcHiiMc3dYkiv
+M7AWSRE6TeHEAwkRuQ7dUQ4zlib0C/rDB2De7ARgdgRmlYQwqen1eCLhagde0/wCmgNmjAw8
+6Rg3Pip67yBP3nxIFBTvTdo3Ot5VDUQci/gsbyM2EV6gy5P5Pb8r/3h507Mrh7AgrzZf15uX
+2WpeReKvagWGi4EJ42i6wHDXFu5A50yePPNE1dDSm7aQlKFbZg58Oi1pNmWDAKAYEKywqR40
+L4v74WXMUBz9cUDWdSJTML8EydubgXRn1hpp+eT8n0o1zOhn8CRlrNj11XktZ/BtnSRWuLvL
+H1/9P9Xl8Z/TucG/j73ROJrVhnH2y+Bvk5QNbR9uplaok9O1uczQ7xLumEGgYJhDVoDdJBBs
+ofqro6kAV9r4Xj50bACRVArPm9q761qA8ufZDkUn2v18rZpy4n2FmVxfSYK5B+DtjWy5D6Xh
+iPBucaqnlDE+wVn22LKq7CEfPVpQxfJqSMlHAwFc1rAtKyondrgC3vTAi5Z3RTmA6JeVnNh1
+hrLmpiQvQpr3tZrt9puqpWIQ+UAATZAHwNUfl03KsHLdRu1QocncAZn6GIM1wNavmA60zsBV
+DIohyoHWae/sgz3Gcq+v682uZRp4P3DBNbFavK6Xqy4uRO2xDwj6m9Z/V5sIzNHsqXoBa0Qd
+MFe9bcfEYbaZf1vuqjky9sOieq1WizaRprn0el6CjgwzDDw4F9Z2LKqXVq+OI63HHSDoPVgz
+COKGhS5sX49AvHwce8h4Ort52qAHwcaI2doogGlygkOYdIxTm7sm0rhOAInfa1BK0SQNgM6U
+mbjlB4xI/J6ew65ZyPXkw5fZFrLL77WAvm7WkGe24tc8LYaQs2GGAyngr0//+Mcp+/GhgFXg
+0O4+NvRTx0UqAj4QrRYhpGDOUP7QrpWFN23thOQA91lk0TF9fRi5d2okWMXA5ibwsNtzSPyo
+5vvd7Mtz5fPvyPvNXUs0B5DVKkhK04S+cQ223Mic9ksHDAXWJOA9jYiLtt3yB1DVy3rzM1KU
+5hxtUcoc2MHzfXEBhCwWGMqApcw7woYBjmdCjdOE2zwF3cmdB4M82rubjovnGBZTSRhYYwiv
+YlO6k6c9x0xWEVuOibWCIwBrMr/97ubyz9sjRiZAgyE+8aoxVi3XkgqI8CGZpqNirhi5/jnv
+mL8zZFDQUeZnL/2afjg4HJ4NNDwQPQ2LvByIjI8UM5RWeFOERiJ3qBuCS5a28mbRt6Zx9dcS
+4rp4s/yrjuXOxnI5PyxHum9hizqOG4k0DwS3kGo5lSf0VeCSWczQEIUSaU8+kUaBkRJ1NaV3
++GS5efl7tqmi5/VsUW2a50umZapZHDgbPsLUJ4OUtjSuAFlNGRs5Cd7RI4iJCRiwGgHrSwcy
+YHeUnlDZ5CniAhkAihJ8zdGsoEtd+IdqvcEws4G0w1EpQewaJTmdNCVDJ2DMpAvUwQCKdsAZ
+IZoESsFM+kiDUP1avhLWajvZ/CYwwoSy9ZwZDGl7b55NlIjsKb6oLdtyO6cYBA+rHvG7dDqY
+gSe0BUgXZFKe37SoGkYnhvyKPKAQ4J4VFQLVkPLPa/5w29vmqh+zbSRX291m/+KTrO03EO1F
+tNvMVlskFYGjraIF3HX5in893p49Qxo2i5J8yMDrHDRisf57hVoRvawXe/BE7zbV/+2XEEtG
+8oq/P26VkME9R0ry6H+iTfXsC8fbNm/PKCiFtUE4wiyXCbE80TmxeiY0Wm93QSCfbRbUZ4L4
+awhC4N23601kd3CDpoN7x7VV77vWDc93Ind+HT7SvVex3MqDZDUYc5QMAGL4clRTuXrd7/rY
+5+JZlhd9eRnBhf2Tyd91hFtaImyx/kl7A6YEKYAc5GY2B5mgVMI5Wt3A4oQKIAAah2B4PJZ6
+SzooaP2RuTrVg+lcZFoaAOt+zJ5zBT4smr95IQ7/z+nTPcg0feycq36pK04+0BXtmSHODKwr
+GjCy9Hqe98+SuzyaP6/n37uaJ1Y+kIRoCIv5WDUGBz7VZowBki90gRdVOVYodmugV0W7b1U0
+WyyW6K0h1fFUtxetxEhm3Bk6ahnmUnfaBifY9GOgYDgFl8YmgWqhh4IfEIEKi4dj7SKlhXI0
+Ve0A8fzqI2EglKLPyhwfxZqq21g7wCKnlYO0Vd6HdaqFA5EfiT7ohIS1E9o/75Zf96s5cv9o
+BRYny3N2zglkku7Pj2VhmaEZU6MokYJzFQ9c09J9xhqlPKYlF3EUhkF0CIvgkby9ufoIKbOk
+SYwcB2dsJb8OkhgLlad0xOsP4G6v//xXEGzVH5e0eLHBwx+Xlz5GC+9+tDwgJAh2smTq+vqP
+h9JZzgJcMmJYQBSjafukRCzZscTWT4o3s9dvyzlZ84hNwKIaVcZ5yQXvkWM8j96x/WK5Bs+W
+Hz3be7o3y1QcpcsvmxmkdZv1fgdBwcnJJZvZSxV92X/9CnYz7tvNhFZ0LAukWNsrQaaoS591
+RhcZFWYWoGN6xGUJ6Z9LBRZyJGuUHxDeq1fi4il9GfG4qW2F7bcycc3HRIu2a8f1/NvPLbbD
+o3T2E31GXwUznfsvPnAhJ4Hi+gAcbDwMWC73mAtalHBjkeYy6A6LKc14pQIaLJTFniAJzASk
+OSKmv1SXq+RAwkPQ9tU4bMiyQBYRo+HoxcV11qjYoEioypt9zDikbYEGEyseYmnzUMxfBEId
+X9Kq86dAXwEQpAZeZf1aqlrON+vt+usuGv18rTYfJtHTvoIAlNBX8KdDuuDP0zHGOKnW46Jb
+AwEYJqyQsDRyIDDa4LsOJbzjIMULOAbuXb3Xzr/Xm++tsioQGtmYfurR9FjF7wd8nqRd7zct
+j3OUVeyI1fleawVykUHjwHV12oPa1XOZDjTdopNwxyJoGE31st5VGJxTKohpsMN8qG8CzevL
+9onckyt7fOuwSZrKtreo43j4zjvrG+SRhkf4tnx9H21fq/ny66nMcTIi7OV5/QTLds279mWw
+gZxqvn6hYNlD/nuyqaot2J4qul9v5D2FtrxQD9T6/X72DJS7pBuX4/A8vZs9YP31R2jTA3aw
+HsoJL0iG5QpD98SIQIb84IK+1Q+h0GIReJ182o/wMTefw2P0kyuA8JFs6BoDpzmUHNs1ZWaa
+FWQrE4m9zTQQwcgcnFrQIPv41FfpjU5DOUqi+nIKUXhr7OIcSB8qOYhA+liuyrHOGDqLqyAW
+BvkQsYiMCwgWgij5AyuvPmUKc45AXbGJhZ8MYimW5yNsDqhY3d4GWkc+aueMPpHitHczrO9E
+2GqxWS8Xrb5gFhst6UgyZrQVyrqJa51VT7FwMl+unmhDTwdmMnMQTjt6qsoXWEhAINuzMmA4
+bSoVlZYm2DOo5amlxeIBLWxi635IqQNTNOh2cTZt3PFhjYNi0cs85t3C+5nJmXYyCeh1DSuD
+EyoJe2P3faEdzT6c50nsTRkoFdfgEDQpcLyEhh3Kix1wzdjZ/FsnHra9DkCt5dtqv1j7dg7x
+MujAQp/3MLBhaWwEzW0/rUPXFv0f4Wtj98e/N5BwIjBBkqX9i9tqvt8sdz+p2G0sHgMlUMEL
+A0EkhITCeovpwL4F0oIDbrjwD9GslyFs2Pf7B0dBPDR0zp9mjep1F9qazvQC3i/lEYnS0R5L
+h/0GY5vhEEMd8f2TjlWHu2c8B6nCWi7eg0ZJRRaAYncbQiffK2scGmSFQ8ZEi4PhH29DkNJ9
+vIwl3U5EsHRFSZX1AeaHUprI11fA0zQJNAIOCOBnxeDxE7G1htyEjoIozEyZCzTaPAa8Rgh6
+G6QcBNBlh1QO/MdCY7b8U8CLYZkywKNzzPUZ5JMaAMHcFh6+2V+tl9C6d5urFvOv84JvX+I4
+ATY4UYlEMzKCxBlhnZ5pM0k5Cl89kTASYJIaKLgaQ9zMHTqXRg93KrVLWxMxXJs4EGjA12nH
+Ye7L7jTf+SGSuNXfRdOSDUkON0djvs3m3+u5A7/6ulmudt99kXTxUkH60Gttwx9We/849ENK
+Rxty968gxn0hhbu7Oc0JQTaNg1s9CjetSfkPfsgX3Mv8+9YfaH6YoKdMbt0fxEF3OgDP/FSV
+KqyrZ2QJFiaGKVFOmcnuri5vPrU5mZfMqjI4Y4hDEP4LzNIBUZGBDcMimxrowIxjPcw2zd5s
+kba9wVEwBVYmbX2zpgzUe8C4+7lZ8HUKS7ohd9NC8owoddauKDcVZcqwseyZ5geM4AStcawm
+5K0baQOB+VSw8XGqgHbUDHMW8NLtJmSL1FiYTKTHOsFhTCOuvuyfnmoRb/MasjKR2WAE50ki
+4huTBkgGrmh1FgoVazJ68B/g71utbT+PhKXsIW3Ta6xJqLOEwMPvGXAsm/I5h7knlnE9Ocw9
+5pyQllGnz3sYbwAuRul6/n3/WmvjaLZ66uTViZ9RKXKgVI9VBQ6LwHJUgHXCX6SQSNN7sv3Q
+4HwG4gDyqjtBPAUvJywtxPlnMTUQSzS6cLB8voKfi6+fQmRx31R0eIUkxkLkncevwySsJZ2E
+L3q3fV2ufB/pn9HLflf9qOAv1W5+cXHxvm/IqBJV97Vx4vvNaQnmtEKdSeGEb6AdEp2S5fLk
+LWiyPmmCZ3XY6w+67em0Ptvbzv08lEsTQesDigeG04LHhlfptzY79xjXSvbWTWXgMAddl/8N
+w76l4z5nk6HKao3DDdwlc5IRGQX++oQ0VvhbEz8QHmQmYvzXd/FIQYb7H7Tc2/qcb9wAFLO2
+2CZsq4+cKIUx2oBB+o/ojag1kl1MQEicZtyVFBk///rDdKKyE3RoWD6iceLHjKE+JJ3fjxDA
+ciod/sBp2B1SPYBVPdwJcR4Ece1hch9znboy51uGOe8DTpC9MOcNTp+q+mmRfrc83ywmBp/f
+u6EM0j+HgasxRbh4YZnKQ5OkxQA8CPFI9QxT/bsWuPj/A9wl1kVSOQAA
+
+--SLDf9lqlvOQaIe6s--
