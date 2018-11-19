@@ -2,131 +2,138 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BF0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF2DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79ABD2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:50:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79ABD2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E8ED2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:50:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GW2YxQtx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E8ED2080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730871AbeKTHQO (ORCPT
+        id S1730889AbeKTHQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:16:14 -0500
-Received: from mga18.intel.com ([134.134.136.126]:34232 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730797AbeKTHQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:16:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 12:50:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="109874462"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2018 12:50:49 -0800
-Subject: Re: [Patch v5 08/16] smt: Create cpu_smt_enabled static key for SMT
- specific code
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
- <91b719e53640f60666b40a3516da2b80703b2f76.1542418937.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811191355270.1537@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b62e6ce2-3a82-f8f0-ab6d-51ab235859a0@linux.intel.com>
-Date:   Mon, 19 Nov 2018 12:50:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Tue, 20 Nov 2018 02:16:18 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44292 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730797AbeKTHQS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:16:18 -0500
+Received: by mail-pg1-f194.google.com with SMTP id t13so5692827pgr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 12:50:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RRrTLiFcYInOyf2eHFRPoMOlDE8FwjZkdLcBSDDzZ10=;
+        b=GW2YxQtxcpxSTsjutLQpB7vygGEn9ghKRWwNSYZrRiPrpcikdPN3f4PYadyN/QDr2J
+         zgFLI9CGYRJoZ7fdZwjpuA1Sl/+MkI0dIhYRgkzTEvl68NCSsmSTkzbGHTbffMXaVsTd
+         wpUs+l5heI0gsHYlbqAvAraOMowk36O43DM80CvJQsJ3mJ/bUXfOfgDxH4P/dAbwr7Wb
+         B2xzWEnrLRDCUE6fLpG+RApYsbb/wV/T43XyU/O+XLI5UfR9r4ubmdREN2NWp55PweGC
+         yXUCyPhIPt22idUV3V8nrpWVDm8rQLsukEczCIvafhf84PYTh+hSGKbJRVlGtDahc6O4
+         srIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RRrTLiFcYInOyf2eHFRPoMOlDE8FwjZkdLcBSDDzZ10=;
+        b=TIFE8QghgKAuYTa2eiAn4E4CwF7GchzQwDJX+fYTIUwMSGafUJonu6ssyw3T/Pkc2q
+         tptQlw0k8ekOEwhJWRNAOUrzjtb1Bwf4uR9b8Lr4C77zGnljMO1H04z1RFdJ0z0hrxl0
+         ZbBOtKl+lPMURcgCpS1K6DbzdpK5swB1pwoHTwufpWVnZhaIwhXT+wkI51+5fTH/GALH
+         fGYFcrqs8Tm2fpFXJ7Ig/DxGjVR+T+sSxY7skdiH2h4nJQGEMF/LBNwFnwHou9gStIF5
+         Q0cvrArjeyUT66OaEUihHfvvCLO9tz6JSAHsfZwsRKrsjf4d5nWDelbs0ihU6eo9d1B2
+         dE/A==
+X-Gm-Message-State: AGRZ1gIqJ33D1tHKPMOk1rqD6IVpDMB4x0xSUqjgZQWbncFntZwIcfGL
+        0bfe45/PyAhqjfY/gaUoqOY=
+X-Google-Smtp-Source: AJdET5fOmeQDwjSL4aN4wDJkYGoYNGJjIXYCe+p4lo5AashulPz7ITnMpguU169smUaVjvEmwYKt+w==
+X-Received: by 2002:a62:6001:: with SMTP id u1-v6mr13376502pfb.130.1542660653259;
+        Mon, 19 Nov 2018 12:50:53 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id l64sm45733854pge.73.2018.11.19.12.50.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 12:50:52 -0800 (PST)
+Date:   Mon, 19 Nov 2018 12:50:50 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     arnd@arndb.de, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+Message-ID: <20181119205050.GA1933@roeck-us.net>
+References: <20181115011125.GA32556@roeck-us.net>
+ <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com>
+ <20181115053836.GA7606@roeck-us.net>
+ <27ed27d3-220e-963f-7d2c-64df10421580@gmail.com>
+ <20181115172535.GA26922@roeck-us.net>
+ <5937b814-ca5f-5786-93a1-3334df8c92dc@gmail.com>
+ <20181116011656.GA21813@roeck-us.net>
+ <ffff966c-d6ae-1487-5269-b86df0824d1c@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811191355270.1537@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ffff966c-d6ae-1487-5269-b86df0824d1c@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/2018 04:58 AM, Thomas Gleixner wrote:
-
->> +DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
+On Mon, Nov 19, 2018 at 10:44:30AM -0800, Florian Fainelli wrote:
+> On 11/15/18 5:16 PM, Guenter Roeck wrote:
+> > On Thu, Nov 15, 2018 at 11:48:20AM -0800, Florian Fainelli wrote:
+> >>
+> >> OK, would you mind testing this below? It seems to me that 8250_of.c is
+> >> incompatible with arch/powerpc/kernel/legacy_serial.c and that is what
+> >> is causing the issue here.
+> >>
+> >> diff --git a/drivers/tty/serial/8250/Kconfig
+> >> b/drivers/tty/serial/8250/Kconfig
+> >> index d7737dca0e48..21cb14cbd34a 100644
+> >> --- a/drivers/tty/serial/8250/Kconfig
+> >> +++ b/drivers/tty/serial/8250/Kconfig
+> >> @@ -483,7 +483,7 @@ config SERIAL_8250_PXA
+> >>
+> >>  config SERIAL_OF_PLATFORM
+> >>         tristate "Devicetree based probing for 8250 ports"
+> >> -       depends on SERIAL_8250 && OF
+> >> +       depends on SERIAL_8250 && OF && !(PPC && PPC_UDBG_16550)
+> >>         default SERIAL_8250
+> >>         help
+> >>           This option is used for all 8250 compatible serial ports that
+> > 
+> > 44x/virtex5_defconfig has both PPC_UDBG_16550 and SERIAL_OF_PLATFORM enabled
+> > and fails to boot (or display anything on the console) with this patch applied.
 > 
-> And here it is declared unconditionally which allows code to use it despite
-> CONFIG_HOTPLUG_SMT=n and subsequently breaks the build.
+> Thanks for trying, can you either share or provide a link to the mpc85xx
+> and ml507 qemu command lines that you use? I spent a good chunk of my
+> time trying to get a kernel to boot but has failed so far.
+> 
 
-Will put this under #ifdef CONFIG_HOTPLUG_SMT
+Good to hear that this doesn't just happen to me ;-).
 
-Tim
+The scripts are all at https://github.com/groeck/linux-build-test/.
+This includes root file systems. The one used below is at
+https://github.com/groeck/linux-build-test/blob/master/rootfs/ppc/rootfs.cpio.gz
+
+ml507:
+
+qemu-system-ppc -kernel vmlinux -M virtex-ml507 -m 256 -no-reboot \
+	-initrd rootfs.cpio -dtb arch/powerpc/boot/dts/virtex440-ml507.dtb \
+	--append 'rdinit=/sbin/init panic=-1 mem=256M console=ttyS0' \
+	-monitor none -nographic
+
+mpc85xx:
+
+qemu-system-ppc -kernel arch/powerpc/boot/uImage -M mpc8544ds -m 256 \
+	-no-reboot -initrd rootfs.cpio \
+	--append 'rdinit=/sbin/init panic=-1 mem=256M console=ttyS0' \
+	-monitor none -nographic
+
+Hope this helps,
+Guenter
