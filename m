@@ -7,47 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7957DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0234CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42175214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF4852146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RO21j0kQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42175214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZPVWwFs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF4852146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406536AbeKTD2m (ORCPT
+        id S2406548AbeKTD2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405931AbeKTD2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:41 -0500
+        id S2405880AbeKTD2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0E9214DA;
-        Mon, 19 Nov 2018 17:04:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CF692146D;
+        Mon, 19 Nov 2018 17:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647064;
-        bh=YSVBQTSlj0cPT64BN4pD7WWXKOl7q/ilPKtH2qm7UOA=;
+        s=default; t=1542647066;
+        bh=AOMRu5cwC+JS3IE9Fgjj67kA38kFt3JlsEGdllflaeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RO21j0kQ6y9BFRIexzpNe2OhOo166LWQIjBLpyvs+wVeE4uZDDD2ClR+CGaWIEOf5
-         Lf3NNyVVJGZY3MGIC519tdTY0RgtVjfQaqdbcYJaaRrcL4jWa/1JoJk7EGynCnR27Z
-         JTH9E+T3gQ8yr0CBUT/HD2QGCkrzoQSq20zU7bhU=
+        b=eZPVWwFsS5NHfRMp4Tv9dJuRFoSHXM+p5hWgZUIRMNg+0+HMgO/zYekfM+L48vZHB
+         ej6sgKSvS5Py3wdEMxWAMFQrbP7oIzIM7eHyK+nDjSersm0Rw9kLY42uOEP3beRvp7
+         gfU07EWyocLBfubvtG0V6sEMq+6AxxGIie3sAPjY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 3.18 37/90] iio: adc: at91: fix wrong channel number in triggered buffer mode
-Date:   Mon, 19 Nov 2018 17:29:19 +0100
-Message-Id: <20181119162626.832032795@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH 3.18 38/90] w1: omap-hdq: fix missing bus unregister at removal
+Date:   Mon, 19 Nov 2018 17:29:20 +0100
+Message-Id: <20181119162626.979793690@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -65,49 +61,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Andreas Kemnade <andreas@kemnade.info>
 
-commit aea835f2dc8a682942b859179c49ad1841a6c8b9 upstream.
+commit a007734618fee1bf35556c04fa498d41d42c7301 upstream.
 
-When channels are registered, the hardware channel number is not the
-actual iio channel number.
-This is because the driver is probed with a certain number of accessible
-channels. Some pins are routed and some not, depending on the description of
-the board in the DT.
-Because of that, channels 0,1,2,3 can correspond to hardware channels
-2,3,4,5 for example.
-In the buffered triggered case, we need to do the translation accordingly.
-Fixed the channel number to stop reading the wrong channel.
+The bus master was not removed after unloading the module
+or unbinding the driver. That lead to oopses like this
 
-Fixes: 0e589d5fb ("ARM: AT91: IIO: Add AT91 ADC driver.")
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[  127.842987] Unable to handle kernel paging request at virtual address bf01d04c
+[  127.850646] pgd = 70e3cd9a
+[  127.853698] [bf01d04c] *pgd=8f908811, *pte=00000000, *ppte=00000000
+[  127.860412] Internal error: Oops: 80000007 [#1] PREEMPT SMP ARM
+[  127.866668] Modules linked in: bq27xxx_battery overlay [last unloaded: omap_hdq]
+[  127.874542] CPU: 0 PID: 1022 Comm: w1_bus_master1 Not tainted 4.19.0-rc4-00001-g2d51da718324 #12
+[  127.883819] Hardware name: Generic OMAP36xx (Flattened Device Tree)
+[  127.890441] PC is at 0xbf01d04c
+[  127.893798] LR is at w1_search_process_cb+0x4c/0xfc
+[  127.898956] pc : [<bf01d04c>]    lr : [<c05f9580>]    psr: a0070013
+[  127.905609] sp : cf885f48  ip : bf01d04c  fp : ddf1e11c
+[  127.911132] r10: cf8fe040  r9 : c05f8d00  r8 : cf8fe040
+[  127.916656] r7 : 000000f0  r6 : cf8fe02c  r5 : cf8fe000  r4 : cf8fe01c
+[  127.923553] r3 : c05f8d00  r2 : 000000f0  r1 : cf8fe000  r0 : dde1ef10
+[  127.930450] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+[  127.938018] Control: 10c5387d  Table: 8f8f0019  DAC: 00000051
+[  127.944091] Process w1_bus_master1 (pid: 1022, stack limit = 0x9135699f)
+[  127.951171] Stack: (0xcf885f48 to 0xcf886000)
+[  127.955810] 5f40:                   cf8fe000 00000000 cf884000 cf8fe090 000003e8 c05f8d00
+[  127.964477] 5f60: dde5fc34 c05f9700 ddf1e100 ddf1e540 cf884000 cf8fe000 c05f9694 00000000
+[  127.973114] 5f80: dde5fc34 c01499a4 00000000 ddf1e540 c0149874 00000000 00000000 00000000
+[  127.981781] 5fa0: 00000000 00000000 00000000 c01010e8 00000000 00000000 00000000 00000000
+[  127.990447] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  127.999114] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
+[  128.007781] [<c05f9580>] (w1_search_process_cb) from [<c05f9700>] (w1_process+0x6c/0x118)
+[  128.016479] [<c05f9700>] (w1_process) from [<c01499a4>] (kthread+0x130/0x148)
+[  128.024047] [<c01499a4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+[  128.031677] Exception stack(0xcf885fb0 to 0xcf885ff8)
+[  128.037017] 5fa0:                                     00000000 00000000 00000000 00000000
+[  128.045684] 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[  128.054351] 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[  128.061340] Code: bad PC value
+[  128.064697] ---[ end trace af066e33c0e14119 ]---
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/at91_adc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/w1/masters/omap_hdq.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/iio/adc/at91_adc.c
-+++ b/drivers/iio/adc/at91_adc.c
-@@ -245,12 +245,14 @@ static irqreturn_t at91_adc_trigger_hand
- 	struct iio_poll_func *pf = p;
- 	struct iio_dev *idev = pf->indio_dev;
- 	struct at91_adc_state *st = iio_priv(idev);
-+	struct iio_chan_spec const *chan;
- 	int i, j = 0;
+--- a/drivers/w1/masters/omap_hdq.c
++++ b/drivers/w1/masters/omap_hdq.c
+@@ -622,6 +622,8 @@ static int omap_hdq_remove(struct platfo
+ 	/* remove module dependency */
+ 	pm_runtime_disable(&pdev->dev);
  
- 	for (i = 0; i < idev->masklength; i++) {
- 		if (!test_bit(i, idev->active_scan_mask))
- 			continue;
--		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, i));
-+		chan = idev->channels + i;
-+		st->buffer[j] = at91_adc_readl(st, AT91_ADC_CHAN(st, chan->channel));
- 		j++;
- 	}
++	w1_remove_master_device(&omap_w1_master);
++
+ 	return 0;
+ }
  
 
 
