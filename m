@@ -2,79 +2,124 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 487D0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC4AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:19:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1803120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1803120659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 6A51120659
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:19:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="PUEOFdB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A51120659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730172AbeKTEmR (ORCPT
+        id S1730207AbeKTEnj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:42:17 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:39406 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729975AbeKTEmQ (ORCPT
+        Mon, 19 Nov 2018 23:43:39 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37775 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730086AbeKTEni (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:42:16 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gOo72-0000l6-F0; Mon, 19 Nov 2018 19:17:32 +0100
-Date:   Mon, 19 Nov 2018 19:17:32 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 17/23] x86/fpu: Eager switch PKRU state
-Message-ID: <20181119181731.bmzbkdwwwt4kbcso@linutronix.de>
-References: <20181107194858.9380-1-bigeasy@linutronix.de>
- <20181107194858.9380-18-bigeasy@linutronix.de>
- <1d4b7b5c-9c3d-1ef5-3336-b7945b7978d4@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1d4b7b5c-9c3d-1ef5-3336-b7945b7978d4@redhat.com>
-User-Agent: NeoMutt/20180716
+        Mon, 19 Nov 2018 23:43:38 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so8908081iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:18:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=TFFx8e1Q8W8lee2IXNbRZZz71PcnEWi5NplF9kzzK94=;
+        b=PUEOFdB1mKfhnFl/BUTYZ2o6hJ0qZuulS/nKSIuubFniCqbYO6oBWWNO6e+qQciAlz
+         5820J1VJUvt2ailwn0EI7pPkVRhG8IHpwkZdku9IhqtitmfJHxGjBXeQkHkYaNjXbm/A
+         9Brv5cuNLq/X8l8CPvKMlOIVRVmYS2poQAN5ERRwt+5JJog2r/d+2NnpOcdXCKGl2jQP
+         JuS4Gvhe9nVPahzSvBuP80SyoNkXX/bjz2232ETrz+ogGwHhD7EjvylnIZnEOWAUOJwX
+         FZQdkXNt8ISxpAyFrfGxsLANmbOJF/Jjp3x8xp2hupaVbuV4BSBsS0TDM6lX1JL6wx4J
+         4C9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=TFFx8e1Q8W8lee2IXNbRZZz71PcnEWi5NplF9kzzK94=;
+        b=TA+5rF2W24ZZOG9Avw6n/rn8UEUXZf3r8M90QJEK4pP5+IanyW9S8gFJglhuWfsKVT
+         oarJ7AgPpxt0KRDg8z4tQ6EtPCqT6/3iw6lGO04QhQYgYOrRA2Bmw0Pl8ecF97IaGpEV
+         DuUqkIp/9GoF8VEFuBA5TwhLeM4Mbm7v6mDTkMtk5H7puukKNej7uPdtVrPKzUAedqFn
+         XnUnQS5dVSKdvssTpBKVOi7iGtuEQgMrTAMpWt3mIjIwPVmM2V8w2gzUicdA6q26cOWN
+         V6vE8WkFUmkeqe50+8eOvmsBADvAvAVl/7wr9Htj4PTYzQi9L41emdbOiL3glVc7nrmQ
+         LTgg==
+X-Gm-Message-State: AGRZ1gJRNYsGKd5lQMOGZfmdMGCf3Dy0T5huNAxjOSy5NELaMi+C9j68
+        nn1lYj2pVm/oYzb/4c0ZYcAPjg==
+X-Google-Smtp-Source: AFSGD/WMiRe9lzasP0X3iVlWZTMp+pUWU7MsYLxfDDdPi4zk8xrq66mc1xlBUiSkF6aJQ+o7Myd7Cw==
+X-Received: by 2002:a24:1706:: with SMTP id 6-v6mr9836417ith.16.1542651537262;
+        Mon, 19 Nov 2018 10:18:57 -0800 (PST)
+Received: from ?IPv6:2600:100e:b01e:cdc6:49a8:b0fe:6838:b5dd? ([2600:100e:b01e:cdc6:49a8:b0fe:6838:b5dd])
+        by smtp.gmail.com with ESMTPSA id n25-v6sm11929866iop.34.2018.11.19.10.18.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 10:18:56 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <20181119171934.GA16252@linux.intel.com>
+Date:   Mon, 19 Nov 2018 11:18:54 -0700
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+        "andriy.shevchenko@linux.intel.com" 
+        <andriy.shevchenko@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kai.svahn@intel.com" <kai.svahn@intel.com>,
+        "mark.shanahan@intel.com" <mark.shanahan@intel.com>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <2804DD93-E67B-4E06-800D-82A2EA21FCC9@amacapital.net>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <20181119150655.GA11843@linux.intel.com> <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com> <20181119171934.GA16252@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-08 12:12:52 [+0100], Paolo Bonzini wrote:
-> On 07/11/2018 20:48, Sebastian Andrzej Siewior wrote:
-> > index 375226055a413..5b33985d9f475 100644
-> > --- a/arch/x86/kernel/fpu/xstate.c
-> > +++ b/arch/x86/kernel/fpu/xstate.c
-> > @@ -811,7 +811,7 @@ void fpu__resume_cpu(void)
-> >   *
-> >   * Note: does not work for compacted buffers.
-> >   */
-> 
-> The comment is wrong, which was already the case before but it becomes a
-> bit more important if the function is used outside its module.
 
-let me fix it.
 
-> However, why not use get_xsave_addr?  I don't see why it is important to
-> skip the checks, and if it is it probably deserves a comment. "Raw" and
-> double underscores in the function name is scary...
+> On Nov 19, 2018, at 10:19 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel=
+.com> wrote:
+>=20
+>> On Mon, Nov 19, 2018 at 04:22:54PM +0000, Jethro Beekman wrote:
+>>> On 2018-11-19 20:36, Jarkko Sakkinen wrote:
+>>> Question: should be dissolve the driver completely and move this code to=
 
-yeah, it is scary and only those that can face baba jaga may use it.
-I though it is a fast path and it would be okay to skip those checks.
-However. Let me fix the comment and use the normal function like
-everyone else. If it is too slow then we can still short circuit it
-later.
+>>> arch/x86/kernel/cpu/sgx/ (and rename intel_sgx.c as main.c)? Swapping
+>>> patch removes the possibility to compile this as a module anyway.
+>>=20
+>> No. We should keep the capability to build this as a module for other use=
+rs
+>> of SGX. What is the swapping patch and why doesn't allow building as a
+>> module?
+>=20
+> In some earlier version of the patch set the request was to remove the
+> callback interface to the driver so now core does direct calls to the
+> swapping operations.
+>=20
+>=20
 
-> Paolo
-
-Sebastian
+Once static_call lands, this will be a great use for it.=
