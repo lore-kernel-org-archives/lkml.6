@@ -4,52 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA5E7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D514C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15BC2089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D696520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s31oYwVN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A15BC2089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="03CDGpF4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D696520823
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389652AbeKTDNU (ORCPT
+        id S2389662AbeKTDNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389110AbeKTDNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:20 -0500
+        id S2389110AbeKTDNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FC51206BA;
-        Mon, 19 Nov 2018 16:49:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B96520823;
+        Mon, 19 Nov 2018 16:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646147;
-        bh=piQbWpmKejRE+ACLR+9DwHSjirW4NhNtg7n9xp7WwGo=;
+        s=default; t=1542646149;
+        bh=gzsVuOOu7pXz93uoIvuZKMtRCGBJUf638TliymDHQ+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s31oYwVN3dWj9CG2D7hPS4uINkDe13dyyypbkHFhe4IyyHqu+2wRHEHaGQbl7OVcK
-         n6V7Cr8/AUU1s0KUKZFUCovDAF7Qu/6AAsq9YQ/NqkWKBBMFbA348vaH4nR5HV5alv
-         IM/ewwUvleBbYW2D/wab1G3yZa3dQIdHEvn4i+Yg=
+        b=03CDGpF4YwwjLINqXfLjJo9QIX+eqXRSu5473BJUHynP7J9rUKVNGVp8/G453fOc4
+         ODV0glvBMFsQBAl1u2+EHDcnaGwPkpXQthPuewdzZ4I3vzjFw19jFVHj5TQ44/SOP7
+         qd6+AHgKP3IvG2rakJZF6uetLVenRtCXxeQEU1Jw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        linux-scsi@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "jianchao.wang" <jianchao.w.wang@oracle.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 054/124] SCSI: fix queue cleanup race before queue initialization is done
-Date:   Mon, 19 Nov 2018 17:28:28 +0100
-Message-Id: <20181119162623.999392166@linuxfoundation.org>
+        stable@vger.kernel.org, Santosh Shilimkar <ssantosh@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: [PATCH 4.14 055/124] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
+Date:   Mon, 19 Nov 2018 17:28:29 +0100
+Message-Id: <20181119162624.183294404@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -67,87 +63,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
 
-commit 8dc765d438f1e42b3e8227b3b09fad7d73f4ec9a upstream.
+commit 832ad0e3da4510fd17f98804abe512ea9a747035 upstream.
 
-c2856ae2f315d ("blk-mq: quiesce queue before freeing queue") has
-already fixed this race, however the implied synchronize_rcu()
-in blk_mq_quiesce_queue() can slow down LUN probe a lot, so caused
-performance regression.
+The Keystone QMSS driver is pretty damaged, in the sense that it
+does things like this:
 
-Then 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
-tried to quiesce queue for avoiding unnecessary synchronize_rcu()
-only when queue initialization is done, because it is usual to see
-lots of inexistent LUNs which need to be probed.
+	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
 
-However, turns out it isn't safe to quiesce queue only when queue
-initialization is done. Because when one SCSI command is completed,
-the user of sending command can be waken up immediately, then the
-scsi device may be removed, meantime the run queue in scsi_end_request()
-is still in-progress, so kernel panic can be caused.
+where cpu_map is a local variable. As we leave the function, this
+will point to nowhere-land, and things will end-up badly.
 
-In Red Hat QE lab, there are several reports about this kind of kernel
-panic triggered during kernel booting.
+Instead, let's use a proper cpumask that gets allocated, giving
+the driver a chance to actually work with things like irqbalance
+as well as have a hypothetical 64bit future.
 
-This patch tries to address the issue by grabing one queue usage
-counter during freeing one request and the following run queue.
-
-Fixes: 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
-Cc: Andrew Jones <drjones@redhat.com>
-Cc: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: linux-scsi@vger.kernel.org
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: jianchao.wang <jianchao.w.wang@oracle.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: stable@vger.kernel.org
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-core.c        |    5 ++---
- drivers/scsi/scsi_lib.c |    8 ++++++++
- 2 files changed, 10 insertions(+), 3 deletions(-)
+ drivers/soc/ti/knav_qmss.h       |    4 ++--
+ drivers/soc/ti/knav_qmss_acc.c   |   10 +++++-----
+ drivers/soc/ti/knav_qmss_queue.c |   22 +++++++++++++++-------
+ 3 files changed, 22 insertions(+), 14 deletions(-)
 
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -671,9 +671,8 @@ void blk_cleanup_queue(struct request_qu
- 	 * dispatch may still be in-progress since we dispatch requests
- 	 * from more than one contexts.
- 	 *
--	 * No need to quiesce queue if it isn't initialized yet since
--	 * blk_freeze_queue() should be enough for cases of passthrough
--	 * request.
-+	 * We rely on driver to deal with the race in case that queue
-+	 * initialization isn't done.
- 	 */
- 	if (q->mq_ops && blk_queue_init_done(q))
- 		blk_mq_quiesce_queue(q);
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -683,6 +683,12 @@ static bool scsi_end_request(struct requ
- 		 */
- 		scsi_mq_uninit_cmd(cmd);
+--- a/drivers/soc/ti/knav_qmss.h
++++ b/drivers/soc/ti/knav_qmss.h
+@@ -321,8 +321,8 @@ struct knav_range_ops {
+ };
  
-+		/*
-+		 * queue is still alive, so grab the ref for preventing it
-+		 * from being cleaned up during running queue.
-+		 */
-+		percpu_ref_get(&q->q_usage_counter);
-+
- 		__blk_mq_end_request(req, error);
+ struct knav_irq_info {
+-	int	irq;
+-	u32	cpu_map;
++	int		irq;
++	struct cpumask	*cpu_mask;
+ };
  
- 		if (scsi_target(sdev)->single_lun ||
-@@ -690,6 +696,8 @@ static bool scsi_end_request(struct requ
- 			kblockd_schedule_work(&sdev->requeue_work);
- 		else
- 			blk_mq_run_hw_queues(q, true);
-+
-+		percpu_ref_put(&q->q_usage_counter);
+ struct knav_range_info {
+--- a/drivers/soc/ti/knav_qmss_acc.c
++++ b/drivers/soc/ti/knav_qmss_acc.c
+@@ -205,18 +205,18 @@ static int knav_range_setup_acc_irq(stru
+ {
+ 	struct knav_device *kdev = range->kdev;
+ 	struct knav_acc_channel *acc;
+-	unsigned long cpu_map;
++	struct cpumask *cpu_mask;
+ 	int ret = 0, irq;
+ 	u32 old, new;
+ 
+ 	if (range->flags & RANGE_MULTI_QUEUE) {
+ 		acc = range->acc;
+ 		irq = range->irqs[0].irq;
+-		cpu_map = range->irqs[0].cpu_map;
++		cpu_mask = range->irqs[0].cpu_mask;
  	} else {
- 		unsigned long flags;
+ 		acc = range->acc + queue;
+ 		irq = range->irqs[queue].irq;
+-		cpu_map = range->irqs[queue].cpu_map;
++		cpu_mask = range->irqs[queue].cpu_mask;
+ 	}
  
+ 	old = acc->open_mask;
+@@ -239,8 +239,8 @@ static int knav_range_setup_acc_irq(stru
+ 			acc->name, acc->name);
+ 		ret = request_irq(irq, knav_acc_int_handler, 0, acc->name,
+ 				  range);
+-		if (!ret && cpu_map) {
+-			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
++		if (!ret && cpu_mask) {
++			ret = irq_set_affinity_hint(irq, cpu_mask);
+ 			if (ret) {
+ 				dev_warn(range->kdev->dev,
+ 					 "Failed to set IRQ affinity\n");
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -102,19 +102,17 @@ static int knav_queue_setup_irq(struct k
+ 			  struct knav_queue_inst *inst)
+ {
+ 	unsigned queue = inst->id - range->queue_base;
+-	unsigned long cpu_map;
+ 	int ret = 0, irq;
+ 
+ 	if (range->flags & RANGE_HAS_IRQ) {
+ 		irq = range->irqs[queue].irq;
+-		cpu_map = range->irqs[queue].cpu_map;
+ 		ret = request_irq(irq, knav_queue_int_handler, 0,
+ 					inst->irq_name, inst);
+ 		if (ret)
+ 			return ret;
+ 		disable_irq(irq);
+-		if (cpu_map) {
+-			ret = irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
++		if (range->irqs[queue].cpu_mask) {
++			ret = irq_set_affinity_hint(irq, range->irqs[queue].cpu_mask);
+ 			if (ret) {
+ 				dev_warn(range->kdev->dev,
+ 					 "Failed to set IRQ affinity\n");
+@@ -1222,9 +1220,19 @@ static int knav_setup_queue_range(struct
+ 
+ 		range->num_irqs++;
+ 
+-		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3)
+-			range->irqs[i].cpu_map =
+-				(oirq.args[2] & 0x0000ff00) >> 8;
++		if (IS_ENABLED(CONFIG_SMP) && oirq.args_count == 3) {
++			unsigned long mask;
++			int bit;
++
++			range->irqs[i].cpu_mask = devm_kzalloc(dev,
++							       cpumask_size(), GFP_KERNEL);
++			if (!range->irqs[i].cpu_mask)
++				return -ENOMEM;
++
++			mask = (oirq.args[2] & 0x0000ff00) >> 8;
++			for_each_set_bit(bit, &mask, BITS_PER_LONG)
++				cpumask_set_cpu(bit, range->irqs[i].cpu_mask);
++		}
+ 	}
+ 
+ 	range->num_irqs = min(range->num_irqs, range->num_queues);
 
 
