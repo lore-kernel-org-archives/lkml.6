@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0DBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA4FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24258206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4810E20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieFVlKpP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24258206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jeyote7t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4810E20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403777AbeKTDRL (ORCPT
+        id S2403784AbeKTDRO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:17:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55316 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:17:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403763AbeKTDRK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:17:10 -0500
+        id S2390166AbeKTDRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:17:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB38C206BA;
-        Mon, 19 Nov 2018 16:52:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F16520851;
+        Mon, 19 Nov 2018 16:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646376;
-        bh=oCuIaUkDSHONnDNSq/oYN9CfOiI1aQkqBfpR9yr5tzs=;
+        s=default; t=1542646379;
+        bh=Z5UT/g9tbAbYhaItit+BKP+ZXkEBH4xKgSZsKzvWDYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ieFVlKpPOlXFQbh7K0FWRoSNfAaQy0fGCXRK4XpCXCqNwpPl+0oY9i4e2U0xHmqXX
-         q1qFPvYIQLmIrUfqllun4+Bigks42Smc52nFI/ad5S57EOiuoyOeSoPeTZaMmgY4if
-         DEpdUKGgTvjOO302O5hJmVb2RMAL5dCbS7J2hlm8=
+        b=Jeyote7tWJ47ViYfoE5UmQnkgGsacgNPB7/y5/8LgBXJyNPnV9SK3JnW1X695cw1e
+         IiewP9Q5NGlywOqMdW+MKNnpFmL72Oby8GiwqgqIJ2+b+bqPnvUrka9wawDu8yesta
+         yR4tBHl8oPBZZiv9pSlRgobAdN/ciot9fOiOwWWc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 18/83] fuse: Fix use-after-free in fuse_dev_do_read()
-Date:   Mon, 19 Nov 2018 17:28:44 +0100
-Message-Id: <20181119162615.550729416@linuxfoundation.org>
+Subject: [PATCH 4.9 19/83] fuse: Fix use-after-free in fuse_dev_do_write()
+Date:   Mon, 19 Nov 2018 17:28:45 +0100
+Message-Id: <20181119162615.686706557@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -66,22 +64,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-commit bc78abbd55dd28e2287ec6d6502b842321a17c87 upstream.
+commit d2d2d4fb1f54eff0f3faa9762d84f6446a4bc5d0 upstream.
 
-We may pick freed req in this way:
+After we found req in request_find() and released the lock,
+everything may happen with the req in parallel:
 
-[cpu0]                                  [cpu1]
-fuse_dev_do_read()                      fuse_dev_do_write()
-   list_move_tail(&req->list, ...);     ...
-   spin_unlock(&fpq->lock);             ...
-   ...                                  request_end(fc, req);
-   ...                                    fuse_put_request(fc, req);
-   if (test_bit(FR_INTERRUPTED, ...))
-         queue_interrupt(fiq, req);
+cpu0                              cpu1
+fuse_dev_do_write()               fuse_dev_do_write()
+  req = request_find(fpq, ...)    ...
+  spin_unlock(&fpq->lock)         ...
+  ...                             req = request_find(fpq, oh.unique)
+  ...                             spin_unlock(&fpq->lock)
+  queue_interrupt(&fc->iq, req);   ...
+  ...                              ...
+  ...                              ...
+  request_end(fc, req);
+    fuse_put_request(fc, req);
+  ...                              queue_interrupt(&fc->iq, req);
 
-Fix that by keeping req alive until we finish all manipulations.
 
-Reported-by: syzbot+4e975615ca01f2277bdd@syzkaller.appspotmail.com
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
@@ -89,25 +90,32 @@ Cc: <stable@vger.kernel.org> # v4.2
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/fuse/dev.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -1303,12 +1303,14 @@ static ssize_t fuse_dev_do_read(struct f
- 		goto out_end;
- 	}
- 	list_move_tail(&req->list, &fpq->processing);
-+	__fuse_get_request(req);
- 	spin_unlock(&fpq->lock);
- 	set_bit(FR_SENT, &req->flags);
- 	/* matches barrier in request_wait_answer() */
- 	smp_mb__after_atomic();
- 	if (test_bit(FR_INTERRUPTED, &req->flags))
- 		queue_interrupt(fiq, req);
-+	fuse_put_request(fc, req);
+@@ -1868,16 +1868,20 @@ static ssize_t fuse_dev_do_write(struct
  
- 	return reqsize;
+ 	/* Is it an interrupt reply? */
+ 	if (req->intr_unique == oh.unique) {
++		__fuse_get_request(req);
+ 		spin_unlock(&fpq->lock);
  
+ 		err = -EINVAL;
+-		if (nbytes != sizeof(struct fuse_out_header))
++		if (nbytes != sizeof(struct fuse_out_header)) {
++			fuse_put_request(fc, req);
+ 			goto err_finish;
++		}
+ 
+ 		if (oh.error == -ENOSYS)
+ 			fc->no_interrupt = 1;
+ 		else if (oh.error == -EAGAIN)
+ 			queue_interrupt(&fc->iq, req);
++		fuse_put_request(fc, req);
+ 
+ 		fuse_copy_finish(cs);
+ 		return nbytes;
 
 
