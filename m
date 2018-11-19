@@ -2,128 +2,358 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2214C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5175C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F682080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:18:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ik7Cs9A/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7F682080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DACF2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:19:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DACF2080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbeKTIof (ORCPT
+        id S1730371AbeKTIow (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:44:35 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38572 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725722AbeKTIof (ORCPT
+        Tue, 20 Nov 2018 03:44:52 -0500
+Received: from mail-io1-f69.google.com ([209.85.166.69]:51978 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725722AbeKTIow (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:44:35 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so5204286plb.5;
-        Mon, 19 Nov 2018 14:18:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rLLX9URkTWMKOpnP07dPOtlBBjEGkANC8hu782U5cTI=;
-        b=Ik7Cs9A/YQbz2xSiqs4oQ/gF/joEIwQmsLJ1SG05IqGuZDQai43K2ThSwwybErYcId
-         1vtSWaLtSrsHgZihiECRHTwhcJM808Pl1PlanVkZBZVb1ElhzT6kRXk90DeMgn0T2rJx
-         ExgSbueZ+Oyy8yew+b9msLgwjfy2H9TXlD71JgAvu0Dfgw3wufB/mvv2Fbc3I4i2D3lg
-         YqZx4TYRmmoIp490zf8grmrnZFZYQP1JQODyO7tQfl08lsZq3LYRTXx/i9M73d2hza53
-         R4x4Ldejnan7Kt4ScqcB/FRsAkj9j+xX3jfPILBj7bBxqt/RtobJ+fFcDAjZJGKuzXB/
-         KA3g==
+        Tue, 20 Nov 2018 03:44:52 -0500
+Received: by mail-io1-f69.google.com with SMTP id x10so5810058ioj.18
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:19:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rLLX9URkTWMKOpnP07dPOtlBBjEGkANC8hu782U5cTI=;
-        b=IfsJnL5rqdLyxuBt8SvW7daKIYpyIao7UqGmnAcGN4a8koloGyrO2wW7qGv2U2UiZi
-         kzZKI9zcNTAVexd8U5RNmTwf+xuKdZbOQnABfvsgkzPrRYXDmXQYR46fwFXaL3JAoMfE
-         WBsXtFY74yvq3F5E2E1IkUjT6YO/dnm8xbjy1DMkVfWYr3G84P1bblGaeyeEUFpwBF6z
-         djvUHcamlAMEni7XiRNyVarouTpf1Bk3sjjROO5H+qFj/+1tRbfOy0KbTHKsZdVyEtaq
-         VeBAlBDL0GosjQE9cJpICFFqVupiLkwiax4rBNCXbhsrTtv8m8T9ExS51AojsV9moJuG
-         P1Eg==
-X-Gm-Message-State: AGRZ1gLCKO4FvLy26KG0mcZPAYG/lonBTyWysibM5SH9NP3lppc6l8qk
-        ibCw6qswKqr7tBe7aOJv/hc=
-X-Google-Smtp-Source: AJdET5dKEpsRoMLUCSHCzLS2DEC32nXFkGrQUh64jbBdFZBcZjoYJDpXiDOXNmzmDQ0TJ5JbrXOJRg==
-X-Received: by 2002:a17:902:50e3:: with SMTP id c32-v6mr24003490plj.39.1542665928282;
-        Mon, 19 Nov 2018 14:18:48 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id f64sm82953944pfh.0.2018.11.19.14.18.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 14:18:47 -0800 (PST)
-Date:   Mon, 19 Nov 2018 14:18:43 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
-Message-ID: <20181119221842.GA26382@Asurada-Nvidia.nvidia.com>
-References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
- <20181113043248.GB11205@roeck-us.net>
- <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
- <20181113172102.GA21714@roeck-us.net>
- <20181114001141.GA14925@Asurada-Nvidia.nvidia.com>
- <20181114172330.GA25592@roeck-us.net>
- <20181117015131.GA10407@Asurada-Nvidia.nvidia.com>
- <20181119174559.GC27435@roeck-us.net>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=lKAtMnR6VuTYuTcCMM2aGPupN2Ipjircn7xyei6Tq9o=;
+        b=omafRAuUj/6gmXntDqrab4jrqbEPlWcR/HfQFmNn9Sp/CJoItRfHxMb7oMk2iNv4Zb
+         Et13+5BFo+QRRu745Sv/eAf15ZJ83Su0BH1djql0tfsNAiA7sZR/2Y4YHnLG+xYXtDBV
+         MQT38TQ1EQZgAyurMiRo7vhYT0hdUXNC6/qZy9RnXV1ZVzru695979d5zx7X8P9vMswA
+         Se8uxUCNj/pnbovnc7UiYYfOvUaPZxuSQNOCb+xDOoCmWMmQun7Dq5x7ETZJGUh2PSc6
+         lcbcR1lW+h5oYzuf6lOsWFHlvpXwmy0aHD6hvwJXj4y5v34nloY6CkbKqQphI59hqY1G
+         7/Yg==
+X-Gm-Message-State: AGRZ1gL8HueR3KXG89XAm7SsE418IXt06/fnSoM14Fk05wFoRksuCFHJ
+        hLawj4oXJCP/LYXzIGEqPkQNmJf7nKzYVg5JmmBuwt8TP3Ic
+X-Google-Smtp-Source: AFSGD/VIxoUHWnTcgMu6zUZbqBtzX+xA+EeW7zFRO5doKVCGOSdCbJcFpuTuxZoVxpSgEhgo5wmXt0vss2qcJL4UuhPBLKN5t/cw
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119174559.GC27435@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a24:153:: with SMTP id 80-v6mr8262938itk.19.1542665944225;
+ Mon, 19 Nov 2018 14:19:04 -0800 (PST)
+Date:   Mon, 19 Nov 2018 14:19:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009ce9ee057b0be7f8@google.com>
+Subject: WARNING in update_load_avg
+From:   syzbot <syzbot+20fddccabc274e99398e@syzkaller.appspotmail.com>
+To:     andy.shevchenko@gmail.com, bp@alien8.de, douly.fnst@cn.fujitsu.com,
+        hpa@zytor.com, konrad.wilk@oracle.com, len.brown@intel.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, puwen@hygon.cn,
+        rppt@linux.vnet.ibm.com, syzkaller-bugs@googlegroups.com,
+        tglx@linutronix.de, ville.syrjala@linux.intel.com, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:45:59AM -0800, Guenter Roeck wrote:
-> > In short, other than exposing it via a generic ABI to the user
-> > space, how about defining some policy to maintaining it within
-> > the driver?
+Hello,
 
-> I think that would be a bad idea. It changes timing for everyone
-> curently using the driver. It also effectively disables monitoring,
-> which is the main purpose for using this chip (and other hardware
-> monitoring chips). This is indeed a key difference between iio
-> and hwmon - the main purpose of chips in the iio subsystem is to
-> be able report data efficiently to user space, not hardware monitoring.
-> I do not think it is appropriate to use iio requirements as argument
-> to change hwmon driver behavior (and vice versa).
+syzbot found the following crash on:
 
-OK...what about setting a default mode via DT? I didn't expect it
-to be possible until I found this existing solution. Though it is
-still in an iio driver, I don't think this should be iio specific.
+HEAD commit:    cddaf02bcb73 tg3: optionally use eth_platform_get_mac_addr..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15810d33400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
+dashboard link: https://syzkaller.appspot.com/bug?extid=20fddccabc274e99398e
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10272c5d400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=157bd093400000
 
-  commit 023e30fb0d3a3b9d6b8dc9e47590aa544d58a22f
-  Author: Adriana Reus <adriana.reus@intel.com>
-  Date:   Tue Nov 24 12:59:49 2015 +0200
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+20fddccabc274e99398e@syzkaller.appspotmail.com
 
-    Documentation: devicetree: Add property for controlling power saving
-                   mode for the us5182 als sensor
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+syz-executor496 (6238) used greatest stack depth: 15648 bytes left
+WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015 rq_clock_task  
+kernel/sched/sched.h:1015 [inline]
+WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015 cfs_rq_clock_task  
+kernel/sched/fair.c:4283 [inline]
+WARNING: CPU: 1 PID: 0 at kernel/sched/sched.h:1015  
+update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
+==================================================================
+BUG: KASAN: stack-out-of-bounds in lookup_object lib/debugobjects.c:157  
+[inline]
+BUG: KASAN: stack-out-of-bounds in debug_object_deactivate+0x3a8/0x450  
+lib/debugobjects.c:543
+Kernel panic - not syncing: panic_on_warn set ...
+Read of size 8 at addr ffff8881dae000e0 by task syz-executor496/6371
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc2+ #302
 
-    Add a property to allow changing the default power-saving mode.
-    By default, at read raw the chip will activate and provide
-    one measurent, then it will shut itself down. However, the
-    chip can also work in "continuous" mode which may be more reliable
-    but is also more power consuming.
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:rq_clock_task kernel/sched/sched.h:1015 [inline]
+RIP: 0010:cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
+RIP: 0010:update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
+Code: e8 fc e1 69 00 e9 8b f8 ff ff 48 8d 7a 18 be ff ff ff ff 48 89 95 30  
+fb ff ff e8 52 e5 07 00 48 8b 95 30 fb ff ff 85 c0 75 29 <0f> 0b 48 b8 00  
+00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 80 3c 01
+RSP: 0018:ffff8881daf07238 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff8881b3b487c0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000086
+RBP: ffff8881daf07750 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: ffff8881daf2d850 R12: ffff8881bf344bc0
+R13: ffff8881daf07728 R14: 0000000000000000 R15: ffff8881b3b48930
+  update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
+  run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+  </IRQ>
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
+Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 33 22 e6 f9 48 8b 45 d8 e9 ca  
+fe ff ff 48 89 df e8 22 22 e6 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
+00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+RSP: 0018:ffff8881d9b27cb8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: 1ffff1103b364f9b RCX: 0000000000000000
+RDX: 1ffffffff12a3f71 RSI: 0000000000000001 RDI: ffffffff8951fb88
+RBP: ffff8881d9b27cb8 R08: ffff8881d9b14340 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d9b27d78
+R13: ffffffff8a1640e0 R14: 0000000000000000 R15: 0000000000000001
+  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
+  default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
+  start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+CPU: 0 PID: 6371 Comm: syz-executor496 Not tainted 4.20.0-rc2+ #302
 
-    Signed-off-by: Adriana Reus <adriana.reus@intel.com>
-    Acked-by: Rob Herring <robh@kernel.org>
-    Signed-off-by: Jonathan Cameron <jic23@kernel.org>
+======================================================
+WARNING: possible circular locking dependency detected
+4.20.0-rc2+ #302 Not tainted
+------------------------------------------------------
+swapper/1/0 is trying to acquire lock:
+00000000cee8b2f6 ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
+kernel/locking/semaphore.c:136
 
-Would it be possible for me to apply a similar one? Since hwmon
-driver uses continuous mode by default, I will add a "one-shot"
-property instead of "continuous" -- all existing users won't be
-effected unless they place one-shot properties in DT bindings.
+but task is already holding lock:
+000000008d358a10 (&rq->lock){-.-.}, at: rq_lock_irqsave  
+kernel/sched/sched.h:1110 [inline]
+000000008d358a10 (&rq->lock){-.-.}, at:  
+update_blocked_averages+0x156/0x1e00 kernel/sched/fair.c:7381
 
-Thanks
-Nicolin
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&rq->lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+        rq_lock kernel/sched/sched.h:1126 [inline]
+        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9768
+        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
+        copy_process+0x25b8/0x87a0 kernel/fork.c:1887
+        _do_fork+0x1cb/0x11d0 kernel/fork.c:2216
+        kernel_thread+0x34/0x40 kernel/fork.c:2275
+        rest_init+0x28/0x372 init/main.c:409
+        arch_call_rest_init+0xe/0x1b
+        start_kernel+0x9f0/0xa2b init/main.c:745
+        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #1 (&p->pi_lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+        try_to_wake_up+0xdc/0x1490 kernel/sched/core.c:1965
+        wake_up_process+0x10/0x20 kernel/sched/core.c:2129
+        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
+        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
+        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:236
+        console_unlock+0x811/0x1190 kernel/printk/printk.c:2432
+        vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+        printk+0xa7/0xcf kernel/printk/printk.c:1997
+        check_stack_usage kernel/exit.c:755 [inline]
+        do_exit.cold.18+0x57/0x16f kernel/exit.c:916
+        do_group_exit+0x177/0x440 kernel/exit.c:970
+        __do_sys_exit_group kernel/exit.c:981 [inline]
+        __se_sys_exit_group kernel/exit.c:979 [inline]
+        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 ((console_sem).lock){-.-.}:
+        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+        __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
+        console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
+        console_trylock_spinning kernel/printk/printk.c:1653 [inline]
+        vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+        printk+0xa7/0xcf kernel/printk/printk.c:1997
+        __warn+0x9e/0x1d0 kernel/panic.c:522
+        report_bug+0x254/0x2d0 lib/bug.c:186
+        fixup_bug arch/x86/kernel/traps.c:178 [inline]
+        do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+        do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+        invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+        rq_clock_task kernel/sched/sched.h:1015 [inline]
+        cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
+        update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
+        update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
+        run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
+        __do_softirq+0x308/0xb7e kernel/softirq.c:292
+        invoke_softirq kernel/softirq.c:373 [inline]
+        irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+        exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+        smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+        apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+        native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
+        arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
+        default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+        arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+        default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+        cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+        do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
+        cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
+        start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+other info that might help us debug this:
+
+Chain exists of:
+   (console_sem).lock --> &p->pi_lock --> &rq->lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&rq->lock);
+                                lock(&p->pi_lock);
+                                lock(&rq->lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+1 lock held by swapper/1/0:
+  #0: 000000008d358a10 (&rq->lock){-.-.}, at: rq_lock_irqsave  
+kernel/sched/sched.h:1110 [inline]
+  #0: 000000008d358a10 (&rq->lock){-.-.}, at:  
+update_blocked_averages+0x156/0x1e00 kernel/sched/fair.c:7381
+
+stack backtrace:
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc2+ #302
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1221
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2347 [inline]
+  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+  __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
+  console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
+  console_trylock_spinning kernel/printk/printk.c:1653 [inline]
+  vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+  printk+0xa7/0xcf kernel/printk/printk.c:1997
+  __warn+0x9e/0x1d0 kernel/panic.c:522
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:rq_clock_task kernel/sched/sched.h:1015 [inline]
+RIP: 0010:cfs_rq_clock_task kernel/sched/fair.c:4283 [inline]
+RIP: 0010:update_load_avg+0x1539/0x2470 kernel/sched/fair.c:3492
+Code: e8 fc e1 69 00 e9 8b f8 ff ff 48 8d 7a 18 be ff ff ff ff 48 89 95 30  
+fb ff ff e8 52 e5 07 00 48 8b 95 30 fb ff ff 85 c0 75 29 <0f> 0b 48 b8 00  
+00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 80 3c 01
+RSP: 0018:ffff8881daf07238 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: ffff8881b3b487c0 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000086
+RBP: ffff8881daf07750 R08: 0000000000000000 R09: 0000000000000001
+R10: 0000000000000000 R11: ffff8881daf2d850 R12: ffff8881bf344bc0
+R13: ffff8881daf07728 R14: 0000000000000000 R15: ffff8881b3b48930
+  update_blocked_averages+0xcc7/0x1e00 kernel/sched/fair.c:7401
+  run_rebalance_domains+0x37c/0x500 kernel/sched/fair.c:9696
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  ? inte
+Lost 38 message(s)!
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+
+The buggy address belongs to the page:
+page:ffffea00076b8000 count:1 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000001000(reserved)
+raw: 02fffc0000001000 ffffea00076b8008 ffffea00076b8008 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881dadfff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8881dae00000: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
+> ffff8881dae00080: f1 00 f2 f2 f2 f2 f2 f2 f2 f8 f2 f2 f2 00 00 00
+                                                        ^
+  ffff8881dae00100: 00 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1
+  ffff8881dae00180: f1 f8 f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 6371 Comm: syz-executor496 Tainted: G    B              
+4.20.0-rc2+ #302
+Shutting down cpus with NMI
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
