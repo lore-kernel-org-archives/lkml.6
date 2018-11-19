@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7CDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD3CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB2142086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346092089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6gVBc1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2142086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXqvI0gU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346092089F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbeKTCzv (ORCPT
+        id S1730539AbeKTCzy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53766 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729895AbeKTCzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:50 -0500
+        id S1730526AbeKTCzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7666B20831;
-        Mon, 19 Nov 2018 16:31:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 020832089F;
+        Mon, 19 Nov 2018 16:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645103;
-        bh=btImX78YnPac5lrO0v4lk/gzuoQPQHkwzrLZOxo0lv8=;
+        s=default; t=1542645106;
+        bh=ScfGi2GKjPnEymGpvcEzLKXu56UmwDK7mrJhzzgsEzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6gVBc1/7LQV6X0cXg0ZZ7Xugmw1Z3aY14aoXS18khalLBxHa6nZ5BlK6qYw5lTPd
-         bzHnWf2BrgvxNMBc9mi8+BpA1VEsZlugld8nRSbiE1t3WDSgWIg+7B7DYD86aeebDm
-         6ZyUfhDJqy8UQDwZw8vC8K8H9yHmV4Pg8iFfnHmU=
+        b=GXqvI0gU7I0pvbLSgCPB8QofDimjgDYjOFdnshRX/MK7UUQMwkhTzvPx/CC6NHPRr
+         xTjxys2FitC1IMXZoMCYSP5gMZrjTC8isOPEhpTF6SScOfYjnGKwuaVeu1YlUaDF2F
+         ZxBpqAM8mDW+200g4Zv0GTeA9N5U4CKctkNURWOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dominique Martinet <dominique.martinet@cea.fr>,
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 038/205] 9p locks: fix glock.client_id leak in do_lock
-Date:   Mon, 19 Nov 2018 17:25:45 +0100
-Message-Id: <20181119162624.205418076@linuxfoundation.org>
+Subject: [PATCH 4.19 039/205] udf: Prevent write-unsupported filesystem to be remounted read-write
+Date:   Mon, 19 Nov 2018 17:25:46 +0100
+Message-Id: <20181119162624.373332996@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,74 +62,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit b4dc44b3cac9e8327e0655f530ed0c46f2e6214c ]
+[ Upstream commit a9ad01bc759df79b0012f43ee52164391e31cd96 ]
 
-the 9p client code overwrites our glock.client_id pointing to a static
-buffer by an allocated string holding the network provided value which
-we do not care about; free and reset the value as appropriate.
+There are certain filesystem features which we support for reading but
+not for writing. We properly refuse to mount such filesystems read-write
+however for some features (such as read-only partitions), we don't check
+for these features when remounting the filesystem from read-only to
+read-write. Thus such filesystems could be remounted read-write leading
+to strange behavior (most likely crashes).
 
-This is almost identical to the leak in v9fs_file_getlock() fixed by
-Al Viro in commit ce85dd58ad5a6 ("9p: we are leaking glock.client_id
-in v9fs_file_getlock()"), which was returned as an error by a coverity
-false positive -- while we are here attempt to make the code slightly
-more robust to future change of the net/9p/client code and hopefully
-more clear to coverity that there is no problem.
+Fix the problem by marking in superblock whether the filesystem has some
+features that are supported in read-only mode and check this flag during
+remount.
 
-Link: http://lkml.kernel.org/r/1536339057-21974-5-git-send-email-asmadeus@codewreck.org
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/9p/vfs_file.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ fs/udf/super.c  |   30 ++++++++++++++++--------------
+ fs/udf/udf_sb.h |    2 ++
+ 2 files changed, 18 insertions(+), 14 deletions(-)
 
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -204,6 +204,14 @@ static int v9fs_file_do_lock(struct file
- 			break;
- 		if (schedule_timeout_interruptible(P9_LOCK_TIMEOUT) != 0)
- 			break;
-+		/*
-+		 * p9_client_lock_dotl overwrites flock.client_id with the
-+		 * server message, free and reuse the client name
-+		 */
-+		if (flock.client_id != fid->clnt->name) {
-+			kfree(flock.client_id);
-+			flock.client_id = fid->clnt->name;
+--- a/fs/udf/super.c
++++ b/fs/udf/super.c
+@@ -613,14 +613,11 @@ static int udf_remount_fs(struct super_b
+ 	struct udf_options uopt;
+ 	struct udf_sb_info *sbi = UDF_SB(sb);
+ 	int error = 0;
+-	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
++
++	if (!(*flags & SB_RDONLY) && UDF_QUERY_FLAG(sb, UDF_FLAG_RW_INCOMPAT))
++		return -EACCES;
+ 
+ 	sync_filesystem(sb);
+-	if (lvidiu) {
+-		int write_rev = le16_to_cpu(lvidiu->minUDFWriteRev);
+-		if (write_rev > UDF_MAX_WRITE_VERSION && !(*flags & SB_RDONLY))
+-			return -EACCES;
+-	}
+ 
+ 	uopt.flags = sbi->s_flags;
+ 	uopt.uid   = sbi->s_uid;
+@@ -1257,6 +1254,7 @@ static int udf_load_partdesc(struct supe
+ 			ret = -EACCES;
+ 			goto out_bh;
+ 		}
++		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
+ 		ret = udf_load_vat(sb, i, type1_idx);
+ 		if (ret < 0)
+ 			goto out_bh;
+@@ -2155,10 +2153,12 @@ static int udf_fill_super(struct super_b
+ 				UDF_MAX_READ_VERSION);
+ 			ret = -EINVAL;
+ 			goto error_out;
+-		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION &&
+-			   !sb_rdonly(sb)) {
+-			ret = -EACCES;
+-			goto error_out;
++		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION) {
++			if (!sb_rdonly(sb)) {
++				ret = -EACCES;
++				goto error_out;
++			}
++			UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
+ 		}
+ 
+ 		sbi->s_udfrev = minUDFWriteRev;
+@@ -2176,10 +2176,12 @@ static int udf_fill_super(struct super_b
+ 	}
+ 
+ 	if (sbi->s_partmaps[sbi->s_partition].s_partition_flags &
+-			UDF_PART_FLAG_READ_ONLY &&
+-	    !sb_rdonly(sb)) {
+-		ret = -EACCES;
+-		goto error_out;
++			UDF_PART_FLAG_READ_ONLY) {
++		if (!sb_rdonly(sb)) {
++			ret = -EACCES;
++			goto error_out;
 +		}
++		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
  	}
  
- 	/* map 9p status to VFS status */
-@@ -235,6 +243,8 @@ out_unlock:
- 		locks_lock_file_wait(filp, fl);
- 		fl->fl_type = fl_type;
- 	}
-+	if (flock.client_id != fid->clnt->name)
-+		kfree(flock.client_id);
- out:
- 	return res;
- }
-@@ -269,7 +279,7 @@ static int v9fs_file_getlock(struct file
+ 	if (udf_find_fileset(sb, &fileset, &rootdir)) {
+--- a/fs/udf/udf_sb.h
++++ b/fs/udf/udf_sb.h
+@@ -30,6 +30,8 @@
+ #define UDF_FLAG_LASTBLOCK_SET	16
+ #define UDF_FLAG_BLOCKSIZE_SET	17
+ #define UDF_FLAG_INCONSISTENT	18
++#define UDF_FLAG_RW_INCOMPAT	19	/* Set when we find RW incompatible
++					 * feature */
  
- 	res = p9_client_getlock_dotl(fid, &glock);
- 	if (res < 0)
--		return res;
-+		goto out;
- 	/* map 9p lock type to os lock type */
- 	switch (glock.type) {
- 	case P9_LOCK_TYPE_RDLCK:
-@@ -290,7 +300,9 @@ static int v9fs_file_getlock(struct file
- 			fl->fl_end = glock.start + glock.length - 1;
- 		fl->fl_pid = -glock.proc_id;
- 	}
--	kfree(glock.client_id);
-+out:
-+	if (glock.client_id != fid->clnt->name)
-+		kfree(glock.client_id);
- 	return res;
- }
- 
+ #define UDF_PART_FLAG_UNALLOC_BITMAP	0x0001
+ #define UDF_PART_FLAG_UNALLOC_TABLE	0x0002
 
 
