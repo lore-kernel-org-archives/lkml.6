@@ -2,107 +2,383 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D24FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61600C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D80292145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E0352147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:53:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1mHTuXE+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D80292145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/+CN1Bg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0352147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbeKTEMt (ORCPT
+        id S1731154AbeKTESH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:12:49 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:40767 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388366AbeKTDI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=1ADKlYvoqStJ6xtgbjELNxSEP+2pBGdk3EwQEUhmNpA=;
-        b=1mHTuXE+gvQxc3bvCyJ7ustNyHQV8cqH8uO/yLvQyg43xU8GwwYDNm+UL6B/ZGoTjPBxBd+tvoemh4u6TIggW6fRF+ygyaCvwxI6AsbmYBqGa/s/kRFXcdqbN/LiupU/G9friRtj5LjcHHzxrJgrOdqXpD+9Dnf0jezqLq//AuU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gOmfC-0008WJ-Ba; Mon, 19 Nov 2018 17:44:42 +0100
-Date:   Mon, 19 Nov 2018 17:44:42 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        davem@davemloft.net, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        linux-riscv@lists.infradead.org
-Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to
- phy_select/restore_page functions
-Message-ID: <20181119164442.GB31955@lunn.ch>
-References: <mvm8t1pazea.fsf@suse.de>
- <20181119151057.GC26852@lunn.ch>
- <mvm4lcdaynt.fsf@suse.de>
- <20181119152830.GE26852@lunn.ch>
- <20181119154005.GA8367@piout.net>
- <mvmzhu59idl.fsf@suse.de>
- <20181119161204.GC2393@lunn.ch>
- <mvmva4t9h8x.fsf@suse.de>
- <20181119162529.GA31955@lunn.ch>
- <mvmo9al9gfl.fsf@suse.de>
+        Mon, 19 Nov 2018 23:18:07 -0500
+Received: from casper.infradead.org ([85.118.1.10]:41258 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730274AbeKTESG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 23:18:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=NxUC/6YntL79MMsrRk8NNnbnAENGqFbB+t+It1tPOAI=; b=u/+CN1BgtPAnVFGgIs4p28xR+p
+        j0T2/d9VhLV45HSCvvQWkTfMIJ0x5DikOPCyeyoOiZbUOspKuF9b4fYeJU3TuGl8ZmjoCjfBr6OLM
+        7dC3suCv073C5Q7RuAnf9A64DGYqq8ZxZ5JQe4it4QXr5G+jdcAgQfdTQ8rvtHEfLOdkV0Ih3wPTD
+        VkX4r3YuPix3OJw6s0o/EKc4PvVp9X6OIPmbrRsiKEh1SJ3SgRk7l1VA7h+I/WWYVEtjlKfqMZoqf
+        UKacbg8BW0GBib0eHWgHRScJHHO0B7xVcqlbrvVNWYaR49ktt7yQtGZYls1jNqLcUWSdPv8c+hT4L
+        YwjdgKiQ==;
+Received: from 177.205.94.246.dynamic.adsl.gvt.net.br ([177.205.94.246] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOnjn-0007ea-36; Mon, 19 Nov 2018 17:53:31 +0000
+Date:   Mon, 19 Nov 2018 15:53:26 -0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Stakanov Schufter <stakanov@freenet.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181119155326.24f6083f@coco.lan>
+In-Reply-To: <s5hbm6l5cdi.wl-tiwai@suse.de>
+References: <s5hbm6l5cdi.wl-tiwai@suse.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mvmo9al9gfl.fsf@suse.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 05:32:14PM +0100, Andreas Schwab wrote:
-> On Nov 19 2018, Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > Lock debugging: prove locking correctness
-> 
+Hi Takashi,
 
-Lets see how much this gets messed up by email...
+Em Mon, 19 Nov 2018 16:13:29 +0100
+Takashi Iwai <tiwai@suse.de> escreveu:
 
-.config - Linux/arm 4.20.0-rc2 Kernel Configuration
- > Kernel hacking > Lock Debugging (spinlocks, mutexes, etc...) ──────
-  ┌───────── Lock Debugging (spinlocks, mutexes, etc...) ──────────┐
-  │  Arrow keys navigate the menu.  <Enter> selects submenus --->  │  
-  │  (or empty submenus ----).  Highlighted letters are hotkeys.   │  
-  │  Pressing <Y> includes, <N> excludes, <M> modularizes          │  
-  │  features.  Press <Esc><Esc> to exit, <?> for Help, </> for    │  
-  │ ┌────────────────────────────────────────────────────────────┐ │  
-  │ │    [*] Lock debugging: prove locking correctness           │ │  
-  │ │    [ ] Lock usage statistics                               │ │  
-  │ │    -*- RT Mutex debugging, deadlock detection              │ │  
-  │ │    -*- Spinlock and rw-lock debugging: basic checks        │ │  
-  │ │    -*- Mutex debugging: basic checks                       │ │  
-  │ │    -*- Wait/wound mutex debugging: Slowpath testing        │ │  
-  │ │    -*- RW Semaphore debugging: basic checks                │ │  
-  │ │    -*- Lock debugging: detect incorrect freeing of live loc│ │  
-  │ │    [ ] Lock dependency engine debugging                    │ │  
-  │ │    [*] Sleep inside atomic section checking                │ │  
-  │ │    [ ] Locking API boot-time self-tests                    │ │  
-  │ │    < > torture tests for locking                           │ │  
-  │ │    < > Wait/wound mutex selftests                          │ │  
-  │ └────────────────────────────────────────────────────────────┘ │  
-  ├────────────────────────────────────────────────────────────────┤  
-  │    <Select>    < Exit >    < Help >    < Save >    < Load >    │  
-  └────────────────────────────────────────────────────────────────┘  
-    
-If you cannot see it at all, it probably means you are missing a
-dependency:
+> Hi,
+>=20
+> we've got a regression report on openSUSE Bugzilla regarding DVB-S PCI
+> card:
+>   https://bugzilla.opensuse.org/show_bug.cgi?id=3D1116374
+>=20
+> According to the reporter (Stakanov, Cc'ed), the card worked fine on
+> 4.18.15, but since 4.19, it doesn't give any channels, sound nor
+> picture, but only EPG is received.
 
-  │   Depends on: DEBUG_KERNEL [=y] && \                           │  
-  │ LOCK_DEBUGGING_SUPPORT [=y]                                    │  
+Receiving just EPG is weird.
 
-    Andrew
+>=20
+> The following errors might be relevant:
+>=20
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    4.845180] b2c2-flexcop: B2C2 FlexcopII/II(b)/III digital TV receiver=
+ chip loaded successfully
+> [    4.869703] b2c2-flexcop: MAC address =3D xx:xx:xx:xx:xx:xx
+> [    5.100318] b2c2-flexcop: found 'ST STV0299 DVB-S' .
+> [    5.100323] b2c2_flexcop_pci 0000:06:06.0: DVB: registering adapter 0 =
+frontend 0 (ST STV0299 DVB-S)...
+> [    5.100370] b2c2-flexcop: initialization of 'Sky2PC/SkyStar 2 DVB-S re=
+v 2.6' at the 'PCI' bus controlled by a 'FlexCopIIb' complete
+
+
+> [  117.513086] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
+requency 1549000 out of range (950000..2150)
+> [  124.905222] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
+requency 1880000 out of range (950000..2150)
+> [  127.337079] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
+requency 1353500 out of range (950000..2150)
+
+That indicates that it is trying to tune to an unsupported frequency. For
+DVB-S, all frequencies above should be in kHz.
+
+It is very weird that the low frequency is bigger than the higher one.
+
+I suspect that this could be the root cause of the issue.
+
+Yet, the entry at stv0299 (with apparently is the used frontend)
+seems correct, as both min and max frequencies are in MHz:
+
+static const struct dvb_frontend_ops stv0299_ops =3D {
+	.delsys =3D { SYS_DVBS },
+	.info =3D {
+		.name			=3D "ST STV0299 DVB-S",
+		.frequency_min_hz	=3D  950 * MHz,
+		.frequency_max_hz	=3D 2150 * MHz,
+		.frequency_stepsize_hz	=3D  125 * kHz,
+		.symbol_rate_min	=3D 1000000,
+		.symbol_rate_max	=3D 45000000,
+		.symbol_rate_tolerance	=3D 500,	/* ppm */
+		.caps =3D FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
+		      FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 |
+		      FE_CAN_QPSK |
+		      FE_CAN_FEC_AUTO
+	},
+
+It could be some mistake at the tuner (if this driver loads a
+separate tuner).
+
+=46rom the code, it seems that this specific board uses this tuner
+from dvb-pll:
+
+static const struct dvb_pll_desc dvb_pll_samsung_tbmu24112 =3D {
+        .name =3D "Samsung TBMU24112",
+        .min    =3D  950000,
+        .max    =3D 2150000, /* guesses */
+        .iffreq =3D 0,
+        .count =3D 2,
+        .entries =3D {
+                { 1500000, 125, 0x84, 0x18 },
+                { 9999999, 125, 0x84, 0x08 },
+        }
+};
+
+Here, frequencies are in kHz. The code should be converting them to Hz=20
+if the TV standard is satellite.
+
+
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> The lspci shows:
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> 06:06.0 Network controller: Techsan Electronics Co Ltd B2C2 FlexCopII DVB=
+ chip / Technisat SkyStar2 DVB card (rev 02)
+>         Subsystem: Techsan Electronics Co Ltd B2C2 FlexCopII DVB chip / T=
+echnisat SkyStar2 DVB card
+>         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParEr=
+r- Stepping- SERR- FastB2B- DisINTx-
+>         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dslow >TAbort- =
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+>         Latency: 32
+>         Interrupt: pin A routed to IRQ 20
+>         NUMA node: 0
+>         Region 0: Memory at fe500000 (32-bit, non-prefetchable) [size=3D6=
+4K]
+>         Region 1: I/O ports at b040 [size=3D32]
+>         Kernel driver in use: b2c2_flexcop_pci
+>         Kernel modules: b2c2_flexcop_pci
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> Other details can be found in the bugzilla entry above.
+>=20
+> If any fix is known, please let me know.  I'll build a test kernel for
+> openSUSE to confirm it.
+>=20
+>=20
+> Thanks!
+>=20
+> Takashi
+
+
+
+Thanks,
+Mauro
+
+--
+
+Could you ask the user to apply the enclosed patch and provide us
+the results of those prints?
+
+diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst =
+b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
+index 0f8b31874002..60874a1f3d89 100644
+--- a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
++++ b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _media_ioc_request_alloc:
+=20
+diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst =
+b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
+index 6dd2d7fea714..3f481256f75a 100644
+--- a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
++++ b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _media_request_ioc_queue:
+=20
+diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst=
+ b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
+index febe888494c8..d9c4d308b477 100644
+--- a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
++++ b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _media_request_ioc_reinit:
+=20
+diff --git a/Documentation/media/uapi/mediactl/request-api.rst b/Documentat=
+ion/media/uapi/mediactl/request-api.rst
+index 5f4a23029c48..7a85b346db91 100644
+--- a/Documentation/media/uapi/mediactl/request-api.rst
++++ b/Documentation/media/uapi/mediactl/request-api.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _media-request-api:
+=20
+diff --git a/Documentation/media/uapi/mediactl/request-func-close.rst b/Doc=
+umentation/media/uapi/mediactl/request-func-close.rst
+index 098d7f2b9548..c85275a8870c 100644
+--- a/Documentation/media/uapi/mediactl/request-func-close.rst
++++ b/Documentation/media/uapi/mediactl/request-func-close.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _request-func-close:
+=20
+diff --git a/Documentation/media/uapi/mediactl/request-func-ioctl.rst b/Doc=
+umentation/media/uapi/mediactl/request-func-ioctl.rst
+index ff7b072a6999..8b69465bd2dd 100644
+--- a/Documentation/media/uapi/mediactl/request-func-ioctl.rst
++++ b/Documentation/media/uapi/mediactl/request-func-ioctl.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _request-func-ioctl:
+=20
+diff --git a/Documentation/media/uapi/mediactl/request-func-poll.rst b/Docu=
+mentation/media/uapi/mediactl/request-func-poll.rst
+index 85191254f381..8f58f9948cb6 100644
+--- a/Documentation/media/uapi/mediactl/request-func-poll.rst
++++ b/Documentation/media/uapi/mediactl/request-func-poll.rst
+@@ -1,4 +1,15 @@
+-.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
+-sections
++.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
++..
++.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
++..
++.. For GFDL-1.1-or-later, see:
++..
++.. Permission is granted to copy, distribute and/or modify this document
++.. under the terms of the GNU Free Documentation License, Version 1.1 or
++.. any later version published by the Free Software Foundation, with no
++.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
++.. A copy of the license is included at
++.. Documentation/media/uapi/fdl-appendix.rst.
+=20
+ .. _request-func-poll:
+=20
+diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core=
+/dvb_frontend.c
+index 961207cf09eb..bcdfe9939d64 100644
+--- a/drivers/media/dvb-core/dvb_frontend.c
++++ b/drivers/media/dvb-core/dvb_frontend.c
+@@ -917,6 +917,9 @@ static void dvb_frontend_get_frequency_limits(struct dv=
+b_frontend *fe,
+ 			 "DVB: adapter %i frontend %u frequency limits undefined - fix the driv=
+er\n",
+ 			 fe->dvb->num, fe->id);
+=20
++printk("%s: frequencies: tuner: %u...%u, frontend: %u...%u",
++       __func__, tuner_min, tuner_max, frontend_min, frontend_max);
++
+ 	/* If the standard is for satellite, convert frequencies to kHz */
+ 	switch (c->delivery_system) {
+ 	case SYS_DVBS:
+diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-fron=
+tends/dvb-pll.c
+index 6d4b2eec67b4..62e81010b8cc 100644
+--- a/drivers/media/dvb-frontends/dvb-pll.c
++++ b/drivers/media/dvb-frontends/dvb-pll.c
+@@ -857,6 +857,8 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend=
+ *fe, int pll_addr,
+ 		fe->ops.tuner_ops.info.frequency_min_hz =3D desc->min;
+ 		fe->ops.tuner_ops.info.frequency_max_hz =3D desc->max;
+ 	}
++printk("%s: delsys: %d, frequency range: %u..%u\n",
++       __func__, c->delivery_system, fe->ops.tuner_ops.info.frequency_min_=
+hz, fe->ops.tuner_ops.info.frequency_max_hz);
+=20
+ 	if (!desc->initdata)
+ 		fe->ops.tuner_ops.init =3D NULL;
 
 
