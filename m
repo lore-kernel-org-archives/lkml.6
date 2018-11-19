@@ -2,102 +2,252 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6B5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A6DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606A620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606A620823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B9A0B2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:29:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9A0B2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbeKSNhl (ORCPT
+        id S1728363AbeKSNvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 08:37:41 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50112 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbeKSNhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 08:37:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F13CF80D;
-        Sun, 18 Nov 2018 19:15:28 -0800 (PST)
-Received: from [10.162.0.72] (unknown [10.162.0.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6C74A3F5A0;
-        Sun, 18 Nov 2018 19:15:26 -0800 (PST)
-Subject: Re: [PATCH 1/7] node: Link memory nodes to their compute nodes
-To:     Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20181114224921.12123-2-keith.busch@intel.com>
- <20181115135710.GD19286@bombadil.infradead.org>
- <20181115145920.GG11416@localhost.localdomain>
- <20181115203654.GA28246@bombadil.infradead.org>
- <20181116183254.GD14630@localhost.localdomain>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <d5c7a267-840b-f253-ef0d-3715b2bcc196@arm.com>
-Date:   Mon, 19 Nov 2018 08:45:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 19 Nov 2018 08:51:50 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15116 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728342AbeKSNvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 08:51:50 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E14E16A3A12DE;
+        Mon, 19 Nov 2018 11:29:33 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 19 Nov 2018 11:29:27 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2] f2fs: add bio cache for IPU
+Date:   Mon, 19 Nov 2018 11:29:24 +0800
+Message-ID: <20181119032924.12587-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20181116183254.GD14630@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
+commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
+lost the chance of merging page in inner managed bio cache, result in
+submitting more small-sized IO.
 
+So let's add temporary bio in writepages() to cache mergeable write IO as
+much as possible.
 
-On 11/17/2018 12:02 AM, Keith Busch wrote:
-> On Thu, Nov 15, 2018 at 12:36:54PM -0800, Matthew Wilcox wrote:
->> On Thu, Nov 15, 2018 at 07:59:20AM -0700, Keith Busch wrote:
->>> On Thu, Nov 15, 2018 at 05:57:10AM -0800, Matthew Wilcox wrote:
->>>> On Wed, Nov 14, 2018 at 03:49:14PM -0700, Keith Busch wrote:
->>>>> Memory-only nodes will often have affinity to a compute node, and
->>>>> platforms have ways to express that locality relationship.
->>>>>
->>>>> A node containing CPUs or other DMA devices that can initiate memory
->>>>> access are referred to as "memory iniators". A "memory target" is a
->>>>> node that provides at least one phyiscal address range accessible to a
->>>>> memory initiator.
->>>>
->>>> I think I may be confused here.  If there is _no_ link from node X to
->>>> node Y, does that mean that node X's CPUs cannot access the memory on
->>>> node Y?  In my mind, all nodes can access all memory in the system,
->>>> just not with uniform bandwidth/latency.
->>>
->>> The link is just about which nodes are "local". It's like how nodes have
->>> a cpulist. Other CPUs not in the node's list can acces that node's memory,
->>> but the ones in the mask are local, and provide useful optimization hints.
->>
->> So ... let's imagine a hypothetical system (I've never seen one built like
->> this, but it doesn't seem too implausible).  Connect four CPU sockets in
->> a square, each of which has some regular DIMMs attached to it.  CPU A is
->> 0 hops to Memory A, one hop to Memory B and Memory C, and two hops from
->> Memory D (each CPU only has two "QPI" links).  Then maybe there's some
->> special memory extender device attached on the PCIe bus.  Now there's
->> Memory B1 and B2 that's attached to CPU B and it's local to CPU B, but
->> not as local as Memory B is ... and we'd probably _prefer_ to allocate
->> memory for CPU A from Memory B1 than from Memory D.  But ... *mumble*,
->> this seems hard.
-> 
-> Indeed, that particular example is out of scope for this series. The
-> first objective is to aid a process running in node B's CPUs to allocate
-> memory in B1. Anything that crosses QPI are their own.
+Test case:
+1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
+2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
 
-This is problematic. Any new kernel API interface should accommodate B2 type
-memory as well from the above example which is on a PCIe bus. Because
-eventually they would be represented as some sort of a NUMA node and then
-applications will have to depend on this sysfs interface for their desired
-memory placement requirements. Unless this interface is thought through for
-B2 type of memory, it might not be extensible in the future.
+Before:
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
+
+After:
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
+f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- submit cached bio for cp error case.
+ fs/f2fs/data.c    | 61 +++++++++++++++++++++++++++++++++++++++++++++--
+ fs/f2fs/f2fs.h    |  3 +++
+ fs/f2fs/segment.c |  5 +++-
+ 3 files changed, 66 insertions(+), 3 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 8780f3d737c4..7dffafb8b2c5 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -474,6 +474,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	return 0;
+ }
+ 
++int f2fs_merge_page_bio(struct f2fs_io_info *fio)
++{
++	struct bio *bio = *fio->bio;
++	struct page *page = fio->encrypted_page ?
++			fio->encrypted_page : fio->page;
++
++	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
++			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
++		return -EFAULT;
++
++	trace_f2fs_submit_page_bio(page, fio);
++	f2fs_trace_ios(fio, 0);
++
++	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
++			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
++		__submit_bio(fio->sbi, bio, fio->type);
++		bio = NULL;
++	}
++alloc_new:
++	if (!bio) {
++		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
++				BIO_MAX_PAGES, false, fio->type, fio->temp);
++		*fio->last_block = fio->new_blkaddr;
++		bio_set_op_attrs(bio, fio->op, fio->op_flags);
++	}
++
++	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
++		__submit_bio(fio->sbi, bio, fio->type);
++		bio = NULL;
++		goto alloc_new;
++	}
++
++	if (fio->io_wbc)
++		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
++
++	*fio->last_block = fio->new_blkaddr;
++
++	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
++
++	*fio->bio = bio;
++	return 0;
++}
++
+ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ {
+ 	struct f2fs_sb_info *sbi = fio->sbi;
+@@ -1894,6 +1937,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ }
+ 
+ static int __write_data_page(struct page *page, bool *submitted,
++				struct bio **bio,
++				sector_t *last_block,
+ 				struct writeback_control *wbc,
+ 				enum iostat_type io_type)
+ {
+@@ -1919,6 +1964,8 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		.need_lock = LOCK_RETRY,
+ 		.io_type = io_type,
+ 		.io_wbc = wbc,
++		.bio = bio,
++		.last_block = last_block,
+ 	};
+ 
+ 	trace_f2fs_writepage(page, DATA);
+@@ -2020,6 +2067,10 @@ static int __write_data_page(struct page *page, bool *submitted,
+ 		f2fs_balance_fs(sbi, need_balance_fs);
+ 
+ 	if (unlikely(f2fs_cp_error(sbi))) {
++		if (bio && *bio) {
++			__submit_bio(sbi, *bio, DATA);
++			*bio = NULL;
++		}
+ 		f2fs_submit_merged_write(sbi, DATA);
+ 		submitted = NULL;
+ 	}
+@@ -2046,7 +2097,7 @@ static int __write_data_page(struct page *page, bool *submitted,
+ static int f2fs_write_data_page(struct page *page,
+ 					struct writeback_control *wbc)
+ {
+-	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
++	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
+ }
+ 
+ /*
+@@ -2062,6 +2113,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	int done = 0;
+ 	struct pagevec pvec;
+ 	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
++	struct bio *bio = NULL;
++	sector_t last_block;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+ 	pgoff_t index;
+@@ -2149,7 +2202,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 			if (!clear_page_dirty_for_io(page))
+ 				goto continue_unlock;
+ 
+-			ret = __write_data_page(page, &submitted, wbc, io_type);
++			ret = __write_data_page(page, &submitted, &bio,
++						&last_block, wbc, io_type);
+ 			if (unlikely(ret)) {
+ 				/*
+ 				 * keep nr_to_write, since vfs uses this to
+@@ -2198,6 +2252,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+ 	if (nwritten)
+ 		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
+ 								NULL, 0, DATA);
++	/* submit cached bio of IPU write */
++	if (bio)
++		__submit_bio(sbi, bio, DATA);
+ 
+ 	return ret;
+ }
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 26ad1de8641c..d0bb679fd668 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1051,6 +1051,8 @@ struct f2fs_io_info {
+ 	bool retry;		/* need to reallocate block address */
+ 	enum iostat_type io_type;	/* io type */
+ 	struct writeback_control *io_wbc; /* writeback control */
++	struct bio **bio;		/* bio for ipu */
++	sector_t *last_block;		/* last block number in bio */
+ 	unsigned char version;		/* version of the node */
+ };
+ 
+@@ -3093,6 +3095,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				nid_t ino, enum page_type type);
+ void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
+ int f2fs_submit_page_bio(struct f2fs_io_info *fio);
++int f2fs_merge_page_bio(struct f2fs_io_info *fio);
+ void f2fs_submit_page_write(struct f2fs_io_info *fio);
+ struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
+ 			block_t blk_addr, struct bio *bio);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index 204d31e58967..b0e6331a5d95 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3158,7 +3158,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
+ 
+ 	stat_inc_inplace_blocks(fio->sbi);
+ 
+-	err = f2fs_submit_page_bio(fio);
++	if (fio->bio)
++		err = f2fs_merge_page_bio(fio);
++	else
++		err = f2fs_submit_page_bio(fio);
+ 	if (!err)
+ 		update_device_state(fio);
+ 
+-- 
+2.18.0.rc1
+
