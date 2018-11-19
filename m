@@ -2,126 +2,174 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B791C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 04:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1841EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413E22086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 04:58:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413E22086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CB95920817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 05:08:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DcWIpwIE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB95920817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbeKSPUj (ORCPT
+        id S1725912AbeKSPa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 10:20:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50370 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725866AbeKSPUj (ORCPT
+        Mon, 19 Nov 2018 10:30:58 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41732 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbeKSPa6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 10:20:39 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJ4rVAQ070978
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 23:58:12 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nujd3h37j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 23:58:12 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 19 Nov 2018 04:58:10 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Nov 2018 04:58:06 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJ4w5G751314802
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 04:58:05 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4AAB811C04C;
-        Mon, 19 Nov 2018 04:58:05 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 38BAA11C04A;
-        Mon, 19 Nov 2018 04:58:02 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.88.94])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Nov 2018 04:58:01 +0000 (GMT)
-Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures
- to tpm_pcr_extend()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Sun, 18 Nov 2018 23:57:50 -0500
-In-Reply-To: <20181118072745.GA5897@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
-         <20181114153108.12907-8-roberto.sassu@huawei.com>
-         <20181116150352.GA3612@linux.intel.com>
-         <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
-         <20181118072745.GA5897@linux.intel.com>
+        Mon, 19 Nov 2018 10:30:58 -0500
+Received: by mail-io1-f66.google.com with SMTP id s22so9444171ioc.8
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 21:08:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FHoz7/mmqMJ5RXC85qTDqZ7vp2xuTJPd+gTzOToOizA=;
+        b=DcWIpwIElIGiEYooxf5xTnzwJ1qMofw/6AtcA6ip4yX7YP2tx5JtZs/lNGXsgZnIz6
+         xZYTHsKE2c9gUEe1nejX3VwYzk3/2R3PqrBgUnlEoMy0hlE9pCCbbJUPaZvMED0X4NFH
+         O1YaCpgd51k1C5beTS8JWTxb5CeV9Aphu7YVY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FHoz7/mmqMJ5RXC85qTDqZ7vp2xuTJPd+gTzOToOizA=;
+        b=UeSj3oq/zL2fcqAyCUcrYP1E+L3oINC8ImI4n9E8cwBK2LYck16hS6QuPFT9tPXwLj
+         hUjq8BIB8GW4K6KuMKW7Z06Txl54kqdugxOREwi1/f5uh3nsFESarILINVNO5LtOTi46
+         KoizdsOCbk6Zz0mDt5zQ9R320uoOdJQyC4zY7IfzP8y4XQxyEq2pBK4tTjGNYacqJe1G
+         78vtSXxhHkCJXuO3/uF6PK/PiYmN0PndU4S5LzmFgH2mma7xjU29a6XwFXf8n+YOJr0u
+         I3vi5faf/n+ip0FFTr0fAHk01BEi4kwfzk+4WBHqx0Kp9CNQsgzpSu/R32bct2aCcUKW
+         WxjA==
+X-Gm-Message-State: AA+aEWY24CKU7wjkXbdCghZUTSkyWCsbT99gkGgI24uQMrWvuAm4nBBM
+        nNDMgnlXlVKGONm3WjydNFqFM1GEoVk3jqh9XOIhcQ==
+X-Google-Smtp-Source: AFSGD/VaVMsjnlOSK+H97ZV4xlLxd8fnER3SZaGBQOh9z2tLg3EOP+0Dd2MrU/Lz5GtKrlrd2jqjr+4hP8G5hQTw40A=
+X-Received: by 2002:a6b:bc04:: with SMTP id m4-v6mr12841785iof.171.1542604109872;
+ Sun, 18 Nov 2018 21:08:29 -0800 (PST)
+MIME-Version: 1.0
+References: <1542169930-24118-1-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1542169930-24118-1-git-send-email-firoz.khan@linaro.org>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Mon, 19 Nov 2018 10:38:20 +0530
+Message-ID: <CALxhOnis61eCGyS22e0_s5PLOimsNX+mhgMa_-enLWQ=EarBfg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] sh: system call table generation support
+To:     linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18111904-0016-0000-0000-00000228F3FE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111904-0017-0000-0000-000032812487
-Message-Id: <1542603470.4914.55.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811190045
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-18 at 09:27 +0200, Jarkko Sakkinen wrote:
-> On Fri, Nov 16, 2018 at 04:55:36PM +0100, Roberto Sassu wrote:
-> > On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
-> > > On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
-> > > > Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
-> > > > 
-> > > > This patch modifies the definition of tpm_pcr_extend() to allow other
-> > > > kernel subsystems to pass a digest for each algorithm supported by the TPM.
-> > > > All digests are processed by the TPM in one operation.
-> > > > 
-> > > > If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
-> > > > the TPM driver extends the remaining PCR banks with the first digest
-> > > > passed as an argument to the function.
-> > > 
-> > > What is the legit use case for this?
-> > 
-> > A subset could be chosen for better performance, or when a TPM algorithm
-> > is not supported by the crypto subsystem.
-> 
-> Doesn't extending a subset a security concern?
+On Wed, 14 Nov 2018 at 10:02, Firoz Khan <firoz.khan@linaro.org> wrote:
+>
+> The purpose of this patch series is, we can easily
+> add/modify/delete system call table support by cha-
+> nging entry in syscall.tbl file instead of manually
+> changing many files. The other goal is to unify the
+> system call table generation support implementation
+> across all the architectures.
+>
+> The system call tables are in different format in
+> all architecture. It will be difficult to manually
+> add, modify or delete the system calls in the resp-
+> ective files manually. To make it easy by keeping a
+> script and which'll generate uapi header file and
+> syscall table file.
+>
+> syscall.tbl contains the list of available system
+> calls along with system call number and correspond-
+> ing entry point. Add a new system call in this arch-
+> itecture will be possible by adding new entry in
+> the syscall.tbl file.
+>
+> Adding a new table entry consisting of:
+>         - System call number.
+>         - ABI.
+>         - System call name.
+>         - Entry point name.
+>
+> Please note, this support is only available for 32-bit
+> kernel, not 64-bit kernel. As I came across the 64-bit
+> kernel is not active for long time.
+>
+> ARM, s390 and x86 architecuture does exist the sim-
+> ilar support. I leverage their implementation to come
+> up with a generic solution.
+>
+> I have done the same support for work for alpha, ia64,
+> m68k, microblaze, mips, parisc, powerpc, sparc, and
+> xtensa. Below mentioned git repository contains more
+> details about the workflow.
+>
+> https://github.com/frzkhn/system_call_table_generator/
+>
+> Finally, this is the ground work to solve the Y2038
+> issue. We need to add two dozen of system calls to solve
+> Y2038 issue. So this patch series will help to add new
+> system calls easily by adding new entry in the syscall-
+> .tbl.
+>
+> Changes since v2:
+>  - changed from generic-y to generated-y in Kbuild.
+>
+> Changes since v1:
+>  - optimized/updated the syscall table generation
+>    scripts.
+>  - fixed all mixed indentation issues in syscall.tbl.
+>  - added "comments" in syscall.tbl.
+>
+> Firoz Khan (3):
+>   sh: add __NR_syscalls along with NR_syscalls
+>   sh: add system call table generation support
+>   sh: generate uapi header and syscall table header files
 
-Right, so instead of extending a subset of the allocated banks, all of
-the allocated banks need to be extended, even for those banks that a
-digest was not included.  This is no different than what is being done
-today.  IMA is currently only calculating the SHA1 hash, padding the
-digest with 0's, and extending the padded value(s) into all of the
-allocated banks.
+Gentle reminder!
 
-If there is a vulnerability with the hash algorithm, then any bank
-extended with the padded/truncated digest would be susceptible.
+Could someone review this patch series. I haven't received any
+feedback till now.
 
-IMA will need to become TPM 2.0 aware, calculating and extending
-multiple banks and define a new measurement list format containing the
-multiple digests.
+FYI, this support is only available for 32-bit kernel, not 64-bit
+kernel. As I came across the 64-bit kernel is not active for long time.
 
-Mimi
+Thanks
+Firoz
 
+>
+>  arch/sh/Makefile                      |   3 +
+>  arch/sh/include/asm/Kbuild            |   1 +
+>  arch/sh/include/asm/unistd.h          |   2 +
+>  arch/sh/include/uapi/asm/Kbuild       |   1 +
+>  arch/sh/include/uapi/asm/unistd_32.h  |   4 +-
+>  arch/sh/include/uapi/asm/unistd_64.h  |   4 +-
+>  arch/sh/kernel/syscalls/Makefile      |  38 ++++
+>  arch/sh/kernel/syscalls/syscall.tbl   | 392 ++++++++++++++++++++++++++++++++++
+>  arch/sh/kernel/syscalls/syscallhdr.sh |  36 ++++
+>  arch/sh/kernel/syscalls/syscalltbl.sh |  32 +++
+>  arch/sh/kernel/syscalls_32.S          | 387 +--------------------------------
+>  11 files changed, 514 insertions(+), 386 deletions(-)
+>  create mode 100644 arch/sh/kernel/syscalls/Makefile
+>  create mode 100644 arch/sh/kernel/syscalls/syscall.tbl
+>  create mode 100644 arch/sh/kernel/syscalls/syscallhdr.sh
+>  create mode 100644 arch/sh/kernel/syscalls/syscalltbl.sh
+>
+> --
+> 1.9.1
+>
