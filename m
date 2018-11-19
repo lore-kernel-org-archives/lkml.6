@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54894C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D2AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21CC42087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CC42087A
+	by mail.kernel.org (Postfix) with ESMTP id BA8F52080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 01:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA8F52080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbeKSLWb (ORCPT
+        id S1727958AbeKSLWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 06:22:31 -0500
-Received: from mx.socionext.com ([202.248.49.38]:40673 "EHLO mx.socionext.com"
+        Mon, 19 Nov 2018 06:22:34 -0500
+Received: from mx.socionext.com ([202.248.49.38]:40693 "EHLO mx.socionext.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeKSLWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 06:22:31 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:35 +0900
+        id S1727622AbeKSLWd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 06:22:33 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 19 Nov 2018 10:00:37 +0900
 Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 4F7F6180111;
-        Mon, 19 Nov 2018 10:00:35 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:35 +0900
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 5BD0060062;
+        Mon, 19 Nov 2018 10:00:37 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 19 Nov 2018 10:00:37 +0900
 Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id B0C8740387;
-        Mon, 19 Nov 2018 10:00:33 +0900 (JST)
+        by iyokan.css.socionext.com (Postfix) with ESMTP id C36A740387;
+        Mon, 19 Nov 2018 10:00:36 +0900 (JST)
 Received: from M20VSDK.e01.socionext.com (unknown [10.213.118.34])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 8EDB2120455;
-        Mon, 19 Nov 2018 10:00:33 +0900 (JST)
+        by yuzu.css.socionext.com (Postfix) with ESMTP id A489C120455;
+        Mon, 19 Nov 2018 10:00:36 +0900 (JST)
 From:   Sugaya Taichi <sugaya.taichi@socionext.com>
 To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Masami Hiramatsu <masami.hiramatsu@linaro.org>,
         Jassi Brar <jaswinder.singh@linaro.org>,
         Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 03/14] ARM: milbeaut: Add Milbeaut M10V early printk
-Date:   Mon, 19 Nov 2018 10:01:08 +0900
-Message-Id: <1542589274-13878-4-git-send-email-sugaya.taichi@socionext.com>
+Subject: [PATCH 06/14] dt-bindings: clock: milbeaut: add Milbeaut clock description
+Date:   Mon, 19 Nov 2018 10:01:11 +0900
+Message-Id: <1542589274-13878-7-git-send-email-sugaya.taichi@socionext.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
 References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
@@ -61,104 +61,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Milbeaut M10V earlyprintk.
+Add DT bindings document for Milbeaut clock.
 
 Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
 ---
- arch/arm/Kconfig.debug            | 12 ++++++++++--
- arch/arm/include/debug/milbeaut.S | 25 +++++++++++++++++++++++++
- 2 files changed, 35 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/include/debug/milbeaut.S
+ .../devicetree/bindings/clock/milbeaut-clock.txt   | 93 ++++++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/milbeaut-clock.txt
 
-diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-index d6a49f5..5c44533 100644
---- a/arch/arm/Kconfig.debug
-+++ b/arch/arm/Kconfig.debug
-@@ -1413,6 +1413,11 @@ choice
- 		  options; the platform specific options are deprecated
- 		  and will be soon removed.
- 
-+	config DEBUG_LL_MILBEAUT_UART
-+		bool "Kernel low-level debug output via USIO"
-+		depends on ARCH_MILBEAUT
-+		help
-+		  Say Y here if you want to debug with USIO
- endchoice
- 
- config DEBUG_AT91_UART
-@@ -1534,6 +1539,7 @@ config DEBUG_LL_INCLUDE
- 	default "debug/bcm63xx.S" if DEBUG_BCM63XX_UART
- 	default "debug/digicolor.S" if DEBUG_DIGICOLOR_UA0
- 	default "debug/brcmstb.S" if DEBUG_BRCMSTB_UART
-+	default "debug/milbeaut.S" if DEBUG_LL_MILBEAUT_UART
- 	default "mach/debug-macro.S"
- 
- # Compatibility options for PL01x
-@@ -1580,6 +1586,7 @@ config DEBUG_UART_PHYS
- 	default 0x18020000 if DEBUG_SIRFATLAS7_UART1
- 	default 0x18023000 if DEBUG_BCM_IPROC_UART3
- 	default 0x1c090000 if DEBUG_VEXPRESS_UART0_RS1
-+	default 0x1e700010 if ARCH_MILBEAUT_M10V
- 	default 0x20001000 if DEBUG_HIP01_UART
- 	default 0x20060000 if DEBUG_RK29_UART0
- 	default 0x20064000 if DEBUG_RK29_UART1 || DEBUG_RK3X_UART2
-@@ -1681,7 +1688,7 @@ config DEBUG_UART_PHYS
- 		DEBUG_S3C64XX_UART || \
- 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
- 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
--		DEBUG_AT91_UART
-+		DEBUG_AT91_UART || DEBUG_LL_MILBEAUT_UART
- 
- config DEBUG_UART_VIRT
- 	hex "Virtual base address of debug UART"
-@@ -1755,6 +1762,7 @@ config DEBUG_UART_VIRT
- 	default 0xfe100000 if DEBUG_IMX23_UART || DEBUG_IMX28_UART
- 	default 0xfe230000 if DEBUG_PICOXCELL_UART
- 	default 0xfe300000 if DEBUG_BCM_KONA_UART
-+	default 0xfe700010 if ARCH_MILBEAUT_M10V
- 	default 0xfe800000 if ARCH_IOP32X
- 	default 0xfeb00000 if DEBUG_HI3620_UART || DEBUG_HIX5HD2_UART
- 	default 0xfeb24000 if DEBUG_RK3X_UART0
-@@ -1796,7 +1804,7 @@ config DEBUG_UART_VIRT
- 		DEBUG_S3C64XX_UART || \
- 		DEBUG_BCM63XX_UART || DEBUG_ASM9260_UART || \
- 		DEBUG_SIRFSOC_UART || DEBUG_DIGICOLOR_UA0 || \
--		DEBUG_AT91_UART
-+		DEBUG_AT91_UART || DEBUG_LL_MILBEAUT_UART
- 
- config DEBUG_UART_8250_SHIFT
- 	int "Register offset shift for the 8250 debug UART"
-diff --git a/arch/arm/include/debug/milbeaut.S b/arch/arm/include/debug/milbeaut.S
+diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.txt b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
 new file mode 100644
-index 0000000..0660e0f
+index 0000000..5c093c8
 --- /dev/null
-+++ b/arch/arm/include/debug/milbeaut.S
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Socionext Inc.
-+ */
++++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.txt
+@@ -0,0 +1,93 @@
++Milbeaut M10V Clock Controller Binding
++----------------------------------------
++Milbeaut clock controller is consists of few oscillators, PLL, multiplexer
++and few divider modules
 +
-+	.macro addruart, rp, rv, tmp
-+	ldr	\rp, =CONFIG_DEBUG_UART_PHYS
-+	ldr	\rv, =CONFIG_DEBUG_UART_VIRT
-+	.endm
++This binding uses common clock bindings
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 +
-+	.macro senduart,rd,rx
-+	strh    \rd, [\rx, #0x04]               @ write to TxData register
-+	.endm
++Required properties:
++- compatible: shall be "socionext,milbeaut-m10v-clk-regs"
++- reg: shall contain base address and length of clock registers
++- #clock-cells: shall be 0
 +
-+	.macro waituart,rd,rx
-+1:	ldrb    \rd, [\rx, #0x03]               @ SSR
-+	tst     \rd, #1 << 1                    @ check TDRE bit
-+	beq     1b
-+	.endm
++Example:
++	m10v-clk-tree@ {
++		compatible = "socionext,milbeaut-m10v-clk-regs";
++		reg = <0x1d021000 0x4000>;
 +
-+	.macro busyuart,rd,rx
-+2:	ldrb    \rd, [\rx, #0x03]               @ SSR
-+	tst     \rd, #1 << 1                    @ check TEMT bit
-+	beq     2b
-+	.endm
++		clocks {
++			#address-cells = <0>;
++			#size-cells = <0>;
++
++			uclk40xi: uclk40xi {
++				compatible = "fixed-clock";
++				#clock-cells = <0>;
++				clock-frequency = <40000000>;
++			};
++		};
++	}
++
++The clock consumer shall specify the desired clock-output of the clock
++controller (as defined in [2]) by specifying output-id in its "clock"
++phandle cell
++[2] arch/arm/boot/dts/milbeaut-m10v-clk.h
++
++For example for UART1:
++	usio1:  usio_uart@1e700010 {
++		index = <0>;
++		compatible = "socionext,milbeaut-m10v-usio-uart";
++		reg = <0x1e700010 0x10>;
++		interrupts = <0 141 0x4>, <0 149 0x4>;
++		interrupt-names = "rx", "tx";
++		clocks = <&hclk>;
++	};
++
++
++
++
++Required properties:
++- compatible:
++	"socionext,milbeaut-m10v-clk-mux"
++		-clock-cells: should be 0
++		-clocks: should be two factor
++	"socionext,milbeaut-m10v-pll-fixed-factor"
++		-clock-cells: should be 0
++		-clocks: should be one factor
++		-offset: offset
++		-clock-div: div number
++		-clock-mult: multiple number
++	"socionext,milbeaut-m10v-clk-div"
++		-clock-cells: should be 0
++		-clocks: should be one factor
++		-offset: offset
++		-mask: mask bit
++		-ratios: div ratio
++
++Example
++	piclk_mux_0: spiclk_mux_0 {
++		compatible = "socionext,m10v-clk-div";
++		#clock-cells = <0>;
++		clocks = <&pll10_div_1_2>;
++		offset = <bSPICLK>;
++		mask = <0x3>;
++		ratios = <4 0x5 2 0x4>;
++	};
++
++	pll10: pll10 {
++		compatible = "socionext,m10v-pll-fixed-factor";
++		#clock-cells = <0>;
++		clocks = <&uclk40xi>;
++		offset = <10>;
++		clock-div = <5>;
++		clock-mult = <108>;
++	};
++
++	emmcclk: emmcclk {
++		compatible = "socionext,m10v-clk-div";
++		#clock-cells = <0>;
++		clocks = <&pll11>;
++		offset = <bEMMCCLK>;
++		mask = <0x3>;
++		ratios = <15 0x7 10 0x6 9 0x5 8 0x4>;
++	};
 -- 
 1.9.1
 
