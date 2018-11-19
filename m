@@ -2,172 +2,74 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A867CC04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:40:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ED8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769B220870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:40:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 769B220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 134BE20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:42:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134BE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbeKSWEK (ORCPT
+        id S1728731AbeKSWF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:04:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:55032 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbeKSWEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:04:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3599C80D;
-        Mon, 19 Nov 2018 03:40:48 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2241B3F5B7;
-        Mon, 19 Nov 2018 03:40:45 -0800 (PST)
-Date:   Mon, 19 Nov 2018 11:40:36 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: Re: [RESEND PATCH v3 1/2] dt-bindings: PCI: Add UniPhier PCIe host
- controller description
-Message-ID: <20181119114028.GA30042@e107981-ln.cambridge.arm.com>
-References: <1539667641-26024-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1539667641-26024-2-git-send-email-hayashi.kunihiko@socionext.com>
+        Mon, 19 Nov 2018 17:05:27 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38184 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728640AbeKSWF1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 17:05:27 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gOhw7-0005ZO-S1; Mon, 19 Nov 2018 12:41:51 +0100
+Date:   Mon, 19 Nov 2018 12:41:51 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH] x86/fpu: Disable BH while while loading FPU registers in
+ __fpu__restore_sig()
+Message-ID: <20181119114151.e4mbs7ktfjojl3uf@linutronix.de>
+References: <20181107194858.9380-1-bigeasy@linutronix.de>
+ <20181107194858.9380-3-bigeasy@linutronix.de>
+ <20181108145721.GC7543@zn.tnic>
+ <20181109173521.2m6iijp5wkncgi77@linutronix.de>
+ <20181109185202.GF21243@zn.tnic>
+ <20181109232521.l2ll2n3coxygkxv4@linutronix.de>
+ <20181112155643.vclej44qzg3pmbow@linutronix.de>
+ <433cec57-57a9-afff-22f3-68308eda682b@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1539667641-26024-2-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <433cec57-57a9-afff-22f3-68308eda682b@intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:27:20PM +0900, Kunihiko Hayashi wrote:
-> Add DT bindings for PCIe controller implemented in UniPhier SoCs when
-> configured in Root Complex (host) mode. This controller is based on
-> the DesignWare PCIe core.
+On 2018-11-12 09:48:08 [-0800], Dave Hansen wrote:
+> On 11/12/18 7:56 AM, Sebastian Andrzej Siewior wrote:
+> > Use local_bh_disable() around the restore sequence to avoid the race. BH
+> > needs to be disabled because BH is allowed to run (even with preemption
+> > disabled) and might invoke kernel_fpu_begin().
 > 
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/pci/uniphier-pcie.txt      | 81 ++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/uniphier-pcie.txt b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-> new file mode 100644
-> index 0000000..46a2754
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/uniphier-pcie.txt
-> @@ -0,0 +1,81 @@
-> +Socionext UniPhier PCIe host controller bindings
-> +
-> +This describes the devicetree bindings for PCIe host controller implemented
-> +on Socionext UniPhier SoCs.
-> +
-> +UniPhier PCIe host controller is based on the Synopsys DesignWare PCI core.
-> +It shares common functions with the PCIe DesignWare core driver and inherits
-> +common properties defined in
-> +Documentation/devicetree/bindings/pci/designware-pcie.txt.
-> +
-> +Required properties:
-> +- compatible: Should be "socionext,uniphier-pcie".
-> +- reg: Specifies offset and length of the register set for the device.
-> +	According to the reg-names, appropriate register sets are required.
-> +- reg-names: Must include the following entries:
-> +    "dbi"    - controller configuration registers
-> +    "link"   - SoC-specific glue layer registers
-> +    "config" - PCIe configuration space
-> +- clocks: A phandle to the clock gate for PCIe glue layer including
-> +	the host controller.
-> +- resets: A phandle to the reset line for PCIe glue layer including
-> +	the host controller.
-> +- interrupts: A list of interrupt specifiers. According to the
-> +	interrupt-names, appropriate interrupts are required.
-> +- interrupt-names: Must include the following entries:
-> +    "dma" - DMA interrupt
-> +    "msi" - MSI interrupt
-> +
-> +Optional properties:
-> +- phys: A phandle to generic PCIe PHY. According to the phy-names, appropriate
-> +	phys are required.
-> +- phy-names: Must be "pcie-phy".
-> +
-> +Required sub-node:
-> +- legacy-interrupt-controller: Specifies interrupt controller for legacy PCI
-> +	interrupts.
-> +
-> +Required properties for legacy-interrupt-controller:
-> +- interrupt-controller: identifies the node as an interrupt controller.
-> +- #interrupt-cells: specifies the number of cells needed to encode an
-> +	interrupt source. The value must be 1.
-> +- interrupt-parent: Phandle to the parent interrupt controller.
-> +- interrupts: An interrupt specifier for legacy interrupt.
-> +
-> +Example:
-> +
-> +	pcie: pcie@66000000 {
-> +		compatible = "socionext,uniphier-pcie", "snps,dw-pcie";
-> +		status = "disabled";
-> +		reg-names = "dbi", "link", "config";
-> +		reg = <0x66000000 0x1000>, <0x66010000 0x10000>,
-> +		      <0x2fff0000 0x10000>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +		clocks = <&sys_clk 24>;
-> +		resets = <&sys_rst 24>;
-> +		num-lanes = <1>;
-> +		num-viewport = <1>;
-> +		bus-range = <0x0 0xff>;
-> +		device_type = "pci";
-> +		ranges =
-> +		/* downstream I/O */
-> +			<0x81000000 0 0x00000000  0x2ffe0000  0 0x00010000
-> +		/* non-prefetchable memory */
-> +			 0x82000000 0 0x00000000  0x20000000  0 0x0ffe0000>;
-> +		#interrupt-cells = <1>;
-> +		interrupt-names = "dma", "msi";
-> +		interrupts = <0 224 4>, <0 225 4>;
-> +		interrupt-map-mask = <0 0 0  7>;
-> +		interrupt-map = <0 0 0  1  &pcie_intc 1>,	/* INTA */
-> +				<0 0 0  2  &pcie_intc 2>,	/* INTB */
-> +				<0 0 0  3  &pcie_intc 3>,	/* INTC */
-> +				<0 0 0  4  &pcie_intc 4>;	/* INTD */
+> FWIW, that would make nice comment fodder for the local_bh_disable().
+> I'd much rather run into it there than in a changelog.
 
-This is not correct and we must fix this concept for all DWC based host
-bridges bindings. We are mapping INTX to inputs [0,1,2,3] of the host
-bridge interrupt controllers and the binding should reflect that.
+Hmm. Should I really resent a v2 of this with the additional comment?
+This patch should go stable to the fix the bug and at the end of this
+series I remove/replace this hunk anyway.
+I can do either way, just wanted to check first.
 
-This should be the correct mapping:
-
-		interrupt-map = <0 0 0  1  &pcie_intc 0>,	/* INTA */
-				<0 0 0  2  &pcie_intc 1>,	/* INTB */
-				<0 0 0  3  &pcie_intc 2>,	/* INTC */
-				<0 0 0  4  &pcie_intc 3>;	/* INTD */
-
-Lorenzo
-
-> +
-> +		pcie_intc: legacy-interrupt-controller {
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +			interrupt-parent = <&gic>;
-> +			interrupts = <0 226 4>;
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+Sebastian
