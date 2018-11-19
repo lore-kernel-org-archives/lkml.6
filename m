@@ -2,67 +2,86 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 912E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:12:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2BBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:12:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55EA920831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:12:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EA920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8853B20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:12:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZhCMoDET"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8853B20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbeKTBgX (ORCPT
+        id S1729740AbeKTBgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:36:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:62656 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729548AbeKTBgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:36:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 07:12:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="101468297"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2018 07:12:30 -0800
-Received: from [10.252.27.191] (abudanko-mobl.ccr.corp.intel.com [10.252.27.191])
-        by linux.intel.com (Postfix) with ESMTP id D4D23580032;
-        Mon, 19 Nov 2018 07:12:25 -0800 (PST)
-Subject: Re: [PATCH v1 1/2]: Documentation/admin-guide: update admin-guide
- index.rst
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
-References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
- <810bb4aa-777f-77ed-19f0-882354bdf9c7@linux.intel.com>
- <20181119100322.GA19910@kroah.com>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <660fcb45-bc63-0bf2-f14b-49b13b2580a0@linux.intel.com>
-Date:   Mon, 19 Nov 2018 18:12:23 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 19 Nov 2018 20:36:38 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40763 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729392AbeKTBgh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:36:37 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so23298903wrt.7;
+        Mon, 19 Nov 2018 07:12:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=aZtv047poDD10sIyMM43BX4wyNVtgA74SvoKQ1ZqC/I=;
+        b=ZhCMoDETv71/HutHmiWzsUVBKuwcILlRgyQ1ZHd0pCrx5fANmLF5wc+4Id0EbqDyWu
+         fQ6bp4rh5he1dVKR6nfcJtyD2JVC3JAxT5H3BK9ZtS5TSWCXP6whI9MSsicrmnzHIZ3h
+         bOUMdHdKz+Dr6VdukMw39D3T3k3xTLky3wImc8YSjQOP8FHDd5ONEhJ6Wgi18ZGQ7hwW
+         LVBLAegl5MvjMO0ozoRjVd0/JVYWkHfQoegHpYh9S0HsNuGioUSLZWuKOIBUpGEB5pJ/
+         j6lJ5SlgwLZDAEh9GhBarevyHdjBWCsRBeKNNQMrS7GJlU2LzHUOvfZsna9ICeV7AVi7
+         suCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aZtv047poDD10sIyMM43BX4wyNVtgA74SvoKQ1ZqC/I=;
+        b=Bqns8vzCYOzz0Frqs3Uq8QwbzihAtZxpozYvlTNOsXhlBTpWnR+/Mq4o/Bhvb0Zykk
+         lLC1RNs7Z3o4r7B2jxfajxXSUsFE4C3bS/JFKqFZnIXJivCjMKVZWgacp5mWHOOrPxJ4
+         5YaO0BuFU/Pa5SB/nSd0UMk3HsHuVqT52irOz1KRwC2tcY26+3kTfjYXIAoHmkTKpWly
+         iOn45REpNutOrsjT9C4fod3lAXOJhbzNM2lDuToYitG650fQNU6MmHjyRFwNZf4qOBuK
+         sSX+lQ7DLl0/8qISFitpjXzi41yFb4Zu3F0QMxbHuNVhqJPFRfwdwBSQ27pVCKZk/P/u
+         d9WA==
+X-Gm-Message-State: AGRZ1gKhnETYj9fzP6fUxXB2m8JdOpEBOgnMmw5SbXIZOWMZII6qrNp2
+        BpqSGInYEHMxfyLRWBuMz7Y=
+X-Google-Smtp-Source: AJdET5fHnktavUheO7JXGyidA85F/V+IWSs//QQwlXzLwJ+7GPAtz6clBhbKZ0WNmThIb5Q6EOij7Q==
+X-Received: by 2002:a5d:4708:: with SMTP id y8-v6mr18492401wrq.16.1542640362963;
+        Mon, 19 Nov 2018 07:12:42 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id f12-v6sm24097929wru.63.2018.11.19.07.12.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 07:12:42 -0800 (PST)
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+ <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+ <20181119151009.490413d9@bbrezillon>
+ <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+ <20181119154338.2dfa7a5a@bbrezillon>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
+Date:   Mon, 19 Nov 2018 16:12:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20181119100322.GA19910@kroah.com>
+In-Reply-To: <20181119154338.2dfa7a5a@bbrezillon>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,156 +90,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg,
-
-On 19.11.2018 13:03, Greg KH wrote:
-> On Mon, Nov 19, 2018 at 08:41:31AM +0300, Alexey Budankov wrote:
->>
->> Extend index.rst index file at admin-guide root directory with 
->> the reference to perf-security.rst file being introduced.
->>
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->>  Documentation/admin-guide/index.rst | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
->> index 0873685bab0f..885cc0de9114 100644
->> --- a/Documentation/admin-guide/index.rst
->> +++ b/Documentation/admin-guide/index.rst
->> @@ -75,6 +75,7 @@ configure specific aspects of kernel behavior to your liking.
->>     thunderbolt
->>     LSM/index
->>     mm/index
->> +   perf-security
+On 11/19/2018 03:43 PM, Boris Brezillon wrote:
+> On Mon, 19 Nov 2018 15:14:07 +0100
+> Marek Vasut <marek.vasut@gmail.com> wrote:
 > 
-> You just broke the build with this patch.  They need to be ordered the
-> other way around :(
+>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:
+>>> On Mon, 19 Nov 2018 14:49:31 +0100
+>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+>>>   
+>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:  
+>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+>>>>>
+>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+>>>>> ---
+>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+>>>>>  1 file changed, 33 insertions(+)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>> new file mode 100644
+>>>>> index 0000000..8286cc8
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>>>>> @@ -0,0 +1,33 @@
+>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+>>>>> +----------------------------------------------------
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible: should be "renesas,rpc-r8a77995"
+>>>>> +- #address-cells: should be 1
+>>>>> +- #size-cells: should be 0
+>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
+>>>>> +       mapping area
+>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
+>>>>> +- interrupts: interrupt line connected to the RPC SPI controller    
+>>>>
+>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
+>>>> look in the bindings ?  
+>>>
+>>> Not sure this approach is still accepted, but that's how we solved the
+>>> problem for the flexcom block [1].
+>>>
+>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt  
+>>
+>> That looks pretty horrible.
+>>
+>> In U-Boot we check whether the device hanging under the controller node
+>> is JEDEC SPI flash or CFI flash and based on that decide what the config
+>> of the controller should be (SPI or HF). Not sure that's much better,but
+>> at least it doesn't need extra nodes which do not really represent any
+>> kind of real hardware.
+>>
+> 
+> The subnodes are not needed, you can just have a property that tells in
+> which mode the controller is supposed to operate, and the MFD would
+> create a sub-device that points to the same device_node.
 
-Thanks for pointing that out.
+Do you even need a dedicated property ? I think you can decide purely on
+what node is hanging under the controller (jedec spi nor or cfi nor).
 
-The patches are now rebased according to MAINTAINERS here: 
-	git://git.lwn.net/linux.git docs-next
+> Or we can have
+> a single driver that decides what to declare (a spi_controller or flash
+> controller), but you'd still have to decide where to place this
+> driver...
 
-make htmldocs SPHINXDIRS=admin-guide worked for me:
-...
-build succeeded, 10 warnings.
-The HTML pages are in Documentation/output/admin-guide.
+I'd definitely prefer a single driver.
 
-firefox Documentation/output/admin-guide/index.html 
-shows link to the document at the end of this paragraph:
-
-"The rest of this manual consists of various unordered guides on how to \
- configure specific aspects of kernel behavior to your liking."
-
-Rebased changes are below for your convenience.
-
-Thanks,
-Alexey
-
----
- Documentation/admin-guide/index.rst         |  1 +
- Documentation/admin-guide/perf-security.rst | 83 +++++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
-
-diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
-index 965745d5fb9a..0a491676685e 100644
---- a/Documentation/admin-guide/index.rst
-+++ b/Documentation/admin-guide/index.rst
-@@ -76,6 +76,7 @@ configure specific aspects of kernel behavior to your liking.
-    thunderbolt
-    LSM/index
-    mm/index
-+   perf-security
- 
- .. only::  subproject and html
- 
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-new file mode 100644
-index 000000000000..b9564066e686
---- /dev/null
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -0,0 +1,83 @@
-+.. _perf_security:
-+
-+PCL/Perf security
-+=================
-+
-+Overview
-+--------
-+
-+Usage of Performance Counters for Linux (PCL) [1]_ , [2]_ , [3]_ can impose a
-+considerable risk of leaking sensitive data accessed by monitored processes.
-+The data leakage is possible both in scenarios of direct usage of PCL system
-+call API [2]_ and over data files generated by Perf tool user mode utility
-+(Perf) [3]_ , [4]_ . The risk depends on the nature of data that PCL performance
-+monitoring units (PMU) [2]_ collect and expose for performance analysis.
-+Having that said PCL/Perf performance monitoring is the subject for security
-+access control management [5]_ .
-+
-+PCL/Perf access control
-+-----------------------
-+
-+For the purpose of performing security checks Linux implementation splits
-+processes into two categories [6]_ : a) privileged processes (whose effective
-+user ID is 0, referred to as superuser or root), and b) unprivileged processes
-+(whose effective UID is nonzero). Privileged processes bypass all kernel
-+security permission checks so PCL performance monitoring is fully available to
-+privileged processes without *access*, *scope* and *resource* restrictions.
-+Unprivileged processes are subject to full security permission check based
-+on the process's credentials [5]_ (usually: effective UID, effective GID,
-+and supplementary group list).
-+
-+PCL/Perf unprivileged users
-+---------------------------
-+
-+PCL/Perf *scope* and *access* control for unprivileged processes is governed by
-+perf_event_paranoid [2]_ setting:
-+
-+**-1**:
-+     Impose no *scope* and *access* restrictions on using PCL performance
-+     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
-+     ignored when allocating memory buffers for storing performance data.
-+     This is the least secure mode since allowed monitored *scope* is
-+     maximized and no PCL specific limits are imposed on *resources*
-+     allocated for performance monitoring.
-+
-+**>=0**:
-+     *scope* includes per-process and system wide performance monitoring
-+     but excludes raw tracepoints and ftrace function tracepoints monitoring.
-+     CPU and system events happened when executing either in user or
-+     in kernel space can be monitored and captured for later analysis.
-+     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
-+     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-+
-+**>=1**:
-+     *scope* includes per-process performance monitoring only and excludes
-+     system wide performance monitoring. CPU and system events happened when
-+     executing either in user or in kernel space can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+**>=2**:
-+     *scope* includes per-process performance monitoring only. CPU and system
-+     events happened when executing in user space only can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+**>=3**:
-+     Restrict *access* to PCL performance monitoring for unprivileged processes.
-+     This is the default on Debian and Android [7]_ , [8]_ .
-+
-+Bibliography
-+------------
-+
-+.. [1] `<https://lwn.net/Articles/337493/>`_
-+.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
-+.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
-+.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
-+.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
-+.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
-+.. [7] `<https://lkml.org/lkml/2016/1/11/587>`_
-+.. [8] `<https://android-review.googlesource.com/#/c/234743/>`_
-+
+-- 
+Best regards,
+Marek Vasut
