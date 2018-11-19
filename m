@@ -2,132 +2,136 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C19BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D68C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BC7208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C627420831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:10:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sSZI6FDx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BC7208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZhICwh8X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C627420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbeKSXbu (ORCPT
+        id S1729262AbeKSXd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:31:50 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:55408 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbeKSXbu (ORCPT
+        Mon, 19 Nov 2018 18:33:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49650 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729206AbeKSXd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:31:50 -0500
+        Mon, 19 Nov 2018 18:33:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OjEPoOrSvn/SVnSSCA7UFGSNFLgoXG8AkPeL/+L6YF0=; b=sSZI6FDxu+tf8PQCNWEkJ+Tz8
-        oT3acWz0M2WVtCMCF5Fpo/a5j98FxzyitYJKXB0XckSeSbEwwHNUuAOBgo45a67zpPJIXS4gFSl2G
-        yjqidKF0N1/i+2KxdsNEKvmTjTE8hZ57kV/Esy+Mo16uEadxL6Tp9injSfGZ7jLONWu6dYZdw4mlJ
-        hzuv+KZnPqtZK9GOiIidk7wTerGDYgJXbMJF69XsA9jwJHba2o6AGXJq79x1IHh7CPQegUjIM8HpY
-        P39BJbhj/xfe1wf8N03bAwk2nTGR8qVbuxjEjB8Ov3ZJj4az77bcMKWwkdVWse0pyrVL0TDgBn6RV
-        +hpidC2HQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOjHV-00081a-Lt; Mon, 19 Nov 2018 13:08:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6B28220298BFC; Mon, 19 Nov 2018 14:08:00 +0100 (CET)
-Date:   Mon, 19 Nov 2018 14:08:00 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] perf/core: Generalise event exclusion checking
-Message-ID: <20181119130800.GE9761@hirez.programming.kicks-ass.net>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=k+puHK7Mryz/fAkkjP+c7+vOaynj1dr6Er2mBy+twh0=; b=ZhICwh8X3bj1
+        zROg+EnaNsQ1WP5a5HO757KPFnhG4kp8R0IwCNjbFbBIZ8qZDM1o/g4A+70gMSNoUOeiTfVGFKvSj
+        rGNBX5sUpjxTy/gntaJEWPJe0ocrb8XjnqYlQ9Cw2cKVZqrcwdu2DpZP4yuNinE8pyGndVxkQhUyu
+        Bfto0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gOjJj-00009z-Or; Mon, 19 Nov 2018 13:10:19 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 7B2B41125031; Mon, 19 Nov 2018 13:10:19 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: Change regulator-coupled-max-spread property" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181119131019.7B2B41125031@debutante.sirena.org.uk>
+Date:   Mon, 19 Nov 2018 13:10:19 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 10:24:03AM +0000, Andrew Murray wrote:
-> Many PMU drivers do not have the capability to exclude counting events
-> that occur in specific contexts such as idle, kernel, guest, etc. These
-> drivers indicate this by returning an error in their event_init upon
-> testing the events attribute flags.
-> 
-> However this approach requires that each time a new event modifier is
-> added to perf, all the perf drivers need to be modified to indicate that
-> they don't support the attribute. This results in additional boiler-plate
-> code common to many drivers that needs to be maintained. An example of
-> this is the addition of exclude_host and exclude_guest in 2011 yet many
-> PMU drivers do not support this or indicate an error on events that make
-> use of it.
-> 
-> This patch generalises the test for exclusion and updates PMU drivers to
-> use it. This is a functional change as some PMU drivers will now correctly
-> report that they don't support certain events whereas they previously did.
+The patch
 
-Right, I like that idea, and yes, there's a lot of fail around there :/
+   regulator: Change regulator-coupled-max-spread property
 
-> A longer term approach may instead be for PMU's to advertise their
-> capabilities on registration.
+has been applied to the regulator tree at
 
-This I think is the better approach. We already have the
-PERF_PMU_CAP_flags that can be used to advertise various PMU
-capabilities.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-Something along these lines I suppose; then every PMU that actually
-checks the flags, needs to set the flag, otherwise it'll fail.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..de15723ea52a 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -244,6 +244,7 @@ struct perf_event;
- #define PERF_PMU_CAP_EXCLUSIVE			0x10
- #define PERF_PMU_CAP_ITRACE			0x20
- #define PERF_PMU_CAP_HETEROGENEOUS_CPUS		0x40
-+#define PERF_PMU_CAP_EXCLUDE			0x80
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From a8d8ee437ea0bf21f840f33ca87f8e1641727aae Mon Sep 17 00:00:00 2001
+From: Dmitry Osipenko <digetx@gmail.com>
+Date: Mon, 19 Nov 2018 00:56:16 +0300
+Subject: [PATCH] regulator: Change regulator-coupled-max-spread property
+
+Redefine binding for regulator-coupled-max-spread property in a way that
+max-spread values are defined per regulator couple instead of defining
+single max-spread for the whole group of coupled regulators.
+
+With that change the following regulators coupling configuration will be
+possible:
+
+regA: regulatorA {
+	regulator-coupled-with = <&regB &regC>;
+	regulator-coupled-max-spread = <100000 300000>;
+};
+
+regB: regulatorB {
+	regulator-coupled-with = <&regA &regC>;
+	regulator-coupled-max-spread = <100000 200000>;
+};
+
+regC: regulatorC {
+	regulator-coupled-with = <&regA &regB>;
+	regulator-coupled-max-spread = <300000 200000>;
+};
+
+Note that the regulator-coupled-max-spread property does not have any
+users yet, hence it's okay to change the binding.
+
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/regulator/regulator.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
+index ca96f70bd2de..e3a7a7a0316b 100644
+--- a/Documentation/devicetree/bindings/regulator/regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/regulator.txt
+@@ -79,8 +79,9 @@ Optional properties:
+ - regulator-coupled-with: Regulators with which the regulator
+   is coupled. The linkage is 2-way - all coupled regulators should be linked
+   with each other. A regulator should not be coupled with its supplier.
+-- regulator-coupled-max-spread: Max spread between voltages of coupled regulators
+-  in microvolts.
++- regulator-coupled-max-spread: Array of maximum spread between voltages of
++  coupled regulators in microvolts, each value in the array relates to the
++  corresponding couple specified by the regulator-coupled-with property.
  
- /**
-  * struct pmu - generic performance monitoring unit
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 84530ab358c3..d76b724177b9 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9772,6 +9772,14 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 	if (ctx)
- 		perf_event_ctx_unlock(event->group_leader, ctx);
- 
-+	if (!ret) {
-+		if ((pmu->capabilities & PERF_PMU_CAP_EXCLUDE) ||
-+		    event_has_exclude_flags(event)) {
-+			event->destroy(event);
-+			ret = -EINVAL;
-+		}
-+	}
-+
- 	if (ret)
- 		module_put(pmu->module);
- 
+ Deprecated properties:
+ - regulator-compatible: If a regulator chip contains multiple
+-- 
+2.19.0.rc2
 
