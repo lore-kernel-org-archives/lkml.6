@@ -2,90 +2,99 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF68C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17C6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9472089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DpHRPW9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9472089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A939F2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A939F2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbeKTAg4 (ORCPT
+        id S1729539AbeKTAhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:36:56 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42124 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729395AbeKTAgz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:36:55 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l15-v6so18044901lja.9
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:13:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=28RJy74gUYpdnlBnyud84XdLUW/CMJEwOZrID6V8hxs=;
-        b=DpHRPW9ulhYFiGAie+g3kYsM62vNEjig6UiyoJwV/ICVMS9QyP/LxX1FZiqjLxRT+A
-         4gTJnagoI9UL9fZ9euWU5amsmduXYtdb7E2tNpkYGnetwixP0SckMVg0/XqK/P+pW5jB
-         Tle4NnA9sEJ+7rCdtaLnFU85ZQR7wWxXDd3sI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=28RJy74gUYpdnlBnyud84XdLUW/CMJEwOZrID6V8hxs=;
-        b=oaxMerEjWOWvipuY3IMdEK0qcoTq2lomsXZKIAe5QZf3Q1qi784MNwQbFd3GBAcFNP
-         5CCxbU32zvkPFQqKeeZ1olPAd8CO7LrRsd3gVXGmf9ui1TSKbliheCTbsdqUxj0RpTDs
-         Qwk0DxMyKd/CdP4/Ds1ChgmpHFNz9GRfcvcLzXqeu4rbjMQnpjVpLRwjuppeOXrB8Uuq
-         xLGqGa6rINdxyObohsSywE37Vozy2tcRHd5lxrkQ7qtNjWQBn0KpC5T0wBDT62dF5giH
-         ZKTxsqAvf03G3EUnqwh/qwMHXPDsGSviplz+JLtAGnx8gJkRyaYMknkMmv7thJqpZslr
-         bKTg==
-X-Gm-Message-State: AA+aEWZzYasMpbPbdO94GJc5M8X38oN+wAAYhAJ2AnhdjogDQOtSc90b
-        Z5IaE7bvVtBkvyvhAN0LKALI6n6wc62Kxv8yH7q88trkN28=
-X-Google-Smtp-Source: AFSGD/VXHc3SP0kuDYnKt82lBKut5Z4jV7sAaZyK2yVTRvCNkp+MUqOjCjP2AJnJFouPHZN0zz6S3FgAS550zlmr9Oo=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr7072435ljk.4.1542636789330;
- Mon, 19 Nov 2018 06:13:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20181116185853.128207-1-evgreen@chromium.org>
-In-Reply-To: <20181116185853.128207-1-evgreen@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 19 Nov 2018 15:12:57 +0100
-Message-ID: <CACRpkdZ5OsrECHzTgEHTqt5c6UAUuu5Mjs9MaE92ahfp2w8YoQ@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: msm: Add sleep pinctrl state transitions
-To:     evgreen@chromium.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
+        Mon, 19 Nov 2018 19:37:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56474 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728252AbeKTAhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:37:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B3A7AAC3C;
+        Mon, 19 Nov 2018 14:13:52 +0000 (UTC)
+Message-ID: <1542636268.945.4.camel@suse.com>
+Subject: Re: [PATCH v2] usb: hub: add retry routine after intr URB sumbit
+ error
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        stern@rowland.harvard.edu
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Date:   Mon, 19 Nov 2018 15:04:28 +0100
+In-Reply-To: <20181119140208.11590-1-nsaenzjulienne@suse.de>
+References: <20181119140208.11590-1-nsaenzjulienne@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 7:59 PM Evan Green <evgreen@chromium.org> wrote:
+On Mo, 2018-11-19 at 15:02 +0100, Nicolas Saenz Julienne wrote:
+> 
+> +static void hub_retry_irq_urb(struct timer_list *t)
+> +{
+> +	struct usb_hub *hub = from_timer(hub, t, irq_urb_retry);
+> +	int status;
+> +
+> +	if (hub->disconnected || hub->quiescing)
+> +		return;
+> +
+> +	dev_err(hub->intfdev, "retrying int urb\n");
+> +	status = usb_submit_urb(hub->urb, GFP_ATOMIC);
+> +	if (status && status != -ENODEV && status != -EPERM &&
+> +	    status != -ESHUTDOWN)
+> +		mod_timer(&hub->irq_urb_retry,
+> +			  jiffies + msecs_to_jiffies(MSEC_PER_SEC));
+> +}
+> +
+>  static void kick_hub_wq(struct usb_hub *hub)
+>  {
+>  	struct usb_interface *intf;
+> @@ -713,8 +729,12 @@ static void hub_irq(struct urb *urb)
+>  		return;
+>  
+>  	status = usb_submit_urb(hub->urb, GFP_ATOMIC);
+> -	if (status != 0 && status != -ENODEV && status != -EPERM)
+> +	if (status != 0 && status != -ENODEV && status != -EPERM &&
+> +	    status != -ESHUTDOWN) {
+>  		dev_err(hub->intfdev, "resubmit --> %d\n", status);
+> +		mod_timer(&hub->irq_urb_retry,
+> +			  jiffies + msecs_to_jiffies(MSEC_PER_SEC));
+> +	}
+>  }
+>  
+>  /* USB 2.0 spec Section 11.24.2.3 */
+> @@ -1268,6 +1288,7 @@ static void hub_quiesce(struct usb_hub *hub, enum hub_quiescing_type type)
+>  	}
+>  
+>  	/* Stop hub_wq and related activity */
+> +	del_timer_sync(&hub->irq_urb_retry);
 
-> Add PM suspend callbacks to the msm core driver that select the
-> sleep and default pinctrl states. Then wire those callbacks up
-> in the sdm845 driver, for those boards that may have GPIO hogs
-> that need to change state during suspend.
->
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->
-> Changes in v2:
->  - Moved dev_pm_ops structure to pinctrl-msm [Bjorn]
+That is a race condition. You kill the timer here, but the URB may
+still be in flight. And if it fails, it will restart the error
+handler. You have to introduce a flag or poison the URB.
 
-Patch applied with Bj=C3=B6rn's ACK.
+>  	usb_kill_urb(hub->urb);
+>  	if (hub->has_indicators)
+>  		cancel_delayed_work_sync(&hub->leds);
+> 
 
-Yours,
-Linus Walleij
+	Regards
+		Oliver
+
