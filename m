@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B6DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901D9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D607420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57CBA20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/8OC1Nd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D607420870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRzSCa6U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57CBA20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731226AbeKTC6A (ORCPT
+        id S1731239AbeKTC6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:58:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56872 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56924 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730122AbeKTC57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:57:59 -0500
+        id S1730122AbeKTC6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:58:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 537352086A;
-        Mon, 19 Nov 2018 16:33:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA3F42086A;
+        Mon, 19 Nov 2018 16:33:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645231;
-        bh=YFNXikzqD/rmKLDlYTIAt8DFP6cckuzT6Db6qHwZbeo=;
+        s=default; t=1542645234;
+        bh=mCoKHwDc8CA275aNiFR+LzNptPo/V5/D0tMHFphCumY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c/8OC1NdGY5Jft5WwU+h2h0mokYBtUJm4/d3b6243LDvBsuUMZda1zo8Z0Oq6ckxB
-         Ec8nQ2CdUwuuc+Q5G3uXhRVGJC7G71BPMKG1DW6EBwot2ldpoF03SdOrxEI8UkrctE
-         I5tQK0gTiAjZwpSPJcJqaFiIYVA/viLWuSlSfVqY=
+        b=pRzSCa6UBhl7kb+VeUZWMQhenqyeckUee+a/BA3rVsTJvtKWIxWQNSyUn8tLzj/B3
+         1rk6vWaUA01/WNwsN4q3tOGl7mMsXQiVUErzU/VBa05/dBfDtS7y6NFDnQGnvhfXic
+         rBqzjF4E1D9G+t+xLEyyy9vSrIlfcDZwgfPIumgI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.19 086/205] Revert "ceph: fix dentry leak in splice_dentry()"
-Date:   Mon, 19 Nov 2018 17:26:33 +0100
-Message-Id: <20181119162631.564218605@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>
+Subject: [PATCH 4.19 087/205] thermal: core: Fix use-after-free in thermal_cooling_device_destroy_sysfs
+Date:   Mon, 19 Nov 2018 17:26:34 +0100
+Message-Id: <20181119162631.731999000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,41 +64,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit efe328230dc01aa0b1269aad0b5fae73eea4677a upstream.
+commit 3c587768271e9c20276522025729e4ebca51583b upstream.
 
-This reverts commit 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3.
+This patch fixes use-after-free that was detected by KASAN. The bug is
+triggered on a CPUFreq driver module unload by freeing 'cdev' on device
+unregister and then using the freed structure during of the cdev's sysfs
+data destruction. The solution is to unregister the sysfs at first, then
+destroy sysfs data and finally release the cooling device.
 
-splice_dentry() is used by three places. For two places, req->r_dentry
-is passed to splice_dentry(). In the case of error, req->r_dentry does
-not get updated. So splice_dentry() should not drop reference.
-
-Cc: stable@vger.kernel.org # 4.18+
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Cc: <stable@vger.kernel.org> # v4.17+
+Fixes: 8ea229511e06 ("thermal: Add cooling device's statistics in sysfs")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/inode.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/thermal/thermal_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1132,8 +1132,12 @@ static struct dentry *splice_dentry(stru
- 	if (IS_ERR(realdn)) {
- 		pr_err("splice_dentry error %ld %p inode %p ino %llx.%llx\n",
- 		       PTR_ERR(realdn), dn, in, ceph_vinop(in));
--		dput(dn);
--		dn = realdn; /* note realdn contains the error */
-+		dn = realdn;
-+		/*
-+		 * Caller should release 'dn' in the case of error.
-+		 * If 'req->r_dentry' is passed to this function,
-+		 * caller should leave 'req->r_dentry' untouched.
-+		 */
- 		goto out;
- 	} else if (realdn) {
- 		dout("dn %p (%d) spliced with %p (%d) "
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -1102,8 +1102,9 @@ void thermal_cooling_device_unregister(s
+ 	mutex_unlock(&thermal_list_lock);
+ 
+ 	ida_simple_remove(&thermal_cdev_ida, cdev->id);
+-	device_unregister(&cdev->device);
++	device_del(&cdev->device);
+ 	thermal_cooling_device_destroy_sysfs(cdev);
++	put_device(&cdev->device);
+ }
+ EXPORT_SYMBOL_GPL(thermal_cooling_device_unregister);
+ 
 
 
