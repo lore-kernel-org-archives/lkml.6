@@ -2,140 +2,220 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2970C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA4EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B82D2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:27:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B82D2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=au1.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EBC152080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 00:31:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EMnhyVtK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBC152080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbeKSKtG (ORCPT
+        id S1727643AbeKSKxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 05:49:06 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52354 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727761AbeKSKtG (ORCPT
+        Mon, 19 Nov 2018 05:53:15 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38609 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727223AbeKSKxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 05:49:06 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJ0IZcM027251
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 19:27:16 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nujd38m02-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 19:27:15 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <andrew.donnellan@au1.ibm.com>;
-        Mon, 19 Nov 2018 00:27:14 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Nov 2018 00:27:11 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJ0RAwo59768948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 00:27:10 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B5B152051;
-        Mon, 19 Nov 2018 00:27:10 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 26BFF52052;
-        Mon, 19 Nov 2018 00:27:10 +0000 (GMT)
-Received: from [9.102.56.191] (unknown [9.102.56.191])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 56000A01E6;
-        Mon, 19 Nov 2018 11:27:08 +1100 (AEDT)
-Subject: Re: [PATCH] misc: cxl: Use device_type helpers to access the node
- type
-To:     Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linuxppc-dev@lists.ozlabs.org
-References: <20181116221104.23024-6-robh@kernel.org>
-From:   Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Date:   Mon, 19 Nov 2018 11:27:07 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 19 Nov 2018 05:53:14 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x64so16794140vsa.5
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 16:31:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=J9jWcfM1lf5Nw19hr8EfJaBkuFiDFUVblfNS2Vd9O1k=;
+        b=EMnhyVtK1+EPIhTkuWH9jZquX1YryPdAH9BWE8aur4SQcSI0IkTrrItGCjdc5IhHOB
+         8TtW3lp7UbMF7NJ6SAcCzvcMXFfDsALslnGlXnk2m52JPSHYAw5jw57xI0LnoyNaRsKo
+         woRpIVcDgBrRzjxtx7atH22htgAi62juqUP2nLfWn4hyBdanZGe8L4BpvsBFDEuxmvls
+         1EJAQcT34pU5ug6GbgZlir0lVY5uBavTh4JpkElbUhUvlqeQr8tPf15fdl655RnblSQw
+         mrDI3eisWxS1JvyE2lCiq+S1qQMJtKrKAuv8d1VEUGS+0PQhkHjrxU3Ax4E1YwaQlekJ
+         2E7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=J9jWcfM1lf5Nw19hr8EfJaBkuFiDFUVblfNS2Vd9O1k=;
+        b=BhYhJayixe9NJ3BBV+mESrTxBjiydpDSYl6tZLpxn1njZHzYZB9ysdRri8ZeMK2eR8
+         nS9sXKiFhR1yt9xsCelPfklQjoOq98bU/vDgcm7ZlGkjLiZ384P+dhWu3IAg9CGZzUBC
+         RkJyTbYbMrf+GJE9ooWGHftaiNIqz7TEkvE/JHXcEfNyYrE8S6WdvaZjLFMJnF0p/liK
+         5kvAqKsIQXp6IXB2HNJXtRYwSoy2dyqK/FSV1xmZJG/5nHfh9KwkUwLEJuE7MOV1jKcW
+         IICaO0jQc90odt0O0LH6fumKJQrgpsAAPcuz+8m2trv7NGNbik4OjKlw3JmEqPjGvTvE
+         oURQ==
+X-Gm-Message-State: AGRZ1gLK3z1S+2OtTRTvM1wfulF9nIl7T+2vEVZswSQCLryuP8LuIwgQ
+        vcuTZad38BWVuw38bLs7RzEpIadr1CHipvJVEGiLDw==
+X-Google-Smtp-Source: AJdET5d4cO8y4XUvAwxeaidLZktke8D25cB8GIS9nmIQp+3wKAUiM8Ry8TI+aepTmjj0rXKYg7Xv/BlOs0+5Ct/9F/E=
+X-Received: by 2002:a67:b44:: with SMTP id 65mr8165388vsl.77.1542587483477;
+ Sun, 18 Nov 2018 16:31:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181116221104.23024-6-robh@kernel.org>
-Content-Language: en-AU
-X-TM-AS-GCONF: 00
-x-cbid: 18111900-0016-0000-0000-00000228E128
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111900-0017-0000-0000-0000328110F2
-Message-Id: <4946be8a-887b-470e-0771-313bf222e777@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-18_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811190001
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Sun, 18 Nov 2018 16:31:22
+ -0800 (PST)
+In-Reply-To: <20181118213021.24asgwkci3do6oby@brauner.io>
+References: <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
+ <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
+ <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com>
+ <CAKOZuevRq-igh06zS_nsGG400zXrKFCtajpEG9-xgU2+Rtb2Pw@mail.gmail.com>
+ <20181118190504.ixglsqbn6mxkcdzu@yavin> <CAKOZuetfqvn1uVqKJ=16iEzG4g449YOjC_tLM60eKBSkv9u+bQ@mail.gmail.com>
+ <608F2959-800D-46EE-A7CD-8C972ACD2F02@amacapital.net> <20181118204317.seaztq7fqmysucns@brauner.io>
+ <CAKOZueuWzu2GuJ-w3yb01P9uyO1WniKG+i=BUsweVdA-KgEjhw@mail.gmail.com>
+ <20181118212336.53hh3qbjughrtc2l@brauner.io> <20181118213021.24asgwkci3do6oby@brauner.io>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Sun, 18 Nov 2018 16:31:22 -0800
+Message-ID: <CAKOZuetT8mzZJR-K_W0VM7Dg1c1SnH8tW-HXxMT77yS0DE453w@mail.gmail.com>
+Subject: Re: [PATCH] proc: allow killing processes via file descriptors
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jan Engelhardt <jengelh@inai.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/11/18 9:11 am, Rob Herring wrote:
-> Remove directly accessing device_node.type pointer and use the accessors
-> instead. This will eventually allow removing the type pointer.
-> 
+On Sun, Nov 18, 2018 at 1:30 PM, Christian Brauner <christian@brauner.io> wrote:
+> On Sun, Nov 18, 2018 at 10:23:36PM +0100, Christian Brauner wrote:
+>> On Sun, Nov 18, 2018 at 12:54:10PM -0800, Daniel Colascione wrote:
+>> > On Sun, Nov 18, 2018 at 12:43 PM, Christian Brauner
+>> > <christian@brauner.io> wrote:
+>> > > On Sun, Nov 18, 2018 at 01:28:41PM -0700, Andy Lutomirski wrote:
+>> > >>
+>> > >>
+>> > >> > On Nov 18, 2018, at 12:44 PM, Daniel Colascione <dancol@google.com> wrote:
+>> > >> >
+>> > >>
+>> > >> >
+>> > >> > That is, I'm proposing an API that looks like this:
+>> > >> >
+>> > >> > int process_kill(int procfs_dfd, int signo, const union sigval value)
+>> > >> >
+>> > >> > If, later, process_kill were to *also* accept process-capability FDs,
+>> > >> > nothing would break.
+>> > >>
+>> > >> Except that this makes it ambiguous to the caller as to whether their current creds are considered.  So it would need to be a different syscall or at least a flag.  Otherwise a lot of those nice theoretical properties go away.
+>> > >
+>> > > I can add a flag argument
+>> > > int process_signal(int procfs_dfd, int signo, siginfo_t *info, int flags)
+>> > > The way I see it process_signal() should be equivalent to kill(pid, signal) for now.
+>> > > That is siginfo_t is cleared and set to:
+>> > >
+>> > > info.si_signo = sig;
+>> > > info.si_errno = 0;
+>> > > info.si_code = SI_USER;
+>> > > info.si_pid = task_tgid_vnr(current);
+>> > > info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
+>> >
+>> > That makes sense. I just don't want to get into a situation where
+>> > callers feel that they *have* to use the PID-based APIs to send a
+>> > signal because process_kill doesn't offer some bit of functionality.
+>>
+>> Yeah.
+>>
+>> >
+>> > Are you imagining something like requiring info t be NULL unless flags
+>> > contains some "I have a siginfo_t" value?
+>>
+>> Well, I was actually thinking about something like:
+>>
+>> /**
+>>  *  sys_process_signal - send a signal to a process trough a process file descriptor
+>>  *  @fd: the file descriptor of the process
+>>  *  @sig: signal to be sent
+>>  *  @info: the signal info
+>>  *  @flags: future flags to be passed
+>>  */
+>> SYSCALL_DEFINE4(process_signal, int, fd, int, sig, siginfo_t __user *, info,
+>>               int, flags)
+>> {
+>>       struct pid *pid;
+>>       struct fd *f;
+>>       kernel_siginfo_t kinfo;
+>>
+>>       /* Do not allow users to pass garbage. */
+>>       if (flags)
+>>               return -EINVAL;
+>>
+>>       int ret = __copy_siginfo_from_user(sig, &kinfo, info);
+>>       if (unlikely(ret))
+>>               return ret;
+>>
+>>       /* For now, enforce that caller's creds are used. */
+>>       kinfo.si_pid = task_tgid_vnr(current);
+>>       kinfo.si_uid = from_kuid_munged(current_user_ns(), current_uid());
 
-This description doesn't quite match what's being fixed - we're not 
-accessing the .type pointer, we're getting the device_type property 
-directly.
+How about doing it this way? If info is NULL, act like kill(2);
+otherwise, act like rt_sigqueueinfo(2).
 
-> Cc: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-> Cc: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+(Not actual working or compiled code.)
 
-Apart from that:
+SYSCALL_DEFINE4(process_signal, int, fd, int, sig, siginfo_t __user *, info,
+              int, flags)
+{
+        struct fd f = { 0 };
+        kernel_siginfo_t kinfo;
+        int ret;
 
-Acked-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+        /* Make API extension possible.  */
+        ret = -EINVAL;
+        if (flags)
+                goto out;
 
-> ---
->   drivers/misc/cxl/pci.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/misc/cxl/pci.c b/drivers/misc/cxl/pci.c
-> index b66d832d3233..c79ba1c699ad 100644
-> --- a/drivers/misc/cxl/pci.c
-> +++ b/drivers/misc/cxl/pci.c
-> @@ -1718,7 +1718,6 @@ int cxl_slot_is_switched(struct pci_dev *dev)
->   {
->   	struct device_node *np;
->   	int depth = 0;
-> -	const __be32 *prop;
->   
->   	if (!(np = pci_device_to_OF_node(dev))) {
->   		pr_err("cxl: np = NULL\n");
-> @@ -1727,8 +1726,7 @@ int cxl_slot_is_switched(struct pci_dev *dev)
->   	of_node_get(np);
->   	while (np) {
->   		np = of_get_next_parent(np);
-> -		prop = of_get_property(np, "device_type", NULL);
-> -		if (!prop || strcmp((char *)prop, "pciex"))
-> +		if (!of_node_is_type(np, "pciex"))
->   			break;
->   		depth++;
->   	}
-> 
+        ret = -EBADF;
+        f = fdget(fd);
+        if (!f.file)
+                goto out;
 
--- 
-Andrew Donnellan              OzLabs, ADL Canberra
-andrew.donnellan@au1.ibm.com  IBM Australia Limited
+        ret = mumble_mumble_check_real_proc_file(f.file);
+        if (ret)
+                goto out;
 
+        /* Act like kill(2) or rt_sigqueueinfo(2) depending on whether
+         * the user gave us a siginfo structure.
+         */
+        if (info) {
+                ret = __copy_siginfo_from_user(sig, &kinfo, info);
+                if (ret)
+                        goto out;
+                /* Combine this logic with rt_sigqueueinfo(2) */
+                ret = -EPERM;
+                if ((info->si_code >= 0 || info->si_code == SI_TKILL) &&
+                    (task_pid_vnr(current) != pid))
+                        goto out;
+
+        } else {
+                /* Combine this logic with kill(2) */
+                clear_siginfo(&kinfo);
+                kinfo.si_signo = sig;
+                kinfo.si_errno = 0;
+                kinfo.si_code = SI_USER;
+                kinfo.si_pid = task_tgid_vnr(current);
+                kinfo.si_uid = from_kuid_munged(current_user_ns(),
+current_uid());
+        }
+
+        ret = kill_pid_info(sig, &kinfo, proc_pid(file_inode(f.file)));
+
+out:
+        if (f.file)
+                fput(f);
+        return ret;
+}
