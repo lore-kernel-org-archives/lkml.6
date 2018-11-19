@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512B4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B596C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AAD7224B3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24C8B224B3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKOV8/n5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AAD7224B3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+YKFTMj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C8B224B3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406059AbeKTD1D (ORCPT
+        id S2406071AbeKTD1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:27:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40816 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:27:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405038AbeKTD1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:27:02 -0500
+        id S2405038AbeKTD1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:27:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E832224B3;
-        Mon, 19 Nov 2018 17:02:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF3B820659;
+        Mon, 19 Nov 2018 17:02:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646965;
-        bh=Xah0VkU2b0lUZfEdC3EvfcP8uz7DkN0YemocTkoOvuM=;
+        s=default; t=1542646968;
+        bh=MEZ8F+QDGW5xGKRqkivbzN4dk4/tNY6m2psXfw1VWDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YKOV8/n5WLNKcqUbMnvfXHmaIdREPdZfYNwF4D/P75Jl2fGbdGePjiub+YkIpekF+
-         kdb4ueRd4IyWYTYk/Ru+ezAVJHCUmsabxmvIwwy1/9IZT23Dqh2q0Vh8w5HRMXPqH9
-         kGhIDDBKrJc2EKsJ3ra/JJzfqkpu64JseVsGHo2o=
+        b=W+YKFTMj6PBqIDj6kfzeu/wNsfZbWcC+s7EqoPpNIsvf8NmgkChtTlgOo8/y+zWeZ
+         eGH7DkYZk62Stw/5s3gp6wn7OcaI2KzalFhaxsFeof5uw31h4Eq3O3FXf4n8w8DZkF
+         7SeZPjV/PSNh55mtlU+CxQn/yqjUF0XXFX2NiBFs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
-        Clint Taylor <clinton.a.taylor@intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.4 160/160] drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
-Date:   Mon, 19 Nov 2018 17:29:59 +0100
-Message-Id: <20181119162644.562294266@linuxfoundation.org>
+        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.4 147/160] ext4: fix buffer leak in ext4_xattr_move_to_block() on error path
+Date:   Mon, 19 Nov 2018 17:29:46 +0100
+Message-Id: <20181119162643.924568137@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,60 +63,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Clint Taylor <clinton.a.taylor@intel.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 6503493145cba4413ecd3d4d153faeef4a1e9b85 upstream.
+commit 6bdc9977fcdedf47118d2caf7270a19f4b6d8a8f upstream.
 
-HDMI 2.0 594Mhz modes were incorrectly selecting 25.200Mhz Automatic N value
-mode instead of HDMI specification values.
-
-V2: Fix 88.2 Hz N value
-
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1540493521-1746-2-git-send-email-clinton.a.taylor@intel.com
-(cherry picked from commit 5a400aa3c562c4a726b4da286e63c96db905ade1)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Fixes: 3f2571c1f91f ("ext4: factor out xattr moving")
+Fixes: 6dd4ee7cab7e ("ext4: Expand extra_inodes space per ...")
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 2.6.23
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_audio.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ fs/ext4/xattr.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/i915/intel_audio.c
-+++ b/drivers/gpu/drm/i915/intel_audio.c
-@@ -76,6 +76,9 @@ static const struct {
- /* HDMI N/CTS table */
- #define TMDS_297M 297000
- #define TMDS_296M 296703
-+#define TMDS_594M 594000
-+#define TMDS_593M 593407
-+
- static const struct {
- 	int sample_rate;
- 	int clock;
-@@ -96,6 +99,20 @@ static const struct {
- 	{ 176400, TMDS_297M, 18816, 247500 },
- 	{ 192000, TMDS_296M, 23296, 281250 },
- 	{ 192000, TMDS_297M, 20480, 247500 },
-+	{ 44100, TMDS_593M, 8918, 937500 },
-+	{ 44100, TMDS_594M, 9408, 990000 },
-+	{ 48000, TMDS_593M, 5824, 562500 },
-+	{ 48000, TMDS_594M, 6144, 594000 },
-+	{ 32000, TMDS_593M, 5824, 843750 },
-+	{ 32000, TMDS_594M, 3072, 445500 },
-+	{ 88200, TMDS_593M, 17836, 937500 },
-+	{ 88200, TMDS_594M, 18816, 990000 },
-+	{ 96000, TMDS_593M, 11648, 562500 },
-+	{ 96000, TMDS_594M, 12288, 594000 },
-+	{ 176400, TMDS_593M, 35672, 937500 },
-+	{ 176400, TMDS_594M, 37632, 990000 },
-+	{ 192000, TMDS_593M, 23296, 562500 },
-+	{ 192000, TMDS_594M, 24576, 594000 },
- };
- 
- /* get AUD_CONFIG_PIXEL_CLOCK_HDMI_* value for mode */
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1490,6 +1490,8 @@ cleanup:
+ 	kfree(buffer);
+ 	if (is)
+ 		brelse(is->iloc.bh);
++	if (bs)
++		brelse(bs->bh);
+ 	kfree(is);
+ 	kfree(bs);
+ 	brelse(bh);
 
 
