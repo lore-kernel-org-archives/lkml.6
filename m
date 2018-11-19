@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADBCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43E9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1EE2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF0F3206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ke/0/CBM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1EE2086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QqlnneD4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0F3206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbeKTDBX (ORCPT
+        id S1732155AbeKTDBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:01:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33220 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:01:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730931AbeKTDBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:01:21 -0500
+        id S1730931AbeKTDBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:01:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68AB9206BA;
-        Mon, 19 Nov 2018 16:37:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED37F206BA;
+        Mon, 19 Nov 2018 16:37:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645432;
-        bh=oHZ+lvbQWIkgvMN6WuljezjmZ87zrkHQyfEyCdXM5Ec=;
+        s=default; t=1542645435;
+        bh=GwfUnjoC0ei/oCqy/n10/qfXvc7sVONwSY7e2z4CFkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ke/0/CBM4U0eJxEoPxnfiOGf1jg5u9fKhv5JbFdcSpHzr54adgbu8bAaKNJw8Wk1N
-         GWWH68G76HCylXZ8283+JM2P8CIBgdyFkyet0DXMXJ1mRPvtRv6buu7xjaCU0/kHHC
-         gAmu2PpTBmyQBP6owcbr/FYJm+xmqfKrbyb1iTlg=
+        b=QqlnneD4q7Zto8ebo/DBv9s1GEU5DH3SaDzQ8mMhSZokw48xzXCCzkR4FsUM9K3t2
+         Sq2vUSOAFFOxo3ITEqe5ZUHKpsAxzj3eDmL+6dom+R/wTfiqAQmEf8SYCdKg0t0gnm
+         SEGq6JoK6xv5IHl5AdeZw3UTqG5lZ/At9AifTu0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 161/205] fuse: fix possibly missed wake-up after abort
-Date:   Mon, 19 Nov 2018 17:27:48 +0100
-Message-Id: <20181119162639.608639347@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@gmx.us>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.19 162/205] selinux: check length properly in SCTP bind hook
+Date:   Mon, 19 Nov 2018 17:27:49 +0100
+Message-Id: <20181119162639.690402875@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -61,60 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 2d84a2d19b6150c6dbac1e6ebad9c82e4c123772 upstream.
+commit c138325fb8713472d5a0c3c7258b9131bab40725 upstream.
 
-In current fuse_drop_waiting() implementation it's possible that
-fuse_wait_aborted() will not be woken up in the unlikely case that
-fuse_abort_conn() + fuse_wait_aborted() runs in between checking
-fc->connected and calling atomic_dec(&fc->num_waiting).
+selinux_sctp_bind_connect() must verify if the address buffer has
+sufficient length before accessing the 'sa_family' field. See
+__sctp_connect() for a similar check.
 
-Do the atomic_dec_and_test() unconditionally, which also provides the
-necessary barrier against reordering with the fc->connected check.
+The length of the whole address ('len') is already checked in the
+callees.
 
-The explicit smp_mb() in fuse_wait_aborted() is not actually needed, since
-the spin_unlock() in fuse_abort_conn() provides the necessary RELEASE
-barrier after resetting fc->connected.  However, this is not a performance
-sensitive path, and adding the explicit barrier makes it easier to
-document.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: b8f95e5d13f5 ("fuse: umount should wait for all requests")
-Cc: <stable@vger.kernel.org> #v4.19
+Reported-by: Qian Cai <cai@gmx.us>
+Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+Cc: <stable@vger.kernel.org> # 4.17+
+Cc: Richard Haines <richard_c_haines@btinternet.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Tested-by: Qian Cai <cai@gmx.us>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ security/selinux/hooks.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -129,9 +129,13 @@ static bool fuse_block_alloc(struct fuse
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(str
+ 	addr_buf = address;
  
- static void fuse_drop_waiting(struct fuse_conn *fc)
- {
--	if (fc->connected) {
--		atomic_dec(&fc->num_waiting);
--	} else if (atomic_dec_and_test(&fc->num_waiting)) {
-+	/*
-+	 * lockess check of fc->connected is okay, because atomic_dec_and_test()
-+	 * provides a memory barrier mached with the one in fuse_wait_aborted()
-+	 * to ensure no wake-up is missed.
-+	 */
-+	if (atomic_dec_and_test(&fc->num_waiting) &&
-+	    !READ_ONCE(fc->connected)) {
- 		/* wake up aborters */
- 		wake_up_all(&fc->blocked_waitq);
- 	}
-@@ -2167,6 +2171,8 @@ EXPORT_SYMBOL_GPL(fuse_abort_conn);
- 
- void fuse_wait_aborted(struct fuse_conn *fc)
- {
-+	/* matches implicit memory barrier in fuse_drop_waiting() */
-+	smp_mb();
- 	wait_event(fc->blocked_waitq, atomic_read(&fc->num_waiting) == 0);
- }
- 
+ 	while (walk_size < addrlen) {
++		if (walk_size + sizeof(sa_family_t) > addrlen)
++			return -EINVAL;
++
+ 		addr = addr_buf;
+ 		switch (addr->sa_family) {
+ 		case AF_UNSPEC:
 
 
