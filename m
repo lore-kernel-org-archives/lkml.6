@@ -3,42 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADC5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84755C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19FFC20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:20:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19FFC20823
+	by mail.kernel.org (Postfix) with ESMTP id 529C720989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:21:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 529C720989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeKSVnw (ORCPT
+        id S1728685AbeKSVoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:43:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50964 "EHLO mx1.suse.de"
+        Mon, 19 Nov 2018 16:44:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51076 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727857AbeKSVnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:43:52 -0500
+        id S1727857AbeKSVoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:44:55 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 73358AE1D;
-        Mon, 19 Nov 2018 11:20:32 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 12:20:32 +0100
-Message-ID: <s5hbm6l71q7.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id EDD24ACE8;
+        Mon, 19 Nov 2018 11:21:34 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 12:21:33 +0100
+Message-ID: <s5ha7m571oi.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Connor McAdams" <conmanx360@gmail.com>
-Cc:     <alsa-devel@alsa-project.org>,
-        "Alastair Bridgewater" <alastair.bridgewater@gmail.com>,
+To:     "Rob Herring" <robh@kernel.org>
+Cc:     <alsa-devel@alsa-project.org>, <linuxppc-dev@lists.ozlabs.org>,
         "Jaroslav Kysela" <perex@perex.cz>,
-        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] ALSA: hda/ca0132 - fix AE-5 pincfg
-In-Reply-To: <20181116192517.5128-2-conmanx360@gmail.com>
-References: <20181116192517.5128-1-conmanx360@gmail.com>
-        <20181116192517.5128-2-conmanx360@gmail.com>
+        "Johannes Berg" <johannes@sipsolutions.net>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: aoa: Use device_type helpers to access the node type
+In-Reply-To: <20181116221104.23024-8-robh@kernel.org>
+References: <20181116221104.23024-8-robh@kernel.org>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,13 +47,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 20:24:56 +0100,
-Connor McAdams wrote:
+On Fri, 16 Nov 2018 23:11:04 +0100,
+Rob Herring wrote:
 > 
-> This patch fixes the pincfg assignment for the AE-5, which was
-> previously using the Recon3D pincfg's by mistake.
+> Remove directly accessing device_node.type pointer and use the accessors
+> instead. This will eventually allow removing the type pointer.
 > 
-> Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+> Replace the open coded iterating over child nodes with
+> for_each_child_of_node() while we're here.
+> 
+> Cc: Johannes Berg <johannes@sipsolutions.net>
+> Cc: Jaroslav Kysela <perex@perex.cz>
+> Cc: Takashi Iwai <tiwai@suse.com>
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
 Applied, thanks.
 
