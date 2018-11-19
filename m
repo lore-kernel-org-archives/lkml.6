@@ -2,77 +2,101 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D15C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D233C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1485C2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:49:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1485C2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C4862086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:57:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4862086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732199AbeKTKP6 (ORCPT
+        id S1732209AbeKTKXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:15:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47118 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727583AbeKTKP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:15:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 691C5B037;
-        Mon, 19 Nov 2018 23:49:48 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 00:49:46 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
- protection modes
-In-Reply-To: <591a5109-ffef-b17f-38e3-12082d229451@intel.com>
-Message-ID: <nycvar.YFH.7.76.1811200048480.21108@cbobk.fhfr.pm>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <alpine.DEB.2.21.1811192133240.1669@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811192153470.21108@cbobk.fhfr.pm>
- <49d27ed3-dc44-042c-4941-31dedb2a56d2@linux.intel.com> <alpine.DEB.2.21.1811192353170.1669@nanos.tec.linutronix.de> <591a5109-ffef-b17f-38e3-12082d229451@intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 20 Nov 2018 05:23:25 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:35419 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727583AbeKTKXZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:23:25 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 32F9C80910; Tue, 20 Nov 2018 00:57:11 +0100 (CET)
+Date:   Tue, 20 Nov 2018 00:57:13 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Ayman Bagabas <ayman.bagabas@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
+Message-ID: <20181119235713.GB7367@amd>
+References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+ <20181108171701.4444-4-ayman.bagabas@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
+Content-Disposition: inline
+In-Reply-To: <20181108171701.4444-4-ayman.bagabas@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018, Dave Hansen wrote:
 
-> > What? IBPB makes tons of sense even without STIBP.
-> 
-> I'm lost. :)
-> 
-> I don't think anyone is talking about using STIBP *everywhere* that IBPB
-> is in-use.
-> 
-> We're just guessing that, if anybody is paranoid enough to ask for IBPB,
-> *and* they have SMT, they almost certainly want STIBP too.
+--BwCQnh7xodEAoBMC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I think you are not lost :) and this is exactly what makes sense, and what 
-Tim's patchset implements.
+Hi!
 
--- 
-Jiri Kosina
-SUSE Labs
+> Some of Huawei laptops come with a LED in the micmute key. This patch
+> enables and disable this LED accordingly.
+>=20
+> Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 
+NAK.
+
+We already have a LED subsystem.=20
+
+> +#if IS_ENABLED(CONFIG_HUAWEI_LAPTOP)
+> +#include <linux/platform_data/x86/huawei_wmi.h>
+> +
+> +static int (*huawei_wmi_micmute_led_set_func)(bool);
+> +
+
+So we should not be doing this.
+
+Thinkpad ACPI module exports its LEDs there, for example.
+
+Thanks,
+
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--BwCQnh7xodEAoBMC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvzTdkACgkQMOfwapXb+vJHtgCfSrSy/HEgobRBwkYpnbJZM5jI
+n7sAoKGojJc/+y6lgXlowIZ45WRVDCd0
+=9SXS
+-----END PGP SIGNATURE-----
+
+--BwCQnh7xodEAoBMC--
