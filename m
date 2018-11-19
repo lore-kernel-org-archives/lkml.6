@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B48CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393B3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71242148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 021BA2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZtZUU6vD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71242148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wF4KzTih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021BA2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407028AbeKTDaY (ORCPT
+        id S2407042AbeKTDa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45364 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405879AbeKTDaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:23 -0500
+        id S2405879AbeKTDaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 498962148E;
-        Mon, 19 Nov 2018 17:06:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB2DA2146D;
+        Mon, 19 Nov 2018 17:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647165;
-        bh=5+cBpMdwX3ZT98DuPBNfKV+QJI4z6KXOF/wigD9eJgs=;
+        s=default; t=1542647168;
+        bh=KAq5HVmQFyKAOeoErODeSYWVAsbH8Z1mTW/6C5VCbAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZtZUU6vDODDzEwb1BVttUxpyUrag0pcVi6110aEktqV3eI2lz++B+G6i3XwjGZwje
-         rtjKugTdcSEEQwY4YMOQCmX+4XU89M+PSmCFH6Hap12kbxRTIormnyGZ+C67ryFKMZ
-         Tx8qP71/THmuIReG0yOU/V4xj/UDZy3dgmrrHQFg=
+        b=wF4KzTihy2cMdBvuywfUGpp9znuL+r8M3pqAY5hIyMrz7AWLnza+Ht9R04zCbf0QR
+         gaKGNuQYVBQLfG2GSopSZyXzHpXGDr0Nv4XEKD9XqxW+UeA3yHP8uizgpmDuWJ18Bc
+         yK7rfMBdNb80lEQYqvpTZGb5X8aZclyZWwJKxvJI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        stable@vger.kernel.org, Dmitry Monakhov <dmonakhov@gmail.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 3.18 76/90] ext4: fix possible inode leak in the retry loop of ext4_resize_fs()
-Date:   Mon, 19 Nov 2018 17:29:58 +0100
-Message-Id: <20181119162632.376780865@linuxfoundation.org>
+Subject: [PATCH 3.18 77/90] ext4: avoid buffer leak in ext4_orphan_add() after prior errors
+Date:   Mon, 19 Nov 2018 17:29:59 +0100
+Message-Id: <20181119162632.530216421@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -63,30 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit db6aee62406d9fbb53315fcddd81f1dc271d49fa upstream.
+commit feaf264ce7f8d54582e2f66eb82dd9dd124c94f3 upstream.
 
-Fixes: 1c6bd7173d66 ("ext4: convert file system to meta_bg if needed ...")
+Fixes: d745a8c20c1f ("ext4: reduce contention on s_orphan_lock")
+Fixes: 6e3617e579e0 ("ext4: Handle non empty on-disk orphan link")
+Cc: Dmitry Monakhov <dmonakhov@gmail.com>
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.7
+Cc: stable@kernel.org # 2.6.34
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ext4/namei.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -2028,6 +2028,10 @@ retry:
- 		n_blocks_count_retry = 0;
- 		free_flex_gd(flex_gd);
- 		flex_gd = NULL;
-+		if (resize_inode) {
-+			iput(resize_inode);
-+			resize_inode = NULL;
-+		}
- 		goto retry;
- 	}
- 
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2604,7 +2604,9 @@ int ext4_orphan_add(handle_t *handle, st
+ 			list_del_init(&EXT4_I(inode)->i_orphan);
+ 			mutex_unlock(&sbi->s_orphan_lock);
+ 		}
+-	}
++	} else
++		brelse(iloc.bh);
++
+ 	jbd_debug(4, "superblock will point to %lu\n", inode->i_ino);
+ 	jbd_debug(4, "orphan inode %lu will point to %d\n",
+ 			inode->i_ino, NEXT_ORPHAN(inode));
 
 
