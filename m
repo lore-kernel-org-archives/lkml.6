@@ -2,229 +2,311 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55976C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B32CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0957420871
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28AA42080F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:37:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A5jj4Oa+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0957420871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="GqlOySVn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AA42080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbeKSS6u (ORCPT
+        id S1727122AbeKSTAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:58:50 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39047 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbeKSS6t (ORCPT
+        Mon, 19 Nov 2018 14:00:16 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:17216 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbeKSTAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:58:49 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c72so9812894pfc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 00:35:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=OKGbvDglEgffSrggvr3EYdJVXrnGD5uXE1ImKP89pok=;
-        b=A5jj4Oa+o2MCRB5zPYl9C+Bjx6yl2S9KUkghG0etuqUMzRyZ74IFfwjOSoQOlQc4Th
-         U7bSJw+jbylG8MzAHrSqjGyI4ZO5JZt2IZnFLXHQVnjKeEGgDml7Oqww81SdXoc6Gtk1
-         QnQA99p/IG1OdEF03+B0PlCXhF/aYhUzTLB0Yr/YbKe7zwCm4F/UCz3gaKiKE005tBWR
-         7SgteQosSygfE0pOntXGKFbY3H3IQfDIrbw6QaQ/TKg8+93GUrvubTIBuo5K8cWcB9Fh
-         KDlqCJQl0pkcQaUC5jGP5+/qa3QxYzrL2NszxeW458qBiqEnx0Swy0ucd1bhp8QAGnI7
-         kxnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=OKGbvDglEgffSrggvr3EYdJVXrnGD5uXE1ImKP89pok=;
-        b=Foz3+4cXDkNAst1JmXfJ1ORtdwmxp0NAPIEsQ8LAP8FIvfSpXKL5ao6UlC3PIZIRAO
-         zKKsYsVi3gwRZ0ydBX7fNPybNLlpMD55KGkKLB4WWvmKXVfc+K7dsQCW7sozBskdRnHb
-         6RLuEljOlLEQeDc5FePytdLLIVlaF20hZ1Ls9xb1cOPEidJERn5fLfR59SqnpvhEqIQG
-         JzkeQQRG2AjMSixROk7JA4RuYt5rGtwWMdprY8xLCaoeuNQimotiw7EMdvGcAEGJkaHd
-         eN2exr6+kZDBw2LQsLIz90P+hiacMPALJl8PLcybo1t/xUyBrMl8D02btX1QSAuVP+qk
-         HI8g==
-X-Gm-Message-State: AGRZ1gKPsgwB/aL3ui6gyQvL5tYLEuPkihRUvWPLWJDI5i/1RN7BUUAz
-        VUezHh/rWZtTOR50Ljeq3GormkbQLjc=
-X-Google-Smtp-Source: AJdET5eo4N/gZIo1mAYDvgth9o+Ja5hCj3rYbg7qTB4NF25h+jxfQwzNsPxEsgvSS7xjw9/FYK96uw==
-X-Received: by 2002:a65:4b82:: with SMTP id t2mr19423202pgq.189.1542616552468;
-        Mon, 19 Nov 2018 00:35:52 -0800 (PST)
-Received: from [192.168.1.101] (122-58-176-92-adsl.sparkbb.co.nz. [122.58.176.92])
-        by smtp.gmail.com with ESMTPSA id b2sm50765857pfm.3.2018.11.19.00.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 00:35:51 -0800 (PST)
-Subject: Re: [RFC PATCH v2 07/14] m68k: atari: Convert to clocksource API
-To:     Finn Thain <fthain@telegraphics.com.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <cover.1542589838.git.fthain@telegraphics.com.au>
- <b94b3aed32c0ae0f5de786ffc746ffb20fbe2d1e.1542589838.git.fthain@telegraphics.com.au>
-Cc:     Andreas Schwab <schwab@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen N Chivers <schivers@csc.com.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <c465ebbb-69f8-c42c-c2d0-0e57dffe30a5@gmail.com>
-Date:   Mon, 19 Nov 2018 21:35:27 +1300
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
-MIME-Version: 1.0
-In-Reply-To: <b94b3aed32c0ae0f5de786ffc746ffb20fbe2d1e.1542589838.git.fthain@telegraphics.com.au>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+        Mon, 19 Nov 2018 14:00:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1542616633;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=4rp0IOcMRXkarWXTJM0fuZsUjRA4O3qB2gXsLUSZgMY=;
+        b=GqlOySVnJHlrh1yplzP+l8BbXA+NsiKgGGJslAs0SfLnAD6MnOfd0HS71UuOwmdV/C
+        SzIQTLjQnl5JojpwdNIsuHDEq+8jjiJyLQocO5k5jNqYdkHhW8RmnyypQ1qydKOhA0Ke
+        mg+xMfV3E6iaYmYPbswPhzUUXvVuBBvm5e4k81xcFls0eL1/BE+TkzybwXXlSxpEQkmu
+        dF7//yVH1XluMFWEayWij92rhPfDYnnqWT0NT5xpzfVLtdjHJE8hefJR6gDD1qORoeHT
+        lcK5Rin+hYTm/3fAY1/oPf5iWqJ0VYJjbTtJ3BOPsqluART558w+SXXxt4anm7Xa3zG5
+        QkNA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NMGH/zowDCvpOU="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.4 DYNA|AUTH)
+        with ESMTPSA id c01a4cuAJ8b7Anh
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 19 Nov 2018 09:37:07 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 2/5] gnss: sirf: power on logic for devices without wakeup signal
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20181118215801.12280-3-andreas@kemnade.info>
+Date:   Mon, 19 Nov 2018 09:37:06 +0100
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <55CBD60B-B1CC-46DE-99D8-980D1239E5FF@goldelico.com>
+References: <20181118215801.12280-1-andreas@kemnade.info> <20181118215801.12280-3-andreas@kemnade.info>
+To:     Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
 
-this fixes the ssh timeout issues I reported for the earlier versions. 
-Can't see a large degradation of resolution either.
-
-The race in the previous versions may have been exacerbated in part by 
-an incorrect assumption about the likelihood of counter wrap-around in 
-the old atari_gettimeoffset() implementation. The comment in the code 
-states that the likelihood is just 2%, so skips the interrupt pending 
-bit check if the counter has run down more than 2%. It does not follow 
-that the counter never runs down further than that threshold though. I 
-have found the distribution of counter values observed with interrupt 
-pending to be quite long-tailed, with a 50% threshold just beginning to 
-catch the majority of wrap-arounds.
-
-Your solution to stop the clock instead of allowing a jump backwards is 
-much safer in this context.
-
-Am 19.11.2018 um 14:10 schrieb Finn Thain:
-> Add a platform clocksource by adapting the existing arch_gettimeoffset
-> implementation.
->
-> Normally the MFP timer C interrupt flag would be used to check for
-> timer counter wrap-around. Unfortunately, that flag gets cleared by the
-> MFP itself (due to automatic EOI mode). This means that
-> mfp_timer_c_handler() and atari_read_clk() must race when accounting
-> for counter wrap-around.
->
-> That problem is avoided here by effectively stopping the clock when it
-> might otherwise jump backwards. This harms clock accuracy; the result
-> is not much better than the jiffies clocksource. Also, clock error is
-> no longer uniformly distributed.
->
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+> Am 18.11.2018 um 22:57 schrieb Andreas Kemnade <andreas@kemnade.info>:
+>=20
+> Some Wi2Wi devices do not have a wakeup output, so device state can
+> only be indirectly detected by looking whether there is communitcation
+> over the serial lines.
+> Additionally it checks for the initial state of the device during
+> probing to ensure it is off.
+> Timeout values need to be increased, because the reaction on serial =
+line
+> is slower and are in line  with previous patches by
+> Neil Brown <neilb@suse.de> and  H. Nikolaus Schaller =
+<hns@goldelico.com>.
+>=20
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
-> TODO: find a spare counter for the clocksource, rather than hanging
-> it off the HZ timer.
->
-> It would be simpler to adopt the 'jiffies' clocksource here
-> (c.f. patch for the hp300 platform in this series).
->
-> Changed since v1:
->  - Moved clk_total access to within the irq lock.
->  - Renamed mfp_timer_handler and mfptimer_handler.
->  - Avoid accessing the timer interrupt flag in atari_read_clk(). To
-> get monotonicity, keep track of the previous timer counter value.
-> ---
->  arch/m68k/atari/time.c | 48 +++++++++++++++++++++++++++---------------
->  1 file changed, 31 insertions(+), 17 deletions(-)
->
-> diff --git a/arch/m68k/atari/time.c b/arch/m68k/atari/time.c
-> index fafa20f75ab9..914832e55ec5 100644
-> --- a/arch/m68k/atari/time.c
-> +++ b/arch/m68k/atari/time.c
-> @@ -16,6 +16,7 @@
->  #include <linux/init.h>
->  #include <linux/rtc.h>
->  #include <linux/bcd.h>
-> +#include <linux/clocksource.h>
->  #include <linux/delay.h>
->  #include <linux/export.h>
->
-> @@ -24,12 +25,27 @@
->  DEFINE_SPINLOCK(rtc_lock);
->  EXPORT_SYMBOL_GPL(rtc_lock);
->
-> +static u64 atari_read_clk(struct clocksource *cs);
-> +
-> +static struct clocksource atari_clk = {
-> +	.name   = "mfp",
-> +	.rating = 100,
-> +	.read   = atari_read_clk,
-> +	.mask   = CLOCKSOURCE_MASK(32),
-> +	.flags  = CLOCK_SOURCE_IS_CONTINUOUS,
-> +};
-> +
-> +static u32 clk_total;
-> +static u32 last_timer_count;
-> +
->  static irqreturn_t mfp_timer_c_handler(int irq, void *dev_id)
->  {
->  	irq_handler_t timer_routine = dev_id;
->  	unsigned long flags;
->
->  	local_irq_save(flags);
-> +	last_timer_count = st_mfp.tim_dt_c;
-> +	clk_total += INT_TICKS;
->  	timer_routine(0, NULL);
->  	local_irq_restore(flags);
->
-> @@ -44,32 +60,30 @@ atari_sched_init(irq_handler_t timer_routine)
->      /* start timer C, div = 1:100 */
->      st_mfp.tim_ct_cd = (st_mfp.tim_ct_cd & 15) | 0x60;
->      /* install interrupt service routine for MFP Timer C */
-> -    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, 0, "timer",
-> +    if (request_irq(IRQ_MFP_TIMC, mfp_timer_c_handler, IRQF_TIMER, "timer",
->                      timer_routine))
->  	pr_err("Couldn't register timer interrupt\n");
-> +
-> +    clocksource_register_hz(&atari_clk, INT_CLK);
->  }
->
->  /* ++andreas: gettimeoffset fixed to check for pending interrupt */
->
-> -#define TICK_SIZE 10000
+> drivers/gnss/sirf.c | 97 =
++++++++++++++++++++++++++++++++++++------------------
+> 1 file changed, 65 insertions(+), 32 deletions(-)
+>=20
+> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+> index b5efbb062316..6a0e5c0a2d62 100644
+> --- a/drivers/gnss/sirf.c
+> +++ b/drivers/gnss/sirf.c
+> @@ -22,8 +22,8 @@
+>=20
+> #define SIRF_BOOT_DELAY			500
+> #define SIRF_ON_OFF_PULSE_TIME		100
+> -#define SIRF_ACTIVATE_TIMEOUT		200
+> -#define SIRF_HIBERNATE_TIMEOUT		200
+> +#define SIRF_ACTIVATE_TIMEOUT		1000
+> +#define SIRF_HIBERNATE_TIMEOUT		1000
+>=20
+> struct sirf_data {
+> 	struct gnss_device *gdev;
+> @@ -45,26 +45,14 @@ static int sirf_open(struct gnss_device *gdev)
+> 	int ret;
+>=20
+> 	data->opened =3D true;
+> -	ret =3D serdev_device_open(serdev);
+> -	if (ret)
+> -		return ret;
 > -
-> -/* This is always executed with interrupts disabled.  */
-> -u32 atari_gettimeoffset(void)
-> +static u64 atari_read_clk(struct clocksource *cs)
->  {
-> -  u32 ticks, offset = 0;
+> -	serdev_device_set_baudrate(serdev, data->speed);
+> -	serdev_device_set_flow_control(serdev, false);
+>=20
+> 	ret =3D pm_runtime_get_sync(&serdev->dev);
+> 	if (ret < 0) {
+> 		dev_err(&gdev->dev, "failed to runtime resume: %d\n", =
+ret);
+> 		pm_runtime_put_noidle(&serdev->dev);
+> 		data->opened =3D false;
+> -		goto err_close;
+> 	}
+>=20
+> -	return 0;
 > -
-> -  /* read MFP timer C current value */
-> -  ticks = st_mfp.tim_dt_c;
-> -  /* The probability of underflow is less than 2% */
-> -  if (ticks > INT_TICKS - INT_TICKS / 50)
-> -    /* Check for pending timer interrupt */
-> -    if (st_mfp.int_pn_b & (1 << 5))
-> -      offset = TICK_SIZE;
-> +	unsigned long flags;
-> +	u32 ticks;
->
-> -  ticks = INT_TICKS - ticks;
-> -  ticks = ticks * 10000L / INT_TICKS;
-> +	local_irq_save(flags);
-> +	ticks = st_mfp.tim_dt_c;
-> +	if (ticks > last_timer_count) /* timer wrapped since last interrupt */
-> +		ticks = last_timer_count;
-> +	last_timer_count = ticks;
-> +	ticks = INT_TICKS - ticks;
-> +	ticks += clk_total;
-> +	local_irq_restore(flags);
->
-> -  return (ticks + offset) * 1000;
-> +	return ticks;
->  }
->
->
->
+> -err_close:
+> -	serdev_device_close(serdev);
+> -
+> 	return ret;
+> }
+>=20
+> @@ -73,8 +61,6 @@ static void sirf_close(struct gnss_device *gdev)
+> 	struct sirf_data *data =3D gnss_get_drvdata(gdev);
+> 	struct serdev_device *serdev =3D data->serdev;
+>=20
+> -	serdev_device_close(serdev);
+> -
+> 	pm_runtime_put(&serdev->dev);
+> 	data->opened =3D false;
+> }
+> @@ -109,6 +95,11 @@ static int sirf_receive_buf(struct serdev_device =
+*serdev,
+> 	struct sirf_data *data =3D serdev_device_get_drvdata(serdev);
+> 	struct gnss_device *gdev =3D data->gdev;
+>=20
+> +	if ((!data->wakeup) && (!data->active)) {
+> +		data->active =3D 1;
+> +		wake_up_interruptible(&data->power_wait);
+> +	}
+> +
+> 	/*
+> 	 * we might come here everytime when runtime is resumed
+> 	 * and data is received. Two cases are possible
+> @@ -149,6 +140,25 @@ static int sirf_wait_for_power_state(struct =
+sirf_data *data, bool active,
+> {
+> 	int ret;
+>=20
+> +	/* no wakeup pin, success condition is that
+> +	 * no byte comes in in the period
+> +	 */
+> +	if ((!data->wakeup) && (!active) && (data->active)) {
+> +		/* some bytes might come, so sleep a bit first */
+> +		msleep(timeout);
+> +		data->active =3D false;
+> +		ret =3D =
+wait_event_interruptible_timeout(data->power_wait,
+> +			data->active =3D=3D true, =
+msecs_to_jiffies(timeout));
+> +
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* we are still getting woken up -> timeout */
+> +		if (ret > 0)
+> +			return -ETIMEDOUT;
+> +		return 0;
+> +	}
+> +
+> 	ret =3D wait_event_interruptible_timeout(data->power_wait,
+> 			data->active =3D=3D active, =
+msecs_to_jiffies(timeout));
+> 	if (ret < 0)
+> @@ -203,21 +213,48 @@ static int sirf_set_active(struct sirf_data =
+*data, bool active)
+> static int sirf_runtime_suspend(struct device *dev)
+> {
+> 	struct sirf_data *data =3D dev_get_drvdata(dev);
+> +	int ret;
+>=20
+> 	if (!data->on_off)
+> 		return regulator_disable(data->vcc);
+> +	ret =3D sirf_set_active(data, false);
+>=20
+> -	return sirf_set_active(data, false);
+> +	if (ret)
+> +		dev_err(dev, "failed to deactivate");
+> +
+> +	/* we should close it anyways, so the following receptions
+> +	 * will not run into the empty
+> +	 */
+> +	serdev_device_close(data->serdev);
+> +	return 0;
+> }
+>=20
+> static int sirf_runtime_resume(struct device *dev)
+> {
+> +	int ret;
+> 	struct sirf_data *data =3D dev_get_drvdata(dev);
+> +	ret =3D serdev_device_open(data->serdev);
+> +	if (ret)
+> +		return ret;
+>=20
+> -	if (!data->on_off)
+> -		return regulator_enable(data->vcc);
+> +	serdev_device_set_baudrate(data->serdev, data->speed);
+> +	serdev_device_set_flow_control(data->serdev, false);
+> +
+> +	if (!data->on_off) {
+> +		ret =3D regulator_enable(data->vcc);
+> +		if (ret)
+> +			goto err_close_serdev;
+> +	}
+> +	ret =3D sirf_set_active(data, true);
+> +
+> +	if (!ret)
+> +		return 0;
+>=20
+> -	return sirf_set_active(data, true);
+> +	if (!data->on_off)
+> +		regulator_disable(data->vcc);
+> +err_close_serdev:
+> +	serdev_device_close(data->serdev);
+> +	return ret;
+> }
+>=20
+> static int __maybe_unused sirf_suspend(struct device *dev)
+> @@ -311,18 +348,6 @@ static int sirf_probe(struct serdev_device =
+*serdev)
+> 	if (data->on_off) {
+> 		data->wakeup =3D devm_gpiod_get_optional(dev, =
+"sirf,wakeup",
+> 				GPIOD_IN);
+> -		if (IS_ERR(data->wakeup))
+> -			goto err_put_device;
+> -
+> -		/*
+> -		 * Configurations where WAKEUP has been left not =
+connected,
+> -		 * are currently not supported.
+> -		 */
+> -		if (!data->wakeup) {
+> -			dev_err(dev, "no wakeup gpio specified\n");
+> -			ret =3D -ENODEV;
+> -			goto err_put_device;
+> -		}
+> 	}
+>=20
+> 	if (data->wakeup) {
+> @@ -352,6 +377,13 @@ static int sirf_probe(struct serdev_device =
+*serdev)
+> 	if (IS_ENABLED(CONFIG_PM)) {
+> 		pm_runtime_set_suspended(dev);	/* clear runtime_error =
+flag */
+> 		pm_runtime_enable(dev);
+> +		/* device might be enabled at boot, so lets first enable =
+it,
+> +		 * then disable it to bring it into a clear state
+> +		 */
+
+That is an interesting trick to solve the "device is powered on but =
+kernel does
+not know" problem.
+
+The assumption to make your trick work is that there is nobody besides =
+the
+running kernel who can turn on/off the device so that after this =
+operation,
+the kernel can simply track the power state in a boolean flag.
+
+Since the power control gpio is grabbed by this driver, it can't be =
+exported
+to user-space and hence I think we can take this assumption for granted.
+
+> +		ret =3D pm_runtime_get_sync(dev);
+> +		if (ret)
+> +			goto err_disable_rpm;
+> +		pm_runtime_put(dev);
+> 	} else {
+> 		ret =3D sirf_runtime_resume(dev);
+> 		if (ret < 0)
+> @@ -401,6 +433,7 @@ static const struct of_device_id sirf_of_match[] =3D=
+ {
+> 	{ .compatible =3D "linx,r4" },
+> 	{ .compatible =3D "wi2wi,w2sg0008i" },
+> 	{ .compatible =3D "wi2wi,w2sg0084i" },
+> +	{ .compatible =3D "wi2wi,w2sg0004" },
+> 	{},
+> };
+> MODULE_DEVICE_TABLE(of, sirf_of_match);
+> --=20
+> 2.11.0
+>=20
+> _______________________________________________
+> http://projects.goldelico.com/p/gta04-kernel/
+> Letux-kernel mailing list
+> Letux-kernel@openphoenux.org
+> http://lists.goldelico.com/mailman/listinfo.cgi/letux-kernel
+
+BR,
+Nikolaus
+
