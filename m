@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A0FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3078CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DE9214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5FF21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mY0u65ae"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DE9214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6MyOG07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5FF21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387949AbeKTDHd (ORCPT
+        id S2387965AbeKTDHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41692 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387501AbeKTDHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:32 -0500
+        id S2387501AbeKTDHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21AF72148E;
-        Mon, 19 Nov 2018 16:43:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8809020C01;
+        Mon, 19 Nov 2018 16:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645801;
-        bh=mNtbIhtJs/qIp4gUkqM/TOPMwlk7n+mtlBkwQfk80Yw=;
+        s=default; t=1542645804;
+        bh=KhvDJbfRfvk/YFIempkZroejV0MySe12016TcK3qtyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mY0u65aelbrJoHgK/4bBMaJZXI14+sWozqCfCJjcOxYbtQvdkoLQkepuoUucfIDER
-         UskIa0rSNhh9xZ6Y9QVDpmJMKSufxJmdyqFmxaagY0788nQ6KQsBU/hvPRJ1vzcZHf
-         vhNpQyCyxegk00gRtqDuQG8u2/nIzyxuDK6bwn38=
+        b=b6MyOG07ROIDSyydVYgabCJehWILhzMes6kF6sKD/WcGqwxsUoC9J669lg6GIWpUp
+         0ZMckMjk6EVs+QoMUMZKjyKNFdELv3Ry4zo/SRmoS/iXl81Dxv+686uE0D6d2SasgY
+         BklbDF4k0oBT7wwzS8Xeo7LgZy0xuPEGl45eoDMA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Greg Edwards <gedwards@ddn.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.18 077/171] vhost/scsi: truncate T10 PI iov_iter to prot_bytes
-Date:   Mon, 19 Nov 2018 17:27:53 +0100
-Message-Id: <20181119162631.979338024@linuxfoundation.org>
+        stable@vger.kernel.org, GwanYeong Kim <gy741.kim@gmail.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Borislav Petkov <bp@suse.de>,
+        Alok Kataria <akataria@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        virtualization@lists.linux-foundation.org, x86-ml <x86@kernel.org>
+Subject: [PATCH 4.18 095/171] x86/cpu/vmware: Do not trace vmware_sched_clock()
+Date:   Mon, 19 Nov 2018 17:28:11 +0100
+Message-Id: <20181119162634.211879353@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,47 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Edwards <gedwards@ddn.com>
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-commit 4542d623c7134bc1738f8a68ccb6dd546f1c264f upstream.
+commit 15035388439f892017d38b05214d3cda6578af64 upstream.
 
-Commands with protection information included were not truncating the
-protection iov_iter to the number of protection bytes in the command.
-This resulted in vhost_scsi mis-calculating the size of the protection
-SGL in vhost_scsi_calc_sgls(), and including both the protection and
-data SG entries in the protection SGL.
+When running function tracing on a Linux guest running on VMware
+Workstation, the guest would crash. This is due to tracing of the
+sched_clock internal call of the VMware vmware_sched_clock(), which
+causes an infinite recursion within the tracing code (clock calls must
+not be traced).
 
-Fixes: 09b13fa8c1a1 ("vhost/scsi: Add ANY_LAYOUT support in vhost_scsi_handle_vq")
-Signed-off-by: Greg Edwards <gedwards@ddn.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-Fixes: 09b13fa8c1a1093e9458549ac8bb203a7c65c62a
+Make vmware_sched_clock() not traced by ftrace.
+
+Fixes: 80e9a4f21fd7c ("x86/vmware: Add paravirt sched clock")
+Reported-by: GwanYeong Kim <gy741.kim@gmail.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+CC: Alok Kataria <akataria@vmware.com>
+CC: GwanYeong Kim <gy741.kim@gmail.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Ingo Molnar <mingo@kernel.org>
 Cc: stable@vger.kernel.org
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: virtualization@lists.linux-foundation.org
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181109152207.4d3e7d70@gandalf.local.home
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vhost/scsi.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/vmware.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -964,7 +964,8 @@ vhost_scsi_handle_vq(struct vhost_scsi *
- 				prot_bytes = vhost32_to_cpu(vq, v_req_pi.pi_bytesin);
- 			}
- 			/*
--			 * Set prot_iter to data_iter, and advance past any
-+			 * Set prot_iter to data_iter and truncate it to
-+			 * prot_bytes, and advance data_iter past any
- 			 * preceeding prot_bytes that may be present.
- 			 *
- 			 * Also fix up the exp_data_len to reflect only the
-@@ -973,6 +974,7 @@ vhost_scsi_handle_vq(struct vhost_scsi *
- 			if (prot_bytes) {
- 				exp_data_len -= prot_bytes;
- 				prot_iter = data_iter;
-+				iov_iter_truncate(&prot_iter, prot_bytes);
- 				iov_iter_advance(&data_iter, prot_bytes);
- 			}
- 			tag = vhost64_to_cpu(vq, v_req_pi.tag);
+--- a/arch/x86/kernel/cpu/vmware.c
++++ b/arch/x86/kernel/cpu/vmware.c
+@@ -77,7 +77,7 @@ static __init int setup_vmw_sched_clock(
+ }
+ early_param("no-vmw-sched-clock", setup_vmw_sched_clock);
+ 
+-static unsigned long long vmware_sched_clock(void)
++static unsigned long long notrace vmware_sched_clock(void)
+ {
+ 	unsigned long long ns;
+ 
 
 
