@@ -2,146 +2,79 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA47C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89929C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 864CE206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:33:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=astier-eu.20150623.gappssmtp.com header.i=@astier-eu.20150623.gappssmtp.com header.b="pT7Lq2bW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 864CE206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=astier.eu
+	by mail.kernel.org (Postfix) with ESMTP id 5A118206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:34:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A118206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeKST43 (ORCPT
+        id S1727511AbeKST5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:56:29 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55083 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbeKST43 (ORCPT
+        Mon, 19 Nov 2018 14:57:04 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:55793 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbeKST5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:56:29 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so4552814wma.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 01:33:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=astier-eu.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=C+YkQIieV9jhQ8eitBPzVM0jS7ANYINOLJ2PFNbaG+E=;
-        b=pT7Lq2bWS9j+pIBcmQk1lbDlp3e9+vjTaf+7L5O6nrtfH8v3ctE9guBJ5CZ40dEBDV
-         EFJdcSq450So9gUxwg/LrAMfjdWptpyYVTISURJtV0qacZppL4Te16x2Mm+/cw4O2wel
-         bb6iuUw9Q5TNeYN3NY6ep7gJ+e25SUTM8ZxjUGAuYWkhwuDHf1R5GVseKp4cdpO7VcBu
-         ocnSxzlsPk7fbX83KPqvzeitWVsUjUW1S+XW0Vy9Aj4Z/gNIcV8z4poJfE/NzwNqZnf+
-         EGW7dN4nZlG7Kz3JwyoNzob8A6bkBtlpRIWamBr1CHQVpsGm9A7ompdXtl+LCHt7hAEx
-         iQLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C+YkQIieV9jhQ8eitBPzVM0jS7ANYINOLJ2PFNbaG+E=;
-        b=KW50PS46btwtCkVt7goppE5QSmgSGssMtqU0mWYBQDhxwEzEiKn1JDt+a9CWHoDGRz
-         QM4aRsyd2xYD0tRcKQ61wQjiMYzELu3Z6C0/HAM6jZVfgVu+fKUtJYyIN1oLvcF/IdI/
-         YvOF4U+IrR0wRyIjj5huwdLDcBO5JOVRDTksl2wl+iYzlGXAfecrir7RczT3egysDNyi
-         PdXsQ4XZBbVeK1K9k53B6ntfrvH2e81lBuhLpf3ktNxzIui5+SDDdCCnCZCq2aZoaWH4
-         1pNcOtUyyxs52cGXNof4YGvxsxH5tayXkKC04O66sO2C3JKSvLBHtNPC3KPNKdGtMDKc
-         jCEA==
-X-Gm-Message-State: AGRZ1gJ9RyBYaSlckDbZpSCcCdM5RIlfobPp3h+W73qhJoB8dZ76SdzW
-        3glb1G8e02ZZ9ofx4yyBadhyLTPnw+0=
-X-Google-Smtp-Source: AJdET5dHsfATVKJfyB4HKeorjlhmYum6IKnLxphF1P8mopZXrRBueQR668czZClEYSP3O7HYHYDpkg==
-X-Received: by 2002:a1c:bb85:: with SMTP id l127mr6220295wmf.98.1542620002406;
-        Mon, 19 Nov 2018 01:33:22 -0800 (PST)
-Received: from jaya ([92.103.140.194])
-        by smtp.gmail.com with ESMTPSA id l37sm6121562wre.69.2018.11.19.01.33.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 01:33:21 -0800 (PST)
-Date:   Mon, 19 Nov 2018 10:33:19 +0100
-From:   Anisse Astier <anisse@astier.eu>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] mmc: sdhci-pci: only install voltage switch
- method when useful
-Message-ID: <20181119093319.GA3356@jaya>
-References: <20181022134026.GB18413@jaya>
- <20181023100729.28864-4-anisse@astier.eu>
- <20181116165850.GB5894@jaya>
- <94fa0484-c532-683f-3a3f-fd9f4b263d16@intel.com>
+        Mon, 19 Nov 2018 14:57:04 -0500
+Received: from [192.168.178.52] ([109.104.46.191]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MsIfc-1fZSzk0J6A-00thjo; Mon, 19 Nov 2018 10:33:42 +0100
+Subject: Re: [PATCH 13/17] pwm: bcm2835: Switch to SPDX identifier
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Eric Anholt <eric@anholt.net>,
+        linux-rpi-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org
+References: <1541866978-7943-1-git-send-email-stefan.wahren@i2se.com>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <00989205-1712-09ab-e73e-1c189e6d83d1@i2se.com>
+Date:   Mon, 19 Nov 2018 10:33:45 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94fa0484-c532-683f-3a3f-fd9f4b263d16@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1541866978-7943-1-git-send-email-stefan.wahren@i2se.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
+X-Provags-ID: V03:K1:Kdfmp9+hXLadzWF6KAJYkZzk6v/ekNfljzwXNVVvN9iE8PyMgT6
+ dETS+6FXCxnATJ7YQAdsMBWrC7epCqkj1nOnQGT1CMn4g/jmpyuXz/aabsc23ERi7uNSolZ
+ P/DPRi51EhaXJx5l0PhwBp+mVu7rjwHWM9dmu3ynsU/m1HW4mNF91/os9X0XW3rR83kvrYg
+ aXxnyiD2HdgBa217mQ9wQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:DiAiN5DTX7A=:/8rUVZml8lq3DzbCPiIpQq
+ hp7Ih//scU534nZwOSIynZ8jwdpQ4XEKi0dfnWv45umP+OMpOTbo9xCEj99h+XOKIZmR3LCTc
+ 6uwZcgzoOFYeY10a1SdpwHf7m0w+jyYNNeqlT2gnsKoBgJF8ksJ6qPLOIA7Q4sNGqG723vP3U
+ ISb9HrGzPMpWZ8WktmOSDK3NvXMWgFPGV5cv8DLSnZBlK2xGugHEUbB8b2lBaKLECwBieLNUB
+ XCtnaKd4xcQJgnthOX3aBbDt5sV34WvUIFKTPOEzzMrgqD2hbm/4OdZvfVJ8FXq0S6e5JEIuh
+ 87Ibx7tgHfJUyPc+bG8drZV3MpXNSMu10lX18lBebYMch8uVka728b+iiOsObv9ZArT9+bYIZ
+ weywlzgQ1KicuX33VNd65uNjrhMBMasPxQMU4+lazSd7gmvwjqDx6N8aJhU++NTZ6+Rw5RFRJ
+ pLjZqOYdENlMR/4PIu74NBi0VRDSAYAj6UJHosRRfVlIWYls3VGZMnI/tDQsYI282tthTr7jA
+ 9fZrZhzuCsQ+a09KJywYi8JPCmjwizFtCA80MX9wbZh2hTTMqTxeoSLNvARVDd3OLdE1HLgwY
+ JxiVszOZkq4KdGzeoaTkYof6YRb/R1jMhCoHrGUTjHqZKgaH9+Iw/r2n28xflUMkbnTv1q/md
+ 0zESuCJHk7o0lcahR6MDX66BCeABjr0LngzTM/l88PyyD+MqHeAF6IK7sjJ8Ikiiv5wisecjC
+ IfCqIOOz389fWn6GJnPytJytKNe0Y4DO3XPfsEXwbDa0uMuMh2KoWZ99F+dcnFMuyXSt133sS
+ 84L51tVCSfkbAf5c4QzJ0TxEt8fOfOLRIJyOaCmp3CoPZSWJh4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:45:03AM +0200, Adrian Hunter wrote:
-> On 16/11/18 6:58 PM, Anisse Astier wrote:
-> > Hi Adrian,
-> > 
-> > On Tue, Oct 23, 2018 at 12:07:29PM +0200, Anisse Astier wrote:
-> >> If there's no ACPI DSM for voltage switch, it will just cause a lot of
-> >> debug info down the line, we only need one at startup.
-> >>
-> >> Signed-off-by: Anisse Astier <anisse@astier.eu>
-> >> ---
-> >>  drivers/mmc/host/sdhci-pci-core.c | 11 +++++++++++
-> >>  1 file changed, 11 insertions(+)
-> >>
-> >> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> >> index f2c1fb339d66..95fdbb883c7e 100644
-> >> --- a/drivers/mmc/host/sdhci-pci-core.c
-> >> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> >> @@ -723,6 +723,7 @@ static const struct dmi_system_id board_no_1_8v[] = {
-> >>  static void byt_probe_slot(struct sdhci_pci_slot *slot)
-> >>  {
-> >>  	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
-> >> +	struct intel_host *intel_host = sdhci_pci_priv(slot);
-> >>  
-> >>  	byt_read_dsm(slot);
-> >>  
-> >> @@ -733,6 +734,16 @@ static void byt_probe_slot(struct sdhci_pci_slot *slot)
-> >>  				mmc_hostname(slot->host->mmc));
-> >>  		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
-> >>  	}
-> >> +	/* Check if we have the appropriate voltage switch DSM methods */
-> >> +	if (!(intel_host->dsm_fns & (1 << INTEL_DSM_V18_SWITCH)) &&
-> >> +	    !(intel_host->dsm_fns & (1 << INTEL_DSM_V33_SWITCH))) {
-> >> +		/* No voltage switching supported at all, there's no
-> >> +		 * point in installing the callback: return.
-> >> +		 */
-> >> +		pr_debug("%s: No voltage switching ACPI DSM helper\n",
-> >> +				mmc_hostname(slot->host->mmc));
-> >> +		return;
-> >> +	}
-> >>  	ops->start_signal_voltage_switch = intel_start_signal_voltage_switch;
-> >>  }
-> >>  
-> >> -- 
-> >> 2.17.2
-> >>
-> > 
-> > What do you think of picking this last patch ? Or maybe you had
-> > different cleanups in mind when you said you wanted to rework this ?
-> 
-> Voltage switches are relatively rare, and dynamic debug allows control over
-> exactly which debug messages display, so I am not sure this patch is needed.
+Hi Thierry,
 
-I just thought this message was a bit clearer than:
-mmc0: intel_start_signal_voltage_switch DSM fn 4 error -95 result 0
+Am 10.11.2018 um 17:22 schrieb Stefan Wahren:
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+>
+> Cc: Bart Tanghe <bart.tanghe@thomasmore.be>
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-But you're correct, with dynamic debug it shouldn't be an issue, and the
-original message is easily searchable in the code. It only happens every
-two seconds.
+are you fine with this patch?
 
-I'm ok to drop this patch.
+Regards
+Stefan
 
-Regards,
-
-Anisse
