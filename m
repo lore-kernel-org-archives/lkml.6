@@ -2,135 +2,112 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16617C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75DF8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB85420831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB85420831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4593D20671
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 13:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4593D20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729447AbeKTANl (ORCPT
+        id S1729366AbeKTAPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:13:41 -0500
-Received: from mga04.intel.com ([192.55.52.120]:17006 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727310AbeKTANl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:13:41 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 05:50:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="282350706"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Nov 2018 05:49:57 -0800
-Date:   Mon, 19 Nov 2018 15:49:56 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-Message-ID: <20181119134956.GD8755@linux.intel.com>
-References: <1541962653.3190.7.camel@HansenPartnership.com>
- <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
- <1541968191.3190.12.camel@HansenPartnership.com>
- <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
- <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
- <1541972556.3734.90.camel@linux.ibm.com>
- <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
- <b89c95a496a1512ee3069b6a69cf915906fe697a.camel@mniewoehner.de>
- <20181118081833.GH5897@linux.intel.com>
- <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
+        Mon, 19 Nov 2018 19:15:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50338 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727310AbeKTAPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:15:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C28A3AF04;
+        Mon, 19 Nov 2018 13:51:50 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 14:51:49 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
+ l1tf=off
+Message-ID: <20181119135149.GN22247@dhcp22.suse.cz>
+References: <20181113184910.26697-1-mhocko@kernel.org>
+ <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm>
+ <20181114073229.GC23419@dhcp22.suse.cz>
+ <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <467833cc47247a55595d72426f46eeac1406eb04.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <nycvar.YFH.7.76.1811191436140.21108@cbobk.fhfr.pm>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 03:10:06PM +0100, Michael Niewöhner wrote:
-> On Sun, 2018-11-18 at 10:18 +0200, Jarkko Sakkinen wrote:
-> > On Fri, Nov 16, 2018 at 10:06:28PM +0100, Michael Niewöhner wrote:
-> > > On Wed, 2018-11-14 at 21:46 +0100, Michael Niewöhner wrote:
-> > > > Hi all,
-> > > > 
-> > > > I tried that patch mentioned by Mimi but it does not change anything for
-> > > > me.
-> > > > 
-> > > > Then I did some more tests with different kernel configs and finally got
-> > > > TPM
-> > > > working by
-> > > > a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
-> > > > 
-> > > > (initramfs) dmesg | grep -i tpm
-> > > > [    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
-> > > > SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018
-> > > > TPMEventLog=0x97cbb018
-> > > > [    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
-> > > > S06   00001260 AMI 00000000)
-> > > > (initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
-> > > > (initramfs) modprobe tpm_tis
-> > > > [   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > > > 
-> > > > b) compiling TPM-support in-kernel and manually bind the ACPI device
-> > > > 
-> > > > (initramfs) dmesg | grep -i tpm
-> > > > [    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
-> > > > SMBIOS
-> > > > 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
-> > > > [    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06
-> > > > 00001260
-> > > > AMI 00000000)
-> > > > (initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
-> > > > [  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > > > 
-> > > > 
-> > > > It seems to me, the kernel tries to enable the TPM to early...
-> > > > 
-> > > > 
-> > > > Michael
+On Mon 19-11-18 14:36:32, Jiri Kosina wrote:
+> On Wed, 14 Nov 2018, Michal Hocko wrote:
+> 
+> > > > +				It also drops the swap size and available
+> > > > +				RAM limit restriction.
 > > > 
-> > > Looks like the manual driver bind works more or less but e.g reading hwrng
-> > > does
-> > > not work...
+> > > Minor nit: I think this should explicitly mention that those two things 
+> > > are related to bare metal mitigation, to avoid any confusion (as otherwise 
+> > > the l1tf cmdline parameter is purely about hypervisor mitigations).
+> > 
+> > Do you have any specific wording in mind?
+> > 
+> > It also drops the swap size and available RAM limit restrictions on both
+> > hypervisor and bare metal.
+> > 
+> > Sounds better?
+> > 
+> > > With that
 > > > 
-> > > # echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
-> > > [  148.293302] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> > > # cat /sys/devices/virtual/misc/hw_random/rng_current
-> > > tpm-rng-0
-> > > # cat /dev/hwrng >/dev/null 
-> > > cat: /dev/hwrng: Operation not permitted
+> > > 	Acked-by: Jiri Kosina <jkosina@suse.cz>
 > > 
-> > Can you check with trace-cmd start -p function -l 'tpm*'?
-> > 
-> > /Jarkko
+> > Thanks!
 > 
-> 
-> Hi Jarko,
-> 
-> what output do you need exactly?
+> Yes, I think that makes it absolutely clear. Thanks,
 
-TPM gets added with tpm_add_hwrng() and the callback that is called by
-hwrng subsystem is tpm_hwrng_read().
+OK. Here is the incremental diff on top of the patch. I will fold and
+repost later this week. I assume people are still catching up after LPC
+and I do not want to spam them even more.
 
-Obviously the former gets called (can be seen from the sysfs file). Just
-wondering if it ever reaches tpm_hwrng_read().
-
-/Jarkko
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a54f2bd39e77..c5aa4b4a797d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2096,7 +2096,8 @@
+ 				Disables hypervisor mitigations and doesn't
+ 				emit any warnings.
+ 				It also drops the swap size and available
+-				RAM limit restriction.
++				RAM limit restriction on both hypervisor and
++				bare metal.
+ 
+ 			Default is 'flush'.
+ 
+diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
+index b00464a9c09c..2e65e6cb033e 100644
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -405,7 +405,8 @@ The kernel command line allows to control the L1TF mitigations at boot
+ 
+   off		Disables hypervisor mitigations and doesn't emit any
+ 		warnings.
+-		It also drops the swap size and available RAM limit restrictions.
++		It also drops the swap size and available RAM limit restrictions
++                on both hypervisor and bare metal.
+ 
+   ============  =============================================================
+ 
+-- 
+Michal Hocko
+SUSE Labs
