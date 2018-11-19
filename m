@@ -7,221 +7,201 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEF1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38A7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BF0206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0BB206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:07:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyAfuu24"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1BF0206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="mShR3xr3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0BB206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406658AbeKTDbx (ORCPT
+        id S2407274AbeKTDcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:31:53 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46855 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406271AbeKTDbw (ORCPT
+        Mon, 19 Nov 2018 22:32:08 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42146 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406227AbeKTDcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:31:52 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so11900995ply.13;
-        Mon, 19 Nov 2018 09:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XZpEWxqmj+M8ri5b/GfMD8rAJh3MaWf0rAgLdhe1Yrw=;
-        b=DyAfuu24IUBHfQ/teYq3VSuHBsJzvZIxSbd0M+Hgy+qa1ck94OOY4vxU6cuQV170xC
-         KKQ79+wF1YjTuqb6IzV6X0K8CNpGaEx5UbXwlIJq4gWwSOUiaOxW5oaOH8rO0l4mDPUY
-         FfRyy7MBJMv7kzv1VUo5f9l178iac01dBMclqxuUqjgdh1TDHCSvUoaa8afNOcXdiSiw
-         CPt9Vsp/vLb5PdvUc6WvyFiUB4727HW7MoMjKxjeggFEUqNgwJQlBX+VScRZiPF/I5zl
-         GOWqzWcBVVEBnAMGulAPMlVawsy2HZhaDQV8pD2gvNq8uJjVpXQYW3l8NLb11gziyG3f
-         ryeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XZpEWxqmj+M8ri5b/GfMD8rAJh3MaWf0rAgLdhe1Yrw=;
-        b=FwP2wPTw05p+a7d+tnogdKyTdSEchFYkQxAKGndJlh1W0FCOxFs7VikWK06FPhuOnO
-         jqWSvwHZhzdBQKCemKb8R6L4WXMbA1f7AXEd+WdgA48F4Lv+bBqjXEySwMk+6CPLf5C5
-         xWfeHLlyNSJgac1eQyyMXWAKCDlHShQUfQ/WxRtNiwRK5hbSWuzLuRC/b9SpcWdflc2/
-         IB+oiXyWdce3sKWXVbBRUJSPUT2xs1seFfvMfE/XZqbDRMLpvG3JWwtF0DN0BMXu1Kh/
-         tupoVTzzJyWM6+k5aCSkZ1Jw6OsadnHzjco5Ivt80SpGPAqJMsv5RfotXHi4sQa4L/Un
-         Wvsw==
-X-Gm-Message-State: AGRZ1gINmCY8OGilvsh1EYGeahlC04akv3926v/b34WfxwIqgDxtdpUl
-        BufByt+vdD6eOdes0fU6uR4=
-X-Google-Smtp-Source: AJdET5cZO+2nrsQngeCnK/8NU/Nyglg8jCQQDoGPG4DKLYf90iwJXSacpN/kV+W4SmnBa2WH5zArfg==
-X-Received: by 2002:a17:902:3084:: with SMTP id v4-v6mr22687880plb.326.1542647254429;
-        Mon, 19 Nov 2018 09:07:34 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b27sm34700649pfh.113.2018.11.19.09.07.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 09:07:33 -0800 (PST)
-Date:   Mon, 19 Nov 2018 09:07:32 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/2] hwmon: (ntc_thermistor): add support for B57891S0103
- from Epcos
-Message-ID: <20181119170732.GA27435@roeck-us.net>
-References: <20181117121248.32143-1-peda@axentia.se>
- <20181117121248.32143-2-peda@axentia.se>
+        Mon, 19 Nov 2018 22:32:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QMYljRBaKNs7B5Gtlcnw+OMT47WLUxvUWwotj5cDauw=; b=mShR3xr3GjetSxL7B6qiJkW76
+        w5NNAEMrlFfXN4Dp0QHT0dVTOkRcWpLQRIE9+rJ6brA9fBeyuxIR2mSLRTDUcJ0df20vryezvH9e5
+        7q35Q4Dj9XnTwEge+8+Aa6nIsAvGhGNOt6zZUgvPbgOvwC0pBNSvlCdtz0pghbHHoKIqE=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:45591)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gOn1O-0000w3-8r; Mon, 19 Nov 2018 17:07:38 +0000
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gOn1J-0002v3-PP; Mon, 19 Nov 2018 17:07:33 +0000
+Date:   Mon, 19 Nov 2018 17:07:32 +0000
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        netdev@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH v2 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181119170732.GB30658@n2100.armlinux.org.uk>
+References: <20181109234755.21687-1-grygorii.strashko@ti.com>
+ <20181109234755.21687-5-grygorii.strashko@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181117121248.32143-2-peda@axentia.se>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181109234755.21687-5-grygorii.strashko@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 12:13:00PM +0000, Peter Rosin wrote:
-> More of the same...
+On Fri, Nov 09, 2018 at 05:47:54PM -0600, Grygorii Strashko wrote:
+> Convert mvebu-cp110-comphy PHY driver to use recently introduced
+> PHY_MODE_ETHERNET and phy_set_mode_ext().
 > 
-> Signed-off-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
 > ---
->  drivers/hwmon/Kconfig                        |  3 +-
->  drivers/hwmon/ntc_thermistor.c               | 57 +++++++++++++++++++++++++++-
->  include/linux/platform_data/ntc_thermistor.h |  1 +
->  3 files changed, 58 insertions(+), 3 deletions(-)
+>  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 19 +-----
+>  drivers/phy/marvell/phy-mvebu-cp110-comphy.c    | 83 ++++++++++++++-----------
+>  2 files changed, 48 insertions(+), 54 deletions(-)
 > 
-> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-> index f10840ad465c..5438cecace22 100644
-> --- a/drivers/hwmon/Kconfig
-> +++ b/drivers/hwmon/Kconfig
-> @@ -1206,7 +1206,8 @@ config SENSORS_NTC_THERMISTOR
->  
->  	  Currently, this driver supports
->  	  NCP15WB473, NCP18WB473, NCP21WB473, NCP03WB473, NCP15WL333,
-> -	  NCP03WF104 and NCP15XH103 from Murata and B57330V2103 from EPCOS.
-> +	  NCP03WF104 and NCP15XH103 from Murata and B57330V2103 and
-> +	  B57891S0103 from EPCOS.
->  
->  	  This driver can also be built as a module.  If so, the module
->  	  will be called ntc-thermistor.
-> diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
-> index c52d07c6b49f..e0c6b2f244a6 100644
-> --- a/drivers/hwmon/ntc_thermistor.c
-> +++ b/drivers/hwmon/ntc_thermistor.c
-> @@ -55,6 +55,7 @@ static const struct platform_device_id ntc_thermistor_id[] = {
->  	{ "b57330v2103", TYPE_B57330V2103},
->  	{ "ncp03wf104", TYPE_NCPXXWF104 },
->  	{ "ncp15xh103", TYPE_NCPXXXH103 },
-> +	{ "b57891s0103", TYPE_B57891S0103 },
->  	{ },
->  };
->  
-> @@ -212,8 +213,8 @@ static const struct ntc_compensation ncpXXxh103[] = {
->  };
->  
->  /*
-> - * The following compensation table is from the specification of EPCOS NTC
-> - * Thermistors Datasheet
-> + * The following compensation tables are from the specifications in EPCOS NTC
-> + * Thermistors Datasheets
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 7a37a37..731793a 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -1165,28 +1165,13 @@ static void mvpp22_gop_setup_irq(struct mvpp2_port *port)
 >   */
->  static const struct ntc_compensation b57330v2103[] = {
->  	{ .temp_c	= -40, .ohm	= 190030 },
-> @@ -252,6 +253,52 @@ static const struct ntc_compensation b57330v2103[] = {
->  	{ .temp_c	= 125, .ohm	= 531 },
+>  static int mvpp22_comphy_init(struct mvpp2_port *port)
+>  {
+> -	enum phy_mode mode;
+>  	int ret;
+>  
+>  	if (!port->comphy)
+>  		return 0;
+>  
+> -	switch (port->phy_interface) {
+> -	case PHY_INTERFACE_MODE_SGMII:
+> -	case PHY_INTERFACE_MODE_1000BASEX:
+> -		mode = PHY_MODE_SGMII;
+> -		break;
+> -	case PHY_INTERFACE_MODE_2500BASEX:
+> -		mode = PHY_MODE_2500SGMII;
+> -		break;
+> -	case PHY_INTERFACE_MODE_10GKR:
+> -		mode = PHY_MODE_10GKR;
+> -		break;
+> -	default:
+> -		return -EINVAL;
+> -	}
+> -
+> -	ret = phy_set_mode(port->comphy, mode);
+> +	ret = phy_set_mode_ext(port->comphy, PHY_MODE_ETHERNET,
+> +			       port->phy_interface);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> index 79b52c3..7dee72b 100644
+> --- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> +++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/iopoll.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/module.h>
+> +#include <linux/phy.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+> @@ -131,26 +132,26 @@ struct mvebu_comhy_conf {
+>  
+>  static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
+>  	/* lane 0 */
+> -	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
+> -	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+>  	/* lane 1 */
+> -	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_SGMII, 0x1),
+> -	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_2500SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+>  	/* lane 2 */
+> -	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_SGMII, 0x1),
+> -	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_2500SGMII, 0x1),
+> -	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_10GKR, 0x1),
+> +	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> +	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_10GKR, 0x1),
+>  	/* lane 3 */
+> -	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_SGMII, 0x2),
+> -	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_2500SGMII, 0x2),
+> +	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_SGMII, 0x2),
+> +	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+>  	/* lane 4 */
+> -	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_SGMII, 0x2),
+> -	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_2500SGMII, 0x2),
+> -	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_10GKR, 0x2),
+> -	MVEBU_COMPHY_CONF(4, 1, PHY_MODE_SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_SGMII, 0x2),
+> +	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+> +	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_10GKR, 0x2),
+> +	MVEBU_COMPHY_CONF(4, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+>  	/* lane 5 */
+> -	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_SGMII, 0x1),
+> -	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_2500SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+> +	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
 >  };
 >  
-> +static const struct ntc_compensation b57891s0103[] = {
-> +	{ .temp_c	= -55.0, .ohm	= 878900 },
-> +	{ .temp_c	= -50.0, .ohm	= 617590 },
-> +	{ .temp_c	= -45.0, .ohm	= 439340 },
-> +	{ .temp_c	= -40.0, .ohm	= 316180 },
-> +	{ .temp_c	= -35.0, .ohm	= 230060 },
-> +	{ .temp_c	= -30.0, .ohm	= 169150 },
-> +	{ .temp_c	= -25.0, .ohm	= 125550 },
-> +	{ .temp_c	= -20.0, .ohm	= 94143 },
-> +	{ .temp_c	= -15.0, .ohm	= 71172 },
-> +	{ .temp_c	= -10.0, .ohm	= 54308 },
-> +	{ .temp_c	= -5.0, .ohm	= 41505 },
-> +	{ .temp_c	= 0.0, .ohm	= 32014 },
-> +	{ .temp_c	= 5.0, .ohm	= 25011 },
-> +	{ .temp_c	= 10.0, .ohm	= 19691 },
-> +	{ .temp_c	= 15.0, .ohm	= 15618 },
-> +	{ .temp_c	= 20.0, .ohm	= 12474 },
-> +	{ .temp_c	= 25.0, .ohm	= 10000 },
-> +	{ .temp_c	= 30.0, .ohm	= 8080 },
-> +	{ .temp_c	= 35.0, .ohm	= 6569 },
-> +	{ .temp_c	= 40.0, .ohm	= 5372 },
-> +	{ .temp_c	= 45.0, .ohm	= 4424 },
-> +	{ .temp_c	= 50.0, .ohm	= 3661 },
-> +	{ .temp_c	= 55.0, .ohm	= 3039 },
-> +	{ .temp_c	= 60.0, .ohm	= 2536 },
-> +	{ .temp_c	= 65.0, .ohm	= 2128 },
-> +	{ .temp_c	= 70.0, .ohm	= 1794 },
-> +	{ .temp_c	= 75.0, .ohm	= 1518 },
-> +	{ .temp_c	= 80.0, .ohm	= 1290 },
-> +	{ .temp_c	= 85.0, .ohm	= 1100 },
-> +	{ .temp_c	= 90.0, .ohm	= 942 },
-> +	{ .temp_c	= 95.0, .ohm	= 809 },
-> +	{ .temp_c	= 100.0, .ohm	= 697 },
-> +	{ .temp_c	= 105.0, .ohm	= 604 },
-> +	{ .temp_c	= 110.0, .ohm	= 525 },
-> +	{ .temp_c	= 115.0, .ohm	= 457 },
-> +	{ .temp_c	= 120.0, .ohm	= 400 },
-> +	{ .temp_c	= 125.0, .ohm	= 351 },
-> +	{ .temp_c	= 130.0, .ohm	= 308 },
-> +	{ .temp_c	= 135.0, .ohm	= 272 },
-> +	{ .temp_c	= 140.0, .ohm	= 240 },
-> +	{ .temp_c	= 145.0, .ohm	= 213 },
-> +	{ .temp_c	= 150.0, .ohm	= 189 },
-> +	{ .temp_c	= 155.0, .ohm	= 168 },
-> +};
-> +
->  struct ntc_data {
->  	struct ntc_thermistor_platform_data *pdata;
->  	const struct ntc_compensation *comp;
-> @@ -296,6 +343,8 @@ static const struct of_device_id ntc_match[] = {
->  		.data = &ntc_thermistor_id[6] },
->  	{ .compatible = "murata,ncp15xh103",
->  		.data = &ntc_thermistor_id[7] },
-> +	{ .compatible = "epcos,b57891s0103",
-> +		.data = &ntc_thermistor_id[8] },
->  
->  	/* Usage of vendor name "ntc" is deprecated */
->  	{ .compatible = "ntc,ncp15wb473",
-> @@ -627,6 +676,10 @@ static int ntc_thermistor_probe(struct platform_device *pdev)
->  		data->comp = ncpXXxh103;
->  		data->n_comp = ARRAY_SIZE(ncpXXxh103);
->  		break;
-> +	case TYPE_B57891S0103:
-> +		data->comp = b57891s0103;
-> +		data->n_comp = ARRAY_SIZE(b57891s0103);
-> +		break;
->  	default:
->  		dev_err(dev, "Unknown device type: %lu(%s)\n",
->  				pdev_id->driver_data, pdev_id->name);
-> diff --git a/include/linux/platform_data/ntc_thermistor.h b/include/linux/platform_data/ntc_thermistor.h
-> index 698d0d59db76..231a27c302ec 100644
-> --- a/include/linux/platform_data/ntc_thermistor.h
-> +++ b/include/linux/platform_data/ntc_thermistor.h
-> @@ -29,6 +29,7 @@ enum ntc_thermistor_type {
->  	TYPE_B57330V2103,
->  	TYPE_NCPXXWF104,
->  	TYPE_NCPXXXH103,
-> +	TYPE_B57891S0103,
-
-Guess I deserve the non-alphabetic order as penalty for not enforcing it 
-earlier. I'll accept the patch after DT approval and submit another one
-myself afterwards to restore alphabetic order.
-
-Guenter
-
+>  struct mvebu_comphy_priv {
+> @@ -163,10 +164,12 @@ struct mvebu_comphy_lane {
+>  	struct mvebu_comphy_priv *priv;
+>  	unsigned id;
+>  	enum phy_mode mode;
+> +	int submode;
+>  	int port;
 >  };
 >  
->  struct ntc_thermistor_platform_data {
-> -- 
-> 2.11.0
-> 
+> -static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> +static int mvebu_comphy_get_mux(int lane, int port,
+> +				enum phy_mode mode, int submode)
+>  {
+>  	int i, n = ARRAY_SIZE(mvebu_comphy_cp110_modes);
+>  
+> @@ -177,7 +180,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+>  	for (i = 0; i < n; i++) {
+>  		if (mvebu_comphy_cp110_modes[i].lane == lane &&
+>  		    mvebu_comphy_cp110_modes[i].port == port &&
+> -		    mvebu_comphy_cp110_modes[i].mode == mode)
+> +		    mvebu_comphy_cp110_modes[i].mode == submode)
+
+This looks like it could be a future source of problems, since we
+have both a "mode" and a "submode".  Is there any reason not to
+rename mvebu_comphy_cp110_modes's .mode member to be .submode ?
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
