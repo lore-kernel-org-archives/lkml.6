@@ -2,91 +2,107 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5F3AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 211EFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D68320817
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:07:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D68320817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E0B2B20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:08:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B2B20C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbeKSTaN (ORCPT
+        id S1727330AbeKSTba convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:30:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54862 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 14:31:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38673 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726784AbeKSTaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:30:12 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 42C3C3082A44;
-        Mon, 19 Nov 2018 09:07:12 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2876819490;
-        Mon, 19 Nov 2018 09:06:50 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 17:06:46 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 17/19] block: don't use bio->bi_vcnt to figure out
- segment number
-Message-ID: <20181119090645.GN16736@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-18-ming.lei@redhat.com>
- <20181116021140.GL23828@vader>
+        id S1726311AbeKSTba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:31:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D752E20CFD; Mon, 19 Nov 2018 10:08:26 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 46C0C20791;
+        Mon, 19 Nov 2018 10:08:26 +0100 (CET)
+Date:   Mon, 19 Nov 2018 10:08:25 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:MEMORY TECHNOLOGY..." <linux-mtd@lists.infradead.org>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 00/25] at24: remove
+Message-ID: <20181119100825.277b1f97@bbrezillon>
+In-Reply-To: <CAMRc=MfXWW9siNZNkocxmTU7mnoQO0KpeHQ3JmLcEfNscqCbDQ@mail.gmail.com>
+References: <20181113140133.17385-1-brgl@bgdev.pl>
+        <20181118170329.788778a8@bbrezillon>
+        <CAMRc=MfXWW9siNZNkocxmTU7mnoQO0KpeHQ3JmLcEfNscqCbDQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116021140.GL23828@vader>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Mon, 19 Nov 2018 09:07:12 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 06:11:40PM -0800, Omar Sandoval wrote:
-> On Thu, Nov 15, 2018 at 04:53:04PM +0800, Ming Lei wrote:
-> > It is wrong to use bio->bi_vcnt to figure out how many segments
-> > there are in the bio even though CLONED flag isn't set on this bio,
-> > because this bio may be splitted or advanced.
-> > 
-> > So always use bio_segments() in blk_recount_segments(), and it shouldn't
-> > cause any performance loss now because the physical segment number is figured
-> > out in blk_queue_split() and BIO_SEG_VALID is set meantime since
-> > bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting").
-> > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Fixes: 7f60dcaaf91 ("block: blk-merge: fix blk_recount_segments()")
-> 
-> From what I can tell, the problem was originally introduced by
-> 76d8137a3113 ("blk-merge: recaculate segment if it isn't less than max segments")
-> 
-> Is that right?
+On Mon, 19 Nov 2018 09:58:46 +0100
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-Indeed, will update it in next version.
+> niedz., 18 lis 2018 o 17:03 Boris Brezillon
+> <boris.brezillon@bootlin.com> napisał(a):
+> >
+> > On Tue, 13 Nov 2018 15:01:08 +0100
+> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >  
+> > > As far as merging of this series goes: I'd like to avoid dragging it over
+> > > four releases. The series is logically split into five groups:
+> > >
+> > > patches 1-2: nvmem and mtd changes
+> > > patches 3-9: davinci arch-specific changes
+> > > patches 10-13: networking changes
+> > > patches 14-24: davinci specific again
+> > > patch 25: final at24 change
+> > >
+> > > With that I believe we can do the following: Greg KH could pick up the
+> > > first two patches into his char-misc tree.  
+> >
+> > The char-misc tree? Why not the MTD or NVMEM tree?
+> >  
+> 
+> There is no NVMEM tree - Srinivas sends his patches to Greg to be
+> applied to char-misc.
 
-Thanks,
-Ming
+Okay, I didn't know that.
+
+> 
+> The second patch depends on the first one so in order to avoid more
+> merging problems I suggested that the MTD patch go through char-misc
+> as well. If you see a better solution, please let me know.
+
+No that's fine, as long as I have an immutable tag/branch I can pull if
+needed.
