@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217CCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16590C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF42020851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D436520851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIzbAVaK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF42020851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WOJKXhaU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D436520851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390501AbeKTDQU (ORCPT
+        id S2390512AbeKTDQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:16:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54232 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389669AbeKTDQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:16:19 -0500
+        id S2389669AbeKTDQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97B5421104;
-        Mon, 19 Nov 2018 16:52:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C12206BA;
+        Mon, 19 Nov 2018 16:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646326;
-        bh=yENuWU7l34XokPTkoWu3Epd4w5mXTBRiBofPacUqWQE=;
+        s=default; t=1542646328;
+        bh=L/XSPSja3NBIaRnnd7veJefQkUOq7IolOEpkBjKFCLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mIzbAVaK+DF8HD8xJUMbaU+7L4EZcpyJ8ZnOgAhgW72H/TApjmnmntNSDKv4kaJBv
-         dFk6UfAUF684ZEuHsMweidsRib6kL8qP7EWR96Csn0EVMehkX/uGvt5DtY0/TIdf35
-         dUr1en/K6HKWGm2rngV2kQEp07lfkZmn+AECVhic=
+        b=WOJKXhaUyuUGml9cY4qJ0c06UK1J6ep07aNFmREOsGESMvvhVGRZ6MjXWeLQUySWS
+         IYOeTN2OcAIuucj6/CZe3iolw0mmqTcSkKyfuWfWBnSt/JXYW1dNgb2CAnYQ/U0gqJ
+         LC+SZ4SQvGvJ68YXSf1apt6NMkbGLFvsbcN1rPAI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 124/124] gpio: brcmstb: release the bgpio lock during irq handlers
-Date:   Mon, 19 Nov 2018 17:29:38 +0100
-Message-Id: <20181119162634.317442434@linuxfoundation.org>
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Clint Taylor <clinton.a.taylor@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.14 116/124] drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
+Date:   Mon, 19 Nov 2018 17:29:30 +0100
+Message-Id: <20181119162633.314921704@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -65,83 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Doug Berger <opendmb@gmail.com>
+From: Clint Taylor <clinton.a.taylor@intel.com>
 
-commit 142c168e0e50164e67c9399c28dedd65a307cfe5 upstream.
+commit 6503493145cba4413ecd3d4d153faeef4a1e9b85 upstream.
 
-The basic memory-mapped GPIO controller lock must be released
-before calling the registered GPIO interrupt handlers to allow
-the interrupt handlers to access the hardware.
+HDMI 2.0 594Mhz modes were incorrectly selecting 25.200Mhz Automatic N value
+mode instead of HDMI specification values.
 
-Examples of why a GPIO interrupt handler might want to access
-the GPIO hardware include an interrupt that is configured to
-trigger on rising and falling edges that needs to read the
-current level of the input to know how to respond, or an
-interrupt that causes a change in a GPIO output in the same
-bank. If the lock is not released before enterring the handler
-the hardware accesses will deadlock when they attempt to grab
-the lock.
+V2: Fix 88.2 Hz N value
 
-Since the lock is only needed to protect the calculation of
-unmasked pending interrupts create a dedicated function to
-perform this and hide the complexity.
-
-Fixes: 19a7b6940b78 ("gpio: brcmstb: Add interrupt and wakeup source support")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Gregory Fong <gregory.0xf0@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1540493521-1746-2-git-send-email-clinton.a.taylor@intel.com
+(cherry picked from commit 5a400aa3c562c4a726b4da286e63c96db905ade1)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-brcmstb.c |   21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/i915/intel_audio.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/gpio/gpio-brcmstb.c
-+++ b/drivers/gpio/gpio-brcmstb.c
-@@ -63,6 +63,21 @@ brcmstb_gpio_gc_to_priv(struct gpio_chip
- 	return bank->parent_priv;
- }
- 
-+static unsigned long
-+brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
-+{
-+	void __iomem *reg_base = bank->parent_priv->reg_base;
-+	unsigned long status;
-+	unsigned long flags;
+--- a/drivers/gpu/drm/i915/intel_audio.c
++++ b/drivers/gpu/drm/i915/intel_audio.c
+@@ -134,6 +134,9 @@ static const struct {
+ /* HDMI N/CTS table */
+ #define TMDS_297M 297000
+ #define TMDS_296M 296703
++#define TMDS_594M 594000
++#define TMDS_593M 593407
 +
-+	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
-+	status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
-+		 bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
-+	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
-+
-+	return status;
-+}
-+
- static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
- 		unsigned int offset, bool enable)
- {
-@@ -205,11 +220,8 @@ static void brcmstb_gpio_irq_bank_handle
- 	struct irq_domain *irq_domain = bank->gc.irqdomain;
- 	void __iomem *reg_base = priv->reg_base;
- 	unsigned long status;
--	unsigned long flags;
+ static const struct {
+ 	int sample_rate;
+ 	int clock;
+@@ -154,6 +157,20 @@ static const struct {
+ 	{ 176400, TMDS_297M, 18816, 247500 },
+ 	{ 192000, TMDS_296M, 23296, 281250 },
+ 	{ 192000, TMDS_297M, 20480, 247500 },
++	{ 44100, TMDS_593M, 8918, 937500 },
++	{ 44100, TMDS_594M, 9408, 990000 },
++	{ 48000, TMDS_593M, 5824, 562500 },
++	{ 48000, TMDS_594M, 6144, 594000 },
++	{ 32000, TMDS_593M, 5824, 843750 },
++	{ 32000, TMDS_594M, 3072, 445500 },
++	{ 88200, TMDS_593M, 17836, 937500 },
++	{ 88200, TMDS_594M, 18816, 990000 },
++	{ 96000, TMDS_593M, 11648, 562500 },
++	{ 96000, TMDS_594M, 12288, 594000 },
++	{ 176400, TMDS_593M, 35672, 937500 },
++	{ 176400, TMDS_594M, 37632, 990000 },
++	{ 192000, TMDS_593M, 23296, 562500 },
++	{ 192000, TMDS_594M, 24576, 594000 },
+ };
  
--	spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
--	while ((status = bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
--			 bank->gc.read_reg(reg_base + GIO_MASK(bank->id)))) {
-+	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
- 		int bit;
- 
- 		for_each_set_bit(bit, &status, 32) {
-@@ -224,7 +236,6 @@ static void brcmstb_gpio_irq_bank_handle
- 			generic_handle_irq(irq_find_mapping(irq_domain, bit));
- 		}
- 	}
--	spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
- }
- 
- /* Each UPG GIO block has one IRQ for all banks */
+ /* get AUD_CONFIG_PIXEL_CLOCK_HDMI_* value for mode */
 
 
