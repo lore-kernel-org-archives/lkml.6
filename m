@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A617C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403C9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF760213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01DF721104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:37:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6o4b/tU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF760213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiL++vtK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01DF721104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeKTDBs (ORCPT
+        id S1732282AbeKTDBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:01:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33870 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:01:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731329AbeKTDBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:01:47 -0500
+        id S1730719AbeKTDBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:01:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F351206BA;
-        Mon, 19 Nov 2018 16:37:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C729520989;
+        Mon, 19 Nov 2018 16:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645458;
-        bh=XjwywqNVjT8DKvYAThdV3hx8JPJbM/E/r5bhSB3C50g=;
+        s=default; t=1542645462;
+        bh=+oShAXByvRILOqXXDWbQpKhtTskWfah/GmYqoObqqeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X6o4b/tUxeJWkN3SYlBcZjE5Q9B0vkMRrfqRQY53KNqYVXXt6c0bGvhF3Ec8o3Wij
-         JXViY7Zia5+l8nLFH0iEhyrWJ0x2Bs7SPsd6mgdVBJyKGaU3fKn8wo8DK/ClfKblPZ
-         HbLZciGEuHJEQ6dxXYwG9W8mUC13Hw8+uSL4zDFQ=
+        b=SiL++vtK4stLmT8t8uAHv7ZhWHy3qH5QYna5/2QqEjsBnlFVYhNiyXFqRFQWZlF28
+         +58ihzw3ikPcATmKz+MIqSEK+BCx36N/cQLvPr90+niUadC9tYHRVxjYp5vH7oGVvd
+         qMINqi8yLv6ZKvpEIAhJ+LAIVpmz7xrFIfdTf5n0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.19 170/205] efi/arm/libstub: Pack FDT after populating it
-Date:   Mon, 19 Nov 2018 17:27:57 +0100
-Message-Id: <20181119162640.388446693@linuxfoundation.org>
+        stable@vger.kernel.org, Roman Gushchin <guro@fb.com>,
+        Spock <dairinin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 171/205] mm: dont reclaim inodes with many attached pages
+Date:   Mon, 19 Nov 2018 17:27:58 +0100
+Message-Id: <20181119162640.474322772@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,57 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Roman Gushchin <guro@fb.com>
 
-commit 72a58a63a164b4e9d2d914e65caeb551846883f1 upstream.
+commit a76cf1a474d7dbcd9336b5f5afb0162baa142cf0 upstream.
 
-Commit:
+Spock reported that commit 172b06c32b94 ("mm: slowly shrink slabs with a
+relatively small number of objects") leads to a regression on his setup:
+periodically the majority of the pagecache is evicted without an obvious
+reason, while before the change the amount of free memory was balancing
+around the watermark.
 
-  24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
+The reason behind is that the mentioned above change created some
+minimal background pressure on the inode cache.  The problem is that if
+an inode is considered to be reclaimed, all belonging pagecache page are
+stripped, no matter how many of them are there.  So, if a huge
+multi-gigabyte file is cached in the memory, and the goal is to reclaim
+only few slab objects (unused inodes), we still can eventually evict all
+gigabytes of the pagecache at once.
 
-increased the allocation size for the FDT image created by the stub to a
-fixed value of 2 MB, to simplify the former code that made several
-attempts with increasing values for the size. This is reasonable
-given that the allocation is of type EFI_LOADER_DATA, which is released
-to the kernel unless it is explicitly memblock_reserve()d by the early
-boot code.
+The workload described by Spock has few large non-mapped files in the
+pagecache, so it's especially noticeable.
 
-However, this allocation size leaked into the 'size' field of the FDT
-header metadata, and so the entire allocation remains occupied by the
-device tree binary, even if most of it is not used to store device tree
-information.
+To solve the problem let's postpone the reclaim of inodes, which have
+more than 1 attached page.  Let's wait until the pagecache pages will be
+evicted naturally by scanning the corresponding LRU lists, and only then
+reclaim the inode structure.
 
-So call fdt_pack() to shrink the FDT data structure to its minimum size
-after populating all the fields, so that the remaining memory is no
-longer wasted.
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: <stable@vger.kernel.org> # v4.12+
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Fixes: 24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
-Link: http://lkml.kernel.org/r/20181114175544.12860-4-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: http://lkml.kernel.org/r/20181023164302.20436-1-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Reported-by: Spock <dairinin@gmail.com>
+Tested-by: Spock <dairinin@gmail.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: <stable@vger.kernel.org>	[4.19.x]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/efi/libstub/fdt.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/inode.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -158,6 +158,10 @@ static efi_status_t update_fdt(efi_syste
- 			return efi_status;
- 		}
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -730,8 +730,11 @@ static enum lru_status inode_lru_isolate
+ 		return LRU_REMOVED;
  	}
-+
-+	/* shrink the FDT back to its minimum size */
-+	fdt_pack(fdt);
-+
- 	return EFI_SUCCESS;
  
- fdt_set_fail:
+-	/* recently referenced inodes get one more pass */
+-	if (inode->i_state & I_REFERENCED) {
++	/*
++	 * Recently referenced inodes and inodes with many attached pages
++	 * get one more pass.
++	 */
++	if (inode->i_state & I_REFERENCED || inode->i_data.nrpages > 1) {
+ 		inode->i_state &= ~I_REFERENCED;
+ 		spin_unlock(&inode->i_lock);
+ 		return LRU_ROTATE;
 
 
