@@ -7,47 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C50C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E3EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4262086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D11352145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATA/Qgmt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4262086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZwGfxmx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D11352145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388091AbeKTDID (ORCPT
+        id S2388105AbeKTDIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42380 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:02 -0500
+        id S1731911AbeKTDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D72EB2086A;
-        Mon, 19 Nov 2018 16:43:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7640320C01;
+        Mon, 19 Nov 2018 16:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645831;
-        bh=IHgHSsEbRwnMtzr9JDx6HgV44AXUaDqCRf8ORoU5nuw=;
+        s=default; t=1542645834;
+        bh=rDwMqZXUDDMgYI+7rkkQFrhVezeZcQudBuXlTDpQxI0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ATA/QgmtHsb0UoERmRTRSY8XOqt69GMqe2Hx3Z6hm14q+wfkGaHU1HQwqTBTKZaAo
-         IB5khm7z5A4zhJ7tOGyJPJcCyughRj883KtBxTpUS8CPlic7EPQbETFBQwdcVlFbhZ
-         KEclauEnfZSKA7KEA39Yuez1uMl12ZjrXGAvdFw8=
+        b=kZwGfxmxfgJMP7Z1aJeBA0onclPE7e1Yb00UbyfHu2D+DyFtqAj/F3c8ITLK5YDgC
+         y6hn/jKtSGqTqtJcOpTekKnRJORVK9nrQ+GX7yaccUguLJwa1wynE3GSrfZ7DYisRz
+         4AhdFAspXswqmdEfIfNxlP/u+Ersb6Pu0c30hkJc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 078/171] scsi: qla2xxx: Initialize port speed to avoid setting lower speed
-Date:   Mon, 19 Nov 2018 17:27:54 +0100
-Message-Id: <20181119162632.112139842@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.18 105/171] ext4: add missing brelse() update_backups()s error path
+Date:   Mon, 19 Nov 2018 17:28:21 +0100
+Message-Id: <20181119162635.566831190@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -65,35 +62,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit f635e48e866ee1a47d2d42ce012fdcc07bf55853 upstream.
+commit ea0abbb648452cdb6e1734b702b6330a7448fcf8 upstream.
 
-This patch initializes port speed so that firmware does not set lower
-operating speed. Setting lower speed in firmware impacts WRITE perfomance.
-
-Fixes: 726b85487067 ("qla2xxx: Add framework for async fabric discovery")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: ac27a0ec112a ("ext4: initial copy of files from ext3")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 2.6.19
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_init.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/ext4/resize.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -4491,6 +4491,7 @@ qla2x00_alloc_fcport(scsi_qla_host_t *vh
- 	fcport->loop_id = FC_NO_LOOP_ID;
- 	qla2x00_set_fcport_state(fcport, FCS_UNCONFIGURED);
- 	fcport->supported_classes = FC_COS_UNSPECIFIED;
-+	fcport->fp_speed = PORT_SPEED_UNKNOWN;
- 
- 	fcport->ct_desc.ct_sns = dma_alloc_coherent(&vha->hw->pdev->dev,
- 		sizeof(struct ct_sns_pkt), &fcport->ct_desc.ct_sns_dma,
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1124,8 +1124,10 @@ static void update_backups(struct super_
+ 			   backup_block, backup_block -
+ 			   ext4_group_first_block_no(sb, group));
+ 		BUFFER_TRACE(bh, "get_write_access");
+-		if ((err = ext4_journal_get_write_access(handle, bh)))
++		if ((err = ext4_journal_get_write_access(handle, bh))) {
++			brelse(bh);
+ 			break;
++		}
+ 		lock_buffer(bh);
+ 		memcpy(bh->b_data, data, size);
+ 		if (rest)
 
 
