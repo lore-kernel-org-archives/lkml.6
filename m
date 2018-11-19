@@ -2,178 +2,286 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B09C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A74C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00D620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC52720823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 11:27:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fGVj0V8u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00D620823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="K2SgDnb6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC52720823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=austad.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeKSVpt (ORCPT
+        id S1728592AbeKSVut (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:45:49 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38240 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbeKSVpt (ORCPT
+        Mon, 19 Nov 2018 16:50:49 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45552 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728518AbeKSVus (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:45:49 -0500
-Received: by mail-it1-f194.google.com with SMTP id h65so3602206ith.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 03:22:29 -0800 (PST)
+        Mon, 19 Nov 2018 16:50:48 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so25783096ljd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 03:27:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3TA0tjnvEntm7WKuCiOxyeEgF0BAR0FEyPhya5grE5w=;
-        b=fGVj0V8ulBIbtr8rVm8gCTyB62WBAwEqDm90S1LZzZ/l0LeLmakRwQtfq4Iph4wecR
-         O2Mgc4rSkCyoNvgt0nKcPbGZsu49vmrylyt6Ky4JeomKD4Bq8Nr+OcKNIYI4zMvExQNy
-         RTRU2YziouEHsUHTZpqJkRy/UVXNZb6q71uAA=
+        d=austad-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=t5uTk1+gdaFjUDPsSuFp1Xhw/I50f1KTycgKFIEfIHE=;
+        b=K2SgDnb6RohlYOrWU/XbAjiF9hPX4ABOL5lltn8j7+qxoGpJ8uEsaGjTBiR9jkChYm
+         Why+BM963H0O/dGnu5Q24RIQ00Kew/Ep+ID5oXtFH3lKcqzHJZ+s0grWZAZwkevxALrZ
+         ZVq6fLgwNY8rJtbbLc/7kn8Xf/dxTUc5KANgRvnxpsitWxVt6otZ+II3+ISlWuWnpTAi
+         uuaWMy4w7nk9cPT2/s53Nu7f1V92FHehhHuIaBeS2kAssJvai9m9RKz5nttTzRopiJzy
+         FMvGc1MPpk32tOHfzRN86zxKPvh7HNz0PsFVODKMZM+XEcId8UaZelvwGEsPLBr9RQXM
+         R/Rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3TA0tjnvEntm7WKuCiOxyeEgF0BAR0FEyPhya5grE5w=;
-        b=I28f0RvF6H7vDFfPLgAEU2TmpGJVMypy2iDULHyftkgoRJHxp5b3ewGwR8Zm6zhEZW
-         OHVpFmR+lI6K+QvmVNtLP3NDZ+0hRUMmBS+Z80LFFI8YbW0FSdfUDaFUYerxd18npjyG
-         8ZvNFMP3kCfVepQRUdaIlyKw2KnMmof5Bk0baU3TUVNn8ZGvyNiQ4DICZaqaLY8G2IAr
-         Xt4kMFeF6rdaNixVx/8dok7wNOYmjOhbwUvreQlmjZpLk+gN2kOll5zFcaQnEdw9NaHR
-         JUXTzFke1c7VYkPpVdOPFI/ZWA25MtKM3n70kK3cQdjhm81DFC1vjV+p08BMaycXAwle
-         PKjg==
-X-Gm-Message-State: AA+aEWaQK2wf+pjNEYKePkq3JJdfqwkcENPzNXC0SybWq1ZO/I69v4Rd
-        9wi9fKOPrXliWY8wP0HBQETwMFiQYfGEpd1UDnfcIw==
-X-Google-Smtp-Source: AFSGD/WhN18HGQiWQz3HVjl5wVEouwQHBNICs1xinrArKvV2UBXcQE8ai3HfuWb+JHDLhjb8Vegl17sp7V1RjwsU4jU=
-X-Received: by 2002:a24:2710:: with SMTP id g16-v6mr510905ita.107.1542626549241;
- Mon, 19 Nov 2018 03:22:29 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t5uTk1+gdaFjUDPsSuFp1Xhw/I50f1KTycgKFIEfIHE=;
+        b=oGlCiM/Hox4tHECkf6zPx6BDPc7W4/J1ct2Rdzk+rP/JXsnKCzgrjoCjnEGI1c4B8x
+         EuM6JriUEZduaLgNNURIOR6Nh5NSJF0BJugLhbtucH0VkmyshpJXJGF5902ar5Afas0D
+         T+rJ6VotCvxCqkgfnmkWBagFMn4UbTd5cRJAxr2Aw9JCpAtIAkMw3xz4MAwkz7HRSUH0
+         YIVojxUqknmCFCMGl9yrL7jDPwgjDIBu9khKw8R4dvEFUdByeZIf8jUrWCnFRzExE1bl
+         Tmicb0ZWuuX3LjdpeBo4Uoz8H4z+IgM/iyg71+GaDBairemST04ZEwlKN413BPycl5Vw
+         3NoQ==
+X-Gm-Message-State: AGRZ1gKrJUYXGHzCkULbWCO6Yg0RzPP13nGrxr8UUSZ6N8+iId3MMbsp
+        J5UdJAvCrSv/ImF3rZA7JIGyZ/kSLc0XLw==
+X-Google-Smtp-Source: AJdET5fg3qKNmIA7pEopzeQf/9cXskdKgyFl7O0N7y2s/cLzkdMgem4O9n8EzCgFYb2sUIiZQ/nrJw==
+X-Received: by 2002:a2e:458b:: with SMTP id s133-v6mr11075033lja.170.1542626845487;
+        Mon, 19 Nov 2018 03:27:25 -0800 (PST)
+Received: from sisyphus.home.austad.us (11.92-220-88.customer.lyse.net. [92.220.88.11])
+        by smtp.gmail.com with ESMTPSA id g17sm2961461lfg.78.2018.11.19.03.27.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 03:27:24 -0800 (PST)
+Date:   Mon, 19 Nov 2018 12:27:21 +0100
+From:   Henrik Austad <henrik@austad.us>
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Henrik Austad <haustad@cisco.com>,
+        Peter Zijlstra <peterz@infradead.org>, juri.lelli@arm.com,
+        bigeasy@linutronix.de, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jdesfossez@efficios.com,
+        dvhart@infradead.org, bristot@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 00/17] Backport rt/deadline crash and the ardous story of
+ FUTEX_UNLOCK_PI to 4.4
+Message-ID: <20181119112720.GA29334@sisyphus.home.austad.us>
+References: <1541758065-10952-1-git-send-email-henrik@austad.us>
+ <20181109103531.GA9188@sisyphus.home.austad.us>
 MIME-Version: 1.0
-References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-5-jagan@amarulasolutions.com> <20181119083243.4njj2p2sy2xf2zyf@flea>
-In-Reply-To: <20181119083243.4njj2p2sy2xf2zyf@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 19 Nov 2018 16:52:17 +0530
-Message-ID: <CAMty3ZAKL2fZqwLwd_WiQpzz+cOETMR7ES7HQsBo3PsAvjM+6A@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] drm/sun4i: sun6i_mipi_dsi: Simplify drq set to
- support all modes
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
+Content-Disposition: inline
+In-Reply-To: <20181109103531.GA9188@sisyphus.home.austad.us>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 2:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Nov 16, 2018 at 10:09:08PM +0530, Jagan Teki wrote:
-> > Allwinner MIPI DSI DRQ set value can be varied with respective
-> > video modes.
-> > - burst mode the set value is always 0
-> > - video modes whose front porch greater than 20, the set value
-> >   can be computed based front porch and bpp.
-> > - video modes whose front porch is not greater than 20, the set value
-> >   is simply 0
-> >
-> > This patch simplifies existing drq set value code by grouping
-> > into sun6i_dsi_get_drq and support all video modes.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 38 ++++++++++++++++----------
-> >  1 file changed, 23 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index efd08bfd0cb8..d60955880c43 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -363,6 +363,26 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
-> >                    SUN6I_DSI_INST_JUMP_CFG_NUM(1));
-> >  };
-> >
-> > +static int sun6i_dsi_get_drq(struct sun6i_dsi *dsi,
-> > +                           struct drm_display_mode *mode)
-> > +{
-> > +     struct mipi_dsi_device *device = dsi->device;
-> > +     int drq = 0;
->
-> So, here, you declaring a variable called drq, set to 0.
->
-> > +     if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-> > +             return drq;
->
-> That you return here. You could just return 0, to be clearer.
->
-> > +     if ((mode->hsync_start - mode->hdisplay) > 20) {
-> > +             /* Maaaaaagic */
-> > +             u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
->
-> You re-declare a variable with the same name here, but a different
-> type....
->
-> > +             drq *= mipi_dsi_pixel_format_to_bpp(device->format);
-> > +             drq /= 32;
-> > +     }
-> > +
-> > +     return drq;
->
-> And then return the first one? How is that even working?
 
-Will fix this.
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> > +
-> >  static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
-> >                                     struct drm_display_mode *mode, u16 hblk)
-> >  {
-> > @@ -478,21 +498,9 @@ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
-> >  static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
-> >                                 struct drm_display_mode *mode)
-> >  {
-> > -     struct mipi_dsi_device *device = dsi->device;
-> > -     u32 val = 0;
-> > -
-> > -     if ((mode->hsync_start - mode->hdisplay) > 20) {
-> > -             /* Maaaaaagic */
-> > -             u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
-> > -
-> > -             drq *= mipi_dsi_pixel_format_to_bpp(device->format);
-> > -             drq /= 32;
-> > -
-> > -             val = (SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
-> > -                    SUN6I_DSI_TCON_DRQ_SET(drq));
-> > -     }
-> > -
-> > -     regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG, val);
-> > +     regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
-> > +                  SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
-> > +                  SUN6I_DSI_TCON_DRQ_SET(sun6i_dsi_get_drq(dsi, mode)));
->
-> On top of that, you now enable the DRQ stuff all the time, while it
+On Fri, Nov 09, 2018 at 11:35:31AM +0100, Henrik Austad wrote:
+> On Fri, Nov 09, 2018 at 11:07:28AM +0100, Henrik Austad wrote:
+> > From: Henrik Austad <haustad@cisco.com>
+> >=20
+> > Short story:
+>=20
+> Sorry for the spam, it looks like I was not very specific in /which/=20
+> version I targeted this to, as well as not providing a full Cc-list for t=
+he=20
+> cover-letter.
 
-Earlier the val value is ENABLE_MODE ORed with drq value. for the
-condition drq is computed in if block otherwise the val is 0.
-So as I explained in commit message the drq value is 0
-- for video modes whose front porch is not greater than 20 and
-- for burst mode the val
+Gentle prod. I realize this was sent out just before plumbers and that=20
+people had pretty packed agendas, so a small nudge to gain a spot closer to=
+=20
+the top of the inbox :)
 
-ie reason I mode it common.
+This series has now been running on an arm64 system for 9 days without any=
+=20
+issues and pi_stress showed a dramatic improvement from ~30 seconds and up=
+=20
+to several ours (it finally deadlocked at 3.9e9 inversions).
+
+I'd greatly appreciate if someone could give the list of patches a quick=20
+glance to verify that I got all the required patches and then if it could=
+=20
+be added to 4.4.y.
+
+Thanks!
+
+-Henrik
+
+
+> The series is targeted at stable v4.4.162.
+>=20
+> Expanding Cc-list to those missing from the first attempt.
+>=20
+> -Henrik
+>=20
+> > The following patches are needed on a 4.4 kernel to avoid
+> > Oops in the scheduler when a sched_rr and sched_deadline task contends
+> > on the same futex (with PI).
+> >=20
+> > Longer story:
+> >=20
+> > On one of our arm64 systems, we occasionally crash with an Oops in the
+> > scheduler with the following backtrace.
+> >=20
+> > [<ffffffc0000ee398>] enqueue_task_dl+0x1f0/0x420
+> > [<ffffffc0000d0f14>] activate_task+0x7c/0x90
+> > [<ffffffc0000edbdc>] push_dl_task+0x164/0x1c8
+> > [<ffffffc0000edc60>] push_dl_tasks+0x20/0x30
+> > [<ffffffc0000cc00c>] __balance_callback+0x44/0x68
+> > [<ffffffc000d2c018>] __schedule+0x6f0/0x728
+> > [<ffffffc000d2c278>] schedule+0x78/0x98
+> > [<ffffffc000d2e76c>] __rt_mutex_slowlock+0x9c/0x108
+> > [<ffffffc000d2e9d0>] rt_mutex_slowlock+0xd8/0x198
+> > [<ffffffc0000f7f28>] rt_mutex_timed_futex_lock+0x30/0x40
+> > [<ffffffc00012c1a8>] futex_lock_pi+0x200/0x3b0
+> > [<ffffffc00012cf84>] do_futex+0x1c4/0x550
+> > [<ffffffc00012d92c>] compat_SyS_futex+0x10c/0x138
+> > [<ffffffc00008504c>] __sys_trace_return+0x0/0x4
+> >=20
+> > This seems to be the same bug Xuneli Pang triggered and fixed in
+> > e96a7705e7d3 "sched/rtmutex/deadline: Fix a PI crash for deadline
+> > tasks". As noted by Peter Zijlstra in the previous attempt, this fix
+> > requires a few other patches, most notably the FUTEX_UNLOCK_PI series
+> > [1]
+> >=20
+> > Testing this on a dual-core VM I have not been able to reproduce the
+> > same crash, but pi_stress (part of the rt-test suite) reveals that
+> > vanilla 4.4.162 behaves rather badly with a mix of deadline and
+> > sched_(rr|fifo) tasks:
+> >=20
+> > time pi_stress --rr --mlockall --sched id=3Dhigh,policy=3Ddeadline,runt=
+ime=3D100000,deadline=3D200000,period=3D200000
+> > Starting PI Stress Test
+> > Number of thread groups: 1
+> > Duration of test run: infinite
+> > Number of inversions per group: unlimited
+> >      Admin thread SCHED_RR priority 4
+> > 1 groups of 3 threads will be created
+> >       High thread SCHED_DEADLINE runtime 100000 deadline 200000 period =
+200000
+> >        Med thread SCHED_RR priority 2
+> >        Low thread SCHED_RR priority 1
+> > Current Inversions: 141627
+> > WATCHDOG triggered: group 0 is deadlocked!
+> > reporter stopping due to watchdog event
+> > Stopping test
+> > Terminated
+> >=20
+> > real    0m26.291s
+> > user    0m0.148s
+> > sys     0m18.819s
+> >=20
+> > With this series applied, the test ran for ~4.5 hours and again for 129
+> > minutes (when I remembered to time it) before crashing:
+> >=20
+> > time pi_stress --rr --mlockall --sched id=3Dhigh,policy=3Ddeadline,runt=
+ime=3D100000,deadline=3D200000,period=3D200000
+> > Starting PI Stress Test
+> > Number of thread groups: 1
+> > Duration of test run: infinite
+> > Number of inversions per group: unlimited
+> >      Admin thread SCHED_RR priority 4
+> > 1 groups of 3 threads will be created
+> >       High thread SCHED_DEADLINE runtime 100000 deadline 200000 period =
+200000
+> >        Med thread SCHED_RR priority 2
+> >        Low thread SCHED_RR priority 1
+> > Current Inversions: 51985223
+> > WATCHDOG triggered: group 0 is deadlocked!
+> > reporter stopping due to watchdog event
+> > Stopping test
+> > Terminated
+> >=20
+> > real    129m38.807s
+> > user    0m59.084s
+> > sys     109m53.666s
+> >=20
+> >=20
+> > So clearly not perfect, but a *lot* better.
+> >=20
+> > The same series on our vendor-4.4 kernel moves pi_stress up from ~30
+> > seconds before deadlock up to the same level as the VM (the test is
+> > still going as of this writing).
+> >=20
+> > I suspect other users of 4.4 would benefit from having these patches
+> > backported, so tag them for stable. I assume 4.9 and 4.14 could benefit
+> > as well, but I have not had time to look into those.
+> >=20
+> > 1) https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1359667=
+=2Ehtml
+> >=20
+> > Peter Zijlstra (13):
+> >   futex: Cleanup variable names for futex_top_waiter()
+> >   futex: Use smp_store_release() in mark_wake_futex()
+> >   futex: Remove rt_mutex_deadlock_account_*()
+> >   futex,rt_mutex: Provide futex specific rt_mutex API
+> >   futex: Change locking rules
+> >   futex: Cleanup refcounting
+> >   futex: Rework inconsistent rt_mutex/futex_q state
+> >   futex: Pull rt_mutex_futex_unlock() out from under hb->lock
+> >   futex,rt_mutex: Introduce rt_mutex_init_waiter()
+> >   futex,rt_mutex: Restructure rt_mutex_finish_proxy_lock()
+> >   futex: Rework futex_lock_pi() to use rt_mutex_*_proxy_lock()
+> >   futex: Futex_unlock_pi() determinism
+> >   futex: Drop hb->lock before enqueueing on the rtmutex
+> >=20
+> > Thomas Gleixner (2):
+> >   rtmutex: Make wait_lock irq safe
+> >   futex: Rename free_pi_state() to put_pi_state()
+> >=20
+> > Xunlei Pang (2):
+> >   rtmutex: Deboost before waking up the top waiter
+> >   sched/rtmutex/deadline: Fix a PI crash for deadline tasks
+> >=20
+> >  include/linux/init_task.h       |   1 +
+> >  include/linux/sched.h           |   2 +
+> >  include/linux/sched/rt.h        |   1 +
+> >  kernel/fork.c                   |   1 +
+> >  kernel/futex.c                  | 532 ++++++++++++++++++++++++++------=
+--------
+> >  kernel/locking/rtmutex-debug.c  |   9 -
+> >  kernel/locking/rtmutex-debug.h  |   3 -
+> >  kernel/locking/rtmutex.c        | 406 ++++++++++++++++++------------
+> >  kernel/locking/rtmutex.h        |   2 -
+> >  kernel/locking/rtmutex_common.h |  24 +-
+> >  kernel/sched/core.c             |   2 +
+> >  11 files changed, 620 insertions(+), 363 deletions(-)
+> >=20
+> > --=20
+> > 2.7.4
+> >=20
+>=20
+> --=20
+> Henrik Austad
+
+
+
+--=20
+Henrik Austad
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvynhgACgkQ6k5VT6v45lkwPwCbBLNImzUZqVN8HgIZJLusO8I0
+RccAn2CTddVK3rZgDaKGS2kFxLnXmQAB
+=Iupx
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
