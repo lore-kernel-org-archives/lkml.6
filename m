@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-18.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5FAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C693C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD34220C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3930E213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:28:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lyLV3L8w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD34220C01
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJUIqqcT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3930E213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404923AbeKTDwG (ORCPT
+        id S2404361AbeKTDw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:52:06 -0500
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:36819 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404386AbeKTDwC (ORCPT
+        Mon, 19 Nov 2018 22:52:29 -0500
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:54224 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404884AbeKTDv6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:52:02 -0500
-Received: by mail-wm1-f47.google.com with SMTP id s11so6099466wmh.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 09:27:36 -0800 (PST)
+        Mon, 19 Nov 2018 22:51:58 -0500
+Received: by mail-wm1-f42.google.com with SMTP id g131so5752862wmg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 09:27:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=34hTykRKcWhaMS1fQrkJbK7/jAHF4emrjHnaRSxm5Ss=;
-        b=lyLV3L8wTcUcKgrTnPNQTK30cd26lfH8yp9gsif8Ds82qAL//+kmhUmF/f2cU3Cl7R
-         K9yyY/I69P0vbudaiZx3TqZ1AiwAMlP+VRIUKAh+jciqdxI2TTYUWHDylkDlzzOIDQQd
-         1CMzpWxJf7J3SporiQRVPWZU3f6uKjJujpGJyyMpljb3pQSw93arORHPmS6VsqGwv7tB
-         Rh/ypAwy0JT33yKg6j4zZi2u7s1gWHbUhH2WBr1GaJWk2P0oKGtRMpTh0Cpx21PjEOxb
-         tAdkyIBnC7Haphnrm4W6YedjmLE77ca4FImSOtQIA9yxWeUCGNx8LhsooDFHhVYAmkSR
-         sWAQ==
+        bh=4Hsa8V5cyqurd6qNrrNh17vMgQf+VOFwFcgWWUblsJY=;
+        b=eJUIqqcTCwdMK+Ze5U3tBDmP7zaYnnM7KjIf6MsdirCNEMcg85CW5ArsNDzJefv3Ow
+         NxAFPAWc1lKeYz6XKKw/SNzpF6BbaxAPiCkfCF1fq0i8Df5tOVzMQY7L92FIapGg9vGi
+         ewUGbGFHEdxAYMerulbTxKoMAJ0HKJdiC/m6cJTlDPNL8kr5xGlc0jCfEChyFnoXnp+B
+         pOkxzznQGcKOfZ+Mro5UO/JZtO+069vPnr6TzWgUvL6om1WY/aDrURMVklzJlu9rxwva
+         ZcDEm53f3Z8HN2tUnkRyIfYCMGWVZb1J6JE3obCk0EMXovqNXVcPqWj8byicTzfJWSE0
+         2ejw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=34hTykRKcWhaMS1fQrkJbK7/jAHF4emrjHnaRSxm5Ss=;
-        b=VEROP4Jw6tHAzTWZpMjHlkHNWW2EO63788QzcOjPeG1+6B8XpfVeHOKv3Ho8rhK9ZJ
-         PdcPQC9FU/U51jb6icUZcareNEbfeFtJ297ZOnJLtsJa/ouVW0E+Jm1CAqBgwencAan+
-         zo/K4zTOWqtaH/Orj+wucjL7MkxZ6gjOBY9dlr8qoQxmt+vTn63/tB0q0FjX6/meKpB9
-         bw6vKSbBplfWp05zhifzjyNYIfYNl2EOda3uwEqH+lvYQicrkBKzJFqh5TklEOHnfQqE
-         KnApSHEvc10N/NUMlqAWAARM1SJlfTlG+p3nxk/VoklR8A/hBTVw/OSzoY9Zfi55u8h8
-         vsqw==
-X-Gm-Message-State: AA+aEWZWZHqTRrvF6yQM2EDdNYbl0eZpQP61N3GhrfLOiC3tTWThcZoI
-        jdZSi/cbxSiNwFRkDS3lfZM6YA==
-X-Google-Smtp-Source: AJdET5cE1luzhk6bqo2a67kWH0NiMR++tuu8gFzhI8kOTUxou2v2fiPAyFsC2WBOp3TVhTbZH0Y96w==
-X-Received: by 2002:a1c:3a07:: with SMTP id h7mr5536450wma.41.1542648455754;
-        Mon, 19 Nov 2018 09:27:35 -0800 (PST)
+        bh=4Hsa8V5cyqurd6qNrrNh17vMgQf+VOFwFcgWWUblsJY=;
+        b=aovP83ZD8zoEASUwiwWfJv5VSk6GeHGzztNNHwpSsCyEdtIM+9d8pgEYzhiTuz92om
+         n+AV+drzNrrlGQe57cGn34ZaBwvtka1OurxLVe7uaG0nGVwXJBH5zvq4U0Ud5M45jdtm
+         gweaMioLTcaDpdx4GfSqKr7SEcS+Cq/BT84mn4xOoovB94SVH+h32XO99zQTASV8WaMB
+         VggOaPWDwLkSFIh7huZFHlsFhX84xz77EwGgyUZ+wRQ8xIDRUOn4s62IShe+V/2QFk1A
+         k8+F9y4Y7TqfzXuFykNwBViow1+EpUJL9j3NFUHZvPZCRkYRo/eRzmP45gfNT7jngJ7Z
+         fm0w==
+X-Gm-Message-State: AA+aEWbdZERrFqhnoOlYKnYdR+aKr1BFwE4swJ1MKLHvuaUmaVjvmcHh
+        Mv3Vfo/IcqMckdE79thXgNY4mQ==
+X-Google-Smtp-Source: AJdET5fanlhsIp0g/xpGFrbxrhl1+EyGkJqzbcRiaBt+vYNbFkmdxUN2MTjJ3If/N5HOS7n3bvTZnw==
+X-Received: by 2002:a1c:110b:: with SMTP id 11mr5140713wmr.83.1542648451862;
+        Mon, 19 Nov 2018 09:27:31 -0800 (PST)
 Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:10:3180:41f8:3010:ff61])
-        by smtp.gmail.com with ESMTPSA id l143-v6sm23685190wmb.23.2018.11.19.09.27.33
+        by smtp.gmail.com with ESMTPSA id l143-v6sm23685190wmb.23.2018.11.19.09.27.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 09:27:34 -0800 (PST)
+        Mon, 19 Nov 2018 09:27:31 -0800 (PST)
 From:   Andrey Konovalov <andreyknvl@google.com>
 To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
         Alexander Potapenko <glider@google.com>,
@@ -96,9 +96,9 @@ Cc:     Kostya Serebryany <kcc@google.com>,
         Chintan Pandya <cpandya@codeaurora.org>,
         Vishwath Mohan <vishwath@google.com>,
         Andrey Konovalov <andreyknvl@google.com>
-Subject: [PATCH v11 24/24] kasan: add SPDX-License-Identifier mark to source files
-Date:   Mon, 19 Nov 2018 18:26:40 +0100
-Message-Id: <95c5fe49a551b0aae873ed959656ae6fd3421e14.1542648335.git.andreyknvl@google.com>
+Subject: [PATCH v11 22/24] kasan: add __must_check annotations to kasan hooks
+Date:   Mon, 19 Nov 2018 18:26:38 +0100
+Message-Id: <0a0cabf188838f1d42b417f6aadc97b8fcf5c60b.1542648335.git.andreyknvl@google.com>
 X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
 In-Reply-To: <cover.1542648335.git.andreyknvl@google.com>
 References: <cover.1542648335.git.andreyknvl@google.com>
@@ -109,95 +109,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a "SPDX-License-Identifier: GPL-2.0" mark to all source
-files under mm/kasan.
+This patch adds __must_check annotations to kasan hooks that return a
+pointer to make sure that a tagged pointer always gets propagated.
 
-Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Suggested-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
 Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
 ---
- mm/kasan/common.c         | 1 +
- mm/kasan/generic.c        | 1 +
- mm/kasan/generic_report.c | 1 +
- mm/kasan/init.c           | 1 +
- mm/kasan/quarantine.c     | 1 +
- mm/kasan/report.c         | 1 +
- mm/kasan/tags.c           | 1 +
- mm/kasan/tags_report.c    | 1 +
- 8 files changed, 8 insertions(+)
+ include/linux/kasan.h | 16 ++++++++++------
+ mm/kasan/common.c     | 14 ++++++++------
+ 2 files changed, 18 insertions(+), 12 deletions(-)
 
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 8da7b7a4397a..b40ea104dd36 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -49,16 +49,20 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+ void kasan_poison_slab(struct page *page);
+ void kasan_unpoison_object_data(struct kmem_cache *cache, void *object);
+ void kasan_poison_object_data(struct kmem_cache *cache, void *object);
+-void *kasan_init_slab_obj(struct kmem_cache *cache, const void *object);
++void * __must_check kasan_init_slab_obj(struct kmem_cache *cache,
++					const void *object);
+ 
+-void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags);
++void * __must_check kasan_kmalloc_large(const void *ptr, size_t size,
++						gfp_t flags);
+ void kasan_kfree_large(void *ptr, unsigned long ip);
+ void kasan_poison_kfree(void *ptr, unsigned long ip);
+-void *kasan_kmalloc(struct kmem_cache *s, const void *object, size_t size,
+-		  gfp_t flags);
+-void *kasan_krealloc(const void *object, size_t new_size, gfp_t flags);
++void * __must_check kasan_kmalloc(struct kmem_cache *s, const void *object,
++					size_t size, gfp_t flags);
++void * __must_check kasan_krealloc(const void *object, size_t new_size,
++					gfp_t flags);
+ 
+-void *kasan_slab_alloc(struct kmem_cache *s, void *object, gfp_t flags);
++void * __must_check kasan_slab_alloc(struct kmem_cache *s, void *object,
++					gfp_t flags);
+ bool kasan_slab_free(struct kmem_cache *s, void *object, unsigned long ip);
+ 
+ struct kasan_cache {
 diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index ba8e78eb0c67..6628a9f0c03f 100644
+index 195ca385cf7a..ba8e78eb0c67 100644
 --- a/mm/kasan/common.c
 +++ b/mm/kasan/common.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains common generic and tag-based KASAN code.
-  *
-diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-index b8de6d33c55c..ccb6207276e3 100644
---- a/mm/kasan/generic.c
-+++ b/mm/kasan/generic.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains core generic KASAN code.
-  *
-diff --git a/mm/kasan/generic_report.c b/mm/kasan/generic_report.c
-index a4604cceae59..5e12035888f2 100644
---- a/mm/kasan/generic_report.c
-+++ b/mm/kasan/generic_report.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains generic KASAN specific error reporting code.
-  *
-diff --git a/mm/kasan/init.c b/mm/kasan/init.c
-index 2b21d3717d62..34afad56497b 100644
---- a/mm/kasan/init.c
-+++ b/mm/kasan/init.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains some kasan initialization code.
-  *
-diff --git a/mm/kasan/quarantine.c b/mm/kasan/quarantine.c
-index b209dbaefde8..57334ef2d7ef 100644
---- a/mm/kasan/quarantine.c
-+++ b/mm/kasan/quarantine.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * KASAN quarantine.
-  *
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index 214d85035f99..ca9418fe9232 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains common generic and tag-based KASAN error reporting code.
-  *
-diff --git a/mm/kasan/tags.c b/mm/kasan/tags.c
-index 1d1b79350e28..0777649e07c4 100644
---- a/mm/kasan/tags.c
-+++ b/mm/kasan/tags.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains core tag-based KASAN code.
-  *
-diff --git a/mm/kasan/tags_report.c b/mm/kasan/tags_report.c
-index 573c51d20d09..8eaf5f722271 100644
---- a/mm/kasan/tags_report.c
-+++ b/mm/kasan/tags_report.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * This file contains tag-based KASAN specific error reporting code.
-  *
+@@ -373,7 +373,7 @@ static u8 assign_tag(struct kmem_cache *cache, const void *object, bool new)
+ #endif
+ }
+ 
+-void *kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
++void * __must_check kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
+ {
+ 	struct kasan_alloc_meta *alloc_info;
+ 
+@@ -389,7 +389,8 @@ void *kasan_init_slab_obj(struct kmem_cache *cache, const void *object)
+ 	return (void *)object;
+ }
+ 
+-void *kasan_slab_alloc(struct kmem_cache *cache, void *object, gfp_t flags)
++void * __must_check kasan_slab_alloc(struct kmem_cache *cache, void *object,
++					gfp_t flags)
+ {
+ 	return kasan_kmalloc(cache, object, cache->object_size, flags);
+ }
+@@ -449,8 +450,8 @@ bool kasan_slab_free(struct kmem_cache *cache, void *object, unsigned long ip)
+ 	return __kasan_slab_free(cache, object, ip, true);
+ }
+ 
+-void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+-		   gfp_t flags)
++void * __must_check kasan_kmalloc(struct kmem_cache *cache, const void *object,
++					size_t size, gfp_t flags)
+ {
+ 	unsigned long redzone_start;
+ 	unsigned long redzone_end;
+@@ -482,7 +483,8 @@ void *kasan_kmalloc(struct kmem_cache *cache, const void *object, size_t size,
+ }
+ EXPORT_SYMBOL(kasan_kmalloc);
+ 
+-void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
++void * __must_check kasan_kmalloc_large(const void *ptr, size_t size,
++						gfp_t flags)
+ {
+ 	struct page *page;
+ 	unsigned long redzone_start;
+@@ -506,7 +508,7 @@ void *kasan_kmalloc_large(const void *ptr, size_t size, gfp_t flags)
+ 	return (void *)ptr;
+ }
+ 
+-void *kasan_krealloc(const void *object, size_t size, gfp_t flags)
++void * __must_check kasan_krealloc(const void *object, size_t size, gfp_t flags)
+ {
+ 	struct page *page;
+ 
 -- 
 2.19.1.1215.g8438c0b245-goog
 
