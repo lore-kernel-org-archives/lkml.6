@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1292CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98903C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED5F2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E98E2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="asJMeX2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED5F2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BfoAvjfa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E98E2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404675AbeKTDWL (ORCPT
+        id S2404687AbeKTDWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33752 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403956AbeKTDWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:10 -0500
+        id S2403845AbeKTDWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74458208E3;
-        Mon, 19 Nov 2018 16:57:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B59F2146D;
+        Mon, 19 Nov 2018 16:57:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646675;
-        bh=itjEC9+QHmmh2n5VFDaXGfihq9GeRTwtH8YfBl8I8BA=;
+        s=default; t=1542646677;
+        bh=tyu/5Cyo3cakQrnigEPmIMmD/DTF62KjUQkiJn/SWZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=asJMeX2PGRcKWiv8gKRJTWwTnhKUBvUe+Cv3BgPwgBg3SelxzbTA025Cy8vApB4WC
-         h2KxN/rDtr6AGp6+F/T4J+QTW6SgyCACOyYcQNLRfy1GLa7ZYkcDl3EOL3xg8R6E9M
-         lrN87p8yVldlfh3Jt3SBdHTqXhoi4TfukK1AY0Zc=
+        b=BfoAvjfapbiuc3U9599FyPHZKmuxjbcEmzLax+b/zWQVCsS8MwJGa2LxMcwwO3vGK
+         JKU3yUJbQJOHV/3hS6g9OO7M63sJyPJxAm7HUFacPiGKk/khpdcLPxbgcbD4nmj7hm
+         hy8ioFf13b+GXgfLrRlQm7nLy5DyUa+LQf94z5Bg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Waiman.Long@hp.com, peterz@infradead.org,
-        Juergen Gross <jgross@suse.com>,
-        Jan Beulich <jbeulich@suse.com>
-Subject: [PATCH 4.4 047/160] xen: make xen_qlock_wait() nestable
-Date:   Mon, 19 Nov 2018 17:28:06 +0100
-Message-Id: <20181119162636.052931540@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Nuernberger <snu@amazon.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Simon Veith <sveith@amazon.de>,
+        Paul Moore <paul@paul-moore.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 048/160] net/ipv4: defensive cipso option parsing
+Date:   Mon, 19 Nov 2018 17:28:07 +0100
+Message-Id: <20181119162636.181794770@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,93 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Stefan Nuernberger <snu@amazon.com>
 
-commit a856531951dc8094359dfdac21d59cee5969c18e upstream.
+commit 076ed3da0c9b2f88d9157dbe7044a45641ae369e upstream.
 
-xen_qlock_wait() isn't safe for nested calls due to interrupts. A call
-of xen_qlock_kick() might be ignored in case a deeper nesting level
-was active right before the call of xen_poll_irq():
+commit 40413955ee26 ("Cipso: cipso_v4_optptr enter infinite loop") fixed
+a possible infinite loop in the IP option parsing of CIPSO. The fix
+assumes that ip_options_compile filtered out all zero length options and
+that no other one-byte options beside IPOPT_END and IPOPT_NOOP exist.
+While this assumption currently holds true, add explicit checks for zero
+length and invalid length options to be safe for the future. Even though
+ip_options_compile should have validated the options, the introduction of
+new one-byte options can still confuse this code without the additional
+checks.
 
-CPU 1:                                   CPU 2:
-spin_lock(lock1)
-                                         spin_lock(lock1)
-                                         -> xen_qlock_wait()
-                                            -> xen_clear_irq_pending()
-                                            Interrupt happens
-spin_unlock(lock1)
--> xen_qlock_kick(CPU 2)
-spin_lock_irqsave(lock2)
-                                         spin_lock_irqsave(lock2)
-                                         -> xen_qlock_wait()
-                                            -> xen_clear_irq_pending()
-                                               clears kick for lock1
-                                            -> xen_poll_irq()
-spin_unlock_irq_restore(lock2)
--> xen_qlock_kick(CPU 2)
-                                            wakes up
-                                         spin_unlock_irq_restore(lock2)
-                                         IRET
-                                           resumes in xen_qlock_wait()
-                                           -> xen_poll_irq()
-                                           never wakes up
-
-The solution is to disable interrupts in xen_qlock_wait() and not to
-poll for the irq in case xen_qlock_wait() is called in nmi context.
-
+Signed-off-by: Stefan Nuernberger <snu@amazon.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Simon Veith <sveith@amazon.de>
 Cc: stable@vger.kernel.org
-Cc: Waiman.Long@hp.com
-Cc: peterz@infradead.org
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Jan Beulich <jbeulich@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   24 ++++++++++--------------
- 1 file changed, 10 insertions(+), 14 deletions(-)
+ net/ipv4/cipso_ipv4.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -41,29 +41,25 @@ static void xen_qlock_kick(int cpu)
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -1582,7 +1582,7 @@ static int cipso_v4_parsetag_loc(const s
+  *
+  * Description:
+  * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
+- * to the start of the CIPSO option on success, NULL if one if not found.
++ * to the start of the CIPSO option on success, NULL if one is not found.
+  *
   */
- static void xen_qlock_wait(u8 *byte, u8 val)
- {
-+	unsigned long flags;
- 	int irq = __this_cpu_read(lock_kicker_irq);
+ unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
+@@ -1592,10 +1592,8 @@ unsigned char *cipso_v4_optptr(const str
+ 	int optlen;
+ 	int taglen;
  
- 	/* If kicker interrupts not initialized yet, just spin */
--	if (irq == -1)
-+	if (irq == -1 || in_nmi())
- 		return;
- 
--	/* If irq pending already clear it and return. */
-+	/* Guard against reentry. */
-+	local_irq_save(flags);
+-	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
++	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 1; ) {
+ 		switch (optptr[0]) {
+-		case IPOPT_CIPSO:
+-			return optptr;
+ 		case IPOPT_END:
+ 			return NULL;
+ 		case IPOPT_NOOP:
+@@ -1604,6 +1602,11 @@ unsigned char *cipso_v4_optptr(const str
+ 		default:
+ 			taglen = optptr[1];
+ 		}
++		if (!taglen || taglen > optlen)
++			return NULL;
++		if (optptr[0] == IPOPT_CIPSO)
++			return optptr;
 +
-+	/* If irq pending already clear it. */
- 	if (xen_test_irq_pending(irq)) {
- 		xen_clear_irq_pending(irq);
--		return;
-+	} else if (READ_ONCE(*byte) == val) {
-+		/* Block until irq becomes pending (or a spurious wakeup) */
-+		xen_poll_irq(irq);
+ 		optlen -= taglen;
+ 		optptr += taglen;
  	}
- 
--	if (READ_ONCE(*byte) != val)
--		return;
--
--	/*
--	 * If an interrupt happens here, it will leave the wakeup irq
--	 * pending, which will cause xen_poll_irq() to return
--	 * immediately.
--	 */
--
--	/* Block until irq becomes pending (or perhaps a spurious wakeup) */
--	xen_poll_irq(irq);
-+	local_irq_restore(flags);
- }
- 
- #else /* CONFIG_QUEUED_SPINLOCKS */
 
 
