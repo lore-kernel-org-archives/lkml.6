@@ -2,199 +2,355 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCACC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD2CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98BAB2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:40:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cinyNuMb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BAB2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id 929422145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:40:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929422145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free-electrons.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390100AbeKTEEy (ORCPT
+        id S2389694AbeKTDN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:04:54 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40138 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389229AbeKTEEx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:04:53 -0500
-Received: by mail-ot1-f67.google.com with SMTP id s5so28400760oth.7;
-        Mon, 19 Nov 2018 09:40:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language;
-        bh=2e9GmcmvDnjGTuB1UfTZyLTxmQvy2ZTf8CtPcYRwmyw=;
-        b=cinyNuMbhZwoBooqNjdQCQXEyqUn9PWdVEcJO3QAaD38dMD0JTKECO/+eFs4SAdVNf
-         hXAcrsAW2bGSbWcyZdoywh14I9OTpmZvD6egdT8DYDroeUARVTKh6CXn7EgRmx0NmAXI
-         kfv6f9s5ciRZ61RCfpSvGDh/YWelagNgn4UeQy1k07rYARL6SUwdW8p2U3LjAkyUH2/k
-         u48EKEgAKPDoIoQrQpUqr11qhBgH7aaR5uGtSFsvEQ5WyMmcCaGf+zo9JfSFTUMFoInW
-         VZ+ywBVW2jVtnd7tZ6fYZbwexYA65KmDruJCImACX7AbUmHhugS7MSk/bIOn9GqNRQ3m
-         EyfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language;
-        bh=2e9GmcmvDnjGTuB1UfTZyLTxmQvy2ZTf8CtPcYRwmyw=;
-        b=AhsKGJoSQKu7rtGsYb6IRI3p0jqmivMegCFv+zOVfmCqE8i6z8fgAfU2E+7XKF8K/C
-         DOLXlXX99eU7rAXIsVyyzNDNDpknCuBnDAZ2Y0SIWIPotmx6WxwZ6Pbv/MzKW3Mg4W2g
-         mWbthsblFRwXWxD+Cw89Of6CDol1kpk3wujm2hzEW0s/glihtJJ23VBLHsPHED7PN0u0
-         s7ypwRbHeZz2W3k4Nsik8hq959H6CY11hlutJckjRRD95mzL2Zj3i26sz2KcschkyuxB
-         /Sd5t89OV2Ma8p9ufgYySl3DKHc2GD1eBmfjmjLfMaR/nGE8ZiJrBaLXhnIUZpxAl1re
-         tyHA==
-X-Gm-Message-State: AGRZ1gLK69+Mr8bHE1u5PKsmAvSz2I7yIVvFKC+dKJuUsmkv2vLGwWfN
-        3c1T6W6xDMuoDUqjqwGDuqTWHlfT
-X-Google-Smtp-Source: AJdET5e+XjKBFXz+Rxp9CyF7WVAMWiceRdQROvcYhefZffuhjAGM4Mog9sltdSTMVvTSE/qhhGl4cw==
-X-Received: by 2002:a9d:2cbc:: with SMTP id p57mr12985701otb.1.1542649225187;
-        Mon, 19 Nov 2018 09:40:25 -0800 (PST)
-Received: from [192.168.1.104] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id w186-v6sm13869955oig.52.2018.11.19.09.40.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 09:40:21 -0800 (PST)
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-To:     Priit Laes <plaes@plaes.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
- <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
- <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
- <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
- <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
- <20181119112755.qtthenx54v3tnok3@plaes.org>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <fe3efdcb-3488-2fa5-f749-3e7366609697@lwfinger.net>
-Date:   Mon, 19 Nov 2018 11:40:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 19 Nov 2018 22:13:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54027 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389110AbeKTDN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:28 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6287A20D17; Mon, 19 Nov 2018 17:49:11 +0100 (CET)
+Received: from localhost (unknown [37.205.56.236])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 55EE620D92;
+        Mon, 19 Nov 2018 17:48:46 +0100 (CET)
+Date:   Mon, 19 Nov 2018 16:48:42 +0000
+From:   Antoine Tenart <antoine.tenart@free-electrons.com>
+To:     Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        netdev@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH v2 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181119164842.GA31822@kwain>
+References: <20181109234755.21687-1-grygorii.strashko@ti.com>
+ <20181109234755.21687-5-grygorii.strashko@ti.com>
+ <20181119092632.7048bc46@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20181119112755.qtthenx54v3tnok3@plaes.org>
-Content-Type: multipart/mixed;
- boundary="------------FD22EC480DE4FF646E0A5039"
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119092632.7048bc46@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------FD22EC480DE4FF646E0A5039
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi,
 
-On 11/19/18 5:27 AM, Priit Laes wrote:
-> On Sun, Nov 18, 2018 at 01:35:57PM -0600, Larry Finger wrote:
->> On 11/18/18 2:23 AM, Priit Laes wrote:
->>> On Sat, Nov 17, 2018 at 09:31:35PM -0600, Larry Finger wrote:
->>>> On 11/14/18 12:27 PM, Priit Laes wrote:
->>>>> Kernel library has a common cordic algorithm which is identical
->>>>> to internally implementatd one, so use it and drop the duplicate
->>>>> implementation.
->>>>>
->>
->> My test setup has a hardware failure, thus I cannot test your patch, but I
->> now believe it to be correct. Thus your first and third patches may be
->> annotated with
->> ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
->>
->> One thing that should be done is to fix the error in the b43 code for stable
->> as it was introduced in 2.6.34. I propose adding the attached patched to
->> your series placed between your current 2nd and 3rd patches so that the old
->> kernels get fixed. Of course, your 3rd patch will need to be revised. If all
->> 4 of the patches get submitted together there will be no problems with the
->> timing. My change will exist for seconds in the mainline kernel, but it will
->> get propagated back through stable.
+On Mon, Nov 19, 2018 at 09:26:32AM +0100, Maxime Chevallier wrote:
 > 
-> Thanks!
+> On Fri, 9 Nov 2018 17:47:54 -0600
+> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 > 
->>  From b42ae73ef7505de93e4c66fb9f66930e3f3d969a Mon Sep 17 00:00:00 2001
->> From: Larry Finger <Larry.Finger@lwfinger.net>
->> Date: Sun, 18 Nov 2018 13:15:07 -0600
->> Subject: [PATCH] b43: Fix error in cordic routine
->> MIME-Version: 1.0
->> Content-Type: text/plain; charset=UTF-8
->> Content-Transfer-Encoding: 8bit
->> To: kvalo@codeaurora.org
->> Cc: linux-wireless@vger.kernel.org
->>
->> The cordic routine for calculating sines and cosines that was added in
->> commit 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
->> contains an error whereby a quantity declared u32 can in fact go negative.
+> >Convert mvebu-cp110-comphy PHY driver to use recently introduced
+> >PHY_MODE_ETHERNET and phy_set_mode_ext().
 > 
-> It seems to be different commit though:
-> commit 6f98e62a9 ("b43: update cordic code to match current specs")
+> Sorry I missed your V2, hopefully I tested the right version this time.
+> Tested on MCBin, this works just fine.
+> 
+> Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Thanks for catching that mistake. I must have gotten one line off in my copy and 
-paste. The respun version of my patch is attached.
+Thank you for testing!
 
-I have now been able to test b43 on an LP-PHY device. I do not see any major 
-changes, but there has to be some effect.
+Acked-by: Antoine Tenart <antoine.tenart@bootlin.com>
 
-Larry
-Larry
+Antoine
 
+> >Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> >---
+> > drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 19 +-----
+> > drivers/phy/marvell/phy-mvebu-cp110-comphy.c    | 83 ++++++++++++++-----------
+> > 2 files changed, 48 insertions(+), 54 deletions(-)
+> >
+> >diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> >index 7a37a37..731793a 100644
+> >--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> >+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> >@@ -1165,28 +1165,13 @@ static void mvpp22_gop_setup_irq(struct mvpp2_port *port)
+> >  */
+> > static int mvpp22_comphy_init(struct mvpp2_port *port)
+> > {
+> >-	enum phy_mode mode;
+> > 	int ret;
+> > 
+> > 	if (!port->comphy)
+> > 		return 0;
+> > 
+> >-	switch (port->phy_interface) {
+> >-	case PHY_INTERFACE_MODE_SGMII:
+> >-	case PHY_INTERFACE_MODE_1000BASEX:
+> >-		mode = PHY_MODE_SGMII;
+> >-		break;
+> >-	case PHY_INTERFACE_MODE_2500BASEX:
+> >-		mode = PHY_MODE_2500SGMII;
+> >-		break;
+> >-	case PHY_INTERFACE_MODE_10GKR:
+> >-		mode = PHY_MODE_10GKR;
+> >-		break;
+> >-	default:
+> >-		return -EINVAL;
+> >-	}
+> >-
+> >-	ret = phy_set_mode(port->comphy, mode);
+> >+	ret = phy_set_mode_ext(port->comphy, PHY_MODE_ETHERNET,
+> >+			       port->phy_interface);
+> > 	if (ret)
+> > 		return ret;
+> > 
+> >diff --git a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> >index 79b52c3..7dee72b 100644
+> >--- a/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> >+++ b/drivers/phy/marvell/phy-mvebu-cp110-comphy.c
+> >@@ -9,6 +9,7 @@
+> > #include <linux/iopoll.h>
+> > #include <linux/mfd/syscon.h>
+> > #include <linux/module.h>
+> >+#include <linux/phy.h>
+> > #include <linux/phy/phy.h>
+> > #include <linux/platform_device.h>
+> > #include <linux/regmap.h>
+> >@@ -131,26 +132,26 @@ struct mvebu_comhy_conf {
+> > 
+> > static const struct mvebu_comhy_conf mvebu_comphy_cp110_modes[] = {
+> > 	/* lane 0 */
+> >-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_SGMII, 0x1),
+> >-	MVEBU_COMPHY_CONF(0, 1, PHY_MODE_2500SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(0, 1, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> > 	/* lane 1 */
+> >-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_SGMII, 0x1),
+> >-	MVEBU_COMPHY_CONF(1, 2, PHY_MODE_2500SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(1, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> > 	/* lane 2 */
+> >-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_SGMII, 0x1),
+> >-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_2500SGMII, 0x1),
+> >-	MVEBU_COMPHY_CONF(2, 0, PHY_MODE_10GKR, 0x1),
+> >+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> >+	MVEBU_COMPHY_CONF(2, 0, PHY_INTERFACE_MODE_10GKR, 0x1),
+> > 	/* lane 3 */
+> >-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_SGMII, 0x2),
+> >-	MVEBU_COMPHY_CONF(3, 1, PHY_MODE_2500SGMII, 0x2),
+> >+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_SGMII, 0x2),
+> >+	MVEBU_COMPHY_CONF(3, 1, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+> > 	/* lane 4 */
+> >-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_SGMII, 0x2),
+> >-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_2500SGMII, 0x2),
+> >-	MVEBU_COMPHY_CONF(4, 0, PHY_MODE_10GKR, 0x2),
+> >-	MVEBU_COMPHY_CONF(4, 1, PHY_MODE_SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_SGMII, 0x2),
+> >+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_2500BASEX, 0x2),
+> >+	MVEBU_COMPHY_CONF(4, 0, PHY_INTERFACE_MODE_10GKR, 0x2),
+> >+	MVEBU_COMPHY_CONF(4, 1, PHY_INTERFACE_MODE_SGMII, 0x1),
+> > 	/* lane 5 */
+> >-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_SGMII, 0x1),
+> >-	MVEBU_COMPHY_CONF(5, 2, PHY_MODE_2500SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_SGMII, 0x1),
+> >+	MVEBU_COMPHY_CONF(5, 2, PHY_INTERFACE_MODE_2500BASEX, 0x1),
+> > };
+> > 
+> > struct mvebu_comphy_priv {
+> >@@ -163,10 +164,12 @@ struct mvebu_comphy_lane {
+> > 	struct mvebu_comphy_priv *priv;
+> > 	unsigned id;
+> > 	enum phy_mode mode;
+> >+	int submode;
+> > 	int port;
+> > };
+> > 
+> >-static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> >+static int mvebu_comphy_get_mux(int lane, int port,
+> >+				enum phy_mode mode, int submode)
+> > {
+> > 	int i, n = ARRAY_SIZE(mvebu_comphy_cp110_modes);
+> > 
+> >@@ -177,7 +180,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> > 	for (i = 0; i < n; i++) {
+> > 		if (mvebu_comphy_cp110_modes[i].lane == lane &&
+> > 		    mvebu_comphy_cp110_modes[i].port == port &&
+> >-		    mvebu_comphy_cp110_modes[i].mode == mode)
+> >+		    mvebu_comphy_cp110_modes[i].mode == submode)
+> > 			break;
+> > 	}
+> > 
+> >@@ -187,8 +190,7 @@ static int mvebu_comphy_get_mux(int lane, int port, enum phy_mode mode)
+> > 	return mvebu_comphy_cp110_modes[i].mux;
+> > }
+> > 
+> >-static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> >-					     enum phy_mode mode)
+> >+static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane)
+> > {
+> > 	struct mvebu_comphy_priv *priv = lane->priv;
+> > 	u32 val;
+> >@@ -206,14 +208,14 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> > 		 MVEBU_COMPHY_SERDES_CFG0_HALF_BUS |
+> > 		 MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xf) |
+> > 		 MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xf));
+> >-	if (mode == PHY_MODE_10GKR)
+> >+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
+> > 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0xe) |
+> > 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0xe);
+> >-	else if (mode == PHY_MODE_2500SGMII)
+> >+	else if (lane->submode == PHY_INTERFACE_MODE_2500BASEX)
+> > 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x8) |
+> > 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x8) |
+> > 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
+> >-	else if (mode == PHY_MODE_SGMII)
+> >+	else if (lane->submode == PHY_INTERFACE_MODE_SGMII)
+> > 		val |= MVEBU_COMPHY_SERDES_CFG0_GEN_RX(0x6) |
+> > 		       MVEBU_COMPHY_SERDES_CFG0_GEN_TX(0x6) |
+> > 		       MVEBU_COMPHY_SERDES_CFG0_HALF_BUS;
+> >@@ -243,7 +245,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> > 	/* refclk selection */
+> > 	val = readl(priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
+> > 	val &= ~MVEBU_COMPHY_MISC_CTRL0_REFCLK_SEL;
+> >-	if (mode == PHY_MODE_10GKR)
+> >+	if (lane->submode == PHY_INTERFACE_MODE_10GKR)
+> > 		val |= MVEBU_COMPHY_MISC_CTRL0_ICP_FORCE;
+> > 	writel(val, priv->base + MVEBU_COMPHY_MISC_CTRL0(lane->id));
+> > 
+> >@@ -261,8 +263,7 @@ static void mvebu_comphy_ethernet_init_reset(struct mvebu_comphy_lane *lane,
+> > 	writel(val, priv->base + MVEBU_COMPHY_LOOPBACK(lane->id));
+> > }
+> > 
+> >-static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
+> >-				  enum phy_mode mode)
+> >+static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane)
+> > {
+> > 	struct mvebu_comphy_priv *priv = lane->priv;
+> > 	u32 val;
+> >@@ -303,13 +304,13 @@ static int mvebu_comphy_init_plls(struct mvebu_comphy_lane *lane,
+> > 	return 0;
+> > }
+> > 
+> >-static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
+> >+static int mvebu_comphy_set_mode_sgmii(struct phy *phy)
+> > {
+> > 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
+> > 	struct mvebu_comphy_priv *priv = lane->priv;
+> > 	u32 val;
+> > 
+> >-	mvebu_comphy_ethernet_init_reset(lane, mode);
+> >+	mvebu_comphy_ethernet_init_reset(lane);
+> > 
+> > 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
+> > 	val &= ~MVEBU_COMPHY_RX_CTRL1_CLK8T_EN;
+> >@@ -330,7 +331,7 @@ static int mvebu_comphy_set_mode_sgmii(struct phy *phy, enum phy_mode mode)
+> > 	val |= MVEBU_COMPHY_GEN1_S0_TX_EMPH(0x1);
+> > 	writel(val, priv->base + MVEBU_COMPHY_GEN1_S0(lane->id));
+> > 
+> >-	return mvebu_comphy_init_plls(lane, PHY_MODE_SGMII);
+> >+	return mvebu_comphy_init_plls(lane);
+> > }
+> > 
+> > static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+> >@@ -339,7 +340,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+> > 	struct mvebu_comphy_priv *priv = lane->priv;
+> > 	u32 val;
+> > 
+> >-	mvebu_comphy_ethernet_init_reset(lane, PHY_MODE_10GKR);
+> >+	mvebu_comphy_ethernet_init_reset(lane);
+> > 
+> > 	val = readl(priv->base + MVEBU_COMPHY_RX_CTRL1(lane->id));
+> > 	val |= MVEBU_COMPHY_RX_CTRL1_RXCLK2X_SEL |
+> >@@ -469,7 +470,7 @@ static int mvebu_comphy_set_mode_10gkr(struct phy *phy)
+> > 	val |= MVEBU_COMPHY_EXT_SELV_RX_SAMPL(0x1a);
+> > 	writel(val, priv->base + MVEBU_COMPHY_EXT_SELV(lane->id));
+> > 
+> >-	return mvebu_comphy_init_plls(lane, PHY_MODE_10GKR);
+> >+	return mvebu_comphy_init_plls(lane);
+> > }
+> > 
+> > static int mvebu_comphy_power_on(struct phy *phy)
+> >@@ -479,7 +480,8 @@ static int mvebu_comphy_power_on(struct phy *phy)
+> > 	int ret, mux;
+> > 	u32 val;
+> > 
+> >-	mux = mvebu_comphy_get_mux(lane->id, lane->port, lane->mode);
+> >+	mux = mvebu_comphy_get_mux(lane->id, lane->port,
+> >+				   lane->mode, lane->submode);
+> > 	if (mux < 0)
+> > 		return -ENOTSUPP;
+> > 
+> >@@ -492,12 +494,12 @@ static int mvebu_comphy_power_on(struct phy *phy)
+> > 	val |= mux << MVEBU_COMPHY_SELECTOR_PHY(lane->id);
+> > 	regmap_write(priv->regmap, MVEBU_COMPHY_SELECTOR, val);
+> > 
+> >-	switch (lane->mode) {
+> >-	case PHY_MODE_SGMII:
+> >-	case PHY_MODE_2500SGMII:
+> >-		ret = mvebu_comphy_set_mode_sgmii(phy, lane->mode);
+> >+	switch (lane->submode) {
+> >+	case PHY_INTERFACE_MODE_SGMII:
+> >+	case PHY_INTERFACE_MODE_2500BASEX:
+> >+		ret = mvebu_comphy_set_mode_sgmii(phy);
+> > 		break;
+> >-	case PHY_MODE_10GKR:
+> >+	case PHY_INTERFACE_MODE_10GKR:
+> > 		ret = mvebu_comphy_set_mode_10gkr(phy);
+> > 		break;
+> > 	default:
+> >@@ -517,10 +519,17 @@ static int mvebu_comphy_set_mode(struct phy *phy,
+> > {
+> > 	struct mvebu_comphy_lane *lane = phy_get_drvdata(phy);
+> > 
+> >-	if (mvebu_comphy_get_mux(lane->id, lane->port, mode) < 0)
+> >+	if (mode != PHY_MODE_ETHERNET)
+> >+		return -EINVAL;
+> >+
+> >+	if (submode == PHY_INTERFACE_MODE_1000BASEX)
+> >+		submode = PHY_INTERFACE_MODE_SGMII;
+> >+
+> >+	if (mvebu_comphy_get_mux(lane->id, lane->port, mode, submode) < 0)
+> > 		return -EINVAL;
+> > 
+> > 	lane->mode = mode;
+> >+	lane->submode = submode;
+> > 	return 0;
+> > }
+> > 
+> 
+> 
+> 
+> -- 
+> Maxime Chevallier, Bootlin
+> Embedded Linux and kernel engineering
+> https://bootlin.com
 
---------------FD22EC480DE4FF646E0A5039
-Content-Type: text/x-patch;
- name="0001-b43-Fix-error-in-cordic-routine.patch"
-Content-Transfer-Encoding: 8bit
-Content-Disposition: attachment;
- filename="0001-b43-Fix-error-in-cordic-routine.patch"
-
-From b42ae73ef7505de93e4c66fb9f66930e3f3d969a Mon Sep 17 00:00:00 2001
-From: Larry Finger <Larry.Finger@lwfinger.net>
-Date: Sun, 18 Nov 2018 13:15:07 -0600
-Subject: [PATCH] b43: Fix error in cordic routine
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To: kvalo@codeaurora.org
-Cc: linux-wireless@vger.kernel.org
-
-The cordic routine for calculating sines and cosines that was added in
-commit 6f98e62a9f1b ("b43: update cordic code to match current specs")
-contains an error whereby a quantity declared u32 can in fact go negative.
-
-This problem was detected by Priit Laes who is switching b43 to use the
-routine in the library functions of the kernel.
-
-Fixes: 6f98e62a9f1b ("b43: update cordic code to match current specs")
-Reported-by: Priit Laes <plaes@plaes.org>
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Cc: Stable <stable@vger.kernel.org> # 2.6.34
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
----
- drivers/net/wireless/broadcom/b43/phy_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wireless/broadcom/b43/phy_common.c b/drivers/net/wireless/broadcom/b43/phy_common.c
-index 85f2ca989565..ef3ffa5ad466 100644
---- a/drivers/net/wireless/broadcom/b43/phy_common.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_common.c
-@@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
- 	u8 i;
- 	s32 tmp;
- 	s8 signx = 1;
--	u32 angle = 0;
-+	s32 angle = 0;
- 	struct b43_c32 ret = { .i = 39797, .q = 0, };
- 
- 	while (theta > (180 << 16))
 -- 
-2.16.4
-
-
---------------FD22EC480DE4FF646E0A5039--
+Antoine T�nart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
