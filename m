@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4142BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95342C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086C32148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D946208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zo5hgRI+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 086C32148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQQwk/Ih"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D946208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732575AbeKTDC5 (ORCPT
+        id S1732585AbeKTDDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35396 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731835AbeKTDC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:56 -0500
+        id S1731835AbeKTDC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 065D7208E3;
-        Mon, 19 Nov 2018 16:38:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FCBE20989;
+        Mon, 19 Nov 2018 16:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645527;
-        bh=WavSp8UUY/UrcyJVoCimKmEEmLX4tXGYmMp57RYXh0o=;
+        s=default; t=1542645530;
+        bh=cdscZSLh9d43Vwj9Xe0SPohKsWQdMckvjGwRytDr1nA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zo5hgRI+LCUOwFWlg2VFP3hfe15N03D7JGRePil8N/krc8iKgQctCjhbr7dG7H2LE
-         BK8TLbrAC9qOqdfHsMW1eC0Z8iN06uLZzU1JCrXKyD7wjNf9eXube1h+0PnmvU3uOG
-         Li3xh0qES+/bvmO3wM7nr2NKQ45rRo7MOrV62xjc=
+        b=XQQwk/IhvWHgkvmBQii3plON/Km+j8aCF+uDP/zFHZZN4pObD8pBRXbO1CWZS7IYn
+         6YIhtJdrp9KLZRQeZRFvUrLeTEgtDWKTJePOw2+dT77GZP+DJhjDObKV1B75ebjBN3
+         7djh/z+VTha1bGkbuVgP0twA0t0tcAbRfj4Fmn50=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergii Romantsov <sergii.romantsov@globallogic.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
         Chris Wilson <chris@chris-wilson.co.uk>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Matthew Auld <matthew.auld@intel.com>
-Subject: [PATCH 4.19 197/205] drm/i915: Compare users 64b GTT offset even on 32b
-Date:   Mon, 19 Nov 2018 17:28:24 +0100
-Message-Id: <20181119162642.422942133@linuxfoundation.org>
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.19 198/205] drm/i915: Dont oops during modeset shutdown after lpe audio deinit
+Date:   Mon, 19 Nov 2018 17:28:25 +0100
+Message-Id: <20181119162642.506771617@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,62 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 085603287452fc96376ed4888bf29f8c095d2b40 upstream.
+commit 6a8915d0f8cf323e1beb792a33095cf652db4056 upstream.
 
-Beware mixing unsigned long constants and 64b values, as on 32b the
-constant will be zero extended and discard the high 32b when used as
-a mask!
+We deinit the lpe audio device before we call
+drm_atomic_helper_shutdown(), which means the platform device
+may already be gone when it comes time to shut down the crtc.
+As we don't know when the last reference to the platform
+device gets dropped by the audio driver we can't assume that
+the device and its data are still around when turning off the
+crtc. Mark the platform device as gone as soon as we do the
+audio deinit.
 
-Reported-by: Sergii Romantsov <sergii.romantsov@globallogic.com>
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108282
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Matthew Auld <matthew.auld@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181025091823.20571-2-chris@chris-wilson.co.uk
-(cherry picked from commit 6fc4e48f9ed46e9adff236a0c350074aafa3b7fa)
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181105194604.6994-1-ville.syrjala@linux.intel.com
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+(cherry picked from commit f45a7977d1140c11f334e01a9f77177ed68e3bfa)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/gvt/gtt.h             |    1 -
- drivers/gpu/drm/i915/i915_gem_execbuffer.c |    2 +-
- drivers/gpu/drm/i915/i915_gem_gtt.h        |    2 ++
- 3 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_lpe_audio.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/gvt/gtt.h
-+++ b/drivers/gpu/drm/i915/gvt/gtt.h
-@@ -35,7 +35,6 @@
- #define _GVT_GTT_H_
+--- a/drivers/gpu/drm/i915/intel_lpe_audio.c
++++ b/drivers/gpu/drm/i915/intel_lpe_audio.c
+@@ -297,8 +297,10 @@ void intel_lpe_audio_teardown(struct drm
+ 	lpe_audio_platdev_destroy(dev_priv);
  
- #define I915_GTT_PAGE_SHIFT         12
--#define I915_GTT_PAGE_MASK		(~(I915_GTT_PAGE_SIZE - 1))
+ 	irq_free_desc(dev_priv->lpe_audio.irq);
+-}
  
- struct intel_vgpu_mm;
++	dev_priv->lpe_audio.irq = -1;
++	dev_priv->lpe_audio.platdev = NULL;
++}
  
---- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-+++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
-@@ -458,7 +458,7 @@ eb_validate_vma(struct i915_execbuffer *
- 	 * any non-page-aligned or non-canonical addresses.
- 	 */
- 	if (unlikely(entry->flags & EXEC_OBJECT_PINNED &&
--		     entry->offset != gen8_canonical_addr(entry->offset & PAGE_MASK)))
-+		     entry->offset != gen8_canonical_addr(entry->offset & I915_GTT_PAGE_MASK)))
- 		return -EINVAL;
- 
- 	/* pad_to_size was once a reserved field, so sanitize it */
---- a/drivers/gpu/drm/i915/i915_gem_gtt.h
-+++ b/drivers/gpu/drm/i915/i915_gem_gtt.h
-@@ -49,6 +49,8 @@
- #define I915_GTT_PAGE_SIZE I915_GTT_PAGE_SIZE_4K
- #define I915_GTT_MAX_PAGE_SIZE I915_GTT_PAGE_SIZE_2M
- 
-+#define I915_GTT_PAGE_MASK -I915_GTT_PAGE_SIZE
-+
- #define I915_GTT_MIN_ALIGNMENT I915_GTT_PAGE_SIZE
- 
- #define I915_FENCE_REG_NONE -1
+ /**
+  * intel_lpe_audio_notify() - notify lpe audio event
 
 
