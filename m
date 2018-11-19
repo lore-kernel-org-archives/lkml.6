@@ -2,256 +2,142 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03004C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 909B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F52120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B1720831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DbdjlpXV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F52120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0N03DeP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B1720831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbeKTBdZ (ORCPT
+        id S1729732AbeKTBdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:33:25 -0500
-Received: from mail-eopbgr140070.outbound.protection.outlook.com ([40.107.14.70]:9468
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729483AbeKTBdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:33:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AkrAwib479XYiIh28hVEoJaMqd+JgzbOdhz0ZRjT5P4=;
- b=DbdjlpXVpfteKgOlpMzjem/msb7rO0vU/nTXbsgiGJKyzhai48rLbhbDZnKeYy0mJ9ODDQiGUt8cjSn5C9YmgnTaZxAjxVq+bIzH5tMa9yl4v/jUK2QZlFcfOBG74ypBA4Ad5tt7CLkAr+1ftGDAkYYeIpYwaJAqjioKEh86trg=
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
- VI1PR04MB3022.eurprd04.prod.outlook.com (10.170.228.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Mon, 19 Nov 2018 15:09:24 +0000
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::bded:8cac:201e:eb8e]) by VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::bded:8cac:201e:eb8e%4]) with mapi id 15.20.1294.045; Mon, 19 Nov 2018
- 15:09:24 +0000
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "David S . Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        Catalin Horghidan <catalin.horghidan@nxp.com>
-Subject: RE: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Topic: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
- ethernet drivers
-Thread-Index: AQHUfP5F6CjK0TC0VUGuagGxPDq736VTH14AgAP6btA=
-Date:   Mon, 19 Nov 2018 15:09:24 +0000
-Message-ID: <VI1PR04MB48809F132A5DFFC71DA5F6BD96D80@VI1PR04MB4880.eurprd04.prod.outlook.com>
-References: <1542298436-23422-1-git-send-email-claudiu.manoil@nxp.com>
- <1542298436-23422-2-git-send-email-claudiu.manoil@nxp.com>
- <20181117003002.GC752@lunn.ch>
-In-Reply-To: <20181117003002.GC752@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=claudiu.manoil@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB3022;6:yUpzRXDm/BZkDa0YzLbbka+HQ0Nuj7uDrNeUKo1deR0AkPxN4Ymepwq5wKcYwc9t2VhESMTu0JZ0C5P5cahGcZIVCnchNdWfxbRRjuYmzXJJ5cejyEOQSmWT/KbNnWDJ1sc9rZh74Wx6gqca9E45Fa3JCVMQAL0eHCmtjaKj+wignneTpkIzAoo6GqOMFXCrCnHpAUaPn3ssBQtu/DGYRawW0Sl910x8tnO1xUUJN7txbDSrFRlTcN2bnMf/fbTVl0OXdqHoJtr5+7DrxarIyCmkQ1DegVzY449BvOio3+BCliWcqf4EHQxq90N+7srhJnJQiLPfqyfTrxbmyQx2BA3FZl0nk5YzUL2/92gFwRhazMN13Xo6gAC/FLKNpJN4aRdSXoOvJJ1jQetEqhmADPYI4+kGIec8Bm+wSK26ULQp+MgGlil33/fzFfHEnUxjazwVQ1izsdUvQ8odhe2pUQ==;5:j3WNmAy1B0x/++STUVHSzbNet4JtPI43z/NOL4mYh5pd8hX7+e0/MCmqodODv+KYMKBEqOT7ryFwXi8Z6Ol5qIlre+7Nlv+En1En9lOV+2A9JC3eBLwlVP9M8fD0c83NMkCi01ZxzSMU5Sfe7ZcxeY7y/gdTkqo973NYprDODCo=;7:8Zgf5UAmyyVQ6gfiHPqiYhSR2tEKwxEVzMN0th67rfhtKPEeHg6IHcMtiqWiPgWlBObZzdtCcNEqfGDlkZFsDZFVQbOqz/D/EG1JIXMWI/0790nfw8S6fGD+byPUq8aiK4OPEVDrYYfrfHPc3prLyQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: b262633a-142f-4646-7710-08d64e30fdf6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3022;
-x-ms-traffictypediagnostic: VI1PR04MB3022:
-x-microsoft-antispam-prvs: <VI1PR04MB30227FBC1502CDB6BF3FD03C96D80@VI1PR04MB3022.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3022;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3022;
-x-forefront-prvs: 08617F610C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(396003)(366004)(136003)(199004)(189003)(13464003)(4326008)(26005)(6246003)(186003)(25786009)(53936002)(478600001)(55016002)(106356001)(9686003)(105586002)(6436002)(71200400001)(8936002)(71190400001)(33656002)(81166006)(8676002)(81156014)(66066001)(256004)(14444005)(14454004)(99286004)(7696005)(5660300001)(6506007)(102836004)(76176011)(68736007)(74316002)(7736002)(2900100001)(305945005)(2906002)(86362001)(6916009)(44832011)(229853002)(476003)(6116002)(3846002)(11346002)(54906003)(446003)(316002)(486006)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3022;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: tXkaY5OLqK4MQd1KdoW/rTT4tbD/YTEQEjOLgavL4uylEg4jcH7J0CzjrpmHxgE7aNIGKZcY0Chbo2q3eHQQjNvqfGlLvqNJxxImZYSbO1Qzt+22xWOQOfQX5+lrzAYHE1YmFnZwJdBntR56Ty0NEnN4K5kEdHwNpRo1egtghmKTc3e9XBpcO0E6KsdY/7/K/j+JMJeW5pISNDFrEUOJUunatw2OOGDjtWA5cJvoyFWtCNQPWiA4c6d7qnKKGRYMsiUmU7ex5T1u2XVxotYVt2px/up2wXf438KtMM8TG1ZjVph7G0gVEhgmii5vXt8tzn02VWoPZdw0MyXiM+Fzv6RzQAKcp9jH97u3gYa3C64=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 19 Nov 2018 20:33:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40932 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbeKTBdf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:33:35 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so5465318lji.7;
+        Mon, 19 Nov 2018 07:09:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MvR9CCPpY/aLV5Jk38x7MS/QbnbaQkYNH7EwbFZeHZs=;
+        b=G0N03DePCZtEY/S19OCFp9LVhQuBp4OalDGEJgLLQyQgzirQ5QLFQ8znzKvNi3fPWI
+         A4M1/+uzZbxSpDkMtDovc8CA27mhQdH4o43ejEuYZq6igcSGYmxD3Cf8OTBHiRk4SnfV
+         kvqfpNfKDwwWr+hk9gWNjkbDjztpLldf9+kGFWc5PW04OUzEg0vLec7dVo3NhTmjoCT9
+         lXAOeQ0JpVBE4nQmFfW3TLHkPjFlUd00hBXGSCb2M6syJEAySYaZWMkdYhZEyh90wmZr
+         xr50T7TMUlLnIGEntitw2zoqqobQt1M+Rg5Hfh9qhn17v9I1DQSQ83p3vyw+8NwpTAWM
+         dPJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MvR9CCPpY/aLV5Jk38x7MS/QbnbaQkYNH7EwbFZeHZs=;
+        b=WAHEtNWEBtR7BR9anqJtqeDVJdchV5eTa6wGf9FRy9giRLyCyYSQDEgOlwR26ge5K3
+         sHGOIF7kiU5EEenAup5BtxC/Q3dNb8mONtNrpYw38n1x67tNIxrfKsnQYoYBg8VQxqJL
+         9DIdAl4jeaFJvW6jRdZlPeqm2nzj7I+5c94lT670JdR7jvXvHBeZn//YJFauGk85RhFv
+         x5IgI3fQnI80edwaJ4EeHmi9ouuDIMCwoo9TvMihYXBqB5Ndjkp9aMOsWQPqM3Bwxfqu
+         q5tsTVZYx2+PGv6ufSFdSTi/sP+yi/DuBHknEBJ8Xsc1a7dD1u3p727x4rLT56ZKUXKn
+         sqLA==
+X-Gm-Message-State: AGRZ1gLKsfdgH7cCiFLQ7e94Yp7giIuH+J75MBn+iDMPjzTK+eyWxzMC
+        FFtiEt1CIz3mf6aauFhmRP9pK99oHqFzpg+q1YAEFlb5
+X-Google-Smtp-Source: AFSGD/XY+n8YDA9XvnM2p4vE00ddLVjQYc6i51Z5rDvKJcuFzFmoQrz1KQIsEGBuonpdrIaEUeZVt4QcOc/dSFyD6Ho=
+X-Received: by 2002:a2e:9b84:: with SMTP id z4-v6mr1350401lji.93.1542640181361;
+ Mon, 19 Nov 2018 07:09:41 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b262633a-142f-4646-7710-08d64e30fdf6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 15:09:24.4067
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3022
+References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+ <20181116182836.GB17088@rapoport-lnx> <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
+ <20181117143742.GB7861@bombadil.infradead.org>
+In-Reply-To: <20181117143742.GB7861@bombadil.infradead.org>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 19 Nov 2018 20:43:09 +0530
+Message-ID: <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
+To:     Matthew Wilcox <willy@infradead.org>, rppt@linux.ibm.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->-----Original Message-----
->From: Andrew Lunn <andrew@lunn.ch>
->Sent: Saturday, November 17, 2018 2:30 AM
->To: Claudiu Manoil <claudiu.manoil@nxp.com>
->Cc: David S . Miller <davem@davemloft.net>; netdev@vger.kernel.org; linux-
->kernel@vger.kernel.org; Alexandru Marginean
-><alexandru.marginean@nxp.com>; Catalin Horghidan
-><catalin.horghidan@nxp.com>
->Subject: Re: [PATCH net-next 1/4] enetc: Introduce basic PF and VF ENETC
->ethernet drivers
+Hi Mike,
+
+On Sat, Nov 17, 2018 at 8:07 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-[...]
->> +
->> +static int enetc_map_tx_buffs(struct enetc_bdr *tx_ring, struct sk_buff=
- *skb);
->> +static void enetc_unmap_tx_buff(struct enetc_bdr *tx_ring,
->> +				struct enetc_tx_swbd *tx_swbd);
->> +static int enetc_clean_tx_ring(struct enetc_bdr *tx_ring, int budget);
->> +
->> +static struct sk_buff *enetc_map_rx_buff_to_skb(struct enetc_bdr *rx_ri=
-ng,
->> +						int i, u16 size);
->> +static void enetc_add_rx_buff_to_skb(struct enetc_bdr *rx_ring, int i,
->> +				     u16 size, struct sk_buff *skb);
->> +static void enetc_process_skb(struct enetc_bdr *rx_ring, struct sk_buff=
- *skb);
->> +static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
->> +			       struct napi_struct *napi, int work_limit);
->> +
+> On Sat, Nov 17, 2018 at 12:26:38PM +0530, Souptick Joarder wrote:
+> > On Fri, Nov 16, 2018 at 11:59 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > > > + * vm_insert_range - insert range of kernel pages into user vma
+> > > > + * @vma: user vma to map to
+> > > > + * @addr: target user address of this page
+> > > > + * @pages: pointer to array of source kernel pages
+> > > > + * @page_count: no. of pages need to insert into user vma
+> > > > + *
+> > > > + * This allows drivers to insert range of kernel pages they've allocated
+> > > > + * into a user vma. This is a generic function which drivers can use
+> > > > + * rather than using their own way of mapping range of kernel pages into
+> > > > + * user vma.
+> > >
+> > > Please add the return value and context descriptions.
+> > >
+> >
+> > Sure I will wait for some time to get additional review comments and
+> > add all of those requested changes in v2.
 >
->Please try to avoid forward declarations. Move the code around so you
->don't need them.
->
+> You could send your proposed wording now which might remove the need
+> for a v3 if we end up arguing about the wording.
 
-Maybe I could drop some of these, but...
-For some performance critical functions on the datapath this would be an
-attempt to improve icache hit rate by having the caller function located in
-memory just before it's children (callees).  As you can see, only some perf
-critical functions are forward declared here, for the xmit() and rx/tx clea=
-nup paths.
-Does this make sense to you?  Could you point me to some reading on this to=
-pic otherwise?
+Does this description looks good ?
 
->> +static bool enetc_tx_csum(struct sk_buff *skb, union enetc_tx_bd *txbd)
->> +{
->> +	int l3_start, l3_hsize;
->> +	u16 l3_flags, l4_flags;
->> +
->> +	if (skb->ip_summed !=3D CHECKSUM_PARTIAL)
->> +		return false;
->> +
->> +	switch (skb->csum_offset) {
->> +	case offsetof(struct tcphdr, check):
->> +		l4_flags =3D ENETC_TXBD_L4_TCP;
->> +		break;
->> +	case offsetof(struct udphdr, check):
->> +		l4_flags =3D ENETC_TXBD_L4_UDP;
->> +		break;
->> +	default:
->> +		skb_checksum_help(skb);
->> +		return false;
->> +	}
->> +
->> +	l3_start =3D skb_network_offset(skb);
->> +	l3_hsize =3D skb_network_header_len(skb);
->> +
->> +	l3_flags =3D 0;
->> +	if (skb->protocol =3D=3D htons(ETH_P_IPV6))
->> +		l3_flags =3D ENETC_TXBD_L3_IPV6;
->
->Is there no need to do anything with IPv4?
->
-
-No, 0 for this bit means IPv4. Only UDP and TCP over IPv4 and IPv6 supporte=
-d.
-
-[...]
-
->> +static void adjust_link(struct net_device *ndev)
->> +{
->> +	struct phy_device *phydev =3D ndev->phydev;
->> +
->> +	phy_print_status(phydev);
->
->You normally need more than that. Maybe later patches add to this?
->
-
-Yes, later patches.  The first boards will be soon available.
-Once we validate the remaining support for PHYs (including MDIO support whi=
-ch
-is on the todo list) the patches will be available.  Also, we're looking at=
- phylink too.
-Once we can confirm whether it works on our boards, the driver will be upda=
-ted accordingly.
-
->> +static int enetc_phy_connect(struct net_device *ndev)
->> +{
->> +	struct enetc_ndev_priv *priv =3D netdev_priv(ndev);
->> +	struct phy_device *phydev;
->> +
->> +	if (!priv->phy_node)
->> +		return 0; /* phy-less mode */
->
->What are your user-cases for phy-less? If you don't have a PHY it is
->mostly because you are connected to an Ethernet switch. In that case
->you use fixed-link, which gives you a phy.
->
-
-This code path is also reached by the VF driver (via the open() hook which =
-is common to both
-PF and VF drivers, and VFs don't manage PHYs).=20
-Also,  the driver may be exercised in MAC loopback mode (ethtool -K loopbac=
-k on), when the
-PHY nodes are removed.  And it's always good to be able to run the driver o=
-n a simulator or
-an emulator without having to modify it.
-
-[...]
-
->> +int enetc_pci_probe(struct pci_dev *pdev, const char *name, int sizeof_=
-priv)
->> +{
->> +	struct enetc_si *si, *p;
->> +	struct enetc_hw *hw;
->> +	size_t alloc_size;
->> +	int err, len;
->> +
->> +	err =3D pci_enable_device_mem(pdev);
->> +	if (err) {
->> +		dev_err(&pdev->dev, "device enable failed\n");
->> +		return err;
->> +	}
->> +
->> +	/* set up for high or low dma */
->> +	err =3D dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
->> +	if (err) {
->> +		err =3D dma_set_mask_and_coherent(&pdev->dev,
->DMA_BIT_MASK(32));
->> +		if (err) {
->> +			dev_err(&pdev->dev,
->> +				"DMA configuration failed: 0x%x\n", err);
->> +			goto err_dma;
->> +		}
->> +	}
->
->Humm, i thought drivers were not supposed to do this. The architecture
->code should be setting masks. But i've not followed all those
->conversations...
->
-
-Documentation/DMA-API-HOWTO.txt still states:
-" For correct operation, you must interrogate the kernel in your device
-probe routine to see if the DMA controller on the machine can properly
-support the DMA addressing limitation your device has.  It is good
-style to do this even if your device holds the default setting, [...]"
-
-For the rest of the comments I didn't include in this reply: OK.
-
-Thanks,
-Claudiu
+/**
+ * vm_insert_range - insert range of kernel pages into user vma
+ * @vma: user vma to map to
+ * @addr: target user address of this page
+ * @pages: pointer to array of source kernel pages
+ * @page_count: number of pages need to insert into user vma
+ *
+ * This allows drivers to insert range of kernel pages they've allocated
+ * into a user vma. This is a generic function which drivers can use
+ * rather than using their own way of mapping range of kernel pages into
+ * user vma.
+ *
+ * Context - Process context. Called by mmap handlers.
+ * Return - int error value
+ * 0                    - OK
+ * -EINVAL              - Invalid argument
+ * -ENOMEM              - No memory
+ * -EFAULT              - Bad address
+ * -EBUSY               - Device or resource busy
+ */
