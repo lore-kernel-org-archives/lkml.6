@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD6AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E042C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 851272145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 672702086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8f5NShd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 851272145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IcHmGErb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672702086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbeKTDHE (ORCPT
+        id S2387812AbeKTDHH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41060 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:03 -0500
+        id S1732866AbeKTDHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B077721104;
-        Mon, 19 Nov 2018 16:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E1342146D;
+        Mon, 19 Nov 2018 16:42:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645773;
-        bh=biL11TeJCGrE9imIP3ObqD8wFAgS/repQVBDgMfSNV4=;
+        s=default; t=1542645775;
+        bh=Pu8jryiNqAjP7vexy3mIGic0GozsUxuGMStU4nruyg4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X8f5NShdIKVFfxAvlnqM1cufbyXxCSVKTbe6i80tuBocQtbto5Y3TSUyDYGquJS1C
-         baL+Df/qtp7A37fhWivQIHALSXNhDxuL9KZB1dE2jOSaelVBdHwtmcjyThKo8Uj/Dc
-         rsLMi6z9mku15iqfBLvHOuXB0R8t8Wvr5UPMDwDQ=
+        b=IcHmGErbvokQGqrPR04A2oBytp6uma4Aw6OI06OYsdgAv61AYEWqVXxksjLsnPHrm
+         pNIs+X7dRdK1ZgM9SmbvqY3rUJjGfDzUHJSuUbuOUHidYlNebNvfUzwBD/HgifsLa7
+         jMIf9fVISTP9wSXVdEDX9PHMeVvxvUOplKYH7Szg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.18 076/171] reset: hisilicon: fix potential NULL pointer dereference
-Date:   Mon, 19 Nov 2018 17:27:52 +0100
-Message-Id: <20181119162631.835971036@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Dan Williams <dan.j.williams@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.18 085/171] memory_hotplug: cond_resched in __remove_pages
+Date:   Mon, 19 Nov 2018 17:28:01 +0100
+Message-Id: <20181119162632.988943934@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,42 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit e9a2310fb689151166df7fd9971093362d34bd79 upstream.
+commit dd33ad7b251f900481701b2a82d25de583867708 upstream.
 
-There is a potential execution path in which function
-platform_get_resource() returns NULL. If this happens,
-we will end up having a NULL pointer dereference.
+We have received a bug report that unbinding a large pmem (>1TB) can
+result in a soft lockup:
 
-Fix this by replacing devm_ioremap with devm_ioremap_resource,
-which has the NULL check and the memory region request.
+  NMI watchdog: BUG: soft lockup - CPU#9 stuck for 23s! [ndctl:4365]
+  [...]
+  Supported: Yes
+  CPU: 9 PID: 4365 Comm: ndctl Not tainted 4.12.14-94.40-default #1 SLE12-SP4
+  Hardware name: Intel Corporation S2600WFD/S2600WFD, BIOS SE5C620.86B.01.00.0833.051120182255 05/11/2018
+  task: ffff9cce7d4410c0 task.stack: ffffbe9eb1bc4000
+  RIP: 0010:__put_page+0x62/0x80
+  Call Trace:
+   devm_memremap_pages_release+0x152/0x260
+   release_nodes+0x18d/0x1d0
+   device_release_driver_internal+0x160/0x210
+   unbind_store+0xb3/0xe0
+   kernfs_fop_write+0x102/0x180
+   __vfs_write+0x26/0x150
+   vfs_write+0xad/0x1a0
+   SyS_write+0x42/0x90
+   do_syscall_64+0x74/0x150
+   entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+  RIP: 0033:0x7fd13166b3d0
 
-This code was detected with the help of Coccinelle.
+It has been reported on an older (4.12) kernel but the current upstream
+code doesn't cond_resched in the hot remove code at all and the given
+range to remove might be really large.  Fix the issue by calling
+cond_resched once per memory section.
 
-Cc: stable@vger.kernel.org
-Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: http://lkml.kernel.org/r/20181031125840.23982-1-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Johannes Thumshirn <jthumshirn@suse.de>
+Cc: Dan Williams <dan.j.williams@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/hisilicon/reset.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ mm/memory_hotplug.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -109,9 +109,8 @@ struct hisi_reset_controller *hisi_reset
- 		return NULL;
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -587,6 +587,7 @@ int __remove_pages(struct zone *zone, un
+ 	for (i = 0; i < sections_to_remove; i++) {
+ 		unsigned long pfn = phys_start_pfn + i*PAGES_PER_SECTION;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	rstc->membase = devm_ioremap(&pdev->dev,
--				res->start, resource_size(res));
--	if (!rstc->membase)
-+	rstc->membase = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rstc->membase))
- 		return NULL;
- 
- 	spin_lock_init(&rstc->lock);
++		cond_resched();
+ 		ret = __remove_section(zone, __pfn_to_section(pfn), map_offset,
+ 				altmap);
+ 		map_offset = 0;
 
 
