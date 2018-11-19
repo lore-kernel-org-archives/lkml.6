@@ -2,101 +2,175 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D4FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEEEC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB81B208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB81B208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 143CF20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYzMlTgg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143CF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726564AbeKTF1N (ORCPT
+        id S1727692AbeKTF1c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:27:13 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:52570 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeKTF1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:27:12 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gOooJ-0008VP-6i; Mon, 19 Nov 2018 12:02:15 -0700
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gOooH-0004yY-LG; Mon, 19 Nov 2018 12:02:14 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-References: <20181119103241.5229-1-christian@brauner.io>
-        <20181119103241.5229-3-christian@brauner.io>
-        <CAKOZueshQ2DAwUYp+dLpmfYG6FtvCqeRQxH41SjNS+WqY3e0Fw@mail.gmail.com>
-        <20181119182902.fadw6qiu3eepndm3@brauner.io>
-Date:   Mon, 19 Nov 2018 13:02:06 -0600
-In-Reply-To: <20181119182902.fadw6qiu3eepndm3@brauner.io> (Christian Brauner's
-        message of "Mon, 19 Nov 2018 19:29:05 +0100")
-Message-ID: <87o9ak28nl.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 20 Nov 2018 00:27:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725969AbeKTF1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:27:31 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3113020851;
+        Mon, 19 Nov 2018 19:02:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542654155;
+        bh=zWgFKLjronZiVWnLDTeZ27i548bHz3nIsobsoM0p3rY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jYzMlTgg/b4LFGR8t6hTyF1MQYhowTNjqzYnwmrovRBu+gf3dWHbNKHqtX0PL5GOu
+         oKkSStZJCRJx65leTp9WJE9e+qOm2lh9rpi84nqGAYvMBqsSudBElMGD2owZr8AXZc
+         Lf3J7FAE658veK4Ilr9hBXWR40dXR4Z3rNVqYnTk=
+Date:   Mon, 19 Nov 2018 21:02:29 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
+        linuxarm@huawei.com, haojian.zhuang@linaro.org,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        David Kershner <david.kershner@unisys.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
+        linux-netdev <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-accelerators@lists.ozlabs.org
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181119190229.GB21715@mtr-leonro.mtl.com>
+References: <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
+ <20181114160017.GI3759@mtr-leonro.mtl.com>
+ <20181115085109.GD157308@Turing-Arch-b>
+ <20181115145455.GN3759@mtr-leonro.mtl.com>
+ <20181119091405.GE157308@Turing-Arch-b>
+ <20181119091910.GF157308@Turing-Arch-b>
+ <20181119104801.GF8268@mtr-leonro.mtl.com>
+ <20181119164853.GA4593@redhat.com>
+ <20181119182752.GA4890@ziepe.ca>
+ <20181119184215.GB4593@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gOooH-0004yY-LG;;;mid=<87o9ak28nl.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/IAgxHXFWsW3kF6a7EpuFZNuQYr3Siskc=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Content-Disposition: inline
+In-Reply-To: <20181119184215.GB4593@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christian Brauner <christian@brauner.io> writes:
 
-> On Mon, Nov 19, 2018 at 07:59:24AM -0800, Daniel Colascione wrote:
->> You never addressed my comment on the previous patch about your use of
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Nov 19, 2018 at 01:42:16PM -0500, Jerome Glisse wrote:
+> On Mon, Nov 19, 2018 at 11:27:52AM -0700, Jason Gunthorpe wrote:
+> > On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
+> >
+> > > Just to comment on this, any infiniband driver which use umem and do
+> > > not have ODP (here ODP for me means listening to mmu notifier so all
+> > > infiniband driver except mlx5) will be affected by same issue AFAICT.
+> > >
+> > > AFAICT there is no special thing happening after fork() inside any of
+> > > those driver. So if parent create a umem mr before fork() and program
+> > > hardware with it then after fork() the parent might start using new
+> > > page for the umem range while the old memory is use by the child. The
+> > > reverse is also true (parent using old memory and child new memory)
+> > > bottom line you can not predict which memory the child or the parent
+> > > will use for the range after fork().
+> > >
+> > > So no matter what you consider the child or the parent, what the hw
+> > > will use for the mr is unlikely to match what the CPU use for the
+> > > same virtual address. In other word:
+> > >
+> > > Before fork:
+> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xCAFE
+> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
+> > >
+> > > Case 1:
+> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xCAFE
+> > >     CPU child:  virtual addr ptr1 -> physical address =3D 0xDEAD
+> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
+> > >
+> > > Case 2:
+> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xBEEF
+> > >     CPU child:  virtual addr ptr1 -> physical address =3D 0xCAFE
+> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
+> >
+> > IIRC this is solved in IB by automatically calling
+> > madvise(MADV_DONTFORK) before creating the MR.
+> >
+> > MADV_DONTFORK
+> >   .. This is useful to prevent copy-on-write semantics from changing the
+> >   physical location of a page if the parent writes to it after a
+> >   fork(2) ..
 >
-> Sorry, that thread exploded so quickly that I might have missed it.
+> This would work around the issue but this is not transparent ie
+> range marked with DONTFORK no longer behave as expected from the
+> application point of view.
 >
->> private_data here. Why can't you use the struct pid reference that's
->> already in the inode?
+> Also it relies on userspace doing the right thing (which is not
+> something i usualy trust :)).
+
+The good thing that we didn't see anyone who succeeded to run
+IB stack without our user space, which does right thing under
+the hood :).
+
 >
-> If that's what people prefer we can probably use that. There was
-> precedent for stashing away such data in fs/proc/base.c already for
-> various other things including user namespaces and struct mm so I
-> followed this model. A prior version of my patch (I didn't send out) did
-> retrive the inode via proc_pid() in .open() took an additional reference
-> via get_pid() and dropped it in .release(). Do we prefer that?
+> Cheers,
+> J=E9r=F4me
 
-If you are using proc/<pid>/ directories as your file descriptors, you
-don't need to add an open or a release method at all.  The existing file
-descriptors hold a reference to the inode which holds a reference the
-the struct pid.
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The only time you need to get a reference is when you need a task
-and kill_pid_info already performs that work for you.
+-----BEGIN PGP SIGNATURE-----
 
-So using proc_pid is all you need to do to get the pid from the existing
-file descriptors.
+iQIcBAEBAgAGBQJb8wjFAAoJEORje4g2clinsgMP/06W7PP/epn/WsbihGFnNzR7
+eSCxWl6pe1bRlT0k3QIUENSn61M04nryTJTErkpGC/Qgk+hDxQMMGk4Rr1sE7PUA
+Ht9AYxBf9+aijIZM8ttCcandwz+RZ8TjtUH+ejXd1XDc1kbkJFgL+9H8TNbfJu+o
+521rbhMoebH+dJnTtGfts82ZrY+/rfyALkXLnRwArh8Hkz7AqTNQEKI/sqaM8jhc
+dPqtU+xlIbwAejMNKhFKQswXRJfzO7MBSXocRf4wSX5L/U8A+p+s2QmknJTokiiG
+061EB/clVZ1u09wuhEBT4IbMQmle2CkRg3m3NtTrTJg3Or1wP6G9lt8NSA73nS6/
+o6OAdsPiool8Hnv0h9wGSgaRLuXTc/TUG2xVbBQWPyRJFXqy7aeXNOW1fS5SFIAy
+kj9PSxrMmpp+gYyEx9DBbpX6oPtJmsv4dvbKmpUQWsqbCIxdtwtKW00gAPTvYbHP
+jz7mEfGCHDRRIPcEcXxmeASta6BIzJRZR94xviAeCPOst5PuS4QUr098hv46Syn9
+gXRYzkcaIIhCjsPhWfsy/mrs+5k+NFPIy7jH4Zb5JE020Qu+Mir8PoY4ml25PiJy
+0SAiHLu0vnYtgbxgpHPXPqMqPxTqZAh8kGE+utcGVZeS6VrxBSysKe5fxSlehifS
+iH8hKkPnI7Z6xPkex8QN
+=EMEz
+-----END PGP SIGNATURE-----
 
-Eric
-
+--ZGiS0Q5IWpPtfppv--
