@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3DBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14215C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94732148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF28E2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mA9VuRdm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E94732148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C46MLfkm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF28E2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388711AbeKTDKI (ORCPT
+        id S2388722AbeKTDKK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:10:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45436 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:10:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388694AbeKTDKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:10:07 -0500
+        id S2388283AbeKTDKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:10:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E460214C4;
-        Mon, 19 Nov 2018 16:45:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19EF7214DA;
+        Mon, 19 Nov 2018 16:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645956;
-        bh=DODjuOWXcbL0Xf9dhq+G95nLX6yJRgONrTasYZYJ5i0=;
+        s=default; t=1542645958;
+        bh=66bod2TbEGoMlGVy/VUzO9dwX/B+qEMnt4ICre5pyiM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mA9VuRdmCZzfIE60w4iwqGsTJ4lrkz1hA54HQNFx8Sg/z4CGesBiYgbMKUYuq7R7X
-         pJBso18LJMH3/1YkSmo2KzqM6pMlVDlTMdpliNU6VpJK8CJU7if5KVmFoDw/cJ/qEY
-         CAqcbN1bzR6ayP6gMNB9C4B06fjWOZQFplKA16v0=
+        b=C46MLfkmE6Md56W2V0DIxBr+nj12olMf695Jg4rvMxprs47UqEEstzfj7AEZYM23I
+         obXxGB7k+y0SxGOWFGmmrlMkzqZfb4qCXWyQhmcz1t2qzvSgTPumyITWrXHNW4a4ii
+         DeW6zjeAqP7KevylRFMrmoQM9bi22uEi7FxkzTaA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>
-Subject: [PATCH 4.18 151/171] drm/etnaviv: fix bogus fence complete check in timeout handler
-Date:   Mon, 19 Nov 2018 17:29:07 +0100
-Message-Id: <20181119162639.873025932@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+Subject: [PATCH 4.18 152/171] drm/dp_mst: Check if primary mstb is null
+Date:   Mon, 19 Nov 2018 17:29:08 +0100
+Message-Id: <20181119162639.945898878@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -61,33 +62,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
 
-commit 6fce3a406108ee6c8a61e2a33e52e9198a626ea0 upstream.
+commit 23d8003907d094f77cf959228e2248d6db819fa7 upstream.
 
-The GPU hardware fences and the job out-fences are on different timelines
-so it's wrong to compare them. Fix this by only looking at the out-fence.
+Unfortunately drm_dp_get_mst_branch_device which is called from both
+drm_dp_mst_handle_down_rep and drm_dp_mst_handle_up_rep seem to rely
+on that mgr->mst_primary is not NULL, which seem to be wrong as it can be
+cleared with simultaneous mode set, if probing fails or in other case.
+mgr->lock mutex doesn't protect against that as it might just get
+assigned to NULL right before, not simultaneously.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 2c83a726d6fb (drm/etnaviv: bring back progress check in job
-                     timeout handler)
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+There are currently bugs 107738, 108616 bugs which crash in
+drm_dp_get_mst_branch_device, caused by this issue.
+
+v2: Refactored the code, as it was nicely noticed.
+    Fixed Bugzilla bug numbers(second was 108616, but not 108816)
+    and added links.
+
+[changed title and added stable cc]
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+Cc: stable@vger.kernel.org
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108616
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107738
+Link: https://patchwork.freedesktop.org/patch/msgid/20181109090012.24438-1-stanislav.lisovskiy@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/etnaviv/etnaviv_sched.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_mst_topology.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/etnaviv/etnaviv_sched.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_sched.c
-@@ -93,7 +93,7 @@ static void etnaviv_sched_timedout_job(s
- 	 * If the GPU managed to complete this jobs fence, the timout is
- 	 * spurious. Bail out.
- 	 */
--	if (fence_completed(gpu, submit->out_fence->seqno))
-+	if (dma_fence_is_signaled(submit->out_fence))
- 		return;
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -1274,6 +1274,9 @@ static struct drm_dp_mst_branch *drm_dp_
+ 	mutex_lock(&mgr->lock);
+ 	mstb = mgr->mst_primary;
  
- 	/*
++	if (!mstb)
++		goto out;
++
+ 	for (i = 0; i < lct - 1; i++) {
+ 		int shift = (i % 2) ? 0 : 4;
+ 		int port_num = (rad[i / 2] >> shift) & 0xf;
 
 
