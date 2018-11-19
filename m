@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA4C2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16746C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8036720851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D311720851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZJ40zLc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8036720851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+WKv+Kv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D311720851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390476AbeKTDQO (ORCPT
+        id S2390488AbeKTDQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:16:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54096 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389669AbeKTDQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:16:14 -0500
+        id S2389669AbeKTDQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68F6B206BA;
-        Mon, 19 Nov 2018 16:52:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01EF8208E3;
+        Mon, 19 Nov 2018 16:52:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646320;
-        bh=dcKv9ge2mvdbAQDK38c15+F4vEev+rifBdBmljfYJsA=;
+        s=default; t=1542646323;
+        bh=EX+MYJ570fFAxuX2q0W4O6oFwisbYv0WkVNQFh4/9Sg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kZJ40zLc6hpuaUY1j9PjdoO0WQHSXcEwWTIKwyPBZZ0o9vL9o2x2rkvCPL3KkRsto
-         qZYzev2SBIUsNa93DM3YwbTqFNnagmS9p7SAMg4XAa0znBCQ4D2Ra6fidvKtrmNCxh
-         kb+yLvB5aO1Bil0U1kZaSlhCfm7EwAAkDexmsi70=
+        b=u+WKv+KvWr+73+Cv/ZoryyQLxvLsovYxISWLD7X3MSQAg7YJXwV/lMnjRWPcVDTEX
+         o7dcujd9O/Fe4Ty7uHFkOcSM4HsvU97o6ShvIDOj3h58j91z57twbRIoPmKzqCbycq
+         mHscEAHIA22QsbLbJHfp817hBRhIU/kZyi0IivcU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 073/124] ext4: add missing brelse() update_backups()s error path
-Date:   Mon, 19 Nov 2018 17:28:47 +0100
-Message-Id: <20181119162627.224507879@linuxfoundation.org>
+        stable@vger.kernel.org, Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.14 115/124] drm/i915: Large page offsets for pread/pwrite
+Date:   Mon, 19 Nov 2018 17:29:29 +0100
+Message-Id: <20181119162633.213709771@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -61,33 +63,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 
-commit ea0abbb648452cdb6e1734b702b6330a7448fcf8 upstream.
+commit ab0d6a141843e0b4b2709dfd37b53468b5452c3a upstream.
 
-Fixes: ac27a0ec112a ("ext4: initial copy of files from ext3")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 2.6.19
+Handle integer overflow when computing the sub-page length for shmem
+backed pread/pwrite.
+
+Reported-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181012140228.29783-1-chris@chris-wilson.co.uk
+(cherry picked from commit a5e856a5348f6cd50889d125c40bbeec7328e466)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/i915_gem.c |   12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -1097,8 +1097,10 @@ static void update_backups(struct super_
- 			   backup_block, backup_block -
- 			   ext4_group_first_block_no(sb, group));
- 		BUFFER_TRACE(bh, "get_write_access");
--		if ((err = ext4_journal_get_write_access(handle, bh)))
-+		if ((err = ext4_journal_get_write_access(handle, bh))) {
-+			brelse(bh);
- 			break;
-+		}
- 		lock_buffer(bh);
- 		memcpy(bh->b_data, data, size);
- 		if (rest)
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -980,11 +980,7 @@ i915_gem_shmem_pread(struct drm_i915_gem
+ 	offset = offset_in_page(args->offset);
+ 	for (idx = args->offset >> PAGE_SHIFT; remain; idx++) {
+ 		struct page *page = i915_gem_object_get_page(obj, idx);
+-		int length;
+-
+-		length = remain;
+-		if (offset + length > PAGE_SIZE)
+-			length = PAGE_SIZE - offset;
++		unsigned int length = min_t(u64, remain, PAGE_SIZE - offset);
+ 
+ 		ret = shmem_pread(page, offset, length, user_data,
+ 				  page_to_phys(page) & obj_do_bit17_swizzling,
+@@ -1406,11 +1402,7 @@ i915_gem_shmem_pwrite(struct drm_i915_ge
+ 	offset = offset_in_page(args->offset);
+ 	for (idx = args->offset >> PAGE_SHIFT; remain; idx++) {
+ 		struct page *page = i915_gem_object_get_page(obj, idx);
+-		int length;
+-
+-		length = remain;
+-		if (offset + length > PAGE_SIZE)
+-			length = PAGE_SIZE - offset;
++		unsigned int length = min_t(u64, remain, PAGE_SIZE - offset);
+ 
+ 		ret = shmem_pwrite(page, offset, length, user_data,
+ 				   page_to_phys(page) & obj_do_bit17_swizzling,
 
 
