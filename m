@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20974C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA7C821707
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C273621707
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2CLZOMzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7C821707
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LP+n/uXl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C273621707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405197AbeKTDYH (ORCPT
+        id S2405208AbeKTDYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36328 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:06 -0500
+        id S2404390AbeKTDYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F27A721582;
-        Mon, 19 Nov 2018 16:59:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D31F215EA;
+        Mon, 19 Nov 2018 16:59:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646790;
-        bh=9TM6fTcgyujrbLa7e6bjApQTRJdk6fmwrfsMndsWMNs=;
+        s=default; t=1542646793;
+        bh=CuI2TlyF4iFg5uzMeGuehEqFaOerVCMk+M8jbHiJlqA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2CLZOMzJyNdbVtOUQnuZ1p4dkOXT3zQKCXQPSNEEUlMvIGMP5gSP9OM4XuCXkN3OE
-         38xhP6TeLyjBe/J4FiSMVDSIgu8jjL/Is5JxXdF1yktUB1OYbUNw/okWEEHuL+qaFp
-         wBf/sXsJVV+uc1ZNETpXqBlSHUCPrPKLSCOz+hNQ=
+        b=LP+n/uXlMuGh+sbWw/ZNvoykSqnuJFAfxeKV2zX6Kw2PYgsrepOfSxo8Tmi5kTLXD
+         ixM3bO9j+IgUtuv7iuQ5if3nMKu4MMuUWKW/8oa/4zv1vpVzAMQc6Baw8Y+GnSqqyh
+         UaOzPwW6H4vbm8d8oL2kg/d9MC+hCV5YhcjFm2fA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 091/160] Btrfs: fix wrong dentries after fsync of file that got its parent replaced
-Date:   Mon, 19 Nov 2018 17:28:50 +0100
-Message-Id: <20181119162640.060269598@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>,
+        Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 092/160] btrfs: qgroup: Dirty all qgroups before rescan
+Date:   Mon, 19 Nov 2018 17:28:51 +0100
+Message-Id: <20181119162640.126151253@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,86 +63,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Qu Wenruo <wqu@suse.com>
 
-commit 0f375eed92b5a407657532637ed9652611a682f5 upstream.
+commit 9c7b0c2e8dbfbcd80a71e2cbfe02704f26c185c6 upstream.
 
-In a scenario like the following:
+[BUG]
+In the following case, rescan won't zero out the number of qgroup 1/0:
 
-  mkdir /mnt/A               # inode 258
-  mkdir /mnt/B               # inode 259
-  touch /mnt/B/bar           # inode 260
+  $ mkfs.btrfs -fq $DEV
+  $ mount $DEV /mnt
 
-  sync
+  $ btrfs quota enable /mnt
+  $ btrfs qgroup create 1/0 /mnt
+  $ btrfs sub create /mnt/sub
+  $ btrfs qgroup assign 0/257 1/0 /mnt
 
-  mv /mnt/B/bar /mnt/A/bar
-  mv -T /mnt/A /mnt/B
-  fsync /mnt/B/bar
+  $ dd if=/dev/urandom of=/mnt/sub/file bs=1k count=1000
+  $ btrfs sub snap /mnt/sub /mnt/snap
+  $ btrfs quota rescan -w /mnt
+  $ btrfs qgroup show -pcre /mnt
+  qgroupid         rfer         excl     max_rfer     max_excl parent  child
+  --------         ----         ----     --------     -------- ------  -----
+  0/5          16.00KiB     16.00KiB         none         none ---     ---
+  0/257      1016.00KiB     16.00KiB         none         none 1/0     ---
+  0/258      1016.00KiB     16.00KiB         none         none ---     ---
+  1/0        1016.00KiB     16.00KiB         none         none ---     0/257
 
-  <power fail>
+So far so good, but:
 
-After replaying the log we end up with file bar having 2 hard links, both
-with the name 'bar' and one in the directory with inode number 258 and the
-other in the directory with inode number 259. Also, we end up with the
-directory inode 259 still existing and with the directory inode 258 still
-named as 'A', instead of 'B'. In this scenario, file 'bar' should only
-have one hard link, located at directory inode 258, the directory inode
-259 should not exist anymore and the name for directory inode 258 should
-be 'B'.
+  $ btrfs qgroup remove 0/257 1/0 /mnt
+  WARNING: quotas may be inconsistent, rescan needed
+  $ btrfs quota rescan -w /mnt
+  $ btrfs qgroup show -pcre  /mnt
+  qgoupid         rfer         excl     max_rfer     max_excl parent  child
+  --------         ----         ----     --------     -------- ------  -----
+  0/5          16.00KiB     16.00KiB         none         none ---     ---
+  0/257      1016.00KiB     16.00KiB         none         none ---     ---
+  0/258      1016.00KiB     16.00KiB         none         none ---     ---
+  1/0        1016.00KiB     16.00KiB         none         none ---     ---
+	     ^^^^^^^^^^     ^^^^^^^^ not cleared
 
-This incorrect behaviour happens because when attempting to log the old
-parents of an inode, we skip any parents that no longer exist. Fix this
-by forcing a full commit if an old parent no longer exists.
+[CAUSE]
+Before rescan we call qgroup_rescan_zero_tracking() to zero out all
+qgroups' accounting numbers.
 
-A test case for fstests follows soon.
+However we don't mark all qgroups dirty, but rely on rescan to do so.
 
+If we have any high level qgroup without children, it won't be marked
+dirty during rescan, since we cannot reach that qgroup.
+
+This will cause QGROUP_INFO items of childless qgroups never get updated
+in the quota tree, thus their numbers will stay the same in "btrfs
+qgroup show" output.
+
+[FIX]
+Just mark all qgroups dirty in qgroup_rescan_zero_tracking(), so even if
+we have childless qgroups, their QGROUP_INFO items will still get
+updated during rescan.
+
+Reported-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
 CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
+Tested-by: Misono Tomohiro <misono.tomohiro@jp.fujitsu.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/btrfs/qgroup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -5240,9 +5240,33 @@ static int btrfs_log_all_parents(struct
- 
- 			dir_inode = btrfs_iget(root->fs_info->sb, &inode_key,
- 					       root, NULL);
--			/* If parent inode was deleted, skip it. */
--			if (IS_ERR(dir_inode))
--				continue;
-+			/*
-+			 * If the parent inode was deleted, return an error to
-+			 * fallback to a transaction commit. This is to prevent
-+			 * getting an inode that was moved from one parent A to
-+			 * a parent B, got its former parent A deleted and then
-+			 * it got fsync'ed, from existing at both parents after
-+			 * a log replay (and the old parent still existing).
-+			 * Example:
-+			 *
-+			 * mkdir /mnt/A
-+			 * mkdir /mnt/B
-+			 * touch /mnt/B/bar
-+			 * sync
-+			 * mv /mnt/B/bar /mnt/A/bar
-+			 * mv -T /mnt/A /mnt/B
-+			 * fsync /mnt/B/bar
-+			 * <power fail>
-+			 *
-+			 * If we ignore the old parent B which got deleted,
-+			 * after a log replay we would have file bar linked
-+			 * at both parents and the old parent B would still
-+			 * exist.
-+			 */
-+			if (IS_ERR(dir_inode)) {
-+				ret = PTR_ERR(dir_inode);
-+				goto out;
-+			}
- 
- 			ret = btrfs_log_inode(trans, root, dir_inode,
- 					      LOG_INODE_ALL, 0, LLONG_MAX, ctx);
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -2446,6 +2446,7 @@ qgroup_rescan_zero_tracking(struct btrfs
+ 		qgroup->rfer_cmpr = 0;
+ 		qgroup->excl = 0;
+ 		qgroup->excl_cmpr = 0;
++		qgroup_dirty(fs_info, qgroup);
+ 	}
+ 	spin_unlock(&fs_info->qgroup_lock);
+ }
 
 
