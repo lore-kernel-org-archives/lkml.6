@@ -6,44 +6,49 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B6AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BD1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE492208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 345A0208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdPgedBA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE492208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaaMwfHM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 345A0208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732515AbeKTDCp (ORCPT
+        id S1732530AbeKTDCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35090 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731835AbeKTDCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:43 -0500
+        id S1731835AbeKTDCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E21F2147D;
-        Mon, 19 Nov 2018 16:38:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A61662148E;
+        Mon, 19 Nov 2018 16:38:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645514;
-        bh=38ZbgmQlAGrBWPttMOgxte8Rde3np1pKsVMCR6KW5NU=;
+        s=default; t=1542645517;
+        bh=tB776zwBpUfcsOIZD3N570CHJEWaV8kpgOTZRrOySS4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SdPgedBAhpu7YqzJM2UQojsk80lujaf1cDimI/EDBXDihr7+xyp0EksjKMwYrMhnC
-         nAVzwStF2/rZG0mwUMfFH7pZgyiNvbXQh/brRBDtNlunUCfQ3EOW095xjYBRscsYqI
-         d+o8oCmwFSdAHCYMxMcIxgVo+EW3jz4QLDCPf+a0=
+        b=BaaMwfHMBiGL4ak7rxZSHJRRvvP6BhEpi6Fe2bpCmj+ugBEtWaQ7B9RN0EHlIh6JR
+         7UGnvYysf7FTiUlx4AjL3h+6X3F9mkKBPbWWLcB/gWR3BQRgnVeNlXcB1gYHvuwrL7
+         5wQam2ywnd4YmNvXR4T5OqPQaxr8l13UKnYG5RFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 143/205] ext4: release bs.bh before re-using in ext4_xattr_block_find()
-Date:   Mon, 19 Nov 2018 17:27:30 +0100
-Message-Id: <20181119162638.024232041@linuxfoundation.org>
+        stable@vger.kernel.org, Dennis <dennis.nezic@utoronto.ca>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Peter Nowee <peter.nowee@gmail.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Subject: [PATCH 4.19 185/205] drm/i915: Use the correct crtc when sanitizing plane mapping
+Date:   Mon, 19 Nov 2018 17:28:12 +0100
+Message-Id: <20181119162641.548293417@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -61,33 +66,218 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 45ae932d246f721e6584430017176cbcadfde610 upstream.
+commit 9b27390139dbe0dc10d1899545248862fe826b61 upstream.
 
-bs.bh was taken in previous ext4_xattr_block_find() call,
-it should be released before re-using
+When we decide that a plane is attached to the wrong pipe we try
+to turn off said plane. However we are passing around the crtc we
+think that the plane is supposed to be using rather than the crtc
+it is currently using. That doesn't work all that well because
+we may have to do vblank waits etc. and the other pipe might
+not even be enabled here. So let's pass the plane's current crtc to
+intel_plane_disable_noatomic() so that it can its job correctly.
 
-Fixes: 7e01c8e5420b ("ext3/4: fix uninitialized bs in ...")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 2.6.26
+To do that semi-cleanly we also have to change the plane readout
+to record the plane's visibility into the bitmasks of the crtc
+where the plane is currently enabled rather than to the crtc
+we want to use for the plane.
+
+One caveat here is that our active_planes bitmask will get confused
+if both planes are enabled on the same pipe. Fortunately we can use
+plane_mask to reconstruct active_planes sufficiently since
+plane_mask still has the same meaning (is the plane visible?)
+during readout. We also have to do the same during the initial
+plane readout as the second plane could clear the active_planes
+bit the first plane had already set.
+
+v2: Rely on fixup_active_planes() to populate active_planes fully (Daniel)
+    Add Daniel's proposed comment to better document why we do this
+    Drop the redundant intel_set_plane_visible() call
+
+Cc: stable@vger.kernel.org # fcba862e8428 drm/i915: Have plane->get_hw_state() return the current pipe
+Cc: stable@vger.kernel.org
+Cc: Dennis <dennis.nezic@utoronto.ca>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Tested-by: Dennis <dennis.nezic@utoronto.ca>
+Tested-by: Peter Nowee <peter.nowee@gmail.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105637
+Fixes: b1e01595a66d ("drm/i915: Redo plane sanitation during readout")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181003145017.4527-1-ville.syrjala@linux.intel.com
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+(cherry picked from commit 62358aa4ee86481ce044bef04859820e1bc7c1d9)
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/xattr.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/i915/intel_display.c |   78 ++++++++++++++++++++---------------
+ 1 file changed, 46 insertions(+), 32 deletions(-)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2405,6 +2405,8 @@ retry_inode:
- 			error = ext4_xattr_block_set(handle, inode, &i, &bs);
- 		} else if (error == -ENOSPC) {
- 			if (EXT4_I(inode)->i_file_acl && !bs.s.base) {
-+				brelse(bs.bh);
-+				bs.bh = NULL;
- 				error = ext4_xattr_block_find(inode, &i, &bs);
- 				if (error)
- 					goto cleanup;
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -2754,20 +2754,33 @@ intel_set_plane_visible(struct intel_crt
+ 
+ 	plane_state->base.visible = visible;
+ 
+-	/* FIXME pre-g4x don't work like this */
+-	if (visible) {
++	if (visible)
+ 		crtc_state->base.plane_mask |= drm_plane_mask(&plane->base);
+-		crtc_state->active_planes |= BIT(plane->id);
+-	} else {
++	else
+ 		crtc_state->base.plane_mask &= ~drm_plane_mask(&plane->base);
+-		crtc_state->active_planes &= ~BIT(plane->id);
+-	}
+ 
+ 	DRM_DEBUG_KMS("%s active planes 0x%x\n",
+ 		      crtc_state->base.crtc->name,
+ 		      crtc_state->active_planes);
+ }
+ 
++static void fixup_active_planes(struct intel_crtc_state *crtc_state)
++{
++	struct drm_i915_private *dev_priv = to_i915(crtc_state->base.crtc->dev);
++	struct drm_plane *plane;
++
++	/*
++	 * Active_planes aliases if multiple "primary" or cursor planes
++	 * have been used on the same (or wrong) pipe. plane_mask uses
++	 * unique ids, hence we can use that to reconstruct active_planes.
++	 */
++	crtc_state->active_planes = 0;
++
++	drm_for_each_plane_mask(plane, &dev_priv->drm,
++				crtc_state->base.plane_mask)
++		crtc_state->active_planes |= BIT(to_intel_plane(plane)->id);
++}
++
+ static void intel_plane_disable_noatomic(struct intel_crtc *crtc,
+ 					 struct intel_plane *plane)
+ {
+@@ -2777,6 +2790,7 @@ static void intel_plane_disable_noatomic
+ 		to_intel_plane_state(plane->base.state);
+ 
+ 	intel_set_plane_visible(crtc_state, plane_state, false);
++	fixup_active_planes(crtc_state);
+ 
+ 	if (plane->id == PLANE_PRIMARY)
+ 		intel_pre_disable_primary_noatomic(&crtc->base);
+@@ -2795,7 +2809,6 @@ intel_find_initial_plane_obj(struct inte
+ 	struct drm_i915_gem_object *obj;
+ 	struct drm_plane *primary = intel_crtc->base.primary;
+ 	struct drm_plane_state *plane_state = primary->state;
+-	struct drm_crtc_state *crtc_state = intel_crtc->base.state;
+ 	struct intel_plane *intel_plane = to_intel_plane(primary);
+ 	struct intel_plane_state *intel_state =
+ 		to_intel_plane_state(plane_state);
+@@ -2885,10 +2898,6 @@ valid_fb:
+ 	plane_state->fb = fb;
+ 	plane_state->crtc = &intel_crtc->base;
+ 
+-	intel_set_plane_visible(to_intel_crtc_state(crtc_state),
+-				to_intel_plane_state(plane_state),
+-				true);
+-
+ 	atomic_or(to_intel_plane(primary)->frontbuffer_bit,
+ 		  &obj->frontbuffer_bits);
+ }
+@@ -15365,17 +15374,6 @@ void i830_disable_pipe(struct drm_i915_p
+ 	POSTING_READ(DPLL(pipe));
+ }
+ 
+-static bool intel_plane_mapping_ok(struct intel_crtc *crtc,
+-				   struct intel_plane *plane)
+-{
+-	enum pipe pipe;
+-
+-	if (!plane->get_hw_state(plane, &pipe))
+-		return true;
+-
+-	return pipe == crtc->pipe;
+-}
+-
+ static void
+ intel_sanitize_plane_mapping(struct drm_i915_private *dev_priv)
+ {
+@@ -15387,13 +15385,20 @@ intel_sanitize_plane_mapping(struct drm_
+ 	for_each_intel_crtc(&dev_priv->drm, crtc) {
+ 		struct intel_plane *plane =
+ 			to_intel_plane(crtc->base.primary);
++		struct intel_crtc *plane_crtc;
++		enum pipe pipe;
++
++		if (!plane->get_hw_state(plane, &pipe))
++			continue;
+ 
+-		if (intel_plane_mapping_ok(crtc, plane))
++		if (pipe == crtc->pipe)
+ 			continue;
+ 
+ 		DRM_DEBUG_KMS("%s attached to the wrong pipe, disabling plane\n",
+ 			      plane->base.name);
+-		intel_plane_disable_noatomic(crtc, plane);
++
++		plane_crtc = intel_get_crtc_for_pipe(dev_priv, pipe);
++		intel_plane_disable_noatomic(plane_crtc, plane);
+ 	}
+ }
+ 
+@@ -15565,23 +15570,32 @@ void i915_redisable_vga(struct drm_i915_
+ }
+ 
+ /* FIXME read out full plane state for all planes */
+-static void readout_plane_state(struct intel_crtc *crtc)
++static void readout_plane_state(struct drm_i915_private *dev_priv)
+ {
+-	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
+-	struct intel_crtc_state *crtc_state =
+-		to_intel_crtc_state(crtc->base.state);
+ 	struct intel_plane *plane;
++	struct intel_crtc *crtc;
+ 
+-	for_each_intel_plane_on_crtc(&dev_priv->drm, crtc, plane) {
++	for_each_intel_plane(&dev_priv->drm, plane) {
+ 		struct intel_plane_state *plane_state =
+ 			to_intel_plane_state(plane->base.state);
+-		enum pipe pipe;
++		struct intel_crtc_state *crtc_state;
++		enum pipe pipe = PIPE_A;
+ 		bool visible;
+ 
+ 		visible = plane->get_hw_state(plane, &pipe);
+ 
++		crtc = intel_get_crtc_for_pipe(dev_priv, pipe);
++		crtc_state = to_intel_crtc_state(crtc->base.state);
++
+ 		intel_set_plane_visible(crtc_state, plane_state, visible);
+ 	}
++
++	for_each_intel_crtc(&dev_priv->drm, crtc) {
++		struct intel_crtc_state *crtc_state =
++			to_intel_crtc_state(crtc->base.state);
++
++		fixup_active_planes(crtc_state);
++	}
+ }
+ 
+ static void intel_modeset_readout_hw_state(struct drm_device *dev)
+@@ -15613,13 +15627,13 @@ static void intel_modeset_readout_hw_sta
+ 		if (crtc_state->base.active)
+ 			dev_priv->active_crtcs |= 1 << crtc->pipe;
+ 
+-		readout_plane_state(crtc);
+-
+ 		DRM_DEBUG_KMS("[CRTC:%d:%s] hw state readout: %s\n",
+ 			      crtc->base.base.id, crtc->base.name,
+ 			      enableddisabled(crtc_state->base.active));
+ 	}
+ 
++	readout_plane_state(dev_priv);
++
+ 	for (i = 0; i < dev_priv->num_shared_dpll; i++) {
+ 		struct intel_shared_dpll *pll = &dev_priv->shared_dplls[i];
+ 
 
 
