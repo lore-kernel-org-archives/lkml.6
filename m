@@ -2,175 +2,103 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEEEC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656EEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143CF20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYzMlTgg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143CF20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3732A20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3732A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbeKTF1c (ORCPT
+        id S1726629AbeKTF2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:27:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725969AbeKTF1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:27:31 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3113020851;
-        Mon, 19 Nov 2018 19:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542654155;
-        bh=zWgFKLjronZiVWnLDTeZ27i548bHz3nIsobsoM0p3rY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jYzMlTgg/b4LFGR8t6hTyF1MQYhowTNjqzYnwmrovRBu+gf3dWHbNKHqtX0PL5GOu
-         oKkSStZJCRJx65leTp9WJE9e+qOm2lh9rpi84nqGAYvMBqsSudBElMGD2owZr8AXZc
-         Lf3J7FAE658veK4Ilr9hBXWR40dXR4Z3rNVqYnTk=
-Date:   Mon, 19 Nov 2018 21:02:29 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
-        linuxarm@huawei.com, haojian.zhuang@linaro.org,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181119190229.GB21715@mtr-leonro.mtl.com>
-References: <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181119164853.GA4593@redhat.com>
- <20181119182752.GA4890@ziepe.ca>
- <20181119184215.GB4593@redhat.com>
+        Tue, 20 Nov 2018 00:28:20 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39530 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbeKTF2T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:28:19 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gOop5-0001PT-8K; Mon, 19 Nov 2018 20:03:03 +0100
+Date:   Mon, 19 Nov 2018 20:03:02 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [Patch v5 08/16] smt: Create cpu_smt_enabled static key for SMT
+ specific code
+In-Reply-To: <439a2d72-988c-d397-dc32-daf098af655c@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1811191959540.1669@nanos.tec.linutronix.de>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <91b719e53640f60666b40a3516da2b80703b2f76.1542418937.git.tim.c.chen@linux.intel.com> <20181119145754.GA2131@hirez.programming.kicks-ass.net>
+ <439a2d72-988c-d397-dc32-daf098af655c@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
-Content-Disposition: inline
-In-Reply-To: <20181119184215.GB4593@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Tim,
 
---ZGiS0Q5IWpPtfppv
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 19 Nov 2018, Tim Chen wrote:
+> On 11/19/2018 06:57 AM, Peter Zijlstra wrote:
+> > In particular, the SMT topology bits are set before we enable
+> > interrrupts and similarly, are cleared after we disable interrupts for
+> > the last time and die.
+> 
+> 
+> Peter & Thomas,
+> 
+> Any objection if I export sched_smt_present after including
+> Peter's patch and use it in spec_ctrl_update_msr instead.
+> 
+> Something like this?
 
-On Mon, Nov 19, 2018 at 01:42:16PM -0500, Jerome Glisse wrote:
-> On Mon, Nov 19, 2018 at 11:27:52AM -0700, Jason Gunthorpe wrote:
-> > On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
-> >
-> > > Just to comment on this, any infiniband driver which use umem and do
-> > > not have ODP (here ODP for me means listening to mmu notifier so all
-> > > infiniband driver except mlx5) will be affected by same issue AFAICT.
-> > >
-> > > AFAICT there is no special thing happening after fork() inside any of
-> > > those driver. So if parent create a umem mr before fork() and program
-> > > hardware with it then after fork() the parent might start using new
-> > > page for the umem range while the old memory is use by the child. The
-> > > reverse is also true (parent using old memory and child new memory)
-> > > bottom line you can not predict which memory the child or the parent
-> > > will use for the range after fork().
-> > >
-> > > So no matter what you consider the child or the parent, what the hw
-> > > will use for the mr is unlikely to match what the CPU use for the
-> > > same virtual address. In other word:
-> > >
-> > > Before fork:
-> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xCAFE
-> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
-> > >
-> > > Case 1:
-> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xCAFE
-> > >     CPU child:  virtual addr ptr1 -> physical address =3D 0xDEAD
-> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
-> > >
-> > > Case 2:
-> > >     CPU parent: virtual addr ptr1 -> physical address =3D 0xBEEF
-> > >     CPU child:  virtual addr ptr1 -> physical address =3D 0xCAFE
-> > >     HARDWARE:   virtual addr ptr1 -> physical address =3D 0xCAFE
-> >
-> > IIRC this is solved in IB by automatically calling
-> > madvise(MADV_DONTFORK) before creating the MR.
-> >
-> > MADV_DONTFORK
-> >   .. This is useful to prevent copy-on-write semantics from changing the
-> >   physical location of a page if the parent writes to it after a
-> >   fork(2) ..
->
-> This would work around the issue but this is not transparent ie
-> range marked with DONTFORK no longer behave as expected from the
-> application point of view.
->
-> Also it relies on userspace doing the right thing (which is not
-> something i usualy trust :)).
+>  
+> +#ifdef CONFIG_SCHED_SMT
+> +
+> +extern struct static_key_false sched_smt_present;
+> +
+> +static inline bool cpu_smt_present(void)
+> +{
+> +	if (static_branch_unlikely(&sched_smt_present))
+> +		return true;
+> +	else
+> +		return false;
 
-The good thing that we didn't see anyone who succeeded to run
-IB stack without our user space, which does right thing under
-the hood :).
+What's wrong with
 
->
-> Cheers,
-> J=E9r=F4me
+       return static_branch_unlikely(&sched_smt_present);
 
---ZGiS0Q5IWpPtfppv
-Content-Type: application/pgp-signature; name="signature.asc"
+???
 
------BEGIN PGP SIGNATURE-----
+But that's just a stylistic nitpick. The real issue is that you prevent the
+mitigation when CONFIG_SCHED_SMT=n.
 
-iQIcBAEBAgAGBQJb8wjFAAoJEORje4g2clinsgMP/06W7PP/epn/WsbihGFnNzR7
-eSCxWl6pe1bRlT0k3QIUENSn61M04nryTJTErkpGC/Qgk+hDxQMMGk4Rr1sE7PUA
-Ht9AYxBf9+aijIZM8ttCcandwz+RZ8TjtUH+ejXd1XDc1kbkJFgL+9H8TNbfJu+o
-521rbhMoebH+dJnTtGfts82ZrY+/rfyALkXLnRwArh8Hkz7AqTNQEKI/sqaM8jhc
-dPqtU+xlIbwAejMNKhFKQswXRJfzO7MBSXocRf4wSX5L/U8A+p+s2QmknJTokiiG
-061EB/clVZ1u09wuhEBT4IbMQmle2CkRg3m3NtTrTJg3Or1wP6G9lt8NSA73nS6/
-o6OAdsPiool8Hnv0h9wGSgaRLuXTc/TUG2xVbBQWPyRJFXqy7aeXNOW1fS5SFIAy
-kj9PSxrMmpp+gYyEx9DBbpX6oPtJmsv4dvbKmpUQWsqbCIxdtwtKW00gAPTvYbHP
-jz7mEfGCHDRRIPcEcXxmeASta6BIzJRZR94xviAeCPOst5PuS4QUr098hv46Syn9
-gXRYzkcaIIhCjsPhWfsy/mrs+5k+NFPIy7jH4Zb5JE020Qu+Mir8PoY4ml25PiJy
-0SAiHLu0vnYtgbxgpHPXPqMqPxTqZAh8kGE+utcGVZeS6VrxBSysKe5fxSlehifS
-iH8hKkPnI7Z6xPkex8QN
-=EMEz
------END PGP SIGNATURE-----
+Thanks,
 
---ZGiS0Q5IWpPtfppv--
+	tglx
