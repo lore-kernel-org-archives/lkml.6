@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DA4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEF6C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBEC214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2343B214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMTLCvAq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBEC214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FzxhnNW9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2343B214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388846AbeKTDKf (ORCPT
+        id S2388861AbeKTDKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:10:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46050 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:10:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387731AbeKTDKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:10:33 -0500
+        id S2388841AbeKTDKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:10:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7717214E0;
-        Mon, 19 Nov 2018 16:46:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70674214DB;
+        Mon, 19 Nov 2018 16:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645981;
-        bh=P5SO6vqNPo/ZIAVEPtN+GY47/gL4oJlCPzDrZLTesVA=;
+        s=default; t=1542645983;
+        bh=Krhr+PihP3nFWs2xQerL8gBpjUB01Qhyx5nMl9YDU1c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CMTLCvAqeEmQPUo8GfrUDNBpu24rf4M2JlV+eDlaJlyLfP0UOHcyC7BnALM5AlEUm
-         5yHhi/KESKj9FYq7eGZgFCC8mnkJuEatHlJJKtI3XI7arMeZI0h1y1Aqc5y3F7LoT9
-         3VaIFrKRUccMJc5wNEQz4ldCE/AX2v0o/yTH6J0o=
+        b=FzxhnNW9u2R4cHMrbPWkednLIOKXBmBZy8BHZSVvfzYv23rPDy5hNk6BEklUkZAaE
+         LOU7vMwujHdngTj4NW/qJnq1t3qDBZxbo3zLWxelLJVpHhW0ldq/KhqY1cw5FgbFjW
+         +jO+n2NlMZvaBgqJ3ntaJ9gtGAgzuILcmepqyyNY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Clinton Taylor <clinton.a.taylor@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Ville Syrjala <ville.syrjala@linux.intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
-        Alexander Wilson <alexander.wilson@ncf.edu>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.18 155/171] drm/i915/dp: Link train Fallback on eDP only if fallback link BW can fit panels native mode
-Date:   Mon, 19 Nov 2018 17:29:11 +0100
-Message-Id: <20181119162640.176147180@linuxfoundation.org>
+        stable@vger.kernel.org, Matt Roper <matthew.d.roper@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 4.18 164/171] drm/i915: Fix ilk+ watermarks when disabling pipes
+Date:   Mon, 19 Nov 2018 17:29:20 +0100
+Message-Id: <20181119162640.858666256@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -69,132 +65,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manasi Navare <manasi.d.navare@intel.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 041444458835d7fb2c9f042598bfe16bf375b15d upstream.
+commit df5e31c204b34e8d9e5ec33f5b28e960c4f25e14 upstream.
 
-This patch fixes the original commit c0cfb10d9e1de49 ("drm/i915/edp:
-Do not do link training fallback or prune modes on EDP") that causes
-a blank screen in case of certain eDP panels (Eg: seen on Dell XPS13 9350)
-where first link training fails and a retraining is required by falling
-back to lower link rate/lane count.
-In case of some panels they advertise higher link rate/lane count
-than whats required for supporting the panel's native mode.
-But we always link train at highest link rate/lane count for eDP
-and if that fails we can still fallback to lower link rate/lane count
-as long as the fallback link BW still fits the native mode to avoid
-pruning the panel's native mode yet retraining at fallback values
-to recover from a blank screen.
+We're no longer programming any watermarks when we're disabling
+a pipe. That means ilk_wm_merge() & co. will keep considering
+the any pipe that is getting disabled as still enabled. Thus we
+either get no LP1+ watermakrs (ilk-ivb), or we get suboptimal
+ones (hsw-bdw).
 
-v3:
-* Add const for fixed_mode (Ville)
-v2:
-* Send uevent if link failure on eDP unconditionally
+This seems to have been broken by commit b6b178a77210 ("drm/i915:
+Calculate ironlake intermediate watermarks correctly, v2."). Before
+that we apparently had some difference between the intermediate
+and optimal watermarks and so we would program the optiomal ones.
+Now intermediate and optimal are identical for disabled pipes
+and so we don't program either.
 
-Fixes: c0cfb10d9e1d ("drm/i915/edp: Do not do link training fallback or prune modes on EDP")
-Cc: Clinton Taylor <clinton.a.taylor@intel.com>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Ville Syrjala <ville.syrjala@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: <stable@vger.kernel.org> # v4.17+
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107489
-Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=105338
-Signed-off-by: Manasi Navare <manasi.d.navare@intel.com>
-Tested-by: Alexander Wilson <alexander.wilson@ncf.edu>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181009212804.702-1-manasi.d.navare@intel.com
-(cherry picked from commit 1e712535c51ab025ebc776d4405683d81521996d)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Fix this by programming the intermediate watermarks even for
+disabled pipes. We were already doing that for skl+. We'll
+leave out gmch platforms for now since those do the merging
+in a different manner and should work as is. We'll want to
+unify this eventually, but play it safe for now and just put
+in a FIXME.
+
+Cc: stable@vger.kernel.org
+Cc: Matt Roper <matthew.d.roper@intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Fixes: b6b178a77210 ("drm/i915: Calculate ironlake intermediate watermarks correctly, v2.")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181025130536.29024-1-ville.syrjala@linux.intel.com
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com> #irc
+(cherry picked from commit a748faea3bfd7fd1d1485bc1c426c7d460cc6503)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp.c               |   30 ++++++++++++++++++++++++++
- drivers/gpu/drm/i915/intel_dp_link_training.c |   26 +++++++---------------
- 2 files changed, 39 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/i915/intel_display.c |   17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -387,6 +387,22 @@ static bool intel_dp_link_params_valid(s
- 	return true;
- }
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -12509,17 +12509,12 @@ static void intel_atomic_commit_tail(str
+ 			intel_check_cpu_fifo_underruns(dev_priv);
+ 			intel_check_pch_fifo_underruns(dev_priv);
  
-+static bool intel_dp_can_link_train_fallback_for_edp(struct intel_dp *intel_dp,
-+						     int link_rate,
-+						     uint8_t lane_count)
-+{
-+	const struct drm_display_mode *fixed_mode =
-+		intel_dp->attached_connector->panel.fixed_mode;
-+	int mode_rate, max_rate;
-+
-+	mode_rate = intel_dp_link_required(fixed_mode->clock, 18);
-+	max_rate = intel_dp_max_data_rate(link_rate, lane_count);
-+	if (mode_rate > max_rate)
-+		return false;
-+
-+	return true;
-+}
-+
- int intel_dp_get_link_train_fallback_values(struct intel_dp *intel_dp,
- 					    int link_rate, uint8_t lane_count)
- {
-@@ -396,9 +412,23 @@ int intel_dp_get_link_train_fallback_val
- 				    intel_dp->num_common_rates,
- 				    link_rate);
- 	if (index > 0) {
-+		if (intel_dp_is_edp(intel_dp) &&
-+		    !intel_dp_can_link_train_fallback_for_edp(intel_dp,
-+							      intel_dp->common_rates[index - 1],
-+							      lane_count)) {
-+			DRM_DEBUG_KMS("Retrying Link training for eDP with same parameters\n");
-+			return 0;
-+		}
- 		intel_dp->max_link_rate = intel_dp->common_rates[index - 1];
- 		intel_dp->max_link_lane_count = lane_count;
- 	} else if (lane_count > 1) {
-+		if (intel_dp_is_edp(intel_dp) &&
-+		    !intel_dp_can_link_train_fallback_for_edp(intel_dp,
-+							      intel_dp_max_common_rate(intel_dp),
-+							      lane_count >> 1)) {
-+			DRM_DEBUG_KMS("Retrying Link training for eDP with same parameters\n");
-+			return 0;
-+		}
- 		intel_dp->max_link_rate = intel_dp_max_common_rate(intel_dp);
- 		intel_dp->max_link_lane_count = lane_count >> 1;
- 	} else {
---- a/drivers/gpu/drm/i915/intel_dp_link_training.c
-+++ b/drivers/gpu/drm/i915/intel_dp_link_training.c
-@@ -335,22 +335,14 @@ intel_dp_start_link_train(struct intel_d
- 	return;
+-			if (!new_crtc_state->active) {
+-				/*
+-				 * Make sure we don't call initial_watermarks
+-				 * for ILK-style watermark updates.
+-				 *
+-				 * No clue what this is supposed to achieve.
+-				 */
+-				if (INTEL_GEN(dev_priv) >= 9)
+-					dev_priv->display.initial_watermarks(intel_state,
+-									     to_intel_crtc_state(new_crtc_state));
+-			}
++			/* FIXME unify this for all platforms */
++			if (!new_crtc_state->active &&
++			    !HAS_GMCH_DISPLAY(dev_priv) &&
++			    dev_priv->display.initial_watermarks)
++				dev_priv->display.initial_watermarks(intel_state,
++								     to_intel_crtc_state(new_crtc_state));
+ 		}
+ 	}
  
-  failure_handling:
--	/* Dont fallback and prune modes if its eDP */
--	if (!intel_dp_is_edp(intel_dp)) {
--		DRM_DEBUG_KMS("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
--			      intel_connector->base.base.id,
--			      intel_connector->base.name,
--			      intel_dp->link_rate, intel_dp->lane_count);
--		if (!intel_dp_get_link_train_fallback_values(intel_dp,
--							     intel_dp->link_rate,
--							     intel_dp->lane_count))
--			/* Schedule a Hotplug Uevent to userspace to start modeset */
--			schedule_work(&intel_connector->modeset_retry_work);
--	} else {
--		DRM_ERROR("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
--			  intel_connector->base.base.id,
--			  intel_connector->base.name,
--			  intel_dp->link_rate, intel_dp->lane_count);
--	}
-+	DRM_DEBUG_KMS("[CONNECTOR:%d:%s] Link Training failed at link rate = %d, lane count = %d",
-+		      intel_connector->base.base.id,
-+		      intel_connector->base.name,
-+		      intel_dp->link_rate, intel_dp->lane_count);
-+	if (!intel_dp_get_link_train_fallback_values(intel_dp,
-+						     intel_dp->link_rate,
-+						     intel_dp->lane_count))
-+		/* Schedule a Hotplug Uevent to userspace to start modeset */
-+		schedule_work(&intel_connector->modeset_retry_work);
- 	return;
- }
 
 
