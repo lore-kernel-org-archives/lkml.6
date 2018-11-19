@@ -7,57 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D693BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9943C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954DD223CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2685223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1OczWtjy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 954DD223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R9027OuG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2685223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405504AbeKTDZK (ORCPT
+        id S2405516AbeKTDZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38212 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbeKTDZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:10 -0500
+        id S2404694AbeKTDZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98F5A223C7;
-        Mon, 19 Nov 2018 17:00:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DFD9223C8;
+        Mon, 19 Nov 2018 17:00:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646853;
-        bh=6OBVnQmEuxFkeR64b7OFg+kAk3XG3X8nf8lplQ49ixc=;
+        s=default; t=1542646855;
+        bh=kUdbiAa+0z+BbvfevZif2LqY4rXz5+gtIpNg+tT9qZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1OczWtjyPSxtM9gd9gq/oHKrRtG+rPXMQQtXMvwsjxXHbO0bolmjnzCn235mRl2jY
-         BSJHQUEXp12sNaAzsrPpzjRpoZwhv71EO+lYwBcAkmflKeaDzeFrFtgVb9DzkCfTPB
-         fZhgzBt+BrmhAGEZJhtBLWhMOFaqWiQ6xflphV6k=
+        b=R9027OuGFfMXNXCIdBi+8OEumqh1guJ4Xq4dDfj6lfc3XKk+y7Sl1/mqWechS0PZM
+         /+UfVQxDA5UseMbhZd8fJORfHtuxH+ewVzn5slGblL8VQrl11Vws31w0P+uDHTJ7vA
+         vqZEKVZkwKnS61n8wSW6jVckVTDIU7TDKpZmcYl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Oscar Salvador <osalvador@suse.de>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Alexander Duyck <alexander.h.duyck@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 116/160] mm: do not bug_on on incorrect length in __mm_populate()
-Date:   Mon, 19 Nov 2018 17:29:15 +0100
-Message-Id: <20181119162641.942118072@linuxfoundation.org>
+Subject: [PATCH 4.4 117/160] e1000: avoid null pointer dereference on invalid stat type
+Date:   Mon, 19 Nov 2018 17:29:16 +0100
+Message-Id: <20181119162642.043507561@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -75,129 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit bb177a732c4369bb58a1fe1df8f552b6f0f7db5f upstream.
+[ Upstream commit 5983587c8c5ef00d6886477544ad67d495bc5479 ]
 
-syzbot has noticed that a specially crafted library can easily hit
-VM_BUG_ON in __mm_populate
+Currently if the stat type is invalid then data[i] is being set
+either by dereferencing a null pointer p, or it is reading from
+an incorrect previous location if we had a valid stat type
+previously.  Fix this by skipping over the read of p on an invalid
+stat type.
 
-  kernel BUG at mm/gup.c:1242!
-  invalid opcode: 0000 [#1] SMP
-  CPU: 2 PID: 9667 Comm: a.out Not tainted 4.18.0-rc3 #644
-  Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 05/19/2017
-  RIP: 0010:__mm_populate+0x1e2/0x1f0
-  Code: 55 d0 65 48 33 14 25 28 00 00 00 89 d8 75 21 48 83 c4 20 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 75 18 f1 ff 0f 0b e8 6e 18 f1 ff <0f> 0b 31 db eb c9 e8 93 06 e0 ff 0f 1f 00 55 48 89 e5 53 48 89 fb
-  Call Trace:
-     vm_brk_flags+0xc3/0x100
-     vm_brk+0x1f/0x30
-     load_elf_library+0x281/0x2e0
-     __ia32_sys_uselib+0x170/0x1e0
-     do_fast_syscall_32+0xca/0x420
-     entry_SYSENTER_compat+0x70/0x7f
+Detected by CoverityScan, CID#113385 ("Explicit null dereferenced")
 
-The reason is that the length of the new brk is not page aligned when we
-try to populate the it.  There is no reason to bug on that though.
-do_brk_flags already aligns the length properly so the mapping is
-expanded as it should.  All we need is to tell mm_populate about it.
-Besides that there is absolutely no reason to to bug_on in the first
-place.  The worst thing that could happen is that the last page wouldn't
-get populated and that is far from putting system into an inconsistent
-state.
-
-Fix the issue by moving the length sanitization code from do_brk_flags
-up to vm_brk_flags.  The only other caller of do_brk_flags is brk
-syscall entry and it makes sure to provide the proper length so t here
-is no need for sanitation and so we can use do_brk_flags without it.
-
-Also remove the bogus BUG_ONs.
-
-[osalvador@techadventures.net: fix up vm_brk_flags s@request@len@]
-Link: http://lkml.kernel.org/r/20180706090217.GI32658@dhcp22.suse.cz
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reported-by: syzbot <syzbot+5dcb560fe12aa5091c06@syzkaller.appspotmail.com>
-Tested-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Huang, Ying" <ying.huang@intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-[bwh: Backported to 4.4:
- - There is no do_brk_flags() function; update do_brk()
- - do_brk(), vm_brk() return the address on success
- - Adjust context]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/gup.c  |  2 --
- mm/mmap.c | 19 ++++++++++---------
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/intel/e1000/e1000_ethtool.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/mm/gup.c b/mm/gup.c
-index b599526db9f7..018144c4b9ec 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -940,8 +940,6 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
- 	int locked = 0;
- 	long ret = 0;
- 
--	VM_BUG_ON(start & ~PAGE_MASK);
--	VM_BUG_ON(len != PAGE_ALIGN(len));
- 	end = start + len;
- 
- 	for (nstart = start; nstart < end; nstart = nend) {
-diff --git a/mm/mmap.c b/mm/mmap.c
-index dd9205542a86..3074dbcd9621 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2808,21 +2808,15 @@ static inline void verify_mm_writelocked(struct mm_struct *mm)
-  *  anonymous maps.  eventually we may be able to do some
-  *  brk-specific accounting here.
-  */
--static unsigned long do_brk(unsigned long addr, unsigned long request)
-+static unsigned long do_brk(unsigned long addr, unsigned long len)
+diff --git a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+index 5ae8874bbf72..d70b2e5d5222 100644
+--- a/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
++++ b/drivers/net/ethernet/intel/e1000/e1000_ethtool.c
+@@ -1826,11 +1826,12 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
  {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma, *prev;
--	unsigned long flags, len;
-+	unsigned long flags;
- 	struct rb_node **rb_link, *rb_parent;
- 	pgoff_t pgoff = addr >> PAGE_SHIFT;
- 	int error;
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
+ 	int i;
+-	char *p = NULL;
+ 	const struct e1000_stats *stat = e1000_gstrings_stats;
  
--	len = PAGE_ALIGN(request);
--	if (len < request)
--		return -ENOMEM;
--	if (!len)
--		return addr;
--
- 	flags = VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm->def_flags;
- 
- 	error = get_unmapped_area(NULL, addr, len, 0, MAP_FIXED);
-@@ -2890,12 +2884,19 @@ out:
- 	return addr;
- }
- 
--unsigned long vm_brk(unsigned long addr, unsigned long len)
-+unsigned long vm_brk(unsigned long addr, unsigned long request)
- {
- 	struct mm_struct *mm = current->mm;
-+	unsigned long len;
- 	unsigned long ret;
- 	bool populate;
- 
-+	len = PAGE_ALIGN(request);
-+	if (len < request)
-+		return -ENOMEM;
-+	if (!len)
-+		return addr;
+ 	e1000_update_stats(adapter);
+-	for (i = 0; i < E1000_GLOBAL_STATS_LEN; i++) {
++	for (i = 0; i < E1000_GLOBAL_STATS_LEN; i++, stat++) {
++		char *p;
 +
- 	down_write(&mm->mmap_sem);
- 	ret = do_brk(addr, len);
- 	populate = ((mm->def_flags & VM_LOCKED) != 0);
+ 		switch (stat->type) {
+ 		case NETDEV_STATS:
+ 			p = (char *)netdev + stat->stat_offset;
+@@ -1841,15 +1842,13 @@ static void e1000_get_ethtool_stats(struct net_device *netdev,
+ 		default:
+ 			WARN_ONCE(1, "Invalid E1000 stat type: %u index %d\n",
+ 				  stat->type, i);
+-			break;
++			continue;
+ 		}
+ 
+ 		if (stat->sizeof_stat == sizeof(u64))
+ 			data[i] = *(u64 *)p;
+ 		else
+ 			data[i] = *(u32 *)p;
+-
+-		stat++;
+ 	}
+ /* BUG_ON(i != E1000_STATS_LEN); */
+ }
 -- 
 2.17.1
 
