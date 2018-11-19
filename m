@@ -7,56 +7,54 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C484C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF267C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 362972147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B77AD206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QG/9d6Kf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362972147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibnhAxoq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B77AD206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389800AbeKTDNt (ORCPT
+        id S2388933AbeKTDNw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50752 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389790AbeKTDNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:48 -0500
+        id S2389790AbeKTDNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18A9E20C01;
-        Mon, 19 Nov 2018 16:49:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D3AF208E4;
+        Mon, 19 Nov 2018 16:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646175;
-        bh=uKY2+/86QuSCqzV+4FXgUeDBMoeO3JoU3rm6NyYgFMc=;
+        s=default; t=1542646178;
+        bh=esSOSDqdcLIeB/0W6Jvy06Ucng8deGJQLhMDzz390u8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QG/9d6Kft5JcoB84Zgxg7Ru+Qb7V/LS0EMMJjXXtJqVD6thpdb8TeTU0DBhzuEI4n
-         k6p5gC+WTI8RtBuBzHZ/7rG9Lzpz8bzcJ4ipMVDT0fLiNRNfWPLqq0gv5UJYcWPZ49
-         zI2SV9I5B1JpjTCEUG61DJHxgj9zNPyMdIPJcIbE=
+        b=ibnhAxoqYMFiKAzB/wIfotMpuBC4pB471ofyVcm/9fkQrmi7Yo92ElAm86Pld/ug6
+         Ks0lGeqj55JGJfI7DkiSu+1r3nOKJJBj7nQ22JWaRVslwR6Pu13jdy5DZB757NIkAf
+         +aE6L1GBV/DkZ4OiHGjSb8jVbx4duDoUSKtU4sAE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        stable@vger.kernel.org, "H. Peter Anvin (Intel)" <hpa@zytor.com>,
+        "Cc: Johan Hovold" <johan@kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "akataria@vmware.com" <akataria@vmware.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: [PATCH 4.14 064/124] x86/hyper-v: Enable PIT shutdown quirk
-Date:   Mon, 19 Nov 2018 17:28:38 +0100
-Message-Id: <20181119162625.804467418@linuxfoundation.org>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: [PATCH 4.14 065/124] termios, tty/tty_baudrate.c: fix buffer overrun
+Date:   Mon, 19 Nov 2018 17:28:39 +0100
+Message-Id: <20181119162625.976924037@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -74,64 +72,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Kelley <mikelley@microsoft.com>
+From: H. Peter Anvin <hpa@zytor.com>
 
-commit 1de72c706488b7be664a601cf3843bd01e327e58 upstream.
+commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
 
-Hyper-V emulation of the PIT has a quirk such that the normal PIT shutdown
-path doesn't work, because clearing the counter register restarts the
-timer.
+On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
+not do any limit checking on the tty_baudrate[] array, and in fact a
+buffer overrun is possible on both architectures. Add a limit check to
+prevent that situation.
 
-Disable the counter clearing on PIT shutdown.
+This will be followed by a much bigger cleanup/simplification patch.
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
-Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
-Cc: "jgross@suse.com" <jgross@suse.com>
-Cc: "akataria@vmware.com" <akataria@vmware.com>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>
-Cc: "apw@canonical.com" <apw@canonical.com>
-Cc: vkuznets <vkuznets@redhat.com>
-Cc: "jasowang@redhat.com" <jasowang@redhat.com>
-Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Cc: KY Srinivasan <kys@microsoft.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1541303219-11142-3-git-send-email-mikelley@microsoft.com
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Requested-by: Cc: Johan Hovold <johan@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mshyperv.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/tty/tty_baudrate.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/cpu/mshyperv.c
-+++ b/arch/x86/kernel/cpu/mshyperv.c
-@@ -20,6 +20,7 @@
- #include <linux/interrupt.h>
- #include <linux/irq.h>
- #include <linux/kexec.h>
-+#include <linux/i8253.h>
- #include <asm/processor.h>
- #include <asm/hypervisor.h>
- #include <asm/hyperv.h>
-@@ -243,6 +244,16 @@ static void __init ms_hyperv_init_platfo
- 	if (efi_enabled(EFI_BOOT))
- 		x86_platform.get_nmi_reason = hv_get_nmi_reason;
+--- a/drivers/tty/tty_baudrate.c
++++ b/drivers/tty/tty_baudrate.c
+@@ -76,7 +76,7 @@ speed_t tty_termios_baud_rate(struct kte
+ 		else
+ 			cbaud += 15;
+ 	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
+ }
+ EXPORT_SYMBOL(tty_termios_baud_rate);
  
-+	/*
-+	 * Hyper-V VMs have a PIT emulation quirk such that zeroing the
-+	 * counter register during PIT shutdown restarts the PIT. So it
-+	 * continues to interrupt @18.2 HZ. Setting i8253_clear_counter
-+	 * to false tells pit_shutdown() not to zero the counter so that
-+	 * the PIT really is shutdown. Generation 2 VMs don't have a PIT,
-+	 * and setting this value has no effect.
-+	 */
-+	i8253_clear_counter_on_shutdown = false;
-+
- #if IS_ENABLED(CONFIG_HYPERV)
- 	/*
- 	 * Setup the hook to get control post apic initialization.
+@@ -112,7 +112,7 @@ speed_t tty_termios_input_baud_rate(stru
+ 		else
+ 			cbaud += 15;
+ 	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
+ #else
+ 	return tty_termios_baud_rate(termios);
+ #endif
 
 
