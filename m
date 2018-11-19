@@ -4,49 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32952C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4FEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE67C21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 113F72145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1QKqz5mD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE67C21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="raTG05ze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 113F72145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387592AbeKTDGX (ORCPT
+        id S2387605AbeKTDGZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732956AbeKTDGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:21 -0500
+        id S1732796AbeKTDGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E36C2145D;
-        Mon, 19 Nov 2018 16:42:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B960B21104;
+        Mon, 19 Nov 2018 16:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645731;
-        bh=NZeZAkAUlSoYWYeFsZ5Ec2kPn61AnqQmG65BjHOREGQ=;
+        s=default; t=1542645734;
+        bh=ohRyho1ugDup3+ak3YIDITlc4D2NV+W4IaClXa/EkV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QKqz5mDvxSJRhazoJni7IjptP/rWq0WuvRqZ70ayZsKW1BfRhr0C271cXDl6xk8t
-         wvcTqzTlEfRmrancQN2oLuEmXp9gzC5aqjsnwKNZymfac3TcY5ntZqkz+bbIAq48Wu
-         zkIZCZ79mwuZpTg49etwqJn8xG/QXs32OrDElrv8=
+        b=raTG05zeKUE7AnOGInwb+tQ4WoioDEgxPTfuszA//l9HLii9AwU10TZiWR3dr2/4C
+         2TlFRLVOQRORHBwYJwcn1qgdrrtk/pMKNPMcE5c9wOu0+JMY1w8y9h0LmX+rS3HbLr
+         8pKo7Bc8YOCRjXlbLK9YQChGAm1Rp0SvhUAsu1bU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.18 067/171] clk: rockchip: Fix static checker warning in rockchip_ddrclk_get_parent call
-Date:   Mon, 19 Nov 2018 17:27:43 +0100
-Message-Id: <20181119162630.652884676@linuxfoundation.org>
+        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.18 068/171] libceph: bump CEPH_MSG_MAX_DATA_LEN
+Date:   Mon, 19 Nov 2018 17:27:44 +0100
+Message-Id: <20181119162630.805165900@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,45 +60,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 665636b2940d0897c4130253467f5e8c42eea392 upstream.
+commit 94e6992bb560be8bffb47f287194adf070b57695 upstream.
 
-Fixes the signedness bug returning '(-22)' on the return type by removing the
-sanity checker in rockchip_ddrclk_get_parent(). The function should return
-and unsigned value only and it's safe to remove the sanity checker as the
-core functions that call get_parent like clk_core_get_parent_by_index already
-ensures the validity of the clk index returned (index >= core->num_parents).
+If the read is large enough, we end up spinning in the messenger:
 
-Fixes: a4f182bf81f18 ("clk: rockchip: add new clock-type for the ddrclk")
+  libceph: osd0 192.168.122.1:6801 io error
+  libceph: osd0 192.168.122.1:6801 io error
+  libceph: osd0 192.168.122.1:6801 io error
+
+This is a receive side limit, so only reads were affected.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-ddr.c |    4 ----
- 1 file changed, 4 deletions(-)
+ include/linux/ceph/libceph.h |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/clk/rockchip/clk-ddr.c
-+++ b/drivers/clk/rockchip/clk-ddr.c
-@@ -80,16 +80,12 @@ static long rockchip_ddrclk_sip_round_ra
- static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
- {
- 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
--	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -81,7 +81,13 @@ struct ceph_options {
  
- 	val = clk_readl(ddrclk->reg_base +
- 			ddrclk->mux_offset) >> ddrclk->mux_shift;
- 	val &= GENMASK(ddrclk->mux_width - 1, 0);
+ #define CEPH_MSG_MAX_FRONT_LEN	(16*1024*1024)
+ #define CEPH_MSG_MAX_MIDDLE_LEN	(16*1024*1024)
+-#define CEPH_MSG_MAX_DATA_LEN	(16*1024*1024)
++
++/*
++ * Handle the largest possible rbd object in one message.
++ * There is no limit on the size of cephfs objects, but it has to obey
++ * rsize and wsize mount options anyway.
++ */
++#define CEPH_MSG_MAX_DATA_LEN	(32*1024*1024)
  
--	if (val >= num_parents)
--		return -EINVAL;
--
- 	return val;
- }
+ #define CEPH_AUTH_NAME_DEFAULT   "guest"
  
 
 
