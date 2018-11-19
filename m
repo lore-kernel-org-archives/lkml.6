@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7152BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32952C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8872147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE67C21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V5n9m9CU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8872147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1QKqz5mD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE67C21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387584AbeKTDGU (ORCPT
+        id S2387592AbeKTDGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40014 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732956AbeKTDGT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:19 -0500
+        id S1732956AbeKTDGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8238D21104;
-        Mon, 19 Nov 2018 16:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E36C2145D;
+        Mon, 19 Nov 2018 16:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645729;
-        bh=qefP37H9At33JC0+IfUxMrLMFQr9iZQYMbvopnoFRxg=;
+        s=default; t=1542645731;
+        bh=NZeZAkAUlSoYWYeFsZ5Ec2kPn61AnqQmG65BjHOREGQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V5n9m9CUz1n/OQsmqYK9gW9T2oCMRgTOQXeDJ/LwVF/YVNsEFN/p2TsTiI8yGffR6
-         CquHuzjv9br35LdQrodXYM2P9Nn3eb/NI12aU6oWRXqI/m2twpT4DA1mtuEfQp6d+2
-         qH/GgjbQJfaFHhkrqiIodt+Rz83E7+oTz0Y6abxA=
+        b=1QKqz5mDvxSJRhazoJni7IjptP/rWq0WuvRqZ70ayZsKW1BfRhr0C271cXDl6xk8t
+         wvcTqzTlEfRmrancQN2oLuEmXp9gzC5aqjsnwKNZymfac3TcY5ntZqkz+bbIAq48Wu
+         zkIZCZ79mwuZpTg49etwqJn8xG/QXs32OrDElrv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ziyuan Xu <xzy.xu@rock-chips.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
+        stable@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.18 066/171] clk: rockchip: fix wrong mmc sample phase shift for rk3328
-Date:   Mon, 19 Nov 2018 17:27:42 +0100
-Message-Id: <20181119162630.516562998@linuxfoundation.org>
+Subject: [PATCH 4.18 067/171] clk: rockchip: Fix static checker warning in rockchip_ddrclk_get_parent call
+Date:   Mon, 19 Nov 2018 17:27:43 +0100
+Message-Id: <20181119162630.652884676@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,52 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ziyuan Xu <xzy.xu@rock-chips.com>
+From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-commit 82f4b67f018c88a7cc9337f0067ed3d6ec352648 upstream.
+commit 665636b2940d0897c4130253467f5e8c42eea392 upstream.
 
-mmc sample shift is 0 for RK3328 referring to the TRM.
-So fix them.
+Fixes the signedness bug returning '(-22)' on the return type by removing the
+sanity checker in rockchip_ddrclk_get_parent(). The function should return
+and unsigned value only and it's safe to remove the sanity checker as the
+core functions that call get_parent like clk_core_get_parent_by_index already
+ensures the validity of the clk index returned (index >= core->num_parents).
 
-Fixes: fe3511ad8a1c ("clk: rockchip: add clock controller for rk3328")
+Fixes: a4f182bf81f18 ("clk: rockchip: add new clock-type for the ddrclk")
 Cc: stable@vger.kernel.org
-Signed-off-by: Ziyuan Xu <xzy.xu@rock-chips.com>
-Signed-off-by: Shawn Lin <shawn.lin@rock-chips.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clk/rockchip/clk-rk3328.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/rockchip/clk-ddr.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -813,22 +813,22 @@ static struct rockchip_clk_branch rk3328
- 	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
- 	    RK3328_SDMMC_CON0, 1),
- 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
--	    RK3328_SDMMC_CON1, 1),
-+	    RK3328_SDMMC_CON1, 0),
+--- a/drivers/clk/rockchip/clk-ddr.c
++++ b/drivers/clk/rockchip/clk-ddr.c
+@@ -80,16 +80,12 @@ static long rockchip_ddrclk_sip_round_ra
+ static u8 rockchip_ddrclk_get_parent(struct clk_hw *hw)
+ {
+ 	struct rockchip_ddrclk *ddrclk = to_rockchip_ddrclk_hw(hw);
+-	int num_parents = clk_hw_get_num_parents(hw);
+ 	u32 val;
  
- 	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
- 	    RK3328_SDIO_CON0, 1),
- 	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
--	    RK3328_SDIO_CON1, 1),
-+	    RK3328_SDIO_CON1, 0),
+ 	val = clk_readl(ddrclk->reg_base +
+ 			ddrclk->mux_offset) >> ddrclk->mux_shift;
+ 	val &= GENMASK(ddrclk->mux_width - 1, 0);
  
- 	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
- 	    RK3328_EMMC_CON0, 1),
- 	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
--	    RK3328_EMMC_CON1, 1),
-+	    RK3328_EMMC_CON1, 0),
+-	if (val >= num_parents)
+-		return -EINVAL;
+-
+ 	return val;
+ }
  
- 	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "clk_sdmmc_ext",
- 	    RK3328_SDMMC_EXT_CON0, 1),
- 	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "clk_sdmmc_ext",
--	    RK3328_SDMMC_EXT_CON1, 1),
-+	    RK3328_SDMMC_EXT_CON1, 0),
- };
- 
- static const char *const rk3328_critical_clocks[] __initconst = {
 
 
