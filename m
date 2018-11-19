@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DD3CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D75C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346092089F
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3412146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXqvI0gU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346092089F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gYTDic3q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3412146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbeKTCzy (ORCPT
+        id S1730553AbeKTCz4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53826 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730526AbeKTCzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:54 -0500
+        id S1730526AbeKTCz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 020832089F;
-        Mon, 19 Nov 2018 16:31:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 829262086A;
+        Mon, 19 Nov 2018 16:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645106;
-        bh=ScfGi2GKjPnEymGpvcEzLKXu56UmwDK7mrJhzzgsEzI=;
+        s=default; t=1542645109;
+        bh=vT237MgLcQLYi65MuwzWBxfLfEUk+gXw6z54KIQxK10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXqvI0gU7I0pvbLSgCPB8QofDimjgDYjOFdnshRX/MK7UUQMwkhTzvPx/CC6NHPRr
-         xTjxys2FitC1IMXZoMCYSP5gMZrjTC8isOPEhpTF6SScOfYjnGKwuaVeu1YlUaDF2F
-         ZxBpqAM8mDW+200g4Zv0GTeA9N5U4CKctkNURWOw=
+        b=gYTDic3qmq2mfJrDt8pU9k2ChFG8QeqOloOwcDpM44c6dQltSVLl3lQCMVDJfnAOc
+         OBx2R/dy+BytkCKsHaJ686MARdR2jFC2WhRh4wwBb2A4smnRo+KK42j/z5eCSAvRHn
+         co0tUJwj5wG5Cq0dgeR3qjRlUXOlR0alpWXj2FcQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 039/205] udf: Prevent write-unsupported filesystem to be remounted read-write
-Date:   Mon, 19 Nov 2018 17:25:46 +0100
-Message-Id: <20181119162624.373332996@linuxfoundation.org>
+Subject: [PATCH 4.19 022/205] drm/hisilicon: hibmc: Do not carry error code in HiBMC framebuffer pointer
+Date:   Mon, 19 Nov 2018 17:25:29 +0100
+Message-Id: <20181119162621.315836959@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,101 +62,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Kara <jack@suse.cz>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit a9ad01bc759df79b0012f43ee52164391e31cd96 ]
+[ Upstream commit 331d880b35a76b5de0eec8cbcecbf615d758a5f9 ]
 
-There are certain filesystem features which we support for reading but
-not for writing. We properly refuse to mount such filesystems read-write
-however for some features (such as read-only partitions), we don't check
-for these features when remounting the filesystem from read-only to
-read-write. Thus such filesystems could be remounted read-write leading
-to strange behavior (most likely crashes).
+In hibmc_drm_fb_create(), when the call to hibmc_framebuffer_init() fails
+with error, do not store the error code in the HiBMC device frame-buffer
+pointer, as this will be later checked for non-zero value in
+hibmc_fbdev_destroy() when our intention is to check for a valid function
+pointer.
 
-Fix the problem by marking in superblock whether the filesystem has some
-features that are supported in read-only mode and check this flag during
-remount.
+This fixes the following crash:
+[    9.699791] Unable to handle kernel NULL pointer dereference at virtual address 000000000000001a
+[    9.708672] Mem abort info:
+[    9.711489]   ESR = 0x96000004
+[    9.714570]   Exception class = DABT (current EL), IL = 32 bits
+[    9.720551]   SET = 0, FnV = 0
+[    9.723631]   EA = 0, S1PTW = 0
+[    9.726799] Data abort info:
+[    9.729702]   ISV = 0, ISS = 0x00000004
+[    9.733573]   CM = 0, WnR = 0
+[    9.736566] [000000000000001a] user address but active_mm is swapper
+[    9.742987] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[    9.748614] Modules linked in:
+[    9.751694] CPU: 16 PID: 293 Comm: kworker/16:1 Tainted: G        W         4.19.0-rc4-next-20180920-00001-g9b0012c #322
+[    9.762681] Hardware name: Huawei Taishan 2280 /D05, BIOS Hisilicon D05 IT21 Nemo 2.0 RC0 04/18/2018
+[    9.771915] Workqueue: events work_for_cpu_fn
+[    9.776312] pstate: 60000005 (nZCv daif -PAN -UAO)
+[    9.781150] pc : drm_mode_object_put+0x0/0x20
+[    9.785547] lr : hibmc_fbdev_fini+0x40/0x58
+[    9.789767] sp : ffff00000af1bcf0
+[    9.793108] x29: ffff00000af1bcf0 x28: 0000000000000000
+[    9.798473] x27: 0000000000000000 x26: ffff000008f66630
+[    9.803838] x25: 0000000000000000 x24: ffff0000095abb98
+[    9.809203] x23: ffff8017db92fe00 x22: ffff8017d2b13000
+[    9.814568] x21: ffffffffffffffea x20: ffff8017d2f80018
+[    9.819933] x19: ffff8017d28a0018 x18: ffffffffffffffff
+[    9.825297] x17: 0000000000000000 x16: 0000000000000000
+[    9.830662] x15: ffff0000092296c8 x14: ffff00008939970f
+[    9.836026] x13: ffff00000939971d x12: ffff000009229940
+[    9.841391] x11: ffff0000085f8fc0 x10: ffff00000af1b9a0
+[    9.846756] x9 : 000000000000000d x8 : 6620657a696c6169
+[    9.852121] x7 : ffff8017d3340580 x6 : ffff8017d4168000
+[    9.857486] x5 : 0000000000000000 x4 : ffff8017db92fb20
+[    9.862850] x3 : 0000000000002690 x2 : ffff8017d3340480
+[    9.868214] x1 : 0000000000000028 x0 : 0000000000000002
+[    9.873580] Process kworker/16:1 (pid: 293, stack limit = 0x(____ptrval____))
+[    9.880788] Call trace:
+[    9.883252]  drm_mode_object_put+0x0/0x20
+[    9.887297]  hibmc_unload+0x1c/0x80
+[    9.890815]  hibmc_pci_probe+0x170/0x3c8
+[    9.894773]  local_pci_probe+0x3c/0xb0
+[    9.898555]  work_for_cpu_fn+0x18/0x28
+[    9.902337]  process_one_work+0x1e0/0x318
+[    9.906382]  worker_thread+0x228/0x450
+[    9.910164]  kthread+0x128/0x130
+[    9.913418]  ret_from_fork+0x10/0x18
+[    9.917024] Code: a94153f3 a8c27bfd d65f03c0 d503201f (f9400c01)
+[    9.923180] ---[ end trace 2695ffa0af5be375 ]---
 
-Signed-off-by: Jan Kara <jack@suse.cz>
+Fixes: d1667b86795a ("drm/hisilicon/hibmc: Add support for frame buffer")
+Signed-off-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
+Signed-off-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/udf/super.c  |   30 ++++++++++++++++--------------
- fs/udf/udf_sb.h |    2 ++
- 2 files changed, 18 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -613,14 +613,11 @@ static int udf_remount_fs(struct super_b
- 	struct udf_options uopt;
- 	struct udf_sb_info *sbi = UDF_SB(sb);
- 	int error = 0;
--	struct logicalVolIntegrityDescImpUse *lvidiu = udf_sb_lvidiu(sb);
-+
-+	if (!(*flags & SB_RDONLY) && UDF_QUERY_FLAG(sb, UDF_FLAG_RW_INCOMPAT))
-+		return -EACCES;
- 
- 	sync_filesystem(sb);
--	if (lvidiu) {
--		int write_rev = le16_to_cpu(lvidiu->minUDFWriteRev);
--		if (write_rev > UDF_MAX_WRITE_VERSION && !(*flags & SB_RDONLY))
--			return -EACCES;
--	}
- 
- 	uopt.flags = sbi->s_flags;
- 	uopt.uid   = sbi->s_uid;
-@@ -1257,6 +1254,7 @@ static int udf_load_partdesc(struct supe
- 			ret = -EACCES;
- 			goto out_bh;
- 		}
-+		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
- 		ret = udf_load_vat(sb, i, type1_idx);
- 		if (ret < 0)
- 			goto out_bh;
-@@ -2155,10 +2153,12 @@ static int udf_fill_super(struct super_b
- 				UDF_MAX_READ_VERSION);
- 			ret = -EINVAL;
- 			goto error_out;
--		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION &&
--			   !sb_rdonly(sb)) {
--			ret = -EACCES;
--			goto error_out;
-+		} else if (minUDFWriteRev > UDF_MAX_WRITE_VERSION) {
-+			if (!sb_rdonly(sb)) {
-+				ret = -EACCES;
-+				goto error_out;
-+			}
-+			UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
- 		}
- 
- 		sbi->s_udfrev = minUDFWriteRev;
-@@ -2176,10 +2176,12 @@ static int udf_fill_super(struct super_b
+--- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
++++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_fbdev.c
+@@ -122,6 +122,7 @@ static int hibmc_drm_fb_create(struct dr
+ 	hi_fbdev->fb = hibmc_framebuffer_init(priv->dev, &mode_cmd, gobj);
+ 	if (IS_ERR(hi_fbdev->fb)) {
+ 		ret = PTR_ERR(hi_fbdev->fb);
++		hi_fbdev->fb = NULL;
+ 		DRM_ERROR("failed to initialize framebuffer: %d\n", ret);
+ 		goto out_release_fbi;
  	}
- 
- 	if (sbi->s_partmaps[sbi->s_partition].s_partition_flags &
--			UDF_PART_FLAG_READ_ONLY &&
--	    !sb_rdonly(sb)) {
--		ret = -EACCES;
--		goto error_out;
-+			UDF_PART_FLAG_READ_ONLY) {
-+		if (!sb_rdonly(sb)) {
-+			ret = -EACCES;
-+			goto error_out;
-+		}
-+		UDF_SET_FLAG(sb, UDF_FLAG_RW_INCOMPAT);
- 	}
- 
- 	if (udf_find_fileset(sb, &fileset, &rootdir)) {
---- a/fs/udf/udf_sb.h
-+++ b/fs/udf/udf_sb.h
-@@ -30,6 +30,8 @@
- #define UDF_FLAG_LASTBLOCK_SET	16
- #define UDF_FLAG_BLOCKSIZE_SET	17
- #define UDF_FLAG_INCONSISTENT	18
-+#define UDF_FLAG_RW_INCOMPAT	19	/* Set when we find RW incompatible
-+					 * feature */
- 
- #define UDF_PART_FLAG_UNALLOC_BITMAP	0x0001
- #define UDF_PART_FLAG_UNALLOC_TABLE	0x0002
 
 
