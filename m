@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109A0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C694C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45C62086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:56:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45C62086A
+	by mail.kernel.org (Postfix) with ESMTP id BFF982086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:56:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF982086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731641AbeKTIWZ (ORCPT
+        id S1731878AbeKTIWh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:22:25 -0500
+        Tue, 20 Nov 2018 03:22:37 -0500
 Received: from mga09.intel.com ([134.134.136.24]:32094 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731022AbeKTIUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:20:08 -0500
+        id S1731500AbeKTIUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:20:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:28 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="93319895"
+   d="scan'208";a="93319889"
 Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:27 -0800
+  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:26 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v6 18/26] mm: Introduce do_mmap_locked()
-Date:   Mon, 19 Nov 2018 13:48:01 -0800
-Message-Id: <20181119214809.6086-19-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v6 16/26] mm: Handle THP/HugeTLB shadow stack page fault
+Date:   Mon, 19 Nov 2018 13:47:59 -0800
+Message-Id: <20181119214809.6086-17-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181119214809.6086-1-yu-cheng.yu@intel.com>
 References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
@@ -66,43 +66,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few places that need do_mmap() with mm->mmap_sem held.
-Create an in-line function for that.
+This patch implements THP shadow stack (SHSTK) copying in the same
+way as in the previous patch for regular PTE.
+
+In copy_huge_pmd(), clear the dirty bit from the PMD to cause a page
+fault upon the next SHSTK access to the PMD.  At that time, fix the
+PMD and copy/re-use the page.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- include/linux/mm.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/x86/mm/pgtable.c         | 8 ++++++++
+ include/asm-generic/pgtable.h | 2 ++
+ mm/huge_memory.c              | 4 ++++
+ 3 files changed, 14 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 7873ac3635a7..36f72c4441cc 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2348,6 +2348,24 @@ static inline void mm_populate(unsigned long addr, unsigned long len)
- static inline void mm_populate(unsigned long addr, unsigned long len) {}
- #endif
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 75dddc3d8451..4275c80f5832 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -897,6 +897,14 @@ inline pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma)
+ 		return pte;
+ }
  
-+static inline unsigned long do_mmap_locked(unsigned long addr,
-+	unsigned long len, unsigned long prot, unsigned long flags,
-+	vm_flags_t vm_flags)
++inline pmd_t pmd_set_vma_features(pmd_t pmd, struct vm_area_struct *vma)
 +{
-+	struct mm_struct *mm = current->mm;
-+	unsigned long populate;
-+
-+	down_write(&mm->mmap_sem);
-+	addr = do_mmap(NULL, addr, len, prot, flags, vm_flags, 0,
-+		       &populate, NULL);
-+	up_write(&mm->mmap_sem);
-+
-+	if (populate)
-+		mm_populate(addr, populate);
-+
-+	return addr;
++	if (vma->vm_flags & VM_SHSTK)
++		return pmd_mkdirty_shstk(pmd);
++	else
++		return pmd;
 +}
 +
- /* These take the mm semaphore themselves */
- extern int __must_check vm_brk(unsigned long, unsigned long);
- extern int __must_check vm_brk_flags(unsigned long, unsigned long, unsigned long);
+ inline bool arch_copy_pte_mapping(vm_flags_t vm_flags)
+ {
+ 	return (vm_flags & VM_SHSTK);
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index 30ac390fb2d4..b0b375d8bb34 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -1145,9 +1145,11 @@ static inline bool arch_has_pfn_modify_check(void)
+ 
+ #ifndef CONFIG_ARCH_HAS_SHSTK
+ #define pte_set_vma_features(pte, vma) pte
++#define pmd_set_vma_features(pmd, vma) pmd
+ #define arch_copy_pte_mapping(vma_flags) false
+ #else
+ pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma);
++pmd_t pmd_set_vma_features(pmd_t pmd, struct vm_area_struct *vma);
+ bool arch_copy_pte_mapping(vm_flags_t vm_flags);
+ #endif
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 55478ab3c83b..12148a5b60e0 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -597,6 +597,7 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf,
+ 
+ 		entry = mk_huge_pmd(page, vma->vm_page_prot);
+ 		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
++		entry = pmd_set_vma_features(entry, vma);
+ 		page_add_new_anon_rmap(page, vma, haddr, true);
+ 		mem_cgroup_commit_charge(page, memcg, false, true);
+ 		lru_cache_add_active_or_unevictable(page, vma);
+@@ -1209,6 +1210,7 @@ static vm_fault_t do_huge_pmd_wp_page_fallback(struct vm_fault *vmf,
+ 		pte_t entry;
+ 		entry = mk_pte(pages[i], vma->vm_page_prot);
+ 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
++		entry = pte_set_vma_features(entry, vma);
+ 		memcg = (void *)page_private(pages[i]);
+ 		set_page_private(pages[i], 0);
+ 		page_add_new_anon_rmap(pages[i], vmf->vma, haddr, false);
+@@ -1293,6 +1295,7 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 		pmd_t entry;
+ 		entry = pmd_mkyoung(orig_pmd);
+ 		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
++		entry = pmd_set_vma_features(entry, vma);
+ 		if (pmdp_set_access_flags(vma, haddr, vmf->pmd, entry,  1))
+ 			update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
+ 		ret |= VM_FAULT_WRITE;
+@@ -1365,6 +1368,7 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+ 		pmd_t entry;
+ 		entry = mk_huge_pmd(new_page, vma->vm_page_prot);
+ 		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
++		entry = pmd_set_vma_features(entry, vma);
+ 		pmdp_huge_clear_flush_notify(vma, haddr, vmf->pmd);
+ 		page_add_new_anon_rmap(new_page, vma, haddr, true);
+ 		mem_cgroup_commit_charge(new_page, memcg, false, true);
 -- 
 2.17.1
 
