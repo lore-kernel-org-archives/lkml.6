@@ -2,133 +2,112 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B268C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E6BC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D87F206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:37:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jad4LtkQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D87F206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CBA9A20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA9A20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbeKSXBH (ORCPT
+        id S1728864AbeKSXCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:01:07 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34756 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728724AbeKSXBH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:01:07 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b3so2523283ede.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:37:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uerP6zERXnXOELK7KdfQ8/C1wBZMRrgOAy1qLZQVpIU=;
-        b=Jad4LtkQCHXmxMRzrwOgl64u9JcaFMUAtlDltdcXGHMch7IDR7BBcHhtrvlTScHYzw
-         uUaiKsOA0slRHRscZxPzMw43caO6/FYTfSt+WSigT2PsLiikS7QTiUwCV8+pfHp34v4v
-         r2A7aXTiHrIS49DNG7UNdTPq+eAyhfoH6bSUqjyHoFyZ353S+bJET0QoN4hUi4x2rDzc
-         KpRLVaaVQiLjc1V4umGVBKbct+VMQ0ARnHzSVtcW377+5KOc0ASyvVN9SMvI0snd5OMH
-         Cl61mfe9UNy7PZ4zYQQlLoP6+DhIFroS9fCinvL08Uq0Oa72PXhofRetyuCrl3Gc9y2u
-         S3xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uerP6zERXnXOELK7KdfQ8/C1wBZMRrgOAy1qLZQVpIU=;
-        b=mkcU7o9XqAMOoXwmMtSFXvSjj6lBWrEt7lWevWgWdUZSe7ghN9Nwk1SDL3bI4QBn/f
-         U1kKthtYIroiAyGLtHnGtE5dAVVAqVjmEQRcpjEXfKbV7qceYfCSp8W6bB3CuMcZfe00
-         SFfCMRrLZkgdFBHfbZZnHAi0bnfHkOTXx+pG3ha+u1P7T0E+ivFc4JLB3bvBhl19Sxy0
-         J00aIuIV+rLOGSNeDm38opLXgH1dsBKNDj0FeAD/AglFSl/L4DfOVV3A2sJ+QA7hmRZq
-         Jcd+hzV7zjylG+bJh1Y6xV8waQohxcbV6vWqgE7BIy59AlOTEWz1+7GhAa5fs1F1kC6q
-         jNAw==
-X-Gm-Message-State: AGRZ1gJ0sNF6UymzEbEmu/LA4n9GN3qUJU1Y0UsxO7j94Hncgudy4y5L
-        4Sik1cb6yZwQnY8LHjVs/tY=
-X-Google-Smtp-Source: AJdET5enGJkpczabqRELSdejiWnkjUG/52bslxoNdjJ1UUnfWk+YiMk4yc247a1C8NzD3euMSLHcRw==
-X-Received: by 2002:a17:906:16ca:: with SMTP id t10-v6mr16563323ejd.200.1542631055489;
-        Mon, 19 Nov 2018 04:37:35 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:40bc:4d00:b8ae:204:75e7:9858])
-        by smtp.gmail.com with ESMTPSA id b49sm8584204edb.73.2018.11.19.04.37.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 04:37:35 -0800 (PST)
-Date:   Mon, 19 Nov 2018 13:37:33 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] build_bug.h: remove most of dummy BUILD_BUG_ON
- stubs for sparse
-Message-ID: <20181119123732.zcb6axl25bixgtly@ltop.local>
-References: <1542623503-3755-1-git-send-email-yamada.masahiro@socionext.com>
- <1542623503-3755-3-git-send-email-yamada.masahiro@socionext.com>
+        Mon, 19 Nov 2018 18:02:22 -0500
+Received: from mga17.intel.com ([192.55.52.151]:9853 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728530AbeKSXCW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:02:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 04:38:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="109326160"
+Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2018 04:38:45 -0800
+Date:   Mon, 19 Nov 2018 14:38:44 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v9 14/17] tpm: remove TPM_TRANSMIT_UNLOCKED flag
+Message-ID: <20181119123844.GA8755@linux.intel.com>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-15-jarkko.sakkinen@linux.intel.com>
+ <20181118195104.GA21938@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542623503-3755-3-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20181118195104.GA21938@ziepe.ca>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 07:31:43PM +0900, Masahiro Yamada wrote:
-> The introduction of these dummy BUILD_BUG_ON stubs dates back to
-> commit 903c0c7cdc21 ("sparse: define dummy BUILD_BUG_ON definition
-> for sparse").
+On Sun, Nov 18, 2018 at 12:51:04PM -0700, Jason Gunthorpe wrote:
+> On Sun, Nov 18, 2018 at 02:47:47PM +0200, Jarkko Sakkinen wrote:
+> > Added locking as part of tpm_try_get_ops() and tpm_put_ops() as they are
+> > anyway used in most of the call sites except in tpmrm_release() where we
+> > take the locks manually.
+> > 
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > ---
+> >  drivers/char/tpm/tpm-chip.c       |  2 ++
+> >  drivers/char/tpm/tpm-dev-common.c |  4 +---
+> >  drivers/char/tpm/tpm-interface.c  |  8 --------
+> >  drivers/char/tpm/tpm.h            |  8 ++------
+> >  drivers/char/tpm/tpm2-cmd.c       | 13 ++++---------
+> >  drivers/char/tpm/tpm2-space.c     | 15 ++++++---------
+> >  6 files changed, 15 insertions(+), 35 deletions(-)
+>  
+> > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> > index 32db84683c40..157505b0f755 100644
+> > --- a/drivers/char/tpm/tpm-chip.c
+> > +++ b/drivers/char/tpm/tpm-chip.c
+> > @@ -58,6 +58,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+> >  	if (!chip->ops)
+> >  		goto out_lock;
+> >  
+> > +	mutex_lock(&chip->tpm_mutex);
+> >  	return 0;
 > 
-> At that time, BUILD_BUG_ON() was implemented with the negative array
-> trick *and* the link-time trick, like this:
-> 
->   extern int __build_bug_on_failed;
->   #define BUILD_BUG_ON(condition)                                \
->           do {                                                   \
->                   ((void)sizeof(char[1 - 2*!!(condition)]));     \
->                   if (condition) __build_bug_on_failed = 1;      \
->           } while(0)
-> 
-> Sparse is more strict about the negative array trick than GCC because
-> Sparse requires the array length to be really constant.
-> 
-> Here is the simple test code for the macro above:
-> 
->   static const int x = 0;
->   BUILD_BUG_ON(x);
-> 
-> GCC is absolutely fine with it (-Wvla was not enabled at that time),
-> but Sparse warns like this:
-> 
->   error: bad constant expression
->   error: cannot size expression
-> 
-> (If you are using a newer version of Sparse, you will see a different
-> warning message, "warning: Variable length array is used".)
-> 
-> Anyway, Sparse was producing many false positive warnings, hence
-> silenced.
-> 
-> With the previous commit, the leftover negative array trick is gone.
-> Sparse is fine with the current BUILD_BUG_ON(), which is implemented
-> by using the 'error' attribute. (assuming your Sparse version supports
-> -Wno-unknown-attribute option)
-> 
-> I am keeping the stub for BUILD_BUG_ON_ZERO(). Otherwise, Sparse
-> would complain about the following code, which GCC is fine with:
-> 
->   static const int x = 0;
->   int y = BUILD_BUG_ON_ZERO(x);
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
+> It really isn't appropriate for something called 'get' to be exclusive
+> like this.. Call it tpm_try_lock_ops() ?
 
-Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Would definitely be appropriate to rename it, yes.
+
+> > diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+> > index c7dc54930576..582caefcf19b 100644
+> > --- a/drivers/char/tpm/tpm-dev-common.c
+> > +++ b/drivers/char/tpm/tpm-dev-common.c
+> > @@ -33,7 +33,6 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+> >  	struct tpm_header *header = (void *)buf;
+> >  	ssize_t ret, len;
+> >  
+> > -	mutex_lock(&chip->tpm_mutex);
+> 
+> The now implicit locking should be tested for using lockdep calls in
+> all places that assume the lock is held by the caller.
+
+Yes. Most importantly trusted keys and IMA should be tested with lockdep
+turned on.
+
+/Jarkko
