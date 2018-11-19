@@ -6,233 +6,103 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C49FDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0FAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C4DB20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4DB20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id AEA7220831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:04:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA7220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbeKTC17 (ORCPT
+        id S1730012AbeKTC2Q convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:27:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:60430 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729796AbeKTC16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:27:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A970680D;
-        Mon, 19 Nov 2018 08:03:57 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CC013F575;
-        Mon, 19 Nov 2018 08:03:55 -0800 (PST)
-Date:   Mon, 19 Nov 2018 16:03:52 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] drivers/perf: perf/core: generalise event
- exclusion checking with perf macro
-Message-ID: <20181119160352.ua2lx72l754imiek@lakrids.cambridge.arm.com>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <1542363853-13849-10-git-send-email-andrew.murray@arm.com>
+        Mon, 19 Nov 2018 21:28:16 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38931 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729796AbeKTC2Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:28:16 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gOm1y-0001lo-Vn; Mon, 19 Nov 2018 17:04:11 +0100
+Date:   Mon, 19 Nov 2018 17:04:10 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>, x86@kernel.org
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v2] x86/fpu: Disable BH while while loading FPU registers in
+ __fpu__restore_sig()
+Message-ID: <20181119160410.ne7oiq2gkwt6jiqg@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1542363853-13849-10-git-send-email-andrew.murray@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8BIT
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 10:24:12AM +0000, Andrew Murray wrote:
-> Replace checking of perf event exclusion flags with perf macro.
-> 
-> This is a functional change as exclude_host and exclude_guest are added
-> in the following files:
-> 
->  - drivers/perf/qcom_l2_pmu.c
->  - drivers/perf/qcom_l3_pmu.c
->  - drivers/perf/arm_pmu.c
-> 
-> And exclude_idle and exclude_hv are added in these files:
-> 
->  - drivers/perf/xgene_pmu.c
+The sequence
+   fpu->initialized = 1; /* step A */
+   preempt_disable();	 /* step B */
+   fpu__restore(fpu);
+   preempt_enable();
 
-FWIW, that all sounds fine to me.
+is racy in regard to a context switch.
+For 32bit frames __fpu__restore_sig() prepares the FPU state within
+fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+particular) does not modify fpu->state it uses fpu__drop() which sets
+fpu->initializes to 0. With this change the CPU's FPU state is not saved
+to fpu->state during a context switch. It then loads the state to
+fpu->state from userland and ensures it sane. The new state is loaded
+via fpu__restore(). The code sets then fpu->initializes to 1 in order
+to avoid fpu__initialize() doing anything (overwrite the new state)
+which is part of fpu__restore().
+A context switch between step A and B would save CPU's current FPU
+registers to fpu->state and overwrite the newly prepared state. This
+looks like tiny race window but the Kernel Test Robot reported this back
+in 2016 while we had lazy FPU support. Borislav Petkov made the link
+between that report and another patch that has been posted.
+Since the removal of the lazy FPU support, this race goes unnoticed
+because the warning has been removed.
 
-Assuming you fix up the 'macro' nit:
+Use local_bh_disable() around the restore sequence to avoid the race. BH
+needs to be disabled because BH is allowed to run (even with preemption
+disabled) and might invoke kernel_fpu_begin().
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1…v2: A more verbose commit as message.
 
-... unless we go for Peter's core cap for this.
+ arch/x86/kernel/fpu/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Mark.
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 61a949d84dfa5..d99a8ee9e185e 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
+ 
++		local_bh_disable();
+ 		fpu->initialized = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
+ 
+ 		return err;
+ 	} else {
+-- 
+2.19.1
 
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->  drivers/perf/arm-cci.c                   | 7 +------
->  drivers/perf/arm-ccn.c                   | 5 +----
->  drivers/perf/arm_dsu_pmu.c               | 7 +------
->  drivers/perf/arm_pmu.c                   | 9 +--------
->  drivers/perf/hisilicon/hisi_uncore_pmu.c | 7 +------
->  drivers/perf/qcom_l2_pmu.c               | 3 +--
->  drivers/perf/qcom_l3_pmu.c               | 3 +--
->  drivers/perf/xgene_pmu.c                 | 3 +--
->  8 files changed, 8 insertions(+), 36 deletions(-)
-> 
-> diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-> index 1bfeb16..d749f19 100644
-> --- a/drivers/perf/arm-cci.c
-> +++ b/drivers/perf/arm-cci.c
-> @@ -1328,12 +1328,7 @@ static int cci_pmu_event_init(struct perf_event *event)
->  		return -EOPNOTSUPP;
->  
->  	/* We have no filtering of any kind */
-> -	if (event->attr.exclude_user	||
-> -	    event->attr.exclude_kernel	||
-> -	    event->attr.exclude_hv	||
-> -	    event->attr.exclude_idle	||
-> -	    event->attr.exclude_host	||
-> -	    event->attr.exclude_guest)
-> +	if (event_has_exclude_flags(event))
->  		return -EINVAL;
->  
->  	/*
-> diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-> index 7dd850e..9a22a95 100644
-> --- a/drivers/perf/arm-ccn.c
-> +++ b/drivers/perf/arm-ccn.c
-> @@ -741,10 +741,7 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
->  		return -EOPNOTSUPP;
->  	}
->  
-> -	if (has_branch_stack(event) || event->attr.exclude_user ||
-> -			event->attr.exclude_kernel || event->attr.exclude_hv ||
-> -			event->attr.exclude_idle || event->attr.exclude_host ||
-> -			event->attr.exclude_guest) {
-> +	if (has_branch_stack(event) || event_has_exclude_flags(event)) {
->  		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
-> index 660cb8a..300ff3d 100644
-> --- a/drivers/perf/arm_dsu_pmu.c
-> +++ b/drivers/perf/arm_dsu_pmu.c
-> @@ -563,12 +563,7 @@ static int dsu_pmu_event_init(struct perf_event *event)
->  	}
->  
->  	if (has_branch_stack(event) ||
-> -	    event->attr.exclude_user ||
-> -	    event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv ||
-> -	    event->attr.exclude_idle ||
-> -	    event->attr.exclude_host ||
-> -	    event->attr.exclude_guest) {
-> +	    event_has_exclude_flags(event)) {
->  		dev_dbg(dsu_pmu->pmu.dev, "Can't support filtering\n");
->  		return -EINVAL;
->  	}
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 7f01f6f..a03634f 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -357,13 +357,6 @@ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
->  }
->  
->  static int
-> -event_requires_mode_exclusion(struct perf_event_attr *attr)
-> -{
-> -	return attr->exclude_idle || attr->exclude_user ||
-> -	       attr->exclude_kernel || attr->exclude_hv;
-> -}
-> -
-> -static int
->  __hw_perf_event_init(struct perf_event *event)
->  {
->  	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
-> @@ -395,7 +388,7 @@ __hw_perf_event_init(struct perf_event *event)
->  	 */
->  	if ((!armpmu->set_event_filter ||
->  	     armpmu->set_event_filter(hwc, &event->attr)) &&
-> -	     event_requires_mode_exclusion(&event->attr)) {
-> +	     event_has_exclude_flags(event)) {
->  		pr_debug("ARM performance counters do not support "
->  			 "mode exclusion\n");
->  		return -EOPNOTSUPP;
-> diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> index 9efd241..d3edff9 100644
-> --- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> +++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-> @@ -143,12 +143,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
->  		return -EOPNOTSUPP;
->  
->  	/* counters do not have these bits */
-> -	if (event->attr.exclude_user	||
-> -	    event->attr.exclude_kernel	||
-> -	    event->attr.exclude_host	||
-> -	    event->attr.exclude_guest	||
-> -	    event->attr.exclude_hv	||
-> -	    event->attr.exclude_idle)
-> +	if (event_has_exclude_flags(event))
->  		return -EINVAL;
->  
->  	/*
-> diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-> index 842135c..d7d85a2 100644
-> --- a/drivers/perf/qcom_l2_pmu.c
-> +++ b/drivers/perf/qcom_l2_pmu.c
-> @@ -510,8 +510,7 @@ static int l2_cache_event_init(struct perf_event *event)
->  	}
->  
->  	/* We cannot filter accurately so we just don't allow it. */
-> -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv || event->attr.exclude_idle) {
-> +	if (event_has_exclude_flags(event)) {
->  		dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
->  				    "Can't exclude execution levels\n");
->  		return -EOPNOTSUPP;
-> diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
-> index 2dc63d6..f27af67 100644
-> --- a/drivers/perf/qcom_l3_pmu.c
-> +++ b/drivers/perf/qcom_l3_pmu.c
-> @@ -497,8 +497,7 @@ static int qcom_l3_cache__event_init(struct perf_event *event)
->  	/*
->  	 * There are no per-counter mode filters in the PMU.
->  	 */
-> -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
-> -	    event->attr.exclude_hv || event->attr.exclude_idle)
-> +	if (event_has_exclude_flags(event))
->  		return -EINVAL;
->  
->  	/*
-> diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-> index 0e31f13..1fcd5a0 100644
-> --- a/drivers/perf/xgene_pmu.c
-> +++ b/drivers/perf/xgene_pmu.c
-> @@ -915,8 +915,7 @@ static int xgene_perf_event_init(struct perf_event *event)
->  		return -EINVAL;
->  
->  	/* SOC counters do not have usr/os/guest/host bits */
-> -	if (event->attr.exclude_user || event->attr.exclude_kernel ||
-> -	    event->attr.exclude_host || event->attr.exclude_guest)
-> +	if (event_has_exclude_flags(event))
->  		return -EINVAL;
->  
->  	if (event->cpu < 0)
-> -- 
-> 2.7.4
-> 
