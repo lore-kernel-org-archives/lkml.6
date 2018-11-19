@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0716AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65443C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C578020823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 300A9206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="th10CNBg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C578020823
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bQVaF6tK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300A9206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389293AbeKTDMQ (ORCPT
+        id S2389305AbeKTDMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48404 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeKTDMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:15 -0500
+        id S2388196AbeKTDMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48BC9206BA;
-        Mon, 19 Nov 2018 16:48:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9F21206BA;
+        Mon, 19 Nov 2018 16:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646082;
-        bh=/IRvNVH4burCYBSbOqj4D2+wAyRp+CWg+At4YcjgGbs=;
+        s=default; t=1542646085;
+        bh=vVIptu/O7LlzE8T4zV+KNR7RuRTtrTOF54SoYZtKKj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=th10CNBggJptsWmb2XcVLHlmsc9F06Xf0JqOzHo8b6ATuQiQo3w2iPnRbBhBrSAVH
-         fTuOYbCcsSrccKyYpTopSGHvDCm+m7+7CQzng0ij6KzAe9z22Rvcss2aWEFGsYsL1t
-         KX7hZZf8oBjxGYgiH2vbAG/GP/vM0gCTDRaG0kn0=
+        b=bQVaF6tK1tEtrWzYk9gZKrpMlBmWqZtIkGi+QORmiNdRxdvkEM3CoHcrxxPFA+6Zh
+         3MdXn+ZfRLTRaQdbXiCYLdCCsISHPw/Lpzp6sIFpIoQphI8gvbUXfBeHF5x5hbzitj
+         VglNk8b+//tqnkuqGlFUGY5IKb0b6PGdUGJoIjl0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Himanshu Madhani <hmadhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.14 029/124] scsi: qla2xxx: Fix re-using LoopID when handle is in use
-Date:   Mon, 19 Nov 2018 17:28:03 +0100
-Message-Id: <20181119162619.241071826@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 003/124] powerpc/mm: Fix page table dump to work on Radix
+Date:   Mon, 19 Nov 2018 17:27:37 +0100
+Message-Id: <20181119162613.631725021@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,72 +62,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Quinn Tran <quinn.tran@cavium.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 5c6400536481d9ef44ef94e7bf2c7b8e81534db7 upstream.
+[ Upstream commit 0d923962ab69c27cca664a2d535e90ef655110ca ]
 
-This patch fixes issue where driver clears NPort ID map instead of marking
-handle in use. Once driver clears NPort ID from the database, it can reuse
-the same NPort ID resulting in a PLOGI failure.
+When we're running on Book3S with the Radix MMU enabled the page table
+dump currently prints the wrong addresses because it uses the wrong
+start address.
 
-[mkp: fixed Himanshu's SoB]
+Fix it to use PAGE_OFFSET rather than KERN_VIRT_START.
 
-Fixes: a084fd68e1d2 ("scsi: qla2xxx: Fix re-login for Nport Handle in use")
-Cc: <stable@vger.kernel.org>
-Signed-of-by: Quinn Tran <quinn.tran@cavium.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Himanshu Madhani <hmadhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/scsi/qla2xxx/qla_init.c   |   18 ++++--------------
- drivers/scsi/qla2xxx/qla_target.c |    3 ++-
- 2 files changed, 6 insertions(+), 15 deletions(-)
+ arch/powerpc/mm/dump_linuxpagetables.c |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1511,25 +1511,15 @@ qla24xx_handle_plogi_done_event(struct s
- 		cid.b.rsvd_1 = 0;
+--- a/arch/powerpc/mm/dump_linuxpagetables.c
++++ b/arch/powerpc/mm/dump_linuxpagetables.c
+@@ -422,12 +422,13 @@ static void walk_pagetables(struct pg_st
+ 	unsigned int i;
+ 	unsigned long addr;
  
- 		ql_dbg(ql_dbg_disc, vha, 0x20ec,
--		    "%s %d %8phC LoopID 0x%x in use post gnl\n",
-+		    "%s %d %8phC lid %#x in use with pid %06x post gnl\n",
- 		    __func__, __LINE__, ea->fcport->port_name,
--		    ea->fcport->loop_id);
-+		    ea->fcport->loop_id, cid.b24);
- 
--		if (IS_SW_RESV_ADDR(cid)) {
--			set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
--			ea->fcport->loop_id = FC_NO_LOOP_ID;
--		} else {
--			qla2x00_clear_loop_id(ea->fcport);
--		}
-+		set_bit(ea->fcport->loop_id, vha->hw->loop_id_map);
-+		ea->fcport->loop_id = FC_NO_LOOP_ID;
- 		qla24xx_post_gnl_work(vha, ea->fcport);
- 		break;
- 	case MBS_PORT_ID_USED:
--		ql_dbg(ql_dbg_disc, vha, 0x20ed,
--		    "%s %d %8phC NPortId %02x%02x%02x inuse post gidpn\n",
--		    __func__, __LINE__, ea->fcport->port_name,
--		    ea->fcport->d_id.b.domain, ea->fcport->d_id.b.area,
--		    ea->fcport->d_id.b.al_pa);
--
- 		lid = ea->iop[1] & 0xffff;
- 		qlt_find_sess_invalidate_other(vha,
- 		    wwn_to_u64(ea->fcport->port_name),
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1203,7 +1203,8 @@ void qlt_schedule_sess_for_deletion(stru
- 	qla24xx_chk_fcp_state(sess);
- 
- 	ql_dbg(ql_dbg_tgt, sess->vha, 0xe001,
--	    "Scheduling sess %p for deletion\n", sess);
-+	    "Scheduling sess %p for deletion %8phC\n",
-+	    sess, sess->port_name);
- 
- 	INIT_WORK(&sess->del_work, qla24xx_delete_sess_fn);
- 	queue_work(sess->vha->hw->wq, &sess->del_work);
++	addr = st->start_address;
++
+ 	/*
+ 	 * Traverse the linux pagetable structure and dump pages that are in
+ 	 * the hash pagetable.
+ 	 */
+-	for (i = 0; i < PTRS_PER_PGD; i++, pgd++) {
+-		addr = KERN_VIRT_START + i * PGDIR_SIZE;
++	for (i = 0; i < PTRS_PER_PGD; i++, pgd++, addr += PGDIR_SIZE) {
+ 		if (!pgd_none(*pgd) && !pgd_huge(*pgd))
+ 			/* pgd exists */
+ 			walk_pud(st, pgd, addr);
+@@ -476,9 +477,14 @@ static int ptdump_show(struct seq_file *
+ {
+ 	struct pg_state st = {
+ 		.seq = m,
+-		.start_address = KERN_VIRT_START,
+ 		.marker = address_markers,
+ 	};
++
++	if (radix_enabled())
++		st.start_address = PAGE_OFFSET;
++	else
++		st.start_address = KERN_VIRT_START;
++
+ 	/* Traverse kernel page tables */
+ 	walk_pagetables(&st);
+ 	note_page(&st, 0, 0, 0);
 
 
