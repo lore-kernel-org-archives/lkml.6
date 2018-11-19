@@ -2,146 +2,160 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E0AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D18C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04B7120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:12:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04B7120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D5F520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:13:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D5F520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbeKTAgY (ORCPT
+        id S1729497AbeKTAgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:36:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:47724 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbeKTAgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:36:24 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 13C0720791; Mon, 19 Nov 2018 15:12:38 +0100 (CET)
-Received: from localhost (unknown [185.94.189.187])
-        by mail.bootlin.com (Postfix) with ESMTPSA id C4B9D20745;
-        Mon, 19 Nov 2018 15:12:37 +0100 (CET)
-Date:   Mon, 19 Nov 2018 15:12:37 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Pawel Osciak <posciak@chromium.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH v2 0/2] media: cedrus: Add H264 decoding support
-Message-ID: <20181119141237.qwwdn27e6jwjvhmz@flea>
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
- <CAAFQd5DmcC23ZSktBXo=Sz-6G76oaJywha9mXtaPFSx08eV_nA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zmi43yrjnqz7zkau"
-Content-Disposition: inline
-In-Reply-To: <CAAFQd5DmcC23ZSktBXo=Sz-6G76oaJywha9mXtaPFSx08eV_nA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Mon, 19 Nov 2018 19:36:54 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:45976 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729331AbeKTAgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:36:54 -0500
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 19 Nov 2018 23:13:07 +0900
+Received: from vbox.ree.adwin.renesas.com (unknown [10.226.37.67])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 5B929401BF07;
+        Mon, 19 Nov 2018 23:13:03 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-m68k@lists.linux-m68k.org,
+        linux-mips@linux-mips.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: Add (devm_)clk_get_optional() functions
+Date:   Mon, 19 Nov 2018 14:12:59 +0000
+Message-Id: <20181119141259.11992-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds clk_get_optional() and devm_clk_get_optional() functions to get
+optional clocks.
+They behave the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
---zmi43yrjnqz7zkau
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+---
+v7:
+ - Instead of messing with the core functions, simply wrap them for the
+   _optional() versions. By putting clk_get_optional() inline in the header
+   file, we can get rid of the arch specific patches as well.
+v6:
+ - Add doxygen style comment for devm_clk_get_optional() args
+v5:
+ - No changes.
+v4:
+ - No changes.
+v3:
+ - No changes.
+---
+ drivers/clk/clk-devres.c | 11 +++++++++++
+ include/linux/clk.h      | 27 +++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-Hi Tomasz,
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 12c87457eca1..f0033d937c39 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,17 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	struct clk *clk = devm_clk_get(dev, id);
++
++	if (clk == ERR_PTR(-ENOENT))
++		return NULL;
++	else
++		return clk;
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index a7773b5c0b9f..c7bbb0678057 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -383,6 +383,17 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+  */
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
++/**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
+ /**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+@@ -718,6 +729,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
+@@ -862,6 +879,16 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+ 	clk_bulk_unprepare(num_clks, clks);
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	struct clk *clk = clk_get(dev, id);
++
++	if (clk == ERR_PTR(-ENOENT))
++		return NULL;
++	else
++		return clk;
++}
++
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+-- 
+2.17.1
 
-On Fri, Nov 16, 2018 at 04:04:40PM +0900, Tomasz Figa wrote:
-> > I've been using the controls currently integrated into ChromeOS that
-> > have a working version of this particular setup. However, these
-> > controls have a number of shortcomings and inconsistencies with other
-> > decoding API. I've worked with libva so far, but I've noticed already
-> > that:
-> >   - The kernel UAPI expects to have the nal_ref_idc variable, while
-> >     libva only exposes whether that frame is a reference frame or
-> >     not. I've looked at the rockchip driver in the ChromeOS tree, and
-> >     our own driver, and they both need only the information about
-> >     whether the frame is a reference one or not, so maybe we should
-> >     change this?
->=20
-> Since this is something that is actually present in the stream and the
-> problem is that libva doesn't convey the information properly, I
-> believe you can workaround it in the libva backend using this API by
-> just setting it to 0 and some arbitrary non-zero value in a binary
-> fashion.
-
-That could work yes, thanks for the suggestion!
-
-> >   - The H264 bitstream exposes the picture default reference list (for
-> >     both list 0 and list 1), the slice reference list and an override
-> >     flag. The libva will only pass the reference list to be used (so
-> >     either the picture default's or the slice's) depending on the
-> >     override flag. The kernel UAPI wants the picture default reference
-> >     list and the slice reference list, but doesn't expose the override
-> >     flag, which prevents us from configuring properly the
-> >     hardware. Our video decoding engine needs the three information,
-> >     but we can easily adapt to having only one. However, having two
-> >     doesn't really work for us.
-> >
->=20
-> From what I can see in the H.264 Slice header, there are 3 related data:
->  - num_ref_idx_active_override_flag - affects the number of reference
-> indices for the slice,
->  - ref_list_l{0,1}_modifications - modifications for the reference lists,
->  - ref_pic_list_modification_flag_l{0,1} - selects whether the
-> modifications are applied.
->=20
-> The reference lists inside the v4l2_ctrl_h264_slice_param are expected
-> to already take all the above into account and be the final reference
-> lists to be used for the slice. For reference, the H.264 specification
-> refers to those final reference lists as RefPicList0 and RefPicList1
-> and so the names of the fields in the struct.
->=20
-> There is some interesting background here, though. The Rockchip VPU
-> parses the slice headers itself and handles the above data on its own.
-> This means that it needs to be programmed with the unmodified
-> reference lists, as in v4l2_ctrl_h264_decode_param.
->=20
-> Given that, it sounds like we need to have both. Your driver would
-> always use the lists in v4l2_ctrl_h264_slice_param, while the Rockchip
-> VPU would ignore them, use the ones in v4l2_ctrl_h264_decode_param and
-> perform the per-slice modifications on its own.
-
-I guess that would work, yep
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---zmi43yrjnqz7zkau
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/LE1QAKCRDj7w1vZxhR
-xU6lAQCzHT+UfaY4dv6lCYEoscex90eOwXS0/ocDdzhogtlupQEAmk5Cm8O2uK2v
-n7r5Zwk9nm0dlXFOvMi9Auac66YJzw0=
-=6I8o
------END PGP SIGNATURE-----
-
---zmi43yrjnqz7zkau--
