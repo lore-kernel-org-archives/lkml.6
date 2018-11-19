@@ -6,49 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 178CAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 097E8C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3AC2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C416C20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uj4tmxXt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3AC2086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNaOhJ/R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C416C20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbeKTCy5 (ORCPT
+        id S1730230AbeKTCy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:54:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52370 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:54:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730199AbeKTCy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:54:57 -0500
+        id S1730199AbeKTCy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:54:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13A8320831;
-        Mon, 19 Nov 2018 16:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B92AC20831;
+        Mon, 19 Nov 2018 16:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645049;
-        bh=0xzodsg19+3Hotv++inU1YG/47WJZ9fU2oZxZrXjpkY=;
+        s=default; t=1542645052;
+        bh=ibH6A1vYJiM7pedXCdhIFIfNqVYhX8Wlub+ShC3C0ds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uj4tmxXtNdobkchSvFPsqvT0u9+8S51D81XYWsSuFRYJmTdISvmFdNHotPOmaUWUh
-         1RQncPlo+LrOMC4RhUT9DSWgk+TdO7UgChWHj9o0W8VkA661nyg4AEeiOSiL6vG4jK
-         hVnNSZzkCWkACxwE8BbNg16sS0+S/cH733j76Ytc=
+        b=jNaOhJ/Rs41JAypjvAc+HItLuj5aBMkq/GRHfWBqQe5w7/jihLZOLISt1d6bmmnDs
+         EJUJV6ahJ0jS5U8Wyx345x5B5n4wQiasdO6uzhUnG6oCKWkjdxP0d2oICx4H9726NU
+         Felvim0aUkvAMmVBSh8t3Lhbcbk/Z8zvYyzqzuiM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>, Sean Paul <seanpaul@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 017/205] drm/msm: dpu: Allow planes to extend past active display
-Date:   Mon, 19 Nov 2018 17:25:24 +0100
-Message-Id: <20181119162620.335149697@linuxfoundation.org>
+Subject: [PATCH 4.19 018/205] powerpc/mm: Dont report hugepage tables as memory leaks when using kmemleak
+Date:   Mon, 19 Nov 2018 17:25:25 +0100
+Message-Id: <20181119162620.535838148@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -66,126 +62,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 96fc56a775c1e44c0e3c0119f2cd3d77431c4569 ]
+[ Upstream commit 803d690e68f0c5230183f1a42c7d50a41d16e380 ]
 
-The atomic_check is a bit too aggressive with respect to planes which
-leave the active area. This caused a bunch of log spew when the cursor
-got to the edge of the screen and stopped it from going all the way.
+When a process allocates a hugepage, the following leak is
+reported by kmemleak. This is a false positive which is
+due to the pointer to the table being stored in the PGD
+as physical memory address and not virtual memory pointer.
 
-This patch removes the conservative bounds checks from atomic and clips
-the dst rect such that we properly display planes which go off the
-screen.
+unreferenced object 0xc30f8200 (size 512):
+  comm "mmap", pid 374, jiffies 4872494 (age 627.630s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace:
+    [<e32b68da>] huge_pte_alloc+0xdc/0x1f8
+    [<9e0df1e1>] hugetlb_fault+0x560/0x8f8
+    [<7938ec6c>] follow_hugetlb_page+0x14c/0x44c
+    [<afbdb405>] __get_user_pages+0x1c4/0x3dc
+    [<b8fd7cd9>] __mm_populate+0xac/0x140
+    [<3215421e>] vm_mmap_pgoff+0xb4/0xb8
+    [<c148db69>] ksys_mmap_pgoff+0xcc/0x1fc
+    [<4fcd760f>] ret_from_syscall+0x0/0x38
 
-Changes in v2:
-- Apply the clip to src as well (taking into account scaling)
-Changes in v3:
-- Use drm_atomic_helper_check_plane_state() to clip src/dst
+See commit a984506c542e2 ("powerpc/mm: Don't report PUDs as
+memory leaks when using kmemleak") for detailed explanation.
 
-Cc: Sravanthi Kollukuduru <skolluku@codeaurora.org>
-Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Reviewed-by: Jeykumar Sankaran <jsanka@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+To fix that, this patch tells kmemleak to ignore the allocated
+hugepage table.
 
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c   |    3 --
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c  |   38 +++++++++++++++++------------
- drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c |    1 
- drivers/gpu/drm/msm/msm_drv.h              |    2 +
- 4 files changed, 26 insertions(+), 18 deletions(-)
+ arch/powerpc/mm/hugetlbpage.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -1535,8 +1535,7 @@ static int dpu_crtc_atomic_check(struct
- 		cnt++;
- 
- 		dst = drm_plane_state_dest(pstate);
--		if (!drm_rect_intersect(&clip, &dst) ||
--		    !drm_rect_equals(&clip, &dst)) {
-+		if (!drm_rect_intersect(&clip, &dst)) {
- 			DPU_ERROR("invalid vertical/horizontal destination\n");
- 			DPU_ERROR("display: " DRM_RECT_FMT " plane: "
- 				  DRM_RECT_FMT "\n", DRM_RECT_ARG(&crtc_rect),
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -1254,7 +1254,7 @@ static int dpu_plane_sspp_atomic_update(
- 	const struct dpu_format *fmt;
- 	struct drm_crtc *crtc;
- 	struct drm_framebuffer *fb;
--	struct drm_rect src, dst;
-+	int ret, min_scale;
- 
- 	if (!plane) {
- 		DPU_ERROR("invalid plane\n");
-@@ -1293,21 +1293,29 @@ static int dpu_plane_sspp_atomic_update(
- 	pdpu->is_rt_pipe = (dpu_crtc_get_client_type(crtc) != NRT_CLIENT);
- 	_dpu_plane_set_qos_ctrl(plane, false, DPU_PLANE_QOS_PANIC_CTRL);
- 
--	src.x1 = state->src_x >> 16;
--	src.y1 = state->src_y >> 16;
--	src.x2 = src.x1 + (state->src_w >> 16);
--	src.y2 = src.y1 + (state->src_h >> 16);
--
--	dst = drm_plane_state_dest(state);
--
--	DPU_DEBUG_PLANE(pdpu, "FB[%u] " DRM_RECT_FMT "->crtc%u " DRM_RECT_FMT
--			", %4.4s ubwc %d\n", fb->base.id, DRM_RECT_ARG(&src),
--			crtc->base.id, DRM_RECT_ARG(&dst),
--			(char *)&fmt->base.pixel_format,
--			DPU_FORMAT_IS_UBWC(fmt));
-+	min_scale = FRAC_16_16(1, pdpu->pipe_sblk->maxdwnscale);
-+	ret = drm_atomic_helper_check_plane_state(state, crtc->state, min_scale,
-+					  pdpu->pipe_sblk->maxupscale << 16,
-+					  true, false);
-+	if (ret) {
-+		DPU_ERROR_PLANE(pdpu, "Check plane state failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	DPU_DEBUG_PLANE(pdpu, "FB[%u] " DRM_RECT_FP_FMT "->crtc%u " DRM_RECT_FMT
-+			", %4.4s ubwc %d\n", fb->base.id, DRM_RECT_FP_ARG(&state->src),
-+			crtc->base.id, DRM_RECT_ARG(&state->dst),
-+			(char *)&fmt->base.pixel_format, DPU_FORMAT_IS_UBWC(fmt));
-+
-+	pdpu->pipe_cfg.src_rect = state->src;
-+
-+	/* state->src is 16.16, src_rect is not */
-+	pdpu->pipe_cfg.src_rect.x1 >>= 16;
-+	pdpu->pipe_cfg.src_rect.x2 >>= 16;
-+	pdpu->pipe_cfg.src_rect.y1 >>= 16;
-+	pdpu->pipe_cfg.src_rect.y2 >>= 16;
- 
--	pdpu->pipe_cfg.src_rect = src;
--	pdpu->pipe_cfg.dst_rect = dst;
-+	pdpu->pipe_cfg.dst_rect = state->dst;
- 
- 	_dpu_plane_setup_scaler(pdpu, pstate, fmt, false);
- 
---- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
-+++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
-@@ -259,7 +259,6 @@ static void mdp5_plane_cleanup_fb(struct
- 	msm_framebuffer_cleanup(fb, kms->aspace);
- }
- 
--#define FRAC_16_16(mult, div)    (((mult) << 16) / (div))
- static int mdp5_plane_atomic_check_with_state(struct drm_crtc_state *crtc_state,
- 					      struct drm_plane_state *state)
- {
---- a/drivers/gpu/drm/msm/msm_drv.h
-+++ b/drivers/gpu/drm/msm/msm_drv.h
-@@ -62,6 +62,8 @@ struct msm_gem_vma;
- #define MAX_BRIDGES    8
- #define MAX_CONNECTORS 8
- 
-+#define FRAC_16_16(mult, div)    (((mult) << 16) / (div))
-+
- struct msm_file_private {
- 	rwlock_t queuelock;
- 	struct list_head submitqueues;
+--- a/arch/powerpc/mm/hugetlbpage.c
++++ b/arch/powerpc/mm/hugetlbpage.c
+@@ -19,6 +19,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/swap.h>
+ #include <linux/swapops.h>
++#include <linux/kmemleak.h>
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+ #include <asm/tlb.h>
+@@ -112,6 +113,8 @@ static int __hugepte_alloc(struct mm_str
+ 		for (i = i - 1 ; i >= 0; i--, hpdp--)
+ 			*hpdp = __hugepd(0);
+ 		kmem_cache_free(cachep, new);
++	} else {
++		kmemleak_ignore(new);
+ 	}
+ 	spin_unlock(ptl);
+ 	return 0;
 
 
