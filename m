@@ -7,54 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B04C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C291C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7C1223D1
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 538FE223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EgeEajGA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7C1223D1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMT0DS6u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 538FE223D8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405715AbeKTDZ4 (ORCPT
+        id S2405729AbeKTDZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404876AbeKTDZz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:55 -0500
+        id S2404876AbeKTDZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 395C3223CE;
-        Mon, 19 Nov 2018 17:01:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C908E223CB;
+        Mon, 19 Nov 2018 17:01:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646898;
-        bh=4W9FYAne8thCfi8FuOQ8BCMoPAMcf00WCx47DImYr1g=;
+        s=default; t=1542646901;
+        bh=TBW2h7ZcTNboCumzKMhpI3YmE7TBQFawUAwMO9AnyjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EgeEajGAlMsXNA9oFmSJtqWhu0qyXzxy0xssuukOkEmLPIgF/AUgUDScixwIOhiOE
-         +WCIRlPkhsXg9NdOCA+M5BqYs/lnmEbkpnmY3wcKN7/4BJ56RgrCASrD3XwWNFVfaX
-         WwmvMXKOxJZPWwxh9J7ceEO5NTrio+5s1oD9xlDU=
+        b=FMT0DS6u1vE9fSxqiiImaFfT7m7BUJ7iZACupbEqFvlwoV2M4hdPudfLeduQ7UOzi
+         8oID3qScdiP2oHA6yTA3nHa+PTttbpYLgRSluk4V7M/G47G98d2d7CvLQEN53MVuLP
+         +iv7YZsg08XqAvEfttN6D3nBHJqg0bRqVYHE0HqE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Peter Anvin (Intel)" <hpa@zytor.com>,
-        "Cc: Johan Hovold" <johan@kernel.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: [PATCH 4.4 133/160] termios, tty/tty_baudrate.c: fix buffer overrun
-Date:   Mon, 19 Nov 2018 17:29:32 +0100
-Message-Id: <20181119162643.157773373@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.4 107/160] scsi: qla2xxx: Fix incorrect port speed being set for FC adapters
+Date:   Mon, 19 Nov 2018 17:29:06 +0100
+Message-Id: <20181119162641.262158099@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -72,55 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Peter Anvin <hpa@zytor.com>
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
+commit 4c1458df9635c7e3ced155f594d2e7dfd7254e21 upstream.
 
-On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
-not do any limit checking on the tty_baudrate[] array, and in fact a
-buffer overrun is possible on both architectures. Add a limit check to
-prevent that situation.
-
-This will be followed by a much bigger cleanup/simplification patch.
-
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Requested-by: Cc: Johan Hovold <johan@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 6246b8a1d26c7c ("[SCSI] qla2xxx: Enhancements to support ISP83xx.")
+Fixes: 1bb395485160d2 ("qla2xxx: Correct iiDMA-update calling conventions.")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ioctl.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/qla2xxx/qla_mbx.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/tty/tty_ioctl.c
-+++ b/drivers/tty/tty_ioctl.c
-@@ -330,7 +330,7 @@ speed_t tty_termios_baud_rate(struct kte
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- }
- EXPORT_SYMBOL(tty_termios_baud_rate);
- 
-@@ -366,7 +366,7 @@ speed_t tty_termios_input_baud_rate(stru
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- #else
- 	return tty_termios_baud_rate(termios);
- #endif
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -3315,10 +3315,7 @@ qla2x00_set_idma_speed(scsi_qla_host_t *
+ 	mcp->mb[0] = MBC_PORT_PARAMS;
+ 	mcp->mb[1] = loop_id;
+ 	mcp->mb[2] = BIT_0;
+-	if (IS_CNA_CAPABLE(vha->hw))
+-		mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+-	else
+-		mcp->mb[3] = port_speed & (BIT_2|BIT_1|BIT_0);
++	mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+ 	mcp->mb[9] = vha->vp_idx;
+ 	mcp->out_mb = MBX_9|MBX_3|MBX_2|MBX_1|MBX_0;
+ 	mcp->in_mb = MBX_3|MBX_1|MBX_0;
 
 
