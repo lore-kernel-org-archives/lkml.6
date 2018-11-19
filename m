@@ -2,108 +2,98 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D385C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2260C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8428214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEsIbzlK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8428214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 94ACB214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94ACB214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388397AbeKTDJE (ORCPT
+        id S2388413AbeKTDJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43912 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:09:06 -0500
+Received: from mga14.intel.com ([192.55.52.115]:5595 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387555AbeKTDJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68BBA2145D;
-        Mon, 19 Nov 2018 16:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645891;
-        bh=ilXC9YEHtc75CupCnebjigc0y3F0JyWgwIjTdw920EY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oEsIbzlK3J/kXzmZZKVLuAIq7Hx8EBaxH2AbG7lTAoDNcIGp003jdnxgPQUe4gMe5
-         0KaTBgvEOaH+2qAwEsMcGKdOoYn2tgXJ2xI2BTwVobWA7MfsgFQpWUZGQe+dgQncbl
-         +D3FeHZVz2uxPjTiwU3OJMVGW+PEroP/w1dlxypk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 4.18 129/171] NFSv4: Dont exit the state manager without clearing NFS4CLNT_MANAGER_RUNNING
-Date:   Mon, 19 Nov 2018 17:28:45 +0100
-Message-Id: <20181119162637.858767955@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
-References: <20181119162618.909354448@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S2387555AbeKTDJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:09:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 08:44:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
+   d="scan'208";a="109813190"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
+  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2018 08:44:49 -0800
+Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
+ <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
+ <20181118074832.GG5897@linux.intel.com>
+ <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
+ <20181119135800.GE8755@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <b0efbbf8-6242-a48d-d984-b49d5fb20bb8@intel.com>
+Date:   Mon, 19 Nov 2018 08:44:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181119135800.GE8755@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.18-stable review patch.  If anyone has any objections, please let me know.
+On 11/19/18 5:58 AM, Jarkko Sakkinen wrote:
+> Please explain a scenario where "!ret_size" would no work given that
+> both size and partial_data have always positive value?
 
-------------------
+Right, I only looked at the one line above before responding.
+I'll change it to !ret_size
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+> 
+> I don't understand. In order to maintain backwards compatibility you can
+> send a new command at any time.
 
-commit 21a446cf186570168b7281b154b1993968598aca upstream.
+No, currently it is not possible to send a new command until the previous
+response is consumed. -EBUSY is returned if one sends a new command before
+reading the previous response (or at least part of it). See:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/char/tpm/tpm-dev-common.c#n128
 
-If we exit the NFSv4 state manager due to a umount, then we can end up
-leaving the NFS4CLNT_MANAGER_RUNNING flag set. If another mount causes
-the nfs4_client to be rereferenced before it is destroyed, then we end
-up never being able to recover state.
-
-Fixes: 47c2199b6eb5 ("NFSv4.1: Ensure state manager thread dies on last ...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.15+
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/nfs/nfs4state.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -2553,11 +2553,12 @@ static void nfs4_state_manager(struct nf
- 		nfs4_clear_state_manager_bit(clp);
- 		/* Did we race with an attempt to give us more work? */
- 		if (clp->cl_state == 0)
--			break;
-+			return;
- 		if (test_and_set_bit(NFS4CLNT_MANAGER_RUNNING, &clp->cl_state) != 0)
--			break;
-+			return;
- 	} while (refcount_read(&clp->cl_count) > 1);
--	return;
-+	goto out_drain;
-+
- out_error:
- 	if (strlen(section))
- 		section_sep = ": ";
-@@ -2565,6 +2566,7 @@ out_error:
- 			" with error %d\n", section_sep, section,
- 			clp->cl_hostname, -status);
- 	ssleep(1);
-+out_drain:
- 	nfs4_end_drain_session(clp);
- 	nfs4_clear_state_manager_bit(clp);
- }
-
-
+-- 
+Tadeusz
