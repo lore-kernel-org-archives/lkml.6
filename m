@@ -2,106 +2,297 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B41C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74A44C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B9EE20684
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:46:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9EE20684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B69C20684
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:50:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B69C20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeKSSJp (ORCPT
+        id S1726565AbeKSSNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:09:45 -0500
-Received: from mga05.intel.com ([192.55.52.43]:58654 "EHLO mga05.intel.com"
+        Mon, 19 Nov 2018 13:13:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51456 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726256AbeKSSJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:09:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 23:46:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,251,1539673200"; 
-   d="scan'208";a="107430677"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga004.fm.intel.com with ESMTP; 18 Nov 2018 23:46:55 -0800
-Subject: Re: [PATCH v2 3/3] mmc: sdhci-pci: only install voltage switch method
- when useful
-To:     Anisse Astier <anisse@astier.eu>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181022134026.GB18413@jaya>
- <20181023100729.28864-4-anisse@astier.eu> <20181116165850.GB5894@jaya>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <94fa0484-c532-683f-3a3f-fd9f4b263d16@intel.com>
-Date:   Mon, 19 Nov 2018 09:45:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726348AbeKSSNp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:13:45 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E3D13002061;
+        Mon, 19 Nov 2018 07:50:55 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C00CE608E7;
+        Mon, 19 Nov 2018 07:50:30 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 15:50:25 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 03/19] block: use bio_for_each_bvec() to compute
+ multi-page bvec count
+Message-ID: <20181119075024.GA16519@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-4-ming.lei@redhat.com>
+ <20181115202028.GC9348@vader>
 MIME-Version: 1.0
-In-Reply-To: <20181116165850.GB5894@jaya>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115202028.GC9348@vader>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 19 Nov 2018 07:50:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/11/18 6:58 PM, Anisse Astier wrote:
-> Hi Adrian,
+On Thu, Nov 15, 2018 at 12:20:28PM -0800, Omar Sandoval wrote:
+> On Thu, Nov 15, 2018 at 04:52:50PM +0800, Ming Lei wrote:
+> > First it is more efficient to use bio_for_each_bvec() in both
+> > blk_bio_segment_split() and __blk_recalc_rq_segments() to compute how
+> > many multi-page bvecs there are in the bio.
+> > 
+> > Secondly once bio_for_each_bvec() is used, the bvec may need to be
+> > splitted because its length can be very longer than max segment size,
+> > so we have to split the big bvec into several segments.
+> > 
+> > Thirdly when splitting multi-page bvec into segments, the max segment
+> > limit may be reached, so the bio split need to be considered under
+> > this situation too.
+> > 
+> > Cc: Dave Chinner <dchinner@redhat.com>
+> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> > Cc: Mike Snitzer <snitzer@redhat.com>
+> > Cc: dm-devel@redhat.com
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: Shaohua Li <shli@kernel.org>
+> > Cc: linux-raid@vger.kernel.org
+> > Cc: linux-erofs@lists.ozlabs.org
+> > Cc: David Sterba <dsterba@suse.com>
+> > Cc: linux-btrfs@vger.kernel.org
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: linux-xfs@vger.kernel.org
+> > Cc: Gao Xiang <gaoxiang25@huawei.com>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Theodore Ts'o <tytso@mit.edu>
+> > Cc: linux-ext4@vger.kernel.org
+> > Cc: Coly Li <colyli@suse.de>
+> > Cc: linux-bcache@vger.kernel.org
+> > Cc: Boaz Harrosh <ooo@electrozaur.com>
+> > Cc: Bob Peterson <rpeterso@redhat.com>
+> > Cc: cluster-devel@redhat.com
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  block/blk-merge.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++---------
+> >  1 file changed, 76 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/block/blk-merge.c b/block/blk-merge.c
+> > index 91b2af332a84..6f7deb94a23f 100644
+> > --- a/block/blk-merge.c
+> > +++ b/block/blk-merge.c
+> > @@ -160,6 +160,62 @@ static inline unsigned get_max_io_size(struct request_queue *q,
+> >  	return sectors;
+> >  }
+> >  
+> > +/*
+> > + * Split the bvec @bv into segments, and update all kinds of
+> > + * variables.
+> > + */
+> > +static bool bvec_split_segs(struct request_queue *q, struct bio_vec *bv,
+> > +		unsigned *nsegs, unsigned *last_seg_size,
+> > +		unsigned *front_seg_size, unsigned *sectors)
+> > +{
+> > +	bool need_split = false;
+> > +	unsigned len = bv->bv_len;
+> > +	unsigned total_len = 0;
+> > +	unsigned new_nsegs = 0, seg_size = 0;
 > 
-> On Tue, Oct 23, 2018 at 12:07:29PM +0200, Anisse Astier wrote:
->> If there's no ACPI DSM for voltage switch, it will just cause a lot of
->> debug info down the line, we only need one at startup.
->>
->> Signed-off-by: Anisse Astier <anisse@astier.eu>
->> ---
->>  drivers/mmc/host/sdhci-pci-core.c | 11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
->> index f2c1fb339d66..95fdbb883c7e 100644
->> --- a/drivers/mmc/host/sdhci-pci-core.c
->> +++ b/drivers/mmc/host/sdhci-pci-core.c
->> @@ -723,6 +723,7 @@ static const struct dmi_system_id board_no_1_8v[] = {
->>  static void byt_probe_slot(struct sdhci_pci_slot *slot)
->>  {
->>  	struct mmc_host_ops *ops = &slot->host->mmc_host_ops;
->> +	struct intel_host *intel_host = sdhci_pci_priv(slot);
->>  
->>  	byt_read_dsm(slot);
->>  
->> @@ -733,6 +734,16 @@ static void byt_probe_slot(struct sdhci_pci_slot *slot)
->>  				mmc_hostname(slot->host->mmc));
->>  		slot->host->quirks2 |= SDHCI_QUIRK2_NO_1_8_V;
->>  	}
->> +	/* Check if we have the appropriate voltage switch DSM methods */
->> +	if (!(intel_host->dsm_fns & (1 << INTEL_DSM_V18_SWITCH)) &&
->> +	    !(intel_host->dsm_fns & (1 << INTEL_DSM_V33_SWITCH))) {
->> +		/* No voltage switching supported at all, there's no
->> +		 * point in installing the callback: return.
->> +		 */
->> +		pr_debug("%s: No voltage switching ACPI DSM helper\n",
->> +				mmc_hostname(slot->host->mmc));
->> +		return;
->> +	}
->>  	ops->start_signal_voltage_switch = intel_start_signal_voltage_switch;
->>  }
->>  
->> -- 
->> 2.17.2
->>
+> "unsigned int" here and everywhere else.
 > 
-> What do you think of picking this last patch ? Or maybe you had
-> different cleanups in mind when you said you wanted to rework this ?
+> > +	if ((*nsegs >= queue_max_segments(q)) || !len)
+> > +		return need_split;
+> > +
+> > +	/*
+> > +	 * Multipage bvec may be too big to hold in one segment,
+> > +	 * so the current bvec has to be splitted as multiple
+> > +	 * segments.
+> > +	 */
+> > +	while (new_nsegs + *nsegs < queue_max_segments(q)) {
+> > +		seg_size = min(queue_max_segment_size(q), len);
+> > +
+> > +		new_nsegs++;
+> > +		total_len += seg_size;
+> > +		len -= seg_size;
+> > +
+> > +		if ((queue_virt_boundary(q) && ((bv->bv_offset +
+> > +		    total_len) & queue_virt_boundary(q))) || !len)
+> > +			break;
+> 
+> Checking queue_virt_boundary(q) != 0 is superfluous, and the len check
+> could just control the loop, i.e.,
+> 
+> 	while (len && new_nsegs + *nsegs < queue_max_segments(q)) {
+> 		seg_size = min(queue_max_segment_size(q), len);
+> 
+> 		new_nsegs++;
+> 		total_len += seg_size;
+> 		len -= seg_size;
+> 
+> 		if ((bv->bv_offset + total_len) & queue_virt_boundary(q))
+> 			break;
+> 	}
+> 
+> And if you rewrite it this way, I _think_ you can get rid of this
+> special case:
+> 
+> 	if ((*nsegs >= queue_max_segments(q)) || !len)
+> 		return need_split;
+> 
+> above.
 
-Voltage switches are relatively rare, and dynamic debug allows control over
-exactly which debug messages display, so I am not sure this patch is needed.
+Good point, will do in next version.
+
+> 
+> > +	}
+> > +
+> > +	/* split in the middle of the bvec */
+> > +	if (len)
+> > +		need_split = true;
+> 
+> need_split is unnecessary, just return len != 0.
+
+OK.
+
+> 
+> > +
+> > +	/* update front segment size */
+> > +	if (!*nsegs) {
+> > +		unsigned first_seg_size = seg_size;
+> > +
+> > +		if (new_nsegs > 1)
+> > +			first_seg_size = queue_max_segment_size(q);
+> > +		if (*front_seg_size < first_seg_size)
+> > +			*front_seg_size = first_seg_size;
+> > +	}
+> > +
+> > +	/* update other varibles */
+> > +	*last_seg_size = seg_size;
+> > +	*nsegs += new_nsegs;
+> > +	if (sectors)
+> > +		*sectors += total_len >> 9;
+> > +
+> > +	return need_split;
+> > +}
+> > +
+> >  static struct bio *blk_bio_segment_split(struct request_queue *q,
+> >  					 struct bio *bio,
+> >  					 struct bio_set *bs,
+> > @@ -173,7 +229,7 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+> >  	struct bio *new = NULL;
+> >  	const unsigned max_sectors = get_max_io_size(q, bio);
+> >  
+> > -	bio_for_each_segment(bv, bio, iter) {
+> > +	bio_for_each_bvec(bv, bio, iter) {
+> >  		/*
+> >  		 * If the queue doesn't support SG gaps and adding this
+> >  		 * offset would create a gap, disallow it.
+> > @@ -188,8 +244,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+> >  			 */
+> >  			if (nsegs < queue_max_segments(q) &&
+> >  			    sectors < max_sectors) {
+> > -				nsegs++;
+> > -				sectors = max_sectors;
+> > +				/* split in the middle of bvec */
+> > +				bv.bv_len = (max_sectors - sectors) << 9;
+> > +				bvec_split_segs(q, &bv, &nsegs,
+> > +						&seg_size,
+> > +						&front_seg_size,
+> > +						&sectors);
+> >  			}
+> >  			goto split;
+> >  		}
+> > @@ -214,11 +274,12 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+> >  		if (nsegs == 1 && seg_size > front_seg_size)
+> >  			front_seg_size = seg_size;
+> 
+> Hm, do we still need to check this here now that we're updating
+> front_seg_size inside of bvec_split_segs()?
+
+Right, the check & update can be removed.
+
+> 
+> >  
+> > -		nsegs++;
+> >  		bvprv = bv;
+> >  		bvprvp = &bvprv;
+> > -		seg_size = bv.bv_len;
+> > -		sectors += bv.bv_len >> 9;
+> > +
+> > +		if (bvec_split_segs(q, &bv, &nsegs, &seg_size,
+> > +					&front_seg_size, &sectors))
+> 
+> What happened to the indent alignment here?
+
+Will fix it in next version.
+
+> 
+> > +			goto split;
+> >  
+> >  	}
+> >  
+> > @@ -296,6 +357,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+> >  	struct bio_vec bv, bvprv = { NULL };
+> >  	int cluster, prev = 0;
+> >  	unsigned int seg_size, nr_phys_segs;
+> > +	unsigned front_seg_size = bio->bi_seg_front_size;
+> >  	struct bio *fbio, *bbio;
+> >  	struct bvec_iter iter;
+> >  
+> > @@ -316,7 +378,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+> >  	seg_size = 0;
+> >  	nr_phys_segs = 0;
+> >  	for_each_bio(bio) {
+> > -		bio_for_each_segment(bv, bio, iter) {
+> > +		bio_for_each_bvec(bv, bio, iter) {
+> >  			/*
+> >  			 * If SG merging is disabled, each bio vector is
+> >  			 * a segment
+> > @@ -336,20 +398,20 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+> >  				continue;
+> >  			}
+> >  new_segment:
+> > -			if (nr_phys_segs == 1 && seg_size >
+> > -			    fbio->bi_seg_front_size)
+> > -				fbio->bi_seg_front_size = seg_size;
+> > +			if (nr_phys_segs == 1 && seg_size > front_seg_size)
+> > +				front_seg_size = seg_size;
+> 
+> Same comment as in blk_bio_segment_split(), do we still need to check
+> this if we're updating front_seg_size in bvec_split_segs()?
+
+I think we can remove it too.
+
+
+Thanks,
+Ming
