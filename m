@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA31AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43A7C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3202223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C0C4223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:01:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSHSRhN6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3202223C8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGqHRaFu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C0C4223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405584AbeKTDZ1 (ORCPT
+        id S2405606AbeKTDZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:25:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38650 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:25:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbeKTDZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:25:26 -0500
+        id S2404694AbeKTDZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:25:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2576E22353;
-        Mon, 19 Nov 2018 17:01:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A7C1223CB;
+        Mon, 19 Nov 2018 17:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646870;
-        bh=VGz86Whyi8ZztzV+zVq+qe33T/DvgTMaHepNew3S5v8=;
+        s=default; t=1542646875;
+        bh=inkfTwAR29FScLvvi0xzx1mUWDx8n5qUZkh0pOr7lgU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSHSRhN61Y4Gc7GC5gejH5wPawrbYXqAu0lWEcqsuxmI4qmb/bIgHf0CpbOCh7TTg
-         NJA+hcqaMer/UtJDJjdrwmqrIFpny7vqAvbH+YXAqAj9MdtvJfgbJ6kbF5ef31ZPi6
-         MSNj3byFTMHBQWksKcVA9Q9ncCvkJhRLsqmEAbZE=
+        b=DGqHRaFuss/U1IA2UTrv+wsiXXHLYoBnngOj5PXKlGIYXKstmlPhCx9MJPoz5hEQ1
+         gIduga0JaMMPsOCqGymvblLOAoiPcAbv+cnE/1xF7BeK4AK6Ob3UB/0/ApcznKkQB2
+         yOFQgCG2G2q5yU+U8A0GGcMzpnJBvAFeMDY2caCA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.4 123/160] xtensa: make sure bFLT stack is 16 byte aligned
-Date:   Mon, 19 Nov 2018 17:29:22 +0100
-Message-Id: <20181119162642.485703650@linuxfoundation.org>
+Subject: [PATCH 4.4 124/160] xtensa: fix boot parameters address translation
+Date:   Mon, 19 Nov 2018 17:29:23 +0100
+Message-Id: <20181119162642.546630224@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,43 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 0773495b1f5f1c5e23551843f87b5ff37e7af8f7 upstream.
+commit 40dc948f234b73497c3278875eb08a01d5854d3f upstream.
 
-Xtensa ABI requires stack alignment to be at least 16. In noMMU
-configuration ARCH_SLAB_MINALIGN is used to align stack. Make it at
-least 16.
+The bootloader may pass physical address of the boot parameters structure
+to the MMUv3 kernel in the register a2. Code in the _SetupMMU block in
+the arch/xtensa/kernel/head.S is supposed to map that physical address to
+the virtual address in the configured virtual memory layout.
 
-This fixes the following runtime error in noMMU configuration, caused by
-interaction between insufficiently aligned stack and alloca function,
-that results in corruption of on-stack variable in the libc function
-glob:
-
- Caught unhandled exception in 'sh' (pid = 47, pc = 0x02d05d65)
-  - should not happen
-  EXCCAUSE is 15
+This code haven't been updated when additional 256+256 and 512+512
+memory layouts were introduced and it may produce wrong addresses when
+used with these layouts.
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/include/asm/processor.h |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/xtensa/kernel/head.S |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/xtensa/include/asm/processor.h
-+++ b/arch/xtensa/include/asm/processor.h
-@@ -24,7 +24,11 @@
- # error Linux requires the Xtensa Windowed Registers Option.
- #endif
- 
--#define ARCH_SLAB_MINALIGN	XCHAL_DATA_WIDTH
-+/* Xtensa ABI requires stack alignment to be at least 16 */
-+
-+#define STACK_ALIGN (XCHAL_DATA_WIDTH > 16 ? XCHAL_DATA_WIDTH : 16)
-+
-+#define ARCH_SLAB_MINALIGN STACK_ALIGN
- 
- /*
-  * User space process size: 1 GB.
+--- a/arch/xtensa/kernel/head.S
++++ b/arch/xtensa/kernel/head.S
+@@ -88,9 +88,12 @@ _SetupMMU:
+ 	initialize_mmu
+ #if defined(CONFIG_MMU) && XCHAL_HAVE_PTP_MMU && XCHAL_HAVE_SPANNING_WAY
+ 	rsr	a2, excsave1
+-	movi	a3, 0x08000000
++	movi	a3, XCHAL_KSEG_PADDR
++	bltu	a2, a3, 1f
++	sub	a2, a2, a3
++	movi	a3, XCHAL_KSEG_SIZE
+ 	bgeu	a2, a3, 1f
+-	movi	a3, 0xd0000000
++	movi	a3, XCHAL_KSEG_CACHED_VADDR
+ 	add	a2, a2, a3
+ 	wsr	a2, excsave1
+ 1:
 
 
