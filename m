@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A583EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E69C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B65D20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2132020831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1hD3fzEC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B65D20831
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTVT44AD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2132020831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389164AbeKTDLt (ORCPT
+        id S2389179AbeKTDLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47874 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:11:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388196AbeKTDLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:49 -0500
+        id S2389165AbeKTDLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DC9020823;
-        Mon, 19 Nov 2018 16:47:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C87206BA;
+        Mon, 19 Nov 2018 16:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646057;
-        bh=u0kyirfyXd9Re0ugJa+loEaiFFLb6Yd4LAKA2Um3Ggc=;
+        s=default; t=1542646059;
+        bh=6vM8VTpiu7OnQDkmjkItR2kotiU9Pie+zTji6FG2pmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1hD3fzECOdiVie1LLyspKNXygRqTR8UcefSuDEwWEwtDA7iC6wiP57ydrJun3/HyR
-         zeoH8giQPfT1k9j14EcKNHrq7PXR+cjswaqqZ6supy1emWw0Zlki+TejYabia5h0RK
-         N2Eq6/wklHgR9cIUuF1Yi5HgT3ElDXiu+mKlTFrc=
+        b=DTVT44ADrbrMv8+XBvdvlKp5Gop0qeACj7QpIpXmNBkC10IVgDKqxHVaQDgaDJPB6
+         7jnkXiK7zS+9nz2yZNdzzcUP7O+zk/FvIV5fovioMlbw5kN6DnKuJsYHPi10lEboTi
+         zQcQL/UOw3GFHJnY4iLaY0YCXpcRVajb1RNpHDxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 002/124] powerpc/64/module: REL32 relocation range check
-Date:   Mon, 19 Nov 2018 17:27:36 +0100
-Message-Id: <20181119162613.409384960@linuxfoundation.org>
+Subject: [PATCH 4.14 020/124] staging:iio:ad7606: fix voltage scales
+Date:   Mon, 19 Nov 2018 17:27:54 +0100
+Message-Id: <20181119162617.429169927@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,46 +64,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-[ Upstream commit b851ba02a6f3075f0f99c60c4bc30a4af80cf428 ]
+[ Upstream commit 4ee033301c898dd0835d035d0e0eb768a3d35da1 ]
 
-The recent module relocation overflow crash demonstrated that we
-have no range checking on REL32 relative relocations. This patch
-implements a basic check, the same kernel that previously oopsed
-and rebooted now continues with some of these errors when loading
-the module:
+Fixes commit 17be2a2905a6ec9aa27cd59521495e2f490d2af0 ("staging: iio:
+ad7606: replace range/range_available with corresponding scale").
 
-  module_64: x_tables: REL32 527703503449812 out of range!
+The AD7606 devices don't have a 2.5V voltage range, they have 5V & 10V
+voltage range, which is selectable via the `gpio_range` descriptor.
 
-Possibly other relocations (ADDR32, REL16, TOC16, etc.) should also have
-overflow checks.
+The scales also seem to have been miscomputed, because when they were
+applied to the raw values, the results differ from the expected values.
+After checking the ADC transfer function in the datasheet, these were
+re-computed.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/module_64.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/staging/iio/adc/ad7606.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -656,7 +656,14 @@ int apply_relocate_add(Elf64_Shdr *sechd
+--- a/drivers/staging/iio/adc/ad7606.c
++++ b/drivers/staging/iio/adc/ad7606.c
+@@ -26,9 +26,12 @@
  
- 		case R_PPC64_REL32:
- 			/* 32 bits relative (used by relative exception tables) */
--			*(u32 *)location = value - (unsigned long)location;
-+			/* Convert value to relative */
-+			value -= (unsigned long)location;
-+			if (value + 0x80000000 > 0xffffffff) {
-+				pr_err("%s: REL32 %li out of range!\n",
-+				       me->name, (long int)value);
-+				return -ENOEXEC;
-+			}
-+			*(u32 *)location = value;
- 			break;
+ #include "ad7606.h"
  
- 		case R_PPC64_TOCSAVE:
+-/* Scales are computed as 2.5/2**16 and 5/2**16 respectively */
++/*
++ * Scales are computed as 5000/32768 and 10000/32768 respectively,
++ * so that when applied to the raw values they provide mV values
++ */
+ static const unsigned int scale_avail[2][2] = {
+-	{0, 38147}, {0, 76294}
++	{0, 152588}, {0, 305176}
+ };
+ 
+ static int ad7606_reset(struct ad7606_state *st)
 
 
