@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EF2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35CEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B31D3214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9307B2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrNx6IVd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B31D3214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nqv7MjgE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9307B2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404937AbeKTDXD (ORCPT
+        id S2404950AbeKTDXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34938 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbeKTDXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:02 -0500
+        id S2403980AbeKTDXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2E35214C4;
-        Mon, 19 Nov 2018 16:58:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BFEB2148E;
+        Mon, 19 Nov 2018 16:58:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646727;
-        bh=S6MOT+VWNCk/zUMH+63BS83Ye4WlYhgIwdaFYpzq7EQ=;
+        s=default; t=1542646729;
+        bh=i3oc0HOA1RGCBv7i87ubPJtz79+LksxjEiYKyVltE3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YrNx6IVdok/CbRXcRolcbr2oFuPtkirjM9m1pRcuZiB4TLLz+1KkwKj6QoEFJNrKF
-         S3TNGQrcyNjElMCioG3tLL7Uo/XHha8wX3nBVhZLOIG+rWXJ977gnnlzBve21GawUz
-         0k4lqZIyhEcfpXv4oK0jNegpnIoM4KC7Ff/w/UDg=
+        b=Nqv7MjgEiUPiNSNFLhHuZBS9p6bEMAzyKJymYL4Msez9s+T5+A/AzdvhwcqybntgB
+         NTdHzJ+qtTcUspWxhSaa7RzkvKGwK/fBMdhjsKJ8wYlHdcXlws0n2skg+j+PzjKtRh
+         +4V6vzyqdj7T4Rp6AUEufDd5YOanzzwTvPm5g80A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Martin Willi <martin@strongswan.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 030/160] pinctrl: ssbi-gpio: Fix pm8xxx_pin_config_get() to be compliant
-Date:   Mon, 19 Nov 2018 17:27:49 +0100
-Message-Id: <20181119162633.756232836@linuxfoundation.org>
+Subject: [PATCH 4.4 031/160] ath10k: schedule hardware restart if WMI command times out
+Date:   Mon, 19 Nov 2018 17:27:50 +0100
+Message-Id: <20181119162633.884969377@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -65,86 +63,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Martin Willi <martin@strongswan.org>
 
-[ Upstream commit b432414b996d32a1bd9afe2bd595bd5729c1477f ]
+[ Upstream commit a9911937e7d332761e8c4fcbc7ba0426bdc3956f ]
 
-If you look at "pinconf-groups" in debugfs for ssbi-gpio you'll notice
-it looks like nonsense.
+When running in AP mode, ath10k sometimes suffers from TX credit
+starvation. The issue is hard to reproduce and shows up once in a
+few days, but has been repeatedly seen with QCA9882 and a large
+range of firmwares, including 10.2.4.70.67.
 
-The problem is fairly well described in commit 1cf86bc21257 ("pinctrl:
-qcom: spmi-gpio: Fix pmic_gpio_config_get() to be compliant") and
-commit 05e0c828955c ("pinctrl: msm: Fix msm_config_group_get() to be
-compliant"), but it was pointed out that ssbi-gpio has the same
-problem.  Let's fix it there too.
+Once the module is in this state, TX credits are never replenished,
+which results in "SWBA overrun" errors, as no beacons can be sent.
+Even worse, WMI commands run in a timeout while holding the conf
+mutex for three seconds each, making any further operations slow
+and the whole system unresponsive.
 
-Fixes: b4c45fe974bc ("pinctrl: qcom: ssbi: Family A gpio & mpp drivers")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The firmware/driver never recovers from that state automatically,
+and triggering TX flush or warm restarts won't work over WMI. So
+issue a hardware restart if a WMI command times out due to missing
+TX credits. This implies a connectivity outage of about 1.4s in AP
+mode, but brings back the interface and the whole system to a usable
+state. WMI command timeouts have not been seen in absent of this
+specific issue, so taking such drastic actions seems legitimate.
+
+Signed-off-by: Martin Willi <martin@strongswan.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c |   28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+ drivers/net/wireless/ath/ath10k/wmi.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -259,22 +259,32 @@ static int pm8xxx_pin_config_get(struct
+--- a/drivers/net/wireless/ath/ath10k/wmi.c
++++ b/drivers/net/wireless/ath/ath10k/wmi.c
+@@ -1749,6 +1749,12 @@ int ath10k_wmi_cmd_send(struct ath10k *a
+ 	if (ret)
+ 		dev_kfree_skb_any(skb);
  
- 	switch (param) {
- 	case PIN_CONFIG_BIAS_DISABLE:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_NP;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_NP)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_DOWN:
--		arg = pin->bias == PM8XXX_GPIO_BIAS_PD;
-+		if (pin->bias != PM8XXX_GPIO_BIAS_PD)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_BIAS_PULL_UP:
--		arg = pin->bias <= PM8XXX_GPIO_BIAS_PU_1P5_30;
-+		if (pin->bias > PM8XXX_GPIO_BIAS_PU_1P5_30)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PM8XXX_QCOM_PULL_UP_STRENGTH:
- 		arg = pin->pull_up_strength;
- 		break;
- 	case PIN_CONFIG_BIAS_HIGH_IMPEDANCE:
--		arg = pin->disable;
-+		if (!pin->disable)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_INPUT_ENABLE:
--		arg = pin->mode == PM8XXX_GPIO_MODE_INPUT;
-+		if (pin->mode != PM8XXX_GPIO_MODE_INPUT)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_OUTPUT:
- 		if (pin->mode & PM8XXX_GPIO_MODE_OUTPUT)
-@@ -289,10 +299,14 @@ static int pm8xxx_pin_config_get(struct
- 		arg = pin->output_strength;
- 		break;
- 	case PIN_CONFIG_DRIVE_PUSH_PULL:
--		arg = !pin->open_drain;
-+		if (pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
--		arg = pin->open_drain;
-+		if (!pin->open_drain)
-+			return -EINVAL;
-+		arg = 1;
- 		break;
- 	default:
- 		return -EINVAL;
++	if (ret == -EAGAIN) {
++		ath10k_warn(ar, "wmi command %d timeout, restarting hardware\n",
++			    cmd_id);
++		queue_work(ar->workqueue, &ar->restart_work);
++	}
++
+ 	return ret;
+ }
+ 
 
 
