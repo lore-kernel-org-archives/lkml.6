@@ -2,95 +2,106 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504D2C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA75C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134AA2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:57:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134AA2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 01D302089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:58:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IGpQKqMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01D302089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeKSXUp (ORCPT
+        id S1728937AbeKSXVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:20:45 -0500
-Received: from mga18.intel.com ([134.134.136.126]:59378 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728724AbeKSXUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:20:45 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 04:57:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="107493545"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Nov 2018 04:57:06 -0800
-Date:   Mon, 19 Nov 2018 14:57:04 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>, stable@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 08/17] tpm: call tpm2_flush_space() on error in
- tpm_try_transmit()
-Message-ID: <20181119125704.GC8755@linux.intel.com>
-References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
- <20181116123845.15705-9-jarkko.sakkinen@linux.intel.com>
- <20181116161957.GG1706@sasha-vm>
- <20181118073618.GD5897@linux.intel.com>
- <20181118232157.GA1711@sasha-vm>
+        Mon, 19 Nov 2018 18:21:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36742 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728903AbeKSXVv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:21:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5ODMqUXIxXlq8NQaGVEI5LGykRgTtYVNr5q1ok1UGiQ=; b=IGpQKqMkciwDKHo7ruv/LuIQU
+        R43GWF+/4wGRLhswNCXDNsb3Qq4Z+SGGAZbaoSBN3AdPkwxiGGyK/PlFQRE3H2biKgaXMQlDZgjQs
+        EP11ipfPrnYPDrDKXDQ5yEL/xft9VcnlD/nHtLo1GE9XEbZdstxoGlz5gluhVwKiFIqSpNJOfvLdt
+        Lp2Vi6i2RqvfmeFcu2PTKPRMO0UMNOOGietR5lSuAQ5vZNIXiNFOd77P7WfenX1VImWCYu+ZGksE5
+        gCdtS5v41FnhSPyUb2ClKsyDz58UeTI0+YTdQk0zdgtSc/fMBfX5nnRJSqaAyd8/+reROxKtQfHbU
+        YbPQedCoQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gOj7w-0001gt-Nj; Mon, 19 Nov 2018 12:58:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 41F0020298BFC; Mon, 19 Nov 2018 13:58:07 +0100 (CET)
+Date:   Mon, 19 Nov 2018 13:58:07 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/10] perf/core: Add macro to test for event exclusion
+ flags
+Message-ID: <20181119125807.GD9761@hirez.programming.kicks-ass.net>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+ <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181118232157.GA1711@sasha-vm>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1542363853-13849-2-git-send-email-andrew.murray@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 06:21:57PM -0500, Sasha Levin wrote:
-> There's no "preferred" approach really. I try to warn about cases like
-> this early because the response rates to Greg's "FAILED" email seem to
-> be low - by the time they are sent out people are done with that code
-> and have moved on.
+On Fri, Nov 16, 2018 at 10:24:04AM +0000, Andrew Murray wrote:
+> Add a macro that tests if any of the perf event exclusion flags
+> are set on a given event.
+
+It is in fact an inline function, not a CPP macro.
+
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+>  include/linux/perf_event.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
-> In this scenario, for exmaple, this patch would not apply to any stable
-> tree because it depends on a previous patch in this series that was not
-> tagged for stable. My hopes are that if I warn you about this early you
-> can work around this (for example, by marking that prior patch for
-> stable as well) so you won't need to deal with this patch again in a few
-> weeks.
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 53c500f..89ee7fa 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -1004,6 +1004,15 @@ perf_event__output_id_sample(struct perf_event *event,
+>  extern void
+>  perf_log_lost_samples(struct perf_event *event, u64 lost);
+>  
+> +static inline bool event_has_exclude_flags(struct perf_event *event)
+> +{
+> +	struct perf_event_attr *attr = &event->attr;
+> +
+> +	return attr->exclude_idle || attr->exclude_user ||
+> +	       attr->exclude_kernel || attr->exclude_hv ||
+> +	       attr->exclude_guest || attr->exclude_host;
+> +}
+> +
+>  static inline bool is_sampling_event(struct perf_event *event)
+>  {
+>  	return event->attr.sample_period != 0;
+> -- 
+> 2.7.4
 > 
-> There's no need to change anything about your flow if it works for you.
-
-Ok, I see. Yeah, it is just how I organize my work. Rather solve the
-patch dependency sudoku one time than two times.
-
-When I maintain a subsystem I've thought that it is my responsibility to
-always do that and not wait someone else to do it for me :-) That is the
-responsibility part of the equation when you have the power to decide
-what gets in.
-
-Right now I have two failed merges in my queue that I plan to take care
-of them next week.
-
-> Thanks,
-> Sasha
-
-/Jarkko
