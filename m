@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D295C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98C4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 661FA20659
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F45224E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:02:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvPtMlsQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661FA20659
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yIHS2wNj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92F45224E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406017AbeKTD06 (ORCPT
+        id S2405193AbeKTD1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:26:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40694 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:27:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405038AbeKTD05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:26:57 -0500
+        id S2405038AbeKTD07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:26:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7D9B224B3;
-        Mon, 19 Nov 2018 17:02:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72032224E3;
+        Mon, 19 Nov 2018 17:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646960;
-        bh=kyzV9064eoYDXGJahdlO5vr+xrC2s07VItNlBk04//8=;
+        s=default; t=1542646962;
+        bh=4GPUu5LxXolfyEjD0+x08K4OBkcUMXJF9Qt3oPc2FVQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CvPtMlsQqM7M6N7BmG8BZnRRlk154pdau9A8WSp+e3vEDhuiX1X/mTsu1/7SK7l8c
-         ZrU8tVPa2CLw91gwxUiFph+XNGRHk2wUc56O715Kx2MWVK00Lp/+wFuUOdt++I8Wr2
-         NObbPqRxQ9zDS40LYN5IJw0KSHZ7rjZmIfpzH9UY=
+        b=yIHS2wNj8VQjlzo8eDZiLgad30WGxg+dzj3nK42dtIXfC8HMGGd55TY4PyuiYxnhW
+         2FQ7bvfKr1JZ6qPAn6ezG+f+KEUHJ52bAvDKW/rChi8HadqtcJs+uPyyeK+uo0hhl2
+         2FVouigA6XA0MLOUm2jeTsIiZzljMnaWsoEd8AZ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.4 158/160] drm/rockchip: Allow driver to be shutdown on reboot/kexec
-Date:   Mon, 19 Nov 2018 17:29:57 +0100
-Message-Id: <20181119162644.478345427@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+Subject: [PATCH 4.4 159/160] drm/dp_mst: Check if primary mstb is null
+Date:   Mon, 19 Nov 2018 17:29:58 +0100
+Message-Id: <20181119162644.519534316@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,54 +62,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
 
-commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5 upstream.
+commit 23d8003907d094f77cf959228e2248d6db819fa7 upstream.
 
-Leaving the DRM driver enabled on reboot or kexec has the annoying
-effect of leaving the display generating transactions whilst the
-IOMMU has been shut down.
+Unfortunately drm_dp_get_mst_branch_device which is called from both
+drm_dp_mst_handle_down_rep and drm_dp_mst_handle_up_rep seem to rely
+on that mgr->mst_primary is not NULL, which seem to be wrong as it can be
+cleared with simultaneous mode set, if probing fails or in other case.
+mgr->lock mutex doesn't protect against that as it might just get
+assigned to NULL right before, not simultaneously.
 
-In turn, the IOMMU driver (which shares its interrupt line with
-the VOP) starts warning either on shutdown or when entering the
-secondary kernel in the kexec case (nothing is expected on that
-front).
+There are currently bugs 107738, 108616 bugs which crash in
+drm_dp_get_mst_branch_device, caused by this issue.
 
-A cheap way of ensuring that things are nicely shut down is to
-register a shutdown callback in the platform driver.
+v2: Refactored the code, as it was nicely noticed.
+    Fixed Bugzilla bug numbers(second was 108616, but not 108816)
+    and added links.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Tested-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180805124807.18169-1-marc.zyngier@arm.com
+[changed title and added stable cc]
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
 Cc: stable@vger.kernel.org
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108616
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=107738
+Link: https://patchwork.freedesktop.org/patch/msgid/20181109090012.24438-1-stanislav.lisovskiy@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/drm_dp_mst_topology.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -547,6 +547,11 @@ static int rockchip_drm_platform_remove(
- 	return 0;
- }
+--- a/drivers/gpu/drm/drm_dp_mst_topology.c
++++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+@@ -1225,6 +1225,9 @@ static struct drm_dp_mst_branch *drm_dp_
+ 	mutex_lock(&mgr->lock);
+ 	mstb = mgr->mst_primary;
  
-+static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
-+{
-+	rockchip_drm_platform_remove(pdev);
-+}
++	if (!mstb)
++		goto out;
 +
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -556,6 +561,7 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
-+	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
+ 	for (i = 0; i < lct - 1; i++) {
+ 		int shift = (i % 2) ? 0 : 4;
+ 		int port_num = (rad[i / 2] >> shift) & 0xf;
 
 
