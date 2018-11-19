@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EC0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F7B0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E0A9214D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 278692148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKjsXOyP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E0A9214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rYcweuED"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 278692148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406840AbeKTD3p (ORCPT
+        id S2406853AbeKTD3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44486 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406762AbeKTD3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:43 -0500
+        id S2405919AbeKTD3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A680E214DA;
-        Mon, 19 Nov 2018 17:05:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A8932148E;
+        Mon, 19 Nov 2018 17:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647126;
-        bh=oVHs1K6JN8iBmHFMSHjU++BTEp6qXEu2Y5es14JNpdY=;
+        s=default; t=1542647128;
+        bh=ROXOldMVVOQgOslADCrnDHIu/cktbqVfTGGIf4VxY5Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UKjsXOyPUDOVUONXrK/ebhTNZbPc1EWyLNuFe/tW3cr300umGB7jxr/paAmRF2FAF
-         RgSq5VWDhYoDBgy9863ha4XDtBMKNBrPCUq3xqq6pIxp9nFqsLdxbUrPzVB70aI0jd
-         v0gXJDScEDO2SaKWNTJxgOsUU1p9J628adGlmL2Q=
+        b=rYcweuED77qJZshuAiNofheMsq9VEuh9m4dMMNMMCfK7qyk3J7tSmRkHEkPcjMIP4
+         ZHM6vsYG1m50+WOmwdQfD/MhsfkB+czH4OZsifizmYMIPJghd0mZaVGG+jGzPvjRFK
+         BDA1CcbbGfUJXquLNbzvdsP9GiddZI+XPeRlUOrs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Marco Felsch <m.felsch@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 59/90] powerpc/boot: Ensure _zimage_start is a weak symbol
-Date:   Mon, 19 Nov 2018 17:29:41 +0100
-Message-Id: <20181119162630.259245013@linuxfoundation.org>
+Subject: [PATCH 3.18 60/90] media: tvp5150: fix width alignment during set_selection()
+Date:   Mon, 19 Nov 2018 17:29:42 +0100
+Message-Id: <20181119162630.364548846@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,62 +63,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Marco Felsch <m.felsch@pengutronix.de>
 
-[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
+[ Upstream commit bd24db04101f45a9c1d874fe21b0c7eab7bcadec ]
 
-When building with clang crt0's _zimage_start is not marked weak, which
-breaks the build when linking the kernel image:
+The driver ignored the width alignment which exists due to the UYVY
+colorspace format. Fix the width alignment and make use of the the
+provided v4l2 helper function to set the width, height and all
+alignments in one.
 
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058 g       .text  0000000000000000 _zimage_start
+Fixes: 963ddc63e20d ("[media] media: tvp5150: Add cropping support")
 
- ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
- (.text+0x58): multiple definition of '_zimage_start';
- arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
-
-Clang requires the .weak directive to appear after the symbol is
-declared. The binutils manual says:
-
- This directive sets the weak attribute on the comma separated list of
- symbol names. If the symbols do not already exist, they will be
- created.
-
-So it appears this is different with clang. The only reference I could
-see for this was an OpenBSD mailing list post[1].
-
-Changing it to be after the declaration fixes building with Clang, and
-still works with GCC.
-
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058  w      .text	0000000000000000 _zimage_start
-
-Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
-
-[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/boot/crt0.S |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/i2c/tvp5150.c |   14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -47,8 +47,10 @@ p_end:		.long	_end
- p_pstack:	.long	_platform_stack_top
- #endif
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -864,9 +864,6 @@ static int tvp5150_s_crop(struct v4l2_su
  
--	.weak	_zimage_start
- 	.globl	_zimage_start
-+	/* Clang appears to require the .weak directive to be after the symbol
-+	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
-+	.weak	_zimage_start
- _zimage_start:
- 	.globl	_zimage_start_lib
- _zimage_start_lib:
+ 	/* tvp5150 has some special limits */
+ 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
+-	rect.width = clamp_t(unsigned int, rect.width,
+-			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
+-			     TVP5150_H_MAX - rect.left);
+ 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
+ 
+ 	/* Calculate height based on current standard */
+@@ -880,9 +877,16 @@ static int tvp5150_s_crop(struct v4l2_su
+ 	else
+ 		hmax = TVP5150_V_MAX_OTHERS;
+ 
+-	rect.height = clamp_t(unsigned int, rect.height,
++	/*
++	 * alignments:
++	 *  - width = 2 due to UYVY colorspace
++	 *  - height, image = no special alignment
++	 */
++	v4l_bound_align_image(&rect.width,
++			      TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
++			      TVP5150_H_MAX - rect.left, 1, &rect.height,
+ 			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
+-			      hmax - rect.top);
++			      hmax - rect.top, 0, 0);
+ 
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
+ 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
 
 
