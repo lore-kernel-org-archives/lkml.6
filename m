@@ -2,87 +2,95 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34907C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A16DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F742145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bx8EobnR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F742145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwfinger.net
+	by mail.kernel.org (Postfix) with ESMTP id 1A9342145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:41:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9342145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389910AbeKTEFj (ORCPT
+        id S2389584AbeKTDNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:05:39 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44679 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389196AbeKTEFi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:05:38 -0500
-Received: by mail-ot1-f66.google.com with SMTP id z33so28386425otz.11;
-        Mon, 19 Nov 2018 09:41:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=i3aw8l6515lnEIYuI3zH+3p6IRogzSbTUw4yitJl+Vs=;
-        b=Bx8EobnRDPP7bHZJrHupC/t/PojAU6dAINe3YtuY4Ovy9SbRCD5+s3F3hSdZs0h1Gn
-         nyFENz0YtwVo9CMtmZROp+Cv6MWS6k/xc4cPtgH4lWe37OriT9I952/UOblDdP2IW2c4
-         lJBRKhHmj03i4OksLC4T2KW7bgvKpfiVUQuwEbqOoZftuK/bT2qDmFGiuZQw7Cl2qZCv
-         P8iJe5/oAccBzIfg4Hsd7oLWr5yUBNz+6pADDi5uatndzVDJAUQn6YqwYJ7nHHl6UPJt
-         x1geHsv5yX6s6RBgulCrlJA1pVOxZEuZvftUYJK76npBaPPNmRK8MvoqfZCthTf+IFkf
-         90Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=i3aw8l6515lnEIYuI3zH+3p6IRogzSbTUw4yitJl+Vs=;
-        b=pqio+S6x1lJGVGlsIb8wC3BTpAOWiMzDvV5wv0GrA1rhMHfNcgY9foTTwwjyUcEgvt
-         gg+ydolg7qK2G2oVcQzBRtCb9Z57TVRyetVdUaTdiSaTHI6CQ4o9WseLBWzdiTpudCqF
-         hIb713vgl2hE4mWe+7MPOJXQNha2zgwbDTdQn7JDSInd5F3gFjA7HLkD7Oe6ULoD5f2Q
-         SGslV3VI34TjPLU+5vfHr5SqVi5p3n1oeW15ww/7wH8McNU1A0Bon95Jk67N92ePe2cj
-         xN0KiK2Qkg8MRXU+XgDP4rDOnKm0YJ5pgJ2U1ozddiY+rstmHD/BejrvM9TLA5lne4w7
-         qLOg==
-X-Gm-Message-State: AGRZ1gJkLvjj3SaelctQ4T85+zNoqtZCsM6D9onZ1eJA7Zy3bYJ414ul
-        XJv+yYRw5yE0Sip0Su4732sS8KwM
-X-Google-Smtp-Source: AJdET5d4TiSEVamPoh97izEUmAENkuf8mCOSe0ws8g7TypsHVjF9TJzaHhir5LhMKP4zBd5Qkh+2sg==
-X-Received: by 2002:a9d:5b51:: with SMTP id e17mr14520651otj.44.1542649269399;
-        Mon, 19 Nov 2018 09:41:09 -0800 (PST)
-Received: from [192.168.1.104] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id q13sm3005917otb.5.2018.11.19.09.41.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 09:41:08 -0800 (PST)
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Priit Laes <plaes@plaes.org>, Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
- <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
- <d630ca3e-4070-5395-54c2-e20e0c552dc3@lwfinger.net>
- <20181118082327.ttrz2nl5owi2hoqv@plaes.org>
- <df798743-10bb-0455-be83-2fb59eca3209@lwfinger.net>
- <87lg5pcppn.fsf@kamboji.qca.qualcomm.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <35b98c89-1a5c-79d8-3d00-1de1044bb9ab@lwfinger.net>
-Date:   Mon, 19 Nov 2018 11:41:10 -0600
+        Mon, 19 Nov 2018 22:13:11 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36468 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387988AbeKTDNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5B3E9AF6C;
+        Mon, 19 Nov 2018 16:48:55 +0000 (UTC)
+Subject: Re: Memory hotplug softlock issue
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Baoquan He <bhe@redhat.com>, David Hildenbrand <david@redhat.com>,
+        linux-mm@kvack.org, pifang@redhat.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        aarcange@redhat.com, Mel Gorman <mgorman@suse.de>,
+        Hugh Dickins <hughd@google.com>
+References: <20181115131927.GT23831@dhcp22.suse.cz>
+ <20181115133840.GR2653@MiWiFi-R3L-srv>
+ <20181115143204.GV23831@dhcp22.suse.cz>
+ <20181116012433.GU2653@MiWiFi-R3L-srv>
+ <20181116091409.GD14706@dhcp22.suse.cz>
+ <20181119105202.GE18471@MiWiFi-R3L-srv>
+ <20181119124033.GJ22247@dhcp22.suse.cz>
+ <20181119125121.GK22247@dhcp22.suse.cz>
+ <20181119141016.GO22247@dhcp22.suse.cz>
+ <eb979e1e-e0fc-b1a3-b6cc-70b503a74a20@suse.cz>
+ <20181119164618.GQ22247@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <c7c20cc5-c2a4-ce61-3d97-56c8acfb13ec@suse.cz>
+Date:   Mon, 19 Nov 2018 17:46:03 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <87lg5pcppn.fsf@kamboji.qca.qualcomm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181119164618.GQ22247@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -90,79 +98,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 4:43 AM, Kalle Valo wrote:
-> Larry Finger <Larry.Finger@lwfinger.net> writes:
+On 11/19/18 5:46 PM, Michal Hocko wrote:
+> On Mon 19-11-18 17:36:21, Vlastimil Babka wrote:
+>>
+>> So what protects us from locking a page whose refcount dropped to zero?
+>> and is being freed? The checks in freeing path won't be happy about a
+>> stray lock.
 > 
->>>>> @@ -1570,10 +1571,10 @@ static u16 b43_nphy_gen_load_samples(struct b43_wldev *dev, u32 freq, u16 max,
->>>>>     	angle = 0;
->>>>>     	for (i = 0; i < len; i++) {
->>>>> -		samples[i] = b43_cordic(angle);
->>>>> +		samples[i] = cordic_calc_iq(angle);
->>>>>     		angle += rot;
->>>>> -		samples[i].q = CORDIC_CONVERT(samples[i].q * max);
->>>>> -		samples[i].i = CORDIC_CONVERT(samples[i].i * max);
->>>>> +		samples[i].q = CORDIC_FLOAT(samples[i].q * max);
->>>>> +		samples[i].i = CORDIC_FLOAT(samples[i].i * max);
->>>>>     	}
->>>>>     	i = b43_nphy_load_samples(dev, samples, len);
->>>>
->>>> There is a fundamental flaw in this patch. Routine b43_cordic() takes an
->>>> angle in degrees scaled by 2^16, whereas cordic_calc_iq() takes an angle in
->>>> degrees. For a given input, the two routines must get different answers. At
->>>> a minimum, the calculation of rot would need to remove the left shift of 16.
->>>
->>> Thanks for the hint. I modified my "test harness" a bit to plot out values
->>> from -360 .. 360 and transformed the theta for b43_cordic argument
->>> using CORDIC_FIXED macro:
->>>
->>> b43_cordic(CORDIC_FIXED(theta));
->>> cordic_calc_iq(theta);
->>>
->>> Then I plotted the results and well.. they are not that pretty.
->>> While the results give
->>> identical answers between certain ranges of degrees, the cordic
->>> algorithm for b43 seems
->>> to be broken for certain ranges: (-270..-180 ; -90 .. 0; 90.. 180 and 270..360).
->>>
->>> You can find my test harnesses here:
->>>
->>> https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
->>
->> I found a problem with the b43 implementation. The local variables for
->> that routine includes
->>
->>          u32 angle = 0;
->>
->> If one looks further down in the algorithm, if the reduced value of
->> "theta" is less than 0, then "angle" should be negative. That causes
->> the calculation to blow up. This explains why some ranges of angles
->> got the same result for both routines. When that declaration is
->> changed to "int angle = 0", the two routines give the same answer for
->> all inputs.
->>
->> My test setup has a hardware failure, thus I cannot test your patch,
->> but I now believe it to be correct. Thus your first and third patches
->> may be annotated with
->> ACKed-by: Larry Finger <Larry.Finger@lwfinger.net>
->>
->> One thing that should be done is to fix the error in the b43 code for
->> stable as it was introduced in 2.6.34. I propose adding the attached
->> patched to your series placed between your current 2nd and 3rd patches
->> so that the old kernels get fixed. Of course, your 3rd patch will need
->> to be revised. If all 4 of the patches get submitted together there
->> will be no problems with the timing. My change will exist for seconds
->> in the mainline kernel, but it will get propagated back through
->> stable.
-> 
-> Sorry Larry, I'm not fully understanding what you mean here. So I'm
-> going to just drop the whole series and assume that Priit will submit a
-> new version. Please let me know if I should do something else.
+> Nothing really prevents that. But does it matter. The worst that might
+> happen is that we lock a freed or reused page. Who would complain?
 
-Dropping the entire series is the right thing to do. The complication is that 
-with Priit's changes, my fix is irrelevant for HEAD, but it is still needed for 
-stable. My patch must be submitted before his 3rd one, but then his will not 
-apply cleanly.If he respins his patches and puts mine in the series before he 
-changes b43, then my patch will be available for stable even though his next 
-patch will replace my new code. That seems to be the best approach.
+free_pages_check() for example
 
-Larry
+PAGE_FLAGS_CHECK_AT_FREE includes PG_locked
+
