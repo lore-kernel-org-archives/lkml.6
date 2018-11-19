@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F6BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D878C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2FB206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7DD72147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SWk3/tX8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2FB206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2Pp/XFU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DD72147A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389886AbeKTDPl (ORCPT
+        id S2390319AbeKTDPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:15:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53342 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:15:40 -0500
+        id S2388976AbeKTDPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:15:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E21ED206BA;
-        Mon, 19 Nov 2018 16:51:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FC3E213A2;
+        Mon, 19 Nov 2018 16:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646287;
-        bh=GLsB5ZtA/tl+z56xkqBjGH1heMcnrSRT3MypvEv3VlE=;
+        s=default; t=1542646290;
+        bh=dSqytGO/JyRw3Cd7GI45KBSZcCQ3sj2KFlpvkiXQCls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SWk3/tX84y7NoT5WFgmSlG6x8D4ZnCatsndAdqkiA5Mr3XjdwaoWYCl0PzQfSuXoX
-         rReNFHS5YRiXdWTqUxkfZ+57rnfoyQ7wftrUF5Q+2w4t+gBHtl+tIqqXXOxVxQkBXj
-         UUy8jPjEpk1+4a8oy/GKIZJdrh1aOYFj8EUqfVDk=
+        b=b2Pp/XFUo5FTAqDJ8d5yVRfR+hv6O6/h3F+B8ifLd8RJmvZPiwAnQwKKAjmzHaz7T
+         D6QMDQLBdicWadETrZkR4R2dIaTg2TOm/lU1L6v2xEL7+OHLPpYcyUzqyjkhRuwMxM
+         h98fo0iOJ/PJdqRPKEVblHqmr+i7eU2HV8Ct/TkU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Vicente Bergas <vicencb@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.14 107/124] drm/rockchip: Allow driver to be shutdown on reboot/kexec
-Date:   Mon, 19 Nov 2018 17:29:21 +0100
-Message-Id: <20181119162632.180161006@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.14 108/124] drm/amdgpu: add missing CHIP_HAINAN in amdgpu_ucode_get_load_type
+Date:   Mon, 19 Nov 2018 17:29:22 +0100
+Message-Id: <20181119162632.285058024@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -62,54 +62,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 7f3ef5dedb146e3d5063b6845781ad1bb59b92b5 upstream.
+commit d9997b64c52b70bd98c48f443f068253621d1ffc upstream.
 
-Leaving the DRM driver enabled on reboot or kexec has the annoying
-effect of leaving the display generating transactions whilst the
-IOMMU has been shut down.
+This caused a confusing error message, but there is functionally
+no problem since the default method is DIRECT.
 
-In turn, the IOMMU driver (which shares its interrupt line with
-the VOP) starts warning either on shutdown or when entering the
-secondary kernel in the kexec case (nothing is expected on that
-front).
-
-A cheap way of ensuring that things are nicely shut down is to
-register a shutdown callback in the platform driver.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Tested-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180805124807.18169-1-marc.zyngier@arm.com
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/rockchip/rockchip_drm_drv.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_drv.c
-@@ -425,6 +425,11 @@ static int rockchip_drm_platform_remove(
- 	return 0;
- }
- 
-+static void rockchip_drm_platform_shutdown(struct platform_device *pdev)
-+{
-+	rockchip_drm_platform_remove(pdev);
-+}
-+
- static const struct of_device_id rockchip_drm_dt_ids[] = {
- 	{ .compatible = "rockchip,display-subsystem", },
- 	{ /* sentinel */ },
-@@ -434,6 +439,7 @@ MODULE_DEVICE_TABLE(of, rockchip_drm_dt_
- static struct platform_driver rockchip_drm_platform_driver = {
- 	.probe = rockchip_drm_platform_probe,
- 	.remove = rockchip_drm_platform_remove,
-+	.shutdown = rockchip_drm_platform_shutdown,
- 	.driver = {
- 		.name = "rockchip-drm",
- 		.of_match_table = rockchip_drm_dt_ids,
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+@@ -247,6 +247,7 @@ amdgpu_ucode_get_load_type(struct amdgpu
+ 	case CHIP_PITCAIRN:
+ 	case CHIP_VERDE:
+ 	case CHIP_OLAND:
++	case CHIP_HAINAN:
+ 		return AMDGPU_FW_LOAD_DIRECT;
+ #endif
+ #ifdef CONFIG_DRM_AMDGPU_CIK
 
 
