@@ -2,76 +2,58 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6782EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6D3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27AFF20823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:30:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="f+U1n4lS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27AFF20823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
+	by mail.kernel.org (Postfix) with ESMTP id 98D1720870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:31:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98D1720870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731493AbeKTI4j (ORCPT
+        id S1731527AbeKTI5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:56:39 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40430 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730287AbeKTI4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:56:39 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y16so51467872qki.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:30:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=ChrHpLCAlgKW98ZZQWgvZT7uaNwjORDbt49QnZXL0AY=;
-        b=f+U1n4lStu2OceqxbH1kZ6rlfZNJ+aVTJ8+JVmujzO6KduTEp0GPjfuYBo+5y3rMF9
-         jagC++7Rl7XXLIqWEf0qIWXXlZMC9/mmpQzNM9F6PWJd+mgmxo8+LCf+kykLfpyB6eC6
-         SQ576W3wULMHpCw3ieKrXQ/9jNYVfAJok3//gLZeboRj2uKNbLRIYxJkEWxg6jvPba03
-         iG6ZkhfbyGoOs5KMdYKSV8GJIpIaN8LbS8LxjBKbz5BR29lAokp9sGWF+pq3dwXL393N
-         OIHh8fFTtpqoirQ/ZYhqx6Y1h1FZMDNPw6tQ5lXo1Y9AVL1YVxOs7xxVueS44QJOKECr
-         xv9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=ChrHpLCAlgKW98ZZQWgvZT7uaNwjORDbt49QnZXL0AY=;
-        b=lUNopQlTUKOZNl46X8zh23MkOZfduS9ytVQh3QtlnNevYY2RRxjvNsJsDddHtbJcIs
-         p6NRCjSvKk1/s7mU05G/ieGOKe9H9JeKfk48y9awTlpQTzNeIo2bBd6+fOLrxdiycWtR
-         zvXdoc+3VoYpMuvykLUiksFFEf2elLzylX9LFDfLkukqlsoGOEQChEetlJMllway65hM
-         7vQhom/gcvQM4jjDzACTr+TixOIk6zajDV5SnrPn5T432w58EpFIFH+OfxEJfLOWkGTz
-         YWbVJBouP2jDtYfL8hpBvB8+eysSMrq+klosUPTPWSp4xwtn9JTksFf00ziXUzKeAWJC
-         ZdJw==
-X-Gm-Message-State: AGRZ1gIT5mCHfNdoeYTRa1dp/BrrePd2GF5WHFXNeJfExiqUuwHDWcOZ
-        2sJhHucgfoteYYZ3I7C1bUKn1Q==
-X-Google-Smtp-Source: AJdET5fIqbUqyZE1qNs3gMWz00HN9zocoaWlrK5lttwJ/DOOOCF5fEoNgo+v1zqKc2u6CGoS4fW5qA==
-X-Received: by 2002:a0c:ace4:: with SMTP id n33mr23623350qvc.79.1542666649315;
-        Mon, 19 Nov 2018 14:30:49 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id 21sm1682005qkr.89.2018.11.19.14.30.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 14:30:49 -0800 (PST)
-Date:   Mon, 19 Nov 2018 14:30:45 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Salil Mehta <salil.mehta@huawei.com>
-Cc:     <davem@davemloft.net>, <yisen.zhuang@huawei.com>,
-        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
-Subject: Re: [PATCH net-next 3/8] net: hns3: Add "FD flow table" info query
- function
-Message-ID: <20181119143045.5a147396@cakuba.netronome.com>
-In-Reply-To: <20181119211845.23168-4-salil.mehta@huawei.com>
-References: <20181119211845.23168-1-salil.mehta@huawei.com>
-        <20181119211845.23168-4-salil.mehta@huawei.com>
-Organization: Netronome Systems, Ltd.
+        Tue, 20 Nov 2018 03:57:07 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42219 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728650AbeKTI5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:57:07 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3DB862074F; Mon, 19 Nov 2018 23:31:16 +0100 (CET)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E4257206D8;
+        Mon, 19 Nov 2018 23:31:15 +0100 (CET)
+Date:   Mon, 19 Nov 2018 23:31:14 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+Message-ID: <20181119233114.3c5075e7@bbrezillon>
+In-Reply-To: <90f42104-a6bd-54e7-959c-ebb906c6019a@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+        <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+        <20181119151009.490413d9@bbrezillon>
+        <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+        <20181119154338.2dfa7a5a@bbrezillon>
+        <4c0683d3-fe9d-5a10-6f5c-4774024cb12a@gmail.com>
+        <20181119162127.71d0665d@bbrezillon>
+        <3f791a3c-4a2e-5d43-1026-e1e7b879b562@gmail.com>
+        <20181119231954.333699f4@bbrezillon>
+        <9e217c7c-6626-d683-2d99-0b7571043b3b@gmail.com>
+        <20181119232517.49b39e25@bbrezillon>
+        <90f42104-a6bd-54e7-959c-ebb906c6019a@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,24 +62,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018 21:18:40 +0000, Salil Mehta wrote:
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej
-> new file mode 100644
-> index 000000000000..be7d0dea06e7
-> --- /dev/null
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h.rej
-> @@ -0,0 +1,12 @@
-> +*************** int hclge_set_vlan_filter(struct hnae3_handle *handle, __be16 proto,
-> +*** 800,803 ****
-> +  void hclge_reset_vf_queue(struct hclge_vport *vport, u16 queue_id);
-> +  int hclge_cfg_flowctrl(struct hclge_dev *hdev);
-> +  int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id);
-> +  #endif
-> +--- 800,804 ----
-> +  void hclge_reset_vf_queue(struct hclge_vport *vport, u16 queue_id);
-> +  int hclge_cfg_flowctrl(struct hclge_dev *hdev);
-> +  int hclge_func_reset_cmd(struct hclge_dev *hdev, int func_id);
-> ++ int hclge_dbg_run_cmd(struct hnae3_handle *handle, char *cmd_buf);
-> +  #endif
+On Mon, 19 Nov 2018 23:29:00 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-You probably don't need this.
+> On 11/19/2018 11:25 PM, Boris Brezillon wrote:
+> > On Mon, 19 Nov 2018 23:22:45 +0100
+> > Marek Vasut <marek.vasut@gmail.com> wrote:
+> >   
+> >> On 11/19/2018 11:19 PM, Boris Brezillon wrote:  
+> >>> On Mon, 19 Nov 2018 23:11:31 +0100
+> >>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>     
+> >>>> On 11/19/2018 04:21 PM, Boris Brezillon wrote:    
+> >>>>> On Mon, 19 Nov 2018 16:12:41 +0100
+> >>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>       
+> >>>>>> On 11/19/2018 03:43 PM, Boris Brezillon wrote:      
+> >>>>>>> On Mon, 19 Nov 2018 15:14:07 +0100
+> >>>>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>>>         
+> >>>>>>>> On 11/19/2018 03:10 PM, Boris Brezillon wrote:        
+> >>>>>>>>> On Mon, 19 Nov 2018 14:49:31 +0100
+> >>>>>>>>> Marek Vasut <marek.vasut@gmail.com> wrote:
+> >>>>>>>>>           
+> >>>>>>>>>> On 11/19/2018 11:01 AM, Mason Yang wrote:          
+> >>>>>>>>>>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+> >>>>>>>>>>>
+> >>>>>>>>>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> >>>>>>>>>>> ---
+> >>>>>>>>>>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+> >>>>>>>>>>>  1 file changed, 33 insertions(+)
+> >>>>>>>>>>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>>>>
+> >>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>>>> new file mode 100644
+> >>>>>>>>>>> index 0000000..8286cc8
+> >>>>>>>>>>> --- /dev/null
+> >>>>>>>>>>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>>>>>>>>> @@ -0,0 +1,33 @@
+> >>>>>>>>>>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+> >>>>>>>>>>> +----------------------------------------------------
+> >>>>>>>>>>> +
+> >>>>>>>>>>> +Required properties:
+> >>>>>>>>>>> +- compatible: should be "renesas,rpc-r8a77995"
+> >>>>>>>>>>> +- #address-cells: should be 1
+> >>>>>>>>>>> +- #size-cells: should be 0
+> >>>>>>>>>>> +- reg: should contain 2 entries, one for the registers and one for the direct
+> >>>>>>>>>>> +       mapping area
+> >>>>>>>>>>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> >>>>>>>>>>> +- interrupts: interrupt line connected to the RPC SPI controller            
+> >>>>>>>>>>
+> >>>>>>>>>> Do you also plan to support the RPC HF mode ? And if so, how would that
+> >>>>>>>>>> look in the bindings ?          
+> >>>>>>>>>
+> >>>>>>>>> Not sure this approach is still accepted, but that's how we solved the
+> >>>>>>>>> problem for the flexcom block [1].
+> >>>>>>>>>
+> >>>>>>>>> [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt          
+> >>>>>>>>
+> >>>>>>>> That looks pretty horrible.
+> >>>>>>>>
+> >>>>>>>> In U-Boot we check whether the device hanging under the controller node
+> >>>>>>>> is JEDEC SPI flash or CFI flash and based on that decide what the config
+> >>>>>>>> of the controller should be (SPI or HF). Not sure that's much better,but
+> >>>>>>>> at least it doesn't need extra nodes which do not really represent any
+> >>>>>>>> kind of real hardware.
+> >>>>>>>>        
+> >>>>>>>
+> >>>>>>> The subnodes are not needed, you can just have a property that tells in
+> >>>>>>> which mode the controller is supposed to operate, and the MFD would
+> >>>>>>> create a sub-device that points to the same device_node.        
+> >>>>>>
+> >>>>>> Do you even need a dedicated property ? I think you can decide purely on
+> >>>>>> what node is hanging under the controller (jedec spi nor or cfi nor).      
+> >>>>>
+> >>>>> Yes, that could work if they have well-known compatibles. As soon as
+> >>>>> people start using flash-specific compats (like some people do for
+> >>>>> their SPI NORs) it becomes a maintenance burden.      
+> >>>>
+> >>>> Which, on this controller, is very likely never gonna happen. Once it
+> >>>> does , we can add a custom property.
+> >>>>    
+> >>>>>>> Or we can have
+> >>>>>>> a single driver that decides what to declare (a spi_controller or flash
+> >>>>>>> controller), but you'd still have to decide where to place this
+> >>>>>>> driver...        
+> >>>>>>
+> >>>>>> I'd definitely prefer a single driver.
+> >>>>>>      
+> >>>>>
+> >>>>> Where would you put this driver? I really don't like the idea of having
+> >>>>> MTD drivers spread over the tree. Don't know what's Mark's opinion on
+> >>>>> this matter.      
+> >>>>
+> >>>> Well, it's both CFI (hyperflash) and SF (well, SPI flash) controller, so
+> >>>> where would this go ?
+> >>>>    
+> >>>
+> >>> The spi-mem layer is in drivers/spi/ so it could go in drivers/spi/
+> >>> (spi-mem controller) or drivers/mtd/ (CFI controller).    
+> >>
+> >> drivers/mtd is probably a better option, since it's not a generic SPI
+> >> controller.
+> >>  
+> > 
+> > No, spi-mem controller drivers should go in drivers/spi/ even if they
+> > don't implement the generic SPI interface (it's allowed to only
+> > implement the spi_mem interface).  
+> 
+> Except this is not only SPI MEM controller, this is also hyperflash
+> (that is, CFI) controller. It can drive both types of chips. Thus , I
+> think it fits better in drivers/mtd/ .
+> 
+
+Okay, then I guess we need an ack from Mark on that.
