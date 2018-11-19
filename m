@@ -2,73 +2,119 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB09C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39350C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A7820851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A7820851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0771F20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0771F20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeKSXMC (ORCPT
+        id S1728935AbeKSXMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:12:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:34675 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728701AbeKSXMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:12:02 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 04:48:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="scan'208";a="282337788"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by fmsmga006.fm.intel.com with ESMTP; 19 Nov 2018 04:48:24 -0800
-Date:   Mon, 19 Nov 2018 14:48:22 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Message-ID: <20181119124822.GB8755@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-17-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA225B9@hasmsx108.ger.corp.intel.com>
+        Mon, 19 Nov 2018 18:12:08 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:38320 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728919AbeKSXMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:12:07 -0500
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gOiyP-0006hP-1R; Mon, 19 Nov 2018 13:48:17 +0100
+Date:   Mon, 19 Nov 2018 13:48:16 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, x86@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [Patch v5 09/16] x86/smt: Convert cpu_smt_control check to
+ cpu_smt_enabled static key
+In-Reply-To: <ff3d60388c52043b477a16100b76114c6d8fbaee.1542418937.git.tim.c.chen@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1811191340270.1537@nanos.tec.linutronix.de>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ff3d60388c52043b477a16100b76114c6d8fbaee.1542418937.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA225B9@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 10:52:46PM +0000, Winkler, Tomas wrote:
-> This is still NACK from my side
+Tim,
 
-Last time you spoke about tboot intervention but I don't see why as even
-sending a single command is not atomic in the true sense of the word
-i.e. if there was a problem that would already affect the existing code
-and would essentially mean that tboot itself is broken.
+On Fri, 16 Nov 2018, Tim Chen wrote:
+>  
+> +static char *l1tf_show_smt_vulnerable(void)
+> +{
+> +	if (static_branch_likely(&cpu_smt_enabled))
+> +		return "vulnerable";
+> +	else
+> +		return "disabled";
 
-/Jarkko
+so an UP kernel will now report vulnerable.
+
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -11607,7 +11607,7 @@ static int vmx_vm_init(struct kvm *kvm)
+>  			 * Warn upon starting the first VM in a potentially
+>  			 * insecure environment.
+>  			 */
+> -			if (cpu_smt_control == CPU_SMT_ENABLED)
+> +			if (static_branch_likely(&cpu_smt_enabled))
+>  				pr_warn_once(L1TF_MSG_SMT);
+
+Ditto.
+
+>  #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+> -extern enum cpuhp_smt_control cpu_smt_control;
+>  extern void cpu_smt_disable(bool force);
+>  extern void cpu_smt_check_topology_early(void);
+>  extern void cpu_smt_check_topology(void);
+
+What about the same thing in the else path?
+
+> diff --git a/kernel/cpu.c b/kernel/cpu.c
+> index e216154..54cf3f6 100644
+> --- a/kernel/cpu.c
+> +++ b/kernel/cpu.c
+> @@ -368,8 +368,15 @@ static void lockdep_release_cpus_lock(void)
+>  #endif	/* CONFIG_HOTPLUG_CPU */
+>  
+>  #ifdef CONFIG_HOTPLUG_SMT
+> +
+> +enum cpuhp_smt_control {
+> +        CPU_SMT_ENABLED,
+> +        CPU_SMT_DISABLED,
+> +        CPU_SMT_FORCE_DISABLED,
+> +        CPU_SMT_NOT_SUPPORTED,
+> +};
+> +
+>  enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+
+And this needs to be global because?
+
+> -EXPORT_SYMBOL_GPL(cpu_smt_control);
+
+Thanks,
+
+	tglx
