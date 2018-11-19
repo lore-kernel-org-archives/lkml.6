@@ -2,138 +2,109 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC4BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD3DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAB1821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+PoTgOz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAB1821104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6757D214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6757D214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731716AbeKTC7r (ORCPT
+        id S1731740AbeKTC7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59322 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:46 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1731717AbeKTC7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:48 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 313432145D;
-        Mon, 19 Nov 2018 16:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645337;
-        bh=FNoO5p7239xgTVp9n3X6+XqhlOO7egJfVlerTpurtic=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r+PoTgOzgSqMqVp86AqAipOKbt/3IxNQYVkBdYTHHSWlJJzE43xbTYPZa6xkwK5Rt
-         HoQXr7Me+ARrNNYbprOoClWJ/HbObBV3k06bl3hH19kVv2JWyL8ISwmIK24qtXB3hG
-         ruxdaW3qTT6mo/bHoJZ+qK8bJfhF6NEXC0oD8qm8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Robbie Ko <robbieko@synology.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 125/205] Btrfs: fix cur_offset in the error case for nocow
-Date:   Mon, 19 Nov 2018 17:27:12 +0100
-Message-Id: <20181119162636.522126209@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
-References: <20181119162616.586062722@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CA5421479;
+        Mon, 19 Nov 2018 16:35:39 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 11:35:37 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@osdl.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>
+Subject: Re: [PATCH] sched: Do not bug in __sched_setscheduler() when pi is
+ not used
+Message-ID: <20181119113537.3aa4f05e@gandalf.local.home>
+In-Reply-To: <20181119162432.GB13065@kroah.com>
+References: <20170309101842.1449d49a@gandalf.local.home>
+        <46a07263-3327-94b6-f6b8-a0a17ae7bfee@broadcom.com>
+        <20181119151311.GA5340@kroah.com>
+        <20181119104654.47623a42@gandalf.local.home>
+        <20181119162432.GB13065@kroah.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 19 Nov 2018 17:24:32 +0100
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-------------------
+> On Mon, Nov 19, 2018 at 10:46:54AM -0500, Steven Rostedt wrote:
+> > On Mon, 19 Nov 2018 16:13:11 +0100
+> > Greg KH <gregkh@linuxfoundation.org> wrote:
+> >   
+> > > > Can this patch also be applied to the stable trees? The offending commit
+> > > > was first introduced in 4.2.    
+> > > 
+> > > What is the git commit id of this patch in Linus's tree?  
+> > 
+> > 896bbb2522587e3b8eb2a0d204d43ccc1042a00d
+> > 
+> > The subject was changed when it was applied.  
+> 
+> Ah, that helps.
+> 
+> But why is this really needed in the older kernels?  You want to crash
+> your machine if someone got things wrong?  Given that I doubt this is
+> being hit anymore, why is it needed in 4.9.y and 4.4.y?
 
-From: Robbie Ko <robbieko@synology.com>
+The problem is that it can crash when people didn't get it wrong (by
+using sysrq).
 
-commit 506481b20e818db40b6198815904ecd2d6daee64 upstream.
+The bug happened when we combined two functions into one, and where the
+BUG_ON() from one was now added to the other function. The one (where
+pi is true) requires the function to be called with interrupts
+disabled. The other did not have this requirement (and pi happens to be
+false). Thus, you can trigger the BUG_ON(in_interrupt()) with a simple
+sysrq key stroke, and crash your kernel when it did nothing wrong.
 
-When the cow_file_range fails, the related resources are unlocked
-according to the range [start..end), so the unlock cannot be repeated in
-run_delalloc_nocow.
+> 
+> Also, it doesn't apply there so someone needs to do the backport...
+> 
 
-In some cases (e.g. cur_offset <= end && cow_start != -1), cur_offset is
-not updated correctly, so move the cur_offset update before
-cow_file_range.
+I did the change against v4.2.8 below.
 
-  kernel BUG at mm/page-writeback.c:2663!
-  Internal error: Oops - BUG: 0 [#1] SMP
-  CPU: 3 PID: 31525 Comm: kworker/u8:7 Tainted: P O
-  Hardware name: Realtek_RTD1296 (DT)
-  Workqueue: writeback wb_workfn (flush-btrfs-1)
-  task: ffffffc076db3380 ti: ffffffc02e9ac000 task.ti: ffffffc02e9ac000
-  PC is at clear_page_dirty_for_io+0x1bc/0x1e8
-  LR is at clear_page_dirty_for_io+0x14/0x1e8
-  pc : [<ffffffc00033c91c>] lr : [<ffffffc00033c774>] pstate: 40000145
-  sp : ffffffc02e9af4f0
-  Process kworker/u8:7 (pid: 31525, stack limit = 0xffffffc02e9ac020)
-  Call trace:
-  [<ffffffc00033c91c>] clear_page_dirty_for_io+0x1bc/0x1e8
-  [<ffffffbffc514674>] extent_clear_unlock_delalloc+0x1e4/0x210 [btrfs]
-  [<ffffffbffc4fb168>] run_delalloc_nocow+0x3b8/0x948 [btrfs]
-  [<ffffffbffc4fb948>] run_delalloc_range+0x250/0x3a8 [btrfs]
-  [<ffffffbffc514c0c>] writepage_delalloc.isra.21+0xbc/0x1d8 [btrfs]
-  [<ffffffbffc516048>] __extent_writepage+0xe8/0x248 [btrfs]
-  [<ffffffbffc51630c>] extent_write_cache_pages.isra.17+0x164/0x378 [btrfs]
-  [<ffffffbffc5185a8>] extent_writepages+0x48/0x68 [btrfs]
-  [<ffffffbffc4f5828>] btrfs_writepages+0x20/0x30 [btrfs]
-  [<ffffffc00033d758>] do_writepages+0x30/0x88
-  [<ffffffc0003ba0f4>] __writeback_single_inode+0x34/0x198
-  [<ffffffc0003ba6c4>] writeback_sb_inodes+0x184/0x3c0
-  [<ffffffc0003ba96c>] __writeback_inodes_wb+0x6c/0xc0
-  [<ffffffc0003bac20>] wb_writeback+0x1b8/0x1c0
-  [<ffffffc0003bb0f0>] wb_workfn+0x150/0x250
-  [<ffffffc0002b0014>] process_one_work+0x1dc/0x388
-  [<ffffffc0002b02f0>] worker_thread+0x130/0x500
-  [<ffffffc0002b6344>] kthread+0x10c/0x110
-  [<ffffffc000284590>] ret_from_fork+0x10/0x40
-  Code: d503201f a9025bb5 a90363b7 f90023b9 (d4210000)
+-- Steve
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/btrfs/inode.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -1532,12 +1532,11 @@ out_check:
- 	}
- 	btrfs_release_path(path);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 6776631676e0..b2af7989eb5b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3682,7 +3682,7 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	int reset_on_fork;
  
--	if (cur_offset <= end && cow_start == (u64)-1) {
-+	if (cur_offset <= end && cow_start == (u64)-1)
- 		cow_start = cur_offset;
--		cur_offset = end;
--	}
- 
- 	if (cow_start != (u64)-1) {
-+		cur_offset = end;
- 		ret = cow_file_range(inode, locked_page, cow_start, end, end,
- 				     page_started, nr_written, 1, NULL);
- 		if (ret)
-
-
+ 	/* may grab non-irq protected spin_locks */
+-	BUG_ON(in_interrupt());
++	BUG_ON(pi && in_interrupt());
+ recheck:
+ 	/* double check policy once rq lock held */
+ 	if (policy < 0) {
