@@ -2,129 +2,226 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D40C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E15C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277E020684
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PZnlFPSJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PZnlFPSJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 277E020684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DC59D20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC59D20817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbeKSSzG (ORCPT
+        id S1727278AbeKSSzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:55:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33928 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbeKSSzG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:55:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B20D360767; Mon, 19 Nov 2018 08:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542616330;
-        bh=URtFBdyjHbtpoXUpQoCtBvRn7w04cFXmiPcdAGReB6E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PZnlFPSJpXP848i1xgl7AKAU8OMlFPARloyR6QtjtevUK3zGgbyTmGojL3TPnnvmC
-         bd1Q6kG11xM+49ugEfpVO23vVv93QHTU93a91ywP2VYzn6ArMcz4sd3WF2wUMcJr+Z
-         o+5bfXuyOj6jQ56/6hYMfCbEm3qgP4H422DvR5p4=
-Received: from [10.79.128.20] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Mon, 19 Nov 2018 13:55:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33826 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726910AbeKSSzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:55:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 066E560712;
-        Mon, 19 Nov 2018 08:32:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542616330;
-        bh=URtFBdyjHbtpoXUpQoCtBvRn7w04cFXmiPcdAGReB6E=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PZnlFPSJpXP848i1xgl7AKAU8OMlFPARloyR6QtjtevUK3zGgbyTmGojL3TPnnvmC
-         bd1Q6kG11xM+49ugEfpVO23vVv93QHTU93a91ywP2VYzn6ArMcz4sd3WF2wUMcJr+Z
-         o+5bfXuyOj6jQ56/6hYMfCbEm3qgP4H422DvR5p4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 066E560712
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: =?UTF-8?Q?Re=3a_=5bPatch_v3=c2=a0=5d_drm/msm/dpu=3a_Correct_dpu_des?=
- =?UTF-8?Q?troy_and_disable_order?=
-To:     Jayant Shekhar <jshekhar@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, robdclark@gmail.com,
-        seanpaul@chromium.org, hoegsberg@chromium.org,
-        abhinavk@codeaurora.org, jsanka@codeaurora.org,
-        chandanu@codeaurora.org, nganji@codeaurora.org
-References: <1542608738-3315-1-git-send-email-jshekhar@codeaurora.org>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <9b31405e-a9dd-3571-a969-caf2c27dd792@codeaurora.org>
-Date:   Mon, 19 Nov 2018 14:02:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        by mx1.redhat.com (Postfix) with ESMTPS id 1B57B3DE0A;
+        Mon, 19 Nov 2018 08:32:40 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76F345D75D;
+        Mon, 19 Nov 2018 08:32:23 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 16:32:19 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Omar Sandoval <osandov@osandov.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
+        David Sterba <dsterba@suse.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 12/19] block: allow bio_for_each_segment_all() to
+ iterate over multi-page bvec
+Message-ID: <20181119083218.GH16736@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-13-ming.lei@redhat.com>
+ <20181116012245.GG23828@vader>
 MIME-Version: 1.0
-In-Reply-To: <1542608738-3315-1-git-send-email-jshekhar@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116012245.GG23828@vader>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 19 Nov 2018 08:32:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 15, 2018 at 05:22:45PM -0800, Omar Sandoval wrote:
+> On Thu, Nov 15, 2018 at 04:52:59PM +0800, Ming Lei wrote:
+> > This patch introduces one extra iterator variable to bio_for_each_segment_all(),
+> > then we can allow bio_for_each_segment_all() to iterate over multi-page bvec.
+> > 
+> > Given it is just one mechannical & simple change on all bio_for_each_segment_all()
+> > users, this patch does tree-wide change in one single patch, so that we can
+> > avoid to use a temporary helper for this conversion.
+> > 
+> > Cc: Dave Chinner <dchinner@redhat.com>
+> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Shaohua Li <shli@kernel.org>
+> > Cc: linux-raid@vger.kernel.org
+> > Cc: linux-erofs@lists.ozlabs.org
+> > Cc: linux-btrfs@vger.kernel.org
+> > Cc: David Sterba <dsterba@suse.com>
+> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> > Cc: Gao Xiang <gaoxiang25@huawei.com>
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Theodore Ts'o <tytso@mit.edu>
+> > Cc: linux-ext4@vger.kernel.org
+> > Cc: Coly Li <colyli@suse.de>
+> > Cc: linux-bcache@vger.kernel.org
+> > Cc: Boaz Harrosh <ooo@electrozaur.com>
+> > Cc: Bob Peterson <rpeterso@redhat.com>
+> > Cc: cluster-devel@redhat.com
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  block/bio.c                       | 27 ++++++++++++++++++---------
+> >  block/blk-zoned.c                 |  1 +
+> >  block/bounce.c                    |  6 ++++--
+> >  drivers/md/bcache/btree.c         |  3 ++-
+> >  drivers/md/dm-crypt.c             |  3 ++-
+> >  drivers/md/raid1.c                |  3 ++-
+> >  drivers/staging/erofs/data.c      |  3 ++-
+> >  drivers/staging/erofs/unzip_vle.c |  3 ++-
+> >  fs/block_dev.c                    |  6 ++++--
+> >  fs/btrfs/compression.c            |  3 ++-
+> >  fs/btrfs/disk-io.c                |  3 ++-
+> >  fs/btrfs/extent_io.c              | 12 ++++++++----
+> >  fs/btrfs/inode.c                  |  6 ++++--
+> >  fs/btrfs/raid56.c                 |  3 ++-
+> >  fs/crypto/bio.c                   |  3 ++-
+> >  fs/direct-io.c                    |  4 +++-
+> >  fs/exofs/ore.c                    |  3 ++-
+> >  fs/exofs/ore_raid.c               |  3 ++-
+> >  fs/ext4/page-io.c                 |  3 ++-
+> >  fs/ext4/readpage.c                |  3 ++-
+> >  fs/f2fs/data.c                    |  9 ++++++---
+> >  fs/gfs2/lops.c                    |  6 ++++--
+> >  fs/gfs2/meta_io.c                 |  3 ++-
+> >  fs/iomap.c                        |  6 ++++--
+> >  fs/mpage.c                        |  3 ++-
+> >  fs/xfs/xfs_aops.c                 |  5 +++--
+> >  include/linux/bio.h               | 11 +++++++++--
+> >  include/linux/bvec.h              | 31 +++++++++++++++++++++++++++++++
+> >  28 files changed, 129 insertions(+), 46 deletions(-)
+> > 
+> 
+> [snip]
+> 
+> > diff --git a/include/linux/bio.h b/include/linux/bio.h
+> > index 3496c816946e..1a2430a8b89d 100644
+> > --- a/include/linux/bio.h
+> > +++ b/include/linux/bio.h
+> > @@ -131,12 +131,19 @@ static inline bool bio_full(struct bio *bio)
+> >  	return bio->bi_vcnt >= bio->bi_max_vecs;
+> >  }
+> >  
+> > +#define bvec_for_each_segment(bv, bvl, i, iter_all)			\
+> > +	for (bv = bvec_init_iter_all(&iter_all);			\
+> > +		(iter_all.done < (bvl)->bv_len) &&			\
+> > +		((bvec_next_segment((bvl), &iter_all)), 1);		\
+> 
+> The parentheses around (bvec_next_segment((bvl), &iter_all)) are
+> unnecessary.
 
-On 11/19/2018 11:55 AM, Jayant Shekhar wrote:
-> In case of msm drm bind failure, pm runtime put sync
-> is called from dsi driver which issues an asynchronous
-> put on mdss device. Subsequently when dpu_mdss_destroy
-> is triggered the change will make sure to put the mdss
-> device in suspend and clearing pending work if not
-> scheduled.
-> 
-> Changes in v2:
->     - Removed double spacings [Jeykumar]
-> 
-> Changes in v3:
->     - Fix clock on issue during bootup [Rajendra]
-> 
-> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+OK.
 
-So I no longer see the clock usecount mismatch with this patch now,
-that I had earlier reported with the v2.
-
-Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
-
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> index fd9c893..df8127b 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_mdss.c
-> @@ -156,18 +156,16 @@ static void dpu_mdss_destroy(struct drm_device *dev)
->   	struct dpu_mdss *dpu_mdss = to_dpu_mdss(priv->mdss);
->   	struct dss_module_power *mp = &dpu_mdss->mp;
->   
-> +	pm_runtime_suspend(dev->dev);
-> +	pm_runtime_disable(dev->dev);
->   	_dpu_mdss_irq_domain_fini(dpu_mdss);
-> -
->   	free_irq(platform_get_irq(pdev, 0), dpu_mdss);
-> -
->   	msm_dss_put_clk(mp->clk_config, mp->num_clk);
->   	devm_kfree(&pdev->dev, mp->clk_config);
->   
->   	if (dpu_mdss->mmio)
->   		devm_iounmap(&pdev->dev, dpu_mdss->mmio);
->   	dpu_mdss->mmio = NULL;
-> -
-> -	pm_runtime_disable(dev->dev);
->   	priv->mdss = NULL;
->   }
->   
+> > +		iter_all.done += bv->bv_len, i += 1)
+> > +
+> >  /*
+> >   * drivers should _never_ use the all version - the bio may have been split
+> >   * before it got to the driver and the driver won't own all of it
+> >   */
+> > -#define bio_for_each_segment_all(bvl, bio, i)				\
+> > -	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
+> > +#define bio_for_each_segment_all(bvl, bio, i, iter_all)		\
+> > +	for (i = 0, iter_all.idx = 0; iter_all.idx < (bio)->bi_vcnt; iter_all.idx++)	\
+> > +		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
 > 
+> Would it be possible to move i into iter_all to streamline this a bit?
+
+That may may cause unnecessary conversion work for us, because the local
+variable 'i' is defined in external function.
+
+> 
+> >  static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+> >  				      unsigned bytes, bool mp)
+> > diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+> > index 01616a0b6220..02f26d2b59ad 100644
+> > --- a/include/linux/bvec.h
+> > +++ b/include/linux/bvec.h
+> > @@ -82,6 +82,12 @@ struct bvec_iter {
+> >  						   current bvec */
+> >  };
+> >  
+> > +struct bvec_iter_all {
+> > +	struct bio_vec	bv;
+> > +	int		idx;
+> > +	unsigned	done;
+> > +};
+> > +
+> >  /*
+> >   * various member access, note that bio_data should of course not be used
+> >   * on highmem page vectors
+> > @@ -216,6 +222,31 @@ static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
+> >  	.bi_bvec_done	= 0,						\
+> >  }
+> >  
+> > +static inline struct bio_vec *bvec_init_iter_all(struct bvec_iter_all *iter_all)
+> > +{
+> > +	iter_all->bv.bv_page = NULL;
+> > +	iter_all->done = 0;
+> > +
+> > +	return &iter_all->bv;
+> > +}
+> > +
+> > +/* used for chunk_for_each_segment */
+> > +static inline void bvec_next_segment(const struct bio_vec *bvec,
+> > +		struct bvec_iter_all *iter_all)
+> 
+> Indentation.
+
+OK.
+
+> 
+> > +{
+> > +	struct bio_vec *bv = &iter_all->bv;
+> > +
+> > +	if (bv->bv_page) {
+> > +		bv->bv_page += 1;
+> > +		bv->bv_offset = 0;
+> > +	} else {
+> > +		bv->bv_page = bvec->bv_page;
+> > +		bv->bv_offset = bvec->bv_offset;
+> > +	}
+> > +	bv->bv_len = min_t(unsigned int, PAGE_SIZE - bv->bv_offset,
+> > +			bvec->bv_len - iter_all->done);
+> 
+> Indentation.
+
+OK.
+
+-- 
+Ming
