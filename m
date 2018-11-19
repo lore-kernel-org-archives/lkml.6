@@ -2,49 +2,52 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00320C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECD4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCABC206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A2621104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vt25hfwt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCABC206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wmHSVpNN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77A2621104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404347AbeKTDU4 (ORCPT
+        id S2404356AbeKTDVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:20:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404073AbeKTDUz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:20:55 -0500
+        id S2403836AbeKTDU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:20:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20146208E3;
-        Mon, 19 Nov 2018 16:56:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A962145D;
+        Mon, 19 Nov 2018 16:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646600;
-        bh=pL6fVyp4ty3YFukZbFZf8ERgHVSv8ioYH2nRheFj+sU=;
+        s=default; t=1542646604;
+        bh=dAk6n+LcqA5ELGLdfS+KbRUlggDwrbl3sGcm/TZaRJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vt25hfwtyskEuT14WnolM5BPZ4l159/+0QqxJlcejttQ++1UhXy34FXppxgyID9O9
-         XkxVg5SxRRg7SfWn6sYIHdD1sfS+cQ+GsgmzN1lwKeHp5NO+srYGh4Gmu5a3Gz8uSu
-         vv+Fr/4ULKLp+W7NzUQlwbJF1vlnLaS1cntEM11Q=
+        b=wmHSVpNNglSWl6pFF3OnIUHLZWuvTmiteNtfWe69V3iUKXks1SsvksCiGAbfbneVt
+         aIydTXYvSyBpLJsStY+tedb4J+u1YU4rv/CZsLo+sPpQjEk063JxgN++D1b+Br7JMj
+         ACnl1kP6AMObw5YohjKhwrFYG8X0dSvuYul5qt6M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Bazhenov <bazhenov.dn@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.4 002/160] hwmon: (pmbus) Fix page count auto-detection.
-Date:   Mon, 19 Nov 2018 17:27:21 +0100
-Message-Id: <20181119162630.308352810@linuxfoundation.org>
+        stable@vger.kernel.org, Sanskriti Sharma <sansharm@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 020/160] perf tools: Free temporary sys string in read_event_files()
+Date:   Mon, 19 Nov 2018 17:27:39 +0100
+Message-Id: <20181119162632.446955754@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,54 +65,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Bazhenov <bazhenov.dn@gmail.com>
+From: Sanskriti Sharma <sansharm@redhat.com>
 
-commit e7c6a55606b5c46b449d76588968b4d8caae903f upstream.
+[ Upstream commit 1e44224fb0528b4c0cc176bde2bb31e9127eb14b ]
 
-Devices with compatible="pmbus" field have zero initial page count,
-and pmbus_clear_faults() being called before the page count auto-
-detection does not actually clear faults because it depends on the
-page count. Non-cleared faults in its turn may fail the subsequent
-page count auto-detection.
+For each system in a given pevent, read_event_files() reads in a
+temporary 'sys' string.  Be sure to free this string before moving onto
+to the next system and/or leaving read_event_files().
 
-This patch fixes this problem by calling pmbus_clear_fault_page()
-for currently set page and calling pmbus_clear_faults() after the
-page count was detected.
+Fixes the following coverity complaints:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Bazhenov <bazhenov.dn@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+  Error: RESOURCE_LEAK (CWE-772):
+
+  tools/perf/util/trace-event-read.c:343: overwrite_var: Overwriting
+  "sys" in "sys = read_string()" leaks the storage that "sys" points to.
+
+  tools/perf/util/trace-event-read.c:353: leaked_storage: Variable "sys"
+  going out of scope leaks the storage it points to.
+
+Signed-off-by: Sanskriti Sharma <sansharm@redhat.com>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Joe Lawrence <joe.lawrence@redhat.com>
+Link: http://lkml.kernel.org/r/1538490554-8161-6-git-send-email-sansharm@redhat.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/hwmon/pmbus/pmbus.c      |    2 ++
- drivers/hwmon/pmbus/pmbus_core.c |    5 ++++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ tools/perf/util/trace-event-read.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/hwmon/pmbus/pmbus.c
-+++ b/drivers/hwmon/pmbus/pmbus.c
-@@ -117,6 +117,8 @@ static int pmbus_identify(struct i2c_cli
- 		} else {
- 			info->pages = 1;
+--- a/tools/perf/util/trace-event-read.c
++++ b/tools/perf/util/trace-event-read.c
+@@ -334,9 +334,12 @@ static int read_event_files(struct peven
+ 		for (x=0; x < count; x++) {
+ 			size = read8(pevent);
+ 			ret = read_event_file(pevent, sys, size);
+-			if (ret)
++			if (ret) {
++				free(sys);
+ 				return ret;
++			}
  		}
-+
-+		pmbus_clear_faults(client);
++		free(sys);
  	}
- 
- 	if (pmbus_check_byte_register(client, 0, PMBUS_VOUT_MODE)) {
---- a/drivers/hwmon/pmbus/pmbus_core.c
-+++ b/drivers/hwmon/pmbus/pmbus_core.c
-@@ -1759,7 +1759,10 @@ static int pmbus_init_common(struct i2c_
- 	if (ret >= 0 && (ret & PB_CAPABILITY_ERROR_CHECK))
- 		client->flags |= I2C_CLIENT_PEC;
- 
--	pmbus_clear_faults(client);
-+	if (data->info->pages)
-+		pmbus_clear_faults(client);
-+	else
-+		pmbus_clear_fault_page(client, -1);
- 
- 	if (info->identify) {
- 		ret = (*info->identify)(client, info);
+ 	return 0;
+ }
 
 
