@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2990EC04EBA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FD2C43610
 	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9F220989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9F220989
+	by mail.kernel.org (Postfix) with ESMTP id 26E9F213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:55:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E9F213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731740AbeKTIUh (ORCPT
+        id S1731756AbeKTIUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:20:37 -0500
+        Tue, 20 Nov 2018 03:20:38 -0500
 Received: from mga09.intel.com ([134.134.136.24]:32114 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731707AbeKTIUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:20:36 -0500
+        id S1731707AbeKTIUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:20:38 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:56 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:57 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="92423889"
+   d="scan'208";a="92423896"
 Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga006.jf.intel.com with ESMTP; 19 Nov 2018 13:54:55 -0800
+  by orsmga006.jf.intel.com with ESMTP; 19 Nov 2018 13:54:56 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v6 03/11] x86/cet/ibt: Add IBT legacy code bitmap setup function
-Date:   Mon, 19 Nov 2018 13:49:26 -0800
-Message-Id: <20181119214934.6174-4-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v6 04/11] mm/mmap: Add IBT bitmap size to address space limit check
+Date:   Mon, 19 Nov 2018 13:49:27 -0800
+Message-Id: <20181119214934.6174-5-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181119214934.6174-1-yu-cheng.yu@intel.com>
 References: <20181119214934.6174-1-yu-cheng.yu@intel.com>
@@ -66,69 +66,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Indirect Branch Tracking (IBT) provides an optional legacy code bitmap
-that allows execution of legacy, non-IBT compatible library by an
-IBT-enabled application.  When set, each bit in the bitmap indicates
-one page of legacy code.
-
-The bitmap is allocated and setup from the application.
+The indirect branch tracking legacy bitmap takes a large address
+space.  This causes may_expand_vm() failure on the address limit
+check.  For a IBT-enabled task, add the bitmap size to the
+address limit.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/cet.h |  1 +
- arch/x86/kernel/cet.c      | 23 +++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ arch/x86/include/asm/mmu_context.h | 10 ++++++++++
+ mm/mmap.c                          | 19 ++++++++++++++++++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index 810d3e386fdb..db40fc54a905 100644
---- a/arch/x86/include/asm/cet.h
-+++ b/arch/x86/include/asm/cet.h
-@@ -29,6 +29,7 @@ void cet_disable_free_shstk(struct task_struct *p);
- int cet_restore_signal(unsigned long ssp);
- int cet_setup_signal(bool ia32, unsigned long rstor, unsigned long *new_ssp);
- int cet_setup_ibt(void);
-+int cet_setup_ibt_bitmap(unsigned long bitmap, unsigned long size);
- void cet_disable_ibt(void);
- #else
- static inline int prctl_cet(int option, unsigned long arg2) { return -EINVAL; }
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index fd157a6208c3..18a92a92c50f 100644
---- a/arch/x86/kernel/cet.c
-+++ b/arch/x86/kernel/cet.c
-@@ -21,6 +21,7 @@
- #include <asm/fpu/types.h>
- #include <asm/cet.h>
- #include <asm/special_insns.h>
-+#include <asm/elf.h>
- 
- static int set_shstk_ptr(unsigned long addr)
- {
-@@ -333,3 +334,25 @@ void cet_disable_ibt(void)
- 	wrmsrl(MSR_IA32_U_CET, r);
- 	current->thread.cet.ibt_enabled = 0;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 57c1f6c42bef..97a101267dd5 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -341,4 +341,14 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
  }
-+
-+int cet_setup_ibt_bitmap(unsigned long bitmap, unsigned long size)
+ 
++#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
++static inline unsigned long arch_as_limit(void)
 +{
-+	u64 r;
++	if (current->thread.cet.ibt_enabled)
++		return current->thread.cet.ibt_bitmap_size;
++	else
++		return 0;
++}
++#endif
 +
-+	if (!current->thread.cet.ibt_enabled)
-+		return -EINVAL;
-+
-+	if (!PAGE_ALIGNED(bitmap) || (size > TASK_SIZE_MAX))
-+		return -EINVAL;
-+
-+	current->thread.cet.ibt_bitmap_addr = bitmap;
-+	current->thread.cet.ibt_bitmap_size = size;
-+
-+	/*
-+	 * Turn on IBT legacy bitmap.
-+	 */
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
-+	wrmsrl(MSR_IA32_U_CET, r);
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 9560d69fa08c..3de023f3e565 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3283,13 +3283,30 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 	return NULL;
+ }
+ 
++#ifndef CONFIG_ARCH_HAS_AS_LIMIT
++static inline unsigned long arch_as_limit(void)
++{
 +	return 0;
 +}
++#endif
++
+ /*
+  * Return true if the calling process may expand its vm space by the passed
+  * number of pages
+  */
+ bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
+ {
+-	if (mm->total_vm + npages > rlimit(RLIMIT_AS) >> PAGE_SHIFT)
++	unsigned long as_limit = rlimit(RLIMIT_AS);
++	unsigned long as_limit_plus = as_limit + arch_as_limit();
++
++	/* as_limit_plus overflowed */
++	if (as_limit_plus < as_limit)
++		as_limit_plus = RLIM_INFINITY;
++
++	if (as_limit_plus > as_limit)
++		as_limit = as_limit_plus;
++
++	if (mm->total_vm + npages > as_limit >> PAGE_SHIFT)
+ 		return false;
+ 
+ 	if (is_data_mapping(flags) &&
 -- 
 2.17.1
 
