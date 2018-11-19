@@ -2,118 +2,131 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 747C1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6503EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4711E208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:14:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4711E208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 27A26208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:14:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zFxE7bMJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A26208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406805AbeKTDib (ORCPT
+        id S2406349AbeKTD2E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:38:31 -0500
-Received: from muru.com ([72.249.23.125]:54492 "EHLO muru.com"
+        Mon, 19 Nov 2018 22:28:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406744AbeKTDia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:38:30 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A386D80B6;
-        Mon, 19 Nov 2018 17:14:10 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 09:14:06 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-Message-ID: <20181119171406.GQ53235@atomide.com>
-References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
- <20180703084516.GT112168@atomide.com>
- <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
- <20181113180656.GE53235@atomide.com>
- <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
- <20181119161906.GP53235@atomide.com>
+        id S2405689AbeKTD2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:04 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FFB02154B;
+        Mon, 19 Nov 2018 17:03:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542647027;
+        bh=ceoj3GCtotAeO5Q2sPMKW3wac75oNqTarJlsYHbV6M0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zFxE7bMJVIGi8mCytkTnvrug9yPubtzB57x6DePe6LIAU2N/aJ8RtC0j3XodjO7BA
+         ME8uiVgqN3aIt3CKw/fCuyyzT6fTyhTYWMx95HKlU1z/TZXqBWI4uxHO7QI9LeCxXp
+         W2efl1MJGrFSXa0rdstd5Jv/8tMpL2wW+kR9nnWM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Michael Schmitz <schmitzmic@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 22/90] scsi: esp_scsi: Track residual for PIO transfers
+Date:   Mon, 19 Nov 2018 17:29:04 +0100
+Message-Id: <20181119162624.550078832@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
+References: <20181119162620.585061184@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119161906.GP53235@atomide.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-* Tony Lindgren <tony@atomide.com> [181119 16:19]:
-> * Peter Ujfalusi <peter.ujfalusi@ti.com> [181119 10:16]:
-> > On 2018-11-13 20:06, Tony Lindgren wrote:
-> > > Looks like the IRQ_TYPE_NONE issue still is there for omap5 and
-> > > should be fixed with IRQ_TYPE_HIGH.
-> > > 
-> > > No idea about why palmas interrupts would stop working though,
-> > > Peter, do you have any ideas on this one?
-> > 
-> > No, I don't.
-> > The INT polarity can be changed in Palmas.
-> > based on the pdata->irq_flags (queried via irqd_get_trigger_type())
-> > the code  configures it:
-> > 
-> > if (pdata->irq_flags & IRQ_TYPE_LEVEL_HIGH)
-> > 	reg = PALMAS_POLARITY_CTRL_INT_POLARITY;
-> > else
-> > 	reg = 0;
-> > 
-> > and we pass the same irq_flags to the regmap_add_irq_chip()
-> > IRQ_TYPE_LEVEL_HIGH == IRQF_TRIGGER_HIGH == 0x00000004
-> > 
-> > A change in DT should be enough, no need to patch palmas.c, imho.
-> 
-> But it's not. I'm now wondering if wakeupgen is inverting the
-> polarity for this interrupt?
-> 
-> GIC docs say this about SPI interrupts:
-> 
-> "SPI is triggered on a rising edge or is active-HIGH level-sensitive."
-> 
-> So when setting IRQ_TYPE_LEVEL_HIGH in dts, we still must not
-> invert the polarity in palmas while tegra needs to. So either
-> tegra114 hardware is inverting the polarity, or omap5 wakeupgen
-> is.
-> 
-> Does the palmas trm say which way PALMAS_POLARITY_CTRL
-> triggers if PALMAS_POLARITY_CTRL_INT_POLARITY is set?
-> 
-> Also note that dra7 is using a gpio for palmas interrupt.
+------------------
 
-Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
-Tegra114 PMIC interrupt") states that tegra114 inverts the
-polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
+From: Finn Thain <fthain@telegraphics.com.au>
 
-So it seems that commit df545d1cd01a ("mfd: palmas: Provide
-irq flags through DT/platform data") wrongly sets the
-PALMAS_POLARITY_CTRL_INT_POLARITY on IRQ_TYPE_LEVEL_HIGH
-while it should set it on IRQ_TYPE_LEVEL_LOW.
+[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
 
-I think the fix needs to set the polarity using
-of_machine_is_compatible() and probably also add a new
-compatible to palmas.c for "ti,palmas-tegra114" to properly
-deal with the inverted interrupt. Or add a property for
-"interrupt-inverted". In any case, it seems that the
-of_machine_is_compatible() is also needed too to avoid
-breaking use with dtb files.
+If a target disconnects during a PIO data transfer the command may fail
+when the target reconnects:
 
-Jon & Thierry, can you guys please check and confirm this?
+scsi host1: DMA length is zero!
+scsi host1: cur adr[04380000] len[00000000]
 
-Regards,
+The scsi bus is then reset. This happens because the residual reached
+zero before the transfer was completed.
 
-Tony
+The usual residual calculation relies on the Transfer Count registers.
+That works for DMA transfers but not for PIO transfers. Fix the problem
+by storing the PIO transfer residual and using that to correctly
+calculate bytes_sent.
+
+Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
+Tested-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Tested-by: Michael Schmitz <schmitzmic@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/scsi/esp_scsi.c |    1 +
+ drivers/scsi/esp_scsi.h |    2 ++
+ drivers/scsi/mac_esp.c  |    2 ++
+ 3 files changed, 5 insertions(+)
+
+--- a/drivers/scsi/esp_scsi.c
++++ b/drivers/scsi/esp_scsi.c
+@@ -1316,6 +1316,7 @@ static int esp_data_bytes_sent(struct es
+ 
+ 	bytes_sent = esp->data_dma_len;
+ 	bytes_sent -= ecount;
++	bytes_sent -= esp->send_cmd_residual;
+ 
+ 	if (!(ent->flags & ESP_CMD_FLAG_WRITE))
+ 		bytes_sent -= fifo_cnt;
+--- a/drivers/scsi/esp_scsi.h
++++ b/drivers/scsi/esp_scsi.h
+@@ -524,6 +524,8 @@ struct esp {
+ 
+ 	void			*dma;
+ 	int			dmarev;
++
++	u32			send_cmd_residual;
+ };
+ 
+ /* A front-end driver for the ESP chip should do the following in
+--- a/drivers/scsi/mac_esp.c
++++ b/drivers/scsi/mac_esp.c
+@@ -426,6 +426,8 @@ static void mac_esp_send_pio_cmd(struct
+ 			scsi_esp_cmd(esp, ESP_CMD_TI);
+ 		}
+ 	}
++
++	esp->send_cmd_residual = esp_count;
+ }
+ 
+ static int mac_esp_irq_pending(struct esp *esp)
+
+
