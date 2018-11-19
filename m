@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD83DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E623C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75F4720C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 250EC20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:51:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MpRzgR97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75F4720C01
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0hPGsQ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250EC20C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390234AbeKTDPZ (ORCPT
+        id S2390247AbeKTDP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:15:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52998 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:15:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:15:25 -0500
+        id S2388976AbeKTDP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:15:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8717B21104;
-        Mon, 19 Nov 2018 16:51:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DE43208E4;
+        Mon, 19 Nov 2018 16:51:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646272;
-        bh=EldxGgaxHkTiH8zUq66S1LX4wGZSXlEH3uOHODuaOyM=;
+        s=default; t=1542646274;
+        bh=+VzS/jqQlJvdAYUByv3/unY8V8Aw5MD9GnXdI2FzgBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MpRzgR979SH6syeeXECrB8OvM38QX9R2U+ddssUGq10OeRrHlcBB/bgGKgA+DQF5P
-         BQa7bECBtS4Qj3EMc+nXm6/26DjcoX25chTFW3JaZGVORJOnO9MEd9N9YYzAwN730p
-         ym9vzsUBu6OitWYLo1RGwRUDelIv4J7ssPIoYBow=
+        b=P0hPGsQ9BfUw1NScCpUApILLEhX2hMl0HccvzE2pZJ74l7kUF1l3DLDpa+BL7VMIv
+         KRTaBwHAZAkAVXJV6uRUrSiMUQBHzbTL9faFprk6AlYS4jmk9r+PJC88cKr5yTZ5OS
+         mjNRcPWRFhnbk8/R8BFfiJj29uUt/cugkGIOxDrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 102/124] crypto: user - fix leaking uninitialized memory to userspace
-Date:   Mon, 19 Nov 2018 17:29:16 +0100
-Message-Id: <20181119162631.563208168@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 076/124] ext4: avoid potential extra brelse in setup_new_flex_group_blocks()
+Date:   Mon, 19 Nov 2018 17:28:50 +0100
+Message-Id: <20181119162627.703035071@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -61,93 +61,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Biggers <ebiggers@google.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit f43f39958beb206b53292801e216d9b8a660f087 upstream.
+commit 9e4028935cca3f9ef9b6a90df9da6f1f94853536 upstream.
 
-All bytes of the NETLINK_CRYPTO report structures must be initialized,
-since they are copied to userspace.  The change from strncpy() to
-strlcpy() broke this.  As a minimal fix, change it back.
+Currently bh is set to NULL only during first iteration of for cycle,
+then this pointer is not cleared after end of using.
+Therefore rollback after errors can lead to extra brelse(bh) call,
+decrements bh counter and later trigger an unexpected warning in __brelse()
 
-Fixes: 4473710df1f8 ("crypto: user - Prepare for CRYPTO_MAX_ALG_NAME expansion")
-Cc: <stable@vger.kernel.org> # v4.12+
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Patch moves brelse() calls in body of cycle to exclude requirement of
+brelse() call in rollback.
+
+Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 3.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crypto_user.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/ext4/resize.c |    8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -83,7 +83,7 @@ static int crypto_report_cipher(struct s
- {
- 	struct crypto_report_cipher rcipher;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -592,7 +592,6 @@ handle_bb:
+ 		bh = bclean(handle, sb, block);
+ 		if (IS_ERR(bh)) {
+ 			err = PTR_ERR(bh);
+-			bh = NULL;
+ 			goto out;
+ 		}
+ 		overhead = ext4_group_overhead_blocks(sb, group);
+@@ -604,9 +603,9 @@ handle_bb:
+ 		ext4_mark_bitmap_end(group_data[i].blocks_count,
+ 				     sb->s_blocksize * 8, bh->b_data);
+ 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
++		brelse(bh);
+ 		if (err)
+ 			goto out;
+-		brelse(bh);
  
--	strlcpy(rcipher.type, "cipher", sizeof(rcipher.type));
-+	strncpy(rcipher.type, "cipher", sizeof(rcipher.type));
+ handle_ib:
+ 		if (bg_flags[i] & EXT4_BG_INODE_UNINIT)
+@@ -621,18 +620,16 @@ handle_ib:
+ 		bh = bclean(handle, sb, block);
+ 		if (IS_ERR(bh)) {
+ 			err = PTR_ERR(bh);
+-			bh = NULL;
+ 			goto out;
+ 		}
  
- 	rcipher.blocksize = alg->cra_blocksize;
- 	rcipher.min_keysize = alg->cra_cipher.cia_min_keysize;
-@@ -102,7 +102,7 @@ static int crypto_report_comp(struct sk_
- {
- 	struct crypto_report_comp rcomp;
+ 		ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb),
+ 				     sb->s_blocksize * 8, bh->b_data);
+ 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
++		brelse(bh);
+ 		if (err)
+ 			goto out;
+-		brelse(bh);
+ 	}
+-	bh = NULL;
  
--	strlcpy(rcomp.type, "compression", sizeof(rcomp.type));
-+	strncpy(rcomp.type, "compression", sizeof(rcomp.type));
- 	if (nla_put(skb, CRYPTOCFGA_REPORT_COMPRESS,
- 		    sizeof(struct crypto_report_comp), &rcomp))
- 		goto nla_put_failure;
-@@ -116,7 +116,7 @@ static int crypto_report_acomp(struct sk
- {
- 	struct crypto_report_acomp racomp;
+ 	/* Mark group tables in block bitmap */
+ 	for (j = 0; j < GROUP_TABLE_COUNT; j++) {
+@@ -663,7 +660,6 @@ handle_ib:
+ 	}
  
--	strlcpy(racomp.type, "acomp", sizeof(racomp.type));
-+	strncpy(racomp.type, "acomp", sizeof(racomp.type));
- 
- 	if (nla_put(skb, CRYPTOCFGA_REPORT_ACOMP,
- 		    sizeof(struct crypto_report_acomp), &racomp))
-@@ -131,7 +131,7 @@ static int crypto_report_akcipher(struct
- {
- 	struct crypto_report_akcipher rakcipher;
- 
--	strlcpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
-+	strncpy(rakcipher.type, "akcipher", sizeof(rakcipher.type));
- 
- 	if (nla_put(skb, CRYPTOCFGA_REPORT_AKCIPHER,
- 		    sizeof(struct crypto_report_akcipher), &rakcipher))
-@@ -146,7 +146,7 @@ static int crypto_report_kpp(struct sk_b
- {
- 	struct crypto_report_kpp rkpp;
- 
--	strlcpy(rkpp.type, "kpp", sizeof(rkpp.type));
-+	strncpy(rkpp.type, "kpp", sizeof(rkpp.type));
- 
- 	if (nla_put(skb, CRYPTOCFGA_REPORT_KPP,
- 		    sizeof(struct crypto_report_kpp), &rkpp))
-@@ -160,10 +160,10 @@ nla_put_failure:
- static int crypto_report_one(struct crypto_alg *alg,
- 			     struct crypto_user_alg *ualg, struct sk_buff *skb)
- {
--	strlcpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
--	strlcpy(ualg->cru_driver_name, alg->cra_driver_name,
-+	strncpy(ualg->cru_name, alg->cra_name, sizeof(ualg->cru_name));
-+	strncpy(ualg->cru_driver_name, alg->cra_driver_name,
- 		sizeof(ualg->cru_driver_name));
--	strlcpy(ualg->cru_module_name, module_name(alg->cra_module),
-+	strncpy(ualg->cru_module_name, module_name(alg->cra_module),
- 		sizeof(ualg->cru_module_name));
- 
- 	ualg->cru_type = 0;
-@@ -176,7 +176,7 @@ static int crypto_report_one(struct cryp
- 	if (alg->cra_flags & CRYPTO_ALG_LARVAL) {
- 		struct crypto_report_larval rl;
- 
--		strlcpy(rl.type, "larval", sizeof(rl.type));
-+		strncpy(rl.type, "larval", sizeof(rl.type));
- 		if (nla_put(skb, CRYPTOCFGA_REPORT_LARVAL,
- 			    sizeof(struct crypto_report_larval), &rl))
- 			goto nla_put_failure;
+ out:
+-	brelse(bh);
+ 	err2 = ext4_journal_stop(handle);
+ 	if (err2 && !err)
+ 		err = err2;
 
 
