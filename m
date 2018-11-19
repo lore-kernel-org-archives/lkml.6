@@ -2,112 +2,103 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF58C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCD4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA2A20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:56:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA2A20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AFAF020851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFAF020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbeKTBUq (ORCPT
+        id S1729674AbeKTBVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:20:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729376AbeKTBUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:20:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 30FC180467;
-        Mon, 19 Nov 2018 14:56:55 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43AE81019627;
-        Mon, 19 Nov 2018 14:56:51 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 09:56:50 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: nvme: allow ANA support to be independent of native multipathing
-Message-ID: <20181119145650.GB13470@redhat.com>
-References: <20181114174746.GA18526@redhat.com>
- <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
- <20181115174605.GA19782@redhat.com>
- <20181116091458.GA17267@lst.de>
- <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
- <20181116094947.GA19296@lst.de>
- <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
- <20181116101752.GA21531@lst.de>
- <20181116192802.GA30057@redhat.com>
- <20181119093938.GA11757@lst.de>
+        Mon, 19 Nov 2018 20:21:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39774 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729376AbeKTBVK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:21:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0C4DEACE5;
+        Mon, 19 Nov 2018 14:57:18 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to phy_select/restore_page functions
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+        <20181008100728.24959-2-quentin.schulz@bootlin.com>
+X-Yow:  Where's th' DAFFY DUCK EXHIBIT??
+Date:   Mon, 19 Nov 2018 15:57:17 +0100
+In-Reply-To: <20181008100728.24959-2-quentin.schulz@bootlin.com> (Quentin
+        Schulz's message of "Mon, 8 Oct 2018 12:07:23 +0200")
+Message-ID: <mvm8t1pazea.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119093938.GA11757@lst.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 19 Nov 2018 14:56:55 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19 2018 at  4:39am -0500,
-Christoph Hellwig <hch@lst.de> wrote:
+On Okt 08 2018, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
 
-> On Fri, Nov 16, 2018 at 02:28:02PM -0500, Mike Snitzer wrote:
-> > You rejected the idea of allowing fine-grained control over whether
-> > native NVMe multipathing is enabled or not on a per-namespace basis.
-> > All we have is the coarse-grained nvme_core.multipath=N knob.  Now
-> > you're forecasting removing even that.  Please don't do that.
-> 
-> The whole point is that this hook was intended as a band aid for the
-> hypothetical pre-existing setups.  Not ever for new development.
+> The Microsemi PHYs have multiple banks of registers (called pages).
+> Registers can only be accessed from one page, if we need a register from
+> another page, we need to switch the page and the registers of all other
+> pages are not accessible anymore.
+>
+> Basically, to read register 5 from page 0, 1, 2, etc., you do the same
+> phy_read(phydev, 5); but you need to set the desired page beforehand.
+>
+> In order to guarantee that two concurrent functions do not change the
+> page, we need to do some locking per page. This can be achieved with the
+> use of phy_select_page and phy_restore_page functions but phy_write/read
+> calls in-between those two functions shall be replaced by their
+> lock-free alternative __phy_write/read.
+>
+> Let's migrate this driver to those functions.
 
-It pains me that you're marching us towards increased conflict that
-needs resolution through more formal means.  And that now I'm going to
-have to document the timeline of your authoritarian approach to
-stifling another Linux maintainer's freedom to do his job of delivering
-on functionality I've been depended on for many years.
+This has some serious locking problem.
 
-> > Please, PLEASE take v2 of this patch.. please? ;)
-> 
-> See the previous mail for the plan ahead.   I'm sick and tired of you
-> trying to sneak your new developemts back in.
+[<0>] __schedule+0x25e/0x74c
+[<0>] schedule+0x1a/0x58
+[<0>] schedule_preempt_disabled+0xc/0x14
+[<0>] __mutex_lock.isra.0+0x10e/0x22e
+[<0>] __mutex_lock_slowpath+0xe/0x16
+[<0>] mutex_lock+0x22/0x2a
+[<0>] mdiobus_read+0x36/0x60
+[<0>] vsc85xx_config_init+0x4c/0x1e2
+[<0>] phy_init_hw+0x3c/0x52
+[<0>] phy_attach_direct+0xec/0x1dc
+[<0>] phy_connect_direct+0x1a/0x56
+[<0>] macb_probe+0x800/0xb5e [macb]
+[<0>] platform_drv_probe+0x3e/0x7e
+[<0>] really_probe+0xba/0x310
+[<0>] driver_probe_device+0x54/0xf2
+[<0>] __driver_attach+0xde/0x106
+[<0>] bus_for_each_dev+0x4a/0x72
+[<0>] driver_attach+0x1a/0x22
+[<0>] bus_add_driver+0x1ce/0x212
+[<0>] driver_register+0x3a/0xd0
+[<0>] __platform_driver_register+0x3a/0x42
+[<0>] macb_driver_init+0x20/0x28 [macb]
+[<0>] do_one_initcall+0x48/0x128
+[<0>] do_init_module+0x4a/0x186
+[<0>] load_module+0xd6a/0xe6a
+[<0>] sys_finit_module+0xc6/0xfc
+[<0>] check_syscall_nr+0x22/0x22
 
-I've only ever posted patches in the open and never has it been with the
-idea of sneaking anything in.  Miscategorizing my actions as such is a
-gross abuse that I will not tolerate.
+Andreas.
 
-If we were to confine ourselves to this v2 patch I pleaded with you to
-take: https://lkml.org/lkml/2018/11/17/4
-
-1) Hannes proposed a simplistic patch that didn't account for the fact
-   that NVMe's ana workqueue wouldn't get kicked, his intent was to make
-   ANA work independent of your native multipathing.  (The fact he or I
-   even need to post such patches, to unwind your tight-coupling of ANA
-   and multipathing, speaks to how you've calculatingly undermined any
-   effort to implement proper NVMe multipathing outside of the NVMe
-   driver)
-
-2) ANA and multipathing are completely disjoint on an NVMe spec level.
-   You know this.
-
-SO: will you be taking my v2 patch for 4.21 or not?
-
-Please advise, thanks.
-Mike
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
