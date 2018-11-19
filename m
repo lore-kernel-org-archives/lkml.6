@@ -2,549 +2,256 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 216A2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32430C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C61BA2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=concurrentrt.onmicrosoft.com header.i=@concurrentrt.onmicrosoft.com header.b="MR+zO0iV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C61BA2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=concurrent-rt.com
+	by mail.kernel.org (Postfix) with ESMTP id ECCC82086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:46:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCC82086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbeKTGLi (ORCPT
+        id S1730406AbeKTGLr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:11:38 -0500
-Received: from mail-eopbgr780097.outbound.protection.outlook.com ([40.107.78.97]:18592
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725843AbeKTGLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:11:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=concurrentrt.onmicrosoft.com; s=selector1-concurrentrt-com02e;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xW10cHfCTL/qBIm0OjTt0Zk/K34Hk56ukZByoWr9MF8=;
- b=MR+zO0iVSL0uavMADSm/RqEAzq1mNAvRU7EQOt4qQ6bXVI6A8xIEnnEvL8CUL6UKOu0mPBNeNlhV+L9DfSi6KSRTX+smqvkcjD5O8EMMfzGndYZd5DXDt4Bl8ByJ8xzp61RAmAk8kJ9keFeeXdJa7HuIVltMbqFRVfLNancZgvE=
-Received: from DM6PR11MB2570.namprd11.prod.outlook.com (20.176.99.12) by
- DM6PR11MB2746.namprd11.prod.outlook.com (20.176.99.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.25; Mon, 19 Nov 2018 19:46:23 +0000
-Received: from DM6PR11MB2570.namprd11.prod.outlook.com
- ([fe80::516:620c:3f40:7215]) by DM6PR11MB2570.namprd11.prod.outlook.com
- ([fe80::516:620c:3f40:7215%5]) with mapi id 15.20.1339.027; Mon, 19 Nov 2018
- 19:46:23 +0000
-From:   Joe Korty <Joe.Korty@concurrent-rt.com>
-To:     "julia@ni.com" <julia@ni.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Joe Korty <Joe.Korty@concurrent-rt.com>
-Subject: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt and
- later.
-Thread-Topic: [ptrace, rt] erratic behaviour in PTRACE_SINGLESET on 4.13-rt
- and later.
-Thread-Index: AQHUgECMj/wXEoj7Wkyq0VvWdFU8Ow==
-Date:   Mon, 19 Nov 2018 19:46:23 +0000
-Message-ID: <20181119194619.GA32121@zipoli.concurrent-rt.com>
-Reply-To: Joe Korty <Joe.Korty@concurrent-rt.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BN6PR03CA0049.namprd03.prod.outlook.com
- (2603:10b6:404:4c::11) To DM6PR11MB2570.namprd11.prod.outlook.com
- (2603:10b6:5:c6::12)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Joe.Korty@concurrent-rt.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [12.220.59.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR11MB2746;6:goG6n2QtCo3pWWe+Yno4GWdmpA/gEIVPMmpFDHqwVjOvqrOkXeKVry/H8T4/Db858BbwZLmBDBrJ4CyGVsu+p3WOg1mBUa8l7jcBbl5Pr040L3oLF4wrRkt2xx+HQ+y5pl7XIstnWsQEqtibO0KkgkbCMbBwIV46e+A3qkpkC/eGNcfnS+0JqqQ4Z7w/o6diOvBjkxlP5oWCHOEmYb5PrHjPF+l2bweNB1E5UbstI/bhzqakjOZtxlyBRSxccYVvnmx8322XAasZxFfxffGDOhdNes83lxaXuL9UB8yG3b19HCPDHPfwPao7PZAUmTPoiJE2ktF/Gpa9a03+i+43EfI9gQhrx/4rrLQz3dBfsnjak/ZMR90h+lhjGmdKRd2omXEx8QdJZiPmqHVZs1J0y/LqN+vaGGOzamifEbpwP+4kos6VRSEu5ynealTO0Uttr5KIfRlO8Sh7u6RD5XyMUA==;5:x/6KFKNLqAQMRJsmqwvUJvJF0GrTEGud3vHdQ6bEl/e72Dy9iRvF+Tv6Kke0BcZniRdwjG6dFUh2mnrLqWQ1vrePSBbGm04zfK+peErPG+8H6W1aUFvsK7P95npj5dtQ5If3m72Ln0xIgqvMKdUFulZDIHt8tbB+PQzCr8J7+W0=;7:mCA0d5Y64aX9PUdQEl47Ps5dQzp0858EARWYy93Ef0G3CTlmx8OtriLkYOiCL41akIfqr5lhU0A4Jrs15NAW7WnOJFH+0EWf0IIfCt6NmMMapw5IfLs9oBTBIgoosR0iKPQB3bhq8bPLpkrIpPoHgQ==
-x-ms-office365-filtering-correlation-id: 9ab33e9b-b577-44f2-bcc3-08d64e57af30
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:DM6PR11MB2746;
-x-ms-traffictypediagnostic: DM6PR11MB2746:
-x-microsoft-antispam-prvs: <DM6PR11MB274604D5D9F23B739D1B2C36A0D80@DM6PR11MB2746.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231435)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(2016111802025)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:DM6PR11MB2746;BCL:0;PCL:0;RULEID:;SRVR:DM6PR11MB2746;
-x-forefront-prvs: 08617F610C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(136003)(396003)(346002)(376002)(199004)(189003)(2501003)(44832011)(2900100001)(6436002)(66066001)(68736007)(81166006)(81156014)(4744004)(25786009)(6116002)(97736004)(2906002)(1076002)(476003)(71190400001)(486006)(71200400001)(6486002)(3846002)(72206003)(2201001)(7736002)(86362001)(8676002)(186003)(14454004)(3450700001)(26005)(305945005)(33656002)(386003)(6506007)(508600001)(106356001)(6512007)(110136005)(316002)(5660300001)(102836004)(99286004)(14444005)(5024004)(53936002)(8936002)(43066004)(52116002)(105586002)(256004)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR11MB2746;H:DM6PR11MB2570.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: concurrent-rt.com does not
- designate permitted sender hosts)
-x-microsoft-antispam-message-info: L3BL6xYqlYihPTluDgj+7gilrQY2w1tEvbdfs4qghtgAHdmPS5fow/dEqL9d+hbcka5nIciuxnH2wDYLo04MgbMc8v9lkVmiQFQHiStwrBkEXy0lXt5mL43FdL5TOKk85MEJyt6gnb/TCqHYSZMaFda3TG8Akm8tai6hdHoNnnDbuZ6RFmv0lx1+U93h3W+PdR45R5mHxSYCXIn+CO3LGorEUtDGkZmmTR7CF2Q6UXw5M+CmHzaim7v5Vd7WND5sTiK589Yb/RuFFYZpPX2GL5wYWbwOW6w5GPo4A3pXx0aNW2GEXP+tZXFky8Ll2qhotP1LhrR7OJMVK6W6WUyY5aZSJySlM74f5fbk+iLX51A=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <68CB111ACF90544A8F1E3A1D282BFE14@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 01:11:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51576 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729611AbeKTGLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:11:47 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 90065D2EF9;
+        Mon, 19 Nov 2018 19:46:38 +0000 (UTC)
+Received: from redhat.com (ovpn-124-1.rdu2.redhat.com [10.10.124.1])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1BA655D9C6;
+        Mon, 19 Nov 2018 19:46:34 +0000 (UTC)
+Date:   Mon, 19 Nov 2018 14:46:32 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        Kenneth Lee <liguozhu@hisilicon.com>,
+        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
+        linuxarm@huawei.com, haojian.zhuang@linaro.org,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        David Kershner <david.kershner@unisys.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
+        linux-netdev <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-accelerators@lists.ozlabs.org
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181119194631.GE4593@redhat.com>
+References: <20181115145455.GN3759@mtr-leonro.mtl.com>
+ <20181119091405.GE157308@Turing-Arch-b>
+ <20181119091910.GF157308@Turing-Arch-b>
+ <20181119104801.GF8268@mtr-leonro.mtl.com>
+ <20181119164853.GA4593@redhat.com>
+ <20181119182752.GA4890@ziepe.ca>
+ <20181119184215.GB4593@redhat.com>
+ <20181119185333.GC4890@ziepe.ca>
+ <20181119191721.GC4593@redhat.com>
+ <20181119192702.GD4890@ziepe.ca>
 MIME-Version: 1.0
-X-OriginatorOrg: concurrent-rt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ab33e9b-b577-44f2-bcc3-08d64e57af30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 19:46:23.0844
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 38747689-e6b0-4933-86c0-1116ee3ef93e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB2746
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119192702.GD4890@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 19 Nov 2018 19:46:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julia & the RT team,
+On Mon, Nov 19, 2018 at 12:27:02PM -0700, Jason Gunthorpe wrote:
+> On Mon, Nov 19, 2018 at 02:17:21PM -0500, Jerome Glisse wrote:
+> > On Mon, Nov 19, 2018 at 11:53:33AM -0700, Jason Gunthorpe wrote:
+> > > On Mon, Nov 19, 2018 at 01:42:16PM -0500, Jerome Glisse wrote:
+> > > > On Mon, Nov 19, 2018 at 11:27:52AM -0700, Jason Gunthorpe wrote:
+> > > > > On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
+> > > > > 
+> > > > > > Just to comment on this, any infiniband driver which use umem and do
+> > > > > > not have ODP (here ODP for me means listening to mmu notifier so all
+> > > > > > infiniband driver except mlx5) will be affected by same issue AFAICT.
+> > > > > > 
+> > > > > > AFAICT there is no special thing happening after fork() inside any of
+> > > > > > those driver. So if parent create a umem mr before fork() and program
+> > > > > > hardware with it then after fork() the parent might start using new
+> > > > > > page for the umem range while the old memory is use by the child. The
+> > > > > > reverse is also true (parent using old memory and child new memory)
+> > > > > > bottom line you can not predict which memory the child or the parent
+> > > > > > will use for the range after fork().
+> > > > > > 
+> > > > > > So no matter what you consider the child or the parent, what the hw
+> > > > > > will use for the mr is unlikely to match what the CPU use for the
+> > > > > > same virtual address. In other word:
+> > > > > > 
+> > > > > > Before fork:
+> > > > > >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > > 
+> > > > > > Case 1:
+> > > > > >     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > >     CPU child:  virtual addr ptr1 -> physical address = 0xDEAD
+> > > > > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > > 
+> > > > > > Case 2:
+> > > > > >     CPU parent: virtual addr ptr1 -> physical address = 0xBEEF
+> > > > > >     CPU child:  virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > >     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
+> > > > > 
+> > > > > IIRC this is solved in IB by automatically calling
+> > > > > madvise(MADV_DONTFORK) before creating the MR.
+> > > > > 
+> > > > > MADV_DONTFORK
+> > > > >   .. This is useful to prevent copy-on-write semantics from changing the
+> > > > >   physical location of a page if the parent writes to it after a
+> > > > >   fork(2) ..
+> > > > 
+> > > > This would work around the issue but this is not transparent ie
+> > > > range marked with DONTFORK no longer behave as expected from the
+> > > > application point of view.
+> > > 
+> > > Do you know what the difference is? The man page really gives no
+> > > hint..
+> > > 
+> > > Does it sometimes unmap the pages during fork?
+> > 
+> > It is handled in kernel/fork.c look for DONTCOPY, basicaly it just
+> > leave empty page table in the child process so child will have to
+> > fault in new page. This also means that child will get 0 as initial
+> > value for all memory address under DONTCOPY/DONTFORK which breaks
+> > application expectation of what fork() do.
+> 
+> Hum, I wonder why this API was selected then..
 
-The following program might make a good addition to the rt
-test suite.  It tests the reliability of PTRACE_SINGLESTEP.
-It does by default 10,000 ssteps against a simple,
-spinner tracee.  Also by default, it spins off ten of these
-tracer/tracee pairs, all of which are to run concurrently.
+Because there is nothing else ? :)
 
-Starting with 4.13-rt, this test occasionally encounters a
-sstep whose waitpid returns a WIFSIGNALED (signal SIGTRAP)
-rather than a WIFSTOPPED.  This usually happens after
-thousands of ssteps have executed.  Having multiple
-tracer/tracee pairs running dramatically increases the
-chances of failure.
+> 
+> > > I actually wonder if the kernel is a bit broken here, we have the same
+> > > problem with O_DIRECT and other stuff, right?
+> > 
+> > No it is not, O_DIRECT is fine. The only corner case i can think
+> > of with O_DIRECT is one thread launching an O_DIRECT that write
+> > to private anonymous memory (other O_DIRECT case do not matter)
+> > while another thread call fork() then what the child get can be
+> > undefined ie either it get the data before the O_DIRECT finish
+> > or it gets the result of the O_DIRECT. But this is realy what
+> > you should expect when doing such thing without synchronization.
+> > 
+> > So O_DIRECT is fine.
+> 
+> ?? How can O_DIRECT be fine but RDMA not? They use exactly the same
+> get_user_pages flow, right? Can we do what O_DIRECT does in RDMA and
+> be fine too?
+> 
+> AFAIK the only difference is the length of the race window. You'd have
+> to fork and fault during the shorter time O_DIRECT has get_user_pages
+> open.
 
-The is what the test output looks like for a good run:
+Well in O_DIRECT case there is only one page table, the CPU
+page table and it gets updated during fork() so there is an
+ordering there and the race window is small.
 
-  #forks: 10
-  #steps: 10000
- =20
-  forktest#0/22872: STARTING
-  forktest#7/22879: STARTING
-  forktest#8/22880: STARTING
-  forktest#6/22878: STARTING
-  forktest#5/22877: STARTING
-  forktest#3/22875: STARTING
-  forktest#4/22876: STARTING
-  forktest#9/22882: STARTING
-  forktest#2/22874: STARTING
-  forktest#1/22873: STARTING
-  forktest#0/22872: EXITING, no error
-  forktest#8/22880: EXITING, no error
-  forktest#3/22875: EXITING, no error
-  forktest#7/22879: EXITING, no error
-  forktest#6/22878: EXITING, no error
-  forktest#5/22877: EXITING, no error
-  forktest#2/22874: EXITING, no error
-  forktest#4/22876: EXITING, no error
-  forktest#9/22882: EXITING, no error
-  forktest#1/22873: EXITING, no error
-  All tests PASSED.
+More over programmer knows that can get in trouble if they
+do thing like fork() and don't synchronize their threads
+with each other. So while some weird thing can happen with
+O_DIRECT, it is unlikely (very small race window) and if
+it happens its well within the expected behavior.
 
-This is what the test output looks like for a failing run:
+For hardware the race window is the same as the process
+lifetime so it can be days, months, years ... Once the
+hardware has programmed its page table they will never
+see any update (again mlx5 ODP is the exception here).
 
-  #forks: 10
-  #steps: 10000
- =20
-  forktest#0/22906: STARTING
-  forktest#1/22907: STARTING
-  forktest#2/22909: STARTING
-  forktest#3/22911: STARTING
-  forktest#4/22912: STARTING
-  forktest#5/22915: STARTING
-  forktest#6/22916: STARTING
-  forktest#7/22919: STARTING
-  forktest#8/22920: STARTING
-  forktest#9/22923: STARTING
-  forktest#2/22909: EXITING, ERROR: wait on PTRACE_SINGLESTEP #9: wanted ST=
-ATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#5/22915: EXITING, no error
-  forktest#3/22911: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7953: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#0/22906: EXITING, ERROR: wait on PTRACE_SINGLESTEP #5072: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#9/22923: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7992: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#4/22912: EXITING, ERROR: wait on PTRACE_SINGLESTEP #9923: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#1/22907: EXITING, ERROR: wait on PTRACE_SINGLESTEP #7723: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#7/22919: EXITING, ERROR: wait on PTRACE_SINGLESTEP #5036: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#8/22920: EXITING, ERROR: wait on PTRACE_SINGLESTEP #4943: wanted=
- STATE_STOPPED, saw STATE_SIGNALED instead (and saw signo 5 too)
-  forktest#6/22916: EXITING, no error
-  One or more tests FAILED.
-
-Here are the observations from my testing so far:
-
-  - It has never failed when confined to a single cpu.
-  - It has never failed on !rt kernels.
-  - It has never failed on any kernel prior to 4.13.
-  - More failures than what chance would dictate happen
-    near the end of a test run (ie, if a test of 10,000=20
-    steps is run, the failure will be at the 9,xxx'th step,
-    if 100,000 steps are run, the failure will be at
-    the 9x,xxx'th step).
-
-The above results are from kernels 4.{4,9,11,13,14,19}-rt
-and some !rt's of these as well.
-
-I have yet to see or hear of this bug, if it is a bug,
-giving anyone a problem in a debug session.  It might not
-even be a bug but merely expected behaviour. And of course
-there is the possibility of a misuse of ptrace/waitpid in
-my test program. Its API, after all, is rather convoluted.
-
-Regards,
-Joe
-
-
-
-
-/*
- * Have a tracer do a bunch of PTRACE_SINGLESTEPs against
- * a tracee as fast as possible.  Create several of these
- * tracer/tracee pairs and see if they can be made to
- * interfere with each other.
- *
- * Usage:
- *   ssdd nforks niters
- * Where:
- *   nforks - number of tracer/tracee pairs to fork off.
- *            default 10.
- *   niters - number of PTRACE_SINGLESTEP iterations to
- *            do before declaring success, for each tracer/
- *            tracee pair set up.  Default 10,000.
- *
- * The tracee waits on each PTRACE_SINGLESTEP with a waitpid(2)
- * and checks that waitpid's return values for correctness.
- */
-#include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <string.h>
-#include <signal.h>
-#include <errno.h>
-
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/ptrace.h>
-
-/* do_wait return values */
-#define STATE_EXITED	1
-#define STATE_STOPPED	2
-#define STATE_SIGNALED	3
-#define STATE_UNKNOWN	4
-#define STATE_ECHILD	5
-#define STATE_EXITED_TSIG	6	/* exited with termination signal */
-#define STATE_EXITED_ERRSTAT	7	/* exited with non-zero status */
-
-char *state_name[] =3D {
-	[STATE_EXITED] =3D "STATE_EXITED",
-	[STATE_STOPPED] =3D "STATE_STOPPED",
-	[STATE_SIGNALED] =3D "STATE_SIGNALED",
-	[STATE_UNKNOWN] =3D "STATE_UNKNOWN",
-	[STATE_ECHILD] =3D "STATE_ECHILD",
-	[STATE_EXITED_TSIG] =3D "STATE_EXITED_TSIG",
-	[STATE_EXITED_ERRSTAT] =3D "STATE_EXITED_ERRSTAT"
-};
-
-const char *get_state_name(int state)
-{
-	if (state < STATE_EXITED || state > STATE_EXITED_ERRSTAT)
-		return "?";
-	return state_name[state];
-}
-
-#define unused __attribute__((unused))
-
-static int got_sigchld;
-
-static int do_wait(pid_t *wait_pid, int *ret_sig)
-{
-	int status, child_status;
-
-	*ret_sig =3D -1; /* initially mark 'nothing returned' */
-
-	while (1) {
-		status =3D waitpid(-1, &child_status, WUNTRACED | __WALL);
-		if (status =3D=3D -1) {
-			if (errno =3D=3D EINTR)
-				continue;
-			if (errno =3D=3D ECHILD) {
-				*wait_pid =3D (pid_t)0;
-				return STATE_ECHILD;
-			}
-			printf("do_wait/%d: EXITING, ERROR: "
-			       "waitpid() returned errno %d\n",
-			       getpid(), errno);
-			exit(1);
-		}
-		break;
-	}
-	*wait_pid =3D (pid_t)status;
-
-	if (WIFEXITED(child_status)) {
-		if (WIFSIGNALED(child_status))
-			return STATE_EXITED_TSIG;
-		if (WEXITSTATUS(child_status))
-			return STATE_EXITED_ERRSTAT;
-		return STATE_EXITED;
-	}
-	if (WIFSTOPPED(child_status)) {
-		*ret_sig =3D WSTOPSIG(child_status);
-		return STATE_STOPPED;
-	}
-	if (WIFSIGNALED(child_status)) {
-		*ret_sig =3D WTERMSIG(child_status);
-		return STATE_SIGNALED;
-	}
-	return STATE_UNKNOWN;
-}
-
-int check_sigchld(void)
-{
-	int i;
-	/*
-	 * The signal is asynchronous so give it some
-	 * time to arrive.
-	 */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(1000); /* 10 msecs */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(2000); /* 20 + 10 =3D 30 msecs */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(4000); /* 40 + 30 =3D 70 msecs */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(8000); /* 80 + 40 =3D 150 msecs */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(16000); /* 160 + 150 =3D 310 msecs */
-	for (i =3D 0; i < 10 && !got_sigchld; i++)
-		usleep(32000); /* 320 + 310 =3D 630 msecs */
-
-	return got_sigchld;
-}
-
-pid_t parent;
-int nforks =3D 10;
-int nsteps =3D 10000;
-
-static void sigchld(int sig, unused siginfo_t * info, unused void *arg)
-{
-	got_sigchld =3D 1;
-}
-
-static void child_process(void)
-{
-	unused volatile int i;
-
-	/* wait for ptrace attach */
-	usleep(100000);
-	while (1)
-		i =3D 0;
-}
-
-static int forktests(int testid)
-{
-	int i, status, ret_sig;
-	long pstatus;
-	pid_t child, wait_pid;
-	struct sigaction act, oact;
-
-	parent =3D getpid();
-	printf("forktest#%d/%d: STARTING\n", testid, parent);
-
-	child =3D fork();
-	if (child =3D=3D -1) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "fork returned errno %d\n", testid, parent, errno);
-		exit(1);
-	}
-	if (!child)
-		child_process();
-
-	act.sa_sigaction =3D sigchld;
-	sigemptyset(&act.sa_mask);
-	act.sa_flags =3D SA_SIGINFO;
-	status =3D sigaction(SIGCHLD, &act, &oact);
-	if (status) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "sigaction returned %d, errno %d\n",
-		       testid, parent, status, errno);
-		exit(1);
-	}
-
-	/* give both our child and parent time to set things up */
-	usleep(125000);
-
-	/*
-	 * Attach to the child.
-	 */
-	pstatus =3D ptrace(PTRACE_ATTACH, child, NULL, NULL);
-	if (pstatus =3D=3D ~0l) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "attach failed.  errno %d\n",
-		       testid, getpid(), errno);
-		exit(1);
-	}
-
-	/*
-	 * The attach should cause the child to receive a signal.
-	 */
-	status =3D do_wait(&wait_pid, &ret_sig);
-	if (wait_pid !=3D child) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "attach: Unexpected wait pid %d\n",
-		       testid, getpid(), wait_pid);
-		exit(1);
-	}
-	if (status !=3D STATE_STOPPED) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "attach: wait on PTRACE_ATTACH returned %d "
-		       "[%s, wanted STATE_STOPPED], signo %d\n",
-		       testid, getpid(), status, get_state_name(status),
-		       ret_sig);
-		exit(1);
-	}
-	else if (!check_sigchld()) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "wait on PTRACE_ATTACH saw a SIGCHLD count of %d, should be 1\n",
-		       testid, getpid(), got_sigchld);
-		exit(1);
-	}
-	got_sigchld =3D 0;
+This is where "issues" weird behavior can arise. Because
+you use DONTFORK than you never see weird thing happening.
+If you were to comment out DONTFORK then RDMA in the parent
+might change data in the child (or the other way around ie
+RDMA in the child might change data in the parent).
 
 
-	/*
-	 * Generate 'nsteps' PTRACE_SINGLESTEPs, make sure they all actually step
-	 * the tracee.
-	 */
-	for (i =3D 0; i < nsteps; i++) {
-		pstatus =3D ptrace(PTRACE_SINGLESTEP, child, NULL, NULL);
+> > > Really, if I have a get_user_pages FOLL_WRITE on a page and we fork,
+> > > then shouldn't the COW immediately be broken during the fork?
+> > > 
+> > > The kernel can't guarentee that an ongoing DMA will not write to those
+> > > pages, and it breaks the fork semantic to write to both processes.
+> > 
+> > Fixing that would incur a high cost: need to grow struct page, need
+> > to copy potentialy gigabyte of memory during fork() ... this would be
+> > a serious performance regression for many folks just to work around an
+> > abuse of device driver. So i don't think anything on that front would
+> > be welcome.
+> 
+> Why? Keep track in each mm if there are any active get_user_pages
+> FOLL_WRITE pages in the mm, if yes then sweep the VMAs and fix the
+> issue for the FOLL_WRITE pages.
 
-		if (pstatus) {
-			printf("forktest#%d/%d: EXITING, ERROR: "
-			       "PTRACE_SINGLESTEP #%d: returned status %ld, "
-			       "errno %d, signo %d\n",
-			       testid, getpid(), i, pstatus, errno, ret_sig);
-			exit(1);
-		}
+This has a cost and you don't want to do it for O_DIRECT. I am pretty
+sure that any such patch to modify fork() code path would be rejected.
+At least i would not like it and vote against.
 
-		status =3D do_wait(&wait_pid, &ret_sig);
-		if (wait_pid !=3D child) {
-			printf("forktest#%d/%d: EXITING, ERROR: "
-			       "wait on PTRACE_SINGLESTEP #%d: returned wrong pid %d, "
-			       "expected %d\n",
-			       testid, getpid(), i, wait_pid, child);
-			exit(1);
-		}
-		if (status !=3D STATE_STOPPED) {
-			printf("forktest#%d/%d: EXITING, ERROR: "
-			       "wait on PTRACE_SINGLESTEP #%d: wanted STATE_STOPPED, "
-			       "saw %s instead (and saw signo %d too)\n",
-			       testid, getpid(), i,
-			       get_state_name(status), ret_sig);
-			exit(1);
-		}
-		if (ret_sig !=3D SIGTRAP) {
-			printf("forktest#%d/%d: EXITING, ERROR: "
-			       "wait on PTRACE_SINGLESTEP #%d: returned signal %d, "
-			       "wanted SIGTRAP\n",
-			       testid, getpid(), i, ret_sig);
-			exit(1);
-		}
-		if (!check_sigchld()) {
-			printf("forktest#%d/%d: EXITING, ERROR: "
-			       "wait on PTRACE_SINGLESTEP #%d: no SIGCHLD seen "
-			       "(signal count =3D=3D 0), signo %d\n",
-			       testid, getpid(), i, ret_sig);
-			exit(1);
-		}
-		got_sigchld =3D 0;
-	}
+> 
+> John is already working on being able to detect pages under GUP, so it
+> seems like a small step..
 
-	/*
-	 * We are all done, kill the tracee and wait for it to die.  We test
-	 * the killing results as much as the above attach and sstep results,
-	 * though failure here really isn't the point of this test.
-	 */
-	status =3D kill(child, SIGKILL);
+John is trying to fix serious bugs which can result in filesystem
+corruption. It has a performance cost and thus i don't see that as
+something we should pursue as a default solution. I posted patches
+to remove get_user_page() from GPU driver and i intend to remove
+as many GUP as i can (for hardware that can do the right thing).
 
-	if (status) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "kill of child %d returned %d\n",
-		       testid, getpid(), child, errno);
-		exit(1);
-	}
+To me it sounds better to reward good hardware rather than punish
+everyone :)
 
-	status =3D do_wait(&wait_pid, &ret_sig);
-	if (wait_pid !=3D child) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "kill: Unexpected wait pid %d\n",
-		       testid, getpid(), wait_pid);
-		exit(1);
-	}
-	if (status !=3D STATE_SIGNALED) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "kill: Unexpected child, do_wait status %d "
-		       "[%s, wanted STATE_SIGNALED]\n",
-		       testid, getpid(), status, get_state_name(status));
-		exit(1);
-	}
-	if (ret_sig !=3D SIGKILL) {
-		printf("forktest#%d/%d: EXITING, ERROR: "
-		       "kill: Unexpected child signal %d\n",
-		       testid, getpid(), ret_sig);
-		exit(1);
-	}
+> 
+> Since nearly all cases of fork don't have a GUP FOLL_WRITE active
+> there would be no performance hit.
+> 
+> > umem without proper ODP and VFIO are the only bad user i know of (for
+> > VFIO you can argue that it is part of the API contract and thus that
+> > it is not an abuse but it is not spell out loud in documentation). I
+> > have been trying to push back on any people trying to push thing that
+> > would make the same mistake or at least making sure they understand
+> > what is happening.
+> 
+> It is something we have to live with and support for the foreseeable
+> future.
 
-	printf("forktest#%d/%d: EXITING, no error\n", testid, parent);
-	exit(0);
-}
+Yes for RDMA and VFIO, but i want to avoid any more new users hence
+why i push back on any solution that have the same issues.
 
-int main(int argc, char **argv)
-{
-	int i, ret_sig, status;
-	pid_t child =3D 0, wait_pid;
-	int error =3D 0;
+> 
+> > What really need to happen is people fixing their hardware and do the
+> > right thing (good software engineer versus evil hardware engineer ;))
+> 
+> Even ODP is no pancea, there are performance problems. What we really
+> need is CAPI like stuff, so you will tell Intel to redesign the CPU??
+> :)
 
-	setbuf(stdout, NULL);
+I agree
 
-	argc--, argv++;
-	if (argc) {
-		nforks =3D atoi(*argv);
-		argc--, argv++;
-		if (argc)
-			nsteps =3D atoi(*argv);
-	}
-	printf("#forks: %d\n", nforks);
-	printf("#steps: %d\n", nsteps);
-	printf("\n");
-
-	for (i =3D 0; i < nforks; i++) {
-		child =3D fork();
-		if (child =3D=3D -1) {
-			printf("main: fork returned errno %d\n", errno);
-			exit(1);
-		}
-		if (!child)
-			forktests(i);
-	}
-
-	for (i =3D 0; i < nforks; i++) {
-		status =3D do_wait(&wait_pid, &ret_sig);
-		if (status !=3D STATE_EXITED) {
-			if (0) printf("main/%d: ERROR: "
-			       "forktest#%d unexpected do_wait status %d "
-			       "[%s, wanted STATE_EXITED]\n",
-			       getpid(), wait_pid, status,
-			       get_state_name(status));
-			error =3D 1;
-		}
-	}
-
-	printf("%s.\n", error ?
-		"One or more tests FAILED" :
-		"All tests PASSED");
-	exit(error);
-}
+Jérôme
