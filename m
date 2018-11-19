@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06A0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC5EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5B42151B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70436214F1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fI6c3lhV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5B42151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a6ex5n4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70436214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405035AbeKTDXY (ORCPT
+        id S2405048AbeKTDX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35382 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbeKTDXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:23 -0500
+        id S2403980AbeKTDX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87BC4214D9;
-        Mon, 19 Nov 2018 16:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D142214ED;
+        Mon, 19 Nov 2018 16:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646748;
-        bh=5C58OQkm/9HwIsC3tycs8VrqD6+IFEA8GhBdIzQz2Ng=;
+        s=default; t=1542646750;
+        bh=IQR3opqM/74TalBKrYwdEE+TuWKjWFJt5SjrccxNmw4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fI6c3lhVyvnqjwFUeYt+8vIUcI3T0v9RT8ZUphDVo5sHupzWaSI6+AzrcksphqvIA
-         SA3aEwCbQCEvRRMREWv00v2zhntPlO0j8GCVquLXJqFJoGvhXBuUDWj1IAicDJQsVq
-         rk4hE0esZNuzpYAcqqqeXnE+WhJmKq3uQjtDfIWM=
+        b=a6ex5n4NLZpEkJP/hG3CQ3TdVFkTMluXNje7OaEdp2hb7w+x62KPMsHXX3oTMNDz+
+         YdqKVLZ4VlW2JgqdQ+k30FQwI7Psb0d90P/JL8mdwiOxaSj8ISQuzYzERJkmFKDb/c
+         p8y2gi5UUgZqc6+eTnE0RBcbAdJB2Yisbyz2hsEk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sander Eikelenboom <linux@eikelenboom.it>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: [PATCH 4.4 076/160] xen: fix xen_qlock_wait()
-Date:   Mon, 19 Nov 2018 17:28:35 +0100
-Message-Id: <20181119162638.616346715@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 4.4 077/160] media: em28xx: use a default format if TRY_FMT fails
+Date:   Mon, 19 Nov 2018 17:28:36 +0100
+Message-Id: <20181119162638.703996101@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,82 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Juergen Gross <jgross@suse.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit d3132b3860f6cf35ff7609a76bbcdbb814bd027c upstream.
+commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
 
-Commit a856531951dc80 ("xen: make xen_qlock_wait() nestable")
-introduced a regression for Xen guests running fully virtualized
-(HVM or PVH mode). The Xen hypervisor wouldn't return from the poll
-hypercall with interrupts disabled in case of an interrupt (for PV
-guests it does).
+Follow the V4L2 spec, as warned by v4l2-compliance:
 
-So instead of disabling interrupts in xen_qlock_wait() use a nesting
-counter to avoid calling xen_clear_irq_pending() in case
-xen_qlock_wait() is nested.
+	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
+	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
 
-Fixes: a856531951dc80 ("xen: make xen_qlock_wait() nestable")
+warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
+
 Cc: stable@vger.kernel.org
-Reported-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Tested-by: Sander Eikelenboom <linux@eikelenboom.it>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/xen/spinlock.c |   14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/xen/spinlock.c
-+++ b/arch/x86/xen/spinlock.c
-@@ -8,6 +8,7 @@
- #include <linux/log2.h>
- #include <linux/gfp.h>
- #include <linux/slab.h>
-+#include <linux/atomic.h>
+--- a/drivers/media/usb/em28xx/em28xx-video.c
++++ b/drivers/media/usb/em28xx/em28xx-video.c
+@@ -1288,9 +1288,9 @@ static int vidioc_try_fmt_vid_cap(struct
  
- #include <asm/paravirt.h>
- 
-@@ -19,6 +20,7 @@
- 
- static DEFINE_PER_CPU(int, lock_kicker_irq) = -1;
- static DEFINE_PER_CPU(char *, irq_name);
-+static DEFINE_PER_CPU(atomic_t, xen_qlock_wait_nest);
- static bool xen_pvspin = true;
- 
- #ifdef CONFIG_QUEUED_SPINLOCKS
-@@ -41,25 +43,25 @@ static void xen_qlock_kick(int cpu)
-  */
- static void xen_qlock_wait(u8 *byte, u8 val)
- {
--	unsigned long flags;
- 	int irq = __this_cpu_read(lock_kicker_irq);
-+	atomic_t *nest_cnt = this_cpu_ptr(&xen_qlock_wait_nest);
- 
- 	/* If kicker interrupts not initialized yet, just spin */
- 	if (irq == -1 || in_nmi())
- 		return;
- 
--	/* Guard against reentry. */
--	local_irq_save(flags);
-+	/* Detect reentry. */
-+	atomic_inc(nest_cnt);
- 
--	/* If irq pending already clear it. */
--	if (xen_test_irq_pending(irq)) {
-+	/* If irq pending already and no nested call clear it. */
-+	if (atomic_read(nest_cnt) == 1 && xen_test_irq_pending(irq)) {
- 		xen_clear_irq_pending(irq);
- 	} else if (READ_ONCE(*byte) == val) {
- 		/* Block until irq becomes pending (or a spurious wakeup) */
- 		xen_poll_irq(irq);
+ 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
+ 	if (!fmt) {
+-		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
+-				f->fmt.pix.pixelformat);
+-		return -EINVAL;
++		fmt = &format[0];
++		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
++				f->fmt.pix.pixelformat, fmt->fourcc);
  	}
  
--	local_irq_restore(flags);
-+	atomic_dec(nest_cnt);
- }
- 
- #else /* CONFIG_QUEUED_SPINLOCKS */
+ 	if (dev->board.is_em2800) {
 
 
