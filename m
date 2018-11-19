@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE9BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3031C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1529921104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56BA20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBy49CNN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1529921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGWC9tkc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B56BA20C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388199AbeKTDIU (ORCPT
+        id S2388213AbeKTDIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42822 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:20 -0500
+        id S1731911AbeKTDIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FA62086A;
-        Mon, 19 Nov 2018 16:44:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8076120C01;
+        Mon, 19 Nov 2018 16:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645849;
-        bh=lwPMq3tY9gJfVS9Ef/nV9qubkQLk5BWj9OvqPH/611s=;
+        s=default; t=1542645852;
+        bh=Fyr/2QGCEL9YDOxm0CkfQyZrGYYe/91yhf+pBuOIeLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBy49CNN23M1pgSggH4AtxYqfJJoV96o5BLoJGILflAhbK48jFYsSJB3VWELiwkLE
-         p9oci9+nZzmk0UdWCnku1QmzpBSXEINS/SBMSm6kCcSTeXWefyDzqdFMjh2FPwxD4A
-         5Anole0A0E6WgZk3s2FgPaPhm7Vh13TVkz19dGX8=
+        b=UGWC9tkc/uzbyboYNvcU4nxpZtnvFcFry9+jLcrYtvN/XucHdvMEBUdhLWyqzK63H
+         IkPcEkZIj/psEYvW7LxG3GvsjX8erhnYintNPTS5EIFZuI7HpTXi4yLqw4xwvRLh5V
+         11HmLNuCpg6llPhcLzSwwdL5jvkw0jLctp7RyDOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        stable@vger.kernel.org, Dmitry Monakhov <dmonakhov@gmail.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.18 111/171] ext4: avoid buffer leak on shutdown in ext4_mark_iloc_dirty()
-Date:   Mon, 19 Nov 2018 17:28:27 +0100
-Message-Id: <20181119162636.273737041@linuxfoundation.org>
+Subject: [PATCH 4.18 112/171] ext4: avoid buffer leak in ext4_orphan_add() after prior errors
+Date:   Mon, 19 Nov 2018 17:28:28 +0100
+Message-Id: <20181119162636.391938000@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,35 +64,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit a6758309a005060b8297a538a457c88699cb2520 upstream.
+commit feaf264ce7f8d54582e2f66eb82dd9dd124c94f3 upstream.
 
-ext4_mark_iloc_dirty() callers expect that it releases iloc->bh
-even if it returns an error.
-
-Fixes: 0db1ff222d40 ("ext4: add shutdown bit and check for it")
+Fixes: d745a8c20c1f ("ext4: reduce contention on s_orphan_lock")
+Fixes: 6e3617e579e0 ("ext4: Handle non empty on-disk orphan link")
+Cc: Dmitry Monakhov <dmonakhov@gmail.com>
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 4.11
+Cc: stable@kernel.org # 2.6.34
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/ext4/namei.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5763,9 +5763,10 @@ int ext4_mark_iloc_dirty(handle_t *handl
- {
- 	int err = 0;
- 
--	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
-+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb)))) {
-+		put_bh(iloc->bh);
- 		return -EIO;
--
-+	}
- 	if (IS_I_VERSION(inode))
- 		inode_inc_iversion(inode);
- 
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -2811,7 +2811,9 @@ int ext4_orphan_add(handle_t *handle, st
+ 			list_del_init(&EXT4_I(inode)->i_orphan);
+ 			mutex_unlock(&sbi->s_orphan_lock);
+ 		}
+-	}
++	} else
++		brelse(iloc.bh);
++
+ 	jbd_debug(4, "superblock will point to %lu\n", inode->i_ino);
+ 	jbd_debug(4, "orphan inode %lu will point to %d\n",
+ 			inode->i_ino, NEXT_ORPHAN(inode));
 
 
