@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529E0C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A990C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF6420823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D58208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YDcJNWK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF6420823
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gf9C65zQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D58208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389462AbeKTDMp (ORCPT
+        id S2389473AbeKTDMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:12:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49128 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:12:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387988AbeKTDMn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:12:43 -0500
+        id S2387988AbeKTDMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:12:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C10CC20823;
-        Mon, 19 Nov 2018 16:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EDC12089F;
+        Mon, 19 Nov 2018 16:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646111;
-        bh=ti5AL8/YXoB4mbthc6zea95S+76qAnJWWL7uO4SlMKQ=;
+        s=default; t=1542646113;
+        bh=GSjGNNvFrnbs4C0XsjG77mpG07lzmIioiWhwdfyJDqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YDcJNWK6meiwpD5hJV4xIbu/8X4wwP/WHll36VR4aeVxmoC0EK9AWq24KrK2/zdDn
-         U2az3FEzX4zH1p8hjYR18OiFvT5fE2k4tPzhwAL3AbMSnSgQGIXOsSvQrq8bfB1CH7
-         SiNIMYrQg62lCI+2AzAC5F4wBCMaPJMqBkTLR/BA=
+        b=Gf9C65zQ3ZIFQb9c0PPikc6eFQIXj4Nu/T56hKj4PKqh5PTHfHVcqgDX75awEQ12i
+         r4nw1pjTdkN0oLdtxIFkKEh3uzV+28KHe778LaHohDCWv7JmpUek4Ij+Ak1WCwGTRh
+         nQZzcNazZDvAEGCqQfydJau0nsYQ951p7YOgMo7g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
-        syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
-Subject: [PATCH 4.14 033/124] fuse: set FR_SENT while locked
-Date:   Mon, 19 Nov 2018 17:28:07 +0100
-Message-Id: <20181119162620.018388754@linuxfoundation.org>
+        stable@vger.kernel.org, Ronald Wahl <rwahl@gmx.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.14 042/124] clk: at91: Fix division by zero in PLL recalc_rate()
+Date:   Mon, 19 Nov 2018 17:28:16 +0100
+Message-Id: <20181119162621.751914025@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -61,35 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Ronald Wahl <rwahl@gmx.de>
 
-commit 4c316f2f3ff315cb48efb7435621e5bfb81df96d upstream.
+commit 0f5cb0e6225cae2f029944cb8c74617aab6ddd49 upstream.
 
-Otherwise fuse_dev_do_write() could come in and finish off the request, and
-the set_bit(FR_SENT, ...) could trigger the WARN_ON(test_bit(FR_SENT, ...))
-in request_end().
+Commit a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached MUL
+and DIV values") removed a check that prevents a division by zero. This
+now causes a stacktrace when booting the kernel on a at91 platform if
+the PLL DIV register contains zero. This commit reintroduces this check.
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Reported-by: syzbot+ef054c4d3f64cd7f7cec@syzkaller.appspotmai
-Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
-Cc: <stable@vger.kernel.org> # v4.2
+Fixes: a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached...")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ronald Wahl <rwahl@gmx.de>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/at91/clk-pll.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -1317,8 +1317,8 @@ static ssize_t fuse_dev_do_read(struct f
- 	}
- 	list_move_tail(&req->list, &fpq->processing);
- 	__fuse_get_request(req);
--	spin_unlock(&fpq->lock);
- 	set_bit(FR_SENT, &req->flags);
-+	spin_unlock(&fpq->lock);
- 	/* matches barrier in request_wait_answer() */
- 	smp_mb__after_atomic();
- 	if (test_bit(FR_INTERRUPTED, &req->flags))
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -133,6 +133,9 @@ static unsigned long clk_pll_recalc_rate
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
+ 
++	if (!pll->div || !pll->mul)
++		return 0;
++
+ 	return (parent_rate / pll->div) * (pll->mul + 1);
+ }
+ 
 
 
