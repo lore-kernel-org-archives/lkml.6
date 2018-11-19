@@ -2,105 +2,112 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E60F9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D727C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A17F620823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:12:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04DF92086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 06:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="kv9OvgbX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A17F620823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="2370uH5L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04DF92086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726139AbeKSQfR (ORCPT
+        id S1726211AbeKSQf7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 11:35:17 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40886 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeKSQfQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 11:35:16 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z10so13350008pgp.7
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 22:12:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=MMUm3eNkpyPQHHD2Gp64vHeM9nQZHTseSiKVjNaXq+Q=;
-        b=kv9OvgbX0jXRr6DOGZLs7A8UmehgZimV9NLWu2CAlxgNvsCt2Zwk1uLg4DQdoT44N+
-         PA+ANHP/bC6ACVmDVQlSSnaF1FfBLcTSGdRApwt0mwRgeVHpQLYJHEnJ5xAg0KyotSde
-         LnrtS9clvePHrqi38c8ALBTKnIqNaeD8zkiGQdHId7uxiQxSZiARwPXx1ebIP7qFKDR3
-         cH51S5qRuM5Sram0DJaQuyDll+qB03BNsIhsrrfUcVERHN6wPJWhUi7qV5hwo3ZBLWvy
-         AzNIvSMWD/ViZ9h/H52tOBGQtP2yIXsKTJf+90dfkfOnxYkktCxsQ2DZus7rGCYD5gMZ
-         ULCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MMUm3eNkpyPQHHD2Gp64vHeM9nQZHTseSiKVjNaXq+Q=;
-        b=leycH7GkThvNEM5gXC+fcDORBFk7zI78U+f4CosarvQPxwQye/jEuPc97jdjhxWvWH
-         yEQf7YEp80VkzZainZdWYcbtZWFYxxqZQ76iPp34NodXXxPeX0KM1WO4NKHR8QB7S3m5
-         UHuwCurTTuTBU4vofFDMk2KluyoULyZ2C+a/xf4Tgmy331zyBhahbsKTtVVbFHuq+3Fg
-         0R4Dorscq7Tp4lz/jw6KWY2h8PbnCZvMPtkoGI0RMe7ZkGL4HEEhuMsFoa/JyQUkaWbm
-         8pUWGHQUUuqRAkBBs2UaeEflnYsPodInAOqyoj1cli6o3aRfNhIzfVH53bdcaRjDdFij
-         vokQ==
-X-Gm-Message-State: AGRZ1gIRT8vg3E3sHiYWnW7HpJldIE6jx5yaRvhs0xJXymRLMTrHtaZ9
-        cVrZxQePblt6TVuUoPj5x+vrAA==
-X-Google-Smtp-Source: AJdET5fcLhsbrVoaCd4D+9vKRfCouJQ7gGNfGwjw0jCEsKlG/K7xq5FmZN1iRE+0MaW17fUaJuMZyA==
-X-Received: by 2002:a62:37c7:: with SMTP id e190-v6mr21206743pfa.145.1542607959782;
-        Sun, 18 Nov 2018 22:12:39 -0800 (PST)
-Received: from endless.endlessm-sf.com (125-227-158-176.HINET-IP.hinet.net. [125.227.158.176])
-        by smtp.googlemail.com with ESMTPSA id r4sm47469591pgn.54.2018.11.18.22.12.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Nov 2018 22:12:39 -0800 (PST)
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-To:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dominique Martinet <asmadeus@codewreck.org>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
-Subject: [PATCH] iio: st_sensors: Fix the sleep time for sampling
-Date:   Mon, 19 Nov 2018 14:12:19 +0800
-Message-Id: <20181119061219.14238-1-jian-hong@endlessm.com>
-X-Mailer: git-send-email 2.11.0
+        Mon, 19 Nov 2018 11:35:59 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:33961 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725998AbeKSQf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 11:35:59 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 13bd74fb;
+        Mon, 19 Nov 2018 06:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=UopaU62DekDF+iU8IBwCEnFHyoE=; b=2370uH
+        5Ln8LfSjVn/IPyt8+3r/XwUPzXDLcrt1NiKWgfqzpeQ5ln9dFxm05XfMQKG4QYrU
+        yvH3gfh1CFpwHkIC5W/FDiHoB7g97mwkCa51D1ubBmG5eyxXL7OPRnq3wzIRiuND
+        HreO/FDBQgVg9xTsuS5TlJkbj/f/lVqd3qUaDRICpJQipY2dhYNBvwVVcLKc887Q
+        hiiDfZVzuUWRSXIMZeCBQl/bcjmqB4kFJxebH9DKwTuW0b+i1lZ1LaOVgKaR2EDp
+        fdNyRlXDPdl4nLSPz5EqRhHjEBsPkKGxMSOcZECHHNuyI/o/awXw0KYRXVElPH9u
+        nFJnvBKfMgmr16eg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id fa02def1 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 19 Nov 2018 06:07:23 +0000 (UTC)
+Received: by mail-ot1-f48.google.com with SMTP id t5so26694544otk.1;
+        Sun, 18 Nov 2018 22:13:20 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJFqwgPpU1E/nRtlibYiUkcbpQksjsOk/zkPfoM0wO71x/bGmjb
+        f4/nhc5TyJtB2CPXbs72DqWrIKtHr5jB9jWwFZo=
+X-Google-Smtp-Source: AJdET5dbO9s5WW9GqEoVVwj8kZUD9BttDvupHJ0IItb6oC1Mwt7F8kADf7DfY7P8cVZOPRyZ6jnZSj3u9614qAiBpaY=
+X-Received: by 2002:a9d:12e3:: with SMTP id g90mr8297694otg.223.1542607999398;
+ Sun, 18 Nov 2018 22:13:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
+ <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+ <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
+ <20181117001718.GA175522@gmail.com> <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+ <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
+In-Reply-To: <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Mon, 19 Nov 2018 07:13:07 +0100
+X-Gmail-Original-Message-ID: <CAHmME9oXAnD0sbO2cKeTtotCMohX2Hu6P=uzA_6u0EWECU9Bpg@mail.gmail.com>
+Message-ID: <CAHmME9oXAnD0sbO2cKeTtotCMohX2Hu6P=uzA_6u0EWECU9Bpg@mail.gmail.com>
+Subject: Re: [RFC PATCH] zinc chacha20 generic implementation using crypto API code
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the description of st_sensor_settings and st_sensor_data
-structures' comments:
-- bootime: samples to discard when sensor passing from power-down to
-power-up.
-- odr: Output data rate of the sensor [Hz].
+Hi Herbert,
 
-The sleep time should be
-sdata->sensor_settings->bootime + 1000 / sdata->odr ms.
+On Mon, Nov 19, 2018 at 6:25 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> My proposal is to merge the zinc interface as is, but to invert
+> how we place the algorithm implementations.  IOW the implementations
+> should stay where they are now, with in the crypto API.  However,
+> we will provide direct access to them for zinc without going through
+> the crypto API.  IOW we'll just export the functions directly.
 
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
----
- drivers/iio/common/st_sensors/st_sensors_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Sorry, but there isn't a chance I'll agree to this. The whole idea is
+to have a clean place to focus on synchronous software
+implementations, and not keep it tangled up with the asynchronous API.
+If WireGuard and Zinc go in, it's going to be done right, not in a way
+that introduces more problems and organizational complexity. Avoiding
+the solution proposed here is kind of the point. And given that
+cryptographic code is so security sensitive, I want to make sure this
+is done right, as opposed to rushing it with some half-baked
+concoction that will be maybe possibly be replaced "later". From
+talking to folks at Plumbers, I believe most of the remaining issues
+are taken care of by the upcoming v9, and that you're overstating the
+status of discussions regarding that.
 
-diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
-index 26fbd1bd9413..6b87ea657a92 100644
---- a/drivers/iio/common/st_sensors/st_sensors_core.c
-+++ b/drivers/iio/common/st_sensors/st_sensors_core.c
-@@ -594,7 +594,7 @@ int st_sensors_read_info_raw(struct iio_dev *indio_dev,
- 		if (err < 0)
- 			goto out;
- 
--		msleep((sdata->sensor_settings->bootime * 1000) / sdata->odr);
-+		msleep(sdata->sensor_settings->bootime + 1000 / sdata->odr);
- 		err = st_sensors_read_axis_data(indio_dev, ch, val);
- 		if (err < 0)
- 			goto out;
--- 
-2.11.0
+I think the remaining issue right now is how to order my series and
+Eric's series. If Eric's goes in first, it means that I can either a)
+spend some time developing Zinc further _now_ to support chacha12 and
+keep the top two conversion patches, or b) just drop the top two
+conversion patches and work that out carefully with Eric after. I
+think (b) would be better, but I'm happy to do (a) if you disagree.
+And as I mentioned in the last email, I'd prefer Eric's work to go in
+after Zinc, but I don't think the reasoning for that is particularly
+strong, so it seems fine to merge Eric's work first.
 
+I'll post v9 pretty soon and you can see how things are shaping up.
+Hopefully before then Eric/Ard/you can provide some feedback on
+whether you'd prefer (a) or (b) above.
+
+Regards,
+Jason
