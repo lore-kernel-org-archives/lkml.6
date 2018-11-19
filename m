@@ -2,354 +2,120 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F42DC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2319C2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:33:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2319C2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 589AF2080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:34:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hpALidmf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589AF2080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731188AbeKTH7L convert rfc822-to-8bit (ORCPT
+        id S1731211AbeKTH7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 02:59:11 -0500
-Received: from mga18.intel.com ([134.134.136.126]:37662 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeKTH7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 02:59:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:33:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="107630970"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Nov 2018 13:33:36 -0800
-Received: from fmsmsx121.amr.corp.intel.com (10.18.125.36) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 19 Nov 2018 13:33:35 -0800
-Received: from lcsmsx152.ger.corp.intel.com (10.186.165.231) by
- fmsmsx121.amr.corp.intel.com (10.18.125.36) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 19 Nov 2018 13:33:35 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- LCSMSX152.ger.corp.intel.com ([10.186.165.231]) with mapi id 14.03.0415.000;
- Mon, 19 Nov 2018 23:33:32 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-CC:     "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Microchip (AT91) SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v9 05/17] tpm: declare struct tpm_header
-Thread-Topic: [PATCH v9 05/17] tpm: declare struct tpm_header
-Thread-Index: AQHUfz0gSea28glqM0GUGXtrRBZXG6VXnyUQ
-Date:   Mon, 19 Nov 2018 21:33:31 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA235BB@hasmsx108.ger.corp.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-6-jarkko.sakkinen@linux.intel.com>
-In-Reply-To: <20181118124753.18613-6-jarkko.sakkinen@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTQyZWU1NGYtODgwNi00ZThlLWI5MGYtYzRjZDFlYjE1Y2U0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiUzRDNmIwMkIwNHNCOStGSllIcW1jU2s5cDlOYmdjZUthbWJaenAyT003ZGVJZzlTbTQrd2orNTJHKzd3NVZzaSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 20 Nov 2018 02:59:46 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18892 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeKTH7q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 02:59:46 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf32c5b0000>; Mon, 19 Nov 2018 13:34:19 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 19 Nov 2018 13:34:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 19 Nov 2018 13:34:11 -0800
+Received: from [10.26.11.92] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 19 Nov
+ 2018 21:34:09 +0000
+Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
+ on resume from LP1 on Tegra30
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180830185404.7224-1-digetx@gmail.com>
+ <20180830185404.7224-3-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
+Date:   Mon, 19 Nov 2018 21:34:06 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20180830185404.7224-3-digetx@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542663260; bh=8XIYjLvnxyy4KKvJkYuIFmYBSu78w2y0iJXgYVV2ceI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hpALidmfej4EI+3AZlGRfQ2TcvifzS/mnLa8fiRnD2lOuU5HUro34h8Q3oRJOmYzi
+         CcVc9UVnnycRqkywfuTOj3qBsBeH5rSIfI5aDnhtAJl6X4whXg7KIVgxB+zaaNOneO
+         cimo8hzY4FEbhm0DEaoPbC9Cj60Bs0lb2IuxOas82lcmEgHYv8mEERQhXixi2PB31n
+         rUE4K9x3rHGsdAQT3ZtyKqR7KdAMLEa8IqHZUgoyfpPrGXhEFBuldUIjqhKecCWbxF
+         V9sUCJiXrqYSOCzkeRV21DIwJP6t4hbtwPDjXUoBGvYDqbNoz0CoEAeNbt7zxxgdIl
+         gICy38+A5Uaig==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+On 30/08/2018 19:54, Dmitry Osipenko wrote:
+> The DRAM refresh-interval is getting erroneously set to "1" on exiting
+> from memory self-refreshing mode. The clobbered interval causes the
+> "refresh request overflow timeout" error raised by the External Memory
+> Controller on exiting from LP1 on Tegra30.
 > 
-> Decleare struct tpm_header that replaces struct tpm_input_header and
-Typo 
-> struct tpm_output_header.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 > ---
->  drivers/char/tpm/tpm-interface.c  |  9 ++++-----
->  drivers/char/tpm/tpm.h            | 27 ++++++++++++---------------
->  drivers/char/tpm/tpm2-cmd.c       |  4 ++--
->  drivers/char/tpm/tpm2-space.c     |  6 +++---
->  drivers/char/tpm/tpm_i2c_atmel.c  |  5 ++---
-> drivers/char/tpm/tpm_vtpm_proxy.c |  8 ++++----
->  drivers/char/tpm/xen-tpmfront.c   |  2 +-
->  7 files changed, 28 insertions(+), 33 deletions(-)
+>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
+>  1 file changed, 2 deletions(-)
 > 
-> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> interface.c
-> index 7ac6ada8428c..cb0d44c158ae 100644
-> --- a/drivers/char/tpm/tpm-interface.c
-> +++ b/drivers/char/tpm/tpm-interface.c
-> @@ -67,7 +67,7 @@ static int tpm_validate_command(struct tpm_chip
-> *chip,
->  				 const u8 *cmd,
->  				 size_t len)
->  {
-> -	const struct tpm_input_header *header = (const void *)cmd;
-> +	const struct tpm_header *header = (const void *)cmd;
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> index 801fe58978ae..99ac9c6dcf7c 100644
+> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+> @@ -29,7 +29,6 @@
+>  #define EMC_CFG				0xc
+>  #define EMC_ADR_CFG			0x10
+>  #define EMC_TIMING_CONTROL		0x28
+> -#define EMC_REFRESH			0x70
+>  #define EMC_NOP				0xdc
+>  #define EMC_SELF_REF			0xe0
+>  #define EMC_MRW				0xe8
+> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
+>  	cmp	r10, #TEGRA30
+>  	streq	r1, [r0, #EMC_NOP]
+>  	streq	r1, [r0, #EMC_NOP]
+> -	streq	r1, [r0, #EMC_REFRESH]
+>  
+>  	emc_device_mask r1, r0
 
+This does look incorrect and it appears Tegra20 has the same bug.
+However, looking at the EMC_REFRESH register it appears that bits 5:0
+are the REFRESH_LO and bits 15:6 are the refresh interval. So this seems
+to imply the interval is set to 0 and not 1. So maybe the commit message
+needs to be fixed up.
 
-Sometimes it is casted (void *), sometimes (struct tpm_header *)
-Better to use one convention 
+The other question I have, should we be restoring the refresh value here
+somewhere?
 
->  	int i;
->  	u32 cc;
->  	u32 attrs;
-> @@ -166,7 +166,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,
->  				u8 *buf, size_t bufsiz,
->  				unsigned int flags)
->  {
-> -	struct tpm_output_header *header = (void *)buf;
-> +	struct tpm_header *header = (void *)buf;
->  	int rc;
->  	ssize_t len = 0;
->  	u32 count, ordinal;
-> @@ -316,7 +316,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> *chip,  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
->  		     u8 *buf, size_t bufsiz, unsigned int flags)  {
-> -	struct tpm_output_header *header = (struct tpm_output_header
-> *)buf;
-> +	struct tpm_header *header = (struct tpm_header *)buf;
->  	/* space for header and handles */
->  	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
->  	unsigned int delay_msec = TPM2_DURATION_SHORT; @@ -381,8
-> +381,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct
-> tpm_space *space,
->  			 struct tpm_buf *buf, size_t min_rsp_body_length,
->  			 unsigned int flags, const char *desc)  {
-> -	const struct tpm_output_header *header =
-> -		(struct tpm_output_header *)buf->data;
-> +	const struct tpm_header *header = (struct tpm_header *)buf->data;
->  	int err;
->  	ssize_t len;
-> 
-> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> 49bca4d1e786..86fa8ac0ae20 100644
-> --- a/drivers/char/tpm/tpm.h
-> +++ b/drivers/char/tpm/tpm.h
-> @@ -273,16 +273,13 @@ struct tpm_chip {
-> 
->  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
-> 
-> -struct tpm_input_header {
-> -	__be16	tag;
-> -	__be32	length;
-> -	__be32	ordinal;
-> -} __packed;
-> -
-> -struct tpm_output_header {
-> -	__be16	tag;
-> -	__be32	length;
-> -	__be32	return_code;
-> +struct tpm_header {
-Does it deserve kdoc? 
-> +	__be16 tag;
-> +	__be32 length;
-> +	union {
-> +		__be32 ordinal;
-> +		__be32 return_code;
-> +	};
->  } __packed;
-> 
->  #define TPM_TAG_RQU_COMMAND 193
-> @@ -401,8 +398,8 @@ struct tpm_buf {
-> 
->  static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)  {
-> -	struct tpm_input_header *head;
-> -	head = (struct tpm_input_header *)buf->data;
-> +	struct tpm_header *head = (struct tpm_header *)buf->data;
-> +
->  	head->tag = cpu_to_be16(tag);
->  	head->length = cpu_to_be32(sizeof(*head));
->  	head->ordinal = cpu_to_be32(ordinal);
-> @@ -428,14 +425,14 @@ static inline void tpm_buf_destroy(struct tpm_buf
-> *buf)
-> 
->  static inline u32 tpm_buf_length(struct tpm_buf *buf)  {
-> -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> >data;
-No blank after ) in casting. 
+Cheers
+Jon
 
-> +	struct tpm_header *head = (struct tpm_header *) buf->data;
-> 
->  	return be32_to_cpu(head->length);
->  }
-> 
->  static inline u16 tpm_buf_tag(struct tpm_buf *buf)  {
-> -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> >data;
-> +	struct tpm_header *head = (struct tpm_header *) buf->data;
-> 
->  	return be16_to_cpu(head->tag);
->  }
-> @@ -444,7 +441,7 @@ static inline void tpm_buf_append(struct tpm_buf
-> *buf,
->  				  const unsigned char *new_data,
->  				  unsigned int new_len)
->  {
-> -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> >data;
-> +	struct tpm_header *head = (struct tpm_header *) buf->data;
-No blank after ) in casting.
->  	u32 len = tpm_buf_length(buf);
-> 
->  	/* Return silently if overflow has already happened. */ diff --git
-> a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c index
-> 2bcf470c8e5d..ab03f8600f89 100644
-> --- a/drivers/char/tpm/tpm2-cmd.c
-> +++ b/drivers/char/tpm/tpm2-cmd.c
-> @@ -784,7 +784,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
->   */
->  int tpm2_probe(struct tpm_chip *chip)
->  {
-> -	struct tpm_output_header *out;
-> +	struct tpm_header *out;
->  	struct tpm_buf buf;
->  	int rc;
-> 
-> @@ -797,7 +797,7 @@ int tpm2_probe(struct tpm_chip *chip)
->  	rc = tpm_transmit_cmd(chip, NULL, &buf, 0, 0, NULL);
->  	/* We ignore TPM return codes on purpose. */
->  	if (rc >=  0) {
-> -		out = (struct tpm_output_header *)buf.data;
-> +		out = (struct tpm_header *)buf.data;
->  		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
->  			chip->flags |= TPM_CHIP_FLAG_TPM2;
->  	}
-> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> index 5ecc73988f7c..862ee1ce1755 100644
-> --- a/drivers/char/tpm/tpm2-space.c
-> +++ b/drivers/char/tpm/tpm2-space.c
-> @@ -334,7 +334,7 @@ static int tpm2_map_response_header(struct
-> tpm_chip *chip, u32 cc, u8 *rsp,
->  				    size_t len)
->  {
->  	struct tpm_space *space = &chip->work_space;
-> -	struct tpm_output_header *header = (void *)rsp;
-> +	struct tpm_header *header = (void *)rsp;
->  	u32 phandle;
->  	u32 phandle_type;
->  	u32 vhandle;
-> @@ -394,7 +394,7 @@ static int tpm2_map_response_body(struct tpm_chip
-> *chip, u32 cc, u8 *rsp,
->  				  size_t len)
->  {
->  	struct tpm_space *space = &chip->work_space;
-> -	struct tpm_output_header *header = (void *)rsp;
-> +	struct tpm_header *header = (void *)rsp;
->  	struct tpm2_cap_handles *data;
->  	u32 phandle;
->  	u32 phandle_type;
-> @@ -492,7 +492,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
-> int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
->  		      u32 cc, u8 *buf, size_t *bufsiz)  {
-> -	struct tpm_output_header *header = (void *)buf;
-> +	struct tpm_header *header = (void *)buf;
->  	int rc;
-> 
->  	if (!space)
-> diff --git a/drivers/char/tpm/tpm_i2c_atmel.c
-> b/drivers/char/tpm/tpm_i2c_atmel.c
-> index 95ce2e9ccdc6..4720b2442ffe 100644
-> --- a/drivers/char/tpm/tpm_i2c_atmel.c
-> +++ b/drivers/char/tpm/tpm_i2c_atmel.c
-> @@ -46,7 +46,7 @@ struct priv_data {
->  	/* This is the amount we read on the first try. 25 was chosen to fit a
->  	 * fair number of read responses in the buffer so a 2nd retry can be
->  	 * avoided in small message cases. */
-> -	u8 buffer[sizeof(struct tpm_output_header) + 25];
-> +	u8 buffer[sizeof(struct tpm_header) + 25];
->  };
-> 
->  static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len) @@ -
-> 72,8 +72,7 @@ static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf,
-> size_t count)  {
->  	struct priv_data *priv = dev_get_drvdata(&chip->dev);
->  	struct i2c_client *client = to_i2c_client(chip->dev.parent);
-> -	struct tpm_output_header *hdr =
-> -		(struct tpm_output_header *)priv->buffer;
-> +	struct tpm_header *hdr = (struct tpm_header *)priv->buffer;
->  	u32 expected_len;
->  	int rc;
-> 
-> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c
-> b/drivers/char/tpm/tpm_vtpm_proxy.c
-> index 5f95fbfb7f6b..28eb5ab15b99 100644
-> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> @@ -303,9 +303,9 @@ static int vtpm_proxy_tpm_op_recv(struct tpm_chip
-> *chip, u8 *buf, size_t count)  static int
-> vtpm_proxy_is_driver_command(struct tpm_chip *chip,
->  					u8 *buf, size_t count)
->  {
-> -	struct tpm_input_header *hdr = (struct tpm_input_header *)buf;
-> +	struct tpm_header *hdr = (struct tpm_header *)buf;
-> 
-> -	if (count < sizeof(struct tpm_input_header))
-> +	if (count < sizeof(struct tpm_header))
->  		return 0;
-> 
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2) { @@ -402,7 +402,7 @@
-> static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)  {
->  	struct tpm_buf buf;
->  	int rc;
-> -	const struct tpm_output_header *header;
-> +	const struct tpm_header *header;
->  	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-> 
->  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> @@ -427,7 +427,7 @@ static int vtpm_proxy_request_locality(struct
-> tpm_chip *chip, int locality)
->  		goto out;
->  	}
-> 
-> -	header = (const struct tpm_output_header *)buf.data;
-> +	header = (const struct tpm_header *)buf.data;
->  	rc = be32_to_cpu(header->return_code);
->  	if (rc)
->  		locality = -1;
-> diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
-> tpmfront.c index b150f87f38f5..1259e935fd58 100644
-> --- a/drivers/char/tpm/xen-tpmfront.c
-> +++ b/drivers/char/tpm/xen-tpmfront.c
-> @@ -163,7 +163,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf,
-> size_t count)
->  	wmb();
->  	notify_remote_via_evtchn(priv->evtchn);
-> 
-> -	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
-> +	ordinal = be32_to_cpu(((struct tpm_header *)buf)->ordinal);
->  	duration = tpm_calc_ordinal_duration(chip, ordinal);
-> 
->  	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
-> --
-> 2.19.1
-
+-- 
+nvpublic
