@@ -4,46 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70313C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C64BCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D7D21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ED4621104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xZgfTL+F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37D7D21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qvn4a9Of"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ED4621104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbeKTDI0 (ORCPT
+        id S2388241AbeKTDI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42946 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388214AbeKTDIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:25 -0500
+        id S2387795AbeKTDI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 281FC2086A;
-        Mon, 19 Nov 2018 16:44:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 875C920C01;
+        Mon, 19 Nov 2018 16:44:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645854;
-        bh=+QZNpIv93hJBkxFe88buioyDOZK73JoMZhw8bzleUUY=;
+        s=default; t=1542645857;
+        bh=dI1UPSFfo805wVZNkkEoK02gcI6wVxdmW+UmyfvB5Ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xZgfTL+FcaxB+ueDzWpjJwMKKsHI15y0qpVLeehNmdn1UuLvtIFUxPnO2Cpt0HA+n
-         EzpkjaAd5lRtjLjvEw5H1jJXnf6bRo/ScHp75DxaE1G3bbzNAgZpML12XdElsm+nr1
-         xN/+YlTeoaU0gvtxl87/ntlsdcXjSx8HHVox/wek=
+        b=Qvn4a9OfpgAyeg5deoxbCfhBwsfc9OQbY8NQj07q+of0Y2VSLZAK8T8x9vQlfmqAY
+         UqvLbX7leSoV5sny4XwPzorEti8UGyQAYQQMiOWg6yEviy0TJTVBpFtShYpW8tid94
+         aYao2gNQ2adn8VCf4iuZqcTvnUDjVNErVjdZRJp0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.18 113/171] ext4: fix missing cleanup if ext4_alloc_flex_bg_array() fails while resizing
-Date:   Mon, 19 Nov 2018 17:28:29 +0100
-Message-Id: <20181119162636.504133061@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        linux-scsi@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "jianchao.wang" <jianchao.w.wang@oracle.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.18 079/171] SCSI: fix queue cleanup race before queue initialization is done
+Date:   Mon, 19 Nov 2018 17:27:55 +0100
+Message-Id: <20181119162632.278437995@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -61,30 +68,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit f348e2241fb73515d65b5d77dd9c174128a7fbf2 upstream.
+commit 8dc765d438f1e42b3e8227b3b09fad7d73f4ec9a upstream.
 
-Fixes: 117fff10d7f1 ("ext4: grow the s_flex_groups array as needed ...")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.7
+c2856ae2f315d ("blk-mq: quiesce queue before freeing queue") has
+already fixed this race, however the implied synchronize_rcu()
+in blk_mq_quiesce_queue() can slow down LUN probe a lot, so caused
+performance regression.
+
+Then 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
+tried to quiesce queue for avoiding unnecessary synchronize_rcu()
+only when queue initialization is done, because it is usual to see
+lots of inexistent LUNs which need to be probed.
+
+However, turns out it isn't safe to quiesce queue only when queue
+initialization is done. Because when one SCSI command is completed,
+the user of sending command can be waken up immediately, then the
+scsi device may be removed, meantime the run queue in scsi_end_request()
+is still in-progress, so kernel panic can be caused.
+
+In Red Hat QE lab, there are several reports about this kind of kernel
+panic triggered during kernel booting.
+
+This patch tries to address the issue by grabing one queue usage
+counter during freeing one request and the following run queue.
+
+Fixes: 1311326cf4755c7 ("blk-mq: avoid to synchronize rcu inside blk_cleanup_queue()")
+Cc: Andrew Jones <drjones@redhat.com>
+Cc: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: linux-scsi@vger.kernel.org
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: James E.J. Bottomley <jejb@linux.vnet.ibm.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: jianchao.wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ block/blk-core.c        |    5 ++---
+ drivers/scsi/scsi_lib.c |    8 ++++++++
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -2022,7 +2022,7 @@ retry:
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -793,9 +793,8 @@ void blk_cleanup_queue(struct request_qu
+ 	 * dispatch may still be in-progress since we dispatch requests
+ 	 * from more than one contexts.
+ 	 *
+-	 * No need to quiesce queue if it isn't initialized yet since
+-	 * blk_freeze_queue() should be enough for cases of passthrough
+-	 * request.
++	 * We rely on driver to deal with the race in case that queue
++	 * initialization isn't done.
+ 	 */
+ 	if (q->mq_ops && blk_queue_init_done(q))
+ 		blk_mq_quiesce_queue(q);
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -696,6 +696,12 @@ static bool scsi_end_request(struct requ
+ 		 */
+ 		scsi_mq_uninit_cmd(cmd);
  
- 	err = ext4_alloc_flex_bg_array(sb, n_group + 1);
- 	if (err)
--		return err;
-+		goto out;
++		/*
++		 * queue is still alive, so grab the ref for preventing it
++		 * from being cleaned up during running queue.
++		 */
++		percpu_ref_get(&q->q_usage_counter);
++
+ 		__blk_mq_end_request(req, error);
  
- 	err = ext4_mb_alloc_groupinfo(sb, n_group + 1);
- 	if (err)
+ 		if (scsi_target(sdev)->single_lun ||
+@@ -703,6 +709,8 @@ static bool scsi_end_request(struct requ
+ 			kblockd_schedule_work(&sdev->requeue_work);
+ 		else
+ 			blk_mq_run_hw_queues(q, true);
++
++		percpu_ref_put(&q->q_usage_counter);
+ 	} else {
+ 		unsigned long flags;
+ 
 
 
