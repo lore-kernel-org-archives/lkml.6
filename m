@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698ECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01764C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D80921104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD05521104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyyvkSN/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D80921104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3aZBq38"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD05521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387841AbeKTDHM (ORCPT
+        id S2387861AbeKTDHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:11 -0500
+        id S1732866AbeKTDHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 769A32086A;
-        Mon, 19 Nov 2018 16:43:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1280E2145D;
+        Mon, 19 Nov 2018 16:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645781;
-        bh=Hqpp29FnB1SxLLTEpuxydVDYiW9VefoUMAhprnSLeBQ=;
+        s=default; t=1542645783;
+        bh=/ANQPiThJ1R8A7Q3oHWYHN1GYQDGsoK53owWsS5PeGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OyyvkSN/1xrSJZa7A0Abg1XodfwnqF/qd6/MGjZ6r62hgQCp0qevzy62brNBKeMOx
-         Gei9TIn7bLuhk8so/DiJfkrAG//loO8W5AzAT7EKhRh0rkLX2ILVMiOq5jmTwM6+z+
-         jIWa+FyKqPHRAjZoLgC6NPi0Ej6lGCved0yi446w=
+        b=k3aZBq38nL5FG58P9jhPKgqIUUEx6T17QYcd27cpu1YJMCB/y5qoXtspMe2xemGDU
+         vdxCK5EClRPecE3OopwM+JhjU642hCA2awdpki+sxfhMfgxLrU+Bbv/gsImItsJKms
+         fMfqLn1RqH2hfzt9fM8H70oqCTfMzeUjq5DC9cK8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: [PATCH 4.18 087/171] ARM: 8809/1: proc-v7: fix Thumb annotation of cpu_v7_hvc_switch_mm
-Date:   Mon, 19 Nov 2018 17:28:03 +0100
-Message-Id: <20181119162633.249369404@linuxfoundation.org>
+        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jarod Wilson <jarod@redhat.com>
+Subject: [PATCH 4.18 088/171] bonding/802.3ad: fix link_failure_count tracking
+Date:   Mon, 19 Nov 2018 17:28:04 +0100
+Message-Id: <20181119162633.379114103@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,57 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Jarod Wilson <jarod@redhat.com>
 
-commit 6282e916f774e37845c65d1eae9f8c649004f033 upstream.
+commit ea53abfab960909d622ca37bcfb8e1c5378d21cc upstream.
 
-Due to what appears to be a copy/paste error, the opening ENTRY()
-of cpu_v7_hvc_switch_mm() lacks a matching ENDPROC(), and instead,
-the one for cpu_v7_smc_switch_mm() is duplicated.
+Commit 4d2c0cda07448ea6980f00102dc3964eb25e241c set slave->link to
+BOND_LINK_DOWN for 802.3ad bonds whenever invalid speed/duplex values
+were read, to fix a problem with slaves getting into weird states, but
+in the process, broke tracking of link failures, as going straight to
+BOND_LINK_DOWN when a link is indeed down (cable pulled, switch rebooted)
+means we broke out of bond_miimon_inspect()'s BOND_LINK_DOWN case because
+!link_state was already true, we never incremented commit, and never got
+a chance to call bond_miimon_commit(), where slave->link_failure_count
+would be incremented. I believe the simple fix here is to mark the slave
+as BOND_LINK_FAIL, and let bond_miimon_inspect() transition the link from
+_FAIL to either _UP or _DOWN, and in the latter case, we now get proper
+incrementing of link_failure_count again.
 
-Given that it is ENDPROC() that emits the Thumb annotation, the
-cpu_v7_hvc_switch_mm() routine will be called in ARM mode on a
-Thumb2 kernel, resulting in the following splat:
-
-  Internal error: Oops - undefined instruction: 0 [#1] SMP THUMB2
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc1-00030-g4d28ad89189d-dirty #488
-  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
-  PC is at cpu_v7_hvc_switch_mm+0x12/0x18
-  LR is at flush_old_exec+0x31b/0x570
-  pc : [<c0316efe>]    lr : [<c04117c7>]    psr: 00000013
-  sp : ee899e50  ip : 00000000  fp : 00000001
-  r10: eda28f34  r9 : eda31800  r8 : c12470e0
-  r7 : eda1fc00  r6 : eda53000  r5 : 00000000  r4 : ee88c000
-  r3 : c0316eec  r2 : 00000001  r1 : eda53000  r0 : 6da6c000
-  Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-
-Note the 'ISA ARM' in the last line.
-
-Fix this by using the correct name in ENDPROC().
-
-Cc: <stable@vger.kernel.org>
-Fixes: 10115105cb3a ("ARM: spectre-v2: add firmware based hardening")
-Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 4d2c0cda0744 ("bonding: speed/duplex update at NETDEV_UP event")
+CC: Mahesh Bandewar <maheshb@google.com>
+CC: David S. Miller <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: stable@vger.kernel.org
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mm/proc-v7.S |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/bonding/bond_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mm/proc-v7.S
-+++ b/arch/arm/mm/proc-v7.S
-@@ -112,7 +112,7 @@ ENTRY(cpu_v7_hvc_switch_mm)
- 	hvc	#0
- 	ldmfd	sp!, {r0 - r3}
- 	b	cpu_v7_switch_mm
--ENDPROC(cpu_v7_smc_switch_mm)
-+ENDPROC(cpu_v7_hvc_switch_mm)
- #endif
- ENTRY(cpu_v7_iciallu_switch_mm)
- 	mov	r3, #0
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3118,13 +3118,13 @@ static int bond_slave_netdev_event(unsig
+ 	case NETDEV_CHANGE:
+ 		/* For 802.3ad mode only:
+ 		 * Getting invalid Speed/Duplex values here will put slave
+-		 * in weird state. So mark it as link-down for the time
++		 * in weird state. So mark it as link-fail for the time
+ 		 * being and let link-monitoring (miimon) set it right when
+ 		 * correct speeds/duplex are available.
+ 		 */
+ 		if (bond_update_speed_duplex(slave) &&
+ 		    BOND_MODE(bond) == BOND_MODE_8023AD)
+-			slave->link = BOND_LINK_DOWN;
++			slave->link = BOND_LINK_FAIL;
+ 
+ 		if (BOND_MODE(bond) == BOND_MODE_8023AD)
+ 			bond_3ad_adapter_speed_duplex_changed(slave);
 
 
