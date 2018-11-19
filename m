@@ -2,210 +2,186 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D22C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEB0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D46920823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:50:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 458B520823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eylkn7qE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D46920823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BrpOBvZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458B520823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731233AbeKTIQb (ORCPT
+        id S1731271AbeKTIQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:16:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730748AbeKTIQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:16:31 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D4E92089F;
-        Mon, 19 Nov 2018 21:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542664251;
-        bh=6bygkLwsb0YUNSJWyyRLhCDP3vqr+MJ5xKx61huKdiA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Eylkn7qER5mkalzUtTQrfBc5ZLixORqZPFokPTRhEyOFjTeoYMu5ywJhlU6BmFieK
-         Ux6eg2YrLjRAbDuv5KPQEhzzTlxhLComhVKu7qVbhIGCIwlK6nN9sYDMKySFizoYif
-         EXfWLmfcOq7PiUmGBRavXJb6DtSZQrSOzn4QGBw0=
-Received: by mail-qk1-f182.google.com with SMTP id d135so51269431qkc.12;
-        Mon, 19 Nov 2018 13:50:51 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJNaaG5Gk4XK7u7hJQOp5VNn116IR8mH0ugM0O/1yY5XZPOXskf
-        aLITXyMKnvynaXVFNjLXif2xCTwXoIpJP3+98A==
-X-Google-Smtp-Source: AJdET5fj5z04kKvA50PRP8BAwRN1w3ToyJIlxXg8kPsUrLixdodQyBysPUN2AjJogarl1fwJjPZ0RePm3AsAZelOz2Q=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr23142151qtf.26.1542664250368;
- Mon, 19 Nov 2018 13:50:50 -0800 (PST)
+        Tue, 20 Nov 2018 03:16:47 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:15645 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730748AbeKTIQr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:16:47 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf3304a0000>; Mon, 19 Nov 2018 13:51:06 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 19 Nov 2018 13:51:06 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 19 Nov 2018 13:51:06 -0800
+Received: from [10.26.11.92] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 19 Nov
+ 2018 21:51:04 +0000
+Subject: Re: [PATCH v1 3/4] ARM: tegra: Restore memory arbitration on resume
+ from LP1 on Tegra30+
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20180830185404.7224-1-digetx@gmail.com>
+ <20180830185404.7224-4-digetx@gmail.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <48dc61a4-7dd0-5f0e-33e0-43c7833e8a37@nvidia.com>
+Date:   Mon, 19 Nov 2018 21:51:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181113130910.22130-1-phil.edworthy@renesas.com>
- <20181113130910.22130-2-phil.edworthy@renesas.com> <20181117143253.GA27381@bogus>
- <TY1PR01MB176917D755CB102AB5FD6BEAF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB176917D755CB102AB5FD6BEAF5D80@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 19 Nov 2018 15:50:39 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJca7mXS_9msTbCovnXpFxC0VY81COk98x-c1Ug5a=jQQ@mail.gmail.com>
-Message-ID: <CAL_JsqJca7mXS_9msTbCovnXpFxC0VY81COk98x-c1Ug5a=jQQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1
- gpio irq mux binding
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180830185404.7224-4-digetx@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542664266; bh=6/0e+I4rU1OLAnDUGVUgzMoaE2+QBiApl/qN2KabI2o=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=BrpOBvZacvll0TJJn5AU2QnD+2FN9vqbT7lzdsRJrVi38TtFU632AY/TQM6TAWxQd
+         Ud4gXgZBgzgK/WcEaY8kRkkRLodu+hNnNcyYmVkM3yFICrVnrQNEFqJOrmVbtg0bLo
+         QEcBHzb0/LJzx5xyAskahCrVshSzjAsK7D9HoMMcs0Vq+5BqdTBrzyG8gjT6duqxYa
+         FAKVDYD2e0V1HNHwu3J/zzoPnEeDg55+KUfZAT/cfG783nUurkESloPqTqtjQVXaMf
+         IASnQ0RF5BMq2D+v0ZpXjoSdVP2joxQSz+Axm3uVaD8UKzGqljWPvnOSVoXBd70+Bj
+         W7MbCAF4WLPKA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 3:39 AM Phil Edworthy <phil.edworthy@renesas.com> wrote:
->
-> Hi Rob,
->
-> On 17 November 2018 14:33 Rob Herring wrote:
-> > On Tue, Nov 13, 2018 at 01:09:09PM +0000, Phil Edworthy wrote:
-> > > Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
-> > > multiplexer.
-> > >
-> > > Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-> > > ---
-> > > v3:
-> > >  - Use 'interrupt-map' DT property correctly.
-> > > v2:
-> > >  - Use interrupt-map to allow the GPIO controller info to be specified
-> > >    as part of the irq.
-> > >  - Don't show status in binding examples.
-> > >  - Don't show the soc/board split in binding doc.
-> > > ---
-> > >  .../interrupt-controller/renesas,rzn1-mux.txt | 73
-> > > +++++++++++++++++++
-> > >  1 file changed, 73 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mu
-> > > x.txt
-> >
-> > A few nits, otherwise:
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> Thanks for the review!
->
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
-> > > mux.txt
-> > > b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-
-> > > mux.txt
-> > > new file mode 100644
-> > > index 000000000000..6515880e25cc
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,r
-> > > +++ zn1-mux.txt
-> > > @@ -0,0 +1,73 @@
-> > > +* Renesas RZ/N1 GPIO Interrupt Multiplexer
-> > > +
-> > > +On Renesas RZ/N1 devices, there are several GPIO Controllers each
-> > > +with a number of interrupt outputs. All of the interrupts from the
-> > > +GPIO Controllers are passed to the GPIO Interrupt Multiplexer, which
-> > > +selects a sub-set of the interrupts to pass onto the system interrupt
-> > controller.
-> > > +
-> > > +A single node in the device tree is used to describe the GPIO IRQ Muxer.
-> > > +
-> > > +Required properties:
-> > > +- compatible: SoC-specific compatible string "renesas,<soc-specific>-
-> > gpioirqmux"
-> > > +  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific
-> > > +compatible
-> > > +  strings must be one of:
-> > > +   "renesas,r9a06g032-gpioirqmux" for RZ/N1D
-> > > +   "renesas,r9a06g033-gpioirqmux" for RZ/N1S
-> > > +- reg: Base address and size of GPIO IRQ Muxer registers.
-> > > +- interrupts: List of output interrupts.
-> > > +- #interrupt-cells: Numder of cells in the input interrupt specifier, must be
-> > 1.
-> > > +- #address-cells: Must be 0.
-> > > +- interrupt-map-mask: must be 127.
-> > > +- interrupt-map: Standard property detailing the maps between input
-> > > +irqs and the
-> > > +  corresponding output irq. This consist of a list of:
-> > > +   <input-irq-spec phandle-to-interrupt-controller output-irq-spec>
-> > > +  The input-irq-spec is from 0 to 95, corresponding to the outputs of
-> > > +the GPIO
-> > > +  Controllers.
-> > > +
-> > > +Example:
-> > > +
-> > > +   The following is an example for the RZ/N1D SoC.
-> > > +
-> > > +   gpioirqmux: gpioirqmux@51000480 {
-> >
-> > interrupt-controller@...
-> Sure
->
-> > > +           compatible = "renesas,r9a06g032-gpioirqmux",
-> > > +                           "renesas,rzn1-gpioirqmux";
-> > > +           reg = <0x51000480 0x20>;
-> > > +           interrupts =
-> > > +                   <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                   <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > This is a bit redundant as the same information is in interrupt-map, but I
-> > guess you need it to get the irq resources.
-> That's right.
->
-> > > +
-> > > +           #interrupt-cells = <1>;
-> > > +           #address-cells = <0>;
-> > > +           interrupt-map-mask = <127>;
-> >
-> > Use hex for masks.
-> Ok.
->
-> > > +           interrupt-map =
-> > > +                   /* gpio2a 24, pin 146: ETH Port 1 IRQ */
-> > > +                   <88 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                   /* gpio2a 26, pin 148: TouchSCRN_IRQ */
-> > > +                   <90 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-> > > +   };
-> > > +
-> > > +   gpio2: gpio@5000d000 {
-> > > +           compatible = "snps,dw-apb-gpio";
-> > > +           reg = <0x5000d000 0x80>;
-> > > +           #address-cells = <1>;
-> > > +           #size-cells = <0>;
-> > > +           clock-names = "bus";
-> > > +           clocks = <&sysctrl R9A06G032_HCLK_GPIO2>;
-> > > +
-> > > +           gpio2a: gpio-controller@0 {
-> >
-> > gpio@0
-> Are you sure about this?
 
-Yes, 'gpio' is what the DT spec says. It is the oddball though and I
-always have to think about it.
+On 30/08/2018 19:54, Dmitry Osipenko wrote:
+> The external memory arbitration configuration is getting reset after
+> memory entering into self-refresh mode, it shall be restored on the
+> exit. Note that MC_EMEM_ARB_CFG register is shadowed and latching
+> happens on the EMC timing update. This fixes 2x GPU performance
+> degradation after resuming from LP1 on Tegra30.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/mach-tegra/iomap.h         |  9 +++++++++
+>  arch/arm/mach-tegra/sleep-tegra30.S | 21 +++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/arch/arm/mach-tegra/iomap.h b/arch/arm/mach-tegra/iomap.h
+> index 9e5b2f869fc8..9bc291e76887 100644
+> --- a/arch/arm/mach-tegra/iomap.h
+> +++ b/arch/arm/mach-tegra/iomap.h
+> @@ -79,15 +79,24 @@
+>  #define TEGRA_PMC_BASE			0x7000E400
+>  #define TEGRA_PMC_SIZE			SZ_256
+>  
+> +#define TEGRA_MC_BASE			0x7000F000
+> +#define TEGRA_MC_SIZE			SZ_1K
+> +
+>  #define TEGRA_EMC_BASE			0x7000F400
+>  #define TEGRA_EMC_SIZE			SZ_1K
+>  
+> +#define TEGRA114_MC_BASE		0x70019000
+> +#define TEGRA114_MC_SIZE		SZ_4K
+> +
+>  #define TEGRA_EMC0_BASE			0x7001A000
+>  #define TEGRA_EMC0_SIZE			SZ_2K
+>  
+>  #define TEGRA_EMC1_BASE			0x7001A800
+>  #define TEGRA_EMC1_SIZE			SZ_2K
+>  
+> +#define TEGRA124_MC_BASE		0x70019000
+> +#define TEGRA124_MC_SIZE		SZ_4K
+> +
+>  #define TEGRA124_EMC_BASE		0x7001B000
+>  #define TEGRA124_EMC_SIZE		SZ_2K
+>  
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> index 99ac9c6dcf7c..828f6c37afde 100644
+> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+> @@ -44,6 +44,8 @@
+>  #define EMC_XM2VTTGENPADCTRL		0x310
+>  #define EMC_XM2VTTGENPADCTRL2		0x314
+>  
+> +#define MC_EMEM_ARB_CFG			0x90
+> +
+>  #define PMC_CTRL			0x0
+>  #define PMC_CTRL_SIDE_EFFECT_LP0 (1 << 14) /* enter LP0 when CPU pwr gated */
+>  
+> @@ -418,6 +420,22 @@ _pll_m_c_x_done:
+>  	movweq	r0, #:lower16:TEGRA124_EMC_BASE
+>  	movteq	r0, #:upper16:TEGRA124_EMC_BASE
+>  
+> +	cmp	r10, #TEGRA30
+> +	moveq	r2, #0x20
+> +	movweq	r4, #:lower16:TEGRA_MC_BASE
+> +	movteq	r4, #:upper16:TEGRA_MC_BASE
+> +	cmp	r10, #TEGRA114
+> +	moveq	r2, #0x34
+> +	movweq	r4, #:lower16:TEGRA114_MC_BASE
+> +	movteq	r4, #:upper16:TEGRA114_MC_BASE
+> +	cmp	r10, #TEGRA124
+> +	moveq	r2, #0x20
+> +	movweq	r4, #:lower16:TEGRA124_MC_BASE
+> +	movteq	r4, #:upper16:TEGRA124_MC_BASE
+> +
+> +	ldr	r1, [r5, r2]		@ restore MC_EMEM_ARB_CFG
+> +	str	r1, [r4, #MC_EMEM_ARB_CFG]
+> +
+>  exit_self_refresh:
+>  	ldr	r1, [r5, #0xC]		@ restore EMC_XM2VTTGENPADCTRL
+>  	str	r1, [r0, #EMC_XM2VTTGENPADCTRL]
+> @@ -546,6 +564,7 @@ tegra30_sdram_pad_address:
+>  	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
+>  	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
+>  	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
+> +	.word	TEGRA_MC_BASE + MC_EMEM_ARB_CFG				@0x20
+>  tegra30_sdram_pad_address_end:
+>  
+>  tegra114_sdram_pad_address:
+> @@ -562,6 +581,7 @@ tegra114_sdram_pad_address:
+>  	.word	TEGRA_EMC1_BASE + EMC_AUTO_CAL_INTERVAL			@0x28
+>  	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL			@0x2c
+>  	.word	TEGRA_EMC1_BASE + EMC_XM2VTTGENPADCTRL2			@0x30
+> +	.word	TEGRA114_MC_BASE + MC_EMEM_ARB_CFG			@0x34
+>  tegra114_sdram_pad_adress_end:
+>  
+>  tegra124_sdram_pad_address:
+> @@ -573,6 +593,7 @@ tegra124_sdram_pad_address:
+>  	.word	TEGRA_PMC_BASE + PMC_IO_DPD_STATUS			@0x14
+>  	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_CLK_SOURCE_MSELECT	@0x18
+>  	.word	TEGRA_CLK_RESET_BASE + CLK_RESET_SCLK_BURST		@0x1c
+> +	.word	TEGRA124_MC_BASE + MC_EMEM_ARB_CFG			@0x20
+>  tegra124_sdram_pad_address_end:
+>  
+>  tegra30_sdram_pad_size:
+> 
 
-> The bindings in Documentation/devicetree/bindings/gpio/snps-dwapb-gpio.txt
-> show an example where the sub-nodes for gpio banks are gpio-controller@.
-> This is also in Documentation/devicetree/bindings/gpio/gpio.txt.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-Indeed. Those should be fixed. I would be easily persuaded to just
-change the spec, but 'gpio@' is much more widely used:
 
-$ git grep gpio@ -- arch/ | wc
-   1110    4378   67766
-$ git grep gpio-controller@ -- arch/ | wc
-     60     232    4270
-
-Rob
+-- 
+nvpublic
