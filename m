@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85ADBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4E8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CDAE214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 025332146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:06:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MaBljlGp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CDAE214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kwIoXUGg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 025332146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407054AbeKTDa3 (ORCPT
+        id S2407079AbeKTDac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:30:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45496 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:30:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405879AbeKTDa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:30:28 -0500
+        id S2407055AbeKTDaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:30:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 577682148E;
-        Mon, 19 Nov 2018 17:06:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7448214DA;
+        Mon, 19 Nov 2018 17:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647170;
-        bh=dRPjBH4dxFxbU7tu/cnK4ldRDWTjAp15cbCExGq5Otg=;
+        s=default; t=1542647173;
+        bh=3SjwC9YYDfSMgdfeZlQ+Wk+tIRnAssBhxk1vsKF2T2w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MaBljlGpvaAXfhoFAIIjWLhFnkpC24P2mfnDHEe2HmQUyFaEJC4Qkirom+Lq4r22v
-         mb6dZE7JHTItQe2iCMj5UcP/lIPUshKJSdGHF2FSNi6hke8eEv47esPIt+PLhWaGXT
-         PzkhHNLGb/G/eULYjh2KJqnjaYqKxbk/mTErMQBo=
+        b=kwIoXUGgRyfq9Zag669BuaMHRAoI2fcPspL9m5Zj1m0fsP7n88XCr2QCOVxHtQYNE
+         40XOjf5dTNXWJEPgUcSKnVbJtb6ZovRkceHs3tDlBKrjpA+KkyaEpYuCowmHQ+/KQC
+         xw6YLUIH0m9GL9NUmk6MrE7cg5esR2vv/DZl5Fz8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 3.18 78/90] ext4: fix missing cleanup if ext4_alloc_flex_bg_array() fails while resizing
-Date:   Mon, 19 Nov 2018 17:30:00 +0100
-Message-Id: <20181119162632.665957039@linuxfoundation.org>
+Subject: [PATCH 3.18 79/90] ext4: avoid possible double brelse() in add_new_gdb() on error path
+Date:   Mon, 19 Nov 2018 17:30:01 +0100
+Message-Id: <20181119162632.768150771@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -62,30 +62,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit f348e2241fb73515d65b5d77dd9c174128a7fbf2 upstream.
+commit 4f32c38b4662312dd3c5f113d8bdd459887fb773 upstream.
 
-Fixes: 117fff10d7f1 ("ext4: grow the s_flex_groups array as needed ...")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Fixes: b40971426a83 ("ext4: add error checking to calls to ...")
+Reported-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.7
+Cc: stable@kernel.org # 2.6.38
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/resize.c |    1 +
+ 1 file changed, 1 insertion(+)
 
 --- a/fs/ext4/resize.c
 +++ b/fs/ext4/resize.c
-@@ -1992,7 +1992,7 @@ retry:
- 
- 	err = ext4_alloc_flex_bg_array(sb, n_group + 1);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	err = ext4_mb_alloc_groupinfo(sb, n_group + 1);
- 	if (err)
+@@ -844,6 +844,7 @@ static int add_new_gdb(handle_t *handle,
+ 	err = ext4_handle_dirty_metadata(handle, NULL, gdb_bh);
+ 	if (unlikely(err)) {
+ 		ext4_std_error(sb, err);
++		iloc.bh = NULL;
+ 		goto exit_inode;
+ 	}
+ 	brelse(dind);
 
 
