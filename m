@@ -2,254 +2,160 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3226DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB43BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:37:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FAFD20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:36:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.ch header.i=@protonmail.ch header.b="sLd4Hzz5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FAFD20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=protonmail.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9276D20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:37:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9276D20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbeKSU7Z (ORCPT
+        id S1727877AbeKSVBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:59:25 -0500
-Received: from mail-40135.protonmail.ch ([185.70.40.135]:48667 "EHLO
-        mail-40135.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727733AbeKSU7Z (ORCPT
+        Mon, 19 Nov 2018 16:01:09 -0500
+Received: from www62.your-server.de ([213.133.104.62]:58854 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbeKSVBJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:59:25 -0500
-Date:   Mon, 19 Nov 2018 10:35:59 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.ch;
-        s=default; t=1542623763;
-        bh=qAWwY7HzNS9LzsgTOIdkeVPcyo6UYU4FRQaA6J5QH68=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=sLd4Hzz57knAAGkS5w0d9mJdLPWeXy5IbHCZpbmRR4KRNkGrpk+WgnvlsfXMCE7sk
-         aQGMEIwOioDuwdwaHlK1XUq7vNOiaugRifN99fgCWJWyScP/KeGx1nR7RdFjcEbz4l
-         pqzEztIsWGhxO7qxXsNyy/gqNadSouA4fpz/5v4g=
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-From:   Jordan Glover <Golden_Miller83@protonmail.ch>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Mon, 19 Nov 2018 16:01:09 -0500
+Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gOgwB-0003ic-UY; Mon, 19 Nov 2018 11:37:51 +0100
+Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gOgwB-0005yq-Ig; Mon, 19 Nov 2018 11:37:51 +0100
+Subject: Re: [PATCH 1/4] bpf: account for freed JIT allocations in arch code
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
         Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Reply-To: Jordan Glover <Golden_Miller83@protonmail.ch>
-Subject: Re: [PATCH v1 2/2]: Documentation/admin-guide: introduce perf-security.rst file
-Message-ID: <aDN4nC6p93nK7ILVP3EH-Y4RcKK4KH0ppQKFkIgxTVxkfbOHWjAYJXdTeuq39nbPkySKItZ_8VHN2PfQS_T08GBzeooD5cvc2Xd8oZxSp9s=@protonmail.ch>
-In-Reply-To: <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
-References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
- <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
-Feedback-ID: QEdvdaLhFJaqnofhWA-dldGwsuoeDdDw7vz0UPs8r8sanA3bIt8zJdf4aDqYKSy4gJuZ0WvFYJtvq21y6ge_uQ==:Ext:ProtonMail
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20181117185715.25198-1-ard.biesheuvel@linaro.org>
+ <20181117185715.25198-2-ard.biesheuvel@linaro.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <b37c3411-7950-dcb3-f0c3-6d9f589d36ab@iogearbox.net>
+Date:   Mon, 19 Nov 2018 11:37:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181117185715.25198-2-ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25134/Mon Nov 19 07:16:12 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, November 19, 2018 6:42 AM, Alexey Budankov <alexey.budankov@linu=
-x.intel.com> wrote:
+On 11/17/2018 07:57 PM, Ard Biesheuvel wrote:
+> Commit ede95a63b5e84 ("bpf: add bpf_jit_limit knob to restrict unpriv
+> allocations") added a call to bpf_jit_uncharge_modmem() to the routine
+> bpf_jit_binary_free() which is called from the __weak bpf_jit_free().
+> This function is overridden by arches, some of which do not call
+> bpf_jit_binary_free() to release the memory, and so the released
+> memory is not accounted for, potentially leading to spurious allocation
+> failures.
+> 
+> So replace the direct calls to module_memfree() in the arch code with
+> calls to bpf_jit_binary_free().
 
-> Implement initial version of perf-security.rst documentation file
-> initially covering security concerns related to PCL/Perf performance
-> monitoring in multiuser environments.
->
-> Suggested-by: Thomas Gleixner tglx@linutronix.de
-> Signed-off-by: Alexey Budankov alexey.budankov@linux.intel.com
->
-> Documentation/admin-guide/perf-security.rst | 83 ++++++++++++++++++++++++=
-+++++
-> 1 file changed, 83 insertions(+)
->
-> diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/=
-admin-guide/perf-security.rst
-> new file mode 100644
-> index 000000000000..b9564066e686
-> --- /dev/null
-> +++ b/Documentation/admin-guide/perf-security.rst
-> @@ -0,0 +1,83 @@
-> +.. perf_security:
-> +
-> +PCL/Perf security
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Overview
-> +--------
-> +
-> +Usage of Performance Counters for Linux (PCL) [1] , [2]_ , [3]_ can impo=
-se a+considerable risk of leaking sensitive data accessed by monitored proc=
-esses.
-> +The data leakage is possible both in scenarios of direct usage of PCL sy=
-stem
-> +call API [2]_ and over data files generated by Perf tool user mode utili=
-ty
-> +(Perf) [3]_ , [4]_ . The risk depends on the nature of data that PCL per=
-formance
-> +monitoring units (PMU) [2]_ collect and expose for performance analysis.
-> +Having that said PCL/Perf performance monitoring is the subject for secu=
-rity
-> +access control management [5]_ .
-> +
-> +PCL/Perf access control
-> +-----------------------
-> +
-> +For the purpose of performing security checks Linux implementation split=
-s
-> +processes into two categories [6]_ : a) privileged processes (whose effe=
-ctive
-> +user ID is 0, referred to as superuser or root), and b) unprivileged pro=
-cesses
-> +(whose effective UID is nonzero). Privileged processes bypass all kernel
-> +security permission checks so PCL performance monitoring is fully availa=
-ble to
-> +privileged processes without access, scope and resource restrictions.
-> +Unprivileged processes are subject to full security permission check bas=
-ed
-> +on the process's credentials [5]_ (usually: effective UID, effective GID=
-,
-> +and supplementary group list).
-> +
-> +PCL/Perf unprivileged users
-> +---------------------------
-> +
-> +PCL/Perf scope and access control for unprivileged processes is governed=
- by
-> +perf_event_paranoid [2]_ setting:
-> +
-> +-1:
->
-> -       Impose no *scope* and *access* restrictions on using PCL performa=
-nce
->
->
-> -       monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking lim=
-it is
->
->
-> -       ignored when allocating memory buffers for storing performance da=
-ta.
->
->
-> -       This is the least secure mode since allowed monitored *scope* is
->
->
-> -       maximized and no PCL specific limits are imposed on *resources*
->
->
-> -       allocated for performance monitoring.
->
->
-> -
->
-> +>=3D0:
->
-> -       *scope* includes per-process and system wide performance monitori=
-ng
->
->
-> -       but excludes raw tracepoints and ftrace function tracepoints moni=
-toring.
->
->
-> -       CPU and system events happened when executing either in user or
->
->
-> -       in kernel space can be monitored and captured for later analysis.
->
->
-> -       Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
->
->
-> -       ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capabil=
-ity.
->
->
-> -
->
-> +>=3D1:
->
-> -       *scope* includes per-process performance monitoring only and excl=
-udes
->
->
-> -       system wide performance monitoring. CPU and system events happene=
-d when
->
->
-> -       executing either in user or in kernel space can be monitored and
->
->
-> -       captured for later analysis. Per-user per-cpu perf_event_mlock_kb
->
->
-> -       locking limit is imposed but ignored for unprivileged processes w=
-ith
->
->
-> -       CAP_IPC_LOCK capability.
->
->
-> -
->
-> +>=3D2:
->
-> -       *scope* includes per-process performance monitoring only. CPU and=
- system
->
->
-> -       events happened when executing in user space only can be monitore=
-d and
->
->
-> -       captured for later analysis. Per-user per-cpu perf_event_mlock_kb
->
->
-> -       locking limit is imposed but ignored for unprivileged processes w=
-ith
->
->
-> -       CAP_IPC_LOCK capability.
->
->
-> -
->
-> +>=3D3:
->
-> -       Restrict *access* to PCL performance monitoring for unprivileged =
-processes.
->
->
-> -       This is the default on Debian and Android [7]_ , [8]_ .
+Sorry but this patch is completely buggy, and above description on the
+accounting incorrect as well. Looks like this patch was not tested at all.
 
-AFAIK there is no support for '+>=3D3' in mainline kernel[1].
-Debian and Android use out-of-tree patch for that[2].
-Maybe someone should upstream it?
+The below cBPF JITs that use module_memfree() which you replace with
+bpf_jit_binary_free() are using module_alloc() internally to get the JIT
+image buffer ...
 
-Jordan
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  arch/mips/net/bpf_jit.c           | 2 +-
+>  arch/powerpc/net/bpf_jit_comp.c   | 2 +-
+>  arch/powerpc/net/bpf_jit_comp64.c | 5 +----
+>  arch/sparc/net/bpf_jit_comp_32.c  | 2 +-
+>  4 files changed, 4 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/mips/net/bpf_jit.c b/arch/mips/net/bpf_jit.c
+> index 4d8cb9bb8365..1b69897274a1 100644
+> --- a/arch/mips/net/bpf_jit.c
+> +++ b/arch/mips/net/bpf_jit.c
+> @@ -1264,7 +1264,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
+>  void bpf_jit_free(struct bpf_prog *fp)
+>  {
+>  	if (fp->jited)
+> -		module_memfree(fp->bpf_func);
+> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
+>  
+>  	bpf_prog_unlock_free(fp);
+>  }
+> diff --git a/arch/powerpc/net/bpf_jit_comp.c b/arch/powerpc/net/bpf_jit_comp.c
+> index d5bfe24bb3b5..a1ea1ea6b40d 100644
+> --- a/arch/powerpc/net/bpf_jit_comp.c
+> +++ b/arch/powerpc/net/bpf_jit_comp.c
+> @@ -683,7 +683,7 @@ void bpf_jit_compile(struct bpf_prog *fp)
+>  void bpf_jit_free(struct bpf_prog *fp)
+>  {
+>  	if (fp->jited)
+> -		module_memfree(fp->bpf_func);
+> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
+>  
+>  	bpf_prog_unlock_free(fp);
+>  }
+> diff --git a/arch/powerpc/net/bpf_jit_comp64.c b/arch/powerpc/net/bpf_jit_comp64.c
+> index 50b129785aee..84c8f013a6c6 100644
+> --- a/arch/powerpc/net/bpf_jit_comp64.c
+> +++ b/arch/powerpc/net/bpf_jit_comp64.c
+> @@ -1024,11 +1024,8 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *fp)
+>  /* Overriding bpf_jit_free() as we don't set images read-only. */
+>  void bpf_jit_free(struct bpf_prog *fp)
+>  {
+> -	unsigned long addr = (unsigned long)fp->bpf_func & PAGE_MASK;
+> -	struct bpf_binary_header *bpf_hdr = (void *)addr;
+> -
+>  	if (fp->jited)
+> -		bpf_jit_binary_free(bpf_hdr);
+> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
+>  
+>  	bpf_prog_unlock_free(fp);
+>  }
+> diff --git a/arch/sparc/net/bpf_jit_comp_32.c b/arch/sparc/net/bpf_jit_comp_32.c
+> index a5ff88643d5c..01bda6bc9e7f 100644
+> --- a/arch/sparc/net/bpf_jit_comp_32.c
+> +++ b/arch/sparc/net/bpf_jit_comp_32.c
+> @@ -759,7 +759,7 @@ cond_branch:			f_offset = addrs[i + filter[i].jf];
+>  void bpf_jit_free(struct bpf_prog *fp)
+>  {
+>  	if (fp->jited)
+> -		module_memfree(fp->bpf_func);
+> +		bpf_jit_binary_free(bpf_jit_binary_hdr(fp));
+>  
+>  	bpf_prog_unlock_free(fp);
+>  }
+> 
 
-[1] https://github.com/torvalds/linux/blob/master/kernel/events/core.c#L395
-[2] https://salsa.debian.org/kernel-team/linux/blob/master/debian/patches/f=
-eatures/all/security-perf-allow-further-restriction-of-perf_event_open.patc=
-h
