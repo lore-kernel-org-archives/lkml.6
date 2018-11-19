@@ -2,117 +2,80 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E70C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19CDF2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:05:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19CDF2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 43EE620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:07:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43EE620823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeKSW2u (ORCPT
+        id S1728729AbeKSWap convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:28:50 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:35604 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728594AbeKSW2u (ORCPT
+        Mon, 19 Nov 2018 17:30:45 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:54492 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728660AbeKSWap (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:28:50 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id B63DD260454
-Received: by earth.universe (Postfix, from userid 1000)
-        id 4153E3C08D7; Mon, 19 Nov 2018 13:05:20 +0100 (CET)
-Date:   Mon, 19 Nov 2018 13:05:20 +0100
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        dri-devel@lists.freedesktop.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [PATCHv4 5/6] drm/omap: add framedone interrupt support
-Message-ID: <20181119120520.qaw6qyxyirjahzcn@earth.universe>
-References: <20181115230645.15748-1-sebastian.reichel@collabora.com>
- <20181115230645.15748-6-sebastian.reichel@collabora.com>
- <20181117210840.GE22813@amd>
+        Mon, 19 Nov 2018 17:30:45 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-169-kQSol00lMqGqmkexHxz3NQ-1; Mon, 19 Nov 2018 12:07:16 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon,
+ 19 Nov 2018 12:07:16 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 19 Nov 2018 12:07:16 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Olof Johansson' <olof@lixom.net>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] arm64: Explicitly mark 64-bit constant as unsigned long
+Thread-Topic: [PATCH] arm64: Explicitly mark 64-bit constant as unsigned long
+Thread-Index: AQHUfhiZwItjBBrszU+mUSyuKaet9KVXA/Iw
+Date:   Mon, 19 Nov 2018 12:07:16 +0000
+Message-ID: <51cf0f37dc694a858fcc422763f6ca72@AcuMS.aculab.com>
+References: <20181117015456.101222-1-olof@lixom.net>
+In-Reply-To: <20181117015456.101222-1-olof@lixom.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="bqwzwua6ufld5yke"
-Content-Disposition: inline
-In-Reply-To: <20181117210840.GE22813@amd>
-User-Agent: NeoMutt/20180716
+X-MC-Unique: kQSol00lMqGqmkexHxz3NQ-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---bqwzwua6ufld5yke
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+From: Olof Johansson
+> Sent: 17 November 2018 01:55
+...
+> -#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffffffffffff
+> +#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xfffffffffffffffful
+>  #error "Inconsistent SCTLR_EL2 set/clear bits"
+>  #endif
 
-Hi,
+Wouldn't this be clearer if written:
+	#if SCTLR_EL2_SET != ~SCTLR_EL2_CLEAR
+which then begs the question of why there are separate 'set' and 'clear' masks.
 
-On Sat, Nov 17, 2018 at 10:08:40PM +0100, Pavel Machek wrote:
-> > This prepares framedone interrupt handling for
-> > manual display update support.
-> >=20
-> > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
->=20
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+	David
 
-Thanks.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-> > @@ -217,6 +239,9 @@ static irqreturn_t omap_irq_handler(int irq, void *=
-arg)
-> > =20
-> >  		if (irqstatus & priv->dispc_ops->mgr_get_sync_lost_irq(priv->dispc, =
-channel))
-> >  			omap_crtc_error_irq(crtc, irqstatus);
-> > +
-> > +		if (irqstatus & priv->dispc_ops->mgr_get_framedone_irq(priv->dispc, =
-channel))
-> > +			omap_crtc_framedone_irq(crtc, irqstatus);
-> >  	}
-> > =20
-> >  	omap_irq_ocp_error_handler(dev, irqstatus);
->=20
-> Will the mgr_get_framedone_irq(priv->dispc, channel) change from
-> interrupt to interrupt? Would it make sense to cache result as a
-> micro-organization?
-
-Maybe. But this is the same for the the omap_crtc_error_* and the
-driver is currently being restructured by Laurent. I think this can
-wait for later.
-
--- Sebastian
-
---bqwzwua6ufld5yke
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvypv0ACgkQ2O7X88g7
-+ppzRxAAh8Bdr0nPl+lmrsqr+40IJjkCTfyFxcSB8tUlfluEvE9mpEPKJB75orDo
-oYUkT1DzUN4ZoMtmcmi5QnPdx2uREOBxcO/05nzG9ZJzSL1Ev7eVOR/h1AntZTRQ
-C9bATio97Y7dThnMee2jlBhPFboDAbsR+ti8QKBIAsgT15tMgWL6JWnOR3UB7wLX
-pFSF0RJAq5jKTbG77VFZLQKaIIvaXsthX6vZk2jhlOFBg+LJzBZ6B3QyqE54qiC6
-8Ql3IUenw+/IDp2Lg9ELhwmVQJSCJclSejeG2TJMEF+tfODen3eS48PEVTflvojR
-qQ880glUkuxHD59lXdFyCB7OUNSJWObYfheReL/omOl+CHXSAU4hJZp1RQpoNntH
-mM/oa0ecaPLwfUUEf8l0dbPPeLLl581WvuRhOnlRkRtWDZ8WiCT2VBZQRDQ/9vgn
-HtPCkZrWxUy/qzM6/Txl08BjPa/16HrWNzEW+2xtn2Fp8jQ3kHLwdmCZqX59s3wH
-xaeuSCY6zaqeoP12OmdxXt0GcUYC/R0vVHtdQdbedguvyDTRUABcmZs49VxUancJ
-IAMB8pYQDJHkEWmm8v89UvdMg4guyECETiLwrVsRTEOWMQXg45Q1wrJLQWywUOT4
-Iu4sYw0ifXt0vIiWmqKrwaXkDONE5LpwRE+cJQiy/qPtzApOkMY=
-=LJsg
------END PGP SIGNATURE-----
-
---bqwzwua6ufld5yke--
