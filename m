@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 978B2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 244DCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D99C206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD1A82145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ta5ZL/W/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D99C206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTJFa5UC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD1A82145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732664AbeKTDDS (ORCPT
+        id S1732676AbeKTDDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35838 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731712AbeKTDDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:03:17 -0500
+        id S1731712AbeKTDDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9E79208E4;
-        Mon, 19 Nov 2018 16:39:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44F81208E4;
+        Mon, 19 Nov 2018 16:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645548;
-        bh=Y+1pVrf6Z5K1cS6XMUOjM3hGRXZYSvJgeHB+AMZiYq4=;
+        s=default; t=1542645550;
+        bh=XQDhcbhziunePN/yrxo4k9WDvIuhv6U4Sl1tt/RZnaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ta5ZL/W/LjM4w4Xbi8HrG1xkHn8Eq8Exmqxr9LmfCm0Tq4erPoccSysp5gK9BYeyH
-         VK72paJK+RWVz1tzaqXUFnlagTNDYzDuEsja6uy9xL0tdaX4R+EpqWue4TC9koHb9S
-         a8KiEwqWTtlZ0z/eBQNDfsdq3qPbG7emIoFoJHuY=
+        b=sTJFa5UCO5XogPA/Px9Qhypsv6GcOBScjIdgDgnLH+b4wx6X3BdqX1bO1hPN9krI2
+         eIRPBbz6N2PJYbWthxxdfv/E+KsYxhXX/9HR5Mk7gk9ntQrgtMffxd0irZRr8GsjyJ
+         VqcPtZlAOY2JxM+E85kKfNqkuqXbbQPj4VUPYKVk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 204/205] drm/i915: Fix hpd handling for pins with two encoders
-Date:   Mon, 19 Nov 2018 17:28:31 +0100
-Message-Id: <20181119162642.910423580@linuxfoundation.org>
+        stable@vger.kernel.org, Stefano Stabellini <stefanos@xilinx.com>,
+        Juergen Gross <jgross@suse.com>, Jeff.Kubascik@dornerworks.com,
+        Jarvis.Roach@dornerworks.com, Nathan.Studer@dornerworks.com,
+        vkuznets@redhat.com, boris.ostrovsky@oracle.com,
+        julien.grall@arm.com
+Subject: [PATCH 4.19 205/205] CONFIG_XEN_PV breaks xen_create_contiguous_region on ARM
+Date:   Mon, 19 Nov 2018 17:28:32 +0100
+Message-Id: <20181119162642.972489706@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,148 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ville Syrjälä <ville.syrjala@linux.intel.com>
+From: Stefano Stabellini <stefanos@xilinx.com>
 
-commit 44a7276b30c3c15f2b7790a5729640597fb6a1df upstream.
+commit f9005571701920551bcf54a500973fb61f2e1eda upstream.
 
-In my haste to remove irq_port[] I accidentally changed the
-way we deal with hpd pins that are shared by multiple encoders
-(DP and HDMI for pre-DDI platforms). Previously we would only
-handle such pins via ->hpd_pulse(), but now we queue up the
-hotplug work for the HDMI encoder directly. Worse yet, we now
-count each hpd twice and this increment the hpd storm count
-twice as fast. This can lead to spurious storms being detected.
+xen_create_contiguous_region has now only an implementation if
+CONFIG_XEN_PV is defined. However, on ARM we never set CONFIG_XEN_PV but
+we do have an implementation of xen_create_contiguous_region which is
+required for swiotlb-xen to work correctly (although it just sets
+*dma_handle).
 
-Go back to the old way of doing things, ie. delegate to
-->hpd_pulse() for any pin which has an encoder with that hook
-implemented. I don't really like the idea of adding irq_port[]
-back so let's loop through the encoders first to check if we
-have an encoder with ->hpd_pulse() for the pin, and then go
-through all the pins and decided on the correct course of action
-based on the earlier findings.
+[backport: remove change to xen_remap_pfn]
 
-I have occasionally toyed with the idea of unifying the pre-DDI
-HDMI and DP encoders into a single encoder as well. Besides the
-hotplug processing it would have the other benefit of preventing
-userspace from trying to enable both encoders at the same time.
-That is simply illegal as they share the same clock/data pins.
-We have some testcases that will attempt that and thus fail on
-many older machines. But for now let's stick to fixing just the
-hotplug code.
-
-Cc: stable@vger.kernel.org # 4.19+
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Fixes: b6ca3eee18ba ("drm/i915: Nuke dev_priv->irq_port[]")
-Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181108200424.28371-1-ville.syrjala@linux.intel.com
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-(cherry picked from commit 5a3aeca97af1b6b3498d59a7fd4e8bb95814c108)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: <stable@vger.kernel.org> # 4.12
+Fixes: 16624390816c ("xen: create xen_create/destroy_contiguous_region() stubs for PVHVM only builds")
+Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+CC: Jeff.Kubascik@dornerworks.com
+CC: Jarvis.Roach@dornerworks.com
+CC: Nathan.Studer@dornerworks.com
+CC: vkuznets@redhat.com
+CC: boris.ostrovsky@oracle.com
+CC: jgross@suse.com
+CC: julien.grall@arm.com
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/i915/intel_hotplug.c |   66 ++++++++++++++++++++++++-----------
- 1 file changed, 47 insertions(+), 19 deletions(-)
+ include/xen/xen-ops.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_hotplug.c
-+++ b/drivers/gpu/drm/i915/intel_hotplug.c
-@@ -397,37 +397,54 @@ void intel_hpd_irq_handler(struct drm_i9
- 	struct intel_encoder *encoder;
- 	bool storm_detected = false;
- 	bool queue_dig = false, queue_hp = false;
-+	u32 long_hpd_pulse_mask = 0;
-+	u32 short_hpd_pulse_mask = 0;
-+	enum hpd_pin pin;
+--- a/include/xen/xen-ops.h
++++ b/include/xen/xen-ops.h
+@@ -41,7 +41,7 @@ int xen_setup_shutdown_event(void);
  
- 	if (!pin_mask)
- 		return;
+ extern unsigned long *xen_contiguous_bitmap;
  
- 	spin_lock(&dev_priv->irq_lock);
-+
-+	/*
-+	 * Determine whether ->hpd_pulse() exists for each pin, and
-+	 * whether we have a short or a long pulse. This is needed
-+	 * as each pin may have up to two encoders (HDMI and DP) and
-+	 * only the one of them (DP) will have ->hpd_pulse().
-+	 */
- 	for_each_intel_encoder(&dev_priv->drm, encoder) {
--		enum hpd_pin pin = encoder->hpd_pin;
- 		bool has_hpd_pulse = intel_encoder_has_hpd_pulse(encoder);
-+		enum port port = encoder->port;
-+		bool long_hpd;
- 
-+		pin = encoder->hpd_pin;
- 		if (!(BIT(pin) & pin_mask))
- 			continue;
- 
--		if (has_hpd_pulse) {
--			bool long_hpd = long_mask & BIT(pin);
--			enum port port = encoder->port;
-+		if (!has_hpd_pulse)
-+			continue;
- 
--			DRM_DEBUG_DRIVER("digital hpd port %c - %s\n", port_name(port),
--					 long_hpd ? "long" : "short");
--			/*
--			 * For long HPD pulses we want to have the digital queue happen,
--			 * but we still want HPD storm detection to function.
--			 */
--			queue_dig = true;
--			if (long_hpd) {
--				dev_priv->hotplug.long_port_mask |= (1 << port);
--			} else {
--				/* for short HPD just trigger the digital queue */
--				dev_priv->hotplug.short_port_mask |= (1 << port);
--				continue;
--			}
-+		long_hpd = long_mask & BIT(pin);
-+
-+		DRM_DEBUG_DRIVER("digital hpd port %c - %s\n", port_name(port),
-+				 long_hpd ? "long" : "short");
-+		queue_dig = true;
-+
-+		if (long_hpd) {
-+			long_hpd_pulse_mask |= BIT(pin);
-+			dev_priv->hotplug.long_port_mask |= BIT(port);
-+		} else {
-+			short_hpd_pulse_mask |= BIT(pin);
-+			dev_priv->hotplug.short_port_mask |= BIT(port);
- 		}
-+	}
-+
-+	/* Now process each pin just once */
-+	for_each_hpd_pin(pin) {
-+		bool long_hpd;
-+
-+		if (!(BIT(pin) & pin_mask))
-+			continue;
- 
- 		if (dev_priv->hotplug.stats[pin].state == HPD_DISABLED) {
- 			/*
-@@ -444,11 +461,22 @@ void intel_hpd_irq_handler(struct drm_i9
- 		if (dev_priv->hotplug.stats[pin].state != HPD_ENABLED)
- 			continue;
- 
--		if (!has_hpd_pulse) {
-+		/*
-+		 * Delegate to ->hpd_pulse() if one of the encoders for this
-+		 * pin has it, otherwise let the hotplug_work deal with this
-+		 * pin directly.
-+		 */
-+		if (((short_hpd_pulse_mask | long_hpd_pulse_mask) & BIT(pin))) {
-+			long_hpd = long_hpd_pulse_mask & BIT(pin);
-+		} else {
- 			dev_priv->hotplug.event_bits |= BIT(pin);
-+			long_hpd = true;
- 			queue_hp = true;
- 		}
- 
-+		if (!long_hpd)
-+			continue;
-+
- 		if (intel_hpd_irq_storm_detect(dev_priv, pin)) {
- 			dev_priv->hotplug.event_bits &= ~BIT(pin);
- 			storm_detected = true;
+-#ifdef CONFIG_XEN_PV
++#if defined(CONFIG_XEN_PV) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
+ int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
+ 				unsigned int address_bits,
+ 				dma_addr_t *dma_handle);
 
 
