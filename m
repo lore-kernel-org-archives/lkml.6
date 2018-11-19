@@ -2,98 +2,101 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2260C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C711C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94ACB214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94ACB214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CDA832148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yocMrgAK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDA832148E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388413AbeKTDJG (ORCPT
+        id S2388424AbeKTDJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:06 -0500
-Received: from mga14.intel.com ([192.55.52.115]:5595 "EHLO mga14.intel.com"
+        Mon, 19 Nov 2018 22:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387555AbeKTDJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 08:44:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109813190"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2018 08:44:49 -0800
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
- <20181118074832.GG5897@linux.intel.com>
- <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
- <20181119135800.GE8755@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <b0efbbf8-6242-a48d-d984-b49d5fb20bb8@intel.com>
-Date:   Mon, 19 Nov 2018 08:44:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387566AbeKTDJI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:09:08 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5E342145D;
+        Mon, 19 Nov 2018 16:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542645897;
+        bh=Ex0wVWAdcnXpMPmuSA+DbKKJv+hVp5hlOlTuhkKNwz4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=yocMrgAKurc7FBspC1K3VEbzZc5KJWTna8zfqWVpUNuUJmPQeTDIU4TLgWOQysYZ2
+         Y+FhbqdwmcFb8j7CDhxoUIoqCEhZYAT2irdkxhnYNoyxV6eJTmsDfEEtyStTiDkv37
+         KGatWqDjNjuoRwNvGrLMAZW4zjwISj35+nR6Ypak=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH 4.18 131/171] rtc: hctosys: Add missing range error reporting
+Date:   Mon, 19 Nov 2018 17:28:47 +0100
+Message-Id: <20181119162638.045320330@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
+References: <20181119162618.909354448@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20181119135800.GE8755@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 5:58 AM, Jarkko Sakkinen wrote:
-> Please explain a scenario where "!ret_size" would no work given that
-> both size and partial_data have always positive value?
+4.18-stable review patch.  If anyone has any objections, please let me know.
 
-Right, I only looked at the one line above before responding.
-I'll change it to !ret_size
+------------------
 
-> 
-> I don't understand. In order to maintain backwards compatibility you can
-> send a new command at any time.
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-No, currently it is not possible to send a new command until the previous
-response is consumed. -EBUSY is returned if one sends a new command before
-reading the previous response (or at least part of it). See:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/char/tpm/tpm-dev-common.c#n128
+commit 7ce9a992ffde8ce93d5ae5767362a5c7389ae895 upstream.
 
--- 
-Tadeusz
+Fix an issue with the 32-bit range error path in `rtc_hctosys' where no
+error code is set and consequently the successful preceding call result
+from `rtc_read_time' is propagated to `rtc_hctosys_ret'.  This in turn
+makes any subsequent call to `hctosys_show' incorrectly report in sysfs
+that the system time has been set from this RTC while it has not.
+
+Set the error to ERANGE then if we can't express the result due to an
+overflow.
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Fixes: b3a5ac42ab18 ("rtc: hctosys: Ensure system time doesn't overflow time_t")
+Cc: stable@vger.kernel.org # 4.17+
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/rtc/hctosys.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/rtc/hctosys.c
++++ b/drivers/rtc/hctosys.c
+@@ -50,8 +50,10 @@ static int __init rtc_hctosys(void)
+ 	tv64.tv_sec = rtc_tm_to_time64(&tm);
+ 
+ #if BITS_PER_LONG == 32
+-	if (tv64.tv_sec > INT_MAX)
++	if (tv64.tv_sec > INT_MAX) {
++		err = -ERANGE;
+ 		goto err_read;
++	}
+ #endif
+ 
+ 	err = do_settimeofday64(&tv64);
+
+
