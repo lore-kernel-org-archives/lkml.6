@@ -2,92 +2,99 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98542C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6B0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B7721104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:19:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B7721104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D77E62145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:20:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcknjYug"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77E62145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405776AbeKTDoE (ORCPT
+        id S2405564AbeKTDoy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:44:04 -0500
-Received: from mga04.intel.com ([192.55.52.120]:34498 "EHLO mga04.intel.com"
+        Mon, 19 Nov 2018 22:44:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36084 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405427AbeKTDoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:44:03 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 09:19:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109821873"
-Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
-  by orsmga002.jf.intel.com with ESMTP; 19 Nov 2018 09:19:34 -0800
-Date:   Mon, 19 Nov 2018 19:19:34 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "mark.shanahan@intel.com" <mark.shanahan@intel.com>,
-        "luto@amacapital.net" <luto@amacapital.net>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-Message-ID: <20181119171934.GA16252@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
- <20181119150655.GA11843@linux.intel.com>
- <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com>
+        id S2404671AbeKTDXz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:55 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 939282148E;
+        Mon, 19 Nov 2018 16:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542646780;
+        bh=HPjxfxZmbYcEOSrwE4NZAAmBSvsrbfEzCujaXKCSzAo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NcknjYugegLCDjroTNEAT6SNf+6oZZpLN7dRv8GF8W84TiaFd7NP+29BtSUqTEOiP
+         lQToH/OfmFYSt1S7t0z4mbXsecR+hFBJPRCUnphXgqfNp3h/vkdjNLGGq3sYGfX++r
+         xwUFGzat1hN0mO4d7KQfjJ5q9ZRe2jPBTRR6Fy90=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.4 087/160] btrfs: dont attempt to trim devices that dont support it
+Date:   Mon, 19 Nov 2018 17:28:46 +0100
+Message-Id: <20181119162639.652870725@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
+References: <20181119162630.031306128@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 04:22:54PM +0000, Jethro Beekman wrote:
-> On 2018-11-19 20:36, Jarkko Sakkinen wrote:
-> > Question: should be dissolve the driver completely and move this code to
-> > arch/x86/kernel/cpu/sgx/ (and rename intel_sgx.c as main.c)? Swapping
-> > patch removes the possibility to compile this as a module anyway.
-> 
-> No. We should keep the capability to build this as a module for other users
-> of SGX. What is the swapping patch and why doesn't allow building as a
-> module?
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-In some earlier version of the patch set the request was to remove the
-callback interface to the driver so now core does direct calls to the
-swapping operations.
+------------------
 
-/Jarkko
+From: Jeff Mahoney <jeffm@suse.com>
+
+commit 0be88e367fd8fbdb45257615d691f4675dda062f upstream.
+
+We check whether any device the file system is using supports discard in
+the ioctl call, but then we attempt to trim free extents on every device
+regardless of whether discard is supported.  Due to the way we mask off
+EOPNOTSUPP, we can end up issuing the trim operations on each free range
+on devices that don't support it, just wasting time.
+
+Fixes: 499f377f49f08 ("btrfs: iterate over unused chunk space in FITRIM")
+CC: stable@vger.kernel.org # 4.4+
+Signed-off-by: Jeff Mahoney <jeffm@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/btrfs/extent-tree.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/fs/btrfs/extent-tree.c
++++ b/fs/btrfs/extent-tree.c
+@@ -10629,6 +10629,10 @@ static int btrfs_trim_free_extents(struc
+ 
+ 	*trimmed = 0;
+ 
++	/* Discard not supported = nothing to do. */
++	if (!blk_queue_discard(bdev_get_queue(device->bdev)))
++		return 0;
++
+ 	/* Not writeable = nothing to do. */
+ 	if (!device->writeable)
+ 		return 0;
+
+
