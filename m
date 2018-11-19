@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F90C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E99C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A344214E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE3C9214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:05:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I53b4DEp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A344214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cv1ZCNJl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3C9214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406698AbeKTD3P (ORCPT
+        id S2406711AbeKTD3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:29:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43874 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:29:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405697AbeKTD3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:29:15 -0500
+        id S2405697AbeKTD3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:29:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5001C2148E;
-        Mon, 19 Nov 2018 17:04:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFDD42148E;
+        Mon, 19 Nov 2018 17:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647097;
-        bh=EK2wsdX/dYU0HvW/ToQqHYcN4kS3HbqDUy3jiWjAO+k=;
+        s=default; t=1542647100;
+        bh=D4Q7lUKRIaB3gm7l76vFCcBCP43h3MWlLOT41zQAgrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I53b4DEppKL64mjl9dAa8YPVKz+Um5AjvSgE4zf7emM4c3LCPtOruIrSOYnNhIXH/
-         HIBDQfpBYkS2WpaJF2HiPikeDMZzyeyjK3NBlQNUaJo3z17wsW4Yg75+TVUWrgJvW0
-         Q75MIwaTFbnByX1kTay2FCeSgmgf+EvM6wSducG0=
+        b=cv1ZCNJl9qMMOE0EP9FxavhYQZ3M0pGJjRDZ2ih5QKqoGe91UnI95PPqi9vA+hiHQ
+         KZiJfsPojFtczD4u2XZ6bnTA+g8INZ+XTY3MC84DUYUvWdzPRG74kzuPvGL+kudzte
+         7vZT7fU6lIvN7Soi8fQMx8swetO13jEK/s0pGodQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 3.18 49/90] media: em28xx: use a default format if TRY_FMT fails
-Date:   Mon, 19 Nov 2018 17:29:31 +0100
-Message-Id: <20181119162628.749178578@linuxfoundation.org>
+Subject: [PATCH 3.18 50/90] media: em28xx: fix input name for Terratec AV 350
+Date:   Mon, 19 Nov 2018 17:29:32 +0100
+Message-Id: <20181119162628.905420843@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,38 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit f823ce2a1202d47110a7ef86b65839f0be8adc38 upstream.
+commit 15644bfa195bd166d0a5ed76ae2d587f719c3dac upstream.
 
-Follow the V4L2 spec, as warned by v4l2-compliance:
-
-	warn: v4l2-test-formats.cpp(732): TRY_FMT cannot handle an invalid pixelformat.
-	warn: v4l2-test-formats.cpp(733): This may or may not be a problem. For more information see:
-
-warn: v4l2-test-formats.cpp(734): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
+Instead of using a register value, use an AMUX name, as otherwise
+VIDIOC_G_AUDIO would fail.
 
 Cc: stable@vger.kernel.org
-Fixes: bddcf63313c6 ("V4L/DVB (9927): em28xx: use a more standard way to specify video formats")
+Fixes: 766ed64de554 ("V4L/DVB (11827): Add support for Terratec Grabster AV350")
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/usb/em28xx/em28xx-video.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/usb/em28xx/em28xx-cards.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -1280,9 +1280,9 @@ static int vidioc_try_fmt_vid_cap(struct
+--- a/drivers/media/usb/em28xx/em28xx-cards.c
++++ b/drivers/media/usb/em28xx/em28xx-cards.c
+@@ -2001,13 +2001,13 @@ struct em28xx_board em28xx_boards[] = {
+ 		.input           = { {
+ 			.type     = EM28XX_VMUX_COMPOSITE1,
+ 			.vmux     = TVP5150_COMPOSITE1,
+-			.amux     = EM28XX_AUDIO_SRC_LINE,
++			.amux     = EM28XX_AMUX_LINE_IN,
+ 			.gpio     = terratec_av350_unmute_gpio,
  
- 	fmt = format_by_fourcc(f->fmt.pix.pixelformat);
- 	if (!fmt) {
--		em28xx_videodbg("Fourcc format (%08x) invalid.\n",
--				f->fmt.pix.pixelformat);
--		return -EINVAL;
-+		fmt = &format[0];
-+		em28xx_videodbg("Fourcc format (%08x) invalid. Using default (%08x).\n",
-+				f->fmt.pix.pixelformat, fmt->fourcc);
- 	}
- 
- 	if (dev->board.is_em2800) {
+ 		}, {
+ 			.type     = EM28XX_VMUX_SVIDEO,
+ 			.vmux     = TVP5150_SVIDEO,
+-			.amux     = EM28XX_AUDIO_SRC_LINE,
++			.amux     = EM28XX_AMUX_LINE_IN,
+ 			.gpio     = terratec_av350_unmute_gpio,
+ 		} },
+ 	},
 
 
