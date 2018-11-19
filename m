@@ -2,150 +2,148 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174B3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0791FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30A1206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39C2214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eaqD/x3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30A1206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyBlQ8/i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39C2214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389089AbeKTDLd (ORCPT
+        id S2389101AbeKTDLg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:33 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:47122 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388196AbeKTDLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:31 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAJGiEB5140956;
-        Mon, 19 Nov 2018 16:45:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=QVpNxCdRrTkzT/YiFruIcmxY+LQ14Mbhsv5I5cebKVo=;
- b=eaqD/x3vKjJoG+DEwMCBvkRRfRuk+kPHUkFtjRVYZU7JXeIZOh7bYqwGKNJHogPcvhqo
- bJxdcjUeMwQ4BcVGIIuCxLAuDmN5mInYkCWjj7Bl2+E9t+gZ+ojqkfr3LP2/Q+UeGJSk
- ZvSUk7tCwOBtB6VXx+LTSR3w96uFw6FyNJHSryp1z9ul+TzlUAdwgh9DFc/dI6UTVgGl
- jkpviPEcqRCvyl7l/IBywGhi0VS//Zo5aRU8OspYh0M4xzd0mXl+5pmYETMyhBKK57KF
- UrJvOkqhkjlDHsHmX9fugG256yBelaQRqBNOJmnlwuDb5lZPJW9a1dOsLHmjG5pR0kRv yQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ntbmqf3r8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Nov 2018 16:45:48 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAJGjlMn010944
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Nov 2018 16:45:47 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAJGjj5Q014005;
-        Mon, 19 Nov 2018 16:45:45 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 19 Nov 2018 08:45:45 -0800
-Date:   Mon, 19 Nov 2018 08:45:54 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
-        alex.williamson@redhat.com, bsd@redhat.com,
-        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
-        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
-        mhocko@kernel.org, mike.kravetz@oracle.com,
-        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
-        rdunlap@infradead.org, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, vbabka@suse.cz
-Subject: Re: [RFC PATCH v4 05/13] workqueue, ktask: renice helper threads to
- prevent starvation
-Message-ID: <20181119164554.axobolrufu26kfah@ca-dmjordan1.us.oracle.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-6-daniel.m.jordan@oracle.com>
- <20181113163400.GK2509588@devbig004.ftw2.facebook.com>
+        Mon, 19 Nov 2018 22:11:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388196AbeKTDLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:36 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CB142145D;
+        Mon, 19 Nov 2018 16:47:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542646044;
+        bh=n4sBl1VuAd8e/omIZ5nQYGs4R8V9o73AA6sFXxvuvek=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eyBlQ8/iFVcUd1E4VgGQND+yZRCPF2jpNGd0j+/cr4+MOJVhcGeQt7WvrsoRLS1Cb
+         c6az/c6hBp3VicVw3JlPrLge/xliAuZy1AsmMc8b2sU22uN3GX0+pgyv8UlUA2UObU
+         EUx+p3f+Nf5Nqcx+dwm1GPzpwhSZW1Mh4lNtfmSY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 015/124] powerpc/memtrace: Remove memory in chunks
+Date:   Mon, 19 Nov 2018 17:27:49 +0100
+Message-Id: <20181119162615.894653973@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+References: <20181119162612.951907286@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113163400.GK2509588@devbig004.ftw2.facebook.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9082 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=825
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811190153
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 08:34:00AM -0800, Tejun Heo wrote:
-> Hello, Daniel.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Hi Tejun, sorry for the delay.  Plumbers...
+------------------
 
-> On Mon, Nov 05, 2018 at 11:55:50AM -0500, Daniel Jordan wrote:
-> >  static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
-> > -			     bool from_cancel)
-> > +			     struct nice_work *nice_work, int flags)
-> >  {
-> >  	struct worker *worker = NULL;
-> >  	struct worker_pool *pool;
-> > @@ -2868,11 +2926,19 @@ static bool start_flush_work(struct work_struct *work, struct wq_barrier *barr,
-> >  	if (pwq) {
-> >  		if (unlikely(pwq->pool != pool))
-> >  			goto already_gone;
-> > +
-> > +		/* not yet started, insert linked work before work */
-> > +		if (unlikely(flags & WORK_FLUSH_AT_NICE))
-> > +			insert_nice_work(pwq, nice_work, work);
-> 
-> So, I'm not sure this works that well.  e.g. what if the work item is
-> waiting for other work items which are at lower priority?  Also, in
-> this case, it'd be a lot simpler to simply dequeue the work item and
-> execute it synchronously.
+From: Rashmica Gupta <rashmica.g@gmail.com>
 
-Good idea, that is much simpler (and shorter).
+[ Upstream commit 3f7daf3d7582dc6628ac40a9045dd1bbd80c5f35 ]
 
-So doing it this way, the current task's nice level would be adjusted while
-running the work synchronously.
+When hot-removing memory release_mem_region_adjustable() splits iomem
+resources if they are not the exact size of the memory being
+hot-deleted. Adding this memory back to the kernel adds a new resource.
 
-> 
-> >  	} else {
-> >  		worker = find_worker_executing_work(pool, work);
-> >  		if (!worker)
-> >  			goto already_gone;
-> >  		pwq = worker->current_pwq;
-> > +		if (unlikely(flags & WORK_FLUSH_AT_NICE)) {
-> > +			set_user_nice(worker->task, nice_work->nice);
-> > +			worker->flags |= WORKER_NICED;
-> > +		}
-> >  	}
-> 
-> I'm not sure about this.  Can you see whether canceling & executing
-> synchronously is enough to address the latency regression?
+Eg a node has memory 0x0 - 0xfffffffff. Hot-removing 1GB from
+0xf40000000 results in the single resource 0x0-0xfffffffff being split
+into two resources: 0x0-0xf3fffffff and 0xf80000000-0xfffffffff.
 
-In my testing, canceling was practically never successful because these are
-long running jobs, so by the time the main ktask thread gets around to
-flushing/nice'ing the works, worker threads have already started running them.
-I had to write a no-op ktask to hit the first path where you suggest
-dequeueing.  So adjusting the priority of a running worker seems required to
-address the latency issue.
+When we hot-add the memory back we now have three resources:
+0x0-0xf3fffffff, 0xf40000000-0xf7fffffff, and 0xf80000000-0xfffffffff.
 
-So instead of flush_work_at_nice, how about this?:
+This is an issue if we try to remove some memory that overlaps
+resources. Eg when trying to remove 2GB at address 0xf40000000,
+release_mem_region_adjustable() fails as it expects the chunk of memory
+to be within the boundaries of a single resource. We then get the
+warning: "Unable to release resource" and attempting to use memtrace
+again gives us this error: "bash: echo: write error: Resource
+temporarily unavailable"
 
-void renice_work_sync(work_struct *work, long nice);
+This patch makes memtrace remove memory in chunks that are always the
+same size from an address that is always equal to end_of_memory -
+n*size, for some n. So hotremoving and hotadding memory of different
+sizes will now not attempt to remove memory that spans multiple
+resources.
 
-If a worker is running the work, renice the worker to 'nice' and wait for it to
-finish (what this patch does now), and if the work isn't running, dequeue it
-and run in the current thread, again at 'nice'.
+Signed-off-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/powerpc/platforms/powernv/memtrace.c |   21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -119,17 +119,15 @@ static bool memtrace_offline_pages(u32 n
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+ 			  change_memblock_state);
+ 
+-	lock_device_hotplug();
+-	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+-	unlock_device_hotplug();
+ 
+ 	return true;
+ }
+ 
+ static u64 memtrace_alloc_node(u32 nid, u64 size)
+ {
+-	u64 start_pfn, end_pfn, nr_pages;
++	u64 start_pfn, end_pfn, nr_pages, pfn;
+ 	u64 base_pfn;
++	u64 bytes = memory_block_size_bytes();
+ 
+ 	if (!NODE_DATA(nid) || !node_spanned_pages(nid))
+ 		return 0;
+@@ -142,8 +140,21 @@ static u64 memtrace_alloc_node(u32 nid,
+ 	end_pfn = round_down(end_pfn - nr_pages, nr_pages);
+ 
+ 	for (base_pfn = end_pfn; base_pfn > start_pfn; base_pfn -= nr_pages) {
+-		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true)
++		if (memtrace_offline_pages(nid, base_pfn, nr_pages) == true) {
++			/*
++			 * Remove memory in memory block size chunks so that
++			 * iomem resources are always split to the same size and
++			 * we never try to remove memory that spans two iomem
++			 * resources.
++			 */
++			lock_device_hotplug();
++			end_pfn = base_pfn + nr_pages;
++			for (pfn = base_pfn; pfn < end_pfn; pfn += bytes>> PAGE_SHIFT) {
++				remove_memory(nid, pfn << PAGE_SHIFT, bytes);
++			}
++			unlock_device_hotplug();
+ 			return base_pfn << PAGE_SHIFT;
++		}
+ 	}
+ 
+ 	return 0;
 
 
-Thanks for taking a look.
