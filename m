@@ -2,82 +2,93 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8952AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B99BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A45320831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:02:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A45320831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D3A2C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:03:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1kSptsLE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3A2C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbeKSU0E (ORCPT
+        id S1727762AbeKSU0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:26:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44068 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 15:26:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeKSU0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:26:04 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727584AbeKSU0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 15:26:32 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 91DBA3081247;
-        Mon, 19 Nov 2018 10:02:56 +0000 (UTC)
-Received: from gondolin (ovpn-116-165.ams2.redhat.com [10.36.116.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 21C9360139;
-        Mon, 19 Nov 2018 10:02:50 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 11:02:48 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christian.ehrhardt@canonical.com, eric.auger@redhat.com
-Subject: Re: [PATCH v2] vfio/pci: Parallelize device open and release
-Message-ID: <20181119110248.68214069.cohuck@redhat.com>
-In-Reply-To: <154238501981.17682.10484940408205923021.stgit@gimli.home>
-References: <154238501981.17682.10484940408205923021.stgit@gimli.home>
-Organization: Red Hat GmbH
+        by mail.kernel.org (Postfix) with ESMTPSA id A4D3F20831;
+        Mon, 19 Nov 2018 10:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542621804;
+        bh=8qx3xu2GbeEOZmep+WWp/pi5JLhqKDlE7QQPZXDAZok=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1kSptsLEjDY9zGjMHfUEH+vcFPCyg8IDDwmoKQF5Q1N/SdesbtLeBbOyf98UH9U/e
+         GXqz0U7U9tkstgoXYlx+xlfjozQLnh7PG0guSjpEeOgC8bG8U70Hv8Fc0Y8KeGiMix
+         ar8nRxvBFrFfZpxPodTakzVDr9radjbBVOxFXJCk=
+Date:   Mon, 19 Nov 2018 11:03:22 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jonatan Corbet <corbet@lwn.net>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kernel-hardening@lists.openwall.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v1 1/2]: Documentation/admin-guide: update admin-guide
+ index.rst
+Message-ID: <20181119100322.GA19910@kroah.com>
+References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
+ <810bb4aa-777f-77ed-19f0-882354bdf9c7@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Mon, 19 Nov 2018 10:02:56 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <810bb4aa-777f-77ed-19f0-882354bdf9c7@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 09:18:41 -0700
-Alex Williamson <alex.williamson@redhat.com> wrote:
-
-> In commit 61d792562b53 ("vfio-pci: Use mutex around open, release, and
-> remove") a mutex was added to freeze the refcnt for a device so that
-> we can handle errors and perform bus resets on final close.  However,
-> bus resets can be rather slow and a global mutex here is undesirable.
-> Evaluating the potential locking granularity, a per-device mutex
-> provides the best resolution but with multiple devices on a bus all
-> released concurrently, they'll race to acquire each other's mutex,
-> likely resulting in no reset at all if we use trylock.  We therefore
-> lock at the granularity of the bus/slot reset as we're only attempting
-> a single reset for this group of devices anyway.  This allows much
-> greater scaling as we're bounded in the number of devices protected by
-> a single reflck object.
+On Mon, Nov 19, 2018 at 08:41:31AM +0300, Alexey Budankov wrote:
 > 
-> Reported-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
-> Tested-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
-> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+> Extend index.rst index file at admin-guide root directory with 
+> the reference to perf-security.rst file being introduced.
+> 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 > ---
+>  Documentation/admin-guide/index.rst | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> v2:
->  - Rolled in PTR_ERR_OR_ZERO suggestion from kbuild bot
->  - Updated commit log and comments per Eric's feedback
-> 
->  drivers/vfio/pci/vfio_pci.c         |  160 ++++++++++++++++++++++++++++++-----
->  drivers/vfio/pci/vfio_pci_private.h |    6 +
->  2 files changed, 142 insertions(+), 24 deletions(-)
+> diff --git a/Documentation/admin-guide/index.rst b/Documentation/admin-guide/index.rst
+> index 0873685bab0f..885cc0de9114 100644
+> --- a/Documentation/admin-guide/index.rst
+> +++ b/Documentation/admin-guide/index.rst
+> @@ -75,6 +75,7 @@ configure specific aspects of kernel behavior to your liking.
+>     thunderbolt
+>     LSM/index
+>     mm/index
+> +   perf-security
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+You just broke the build with this patch.  They need to be ordered the
+other way around :(
+
