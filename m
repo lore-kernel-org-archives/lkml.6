@@ -2,50 +2,49 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49661C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8C1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1098321104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CFF521104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wgqGX3N6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1098321104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="v6t6d0MB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CFF521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387897AbeKTDHX (ORCPT
+        id S2387488AbeKTDH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41446 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:22 -0500
+        id S1732866AbeKTDHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E46E521104;
-        Mon, 19 Nov 2018 16:43:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D86B2145D;
+        Mon, 19 Nov 2018 16:43:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645791;
-        bh=CZY9FtMcnINDNTNjoLCxD8SfcOkzdDB8Puf/uj1AbD4=;
+        s=default; t=1542645793;
+        bh=AzhC7F3DvSdH7pit1EsB+rRKBTvBUCiGvtZYkyevgx0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wgqGX3N6bQ25AlVavv+Pr5llR7nhLWmMSgpz8VMH2w+XgBWCamJihuBjqqZ+BhjKO
-         tVs58x8WIjFAgIY/3HqWQanFDJtU1IOW4RuakpLJQsCoN0LQA3WfV8P11aeNZtYmp6
-         JBOyWTzf9V4lpCvLqPOY1HYyax8KO2mgaxDS37mg=
+        b=v6t6d0MBvhwnM3WOEDPUAbNr4S9HIWVR4T8lnZS0WGKLehZCpMGNLDtPeXocCgZSm
+         1KAK1KDSipCpxLVintN9Rj182OCM6/75xXM7+6VLrWYEZlbbUol4R4tUgywGiH7aVH
+         /FhxB9YYtbMqhQW7DInH/SNjpSrfekZr0H7J/2BY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.18 091/171] mtd: docg3: dont set conflicting BCH_CONST_PARAMS option
-Date:   Mon, 19 Nov 2018 17:28:07 +0100
-Message-Id: <20181119162633.734223643@linuxfoundation.org>
+        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.18 092/171] hwmon: (core) Fix double-free in __hwmon_device_register()
+Date:   Mon, 19 Nov 2018 17:28:08 +0100
+Message-Id: <20181119162633.841840635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,51 +62,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-commit be2e1c9dcf76886a83fb1c433a316e26d4ca2550 upstream.
+commit 74e3512731bd5c9673176425a76a7cc5efa8ddb6 upstream.
 
-I noticed during the creation of another bugfix that the BCH_CONST_PARAMS
-option that is set by DOCG3 breaks setting variable parameters for any
-other users of the BCH library code.
+Fix double-free that happens when thermal zone setup fails, see KASAN log
+below.
 
-The only other user we have today is the MTD_NAND software BCH
-implementation (most flash controllers use hardware BCH these days
-and are not affected). I considered removing BCH_CONST_PARAMS entirely
-because of the inherent conflict, but according to the description in
-lib/bch.c there is a significant performance benefit in keeping it.
+==================================================================
+BUG: KASAN: double-free or invalid-free in __hwmon_device_register+0x5dc/0xa7c
 
-To avoid the immediate problem of the conflict between MTD_NAND_BCH
-and DOCG3, this only sets the constant parameters if MTD_NAND_BCH
-is disabled, which should fix the problem for all cases that
-are affected. This should also work for all stable kernels.
+CPU: 0 PID: 132 Comm: kworker/0:2 Tainted: G    B             4.19.0-rc8-next-20181016-00042-gb52cd80401e9-dirty #41
+Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+Workqueue: events deferred_probe_work_func
+Backtrace:
+[<c0110540>] (dump_backtrace) from [<c0110944>] (show_stack+0x20/0x24)
+[<c0110924>] (show_stack) from [<c105cb08>] (dump_stack+0x9c/0xb0)
+[<c105ca6c>] (dump_stack) from [<c02fdaec>] (print_address_description+0x68/0x250)
+[<c02fda84>] (print_address_description) from [<c02fd4ac>] (kasan_report_invalid_free+0x68/0x88)
+[<c02fd444>] (kasan_report_invalid_free) from [<c02fc85c>] (__kasan_slab_free+0x1f4/0x200)
+[<c02fc668>] (__kasan_slab_free) from [<c02fd0c0>] (kasan_slab_free+0x14/0x18)
+[<c02fd0ac>] (kasan_slab_free) from [<c02f9c6c>] (kfree+0x90/0x294)
+[<c02f9bdc>] (kfree) from [<c0b41bbc>] (__hwmon_device_register+0x5dc/0xa7c)
+[<c0b415e0>] (__hwmon_device_register) from [<c0b421e8>] (hwmon_device_register_with_info+0xa0/0xa8)
+[<c0b42148>] (hwmon_device_register_with_info) from [<c0b42324>] (devm_hwmon_device_register_with_info+0x74/0xb4)
+[<c0b422b0>] (devm_hwmon_device_register_with_info) from [<c0b4481c>] (lm90_probe+0x414/0x578)
+[<c0b44408>] (lm90_probe) from [<c0aeeff4>] (i2c_device_probe+0x35c/0x384)
+[<c0aeec98>] (i2c_device_probe) from [<c08776cc>] (really_probe+0x290/0x3e4)
+[<c087743c>] (really_probe) from [<c0877a2c>] (driver_probe_device+0x80/0x1c4)
+[<c08779ac>] (driver_probe_device) from [<c0877da8>] (__device_attach_driver+0x104/0x11c)
+[<c0877ca4>] (__device_attach_driver) from [<c0874dd8>] (bus_for_each_drv+0xa4/0xc8)
+[<c0874d34>] (bus_for_each_drv) from [<c08773b0>] (__device_attach+0xf0/0x15c)
+[<c08772c0>] (__device_attach) from [<c0877e24>] (device_initial_probe+0x1c/0x20)
+[<c0877e08>] (device_initial_probe) from [<c08762f4>] (bus_probe_device+0xdc/0xec)
+[<c0876218>] (bus_probe_device) from [<c0876a08>] (deferred_probe_work_func+0xa8/0xd4)
+[<c0876960>] (deferred_probe_work_func) from [<c01527c4>] (process_one_work+0x3dc/0x96c)
+[<c01523e8>] (process_one_work) from [<c01541e0>] (worker_thread+0x4ec/0x8bc)
+[<c0153cf4>] (worker_thread) from [<c015b238>] (kthread+0x230/0x240)
+[<c015b008>] (kthread) from [<c01010bc>] (ret_from_fork+0x14/0x38)
+Exception stack(0xcf743fb0 to 0xcf743ff8)
+3fa0:                                     00000000 00000000 00000000 00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
 
-Note that there is only one machine that actually seems to use the
-DOCG3 driver (arch/arm/mach-pxa/mioa701.c), so most users should have
-the driver disabled, but it almost certainly shows up if we wanted
-to test random kernels on machines that use software BCH in MTD.
+Allocated by task 132:
+ kasan_kmalloc.part.1+0x58/0xf4
+ kasan_kmalloc+0x90/0xa4
+ kmem_cache_alloc_trace+0x90/0x2a0
+ __hwmon_device_register+0xbc/0xa7c
+ hwmon_device_register_with_info+0xa0/0xa8
+ devm_hwmon_device_register_with_info+0x74/0xb4
+ lm90_probe+0x414/0x578
+ i2c_device_probe+0x35c/0x384
+ really_probe+0x290/0x3e4
+ driver_probe_device+0x80/0x1c4
+ __device_attach_driver+0x104/0x11c
+ bus_for_each_drv+0xa4/0xc8
+ __device_attach+0xf0/0x15c
+ device_initial_probe+0x1c/0x20
+ bus_probe_device+0xdc/0xec
+ deferred_probe_work_func+0xa8/0xd4
+ process_one_work+0x3dc/0x96c
+ worker_thread+0x4ec/0x8bc
+ kthread+0x230/0x240
+ ret_from_fork+0x14/0x38
+   (null)
 
-Fixes: d13d19ece39f ("mtd: docg3: add ECC correction code")
-Cc: stable@vger.kernel.org
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Freed by task 132:
+ __kasan_slab_free+0x12c/0x200
+ kasan_slab_free+0x14/0x18
+ kfree+0x90/0x294
+ hwmon_dev_release+0x1c/0x20
+ device_release+0x4c/0xe8
+ kobject_put+0xac/0x11c
+ device_unregister+0x2c/0x30
+ __hwmon_device_register+0xa58/0xa7c
+ hwmon_device_register_with_info+0xa0/0xa8
+ devm_hwmon_device_register_with_info+0x74/0xb4
+ lm90_probe+0x414/0x578
+ i2c_device_probe+0x35c/0x384
+ really_probe+0x290/0x3e4
+ driver_probe_device+0x80/0x1c4
+ __device_attach_driver+0x104/0x11c
+ bus_for_each_drv+0xa4/0xc8
+ __device_attach+0xf0/0x15c
+ device_initial_probe+0x1c/0x20
+ bus_probe_device+0xdc/0xec
+ deferred_probe_work_func+0xa8/0xd4
+ process_one_work+0x3dc/0x96c
+ worker_thread+0x4ec/0x8bc
+ kthread+0x230/0x240
+ ret_from_fork+0x14/0x38
+   (null)
+
+Cc: <stable@vger.kernel.org> # v4.15+
+Fixes: 47c332deb8e8 ("hwmon: Deal with errors from the thermal subsystem")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mtd/devices/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hwmon/hwmon.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/mtd/devices/Kconfig
-+++ b/drivers/mtd/devices/Kconfig
-@@ -207,7 +207,7 @@ comment "Disk-On-Chip Device Drivers"
- config MTD_DOCG3
- 	tristate "M-Systems Disk-On-Chip G3"
- 	select BCH
--	select BCH_CONST_PARAMS
-+	select BCH_CONST_PARAMS if !MTD_NAND_BCH
- 	select BITREVERSE
- 	---help---
- 	  This provides an MTD device driver for the M-Systems DiskOnChip
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -631,8 +631,10 @@ __hwmon_device_register(struct device *d
+ 				if (info[i]->config[j] & HWMON_T_INPUT) {
+ 					err = hwmon_thermal_add_sensor(dev,
+ 								hwdev, j);
+-					if (err)
+-						goto free_device;
++					if (err) {
++						device_unregister(hdev);
++						goto ida_remove;
++					}
+ 				}
+ 			}
+ 		}
+@@ -640,8 +642,6 @@ __hwmon_device_register(struct device *d
+ 
+ 	return hdev;
+ 
+-free_device:
+-	device_unregister(hdev);
+ free_hwmon:
+ 	kfree(hwdev);
+ ida_remove:
 
 
