@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE0FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE6EC04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8ED214ED
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8ED214ED
+	by mail.kernel.org (Postfix) with ESMTP id 2840D20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2840D20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbeKTIUH (ORCPT
+        id S1731560AbeKTIUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:20:07 -0500
+        Tue, 20 Nov 2018 03:20:08 -0500
 Received: from mga09.intel.com ([134.134.136.24]:32094 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731504AbeKTIUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:20:06 -0500
+        id S1731529AbeKTIUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:20:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:26 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="93319883"
+   d="scan'208";a="93319892"
 Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:24 -0800
+  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:26 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v6 15/26] mm: Handle shadow stack page fault
-Date:   Mon, 19 Nov 2018 13:47:58 -0800
-Message-Id: <20181119214809.6086-16-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v6 17/26] mm: Update can_follow_write_pte/pmd for shadow stack
+Date:   Mon, 19 Nov 2018 13:48:00 -0800
+Message-Id: <20181119214809.6086-18-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181119214809.6086-1-yu-cheng.yu@intel.com>
 References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
@@ -66,108 +66,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a task does fork(), its shadow stack (SHSTK) must be duplicated
-for the child.  This patch implements a flow similar to copy-on-write
-of an anonymous page, but for SHSTK.
+can_follow_write_pte/pmd look for the (RO & DIRTY) PTE/PMD to
+verify an exclusive RO page still exists after a broken COW.
 
-A SHSTK PTE must be RO and dirty.  This dirty bit requirement is used
-to effect the copying.  In copy_one_pte(), clear the dirty bit from a
-SHSTK PTE to cause a page fault upon the next SHSTK access.  At that
-time, fix the PTE and copy/re-use the page.
+A shadow stack PTE is RO & PAGE_DIRTY_SW when it is shared,
+otherwise RO & PAGE_DIRTY_HW.
+
+Introduce pte_exclusive() and pmd_exclusive() to also verify a
+shadow stack PTE is exclusive.
+
+Also rename can_follow_write_pte/pmd() to can_follow_write() to
+make their meaning clear; i.e. "Can we write to the page?", not
+"Is the PTE writable?"
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/mm/pgtable.c         | 15 +++++++++++++++
- include/asm-generic/pgtable.h |  8 ++++++++
- mm/memory.c                   |  7 ++++++-
- 3 files changed, 29 insertions(+), 1 deletion(-)
+ arch/x86/mm/pgtable.c         | 18 ++++++++++++++++++
+ include/asm-generic/pgtable.h |  4 ++++
+ mm/gup.c                      |  8 +++++---
+ mm/huge_memory.c              |  8 +++++---
+ 4 files changed, 32 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index 59274e2c1ac4..75dddc3d8451 100644
+index 4275c80f5832..7629156d30b0 100644
 --- a/arch/x86/mm/pgtable.c
 +++ b/arch/x86/mm/pgtable.c
-@@ -887,3 +887,18 @@ int pmd_free_pte_page(pmd_t *pmd, unsigned long addr)
- 
- #endif /* CONFIG_X86_64 */
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMAP */
+@@ -909,4 +909,22 @@ inline bool arch_copy_pte_mapping(vm_flags_t vm_flags)
+ {
+ 	return (vm_flags & VM_SHSTK);
+ }
 +
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+inline pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma)
++inline bool pte_exclusive(pte_t pte, struct vm_area_struct *vma)
 +{
 +	if (vma->vm_flags & VM_SHSTK)
-+		return pte_mkdirty_shstk(pte);
++		return pte_dirty_hw(pte);
 +	else
-+		return pte;
++		return pte_dirty(pte);
 +}
 +
-+inline bool arch_copy_pte_mapping(vm_flags_t vm_flags)
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++inline bool pmd_exclusive(pmd_t pmd, struct vm_area_struct *vma)
 +{
-+	return (vm_flags & VM_SHSTK);
++	if (vma->vm_flags & VM_SHSTK)
++		return pmd_dirty_hw(pmd);
++	else
++		return pmd_dirty(pmd);
 +}
-+#endif /* CONFIG_X86_INTEL_SHADOW_STACK_USER */
++#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif /* CONFIG_X86_INTEL_SHADOW_STACK_USER */
 diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
-index 359fb935ded6..30ac390fb2d4 100644
+index b0b375d8bb34..c8685df71521 100644
 --- a/include/asm-generic/pgtable.h
 +++ b/include/asm-generic/pgtable.h
-@@ -1143,4 +1143,12 @@ static inline bool arch_has_pfn_modify_check(void)
- #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
+@@ -1147,10 +1147,14 @@ static inline bool arch_has_pfn_modify_check(void)
+ #define pte_set_vma_features(pte, vma) pte
+ #define pmd_set_vma_features(pmd, vma) pmd
+ #define arch_copy_pte_mapping(vma_flags) false
++#define pte_exclusive(pte, vma) pte_dirty(pte)
++#define pmd_exclusive(pmd, vma) pmd_dirty(pmd)
+ #else
+ pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma);
+ pmd_t pmd_set_vma_features(pmd_t pmd, struct vm_area_struct *vma);
+ bool arch_copy_pte_mapping(vm_flags_t vm_flags);
++bool pte_exclusive(pte_t pte, struct vm_area_struct *vma);
++bool pmd_exclusive(pmd_t pmd, struct vm_area_struct *vma);
  #endif
  
-+#ifndef CONFIG_ARCH_HAS_SHSTK
-+#define pte_set_vma_features(pte, vma) pte
-+#define arch_copy_pte_mapping(vma_flags) false
-+#else
-+pte_t pte_set_vma_features(pte_t pte, struct vm_area_struct *vma);
-+bool arch_copy_pte_mapping(vm_flags_t vm_flags);
-+#endif
-+
  #endif /* _ASM_GENERIC_PGTABLE_H */
-diff --git a/mm/memory.c b/mm/memory.c
-index 4ad2d293ddc2..f6b2e1ece4ab 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -775,7 +775,8 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	 * If it's a COW mapping, write protect it both
- 	 * in the parent and the child
- 	 */
--	if (is_cow_mapping(vm_flags) && pte_write(pte)) {
-+	if ((is_cow_mapping(vm_flags) && pte_write(pte)) ||
-+	    arch_copy_pte_mapping(vm_flags)) {
- 		ptep_set_wrprotect(src_mm, addr, src_pte);
- 		pte = pte_wrprotect(pte);
- 	}
-@@ -2218,6 +2219,7 @@ static inline void wp_page_reuse(struct vm_fault *vmf)
- 	flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
- 	entry = pte_mkyoung(vmf->orig_pte);
- 	entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-+	entry = pte_set_vma_features(entry, vma);
- 	if (ptep_set_access_flags(vma, vmf->address, vmf->pte, entry, 1))
- 		update_mmu_cache(vma, vmf->address, vmf->pte);
- 	pte_unmap_unlock(vmf->pte, vmf->ptl);
-@@ -2291,6 +2293,7 @@ static vm_fault_t wp_page_copy(struct vm_fault *vmf)
- 		flush_cache_page(vma, vmf->address, pte_pfn(vmf->orig_pte));
- 		entry = mk_pte(new_page, vma->vm_page_prot);
- 		entry = maybe_mkwrite(pte_mkdirty(entry), vma);
-+		entry = pte_set_vma_features(entry, vma);
- 		/*
- 		 * Clear the pte entry and flush it first, before updating the
- 		 * pte with the new entry. This will avoid a race condition
-@@ -2801,6 +2804,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	pte = mk_pte(page, vma->vm_page_prot);
- 	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
- 		pte = maybe_mkwrite(pte_mkdirty(pte), vma);
-+		pte = pte_set_vma_features(pte, vma);
- 		vmf->flags &= ~FAULT_FLAG_WRITE;
- 		ret |= VM_FAULT_WRITE;
- 		exclusive = RMAP_EXCLUSIVE;
-@@ -2943,6 +2947,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	entry = mk_pte(page, vma->vm_page_prot);
- 	if (vma->vm_flags & VM_WRITE)
- 		entry = pte_mkwrite(pte_mkdirty(entry));
-+	entry = pte_set_vma_features(entry, vma);
+diff --git a/mm/gup.c b/mm/gup.c
+index aa43620a3270..abc200ed1e4a 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -69,10 +69,12 @@ static int follow_pfn_pte(struct vm_area_struct *vma, unsigned long address,
+  * FOLL_FORCE can write to even unwritable pte's, but only
+  * after we've gone through a COW cycle and they are dirty.
+  */
+-static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
++static inline bool can_follow_write(pte_t pte, unsigned int flags,
++				    struct vm_area_struct *vma)
+ {
+ 	return pte_write(pte) ||
+-		((flags & FOLL_FORCE) && (flags & FOLL_COW) && pte_dirty(pte));
++		((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
++		 pte_exclusive(pte, vma));
+ }
  
- 	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, vmf->address,
- 			&vmf->ptl);
+ static struct page *follow_page_pte(struct vm_area_struct *vma,
+@@ -110,7 +112,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 	}
+ 	if ((flags & FOLL_NUMA) && pte_protnone(pte))
+ 		goto no_page;
+-	if ((flags & FOLL_WRITE) && !can_follow_write_pte(pte, flags)) {
++	if ((flags & FOLL_WRITE) && !can_follow_write(pte, flags, vma)) {
+ 		pte_unmap_unlock(ptep, ptl);
+ 		return NULL;
+ 	}
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 12148a5b60e0..f7476eeed83a 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1403,10 +1403,12 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
+  * FOLL_FORCE can write to even unwritable pmd's, but only
+  * after we've gone through a COW cycle and they are dirty.
+  */
+-static inline bool can_follow_write_pmd(pmd_t pmd, unsigned int flags)
++static inline bool can_follow_write(pmd_t pmd, unsigned int flags,
++				    struct vm_area_struct *vma)
+ {
+ 	return pmd_write(pmd) ||
+-	       ((flags & FOLL_FORCE) && (flags & FOLL_COW) && pmd_dirty(pmd));
++	       ((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
++		pmd_exclusive(pmd, vma));
+ }
+ 
+ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+@@ -1419,7 +1421,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+ 
+ 	assert_spin_locked(pmd_lockptr(mm, pmd));
+ 
+-	if (flags & FOLL_WRITE && !can_follow_write_pmd(*pmd, flags))
++	if (flags & FOLL_WRITE && !can_follow_write(*pmd, flags, vma))
+ 		goto out;
+ 
+ 	/* Avoid dumping huge zero page */
 -- 
 2.17.1
 
