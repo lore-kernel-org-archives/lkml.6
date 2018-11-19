@@ -2,142 +2,97 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A4DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA00C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B416420851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:30:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B416420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FBAA20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:31:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="UPFQlysV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FBAA20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbeKTJ45 (ORCPT
+        id S1731751AbeKTJ5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:56:57 -0500
-Received: from mga12.intel.com ([192.55.52.136]:13278 "EHLO mga12.intel.com"
+        Tue, 20 Nov 2018 04:57:21 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:48171 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728349AbeKTJ45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:56:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:30:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="93340530"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 15:30:53 -0800
-Subject: [PATCH] x86/mm: Drop usage of __flush_tlb_all() in
- kernel_physical_mapping_init()
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     tglx@linutronix.de
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, stable@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org
-Date:   Mon, 19 Nov 2018 15:19:04 -0800
-Message-ID: <154266954452.2939184.974606608701109493.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S1726262AbeKTJ5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:57:20 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 0eac1a5b;
+        Mon, 19 Nov 2018 23:25:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=cKVEK2BpZngHHw5DaDCv65+IbGA=; b=UPFQly
+        sV5PvA/adwO6oEIlC9gKkVG+lGgzbopMWW37tgROEwtIKPQ5h2vZ3rU45ijA+nuF
+        Mp4PeixVRuDIdPsjHk9nxqbaEhe/P3jsXyl60+rJuVERY5X+JQ1Xjb24GUzqsCN1
+        eRvScZn0lvzQhGjJaL2bCpKwympfMUE5FtpY12ut6muDzOLunKAeNjHunJanQkh8
+        uSlzEAVvvSUb4/6DurOpWY6mXzI+iGx3QFkZuRvmziPdZsQUqa6OLnVJMnSTFKps
+        NVl7U1EEVUE/hOXUaO7gRlqjRTzMFDYbn+rzlRXTko6UHzvm7tFQk6QLA6M0sxHt
+        Yl+cGfcUfRrK/usw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 5d5ebf7e (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 19 Nov 2018 23:25:12 +0000 (UTC)
+Received: by mail-ot1-f45.google.com with SMTP id g27so40032oth.6;
+        Mon, 19 Nov 2018 15:31:14 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJz/5qzyRpelrsqfAnehK/k3sRpiyAVn0EoQ47DDPHDNsz9p747
+        q4ubL8Fth6pWyjglsgCFBjcU2EsPWDIWvTMq554=
+X-Google-Smtp-Source: AJdET5cGvuGsWIIWxtT+74MKZp2D1tsT9DwqMrFMSlch2KZ3ODxGrFoca0bMYupwOw3zAqPyDMDExZMHyLGYsfcdoGY=
+X-Received: by 2002:a9d:837:: with SMTP id 52mr13699497oty.143.1542670274157;
+ Mon, 19 Nov 2018 15:31:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20181105232526.173947-11-ebiggers@kernel.org> <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+ <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
+ <20181117001718.GA175522@gmail.com> <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+ <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au> <CAHmME9oXAnD0sbO2cKeTtotCMohX2Hu6P=uzA_6u0EWECU9Bpg@mail.gmail.com>
+ <20181119225414.GB258711@gmail.com> <CAHmME9okRjuYUiL0D=6ZmtMX6rvxU+0xvy2tva+LetjU9itx8Q@mail.gmail.com>
+ <20181119232345.GC258711@gmail.com>
+In-Reply-To: <20181119232345.GC258711@gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 20 Nov 2018 00:31:02 +0100
+X-Gmail-Original-Message-ID: <CAHmME9o9N0r55i4zHu5p-9wcKPsfVVhRC+kbzx0TYxSTZG5kbQ@mail.gmail.com>
+Message-ID: <CAHmME9o9N0r55i4zHu5p-9wcKPsfVVhRC+kbzx0TYxSTZG5kbQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] zinc chacha20 generic implementation using crypto API code
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit f77084d96355 "x86/mm/pat: Disable preemption around
-__flush_tlb_all()" addressed a case where __flush_tlb_all() is called
-without preemption being disabled. It also left a warning to catch other
-cases where preemption is not disabled. That warning triggers for the
-memory hotplug path which is also used for persistent memory enabling:
+Hi Eric,
 
- WARNING: CPU: 35 PID: 911 at ./arch/x86/include/asm/tlbflush.h:460
- RIP: 0010:__flush_tlb_all+0x1b/0x3a
- [..]
- Call Trace:
-  phys_pud_init+0x29c/0x2bb
-  kernel_physical_mapping_init+0xfc/0x219
-  init_memory_mapping+0x1a5/0x3b0
-  arch_add_memory+0x2c/0x50
-  devm_memremap_pages+0x3aa/0x610
-  pmem_attach_disk+0x585/0x700 [nd_pmem]
+On Tue, Nov 20, 2018 at 12:23 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> It's much better to have the documentation in a permanent location.
 
-Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-and Dave confirmed the expectation for TLB flush is for modifying /
-invalidating existing pte entries, but not initial population [2]. Drop
-the usage of __flush_tlb_all() in phys_{p4d,pud,pmd}_init() on the
-expectation that this path is only ever populating empty entries for the
-linear map. Note, at linear map teardown time there is a call to the
-all-cpu flush_tlb_all() to invalidate the removed mappings.
+Agreed.
 
-[1]: https://lore.kernel.org/patchwork/patch/1009434/#1193941
-[2]: https://lore.kernel.org/patchwork/patch/1009434/#1194540
+> I actually did add ChaCha12 support to most of the Zinc assembly in
+> "[WIP] crypto: assembly support for ChaCha12"
+> (https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/commit/?h=adiantum-zinc&id=0a7787a515a977e11b680f1752b430ca1744e399).
+> But I skipped AVX-512 and MIPS since I didn't have a way to test those yet,
+> and I haven't ported the changes to your new perl scripts yet.
 
-Fixes: f77084d96355 ("x86/mm/pat: Disable preemption around __flush_tlb_all()")
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: <stable@vger.kernel.org>
-Reported-by: Andy Lutomirski <luto@kernel.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- arch/x86/mm/init_64.c |    6 ------
- 1 file changed, 6 deletions(-)
+Oh, great. If you're playing with this in the context of the WireGuard
+repo, you can run `ARCH=mips make test-qemu -j$(nproc)` (which is
+what's running on https://www.wireguard.com/build-status/ ). For
+AVX-512 testing, I've got a box I'm happy to give you access to, if
+you want to send an SSH key and your employer allows for that kind of
+thing etc. I can have a stab at all of this too if you like.
 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index 5fab264948c2..de95db8ac52f 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -584,7 +584,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 							   paddr_end,
- 							   page_size_mask,
- 							   prot);
--				__flush_tlb_all();
- 				continue;
- 			}
- 			/*
-@@ -627,7 +626,6 @@ phys_pud_init(pud_t *pud_page, unsigned long paddr, unsigned long paddr_end,
- 		pud_populate(&init_mm, pud, pmd);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	update_page_count(PG_LEVEL_1G, pages);
- 
-@@ -668,7 +666,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 			paddr_last = phys_pud_init(pud, paddr,
- 					paddr_end,
- 					page_size_mask);
--			__flush_tlb_all();
- 			continue;
- 		}
- 
-@@ -680,7 +677,6 @@ phys_p4d_init(p4d_t *p4d_page, unsigned long paddr, unsigned long paddr_end,
- 		p4d_populate(&init_mm, p4d, pud);
- 		spin_unlock(&init_mm.page_table_lock);
- 	}
--	__flush_tlb_all();
- 
- 	return paddr_last;
- }
-@@ -733,8 +729,6 @@ kernel_physical_mapping_init(unsigned long paddr_start,
- 	if (pgd_changed)
- 		sync_global_pgds(vaddr_start, vaddr_end - 1);
- 
--	__flush_tlb_all();
--
- 	return paddr_last;
- }
- 
-
+Jason
