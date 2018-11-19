@@ -4,69 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB448C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E20ACC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8381F20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:25:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92E4120831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:26:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ey27Y8J2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8381F20831
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZS+gRXN4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E4120831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbeKSWtP (ORCPT
+        id S1728852AbeKSWt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:49:15 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40173 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728747AbeKSWtP (ORCPT
+        Mon, 19 Nov 2018 17:49:28 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46487 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbeKSWt2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:49:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id p4so22674993wrt.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:25:46 -0800 (PST)
+        Mon, 19 Nov 2018 17:49:28 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so18947684wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:25:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=e94DIEaO20VLtFTPXBdeuigr1I2rzbvph1yIasDBL34=;
-        b=Ey27Y8J2YhDE6+lRkH45SC/ejdTI66xX5FYehwkoJNLKYb2WF+BiAYZkU3ZNZXYALm
-         KIk21DyB6303cxBETEvNWE8CyCVt82fCJc0SAI515Ohhw/5xoHhKVCy0UP4lkDSsVY5R
-         jCiuIVulkdgN8ok5R4m/FcpkxJ4p7OGfHnAZA=
+        bh=nnvzoqmDkXg2eFCHfa07NLT0wJHaS90+T7q5bDbkcjg=;
+        b=ZS+gRXN4eCG2s6bbsG8JnInfLj2yZSxw9a3Ygd340t7o6Csu3C/mm2N+66vn2knV8D
+         xyq0fVUVatXNc3oczOwtz5f8pMwfnIBDILBg+CW2Tq3FhfnPNTmV0S/oF2tphl8KGblP
+         ZMKEvSEy0TnFO0ps4x8m0CZ9FEQ9J4wfveNK0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=e94DIEaO20VLtFTPXBdeuigr1I2rzbvph1yIasDBL34=;
-        b=N/73QyO4uGuXa/p4IhTWLL508KfUfUHUlPzpPsaHIP4YOyAT7PLJzvHe/DfKvkF7RG
-         ax/M9349Fm8zm89RlId7UxhUwI4dX6ksVgy0huIozyHiFz5oH4e3z470bomlz60DIT7M
-         FIowEITepx9vvmS9NHAgz9lQLf1Fvf6KFxuOTWjK82orrQy3HYoaJZS7y94WKSIcJazB
-         4umUedzciqolGu4RJaSq4dlBQwZOjwBY3NtxOFvp7obB1wVIUKcHykY9CfKFFHBvf8HY
-         0mEQsJVjxbd58r9mb0L/7/LTYmeKUsEFTK4qRXTr9klDi+E9aR1fqO3RCeElE+HjON9q
-         GepA==
-X-Gm-Message-State: AGRZ1gKCu3inrBOMIoHP+YHs+y0pqQyRCs+NcYovsC9f9AFr3U8+EITI
-        AnKj5y6oTbFqPj3wqmUzAEItJEutqMM=
-X-Google-Smtp-Source: AJdET5e3Fvz/YQn0+rJU0hbTVW0OPy3YvH43zkjyaPeS8dokGdeni3pUtNjFXbGKCfJ7EqEBq+hi4w==
-X-Received: by 2002:a05:6000:1009:: with SMTP id a9mr17527207wrx.271.1542630345269;
-        Mon, 19 Nov 2018 04:25:45 -0800 (PST)
+        bh=nnvzoqmDkXg2eFCHfa07NLT0wJHaS90+T7q5bDbkcjg=;
+        b=JjkPhGuGJKyUIQ+K/LuGF4OBV6DTQWYsYlkogImpJQl5Crdl/qPMjMuLbTqwa2z2CW
+         054yKxD6qTgWCMc6kukfLbI1wIV7y5m1c7o57gGNmv9gw/n8p801fiUkyKuNj8Qig7Im
+         fOBtz9L4Uz2/3IcbIeBY/tng3vFqHxTmnf40vVTo0vLamSGVMW2QQZhHBAl00KZjc3F3
+         HTqv127U5/DlyyV22NuZM8h7pnhvRMwncGfdhih88HGVv9a+9BpsBJxj7mOjqGmWGPKR
+         8PiroeggpaPvcx39/2YqGTxBchTuiJeNu8BgYUSPPxMMd+gF8Vi4jiEcFjrzFyugpKBY
+         JC7w==
+X-Gm-Message-State: AGRZ1gLNQfCnwLvdxoGogWDcZDoEgo8qpO71FKENkCftJR1+WJFiVezR
+        ue9U3HWLLIy3gCNHMrh3gf1UmiuRzIQ=
+X-Google-Smtp-Source: AJdET5f1d9yi1rRQn754YsLMzd4Omj7A+dOnnhm8GEnYYF35eyt5TyZpO2LyABHNW5lJQOHicB0gSw==
+X-Received: by 2002:adf:fb47:: with SMTP id c7-v6mr17733860wrs.200.1542630357755;
+        Mon, 19 Nov 2018 04:25:57 -0800 (PST)
 Received: from localhost ([49.248.195.80])
-        by smtp.gmail.com with ESMTPSA id h67-v6sm42241111wma.10.2018.11.19.04.25.43
+        by smtp.gmail.com with ESMTPSA id a204sm5902119wmh.23.2018.11.19.04.25.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 04:25:44 -0800 (PST)
+        Mon, 19 Nov 2018 04:25:57 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         edubezval@gmail.com, andy.gross@linaro.org, vkoul@kernel.org,
         Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 1/4] dt: thermal: tsens: Add bindings for qcs404
-Date:   Mon, 19 Nov 2018 17:55:19 +0530
-Message-Id: <d0ab6a6c4e09ecbd93ed8a81db0036992df62b95.1542629810.git.amit.kucheria@linaro.org>
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH v2 2/4] drivers: thermal: tsens: Add generic support for TSENS v1 IP
+Date:   Mon, 19 Nov 2018 17:55:20 +0530
+Message-Id: <503c279da72905b601f0f66ad6ab74b2affe0265.1542629810.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1542629810.git.amit.kucheria@linaro.org>
 References: <cover.1542629810.git.amit.kucheria@linaro.org>
@@ -77,33 +75,258 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcs404 uses v1 of the TSENS IP block. Create a fallback DT property
-"qcom,tsens-v1" to gather common code.
+qcs404 has a single TSENS IP block with 10 sensors. It uses version 1.4
+of the TSENS IP, functionality for which is encapsulated inside
+qcom,tsens-v1 compatible.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Reviewed-by: Vinod Koul <vkoul@kernel.org>
 Tested-by: Vinod Koul <vkoul@kernel.org>
 ---
- Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/thermal/qcom/Makefile   |   2 +-
+ drivers/thermal/qcom/tsens-v1.c | 196 ++++++++++++++++++++++++++++++++
+ drivers/thermal/qcom/tsens.c    |   3 +
+ drivers/thermal/qcom/tsens.h    |   2 +-
+ 4 files changed, 201 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/thermal/qcom/tsens-v1.c
 
-diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-index 1d9e8cf610181..799de30623522 100644
---- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-+++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-@@ -8,9 +8,12 @@ Required properties:
-     - "qcom,msm8996-tsens" (MSM8996)
-     - "qcom,msm8998-tsens", "qcom,tsens-v2" (MSM8998)
-     - "qcom,sdm845-tsens", "qcom,tsens-v2" (SDM845)
-+    - "qcom,qcs404-tsens", "qcom,tsens-v1" (QCS404)
-   The generic "qcom,tsens-v2" property must be used as a fallback for any SoC
-   with version 2 of the TSENS IP. MSM8996 is the only exception because the
-   generic property did not exist when support was added.
-+  Similarly, the generic "qcom,tsens-v1" property must be used as a fallback for
-+  any SoC with version 1 of the TSENS IP.
+diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
+index a821929ede0bd..60269ee90c434 100644
+--- a/drivers/thermal/qcom/Makefile
++++ b/drivers/thermal/qcom/Makefile
+@@ -1,2 +1,2 @@
+ obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
+-qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
++qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o tsens-v1.o
+diff --git a/drivers/thermal/qcom/tsens-v1.c b/drivers/thermal/qcom/tsens-v1.c
+new file mode 100644
+index 0000000000000..00186b2f82808
+--- /dev/null
++++ b/drivers/thermal/qcom/tsens-v1.c
+@@ -0,0 +1,196 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, Linaro Limited
++ */
++
++#include <linux/regmap.h>
++#include <linux/bitops.h>
++#include "tsens.h"
++
++/* eeprom layout data for qcs404 (v1) */
++#define BASE0_MASK	0x000007f8
++#define BASE1_MASK	0x0007f800
++#define BASE0_SHIFT	3
++#define BASE1_SHIFT	11
++
++#define S0_P1_MASK	0x0000003f
++#define S1_P1_MASK	0x0003f000
++#define S2_P1_MASK	0x3f000000
++#define S3_P1_MASK	0x000003f0
++#define S4_P1_MASK	0x003f0000
++#define S5_P1_MASK	0x0000003f
++#define S6_P1_MASK	0x0003f000
++#define S7_P1_MASK	0x3f000000
++#define S8_P1_MASK	0x000003f0
++#define S9_P1_MASK	0x003f0000
++
++#define S0_P2_MASK	0x00000fc0
++#define S1_P2_MASK	0x00fc0000
++#define S2_P2_MASK_1_0	0xc0000000
++#define S2_P2_MASK_5_2	0x0000000f
++#define S3_P2_MASK	0x0000fc00
++#define S4_P2_MASK	0x0fc00000
++#define S5_P2_MASK	0x00000fc0
++#define S6_P2_MASK	0x00fc0000
++#define S7_P2_MASK_1_0	0xc0000000
++#define S7_P2_MASK_5_2	0x0000000f
++#define S8_P2_MASK	0x0000fc00
++#define S9_P2_MASK	0x0fc00000
++
++#define S0_P1_SHIFT	0
++#define S0_P2_SHIFT	6
++#define S1_P1_SHIFT	12
++#define S1_P2_SHIFT	18
++#define S2_P1_SHIFT	24
++#define S2_P2_SHIFT_1_0	30
++
++#define S2_P2_SHIFT_5_2	0
++#define S3_P1_SHIFT	4
++#define S3_P2_SHIFT	10
++#define S4_P1_SHIFT	16
++#define S4_P2_SHIFT	22
++
++#define S5_P1_SHIFT	0
++#define S5_P2_SHIFT	6
++#define S6_P1_SHIFT	12
++#define S6_P2_SHIFT	18
++#define S7_P1_SHIFT	24
++#define S7_P2_SHIFT_1_0	30
++
++#define S7_P2_SHIFT_5_2	0
++#define S8_P1_SHIFT	4
++#define S8_P2_SHIFT	10
++#define S9_P1_SHIFT	16
++#define S9_P2_SHIFT	22
++
++#define CAL_SEL_MASK	7
++#define CAL_SEL_SHIFT	0
++
++static int calibrate_v1(struct tsens_device *tmdev)
++{
++	u32 base0 = 0, base1 = 0;
++	u32 p1[10], p2[10];
++	u32 mode = 0, lsb = 0, msb = 0;
++	u32 *qfprom_cdata;
++	int i;
++
++	qfprom_cdata = (u32 *)qfprom_read(tmdev->dev, "calib");
++	if (IS_ERR(qfprom_cdata))
++		return PTR_ERR(qfprom_cdata);
++
++	mode = (qfprom_cdata[4] & CAL_SEL_MASK) >> CAL_SEL_SHIFT;
++	dev_dbg(tmdev->dev, "calibration mode is %d\n", mode);
++
++	switch (mode) {
++	case TWO_PT_CALIB:
++		base1 = (qfprom_cdata[4] & BASE1_MASK) >> BASE1_SHIFT;
++		p2[0] = (qfprom_cdata[0] & S0_P2_MASK) >> S0_P2_SHIFT;
++		p2[1] = (qfprom_cdata[0] & S1_P2_MASK) >> S1_P2_SHIFT;
++		/* This value is split over two registers, 2 bits and 4 bits */
++		lsb   = (qfprom_cdata[0] & S2_P2_MASK_1_0) >> S2_P2_SHIFT_1_0;
++		msb   = (qfprom_cdata[1] & S2_P2_MASK_5_2) >> S2_P2_SHIFT_5_2;
++		p2[2] = msb << 2 | lsb;
++		p2[3] = (qfprom_cdata[1] & S3_P2_MASK) >> S3_P2_SHIFT;
++		p2[4] = (qfprom_cdata[1] & S4_P2_MASK) >> S4_P2_SHIFT;
++		p2[5] = (qfprom_cdata[2] & S5_P2_MASK) >> S5_P2_SHIFT;
++		p2[6] = (qfprom_cdata[2] & S6_P2_MASK) >> S6_P2_SHIFT;
++		/* This value is split over two registers, 2 bits and 4 bits */
++		lsb   = (qfprom_cdata[2] & S7_P2_MASK_1_0) >> S7_P2_SHIFT_1_0;
++		msb   = (qfprom_cdata[3] & S7_P2_MASK_5_2) >> S7_P2_SHIFT_5_2;
++		p2[7] = msb << 2 | lsb;
++		p2[8] = (qfprom_cdata[3] & S8_P2_MASK) >> S8_P2_SHIFT;
++		p2[9] = (qfprom_cdata[3] & S9_P2_MASK) >> S9_P2_SHIFT;
++		for (i = 0; i < tmdev->num_sensors; i++)
++			p2[i] = ((base1 + p2[i]) << 2);
++		/* Fall through */
++	case ONE_PT_CALIB2:
++		base0 = (qfprom_cdata[4] & BASE0_MASK) >> BASE0_SHIFT;
++		p1[0] = (qfprom_cdata[0] & S0_P1_MASK) >> S0_P1_SHIFT;
++		p1[1] = (qfprom_cdata[0] & S1_P1_MASK) >> S1_P1_SHIFT;
++		p1[2] = (qfprom_cdata[0] & S2_P1_MASK) >> S2_P1_SHIFT;
++		p1[3] = (qfprom_cdata[1] & S3_P1_MASK) >> S3_P1_SHIFT;
++		p1[4] = (qfprom_cdata[1] & S4_P1_MASK) >> S4_P1_SHIFT;
++		p1[5] = (qfprom_cdata[2] & S5_P1_MASK) >> S5_P1_SHIFT;
++		p1[6] = (qfprom_cdata[2] & S6_P1_MASK) >> S6_P1_SHIFT;
++		p1[7] = (qfprom_cdata[2] & S7_P1_MASK) >> S7_P1_SHIFT;
++		p1[8] = (qfprom_cdata[3] & S8_P1_MASK) >> S8_P1_SHIFT;
++		p1[9] = (qfprom_cdata[3] & S9_P1_MASK) >> S9_P1_SHIFT;
++		for (i = 0; i < tmdev->num_sensors; i++)
++			p1[i] = (((base0) + p1[i]) << 2);
++		break;
++	default:
++		for (i = 0; i < tmdev->num_sensors; i++) {
++			p1[i] = 500;
++			p2[i] = 780;
++		}
++		break;
++	}
++
++	compute_intercept_slope(tmdev, p1, p2, mode);
++
++	return 0;
++}
++
++#define STATUS_OFFSET		0x44
++#define LAST_TEMP_MASK		0x3ff
++#define STATUS_VALID_BIT	BIT(14)
++
++static int get_temp_tsens_v1(struct tsens_device *tmdev, int id, int *temp)
++{
++	struct tsens_sensor *s = &tmdev->sensor[id];
++	u32 code;
++	unsigned int status_reg;
++	u32 last_temp = 0, last_temp2 = 0, last_temp3 = 0;
++	int ret;
++
++	status_reg = tmdev->tm_offset + STATUS_OFFSET + s->hw_id * 4;
++	ret = regmap_read(tmdev->tm_map, status_reg, &code);
++	if (ret)
++		return ret;
++	last_temp = code & LAST_TEMP_MASK;
++	if (code & STATUS_VALID_BIT)
++		goto done;
++
++	/* Try a second time */
++	ret = regmap_read(tmdev->tm_map, status_reg, &code);
++	if (ret)
++		return ret;
++	if (code & STATUS_VALID_BIT) {
++		last_temp = code & LAST_TEMP_MASK;
++		goto done;
++	} else {
++		last_temp2 = code & LAST_TEMP_MASK;
++	}
++
++	/* Try a third/last time */
++	ret = regmap_read(tmdev->tm_map, status_reg, &code);
++	if (ret)
++		return ret;
++	if (code & STATUS_VALID_BIT) {
++		last_temp = code & LAST_TEMP_MASK;
++		goto done;
++	} else {
++		last_temp3 = code & LAST_TEMP_MASK;
++	}
++
++	if (last_temp == last_temp2)
++		last_temp = last_temp2;
++	else if (last_temp2 == last_temp3)
++		last_temp = last_temp3;
++done:
++	/* Convert temperature from deciCelsius to milliCelsius */
++	*temp = sign_extend32(last_temp, fls(LAST_TEMP_MASK) - 1) * 100;
++
++	return 0;
++}
++
++static const struct tsens_ops ops_generic_v1 = {
++	.init		= init_common,
++	.calibrate	= calibrate_v1,
++	.get_temp	= get_temp_tsens_v1,
++};
++
++const struct tsens_data data_tsens_v1 = {
++	.ops		= &ops_generic_v1,
++	.reg_offsets	= { [SROT_CTRL_OFFSET] = 0x4 },
++};
+diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+index f1ec9bbe4717e..d0cc0c09894a9 100644
+--- a/drivers/thermal/qcom/tsens.c
++++ b/drivers/thermal/qcom/tsens.c
+@@ -63,6 +63,9 @@ static const struct of_device_id tsens_table[] = {
+ 	}, {
+ 		.compatible = "qcom,msm8996-tsens",
+ 		.data = &data_8996,
++	}, {
++		.compatible = "qcom,tsens-v1",
++		.data = &data_tsens_v1,
+ 	}, {
+ 		.compatible = "qcom,tsens-v2",
+ 		.data = &data_tsens_v2,
+diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+index 7b7feee5dc463..7060c22ea611b 100644
+--- a/drivers/thermal/qcom/tsens.h
++++ b/drivers/thermal/qcom/tsens.h
+@@ -92,7 +92,7 @@ int init_common(struct tsens_device *);
+ int get_temp_common(struct tsens_device *, int, int *);
  
- - reg: Address range of the thermal registers.
-   New platforms containing v2.x.y of the TSENS IP must specify the SROT and TM
+ /* TSENS v1 targets */
+-extern const struct tsens_data data_8916, data_8974, data_8960;
++extern const struct tsens_data data_8916, data_8974, data_8960, data_tsens_v1;
+ /* TSENS v2 targets */
+ extern const struct tsens_data data_8996, data_tsens_v2;
+ 
 -- 
 2.17.1
 
