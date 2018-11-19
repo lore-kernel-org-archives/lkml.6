@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8070C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FF3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DAF52148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C380B2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DihVuKu8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DAF52148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xKyQ4g8U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C380B2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404697AbeKTDWQ (ORCPT
+        id S2404709AbeKTDWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33852 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403845AbeKTDWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:15 -0500
+        id S2403845AbeKTDWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 849492146D;
-        Mon, 19 Nov 2018 16:57:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CB702146D;
+        Mon, 19 Nov 2018 16:58:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646680;
-        bh=aQSW9SxCW2ZNa38WFcPEbvByg3hDjaJg5S/JYwXzCwo=;
+        s=default; t=1542646682;
+        bh=H4vyIsS0/mHJ2u2q3FI26Ho5QtWwQpv9IR0eTuuip28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DihVuKu8KARsfN/Qfrpr3hJSwRJoAYUjiOxlHxBwXPYh+xwo2jUBvJQy1zxMOTvjt
-         Fz6ND3COwTD52mtDAZzMXwpT/SPw+DsvkMjGwqpCcKa9bjYY3PYLMdRAWBp4WOPzpY
-         M+E+Z1zG2pb9/tyHuilrgONVIN+z2DG107mbQpPU=
+        b=xKyQ4g8UXK+HXOFTmwsspgTqQAqEli8j6Hxd7I6NuCE2+s6CJHVHbObrnpNTWP5V4
+         jYylJmGxhQJNVX3NhMI06m3jq53VSS/vEWqg7v1vGn6/h4Ms9oFSJRrttQOIidNF/i
+         dQh38abuWLBd0V98/6H/39PlqudgAJHu9lewDqhU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 4.4 049/160] libnvdimm: Hold reference on parent while scheduling async init
-Date:   Mon, 19 Nov 2018 17:28:08 +0100
-Message-Id: <20181119162636.264023428@linuxfoundation.org>
+        syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com,
+        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.4 050/160] jbd2: fix use after free in jbd2_log_do_checkpoint()
+Date:   Mon, 19 Nov 2018 17:28:09 +0100
+Message-Id: <20181119162636.417177997@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,46 +64,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+From: Jan Kara <jack@suse.cz>
 
-commit b6eae0f61db27748606cc00dafcfd1e2c032f0a5 upstream.
+commit ccd3c4373eacb044eb3832966299d13d2631f66f upstream.
 
-Unlike asynchronous initialization in the core we have not yet associated
-the device with the parent, and as such the device doesn't hold a reference
-to the parent.
+The code cleaning transaction's lists of checkpoint buffers has a bug
+where it increases bh refcount only after releasing
+journal->j_list_lock. Thus the following race is possible:
 
-In order to resolve that we should be holding a reference on the parent
-until the asynchronous initialization has completed.
+CPU0					CPU1
+jbd2_log_do_checkpoint()
+					jbd2_journal_try_to_free_buffers()
+					  __journal_try_to_free_buffer(bh)
+  ...
+  while (transaction->t_checkpoint_io_list)
+  ...
+    if (buffer_locked(bh)) {
 
-Cc: <stable@vger.kernel.org>
-Fixes: 4d88a97aa9e8 ("libnvdimm: ...base ... infrastructure")
-Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+<-- IO completes now, buffer gets unlocked -->
+
+      spin_unlock(&journal->j_list_lock);
+					    spin_lock(&journal->j_list_lock);
+					    __jbd2_journal_remove_checkpoint(jh);
+					    spin_unlock(&journal->j_list_lock);
+					  try_to_free_buffers(page);
+      get_bh(bh) <-- accesses freed bh
+
+Fix the problem by grabbing bh reference before unlocking
+journal->j_list_lock.
+
+Fixes: dc6e8d669cf5 ("jbd2: don't call get_bh() before calling __jbd2_journal_remove_checkpoint()")
+Fixes: be1158cc615f ("jbd2: fold __process_buffer() into jbd2_log_do_checkpoint()")
+Reported-by: syzbot+7f4a27091759e2fe7453@syzkaller.appspotmail.com
+CC: stable@vger.kernel.org
+Reviewed-by: Lukas Czerner <lczerner@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvdimm/bus.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ fs/jbd2/checkpoint.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/nvdimm/bus.c
-+++ b/drivers/nvdimm/bus.c
-@@ -158,6 +158,8 @@ static void nd_async_device_register(voi
- 		put_device(dev);
- 	}
- 	put_device(dev);
-+	if (dev->parent)
-+		put_device(dev->parent);
- }
+--- a/fs/jbd2/checkpoint.c
++++ b/fs/jbd2/checkpoint.c
+@@ -254,8 +254,8 @@ restart:
+ 		bh = jh2bh(jh);
  
- static void nd_async_device_unregister(void *d, async_cookie_t cookie)
-@@ -175,6 +177,8 @@ static void nd_async_device_unregister(v
- void __nd_device_register(struct device *dev)
- {
- 	dev->bus = &nvdimm_bus_type;
-+	if (dev->parent)
-+		get_device(dev->parent);
- 	get_device(dev);
- 	async_schedule_domain(nd_async_device_register, dev,
- 			&nd_async_domain);
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
+@@ -336,8 +336,8 @@ restart2:
+ 		jh = transaction->t_checkpoint_io_list;
+ 		bh = jh2bh(jh);
+ 		if (buffer_locked(bh)) {
+-			spin_unlock(&journal->j_list_lock);
+ 			get_bh(bh);
++			spin_unlock(&journal->j_list_lock);
+ 			wait_on_buffer(bh);
+ 			/* the journal_head may have gone by now */
+ 			BUFFER_TRACE(bh, "brelse");
 
 
