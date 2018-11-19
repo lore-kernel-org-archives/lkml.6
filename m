@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238C6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF470C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDD1208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 956CC2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2gWjn68F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDDD1208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YnmSKdQS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956CC2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbeKTDFH (ORCPT
+        id S1733162AbeKTDFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:05:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38328 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:05:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733127AbeKTDFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:05:06 -0500
+        id S1732395AbeKTDFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:05:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F2CB208E3;
-        Mon, 19 Nov 2018 16:40:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0F4F20831;
+        Mon, 19 Nov 2018 16:40:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645655;
-        bh=hDJh7F8wofPsm6laeQKyYd0Mbj+g4R5cFKSwj5eUyJY=;
+        s=default; t=1542645658;
+        bh=omF4b5DiqzbI0VwdufbalVbAiuowGa0Sul9bZIgOaHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2gWjn68Frtb/vwZlujct1zQqAFDzeEA1mu2sJ48jiAbZI/qce2LdU1FnZHm8yb9yQ
-         ZbCJzN2FOnDo0iJubi8nU9hE6fAneCmokqEPLzGs6rPz3rCigi1U/r9ziJIz2tu+Mm
-         Ix6q7MK0IUYZra4bly6GSMjJenp5bBu/XvXwWBMs=
+        b=YnmSKdQSqbppOxo1d8NCHEiN3CpM3pGjIcTMo5lNW93UOv+dZOGRIfSWtxTUztJAF
+         N+tTkwCEdk3EnhsbU/VXQZhsF+nEVSHplnNWk1LCqf5R6RP+YpTOOuK9hU/n+DybOP
+         yHjnKlVgBrP5+lBLMEWKooBzSwCBOFcRDARaMRzY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        stable@vger.kernel.org, Sam Bobroff <sbobroff@linux.ibm.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 007/171] powerpc/Makefile: Fix PPC_BOOK3S_64 ASFLAGS
-Date:   Mon, 19 Nov 2018 17:26:43 +0100
-Message-Id: <20181119162620.372166674@linuxfoundation.org>
+Subject: [PATCH 4.18 008/171] powerpc/eeh: Fix possible null deref in eeh_dump_dev_log()
+Date:   Mon, 19 Nov 2018 17:26:44 +0100
+Message-Id: <20181119162620.548389163@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,81 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit 960e30029863db95ec79a71009272d4661db5991 ]
+[ Upstream commit f9bc28aedfb5bbd572d2d365f3095c1becd7209b ]
 
-Ever since commit 15a3204d24a3 ("powerpc/64s: Set assembler machine type
-to POWER4") we force -mpower4 to be passed to the assembler
-irrespective of the CFLAGS used (for Book3s 64).
+If an error occurs during an unplug operation, it's possible for
+eeh_dump_dev_log() to be called when edev->pdn is null, which
+currently leads to dereferencing a null pointer.
 
-When building a powerpc64 kernel with clang, clang will not add -many
-to the assembler flags, so any instructions that the compiler has
-generated that are not available on power4 will cause an error:
+Handle this by skipping the error log for those devices.
 
-  /usr/bin/as -a64 -mppc64 -mlittle-endian -mpower8 \
-   -I ./arch/powerpc/include -I ./arch/powerpc/include/generated \
-   -I ./include -I ./arch/powerpc/include/uapi \
-   -I ./arch/powerpc/include/generated/uapi -I ./include/uapi \
-   -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc \
-   -maltivec -mpower4 -o init/do_mounts.o /tmp/do_mounts-3b0a3d.s
-  /tmp/do_mounts-51ce54.s:748: Error: unrecognized opcode: `isel'
-
-GCC does include -many, so the GCC driven gas call will succeed:
-
-  as -v -I ./arch/powerpc/include -I ./arch/powerpc/include/generated -I
-  ./include -I ./arch/powerpc/include/uapi
-  -I ./arch/powerpc/include/generated/uapi -I ./include/uapi
-  -I ./include/generated/uapi -I arch/powerpc -I arch/powerpc
-   -a64 -mpower8 -many -mlittle -maltivec -mpower4 -o init/do_mounts.o
-
-Note that isel is power7 and above for IBM CPUs. GCC only generates it
-for Power9 and above, but the above test was run against the clang
-generated assembly.
-
-Peter Bergner explains:
-
-  When using -many -mpower4, gas will first try and find a matching
-  power4 mnemonic and failing that, it will then allow any valid
-  mnemonic that gas knows about. GCC's use of -many predates me
-  though.
-
-  IIRC, Alan looked at trying to remove it, but I forget why he
-  didn't. Could be either a gcc or gas issue at the time. I'm not sure
-  whether issue still exists or not. He and I have modified how gas
-  works internally a fair amount since he tried removing gcc use of
-  -many.
-
-  I will also note that when using -many, gas will choose the first
-  mnemonic that matches in the mnemonic table and we have (mostly)
-  sorted the table so that server mnemonics show up earlier in the
-  table than other mnemonics, so they'll be seen/chosen first.
-
-By explicitly setting -many we can build with Clang and GCC while
-retaining the -mpower4 option.
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/Makefile |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/eeh.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -244,7 +244,11 @@ cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
- cpu-as-$(CONFIG_ALTIVEC)	+= $(call as-option,-Wa$(comma)-maltivec)
- cpu-as-$(CONFIG_E200)		+= -Wa,-me200
- cpu-as-$(CONFIG_E500)		+= -Wa,-me500
--cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4
-+
-+# When using '-many -mpower4' gas will first try and find a matching power4
-+# mnemonic and failing that it will allow any valid mnemonic that GAS knows
-+# about. GCC will pass -many to GAS when assembling, clang does not.
-+cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4 -Wa,-many
- cpu-as-$(CONFIG_PPC_E500MC)	+= $(call as-option,-Wa$(comma)-me500mc)
+--- a/arch/powerpc/kernel/eeh.c
++++ b/arch/powerpc/kernel/eeh.c
+@@ -169,6 +169,11 @@ static size_t eeh_dump_dev_log(struct ee
+ 	int n = 0, l = 0;
+ 	char buffer[128];
  
- KBUILD_AFLAGS += $(cpu-as-y)
++	if (!pdn) {
++		pr_warn("EEH: Note: No error log for absent device.\n");
++		return 0;
++	}
++
+ 	n += scnprintf(buf+n, len-n, "%04x:%02x:%02x.%01x\n",
+ 		       pdn->phb->global_number, pdn->busno,
+ 		       PCI_SLOT(pdn->devfn), PCI_FUNC(pdn->devfn));
 
 
