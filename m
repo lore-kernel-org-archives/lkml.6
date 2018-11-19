@@ -2,138 +2,142 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3ABC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBCCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D325F20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC15E2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 20:26:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IrCmBPng"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D325F20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="BDja72tk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC15E2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbeKTGuk (ORCPT
+        id S1730770AbeKTGv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:50:40 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41065 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728938AbeKTGuj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:50:39 -0500
-Received: by mail-io1-f67.google.com with SMTP id s22so11349630ioc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 12:25:21 -0800 (PST)
+        Tue, 20 Nov 2018 01:51:29 -0500
+Received: from mail-eopbgr810051.outbound.protection.outlook.com ([40.107.81.51]:64761
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728938AbeKTGv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:51:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SW76frBgmIxnQj6FbUvYe17VUf1Wc2R/AGi8b/6ZdH8=;
-        b=IrCmBPnglmOh5pNgVx60lJyzAq2HMCcFXS+SR8ReDkal7sRcyoaIv+T/Txzug6le/H
-         w+8HNdvSup6SrvMzUs/5r9gIvZ+s5Z6EcFwUH9FYVNW3Eae333JL+PGjRsbMZ8F6gLWi
-         96+PpdaGcklwMVpjIv9SzGf4TJumcDPkmOr1c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SW76frBgmIxnQj6FbUvYe17VUf1Wc2R/AGi8b/6ZdH8=;
-        b=ZXqttJJjzEYjPKipyfUpKsCkbeq3mJ6tbCnZtHlPY3w/N5yeu/uoOLId00UTU8/SPe
-         iKuw75wsDvFcr/NawXkyvbxKpLeZhhPB3WtVPCG1X1bfxtPZ+Yv5y1Xoxn1AiyxMaiox
-         uht3Srp9hxDsYlcJiNMQBSqd1Hfwld7JuR3Mcno+z5dQwtTEilBzSIGUkkexdz7ep3G4
-         37KTzrEmwmQVda4v3oMXMr8MlaKcV+aV9w/c79wYCKtE4OqBNNR/RLdVsxIPA98gUbp3
-         BwW6EbDn2nTKeufNmd4ZFEJ3IFkIkhPQtZ/9uGbHpw7HtABtvUqFUdfT3oaWU4JdEma6
-         Bk1Q==
-X-Gm-Message-State: AA+aEWZzDLjTS9AYNMWeAyfTMS3bLGLrDwY9WmiR+bzK5ivGVv8tfEFA
-        jPg8zqV7DnYaej4YXH9I0glsUu68ObBtuM8Oe5AmAg==
-X-Google-Smtp-Source: AFSGD/WpPrhjZxCJ0p9GvxJzQQnzEf4P1pU9gGNoQJ9m1YkU+Tdldl3KnmC8wuE2pDsm4dE+W1XJ8t7vNPojZanW7ew=
-X-Received: by 2002:a6b:7a46:: with SMTP id k6mr16560434iop.60.1542659121003;
- Mon, 19 Nov 2018 12:25:21 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pn2N8Vtzm9lYvAF/6PWh7AoXNMTIyeo9B4PgbMynxuM=;
+ b=BDja72tkxT8asUWgg3QHn+s5vgtWe0kDrQkzGUU0qsItfin+G8n8fPx/1f2fsIQeLplqZsYxWErlFzVUJd4Da15ty8DFWGZcR5sg8EbezHhyv5lalB2aIIu6HQ3myPu/FIEDHaLsy4VVkop94strzT/c5mimOC3r1I/X1hK848Y=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1147.namprd12.prod.outlook.com (10.168.236.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Mon, 19 Nov 2018 20:26:07 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::7def:eb99:298c:2952]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::7def:eb99:298c:2952%2]) with mapi id 15.20.1339.027; Mon, 19 Nov 2018
+ 20:26:07 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v8 01/13] arch/resctrl: Start renaming the rdt files to
+ more generic names
+Thread-Topic: [PATCH v8 01/13] arch/resctrl: Start renaming the rdt files to
+ more generic names
+Thread-Index: AQHUfe6NWz4xLUMToUORxfHJiImFOaVVlD6AgAHnz4D//6uigIAAZ4mAgAABGgA=
+Date:   Mon, 19 Nov 2018 20:26:07 +0000
+Message-ID: <ab30c05b-aa6f-1528-42da-bdcab7e068c5@amd.com>
+References: <20181116205407.10457-1-babu.moger@amd.com>
+ <20181116205407.10457-2-babu.moger@amd.com> <20181118140735.GC19380@zn.tnic>
+ <alpine.DEB.2.21.1811192012460.1669@nanos.tec.linutronix.de>
+ <61f6e553-a72f-bfae-0887-44f066006118@amd.com>
+ <20181119202207.GK14688@zn.tnic>
+In-Reply-To: <20181119202207.GK14688@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN1PR12CA0077.namprd12.prod.outlook.com
+ (2603:10b6:802:20::48) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1147;20:ZgFGuEedvD0b+oqBdLTGrLpm1xqoU2bvuJEACN6pc+TliKMWMjrH3spU+LlRL64AbQJI/8nT5wWJmR10HeDPB6SxOouuCNhDYAxdXtxcNOckmW4oKMZf41LpvW7x25GBF7liTan647CX/DunhGhiT+wyn88Iz9t6HyaPe9XJbwjrxKHdO3BXzME2D33jLm4rtiTJkCzwo1uh82qYhc0x69kfYw0AlbzbVQhcLS5B6QeWcN3w7E+j9YzV9H5vMSAr
+x-ms-office365-filtering-correlation-id: f602da07-0ce4-488b-7d7f-08d64e5d3c40
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1147;
+x-ms-traffictypediagnostic: DM5PR12MB1147:
+x-microsoft-antispam-prvs: <DM5PR12MB1147EF6D0173A28307E3B0DD95D80@DM5PR12MB1147.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231436)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1147;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1147;
+x-forefront-prvs: 08617F610C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(366004)(39860400002)(199004)(189003)(51444003)(4326008)(81156014)(53546011)(36756003)(25786009)(6506007)(386003)(97736004)(102836004)(5660300001)(93886005)(68736007)(6246003)(71200400001)(6512007)(256004)(2900100001)(26005)(186003)(71190400001)(8936002)(8676002)(76176011)(99286004)(81166006)(14454004)(53936002)(52116002)(31696002)(105586002)(86362001)(2616005)(486006)(476003)(106356001)(2906002)(11346002)(54906003)(316002)(229853002)(3846002)(6436002)(6116002)(7416002)(7406005)(72206003)(478600001)(305945005)(6486002)(7736002)(31686004)(66066001)(6916009)(446003)(41533002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1147;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LGeCDe3xaHhuXCxxwn/sLEBchMPM/2UfxMFEle0dw+YVYVOewh53vvSxNfo5n9H+roYCA+zJfWSW+9+76jLDAezgmNYIzKpO97soygstlxA6/fQOVGRfiKuF/2brjyVj+VJsxbtAVWZqvT2de7CYBusylHdeC3jJTPjDeC7Qhj3Mc8drz8yCZ3ux22uRK3kSfNuhC+npOLb2sKYI9HgLxGO94DP4Tlfo6I/LpBh1NSm3V9nFQQA09L+KpJ5zuyKDXsAEoRXAScPAYylOZXhKyW2ijQZeKa4kwxY4EbrPsCj4pxTsbOhih3W9sz1UzIvy7HVnqbf2fA26koRoXPMjrmYEAMI2E4IcQN6qZog/b6s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C038DE95C064AD47AF28E77951921B21@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1542657210-37739-1-git-send-email-clabbe@baylibre.com> <1542657210-37739-2-git-send-email-clabbe@baylibre.com>
-In-Reply-To: <1542657210-37739-2-git-send-email-clabbe@baylibre.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 19 Nov 2018 12:25:10 -0800
-Message-ID: <CAKv+Gu80ArVHwBOmD3qjKUEP=LsbOEfZrCyO-rPDtpX3AbykoA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] crypto: move crypto_alg_get/crypto_alg_put to linux/crypto.h
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        nhorman@tuxdriver.com,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f602da07-0ce4-488b-7d7f-08d64e5d3c40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 20:26:07.2725
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018 at 11:53, Corentin Labbe <clabbe@baylibre.com> wrote:
->
-> Since we will need crypto_alg_get/crypto_alg_put for "locking"
-> crypto_alg when updating stats, we need it to be via linux/crypto.h
->
-
-This seems backwards to me. Surely, crypto stats are permitted to use
-the internal crypto API?
-
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  crypto/internal.h      | 12 ------------
->  include/linux/crypto.h | 12 ++++++++++++
->  2 files changed, 12 insertions(+), 12 deletions(-)
->
-> diff --git a/crypto/internal.h b/crypto/internal.h
-> index ef769b5e8ad3..d81f033aeb5c 100644
-> --- a/crypto/internal.h
-> +++ b/crypto/internal.h
-> @@ -91,18 +91,6 @@ unsigned int crypto_alg_extsize(struct crypto_alg *alg);
->  int crypto_type_has_alg(const char *name, const struct crypto_type *frontend,
->                         u32 type, u32 mask);
->
-> -static inline struct crypto_alg *crypto_alg_get(struct crypto_alg *alg)
-> -{
-> -       refcount_inc(&alg->cra_refcnt);
-> -       return alg;
-> -}
-> -
-> -static inline void crypto_alg_put(struct crypto_alg *alg)
-> -{
-> -       if (refcount_dec_and_test(&alg->cra_refcnt) && alg->cra_destroy)
-> -               alg->cra_destroy(alg);
-> -}
-> -
->  static inline int crypto_tmpl_get(struct crypto_template *tmpl)
->  {
->         return try_module_get(tmpl->module);
-> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-> index 3634ad6fe202..ac8f4168a831 100644
-> --- a/include/linux/crypto.h
-> +++ b/include/linux/crypto.h
-> @@ -607,6 +607,18 @@ int crypto_unregister_algs(struct crypto_alg *algs, int count);
->   */
->  int crypto_has_alg(const char *name, u32 type, u32 mask);
->
-> +static inline struct crypto_alg *crypto_alg_get(struct crypto_alg *alg)
-> +{
-> +       refcount_inc(&alg->cra_refcnt);
-> +       return alg;
-> +}
-> +
-> +static inline void crypto_alg_put(struct crypto_alg *alg)
-> +{
-> +       if (refcount_dec_and_test(&alg->cra_refcnt) && alg->cra_destroy)
-> +               alg->cra_destroy(alg);
-> +}
-> +
->  /*
->   * Transforms: user-instantiated objects which encapsulate algorithms
->   * and core processing logic.  Managed via crypto_alloc_*() and
-> --
-> 2.18.1
->
+DQoNCk9uIDExLzE5LzE4IDI6MjIgUE0sIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gTW9u
+LCBOb3YgMTksIDIwMTggYXQgMDg6MTE6MzZQTSArMDAwMCwgTW9nZXIsIEJhYnUgd3JvdGU6DQo+
+PiBDaGFuZ2VkIGNvcmUuYyBhbmQgaW50ZXJuZWwuaCB0byByZXMuYyBhbmQgcmVzLmggcmVzcGVj
+dGl2ZWx5LiBCb3RoIG9mDQo+PiB0aGVzZSBmaWxlcyBhcmUgYWJvdXQgcmVzb3VyY2UgZGVmaW5p
+dGlvbnMgYW5kIGluaXRpYWxpemF0aW9uLg0KPiANCj4gSSBndWVzcyBidXQgdGhlIGNvcmUuYyB0
+aGluZyB3ZSBkbyBhIGxvdCBpbiB0aGUga2VybmVsOg0KPiANCj4gJCBnaXQgbHMtZmlsZXMgfCBn
+cmVwIC1FICIvY29yZVwuYyIgfCB3YyAtbA0KPiAxMDANCj4gDQo+IHdoaWNoIGRlbm90ZXMgd2hl
+cmUgdGhlIGNvcmUgZnVuY3Rpb25hbGl0eSBpcyBsb2NhdGVkLiByZXMuYw0KPiBkb2Vzbid0IHRl
+bGwgbWUgdGhhdC4gcmVzLmggZG9lc24ndCB0ZWxsIG1lIGVpdGhlciB0aGF0IGl0IGlzIGFuDQo+
+IHJlc2N0cmwtaW50ZXJuYWwgaGVhZGVyLi4uDQo+IA0KPiBJT1csIGNhbGxpbmcgaXQgY29yZS5j
+IGFuZCBpbnRlcm5hbC5oIGdpdmVzIHlvdSBhbiBhZGRpdGlvbmFsDQo+IGluZm9ybWF0aW9uIHdo
+YXQgdGhvc2UgZmlsZXMgY29udGFpbi4gQW5kIEkgdGhpbmsgdGhhdCdzIHVzZWZ1bC4NCg0KT2su
+IEZpbmUuIFdpbGwga2VlcCBpdCBhcyBjb3JlLmMgYW5kIGludGVybmVsLmguDQo=
