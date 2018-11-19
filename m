@@ -2,55 +2,59 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CD3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C364C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 905FC208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 547E4206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnYxBUIl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 905FC208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKx3KqEw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 547E4206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390944AbeKTDS3 (ORCPT
+        id S2390957AbeKTDSc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:18:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57336 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:18:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390935AbeKTDS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:18:28 -0500
+        id S2390935AbeKTDSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:18:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25C21206BA;
-        Mon, 19 Nov 2018 16:54:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95EEC21104;
+        Mon, 19 Nov 2018 16:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646453;
-        bh=bruG8EqjvdHBHjS42kA7ZoPBoZzYBiqIlsqveoGsWFM=;
+        s=default; t=1542646456;
+        bh=/KO8JsShzxRtKOKwAFHGHAkCwTP4I+yxRSfdl1ZAkWw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MnYxBUIlXEoIWX09Vk2ETJ2s+Am0M+/IJZ8dJ/fJn8a7I8UBjbnYcDnInhm9SKZEc
-         H91/kyc4ID6yrKsTkvIAVxwGJCOlbCdpakCuzEkn6ZEwdPXgikhhLW9YnUmRUi4fbb
-         PRdocZmXQgbrRHeSWmay3bDNNPFur14uARYIIdms=
+        b=GKx3KqEwOTuXuCc+zPu6sR+HbFlaPpEd7a/HKxtzj3I+RGutSP/UEvfF6gMuPqMw8
+         2OToV5PpxBveQroNtLtTkBVcNKxO/V7AygYjqCcyJ9pxg3PL9pz1A/5OXj+lvq/rVi
+         R4n4EceBCent0l1EXanNhcUgLk8Gi0e5RgSaIZlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 30/83] MIPS: Loongson-3: Fix BRIDGE irq delivery problem
-Date:   Mon, 19 Nov 2018 17:28:56 +0100
-Message-Id: <20181119162618.490777317@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Peter Anvin (Intel)" <hpa@zytor.com>,
+        "Cc: Johan Hovold" <johan@kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>
+Subject: [PATCH 4.9 48/83] termios, tty/tty_baudrate.c: fix buffer overrun
+Date:   Mon, 19 Nov 2018 17:29:14 +0100
+Message-Id: <20181119162622.031401345@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -68,82 +72,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 360fe725f8849aaddc53475fef5d4a0c439b05ae ]
+From: H. Peter Anvin <hpa@zytor.com>
 
-After commit e509bd7da149dc349160 ("genirq: Allow migration of chained
-interrupts by installing default action") Loongson-3 fails at here:
+commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
 
-setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
+On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
+not do any limit checking on the tty_baudrate[] array, and in fact a
+buffer overrun is possible on both architectures. Add a limit check to
+prevent that situation.
 
-This is because both chained_action and cascade_irqaction don't have
-IRQF_SHARED flag. This will cause Loongson-3 resume fails because HPET
-timer interrupt can't be delivered during S3. So we set the irqchip of
-the chained irq to loongson_irq_chip which doesn't disable the chained
-irq in CP0.Status.
+This will be followed by a much bigger cleanup/simplification patch.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20434/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Requested-by: Cc: Johan Hovold <johan@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/mips/include/asm/mach-loongson64/irq.h |  2 +-
- arch/mips/loongson64/loongson-3/irq.c       | 13 +++----------
- 2 files changed, 4 insertions(+), 11 deletions(-)
+ drivers/tty/tty_ioctl.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/include/asm/mach-loongson64/irq.h b/arch/mips/include/asm/mach-loongson64/irq.h
-index d18c45c7c394..19ff9ce46c02 100644
---- a/arch/mips/include/asm/mach-loongson64/irq.h
-+++ b/arch/mips/include/asm/mach-loongson64/irq.h
-@@ -9,7 +9,7 @@
- #define MIPS_CPU_IRQ_BASE 56
- 
- #define LOONGSON_UART_IRQ   (MIPS_CPU_IRQ_BASE + 2) /* UART */
--#define LOONGSON_HT1_IRQ    (MIPS_CPU_IRQ_BASE + 3) /* HT1 */
-+#define LOONGSON_BRIDGE_IRQ (MIPS_CPU_IRQ_BASE + 3) /* CASCADE */
- #define LOONGSON_TIMER_IRQ  (MIPS_CPU_IRQ_BASE + 7) /* CPU Timer */
- 
- #define LOONGSON_HT1_CFG_BASE		loongson_sysconf.ht_control_base
-diff --git a/arch/mips/loongson64/loongson-3/irq.c b/arch/mips/loongson64/loongson-3/irq.c
-index ec5f2b30646c..027f53e3bc81 100644
---- a/arch/mips/loongson64/loongson-3/irq.c
-+++ b/arch/mips/loongson64/loongson-3/irq.c
-@@ -44,12 +44,6 @@ void mach_irq_dispatch(unsigned int pending)
+--- a/drivers/tty/tty_ioctl.c
++++ b/drivers/tty/tty_ioctl.c
+@@ -325,7 +325,7 @@ speed_t tty_termios_baud_rate(struct kte
+ 		else
+ 			cbaud += 15;
  	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
  }
+ EXPORT_SYMBOL(tty_termios_baud_rate);
  
--static struct irqaction cascade_irqaction = {
--	.handler = no_action,
--	.flags = IRQF_NO_SUSPEND,
--	.name = "cascade",
--};
--
- static inline void mask_loongson_irq(struct irq_data *d) { }
- static inline void unmask_loongson_irq(struct irq_data *d) { }
- 
-@@ -90,11 +84,10 @@ void __init mach_init_irq(void)
- 	init_i8259_irqs();
- 	irq_set_chip_and_handler(LOONGSON_UART_IRQ,
- 			&loongson_irq_chip, handle_percpu_irq);
-+	irq_set_chip_and_handler(LOONGSON_BRIDGE_IRQ,
-+			&loongson_irq_chip, handle_percpu_irq);
- 
--	/* setup HT1 irq */
--	setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
--
--	set_c0_status(STATUSF_IP2 | STATUSF_IP6);
-+	set_c0_status(STATUSF_IP2 | STATUSF_IP3 | STATUSF_IP6);
- }
- 
- #ifdef CONFIG_HOTPLUG_CPU
--- 
-2.17.1
-
+@@ -361,7 +361,7 @@ speed_t tty_termios_input_baud_rate(stru
+ 		else
+ 			cbaud += 15;
+ 	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
+ #else
+ 	return tty_termios_baud_rate(termios);
+ #endif
 
 
