@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C05C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D266AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFD4214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99B642148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PTv45apC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFD4214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RB9OwtGW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99B642148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388279AbeKTDKC (ORCPT
+        id S2388693AbeKTDKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45340 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:10:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387731AbeKTDKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:10:02 -0500
+        id S2387731AbeKTDKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:10:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40CC82145D;
-        Mon, 19 Nov 2018 16:45:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA4B02145D;
+        Mon, 19 Nov 2018 16:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645950;
-        bh=WcRkT8QsnVkK0Z178iwDbGcXh7iMXsnDBBCLGE8A6Og=;
+        s=default; t=1542645953;
+        bh=AbXz/91jlseJ2ni/N9El8a4AC8bG8AV0ETEhxKEhB8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PTv45apC4wE0KpxWaALORnV0gDNUbgAhHmmpVpkrr3MWLDdR2Mmg/hXAvXMKiq4EB
-         7FwCmR7FDoAv/urM8CuKUSfg4gqZaUFtviNP/wRByWEjce2SPS0hLmP4EeWRTuRQfs
-         or0Vb3rVdM6ho8k0kwcy16oZeQ2tZWwtSy0bJBsc=
+        b=RB9OwtGWa+Rf+w2xvF317gQg2VmmJSB88vrmjOOMulM4mWuHRv+Zaaks2+Z6X87xX
+         HRMZmtcJGFzy4VQKy2ceypqOFZIghwXH/6kuWxkBLfLvdJCAiQy0rGVEfCgxBZIA3m
+         0ui/oH0oRl3oRT3bqaQ18aQsEYwYic7f/7AQ0dxE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.18 149/171] drm/nouveau: Fix nv50_mstc->best_encoder()
-Date:   Mon, 19 Nov 2018 17:29:05 +0100
-Message-Id: <20181119162639.664195151@linuxfoundation.org>
+        stable@vger.kernel.org, Akshu Agrawal <akshu.agrawal@amd.com>,
+        Satyajit Sahu <satyajit.sahu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.18 150/171] drm/amd/powerplay: Enable/Disable NBPSTATE on On/OFF of UVD
+Date:   Mon, 19 Nov 2018 17:29:06 +0100
+Message-Id: <20181119162639.749676489@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,64 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lyude Paul <lyude@redhat.com>
+From: Akshu Agrawal <akshu.agrawal@amd.com>
 
-commit 7b0f61e91b6056c71649efa3204112a4b6cf5fc8 upstream.
+commit 51ef434a15b450bfbef1e06cc87ee4e98a224486 upstream.
 
-As mentioned in the previous commit, we currently prevent new modesets
-on recently-removed MST connectors by returning no encoder from our
-->best_encoder() callback once the MST port has disappeared. This is
-wrong however, because it prevents legacy modesetting users from being
-able to disable CRTCs on MST connectors after the connector's respective
-topology has disappeared.
+We observe black lines (underflow) on display when playing a
+4K video with UVD. On Disabling Low memory P state this issue is
+not seen.
+Multiple runs of power measurement shows no imapct.
 
-So, fix this by instead by just always returning a valid encoder.
-
-Changes since v2:
-- Remove usage of atomic MST helper for now, since that got replaced
-  with a much simpler solution
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+Signed-off-by: Satyajit Sahu <satyajit.sahu@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-3-lyude@redhat.com
-(cherry picked from commit e87b0bbc9f0380d403f8f2f6abba0d51c74d944f)
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c |   14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -818,22 +818,16 @@ nv50_mstc_atomic_best_encoder(struct drm
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu8_hwmgr.c
+@@ -1222,14 +1222,17 @@ static int smu8_dpm_force_dpm_level(stru
+ 
+ static int smu8_dpm_powerdown_uvd(struct pp_hwmgr *hwmgr)
  {
- 	struct nv50_head *head = nv50_head(connector_state->crtc);
- 	struct nv50_mstc *mstc = nv50_mstc(connector);
--	if (mstc->port) {
--		struct nv50_mstm *mstm = mstc->mstm;
--		return &mstm->msto[head->base.index]->encoder;
--	}
--	return NULL;
-+
-+	return &mstc->mstm->msto[head->base.index]->encoder;
+-	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating))
++	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating)) {
++		smu8_nbdpm_pstate_enable_disable(hwmgr, true, true);
+ 		return smum_send_msg_to_smc(hwmgr, PPSMC_MSG_UVDPowerOFF);
++	}
+ 	return 0;
  }
  
- static struct drm_encoder *
- nv50_mstc_best_encoder(struct drm_connector *connector)
+ static int smu8_dpm_powerup_uvd(struct pp_hwmgr *hwmgr)
  {
- 	struct nv50_mstc *mstc = nv50_mstc(connector);
--	if (mstc->port) {
--		struct nv50_mstm *mstm = mstc->mstm;
--		return &mstm->msto[0]->encoder;
--	}
--	return NULL;
-+
-+	return &mstc->mstm->msto[0]->encoder;
- }
- 
- static enum drm_mode_status
+ 	if (PP_CAP(PHM_PlatformCaps_UVDPowerGating)) {
++		smu8_nbdpm_pstate_enable_disable(hwmgr, false, true);
+ 		return smum_send_msg_to_smc_with_parameter(
+ 			hwmgr,
+ 			PPSMC_MSG_UVDPowerON,
 
 
