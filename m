@@ -3,114 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E647FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54287C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE4862075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:36:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE4862075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 18AD12089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AD12089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730120AbeKTGBw (ORCPT
+        id S1730204AbeKTGCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:01:52 -0500
-Received: from foss.arm.com ([217.140.101.70]:38070 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728402AbeKTGBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:01:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC35080D;
-        Mon, 19 Nov 2018 11:36:47 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 314983F5B7;
-        Mon, 19 Nov 2018 11:36:46 -0800 (PST)
-Subject: Re: [PATCH 06/10] swiotlb: use swiotlb_map_page in
- swiotlb_map_sg_attrs
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     Christoph Hellwig <hch@lst.de>,
-        John Stultz <john.stultz@linaro.org>
-Cc:     konrad.wilk@oracle.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        iommu@lists.linux-foundation.org,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-References: <20181008080246.20543-1-hch@lst.de>
- <20181008080246.20543-7-hch@lst.de>
- <CANcMJZAzrxA9LGNvP-epv2DwsUacEM_hcgA1n5gmaPuWRJG4iw@mail.gmail.com>
- <20181109074955.GA27489@lst.de>
- <9922f377-ee87-ba36-8d28-26af0f7822e5@arm.com>
-Message-ID: <ad8ed3ba-12e8-3031-7c66-035b6d9ad6cd@arm.com>
-Date:   Mon, 19 Nov 2018 19:36:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 01:02:37 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35739 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbeKTGCh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 01:02:37 -0500
+Received: by mail-qk1-f196.google.com with SMTP id w204so50658627qka.2;
+        Mon, 19 Nov 2018 11:37:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V+Y60y4lGm7XkCPftRN73fmQbY1Flo3OgfwrHMQgznk=;
+        b=fcRVNjLKPDFsQitAvaJ/PhE17Pv5V2/Yi+bujWUkvPVSBB55BR56vPB8UD/KCxuEjv
+         uojFFxrYuEQoJMighW6bVsLe7RH3jq6TEz7XY6Q4NSbp2zW88pKzQcfCfM0id1ybzd4X
+         WDMNRGf5/K6alavDOf126ygwCYWTcgKHTEIWHo0/8GcanDTPi3FnaWLEOSLH0avEKII5
+         jCZcr0qUXV+OYKE6OjsJA6sp0BqSoW0dyQHfIlcVTreokCGJxx64r2ZkisPEEYxJjcYX
+         IkXVAl5XEApfBBKsDdoLKaIv4VcReOI+E72FfKq2HNR0EaF1NERF0oQTx0ddqkGY5sKd
+         JwmA==
+X-Gm-Message-State: AGRZ1gLO5Pd60yzY7rQg/37j3XgaUResO8qFIWnpZbCTNqcm5qi7do1X
+        /uUZojF2lNKSFmPqnnwDvQJI1EliCrGq2MDBGl+h2w==
+X-Google-Smtp-Source: AJdET5eG+P0vhxl2Wk+a/73Veb1POYsj2lir/wgHdNZ9Q6bwXcPzhDRFKbZ4eunQilg0YTLipxuo7FU6Ktb08QzN0I8=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr22265057qvl.180.1542656251185;
+ Mon, 19 Nov 2018 11:37:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9922f377-ee87-ba36-8d28-26af0f7822e5@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org> <20181119170939.19153-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181119170939.19153-5-manivannan.sadhasivam@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 19 Nov 2018 20:37:14 +0100
+Message-ID: <CAK8P3a1ZOTrUFKvBCdMX-1Fj5Pnk__+GJdee7pOieb2oiWkpuQ@mail.gmail.com>
+Subject: Re: [PATCH 04/16] arm: dts: Add devicetree for RDA8810PL SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, zhao_steven@263.net,
+        service@rdamicro.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/11/2018 16:37, Robin Murphy wrote:
-> On 09/11/2018 07:49, Christoph Hellwig wrote:
->> On Tue, Nov 06, 2018 at 05:27:14PM -0800, John Stultz wrote:
->>> But at that point if I just re-apply "swiotlb: use swiotlb_map_page in
->>> swiotlb_map_sg_attrs", I reproduce the hangs.
->>>
->>> Any suggestions for how to further debug what might be going wrong
->>> would be appreciated!
->>
->> Very odd.  In the end map_sg and map_page are defined to do the same
->> things to start with.  The only real issue we had in this area was:
->>
->> "[PATCH v2] of/device: Really only set bus DMA mask when appropriate"
->>
->> so with current mainline + that you still see a problem, and if you
->> rever the commit we are replying to it still goes away?
-> 
-> OK, after quite a bit of trying I have managed to provoke a 
-> similar-looking problem with straight 4.20-rc1 on my Juno board - so far 
-> my "reproducer" is to decompress a ~10GB .tar.xz off an external USB 
-> hard disk, wherein after somewhere between 5 minutes and half an hour or 
-> so it tends to falls over with xz choking on corrupt data and/or a USB 
-> error.
-> 
->  From the presentation, this really smells like there's some corner in 
-> which we're either missing cache maintenance or doing it to the wrong 
-> address - I've not seen any issues with Juno's main PCIe-attached I/O, 
-> but the EHCI here is non-coherent (and 32-bit, so the bus_dma_mask thing 
-> doesn't matter) as are the HiKey UFS and SD controller.
-> 
-> I'll keep digging...
+On Mon, Nov 19, 2018 at 6:11 PM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Add initial device tree for RDA8810PL SoC from RDA Microelectronics.
 
-OK, having brought my Hikey to life and reproduced John's stall with 
-rc1, what's going on is that at some point dma_map_sg() returns 0, which 
-causes the SCSI/UFS layer to go round in circles repeatedly trying to 
-map the same list(s) equally unsuccessfully.
+> +       aliases {
+> +               serial0 = &uart0;
+> +               serial1 = &uart1;
+> +               serial2 = &uart2;
+> +       };
 
-Why does dma_map_sg() fail? Turns out what we all managed to overlook is 
-that this patch *does* introduce a subtle change in behaviour, in that 
-previously the non-bounced case assigned dev_addr to sg->dma_address 
-without looking at it; now with the swiotlb_map_page() call we check the 
-return value against DIRECT_MAPPING_ERROR regardless of whether it was 
-bounced or not.
+Better move the aliases into the board file, there might be boards
+that only expose one or two of them on physical connectors,
+or that count them in a different order from the SoC.
 
-Flash back to the other thread when I said "...but I suspect there may 
-well be non-IOMMU platforms where DMA to physical address 0 is a thing 
-:("? I have the 3GB Hikey where all the RAM is below 32 bits so SWIOTLB 
-never ever bounces, but sure enough, guess where that RAM starts...
-
-So in fact it looks like patch #4 technically introduces the first 
-instance of this problem, we're just getting lucky not to hit it with a 
-map_page/map_single case such that direct_mapping_error() would wrongly 
-report failure for page 0. The bad news (for me) is that that can't have 
-anything to do with my apparent memory corruption thing above, so now I 
-still need to figure out what the hell is going on there.
-
-Robin.
+      Arnd
