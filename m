@@ -2,50 +2,52 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4CFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0096C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D75821104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 652852148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gvVv7txi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D75821104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJWc/bmX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 652852148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404148AbeKTDUM (ORCPT
+        id S2404163AbeKTDUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:20:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59464 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:20:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390603AbeKTDUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:20:11 -0500
+        id S2404149AbeKTDUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:20:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AC40206BA;
-        Mon, 19 Nov 2018 16:55:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35CD0208E3;
+        Mon, 19 Nov 2018 16:55:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646557;
-        bh=DOjEd9jxxt8G1uIUwR14/VW/n4R5fBmKnRE0zEqc4H8=;
+        s=default; t=1542646559;
+        bh=tfIRjdUST9LjUkRsdtw5d2TnRtPORwAuUx9V+TB0AUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gvVv7txiL360FiofYDdNYz55NJneZZKVGRyk7soKU5jV4USDmdEiljlxcmEuYusYu
-         9Qkr+HwqGwvjp4rQKRFMzmqmGCiJ51/8tJRus9lsodJ9tMb352XNPmPUe2vO2vL5/J
-         AKdOqtQbtVYjNOhq5uzayeQQyV8MAu/XVxX8eT3Y=
+        b=XJWc/bmXWS4LEJB4nzzcbPBwm64jf6yBMW2gm5Pnkj6AjUoj6wc/mvXfiG6D4mFTu
+         XDgwbJ1P2wXpT/yMD8/KcWv/jTKJ5twJb5DAxf6UzUEeFp94pTFXJml8FMdFC+PARJ
+         c9c8EB82ZPYvVC40gt69gTpXTs8AbzAziLlsLu8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Christoph Hellwig <hch@lst.de>,
-        Nobuhiro Iwamatsu <nobuhiro.iwamatsu@cybertrust.co.jp>
-Subject: [PATCH 4.9 74/83] configfs: replace strncpy with memcpy
-Date:   Mon, 19 Nov 2018 17:29:40 +0100
-Message-Id: <20181119162626.408388577@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.9 75/83] lib/ubsan.c: dont mark __ubsan_handle_builtin_unreachable as noreturn
+Date:   Mon, 19 Nov 2018 17:29:41 +0100
+Message-Id: <20181119162626.568830160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -63,41 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 1823342a1f2b47a4e6f5667f67cd28ab6bc4d6cd upstream.
+commit 1c23b4108d716cc848b38532063a8aca4f86add8 upstream.
 
-gcc 8.1.0 complains:
+gcc-8 complains about the prototype for this function:
 
-fs/configfs/symlink.c:67:3: warning:
-	'strncpy' output truncated before terminating nul copying as many
-	bytes from a string as its length
-fs/configfs/symlink.c: In function 'configfs_get_link':
-fs/configfs/symlink.c:63:13: note: length computed here
+  lib/ubsan.c:432:1: error: ignoring attribute 'noreturn' in declaration of a built-in function '__ubsan_handle_builtin_unreachable' because it conflicts with attribute 'const' [-Werror=attributes]
 
-Using strncpy() is indeed less than perfect since the length of data to
-be copied has already been determined with strlen(). Replace strncpy()
-with memcpy() to address the warning and optimize the code a little.
+This is actually a GCC's bug. In GCC internals
+__ubsan_handle_builtin_unreachable() declared with both 'noreturn' and
+'const' attributes instead of only 'noreturn':
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Nobuhiro Iwamatsu <nobuhiro.iwamatsu@cybertrust.co.jp>
+   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84210
+
+Workaround this by removing the noreturn attribute.
+
+[aryabinin: add information about GCC bug in changelog]
+Link: http://lkml.kernel.org/r/20181107144516.4587-1-aryabinin@virtuozzo.com
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Acked-by: Olof Johansson <olof@lixom.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/configfs/symlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/ubsan.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/fs/configfs/symlink.c
-+++ b/fs/configfs/symlink.c
-@@ -64,7 +64,7 @@ static void fill_item_path(struct config
+--- a/lib/ubsan.c
++++ b/lib/ubsan.c
+@@ -451,8 +451,7 @@ void __ubsan_handle_shift_out_of_bounds(
+ EXPORT_SYMBOL(__ubsan_handle_shift_out_of_bounds);
  
- 		/* back up enough to print this bus id with '/' */
- 		length -= cur;
--		strncpy(buffer + length,config_item_name(p),cur);
-+		memcpy(buffer + length, config_item_name(p), cur);
- 		*(buffer + --length) = '/';
- 	}
- }
+ 
+-void __noreturn
+-__ubsan_handle_builtin_unreachable(struct unreachable_data *data)
++void __ubsan_handle_builtin_unreachable(struct unreachable_data *data)
+ {
+ 	unsigned long flags;
+ 
 
 
