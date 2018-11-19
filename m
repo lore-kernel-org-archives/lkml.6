@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 445FEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B863EC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4DC214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81DD3208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmT8nQFN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A4DC214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgGkTLwH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DD3208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404402AbeKTDVK (ORCPT
+        id S2404425AbeKTDVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:21:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403835AbeKTDVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:21:09 -0500
+        id S2403835AbeKTDVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:21:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2BB3206BA;
-        Mon, 19 Nov 2018 16:56:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DBB7208E3;
+        Mon, 19 Nov 2018 16:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646614;
-        bh=R/TDA5Vcp0zXrIJ7hCyPoMzzv0DMSJ4/K3X7XTiXwL4=;
+        s=default; t=1542646620;
+        bh=PX6IUN8rcfCCRVVOhf6c0t8ioso+/OPi4ZYvAeftqUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LmT8nQFNEpjqtOSmqPogYq9YC56qujlHZv+EqOALCdC5EDt2M1dR1wpVd2Jzai/3q
-         a7vNM7dzap7QohYf8zxPqKge4et2BcOSmrAqFTyF5DExwk5cpfaT/px/5/wENtL4q0
-         U1+6b+MQefHlw2XdbU0nFH3xY8q1kTS1+uDO7T+k=
+        b=YgGkTLwHEj8nAEsXUts/k1cHToHQM7cV02nmRbJqTusiEpaQFEF6yR5d67JVpgrDN
+         4IVjBQAt4lllwJgumPKRnGXDbiAnGkuzRdDNy4c0qjW0UTOG1k7hJJBxfu5iUyMwy/
+         DnYVruz66Czm8yglXXiizjjYJD8VLBL63DDcyTiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Dominik Brodowski <linux@dominikbrodowski.net>
-Subject: [PATCH 4.4 004/160] pcmcia: Implement CLKRUN protocol disabling for Ricoh bridges
-Date:   Mon, 19 Nov 2018 17:27:23 +0100
-Message-Id: <20181119162630.527959147@linuxfoundation.org>
+        stable@vger.kernel.org, John David Anglin <dave.anglin@bell.net>,
+        Helge Deller <deller@gmx.de>
+Subject: [PATCH 4.4 006/160] parisc: Fix address in HPMC IVA
+Date:   Mon, 19 Nov 2018 17:27:25 +0100
+Message-Id: <20181119162630.782287202@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,108 +62,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
+From: John David Anglin <dave.anglin@bell.net>
 
-commit 95691e3eddc41da2d1cd3cca51fecdfb46bd85bc upstream.
+commit 1138b6718ff74d2a934459643e3754423d23b5e2 upstream.
 
-Currently, "disable_clkrun" yenta_socket module parameter is only
-implemented for TI CardBus bridges.
-Add also an implementation for Ricoh bridges that have the necessary
-setting documented in publicly available datasheets.
+Helge noticed that the address of the os_hpmc handler was not being
+correctly calculated in the hpmc macro.  As a result, PDCE_CHECK would
+fail to call os_hpmc:
 
-Tested on a RL5C476II with a Sunrich C-160 CardBus NIC that doesn't work
-correctly unless the CLKRUN protocol is disabled.
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> f600105e02e00000  fffffff0f0c00000  CC_MC_HPMC_MONARCH_SELECTED
+<Cpu2> 140003b202e00000  000000000000000b  CC_ERR_HPMC_STATE_ENTRY
+<Cpu2> 5600100b02e00000  00000000000001a0  CC_MC_OS_HPMC_LEN_ERR
+<Cpu2> 5600106402e00000  fffffff0f0438e70  CC_MC_BR_TO_OS_HPMC_FAILED
+<Cpu2> e800009802e00000  0000000000000000  CC_ERR_CHECK_HPMC
+<Cpu2> 37000f7302e00000  8040004000000000  CC_ERR_CPU_CHECK_SUMMARY
+<Cpu2> 4000109f02e00000  0000000000000000  CC_MC_HPMC_INITIATED
+<Cpu2> 4000101902e00000  0000000000000000  CC_MC_MULTIPLE_HPMCS
+<Cpu2> 030010d502e00000  0000000000000000  CC_CPU_STOP
 
-Let's also make it clear in its description that the "disable_clkrun"
-module parameter only works on these two previously mentioned brands of
-CardBus bridges.
+The address problem can be seen by dumping the fault vector:
 
-Signed-off-by: Maciej S. Szmigiero <mail@maciej.szmigiero.name>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dominik Brodowski <linux@dominikbrodowski.net>
+0000000040159000 <fault_vector_20>:
+    40159000:   63 6f 77 73     stb r15,-2447(dp)
+    40159004:   20 63 61 6e     ldil L%b747000,r3
+    40159008:   20 66 6c 79     ldil L%-1c3b3000,r3
+        ...
+    40159020:   08 00 02 40     nop
+    40159024:   20 6e 60 02     ldil L%15d000,r3
+    40159028:   34 63 00 00     ldo 0(r3),r3
+    4015902c:   e8 60 c0 02     bv,n r0(r3)
+    40159030:   08 00 02 40     nop
+    40159034:   00 00 00 00     break 0,0
+    40159038:   c0 00 70 00     bb,*< r0,sar,40159840 <fault_vector_20+0x840>
+    4015903c:   00 00 00 00     break 0,0
+
+Location 40159038 should contain the physical address of os_hpmc:
+
+000000004015d000 <os_hpmc>:
+    4015d000:   08 1a 02 43     copy r26,r3
+    4015d004:   01 c0 08 a4     mfctl iva,r4
+    4015d008:   48 85 00 68     ldw 34(r4),r5
+
+This patch moves the address setup into initialize_ivt to resolve the
+above problem.  I tested the change by dumping the HPMC entry after setup:
+
+0000000040209020:  8000240
+0000000040209024: 206a2004
+0000000040209028: 34630ac0
+000000004020902c: e860c002
+0000000040209030:  8000240
+0000000040209034: 1bdddce6
+0000000040209038:   15d000
+000000004020903c:      1a0
+
+Signed-off-by: John David Anglin <dave.anglin@bell.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Helge Deller <deller@gmx.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pcmcia/ricoh.h        |   35 +++++++++++++++++++++++++++++++++++
- drivers/pcmcia/yenta_socket.c |    3 ++-
- 2 files changed, 37 insertions(+), 1 deletion(-)
+ arch/parisc/kernel/entry.S |    2 +-
+ arch/parisc/kernel/traps.c |    3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/pcmcia/ricoh.h
-+++ b/drivers/pcmcia/ricoh.h
-@@ -119,6 +119,10 @@
- #define  RL5C4XX_MISC_CONTROL           0x2F /* 8 bit */
- #define  RL5C4XX_ZV_ENABLE              0x08
+--- a/arch/parisc/kernel/entry.S
++++ b/arch/parisc/kernel/entry.S
+@@ -185,7 +185,7 @@
+ 	bv,n	0(%r3)
+ 	nop
+ 	.word	0		/* checksum (will be patched) */
+-	.word	PA(os_hpmc)	/* address of handler */
++	.word	0		/* address of handler */
+ 	.word	0		/* length of handler */
+ 	.endm
  
-+/* Misc Control 3 Register */
-+#define RL5C4XX_MISC3			0x00A2 /* 16 bit */
-+#define  RL5C47X_MISC3_CB_CLKRUN_DIS	BIT(1)
-+
- #ifdef __YENTA_H
+--- a/arch/parisc/kernel/traps.c
++++ b/arch/parisc/kernel/traps.c
+@@ -829,7 +829,8 @@ void __init initialize_ivt(const void *i
+ 	for (i = 0; i < 8; i++)
+ 	    *ivap++ = 0;
  
- #define rl_misc(socket)		((socket)->private[0])
-@@ -156,6 +160,35 @@ static void ricoh_set_zv(struct yenta_so
-         }
- }
+-	/* Compute Checksum for HPMC handler */
++	/* Setup IVA and compute checksum for HPMC handler */
++	ivap[6] = (u32)__pa(os_hpmc);
+ 	length = os_hpmc_size;
+ 	ivap[7] = length;
  
-+static void ricoh_set_clkrun(struct yenta_socket *socket, bool quiet)
-+{
-+	u16 misc3;
-+
-+	/*
-+	 * RL5C475II likely has this setting, too, however no datasheet
-+	 * is publicly available for this chip
-+	 */
-+	if (socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C476 &&
-+	    socket->dev->device != PCI_DEVICE_ID_RICOH_RL5C478)
-+		return;
-+
-+	if (socket->dev->revision < 0x80)
-+		return;
-+
-+	misc3 = config_readw(socket, RL5C4XX_MISC3);
-+	if (misc3 & RL5C47X_MISC3_CB_CLKRUN_DIS) {
-+		if (!quiet)
-+			dev_dbg(&socket->dev->dev,
-+				"CLKRUN feature already disabled\n");
-+	} else if (disable_clkrun) {
-+		if (!quiet)
-+			dev_info(&socket->dev->dev,
-+				 "Disabling CLKRUN feature\n");
-+		misc3 |= RL5C47X_MISC3_CB_CLKRUN_DIS;
-+		config_writew(socket, RL5C4XX_MISC3, misc3);
-+	}
-+}
-+
- static void ricoh_save_state(struct yenta_socket *socket)
- {
- 	rl_misc(socket) = config_readw(socket, RL5C4XX_MISC);
-@@ -172,6 +205,7 @@ static void ricoh_restore_state(struct y
- 	config_writew(socket, RL5C4XX_16BIT_IO_0, rl_io(socket));
- 	config_writew(socket, RL5C4XX_16BIT_MEM_0, rl_mem(socket));
- 	config_writew(socket, RL5C4XX_CONFIG, rl_config(socket));
-+	ricoh_set_clkrun(socket, true);
- }
- 
- 
-@@ -197,6 +231,7 @@ static int ricoh_override(struct yenta_s
- 	config_writew(socket, RL5C4XX_CONFIG, config);
- 
- 	ricoh_set_zv(socket);
-+	ricoh_set_clkrun(socket, false);
- 
- 	return 0;
- }
---- a/drivers/pcmcia/yenta_socket.c
-+++ b/drivers/pcmcia/yenta_socket.c
-@@ -26,7 +26,8 @@
- 
- static bool disable_clkrun;
- module_param(disable_clkrun, bool, 0444);
--MODULE_PARM_DESC(disable_clkrun, "If PC card doesn't function properly, please try this option");
-+MODULE_PARM_DESC(disable_clkrun,
-+		 "If PC card doesn't function properly, please try this option (TI and Ricoh bridges only)");
- 
- static bool isa_probe = 1;
- module_param(isa_probe, bool, 0444);
 
 
