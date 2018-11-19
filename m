@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF272C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A402C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9671B21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8C8B2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpOVspuw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9671B21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a3lckgHc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C8B2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387772AbeKTDG7 (ORCPT
+        id S2387781AbeKTDHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40964 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:58 -0500
+        id S1732866AbeKTDHB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 970C22145D;
-        Mon, 19 Nov 2018 16:42:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 287A92086A;
+        Mon, 19 Nov 2018 16:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645768;
-        bh=QPOFC5yx/z/J5UinNORu04UPy8PIBG5XNyqrNrqAPE4=;
+        s=default; t=1542645770;
+        bh=uAhtZhT/AvewU/0/mdm9Nd8QLcBeacvHg7W/sszvVzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bpOVspuw+S9UX4znBXvLU3JSm1I9iIh71eiCOTeWprQWld5r/cMrMd6oYvesv0ngY
-         AgQktFrG+omODsH5EF4IGJiUh9M1X2RPbF8pYVVLuxjhl9wcfRT95UYVbRLScfewaF
-         XauiDfYJ42IRI/krMI1jpM0MvbCpwXsx7YCMoLJk=
+        b=a3lckgHcJWQS20BVAHCcpcVdJAbkoK4xTXxiEQ++1/vI+wRARFqYzPk5RWSyVoiKJ
+         cDA7gK52ML7vckcdDpQ0hXDhZlhRUXaHVzGvkUXenS3VlWHaku/IRR4l3JNSWSzqfR
+         otj9SMNe7+rKasVLyyLa7NzICpTvy50vqsj8/aiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 044/171] scsi: qla2xxx: Fix driver hang when FC-NVMe LUNs are configured
-Date:   Mon, 19 Nov 2018 17:27:20 +0100
-Message-Id: <20181119162626.947590535@linuxfoundation.org>
+        stable@vger.kernel.org, Young_X <YangX92@hotmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.18 035/171] cdrom: fix improper type cast, which can leat to information leak.
+Date:   Mon, 19 Nov 2018 17:27:11 +0100
+Message-Id: <20181119162625.486955113@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,36 +63,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Young_X <YangX92@hotmail.com>
 
-commit 39553065f77c297239308470ee313841f4e07db4 upstream.
+commit e4f3aa2e1e67bb48dfbaaf1cad59013d5a5bc276 upstream.
 
-This patch fixes multiple call for qla_nvme_unregister_remote_port() as part
-of qlt_schedule_session_for_deletion(), Do not call it again during
-qla_nvme_delete()
+There is another cast from unsigned long to int which causes
+a bounds check to fail with specially crafted input. The value is
+then used as an index in the slot array in cdrom_slot_status().
 
-Fixes: e473b3074104 ("scsi: qla2xxx: Add FC-NVMe abort processing")
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+This issue is similar to CVE-2018-16658 and CVE-2018-10940.
+
+Signed-off-by: Young_X <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_nvme.c |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/cdrom/cdrom.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/qla2xxx/qla_nvme.c
-+++ b/drivers/scsi/qla2xxx/qla_nvme.c
-@@ -657,9 +657,6 @@ void qla_nvme_delete(struct scsi_qla_hos
- 		    __func__, fcport);
+--- a/drivers/cdrom/cdrom.c
++++ b/drivers/cdrom/cdrom.c
+@@ -2441,7 +2441,7 @@ static int cdrom_ioctl_select_disc(struc
+ 		return -ENOSYS;
  
- 		nvme_fc_set_remoteport_devloss(fcport->nvme_remote_port, 0);
--		init_completion(&fcport->nvme_del_done);
--		nvme_fc_unregister_remoteport(fcport->nvme_remote_port);
--		wait_for_completion(&fcport->nvme_del_done);
+ 	if (arg != CDSL_CURRENT && arg != CDSL_NONE) {
+-		if ((int)arg >= cdi->capacity)
++		if (arg >= cdi->capacity)
+ 			return -EINVAL;
  	}
  
- 	if (vha->nvme_local_port) {
 
 
