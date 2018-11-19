@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4858C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C7CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF54214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C41E6213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9i9eARi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF54214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMepcocR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41E6213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731838AbeKTDAP (ORCPT
+        id S1731849AbeKTDAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:00:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60008 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:00:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730366AbeKTDAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:00:14 -0500
+        id S1730366AbeKTDAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:00:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7A7921479;
-        Mon, 19 Nov 2018 16:36:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BAE42086A;
+        Mon, 19 Nov 2018 16:36:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645366;
-        bh=G1z78Zn4fIg9s09kH+P2l9ZCD3XU9wgjLV9S6+cszME=;
+        s=default; t=1542645368;
+        bh=sQWUk5DFVQ6KpU9tOCAQIcuyna0g4rS8/qK4biTbPF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E9i9eARi2g85SNWhfmI5NspQT2kQVYCw8YD8jkKNzqvq1Xs0ww5MbbOSxGBqI3wZq
-         eZcwdyvFo87VRWUcmZZMXRqaHkxZZr1+5T2qoOT/YlEVVI2aCN16tqVgrcAA//GYRU
-         o/ArKDV4NPOz/BTRAAt7U5tCeyiYyACzsQKHHSTE=
+        b=SMepcocRxjfG12oCilILJflAtn0qB48m51ERRrSAQHxdYZ2VUTOmMB46feYXevYBd
+         dXeX5uaZLWGF0lqJecHicCUXpk97T+wlCv87J9kn0rUbXSGNDjKFvrAo6NWUvxHQBH
+         aTLpAzXKnsMr5Apr6xRMRbbAfvFa3M2I2Yo8ASEo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 134/205] ext4: missing !bh check in ext4_xattr_inode_write()
-Date:   Mon, 19 Nov 2018 17:27:21 +0100
-Message-Id: <20181119162637.275262481@linuxfoundation.org>
+Subject: [PATCH 4.19 135/205] ext4: fix possible inode leak in the retry loop of ext4_resize_fs()
+Date:   Mon, 19 Nov 2018 17:27:22 +0100
+Message-Id: <20181119162637.347511242@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,42 +64,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit eb6984fa4ce2837dcb1f66720a600f31b0bb3739 upstream.
+commit db6aee62406d9fbb53315fcddd81f1dc271d49fa upstream.
 
-According to Ted Ts'o ext4_getblk() called in ext4_xattr_inode_write()
-should not return bh = NULL
-
-The only time that bh could be NULL, then, would be in the case of
-something really going wrong; a programming error elsewhere (perhaps a
-wild pointer dereference) or I/O error causing on-disk file system
-corruption (although that would be highly unlikely given that we had
-*just* allocated the blocks and so the metadata blocks in question
-probably would still be in the cache).
-
-Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Fixes: 1c6bd7173d66 ("ext4: convert file system to meta_bg if needed ...")
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 4.13
+Cc: stable@kernel.org # 3.7
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/xattr.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ext4/resize.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1388,6 +1388,12 @@ retry:
- 		bh = ext4_getblk(handle, ea_inode, block, 0);
- 		if (IS_ERR(bh))
- 			return PTR_ERR(bh);
-+		if (!bh) {
-+			WARN_ON_ONCE(1);
-+			EXT4_ERROR_INODE(ea_inode,
-+					 "ext4_getblk() return bh = NULL");
-+			return -EFSCORRUPTED;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -2058,6 +2058,10 @@ retry:
+ 		n_blocks_count_retry = 0;
+ 		free_flex_gd(flex_gd);
+ 		flex_gd = NULL;
++		if (resize_inode) {
++			iput(resize_inode);
++			resize_inode = NULL;
 +		}
- 		ret = ext4_journal_get_write_access(handle, bh);
- 		if (ret)
- 			goto out;
+ 		goto retry;
+ 	}
+ 
 
 
