@@ -2,151 +2,80 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93463C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1A0C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59871213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:31:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ljoh4JZ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59871213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C9031213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9031213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404172AbeKTD4D (ORCPT
+        id S2404266AbeKTD4J convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:56:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390242AbeKTDSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:18:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7DDD206BA;
-        Mon, 19 Nov 2018 16:54:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646466;
-        bh=nme9VIAMF4eBnMtpqLC3w6r/2arWqwaQKKMQBwKHeJ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ljoh4JZ2XPHQU1XLyspibRqEFeBPH+ZY99tW2Tfna7gaLNIgDimNlUt7PdyCuqJiD
-         0qnj+P2nqHsoGMfkD/rnXjcLwCCOAQA3vsAQ7PSNz859ktDhQTOr1sges6i2ZZdz6X
-         l8eUBFla1dj1WoCt7B97nK8cK2YoFDh/FLYAXhyo=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "akataria@vmware.com" <akataria@vmware.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: [PATCH 4.9 52/83] clockevents/drivers/i8253: Add support for PIT shutdown quirk
-Date:   Mon, 19 Nov 2018 17:29:18 +0100
-Message-Id: <20181119162622.810383751@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
-References: <20181119162612.046511542@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 19 Nov 2018 22:56:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39247 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404122AbeKTD4I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:56:08 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gOnOa-0008KF-5T; Mon, 19 Nov 2018 18:31:36 +0100
+Date:   Mon, 19 Nov 2018 18:31:36 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v2] x86/fpu: Disable BH while while loading FPU registers
+ in __fpu__restore_sig()
+Message-ID: <20181119173135.sqxemqwfpuzszyfb@linutronix.de>
+References: <20181119160410.ne7oiq2gkwt6jiqg@linutronix.de>
+ <b8684952-69ab-d79d-7fc0-89c0f4745049@intel.com>
+ <20181119171128.2lxnhga3pym2zlok@linutronix.de>
+ <20181119172743.GE14688@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181119172743.GE14688@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On 2018-11-19 18:27:43 [+0100], Borislav Petkov wrote:
+> On Mon, Nov 19, 2018 at 06:11:29PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2018-11-19 09:02:45 [-0800], Dave Hansen wrote:
+> > > On 11/19/18 8:04 AM, Sebastian Andrzej Siewior wrote:
+> > > > v1…v2: A more verbose commit as message.
+> > > 
+> > > I was really hoping for code comments. :)
+> > 
+> > I though we agreed to make those in the larger series because those
+> > comments in __fpu__restore_sig() would be removed anyway (as part of the
+> > series).
+> 
+> Also, over local_bh_disable() does not really fit as this is generic
+> code and Sebastian said ARM does the whole thing a bit differently, for
+> one.
+> 
+> We probably should put that comment somewhere prominent in
+> arch/x86/kernel/fpu/core.c or similar - somewhere people poking at FPU
+> stuff will see it.
 
-------------------
+I though about __fpregs_changes_begin() in the last patch of the commit:
+ https://git.kernel.org/pub/scm/linux/kernel/git/bigeasy/staging.git/commit/?h=x86_fpu_rtu_v4
 
-From: Michael Kelley <mikelley@microsoft.com>
-
-commit 35b69a420bfb56b7b74cb635ea903db05e357bec upstream.
-
-Add support for platforms where pit_shutdown() doesn't work because of a
-quirk in the PIT emulation. On these platforms setting the counter register
-to zero causes the PIT to start running again, negating the shutdown.
-
-Provide a global variable that controls whether the counter register is
-zero'ed, which platform specific code can override.
-
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
-Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
-Cc: "jgross@suse.com" <jgross@suse.com>
-Cc: "akataria@vmware.com" <akataria@vmware.com>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>
-Cc: "apw@canonical.com" <apw@canonical.com>
-Cc: vkuznets <vkuznets@redhat.com>
-Cc: "jasowang@redhat.com" <jasowang@redhat.com>
-Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Cc: KY Srinivasan <kys@microsoft.com>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1541303219-11142-2-git-send-email-mikelley@microsoft.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/clocksource/i8253.c |   14 ++++++++++++--
- include/linux/i8253.h       |    1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -19,6 +19,13 @@
- DEFINE_RAW_SPINLOCK(i8253_lock);
- EXPORT_SYMBOL(i8253_lock);
- 
-+/*
-+ * Handle PIT quirk in pit_shutdown() where zeroing the counter register
-+ * restarts the PIT, negating the shutdown. On platforms with the quirk,
-+ * platform specific code can set this to false.
-+ */
-+bool i8253_clear_counter_on_shutdown __ro_after_init = true;
-+
- #ifdef CONFIG_CLKSRC_I8253
- /*
-  * Since the PIT overflows every tick, its not very useful
-@@ -108,8 +115,11 @@ static int pit_shutdown(struct clock_eve
- 	raw_spin_lock(&i8253_lock);
- 
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
-+
-+	if (i8253_clear_counter_on_shutdown) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
-+	}
- 
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
---- a/include/linux/i8253.h
-+++ b/include/linux/i8253.h
-@@ -21,6 +21,7 @@
- #define PIT_LATCH	((PIT_TICK_RATE + HZ/2) / HZ)
- 
- extern raw_spinlock_t i8253_lock;
-+extern bool i8253_clear_counter_on_shutdown;
- extern struct clock_event_device i8253_clockevent;
- extern void clockevent_i8253_init(bool oneshot);
- 
-
-
+Sebastian
