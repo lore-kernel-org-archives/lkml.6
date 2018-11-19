@@ -2,93 +2,147 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40782C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3586C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C012080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D99B213A2
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:49:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="FFyvgiOe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C012080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="deWliD/Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D99B213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732156AbeKTKOx (ORCPT
+        id S1732174AbeKTKPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:14:53 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40987 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731972AbeKTKOx (ORCPT
+        Tue, 20 Nov 2018 05:15:46 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:46800 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727583AbeKTKPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:14:53 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j21so57230oii.8
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 15:48:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wygiTZLWq10D2HnpFa23pd0KZJ6w+iznzVW5St01Fd0=;
-        b=FFyvgiOevLSyLiSpUb4j4ve5g5W2vcYCIFn0z5Uw+E37uHodpiEDMPMhUs8ISHiZuz
-         dZQuhKIYI/S2s+qVGo7v5DF5OxRLjhLviiobmutVsiSICaAZwZzNys8so56it6hDXMCa
-         T5vY75mzk+dSsTyQ0amrFfbplNYq2ujtwjCSkX/3vO500WCd1/n7TwwxJo57IR20WmZI
-         eEP+Q/gwEZ59lk7mVC3cV5RxQK2LrHYnFvu3LFiU8Fymx51vGE4NIZKbyGOHjoCVyRfR
-         y6EO9NgPWqYwU2Z2UeWwgOVCzwEjLVkAgabIgy9cMWJTgiT3ovCrqNr6NOgQ4vcU4EvQ
-         zbPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wygiTZLWq10D2HnpFa23pd0KZJ6w+iznzVW5St01Fd0=;
-        b=X7fX6bIYnLmJxe8zxSWirZ/7CN4N+izblsaXOMHSxpQqKa9TITNRtYqE8Moz8tNUV8
-         eJcURy70Ky3wMIJ0T5lzqkC4mwdSs5g5uP882AV8Q8w1CJrLVFPnXSv6QWFdmQgK6AeD
-         xxHg1jnZo/T8HmhZrnERVLkIen3ZQdnJTopFOLOnOxunhvM5olv9OriBZLADVuQgGQQW
-         d3HRBWsYu2hypXZvlKxYz9ME0ey5svKg+MBhyVMd0n/ap/Q7AAzgyMsBDje8LS1lJmmv
-         8y1CthAHdIhRYFvoLNtGDz95LxXsLq4nWqIlzvgZW0wckuXOhUZ1FSWWiTtxPcV9+ygP
-         OR5A==
-X-Gm-Message-State: AGRZ1gISRbUGx761IwlKHd9D5sXh23l4bgmrmErjv+qH+DbWJP2s3qu3
-        kJe8sJxqpDwfU8KxixLS2fp+qhJ+dBHhX67KN3A+FA==
-X-Google-Smtp-Source: AJdET5c4/EDZ9SFQ0Rk4kmk7iIwje4ZmMQtB2bnC5uE5YogY2Ufq+02Ok4TIgzXJdbhtxNhrO7nOfrojYOigXNqRfoQ=
-X-Received: by 2002:aca:2dc8:: with SMTP id t191mr7990882oit.235.1542671324617;
- Mon, 19 Nov 2018 15:48:44 -0800 (PST)
+        Tue, 20 Nov 2018 05:15:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1542671278; x=1574207278;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=NAxAvGot0khMKPE5N+9ISDgf1cKvBtg3TvGfwGYmPkw=;
+  b=deWliD/Qdms4+Jx3aKpIlDD8V1lbnY731uml8qFT2X9YxhFjjkuRJyBm
+   gjFku8jkHXqh65zyis52y0r75Zxi1jkUAgPRIwS3A3n+2jnDrSIN+OR8V
+   mLWFv+HxROirtmJXX4f4I3xXw3U3yYgF146UTDqnCrsertXFXdBmLAc/V
+   E=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2GxAQA9S/NbhiWd50NkHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBZQKDWBIxjGWNLIF6lVCBZgsBAYRshBI4EgEDAQECAQECAQECEAEBAQo?=
+ =?us-ascii?q?JCwgpL0IBEAGBYiKCZQEBAQECARIoPwULAgEIGB4QVwIEARoagn+BegicHgK?=
+ =?us-ascii?q?BEIlYAQEBgh2KKI4bgRGDEoRLARIBH4VbAosIlGcJBZEaIIdIiTUsl0MCBAI?=
+ =?us-ascii?q?EBQIUgV2BBnFwgz2CJg4JjhxAAYI5iheBH4EfAQE?=
+X-IPAS-Result: =?us-ascii?q?A2GxAQA9S/NbhiWd50NkHAEBAQQBAQcEAQGBZQKDWBIxj?=
+ =?us-ascii?q?GWNLIF6lVCBZgsBAYRshBI4EgEDAQECAQECAQECEAEBAQoJCwgpL0IBEAGBY?=
+ =?us-ascii?q?iKCZQEBAQECARIoPwULAgEIGB4QVwIEARoagn+BegicHgKBEIlYAQEBgh2KK?=
+ =?us-ascii?q?I4bgRGDEoRLARIBH4VbAosIlGcJBZEaIIdIiTUsl0MCBAIEBQIUgV2BBnFwg?=
+ =?us-ascii?q?z2CJg4JjhxAAYI5iheBH4EfAQE?=
+Received: from mx0b-00154901.pphosted.com (HELO mx0a-00154901.pphosted.com) ([67.231.157.37])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Nov 2018 17:47:57 -0600
+Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJNnagN124279;
+        Mon, 19 Nov 2018 18:49:36 -0500
+Received: from esa1.dell-outbound2.iphmx.com (esa1.dell-outbound2.iphmx.com [68.232.153.201])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nv5ap0fu6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 18:49:36 -0500
+Cc:     <baicar.tyler@gmail.com>, <Austin.Bolen@dell.com>,
+        <Shyam.Iyer@dell.com>, <lukas@wunner.de>, <bhelgaas@google.com>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>, <ruscur@russell.cc>,
+        <sbobroff@linux.ibm.com>, <oohall@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 20 Nov 2018 05:49:20 +0600
+X-LoopCount0: from 10.166.134.84
+X-IronPort-AV: E=Sophos;i="5.56,254,1539666000"; 
+   d="scan'208";a="1163380859"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <okaya@kernel.org>, <mr.nuke.me@gmail.com>, <keith.busch@intel.com>
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Topic: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Index: AQHUfTk2X+FUHiVWnkuZssuLn5DqDg==
+Date:   Mon, 19 Nov 2018 23:49:32 +0000
+Message-ID: <9c9531c7efb846438f03f744b9afc466@ausx13mps321.AMER.DELL.COM>
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+ <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+ <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+ <20181119165318.GB26595@localhost.localdomain>
+ <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+ <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
+ <20181119174127.GE26595@localhost.localdomain>
+ <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
+ <20181119181051.GA26707@localhost.localdomain>
+ <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
+ <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
+ <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
+ <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
+ <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.178.128.193]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <154266954452.2939184.974606608701109493.stgit@dwillia2-desk3.amr.corp.intel.com>
- <279dadae-9148-465c-7ec6-3f37e026c6c9@intel.com>
-In-Reply-To: <279dadae-9148-465c-7ec6-3f37e026c6c9@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 19 Nov 2018 15:48:33 -0800
-Message-ID: <CAPcyv4iuRMJjEKutcvRSFjpiy8N27jggUQA-uWd3q7Gopa=xFg@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm: Drop usage of __flush_tlb_all() in kernel_physical_mapping_init()
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        stable <stable@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811190209
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 3:43 PM Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 11/19/18 3:19 PM, Dan Williams wrote:
-> > Andy wondered why a path that can sleep was using __flush_tlb_all() [1]
-> > and Dave confirmed the expectation for TLB flush is for modifying /
-> > invalidating existing pte entries, but not initial population [2].
->
-> I _think_ this is OK.
->
-> But, could we sprinkle a few WARN_ON_ONCE(p*_present()) calls in there
-> to help us sleep at night?
-
-Makes sense, I'll add those for v2.
+On 11/19/2018 02:33 PM, Sinan Kaya wrote:=0A=
+> True. I was trying to get it out in a rush. I omitted words.=0A=
+=0A=
+Sounds like you'd make an top notch spec writer! :p=0A=
+=0A=
+> However; table assumes governance about for which entities firmware first=
+=0A=
+> should be enabled. There is no cross reference to _OSC or permission=0A=
+> negotiation like _OST.=0A=
+=0A=
+Well, from an OSPM perspective, is FFS something that can be enabled or =0A=
+disabled? FFS seems to be static to OSPM, which would change the sort of =
+=0A=
+assumptions we can reasonably make here.=0A=
+=0A=
+=0A=
+>>> As I said in my previous email, the right place to talk about this is U=
+EFI=0A=
+>>> forum.=0A=
+>>=0A=
+>> The way I would present the problem to he spec writers is that, although=
+=0A=
+>> the spec appears to be consistent, we've seen firmware vendors that made=
+=0A=
+>> the wrong assumptions about HEST/_OSC. Instead of describing AER=0A=
+>> ownership with _OSC, they attempted to do it with HEST. So we should add=
+=0A=
+>> an implementation note, or clarification about this.=0A=
+> =0A=
+> I agree.=0A=
+=0A=
+Cool. While the UEFI Secret Society debates, can we figure out if/how =0A=
+[patch 1/2] breaks those systems, or is it only [patch 2/2] of this =0A=
+series that we suspect?=0A=
+=0A=
+Alex=0A=
