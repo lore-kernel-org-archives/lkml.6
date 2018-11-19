@@ -4,45 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCA7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEDCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8FA9208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A510F206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vzXGqi8J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FA9208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LR4uYSb4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A510F206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389981AbeKTDO2 (ORCPT
+        id S2389989AbeKTDOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:14:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51766 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:14:27 -0500
+        id S2388976AbeKTDO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0F2E206BA;
-        Mon, 19 Nov 2018 16:50:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 937D5206BA;
+        Mon, 19 Nov 2018 16:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646214;
-        bh=uj6pLK1qYw7JPUtti5S2gFliIK+lGbEuwDEG/MFbkBU=;
+        s=default; t=1542646217;
+        bh=pq2u6jHQWdkevImuOF9+cwWqnU5Zz4L81zfyXiKf1wE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vzXGqi8JETqr0nM6obcgWp4XvVovHdX+j2APezqnrHh7Q66Fr6Hr2EDOd9m3aJLpo
-         PcqIayvUjcE9AWm6zlbj5Yz9HLb3qhl0E7Vwc3i2t+6JM1gCaeTqIFGAORJrpN3YT2
-         Gw6YekA6hWo35hqWK0KF23vQz8I8fKEcXJZxHbgo=
+        b=LR4uYSb4wNCO1XtT0zJohO5lY4JHiGMk+rfd5Ui7Lp9aqDwsWnF0Du4+qItQgZmUE
+         lFBhcBgoJ6BGHsAzAFVm1b/4BP5fgjbwJLgDszaVP2/KAzPPzIFMWE8BfGEkZncwLE
+         eXUaJrawWLzVL0BcYEEF3OnvdILBbuUkRiS0UR5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.14 032/124] fuse: fix blocked_waitq wakeup
-Date:   Mon, 19 Nov 2018 17:28:06 +0100
-Message-Id: <20181119162619.815851268@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.14 074/124] ext4: add missing brelse() in set_flexbg_block_bitmap()s error path
+Date:   Mon, 19 Nov 2018 17:28:48 +0100
+Message-Id: <20181119162627.338430638@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -60,49 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 908a572b80f6e9577b45e81b3dfe2e22111286b8 upstream.
+commit cea5794122125bf67559906a0762186cf417099c upstream.
 
-Using waitqueue_active() is racy.  Make sure we issue a wake_up()
-unconditionally after storing into fc->blocked.  After that it's okay to
-optimize with waitqueue_active() since the first wake up provides the
-necessary barrier for all waiters, not the just the woken one.
-
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 3c18ef8117f0 ("fuse: optimize wake_up")
-Cc: <stable@vger.kernel.org> # v3.10
+Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
+Cc: stable@kernel.org # 3.3
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fs/ext4/resize.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -384,12 +384,19 @@ static void request_end(struct fuse_conn
- 	if (test_bit(FR_BACKGROUND, &req->flags)) {
- 		spin_lock(&fc->lock);
- 		clear_bit(FR_BACKGROUND, &req->flags);
--		if (fc->num_background == fc->max_background)
-+		if (fc->num_background == fc->max_background) {
- 			fc->blocked = 0;
--
--		/* Wake up next waiter, if any */
--		if (!fc->blocked && waitqueue_active(&fc->blocked_waitq))
- 			wake_up(&fc->blocked_waitq);
-+		} else if (!fc->blocked) {
-+			/*
-+			 * Wake up next waiter, if any.  It's okay to use
-+			 * waitqueue_active(), as we've already synced up
-+			 * fc->blocked with waiters with the wake_up() call
-+			 * above.
-+			 */
-+			if (waitqueue_active(&fc->blocked_waitq))
-+				wake_up(&fc->blocked_waitq);
-+		}
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -444,16 +444,18 @@ static int set_flexbg_block_bitmap(struc
  
- 		if (fc->num_background == fc->congestion_threshold && fc->sb) {
- 			clear_bdi_congested(fc->sb->s_bdi, BLK_RW_SYNC);
+ 		BUFFER_TRACE(bh, "get_write_access");
+ 		err = ext4_journal_get_write_access(handle, bh);
+-		if (err)
++		if (err) {
++			brelse(bh);
+ 			return err;
++		}
+ 		ext4_debug("mark block bitmap %#04llx (+%llu/%u)\n", block,
+ 			   block - start, count2);
+ 		ext4_set_bits(bh->b_data, block - start, count2);
+ 
+ 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
++		brelse(bh);
+ 		if (unlikely(err))
+ 			return err;
+-		brelse(bh);
+ 	}
+ 
+ 	return 0;
 
 
