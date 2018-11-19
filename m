@@ -2,124 +2,110 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC4AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E10EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A51120659
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B6920659
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:20:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="PUEOFdB1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A51120659
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Yn9TWYXG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00B6920659
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbeKTEnj (ORCPT
+        id S1730218AbeKTEpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:43:39 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:37775 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730086AbeKTEni (ORCPT
+        Mon, 19 Nov 2018 23:45:34 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40144 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730128AbeKTEpe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:43:38 -0500
-Received: by mail-it1-f196.google.com with SMTP id b5so8908081iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:18:57 -0800 (PST)
+        Mon, 19 Nov 2018 23:45:34 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i12so1959847pfo.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:20:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=TFFx8e1Q8W8lee2IXNbRZZz71PcnEWi5NplF9kzzK94=;
-        b=PUEOFdB1mKfhnFl/BUTYZ2o6hJ0qZuulS/nKSIuubFniCqbYO6oBWWNO6e+qQciAlz
-         5820J1VJUvt2ailwn0EI7pPkVRhG8IHpwkZdku9IhqtitmfJHxGjBXeQkHkYaNjXbm/A
-         9Brv5cuNLq/X8l8CPvKMlOIVRVmYS2poQAN5ERRwt+5JJog2r/d+2NnpOcdXCKGl2jQP
-         JuS4Gvhe9nVPahzSvBuP80SyoNkXX/bjz2232ETrz+ogGwHhD7EjvylnIZnEOWAUOJwX
-         FZQdkXNt8ISxpAyFrfGxsLANmbOJF/Jjp3x8xp2hupaVbuV4BSBsS0TDM6lX1JL6wx4J
-         4C9Q==
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cetOeM3wNE+xbTkSnfOy05RV8vvE0VAiYl8MZym5BT8=;
+        b=Yn9TWYXGlwx6yJ6chj1YMJ/mJSLXfbvvEvL3JRCFf6Ul9ygDyYa9s9BJpXwf3avJfj
+         tAzQz0DRWRnhKefy9/tiw7rTbVdUEfJeS/X3zgiOOQQ1un/y5Oeu03ErOvoePn5oCPNN
+         6rTf52+Wc/yc9JjSL8ZYO3A0S3b8iFK2LWbOtUnDYOuyVZ4JKBoqnoEDvR5QCJlk7Ob9
+         WznPiEX7fl5/QlqgjTRnh3RjpnwkXr1RJaIeHdTyX4ZlsHu+ycSzhORl8VQp11kmQkM/
+         YLX7KukI3VR6Agt7/i3znGfK3jV0HOwq6XQl+2u/LYfsPUdhHm8YrsaZwZbR3WtD2uHI
+         GVjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=TFFx8e1Q8W8lee2IXNbRZZz71PcnEWi5NplF9kzzK94=;
-        b=TA+5rF2W24ZZOG9Avw6n/rn8UEUXZf3r8M90QJEK4pP5+IanyW9S8gFJglhuWfsKVT
-         oarJ7AgPpxt0KRDg8z4tQ6EtPCqT6/3iw6lGO04QhQYgYOrRA2Bmw0Pl8ecF97IaGpEV
-         DuUqkIp/9GoF8VEFuBA5TwhLeM4Mbm7v6mDTkMtk5H7puukKNej7uPdtVrPKzUAedqFn
-         XnUnQS5dVSKdvssTpBKVOi7iGtuEQgMrTAMpWt3mIjIwPVmM2V8w2gzUicdA6q26cOWN
-         V6vE8WkFUmkeqe50+8eOvmsBADvAvAVl/7wr9Htj4PTYzQi9L41emdbOiL3glVc7nrmQ
-         LTgg==
-X-Gm-Message-State: AGRZ1gJRNYsGKd5lQMOGZfmdMGCf3Dy0T5huNAxjOSy5NELaMi+C9j68
-        nn1lYj2pVm/oYzb/4c0ZYcAPjg==
-X-Google-Smtp-Source: AFSGD/WMiRe9lzasP0X3iVlWZTMp+pUWU7MsYLxfDDdPi4zk8xrq66mc1xlBUiSkF6aJQ+o7Myd7Cw==
-X-Received: by 2002:a24:1706:: with SMTP id 6-v6mr9836417ith.16.1542651537262;
-        Mon, 19 Nov 2018 10:18:57 -0800 (PST)
-Received: from ?IPv6:2600:100e:b01e:cdc6:49a8:b0fe:6838:b5dd? ([2600:100e:b01e:cdc6:49a8:b0fe:6838:b5dd])
-        by smtp.gmail.com with ESMTPSA id n25-v6sm11929866iop.34.2018.11.19.10.18.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 10:18:56 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <20181119171934.GA16252@linux.intel.com>
-Date:   Mon, 19 Nov 2018 11:18:54 -0700
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>,
-        "nhorman@redhat.com" <nhorman@redhat.com>,
-        "npmccallum@redhat.com" <npmccallum@redhat.com>,
-        "serge.ayoun@intel.com" <serge.ayoun@intel.com>,
-        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
-        "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kai.svahn@intel.com" <kai.svahn@intel.com>,
-        "mark.shanahan@intel.com" <mark.shanahan@intel.com>,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2804DD93-E67B-4E06-800D-82A2EA21FCC9@amacapital.net>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com> <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <20181119150655.GA11843@linux.intel.com> <e8e640be-6f9f-0835-0578-48f140ac68f9@fortanix.com> <20181119171934.GA16252@linux.intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cetOeM3wNE+xbTkSnfOy05RV8vvE0VAiYl8MZym5BT8=;
+        b=FMZtFn6ifqLj2kIKFCfdXf45RhQq9RJmzyz2zLKzLVL04hBXb1exOElTgFwwWR48lJ
+         vI1w8aphfRYRjcidvAtZFQDIzBv64LUVw3Y5CY2DKmHbGBwRX88pvnSs4Sb9ZPFZhD8a
+         KIs0pXthZXw7pyHzyE1iqotr4iwrgm8fup3cfCgUMEvclslpPue5/j+Het9GKLQN/rwB
+         tjnNoCS/TNYj+dd/bk1+9IVqN6QQ4C+wMJZdROvXL13iRP/uFfQ0HNIRUiPpMPgAabx+
+         pFYoebf3ncy4yPPy/HSXK0t53hBd26LoYm5XwkqztKd+Z+sHYSuUPlyRIdziBG+mq/+c
+         YJ4w==
+X-Gm-Message-State: AGRZ1gJBJOmUs2zF9s3WfA5Mfwt0a6flQGRVbuQPOi+3Ae/YJ0Knf2y5
+        9JJfHzGomwsMDI+dVjTNwBU5Zg==
+X-Google-Smtp-Source: AJdET5ddScElbCtO2I0DpRkSkYTrQrgp3BV3J6vvvpYm4VdG7S5ucn06by1DjDZOIrKE8c8OtOrgPA==
+X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr23838079pfe.11.1542651652808;
+        Mon, 19 Nov 2018 10:20:52 -0800 (PST)
+Received: from brauner.io ([2404:4404:133a:4500:9d11:de0b:446c:8485])
+        by smtp.gmail.com with ESMTPSA id v89sm8814419pfk.12.2018.11.19.10.20.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 10:20:51 -0800 (PST)
+Date:   Mon, 19 Nov 2018 19:20:43 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Daniel Colascione <dancol@google.com>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 1/2] proc: get process file descriptor from /proc/<pid>
+Message-ID: <20181119182038.27obrbpxp54rhfxt@brauner.io>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-2-christian@brauner.io>
+ <CALCETrVvHu2dSJs1dpA-2ozGhZGxbGrnYbUuh98rkCdsz42rfg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrVvHu2dSJs1dpA-2ozGhZGxbGrnYbUuh98rkCdsz42rfg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 07:32:33AM -0800, Andy Lutomirski wrote:
+> On Mon, Nov 19, 2018 at 2:33 AM Christian Brauner <christian@brauner.io> wrote:
+> >
+> > With this patch an open() call on /proc/<pid> will give userspace a handle
+> > to struct pid of the process associated with /proc/<pid>. This allows to
+> > maintain a stable handle on a process.
+> > I have been discussing various approaches extensively during technical
+> > conferences this year culminating in a long argument with Eric at Linux
+> > Plumbers. The general consensus was that having a handle on a process
+> > should be something that is very simple and easy to maintain with the
+> > option of being extensible via a more advanced api if the need arises. I
+> > believe that this patch is the most simple, dumb, and therefore
+> > maintainable solution.
+> 
+> How does the mechanism you're adding here differ from proc_pid()?
 
-
-> On Nov 19, 2018, at 10:19 AM, Jarkko Sakkinen <jarkko.sakkinen@linux.intel=
-.com> wrote:
->=20
->> On Mon, Nov 19, 2018 at 04:22:54PM +0000, Jethro Beekman wrote:
->>> On 2018-11-19 20:36, Jarkko Sakkinen wrote:
->>> Question: should be dissolve the driver completely and move this code to=
-
->>> arch/x86/kernel/cpu/sgx/ (and rename intel_sgx.c as main.c)? Swapping
->>> patch removes the possibility to compile this as a module anyway.
->>=20
->> No. We should keep the capability to build this as a module for other use=
-rs
->> of SGX. What is the swapping patch and why doesn't allow building as a
->> module?
->=20
-> In some earlier version of the patch set the request was to remove the
-> callback interface to the driver so now core does direct calls to the
-> swapping operations.
->=20
->=20
-
-Once static_call lands, this will be a great use for it.=
+I'm sorry, I am missing the context around proc_pid()?. Are you talking
+about the the proc_pid() function in "internal.h"? What exactly is the
+proc_pid() mechanism?
