@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD5BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256A7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B3D2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D393B2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="csusB0P9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8B3D2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfiVaP+0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D393B2146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404755AbeKTDW3 (ORCPT
+        id S2404767AbeKTDWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34138 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403834AbeKTDW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:28 -0500
+        id S2403834AbeKTDWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B7B62148E;
-        Mon, 19 Nov 2018 16:58:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D83682146D;
+        Mon, 19 Nov 2018 16:58:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646692;
-        bh=FhAY5101g+bMmXjSTGJ/eDAU7wF8/oPjo1p80Udpk40=;
+        s=default; t=1542646695;
+        bh=Ih8tfFxSsu0iFHhQeABm0uYNVSnh7x/xMR6cd1GDjxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=csusB0P9RVRUZWJ5aFbqvm0Ekht4TKObtHs9H97XrOSvOk3WZ74BDKljC4xZfxsQd
-         KHHTQ9T5Mx3v2AGuAE5Vw14p5hLmn9oE8pDXJMreQ2V+Pt9JUFYjW1o1Yu6zYFIK18
-         +wx1G3OGJEVjV3k1/94ijz/fzSga+cppbUeTEpV4=
+        b=EfiVaP+0Qct2gWZoT7/oV3txXd1gkeH0c4QAf1AzRubbwtpT164ulKJzssL5XrI8t
+         no+C38WjODyLGxT27AV6wPaxIGawjdX8UCz/lgG0mrYUEnZRpnXabpACPg1Zig2gU1
+         fwg/AKOngrBCn2HPGwB+QQEUPbHK5/pqn276acBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 053/160] HID: hiddev: fix potential Spectre v1
-Date:   Mon, 19 Nov 2018 17:28:12 +0100
-Message-Id: <20181119162636.676152532@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Meng <bmeng.cn@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.4 054/160] PCI: Add Device IDs for Intel GPU "spurious interrupt" quirk
+Date:   Mon, 19 Nov 2018 17:28:13 +0100
+Message-Id: <20181119162636.755535884@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,76 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Breno Leitao <leitao@debian.org>
+From: Bin Meng <bmeng.cn@gmail.com>
 
-commit f11274396a538b31bc010f782e05c2ce3f804c13 upstream.
+commit d0c9606b31a21028fb5b753c8ad79626292accfd upstream.
 
-uref->usage_index can be indirectly controlled by userspace, hence leading
-to a potential exploitation of the Spectre variant 1 vulnerability.
+Add Device IDs to the Intel GPU "spurious interrupt" quirk table.
 
-This field is used as an array index by the hiddev_ioctl_usage() function,
-when 'cmd' is either HIDIOCGCOLLECTIONINDEX, HIDIOCGUSAGES or
-HIDIOCSUSAGES.
+For these devices, unplugging the VGA cable and plugging it in again causes
+spurious interrupts from the IGD.  Linux eventually disables the interrupt,
+but of course that disables any other devices sharing the interrupt.
 
-For cmd == HIDIOCGCOLLECTIONINDEX case, uref->usage_index is compared to
-field->maxusage and then used as an index to dereference field->usage
-array. The same thing happens to the cmd == HIDIOC{G,S}USAGES cases, where
-uref->usage_index is checked against an array maximum value and then it is
-used as an index in an array.
+The theory is that this is a VGA BIOS defect: it should have disabled the
+IGD interrupt but failed to do so.
 
-This is a summary of the HIDIOCGCOLLECTIONINDEX case, which matches the
-traditional Spectre V1 first load:
+See f67fd55fa96f ("PCI: Add quirk for still enabled interrupts on Intel
+Sandy Bridge GPUs") and 7c82126a94e6 ("PCI: Add new ID for Intel GPU
+"spurious interrupt" quirk") for some history.
 
-	copy_from_user(uref, user_arg, sizeof(*uref))
-	if (uref->usage_index >= field->maxusage)
-		goto inval;
-	i = field->usage[uref->usage_index].collection_index;
-	return i;
+[bhelgaas: See link below for discussion about how to fix this more
+generically instead of adding device IDs for every new Intel GPU.  I hope
+this is the last patch to add device IDs.]
 
-This patch fixes this by sanitizing field uref->usage_index before using it
-to index field->usage (HIDIOCGCOLLECTIONINDEX) or field->value in
-HIDIOC{G,S}USAGES arrays, thus, avoiding speculation in the first load.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Breno Leitao <leitao@debian.org>
-v2: Contemplate cmd == HIDIOC{G,S}USAGES case
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Link: https://lore.kernel.org/linux-pci/1537974841-29928-1-git-send-email-bmeng.cn@gmail.com
+Signed-off-by: Bin Meng <bmeng.cn@gmail.com>
+[bhelgaas: changelog]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org	# v3.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |   18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/pci/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -521,14 +521,24 @@ static noinline int hiddev_ioctl_usage(s
- 			if (cmd == HIDIOCGCOLLECTIONINDEX) {
- 				if (uref->usage_index >= field->maxusage)
- 					goto inval;
-+				uref->usage_index =
-+					array_index_nospec(uref->usage_index,
-+							   field->maxusage);
- 			} else if (uref->usage_index >= field->report_count)
- 				goto inval;
- 		}
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -3061,7 +3061,11 @@ static void disable_igfx_irq(struct pci_
  
--		if ((cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) &&
--		    (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
--		     uref->usage_index + uref_multi->num_values > field->report_count))
--			goto inval;
-+		if (cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) {
-+			if (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
-+			    uref->usage_index + uref_multi->num_values >
-+			    field->report_count)
-+				goto inval;
-+
-+			uref->usage_index =
-+				array_index_nospec(uref->usage_index,
-+						   field->report_count -
-+						   uref_multi->num_values);
-+		}
+ 	pci_iounmap(dev, regs);
+ }
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0042, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0046, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x004a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0102, disable_igfx_irq);
++DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0106, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x010a, disable_igfx_irq);
+ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x0152, disable_igfx_irq);
  
- 		switch (cmd) {
- 		case HIDIOCGUSAGE:
 
 
