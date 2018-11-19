@@ -7,47 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CC3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B988AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA7EA2145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F70E2145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh+5ZVxD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA7EA2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NH+ql9wg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F70E2145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390559AbeKTDQd (ORCPT
+        id S2390569AbeKTDQf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:16:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54478 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:16:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389724AbeKTDQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:16:32 -0500
+        id S2389669AbeKTDQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:16:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC38208E3;
-        Mon, 19 Nov 2018 16:52:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 451A3206BA;
+        Mon, 19 Nov 2018 16:52:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646339;
-        bh=eokEFmhFl4ScfdBzvMQwhvHlXkvdxbQtYScsawRczns=;
+        s=default; t=1542646341;
+        bh=lYTkYtVApccVQO2yoYK9LoLTUTTHU04kplz+vggti+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uh+5ZVxDIj8UNd3G6ozmxfdLZocMUFZpYD9ebO8qukKMQ1JVFQyuw1Q/Gu9lDSjin
-         BRWT50xjf4bxRpfFhrpq2WLax2gjJ6HlhCQbk9VdwrtQVETMc61zEXy964gm+BBcPl
-         dW8RK0AgItf2RJqUkXAGK6gV9bTdGblLz8QzfLnA=
+        b=NH+ql9wgK6aGSQ0uVu5c/crkGF1OLBmCPTHy4+DK81SHIjmNMx7363eAdUhOjENB1
+         A/ic8cfY8Cyz6L+q63JHOjoauqkXl5Ztuz4N7sXkHjqZ3P6+SasQPxBxMNBt1o185e
+         Aw6pdySLiCiOt1FpRoyZDAaTN0vwrdUNKySxRnbY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Stabellini <stefanos@xilinx.com>,
-        Juergen Gross <jgross@suse.com>, Jeff.Kubascik@dornerworks.com,
-        Jarvis.Roach@dornerworks.com, Nathan.Studer@dornerworks.com,
-        vkuznets@redhat.com, boris.ostrovsky@oracle.com,
-        julien.grall@arm.com
-Subject: [PATCH 4.14 120/124] CONFIG_XEN_PV breaks xen_create_contiguous_region on ARM
-Date:   Mon, 19 Nov 2018 17:29:34 +0100
-Message-Id: <20181119162633.797817212@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 121/124] ovl: check whiteout in ovl_create_over_whiteout()
+Date:   Mon, 19 Nov 2018 17:29:35 +0100
+Message-Id: <20181119162633.929697203@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -65,45 +61,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Stabellini <stefanos@xilinx.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit f9005571701920551bcf54a500973fb61f2e1eda upstream.
+commit 5e1275808630ea3b2c97c776f40e475017535f72 upstream.
 
-xen_create_contiguous_region has now only an implementation if
-CONFIG_XEN_PV is defined. However, on ARM we never set CONFIG_XEN_PV but
-we do have an implementation of xen_create_contiguous_region which is
-required for swiotlb-xen to work correctly (although it just sets
-*dma_handle).
+Kaixuxia repors that it's possible to crash overlayfs by removing the
+whiteout on the upper layer before creating a directory over it.  This is a
+reproducer:
 
-[backport: remove change to xen_remap_pfn]
+ mkdir lower upper work merge
+ touch lower/file
+ mount -t overlay overlay -olowerdir=lower,upperdir=upper,workdir=work merge
+ rm merge/file
+ ls -al merge/file
+ rm upper/file
+ ls -al merge/
+ mkdir merge/file
 
-Cc: <stable@vger.kernel.org> # 4.12
-Fixes: 16624390816c ("xen: create xen_create/destroy_contiguous_region() stubs for PVHVM only builds")
-Signed-off-by: Stefano Stabellini <stefanos@xilinx.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-CC: Jeff.Kubascik@dornerworks.com
-CC: Jarvis.Roach@dornerworks.com
-CC: Nathan.Studer@dornerworks.com
-CC: vkuznets@redhat.com
-CC: boris.ostrovsky@oracle.com
-CC: jgross@suse.com
-CC: julien.grall@arm.com
-Signed-off-by: Juergen Gross <jgross@suse.com>
+Before commencing with a vfs_rename(..., RENAME_EXCHANGE) verify that the
+lookup of "upper" is positive and is a whiteout, and return ESTALE
+otherwise.
+
+Reported by: kaixuxia <xiakaixu1987@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e9be9d5e76e3 ("overlay filesystem")
+Cc: <stable@vger.kernel.org> # v3.18
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/xen/xen-ops.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/xen/xen-ops.h
-+++ b/include/xen/xen-ops.h
-@@ -40,7 +40,7 @@ int xen_setup_shutdown_event(void);
+---
+ fs/overlayfs/dir.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -392,6 +392,10 @@ static int ovl_create_over_whiteout(stru
+ 	if (IS_ERR(upper))
+ 		goto out_dput;
  
- extern unsigned long *xen_contiguous_bitmap;
- 
--#ifdef CONFIG_XEN_PV
-+#if defined(CONFIG_XEN_PV) || defined(CONFIG_ARM) || defined(CONFIG_ARM64)
- int xen_create_contiguous_region(phys_addr_t pstart, unsigned int order,
- 				unsigned int address_bits,
- 				dma_addr_t *dma_handle);
++	err = -ESTALE;
++	if (d_is_negative(upper) || !IS_WHITEOUT(d_inode(upper)))
++		goto out_dput2;
++
+ 	err = ovl_create_real(wdir, newdentry, cattr, hardlink, true);
+ 	if (err)
+ 		goto out_dput2;
 
 
