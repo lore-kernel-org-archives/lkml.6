@@ -2,194 +2,163 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13A93C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7028BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D9C2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:18:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D9C2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 39C8820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:18:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C8820851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeKSUlt (ORCPT
+        id S1727943AbeKSUmB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:41:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48786 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeKSUlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:41:49 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC2CD5D608;
-        Mon, 19 Nov 2018 10:18:38 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-117-77.ams2.redhat.com [10.36.117.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AF1185D9CD;
-        Mon, 19 Nov 2018 10:18:36 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        David Hildenbrand <david@redhat.com>
-Subject: [PATCH v1] makedumpfile: exclude pages that are logically offline
-Date:   Mon, 19 Nov 2018 11:18:35 +0100
-Message-Id: <20181119101835.9140-1-david@redhat.com>
-In-Reply-To: <20181119101616.8901-1-david@redhat.com>
-References: <20181119101616.8901-1-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 19 Nov 2018 10:18:39 +0000 (UTC)
+        Mon, 19 Nov 2018 15:42:01 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42321 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727718AbeKSUmB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 15:42:01 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAJAIgG52524695
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Mon, 19 Nov 2018 02:18:42 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAJAIfVC2524692;
+        Mon, 19 Nov 2018 02:18:41 -0800
+Date:   Mon, 19 Nov 2018 02:18:41 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-c45e80358cb3c61eaf6f5d35af86c6a874935bd0@git.kernel.org>
+Cc:     hpa@zytor.com, mail@maciej.szmigiero.name, mingo@kernel.org,
+        bp@suse.de, tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          mail@maciej.szmigiero.name, mingo@kernel.org, bp@suse.de
+In-Reply-To: <20181107170218.7596-12-bp@alien8.de>
+References: <20181107170218.7596-12-bp@alien8.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/microcode] x86/microcode/AMD: Convert early parser to the
+ new verification routines
+Git-Commit-ID: c45e80358cb3c61eaf6f5d35af86c6a874935bd0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linux marks pages that are logically offline via a page flag (map count).
-Such pages e.g. include pages infated as part of a balloon driver or
-pages that were not actually onlined when onlining the whole section.
+Commit-ID:  c45e80358cb3c61eaf6f5d35af86c6a874935bd0
+Gitweb:     https://git.kernel.org/tip/c45e80358cb3c61eaf6f5d35af86c6a874935bd0
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Wed, 12 Sep 2018 18:33:34 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 19 Nov 2018 10:51:06 +0100
 
-While the hypervisor usually allows to read such inflated memory, we
-basically read and dump data that is completely irrelevant. Also, this
-might result in quite some overhead in the hypervisor. In addition,
-we saw some problems under Hyper-V, whereby we can crash the kernel by
-dumping, when reading memory of a partially onlined memory segment
-(for memory added by the Hyper-V balloon driver).
+x86/microcode/AMD: Convert early parser to the new verification routines
 
-Therefore, don't read and dump pages that are marked as being logically
-offline.
+Now that they have the required functionality, use them to verify the
+equivalence table and each patch, thus making parse_container() more
+readable.
 
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Originally-by: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20181107170218.7596-12-bp@alien8.de
 ---
- makedumpfile.c | 34 ++++++++++++++++++++++++++++++----
- makedumpfile.h |  1 +
- 2 files changed, 31 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 46 +++++++++++++++++++------------------
+ 1 file changed, 24 insertions(+), 22 deletions(-)
 
-diff --git a/makedumpfile.c b/makedumpfile.c
-index 8923538..b8bfd4c 100644
---- a/makedumpfile.c
-+++ b/makedumpfile.c
-@@ -88,6 +88,7 @@ mdf_pfn_t pfn_cache_private;
- mdf_pfn_t pfn_user;
- mdf_pfn_t pfn_free;
- mdf_pfn_t pfn_hwpoison;
-+mdf_pfn_t pfn_offline;
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 79216cfb9f72..5775dc996df3 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -293,17 +293,18 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 	u16 eq_id;
+ 	u8 *buf;
  
- mdf_pfn_t num_dumped;
+-	/* Am I looking at an equivalence table header? */
+-	if (hdr[0] != UCODE_MAGIC ||
+-	    hdr[1] != UCODE_EQUIV_CPU_TABLE_TYPE ||
+-	    hdr[2] == 0)
+-		return CONTAINER_HDR_SZ;
++	if (!verify_equivalence_table(ucode, size, true))
++		return 0;
  
-@@ -249,6 +250,21 @@ isHugetlb(unsigned long dtor)
-                     && (SYMBOL(free_huge_page) == dtor));
- }
+ 	buf = ucode;
  
-+static int
-+isOffline(unsigned long flags, unsigned int _mapcount)
-+{
-+	if (NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE) == NOT_FOUND_NUMBER)
-+		return FALSE;
-+
-+	if (flags & (1UL << NUMBER(PG_slab)))
-+		return FALSE;
-+
-+	if (_mapcount == (int)NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE))
-+		return TRUE;
-+
-+	return FALSE;
-+}
-+
- static int
- is_cache_page(unsigned long flags)
- {
-@@ -2287,6 +2303,8 @@ write_vmcoreinfo_data(void)
- 	WRITE_NUMBER("PG_hwpoison", PG_hwpoison);
+ 	eq = (struct equiv_cpu_entry *)(buf + CONTAINER_HDR_SZ);
  
- 	WRITE_NUMBER("PAGE_BUDDY_MAPCOUNT_VALUE", PAGE_BUDDY_MAPCOUNT_VALUE);
-+	WRITE_NUMBER("PAGE_OFFLINE_MAPCOUNT_VALUE",
-+		     PAGE_OFFLINE_MAPCOUNT_VALUE);
- 	WRITE_NUMBER("phys_base", phys_base);
+-	/* Find the equivalence ID of our CPU in this table: */
++	/*
++	 * Find the equivalence ID of our CPU in this table. Even if this table
++	 * doesn't contain a patch for the CPU, scan through the whole container
++	 * so that it can be skipped in case there are other containers appended.
++	 */
+ 	eq_id = find_equiv_id(eq, desc->cpuid_1_eax);
  
- 	WRITE_NUMBER("HUGETLB_PAGE_DTOR", HUGETLB_PAGE_DTOR);
-@@ -2687,6 +2705,7 @@ read_vmcoreinfo(void)
- 	READ_SRCFILE("pud_t", pud_t);
+ 	buf  += hdr[2] + CONTAINER_HDR_SZ;
+@@ -316,29 +317,29 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 	while (size > 0) {
+ 		struct microcode_amd *mc;
+ 		u32 patch_size;
++		int ret;
  
- 	READ_NUMBER("PAGE_BUDDY_MAPCOUNT_VALUE", PAGE_BUDDY_MAPCOUNT_VALUE);
-+	READ_NUMBER("PAGE_OFFLINE_MAPCOUNT_VALUE", PAGE_OFFLINE_MAPCOUNT_VALUE);
- 	READ_NUMBER("phys_base", phys_base);
- #ifdef __aarch64__
- 	READ_NUMBER("VA_BITS", VA_BITS);
-@@ -6041,6 +6060,12 @@ __exclude_unnecessary_pages(unsigned long mem_map,
- 		else if (isHWPOISON(flags)) {
- 			pfn_counter = &pfn_hwpoison;
- 		}
-+		/*
-+		 * Exclude pages that are logically offline.
-+		 */
-+		else if (isOffline(flags, _mapcount)) {
-+			pfn_counter = &pfn_offline;
+-		hdr = (u32 *)buf;
+-
+-		if (hdr[0] != UCODE_UCODE_TYPE)
+-			break;
+-
+-		/* Sanity-check patch size. */
+-		patch_size = hdr[1];
+-		if (patch_size > PATCH_MAX_SIZE)
+-			break;
+-
+-		/* Skip patch section header: */
+-		buf  += SECTION_HDR_SIZE;
+-		size -= SECTION_HDR_SIZE;
++		ret = verify_patch(x86_family(desc->cpuid_1_eax), buf, size, &patch_size, true);
++		if (ret < 0) {
++			/*
++			 * Patch verification failed, skip to the next
++			 * container, if there's one:
++			 */
++			goto out;
++		} else if (ret > 0) {
++			goto skip;
 +		}
- 		/*
- 		 * Unexcludable page
- 		 */
-@@ -7522,7 +7547,7 @@ write_elf_pages_cyclic(struct cache_data *cd_header, struct cache_data *cd_page)
- 	 */
- 	if (info->flag_cyclic) {
- 		pfn_zero = pfn_cache = pfn_cache_private = 0;
--		pfn_user = pfn_free = pfn_hwpoison = 0;
-+		pfn_user = pfn_free = pfn_hwpoison = pfn_offline = 0;
- 		pfn_memhole = info->max_mapnr;
+ 
+-		mc = (struct microcode_amd *)buf;
++		mc = (struct microcode_amd *)(buf + SECTION_HDR_SIZE);
+ 		if (eq_id == mc->hdr.processor_rev_id) {
+ 			desc->psize = patch_size;
+ 			desc->mc = mc;
+ 		}
+ 
+-		buf  += patch_size;
+-		size -= patch_size;
++skip:
++		/* Skip patch section header too: */
++		buf  += patch_size + SECTION_HDR_SIZE;
++		size -= patch_size + SECTION_HDR_SIZE;
  	}
  
-@@ -8804,7 +8829,7 @@ write_kdump_pages_and_bitmap_cyclic(struct cache_data *cd_header, struct cache_d
- 		 * Reset counter for debug message.
- 		 */
- 		pfn_zero = pfn_cache = pfn_cache_private = 0;
--		pfn_user = pfn_free = pfn_hwpoison = 0;
-+		pfn_user = pfn_free = pfn_hwpoison = pfn_offline = 0;
- 		pfn_memhole = info->max_mapnr;
+ 	/*
+@@ -355,6 +356,7 @@ static ssize_t parse_container(u8 *ucode, ssize_t size, struct cont_desc *desc)
+ 		return 0;
+ 	}
  
- 		/*
-@@ -9749,7 +9774,7 @@ print_report(void)
- 	pfn_original = info->max_mapnr - pfn_memhole;
++out:
+ 	return orig_size - size;
+ }
  
- 	pfn_excluded = pfn_zero + pfn_cache + pfn_cache_private
--	    + pfn_user + pfn_free + pfn_hwpoison;
-+	    + pfn_user + pfn_free + pfn_hwpoison + pfn_offline;
- 	shrinking = (pfn_original - pfn_excluded) * 100;
- 	shrinking = shrinking / pfn_original;
- 
-@@ -9763,6 +9788,7 @@ print_report(void)
- 	REPORT_MSG("    User process data pages : 0x%016llx\n", pfn_user);
- 	REPORT_MSG("    Free pages              : 0x%016llx\n", pfn_free);
- 	REPORT_MSG("    Hwpoison pages          : 0x%016llx\n", pfn_hwpoison);
-+	REPORT_MSG("    Offline pages           : 0x%016llx\n", pfn_offline);
- 	REPORT_MSG("  Remaining pages  : 0x%016llx\n",
- 	    pfn_original - pfn_excluded);
- 	REPORT_MSG("  (The number of pages is reduced to %lld%%.)\n",
-@@ -9790,7 +9816,7 @@ print_mem_usage(void)
- 	pfn_original = info->max_mapnr - pfn_memhole;
- 
- 	pfn_excluded = pfn_zero + pfn_cache + pfn_cache_private
--	    + pfn_user + pfn_free + pfn_hwpoison;
-+	    + pfn_user + pfn_free + pfn_hwpoison + pfn_offline;
- 	shrinking = (pfn_original - pfn_excluded) * 100;
- 	shrinking = shrinking / pfn_original;
- 	total_size = info->page_size * pfn_original;
-diff --git a/makedumpfile.h b/makedumpfile.h
-index f02f86d..e3a2b29 100644
---- a/makedumpfile.h
-+++ b/makedumpfile.h
-@@ -1927,6 +1927,7 @@ struct number_table {
- 	long    PG_hwpoison;
- 
- 	long	PAGE_BUDDY_MAPCOUNT_VALUE;
-+	long	PAGE_OFFLINE_MAPCOUNT_VALUE;
- 	long	SECTION_SIZE_BITS;
- 	long	MAX_PHYSMEM_BITS;
- 	long    HUGETLB_PAGE_DTOR;
--- 
-2.17.2
-
