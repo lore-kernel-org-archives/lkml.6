@@ -2,128 +2,179 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C469C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2BEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1C32080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:39:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1C32080C
+	by mail.kernel.org (Postfix) with ESMTP id 950E02080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:40:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950E02080C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731443AbeKTKFZ (ORCPT
+        id S1731713AbeKTKG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:05:25 -0500
-Received: from mga04.intel.com ([192.55.52.120]:65250 "EHLO mga04.intel.com"
+        Tue, 20 Nov 2018 05:06:56 -0500
+Received: from mga02.intel.com ([134.134.136.20]:24787 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730079AbeKTKFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:05:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1727583AbeKTKG4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:06:56 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:39:19 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 15:35:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="275293670"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga005.jf.intel.com with ESMTP; 19 Nov 2018 15:39:19 -0800
-Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
- protection modes
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
- <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811192133240.1669@nanos.tec.linutronix.de>
- <nycvar.YFH.7.76.1811192153470.21108@cbobk.fhfr.pm>
- <49d27ed3-dc44-042c-4941-31dedb2a56d2@linux.intel.com>
- <alpine.DEB.2.21.1811192353170.1669@nanos.tec.linutronix.de>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <591a5109-ffef-b17f-38e3-12082d229451@intel.com>
-Date:   Mon, 19 Nov 2018 15:39:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+   d="gz'50?scan'50,208,50";a="105990333"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Nov 2018 15:35:26 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1gOt4g-0008kK-7a; Tue, 20 Nov 2018 07:35:26 +0800
+Date:   Tue, 20 Nov 2018 07:35:15 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     kbuild-all@01.org, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, serge@hallyn.com, jannh@google.com,
+        luto@kernel.org, akpm@linux-foundation.org, oleg@redhat.com,
+        cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        dancol@google.com, timmurray@google.com, linux-man@vger.kernel.org,
+        Christian Brauner <christian@brauner.io>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <201811200726.wJpi3qJO%fengguang.wu@intel.com>
+References: <20181119103241.5229-3-christian@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811192353170.1669@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+In-Reply-To: <20181119103241.5229-3-christian@brauner.io>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 3:01 PM, Thomas Gleixner wrote:
->> Yes, it wouldn't make sense for having just one of those if a task
->> is worried about attack from user space.
->>
->> I'll document it.
-> What? IBPB makes tons of sense even without STIBP.
 
-I'm lost. :)
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I don't think anyone is talking about using STIBP *everywhere* that IBPB
-is in-use.
+Hi Christian,
 
-We're just guessing that, if anybody is paranoid enough to ask for IBPB,
-*and* they have SMT, they almost certainly want STIBP too.
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v4.20-rc3]
+[cannot apply to next-20181119]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/Christian-Brauner/proc-allow-signaling-processes-via-file-descriptors/20181120-063836
+config: riscv-tinyconfig (attached as .config)
+compiler: riscv64-linux-gcc (GCC) 8.1.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # save the attached .config to linux build tree
+        GCC_VERSION=8.1.0 make.cross ARCH=riscv 
+
+All warnings (new ones prefixed by >>):
+
+>> <stdin>:1338:2: warning: #warning syscall procfd_signal not implemented [-Wcpp]
+
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
+
+H4sICE1I81sAAy5jb25maWcAhTvbcts4su/zFayZqlNJ7cbj2B5vZk/5AQJBCSuCoAFQsvPC
+UiTGUcWWfHSZSf7+dIO68NLwTu1OMuhGE2j0vVu//fJbxPa79ctst5zPnp9/Rk/VqtrMdtUi
++rp8rv43inWUaReJWLoLQE6Xq/2P3zfL7fyv6Obi6vLi8sNmfh2Nq82qeo74evV1+bSH/cv1
+6pfffoH//QaLL69AavPvyG+7vfnwjEQ+PM3n0bsh5++jTxcfLy4Bl+sskcOS81LaEiB3P49L
+8B/lRBgrdXb36fLj5eUJN2XZ8AQ6LbuRESwuZZZo+FfpmB0DMX+cob/gc7StdvvX80cHRo9F
+VuqstCo/f1hm0pUim5TMDMtUKunurq/wUofPa5XLVJROWBctt9FqvUPCx92p5iw9Hu7XX8/7
+moCSFU4TmweFTOPSstTh1sNiLBJWpK4caesypsTdr+9W61X1vkHbPtqJzHmT4vm8RltbKqG0
+eSyZc4yPSLzCilQOmiDPO2nuo+3+y/bndle9nHk3FJkwEl7N3Jd2pKcN9sFKrBWT2XnN5sxY
+gaDG+zYoKLifLEcsi1Nh+igceDcWE5E5e3xSt3ypNlvqZKPPZQ67dCxRmE7XyzRCJHyAvL0H
+k5CRHI5KI2zppILXI14tN0Ko3AGNTDQ/eVyf6LTIHDOPJP0DVo/xPC9+d7Pt92gHV41mq0W0
+3c1222g2n6/3q91y9XS+s5N8XMKGknGu4VsyG7YOYmWPvOFFZPvcg62PJcCa2+E/S/EATKXk
+3dbIze22s1+O678Qu5nho9IWea6Ns6B57uPVp+ZWPjS6yC0t2CPBx7mGTfg8Thv6ZS3gxV7h
+PC0Sx4iU0a8zSMeggBNvFExMn4OXOgfhkJ9FmWiD0gd/KJZxQdy4i23hLw1FebTcpcBtLgAJ
+DIUzjDfg9TM0OeRVB3TX0JcfCqfAEnrCLE1ppEeb2Dcxklo1afnVVj4QytEQcHiiMc3dYkiv
+M7AWSRE6TeHEAwkRuQ7dUQ4zlib0C/rDB2De7ARgdgRmlYQwqen1eCLhagde0/wCmgNmjAw8
+6Rg3Pip67yBP3nxIFBTvTdo3Ot5VDUQci/gsbyM2EV6gy5P5Pb8r/3h507Mrh7AgrzZf15uX
+2WpeReKvagWGi4EJ42i6wHDXFu5A50yePPNE1dDSm7aQlKFbZg58Oi1pNmWDAKAYEKywqR40
+L4v74WXMUBz9cUDWdSJTML8EydubgXRn1hpp+eT8n0o1zOhn8CRlrNj11XktZ/BtnSRWuLvL
+H1/9P9Xl8Z/TucG/j73ROJrVhnH2y+Bvk5QNbR9uplaok9O1uczQ7xLumEGgYJhDVoDdJBBs
+ofqro6kAV9r4Xj50bACRVArPm9q761qA8ufZDkUn2v18rZpy4n2FmVxfSYK5B+DtjWy5D6Xh
+iPBucaqnlDE+wVn22LKq7CEfPVpQxfJqSMlHAwFc1rAtKyondrgC3vTAi5Z3RTmA6JeVnNh1
+hrLmpiQvQpr3tZrt9puqpWIQ+UAATZAHwNUfl03KsHLdRu1QocncAZn6GIM1wNavmA60zsBV
+DIohyoHWae/sgz3Gcq+v682uZRp4P3DBNbFavK6Xqy4uRO2xDwj6m9Z/V5sIzNHsqXoBa0Qd
+MFe9bcfEYbaZf1vuqjky9sOieq1WizaRprn0el6CjgwzDDw4F9Z2LKqXVq+OI63HHSDoPVgz
+COKGhS5sX49AvHwce8h4Ort52qAHwcaI2doogGlygkOYdIxTm7sm0rhOAInfa1BK0SQNgM6U
+mbjlB4xI/J6ew65ZyPXkw5fZFrLL77WAvm7WkGe24tc8LYaQs2GGAyngr0//+Mcp+/GhgFXg
+0O4+NvRTx0UqAj4QrRYhpGDOUP7QrpWFN23thOQA91lk0TF9fRi5d2okWMXA5ibwsNtzSPyo
+5vvd7Mtz5fPvyPvNXUs0B5DVKkhK04S+cQ223Mic9ksHDAXWJOA9jYiLtt3yB1DVy3rzM1KU
+5hxtUcoc2MHzfXEBhCwWGMqApcw7woYBjmdCjdOE2zwF3cmdB4M82rubjovnGBZTSRhYYwiv
+YlO6k6c9x0xWEVuOibWCIwBrMr/97ubyz9sjRiZAgyE+8aoxVi3XkgqI8CGZpqNirhi5/jnv
+mL8zZFDQUeZnL/2afjg4HJ4NNDwQPQ2LvByIjI8UM5RWeFOERiJ3qBuCS5a28mbRt6Zx9dcS
+4rp4s/yrjuXOxnI5PyxHum9hizqOG4k0DwS3kGo5lSf0VeCSWczQEIUSaU8+kUaBkRJ1NaV3
++GS5efl7tqmi5/VsUW2a50umZapZHDgbPsLUJ4OUtjSuAFlNGRs5Cd7RI4iJCRiwGgHrSwcy
+YHeUnlDZ5CniAhkAihJ8zdGsoEtd+IdqvcEws4G0w1EpQewaJTmdNCVDJ2DMpAvUwQCKdsAZ
+IZoESsFM+kiDUP1avhLWajvZ/CYwwoSy9ZwZDGl7b55NlIjsKb6oLdtyO6cYBA+rHvG7dDqY
+gSe0BUgXZFKe37SoGkYnhvyKPKAQ4J4VFQLVkPLPa/5w29vmqh+zbSRX291m/+KTrO03EO1F
+tNvMVlskFYGjraIF3HX5in893p49Qxo2i5J8yMDrHDRisf57hVoRvawXe/BE7zbV/+2XEEtG
+8oq/P26VkME9R0ry6H+iTfXsC8fbNm/PKCiFtUE4wiyXCbE80TmxeiY0Wm93QSCfbRbUZ4L4
+awhC4N23601kd3CDpoN7x7VV77vWDc93Ind+HT7SvVex3MqDZDUYc5QMAGL4clRTuXrd7/rY
+5+JZlhd9eRnBhf2Tyd91hFtaImyx/kl7A6YEKYAc5GY2B5mgVMI5Wt3A4oQKIAAah2B4PJZ6
+SzooaP2RuTrVg+lcZFoaAOt+zJ5zBT4smr95IQ7/z+nTPcg0feycq36pK04+0BXtmSHODKwr
+GjCy9Hqe98+SuzyaP6/n37uaJ1Y+kIRoCIv5WDUGBz7VZowBki90gRdVOVYodmugV0W7b1U0
+WyyW6K0h1fFUtxetxEhm3Bk6ahnmUnfaBifY9GOgYDgFl8YmgWqhh4IfEIEKi4dj7SKlhXI0
+Ve0A8fzqI2EglKLPyhwfxZqq21g7wCKnlYO0Vd6HdaqFA5EfiT7ohIS1E9o/75Zf96s5cv9o
+BRYny3N2zglkku7Pj2VhmaEZU6MokYJzFQ9c09J9xhqlPKYlF3EUhkF0CIvgkby9ufoIKbOk
+SYwcB2dsJb8OkhgLlad0xOsP4G6v//xXEGzVH5e0eLHBwx+Xlz5GC+9+tDwgJAh2smTq+vqP
+h9JZzgJcMmJYQBSjafukRCzZscTWT4o3s9dvyzlZ84hNwKIaVcZ5yQXvkWM8j96x/WK5Bs+W
+Hz3be7o3y1QcpcsvmxmkdZv1fgdBwcnJJZvZSxV92X/9CnYz7tvNhFZ0LAukWNsrQaaoS591
+RhcZFWYWoGN6xGUJ6Z9LBRZyJGuUHxDeq1fi4il9GfG4qW2F7bcycc3HRIu2a8f1/NvPLbbD
+o3T2E31GXwUznfsvPnAhJ4Hi+gAcbDwMWC73mAtalHBjkeYy6A6LKc14pQIaLJTFniAJzASk
+OSKmv1SXq+RAwkPQ9tU4bMiyQBYRo+HoxcV11qjYoEioypt9zDikbYEGEyseYmnzUMxfBEId
+X9Kq86dAXwEQpAZeZf1aqlrON+vt+usuGv18rTYfJtHTvoIAlNBX8KdDuuDP0zHGOKnW46Jb
+AwEYJqyQsDRyIDDa4LsOJbzjIMULOAbuXb3Xzr/Xm++tsioQGtmYfurR9FjF7wd8nqRd7zct
+j3OUVeyI1fleawVykUHjwHV12oPa1XOZDjTdopNwxyJoGE31st5VGJxTKohpsMN8qG8CzevL
+9onckyt7fOuwSZrKtreo43j4zjvrG+SRhkf4tnx9H21fq/ny66nMcTIi7OV5/QTLds279mWw
+gZxqvn6hYNlD/nuyqaot2J4qul9v5D2FtrxQD9T6/X72DJS7pBuX4/A8vZs9YP31R2jTA3aw
+HsoJL0iG5QpD98SIQIb84IK+1Q+h0GIReJ182o/wMTefw2P0kyuA8JFs6BoDpzmUHNs1ZWaa
+FWQrE4m9zTQQwcgcnFrQIPv41FfpjU5DOUqi+nIKUXhr7OIcSB8qOYhA+liuyrHOGDqLqyAW
+BvkQsYiMCwgWgij5AyuvPmUKc45AXbGJhZ8MYimW5yNsDqhY3d4GWkc+aueMPpHitHczrO9E
+2GqxWS8Xrb5gFhst6UgyZrQVyrqJa51VT7FwMl+unmhDTwdmMnMQTjt6qsoXWEhAINuzMmA4
+bSoVlZYm2DOo5amlxeIBLWxi635IqQNTNOh2cTZt3PFhjYNi0cs85t3C+5nJmXYyCeh1DSuD
+EyoJe2P3faEdzT6c50nsTRkoFdfgEDQpcLyEhh3Kix1wzdjZ/FsnHra9DkCt5dtqv1j7dg7x
+MujAQp/3MLBhaWwEzW0/rUPXFv0f4Wtj98e/N5BwIjBBkqX9i9tqvt8sdz+p2G0sHgMlUMEL
+A0EkhITCeovpwL4F0oIDbrjwD9GslyFs2Pf7B0dBPDR0zp9mjep1F9qazvQC3i/lEYnS0R5L
+h/0GY5vhEEMd8f2TjlWHu2c8B6nCWi7eg0ZJRRaAYncbQiffK2scGmSFQ8ZEi4PhH29DkNJ9
+vIwl3U5EsHRFSZX1AeaHUprI11fA0zQJNAIOCOBnxeDxE7G1htyEjoIozEyZCzTaPAa8Rgh6
+G6QcBNBlh1QO/MdCY7b8U8CLYZkywKNzzPUZ5JMaAMHcFh6+2V+tl9C6d5urFvOv84JvX+I4
+ATY4UYlEMzKCxBlhnZ5pM0k5Cl89kTASYJIaKLgaQ9zMHTqXRg93KrVLWxMxXJs4EGjA12nH
+Ye7L7jTf+SGSuNXfRdOSDUkON0djvs3m3+u5A7/6ulmudt99kXTxUkH60Gttwx9We/849ENK
+Rxty968gxn0hhbu7Oc0JQTaNg1s9CjetSfkPfsgX3Mv8+9YfaH6YoKdMbt0fxEF3OgDP/FSV
+KqyrZ2QJFiaGKVFOmcnuri5vPrU5mZfMqjI4Y4hDEP4LzNIBUZGBDcMimxrowIxjPcw2zd5s
+kba9wVEwBVYmbX2zpgzUe8C4+7lZ8HUKS7ohd9NC8owoddauKDcVZcqwseyZ5geM4AStcawm
+5K0baQOB+VSw8XGqgHbUDHMW8NLtJmSL1FiYTKTHOsFhTCOuvuyfnmoRb/MasjKR2WAE50ki
+4huTBkgGrmh1FgoVazJ68B/g71utbT+PhKXsIW3Ta6xJqLOEwMPvGXAsm/I5h7knlnE9Ocw9
+5pyQllGnz3sYbwAuRul6/n3/WmvjaLZ66uTViZ9RKXKgVI9VBQ6LwHJUgHXCX6SQSNN7sv3Q
+4HwG4gDyqjtBPAUvJywtxPlnMTUQSzS6cLB8voKfi6+fQmRx31R0eIUkxkLkncevwySsJZ2E
+L3q3fV2ufB/pn9HLflf9qOAv1W5+cXHxvm/IqBJV97Vx4vvNaQnmtEKdSeGEb6AdEp2S5fLk
+LWiyPmmCZ3XY6w+67em0Ptvbzv08lEsTQesDigeG04LHhlfptzY79xjXSvbWTWXgMAddl/8N
+w76l4z5nk6HKao3DDdwlc5IRGQX++oQ0VvhbEz8QHmQmYvzXd/FIQYb7H7Tc2/qcb9wAFLO2
+2CZsq4+cKIUx2oBB+o/ojag1kl1MQEicZtyVFBk///rDdKKyE3RoWD6iceLHjKE+JJ3fjxDA
+ciod/sBp2B1SPYBVPdwJcR4Ece1hch9znboy51uGOe8DTpC9MOcNTp+q+mmRfrc83ywmBp/f
+u6EM0j+HgasxRbh4YZnKQ5OkxQA8CPFI9QxT/bsWuPj/A9wl1kVSOQAA
+
+--J2SCkAp4GZ/dPZZf--
