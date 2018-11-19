@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEDCC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF5EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A510F206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88F1A208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LR4uYSb4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A510F206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+Uqqrtq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F1A208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389989AbeKTDOa (ORCPT
+        id S2390000AbeKTDOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:14:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51842 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:14:29 -0500
+        id S2388976AbeKTDOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 937D5206BA;
-        Mon, 19 Nov 2018 16:50:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30F22208E4;
+        Mon, 19 Nov 2018 16:50:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646217;
-        bh=pq2u6jHQWdkevImuOF9+cwWqnU5Zz4L81zfyXiKf1wE=;
+        s=default; t=1542646219;
+        bh=sDwoeXAwfxrlIUdSZ7nEKUKEa3VDSEF68zSYImSQbPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LR4uYSb4wNCO1XtT0zJohO5lY4JHiGMk+rfd5Ui7Lp9aqDwsWnF0Du4+qItQgZmUE
-         lFBhcBgoJ6BGHsAzAFVm1b/4BP5fgjbwJLgDszaVP2/KAzPPzIFMWE8BfGEkZncwLE
-         eXUaJrawWLzVL0BcYEEF3OnvdILBbuUkRiS0UR5E=
+        b=G+UqqrtqDWGmk3cDU//f5NhK72HvfNlKvmp43JLwcF5iz4YBvgy42k6YVmAevbSeC
+         GuyKSyhzZn302EK7/atJgju3CXtQ08UojY2WpHZyxNeimL5sNRHqg77HIfaG8+gCDx
+         zCahB8exJr0RhvWQ0m67+ZmuJMIOGRGZGN/k4kyY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.14 074/124] ext4: add missing brelse() in set_flexbg_block_bitmap()s error path
-Date:   Mon, 19 Nov 2018 17:28:48 +0100
-Message-Id: <20181119162627.338430638@linuxfoundation.org>
+Subject: [PATCH 4.14 083/124] ext4: fix possible leak of sbi->s_group_desc_leak in error path
+Date:   Mon, 19 Nov 2018 17:28:57 +0100
+Message-Id: <20181119162628.891702588@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -62,42 +62,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit cea5794122125bf67559906a0762186cf417099c upstream.
+commit 9e463084cdb22e0b56b2dfbc50461020409a5fd3 upstream.
 
-Fixes: 33afdcc5402d ("ext4: add a function which sets up group blocks ...")
-Cc: stable@kernel.org # 3.3
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Fixes: bfe0a5f47ada ("ext4: add more mount time checks of the superblock")
+Reported-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 4.18
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/resize.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ fs/ext4/super.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/fs/ext4/resize.c
-+++ b/fs/ext4/resize.c
-@@ -444,16 +444,18 @@ static int set_flexbg_block_bitmap(struc
- 
- 		BUFFER_TRACE(bh, "get_write_access");
- 		err = ext4_journal_get_write_access(handle, bh);
--		if (err)
-+		if (err) {
-+			brelse(bh);
- 			return err;
-+		}
- 		ext4_debug("mark block bitmap %#04llx (+%llu/%u)\n", block,
- 			   block - start, count2);
- 		ext4_set_bits(bh->b_data, block - start, count2);
- 
- 		err = ext4_handle_dirty_metadata(handle, NULL, bh);
-+		brelse(bh);
- 		if (unlikely(err))
- 			return err;
--		brelse(bh);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4012,6 +4012,14 @@ static int ext4_fill_super(struct super_
+ 	sbi->s_groups_count = blocks_count;
+ 	sbi->s_blockfile_groups = min_t(ext4_group_t, sbi->s_groups_count,
+ 			(EXT4_MAX_BLOCK_FILE_PHYS / EXT4_BLOCKS_PER_GROUP(sb)));
++	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
++	    le32_to_cpu(es->s_inodes_count)) {
++		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
++			 le32_to_cpu(es->s_inodes_count),
++			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
++		ret = -EINVAL;
++		goto failed_mount;
++	}
+ 	db_count = (sbi->s_groups_count + EXT4_DESC_PER_BLOCK(sb) - 1) /
+ 		   EXT4_DESC_PER_BLOCK(sb);
+ 	if (ext4_has_feature_meta_bg(sb)) {
+@@ -4031,14 +4039,6 @@ static int ext4_fill_super(struct super_
+ 		ret = -ENOMEM;
+ 		goto failed_mount;
  	}
+-	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
+-	    le32_to_cpu(es->s_inodes_count)) {
+-		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
+-			 le32_to_cpu(es->s_inodes_count),
+-			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
+-		ret = -EINVAL;
+-		goto failed_mount;
+-	}
  
- 	return 0;
+ 	bgl_lock_init(sbi->s_blockgroup_lock);
+ 
 
 
