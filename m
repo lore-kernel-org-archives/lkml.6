@@ -2,90 +2,191 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063B6C04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76E5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:46:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E7C2086B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TzTV2XHW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E7C2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=russell.cc
+	by mail.kernel.org (Postfix) with ESMTP id 9FA052080C
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 02:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA052080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeKSNF5 (ORCPT
+        id S1728039AbeKSNIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 08:05:57 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54265 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726393AbeKSNF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 08:05:57 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 8617D966;
-        Sun, 18 Nov 2018 21:43:46 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Sun, 18 Nov 2018 21:43:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=k4judxvnQqY4gxG2Ew236YLz5HTm5ZsyoOzfNiUOJ
-        y4=; b=TzTV2XHWYVIJsqmbzmBruAIPqxv4EpAEqqsER9dF4KbOY2LcBjhVvxgci
-        f7i3qraS4WEft9LP6r0IUkrkV8bswEYh3W1yciSzKNhUob907DZ68O9EhDdHNxxG
-        vMZQxKttYKq5aJvBenrnmJAhtdbljZoafCQIFXFFTRT1ydPZBDYD07VFsH1gJUSO
-        XFk3MJLlaX/OadACA4D25nbW2eOjCrSlAS6J8mi+icJJs/9eUaeC7cZ+nqsqi9AA
-        sZKcrEa/Wd7R8wEW3ccWvKvUVtMUcw67KsXCU0ogVNauIysS0m1kQwYQfQICxeNv
-        6VydGrgaYGnIUT3aroekuvp8iQXag==
-X-ME-Sender: <xms:YCPyW_NzaXUvWQPMCU119xDrBiAdw5Pbi00uevVPInxyJ5rmkZznJw>
-X-ME-Proxy: <xmx:YCPyW-CrCd3rBboaNnLDeX1Jj4bysAY_NtbdTupFL7jzT0bk4S3p1A>
-    <xmx:YCPyW0TYi5o3qFujXfGdoWAiqqhXS_QxlBKxs-aVjxxc3E5nGt_HzQ>
-    <xmx:YCPyW6Kstsg-WB_q2aFGceE6F87sWtBxi4zOqXkFblO7AIWtIjrSLA>
-    <xmx:YCPyW95CxzJ4lq0vJJYdcnjAtNWUgLpYNEJTv8yMd2AypDGb9zFf4Q>
-    <xmx:YCPyW9e9AG088DjA9MbyovugK4dG4oirRkI3_hePMeHXEqQpzjB_5g>
-    <xmx:YiPyW63lxPywTu2Qbs8iIQiPXlsGkQjC_8hKVOy_mG_p8NFBs5ZrGA>
-Received: from crackle.ozlabs.ibm.com (unknown [122.99.82.10])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C490BE405B;
-        Sun, 18 Nov 2018 21:43:41 -0500 (EST)
-Message-ID: <63177c72b94a653707d6b984ca789ecf8ebf0a95.camel@russell.cc>
-Subject: Re: [RFC PATCH v1 3/6] powerpc: Add skeleton for Kernel Userspace
- Execution Prevention
-From:   Russell Currey <ruscur@russell.cc>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 19 Nov 2018 13:44:08 +1100
-In-Reply-To: <1b27e980fa8dda09955b35be09c99bb1e22fef70.1541568127.git.christophe.leroy@c-s.fr>
-References: <ab8fcb458e1a6ad86382767b3ce7f7cc0d5b7121.1541568127.git.christophe.leroy@c-s.fr>
-         <1b27e980fa8dda09955b35be09c99bb1e22fef70.1541568127.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
+        Mon, 19 Nov 2018 08:08:13 -0500
+Received: from foss.arm.com ([217.140.101.70]:49934 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeKSNIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 08:08:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5C7E80D;
+        Sun, 18 Nov 2018 18:46:05 -0800 (PST)
+Received: from [10.162.0.72] (unknown [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6AF7A3F5A0;
+        Sun, 18 Nov 2018 18:46:03 -0800 (PST)
+Subject: Re: [PATCH 1/7] node: Link memory nodes to their compute nodes
+To:     Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <79caebd8-ebf1-58b5-31e7-ead3626a1ec7@arm.com>
+Date:   Mon, 19 Nov 2018 08:16:02 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181114224921.12123-2-keith.busch@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-07 at 16:56 +0000, Christophe Leroy wrote:
-> This patch adds a skeleton for Kernel Userspace Execution Prevention.
+
+
+On 11/15/2018 04:19 AM, Keith Busch wrote:
+> Memory-only nodes will often have affinity to a compute node, and
+> platforms have ways to express that locality relationship.
+
+It may not have a local affinity to any compute node but it might have a
+valid NUMA distance from all available compute nodes. This is particularly
+true when the coherent device memory which is accessible from all available
+compute nodes without having local affinity to any compute node other than
+the device compute which may or not be represented as a NUMA node in itself.
+
+But in case of normally system memory also, a memory only node might be far
+from other CPU nodes and may not have CPUs of it's own. In that case there
+is no local affinity anyways.
+
 > 
-> Then subarches implementing it have to define CONFIG_PPC_HAVE_KUEP
-> and provide setup_kuep() function.
+> A node containing CPUs or other DMA devices that can initiate memory
+> access are referred to as "memory iniators". A "memory target" is a
+
+Memory initiators should also include heterogeneous compute elements like
+GPU cores, FPGA elements etc apart from CPU and DMA engines.
+
+> node that provides at least one phyiscal address range accessible to a
+> memory initiator.
+
+This definition for "memory target" makes sense. Coherent accesses within
+PA range from all possible "memory initiators" which should also include
+heterogeneous compute elements as mentioned before.
+
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> In preparation for these systems, provide a new kernel API to link
+> the target memory node to its initiator compute node with symlinks to
+> each other.
 
-An open question (with nothing to do specifically with this patch):
+Makes sense but how would we really define NUMA placement for various
+heterogeneous compute elements which are connected differently to the
+system bus differently than the CPU and DMA. 
 
-For what reason would you ever disable execution prevention?  Clearly
-there must be something since "nosmep" is a thing, but I don't know why
-we'd ever do it.
+> 
+> The following example shows the new sysfs hierarchy setup for memory node
+> 'Y' local to commpute node 'X':
+> 
+>   # ls -l /sys/devices/system/node/nodeX/initiator*
+>   /sys/devices/system/node/nodeX/targetY -> ../nodeY
+> 
+>   # ls -l /sys/devices/system/node/nodeY/target*
+>   /sys/devices/system/node/nodeY/initiatorX -> ../nodeX
 
-- Russell
+This inter linking makes sense but once we are able to define all possible
+memory initiators and memory targets as NUMA nodes (which might not very
+trivial) taking into account heterogeneous compute environment. But this
+linking at least establishes the coherency relationship between memory
+initiators and memory targets.
 
+> 
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  drivers/base/node.c  | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/node.h |  2 ++
+>  2 files changed, 34 insertions(+)
+> 
+> diff --git a/drivers/base/node.c b/drivers/base/node.c
+> index 86d6cd92ce3d..a9b7512a9502 100644
+> --- a/drivers/base/node.c
+> +++ b/drivers/base/node.c
+> @@ -372,6 +372,38 @@ int register_cpu_under_node(unsigned int cpu, unsigned int nid)
+>  				 kobject_name(&node_devices[nid]->dev.kobj));
+>  }
+>  
+> +int register_memory_node_under_compute_node(unsigned int m, unsigned int p)
+> +{
+> +	int ret;
+> +	char initiator[20], target[17];
+
+20, 17 seems arbitrary here.
+
+> +
+> +	if (!node_online(p) || !node_online(m))
+> +		return -ENODEV;
+
+Just wondering how a NUMA node for group of GPU compute elements will look
+like which are not manage by kernel but are still memory initiators having
+access to a number of memory targets.
+
+> +	if (m == p)
+> +		return 0;
+
+Why skip ? Should not we link memory target to it's own node which can be
+it's memory initiator as well. Caller of this linking function might decide
+on whether the memory target is accessible from same NUMA node as a memory
+initiator or not.
+
+> +
+> +	snprintf(initiator, sizeof(initiator), "initiator%d", p);
+> +	snprintf(target, sizeof(target), "target%d", m);
+> +
+> +	ret = sysfs_create_link(&node_devices[p]->dev.kobj,
+> +				&node_devices[m]->dev.kobj,
+> +				target);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = sysfs_create_link(&node_devices[m]->dev.kobj,
+> +				&node_devices[p]->dev.kobj,
+> +				initiator);
+> +	if (ret)
+> +		goto err;
+> +
+> +	return 0;
+> + err:
+> +	sysfs_remove_link(&node_devices[p]->dev.kobj,
+> +			  kobject_name(&node_devices[m]->dev.kobj));
+> +	return ret;
+> +}
+> +
+>  int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
+>  {
+>  	struct device *obj;
+> diff --git a/include/linux/node.h b/include/linux/node.h
+> index 257bb3d6d014..1fd734a3fb3f 100644
+> --- a/include/linux/node.h
+> +++ b/include/linux/node.h
+> @@ -75,6 +75,8 @@ extern int register_mem_sect_under_node(struct memory_block *mem_blk,
+>  extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
+>  					   unsigned long phys_index);
+>  
+> +extern int register_memory_node_under_compute_node(unsigned int m, unsigned int p);
+> +
+>  #ifdef CONFIG_HUGETLBFS
+>  extern void register_hugetlbfs_with_node(node_registration_func_t doregister,
+>  					 node_registration_func_t unregister);
+>
+The code is all good but as mentioned before the primary concern is whether
+this semantics will be able to correctly represent all possible present and
+future heterogeneous compute environments with multi attribute memory. This
+is going to be a kernel API. So apart from various NUMA representation for
+all possible kinds, the interface has to be abstract with generic elements
+and room for future extension.
