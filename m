@@ -2,119 +2,169 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D431EC43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4DDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B5720871
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B5720871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 03F9320817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:32:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F9320817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbeKSSzi (ORCPT
+        id S1727325AbeKSSzl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:55:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46355 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726996AbeKSSzh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:55:37 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gOeyu-0004se-1x; Mon, 19 Nov 2018 09:32:32 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gOeys-0005gD-Gu; Mon, 19 Nov 2018 09:32:30 +0100
-Date:   Mon, 19 Nov 2018 09:32:30 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Michal.Vokac@ysoft.com, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-pwm@vger.kernel.org,
-        l.majewski@majess.pl,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181119083230.re3dtq4alnrojbnd@pengutronix.de>
-References: <20181107093355.e4n3irrnkybqsjvc@pengutronix.de>
- <eb4e7a42-bd5c-3ae2-ccb7-d1a73d5ae99c@ysoft.com>
- <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
- <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <CACRpkdZAew3bUea=iR4t-a7SVSMf=-CTeWfeU215uT_jQ-o81A@mail.gmail.com>
+        Mon, 19 Nov 2018 13:55:41 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37238 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727010AbeKSSzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:55:40 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A8F6A20CFD; Mon, 19 Nov 2018 09:32:43 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 776612039F;
+        Mon, 19 Nov 2018 09:32:43 +0100 (CET)
+Date:   Mon, 19 Nov 2018 09:32:43 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v2 04/12] drm/sun4i: sun6i_mipi_dsi: Simplify drq set to
+ support all modes
+Message-ID: <20181119083243.4njj2p2sy2xf2zyf@flea>
+References: <20181116163916.29621-1-jagan@amarulasolutions.com>
+ <20181116163916.29621-5-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xic26kum5qm77vqt"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZAew3bUea=iR4t-a7SVSMf=-CTeWfeU215uT_jQ-o81A@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181116163916.29621-5-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
 
-On Mon, Nov 19, 2018 at 08:44:38AM +0100, Linus Walleij wrote:
-> There is quite a discussion you folks have going on here. I tried to
-> grasp it but I can't. I can try to answer the above question specifically.
+--xic26kum5qm77vqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To sumarize: When the pwm driver probes it is not yet clear if the idle
-state of the output pin is high or low. Even when the pinctrl device has
-an "init" and a "default" pinctrl, it is not yet fixed when its
-"default" is configured.
+On Fri, Nov 16, 2018 at 10:09:08PM +0530, Jagan Teki wrote:
+> Allwinner MIPI DSI DRQ set value can be varied with respective
+> video modes.
+> - burst mode the set value is always 0
+> - video modes whose front porch greater than 20, the set value
+>   can be computed based front porch and bpp.
+> - video modes whose front porch is not greater than 20, the set value
+>   is simply 0
+>=20
+> This patch simplifies existing drq set value code by grouping
+> into sun6i_dsi_get_drq and support all video modes.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 38 ++++++++++++++++----------
+>  1 file changed, 23 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
+4i/sun6i_mipi_dsi.c
+> index efd08bfd0cb8..d60955880c43 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -363,6 +363,26 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *ds=
+i,
+>  		     SUN6I_DSI_INST_JUMP_CFG_NUM(1));
+>  };
+> =20
+> +static int sun6i_dsi_get_drq(struct sun6i_dsi *dsi,
+> +			      struct drm_display_mode *mode)
+> +{
+> +	struct mipi_dsi_device *device =3D dsi->device;
+> +	int drq =3D 0;
 
-The way Thierry wants to fix that is by disabling the output driver
-until the pwm is in use und rely on a pull-up or pull-down in hardware.
+So, here, you declaring a variable called drq, set to 0.
 
-The way I want to fix this is to only configure the pwm pin as part of
-the consumer. This is late enough that the consumer already requested
-and configured the pwm such that the idle level is known.
-Thierry's and Lothar's claim was that putting the pin setup of the pwm
-pin into the pwm consumer's pinctrl was forbidden. That's why I asked
-you as pinctrl maintainer if there is a requirement that I don't know
-of.
+> +	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+> +		return drq;
 
-> So compared to things like that (that we still have to support
-> forever) whatever you are doing here you're doing great as long
-> as it is consumer controlled.
-> 
-> Whether that consumer is the previous driver thingie in the
-> daisy-chain of consumers or the final end user consumer of
-> the pin doesn't really matter to pin control, as long as it is a
-> consumer. I would tend to say it is up to the subsystem,
-> and the old IETF motto "rough consensus and running code".
+That you return here. You could just return 0, to be clearer.
 
-So I understand that from the pinctrl side there is no hard requirement
-that the PWM pin must be muxed as part of the pwm device. And if things
-work better when the pin is only configured as part of its consumer this
-is legitimate.
+> +	if ((mode->hsync_start - mode->hdisplay) > 20) {
+> +		/* Maaaaaagic */
+> +		u16 drq =3D (mode->hsync_start - mode->hdisplay) - 20;
 
-Thanks for your feedback.
+You re-declare a variable with the same name here, but a different
+type....
 
-Best regards
-Uwe
+> +		drq *=3D mipi_dsi_pixel_format_to_bpp(device->format);
+> +		drq /=3D 32;
+> +	}
+> +
+> +	return drq;
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+And then return the first one? How is that even working?
+
+> +
+>  static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
+>  				      struct drm_display_mode *mode, u16 hblk)
+>  {
+> @@ -478,21 +498,9 @@ static u16 sun6i_dsi_get_video_start_delay(struct su=
+n6i_dsi *dsi,
+>  static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+>  				  struct drm_display_mode *mode)
+>  {
+> -	struct mipi_dsi_device *device =3D dsi->device;
+> -	u32 val =3D 0;
+> -
+> -	if ((mode->hsync_start - mode->hdisplay) > 20) {
+> -		/* Maaaaaagic */
+> -		u16 drq =3D (mode->hsync_start - mode->hdisplay) - 20;
+> -
+> -		drq *=3D mipi_dsi_pixel_format_to_bpp(device->format);
+> -		drq /=3D 32;
+> -
+> -		val =3D (SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
+> -		       SUN6I_DSI_TCON_DRQ_SET(drq));
+> -	}
+> -
+> -	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG, val);
+> +	regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
+> +		     SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
+> +		     SUN6I_DSI_TCON_DRQ_SET(sun6i_dsi_get_drq(dsi, mode)));
+
+On top of that, you now enable the DRQ stuff all the time, while it
+was conditional before.
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--xic26kum5qm77vqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/J1KwAKCRDj7w1vZxhR
+xWZZAPwIptQE4vTx5lH3nECBMHT77qQdWrR5HLWWifK0PzUfswEA473gEJF8qMPR
+aZD2c/c5xY4at4eU8jxNkiytdl/ENg4=
+=dwiT
+-----END PGP SIGNATURE-----
+
+--xic26kum5qm77vqt--
