@@ -7,50 +7,53 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB50C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CECC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75B172145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1662921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:44:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l8igayo4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75B172145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="of7fnw3q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1662921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388286AbeKTDIk (ORCPT
+        id S2388297AbeKTDIn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:08:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43294 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDIj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:08:39 -0500
+        id S1731911AbeKTDIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:08:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00E8D2086A;
-        Mon, 19 Nov 2018 16:44:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 682C120C01;
+        Mon, 19 Nov 2018 16:44:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645868;
-        bh=UO9KgfJ+QWqntVIEF6TPMlcTA58O41y1bWMDDzhIVVg=;
+        s=default; t=1542645871;
+        bh=ASZkzun2Zr6EHuh/+prk2gLBgCJ0lbJqTPvP7qVnS/8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l8igayo4jRGBUPLYJnTEwMwOeaOXBcURBDn0rp3z+aLjd2BBHZrr6SDV5l8O6mDDY
-         nj77NAG8urU+XBgpCcDPO4Nsg2w1EV1Gwoez6EGhHa/vPaTgyIRyPRLbxNkDok6I1/
-         OV/XS7/Ag/JWm1/1D6LVDehM4HKOIWHKcILMf+ZM=
+        b=of7fnw3qWE+Eoj+pBS7qxiNa3FB2z7B6mBUoESdpwfoUbOZV2S5YBq/emn5pHfcWz
+         P4ifR/WMK2UID/IyQbF/QEhoebGAWKO+ygRD84sLncKEK25tNYhNh4/TCbwVhTIb3r
+         1ZfDe0/QPcyfvfkSTS+MBhwZtECDSSWeW3FvgG7k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wengang Wang <wen.gang.wang@oracle.com>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Stefan Priebe <s.priebe@profihost.ag>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.18 083/171] ocfs2: free up write context when direct IO failed
-Date:   Mon, 19 Nov 2018 17:27:59 +0100
-Message-Id: <20181119162632.766117734@linuxfoundation.org>
+Subject: [PATCH 4.18 084/171] mm: thp: relax __GFP_THISNODE for MADV_HUGEPAGE mappings
+Date:   Mon, 19 Nov 2018 17:28:00 +0100
+Message-Id: <20181119162632.869393576@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -68,85 +71,228 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wengang Wang <wen.gang.wang@oracle.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-commit 5040f8df56fb90c7919f1c9b0b6e54c843437456 upstream.
+commit ac5b2c18911ffe95c08d69273917f90212cf5659 upstream.
 
-The write context should also be freed even when direct IO failed.
-Otherwise a memory leak is introduced and entries remain in
-oi->ip_unwritten_list causing the following BUG later in unlink path:
+THP allocation might be really disruptive when allocated on NUMA system
+with the local node full or hard to reclaim.  Stefan has posted an
+allocation stall report on 4.12 based SLES kernel which suggests the
+same issue:
 
-  ERROR: bug expression: !list_empty(&oi->ip_unwritten_list)
-  ERROR: Clear inode of 215043, inode has unwritten extents
-  ...
+  kvm: page allocation stalls for 194572ms, order:9, mode:0x4740ca(__GFP_HIGHMEM|__GFP_IO|__GFP_FS|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_THISNODE|__GFP_MOVABLE|__GFP_DIRECT_RECLAIM), nodemask=(null)
+  kvm cpuset=/ mems_allowed=0-1
+  CPU: 10 PID: 84752 Comm: kvm Tainted: G        W 4.12.0+98-ph <a href="/view.php?id=1" title="[geschlossen] Integration Ramdisk" class="resolved">0000001</a> SLE15 (unreleased)
+  Hardware name: Supermicro SYS-1029P-WTRT/X11DDW-NT, BIOS 2.0 12/05/2017
   Call Trace:
-  ? __set_current_blocked+0x42/0x68
-  ocfs2_evict_inode+0x91/0x6a0 [ocfs2]
-  ? bit_waitqueue+0x40/0x33
-  evict+0xdb/0x1af
-  iput+0x1a2/0x1f7
-  do_unlinkat+0x194/0x28f
-  SyS_unlinkat+0x1b/0x2f
-  do_syscall_64+0x79/0x1ae
-  entry_SYSCALL_64_after_hwframe+0x151/0x0
+   dump_stack+0x5c/0x84
+   warn_alloc+0xe0/0x180
+   __alloc_pages_slowpath+0x820/0xc90
+   __alloc_pages_nodemask+0x1cc/0x210
+   alloc_pages_vma+0x1e5/0x280
+   do_huge_pmd_wp_page+0x83f/0xf00
+   __handle_mm_fault+0x93d/0x1060
+   handle_mm_fault+0xc6/0x1b0
+   __do_page_fault+0x230/0x430
+   do_page_fault+0x2a/0x70
+   page_fault+0x7b/0x80
+   [...]
+  Mem-Info:
+  active_anon:126315487 inactive_anon:1612476 isolated_anon:5
+   active_file:60183 inactive_file:245285 isolated_file:0
+   unevictable:15657 dirty:286 writeback:1 unstable:0
+   slab_reclaimable:75543 slab_unreclaimable:2509111
+   mapped:81814 shmem:31764 pagetables:370616 bounce:0
+   free:32294031 free_pcp:6233 free_cma:0
+  Node 0 active_anon:254680388kB inactive_anon:1112760kB active_file:240648kB inactive_file:981168kB unevictable:13368kB isolated(anon):0kB isolated(file):0kB mapped:280240kB dirty:1144kB writeback:0kB shmem:95832kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 81225728kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+  Node 1 active_anon:250583072kB inactive_anon:5337144kB active_file:84kB inactive_file:0kB unevictable:49260kB isolated(anon):20kB isolated(file):0kB mapped:47016kB dirty:0kB writeback:4kB shmem:31224kB shmem_thp: 0kB shmem_pmdmapped: 0kB anon_thp: 31897600kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
 
-This patch also logs, with frequency limit, direct IO failures.
+The defrag mode is "madvise" and from the above report it is clear that
+the THP has been allocated for MADV_HUGEPAGA vma.
 
-Link: http://lkml.kernel.org/r/20181102170632.25921-1-wen.gang.wang@oracle.com
-Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
-Reviewed-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: <stable@vger.kernel.org>
+Andrea has identified that the main source of the problem is
+__GFP_THISNODE usage:
+
+: The problem is that direct compaction combined with the NUMA
+: __GFP_THISNODE logic in mempolicy.c is telling reclaim to swap very
+: hard the local node, instead of failing the allocation if there's no
+: THP available in the local node.
+:
+: Such logic was ok until __GFP_THISNODE was added to the THP allocation
+: path even with MPOL_DEFAULT.
+:
+: The idea behind the __GFP_THISNODE addition, is that it is better to
+: provide local memory in PAGE_SIZE units than to use remote NUMA THP
+: backed memory. That largely depends on the remote latency though, on
+: threadrippers for example the overhead is relatively low in my
+: experience.
+:
+: The combination of __GFP_THISNODE and __GFP_DIRECT_RECLAIM results in
+: extremely slow qemu startup with vfio, if the VM is larger than the
+: size of one host NUMA node. This is because it will try very hard to
+: unsuccessfully swapout get_user_pages pinned pages as result of the
+: __GFP_THISNODE being set, instead of falling back to PAGE_SIZE
+: allocations and instead of trying to allocate THP on other nodes (it
+: would be even worse without vfio type1 GUP pins of course, except it'd
+: be swapping heavily instead).
+
+Fix this by removing __GFP_THISNODE for THP requests which are
+requesting the direct reclaim.  This effectivelly reverts 5265047ac301
+on the grounds that the zone/node reclaim was known to be disruptive due
+to premature reclaim when there was memory free.  While it made sense at
+the time for HPC workloads without NUMA awareness on rare machines, it
+was ultimately harmful in the majority of cases.  The existing behaviour
+is similar, if not as widespare as it applies to a corner case but
+crucially, it cannot be tuned around like zone_reclaim_mode can.  The
+default behaviour should always be to cause the least harm for the
+common case.
+
+If there are specialised use cases out there that want zone_reclaim_mode
+in specific cases, then it can be built on top.  Longterm we should
+consider a memory policy which allows for the node reclaim like behavior
+for the specific memory ranges which would allow a
+
+[1] http://lkml.kernel.org/r/20180820032204.9591-1-aarcange@redhat.com
+
+Mel said:
+
+: Both patches look correct to me but I'm responding to this one because
+: it's the fix.  The change makes sense and moves further away from the
+: severe stalling behaviour we used to see with both THP and zone reclaim
+: mode.
+:
+: I put together a basic experiment with usemem configured to reference a
+: buffer multiple times that is 80% the size of main memory on a 2-socket
+: box with symmetric node sizes and defrag set to "always".  The defrag
+: setting is not the default but it would be functionally similar to
+: accessing a buffer with madvise(MADV_HUGEPAGE).  Usemem is configured to
+: reference the buffer multiple times and while it's not an interesting
+: workload, it would be expected to complete reasonably quickly as it fits
+: within memory.  The results were;
+:
+: usemem
+:                                   vanilla           noreclaim-v1
+: Amean     Elapsd-1       42.78 (   0.00%)       26.87 (  37.18%)
+: Amean     Elapsd-3       27.55 (   0.00%)        7.44 (  73.00%)
+: Amean     Elapsd-4        5.72 (   0.00%)        5.69 (   0.45%)
+:
+: This shows the elapsed time in seconds for 1 thread, 3 threads and 4
+: threads referencing buffers 80% the size of memory.  With the patches
+: applied, it's 37.18% faster for the single thread and 73% faster with two
+: threads.  Note that 4 threads showing little difference does not indicate
+: the problem is related to thread counts.  It's simply the case that 4
+: threads gets spread so their workload mostly fits in one node.
+:
+: The overall view from /proc/vmstats is more startling
+:
+:                          4.19.0-rc1  4.19.0-rc1
+:                             vanillanoreclaim-v1r1
+: Minor Faults               35593425      708164
+: Major Faults                 484088          36
+: Swap Ins                    3772837           0
+: Swap Outs                   3932295           0
+:
+: Massive amounts of swap in/out without the patch
+:
+: Direct pages scanned        6013214           0
+: Kswapd pages scanned              0           0
+: Kswapd pages reclaimed            0           0
+: Direct pages reclaimed      4033009           0
+:
+: Lots of reclaim activity without the patch
+:
+: Kswapd efficiency              100%        100%
+: Kswapd velocity               0.000       0.000
+: Direct efficiency               67%        100%
+: Direct velocity           11191.956       0.000
+:
+: Mostly from direct reclaim context as you'd expect without the patch.
+:
+: Page writes by reclaim  3932314.000       0.000
+: Page writes file                 19           0
+: Page writes anon            3932295           0
+: Page reclaim immediate        42336           0
+:
+: Writes from reclaim context is never good but the patch eliminates it.
+:
+: We should never have default behaviour to thrash the system for such a
+: basic workload.  If zone reclaim mode behaviour is ever desired but on a
+: single task instead of a global basis then the sensible option is to build
+: a mempolicy that enforces that behaviour.
+
+This was a severe regression compared to previous kernels that made
+important workloads unusable and it starts when __GFP_THISNODE was
+added to THP allocations under MADV_HUGEPAGE.  It is not a significant
+risk to go to the previous behavior before __GFP_THISNODE was added, it
+worked like that for years.
+
+This was simply an optimization to some lucky workloads that can fit in
+a single node, but it ended up breaking the VM for others that can't
+possibly fit in a single node, so going back is safe.
+
+[mhocko@suse.com: rewrote the changelog based on the one from Andrea]
+Link: http://lkml.kernel.org/r/20180925120326.24392-2-mhocko@kernel.org
+Fixes: 5265047ac301 ("mm, thp: really limit transparent hugepage allocation to local node")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reported-by: Stefan Priebe <s.priebe@profihost.ag>
+Debugged-by: Andrea Arcangeli <aarcange@redhat.com>
+Reported-by: Alex Williamson <alex.williamson@redhat.com>
+Reviewed-by: Mel Gorman <mgorman@techsingularity.net>
+Tested-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: David Rientjes <rientjes@google.com>
+Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: <stable@vger.kernel.org>	[4.1+]
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/aops.c            |   12 ++++++++++--
- fs/ocfs2/cluster/masklog.h |    9 +++++++++
- 2 files changed, 19 insertions(+), 2 deletions(-)
+ mm/mempolicy.c |   32 ++++++++++++++++++++++++++++++--
+ 1 file changed, 30 insertions(+), 2 deletions(-)
 
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2412,8 +2412,16 @@ static int ocfs2_dio_end_io(struct kiocb
- 	/* this io's submitter should not have unlocked this before we could */
- 	BUG_ON(!ocfs2_iocb_is_rw_locked(iocb));
- 
--	if (bytes > 0 && private)
--		ret = ocfs2_dio_end_io_write(inode, private, offset, bytes);
-+	if (bytes <= 0)
-+		mlog_ratelimited(ML_ERROR, "Direct IO failed, bytes = %lld",
-+				 (long long)bytes);
-+	if (private) {
-+		if (bytes > 0)
-+			ret = ocfs2_dio_end_io_write(inode, private, offset,
-+						     bytes);
-+		else
-+			ocfs2_dio_free_write_ctx(inode, private);
-+	}
- 
- 	ocfs2_iocb_clear_rw_locked(iocb);
- 
---- a/fs/ocfs2/cluster/masklog.h
-+++ b/fs/ocfs2/cluster/masklog.h
-@@ -178,6 +178,15 @@ do {									\
- 			      ##__VA_ARGS__);				\
- } while (0)
- 
-+#define mlog_ratelimited(mask, fmt, ...)				\
-+do {									\
-+	static DEFINE_RATELIMIT_STATE(_rs,				\
-+				      DEFAULT_RATELIMIT_INTERVAL,	\
-+				      DEFAULT_RATELIMIT_BURST);		\
-+	if (__ratelimit(&_rs))						\
-+		mlog(mask, fmt, ##__VA_ARGS__);				\
-+} while (0)
-+
- #define mlog_errno(st) ({						\
- 	int _st = (st);							\
- 	if (_st != -ERESTARTSYS && _st != -EINTR &&			\
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2046,8 +2046,36 @@ alloc_pages_vma(gfp_t gfp, int order, st
+ 		nmask = policy_nodemask(gfp, pol);
+ 		if (!nmask || node_isset(hpage_node, *nmask)) {
+ 			mpol_cond_put(pol);
+-			page = __alloc_pages_node(hpage_node,
+-						gfp | __GFP_THISNODE, order);
++			/*
++			 * We cannot invoke reclaim if __GFP_THISNODE
++			 * is set. Invoking reclaim with
++			 * __GFP_THISNODE set, would cause THP
++			 * allocations to trigger heavy swapping
++			 * despite there may be tons of free memory
++			 * (including potentially plenty of THP
++			 * already available in the buddy) on all the
++			 * other NUMA nodes.
++			 *
++			 * At most we could invoke compaction when
++			 * __GFP_THISNODE is set (but we would need to
++			 * refrain from invoking reclaim even if
++			 * compaction returned COMPACT_SKIPPED because
++			 * there wasn't not enough memory to succeed
++			 * compaction). For now just avoid
++			 * __GFP_THISNODE instead of limiting the
++			 * allocation path to a strict and single
++			 * compaction invocation.
++			 *
++			 * Supposedly if direct reclaim was enabled by
++			 * the caller, the app prefers THP regardless
++			 * of the node it comes from so this would be
++			 * more desiderable behavior than only
++			 * providing THP originated from the local
++			 * node in such case.
++			 */
++			if (!(gfp & __GFP_DIRECT_RECLAIM))
++				gfp |= __GFP_THISNODE;
++			page = __alloc_pages_node(hpage_node, gfp, order);
+ 			goto out;
+ 		}
+ 	}
 
 
