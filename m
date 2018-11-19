@@ -2,768 +2,882 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9151CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B006C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DD320870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34DD320870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pschenker.ch
+	by mail.kernel.org (Postfix) with ESMTP id DE0582086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:48:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrcfbYbi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0582086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbeKSVLS (ORCPT
+        id S1728208AbeKSVLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 16:11:18 -0500
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:37929 "EHLO
-        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727767AbeKSVLR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 16:11:17 -0500
-Received: from [10.0.2.46] (helo=asmtp013.mail.hostpoint.ch)
-        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gOgkY-000Bov-UH; Mon, 19 Nov 2018 11:25:50 +0100
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp013.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gOgkY-0007f0-Mm; Mon, 19 Nov 2018 11:25:50 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        linux-iio@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
+        Mon, 19 Nov 2018 16:11:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727767AbeKSVLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 16:11:23 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3E9920831;
+        Mon, 19 Nov 2018 10:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542624486;
+        bh=o/gurIQn+W0llOlOrPRi2cR+J9skmq07HQiYES1wa18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PrcfbYbikUx93iXMczPIT9O1EA8rXmO9IXqxxavu2E+5A/ILvUzEIVr/o4BnnIW86
+         kJlVvxTfq2VUPvSaJER74Q0L5ZPlTVErvjAtIbNuqSWdzF7FTxwGznwpRsKqs2eF2Q
+         Pz6WB5SFNGWxOH1ufkL0YhkvlSKQ9dr/pF3qnzs4=
+Date:   Mon, 19 Nov 2018 12:48:01 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
+        linuxarm@huawei.com, haojian.zhuang@linaro.org,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        David Kershner <david.kershner@unisys.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
+        linux-netdev <netdev@vger.kernel.org>,
         Randy Dunlap <rdunlap@infradead.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Freeman Liu <freeman.liu@spreadtrum.com>,
-        linux-input@vger.kernel.org,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH v2 2/4] iio: adc: add STMPE ADC driver using IIO framework
-Date:   Mon, 19 Nov 2018 11:25:26 +0100
-Message-Id: <20181119102528.2830-2-dev@pschenker.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119102528.2830-1-dev@pschenker.ch>
-References: <20181119102528.2830-1-dev@pschenker.ch>
+        linux-kernel@vger.kernel.org, Zhou Wang <wangzhou1@hisilicon.com>,
+        linux-crypto@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-accelerators@lists.ozlabs.org,
+        Jerome Glisse <jglisse@redhat.com>
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181119104801.GF8268@mtr-leonro.mtl.com>
+References: <20181112075807.9291-1-nek.in.cn@gmail.com>
+ <20181112075807.9291-2-nek.in.cn@gmail.com>
+ <20181113002354.GO3695@mtr-leonro.mtl.com>
+ <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
+ <20181114160017.GI3759@mtr-leonro.mtl.com>
+ <20181115085109.GD157308@Turing-Arch-b>
+ <20181115145455.GN3759@mtr-leonro.mtl.com>
+ <20181119091405.GE157308@Turing-Arch-b>
+ <20181119091910.GF157308@Turing-Arch-b>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Disposition: inline
+In-Reply-To: <20181119091910.GF157308@Turing-Arch-b>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
 
-This adds an ADC driver for the STMPE device using the industrial
-input/output interface. The driver supports raw reading of values.
-The driver depends on the MFD STMPE driver. If the touchscreen
-block is enabled too, only four of the 8 ADC channels are available.
+--nFreZHaLTZJo0R7j
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+On Mon, Nov 19, 2018 at 05:19:10PM +0800, Kenneth Lee wrote:
+> On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
+> > Date: Mon, 19 Nov 2018 17:14:05 +0800
+> > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > To: Leon Romanovsky <leon@kernel.org>
+> > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+> >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+> >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+> >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mai=
+ling
+> >  list <linux-rdma@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Jason
+> >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+> >  Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>, David Kershner
+> >  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
+> >  Hovold <johan@kernel.org>, Cyrille Pitchen
+> >  <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Du=
+nlap
+> >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Zhou Wang
+> >  <wangzhou1@hisilicon.com>, linux-crypto@vger.kernel.org, Philippe
+> >  Ombredanne <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.co=
+m>,
+> >  "David S. Miller" <davem@davemloft.net>,
+> >  linux-accelerators@lists.ozlabs.org
+> > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > User-Agent: Mutt/1.5.21 (2010-09-15)
+> > Message-ID: <20181119091405.GE157308@Turing-Arch-b>
+> >
+> > On Thu, Nov 15, 2018 at 04:54:55PM +0200, Leon Romanovsky wrote:
+> > > Date: Thu, 15 Nov 2018 16:54:55 +0200
+> > > From: Leon Romanovsky <leon@kernel.org>
+> > > To: Kenneth Lee <liguozhu@hisilicon.com>
+> > > CC: Kenneth Lee <nek.in.cn@gmail.com>, Tim Sell <timothy.sell@unisys.=
+com>,
+> > >  linux-doc@vger.kernel.org, Alexander Shishkin
+> > >  <alexander.shishkin@linux.intel.com>, Zaibo Xu <xuzaibo@huawei.com>,
+> > >  zhangfei.gao@foxmail.com, linuxarm@huawei.com, haojian.zhuang@linaro=
+=2Eorg,
+> > >  Christoph Lameter <cl@linux.com>, Hao Fang <fanghao11@huawei.com>, G=
+avin
+> > >  Schenk <g.schenk@eckelmann.de>, RDMA mailing list
+> > >  <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, J=
+ason
+> > >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+> > >  Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>, David Kershner
+> > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
+> > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy =
+Dunlap
+> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
+> > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "Davi=
+d S.
+> > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
+> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uac=
+ce
+> > > User-Agent: Mutt/1.10.1 (2018-07-13)
+> > > Message-ID: <20181115145455.GN3759@mtr-leonro.mtl.com>
+> > >
+> > > On Thu, Nov 15, 2018 at 04:51:09PM +0800, Kenneth Lee wrote:
+> > > > On Wed, Nov 14, 2018 at 06:00:17PM +0200, Leon Romanovsky wrote:
+> > > > > Date: Wed, 14 Nov 2018 18:00:17 +0200
+> > > > > From: Leon Romanovsky <leon@kernel.org>
+> > > > > To: Kenneth Lee <nek.in.cn@gmail.com>
+> > > > > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+> > > > >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> > > > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.=
+com,
+> > > > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao=
+ Fang
+> > > > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RD=
+MA mailing
+> > > > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilico=
+n.com>,
+> > > > >  Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.co=
+m>, Uwe
+> > > > >  Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>, David Kershn=
+er
+> > > > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cy=
+rille
+> > > > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Ra=
+ndy Dunlap
+> > > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> > > > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombre=
+danne
+> > > > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, K=
+enneth Lee
+> > > > >  <liguozhu@hisilicon.com>, "David S. Miller" <davem@davemloft.net=
+>,
+> > > > >  linux-accelerators@lists.ozlabs.org
+> > > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive=
+/uacce
+> > > > > User-Agent: Mutt/1.10.1 (2018-07-13)
+> > > > > Message-ID: <20181114160017.GI3759@mtr-leonro.mtl.com>
+> > > > >
+> > > > > On Wed, Nov 14, 2018 at 10:58:09AM +0800, Kenneth Lee wrote:
+> > > > > >
+> > > > > > =E5=9C=A8 2018/11/13 =E4=B8=8A=E5=8D=888:23, Leon Romanovsky =
+=E5=86=99=E9=81=93:
+> > > > > > > On Mon, Nov 12, 2018 at 03:58:02PM +0800, Kenneth Lee wrote:
+> > > > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > > > >
+> > > > > > > > WarpDrive is a general accelerator framework for the user a=
+pplication to
+> > > > > > > > access the hardware without going through the kernel in dat=
+a path.
+> > > > > > > >
+> > > > > > > > The kernel component to provide kernel facility to driver f=
+or expose the
+> > > > > > > > user interface is called uacce. It a short name for
+> > > > > > > > "Unified/User-space-access-intended Accelerator Framework".
+> > > > > > > >
+> > > > > > > > This patch add document to explain how it works.
+> > > > > > > + RDMA and netdev folks
+> > > > > > >
+> > > > > > > Sorry, to be late in the game, I don't see other patches, but=
+ from
+> > > > > > > the description below it seems like you are reinventing RDMA =
+verbs
+> > > > > > > model. I have hard time to see the differences in the proposed
+> > > > > > > framework to already implemented in drivers/infiniband/* for =
+the kernel
+> > > > > > > space and for the https://github.com/linux-rdma/rdma-core/ fo=
+r the user
+> > > > > > > space parts.
+> > > > > >
+> > > > > > Thanks Leon,
+> > > > > >
+> > > > > > Yes, we tried to solve similar problem in RDMA. We also learned=
+ a lot from
+> > > > > > the exist code of RDMA. But we we have to make a new one becaus=
+e we cannot
+> > > > > > register accelerators such as AI operation, encryption or compr=
+ession to the
+> > > > > > RDMA framework:)
+> > > > >
+> > > > > Assuming that you did everything right and still failed to use RD=
+MA
+> > > > > framework, you was supposed to fix it and not to reinvent new exa=
+ctly
+> > > > > same one. It is how we develop kernel, by reusing existing code.
+> > > >
+> > > > Yes, but we don't force other system such as NIC or GPU into RDMA, =
+do we?
+> > >
+> > > You don't introduce new NIC or GPU, but proposing another interface to
+> > > directly access HW memory and bypass kernel for the data path. This is
+> > > whole idea of RDMA and this is why it is already present in the kerne=
+l.
+> > >
+> > > Various hardware devices are supported in our stack allow a ton of cr=
+azy
+> > > stuff, including GPUs interconnections and NIC functionalities.
+> >
+> > Yes. We don't want to invent new wheel. That is why we did it behind VF=
+IO in RFC
+> > v1 and v2. But finally we were persuaded by Mr. Jerome Glisse that VFIO=
+ was not
+> > a good place to solve the problem.
 
-Changes in v2:
- - Code formatting
- - Move code to setup ADC to MFD device, as it is used by both drivers
-   adc and touchscreen
- - Removed unused includes
- - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
- - Added new macro that defines the channel of the temperature sensor.
-   Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it throughout
-   the code for better readability.
- - Added mutex_unlock where missing.
+I saw a couple of his responses, he constantly said to you that you are
+reinventing the wheel.
+https://lore.kernel.org/lkml/20180904150019.GA4024@redhat.com/
 
- drivers/iio/adc/Kconfig              |   7 +
- drivers/iio/adc/Makefile             |   1 +
- drivers/iio/adc/stmpe-adc.c          | 340 +++++++++++++++++++++++++++
- drivers/input/touchscreen/stmpe-ts.c |  43 +---
- drivers/mfd/Kconfig                  |   3 +-
- drivers/mfd/stmpe.c                  |  84 +++++++
- include/linux/mfd/stmpe.h            |   6 +
- 7 files changed, 445 insertions(+), 39 deletions(-)
- create mode 100644 drivers/iio/adc/stmpe-adc.c
+> >
+> > And currently, as you see, IB is bound with devices doing RDMA. The reg=
+ister
+> > function, ib_register_device() hint that it is a netdev (get_netdev() c=
+allback), it know
+> > about gid, pkey, and Memory Window. IB is not simply a address space ma=
+nagement
+> > framework. And verbs to IB are not transparent. If we start to add
+> > compression/decompression, AI (RNN, CNN stuff) operations, and encrypti=
+on/decryption
+> > to the verbs set. It will become very complexity. Or maybe I misunderst=
+and the
+> > IB idea? But I don't see compression hardware is integrated in the main=
+line
+> > Kernel. Could you directly point out which one I can used as a referenc=
+e?
+> >
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index a52fea8749a9..5d4c061d8296 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -734,6 +734,13 @@ config STM32_DFSDM_ADC
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called stm32-dfsdm-adc.
- 
-+config STMPE_ADC
-+	tristate "STMicroelectronics STMPE ADC driver"
-+	depends on (OF || COMPILE_TEST || MFD_STMPE)
-+	help
-+	  Say yes here to build support for ST Microelectronics STMPE
-+	  built-in ADC block (stmpe811).
-+
- config STX104
- 	tristate "Apex Embedded Systems STX104 driver"
- 	depends on PC104 && X86
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index a6e6a0b659e2..cba889c30bf9 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_STM32_ADC_CORE) += stm32-adc-core.o
- obj-$(CONFIG_STM32_ADC) += stm32-adc.o
- obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
- obj-$(CONFIG_STM32_DFSDM_ADC) += stm32-dfsdm-adc.o
-+obj-$(CONFIG_STMPE_ADC) += stmpe-adc.o
- obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
- obj-$(CONFIG_TI_ADC0832) += ti-adc0832.o
- obj-$(CONFIG_TI_ADC084S021) += ti-adc084s021.o
-diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
-new file mode 100644
-index 000000000000..151f1c8f827e
---- /dev/null
-+++ b/drivers/iio/adc/stmpe-adc.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  STMicroelectronics STMPE811 IIO ADC Driver
-+ *
-+ *  4 channel, 10/12-bit ADC
-+ *
-+ *  Copyright (C) 2013-2018 Toradex AG <stefan.agner@toradex.com>
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/iio/iio.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/stmpe.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+
-+#define STMPE_REG_INT_STA		0x0B
-+#define STMPE_REG_ADC_INT_EN		0x0E
-+#define STMPE_REG_ADC_INT_STA		0x0F
-+
-+#define STMPE_REG_ADC_CTRL1		0x20
-+#define STMPE_REG_ADC_CTRL2		0x21
-+#define STMPE_REG_ADC_CAPT		0x22
-+#define STMPE_REG_ADC_DATA_CH(channel)	(0x30 + 2 * (channel))
-+
-+#define STMPE_REG_TEMP_CTRL		0x60
-+#define STMPE_TEMP_CTRL_ENABLE		BIT(0)
-+#define STMPE_TEMP_CTRL_ACQ		BIT(1)
-+#define STMPE_TEMP_CTRL_THRES_EN	BIT(3)
-+#define STMPE_START_ONE_TEMP_CONV	(STMPE_TEMP_CTRL_ENABLE | \
-+					STMPE_TEMP_CTRL_ACQ | \
-+					STMPE_TEMP_CTRL_THRES_EN)
-+#define STMPE_REG_TEMP_DATA		0x61
-+#define STMPE_REG_TEMP_TH		0x63
-+#define STMPE_ADC_LAST_NR		7
-+#define STMPE_TEMP_CHANNEL		(STMPE_ADC_LAST_NR + 1)
-+
-+#define STMPE_ADC_CH(channel)		((1 << (channel)) & 0xff)
-+
-+#define STMPE_ADC_TIMEOUT		msecs_to_jiffies(1000)
-+
-+struct stmpe_adc {
-+	struct stmpe *stmpe;
-+	struct clk *clk;
-+	struct device *dev;
-+
-+	/* We are allocating plus one for the temperature channel */
-+	struct iio_chan_spec stmpe_adc_iio_channels[STMPE_ADC_LAST_NR + 2];
-+
-+	struct completion completion;
-+
-+	u8 channel;
-+	u32 value;
-+	u32 norequest_mask;
-+};
-+
-+static int stmpe_read_raw(struct iio_dev *indio_dev,
-+			  struct iio_chan_spec const *chan,
-+			  int *val,
-+			  int *val2,
-+			  long mask)
-+{
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+	long ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+	case IIO_CHAN_INFO_PROCESSED:
-+
-+		mutex_lock(&indio_dev->mlock);
-+
-+		info->channel = (u8)chan->channel;
-+
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			if (info->channel > STMPE_ADC_LAST_NR) {
-+				mutex_unlock(&indio_dev->mlock);
-+				return -EINVAL;
-+			}
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
-+					STMPE_ADC_CH(info->channel));
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
-+					STMPE_ADC_CH(info->channel));
-+
-+			*val = info->value;
-+			break;
-+
-+		case IIO_TEMP:
-+			if (info->channel != STMPE_TEMP_CHANNEL) {
-+				mutex_unlock(&indio_dev->mlock);
-+				return -EINVAL;
-+			}
-+
-+			stmpe_reg_write(info->stmpe, STMPE_REG_TEMP_CTRL,
-+					STMPE_START_ONE_TEMP_CONV);
-+			break;
-+		default:
-+			mutex_unlock(&indio_dev->mlock);
-+			return -EINVAL;
-+		}
-+
-+		ret = wait_for_completion_interruptible_timeout
-+			(&info->completion, STMPE_ADC_TIMEOUT);
-+
-+		if (ret <= 0) {
-+			mutex_unlock(&indio_dev->mlock);
-+			if (ret == 0)
-+				return -ETIMEDOUT;
-+			else
-+				return ret;
-+		}
-+
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			*val = info->value;
-+			break;
-+
-+		case IIO_TEMP:
-+			/*
-+			 * absolute temp = +V3.3 * value /7.51 [K]
-+			 * scale to [milli °C]
-+			 */
-+			*val = ((449960l * info->value) / 1024l) - 273150;
-+			break;
-+		default:
-+			break;
-+		}
-+
-+		mutex_unlock(&indio_dev->mlock);
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 3300;
-+		*val2 = info->stmpe->mod_12b ? 12 : 10;
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static irqreturn_t stmpe_adc_isr(int irq, void *dev_id)
-+{
-+	struct stmpe_adc *info = (struct stmpe_adc *)dev_id;
-+	u8 data[2];
-+
-+	if (info->channel > STMPE_TEMP_CHANNEL)
-+		return IRQ_NONE;
-+
-+	if (info->channel <= STMPE_ADC_LAST_NR) {
-+		int int_sta;
-+
-+		int_sta = stmpe_reg_read(info->stmpe, STMPE_REG_ADC_INT_STA);
-+
-+		/* Is the interrupt relevant */
-+		if (!(int_sta & STMPE_ADC_CH(info->channel)))
-+			return IRQ_NONE;
-+
-+		/* Read value */
-+		stmpe_block_read(info->stmpe,
-+			STMPE_REG_ADC_DATA_CH(info->channel), 2, data);
-+
-+		stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_STA, int_sta);
-+	} else if (info->channel == STMPE_TEMP_CHANNEL) {
-+		/* Read value */
-+		stmpe_block_read(info->stmpe, STMPE_REG_TEMP_DATA, 2, data);
-+	}
-+
-+	info->value = ((u32)data[0] << 8) + data[1];
-+	complete(&info->completion);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct iio_info stmpe_adc_iio_info = {
-+	.read_raw = &stmpe_read_raw,
-+};
-+
-+static void stmpe_adc_voltage_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_VOLTAGE;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	ics->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static void stmpe_adc_temp_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_TEMP;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static int stmpe_adc_init_hw(struct stmpe_adc *adc)
-+{
-+	struct stmpe *stmpe = adc->stmpe;
-+
-+	/* use temp irq for each conversion completion */
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH, 0);
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH + 1, 0);
-+
-+	return 0;
-+}
-+
-+static void stmpe_adc_get_platform_info(struct platform_device *pdev,
-+					struct stmpe_adc *adc)
-+{
-+	struct stmpe *stmpe = dev_get_drvdata(pdev->dev.parent);
-+	struct device_node *np = pdev->dev.of_node;
-+	u32 val;
-+
-+	adc->stmpe = stmpe;
-+
-+	if (!np) {
-+		dev_err(&pdev->dev, "no device tree node found\n");
-+		return;
-+	}
-+
-+	if (!of_property_read_u32(np, "st,norequest-mask", &val))
-+		adc->norequest_mask = val;
-+}
-+
-+static int stmpe_adc_probe(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = NULL;
-+	struct stmpe_adc *info = NULL;
-+	int irq_temp, irq_adc;
-+	int num_chan = 0;
-+	int i = 0;
-+	int ret;
-+
-+	irq_adc = platform_get_irq_byname(pdev, "STMPE_ADC");
-+	if (irq_adc < 0)
-+		return irq_adc;
-+
-+	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct stmpe_adc));
-+	if (!indio_dev) {
-+		dev_err(&pdev->dev, "failed allocating iio device\n");
-+		return -ENOMEM;
-+	}
-+
-+	info = iio_priv(indio_dev);
-+
-+	init_completion(&info->completion);
-+	ret = devm_request_threaded_irq(&pdev->dev, irq_adc, NULL,
-+					stmpe_adc_isr, IRQF_ONESHOT,
-+					"stmpe-adc", info);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-+				irq_adc);
-+		return ret;
-+	}
-+
-+	irq_temp = platform_get_irq_byname(pdev, "STMPE_TEMP_SENS");
-+	if (irq_temp >= 0) {
-+		ret = devm_request_threaded_irq(&pdev->dev, irq_temp, NULL,
-+						stmpe_adc_isr, IRQF_ONESHOT,
-+						"stmpe-adc", info);
-+		if (ret < 0)
-+			dev_warn(&pdev->dev, "failed requesting irq for"
-+				 " temp sensor, irq = %d\n", irq_temp);
-+	}
-+
-+	platform_set_drvdata(pdev, indio_dev);
-+
-+	indio_dev->name		= dev_name(&pdev->dev);
-+	indio_dev->dev.parent	= &pdev->dev;
-+	indio_dev->info		= &stmpe_adc_iio_info;
-+	indio_dev->modes	= INDIO_DIRECT_MODE;
-+
-+	stmpe_adc_get_platform_info(pdev, info);
-+
-+	for_each_clear_bit(i, (unsigned long *) &info->norequest_mask,
-+			   (STMPE_ADC_LAST_NR + 1)) {
-+		stmpe_adc_voltage_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+		num_chan++;
-+	}
-+	stmpe_adc_temp_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+	num_chan++;
-+	indio_dev->channels = info->stmpe_adc_iio_channels;
-+	indio_dev->num_channels = num_chan;
-+
-+	ret = stmpe_adc_init_hw(info);
-+	if (ret)
-+		return ret;
-+
-+	ret = iio_device_register(indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int stmpe_adc_remove(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+
-+	iio_device_unregister(indio_dev);
-+	stmpe_disable(info->stmpe, STMPE_BLOCK_ADC);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stmpe_adc_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+
-+	stmpe_adc_init_hw(info);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stmpe_adc_pm_ops, NULL, stmpe_adc_resume);
-+
-+static struct platform_driver stmpe_adc_driver = {
-+	.probe		= stmpe_adc_probe,
-+	.remove		= stmpe_adc_remove,
-+	.driver		= {
-+		.name	= "stmpe-adc",
-+		.pm	= &stmpe_adc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(stmpe_adc_driver);
-+
-+MODULE_AUTHOR("Stefan Agner <stefan.agner@toradex.com>");
-+MODULE_DESCRIPTION("STMPEXXX ADC driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:stmpe-adc");
-diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
-index c5d9006588a2..31d157032f4a 100644
---- a/drivers/input/touchscreen/stmpe-ts.c
-+++ b/drivers/input/touchscreen/stmpe-ts.c
-@@ -30,8 +30,6 @@
-  * with touchscreen controller
-  */
- #define STMPE_REG_INT_STA		0x0B
--#define STMPE_REG_ADC_CTRL1		0x20
--#define STMPE_REG_ADC_CTRL2		0x21
- #define STMPE_REG_TSC_CTRL		0x40
- #define STMPE_REG_TSC_CFG		0x41
- #define STMPE_REG_FIFO_TH		0x4A
-@@ -88,10 +86,6 @@ struct stmpe_touch {
- 	struct input_dev *idev;
- 	struct delayed_work work;
- 	struct device *dev;
--	u8 sample_time;
--	u8 mod_12b;
--	u8 ref_sel;
--	u8 adc_freq;
- 	u8 ave_ctrl;
- 	u8 touch_det_delay;
- 	u8 settling;
-@@ -176,7 +170,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *data)
- 	input_report_key(ts->idev, BTN_TOUCH, 1);
- 	input_sync(ts->idev);
- 
--       /* flush the FIFO after we have read out our values. */
-+	/* flush the FIFO after we have read out our values. */
- 	__stmpe_reset_fifo(ts->stmpe);
- 
- 	/* reenable the tsc */
-@@ -192,7 +186,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *data)
- static int stmpe_init_hw(struct stmpe_touch *ts)
- {
- 	int ret;
--	u8 adc_ctrl1, adc_ctrl1_mask, tsc_cfg, tsc_cfg_mask;
-+	u8 tsc_cfg, tsc_cfg_mask;
- 	struct stmpe *stmpe = ts->stmpe;
- 	struct device *dev = ts->dev;
- 
-@@ -202,25 +196,6 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 		return ret;
- 	}
- 
--	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
--		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
--	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
--			 STMPE_REF_SEL(0xff);
--
--	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
--			adc_ctrl1_mask, adc_ctrl1);
--	if (ret) {
--		dev_err(dev, "Could not setup ADC\n");
--		return ret;
--	}
--
--	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
--			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
--	if (ret) {
--		dev_err(dev, "Could not setup ADC\n");
--		return ret;
--	}
--
- 	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
- 		  STMPE_DET_DELAY(ts->touch_det_delay) |
- 		  STMPE_SETTLING(ts->settling);
-@@ -234,14 +209,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
--			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
-+		STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
- 	if (ret) {
- 		dev_err(dev, "Could not config touch\n");
- 		return ret;
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
--			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
-+		STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
- 	if (ret) {
- 		dev_err(dev, "Could not config touch\n");
- 		return ret;
-@@ -255,7 +230,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
--			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
-+		STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
- 	if (ret) {
- 		dev_err(dev, "Could not set mode\n");
- 		return ret;
-@@ -294,14 +269,6 @@ static void stmpe_ts_get_platform_info(struct platform_device *pdev,
- 	u32 val;
- 
- 	if (np) {
--		if (!of_property_read_u32(np, "st,sample-time", &val))
--			ts->sample_time = val;
--		if (!of_property_read_u32(np, "st,mod-12b", &val))
--			ts->mod_12b = val;
--		if (!of_property_read_u32(np, "st,ref-sel", &val))
--			ts->ref_sel = val;
--		if (!of_property_read_u32(np, "st,adc-freq", &val))
--			ts->adc_freq = val;
- 		if (!of_property_read_u32(np, "st,ave-ctrl", &val))
- 			ts->ave_ctrl = val;
- 		if (!of_property_read_u32(np, "st,touch-det-delay", &val))
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdce4326..bba159e8eaa4 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1204,7 +1204,7 @@ config MFD_STMPE
- 
- 	  Currently supported devices are:
- 
--		STMPE811: GPIO, Touchscreen
-+		STMPE811: GPIO, Touchscreen, ADC
- 		STMPE1601: GPIO, Keypad
- 		STMPE1801: GPIO, Keypad
- 		STMPE2401: GPIO, Keypad
-@@ -1217,6 +1217,7 @@ config MFD_STMPE
- 		GPIO: stmpe-gpio
- 		Keypad: stmpe-keypad
- 		Touchscreen: stmpe-ts
-+		ADC: stmpe-adc
- 
- menu "STMicroelectronics STMPE Interface Drivers"
- depends on MFD_STMPE
-diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-index 566caca4efd8..eab3d33e4093 100644
---- a/drivers/mfd/stmpe.c
-+++ b/drivers/mfd/stmpe.c
-@@ -23,6 +23,9 @@
- #include <linux/regulator/consumer.h>
- #include "stmpe.h"
- 
-+#define STMPE_REG_ADC_CTRL1	0x20
-+#define STMPE_REG_ADC_CTRL2	0x21
-+
- /**
-  * struct stmpe_platform_data - STMPE platform data
-  * @id: device id to distinguish between multiple STMPEs on the same board
-@@ -463,6 +466,28 @@ static const struct mfd_cell stmpe_ts_cell = {
- 	.num_resources	= ARRAY_SIZE(stmpe_ts_resources),
- };
- 
-+/*
-+ * ADC (STMPE811)
-+ */
-+
-+static struct resource stmpe_adc_resources[] = {
-+	{
-+		.name	= "STMPE_TEMP_SENS",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.name	= "STMPE_ADC",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static const struct mfd_cell stmpe_adc_cell = {
-+	.name		= "stmpe-adc",
-+	.of_compatible	= "st,stmpe-adc",
-+	.resources	= stmpe_adc_resources,
-+	.num_resources	= ARRAY_SIZE(stmpe_adc_resources),
-+};
-+
- /*
-  * STMPE811 or STMPE610
-  */
-@@ -497,6 +522,11 @@ static struct stmpe_variant_block stmpe811_blocks[] = {
- 		.irq	= STMPE811_IRQ_TOUCH_DET,
- 		.block	= STMPE_BLOCK_TOUCHSCREEN,
- 	},
-+	{
-+		.cell	= &stmpe_adc_cell,
-+		.irq	= STMPE811_IRQ_TEMP_SENS,
-+		.block	= STMPE_BLOCK_ADC,
-+	},
- };
- 
- static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
-@@ -517,6 +547,44 @@ static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
- 				enable ? 0 : mask);
- }
- 
-+static int stmpe811_init_adc(struct stmpe *stmpe)
-+{
-+	int ret;
-+	u8 adc_ctrl1, adc_ctrl1_mask;
-+
-+	ret = stmpe_enable(stmpe, STMPE_BLOCK_ADC);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not enable clock for ADC\n");
-+		goto err_adc;
-+	}
-+
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
-+		    STMPE_MOD_12B(stmpe->mod_12b) |
-+		    STMPE_REF_SEL(stmpe->ref_sel);
-+	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
-+			 STMPE_REF_SEL(0xff);
-+
-+	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
-+			adc_ctrl1_mask, adc_ctrl1);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		goto err_adc;
-+	}
-+
-+	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		goto err_adc;
-+	}
-+
-+	return 0;
-+err_adc:
-+	stmpe_disable(stmpe, STMPE_BLOCK_ADC);
-+
-+	return ret;
-+}
-+
- static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block block)
- {
- 	/* 0 for touchscreen, 1 for GPIO */
-@@ -1235,6 +1303,12 @@ static int stmpe_chip_init(struct stmpe *stmpe)
- 			return ret;
- 	}
- 
-+	if (id == STMPE610 || id == STMPE811) {
-+		ret = stmpe811_init_adc(stmpe);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_ICR_LSB], icr);
- }
- 
-@@ -1325,6 +1399,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	struct device_node *np = ci->dev->of_node;
- 	struct stmpe *stmpe;
- 	int ret;
-+	u32 val;
- 
- 	pdata = devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -1342,6 +1417,15 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	mutex_init(&stmpe->irq_lock);
- 	mutex_init(&stmpe->lock);
- 
-+	if (!of_property_read_u32(np, "st,sample-time", &val))
-+		stmpe->sample_time = val;
-+	if (!of_property_read_u32(np, "st,mod-12b", &val))
-+		stmpe->mod_12b = val;
-+	if (!of_property_read_u32(np, "st,ref-sel", &val))
-+		stmpe->ref_sel = val;
-+	if (!of_property_read_u32(np, "st,adc-freq", &val))
-+		stmpe->adc_freq = val;
-+
- 	stmpe->dev = ci->dev;
- 	stmpe->client = ci->client;
- 	stmpe->pdata = pdata;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index c0353f6431f9..4e3f6ff60408 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -134,6 +134,12 @@ struct stmpe {
- 	u8 ier[2];
- 	u8 oldier[2];
- 	struct stmpe_platform_data *pdata;
-+
-+	/* For devices that use an ADC */
-+	u8 sample_time;
-+	u8 mod_12b;
-+	u8 ref_sel;
-+	u8 adc_freq;
- };
- 
- extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
--- 
-2.19.1
+I strongly advise you to read the code, not all drivers are implementing
+gids, pkeys and get_netdev() callback.
 
+Yes, you are misunderstanding drivers/infiniband subsystem. We have
+plenty options to expose APIs to the user space applications, starting
+=66rom standard verbs API and ending with private objects which are
+understandable by specific device/driver.
+
+IB stack provides secure FD to access device, by creating context,
+after that you can send direct commands to the FW (see mlx5 DEVX
+or hfi1) in sane way.
+
+So actually, you will need to register your device, declare your own
+set of objects (similar to mlx5 include/uapi/rdma/mlx5_user_ioctl_*.h).
+
+In regards to reference of compression hardware, I don't have.
+But there is an example of how T10-DIF can be implemented in verbs
+layer:
+https://www.openfabrics.org/images/2018workshop/presentations/307_TOved_T10=
+-DIFOffload.pdf
+Or IPsec crypto:
+https://www.spinics.net/lists/linux-rdma/msg48906.html
+
+> > >
+> > > >
+> > > > I assume you would not agree to register a zip accelerator to infin=
+iband? :)
+> > >
+> > > "infiniband" name in the "drivers/infiniband/" is legacy one and the
+> > > current code supports IB, RoCE, iWARP and OmniPath as a transport lay=
+ers.
+> > > For a lone time, we wanted to rename that folder to be "drivers/rdma",
+> > > but didn't find enough brave men/women to do it, due to backport mess
+> > > for such move.
+> > >
+> > > The addition of zip accelerator to RDMA is possible and depends on how
+> > > you will model such new functionality - new driver, or maybe new ULP.
+> > >
+> > > >
+> > > > Further, I don't think it is wise to break an exist system (RDMA) t=
+o fulfill a
+> > > > totally new scenario. The better choice is to let them run in paral=
+lel for some
+> > > > time and try to merge them accordingly.
+> > >
+> > > Awesome, so please run your code out-of-tree for now and once you are=
+ ready
+> > > for submission let's try to merge it.
+> >
+> > Yes, yes. We know trust need time to gain. But the fact is that there i=
+s no
+> > accelerator user driver can be added to mainline kernel. We should rais=
+e the
+> > topic time to time. So to help the communication to fix the gap, right?
+> >
+> > We are also opened to cooperate with IB to do it within the IB framewor=
+k. But
+> > please let me know where to start. I feel it is quite wired to make a
+> > ib_register_device for a zip or RSA accelerator.
+
+Most of ib_ prefixes in drivers/infinband/ are legacy names. You can
+rename them to be rdma_register_device() if it helps.
+
+So from implementation point of view, as I wrote above.
+Create minimal driver to register, expose MR to user space, add your own
+objects and capabilities through our new KABI and implement user space part
+in github.com/linux-rdma/rdma-core.
+
+> >
+> > >
+> > > >
+> > > > >
+> > > > > >
+> > > > > > Another problem we tried to address is the way to pin the memor=
+y for dma
+> > > > > > operation. The RDMA way to pin the memory cannot avoid the page=
+ lost due to
+> > > > > > copy-on-write operation during the memory is used by the device=
+=2E This may
+> > > > > > not be important to RDMA library. But it is important to accele=
+rator.
+> > > > >
+> > > > > Such support exists in drivers/infiniband/ from late 2014 and
+> > > > > it is called ODP (on demand paging).
+> > > >
+> > > > I reviewed ODP and I think it is a solution bound to infiniband. It=
+ is part of
+> > > > MR semantics and required a infiniband specific hook
+> > > > (ucontext->invalidate_range()). And the hook requires the device to=
+ be able to
+> > > > stop using the page for a while for the copying. It is ok for infin=
+iband
+> > > > (actually, only mlx5 uses it). I don't think most accelerators can =
+support
+> > > > this mode. But WarpDrive works fully on top of IOMMU interface, it =
+has no this
+> > > > limitation.
+> > >
+> > > 1. It has nothing to do with infiniband.
+> >
+> > But it must be a ib_dev first.
+
+It is just a name.
+
+> >
+> > > 2. MR and uncontext are verbs semantics and needed to ensure that host
+> > > memory exposed to user is properly protected from security point of v=
+iew.
+> > > 3. "stop using the page for a while for the copying" - I'm not fully
+> > > understand this claim, maybe this article will help you to better
+> > > describe : https://lwn.net/Articles/753027/
+> >
+> > This topic was being discussed in RFCv2. The key problem here is that:
+> >
+> > The device need to hold the memory for its own calculation, but the CPU=
+/software
+> > want to stop it for a while for synchronizing with disk or COW.
+> >
+> > If the hardware support SVM/SVA (Shared Virtual Memory/Address), it is =
+easy, the
+> > device share page table with CPU, the device will raise a page fault wh=
+en the
+> > CPU downgrade the PTE to read-only.
+> >
+> > If the hardware cannot share page table with the CPU, we then need to h=
+ave
+> > some way to change the device page table. This is what happen in ODP. It
+> > invalidates the page table in device upon mmu_notifier call back. But t=
+his cannot
+> > solve the COW problem: if the user process A share a page P with device=
+, and A
+> > forks a new process B, and it continue to write to the page. By COW, the
+> > process B will keep the page P, while A will get a new page P'. But you=
+ have
+> > no way to let the device know it should use P' rather than P.
+
+I didn't hear about such issue and we supported fork for a long time.
+
+> >
+> > This may be OK for RDMA application. Because RDMA is a big thing and we=
+ can ask
+> > the programmer to avoid the situation. But for a accelerator, I don't t=
+hink we
+> > can ask a programmer to care for this when use a zlib.
+> >
+> > In WarpDrive/uacce, we make this simple. If you support IOMMU and it su=
+pport
+> > SVM/SVA. Everything will be fine just like ODP implicit mode. And you d=
+on't need
+> > to write any code for that. Because it has been done by IOMMU framework=
+=2E If it
+> > dose not, you have to use the kernel allocated memory which has the sam=
+e IOVA as
+> > the VA in user space. So we can still maintain a unify address space am=
+ong the
+> > devices and the applicatin.
+> >
+> > > 4. mlx5 supports ODP not because of being partially IB device,
+> > > but because HW performance oriented implementation is not an easy tas=
+k.
+> > >
+> > > >
+> > > > >
+> > > > > >
+> > > > > > Hope this can help the understanding.
+> > > > >
+> > > > > Yes, it helped me a lot.
+> > > > > Now, I'm more than before convinced that this whole patchset shou=
+ldn't
+> > > > > exist in the first place.
+> > > >
+> > > > Then maybe you can tell me how I can register my accelerator to the=
+ user space?
+> > >
+> > > Write kernel driver and write user space part of it.
+> > > https://github.com/linux-rdma/rdma-core/
+> > >
+> > > I have no doubts that your colleagues who wrote and maintain
+> > > drivers/infiniband/hw/hns driver know best how to do it.
+> > > They did it very successfully.
+> > >
+> > > Thanks
+> > >
+> > > >
+> > > > >
+> > > > > To be clear, NAK.
+> > > > >
+> > > > > Thanks
+> > > > >
+> > > > > >
+> > > > > > Cheers
+> > > > > >
+> > > > > > >
+> > > > > > > Hard NAK from RDMA side.
+> > > > > > >
+> > > > > > > Thanks
+> > > > > > >
+> > > > > > > > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > > > > ---
+> > > > > > > >   Documentation/warpdrive/warpdrive.rst       | 260 +++++++
+> > > > > > > >   Documentation/warpdrive/wd-arch.svg         | 764 +++++++=
++++++++++++++
+> > > > > > > >   Documentation/warpdrive/wd.svg              | 526 +++++++=
++++++++
+> > > > > > > >   Documentation/warpdrive/wd_q_addr_space.svg | 359 +++++++=
+++
+> > > > > > > >   4 files changed, 1909 insertions(+)
+> > > > > > > >   create mode 100644 Documentation/warpdrive/warpdrive.rst
+> > > > > > > >   create mode 100644 Documentation/warpdrive/wd-arch.svg
+> > > > > > > >   create mode 100644 Documentation/warpdrive/wd.svg
+> > > > > > > >   create mode 100644 Documentation/warpdrive/wd_q_addr_spac=
+e.svg
+> > > > > > > >
+> > > > > > > > diff --git a/Documentation/warpdrive/warpdrive.rst b/Docume=
+ntation/warpdrive/warpdrive.rst
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..ef84d3a2d462
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/Documentation/warpdrive/warpdrive.rst
+> > > > > > > > @@ -0,0 +1,260 @@
+> > > > > > > > +Introduction of WarpDrive
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > > > > > > > +
+> > > > > > > > +*WarpDrive* is a general accelerator framework for the use=
+r application to
+> > > > > > > > +access the hardware without going through the kernel in da=
+ta path.
+> > > > > > > > +
+> > > > > > > > +It can be used as the quick channel for accelerators, netw=
+ork adaptors or
+> > > > > > > > +other hardware for application in user space.
+> > > > > > > > +
+> > > > > > > > +This may make some implementation simpler.  E.g.  you can =
+reuse most of the
+> > > > > > > > +*netdev* driver in kernel and just share some ring buffer =
+to the user space
+> > > > > > > > +driver for *DPDK* [4] or *ODP* [5]. Or you can combine the=
+ RSA accelerator with
+> > > > > > > > +the *netdev* in the user space as a https reversed proxy, =
+etc.
+> > > > > > > > +
+> > > > > > > > +*WarpDrive* takes the hardware accelerator as a heterogene=
+ous processor which
+> > > > > > > > +can share particular load from the CPU:
+> > > > > > > > +
+> > > > > > > > +.. image:: wd.svg
+> > > > > > > > +        :alt: WarpDrive Concept
+> > > > > > > > +
+> > > > > > > > +The virtual concept, queue, is used to manage the requests=
+ sent to the
+> > > > > > > > +accelerator. The application send requests to the queue by=
+ writing to some
+> > > > > > > > +particular address, while the hardware takes the requests =
+directly from the
+> > > > > > > > +address and send feedback accordingly.
+> > > > > > > > +
+> > > > > > > > +The format of the queue may differ from hardware to hardwa=
+re. But the
+> > > > > > > > +application need not to make any system call for the commu=
+nication.
+> > > > > > > > +
+> > > > > > > > +*WarpDrive* tries to create a shared virtual address space=
+ for all involved
+> > > > > > > > +accelerators. Within this space, the requests sent to queu=
+e can refer to any
+> > > > > > > > +virtual address, which will be valid to the application an=
+d all involved
+> > > > > > > > +accelerators.
+> > > > > > > > +
+> > > > > > > > +The name *WarpDrive* is simply a cool and general name mea=
+ning the framework
+> > > > > > > > +makes the application faster. It includes general user lib=
+rary, kernel
+> > > > > > > > +management module and drivers for the hardware. In kernel,=
+ the management
+> > > > > > > > +module is called *uacce*, meaning "Unified/User-space-acce=
+ss-intended
+> > > > > > > > +Accelerator Framework".
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +How does it work
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +
+> > > > > > > > +*WarpDrive* uses *mmap* and *IOMMU* to play the trick.
+> > > > > > > > +
+> > > > > > > > +*Uacce* creates a chrdev for the device registered to it. =
+A "queue" will be
+> > > > > > > > +created when the chrdev is opened. The application access =
+the queue by mmap
+> > > > > > > > +different address region of the queue file.
+> > > > > > > > +
+> > > > > > > > +The following figure demonstrated the queue file address s=
+pace:
+> > > > > > > > +
+> > > > > > > > +.. image:: wd_q_addr_space.svg
+> > > > > > > > +        :alt: WarpDrive Queue Address Space
+> > > > > > > > +
+> > > > > > > > +The first region of the space, device region, is used for =
+the application to
+> > > > > > > > +write request or read answer to or from the hardware.
+> > > > > > > > +
+> > > > > > > > +Normally, there can be three types of device regions mmio =
+and memory regions.
+> > > > > > > > +It is recommended to use common memory for request/answer =
+descriptors and use
+> > > > > > > > +the mmio space for device notification, such as doorbell. =
+But of course, this
+> > > > > > > > +is all up to the interface designer.
+> > > > > > > > +
+> > > > > > > > +There can be two types of device memory regions, kernel-on=
+ly and user-shared.
+> > > > > > > > +This will be explained in the "kernel APIs" section.
+> > > > > > > > +
+> > > > > > > > +The Static Share Virtual Memory region is necessary only w=
+hen the device IOMMU
+> > > > > > > > +does not support "Share Virtual Memory". This will be expl=
+ained after the
+> > > > > > > > +*IOMMU* idea.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +Architecture
+> > > > > > > > +------------
+> > > > > > > > +
+> > > > > > > > +The full *WarpDrive* architecture is represented in the fo=
+llowing class
+> > > > > > > > +diagram:
+> > > > > > > > +
+> > > > > > > > +.. image:: wd-arch.svg
+> > > > > > > > +        :alt: WarpDrive Architecture
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +The user API
+> > > > > > > > +------------
+> > > > > > > > +
+> > > > > > > > +We adopt a polling style interface in the user space: ::
+> > > > > > > > +
+> > > > > > > > +        int wd_request_queue(struct wd_queue *q);
+> > > > > > > > +        void wd_release_queue(struct wd_queue *q);
+> > > > > > > > +
+> > > > > > > > +        int wd_send(struct wd_queue *q, void *req);
+> > > > > > > > +        int wd_recv(struct wd_queue *q, void **req);
+> > > > > > > > +        int wd_recv_sync(struct wd_queue *q, void **req);
+> > > > > > > > +        void wd_flush(struct wd_queue *q);
+> > > > > > > > +
+> > > > > > > > +wd_recv_sync() is a wrapper to its non-sync version. It wi=
+ll trapped into
+> > > > > > > > +kernel and waits until the queue become available.
+> > > > > > > > +
+> > > > > > > > +If the queue do not support SVA/SVM. The following helper =
+function
+> > > > > > > > +can be used to create Static Virtual Share Memory: ::
+> > > > > > > > +
+> > > > > > > > +        void *wd_preserve_share_memory(struct wd_queue *q,=
+ size_t size);
+> > > > > > > > +
+> > > > > > > > +The user API is not mandatory. It is simply a suggestion a=
+nd hint what the
+> > > > > > > > +kernel interface is supposed to support.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +The user driver
+> > > > > > > > +---------------
+> > > > > > > > +
+> > > > > > > > +The queue file mmap space will need a user driver to wrap =
+the communication
+> > > > > > > > +protocol. *UACCE* provides some attributes in sysfs for th=
+e user driver to
+> > > > > > > > +match the right accelerator accordingly.
+> > > > > > > > +
+> > > > > > > > +The *UACCE* device attribute is under the following direct=
+ory:
+> > > > > > > > +
+> > > > > > > > +/sys/class/uacce/<dev-name>/params
+> > > > > > > > +
+> > > > > > > > +The following attributes is supported:
+> > > > > > > > +
+> > > > > > > > +nr_queue_remained (ro)
+> > > > > > > > +        number of queue remained
+> > > > > > > > +
+> > > > > > > > +api_version (ro)
+> > > > > > > > +        a string to identify the queue mmap space format a=
+nd its version
+> > > > > > > > +
+> > > > > > > > +device_attr (ro)
+> > > > > > > > +        attributes of the device, see UACCE_DEV_xxx flag d=
+efined in uacce.h
+> > > > > > > > +
+> > > > > > > > +numa_node (ro)
+> > > > > > > > +        id of numa node
+> > > > > > > > +
+> > > > > > > > +priority (rw)
+> > > > > > > > +        Priority or the device, bigger is higher
+> > > > > > > > +
+> > > > > > > > +(This is not yet implemented in RFC version)
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +The kernel API
+> > > > > > > > +--------------
+> > > > > > > > +
+> > > > > > > > +The *uacce* kernel API is defined in uacce.h. If the hardw=
+are support SVM/SVA,
+> > > > > > > > +The driver need only the following API functions: ::
+> > > > > > > > +
+> > > > > > > > +        int uacce_register(uacce);
+> > > > > > > > +        void uacce_unregister(uacce);
+> > > > > > > > +        void uacce_wake_up(q);
+> > > > > > > > +
+> > > > > > > > +*uacce_wake_up* is used to notify the process who epoll() =
+on the queue file.
+> > > > > > > > +
+> > > > > > > > +According to the IOMMU capability, *uacce* categories the =
+devices as follow:
+> > > > > > > > +
+> > > > > > > > +UACCE_DEV_NOIOMMU
+> > > > > > > > +        The device has no IOMMU. The user process cannot u=
+se VA on the hardware
+> > > > > > > > +        This mode is not recommended.
+> > > > > > > > +
+> > > > > > > > +UACCE_DEV_SVA (UACCE_DEV_PASID | UACCE_DEV_FAULT_FROM_DEV)
+> > > > > > > > +        The device has IOMMU which can share the same page=
+ table with user
+> > > > > > > > +        process
+> > > > > > > > +
+> > > > > > > > +UACCE_DEV_SHARE_DOMAIN
+> > > > > > > > +        The device has IOMMU which has no multiple page ta=
+ble and device page
+> > > > > > > > +        fault support
+> > > > > > > > +
+> > > > > > > > +If the device works in mode other than UACCE_DEV_NOIOMMU, =
+*uacce* will set its
+> > > > > > > > +IOMMU to IOMMU_DOMAIN_UNMANAGED. So the driver must not us=
+e any kernel
+> > > > > > > > +DMA API but the following ones from *uacce* instead: ::
+> > > > > > > > +
+> > > > > > > > +        uacce_dma_map(q, va, size, prot);
+> > > > > > > > +        uacce_dma_unmap(q, va, size, prot);
+> > > > > > > > +
+> > > > > > > > +*uacce_dma_map/unmap* is valid only for UACCE_DEV_SVA devi=
+ce. It creates a
+> > > > > > > > +particular PASID and page table for the kernel in the IOMM=
+U (Not yet
+> > > > > > > > +implemented in the RFC)
+> > > > > > > > +
+> > > > > > > > +For the UACCE_DEV_SHARE_DOMAIN device, uacce_dma_map/unmap=
+ is not valid.
+> > > > > > > > +*Uacce* call back start_queue only when the DUS and DKO re=
+gion is mmapped. The
+> > > > > > > > +accelerator driver must use those dma buffer, via uacce_qu=
+eue->qfrs[], on
+> > > > > > > > +start_queue call back. The size of the queue file region i=
+s defined by
+> > > > > > > > +uacce->ops->qf_pg_start[].
+> > > > > > > > +
+> > > > > > > > +We have to do it this way because most of current IOMMU ca=
+nnot support the
+> > > > > > > > +kernel and user virtual address at the same time. So we ha=
+ve to let them both
+> > > > > > > > +share the same user virtual address space.
+> > > > > > > > +
+> > > > > > > > +If the device have to support kernel and user at the same =
+time, both kernel
+> > > > > > > > +and the user should use these DMA API. This is not conveni=
+ent. A better
+> > > > > > > > +solution is to change the future DMA/IOMMU design to let t=
+hem separate the
+> > > > > > > > +address space between the user and kernel space. But it is=
+ not going to be in
+> > > > > > > > +a short time.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +Multiple processes support
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +
+> > > > > > > > +In the latest mainline kernel (4.19) when this document is=
+ written, the IOMMU
+> > > > > > > > +subsystem do not support multiple process page tables yet.
+> > > > > > > > +
+> > > > > > > > +Most IOMMU hardware implementation support multi-process w=
+ith the concept
+> > > > > > > > +of PASID. But they may use different name, e.g. it is call=
+ sub-stream-id in
+> > > > > > > > +SMMU of ARM. With PASID or similar design, multi page tabl=
+e can be added to
+> > > > > > > > +the IOMMU and referred by its PASID.
+> > > > > > > > +
+> > > > > > > > +*JPB* has a patchset to enable this[1]_. We have tested it=
+ with our hardware
+> > > > > > > > +(which is known as *D06*). It works well. *WarpDrive* rely=
+ on them to support
+> > > > > > > > +UACCE_DEV_SVA. If it is not enabled, *WarpDrive* can still=
+ work. But it
+> > > > > > > > +support only one process, the device will be set to UACCE_=
+DEV_SHARE_DOMAIN
+> > > > > > > > +even it is set to UACCE_DEV_SVA initially.
+> > > > > > > > +
+> > > > > > > > +Static Share Virtual Memory is mainly used by UACCE_DEV_SH=
+ARE_DOMAIN device.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +Legacy Mode Support
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +For the hardware without IOMMU, WarpDrive can still work, =
+the only problem is
+> > > > > > > > +VA cannot be used in the device. The driver should adopt a=
+nother strategy for
+> > > > > > > > +the shared memory. It is only for testing, and not recomme=
+nded.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +The Folk Scenario
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +For a process with allocated queues and shared memory, wha=
+t happen if it forks
+> > > > > > > > +a child?
+> > > > > > > > +
+> > > > > > > > +The fd of the queue will be duplicated on folk, so the chi=
+ld can send request
+> > > > > > > > +to the same queue as its parent. But the requests which is=
+ sent from processes
+> > > > > > > > +except for the one who open the queue will be blocked.
+> > > > > > > > +
+> > > > > > > > +It is recommended to add O_CLOEXEC to the queue file.
+> > > > > > > > +
+> > > > > > > > +The queue mmap space has a VM_DONTCOPY in its VMA. So the =
+child will lost all
+> > > > > > > > +those VMAs.
+> > > > > > > > +
+> > > > > > > > +This is why *WarpDrive* does not adopt the mode used in *V=
+FIO* and *InfiniBand*.
+> > > > > > > > +Both solutions can set any user pointer for hardware shari=
+ng. But they cannot
+> > > > > > > > +support fork when the dma is in process. Or the "Copy-On-W=
+rite" procedure will
+> > > > > > > > +make the parent process lost its physical pages.
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +The Sample Code
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +There is a sample user land implementation with a simple d=
+river for Hisilicon
+> > > > > > > > +Hi1620 ZIP Accelerator.
+> > > > > > > > +
+> > > > > > > > +To test, do the following in samples/warpdrive (for the ca=
+se of PC host): ::
+> > > > > > > > +        ./autogen.sh
+> > > > > > > > +        ./conf.sh       # or simply ./configure if you bui=
+ld on target system
+> > > > > > > > +        make
+> > > > > > > > +
+> > > > > > > > +Then you can get test_hisi_zip in the test subdirectory. C=
+opy it to the target
+> > > > > > > > +system and make sure the hisi_zip driver is enabled (the m=
+ajor and minor of
+> > > > > > > > +the uacce chrdev can be gotten from the dmesg or sysfs), a=
+nd run: ::
+> > > > > > > > +        mknod /dev/ua1 c <major> <minior>
+> > > > > > > > +        test/test_hisi_zip -z < data > data.zip
+> > > > > > > > +        test/test_hisi_zip -g < data > data.gzip
+> > > > > > > > +
+> > > > > > > > +
+> > > > > > > > +References
+> > > > > > > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > > > > +.. [1] https://patchwork.kernel.org/patch/10394851/
+> > > > > > > > +
+> > > > > > > > +.. vim: tw=3D78
+> > > > [...]
+> > > > > > > > --
+> > > > > > > > 2.17.1
+> > > > > > > >
+>
+> I don't know if Mr. Jerome Glisse in the list. I think I should cc him fo=
+r my
+> respectation  to his help on last RFC.
+>
+> - Kenneth
+
+--nFreZHaLTZJo0R7j
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJb8pThAAoJEORje4g2clin0VkP/0mm+/wYaqbR8aHIrEuQAjK6
+mKPa7GwmjgWDJLjWUdG3LJCzzaAY1pcrGzqEd+9lpfmQFAS2ep8eTf1upa1lstFu
+mMkAzu6uEojUjGlh/FjhGVuJ61+2MybKL762bSbs64si2r0memcDv/lK8V6zKBGR
+ZdunVXcHXKAevJTs0t0P40DCRmGygaVWt8qIu2vontsPV0GPXa8f3o9kfWu6UGyI
+Z9ZKUW8BsaDCxjY7w8wDe+m68DYv+aPKQhgjMhnX6YHvnC6aWyekpS80zP3v47SL
+w6XNBH5tgXyp8bMUQFb0lCRTwHSWOaW2Z0JKO74GekEKNLAE17LVSTGJT9fq331P
+afzShBnzU7k+pFxHg4C+WWj5iitwtZ5Y2TSR3cP681HBlrQbZtoLTXWt/R7+PjCI
+RwbH7rGUPfs5J02qtaI/mn0E1eCYzfb44XJe+7GvmaMX7CjZNKLrYOBKF8ln8aqk
+0MTCYrkH+R4bPaR8s7W/jjCsYxuNFT/52Mu3bPKv6zVLzBjPzQY9jbppDpu5w3Lq
+qiJqGeP1hn+GQmWZcEZs3qZlJ0P63jXK8KXc4lcV3SusvWoUwDMw4i05Et4IQGEC
+HxqmhPBoIJxNSHNsHnDpQj4ImSnoxd5derld+wBsoccAY1KBVhZlqeMlTOj3IAkk
+qz1DA6HA3E9QR6t0reJP
+=Lylx
+-----END PGP SIGNATURE-----
+
+--nFreZHaLTZJo0R7j--
