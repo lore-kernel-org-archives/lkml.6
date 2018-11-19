@@ -2,232 +2,134 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FC2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD111C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6236D206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6236D206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C4E8206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="jAsfbE9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4E8206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbeKTB4D (ORCPT
+        id S1729832AbeKTB4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:56:03 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34529 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbeKTB4D (ORCPT
+        Mon, 19 Nov 2018 20:56:13 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:39848 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbeKTB4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:56:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so4167152wrw.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 07:32:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fb5RzYfmT5j55PXjoyC4ueYbTbIPYZfitBOOX0J+o9Q=;
-        b=Fsk0QycFyV3qkp2c0gw2cX3r63PUmypsZKAV6jjgt0dDpj+m6V/GfH1tXOzxMBOhVv
-         SbwTekzVDS+O1kyxpImlHDTmbPsPu2a7LjhHHJsQ3vtJDH9Yl3ORvt3Ey3eTfaT/kT4O
-         2esS2f5PgpLLIcXmR3SAW+tqLhosd3BUok2KmyAPN17oPIbG0tQjW12VBzd88Geww16w
-         5zmuiMjrRMcDMLabg70APFhQU/RxKlzhQdtfb4TAveHUyJS6yYINcMC+GG/uYVQ7GHTc
-         HmNotwHfCShbyg58Be0tsk0O6J5649sokXUotp8cQOXFfqnwxm9tfoao6vt02R7xVK3O
-         xFVA==
-X-Gm-Message-State: AA+aEWa7w1zU97XW+ESMPupOU2R332d1IRkbi+qPOYVlPN3tDahfaND9
-        33Bni1QFYJiDCKwXTFoaVlETZQ==
-X-Google-Smtp-Source: AFSGD/UMa77crNOXZw/gmClQVHXuzYxsQKnYUDut9oNmkqK6ri6C4DWxmJvEZjbfBWRTq4M131Vs/A==
-X-Received: by 2002:adf:9467:: with SMTP id 94mr9789458wrq.305.1542641525039;
-        Mon, 19 Nov 2018 07:32:05 -0800 (PST)
-Received: from localhost.localdomain ([151.15.226.84])
-        by smtp.gmail.com with ESMTPSA id t4sm19520601wrm.6.2018.11.19.07.32.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 07:32:03 -0800 (PST)
-Date:   Mon, 19 Nov 2018 16:32:01 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     luca abeni <luca.abeni@santannapisa.it>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        syzbot <syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>, mingo@redhat.com,
-        syzkaller-bugs@googlegroups.com, x86@kernel.org,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: WARNING in enqueue_task_dl
-Message-ID: <20181119153201.GB2119@localhost.localdomain>
-References: <000000000000b5e346057af4da06@google.com>
- <alpine.DEB.2.21.1811190921190.9459@nanos.tec.linutronix.de>
- <20181119130718.69eddf46@luca64>
- <20181119125241.GC9761@hirez.programming.kicks-ass.net>
- <20181119134349.GA2119@localhost.localdomain>
+        Mon, 19 Nov 2018 20:56:13 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAJFTP3q079716;
+        Mon, 19 Nov 2018 15:31:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=NsqC+RmMKrazl8UO/0QON3vmXs78H+SNxTTz2VQ5zbw=;
+ b=jAsfbE9GupH7GT63TGXdOOe54O61wDFLJTz1xv10hoSVQwFlBDNHMtAT1ErhqUyCNT3h
+ 54qS7y1RJsWMJob17w6ZBdWf+lPNyW/6XyFGiVhdivqv6qpWxkPGqF4lpOA3eRS5O24t
+ Mm4x3P6HXyEKxnWZwmOx0acehePLNnSgbi1JF9taX+VeH/txrygSlfQfkChpNKg4lmiD
+ ZXsKCJuARxs2KkBemaRYGuqFID99WEL3/Stk2l7/TCApIS3Pza68AYbWCA9jSKkScvTk
+ R6An6JksDFVTJ2bychzr3poknJYN8Nl036+Yv0267j0V8XD9Jg57pcxEOeaURGtBj4I9 Wg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2ntaxpxqqd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Nov 2018 15:31:50 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAJFVnqV004339
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Nov 2018 15:31:49 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAJFVmh8012016;
+        Mon, 19 Nov 2018 15:31:48 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 19 Nov 2018 07:31:48 -0800
+Subject: Re: [PATCH] x86/xen: cleanup includes in arch/x86/xen/spinlock.c
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de
+References: <20181119135945.9985-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <f3c08c4d-8971-ba7b-223c-91eafc8497f8@oracle.com>
+Date:   Mon, 19 Nov 2018 10:31:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119134349.GA2119@localhost.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181119135945.9985-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9081 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=634
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811190143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/18 14:43, Juri Lelli wrote:
-> On 19/11/18 13:52, Peter Zijlstra wrote:
-> > On Mon, Nov 19, 2018 at 01:07:18PM +0100, luca abeni wrote:
-> > 
-> > > > On Sun, 18 Nov 2018, syzbot wrote:
-> > 
-> > > > > WARNING: CPU: 1 PID: 6351 at kernel/sched/deadline.c:628
-> > > > > enqueue_task_dl+0x22da/0x38a0 kernel/sched/deadline.c:1504
-> > > 
-> > > Here, it looks like a task is invoking sched_setattr() to become
-> > > SCHED_DEADLINE when dl_boosted is set...
-> > > 
-> > > Is this possible / correct?
-> > 
-> > Possible, clearly. Correct, only in so far as that it is not a malformed
-> > program, but it is very poor design to actually trigger this (of course
-> > the fuzzer doesn't care about that).
-> > 
-> > > If this (sched_setattr() with dl_boosted set) should not be possible,
-> > > then we have a bug that we need to investigate...
-> > > 
-> > > Otherwise, I suspect we can just remove the WARN_ON at line 628 of
-> > > deadline.c
-> > 
-> > I wonder why we put that WARN in there to begin with... git-blame gives
-> > us:
-> > 
-> >   98b0a8578050 ("sched/deadline: Remove useless parameter from setup_new_dl_entity()")
-> > 
-> > So the problem seems to be that if we're boosted, we should maybe not be
-> > using our own (newly set) parameters, but those of the donor task.
-> > 
-> > Specifically, our 'suboptimal' deadline inheritance scheme 'requires' us
-> > to use the inherited deadline, not our own. So in that respect I think
-> > the WARN is valid, although I'm not sure what, apart from actually
-> > finishing that PE patch-set we can do about it just now.
-> 
-> Mmm, but, as it was written in the comment that was removed by 295d6d5
-> ("sched/deadline: Fix switching to -deadline"), I was still expecting
-> that for a boosted task setup_new_dl_entity() shouldn't be called.
-> Wonder if this is another manifestation of the problems we have with
-> clocks. Need to think more about it.
+On 11/19/18 8:59 AM, Juergen Gross wrote:
+> arch/x86/xen/spinlock.c includes several headers which are not needed.
+> Remove the #includes.
+>
+> Signed-off-by: Juergen Gross <jgross@suse.com>
+> ---
 
-So, while this looks like nothing more than a stop-gap solution until we
-get PE in place, would the following make any sense? It seems I can't
-reproduce the warning anymore with it (w/o it usually takes a few secs
-to reproduce).
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
---->8---
 
-From 9326fd2b20269cffef7290bdc5b8173460d3c870 Mon Sep 17 00:00:00 2001
-From: Juri Lelli <juri.lelli@redhat.com>
-Date: Mon, 19 Nov 2018 16:04:42 +0100
-Subject: [PATCH] sched/core: Fix PI boosting between RT and DEADLINE
-
-syzbot reported the following warning:
-
- WARNING: CPU: 1 PID: 6351 at kernel/sched/deadline.c:628
- enqueue_task_dl+0x22da/0x38a0 kernel/sched/deadline.c:1504
- PM: Basic memory bitmaps freed
- Kernel panic - not syncing: panic_on_warn set ...
- CPU: 1 PID: 6351 Comm: syz-executor0 Not tainted 4.20.0-rc2+ #338
- Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
- Google 01/01/2011
- Call Trace:
-   __dump_stack lib/dump_stack.c:77 [inline]
-   dump_stack+0x244/0x39d lib/dump_stack.c:113
-   panic+0x2ad/0x55c kernel/panic.c:188
-   __warn.cold.8+0x20/0x45 kernel/panic.c:540
-   report_bug+0x254/0x2d0 lib/bug.c:186
-   fixup_bug arch/x86/kernel/traps.c:178 [inline]
-   do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-   do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
- RIP: 0010:enqueue_task_dl+0x22da/0x38a0 kernel/sched/deadline.c:1504
- Code: ff 48 8b 8d c8 fe ff ff 48 c1 e6 2a 4c 8b 9d d0 fe ff ff 8b 95 d8 fe
- ff ff 48 8b 85 e0 fe ff ff e9 16 e4 ff ff e8 16 d0 ea ff <0f> 0b e9 17 f1
- ff ff 48 8b bd e8 fe ff ff 4c 89 95 c8 fe ff ff 48
- RSP: 0018:ffff8881ba39fa18 EFLAGS: 00010002
- RAX: 0000000000000000 RBX: ffff8881b9d6c000 RCX: ffff8881b9d6c278
- RDX: ffff8881b9d6c03c RSI: 0000000000000002 RDI: ffff8881daf2d710
- RBP: ffff8881ba39fb78 R08: 0000000000000001 R09: ffff8881daf00000
- R10: 0000001a4d4f1987 R11: ffff8881daf2db3b R12: 1ffff11037473f4e
- R13: ffff8881b9d6c2cc R14: ffff8881daf2ccc0 R15: ffff8881daf2ccc0
-   enqueue_task+0x184/0x390 kernel/sched/core.c:730
-   __sched_setscheduler+0xe99/0x2190 kernel/sched/core.c:4336
-   sched_setattr kernel/sched/core.c:4394 [inline]
-   __do_sys_sched_setattr kernel/sched/core.c:4570 [inline]
-   __se_sys_sched_setattr kernel/sched/core.c:4549 [inline]
-   __x64_sys_sched_setattr+0x1b2/0x2f0 kernel/sched/core.c:4549
-   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
- RIP: 0033:0x457569
- Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
- 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
- ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
- RSP: 002b:00007f05ce0a2c78 EFLAGS: 00000246 ORIG_RAX: 000000000000013a
- RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
- RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000000
- RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
- R10: 0000000000000000 R11: 0000000000000246 R12: 00007f05ce0a36d4
- R13: 00000000004c369f R14: 00000000004d5730 R15: 00000000ffffffff
-
-At deadline.c:628 we have:
-
- 623 static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
- 624 {
- 625 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
- 626 	struct rq *rq = rq_of_dl_rq(dl_rq);
- 627
- 628 	WARN_ON(dl_se->dl_boosted);
- 629 	WARN_ON(dl_time_before(rq_clock(rq), dl_se->deadline));
-        [...]
-     }
-
-Which means that setup_new_dl_entity() has been called on a task
-currently boosted. This shouldn't happen though, as setup_new_
-dl_entity() is only called when the 'dynamic' deadline of the new entity
-is in the past w.r.t. rq_clock and boosted tasks shouldn't verify this
-condition.
-
-Digging through PI code I noticed that what above might in fact happen
-if an RT tasks blocks on an rt_mutex hold by a DEADLINE task. In the
-first branch of boosting conditions we check only if a pi_task 'dynamic'
-deadline is earlier than mutex holder's and in this case we set mutex
-holder to be dl_boosted. However, since RT 'dynamic' deadlines are only
-initialized if such tasks get boosted at some point (or if they become
-DEADLINE of course), in general RT 'dynamic' deadlines are usually equal
-to 0 and this verifies the aforementioned condition.
-
-Fix it by checking that the potential donor task is actually (even if
-temporary because in turn boosted) running at DEADLINE priority before
-using its 'dynamic' deadline value.
-
-Reported-by: syzbot+119ba87189432ead09b4@syzkaller.appspotmail.com
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- kernel/sched/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 5afb868f7339..d17257613f10 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3827,7 +3827,8 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
- 	 */
- 	if (dl_prio(prio)) {
- 		if (!dl_prio(p->normal_prio) ||
--		    (pi_task && dl_entity_preempt(&pi_task->dl, &p->dl))) {
-+		    (pi_task && dl_prio(pi_task->prio) &&
-+		     dl_entity_preempt(&pi_task->dl, &p->dl))) {
- 			p->dl.dl_boosted = 1;
- 			queue_flag |= ENQUEUE_REPLENISH;
- 		} else
--- 
-2.17.2
 
