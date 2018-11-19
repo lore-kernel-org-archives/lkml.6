@@ -2,87 +2,123 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B2FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD8DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F4C2075B
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1622420823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nci0wZ8e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F4C2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D7qcptHP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1622420823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729857AbeKTB4o (ORCPT
+        id S1729813AbeKTCBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:56:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729762AbeKTB4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:56:43 -0500
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 554A92146D
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 15:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542641566;
-        bh=sHwkhBNkvftHJBS1ehPM4ASXBhRQU8qt95++KWUYPpQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nci0wZ8eHuR+UqxtTGNohjioV+zwGyTDpvvw3HtWdE/lfB0maBtfmneJ/gGwWClJE
-         2uolBazKzL1/ONYTpuaOFwyk6juwAmO2cIYUpe90jvEAIJwwiEnA9S5sZm567LYpeB
-         6VkJ1KrlK+1e9ule5m/Skwty8xKIz9S33CADxI+g=
-Received: by mail-wr1-f45.google.com with SMTP id u5-v6so27239602wrn.9
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 07:32:46 -0800 (PST)
-X-Gm-Message-State: AA+aEWatc7+uTeH3SgX58z7H0c19FiZ6nWK5pBC/cOBrIiiwHVXaSfMa
-        roMPiqX1iFmna74mrj7aZRR/+DkgOx2qXSw9qahqdw==
-X-Google-Smtp-Source: AFSGD/Xjyo1Vcnoxr384p+bLGZ1AhVN9PJ1vh8IkSKB30XQ2ERP7qTT+BcS2FfUlYOs7qajp/O9aaDDuy2EuJBgUszk=
-X-Received: by 2002:adf:ea81:: with SMTP id s1mr216821wrm.309.1542641564760;
- Mon, 19 Nov 2018 07:32:44 -0800 (PST)
+        Mon, 19 Nov 2018 21:01:49 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52384 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729745AbeKTCBs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:01:48 -0500
+Received: by mail-it1-f196.google.com with SMTP id i7so2686060iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 07:37:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HovDyLoW9JgP2dOMddyLtoMQVzEDX+zbCzhvdFpRmKg=;
+        b=D7qcptHPzcuFLxZJDKf3/4DYoAkuBIC1/vhhevIzPorrX0vffSlkOwDgxtkWOJQ5at
+         HawzLKIlQZPHhzcg/ht+WOn2/Bwzx35gGjNcBaHjt33qZAinytdLYzklmhvd92e87Qpx
+         QdcvOzwwWfj2RygLc+IHYXpaaAK0ppUfMF4FA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HovDyLoW9JgP2dOMddyLtoMQVzEDX+zbCzhvdFpRmKg=;
+        b=jTDx4wbYUqgsbOTTbuLMZZC5BazOly0eHjKEIksXrQg8kvzYiYHQvM0cUMHCmnLQ+y
+         YN0xIGO4Cx1Wr/PettxblC+JEsaF2A4iHWKpEZUkTUDzQvgcQTHP3A8F18H+IQ+Hu1sY
+         sl4Pgk/vbSx9sU7pU6Xyqx4LIa/ZuPh7P0unAjcU77lHqCxer2q0xuvBFpbL/X1U5qiY
+         zHtXunUP83FTbkFyL2M1jBLc2mQgoCMec6p4CmvERCEOr0qnYMKRSlJGMIs/xlGoAlyh
+         eKqif7s1XSFkUVndpVOCxs4ZI9XQCS0umCPAg1SykNoG3znpLi4g6/xlbZpSHYkcZNMk
+         MSTw==
+X-Gm-Message-State: AA+aEWY37xH6IqVGtll8jk79eUrq2EiEZflJ4Wetkz7wXO1YMNe1o+is
+        AXef8kZJdE0yPlrFL19e+09N5pujBVxQ2+U000RgCA==
+X-Google-Smtp-Source: AFSGD/XYGCOxtGQjZNHVynlMGnMqP3y8k20/U+DJFyEKBYt23Zja/1TkjR662SNXidQ9wGwqBoa2EOaNRg2lDyTv3Xs=
+X-Received: by 2002:a24:710:: with SMTP id f16mr1015081itf.121.1542641871167;
+ Mon, 19 Nov 2018 07:37:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119103241.5229-1-christian@brauner.io> <20181119103241.5229-2-christian@brauner.io>
-In-Reply-To: <20181119103241.5229-2-christian@brauner.io>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 19 Nov 2018 07:32:33 -0800
-X-Gmail-Original-Message-ID: <CALCETrVvHu2dSJs1dpA-2ozGhZGxbGrnYbUuh98rkCdsz42rfg@mail.gmail.com>
-Message-ID: <CALCETrVvHu2dSJs1dpA-2ozGhZGxbGrnYbUuh98rkCdsz42rfg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] proc: get process file descriptor from /proc/<pid>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Daniel Colascione <dancol@google.com>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
+References: <20181117185715.25198-1-ard.biesheuvel@linaro.org>
+ <20181117185715.25198-2-ard.biesheuvel@linaro.org> <b37c3411-7950-dcb3-f0c3-6d9f589d36ab@iogearbox.net>
+In-Reply-To: <b37c3411-7950-dcb3-f0c3-6d9f589d36ab@iogearbox.net>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 19 Nov 2018 07:37:39 -0800
+Message-ID: <CAKv+Gu8mo+WkJ356wByidUDoA-xHrUH99od5N_yJoqtX_28_5g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] bpf: account for freed JIT allocations in arch code
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-mips <linux-mips@linux-mips.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        sparclinux@vger.kernel.org,
+        "<netdev@vger.kernel.org>" <netdev@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 2:33 AM Christian Brauner <christian@brauner.io> wrote:
+On Mon, 19 Nov 2018 at 02:37, Daniel Borkmann <daniel@iogearbox.net> wrote:
 >
-> With this patch an open() call on /proc/<pid> will give userspace a handle
-> to struct pid of the process associated with /proc/<pid>. This allows to
-> maintain a stable handle on a process.
-> I have been discussing various approaches extensively during technical
-> conferences this year culminating in a long argument with Eric at Linux
-> Plumbers. The general consensus was that having a handle on a process
-> should be something that is very simple and easy to maintain with the
-> option of being extensible via a more advanced api if the need arises. I
-> believe that this patch is the most simple, dumb, and therefore
-> maintainable solution.
+> On 11/17/2018 07:57 PM, Ard Biesheuvel wrote:
+> > Commit ede95a63b5e84 ("bpf: add bpf_jit_limit knob to restrict unpriv
+> > allocations") added a call to bpf_jit_uncharge_modmem() to the routine
+> > bpf_jit_binary_free() which is called from the __weak bpf_jit_free().
+> > This function is overridden by arches, some of which do not call
+> > bpf_jit_binary_free() to release the memory, and so the released
+> > memory is not accounted for, potentially leading to spurious allocation
+> > failures.
+> >
+> > So replace the direct calls to module_memfree() in the arch code with
+> > calls to bpf_jit_binary_free().
+>
+> Sorry but this patch is completely buggy, and above description on the
+> accounting incorrect as well. Looks like this patch was not tested at all.
+>
 
-How does the mechanism you're adding here differ from proc_pid()?
+My apologies. I went off into the weeds a bit looking at different
+versions for 32-bit and 64-bit on different architectures. So indeed,
+this patch should be dropped.
+
+> The below cBPF JITs that use module_memfree() which you replace with
+> bpf_jit_binary_free() are using module_alloc() internally to get the JIT
+> image buffer ...
+>
+
+Indeed. So would you prefer for arm64 to override bpf_jit_free() in
+its entirety, and not call bpf_jit_binary_free() but simply call
+bpf_jit_uncharge_modmem() and vfree() directly? It's either that, or
+we'd have to untangle this a bit, to avoid having one __weak function
+on top of the other just so other arches can replace the
+module_memfree() call in bpf_jit_binary_free() with vfree() (which
+amount to the same thing on arm64 anyway)
