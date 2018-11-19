@@ -2,50 +2,55 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88EFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6980AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706E02145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E342145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R42/YPF1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706E02145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7Jnqv8+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E342145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389755AbeKTDNi (ORCPT
+        id S2389767AbeKTDNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50502 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388931AbeKTDNi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:38 -0500
+        id S2388931AbeKTDNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE77E213A2;
-        Mon, 19 Nov 2018 16:49:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 556FB208E4;
+        Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646165;
-        bh=YhiCJbcDvFpyuFaRDSOSvPm6EhVF0xLYei0hf5wZdvk=;
+        s=default; t=1542646168;
+        bh=p0RakgUMiWdvLz8WpXd6UarS8P5ezl39+eLS6ukKhYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R42/YPF1yxYyfZb5QYGwYs73n8XFgM9bT5pys8TeyN8GMpYdZsb8+y+CgFAYMm3kj
-         WfFkY3BXllOp/WZCVrzk4kmXupEhOAhpstscp84N46b2WCNTWKE2hs6/ESp00q5KOE
-         CfI8RmBOeTfArFwNBOyaDAPrQsbQK5KfN5w48Goc=
+        b=u7Jnqv8+UaMSZju2vHnNnIzv9nDXVp+g8B7hGEC3F7GwG9Bj1qJ8amdXllDVi4bNz
+         iNVgJdS6X1I3ScZollEjUdVzkEV1xrvaeD4plEdzQG7rLdMzVQ+VknKhvXKDcJsNum
+         TOj+ZiV1Nhhz904CcraiiLhp9Vf8Lz5T0UMNTnM4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.14 061/124] mtd: docg3: dont set conflicting BCH_CONST_PARAMS option
-Date:   Mon, 19 Nov 2018 17:28:35 +0100
-Message-Id: <20181119162625.309215507@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 035/124] MIPS: Loongson-3: Fix CPU UART irq delivery problem
+Date:   Mon, 19 Nov 2018 17:28:09 +0100
+Message-Id: <20181119162620.447043496@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,51 +68,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+[ Upstream commit d06f8a2f1befb5a3d0aa660ab1c05e9b744456ea ]
 
-commit be2e1c9dcf76886a83fb1c433a316e26d4ca2550 upstream.
+Masking/unmasking the CPU UART irq in CP0_Status (and redirecting it to
+other CPUs) may cause interrupts be lost, especially in multi-package
+machines (Package-0's UART irq cannot be delivered to others). So make
+mask_loongson_irq() and unmask_loongson_irq() be no-ops.
 
-I noticed during the creation of another bugfix that the BCH_CONST_PARAMS
-option that is set by DOCG3 breaks setting variable parameters for any
-other users of the BCH library code.
+The original problem (UART IRQ may deliver to any core) is also because
+of masking/unmasking the CPU UART irq in CP0_Status. So it is safe to
+remove all of the stuff.
 
-The only other user we have today is the MTD_NAND software BCH
-implementation (most flash controllers use hardware BCH these days
-and are not affected). I considered removing BCH_CONST_PARAMS entirely
-because of the inherent conflict, but according to the description in
-lib/bch.c there is a significant performance benefit in keeping it.
-
-To avoid the immediate problem of the conflict between MTD_NAND_BCH
-and DOCG3, this only sets the constant parameters if MTD_NAND_BCH
-is disabled, which should fix the problem for all cases that
-are affected. This should also work for all stable kernels.
-
-Note that there is only one machine that actually seems to use the
-DOCG3 driver (arch/arm/mach-pxa/mioa701.c), so most users should have
-the driver disabled, but it almost certainly shows up if we wanted
-to test random kernels on machines that use software BCH in MTD.
-
-Fixes: d13d19ece39f ("mtd: docg3: add ECC correction code")
-Cc: stable@vger.kernel.org
-Cc: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20433/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/devices/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/loongson64/loongson-3/irq.c | 43 ++-------------------------
+ 1 file changed, 3 insertions(+), 40 deletions(-)
 
---- a/drivers/mtd/devices/Kconfig
-+++ b/drivers/mtd/devices/Kconfig
-@@ -206,7 +206,7 @@ comment "Disk-On-Chip Device Drivers"
- config MTD_DOCG3
- 	tristate "M-Systems Disk-On-Chip G3"
- 	select BCH
--	select BCH_CONST_PARAMS
-+	select BCH_CONST_PARAMS if !MTD_NAND_BCH
- 	select BITREVERSE
- 	---help---
- 	  This provides an MTD device driver for the M-Systems DiskOnChip
+diff --git a/arch/mips/loongson64/loongson-3/irq.c b/arch/mips/loongson64/loongson-3/irq.c
+index cbeb20f9fc95..2e115ab66a00 100644
+--- a/arch/mips/loongson64/loongson-3/irq.c
++++ b/arch/mips/loongson64/loongson-3/irq.c
+@@ -102,45 +102,8 @@ static struct irqaction cascade_irqaction = {
+ 	.name = "cascade",
+ };
+ 
+-static inline void mask_loongson_irq(struct irq_data *d)
+-{
+-	clear_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
+-	irq_disable_hazard();
+-
+-	/* Workaround: UART IRQ may deliver to any core */
+-	if (d->irq == LOONGSON_UART_IRQ) {
+-		int cpu = smp_processor_id();
+-		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
+-		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
+-		u64 intenclr_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_INTENCLR);
+-		u64 introuter_lpc_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_LPC);
+-
+-		*(volatile u32 *)intenclr_addr = 1 << 10;
+-		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
+-	}
+-}
+-
+-static inline void unmask_loongson_irq(struct irq_data *d)
+-{
+-	/* Workaround: UART IRQ may deliver to any core */
+-	if (d->irq == LOONGSON_UART_IRQ) {
+-		int cpu = smp_processor_id();
+-		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
+-		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
+-		u64 intenset_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_INTENSET);
+-		u64 introuter_lpc_addr = smp_group[node_id] |
+-			(u64)(&LOONGSON_INT_ROUTER_LPC);
+-
+-		*(volatile u32 *)intenset_addr = 1 << 10;
+-		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
+-	}
+-
+-	set_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
+-	irq_enable_hazard();
+-}
++static inline void mask_loongson_irq(struct irq_data *d) { }
++static inline void unmask_loongson_irq(struct irq_data *d) { }
+ 
+  /* For MIPS IRQs which shared by all cores */
+ static struct irq_chip loongson_irq_chip = {
+@@ -183,7 +146,7 @@ void __init mach_init_irq(void)
+ 	chip->irq_set_affinity = plat_set_irq_affinity;
+ 
+ 	irq_set_chip_and_handler(LOONGSON_UART_IRQ,
+-			&loongson_irq_chip, handle_level_irq);
++			&loongson_irq_chip, handle_percpu_irq);
+ 
+ 	/* setup HT1 irq */
+ 	setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
+-- 
+2.17.1
+
 
 
