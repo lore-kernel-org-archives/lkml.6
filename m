@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FA0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205ACC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D21C20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C1A20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOaOohdK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D21C20851
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wmfejyvw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C1A20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeKSU6F (ORCPT
+        id S1728334AbeKSU6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:58:05 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38379 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbeKSU6D (ORCPT
+        Mon, 19 Nov 2018 15:58:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40989 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbeKSU6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:58:03 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e3-v6so31458227wrs.5
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:34:50 -0800 (PST)
+        Mon, 19 Nov 2018 15:58:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so2778305wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=X5boqJ0UbdeKGVE+FnIPUcIjT6rvSPY3NTZlqHlp7eY=;
-        b=cOaOohdKAX6mJq3wr2E6Hwafuweehz68ABx+2oXHJV0TZuvr4qoCBxK2dufKJTVwOI
-         pIuCn8YJgCmgtwHWw/Bhfhh2VvhLRaaHj0AkzG5SpAmKlDJQv+8kIIsF2MoREcj+qMIQ
-         C2MBBTrmNvoV9HHeYBNRnb8XIcdxNvnBM7qSs=
+        bh=U4mx1fsW9hQVbmr4//R68r7KKVwetfXIYfE3uWdN0BA=;
+        b=WmfejyvwiqglaM7h5Ev4Z0FCeNcqTiYIIExPQ4Tm4odYSIRRi7BQKPz60lpr5NxKUn
+         Ql1cG2nTKWLNdExnpTToG1ROtic9FG/wQtE4SiV+z7fwdjnpxuYSE5pHUn2+EKlQHGQg
+         sT2nPkqTp2x2oDyuhu8iBxzs0ALZZ7E508z78=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=X5boqJ0UbdeKGVE+FnIPUcIjT6rvSPY3NTZlqHlp7eY=;
-        b=JTGZo4DxFIr113Kz45+Cd2Aqlh/4tJtaxDvXp0FGZuVEXrdP1H6IstiiWhJHmf2urD
-         SHdSdP2B0t+CP35sHOJX0vZ8B0W5UYuwxChqJ68ICylRVur/IqQD4tSl3Z+8O5vOAn72
-         Co4DzKE8qgbaYE9kv5y0i14eVX3WFD724v6VcOQ1Rqv3QbJLKBGDiFdncR9/o3xYfYCc
-         pjSBA1qj/fy0xmIO76ONyWQZmVzz+wVRyMUHSN314j7+2lNFzsmot/KASb3BtFxGgwML
-         i9h6N81i+ko31pAD1i8jq66fM5qXxQeRFfFVGVneB5fyYHdoXyEk9spmQG4krlMW6u8k
-         GH1w==
-X-Gm-Message-State: AGRZ1gKC3fS9PoPeb5Hyxax31rHmBlLtpm+5jOUlVSWoDEf6rQeFTCsR
-        OeNGZ2zpqrGO2RVntNRHfWB6nQ==
-X-Google-Smtp-Source: AJdET5dlidO4F2+Oc57hof7n9lzgBTwrCKQE7wMlAYyJLDMl0bDi14Nwu5lkSVkH9OvaTIOR3d0voQ==
-X-Received: by 2002:a5d:6187:: with SMTP id j7mr17824022wru.300.1542623689487;
-        Mon, 19 Nov 2018 02:34:49 -0800 (PST)
+        bh=U4mx1fsW9hQVbmr4//R68r7KKVwetfXIYfE3uWdN0BA=;
+        b=P/k7X4JLJaZrrAST21q1nFIsmFop3IwqG9bkRhwYmCbjcaqNOTfti5AiXQiq3fb/yy
+         nA5oyfBZ3ut3nX6AGkZB7QPqy94jgt2yu+j5vPAl3Gg+7a+Wimdwpru8Kptg9+PodEke
+         er/hHmGHJ0lGfBRiF3MTDzu6rAXbi81JMlLu0rIMgYqagovq8al1XQ2FdcJO4k8+lHkU
+         gB8+Dr0E60mvxPF07TCgLSZ04wrsFqO5B2wSgdl5IUjXm42OsPKBRxsRXxydpYay4QIP
+         me/1v7kam8Tix3tDMfr0/hkxRWOswxghRCE77YGbD1iBhvgrFs4XAWH9WrHOJLwXXYhL
+         F5nA==
+X-Gm-Message-State: AA+aEWZ+98as0eFmX5vWisjBOzMpsLba984BLS+POjXhMi6zrzWEhVvv
+        brM8OFBY4WF53SiJrdslu/dmLA==
+X-Google-Smtp-Source: AFSGD/W2mi6KsjsMrtNGYj62KHvXQ8q32ubp7k6R4iPvkIGZteTn9oJGijRQQtIMchc92nXrQQ0Ntg==
+X-Received: by 2002:a5d:410e:: with SMTP id l14mr9321492wrp.61.1542623692598;
+        Mon, 19 Nov 2018 02:34:52 -0800 (PST)
 Received: from localhost.localdomain ([37.162.18.180])
-        by smtp.gmail.com with ESMTPSA id e9sm14973298wro.16.2018.11.19.02.34.46
+        by smtp.gmail.com with ESMTPSA id e9sm14973298wro.16.2018.11.19.02.34.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 02:34:49 -0800 (PST)
+        Mon, 19 Nov 2018 02:34:52 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -71,9 +71,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         oleksandr@natalenko.name, cgroups@vger.kernel.org,
         linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH V2 05/10] block, bfq: align min and default weights with the old cfq default
-Date:   Mon, 19 Nov 2018 11:34:19 +0100
-Message-Id: <20181119103424.3853-6-paolo.valente@linaro.org>
+Subject: [PATCH V2 06/10] cgroup: make all functions of all cftypes be invoked
+Date:   Mon, 19 Nov 2018 11:34:20 +0100
+Message-Id: <20181119103424.3853-7-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20181119103424.3853-1-paolo.valente@linaro.org>
 References: <20181119103424.3853-1-paolo.valente@linaro.org>
@@ -84,37 +84,246 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Angelo Ruocco <angeloruocco90@gmail.com>
 
-bfq exposes a cgroup attribute, weight, with the same meaning as that
-exposed by cfq.
+When two or more entities (of any kind) share a file, their respective
+cftypes are linked together. The allowed operations on those files
+are: open, release, write and show, mapped to the functions defined in
+the cftypes.
 
-This commit changes bfq default and min weights to match the ones set
-by cfq (before legacy blk was removed).
+This commit makes the cgroup core invoke, whenever one of those
+operations is requested, the respective function of all the cftypes
+linked together.
 
 Signed-off-by: Angelo Ruocco <angeloruocco90@gmail.com>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- block/bfq-iosched.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/cgroup/cgroup.c | 181 ++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 132 insertions(+), 49 deletions(-)
 
-diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-index 77651d817ecd..249d8128d3ee 100644
---- a/block/bfq-iosched.h
-+++ b/block/bfq-iosched.h
-@@ -22,13 +22,13 @@
- #define BFQ_IOPRIO_CLASSES	3
- #define BFQ_CL_IDLE_TIMEOUT	(HZ/5)
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 61eafd69e2fd..9bf6b0b5a0ca 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3452,66 +3452,107 @@ static int cgroup_cpu_pressure_show(struct seq_file *seq, void *v)
+ static int cgroup_file_open(struct kernfs_open_file *of)
+ {
+ 	struct cftype *cft = of->kn->priv;
++	struct cftype *n;
++	int ret = 0;
  
--#define BFQ_MIN_WEIGHT			1
-+#define BFQ_MIN_WEIGHT			10
- #define BFQ_MAX_WEIGHT			1000
- #define BFQ_WEIGHT_CONVERSION_COEFF	10
++	list_for_each_cft(cft, n) {
++		if (cft->open)
++			ret = cft->open(of);
++		/*
++		 * If there has been an error with the open function of one of
++		 * the cft associated with the file, we call the release
++		 * function of all the cftype associated to cft whose open
++		 * function succeded.
++		 */
++		if (ret) {
++			struct cftype *c = of->kn->priv;
++			struct cftype *n;
++
++			list_for_each_cft(c, n) {
++				if (cft == c)
++					break;
++				if (c->release)
++					c->release(of);
++			}
++			break;
++		}
++	}
  
- #define BFQ_DEFAULT_QUEUE_IOPRIO	4
+-	if (cft->open)
+-		return cft->open(of);
+-	return 0;
++	return ret;
+ }
  
--#define BFQ_WEIGHT_LEGACY_DFL	100
-+#define BFQ_WEIGHT_LEGACY_DFL	500
- #define BFQ_DEFAULT_GRP_IOPRIO	0
- #define BFQ_DEFAULT_GRP_CLASS	IOPRIO_CLASS_BE
+ static void cgroup_file_release(struct kernfs_open_file *of)
+ {
+ 	struct cftype *cft = of->kn->priv;
++	struct cftype *n;
+ 
+-	if (cft->release)
+-		cft->release(of);
++	list_for_each_cft(cft, n)
++		if (cft->release)
++			cft->release(of);
+ }
+ 
++/*
++ * Call all the write functions of the cftypes associated with the file.
++ *
++ * When a write fails, don't keep trying to write into the file via the write
++ * functions of the other cftypes associated with it.
++ */
+ static ssize_t cgroup_file_write(struct kernfs_open_file *of, char *buf,
+ 				 size_t nbytes, loff_t off)
+ {
+ 	struct cgroup_namespace *ns = current->nsproxy->cgroup_ns;
+ 	struct cgroup *cgrp = of->kn->parent->priv;
+ 	struct cftype *cft = of->kn->priv;
++	struct cftype *n;
+ 	struct cgroup_subsys_state *css;
+-	int ret;
++	int ret = 0;
+ 
+-	/*
+-	 * If namespaces are delegation boundaries, disallow writes to
+-	 * files in an non-init namespace root from inside the namespace
+-	 * except for the files explicitly marked delegatable -
+-	 * cgroup.procs and cgroup.subtree_control.
+-	 */
+-	if ((cgrp->root->flags & CGRP_ROOT_NS_DELEGATE) &&
+-	    !(cft->flags & CFTYPE_NS_DELEGATABLE) &&
+-	    ns != &init_cgroup_ns && ns->root_cset->dfl_cgrp == cgrp)
+-		return -EPERM;
++	list_for_each_cft(cft, n) {
++		/*
++		 * If namespaces are delegation boundaries, disallow writes to
++		 * files in an non-init namespace root from inside the
++		 * namespace except for the files explicitly marked
++		 * delegatable - cgroup.procs and cgroup.subtree_control.
++		 */
++		if ((cgrp->root->flags & CGRP_ROOT_NS_DELEGATE) &&
++		    !(cft->flags & CFTYPE_NS_DELEGATABLE) &&
++		    ns != &init_cgroup_ns && ns->root_cset->dfl_cgrp == cgrp)
++			return -EPERM;
+ 
+-	if (cft->write)
+-		return cft->write(of, buf, nbytes, off);
++		if (cft->write) {
++			ret = cft->write(of, buf, nbytes, off);
+ 
+-	/*
+-	 * kernfs guarantees that a file isn't deleted with operations in
+-	 * flight, which means that the matching css is and stays alive and
+-	 * doesn't need to be pinned.  The RCU locking is not necessary
+-	 * either.  It's just for the convenience of using cgroup_css().
+-	 */
+-	rcu_read_lock();
+-	css = cgroup_css(cgrp, cft->ss);
+-	rcu_read_unlock();
++			if (ret)
++				break;
++			continue;
++		}
+ 
+-	if (cft->write_u64) {
+-		unsigned long long v;
+-		ret = kstrtoull(buf, 0, &v);
+-		if (!ret)
+-			ret = cft->write_u64(css, cft, v);
+-	} else if (cft->write_s64) {
+-		long long v;
+-		ret = kstrtoll(buf, 0, &v);
+-		if (!ret)
+-			ret = cft->write_s64(css, cft, v);
+-	} else {
+-		ret = -EINVAL;
++		/*
++		 * kernfs guarantees that a file isn't deleted with operations
++		 * in flight, which means that the matching css is and stays
++		 * alive and doesn't need to be pinned.  The RCU locking is not
++		 * necessary either.  It's just for the convenience of using
++		 * cgroup_css().
++		 */
++		rcu_read_lock();
++		css = cgroup_css(cgrp, cft->ss);
++		rcu_read_unlock();
++
++		if (cft->write_u64) {
++			unsigned long long v;
++
++			ret = kstrtoull(buf, 0, &v);
++			if (!ret)
++				ret = cft->write_u64(css, cft, v);
++		} else if (cft->write_s64) {
++			long long v;
++
++			ret = kstrtoll(buf, 0, &v);
++			if (!ret)
++				ret = cft->write_s64(css, cft, v);
++		} else {
++			return -EINVAL;
++		}
+ 	}
+ 
+ 	return ret ?: nbytes;
+@@ -3533,22 +3574,64 @@ static void cgroup_seqfile_stop(struct seq_file *seq, void *v)
+ 		seq_cft(seq)->seq_stop(seq, v);
+ }
+ 
++/*
++ * A file shared by more cftypes may be showing different values. In that case
++ * call all the show functions and print the name of the owner that defined
++ * them.
++ */
+ static int cgroup_seqfile_show(struct seq_file *m, void *arg)
+ {
+ 	struct cftype *cft = seq_cft(m);
++	struct cftype *n;
+ 	struct cgroup_subsys_state *css = seq_css(m);
++	char *first_seqshow_str = NULL;
++	size_t first_str_size = 0;
++	size_t current_str_size = 0;
+ 	int ret = 0;
+ 
+-	if (cft->seq_show)
+-		ret = cft->seq_show(m, arg);
+-	else if (cft->seq_show_cft)
+-		ret = cft->seq_show_cft(m, cft, arg);
+-	else if (cft->read_u64)
+-		seq_printf(m, "%llu\n", cft->read_u64(css, cft));
+-	else if (cft->read_s64)
+-		seq_printf(m, "%lld\n", cft->read_s64(css, cft));
+-	else
+-		ret = -EINVAL;
++	list_for_each_cft(cft, n) {
++		if (cft->seq_show) {
++			ret = cft->seq_show(m, arg);
++			if (ret)
++				break;
++		} else if (cft->seq_show_cft) {
++			ret = cft->seq_show_cft(m, cft, arg);
++			if (ret)
++				break;
++		} else if (cft->read_u64) {
++			seq_printf(m, "%llu\n", cft->read_u64(css, cft));
++		} else if (cft->read_s64) {
++			seq_printf(m, "%lld\n", cft->read_s64(css, cft));
++		} else {
++			ret = -EINVAL;
++			break;
++		}
++		current_str_size = m->count - current_str_size;
++
++		if (first_seqshow_str == NULL) {
++			first_seqshow_str = kmalloc(m->size, GFP_KERNEL);
++			first_str_size = m->count;
++			strcpy(first_seqshow_str, m->buf);
++			first_str_size = m->count;
++		} else if (strcmp(first_seqshow_str,
++				  m->buf + m->count - current_str_size)) {
++			first_str_size = -1;
++		}
++
++		if (current_str_size) {
++			seq_printf(m, " - %s\n", cft->owner_name);
++			current_str_size = m->count;
++		}
++	}
++
++	/*
++	 * If all the cft->seqfile_show/read are equal, truncate the
++	 * output of the seqfile to the length of the first string.
++	 */
++	if (first_str_size != -1)
++		m->count = first_str_size;
++
++	kfree(first_seqshow_str);
+ 	return ret;
+ }
  
 -- 
 2.16.1
