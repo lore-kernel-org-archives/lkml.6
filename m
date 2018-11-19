@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE985C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC8CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A818F214ED
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55941214F1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q91QQ6bo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A818F214ED
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wZcDllbF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55941214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405076AbeKTDXk (ORCPT
+        id S2405090AbeKTDXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35720 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404341AbeKTDXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:39 -0500
+        id S2404684AbeKTDXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C7EB214E0;
-        Mon, 19 Nov 2018 16:59:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A29C6214E0;
+        Mon, 19 Nov 2018 16:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646763;
-        bh=9eG3NIkUNHlo9Ije647ePWrSdEZyU4SixO+N/0inauE=;
+        s=default; t=1542646766;
+        bh=X7KdRkvyAHeGfQnIMtV/VuY5Bb68dxZtnpqjg7ssAzA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q91QQ6boc6/RdDAsEtN+PeI8W3vrJ4sfPaQ9V9V6X4w7NyhR7bM9XjOpOvnkG/N8J
-         dFth0nOtU0Qmx6mCZw4EYPybcv4nb5umC3toHOB0zjLoEG0TWW6116DAbxm9mI2YMw
-         Jclxe3noye8iVHcrBTKOePwt5Cp3KAilDojquZiw=
+        b=wZcDllbFRHFn5+AuCIA1z9HHBtarZVO4sKqM0g5yZ6wko5kPXvAy7gWniufIsjbCA
+         xwNf/l7P+wi3fbN2xJKFU9VOwgPv8wdwRGj3AlDGFx6Avl81LJSBtLD660pHq+bGQ0
+         XPgLYjPB6RfblM/5tNbj1j149IdgQwjVQ8lNhOdw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>,
-        Dinh Nguyen <dinguyen@kernel.org>
-Subject: [PATCH 4.4 082/160] arm64: dts: stratix10: Correct System Manager register size
-Date:   Mon, 19 Nov 2018 17:28:41 +0100
-Message-Id: <20181119162639.166480779@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.4 065/160] smb3: on kerberos mount if server doesnt specify auth type use krb5
+Date:   Mon, 19 Nov 2018 17:28:24 +0100
+Message-Id: <20181119162637.675809487@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -62,32 +62,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+From: Steve French <stfrench@microsoft.com>
 
-commit 74121b9aa3cd571ddfff014a9f47db36cae3cda9 upstream.
+commit 926674de6705f0f1dbf29a62fd758d0977f535d6 upstream.
 
-Correct the register size of the System Manager node.
+Some servers (e.g. Azure) do not include a spnego blob in the SMB3
+negotiate protocol response, so on kerberos mounts ("sec=krb5")
+we can fail, as we expected the server to list its supported
+auth types (OIDs in the spnego blob in the negprot response).
+Change this so that on krb5 mounts we default to trying krb5 if the
+server doesn't list its supported protocol mechanisms.
 
-Cc: stable@vger.kernel.org
-Fixes: 78cd6a9d8e154 ("arm64: dts: Add base stratix 10 dtsi")
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifs_spnego.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-+++ b/arch/arm64/boot/dts/altera/socfpga_stratix10.dtsi
-@@ -249,7 +249,7 @@
+--- a/fs/cifs/cifs_spnego.c
++++ b/fs/cifs/cifs_spnego.c
+@@ -143,8 +143,10 @@ cifs_get_spnego_key(struct cifs_ses *ses
+ 		sprintf(dp, ";sec=krb5");
+ 	else if (server->sec_mskerberos)
+ 		sprintf(dp, ";sec=mskrb5");
+-	else
+-		goto out;
++	else {
++		cifs_dbg(VFS, "unknown or missing server auth type, use krb5\n");
++		sprintf(dp, ";sec=krb5");
++	}
  
- 		sysmgr: sysmgr@ffd12000 {
- 			compatible = "altr,sys-mgr", "syscon";
--			reg = <0xffd12000 0x1000>;
-+			reg = <0xffd12000 0x228>;
- 		};
- 
- 		/* Local timer */
+ 	dp = description + strlen(description);
+ 	sprintf(dp, ";uid=0x%x",
 
 
