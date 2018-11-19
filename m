@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FB0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B97C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53378214DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 837A4208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FeYcKeaU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53378214DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC9Su1Rd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837A4208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389845AbeKTDN7 (ORCPT
+        id S2389859AbeKTDOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51084 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389272AbeKTDN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:58 -0500
+        id S2389272AbeKTDOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7198F2148E;
-        Mon, 19 Nov 2018 16:49:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 088F42148E;
+        Mon, 19 Nov 2018 16:49:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646185;
-        bh=n09kuuIIaLSLonNaQgmmD3FHvq43ya8MPoUUZYoipQQ=;
+        s=default; t=1542646188;
+        bh=fZgEikIk/5hDrbEr9aTKe7AtXrB16YhPuMU4hvwgE78=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FeYcKeaUGgciA1IFzi1Gx9mbe5huWJmQbIXCV0hP5yNmBcwc+qULuZNCWVXZv4kaA
-         1+foXFMjl9mr1O80ILikdkYzV0Ks1XBwQgHQK7Aqy8whOVVwcEjdVcH9vtwVHUvw6r
-         NPt2phbWma0tmGmMy2aHuOeMpV6t4BflEmidOnAA=
+        b=QC9Su1RdjlI0A4ZgwG9DcRdB0zEom4Z4hkiB6XysXlrI6ckhEqiAUVN5tsYEl+0L/
+         OvJgTaddY8q6wTi5JcARC0pC7+VxRz6/tHwP6B9kdD4oaKZcVZTu163fo3JNcHybxS
+         qRq0I2Q2EUG7OI7GcdRtwepr5YaXoGfXJiksSVd4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Robbie Ko <robbieko@synology.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 068/124] btrfs: fix pinned underflow after transaction aborted
-Date:   Mon, 19 Nov 2018 17:28:42 +0100
-Message-Id: <20181119162626.455756513@linuxfoundation.org>
+Subject: [PATCH 4.14 069/124] Btrfs: fix cur_offset in the error case for nocow
+Date:   Mon, 19 Nov 2018 17:28:43 +0100
+Message-Id: <20181119162626.600576083@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -63,101 +63,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+From: Robbie Ko <robbieko@synology.com>
 
-commit fcd5e74288f7d36991b1f0fb96b8c57079645e38 upstream.
+commit 506481b20e818db40b6198815904ecd2d6daee64 upstream.
 
-When running generic/475, we may get the following warning in dmesg:
+When the cow_file_range fails, the related resources are unlocked
+according to the range [start..end), so the unlock cannot be repeated in
+run_delalloc_nocow.
 
-[ 6902.102154] WARNING: CPU: 3 PID: 18013 at fs/btrfs/extent-tree.c:9776 btrfs_free_block_groups+0x2af/0x3b0 [btrfs]
-[ 6902.109160] CPU: 3 PID: 18013 Comm: umount Tainted: G        W  O      4.19.0-rc8+ #8
-[ 6902.110971] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-[ 6902.112857] RIP: 0010:btrfs_free_block_groups+0x2af/0x3b0 [btrfs]
-[ 6902.118921] RSP: 0018:ffffc9000459bdb0 EFLAGS: 00010286
-[ 6902.120315] RAX: ffff880175050bb0 RBX: ffff8801124a8000 RCX: 0000000000170007
-[ 6902.121969] RDX: 0000000000000002 RSI: 0000000000170007 RDI: ffffffff8125fb74
-[ 6902.123716] RBP: ffff880175055d10 R08: 0000000000000000 R09: 0000000000000000
-[ 6902.125417] R10: 0000000000000000 R11: 0000000000000000 R12: ffff880175055d88
-[ 6902.127129] R13: ffff880175050bb0 R14: 0000000000000000 R15: dead000000000100
-[ 6902.129060] FS:  00007f4507223780(0000) GS:ffff88017ba00000(0000) knlGS:0000000000000000
-[ 6902.130996] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 6902.132558] CR2: 00005623599cac78 CR3: 000000014b700001 CR4: 00000000003606e0
-[ 6902.134270] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 6902.135981] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 6902.137836] Call Trace:
-[ 6902.138939]  close_ctree+0x171/0x330 [btrfs]
-[ 6902.140181]  ? kthread_stop+0x146/0x1f0
-[ 6902.141277]  generic_shutdown_super+0x6c/0x100
-[ 6902.142517]  kill_anon_super+0x14/0x30
-[ 6902.143554]  btrfs_kill_super+0x13/0x100 [btrfs]
-[ 6902.144790]  deactivate_locked_super+0x2f/0x70
-[ 6902.146014]  cleanup_mnt+0x3b/0x70
-[ 6902.147020]  task_work_run+0x9e/0xd0
-[ 6902.148036]  do_syscall_64+0x470/0x600
-[ 6902.149142]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[ 6902.150375]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 6902.151640] RIP: 0033:0x7f45077a6a7b
-[ 6902.157324] RSP: 002b:00007ffd589f3e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[ 6902.159187] RAX: 0000000000000000 RBX: 000055e8eec732b0 RCX: 00007f45077a6a7b
-[ 6902.160834] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000055e8eec73490
-[ 6902.162526] RBP: 0000000000000000 R08: 000055e8eec734b0 R09: 00007ffd589f26c0
-[ 6902.164141] R10: 0000000000000000 R11: 0000000000000246 R12: 000055e8eec73490
-[ 6902.165815] R13: 00007f4507ac61a4 R14: 0000000000000000 R15: 00007ffd589f40d8
-[ 6902.167553] irq event stamp: 0
-[ 6902.168998] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-[ 6902.170731] hardirqs last disabled at (0): [<ffffffff810cd810>] copy_process.part.55+0x3b0/0x1f00
-[ 6902.172773] softirqs last  enabled at (0): [<ffffffff810cd810>] copy_process.part.55+0x3b0/0x1f00
-[ 6902.174671] softirqs last disabled at (0): [<0000000000000000>]           (null)
-[ 6902.176407] ---[ end trace 463138c2986b275c ]---
-[ 6902.177636] BTRFS info (device dm-3): space_info 4 has 273465344 free, is not full
-[ 6902.179453] BTRFS info (device dm-3): space_info total=276824064, used=4685824, pinned=18446744073708158976, reserved=0, may_use=0, readonly=65536
+In some cases (e.g. cur_offset <= end && cow_start != -1), cur_offset is
+not updated correctly, so move the cur_offset update before
+cow_file_range.
 
-In the above line there's "pinned=18446744073708158976" which is an
-unsigned u64 value of -1392640, an obvious underflow.
+  kernel BUG at mm/page-writeback.c:2663!
+  Internal error: Oops - BUG: 0 [#1] SMP
+  CPU: 3 PID: 31525 Comm: kworker/u8:7 Tainted: P O
+  Hardware name: Realtek_RTD1296 (DT)
+  Workqueue: writeback wb_workfn (flush-btrfs-1)
+  task: ffffffc076db3380 ti: ffffffc02e9ac000 task.ti: ffffffc02e9ac000
+  PC is at clear_page_dirty_for_io+0x1bc/0x1e8
+  LR is at clear_page_dirty_for_io+0x14/0x1e8
+  pc : [<ffffffc00033c91c>] lr : [<ffffffc00033c774>] pstate: 40000145
+  sp : ffffffc02e9af4f0
+  Process kworker/u8:7 (pid: 31525, stack limit = 0xffffffc02e9ac020)
+  Call trace:
+  [<ffffffc00033c91c>] clear_page_dirty_for_io+0x1bc/0x1e8
+  [<ffffffbffc514674>] extent_clear_unlock_delalloc+0x1e4/0x210 [btrfs]
+  [<ffffffbffc4fb168>] run_delalloc_nocow+0x3b8/0x948 [btrfs]
+  [<ffffffbffc4fb948>] run_delalloc_range+0x250/0x3a8 [btrfs]
+  [<ffffffbffc514c0c>] writepage_delalloc.isra.21+0xbc/0x1d8 [btrfs]
+  [<ffffffbffc516048>] __extent_writepage+0xe8/0x248 [btrfs]
+  [<ffffffbffc51630c>] extent_write_cache_pages.isra.17+0x164/0x378 [btrfs]
+  [<ffffffbffc5185a8>] extent_writepages+0x48/0x68 [btrfs]
+  [<ffffffbffc4f5828>] btrfs_writepages+0x20/0x30 [btrfs]
+  [<ffffffc00033d758>] do_writepages+0x30/0x88
+  [<ffffffc0003ba0f4>] __writeback_single_inode+0x34/0x198
+  [<ffffffc0003ba6c4>] writeback_sb_inodes+0x184/0x3c0
+  [<ffffffc0003ba96c>] __writeback_inodes_wb+0x6c/0xc0
+  [<ffffffc0003bac20>] wb_writeback+0x1b8/0x1c0
+  [<ffffffc0003bb0f0>] wb_workfn+0x150/0x250
+  [<ffffffc0002b0014>] process_one_work+0x1dc/0x388
+  [<ffffffc0002b02f0>] worker_thread+0x130/0x500
+  [<ffffffc0002b6344>] kthread+0x10c/0x110
+  [<ffffffc000284590>] ret_from_fork+0x10/0x40
+  Code: d503201f a9025bb5 a90363b7 f90023b9 (d4210000)
 
-When transaction_kthread is running cleanup_transaction(), another
-fsstress is running btrfs_commit_transaction(). The
-btrfs_finish_extent_commit() may get the same range as
-btrfs_destroy_pinned_extent() got, which causes the pinned underflow.
-
-Fixes: d4b450cd4b33 ("Btrfs: fix race between transaction commit and empty block group removal")
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Robbie Ko <robbieko@synology.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4428,13 +4428,23 @@ static int btrfs_destroy_pinned_extent(s
- 	unpin = pinned_extents;
- again:
- 	while (1) {
-+		/*
-+		 * The btrfs_finish_extent_commit() may get the same range as
-+		 * ours between find_first_extent_bit and clear_extent_dirty.
-+		 * Hence, hold the unused_bg_unpin_mutex to avoid double unpin
-+		 * the same extent range.
-+		 */
-+		mutex_lock(&fs_info->unused_bg_unpin_mutex);
- 		ret = find_first_extent_bit(unpin, 0, &start, &end,
- 					    EXTENT_DIRTY, NULL);
--		if (ret)
-+		if (ret) {
-+			mutex_unlock(&fs_info->unused_bg_unpin_mutex);
- 			break;
-+		}
- 
- 		clear_extent_dirty(unpin, start, end);
- 		btrfs_error_unpin_extent_range(fs_info, start, end);
-+		mutex_unlock(&fs_info->unused_bg_unpin_mutex);
- 		cond_resched();
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -1565,12 +1565,11 @@ out_check:
  	}
+ 	btrfs_release_path(path);
  
+-	if (cur_offset <= end && cow_start == (u64)-1) {
++	if (cur_offset <= end && cow_start == (u64)-1)
+ 		cow_start = cur_offset;
+-		cur_offset = end;
+-	}
+ 
+ 	if (cow_start != (u64)-1) {
++		cur_offset = end;
+ 		ret = cow_file_range(inode, locked_page, cow_start, end, end,
+ 				     page_started, nr_written, 1, NULL);
+ 		if (ret)
 
 
