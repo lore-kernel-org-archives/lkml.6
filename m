@@ -2,52 +2,47 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C9EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79B6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 800DE21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B05F82145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Thb+Tv40"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 800DE21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tjNrh9NE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05F82145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733307AbeKTDFp (ORCPT
+        id S2387402AbeKTDFq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:05:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39166 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:05:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731409AbeKTDFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:05:43 -0500
+        id S1731409AbeKTDFp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:05:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90E4E2145D;
-        Mon, 19 Nov 2018 16:41:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F8DA206BA;
+        Mon, 19 Nov 2018 16:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645693;
-        bh=TRNv0K0/tj8qipmy2CDDKAX6RZALHiFMNg38BA4LBJw=;
+        s=default; t=1542645695;
+        bh=/CeZ3oNN/lXpo68nsw6+FLZwyB5ckAxqzju/wI/+m3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Thb+Tv40iXcFbgJn3Hf0Zoib9yHcsR1VqSDDoED95AoQJyjKcpgT5E2lFs7g6BNhK
-         ee0qYA4Ti10d6D6MGcMEy8JhINu/4rLmrfxry+fhzjt7aOoaGL6EUQsQJ1emx/gOHj
-         JTxFVHXe6iow9M/ONNPHSM6xUaBfKZgxdAn5dCZM=
+        b=tjNrh9NEBmQBwis6hbyM3T13gAJGdlDXZx/JsOFhQoOok4+mHaojp78oLxHFV7ROd
+         4diN43AMUsEPFXrsrUpXO7hysfcgMwWgOPDIEy21BbnS+s96B0rksKfMv7fJ4R+i0D
+         5RhCD/+Pg52duOaa/mRhQrcHc9tDDxZwYu4eswOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Hewitt <christianshewitt@gmail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 054/171] clk: meson-gxbb: set fclk_div3 as CLK_IS_CRITICAL
-Date:   Mon, 19 Nov 2018 17:27:30 +0100
-Message-Id: <20181119162628.753423249@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.18 037/171] ovl: check whiteout in ovl_create_over_whiteout()
+Date:   Mon, 19 Nov 2018 17:27:13 +0100
+Message-Id: <20181119162625.799535834@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -65,64 +60,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e2576c8bdfd462c34b8a46c0084e7c30b0851bf4 ]
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-On the Khadas VIM2 (GXM) and LePotato (GXL) board there are problems
-with reboot; e.g. a ~60 second delay between issuing reboot and the
-board power cycling (and in some OS configurations reboot will fail
-and require manual power cycling).
+commit 5e1275808630ea3b2c97c776f40e475017535f72 upstream.
 
-Similar to 'commit c987ac6f1f088663b6dad39281071aeb31d450a8 ("clk:
-meson-gxbb: set fclk_div2 as CLK_IS_CRITICAL")' the SCPI Cortex-M4
-Co-Processor seems to depend on FCLK_DIV3 being operational.
+Kaixuxia repors that it's possible to crash overlayfs by removing the
+whiteout on the upper layer before creating a directory over it.  This is a
+reproducer:
 
-Until commit 05f814402d6174369b3b29832cbb5eb5ed287059 ("clk:
-meson: add fdiv clock gates"), this clock was modeled and left on by
-the bootloader.
+ mkdir lower upper work merge
+ touch lower/file
+ mount -t overlay overlay -olowerdir=lower,upperdir=upper,workdir=work merge
+ rm merge/file
+ ls -al merge/file
+ rm upper/file
+ ls -al merge/
+ mkdir merge/file
 
-We don't have precise documentation about the SCPI Co-Processor and
-its clock requirement so we are learning things the hard way.
+Before commencing with a vfs_rename(..., RENAME_EXCHANGE) verify that the
+lookup of "upper" is positive and is a whiteout, and return ESTALE
+otherwise.
 
-Marking this clock as critical solves the problem but it should not
-be viewed as final solution. Ideally, the SCPI driver should claim
-these clocks. We also depends on some clock hand-off mechanism
-making its way to CCF, to make sure the clock stays on between its
-registration and the SCPI driver probe.
+Reported by: kaixuxia <xiakaixu1987@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: e9be9d5e76e3 ("overlay filesystem")
+Cc: <stable@vger.kernel.org> # v3.18
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 05f814402d61 ("clk: meson: add fdiv clock gates")
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/gxbb.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ fs/overlayfs/dir.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 177fffb9ebef..902c63209785 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -523,6 +523,18 @@ static struct clk_regmap gxbb_fclk_div3 = {
- 		.ops = &clk_regmap_gate_ops,
- 		.parent_names = (const char *[]){ "fclk_div3_div" },
- 		.num_parents = 1,
-+		/*
-+		 * FIXME:
-+		 * This clock, as fdiv2, is used by the SCPI FW and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) The SCPI generic driver claims and enable all the clocks
-+		 *    it needs
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
- 	},
- };
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -461,6 +461,10 @@ static int ovl_create_over_whiteout(stru
+ 	if (IS_ERR(upper))
+ 		goto out_unlock;
  
--- 
-2.17.1
-
++	err = -ESTALE;
++	if (d_is_negative(upper) || !IS_WHITEOUT(d_inode(upper)))
++		goto out_dput;
++
+ 	newdentry = ovl_create_temp(workdir, cattr);
+ 	err = PTR_ERR(newdentry);
+ 	if (IS_ERR(newdentry))
 
 
