@@ -7,55 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C416C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 285ECC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 218D72145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4643214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYFYk29R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 218D72145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C6Jkw0OX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4643214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388006AbeKTDHn (ORCPT
+        id S2388018AbeKTDHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41954 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733098AbeKTDHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:42 -0500
+        id S1733098AbeKTDHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D250B2147D;
-        Mon, 19 Nov 2018 16:43:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88474214C4;
+        Mon, 19 Nov 2018 16:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645811;
-        bh=pVUHpq6cMjXMhErNAgXcY7EcDCZzqWtGZF0XtISnqds=;
+        s=default; t=1542645815;
+        bh=aDgIno9gTeUP+FmDutpOnw9V+HZo0D3zMC6h9R2nVjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYFYk29Rc2fdKk9mYFAqZ1urWgHdv/4h+bSg1oADuCX2YPB+lSW0UTx44+GOgaN3p
-         /TBSmyz5elxOF2h/GqqjeCg/RbsBYDeL/I9Tye69RfAMfg25J5mMBhwPbXOQRIcqSi
-         7nrK70vyKpTLS96SBWuyoBYmk+mPBHV3cFpLH52E=
+        b=C6Jkw0OXLjP+NqYKnpPfd6DFgHtBt59O4BTzY3XbxXmHedUN5lqb5EW+yeRX0euCK
+         BT2iMAEDXxRJfBYPncDUl0jMt5iy8Y8edc63oOEFEFm2nTsvAAeAOabEw2RNEUZC9u
+         IyL4IJ7+H0VQ6g33EgCwzUQnIElKRwvpsV0mNMLw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "H. Peter Anvin (Intel)" <hpa@zytor.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
+        stable@vger.kernel.org, Mathieu Malaterre <malat@debian.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-alpha@vger.kernel.org, linux-serial@vger.kernel.org,
-        Johan Hovold <johan@kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>
-Subject: [PATCH 4.18 098/171] arch/alpha, termios: implement BOTHER, IBSHIFT and termios2
-Date:   Mon, 19 Nov 2018 17:28:14 +0100
-Message-Id: <20181119162634.591044013@linuxfoundation.org>
+        Babu Moger <babu.moger@oracle.com>
+Subject: [PATCH 4.18 099/171] watchdog/core: Add missing prototypes for weak functions
+Date:   Mon, 19 Nov 2018 17:28:15 +0100
+Message-Id: <20181119162634.722722824@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -73,121 +63,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: H. Peter Anvin (Intel) <hpa@zytor.com>
+From: Mathieu Malaterre <malat@debian.org>
 
-commit d0ffb805b729322626639336986bc83fc2e60871 upstream.
+commit 81bd415c91eb966118d773dddf254aebf3022411 upstream.
 
-Alpha has had c_ispeed and c_ospeed, but still set speeds in c_cflags
-using arbitrary flags. Because BOTHER is not defined, the general
-Linux code doesn't allow setting arbitrary baud rates, and because
-CBAUDEX == 0, we can have an array overrun of the baud_rate[] table in
-drivers/tty/tty_baudrate.c if (c_cflags & CBAUD) == 037.
+The split out of the hard lockup detector exposed two new weak functions,
+but no prototypes for them, which triggers the build warning:
 
-Resolve both problems by #defining BOTHER to 037 on Alpha.
+  kernel/watchdog.c:109:12: warning: no previous prototype for ‘watchdog_nmi_enable’ [-Wmissing-prototypes]
+  kernel/watchdog.c:115:13: warning: no previous prototype for ‘watchdog_nmi_disable’ [-Wmissing-prototypes]
 
-However, userspace still needs to know if setting BOTHER is actually
-safe given legacy kernels (does anyone actually care about that on
-Alpha anymore?), so enable the TCGETS2/TCSETS*2 ioctls on Alpha, even
-though they use the same structure. Define struct termios2 just for
-compatibility; it is the exact same structure as struct termios. In a
-future patchset, this will be cleaned up so the uapi headers are
-usable from libc.
+Add the prototypes.
 
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: <linux-alpha@vger.kernel.org>
-Cc: <linux-serial@vger.kernel.org>
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: <stable@vger.kernel.org>
+Fixes: 73ce0511c436 ("kernel/watchdog.c: move hardlockup detector to separate file")
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Babu Moger <babu.moger@oracle.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180606194232.17653-1-malat@debian.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/include/asm/termios.h       |    8 +++++++-
- arch/alpha/include/uapi/asm/ioctls.h   |    5 +++++
- arch/alpha/include/uapi/asm/termbits.h |   17 +++++++++++++++++
- 3 files changed, 29 insertions(+), 1 deletion(-)
+ include/linux/nmi.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/alpha/include/asm/termios.h
-+++ b/arch/alpha/include/asm/termios.h
-@@ -73,9 +73,15 @@
- })
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -113,6 +113,8 @@ static inline int hardlockup_detector_pe
+ void watchdog_nmi_stop(void);
+ void watchdog_nmi_start(void);
+ int watchdog_nmi_probe(void);
++int watchdog_nmi_enable(unsigned int cpu);
++void watchdog_nmi_disable(unsigned int cpu);
  
- #define user_termios_to_kernel_termios(k, u) \
--	copy_from_user(k, u, sizeof(struct termios))
-+	copy_from_user(k, u, sizeof(struct termios2))
- 
- #define kernel_termios_to_user_termios(u, k) \
-+	copy_to_user(u, k, sizeof(struct termios2))
-+
-+#define user_termios_to_kernel_termios_1(k, u) \
-+	copy_from_user(k, u, sizeof(struct termios))
-+
-+#define kernel_termios_to_user_termios_1(u, k) \
- 	copy_to_user(u, k, sizeof(struct termios))
- 
- #endif	/* _ALPHA_TERMIOS_H */
---- a/arch/alpha/include/uapi/asm/ioctls.h
-+++ b/arch/alpha/include/uapi/asm/ioctls.h
-@@ -32,6 +32,11 @@
- #define TCXONC		_IO('t', 30)
- #define TCFLSH		_IO('t', 31)
- 
-+#define TCGETS2		_IOR('T', 42, struct termios2)
-+#define TCSETS2		_IOW('T', 43, struct termios2)
-+#define TCSETSW2	_IOW('T', 44, struct termios2)
-+#define TCSETSF2	_IOW('T', 45, struct termios2)
-+
- #define TIOCSWINSZ	_IOW('t', 103, struct winsize)
- #define TIOCGWINSZ	_IOR('t', 104, struct winsize)
- #define	TIOCSTART	_IO('t', 110)		/* start output, like ^Q */
---- a/arch/alpha/include/uapi/asm/termbits.h
-+++ b/arch/alpha/include/uapi/asm/termbits.h
-@@ -26,6 +26,19 @@ struct termios {
- 	speed_t c_ospeed;		/* output speed */
- };
- 
-+/* Alpha has identical termios and termios2 */
-+
-+struct termios2 {
-+	tcflag_t c_iflag;		/* input mode flags */
-+	tcflag_t c_oflag;		/* output mode flags */
-+	tcflag_t c_cflag;		/* control mode flags */
-+	tcflag_t c_lflag;		/* local mode flags */
-+	cc_t c_cc[NCCS];		/* control characters */
-+	cc_t c_line;			/* line discipline (== c_cc[19]) */
-+	speed_t c_ispeed;		/* input speed */
-+	speed_t c_ospeed;		/* output speed */
-+};
-+
- /* Alpha has matching termios and ktermios */
- 
- struct ktermios {
-@@ -152,6 +165,7 @@ struct ktermios {
- #define B3000000  00034
- #define B3500000  00035
- #define B4000000  00036
-+#define BOTHER    00037
- 
- #define CSIZE	00001400
- #define   CS5	00000000
-@@ -169,6 +183,9 @@ struct ktermios {
- #define CMSPAR	  010000000000		/* mark or space (stick) parity */
- #define CRTSCTS	  020000000000		/* flow control */
- 
-+#define CIBAUD	07600000
-+#define IBSHIFT	16
-+
- /* c_lflag bits */
- #define ISIG	0x00000080
- #define ICANON	0x00000100
+ /**
+  * touch_nmi_watchdog - restart NMI watchdog timeout.
 
 
