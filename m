@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF33C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698ECC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BD22147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D80921104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iDmTyvud"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64BD22147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyyvkSN/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D80921104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387826AbeKTDHK (ORCPT
+        id S2387841AbeKTDHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41168 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732866AbeKTDHI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:08 -0500
+        id S1732866AbeKTDHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E062E2145D;
-        Mon, 19 Nov 2018 16:42:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 769A32086A;
+        Mon, 19 Nov 2018 16:43:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645778;
-        bh=CEvJMbAl05WmzWThdqpNwcPWqUnhzQ0tF8H7dscxKsI=;
+        s=default; t=1542645781;
+        bh=Hqpp29FnB1SxLLTEpuxydVDYiW9VefoUMAhprnSLeBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iDmTyvud1dIeOXJCjmcFu/2qTjMUEYPpJcwBMWaLMUK0OaLYHkh8UI10CiwxPPx36
-         Zg/zxn5rxWYXHphvAJgWF+bgSHRcmCnEaVOhKMVWYpSnZYlpHn8jCqFXufKAUXIy2B
-         d9PRF8L1HuanSdCgZpxknI9OAzfJ9IfErW30SpN4=
+        b=OyyvkSN/1xrSJZa7A0Abg1XodfwnqF/qd6/MGjZ6r62hgQCp0qevzy62brNBKeMOx
+         Gei9TIn7bLuhk8so/DiJfkrAG//loO8W5AzAT7EKhRh0rkLX2ILVMiOq5jmTwM6+z+
+         jIWa+FyKqPHRAjZoLgC6NPi0Ej6lGCved0yi446w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Khoruzhick <vasilykh@arista.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.18 086/171] netfilter: conntrack: fix calculation of next bucket number in early_drop
-Date:   Mon, 19 Nov 2018 17:28:02 +0100
-Message-Id: <20181119162633.113077821@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: [PATCH 4.18 087/171] ARM: 8809/1: proc-v7: fix Thumb annotation of cpu_v7_hvc_switch_mm
+Date:   Mon, 19 Nov 2018 17:28:03 +0100
+Message-Id: <20181119162633.249369404@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,59 +64,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Khoruzhick <vasilykh@arista.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit f393808dc64149ccd0e5a8427505ba2974a59854 upstream.
+commit 6282e916f774e37845c65d1eae9f8c649004f033 upstream.
 
-If there's no entry to drop in bucket that corresponds to the hash,
-early_drop() should look for it in other buckets. But since it increments
-hash instead of bucket number, it actually looks in the same bucket 8
-times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
-reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
-most cases.
+Due to what appears to be a copy/paste error, the opening ENTRY()
+of cpu_v7_hvc_switch_mm() lacks a matching ENDPROC(), and instead,
+the one for cpu_v7_smc_switch_mm() is duplicated.
 
-Fix it by increasing bucket number instead of hash and rename _hash
-to bucket to avoid future confusion.
+Given that it is ENDPROC() that emits the Thumb annotation, the
+cpu_v7_hvc_switch_mm() routine will be called in ARM mode on a
+Thumb2 kernel, resulting in the following splat:
 
-Fixes: 3e86638e9a0b ("netfilter: conntrack: consider ct netns in early_drop logic")
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  Internal error: Oops - undefined instruction: 0 [#1] SMP THUMB2
+  Modules linked in:
+  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc1-00030-g4d28ad89189d-dirty #488
+  Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
+  PC is at cpu_v7_hvc_switch_mm+0x12/0x18
+  LR is at flush_old_exec+0x31b/0x570
+  pc : [<c0316efe>]    lr : [<c04117c7>]    psr: 00000013
+  sp : ee899e50  ip : 00000000  fp : 00000001
+  r10: eda28f34  r9 : eda31800  r8 : c12470e0
+  r7 : eda1fc00  r6 : eda53000  r5 : 00000000  r4 : ee88c000
+  r3 : c0316eec  r2 : 00000001  r1 : eda53000  r0 : 6da6c000
+  Flags: nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+
+Note the 'ISA ARM' in the last line.
+
+Fix this by using the correct name in ENDPROC().
+
+Cc: <stable@vger.kernel.org>
+Fixes: 10115105cb3a ("ARM: spectre-v2: add firmware based hardening")
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conntrack_core.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ arch/arm/mm/proc-v7.S |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -929,19 +929,22 @@ static unsigned int early_drop_list(stru
- 	return drops;
- }
- 
--static noinline int early_drop(struct net *net, unsigned int _hash)
-+static noinline int early_drop(struct net *net, unsigned int hash)
- {
--	unsigned int i;
-+	unsigned int i, bucket;
- 
- 	for (i = 0; i < NF_CT_EVICTION_RANGE; i++) {
- 		struct hlist_nulls_head *ct_hash;
--		unsigned int hash, hsize, drops;
-+		unsigned int hsize, drops;
- 
- 		rcu_read_lock();
- 		nf_conntrack_get_ht(&ct_hash, &hsize);
--		hash = reciprocal_scale(_hash++, hsize);
-+		if (!i)
-+			bucket = reciprocal_scale(hash, hsize);
-+		else
-+			bucket = (bucket + 1) % hsize;
- 
--		drops = early_drop_list(net, &ct_hash[hash]);
-+		drops = early_drop_list(net, &ct_hash[bucket]);
- 		rcu_read_unlock();
- 
- 		if (drops) {
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -112,7 +112,7 @@ ENTRY(cpu_v7_hvc_switch_mm)
+ 	hvc	#0
+ 	ldmfd	sp!, {r0 - r3}
+ 	b	cpu_v7_switch_mm
+-ENDPROC(cpu_v7_smc_switch_mm)
++ENDPROC(cpu_v7_hvc_switch_mm)
+ #endif
+ ENTRY(cpu_v7_iciallu_switch_mm)
+ 	mov	r3, #0
 
 
