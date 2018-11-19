@@ -2,193 +2,828 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1E1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C3FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5EB920831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:47:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5EB920831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B01D220831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:48:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="B3zybsJN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B01D220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbeKTBKv (ORCPT
+        id S1729616AbeKTBMo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:10:51 -0500
-Received: from mga09.intel.com ([134.134.136.24]:60590 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729398AbeKTBKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:10:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 06:47:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
-   d="gz'50?scan'50,208,50";a="97447811"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Nov 2018 06:46:59 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gOkpH-00092M-AK; Mon, 19 Nov 2018 22:46:59 +0800
-Date:   Mon, 19 Nov 2018 22:46:40 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     kbuild-all@01.org, Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCH 1/2] phy: core: Add phy_pm_runtime_enabled
-Message-ID: <201811192231.AFKyajiB%fengguang.wu@intel.com>
-References: <20181117133755.9129-2-tony@atomide.com>
+        Mon, 19 Nov 2018 20:12:44 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:59236 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729376AbeKTBMn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:12:43 -0500
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id B540B5C0929;
+        Mon, 19 Nov 2018 15:48:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1542638928;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=obDBPOQz+tpOoqsZOrxupjXxY1UsSOFcUG8gTYBagUY=;
+        b=B3zybsJNylUCE2TJD+MtQYDXqKMps/HzqvLf4eQq34nqLjI5ax/whVL/eAusLVErCCUFGs
+        PIgLl2AL+T8garKBcjJjzv4z0QdEWDXCyT6FoZv6HmN6Kw1Qi57HywEQn1aVQsOUgbR/85
+        EWnMyZikbslkB9YUbG835yAnhFoWclI=
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="/04w6evG8XlLl3ft"
-Content-Disposition: inline
-In-Reply-To: <20181117133755.9129-2-tony@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Date:   Mon, 19 Nov 2018 15:48:47 +0100
+From:   Stefan Agner <stefan@agner.ch>
+To:     Philippe Schenker <dev@pschenker.ch>
+Cc:     jic23@kernel.org, marcel.ziswiler@toradex.com,
+        Max Krummenacher <max.krummenacher@toradex.com>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        linux-iio@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Freeman Liu <freeman.liu@spreadtrum.com>,
+        linux-input@vger.kernel.org,
+        Eugen Hristev <eugen.hristev@microchip.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 2/4] iio: adc: add STMPE ADC driver using IIO framework
+In-Reply-To: <20181119102528.2830-2-dev@pschenker.ch>
+References: <20181119102528.2830-1-dev@pschenker.ch>
+ <20181119102528.2830-2-dev@pschenker.ch>
+Message-ID: <f55e8b6c618b1e292cf2a17862bc8a2a@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 19.11.2018 11:25, Philippe Schenker wrote:
+> From: Stefan Agner <stefan@agner.ch>
+> 
+> This adds an ADC driver for the STMPE device using the industrial
+> input/output interface. The driver supports raw reading of values.
+> The driver depends on the MFD STMPE driver. If the touchscreen
+> block is enabled too, only four of the 8 ADC channels are available.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
+> Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+> ---
+> 
+> Changes in v2:
+>  - Code formatting
+>  - Move code to setup ADC to MFD device, as it is used by both drivers
+>    adc and touchscreen
+>  - Removed unused includes
+>  - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
+>  - Added new macro that defines the channel of the temperature sensor.
+>    Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it throughout
+>    the code for better readability.
+>  - Added mutex_unlock where missing.
+> 
+>  drivers/iio/adc/Kconfig              |   7 +
+>  drivers/iio/adc/Makefile             |   1 +
+>  drivers/iio/adc/stmpe-adc.c          | 340 +++++++++++++++++++++++++++
+>  drivers/input/touchscreen/stmpe-ts.c |  43 +---
+>  drivers/mfd/Kconfig                  |   3 +-
+>  drivers/mfd/stmpe.c                  |  84 +++++++
+>  include/linux/mfd/stmpe.h            |   6 +
+>  7 files changed, 445 insertions(+), 39 deletions(-)
+>  create mode 100644 drivers/iio/adc/stmpe-adc.c
+> 
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index a52fea8749a9..5d4c061d8296 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -734,6 +734,13 @@ config STM32_DFSDM_ADC
+>  	  This driver can also be built as a module.  If so, the module
+>  	  will be called stm32-dfsdm-adc.
+>  
+> +config STMPE_ADC
+> +	tristate "STMicroelectronics STMPE ADC driver"
+> +	depends on (OF || COMPILE_TEST || MFD_STMPE)
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I know I previously said you should add COMPILE_TEST.
 
-Hi Tony,
+However, I changed my mind. Why? Even when using COMPILE_TEST, we should
+still make sure that Kconfig dependencies are such that all required
+symbols for compilation are enabled! After all, COMPILE_TEST is used to
+check whether the driver compiles...
 
-I love your patch! Yet something to improve:
+Typically COMPILE_TEST is used when we restrict a config symbol to a
+certain architecture/SoC (e.g. since only that SoC has the particular
+IP). However, in those cases the driver still compiles, even for a
+different architecture.
 
-[auto build test ERROR on phy/next]
-[also build test ERROR on v4.20-rc3 next-20181119]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+However, in this case compile fails if MFD_STMPE or OF is not enabled.
 
-url:    https://github.com/0day-ci/linux/commits/Tony-Lindgren/Improve-phy-mapphone-pm/20181119-222603
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
-config: riscv-tinyconfig (attached as .config)
-compiler: riscv64-linux-gcc (GCC) 8.1.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # save the attached .config to linux build tree
-        GCC_VERSION=8.1.0 make.cross ARCH=riscv 
+Hence we have no compile time optional dependency. So just use:
 
-All errors (new ones prefixed by >>):
+	depends on OF && MFD_STMPE
 
-   In file included from include/linux/usb/otg.h:13,
-                    from include/linux/usb/of.h:12,
-                    from drivers/usb/phy/of.c:9:
-   include/linux/phy/phy.h: In function 'phy_pm_runtime_enabled':
->> include/linux/phy/phy.h:246:14: error: expected ';' before '}' token
-     return false
-                 ^
-                 ;
-    }
-    ~             
 
-vim +246 include/linux/phy/phy.h
+> +	help
+> +	  Say yes here to build support for ST Microelectronics STMPE
+> +	  built-in ADC block (stmpe811).
+> +
+>  config STX104
+>  	tristate "Apex Embedded Systems STX104 driver"
+>  	depends on PC104 && X86
+> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> index a6e6a0b659e2..cba889c30bf9 100644
+> --- a/drivers/iio/adc/Makefile
+> +++ b/drivers/iio/adc/Makefile
+> @@ -69,6 +69,7 @@ obj-$(CONFIG_STM32_ADC_CORE) += stm32-adc-core.o
+>  obj-$(CONFIG_STM32_ADC) += stm32-adc.o
+>  obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
+>  obj-$(CONFIG_STM32_DFSDM_ADC) += stm32-dfsdm-adc.o
+> +obj-$(CONFIG_STMPE_ADC) += stmpe-adc.o
+>  obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
+>  obj-$(CONFIG_TI_ADC0832) += ti-adc0832.o
+>  obj-$(CONFIG_TI_ADC084S021) += ti-adc084s021.o
+> diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
+> new file mode 100644
+> index 000000000000..151f1c8f827e
+> --- /dev/null
+> +++ b/drivers/iio/adc/stmpe-adc.c
+> @@ -0,0 +1,340 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  STMicroelectronics STMPE811 IIO ADC Driver
+> + *
+> + *  4 channel, 10/12-bit ADC
+> + *
+> + *  Copyright (C) 2013-2018 Toradex AG <stefan.agner@toradex.com>
+> + */
+> +
+> +#include <linux/completion.h>
+> +#include <linux/err.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/stmpe.h>
+> +#include <linux/module.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define STMPE_REG_INT_STA		0x0B
+> +#define STMPE_REG_ADC_INT_EN		0x0E
+> +#define STMPE_REG_ADC_INT_STA		0x0F
+> +
+> +#define STMPE_REG_ADC_CTRL1		0x20
+> +#define STMPE_REG_ADC_CTRL2		0x21
+> +#define STMPE_REG_ADC_CAPT		0x22
+> +#define STMPE_REG_ADC_DATA_CH(channel)	(0x30 + 2 * (channel))
+> +
+> +#define STMPE_REG_TEMP_CTRL		0x60
+> +#define STMPE_TEMP_CTRL_ENABLE		BIT(0)
+> +#define STMPE_TEMP_CTRL_ACQ		BIT(1)
+> +#define STMPE_TEMP_CTRL_THRES_EN	BIT(3)
+> +#define STMPE_START_ONE_TEMP_CONV	(STMPE_TEMP_CTRL_ENABLE | \
+> +					STMPE_TEMP_CTRL_ACQ | \
+> +					STMPE_TEMP_CTRL_THRES_EN)
+> +#define STMPE_REG_TEMP_DATA		0x61
+> +#define STMPE_REG_TEMP_TH		0x63
+> +#define STMPE_ADC_LAST_NR		7
+> +#define STMPE_TEMP_CHANNEL		(STMPE_ADC_LAST_NR + 1)
+> +
+> +#define STMPE_ADC_CH(channel)		((1 << (channel)) & 0xff)
+> +
+> +#define STMPE_ADC_TIMEOUT		msecs_to_jiffies(1000)
+> +
+> +struct stmpe_adc {
+> +	struct stmpe *stmpe;
+> +	struct clk *clk;
+> +	struct device *dev;
+> +
+> +	/* We are allocating plus one for the temperature channel */
+> +	struct iio_chan_spec stmpe_adc_iio_channels[STMPE_ADC_LAST_NR + 2];
+> +
+> +	struct completion completion;
+> +
+> +	u8 channel;
+> +	u32 value;
+> +	u32 norequest_mask;
+> +};
+> +
+> +static int stmpe_read_raw(struct iio_dev *indio_dev,
+> +			  struct iio_chan_spec const *chan,
+> +			  int *val,
+> +			  int *val2,
+> +			  long mask)
+> +{
+> +	struct stmpe_adc *info = iio_priv(indio_dev);
+> +	long ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +	case IIO_CHAN_INFO_PROCESSED:
+> +
+> +		mutex_lock(&indio_dev->mlock);
+> +
+> +		info->channel = (u8)chan->channel;
+> +
+> +		switch (chan->type) {
+> +		case IIO_VOLTAGE:
+> +			if (info->channel > STMPE_ADC_LAST_NR) {
+> +				mutex_unlock(&indio_dev->mlock);
+> +				return -EINVAL;
+> +			}
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
+> +					STMPE_ADC_CH(info->channel));
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
+> +					STMPE_ADC_CH(info->channel));
+> +
+> +			*val = info->value;
+> +			break;
+> +
+> +		case IIO_TEMP:
+> +			if (info->channel != STMPE_TEMP_CHANNEL) {
+> +				mutex_unlock(&indio_dev->mlock);
+> +				return -EINVAL;
+> +			}
+> +
+> +			stmpe_reg_write(info->stmpe, STMPE_REG_TEMP_CTRL,
+> +					STMPE_START_ONE_TEMP_CONV);
+> +			break;
+> +		default:
+> +			mutex_unlock(&indio_dev->mlock);
+> +			return -EINVAL;
+> +		}
+> +
+> +		ret = wait_for_completion_interruptible_timeout
+> +			(&info->completion, STMPE_ADC_TIMEOUT);
+> +
+> +		if (ret <= 0) {
+> +			mutex_unlock(&indio_dev->mlock);
+> +			if (ret == 0)
+> +				return -ETIMEDOUT;
+> +			else
+> +				return ret;
+> +		}
+> +
+> +		switch (chan->type) {
+> +		case IIO_VOLTAGE:
+> +			*val = info->value;
+> +			break;
+> +
+> +		case IIO_TEMP:
+> +			/*
+> +			 * absolute temp = +V3.3 * value /7.51 [K]
+> +			 * scale to [milli °C]
+> +			 */
+> +			*val = ((449960l * info->value) / 1024l) - 273150;
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +
+> +		mutex_unlock(&indio_dev->mlock);
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 3300;
+> +		*val2 = info->stmpe->mod_12b ? 12 : 10;
+> +		return IIO_VAL_FRACTIONAL_LOG2;
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static irqreturn_t stmpe_adc_isr(int irq, void *dev_id)
+> +{
+> +	struct stmpe_adc *info = (struct stmpe_adc *)dev_id;
+> +	u8 data[2];
+> +
+> +	if (info->channel > STMPE_TEMP_CHANNEL)
+> +		return IRQ_NONE;
+> +
+> +	if (info->channel <= STMPE_ADC_LAST_NR) {
+> +		int int_sta;
+> +
+> +		int_sta = stmpe_reg_read(info->stmpe, STMPE_REG_ADC_INT_STA);
+> +
+> +		/* Is the interrupt relevant */
+> +		if (!(int_sta & STMPE_ADC_CH(info->channel)))
+> +			return IRQ_NONE;
+> +
+> +		/* Read value */
+> +		stmpe_block_read(info->stmpe,
+> +			STMPE_REG_ADC_DATA_CH(info->channel), 2, data);
+> +
+> +		stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_STA, int_sta);
+> +	} else if (info->channel == STMPE_TEMP_CHANNEL) {
+> +		/* Read value */
+> +		stmpe_block_read(info->stmpe, STMPE_REG_TEMP_DATA, 2, data);
+> +	}
+> +
+> +	info->value = ((u32)data[0] << 8) + data[1];
+> +	complete(&info->completion);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static const struct iio_info stmpe_adc_iio_info = {
+> +	.read_raw = &stmpe_read_raw,
+> +};
+> +
+> +static void stmpe_adc_voltage_chan(struct iio_chan_spec *ics, int chan)
+> +{
+> +	ics->type = IIO_VOLTAGE;
+> +	ics->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
+> +	ics->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
+> +	ics->indexed = 1;
+> +	ics->channel = chan;
+> +}
+> +
+> +static void stmpe_adc_temp_chan(struct iio_chan_spec *ics, int chan)
+> +{
+> +	ics->type = IIO_TEMP;
+> +	ics->info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
+> +	ics->indexed = 1;
+> +	ics->channel = chan;
+> +}
+> +
+> +static int stmpe_adc_init_hw(struct stmpe_adc *adc)
+> +{
+> +	struct stmpe *stmpe = adc->stmpe;
+> +
+> +	/* use temp irq for each conversion completion */
+> +	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH, 0);
+> +	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH + 1, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static void stmpe_adc_get_platform_info(struct platform_device *pdev,
+> +					struct stmpe_adc *adc)
+> +{
+> +	struct stmpe *stmpe = dev_get_drvdata(pdev->dev.parent);
+> +	struct device_node *np = pdev->dev.of_node;
+> +	u32 val;
+> +
+> +	adc->stmpe = stmpe;
+> +
+> +	if (!np) {
+> +		dev_err(&pdev->dev, "no device tree node found\n");
+> +		return;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "st,norequest-mask", &val))
+> +		adc->norequest_mask = val;
+> +}
+> +
+> +static int stmpe_adc_probe(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev = NULL;
+> +	struct stmpe_adc *info = NULL;
+> +	int irq_temp, irq_adc;
+> +	int num_chan = 0;
+> +	int i = 0;
+> +	int ret;
+> +
+> +	irq_adc = platform_get_irq_byname(pdev, "STMPE_ADC");
+> +	if (irq_adc < 0)
+> +		return irq_adc;
+> +
+> +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct stmpe_adc));
+> +	if (!indio_dev) {
+> +		dev_err(&pdev->dev, "failed allocating iio device\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	info = iio_priv(indio_dev);
+> +
+> +	init_completion(&info->completion);
+> +	ret = devm_request_threaded_irq(&pdev->dev, irq_adc, NULL,
+> +					stmpe_adc_isr, IRQF_ONESHOT,
+> +					"stmpe-adc", info);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
+> +				irq_adc);
+> +		return ret;
+> +	}
+> +
+> +	irq_temp = platform_get_irq_byname(pdev, "STMPE_TEMP_SENS");
+> +	if (irq_temp >= 0) {
+> +		ret = devm_request_threaded_irq(&pdev->dev, irq_temp, NULL,
+> +						stmpe_adc_isr, IRQF_ONESHOT,
+> +						"stmpe-adc", info);
+> +		if (ret < 0)
+> +			dev_warn(&pdev->dev, "failed requesting irq for"
+> +				 " temp sensor, irq = %d\n", irq_temp);
+> +	}
+> +
+> +	platform_set_drvdata(pdev, indio_dev);
+> +
+> +	indio_dev->name		= dev_name(&pdev->dev);
+> +	indio_dev->dev.parent	= &pdev->dev;
+> +	indio_dev->info		= &stmpe_adc_iio_info;
+> +	indio_dev->modes	= INDIO_DIRECT_MODE;
+> +
+> +	stmpe_adc_get_platform_info(pdev, info);
 
-   243	
-   244	static inline bool phy_pm_runtime_enabled(struct phy *phy)
-   245	{
- > 246		return false
-   247	}
-   248	
+Since there are no plans to support platform data I think we can get rid
+of this function and just move the code here.
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Then you can also get rid of norequest_mask in struct stmpe_adc and make
+it a local variable here.
 
---/04w6evG8XlLl3ft
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
+> +
+> +	for_each_clear_bit(i, (unsigned long *) &info->norequest_mask,
+> +			   (STMPE_ADC_LAST_NR + 1)) {
+> +		stmpe_adc_voltage_chan(&info->stmpe_adc_iio_channels[num_chan], i);
+> +		num_chan++;
+> +	}
+> +	stmpe_adc_temp_chan(&info->stmpe_adc_iio_channels[num_chan], i);
+> +	num_chan++;
+> +	indio_dev->channels = info->stmpe_adc_iio_channels;
+> +	indio_dev->num_channels = num_chan;
+> +
+> +	ret = stmpe_adc_init_hw(info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = iio_device_register(indio_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
-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
+You can simplify the last 4 lines to just "return ret";
 
---/04w6evG8XlLl3ft--
+> +}
+> +
+> +static int stmpe_adc_remove(struct platform_device *pdev)
+> +{
+> +	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> +	struct stmpe_adc *info = iio_priv(indio_dev);
+> +
+> +	iio_device_unregister(indio_dev);
+> +	stmpe_disable(info->stmpe, STMPE_BLOCK_ADC);
+> +
+> +	return 0;
+> +}
+> +
+> +static int __maybe_unused stmpe_adc_resume(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct stmpe_adc *info = iio_priv(indio_dev);
+> +
+> +	stmpe_adc_init_hw(info);
+> +
+> +	return 0;
+> +}
+> +
+> +static SIMPLE_DEV_PM_OPS(stmpe_adc_pm_ops, NULL, stmpe_adc_resume);
+> +
+> +static struct platform_driver stmpe_adc_driver = {
+> +	.probe		= stmpe_adc_probe,
+> +	.remove		= stmpe_adc_remove,
+> +	.driver		= {
+> +		.name	= "stmpe-adc",
+> +		.pm	= &stmpe_adc_pm_ops,
+> +	},
+> +};
+> +
+> +module_platform_driver(stmpe_adc_driver);
+> +
+> +MODULE_AUTHOR("Stefan Agner <stefan.agner@toradex.com>");
+> +MODULE_DESCRIPTION("STMPEXXX ADC driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:stmpe-adc");
+> diff --git a/drivers/input/touchscreen/stmpe-ts.c
+> b/drivers/input/touchscreen/stmpe-ts.c
+> index c5d9006588a2..31d157032f4a 100644
+> --- a/drivers/input/touchscreen/stmpe-ts.c
+> +++ b/drivers/input/touchscreen/stmpe-ts.c
+> @@ -30,8 +30,6 @@
+>   * with touchscreen controller
+>   */
+>  #define STMPE_REG_INT_STA		0x0B
+> -#define STMPE_REG_ADC_CTRL1		0x20
+> -#define STMPE_REG_ADC_CTRL2		0x21
+>  #define STMPE_REG_TSC_CTRL		0x40
+>  #define STMPE_REG_TSC_CFG		0x41
+>  #define STMPE_REG_FIFO_TH		0x4A
+> @@ -88,10 +86,6 @@ struct stmpe_touch {
+>  	struct input_dev *idev;
+>  	struct delayed_work work;
+>  	struct device *dev;
+> -	u8 sample_time;
+> -	u8 mod_12b;
+> -	u8 ref_sel;
+> -	u8 adc_freq;
+>  	u8 ave_ctrl;
+>  	u8 touch_det_delay;
+>  	u8 settling;
+> @@ -176,7 +170,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *data)
+>  	input_report_key(ts->idev, BTN_TOUCH, 1);
+>  	input_sync(ts->idev);
+>  
+> -       /* flush the FIFO after we have read out our values. */
+> +	/* flush the FIFO after we have read out our values. */
+>  	__stmpe_reset_fifo(ts->stmpe);
+>  
+>  	/* reenable the tsc */
+> @@ -192,7 +186,7 @@ static irqreturn_t stmpe_ts_handler(int irq, void *data)
+>  static int stmpe_init_hw(struct stmpe_touch *ts)
+>  {
+>  	int ret;
+> -	u8 adc_ctrl1, adc_ctrl1_mask, tsc_cfg, tsc_cfg_mask;
+> +	u8 tsc_cfg, tsc_cfg_mask;
+>  	struct stmpe *stmpe = ts->stmpe;
+>  	struct device *dev = ts->dev;
+>  
+> @@ -202,25 +196,6 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+>  		return ret;
+>  	}
+>  
+> -	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
+> -		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
+> -	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
+> -			 STMPE_REF_SEL(0xff);
+> -
+> -	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+> -			adc_ctrl1_mask, adc_ctrl1);
+> -	if (ret) {
+> -		dev_err(dev, "Could not setup ADC\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+> -			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
+> -	if (ret) {
+> -		dev_err(dev, "Could not setup ADC\n");
+> -		return ret;
+> -	}
+> -
+>  	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
+>  		  STMPE_DET_DELAY(ts->touch_det_delay) |
+>  		  STMPE_SETTLING(ts->settling);
+> @@ -234,14 +209,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+>  	}
+>  
+>  	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
+> -			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
+> +		STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
+
+This...
+
+>  	if (ret) {
+>  		dev_err(dev, "Could not config touch\n");
+>  		return ret;
+>  	}
+>  
+>  	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
+> -			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
+> +		STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
+
+...and this...
+
+>  	if (ret) {
+>  		dev_err(dev, "Could not config touch\n");
+>  		return ret;
+> @@ -255,7 +230,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+>  	}
+>  
+>  	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
+> -			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
+> +		STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
+
+... and this change are rather unrelated indent fixes, please drop them.
+
+>  	if (ret) {
+>  		dev_err(dev, "Could not set mode\n");
+>  		return ret;
+> @@ -294,14 +269,6 @@ static void stmpe_ts_get_platform_info(struct
+> platform_device *pdev,
+>  	u32 val;
+>  
+>  	if (np) {
+> -		if (!of_property_read_u32(np, "st,sample-time", &val))
+> -			ts->sample_time = val;
+> -		if (!of_property_read_u32(np, "st,mod-12b", &val))
+> -			ts->mod_12b = val;
+> -		if (!of_property_read_u32(np, "st,ref-sel", &val))
+> -			ts->ref_sel = val;
+> -		if (!of_property_read_u32(np, "st,adc-freq", &val))
+> -			ts->adc_freq = val;
+
+Hm, so this removes backward compatibility. I don't think this is
+acceptable.
+
+You still need to read the values from the stmpe_ts subnode and use them
+the new binding is not there.
+
+--
+Stefan
+
+>  		if (!of_property_read_u32(np, "st,ave-ctrl", &val))
+>  			ts->ave_ctrl = val;
+>  		if (!of_property_read_u32(np, "st,touch-det-delay", &val))
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 8c5dfdce4326..bba159e8eaa4 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1204,7 +1204,7 @@ config MFD_STMPE
+>  
+>  	  Currently supported devices are:
+>  
+> -		STMPE811: GPIO, Touchscreen
+> +		STMPE811: GPIO, Touchscreen, ADC
+>  		STMPE1601: GPIO, Keypad
+>  		STMPE1801: GPIO, Keypad
+>  		STMPE2401: GPIO, Keypad
+> @@ -1217,6 +1217,7 @@ config MFD_STMPE
+>  		GPIO: stmpe-gpio
+>  		Keypad: stmpe-keypad
+>  		Touchscreen: stmpe-ts
+> +		ADC: stmpe-adc
+>  
+>  menu "STMicroelectronics STMPE Interface Drivers"
+>  depends on MFD_STMPE
+> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
+> index 566caca4efd8..eab3d33e4093 100644
+> --- a/drivers/mfd/stmpe.c
+> +++ b/drivers/mfd/stmpe.c
+> @@ -23,6 +23,9 @@
+>  #include <linux/regulator/consumer.h>
+>  #include "stmpe.h"
+>  
+> +#define STMPE_REG_ADC_CTRL1	0x20
+> +#define STMPE_REG_ADC_CTRL2	0x21
+> +
+>  /**
+>   * struct stmpe_platform_data - STMPE platform data
+>   * @id: device id to distinguish between multiple STMPEs on the same board
+> @@ -463,6 +466,28 @@ static const struct mfd_cell stmpe_ts_cell = {
+>  	.num_resources	= ARRAY_SIZE(stmpe_ts_resources),
+>  };
+>  
+> +/*
+> + * ADC (STMPE811)
+> + */
+> +
+> +static struct resource stmpe_adc_resources[] = {
+> +	{
+> +		.name	= "STMPE_TEMP_SENS",
+> +		.flags	= IORESOURCE_IRQ,
+> +	},
+> +	{
+> +		.name	= "STMPE_ADC",
+> +		.flags	= IORESOURCE_IRQ,
+> +	},
+> +};
+> +
+> +static const struct mfd_cell stmpe_adc_cell = {
+> +	.name		= "stmpe-adc",
+> +	.of_compatible	= "st,stmpe-adc",
+> +	.resources	= stmpe_adc_resources,
+> +	.num_resources	= ARRAY_SIZE(stmpe_adc_resources),
+> +};
+> +
+>  /*
+>   * STMPE811 or STMPE610
+>   */
+> @@ -497,6 +522,11 @@ static struct stmpe_variant_block stmpe811_blocks[] = {
+>  		.irq	= STMPE811_IRQ_TOUCH_DET,
+>  		.block	= STMPE_BLOCK_TOUCHSCREEN,
+>  	},
+> +	{
+> +		.cell	= &stmpe_adc_cell,
+> +		.irq	= STMPE811_IRQ_TEMP_SENS,
+> +		.block	= STMPE_BLOCK_ADC,
+> +	},
+>  };
+>  
+>  static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
+> @@ -517,6 +547,44 @@ static int stmpe811_enable(struct stmpe *stmpe,
+> unsigned int blocks,
+>  				enable ? 0 : mask);
+>  }
+>  
+> +static int stmpe811_init_adc(struct stmpe *stmpe)
+> +{
+> +	int ret;
+> +	u8 adc_ctrl1, adc_ctrl1_mask;
+> +
+> +	ret = stmpe_enable(stmpe, STMPE_BLOCK_ADC);
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not enable clock for ADC\n");
+> +		goto err_adc;
+> +	}
+> +
+> +	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
+> +		    STMPE_MOD_12B(stmpe->mod_12b) |
+> +		    STMPE_REF_SEL(stmpe->ref_sel);
+> +	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
+> +			 STMPE_REF_SEL(0xff);
+> +
+> +	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+> +			adc_ctrl1_mask, adc_ctrl1);
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not setup ADC\n");
+> +		goto err_adc;
+> +	}
+> +
+> +	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+> +			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
+> +	if (ret) {
+> +		dev_err(stmpe->dev, "Could not setup ADC\n");
+> +		goto err_adc;
+> +	}
+> +
+> +	return 0;
+> +err_adc:
+> +	stmpe_disable(stmpe, STMPE_BLOCK_ADC);
+> +
+> +	return ret;
+> +}
+> +
+>  static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block block)
+>  {
+>  	/* 0 for touchscreen, 1 for GPIO */
+> @@ -1235,6 +1303,12 @@ static int stmpe_chip_init(struct stmpe *stmpe)
+>  			return ret;
+>  	}
+>  
+> +	if (id == STMPE610 || id == STMPE811) {
+> +		ret = stmpe811_init_adc(stmpe);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return stmpe_reg_write(stmpe, stmpe->regs[STMPE_IDX_ICR_LSB], icr);
+>  }
+>  
+> @@ -1325,6 +1399,7 @@ int stmpe_probe(struct stmpe_client_info *ci,
+> enum stmpe_partnum partnum)
+>  	struct device_node *np = ci->dev->of_node;
+>  	struct stmpe *stmpe;
+>  	int ret;
+> +	u32 val;
+>  
+>  	pdata = devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
+>  	if (!pdata)
+> @@ -1342,6 +1417,15 @@ int stmpe_probe(struct stmpe_client_info *ci,
+> enum stmpe_partnum partnum)
+>  	mutex_init(&stmpe->irq_lock);
+>  	mutex_init(&stmpe->lock);
+>  
+> +	if (!of_property_read_u32(np, "st,sample-time", &val))
+> +		stmpe->sample_time = val;
+> +	if (!of_property_read_u32(np, "st,mod-12b", &val))
+> +		stmpe->mod_12b = val;
+> +	if (!of_property_read_u32(np, "st,ref-sel", &val))
+> +		stmpe->ref_sel = val;
+> +	if (!of_property_read_u32(np, "st,adc-freq", &val))
+> +		stmpe->adc_freq = val;
+> +
+>  	stmpe->dev = ci->dev;
+>  	stmpe->client = ci->client;
+>  	stmpe->pdata = pdata;
+> diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+> index c0353f6431f9..4e3f6ff60408 100644
+> --- a/include/linux/mfd/stmpe.h
+> +++ b/include/linux/mfd/stmpe.h
+> @@ -134,6 +134,12 @@ struct stmpe {
+>  	u8 ier[2];
+>  	u8 oldier[2];
+>  	struct stmpe_platform_data *pdata;
+> +
+> +	/* For devices that use an ADC */
+> +	u8 sample_time;
+> +	u8 mod_12b;
+> +	u8 ref_sel;
+> +	u8 adc_freq;
+>  };
+>  
+>  extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
