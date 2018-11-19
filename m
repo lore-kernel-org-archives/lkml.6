@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E90C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178CAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4C62086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA3AC2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfAlk8dj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4C62086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uj4tmxXt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA3AC2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730198AbeKTCyy (ORCPT
+        id S1730213AbeKTCy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:54:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52322 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:54:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730018AbeKTCyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:54:54 -0500
+        id S1730199AbeKTCy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:54:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C31B20831;
-        Mon, 19 Nov 2018 16:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13A8320831;
+        Mon, 19 Nov 2018 16:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645047;
-        bh=Gbnui4LVQaNxhgJ0YqYic3S3EsG7CVLFvHl2aA7s3w0=;
+        s=default; t=1542645049;
+        bh=0xzodsg19+3Hotv++inU1YG/47WJZ9fU2oZxZrXjpkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QfAlk8djCKTlZE9Io3mPLvPpzBEPvTNhOoTTHBDuFUGYYY13E9Axi1zH1r9E9dbIe
-         m6CWGTx63OJrkrCe+vh+1V0mOS+sJotx4j7514LAwISOdO14COSMqsCnYMus2SI7nM
-         2yUZEUMoVMUvzi13P5HLCCi0gRcZY9tqlhAr7AtM=
+        b=uj4tmxXtNdobkchSvFPsqvT0u9+8S51D81XYWsSuFRYJmTdISvmFdNHotPOmaUWUh
+         1RQncPlo+LrOMC4RhUT9DSWgk+TdO7UgChWHj9o0W8VkA661nyg4AEeiOSiL6vG4jK
+         hVnNSZzkCWkACxwE8BbNg16sS0+S/cH733j76Ytc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
+        stable@vger.kernel.org,
+        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>, Sean Paul <seanpaul@chromium.org>,
         Rob Clark <robdclark@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 016/205] drm/msm/disp/dpu: Use proper define for drm_encoder_init() encoder_type
-Date:   Mon, 19 Nov 2018 17:25:23 +0100
-Message-Id: <20181119162620.108809867@linuxfoundation.org>
+Subject: [PATCH 4.19 017/205] drm/msm: dpu: Allow planes to extend past active display
+Date:   Mon, 19 Nov 2018 17:25:24 +0100
+Message-Id: <20181119162620.335149697@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -67,107 +66,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 2c043eeffea4813b8f569e84b46035a08de5eb47 ]
+[ Upstream commit 96fc56a775c1e44c0e3c0119f2cd3d77431c4569 ]
 
-We got a bug report that this function oopses when trying to do a kasprintf().
+The atomic_check is a bit too aggressive with respect to planes which
+leave the active area. This caused a bunch of log spew when the cursor
+got to the edge of the screen and stopped it from going all the way.
 
-PC is at string+0x2c/0x60
-LR is at vsnprintf+0x28c/0x4ec
-pc : [<ffffff80088d35d8>] lr : [<ffffff80088d5fc4>] pstate: a0c00049
-sp : ffffff80095fb540
-x29: ffffff80095fb540 x28: ffffff8008ad42bc
-x27: 00000000ffffffd8 x26: 0000000000000000
-x25: ffffff8008c216c8 x24: 0000000000000000
-x23: 0000000000000000 x22: ffffff80095fb720
-x21: 0000000000000000 x20: ffffff80095fb720
-x19: ffffff80095fb6f0 x18: 000000000000000a
-x17: 00000000b42ba473 x16: ffffff800805bbe8
-x15: 00000000000a157d x14: 000000000000000c
-x13: 0000000000000000 x12: 0000ffff0000000f
-x11: 0000000000000003 x10: 0000000000000001
-x9 : 0000000000000040 x8 : 000000000000001c
-x7 : ffffffffffffffff x6 : 0000000000000000
-x5 : 0000000000000228 x4 : 0000000000000000
-x3 : ffff0a00ffffff04 x2 : 0000000000007961
-x1 : 0000000000000000 x0 : 0000000000000000
-Process kworker/3:1 (pid: 61, stack limit = 0xffffff80095f8000)
-Call trace:
-Exception stack(0xffffff80095fb400 to 0xffffff80095fb540)
-b400: 0000000000000000 0000000000000000 0000000000007961 ffff0a00ffffff04
-b420: 0000000000000000 0000000000000228 0000000000000000 ffffffffffffffff
-b440: 000000000000001c 0000000000000040 0000000000000001 0000000000000003
-b460: 0000ffff0000000f 0000000000000000 000000000000000c 00000000000a157d
-b480: ffffff800805bbe8 00000000b42ba473 000000000000000a ffffff80095fb6f0
-b4a0: ffffff80095fb720 0000000000000000 ffffff80095fb720 0000000000000000
-b4c0: 0000000000000000 ffffff8008c216c8 0000000000000000 00000000ffffffd8
-b4e0: ffffff8008ad42bc ffffff80095fb540 ffffff80088d5fc4 ffffff80095fb540
-b500: ffffff80088d35d8 00000000a0c00049 ffffff80095fb550 ffffff80080d06a4
-b520: ffffffffffffffff ffffff80088d5e0c ffffff80095fb540 ffffff80088d35d8
-[<ffffff80088d35d8>] string+0x2c/0x60
-[<ffffff80088d5fc4>] vsnprintf+0x28c/0x4ec
-[<ffffff80083973b8>] kvasprintf+0x68/0x100
-[<ffffff800839755c>] kasprintf+0x60/0x80
-[<ffffff800849cc24>] drm_encoder_init+0x134/0x164
-[<ffffff80084d9a7c>] dpu_encoder_init+0x60/0x94
-[<ffffff80084eced0>] _dpu_kms_drm_obj_init+0xa0/0x424
-[<ffffff80084ed870>] dpu_kms_hw_init+0x61c/0x6bc
-[<ffffff80084f7614>] msm_drm_bind+0x380/0x67c
-[<ffffff80085114e4>] try_to_bring_up_master+0x228/0x264
-[<ffffff80085116e8>] component_master_add_with_match+0x90/0xc0
-[<ffffff80084f722c>] msm_pdev_probe+0x260/0x2c8
-[<ffffff800851a910>] platform_drv_probe+0x58/0xa8
-[<ffffff80085185c8>] driver_probe_device+0x2d8/0x40c
-[<ffffff8008518928>] __device_attach_driver+0xd4/0x10c
-[<ffffff800851644c>] bus_for_each_drv+0xb4/0xd0
-[<ffffff8008518230>] __device_attach+0xd0/0x160
-[<ffffff8008518984>] device_initial_probe+0x24/0x30
-[<ffffff800851744c>] bus_probe_device+0x38/0x98
-[<ffffff8008517aac>] deferred_probe_work_func+0x144/0x148
-[<ffffff80080c8654>] process_one_work+0x218/0x3bc
-[<ffffff80080c883c>] process_scheduled_works+0x44/0x48
-[<ffffff80080c95bc>] worker_thread+0x288/0x32c
-[<ffffff80080cea30>] kthread+0x134/0x13c
-[<ffffff8008084750>] ret_from_fork+0x10/0x18
-Code: 910003fd 2a0403e6 eb0400ff 54000060 (38646845)
+This patch removes the conservative bounds checks from atomic and clips
+the dst rect such that we properly display planes which go off the
+screen.
 
-Looking at the code I see that drm_encoder_init() is called from the DPU
-code with 'DRM_MODE_CONNECTOR_DSI' passed in as the 'encoder_type'
-argument (follow from _dpu_kms_initialize_dsi()). That corresponds to
-the integer 16. That is then indexed into drm_encoder_enum_list in
-drm_encoder_init() to look up the name of the encoder. If you're still
-following along, that's an encoder not a connector! We really want to
-use DRM_MODE_ENCODER_DSI (integer 6) instead of DRM_MODE_CONNECTOR_DSI
-here, or we'll go out of bounds of the encoder array. Pass the right
-thing and everything is fine.
+Changes in v2:
+- Apply the clip to src as well (taking into account scaling)
+Changes in v3:
+- Use drm_atomic_helper_check_plane_state() to clip src/dst
 
+Cc: Sravanthi Kollukuduru <skolluku@codeaurora.org>
 Cc: Jeykumar Sankaran <jsanka@codeaurora.org>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Cc: Sean Paul <seanpaul@chromium.org>
-Fixes: 25fdd5933e4c (drm/msm: Add SDM845 DPU support)
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
 Reviewed-by: Jeykumar Sankaran <jsanka@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 
 Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c   |    3 --
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c  |   38 +++++++++++++++++------------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c |    1 
+ drivers/gpu/drm/msm/msm_drv.h              |    2 +
+ 4 files changed, 26 insertions(+), 18 deletions(-)
 
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-@@ -450,7 +450,7 @@ static void _dpu_kms_initialize_dsi(stru
- 	int i, rc;
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+@@ -1535,8 +1535,7 @@ static int dpu_crtc_atomic_check(struct
+ 		cnt++;
  
- 	/*TODO: Support two independent DSI connectors */
--	encoder = dpu_encoder_init(dev, DRM_MODE_CONNECTOR_DSI);
-+	encoder = dpu_encoder_init(dev, DRM_MODE_ENCODER_DSI);
- 	if (IS_ERR_OR_NULL(encoder)) {
- 		DPU_ERROR("encoder init failed for dsi display\n");
- 		return;
+ 		dst = drm_plane_state_dest(pstate);
+-		if (!drm_rect_intersect(&clip, &dst) ||
+-		    !drm_rect_equals(&clip, &dst)) {
++		if (!drm_rect_intersect(&clip, &dst)) {
+ 			DPU_ERROR("invalid vertical/horizontal destination\n");
+ 			DPU_ERROR("display: " DRM_RECT_FMT " plane: "
+ 				  DRM_RECT_FMT "\n", DRM_RECT_ARG(&crtc_rect),
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+@@ -1254,7 +1254,7 @@ static int dpu_plane_sspp_atomic_update(
+ 	const struct dpu_format *fmt;
+ 	struct drm_crtc *crtc;
+ 	struct drm_framebuffer *fb;
+-	struct drm_rect src, dst;
++	int ret, min_scale;
+ 
+ 	if (!plane) {
+ 		DPU_ERROR("invalid plane\n");
+@@ -1293,21 +1293,29 @@ static int dpu_plane_sspp_atomic_update(
+ 	pdpu->is_rt_pipe = (dpu_crtc_get_client_type(crtc) != NRT_CLIENT);
+ 	_dpu_plane_set_qos_ctrl(plane, false, DPU_PLANE_QOS_PANIC_CTRL);
+ 
+-	src.x1 = state->src_x >> 16;
+-	src.y1 = state->src_y >> 16;
+-	src.x2 = src.x1 + (state->src_w >> 16);
+-	src.y2 = src.y1 + (state->src_h >> 16);
+-
+-	dst = drm_plane_state_dest(state);
+-
+-	DPU_DEBUG_PLANE(pdpu, "FB[%u] " DRM_RECT_FMT "->crtc%u " DRM_RECT_FMT
+-			", %4.4s ubwc %d\n", fb->base.id, DRM_RECT_ARG(&src),
+-			crtc->base.id, DRM_RECT_ARG(&dst),
+-			(char *)&fmt->base.pixel_format,
+-			DPU_FORMAT_IS_UBWC(fmt));
++	min_scale = FRAC_16_16(1, pdpu->pipe_sblk->maxdwnscale);
++	ret = drm_atomic_helper_check_plane_state(state, crtc->state, min_scale,
++					  pdpu->pipe_sblk->maxupscale << 16,
++					  true, false);
++	if (ret) {
++		DPU_ERROR_PLANE(pdpu, "Check plane state failed (%d)\n", ret);
++		return ret;
++	}
++
++	DPU_DEBUG_PLANE(pdpu, "FB[%u] " DRM_RECT_FP_FMT "->crtc%u " DRM_RECT_FMT
++			", %4.4s ubwc %d\n", fb->base.id, DRM_RECT_FP_ARG(&state->src),
++			crtc->base.id, DRM_RECT_ARG(&state->dst),
++			(char *)&fmt->base.pixel_format, DPU_FORMAT_IS_UBWC(fmt));
++
++	pdpu->pipe_cfg.src_rect = state->src;
++
++	/* state->src is 16.16, src_rect is not */
++	pdpu->pipe_cfg.src_rect.x1 >>= 16;
++	pdpu->pipe_cfg.src_rect.x2 >>= 16;
++	pdpu->pipe_cfg.src_rect.y1 >>= 16;
++	pdpu->pipe_cfg.src_rect.y2 >>= 16;
+ 
+-	pdpu->pipe_cfg.src_rect = src;
+-	pdpu->pipe_cfg.dst_rect = dst;
++	pdpu->pipe_cfg.dst_rect = state->dst;
+ 
+ 	_dpu_plane_setup_scaler(pdpu, pstate, fmt, false);
+ 
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c
+@@ -259,7 +259,6 @@ static void mdp5_plane_cleanup_fb(struct
+ 	msm_framebuffer_cleanup(fb, kms->aspace);
+ }
+ 
+-#define FRAC_16_16(mult, div)    (((mult) << 16) / (div))
+ static int mdp5_plane_atomic_check_with_state(struct drm_crtc_state *crtc_state,
+ 					      struct drm_plane_state *state)
+ {
+--- a/drivers/gpu/drm/msm/msm_drv.h
++++ b/drivers/gpu/drm/msm/msm_drv.h
+@@ -62,6 +62,8 @@ struct msm_gem_vma;
+ #define MAX_BRIDGES    8
+ #define MAX_CONNECTORS 8
+ 
++#define FRAC_16_16(mult, div)    (((mult) << 16) / (div))
++
+ struct msm_file_private {
+ 	rwlock_t queuelock;
+ 	struct list_head submitqueues;
 
 
