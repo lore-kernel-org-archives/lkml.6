@@ -2,115 +2,129 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4466AC04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF85C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 024702087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 024702087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 399B52086B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 03:06:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Ih6r76k2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 399B52086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbeKSN1d (ORCPT
+        id S1728322AbeKSN2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 08:27:33 -0500
-Received: from mga17.intel.com ([192.55.52.151]:14766 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbeKSN1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 08:27:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Nov 2018 19:05:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,250,1539673200"; 
-   d="scan'208";a="101332823"
-Received: from ltchung-mobl1.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.254.4.5])
-  by orsmga003.jf.intel.com with ESMTP; 18 Nov 2018 19:05:21 -0800
-Subject: Re: [PATCH v4 2/2] tpm: add support for partial reads
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
- <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
- <20181118074832.GG5897@linux.intel.com>
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
- xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
- fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
- LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
- /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
- qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
- cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
- MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
- UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
- dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
- AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
- R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
- 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
- eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
- PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
- HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
- VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
- QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
- pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
- mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
- ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
- EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
- kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
-Message-ID: <90072f09-6388-b1f7-387b-42f056f8893d@intel.com>
-Date:   Sun, 18 Nov 2018 19:05:19 -0800
+        Mon, 19 Nov 2018 08:28:39 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34129 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726903AbeKSN2j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 08:28:39 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 17so12892443pgg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Nov 2018 19:06:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=BYQRzulUfKMZkwHjgjrhWbw0fQOF03QCMk8NzJ9SnoE=;
+        b=Ih6r76k2RMyAhFhV7fDhDQZ/tHcEzgeN8iJJQ6Vy4xm82fa8aZdOw9rIHBfbeMQlB3
+         x6U1UTgM2juuNlw7uH7TmZWCmpdDK5BgcmLKKcCzgXfLVVo3C9Xh4I6UvD+7qR2h1hTc
+         OQp17cuuQuiK+23s+ORwqfnbfHekQ7IwBNl6kuPeMGB8b89Ornvm9n5Ng9PGX6o0hQwK
+         kcbIBstPvzTKg+BY5agIF+EM8E3F4wWP+HNzDrPKQVFSSZvWspsnOHezD7rsxObgUguq
+         zPu+8AJk/Eh17xxCpEPhwiGEuBO6MYFEmSqNF5MgzQMtZIV19jDRPkgBEU4JB2StYNea
+         wwig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=BYQRzulUfKMZkwHjgjrhWbw0fQOF03QCMk8NzJ9SnoE=;
+        b=oGqjTyZcTSlwGmpIddfy+2SKRfn12sNJS3Gqf2GVpFjZBJRWWlAyFvuiZ4UkLzufDo
+         9BnVXZE/plYe8aNcRuM6BfYoUtTqYkENj+kws6MwyV269/EsFpzrKh9DoO58DobkM7Tj
+         jhvnTtO9vZTXTmmJ9JEz0Kh7bS1nUzJGn1FYEyRqtD1/dzYHGav8Bu7+rh0TWbTvEYWP
+         jEfbg6bydvFpNtFh1XRfK3VGj7/M+cteH2FjB1kaYjVvukc5J7LTKpuPc4ZqC1Ucy7m3
+         WBPCJK0IpPDdBdymv/nlA09Xqs76KvAKlMfQQQvZhoGWvi9eLB59zDhVidD7pfvyJAML
+         2t9g==
+X-Gm-Message-State: AGRZ1gKK2d/HEu2gOQIbGdqrYQKgmn4zDRzFizGaEZpX0pzwt8PtP2IN
+        4GTVCWcJIMEhiQvvLBsyvUUxdw==
+X-Google-Smtp-Source: AJdET5eEp31TgAM+Cq014NBy8M9y9cP3x48x6GHmbV95nrI46G+trLqeqWEAknJKSUCJsrHbKoeRJQ==
+X-Received: by 2002:a65:66ce:: with SMTP id c14mr18390406pgw.450.1542596788529;
+        Sun, 18 Nov 2018 19:06:28 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id c14-v6sm43375003pfc.92.2018.11.18.19.06.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Nov 2018 19:06:27 -0800 (PST)
+Subject: Re: a9f38e1dec ("floppy: convert to blk-mq"): INFO: task mount:661
+ blocked for more than 120 seconds.
+To:     kernel test robot <lkp@intel.com>, Omar Sandoval <osandov@fb.com>
+Cc:     LKP <lkp@01.org>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org
+References: <5bf0d0d9.2S1lqKo/21KXGcuH%lkp@intel.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4baa37de-8ec3-45cb-2a31-f5eff0806f48@kernel.dk>
+Date:   Sun, 18 Nov 2018 20:06:25 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181118074832.GG5897@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5bf0d0d9.2S1lqKo/21KXGcuH%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/17/18 11:48 PM, Jarkko Sakkinen wrote:
->> +	if (priv->transmit_result || priv->partial_data) {
->> +		if (*off == 0)
->> +			priv->partial_data = priv->transmit_result;
->> +
->> +		ret_size = min_t(ssize_t, size, priv->partial_data);
->> +		if (ret_size <= 0) {
-> When ret_size < 0? Shouldn't this be just "if (!ret_size)"?
-
-What we want to check here is if ret_size is positive, which is a valid
-value, or if it is negative or zero, which is an invalid value, so in
-this case (!ret_size) will not work.
-
+On 11/17/18 7:39 PM, kernel test robot wrote:
+> Greetings,
 > 
->> 	/* Holds the resul of the last successful call to tpm_transmit() */
->>  	size_t transmit_result;
->> +	/* Holds the count how much of the response is still unread */
->> +	size_t partial_data;
-> I'm otherwise happy how this look like but why call it partial_data.
-> You cannot really tell from the name anything about its contents as
-> data is very abstract term.
- 
-so I will rename these two to response_length and response_length_rem,
-how does this sound?
+> 0day kernel testing robot got the below dmesg and the first bad commit is
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> 
+> commit a9f38e1dec107af70d81338332494bf0a1e76597
+> Author:     Omar Sandoval <osandov@fb.com>
+> AuthorDate: Mon Oct 15 09:21:34 2018 -0600
+> Commit:     Jens Axboe <axboe@kernel.dk>
+> CommitDate: Tue Oct 16 09:50:14 2018 -0600
+> 
+>     floppy: convert to blk-mq
+>     
+>     This driver likes to fetch requests from all over the place, so make
+>     queue_rq put requests on a list so that the logic stays the same. Tested
+>     with QEMU.
+>     
+>     Signed-off-by: Omar Sandoval <osandov@fb.com>
+>     
+>     Converted to blk_mq_init_sq_queue() and fixed a few spots where the
+>     tag_set leaked on cleanup.
+>     
+>     Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-> BTW, why you need the new variable anyway and not just decrease the
-> variable where the length is original stored?
+This should be fixed by:
 
-We need to have two variables, otherwise how do we tell if some part of
-response was consumed to allow sending a new command?
-The transmit_result is used for that. If it is zero then one can transmit
-a new command even if the whole response is not consumed. The new variable
-tracks how much of the response is still to be read. 
+commit de7b75d82f70c5469675b99ad632983c50b6f7e7
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Fri Nov 9 15:58:40 2018 -0700
 
-Thanks,
+    floppy: fix race condition in __floppy_read_block_0()
+
+which isn't in the tree that you tested. It's in -rc3, and in Linus's
+tree since:
+
+commit 59749c2d49bf28df69ac4bcabf1f69b00d3dca59
+Merge: 9b5f361ac4a9 8dc765d438f1
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri Nov 16 09:31:59 2018 -0600
+
+    Merge tag 'for-linus-20181115' of git://git.kernel.dk/linux-block
+
 -- 
-Tadeusz
+Jens Axboe
+
