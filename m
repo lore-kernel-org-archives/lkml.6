@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3426FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B6DC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF0E20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D607420870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:33:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F9J8qR7r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF0E20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/8OC1Nd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D607420870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731213AbeKTC56 (ORCPT
+        id S1731226AbeKTC6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56822 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:58:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731202AbeKTC54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:57:56 -0500
+        id S1730122AbeKTC57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:57:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7AE82086A;
-        Mon, 19 Nov 2018 16:33:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 537352086A;
+        Mon, 19 Nov 2018 16:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645229;
-        bh=rCpwJcpYF9kpU+NGDnMhKEmDAYY6Qdv1HT6cnDjoXj0=;
+        s=default; t=1542645231;
+        bh=YFNXikzqD/rmKLDlYTIAt8DFP6cckuzT6Db6qHwZbeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F9J8qR7rZwH7QP7ymd2Afl22rVX46gMsvNMcS/uTAF+0vH1imBTBhBn7u/8jZ+B3V
-         WdiIPFmhhrkGY6qkC5zDuECP/drXFmnWNL3OfaVET9FXFMq0U6d54usTOUwiX3vGlz
-         Km30m0YU8lZCQhCi5U/mvyTfWhGsnv3vP1zBR8Zk=
+        b=c/8OC1NdGY5Jft5WwU+h2h0mokYBtUJm4/d3b6243LDvBsuUMZda1zo8Z0Oq6ckxB
+         Ec8nQ2CdUwuuc+Q5G3uXhRVGJC7G71BPMKG1DW6EBwot2ldpoF03SdOrxEI8UkrctE
+         I5tQK0gTiAjZwpSPJcJqaFiIYVA/viLWuSlSfVqY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.19 085/205] libceph: bump CEPH_MSG_MAX_DATA_LEN
-Date:   Mon, 19 Nov 2018 17:26:32 +0100
-Message-Id: <20181119162631.461772588@linuxfoundation.org>
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 4.19 086/205] Revert "ceph: fix dentry leak in splice_dentry()"
+Date:   Mon, 19 Nov 2018 17:26:33 +0100
+Message-Id: <20181119162631.564218605@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -61,42 +62,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Yan, Zheng <zyan@redhat.com>
 
-commit 94e6992bb560be8bffb47f287194adf070b57695 upstream.
+commit efe328230dc01aa0b1269aad0b5fae73eea4677a upstream.
 
-If the read is large enough, we end up spinning in the messenger:
+This reverts commit 8b8f53af1ed9df88a4c0fbfdf3db58f62060edf3.
 
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
-  libceph: osd0 192.168.122.1:6801 io error
+splice_dentry() is used by three places. For two places, req->r_dentry
+is passed to splice_dentry(). In the case of error, req->r_dentry does
+not get updated. So splice_dentry() should not drop reference.
 
-This is a receive side limit, so only reads were affected.
-
-Cc: stable@vger.kernel.org
+Cc: stable@vger.kernel.org # 4.18+
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/ceph/libceph.h |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/ceph/inode.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/include/linux/ceph/libceph.h
-+++ b/include/linux/ceph/libceph.h
-@@ -81,7 +81,13 @@ struct ceph_options {
- 
- #define CEPH_MSG_MAX_FRONT_LEN	(16*1024*1024)
- #define CEPH_MSG_MAX_MIDDLE_LEN	(16*1024*1024)
--#define CEPH_MSG_MAX_DATA_LEN	(16*1024*1024)
-+
-+/*
-+ * Handle the largest possible rbd object in one message.
-+ * There is no limit on the size of cephfs objects, but it has to obey
-+ * rsize and wsize mount options anyway.
-+ */
-+#define CEPH_MSG_MAX_DATA_LEN	(32*1024*1024)
- 
- #define CEPH_AUTH_NAME_DEFAULT   "guest"
- 
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1132,8 +1132,12 @@ static struct dentry *splice_dentry(stru
+ 	if (IS_ERR(realdn)) {
+ 		pr_err("splice_dentry error %ld %p inode %p ino %llx.%llx\n",
+ 		       PTR_ERR(realdn), dn, in, ceph_vinop(in));
+-		dput(dn);
+-		dn = realdn; /* note realdn contains the error */
++		dn = realdn;
++		/*
++		 * Caller should release 'dn' in the case of error.
++		 * If 'req->r_dentry' is passed to this function,
++		 * caller should leave 'req->r_dentry' untouched.
++		 */
+ 		goto out;
+ 	} else if (realdn) {
+ 		dout("dn %p (%d) spliced with %p (%d) "
 
 
