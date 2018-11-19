@@ -2,49 +2,55 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBF4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CD7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABF6208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2808206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="frPEyZIH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CABF6208E4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cz/EoD7o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2808206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389880AbeKTDOH (ORCPT
+        id S2389890AbeKTDOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:14:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51282 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:14:06 -0500
+        id S2388976AbeKTDOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41042208E3;
-        Mon, 19 Nov 2018 16:49:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5A6D20C01;
+        Mon, 19 Nov 2018 16:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646193;
-        bh=kfeWNCP1BnrYJvrCm1kH6+IY03YeXtNQvBWu4KNR3Fs=;
+        s=default; t=1542646196;
+        bh=PtTKiDmdzS0jRGw3s3rstKzS2GG5YRLYwcfsSoi3/4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frPEyZIHURoWpNWInF983sSdYgMyGvmty3HDCNQF4WEjPCvbSRbnEKzNtv6m8/ord
-         bYUODjSpTbztvfRc9gjT2l9wOA57eVs82yos+KqfYM7ncdp5dUiLtpObdHy/FDWsla
-         WLhg1ur5YHL7Dw9eQnRsMzSRiaLieA9DTxqri+Qk=
+        b=Cz/EoD7onrzbvQnV/oV9+RMHU4hLJ7yRD05OmVeZCDGIGEjUVxCXiIyrADU+TPoqY
+         ZuZ+d7BrfGHPz7t1dJ1VC9jVKxgV3PHdl+xKMGkszlIt0+Lq4cA/GH+wZIgnYOJjog
+         EYdjxR1cslfJczPf1psHwwuvhuCXvKz4Ud+qyOPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.14 071/124] Btrfs: fix data corruption due to cloning of eof block
-Date:   Mon, 19 Nov 2018 17:28:45 +0100
-Message-Id: <20181119162626.953616726@linuxfoundation.org>
+        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        Zhangjin Wu <wuzhangjin@gmail.com>,
+        Huacai Chen <chenhuacai@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 036/124] MIPS: Loongson-3: Fix BRIDGE irq delivery problem
+Date:   Mon, 19 Nov 2018 17:28:10 +0100
+Message-Id: <20181119162620.630719076@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -62,98 +68,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+[ Upstream commit 360fe725f8849aaddc53475fef5d4a0c439b05ae ]
 
-commit ac765f83f1397646c11092a032d4f62c3d478b81 upstream.
+After commit e509bd7da149dc349160 ("genirq: Allow migration of chained
+interrupts by installing default action") Loongson-3 fails at here:
 
-We currently allow cloning a range from a file which includes the last
-block of the file even if the file's size is not aligned to the block
-size. This is fine and useful when the destination file has the same size,
-but when it does not and the range ends somewhere in the middle of the
-destination file, it leads to corruption because the bytes between the EOF
-and the end of the block have undefined data (when there is support for
-discard/trimming they have a value of 0x00).
+setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
 
-Example:
+This is because both chained_action and cascade_irqaction don't have
+IRQF_SHARED flag. This will cause Loongson-3 resume fails because HPET
+timer interrupt can't be delivered during S3. So we set the irqchip of
+the chained irq to loongson_irq_chip which doesn't disable the chained
+irq in CP0.Status.
 
- $ mkfs.btrfs -f /dev/sdb
- $ mount /dev/sdb /mnt
-
- $ export foo_size=$((256 * 1024 + 100))
- $ xfs_io -f -c "pwrite -S 0x3c 0 $foo_size" /mnt/foo
- $ xfs_io -f -c "pwrite -S 0xb5 0 1M" /mnt/bar
-
- $ xfs_io -c "reflink /mnt/foo 0 512K $foo_size" /mnt/bar
-
- $ od -A d -t x1 /mnt/bar
- 0000000 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 0524288 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c
- *
- 0786528 3c 3c 3c 3c 00 00 00 00 00 00 00 00 00 00 00 00
- 0786544 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- *
- 0790528 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 1048576
-
-The bytes in the range from 786532 (512Kb + 256Kb + 100 bytes) to 790527
-(512Kb + 256Kb + 4Kb - 1) got corrupted, having now a value of 0x00 instead
-of 0xb5.
-
-This is similar to the problem we had for deduplication that got recently
-fixed by commit de02b9f6bb65 ("Btrfs: fix data corruption when
-deduplicating between different files").
-
-Fix this by not allowing such operations to be performed and return the
-errno -EINVAL to user space. This is what XFS is doing as well at the VFS
-level. This change however now makes us return -EINVAL instead of
--EOPNOTSUPP for cases where the source range maps to an inline extent and
-the destination range's end is smaller then the destination file's size,
-since the detection of inline extents is done during the actual process of
-dropping file extent items (at __btrfs_drop_extents()). Returning the
--EINVAL error is done early on and solely based on the input parameters
-(offsets and length) and destination file's size. This makes us consistent
-with XFS and anyone else supporting cloning since this case is now checked
-at a higher level in the VFS and is where the -EINVAL will be returned
-from starting with kernel 4.20 (the VFS changed was introduced in 4.20-rc1
-by commit 07d19dc9fbe9 ("vfs: avoid problematic remapping requests into
-partial EOF block"). So this change is more geared towards stable kernels,
-as it's unlikely the new VFS checks get removed intentionally.
-
-A test case for fstests follows soon, as well as an update to filter
-existing tests that expect -EOPNOTSUPP to accept -EINVAL as well.
-
-CC: <stable@vger.kernel.org> # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: stable@vger.kernel.org
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/20434/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: Fuxin Zhang <zhangfx@lemote.com>
+Cc: Zhangjin Wu <wuzhangjin@gmail.com>
+Cc: Huacai Chen <chenhuacai@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/ioctl.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ arch/mips/include/asm/mach-loongson64/irq.h |  2 +-
+ arch/mips/loongson64/loongson-3/irq.c       | 13 +++----------
+ 2 files changed, 4 insertions(+), 11 deletions(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3909,9 +3909,17 @@ static noinline int btrfs_clone_files(st
- 		goto out_unlock;
- 	if (len == 0)
- 		olen = len = src->i_size - off;
--	/* if we extend to eof, continue to block boundary */
--	if (off + len == src->i_size)
-+	/*
-+	 * If we extend to eof, continue to block boundary if and only if the
-+	 * destination end offset matches the destination file's size, otherwise
-+	 * we would be corrupting data by placing the eof block into the middle
-+	 * of a file.
-+	 */
-+	if (off + len == src->i_size) {
-+		if (!IS_ALIGNED(len, bs) && destoff + len < inode->i_size)
-+			goto out_unlock;
- 		len = ALIGN(src->i_size, bs) - off;
-+	}
+diff --git a/arch/mips/include/asm/mach-loongson64/irq.h b/arch/mips/include/asm/mach-loongson64/irq.h
+index 3644b68c0ccc..be9f727a9328 100644
+--- a/arch/mips/include/asm/mach-loongson64/irq.h
++++ b/arch/mips/include/asm/mach-loongson64/irq.h
+@@ -10,7 +10,7 @@
+ #define MIPS_CPU_IRQ_BASE 56
  
- 	if (len == 0) {
- 		ret = 0;
+ #define LOONGSON_UART_IRQ   (MIPS_CPU_IRQ_BASE + 2) /* UART */
+-#define LOONGSON_HT1_IRQ    (MIPS_CPU_IRQ_BASE + 3) /* HT1 */
++#define LOONGSON_BRIDGE_IRQ (MIPS_CPU_IRQ_BASE + 3) /* CASCADE */
+ #define LOONGSON_TIMER_IRQ  (MIPS_CPU_IRQ_BASE + 7) /* CPU Timer */
+ 
+ #define LOONGSON_HT1_CFG_BASE		loongson_sysconf.ht_control_base
+diff --git a/arch/mips/loongson64/loongson-3/irq.c b/arch/mips/loongson64/loongson-3/irq.c
+index 2e115ab66a00..5605061f5f98 100644
+--- a/arch/mips/loongson64/loongson-3/irq.c
++++ b/arch/mips/loongson64/loongson-3/irq.c
+@@ -96,12 +96,6 @@ void mach_irq_dispatch(unsigned int pending)
+ 	}
+ }
+ 
+-static struct irqaction cascade_irqaction = {
+-	.handler = no_action,
+-	.flags = IRQF_NO_SUSPEND,
+-	.name = "cascade",
+-};
+-
+ static inline void mask_loongson_irq(struct irq_data *d) { }
+ static inline void unmask_loongson_irq(struct irq_data *d) { }
+ 
+@@ -147,11 +141,10 @@ void __init mach_init_irq(void)
+ 
+ 	irq_set_chip_and_handler(LOONGSON_UART_IRQ,
+ 			&loongson_irq_chip, handle_percpu_irq);
++	irq_set_chip_and_handler(LOONGSON_BRIDGE_IRQ,
++			&loongson_irq_chip, handle_percpu_irq);
+ 
+-	/* setup HT1 irq */
+-	setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
+-
+-	set_c0_status(STATUSF_IP2 | STATUSF_IP6);
++	set_c0_status(STATUSF_IP2 | STATUSF_IP3 | STATUSF_IP6);
+ }
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+-- 
+2.17.1
+
 
 
