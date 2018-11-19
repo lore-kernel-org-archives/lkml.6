@@ -4,47 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B285C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9176C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3FF82086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9268920831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zjcwxric"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3FF82086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fXhG1S44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9268920831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbeKTCzC (ORCPT
+        id S1730262AbeKTCzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52494 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730034AbeKTCzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:02 -0500
+        id S1730034AbeKTCzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50F712086A;
-        Mon, 19 Nov 2018 16:30:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2EE720831;
+        Mon, 19 Nov 2018 16:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645054;
-        bh=jYsh38Osj0aUKC7kE/WeDTZh4a98/Rp6AAVRxFBRzy8=;
+        s=default; t=1542645057;
+        bh=a1otWfoPRV54SXWb7xDHi3rWYcauv54MDNyYGhvnkpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zjcwxricf3/xBiKSJEBhHOHNww5+EL2XXi3FtsDNEOydXyA5DF6MTDXAdMAVKRHYR
-         6rx1DORHZY3KxxxmOlMJ5SgErp6ORN3DSDyR9Ob+apMUHD7zATnJY9EFPf90KOQUya
-         jHynsjdLoN5mqhVeTaM46pUhppBIToV2bkEZHKqk=
+        b=fXhG1S44f+nAv03FhUEA5wEHFUUt311XvDcv4ISB7vUUoJ/k2Wp5BS9zWpjzt3xjb
+         wRnbUcq/opm3flKapssDkcHU+fzT+PLovrjaTR4bHaWQRrwtf4xnZTXRIRPnz1WtfI
+         /QGoPLBZzXxSDaP2xrfiELHSTSrdaEN0cvxGXvcE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 019/205] drm/omap: fix memory barrier bug in DMM driver
-Date:   Mon, 19 Nov 2018 17:25:26 +0100
-Message-Id: <20181119162620.758499871@linuxfoundation.org>
+Subject: [PATCH 4.19 002/205] powerpc/64/module: REL32 relocation range check
+Date:   Mon, 19 Nov 2018 17:25:09 +0100
+Message-Id: <20181119162617.201773540@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,74 +63,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-[ Upstream commit 538f66ba204944470a653a4cccc5f8befdf97c22 ]
+[ Upstream commit b851ba02a6f3075f0f99c60c4bc30a4af80cf428 ]
 
-A DMM timeout "timed out waiting for done" has been observed on DRA7
-devices. The timeout happens rarely, and only when the system is under
-heavy load.
+The recent module relocation overflow crash demonstrated that we
+have no range checking on REL32 relative relocations. This patch
+implements a basic check, the same kernel that previously oopsed
+and rebooted now continues with some of these errors when loading
+the module:
 
-Debugging showed that the timeout can be made to happen much more
-frequently by optimizing the DMM driver, so that there's almost no code
-between writing the last DMM descriptors to RAM, and writing to DMM
-register which starts the DMM transaction.
+  module_64: x_tables: REL32 527703503449812 out of range!
 
-The current theory is that a wmb() does not properly ensure that the
-data written to RAM is observable by all the components in the system.
+Possibly other relocations (ADDR32, REL16, TOC16, etc.) should also have
+overflow checks.
 
-This DMM timeout has caused interesting (and rare) bugs as the error
-handling was not functioning properly (the error handling has been fixed
-in previous commits):
-
- * If a DMM timeout happened when a GEM buffer was being pinned for
-   display on the screen, a timeout error would be shown, but the driver
-   would continue programming DSS HW with broken buffer, leading to
-   SYNCLOST floods and possible crashes.
-
- * If a DMM timeout happened when other user (say, video decoder) was
-   pinning a GEM buffer, a timeout would be shown but if the user
-   handled the error properly, no other issues followed.
-
- * If a DMM timeout happened when a GEM buffer was being released, the
-   driver does not even notice the error, leading to crashes or hang
-   later.
-
-This patch adds wmb() and readl() calls after the last bit is written to
-RAM, which should ensure that the execution proceeds only after the data
-is actually in RAM, and thus observable by DMM.
-
-The read-back should not be needed. Further study is required to understand
-if DMM is somehow special case and read-back is ok, or if DRA7's memory
-barriers do not work correctly.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/powerpc/kernel/module_64.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -285,6 +285,17 @@ static int dmm_txn_commit(struct dmm_txn
- 	}
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@ -680,7 +680,14 @@ int apply_relocate_add(Elf64_Shdr *sechd
  
- 	txn->last_pat->next_pa = 0;
-+	/* ensure that the written descriptors are visible to DMM */
-+	wmb();
-+
-+	/*
-+	 * NOTE: the wmb() above should be enough, but there seems to be a bug
-+	 * in OMAP's memory barrier implementation, which in some rare cases may
-+	 * cause the writes not to be observable after wmb().
-+	 */
-+
-+	/* read back to ensure the data is in RAM */
-+	readl(&txn->last_pat->next_pa);
+ 		case R_PPC64_REL32:
+ 			/* 32 bits relative (used by relative exception tables) */
+-			*(u32 *)location = value - (unsigned long)location;
++			/* Convert value to relative */
++			value -= (unsigned long)location;
++			if (value + 0x80000000 > 0xffffffff) {
++				pr_err("%s: REL32 %li out of range!\n",
++				       me->name, (long int)value);
++				return -ENOEXEC;
++			}
++			*(u32 *)location = value;
+ 			break;
  
- 	/* write to PAT_DESCR to clear out any pending transaction */
- 	dmm_write(dmm, 0x0, reg[PAT_DESCR][engine->id]);
+ 		case R_PPC64_TOCSAVE:
 
 
