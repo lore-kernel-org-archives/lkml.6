@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456BAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7463C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07300208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F2FD21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJ1wSWr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07300208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWrbxpL6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2FD21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732756AbeKTDDh (ORCPT
+        id S1732765AbeKTDDk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36298 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731810AbeKTDDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:03:35 -0500
+        id S1731810AbeKTDDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4B36206BA;
-        Mon, 19 Nov 2018 16:39:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E074208E3;
+        Mon, 19 Nov 2018 16:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645566;
-        bh=SZSUn6e3uyRQgGhprXeSl2lC5x4TYn9skgYg/AIyty4=;
+        s=default; t=1542645568;
+        bh=PVHGYFKKlhBz8UBfawrTudmFUYpiiBuFl1G+GUKBUlU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJ1wSWr22ACUZ2LGxQoIWkYf3cCvrK00uwHxRglHPzxfvp91CKQnWuaYK9M/ruHAE
-         xZUsMLujEAtTp7KOOrz33vSzmAVID4zB/jXVvsD5z5w7HToXw5TpjRTXMum1e1Z0r3
-         KT7Lg7txQrULndnk5pwQ0hnRsNxgOszAg/aLA25Y=
+        b=MWrbxpL6e1nAyJ5zJDjb/ZSqsWzBdKLDHtlsAd9Xcm3Y4fyb4smL+U62Et4BUbztq
+         ITwrO9DHrj//nctsVpfD70GHtr8l6C0rD+zenigZVhoRhjgjQgLZV4pH/V47zSTp2v
+         B6Hx7tqxa2JfsQXxeMy+UBQ7W+XxHHyvEwIRgNv8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Animesh Manna <animesh.manna@intel.com>,
-        Paulo Zanoni <paulo.r.zanoni@intel.com>,
-        Jose Roberto de Souza <jose.souza@intel.com>,
-        Manasi Navare <manasi.d.navare@intel.com>,
+        stable@vger.kernel.org, Jani Nikula <jani.nikula@linux.intel.com>,
+        Clint Taylor <clinton.a.taylor@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 192/205] drm/i915/icl: Fix the macros for DFLEXDPMLE register bits
-Date:   Mon, 19 Nov 2018 17:28:19 +0100
-Message-Id: <20181119162642.062073992@linuxfoundation.org>
+Subject: [PATCH 4.19 193/205] drm/i915/hdmi: Add HDMI 2.0 audio clock recovery N values
+Date:   Mon, 19 Nov 2018 17:28:20 +0100
+Message-Id: <20181119162642.134441281@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -65,45 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manasi Navare <manasi.d.navare@intel.com>
+From: Clint Taylor <clinton.a.taylor@intel.com>
 
-commit e528c2affcf216b3d02b22004895cb678769629b upstream.
+commit 6503493145cba4413ecd3d4d153faeef4a1e9b85 upstream.
 
-This patch fixes the macros used for defining the DFLEXDPMLE
-register bit fields. This accounts for changes in the spec.
+HDMI 2.0 594Mhz modes were incorrectly selecting 25.200Mhz Automatic N value
+mode instead of HDMI specification values.
 
-Fixes: a2bc69a1a9d6 ("drm/i915/icl: Add register definition for DFLEXDPMLE")
-Cc: Animesh Manna <animesh.manna@intel.com>
-Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
-Cc: Jose Roberto de Souza <jose.souza@intel.com>
-Cc: <stable@vger.kernel.org> # v4.19+
-Signed-off-by: Manasi Navare <manasi.d.navare@intel.com>
-Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181023191248.26418-1-manasi.d.navare@intel.com
-(cherry picked from commit b4335ec0a3ee6229a570755f8fb95dc8a7c694f2)
+V2: Fix 88.2 Hz N value
+
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Clint Taylor <clinton.a.taylor@intel.com>
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1540493521-1746-2-git-send-email-clinton.a.taylor@intel.com
+(cherry picked from commit 5a400aa3c562c4a726b4da286e63c96db905ade1)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_reg.h |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/i915/intel_audio.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/drivers/gpu/drm/i915/i915_reg.h
-+++ b/drivers/gpu/drm/i915/i915_reg.h
-@@ -2097,8 +2097,12 @@ enum i915_power_well_id {
+--- a/drivers/gpu/drm/i915/intel_audio.c
++++ b/drivers/gpu/drm/i915/intel_audio.c
+@@ -144,6 +144,9 @@ static const struct {
+ /* HDMI N/CTS table */
+ #define TMDS_297M 297000
+ #define TMDS_296M 296703
++#define TMDS_594M 594000
++#define TMDS_593M 593407
++
+ static const struct {
+ 	int sample_rate;
+ 	int clock;
+@@ -164,6 +167,20 @@ static const struct {
+ 	{ 176400, TMDS_297M, 18816, 247500 },
+ 	{ 192000, TMDS_296M, 23296, 281250 },
+ 	{ 192000, TMDS_297M, 20480, 247500 },
++	{ 44100, TMDS_593M, 8918, 937500 },
++	{ 44100, TMDS_594M, 9408, 990000 },
++	{ 48000, TMDS_593M, 5824, 562500 },
++	{ 48000, TMDS_594M, 6144, 594000 },
++	{ 32000, TMDS_593M, 5824, 843750 },
++	{ 32000, TMDS_594M, 3072, 445500 },
++	{ 88200, TMDS_593M, 17836, 937500 },
++	{ 88200, TMDS_594M, 18816, 990000 },
++	{ 96000, TMDS_593M, 11648, 562500 },
++	{ 96000, TMDS_594M, 12288, 594000 },
++	{ 176400, TMDS_593M, 35672, 937500 },
++	{ 176400, TMDS_594M, 37632, 990000 },
++	{ 192000, TMDS_593M, 23296, 562500 },
++	{ 192000, TMDS_594M, 24576, 594000 },
+ };
  
- /* ICL PHY DFLEX registers */
- #define PORT_TX_DFLEXDPMLE1		_MMIO(0x1638C0)
--#define   DFLEXDPMLE1_DPMLETC_MASK(n)	(0xf << (4 * (n)))
--#define   DFLEXDPMLE1_DPMLETC(n, x)	((x) << (4 * (n)))
-+#define   DFLEXDPMLE1_DPMLETC_MASK(tc_port)	(0xf << (4 * (tc_port)))
-+#define   DFLEXDPMLE1_DPMLETC_ML0(tc_port)	(1 << (4 * (tc_port)))
-+#define   DFLEXDPMLE1_DPMLETC_ML1_0(tc_port)	(3 << (4 * (tc_port)))
-+#define   DFLEXDPMLE1_DPMLETC_ML3(tc_port)	(8 << (4 * (tc_port)))
-+#define   DFLEXDPMLE1_DPMLETC_ML3_2(tc_port)	(12 << (4 * (tc_port)))
-+#define   DFLEXDPMLE1_DPMLETC_ML3_0(tc_port)	(15 << (4 * (tc_port)))
- 
- /* BXT PHY Ref registers */
- #define _PORT_REF_DW3_A			0x16218C
+ /* get AUD_CONFIG_PIXEL_CLOCK_HDMI_* value for mode */
 
 
