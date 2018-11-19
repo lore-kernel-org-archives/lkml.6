@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAF5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCBFC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A18D21104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4766A206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xx+TXeZ0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A18D21104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f01fmPCN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4766A206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732628AbeKTDDM (ORCPT
+        id S1732639AbeKTDDN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35664 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731637AbeKTDDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:03:09 -0500
+        id S1732106AbeKTDDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4395208E4;
-        Mon, 19 Nov 2018 16:38:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C7022147D;
+        Mon, 19 Nov 2018 16:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645540;
-        bh=sARIvZLMbY/9k5+UL1CeBNwHSO+ETf3E3+rViPBVBno=;
+        s=default; t=1542645543;
+        bh=BcIX7rVgzF17vZvDpFfawKdOiiBmwEykamPmfUtHCAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xx+TXeZ0vM5p20wk75/zoVt6aRL7SoxLYlFENy8Xtbvs0IjF3vh96tA7v/W2m2HPp
-         /nAZxbh/zYN8nyRcf6c7zSJbUWsiiOivQmlEV8ARDlCVd2VxW+LdvWjP11H35Vnb3N
-         3jKvkhz/XvRgvQuWqoCe00J7nn3H7p4QDKCYP8D8=
+        b=f01fmPCNtheaiQl1WMGlyDWHRqdJ8+KIA9RfEZ0dTmQk8kal2zbapXrVdbqVdCFgy
+         +HsUAXiSe0RhGCrVxyaN2ijLF7dSYYX5vbstqtbO161s1B+t24vYYDQl+QAfFr/a0z
+         LBOHcXMkcUpyP8Qfv8XnSkJZGSZAOTB2WEyyBYA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -45,9 +45,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <ville.syrjala@linux.intel.com>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 202/205] drm/i915: Fix possible race in intel_dp_add_mst_connector()
-Date:   Mon, 19 Nov 2018 17:28:29 +0100
-Message-Id: <20181119162642.781715516@linuxfoundation.org>
+Subject: [PATCH 4.19 203/205] drm/i915: Fix NULL deref when re-enabling HPD IRQs on systems with MST
+Date:   Mon, 19 Nov 2018 17:28:30 +0100
+Message-Id: <20181119162642.844402422@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -67,51 +67,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lyude Paul <lyude@redhat.com>
 
-commit 7c4512300cfa5a4dcc8c1c52ae61e3fa4bd11a39 upstream.
+commit 541ff7e96c13cd5d67f6021d233f8e1c3df49278 upstream.
 
-This hasn't caused any issues yet that I'm aware of, but as Ville
-Syrjälä pointed out - we need to make sure that
-intel_connector->mst_port is set before initializing MST connectors,
-since in theory we could potentially check intel_connector->mst_port in
-i915_hpd_poll_init_work() after registering the connector but before
-having written it's value.
+Turns out that if you trigger an HPD storm on a system that has an MST
+topology connected to it, you'll end up causing the kernel to eventually
+hit a NULL deref:
+
+[  332.339041] BUG: unable to handle kernel NULL pointer dereference at 00000000000000ec
+[  332.340906] PGD 0 P4D 0
+[  332.342750] Oops: 0000 [#1] SMP PTI
+[  332.344579] CPU: 2 PID: 25 Comm: kworker/2:0 Kdump: loaded Tainted: G           O      4.18.0-rc3short-hpd-storm+ #2
+[  332.346453] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
+[  332.348361] Workqueue: events intel_hpd_irq_storm_reenable_work [i915]
+[  332.350301] RIP: 0010:intel_hpd_irq_storm_reenable_work.cold.3+0x2f/0x86 [i915]
+[  332.352213] Code: 00 00 ba e8 00 00 00 48 c7 c6 c0 aa 5f a0 48 c7 c7 d0 73 62 a0 4c 89 c1 4c 89 04 24 e8 7f f5 af e0 4c 8b 04 24 44 89 f8 29 e8 <41> 39 80 ec 00 00 00 0f 85 43 13 fc ff 41 0f b6 86 b8 04 00 00 41
+[  332.354286] RSP: 0018:ffffc90000147e48 EFLAGS: 00010006
+[  332.356344] RAX: 0000000000000005 RBX: ffff8802c226c9d4 RCX: 0000000000000006
+[  332.358404] RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff88032dc95570
+[  332.360466] RBP: 0000000000000005 R08: 0000000000000000 R09: ffff88031b3dc840
+[  332.362528] R10: 0000000000000000 R11: 000000031a069602 R12: ffff8802c226ca20
+[  332.364575] R13: ffff8802c2268000 R14: ffff880310661000 R15: 000000000000000a
+[  332.366615] FS:  0000000000000000(0000) GS:ffff88032dc80000(0000) knlGS:0000000000000000
+[  332.368658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  332.370690] CR2: 00000000000000ec CR3: 000000000200a003 CR4: 00000000003606e0
+[  332.372724] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  332.374773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  332.376798] Call Trace:
+[  332.378809]  process_one_work+0x1a1/0x350
+[  332.380806]  worker_thread+0x30/0x380
+[  332.382777]  ? wq_update_unbound_numa+0x10/0x10
+[  332.384772]  kthread+0x112/0x130
+[  332.386740]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  332.388706]  ret_from_fork+0x35/0x40
+[  332.390651] Modules linked in: i915(O) vfat fat joydev btusb btrtl btbcm btintel bluetooth ecdh_generic iTCO_wdt wmi_bmof i2c_algo_bit drm_kms_helper intel_rapl syscopyarea sysfillrect x86_pkg_temp_thermal sysimgblt coretemp fb_sys_fops crc32_pclmul drm psmouse pcspkr mei_me mei i2c_i801 lpc_ich mfd_core i2c_core tpm_tis tpm_tis_core thinkpad_acpi wmi tpm rfkill video crc32c_intel serio_raw ehci_pci xhci_pci ehci_hcd xhci_hcd [last unloaded: i915]
+[  332.394963] CR2: 00000000000000ec
+
+This appears to be due to the fact that with an MST topology, not all
+intel_connector structs will have ->encoder set. So, fix this by
+skipping connectors without encoders in
+intel_hpd_irq_storm_reenable_work().
+
+For those wondering, this bug was found on accident while simulating HPD
+storms using a Chamelium connected to a ThinkPad T450s (Broadwell).
+
+Changes since v1:
+- Check intel_connector->mst_port instead of intel_connector->encoder
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20181106213017.14563-2-lyude@redhat.com
-(cherry picked from commit 66a5ab1034be801630816d1fa6cfc30db1a2f0b0)
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181106213017.14563-3-lyude@redhat.com
+(cherry picked from commit fee61deecb1d850bf34f682a6a452e5ee51b7572)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp_mst.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i915/intel_hotplug.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/i915/intel_dp_mst.c
-+++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -458,6 +458,10 @@ static struct drm_connector *intel_dp_ad
- 	if (!intel_connector)
- 		return NULL;
+--- a/drivers/gpu/drm/i915/intel_hotplug.c
++++ b/drivers/gpu/drm/i915/intel_hotplug.c
+@@ -228,7 +228,9 @@ static void intel_hpd_irq_storm_reenable
+ 		drm_for_each_connector_iter(connector, &conn_iter) {
+ 			struct intel_connector *intel_connector = to_intel_connector(connector);
  
-+	intel_connector->get_hw_state = intel_dp_mst_get_hw_state;
-+	intel_connector->mst_port = intel_dp;
-+	intel_connector->port = port;
-+
- 	connector = &intel_connector->base;
- 	ret = drm_connector_init(dev, connector, &intel_dp_mst_connector_funcs,
- 				 DRM_MODE_CONNECTOR_DisplayPort);
-@@ -468,10 +472,6 @@ static struct drm_connector *intel_dp_ad
- 
- 	drm_connector_helper_add(connector, &intel_dp_mst_connector_helper_funcs);
- 
--	intel_connector->get_hw_state = intel_dp_mst_get_hw_state;
--	intel_connector->mst_port = intel_dp;
--	intel_connector->port = port;
--
- 	for_each_pipe(dev_priv, pipe) {
- 		struct drm_encoder *enc =
- 			&intel_dp->mst_encoders[pipe]->base.base;
+-			if (intel_connector->encoder->hpd_pin == pin) {
++			/* Don't check MST ports, they don't have pins */
++			if (!intel_connector->mst_port &&
++			    intel_connector->encoder->hpd_pin == pin) {
+ 				if (connector->polled != intel_connector->polled)
+ 					DRM_DEBUG_DRIVER("Reenabling HPD on connector %s\n",
+ 							 connector->name);
 
 
