@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68632C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9807C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30FB421780
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2D7B223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1gdsY3Tv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30FB421780
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEOB5KaD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D7B223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405331AbeKTDYf (ORCPT
+        id S2405342AbeKTDYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36974 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:34 -0500
+        id S2404390AbeKTDYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4965D223C6;
-        Mon, 19 Nov 2018 17:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8E0221731;
+        Mon, 19 Nov 2018 17:00:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646818;
-        bh=hCQOcpR5upKSkVe9pMV00me+OUNLq60hbWZ4vz637yY=;
+        s=default; t=1542646821;
+        bh=o7fEpqGzeKq6C0eGYPBscn15YV1wcZb4XOK9oU0ztzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1gdsY3TvVEU4diSOUMyLK5H0GFiQrKpFIWO+hz+Lmnp8jlYZC0nIZQ4Sl0q+e8L6A
-         oMlxTXwUq/fEfeg/05oyyWsRAAO2IfE/E/P01EyujCvs/Fcco5JMEzwW27Yv4qR4WG
-         wvLCZZCg3iXBB0lmb2E1+A9FY3+cS/tdB6x6gUAs=
+        b=tEOB5KaDO+7KGaHeIpZQ7IR31tJi3Urmpp0qIRrpqrBy/DOM9JeWVvWOI1G+U1NCJ
+         H5VzHrZ1aE15/iA5dCyhwZtevnUjUGngXIfEdEGk06f7ZL7RrI0d1tB3np846NSeyT
+         ieR/DQTewCyrVkzvq7riKV4fi1sTIvTLamTg38Xs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Phil Elwell <phil@raspberrypi.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 101/160] powerpc/boot: Ensure _zimage_start is a weak symbol
-Date:   Mon, 19 Nov 2018 17:29:00 +0100
-Message-Id: <20181119162640.821051288@linuxfoundation.org>
+Subject: [PATCH 4.4 102/160] sc16is7xx: Fix for multi-channel stall
+Date:   Mon, 19 Nov 2018 17:29:01 +0100
+Message-Id: <20181119162640.878366846@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,62 +62,116 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joel Stanley <joel@jms.id.au>
+From: Phil Elwell <phil@raspberrypi.org>
 
-[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
+[ Upstream commit 8344498721059754e09d30fe255a12dab8fb03ef ]
 
-When building with clang crt0's _zimage_start is not marked weak, which
-breaks the build when linking the kernel image:
+The SC16IS752 is a dual-channel device. The two channels are largely
+independent, but the IRQ signals are wired together as an open-drain,
+active low signal which will be driven low while either of the
+channels requires attention, which can be for significant periods of
+time until operations complete and the interrupt can be acknowledged.
+In that respect it is should be treated as a true level-sensitive IRQ.
 
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058 g       .text  0000000000000000 _zimage_start
+The kernel, however, needs to be able to exit interrupt context in
+order to use I2C or SPI to access the device registers (which may
+involve sleeping).  Therefore the interrupt needs to be masked out or
+paused in some way.
 
- ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
- (.text+0x58): multiple definition of '_zimage_start';
- arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
+The usual way to manage sleeping from within an interrupt handler
+is to use a threaded interrupt handler - a regular interrupt routine
+does the minimum amount of work needed to triage the interrupt before
+waking the interrupt service thread. If the threaded IRQ is marked as
+IRQF_ONESHOT the kernel will automatically mask out the interrupt
+until the thread runs to completion. The sc16is7xx driver used to
+use a threaded IRQ, but a patch switched to using a kthread_worker
+in order to set realtime priorities on the handler thread and for
+other optimisations. The end result is non-threaded IRQ that
+schedules some work then returns IRQ_HANDLED, making the kernel
+think that all IRQ processing has completed.
 
-Clang requires the .weak directive to appear after the symbol is
-declared. The binutils manual says:
+The work-around to prevent a constant stream of interrupts is to
+mark the interrupt as edge-sensitive rather than level-sensitive,
+but interpreting an active-low source as a falling-edge source
+requires care to prevent a total cessation of interrupts. Whereas
+an edge-triggering source will generate a new edge for every interrupt
+condition a level-triggering source will keep the signal at the
+interrupting level until it no longer requires attention; in other
+words, the host won't see another edge until all interrupt conditions
+are cleared. It is therefore vital that the interrupt handler does not
+exit with an outstanding interrupt condition, otherwise the kernel
+will not receive another interrupt unless some other operation causes
+the interrupt state on the device to be cleared.
 
- This directive sets the weak attribute on the comma separated list of
- symbol names. If the symbols do not already exist, they will be
- created.
+The existing sc16is7xx driver has a very simple interrupt "thread"
+(kthread_work job) that processes interrupts on each channel in turn
+until there are no more. If both channels are active and the first
+channel starts interrupting while the handler for the second channel
+is running then it will not be detected and an IRQ stall ensues. This
+could be handled easily if there was a shared IRQ status register, or
+a convenient way to determine if the IRQ had been deasserted for any
+length of time, but both appear to be lacking.
 
-So it appears this is different with clang. The only reference I could
-see for this was an OpenBSD mailing list post[1].
+Avoid this problem (or at least make it much less likely to happen)
+by reducing the granularity of per-channel interrupt processing
+to one condition per iteration, only exiting the overall loop when
+both channels are no longer interrupting.
 
-Changing it to be after the declaration fixes building with Clang, and
-still works with GCC.
-
- $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
- 0000000000000058  w      .text	0000000000000000 _zimage_start
-
-Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
-
-[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
-
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/boot/crt0.S |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/tty/serial/sc16is7xx.c |   19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -47,8 +47,10 @@ p_end:		.long	_end
- p_pstack:	.long	_platform_stack_top
- #endif
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -648,7 +648,7 @@ static void sc16is7xx_handle_tx(struct u
+ 		uart_write_wakeup(port);
+ }
  
--	.weak	_zimage_start
- 	.globl	_zimage_start
-+	/* Clang appears to require the .weak directive to be after the symbol
-+	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
-+	.weak	_zimage_start
- _zimage_start:
- 	.globl	_zimage_start_lib
- _zimage_start_lib:
+-static void sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
++static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
+ {
+ 	struct uart_port *port = &s->p[portno].port;
+ 
+@@ -657,7 +657,7 @@ static void sc16is7xx_port_irq(struct sc
+ 
+ 		iir = sc16is7xx_port_read(port, SC16IS7XX_IIR_REG);
+ 		if (iir & SC16IS7XX_IIR_NO_INT_BIT)
+-			break;
++			return false;
+ 
+ 		iir &= SC16IS7XX_IIR_ID_MASK;
+ 
+@@ -685,16 +685,23 @@ static void sc16is7xx_port_irq(struct sc
+ 					    port->line, iir);
+ 			break;
+ 		}
+-	} while (1);
++	} while (0);
++	return true;
+ }
+ 
+ static void sc16is7xx_ist(struct kthread_work *ws)
+ {
+ 	struct sc16is7xx_port *s = to_sc16is7xx_port(ws, irq_work);
+-	int i;
+ 
+-	for (i = 0; i < s->devtype->nr_uart; ++i)
+-		sc16is7xx_port_irq(s, i);
++	while (1) {
++		bool keep_polling = false;
++		int i;
++
++		for (i = 0; i < s->devtype->nr_uart; ++i)
++			keep_polling |= sc16is7xx_port_irq(s, i);
++		if (!keep_polling)
++			break;
++	}
+ }
+ 
+ static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
 
 
