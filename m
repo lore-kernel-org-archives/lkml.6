@@ -2,245 +2,183 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F9DC04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0254AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:56:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5D620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5D620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BB5C620659
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:56:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5C620659
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbeKTFUJ (ORCPT
+        id S1726119AbeKTFVn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:20:09 -0500
-Received: from mga06.intel.com ([134.134.136.31]:32253 "EHLO mga06.intel.com"
+        Tue, 20 Nov 2018 00:21:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50702 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbeKTFUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:20:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 10:55:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
-   d="scan'208";a="109585298"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga001.jf.intel.com with ESMTP; 19 Nov 2018 10:55:15 -0800
-Subject: [PATCH v5] tpm: add support for partial reads
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Mon, 19 Nov 2018 10:55:15 -0800
-Message-ID: <154265371562.23494.10113870855345906523.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S1725770AbeKTFVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:21:43 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C067D3097022;
+        Mon, 19 Nov 2018 18:56:49 +0000 (UTC)
+Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C74B648A8;
+        Mon, 19 Nov 2018 18:56:43 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Tejun Heo <tj@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v2 00/17] locking/lockdep: Add a new class of terminal locks
+Date:   Mon, 19 Nov 2018 13:55:09 -0500
+Message-Id: <1542653726-5655-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 19 Nov 2018 18:56:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently to read a response from the TPM device an application needs
-provide big enough buffer for the whole response and read it in one go.
-The application doesn't know how big the response it beforehand so it
-always needs to maintain a 4K buffer and read the max (4K).
-In case if the user of the TSS library doesn't provide big enough
-buffer the TCTI spec says that the library should set the required
-size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
-application could allocate a bigger buffer and call receive again.
-To make it possible in the TSS library, this requires being able to do
-partial reads from the driver.
-The library would read the 10 bytes header first to get the actual size
-of the response from the header, and then read the rest of the response.
+ v1->v2:
+  - Mark more locks as terminal.
+  - Add a patch to remove the unused version field from lock_class.
+  - Steal some bits from pin_count of held_lock for flags.
+  - Add a patch to warn if a task holding a raw spinlock is acquiring an
+    non-raw lock.
 
-This patch adds support for partial reads, i.e. the user can read the
-response in one or multiple reads, until the whole response is consumed.
-The user can also read only part of the response and ignore
-the rest by issuing a new write to send a new command.
+The purpose of this patchset is to add a new class of locks called
+terminal locks and converts some of the low level raw or regular
+spinlocks to terminal locks. A terminal lock does not have forward
+dependency and it won't allow a lock or unlock operation on another
+lock. Two level nesting of terminal locks is allowed, though.
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
-The usecase is implemented in this TSS commit:
-https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+Only spinlocks that are acquired with the _irq/_irqsave variants or
+acquired in an IRQ disabled context should be classified as terminal
+locks.
 
-Changes in v5:
- - Merge the two patches back into one.
- - Change variable 'partial_data' to a new flag 'response_read'.
- - Update the logic around partial_data to reflect the new flag.
- - Add a new variable response_length that keeps track of how much
-   of the response is left.
+Because of the restrictions on terminal locks, we can do simple checks on
+them without using the lockdep lock validation machinery. The advantages
+of making these changes are as follows:
 
-Changes in v4:
- - Use unsigned type for response_pending as it will never be negative.
- - Rebased on top of name change data_pending to transmit_result patch.
+ 1) It saves table entries used by the validation code and hence make
+    it harder to overflow those tables.
 
-Changes in v3:
- - Remove link to usecase implemented in TSS out of the commit message.
- - Update the conddition in tpm_common_poll() to take into account
-   the partial_data also.
+ 2) The lockdep check in __lock_acquire() will be a little bit faster
+    for terminal locks without using the lock validation code.
 
-Changes in v2:
- - Allow writes after only partial response is consumed to maintain
-   backwords compatibility.
----
- drivers/char/tpm/tpm-dev-common.c |   51 +++++++++++++++++++++++++------------
- drivers/char/tpm/tpm-dev.h        |    7 +++--
- 2 files changed, 39 insertions(+), 19 deletions(-)
+In fact, it is possible to overflow some of the tables by running
+a variety of different workloads on a debug kernel. I have seen bug
+reports about exhausting MAX_LOCKDEP_KEYS, MAX_LOCKDEP_ENTRIES and
+MAX_STACK_TRACE_ENTRIES. This patch will help to reduce the chance
+of overflowing some of the tables.
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 99b5133a9d05..344739223451 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -40,7 +40,7 @@ static void tpm_async_work(struct work_struct *work)
- 
- 	tpm_put_ops(priv->chip);
- 	if (ret > 0) {
--		priv->data_pending = ret;
-+		priv->response_length = ret;
- 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
- 	}
- 	mutex_unlock(&priv->buffer_mutex);
-@@ -63,7 +63,8 @@ static void tpm_timeout_work(struct work_struct *work)
- 					      timeout_work);
- 
- 	mutex_lock(&priv->buffer_mutex);
--	priv->data_pending = 0;
-+	priv->response_read = true;
-+	priv->response_length = 0;
- 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
- 	mutex_unlock(&priv->buffer_mutex);
- 	wake_up_interruptible(&priv->async_wait);
-@@ -74,6 +75,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
- {
- 	priv->chip = chip;
- 	priv->space = space;
-+	priv->response_read = true;
- 
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
-@@ -90,22 +92,35 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- 	ssize_t ret_size = 0;
- 	int rc;
- 
--	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
- 
--	if (priv->data_pending) {
--		ret_size = min_t(ssize_t, size, priv->data_pending);
--		if (ret_size > 0) {
--			rc = copy_to_user(buf, priv->data_buffer, ret_size);
--			memset(priv->data_buffer, 0, priv->data_pending);
--			if (rc)
--				ret_size = -EFAULT;
-+	if (priv->response_length) {
-+		priv->response_read = true;
-+
-+		ret_size = min_t(ssize_t, size, priv->response_length);
-+		if (!ret_size) {
-+			priv->response_length = 0;
-+			goto out;
- 		}
- 
--		priv->data_pending = 0;
-+		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-+		if (rc) {
-+			memset(priv->data_buffer, 0, TPM_BUFSIZE);
-+			priv->response_length = 0;
-+			ret_size = -EFAULT;
-+		} else {
-+			memset(priv->data_buffer + *off, 0, ret_size);
-+			priv->response_length -= ret_size;
-+			*off += ret_size;
-+		}
- 	}
- 
-+out:
-+	if (!priv->response_length) {
-+		*off = 0;
-+		del_singleshot_timer_sync(&priv->user_read_timer);
-+		flush_work(&priv->timeout_work);
-+	}
- 	mutex_unlock(&priv->buffer_mutex);
- 	return ret_size;
- }
-@@ -125,7 +140,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * tpm_read or a user_read_timer timeout. This also prevents split
- 	 * buffered writes from blocking here.
- 	 */
--	if (priv->data_pending != 0 || priv->command_enqueued) {
-+	if (!priv->response_read || priv->command_enqueued) {
- 		ret = -EBUSY;
- 		goto out;
- 	}
-@@ -150,6 +165,10 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 		goto out;
- 	}
- 
-+	priv->response_length = 0;
-+	priv->response_read = false;
-+	*off = 0;
-+
- 	/*
- 	 * If in nonblocking mode schedule an async job to send
- 	 * the command return the size.
-@@ -168,7 +187,7 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	tpm_put_ops(priv->chip);
- 
- 	if (ret > 0) {
--		priv->data_pending = ret;
-+		priv->response_length = ret;
- 		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
- 		ret = size;
- 	}
-@@ -184,7 +203,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
- 
- 	poll_wait(file, &priv->async_wait, wait);
- 
--	if (priv->data_pending)
-+	if (!priv->response_read || priv->response_length)
- 		mask = EPOLLIN | EPOLLRDNORM;
- 	else
- 		mask = EPOLLOUT | EPOLLWRNORM;
-@@ -201,7 +220,7 @@ void tpm_common_release(struct file *file, struct file_priv *priv)
- 	del_singleshot_timer_sync(&priv->user_read_timer);
- 	flush_work(&priv->timeout_work);
- 	file->private_data = NULL;
--	priv->data_pending = 0;
-+	priv->response_length = 0;
- }
- 
- int __init tpm_dev_common_init(void)
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index a126b575cb8c..a744d9bec7b6 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -9,14 +9,15 @@ struct file_priv {
- 	struct tpm_chip *chip;
- 	struct tpm_space *space;
- 
--	/* Holds the amount of data passed or an error code from async op */
--	ssize_t data_pending;
- 	struct mutex buffer_mutex;
--
- 	struct timer_list user_read_timer;      /* user needs to claim result */
- 	struct work_struct timeout_work;
- 	struct work_struct async_work;
- 	wait_queue_head_t async_wait;
-+	/* Holds the resul of the last successful call to tpm_transmit() */
-+	size_t response_length;
-+	/* Becomes true when the response (or part of it) is consumed */
-+	bool response_read;
- 	bool command_enqueued;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
+Below were selected output lines from the lockdep_stats files of the
+patched and unpatched kernels after bootup and running parallel kernel
+builds and some perf benchmarks.
+
+  Item                     Unpatched kernel  Patched kernel  % Change
+  ----                     ----------------  --------------  --------
+  direct dependencies           9924             9032          -9.0%
+  dependency chains            18258            16326         -10.6%
+  dependency chain hlocks      73198            64927         -11.3%
+  stack-trace entries         110502           103225          -6.6%
+
+There were some reductions in the size of the lockdep tables. They were
+not significant, but it is still a good start to rein in the number of
+entries in those tables to make it harder to overflow them.
+
+In term of performance, there isn't that much noticeable differences
+in both the kernel build and perf benchmark. Low level locking
+microbenchmark with 4 locking threads shows the following locking rates
+on a Haswell system:
+
+       Kernel             Lock                 Rate
+       ------             ----                 ----
+   Unpatched kernel    Regular lock         2,288 kop/s
+   Patched kernel      Regular lock         2,352 kop/s
+                       Terminal lock        2,512 kop/s
+
+I was not sure why there was a slight performance improvement with
+the patched kernel. However, comparing the regular and terminal lock
+results, there was a slight 7% improvement in locking throughput for
+terminal locks.
+
+Looking at the perf ouput for regular lock:
+
+   5.43%  run-locktest  [kernel.vmlinux]  [k] __lock_acquire
+   4.65%  run-locktest  [kernel.vmlinux]  [k] lock_contended
+   2.80%  run-locktest  [kernel.vmlinux]  [k] lock_acquired
+   2.53%  run-locktest  [kernel.vmlinux]  [k] lock_release
+   1.42%  run-locktest  [kernel.vmlinux]  [k] mark_lock
+
+For terminal lock:
+
+   5.00%  run-locktest  [kernel.vmlinux]  [k] __lock_acquire
+   4.66%  run-locktest  [kernel.vmlinux]  [k] lock_contended
+   2.88%  run-locktest  [kernel.vmlinux]  [k] lock_acquired
+   2.55%  run-locktest  [kernel.vmlinux]  [k] lock_release
+   1.34%  run-locktest  [kernel.vmlinux]  [k] mark_lock
+
+The __lock_acquire() function ran a bit faster with terminal lock,
+but the other lockdep functions remain more or less the same in term
+of performance.
+
+In term internal lockdep structure sizes, there should be no size
+increase for 64-bit architectures with CONFIG_LOCK_STAT defined.
+The lockdep_map structure will increase in size for 32-bit architectures
+or when CONFIG_LOCK_STAT isn't defined.
+
+Waiman Long (17):
+  locking/lockdep: Remove version from lock_class structure
+  locking/lockdep: Rework lockdep_set_novalidate_class()
+  locking/lockdep: Add a new terminal lock type
+  locking/lockdep: Add DEFINE_TERMINAL_SPINLOCK() and related macros
+  printk: Mark logbuf_lock & console_owner_lock as terminal locks
+  debugobjects: Mark pool_lock as a terminal lock
+  debugobjects: Move printk out of db lock critical sections
+  locking/lockdep: Add support for nestable terminal locks
+  debugobjects: Make object hash locks nestable terminal locks
+  lib/stackdepot: Make depot_lock a terminal spinlock
+  locking/rwsem: Mark rwsem.wait_lock as a terminal lock
+  cgroup: Mark the rstat percpu lock as terminal
+  mm/kasan: Make quarantine_lock a terminal lock
+  dma-debug: Mark free_entries_lock as terminal
+  kernfs: Mark kernfs_open_node_lock as terminal lock
+  delay_acct: Mark task's delays->lock as terminal spinlock
+  locking/lockdep: Check raw/non-raw locking conflicts
+
+ fs/kernfs/file.c                   |  2 +-
+ include/linux/lockdep.h            | 59 +++++++++++++++++++++++----
+ include/linux/rwsem.h              | 11 +++++-
+ include/linux/spinlock_types.h     | 34 ++++++++++------
+ kernel/cgroup/rstat.c              |  9 ++++-
+ kernel/delayacct.c                 |  4 +-
+ kernel/dma/debug.c                 |  2 +-
+ kernel/locking/lockdep.c           | 81 ++++++++++++++++++++++++++++++++------
+ kernel/locking/lockdep_internals.h |  5 +++
+ kernel/locking/lockdep_proc.c      | 11 +++++-
+ kernel/locking/rwsem-xadd.c        |  1 +
+ kernel/locking/spinlock_debug.c    |  1 +
+ kernel/printk/printk.c             |  4 +-
+ kernel/printk/printk_safe.c        |  2 +-
+ lib/debugobjects.c                 | 70 ++++++++++++++++++++++----------
+ lib/stackdepot.c                   |  2 +-
+ mm/kasan/quarantine.c              |  2 +-
+ 17 files changed, 235 insertions(+), 65 deletions(-)
+
+-- 
+1.8.3.1
 
