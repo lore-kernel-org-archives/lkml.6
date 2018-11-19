@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A093C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC28EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0744120870
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4BCE2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:31:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DCGEIHQ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0744120870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="muI5MjiU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BCE2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbeKTCzK (ORCPT
+        id S1730309AbeKTCzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52674 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730034AbeKTCzJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:55:09 -0500
+        id S1730034AbeKTCzM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:55:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15D1920831;
-        Mon, 19 Nov 2018 16:31:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E60D2086A;
+        Mon, 19 Nov 2018 16:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645062;
-        bh=rgmZ8+5s1vB/+hppiXugR3PoagxRQL380G3/0/wH6QU=;
+        s=default; t=1542645065;
+        bh=nEgLqOU8AvyweRa9jgdR45mukFhEbzwbt5m/NOPLl68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DCGEIHQ2WUm+a4KSQZWIZYlxeBtXk+p4fohqJ0OTfQuHSsEUG28SzDDTCIdJVb61L
-         FnEliCJZE2wAaPtgcKFFWFR8t3qyfIDJKg8JXimjH2cd+sOxwm7gJ4y5jvNR+eUp+q
-         1K7zg+KcmOHj7jMfhNc3d1NpkGg8caG6irG6OnBE=
+        b=muI5MjiUCMoo6/xvpEUzknBEiXbmeSuM/yjyc2pJBttNDjxLjvdss93EwboCCTeaN
+         i834K7JFIEfDNJpNuzF8UfMojgUHVnmewcigFknuDP9vcS8h3vxDMVNxA0ES9iPwPv
+         OvMYhmtW1QReWrD52ghhhJ5cU00dT3lHbEwZrWKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Su Sung Chung <Su.Chung@amd.com>,
+        Aric Cyr <Aric.Cyr@amd.com>,
+        Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 004/205] powerpc/mm: fix always true/false warning in slice.c
-Date:   Mon, 19 Nov 2018 17:25:11 +0100
-Message-Id: <20181119162617.721702763@linuxfoundation.org>
+Subject: [PATCH 4.19 005/205] drm/amd/display: fix bug of accessing invalid memory
+Date:   Mon, 19 Nov 2018 17:25:12 +0100
+Message-Id: <20181119162617.904108535@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,125 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Su Sung Chung <Su.Chung@amd.com>
 
-[ Upstream commit 37e9c674e7e6f445e12cb1151017bd4bacdd1e2d ]
+[ Upstream commit 43c3ff27a47d83d153c4adc088243ba594582bf5 ]
 
-This patch fixes the following warnings (obtained with make W=1).
+[Why]
+A loop inside of build_evenly_distributed_points function that traverse through
+the array of points become an infinite loop when m_GammaUpdates does not
+get assigned to any value.
 
-arch/powerpc/mm/slice.c: In function 'slice_range_to_mask':
-arch/powerpc/mm/slice.c:73:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (start < SLICE_LOW_TOP) {
-            ^
-arch/powerpc/mm/slice.c:81:20: error: comparison is always false due to limited range of data type [-Werror=type-limits]
-  if ((start + len) > SLICE_LOW_TOP) {
-                    ^
-arch/powerpc/mm/slice.c: In function 'slice_mask_for_free':
-arch/powerpc/mm/slice.c:136:17: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (high_limit <= SLICE_LOW_TOP)
-                 ^
-arch/powerpc/mm/slice.c: In function 'slice_check_range_fits':
-arch/powerpc/mm/slice.c:185:12: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (start < SLICE_LOW_TOP) {
-            ^
-arch/powerpc/mm/slice.c:195:39: error: comparison is always false due to limited range of data type [-Werror=type-limits]
-  if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
-                                       ^
-arch/powerpc/mm/slice.c: In function 'slice_scan_available':
-arch/powerpc/mm/slice.c:306:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (addr < SLICE_LOW_TOP) {
-           ^
-arch/powerpc/mm/slice.c: In function 'get_slice_psize':
-arch/powerpc/mm/slice.c:709:11: error: comparison is always true due to limited range of data type [-Werror=type-limits]
-  if (addr < SLICE_LOW_TOP) {
-           ^
+[How]
+In DMColor, clear m_gammaIsValid bit just before writting all Zeromem for
+m_GammaUpdates, to prevent calling build_evenly_distributed_points
+before m_GammaUpdates gets assigned to some value.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Su Sung Chung <Su.Chung@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/mm/slice.c |   21 ++++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/amd/display/modules/color/color_gamma.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/mm/slice.c
-+++ b/arch/powerpc/mm/slice.c
-@@ -61,6 +61,13 @@ static void slice_print_mask(const char
- 
- #endif
- 
-+static inline bool slice_addr_is_low(unsigned long addr)
-+{
-+	u64 tmp = (u64)addr;
-+
-+	return tmp < SLICE_LOW_TOP;
-+}
-+
- static void slice_range_to_mask(unsigned long start, unsigned long len,
- 				struct slice_mask *ret)
+--- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
++++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+@@ -1069,10 +1069,14 @@ static void build_evenly_distributed_poi
+ 	struct dividers dividers)
  {
-@@ -70,7 +77,7 @@ static void slice_range_to_mask(unsigned
- 	if (SLICE_NUM_HIGH)
- 		bitmap_zero(ret->high_slices, SLICE_NUM_HIGH);
+ 	struct gamma_pixel *p = points;
+-	struct gamma_pixel *p_last = p + numberof_points - 1;
++	struct gamma_pixel *p_last;
  
--	if (start < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(start)) {
- 		unsigned long mend = min(end,
- 					 (unsigned long)(SLICE_LOW_TOP - 1));
+ 	uint32_t i = 0;
  
-@@ -78,7 +85,7 @@ static void slice_range_to_mask(unsigned
- 			- (1u << GET_LOW_SLICE_INDEX(start));
- 	}
++	// This function should not gets called with 0 as a parameter
++	ASSERT(numberof_points > 0);
++	p_last = p + numberof_points - 1;
++
+ 	do {
+ 		struct fixed31_32 value = dc_fixpt_from_fraction(i,
+ 			numberof_points - 1);
+@@ -1083,7 +1087,7 @@ static void build_evenly_distributed_poi
  
--	if ((start + len) > SLICE_LOW_TOP) {
-+	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
- 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
- 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
- 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
-@@ -133,7 +140,7 @@ static void slice_mask_for_free(struct m
- 		if (!slice_low_has_vma(mm, i))
- 			ret->low_slices |= 1u << i;
+ 		++p;
+ 		++i;
+-	} while (i != numberof_points);
++	} while (i < numberof_points);
  
--	if (high_limit <= SLICE_LOW_TOP)
-+	if (slice_addr_is_low(high_limit - 1))
- 		return;
- 
- 	for (i = 0; i < GET_HIGH_SLICE_INDEX(high_limit); i++)
-@@ -182,7 +189,7 @@ static bool slice_check_range_fits(struc
- 	unsigned long end = start + len - 1;
- 	u64 low_slices = 0;
- 
--	if (start < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(start)) {
- 		unsigned long mend = min(end,
- 					 (unsigned long)(SLICE_LOW_TOP - 1));
- 
-@@ -192,7 +199,7 @@ static bool slice_check_range_fits(struc
- 	if ((low_slices & available->low_slices) != low_slices)
- 		return false;
- 
--	if (SLICE_NUM_HIGH && ((start + len) > SLICE_LOW_TOP)) {
-+	if (SLICE_NUM_HIGH && !slice_addr_is_low(end)) {
- 		unsigned long start_index = GET_HIGH_SLICE_INDEX(start);
- 		unsigned long align_end = ALIGN(end, (1UL << SLICE_HIGH_SHIFT));
- 		unsigned long count = GET_HIGH_SLICE_INDEX(align_end) - start_index;
-@@ -303,7 +310,7 @@ static bool slice_scan_available(unsigne
- 				 int end, unsigned long *boundary_addr)
- {
- 	unsigned long slice;
--	if (addr < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(addr)) {
- 		slice = GET_LOW_SLICE_INDEX(addr);
- 		*boundary_addr = (slice + end) << SLICE_LOW_SHIFT;
- 		return !!(available->low_slices & (1u << slice));
-@@ -706,7 +713,7 @@ unsigned int get_slice_psize(struct mm_s
- 
- 	VM_BUG_ON(radix_enabled());
- 
--	if (addr < SLICE_LOW_TOP) {
-+	if (slice_addr_is_low(addr)) {
- 		psizes = mm->context.low_slices_psize;
- 		index = GET_LOW_SLICE_INDEX(addr);
- 	} else {
+ 	p->r = dc_fixpt_div(p_last->r, dividers.divider1);
+ 	p->g = dc_fixpt_div(p_last->g, dividers.divider1);
 
 
