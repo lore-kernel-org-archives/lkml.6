@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB52C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB259C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F39C52147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F39C52147D
+	by mail.kernel.org (Postfix) with ESMTP id 51AD7206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:16:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AD7206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727951AbeKSUkE (ORCPT
+        id S1727981AbeKSUkH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:40:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35568 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 15:40:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55920 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726287AbeKSUkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:40:04 -0500
+        id S1726287AbeKSUkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 15:40:06 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3A486C05E773;
-        Mon, 19 Nov 2018 10:16:53 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id B088E3084243;
+        Mon, 19 Nov 2018 10:16:56 +0000 (UTC)
 Received: from t460s.redhat.com (ovpn-117-77.ams2.redhat.com [10.36.117.77])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 44F9710640FE;
-        Mon, 19 Nov 2018 10:16:45 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81DA3105706D;
+        Mon, 19 Nov 2018 10:16:53 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-mm@kvack.org
 Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
@@ -37,83 +37,68 @@ Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
         kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
         David Hildenbrand <david@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Dave Young <dyoung@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>, Omar Sandoval <osandov@fb.com>,
-        Arnd Bergmann <arnd@arndb.de>,
         Matthew Wilcox <willy@infradead.org>,
         Michal Hocko <mhocko@suse.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Subject: [PATCH v1 3/8] kexec: export PG_offline to VMCOREINFO
-Date:   Mon, 19 Nov 2018 11:16:11 +0100
-Message-Id: <20181119101616.8901-4-david@redhat.com>
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH v1 4/8] xen/balloon: mark inflated pages PG_offline
+Date:   Mon, 19 Nov 2018 11:16:12 +0100
+Message-Id: <20181119101616.8901-5-david@redhat.com>
 In-Reply-To: <20181119101616.8901-1-david@redhat.com>
 References: <20181119101616.8901-1-david@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 19 Nov 2018 10:16:53 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Mon, 19 Nov 2018 10:16:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Right now, pages inflated as part of a balloon driver will be dumped
-by dump tools like makedumpfile. While XEN is able to check in the
-crash kernel whether a certain pfn is actuall backed by memory in the
-hypervisor (see xen_oldmem_pfn_is_ram) and optimize this case, dumps of
-other balloon inflated memory will essentially result in zero pages getting
-allocated by the hypervisor and the dump getting filled with this data.
+Mark inflated and never onlined pages PG_offline, to tell the world that
+the content is stale and should not be dumped.
 
-The allocation and reading of zero pages can directly be avoided if a
-dumping tool could know which pages only contain stale information not to
-be dumped.
-
-We now have PG_offline which can be (and already is by virtio-balloon)
-used for marking pages as logically offline. Follow up patches will
-make use of this flag also in other balloon implementations.
-
-Let's export PG_offline via PAGE_OFFLINE_MAPCOUNT_VALUE, so
-makedumpfile can directly skip pages that are logically offline and the
-content therefore stale.
-
-Please note that this is also helpful for a problem we were seeing under
-Hyper-V: Dumping logically offline memory (pages kept fake offline while
-onlining a section via online_page_callback) would under some condicions
-result in a kernel panic when dumping them.
-
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Omar Sandoval <osandov@fb.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Matthew Wilcox <willy@infradead.org>
 Cc: Michal Hocko <mhocko@suse.com>
 Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Lianbo Jiang <lijiang@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- kernel/crash_core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/xen/balloon.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 933cb3e45b98..093c9f917ed0 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -464,6 +464,8 @@ static int __init crash_save_vmcoreinfo_init(void)
- 	VMCOREINFO_NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE);
- #ifdef CONFIG_HUGETLB_PAGE
- 	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
-+#define PAGE_OFFLINE_MAPCOUNT_VALUE	(~PG_offline)
-+	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
- #endif
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index 12148289debd..14dd6b814db3 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -425,6 +425,7 @@ static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+ 	for (i = 0; i < size; i++) {
+ 		p = pfn_to_page(start_pfn + i);
+ 		__online_page_set_limits(p);
++		__SetPageOffline(p);
+ 		__balloon_append(p);
+ 	}
+ 	mutex_unlock(&balloon_mutex);
+@@ -493,6 +494,7 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
+ 		xenmem_reservation_va_mapping_update(1, &page, &frame_list[i]);
  
- 	arch_crash_save_vmcoreinfo();
+ 		/* Relinquish the page back to the allocator. */
++		__ClearPageOffline(page);
+ 		free_reserved_page(page);
+ 	}
+ 
+@@ -519,6 +521,7 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
+ 			state = BP_EAGAIN;
+ 			break;
+ 		}
++		__SetPageOffline(page);
+ 		adjust_managed_page_count(page, -1);
+ 		xenmem_reservation_scrub_page(page);
+ 		list_add(&page->lru, &pages);
 -- 
 2.17.2
 
