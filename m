@@ -2,333 +2,259 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA72C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F85C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C22120831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:26:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WKSXXSG+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C22120831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7330620851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7330620851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeKSWtp (ORCPT
+        id S1728799AbeKSWwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 17:49:45 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39458 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbeKSWto (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 17:49:44 -0500
-Received: by mail-wm1-f65.google.com with SMTP id u13-v6so5045788wmc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 04:26:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=RWlU1LSwFAx6oov/bJmjYlsstO2SymtzOQNbuVyVIRA=;
-        b=WKSXXSG+em8s0+pLK1Y9+pBR6bqDlIlElS09l0Y8J67kJa55X0C6kUKW/3mLQJeIy9
-         52tbFT5/+fzxq/xerKyo3KLt2EvBMmFc3wKfuCz9VjL1KBIRT5lrtsvRznITCWchcHTE
-         u81HPdUeNo6LKBfm6FvzAEc1amCjIQr9jU8G0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=RWlU1LSwFAx6oov/bJmjYlsstO2SymtzOQNbuVyVIRA=;
-        b=Yo4o10FZU0Na9TFG0Fd7JRwAaIDZ/wZathUH8C+jOPg/A6wwak0H5OGU1/fVF0u6wM
-         VqVPIvgCpRDdd0rc1DfOGupvRXVFp3b65vDNXIZjjAp7rhcHdbE2In+CbVTI+LLO3okv
-         KLbMbcT1SMRNRoJFXJJjDs8XtM9sKFVtfEDswwQZB+osLhlWmk2yF/y3Lbjuf8oXoOtM
-         2ZolcvruulrQY7H5iXFjCVC7jesI8gIF8mwHZ1sE+gSIVp84iwpIeiRmEY+sV81hqNvF
-         FsbaUgrORihBEw0ara0HAbtkJMWxdAh7QbgfydrrXhWQ8ASCzpngXUXnSgfjAhgEomOs
-         4/xA==
-X-Gm-Message-State: AGRZ1gJ/C7beyd2NxFaa6LYB872gwLiHjx6Xg4IGTnIL2yZoo59WIaJ4
-        yMDYgWpzCGI30ru4g9ifB627jMXUhao=
-X-Google-Smtp-Source: AJdET5dpNWr4lI7l3wBqj9nxebZk/jrd9txpTznsDQyD1L3qL3OSD3GM+TRSTQivpO19HLuLZL1hVA==
-X-Received: by 2002:a1c:7d54:: with SMTP id y81mr6913645wmc.106.1542630373963;
-        Mon, 19 Nov 2018 04:26:13 -0800 (PST)
-Received: from localhost ([49.248.195.80])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm35058384wrt.79.2018.11.19.04.26.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 04:26:13 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, andy.gross@linaro.org, vkoul@kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 4/4] arm64: dts: qcom: qcs404: Add thermal zones for each sensor
-Date:   Mon, 19 Nov 2018 17:55:22 +0530
-Message-Id: <4c95177d5454421fb789cb67da94181af2a0370d.1542629810.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1542629810.git.amit.kucheria@linaro.org>
-References: <cover.1542629810.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1542629810.git.amit.kucheria@linaro.org>
-References: <cover.1542629810.git.amit.kucheria@linaro.org>
+        Mon, 19 Nov 2018 17:52:00 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60300 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728701AbeKSWwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 17:52:00 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 66F0AE41B638F;
+        Mon, 19 Nov 2018 20:28:28 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 19 Nov 2018
+ 20:28:21 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+        <davem@davemloft.net>, <lipeng321@huawei.com>,
+        <linyunsheng@huawei.com>, <shenjian15@huawei.com>,
+        <tanhuazhong@huawei.com>, <liangfuyun1@huawei.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next] net: hns3: add common validation in hclge_dcb
+Date:   Mon, 19 Nov 2018 21:02:15 +0800
+Message-ID: <1542632535-18210-1-git-send-email-tanxiaojun@huawei.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-qcs404 has 10 sensors connected to the single TSENS IP. Define a thermal
-zone for each of those sensors to expose the temperature of each zone.
+From: Yunsheng Lin <linyunsheng@huawei.com>
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Tested-by: Vinod Koul <vkoul@kernel.org>
+Before setting tm related configuration to hardware, driver
+needs to check the configuration provided by user is valid.
+Currently hclge_ieee_setets and hclge_setup_tc both implement
+their own checking, which has a lot in common.
+
+This patch addes hclge_dcb_common_validate to do the common
+checking. The checking in hclge_tm_prio_tc_info_update
+and hclge_tm_schd_info_update is unnecessary now, so change
+the return type to void, which removes the need to do error
+handling when one of the checking fails.
+
+Also, ets->prio_tc is indexed by user prio and ets->tc_tsa is
+indexed by tc num, so this patch changes them to use different
+index.
+
+Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
 ---
- arch/arm64/boot/dts/qcom/qcs404.dtsi | 206 +++++++++++++++++++++++++++
- 1 file changed, 206 insertions(+)
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c | 70 +++++++++++++++-------
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  | 14 +----
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h  |  4 +-
+ 3 files changed, 53 insertions(+), 35 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index 57d14d8f0c901..cbc3fd3788938 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -30,6 +30,7 @@
- 			reg = <0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+index e72f724..f6323b2 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_dcb.c
+@@ -35,7 +35,9 @@ static int hclge_ieee_ets_to_tm_info(struct hclge_dev *hdev,
+ 		}
+ 	}
  
- 		CPU1: cpu@101 {
-@@ -38,6 +39,7 @@
- 			reg = <0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
+-	return hclge_tm_prio_tc_info_update(hdev, ets->prio_tc);
++	hclge_tm_prio_tc_info_update(hdev, ets->prio_tc);
++
++	return 0;
+ }
  
- 		CPU2: cpu@102 {
-@@ -46,6 +48,7 @@
- 			reg = <0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
+ static void hclge_tm_info_to_ieee_ets(struct hclge_dev *hdev,
+@@ -70,25 +72,61 @@ static int hclge_ieee_getets(struct hnae3_handle *h, struct ieee_ets *ets)
+ 	return 0;
+ }
  
- 		CPU3: cpu@103 {
-@@ -54,6 +57,7 @@
- 			reg = <0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&L2_0>;
-+			#cooling-cells= <2>;
- 		};
++static int hclge_dcb_common_validate(struct hclge_dev *hdev, u8 num_tc,
++				     u8 *prio_tc)
++{
++	int i;
++
++	if (num_tc > hdev->tc_max) {
++		dev_err(&hdev->pdev->dev,
++			"tc num checking failed, %u > tc_max(%u)\n",
++			num_tc, hdev->tc_max);
++		return -EINVAL;
++	}
++
++	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
++		if (prio_tc[i] >= num_tc) {
++			dev_err(&hdev->pdev->dev,
++				"prio_tc[%u] checking failed, %u >= num_tc(%u)\n",
++				i, prio_tc[i], num_tc);
++			return -EINVAL;
++		}
++	}
++
++	for (i = 0; i < hdev->num_alloc_vport; i++) {
++		if (num_tc > hdev->vport[i].alloc_tqps) {
++			dev_err(&hdev->pdev->dev,
++				"allocated tqp(%u) checking failed, %u > tqp(%u)\n",
++				i, num_tc, hdev->vport[i].alloc_tqps);
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
+ static int hclge_ets_validate(struct hclge_dev *hdev, struct ieee_ets *ets,
+ 			      u8 *tc, bool *changed)
+ {
+ 	bool has_ets_tc = false;
+ 	u32 total_ets_bw = 0;
+ 	u8 max_tc = 0;
++	int ret;
+ 	u8 i;
  
- 		L2_0: l2-cache {
-@@ -507,4 +511,206 @@
- 			#interrupt-cells = <2>;
- 		};
- 	};
+-	for (i = 0; i < HNAE3_MAX_TC; i++) {
+-		if (ets->prio_tc[i] >= hdev->tc_max ||
+-		    i >= hdev->tc_max)
+-			return -EINVAL;
+-
++	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
+ 		if (ets->prio_tc[i] != hdev->tm_info.prio_tc[i])
+ 			*changed = true;
+ 
+ 		if (ets->prio_tc[i] > max_tc)
+ 			max_tc = ets->prio_tc[i];
++	}
+ 
++	ret = hclge_dcb_common_validate(hdev, max_tc + 1, ets->prio_tc);
++	if (ret)
++		return ret;
 +
-+	thermal-zones {
-+		aoss-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 0>;
-+
-+			trips {
-+				aoss_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				aoss_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		dsp-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 1>;
-+
-+			trips {
-+				dsp_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				dsp_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		lpass-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 2>;
-+
-+			trips {
-+				lpass_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				lpass_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		wlan-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 3>;
-+
-+			trips {
-+				wlan_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				wlan_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cluster-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 4>;
-+
-+			trips {
-+				cluster_alert: cluster_alert {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cluster_crit: cluster_crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal0 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 5>;
-+
-+			trips {
-+				cpu_alert0: cpu_alert0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit0: cpu_crit0 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal1 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 6>;
-+
-+			trips {
-+				cpu_alert1: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit1: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal2 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 7>;
-+
-+			trips {
-+				cpu_alert2: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit2: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		cpu-thermal3 {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 8>;
-+
-+			trips {
-+				cpu_alert3: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				cpu_crit3: trip1 {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+
-+		gpu-thermal {
-+			polling-delay-passive = <250>;
-+			polling-delay = <1000>;
-+
-+			thermal-sensors = <&tsens 9>;
-+
-+			trips {
-+				gpu_alert: trip0 {
-+					temperature = <75000>;
-+					hysteresis = <2000>;
-+					type = "passive";
-+				};
-+				gpu_crit: trip1 {
-+					temperature = <95000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
- };
++	for (i = 0; i < HNAE3_MAX_TC; i++) {
+ 		switch (ets->tc_tsa[i]) {
+ 		case IEEE_8021QAZ_TSA_STRICT:
+ 			if (hdev->tm_info.tc_info[i].tc_sch_mode !=
+@@ -184,9 +222,7 @@ static int hclge_ieee_setets(struct hnae3_handle *h, struct ieee_ets *ets)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = hclge_tm_schd_info_update(hdev, num_tc);
+-	if (ret)
+-		return ret;
++	hclge_tm_schd_info_update(hdev, num_tc);
+ 
+ 	ret = hclge_ieee_ets_to_tm_info(hdev, ets);
+ 	if (ret)
+@@ -305,20 +341,12 @@ static int hclge_setup_tc(struct hnae3_handle *h, u8 tc, u8 *prio_tc)
+ 	if (hdev->flag & HCLGE_FLAG_DCB_ENABLE)
+ 		return -EINVAL;
+ 
+-	if (tc > hdev->tc_max) {
+-		dev_err(&hdev->pdev->dev,
+-			"setup tc failed, tc(%u) > tc_max(%u)\n",
+-			tc, hdev->tc_max);
+-		return -EINVAL;
+-	}
+-
+-	ret = hclge_tm_schd_info_update(hdev, tc);
++	ret = hclge_dcb_common_validate(hdev, tc, prio_tc);
+ 	if (ret)
+-		return ret;
++		return -EINVAL;
+ 
+-	ret = hclge_tm_prio_tc_info_update(hdev, prio_tc);
+-	if (ret)
+-		return ret;
++	hclge_tm_schd_info_update(hdev, tc);
++	hclge_tm_prio_tc_info_update(hdev, prio_tc);
+ 
+ 	ret = hclge_tm_init_hw(hdev);
+ 	if (ret)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+index 494e562..00458da 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c
+@@ -1259,15 +1259,13 @@ int hclge_pause_setup_hw(struct hclge_dev *hdev)
+ 	return 0;
+ }
+ 
+-int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
++void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
+ {
+ 	struct hclge_vport *vport = hdev->vport;
+ 	struct hnae3_knic_private_info *kinfo;
+ 	u32 i, k;
+ 
+ 	for (i = 0; i < HNAE3_MAX_USER_PRIO; i++) {
+-		if (prio_tc[i] >= hdev->tm_info.num_tc)
+-			return -EINVAL;
+ 		hdev->tm_info.prio_tc[i] = prio_tc[i];
+ 
+ 		for (k = 0;  k < hdev->num_alloc_vport; k++) {
+@@ -1275,18 +1273,12 @@ int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc)
+ 			kinfo->prio_tc[i] = prio_tc[i];
+ 		}
+ 	}
+-	return 0;
+ }
+ 
+-int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
++void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
+ {
+ 	u8 i, bit_map = 0;
+ 
+-	for (i = 0; i < hdev->num_alloc_vport; i++) {
+-		if (num_tc > hdev->vport[i].alloc_tqps)
+-			return -EINVAL;
+-	}
+-
+ 	hdev->tm_info.num_tc = num_tc;
+ 
+ 	for (i = 0; i < hdev->tm_info.num_tc; i++)
+@@ -1300,8 +1292,6 @@ int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc)
+ 	hdev->hw_tc_map = bit_map;
+ 
+ 	hclge_tm_schd_info_init(hdev);
+-
+-	return 0;
+ }
+ 
+ int hclge_tm_init_hw(struct hclge_dev *hdev)
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+index 25eef13..4bd916a 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.h
+@@ -131,8 +131,8 @@ struct hclge_port_shapping_cmd {
+ int hclge_tm_schd_init(struct hclge_dev *hdev);
+ int hclge_pause_setup_hw(struct hclge_dev *hdev);
+ int hclge_tm_schd_mode_hw(struct hclge_dev *hdev);
+-int hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
+-int hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
++void hclge_tm_prio_tc_info_update(struct hclge_dev *hdev, u8 *prio_tc);
++void hclge_tm_schd_info_update(struct hclge_dev *hdev, u8 num_tc);
+ int hclge_tm_dwrr_cfg(struct hclge_dev *hdev);
+ int hclge_tm_map_cfg(struct hclge_dev *hdev);
+ int hclge_tm_init_hw(struct hclge_dev *hdev);
 -- 
-2.17.1
+2.7.4
 
