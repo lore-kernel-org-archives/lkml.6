@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C37C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AFB4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D821208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 034CC206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEI5+NDY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D821208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Y99awQy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034CC206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389573AbeKTDNI (ORCPT
+        id S2389596AbeKTDNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49694 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728787AbeKTDNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:07 -0500
+        id S1728787AbeKTDNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8C1D20823;
-        Mon, 19 Nov 2018 16:48:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A2772089F;
+        Mon, 19 Nov 2018 16:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646134;
-        bh=dn5sjxx0Kt2pwbwX5LLd0bR31aNCf6T3sgGE3Tlz2P4=;
+        s=default; t=1542646136;
+        bh=KGPgyQc+5ZlRJWTAQHf3sXIsjtwezEOnT/+J5qHGTLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pEI5+NDYb9YyA2JabS0/TY7QcKMafdeGnoQxATjgEVB9rmIVKfbRr1m/L+cSacfVD
-         2/VAyuhPYTW6k7lxEtb0HrWfVvkM3TY/ykqOTZZkjcHhXf6z+JoVP7nmOUw3k8ZabE
-         ProBLFh4ffKIgdep0+56wBbEz8LCi1pb3RqLI/dg=
+        b=0Y99awQyyQrYLYqQ3+iyAaGtHj36tZ3TbDUdu7pDvlVEs6TWB1U3YyUv3Cr4go6g8
+         51dfWfKiOqYTJVjKz5UuzmWiEhLuj9SejtlTtqAgMb1/h4vi5odkgM32fgsMwGw3gb
+         CWKp5lIgg3RakCBcSPSvE2tQzTa7b16zhA5ZbEBA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <syrjala@sci.fi>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4.14 050/124] mach64: fix image corruption due to reading accelerator registers
-Date:   Mon, 19 Nov 2018 17:28:24 +0100
-Message-Id: <20181119162623.314524758@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH 4.14 051/124] reset: hisilicon: fix potential NULL pointer dereference
+Date:   Mon, 19 Nov 2018 17:28:25 +0100
+Message-Id: <20181119162623.493108367@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -62,111 +62,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit c09bcc91bb94ed91f1391bffcbe294963d605732 upstream.
+commit e9a2310fb689151166df7fd9971093362d34bd79 upstream.
 
-Reading the registers without waiting for engine idle returns
-unpredictable values. These unpredictable values result in display
-corruption - if atyfb_imageblit reads the content of DP_PIX_WIDTH with the
-bit DP_HOST_TRIPLE_EN set (from previous invocation), the driver would
-never ever clear the bit, resulting in display corruption.
+There is a potential execution path in which function
+platform_get_resource() returns NULL. If this happens,
+we will end up having a NULL pointer dereference.
 
-We don't want to wait for idle because it would degrade performance, so
-this patch modifies the driver so that it never reads accelerator
-registers.
+Fix this by replacing devm_ioremap with devm_ioremap_resource,
+which has the NULL check and the memory region request.
 
-HOST_CNTL doesn't have to be read, we can just write it with
-HOST_BYTE_ALIGN because no other part of the driver cares if
-HOST_BYTE_ALIGN is set.
+This code was detected with the help of Coccinelle.
 
-DP_PIX_WIDTH is written in the functions atyfb_copyarea and atyfb_fillrect
-with the default value and in atyfb_imageblit with the value set according
-to the source image data.
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Reviewed-by: Ville Syrjälä <syrjala@sci.fi>
 Cc: stable@vger.kernel.org
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Fixes: 97b7129cd2af ("reset: hisilicon: change the definition of hisi_reset_init")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/aty/mach64_accel.c |   22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ drivers/clk/hisilicon/reset.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/video/fbdev/aty/mach64_accel.c
-+++ b/drivers/video/fbdev/aty/mach64_accel.c
-@@ -127,7 +127,7 @@ void aty_init_engine(struct atyfb_par *p
+--- a/drivers/clk/hisilicon/reset.c
++++ b/drivers/clk/hisilicon/reset.c
+@@ -109,9 +109,8 @@ struct hisi_reset_controller *hisi_reset
+ 		return NULL;
  
- 	/* set host attributes */
- 	wait_for_fifo(13, par);
--	aty_st_le32(HOST_CNTL, 0, par);
-+	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	rstc->membase = devm_ioremap(&pdev->dev,
+-				res->start, resource_size(res));
+-	if (!rstc->membase)
++	rstc->membase = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(rstc->membase))
+ 		return NULL;
  
- 	/* set pattern attributes */
- 	aty_st_le32(PAT_REG0, 0, par);
-@@ -233,7 +233,8 @@ void atyfb_copyarea(struct fb_info *info
- 		rotation = rotation24bpp(dx, direction);
- 	}
- 
--	wait_for_fifo(4, par);
-+	wait_for_fifo(5, par);
-+	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
- 	aty_st_le32(DP_SRC, FRGD_SRC_BLIT, par);
- 	aty_st_le32(SRC_Y_X, (sx << 16) | sy, par);
- 	aty_st_le32(SRC_HEIGHT1_WIDTH1, (width << 16) | area->height, par);
-@@ -269,7 +270,8 @@ void atyfb_fillrect(struct fb_info *info
- 		rotation = rotation24bpp(dx, DST_X_LEFT_TO_RIGHT);
- 	}
- 
--	wait_for_fifo(3, par);
-+	wait_for_fifo(4, par);
-+	aty_st_le32(DP_PIX_WIDTH, par->crtc.dp_pix_width, par);
- 	aty_st_le32(DP_FRGD_CLR, color, par);
- 	aty_st_le32(DP_SRC,
- 		    BKGD_SRC_BKGD_CLR | FRGD_SRC_FRGD_CLR | MONO_SRC_ONE,
-@@ -284,7 +286,7 @@ void atyfb_imageblit(struct fb_info *inf
- {
- 	struct atyfb_par *par = (struct atyfb_par *) info->par;
- 	u32 src_bytes, dx = image->dx, dy = image->dy, width = image->width;
--	u32 pix_width_save, pix_width, host_cntl, rotation = 0, src, mix;
-+	u32 pix_width, rotation = 0, src, mix;
- 
- 	if (par->asleep)
- 		return;
-@@ -296,8 +298,7 @@ void atyfb_imageblit(struct fb_info *inf
- 		return;
- 	}
- 
--	pix_width = pix_width_save = aty_ld_le32(DP_PIX_WIDTH, par);
--	host_cntl = aty_ld_le32(HOST_CNTL, par) | HOST_BYTE_ALIGN;
-+	pix_width = par->crtc.dp_pix_width;
- 
- 	switch (image->depth) {
- 	case 1:
-@@ -370,12 +371,11 @@ void atyfb_imageblit(struct fb_info *inf
- 		mix = FRGD_MIX_D_XOR_S | BKGD_MIX_D;
- 	}
- 
--	wait_for_fifo(6, par);
--	aty_st_le32(DP_WRITE_MASK, 0xFFFFFFFF, par);
-+	wait_for_fifo(5, par);
- 	aty_st_le32(DP_PIX_WIDTH, pix_width, par);
- 	aty_st_le32(DP_MIX, mix, par);
- 	aty_st_le32(DP_SRC, src, par);
--	aty_st_le32(HOST_CNTL, host_cntl, par);
-+	aty_st_le32(HOST_CNTL, HOST_BYTE_ALIGN, par);
- 	aty_st_le32(DST_CNTL, DST_Y_TOP_TO_BOTTOM | DST_X_LEFT_TO_RIGHT | rotation, par);
- 
- 	draw_rect(dx, dy, width, image->height, par);
-@@ -424,8 +424,4 @@ void atyfb_imageblit(struct fb_info *inf
- 			aty_st_le32(HOST_DATA0, get_unaligned_le32(pbitmap), par);
- 		}
- 	}
--
--	/* restore pix_width */
--	wait_for_fifo(1, par);
--	aty_st_le32(DP_PIX_WIDTH, pix_width_save, par);
- }
+ 	spin_lock_init(&rstc->lock);
 
 
