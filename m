@@ -2,113 +2,127 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE013C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:09:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2187FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93BCD20817
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:09:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="su6Pz1k1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93BCD20817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id DD2AB20817
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 09:10:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2AB20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727360AbeKSTcP (ORCPT
+        id S1727325AbeKSTda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 14:32:15 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36758 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbeKSTcP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 14:32:15 -0500
-Received: by mail-it1-f196.google.com with SMTP id c9so6423087itj.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 01:09:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=w/UvPdk3k04KPwiRCCTh5A76t37IqsDKCLrCWDRwgWI=;
-        b=su6Pz1k19nzWjDOxxoebECmLsglqLcWVjCYm7RS66am8NBHbm2ZzAx1ZoNLiubcOCH
-         oMlzeJNX30AOJ88jsacFySxhDz+etW30I9XsH0Bfb4fMReJeGE45ed+whYqRRAMPjqJI
-         mGpC2Hciizu8H55etLVUlA+6uE8MgDF1hZhEzehR+n72XoQVYnXTfp8XCkVfsX275Z3c
-         qILbS1+MdlUJ5Lm4cbvkDSaaq7PJBNqC86i7iTuE7PEF1ZFulW+2ZcWIARuNrCpCy5bh
-         wOSISd9iZkunJHD7d1Jahmz5E5zbOR21j//6uVnVJLWxLfjkVppKFEqHjtYrQgBasbV+
-         ojBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=w/UvPdk3k04KPwiRCCTh5A76t37IqsDKCLrCWDRwgWI=;
-        b=piEkFTVUZ87lPZ3fZu7ex74J35M1jBEfaKa8yH31an7LE1QGeL6lTeAfplaDhLAw/f
-         T4hin/aNbI0EWF86POaSPpx6QUdAH4inaekkoDK/yZSUkRqYDWq1z9Y5sAQqlVv07Aec
-         oR0hgHIl55+nZAiMRCgoqiifmW4dK5XiaJ6CeNEr46ZLazFWuuyX4NehWGYRSXCXDxvA
-         8nfVehWDGamRoLNI7lDnhFHdo+Vca1pE0wAcCL74QYyFkokriG3KJMZt1W+ZOvU1p1ht
-         f1dCuMHHNO3BexOJBwuhhc/7j+ua+CLqgngca8rzgZ3rQHfIQGRCV24/zqkzkQNVlSf6
-         tA9g==
-X-Gm-Message-State: AGRZ1gKi+/XZEnC7I+P9NafjTnd3zuXALyZ3Exu1hH/3CbGtlaqGAPv9
-        67P3suFP21RW+mJbYGfuSJhPXyS0AwBBRsMq6I30wIBY
-X-Google-Smtp-Source: AFSGD/W/uEn3toVc2pcIFldDnY6VAYUGvTTSC3vi6fCr+UQJIYzVnCNGSGQQQ/7qJDZMrgnH+7OQPiTZjqrHieASAHA=
-X-Received: by 2002:a24:4dc9:: with SMTP id l192-v6mr8059535itb.96.1542618553730;
- Mon, 19 Nov 2018 01:09:13 -0800 (PST)
+        Mon, 19 Nov 2018 14:33:30 -0500
+Received: from foss.arm.com ([217.140.101.70]:52492 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726311AbeKSTd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 14:33:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 66B8F1596;
+        Mon, 19 Nov 2018 01:10:28 -0800 (PST)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 720DF3F5A0;
+        Mon, 19 Nov 2018 01:10:26 -0800 (PST)
+Date:   Mon, 19 Nov 2018 09:10:20 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     peng.hao2@zte.com.cn
+Cc:     julien.thierry@arm.com, marc.zyngier@arm.com,
+        andre.przywara@arm.com, linux-kernel@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+        ard.bieshseuvel@linaro.org, leif.lindholm@linaro.org
+Subject: Re: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
+Message-ID: <20181119091020.ejplmzkzo4jd72md@salmiak>
+References: <851b61b1-786b-ef64-b8c4-fe6926bdf9f9@arm.com>
+ <201811171058376326562@zte.com.cn>
 MIME-Version: 1.0
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-3-brgl@bgdev.pl>
- <CACRpkdb71d2yCmxWDBaHY+60A9UDG1u0ACuXUq9pcH13_yA6-g@mail.gmail.com>
-In-Reply-To: <CACRpkdb71d2yCmxWDBaHY+60A9UDG1u0ACuXUq9pcH13_yA6-g@mail.gmail.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Mon, 19 Nov 2018 10:09:02 +0100
-Message-ID: <CAMRc=Me9Ypsz_NH7j1K1TxR8u=9qF9opKPri10Jkn3G=_tdssg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] gpio: mockup: add locking
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201811171058376326562@zte.com.cn>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 16 lis 2018 o 22:43 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
-=82(a):
->
-> On Thu, Nov 8, 2018 at 5:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> > While no user reported any race condition problems with gpio-mockup,
-> > let's be on the safe side and use a mutex when performing any changes
-> > on the dummy chip structures.
+On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
+> >On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
+> >>> Hi,
+> >>>> When virtual machine starts, hang up.
+> >>>
+> >>> I take it you mean the *guest* hangs? Because it doesn't get a timer
+> >>> interrupt?
+> >>>
+> >>>> The kernel version of guest
+> >>>> is 4.16. Host support vgic_v3.
+> >>>
+> >>> Your host kernel is something recent, I guess?
+> >>>
+> >>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+> >>>> during injection interruption. when kvm_vgic_vcpu_init is called,
+> >>>> dist is not initialized at this time. Unable to get vgic V3 or V2
+> >>>> correctly, so group is not set.
+> >>>
+> >>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
+> >>> version?) or some other userland tool?
+> >>>
+> >>
+> >> QEMU emulator version 3.0.50 .
+> >>
+> >>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
+> >>>> time.
+> >>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+> >>>> interrupt injection failed.
+> >>>>
+> >>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> >>>> ---
+> >>>>   virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> >>>> index 9c0dd23..d101000 100644
+> >>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> >>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> >>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
+> >>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
+> >>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
+> >>>>
+> >>>> -    if (irq->group)
+> >>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+> >>>
+> >>> This is not the right fix, not only because it basically reverts the
+> >>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
+> >>> their configured group).
+> >>>
+> >>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
+> >>> before dist->vgic_model is set, also what value it has?
+> >>> If I understand the code correctly, that shouldn't happen for a GICv3.
+> >>>
+> >> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
+> >>   If the interrupt comes at this time, the interrupt injection fails.
 > >
-> > Suggested-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
-> > Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
->
-> I tried to apply this but it failed, does it require patch 1?
->
+> >Does that mean that the guest is configuring its interrupts as Group0?
+> >That sounds wrong, Linux should configure all it's interrupts as
+> >non-secure group1.
+> 
+> no, I think that uefi dose this, not linux.
+> 1. kvm_vgic_vcpu_init 
+> 2. vgic_create 
+> 3. kvm_vgic_dist_init 
+> 4.vgic_mmio_write_group: uefi as guest, write group=0
+> 5.vgic_mmio_write_group: linux as guest, write group=1
 
-Yes, because of the change in get_direction().
+Is this the same issue fixed by EDK2 commit:
 
-> I can pull in the next -rc after I merged the fix in that case
-> and we can apply on top.
->
+66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
 
-This is fine, it's aimed for 4.21 anyway.
+... where EDK2 would try to use IAR0 rather than IAR1?
 
-> __gpio_*
-> I tend to dislike __underscore_notation because I feel it
-> is semantically ambguous. I prefer a proper name, even
-> to the point that I prefer inner_function_foo over __foo,
-> but it's your driver and I might be a bit grumpy. :)
->
+The commit messages notes this lead to a boot-time hang.
 
-I think this is a common and intuitive pattern in the kernel codebase.
-Many subsystems and drivers use '__' to mark functions that execute
-internal logic and expect certain locks to be held etc.
-
-If you don't mind, I'd like to leave it like this.
-
-Bart
+Thanks,
+Mark.
