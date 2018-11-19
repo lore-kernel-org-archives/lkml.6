@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BB4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BBFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FBBE2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612C620823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8iZHEZv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FBBE2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hcuU6/Vq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 612C620823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbeKSU6R (ORCPT
+        id S1728444AbeKSU6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:58:17 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37716 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbeKSU6Q (ORCPT
+        Mon, 19 Nov 2018 15:58:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33400 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbeKSU6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:58:16 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j10so17215636wru.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:35:03 -0800 (PST)
+        Mon, 19 Nov 2018 15:58:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 79so2405024wmo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:35:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=95cHSgXhObq6AUCu/Rr/+wEQTPHLVt9I8/orFJ2tnV8=;
-        b=N8iZHEZvKWz0J/nual7jk0fkuGeRXXZ7k/3ibe4bHVxzhla7D7v8KTcgOO8yVpWvFT
-         B3vEIw+EBmC/yavIAvjOIiUz2wiAPEAIzT1RHvDAgZUu4MTPxiKzIwxtEJH+JHWk3fW/
-         YZJUNoJLJnP75HF8BVdkglOlyHl+oOYs6W9pY=
+        bh=2PZH8WwXkvnGeOOTNTp/CB09k6USJvSSB6C0CaaMGjI=;
+        b=hcuU6/VqTQwptGHjtIMvqO0p51x14o0CH8VynZz+6pAYFV8wdEQyx+ljlgfV6rV2w7
+         ITCCyWJsgcX5EmmWYweoyDAMoKM4kZS/0KIuLLINuDr3CFzBBAYSz+58G1YiRCRMTQrt
+         ivc6Bbj1bt5nmThOu57faArw/3BCDnwjUELl8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=95cHSgXhObq6AUCu/Rr/+wEQTPHLVt9I8/orFJ2tnV8=;
-        b=VUlyPSAK/l90oYsdyUHZ6CmM8rfA89ByDNPgOle3YFPfMrB0bdOXJKSxBOzW90mRpY
-         x7gN9w9qObEunRwCB2XB0d616KFxYQ50eJaSmzTqVnEcgPyl4VHhOo8Tjp6uvunPFirO
-         usIdBT9NJOIthFsX//RtKeEa1n0KFlgkHzPGKjUvyimRBHHP7RP5raqTMj1ok8aVf8Xi
-         Lf1qjohKqtWZCmhyskmZWf+KR2mOkOeVNoP4IRqVybZmc4Eq2qSD3njuoDWgYe8W1kYG
-         rFVlwqTzdXXyEvZZUwQ4dxTL0GW709NS1ZA3ZVbSJKP/2tO3U6AnFPR6Pl4ysNRiYwN+
-         jTwQ==
-X-Gm-Message-State: AGRZ1gLvPwTN/HvXXl6WZFu48DW7qLSnNTvBHrvdHzbrHp0B5Yfc3Asg
-        7vsrUrAwlWVdqMC+oR/Cs5qaSQ==
-X-Google-Smtp-Source: AJdET5dv/kwKsiWQBLYn+3+c+70Y68/WWV68w94tCu7QaX1LfXLzsVsfON/+RAR1/k+eJjYW/4XsJg==
-X-Received: by 2002:adf:e247:: with SMTP id n7mr16869741wri.205.1542623702316;
-        Mon, 19 Nov 2018 02:35:02 -0800 (PST)
+        bh=2PZH8WwXkvnGeOOTNTp/CB09k6USJvSSB6C0CaaMGjI=;
+        b=R7EPKxQUCxhRamez2jd93QBX8CPie6Z+w5uGXvf1X98+pT5zNGVMocftHXsTY3hfmB
+         Ku5kefxs18lH8zi66OGRHU9Hwzy6tpTTXN3xFX9tqeuMJfMcf4CoDJ9FIEc2hIraSMZM
+         uxRl4vHy54Di4p12zONAhoMI+0IMHKKuqJUDBGHRCK/y6x44jj2WX5W8wOImGHuCTJuU
+         4Pb28kJv+ihXnSfY+aC0VMQwXZG9Pz9C5rzqAOu53qJqeQDt7r9Y9oYXnoIfvpOssi2z
+         hLtQzG03NXjnhq127gxyH0zA6zrLb6+wQe2g3IXXExXITSn9GoDUSCeNfeBt1ooPLbAl
+         kNDw==
+X-Gm-Message-State: AGRZ1gKFDCWPhOLTklwxcOqnegsMsIQ6b7QJYT6B6WDotEH7nRHOn8WD
+        mHGYceN7gvvaQwRFAxutcfFNVg==
+X-Google-Smtp-Source: AFSGD/V/PzPvdMmgio2MMuksaWEdLCDo8SfjRuu380b7ZwE1q0ngjmXv93lavCq2gXUdRW2aWbo06w==
+X-Received: by 2002:a1c:ddc3:: with SMTP id u186mr6436592wmg.110.1542623705169;
+        Mon, 19 Nov 2018 02:35:05 -0800 (PST)
 Received: from localhost.localdomain ([37.162.18.180])
-        by smtp.gmail.com with ESMTPSA id e9sm14973298wro.16.2018.11.19.02.34.59
+        by smtp.gmail.com with ESMTPSA id e9sm14973298wro.16.2018.11.19.02.35.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 02:35:01 -0800 (PST)
+        Mon, 19 Nov 2018 02:35:04 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -71,9 +71,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         oleksandr@natalenko.name, cgroups@vger.kernel.org,
         linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH V2 09/10] doc, bfq-iosched: fix a few clerical errors
-Date:   Mon, 19 Nov 2018 11:34:23 +0100
-Message-Id: <20181119103424.3853-10-paolo.valente@linaro.org>
+Subject: [PATCH V2 10/10] doc, bfq-iosched: make it consistent with the new cgroup interface
+Date:   Mon, 19 Nov 2018 11:34:24 +0100
+Message-Id: <20181119103424.3853-11-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20181119103424.3853-1-paolo.valente@linaro.org>
 References: <20181119103424.3853-1-paolo.valente@linaro.org>
@@ -82,45 +82,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit fixes a few clerical errors in
-Documentation/block/bfq-iosched.txt.
+BFQ now shares interface files with CFQ, for the proportional-share
+policy. Make documentation consistent with that.
 
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- Documentation/block/bfq-iosched.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/block/bfq-iosched.txt | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
 diff --git a/Documentation/block/bfq-iosched.txt b/Documentation/block/bfq-iosched.txt
-index 8d8d8f06cab2..6d7dd5ab8554 100644
+index 6d7dd5ab8554..3d7ef138ce6a 100644
 --- a/Documentation/block/bfq-iosched.txt
 +++ b/Documentation/block/bfq-iosched.txt
-@@ -42,7 +42,7 @@ sustainable throughputs, on the same systems as above:
+@@ -508,12 +508,14 @@ process.
+ To get proportional sharing of bandwidth with BFQ for a given device,
+ BFQ must of course be the active scheduler for that device.
  
- BFQ works for multi-queue devices too.
+-Within each group directory, the names of the files associated with
+-BFQ-specific cgroup parameters and stats begin with the "bfq."
+-prefix. So, with cgroups-v1 or cgroups-v2, the full prefix for
+-BFQ-specific files is "blkio.bfq." or "io.bfq." For example, the group
+-parameter to set the weight of a group with BFQ is blkio.bfq.weight
+-or io.bfq.weight.
++BFQ uses the standard interface files of the proportional-share
++policy, previously used by CFQ. If one such file is read/written, then
++the operation associated with the file is performed by BFQ for each
++device where BFQ is the active scheduler. In addition, BFQ is
++configured so as to share interface files with other entities (if some
++of these files does happen to be shared, then its associated operation
++is performed also by any of the other entities that is using the
++file).
  
--The table of contents follow. Impatients can just jump to Section 3.
-+The table of contents follows. Impatients can just jump to Section 3.
+ As for cgroups-v1 (blkio controller), the exact set of stat files
+ created, and kept up-to-date by bfq, depends on whether
+@@ -521,13 +523,13 @@ CONFIG_DEBUG_BLK_CGROUP is set. If it is set, then bfq creates all
+ the stat files documented in
+ Documentation/cgroup-v1/blkio-controller.txt. If, instead,
+ CONFIG_DEBUG_BLK_CGROUP is not set, then bfq creates only the files
+-blkio.bfq.io_service_bytes
+-blkio.bfq.io_service_bytes_recursive
+-blkio.bfq.io_serviced
+-blkio.bfq.io_serviced_recursive
++blkio.io_service_bytes
++blkio.io_service_bytes_recursive
++blkio.io_serviced
++blkio.io_serviced_recursive
  
- CONTENTS
+ The value of CONFIG_DEBUG_BLK_CGROUP greatly influences the maximum
+-throughput sustainable with bfq, because updating the blkio.bfq.*
++throughput sustainable with BFQ, because updating the blkio.*
+ stats is rather costly, especially for some of the stats enabled by
+ CONFIG_DEBUG_BLK_CGROUP.
  
-@@ -51,7 +51,7 @@ CONTENTS
-  1-2 Server systems
- 2. How does BFQ work?
- 3. What are BFQ's tunables and how to properly configure BFQ?
--4. BFQ group scheduling
-+4. Group scheduling with BFQ
-  4-1 Service guarantees provided
-  4-2 Interface
+@@ -536,8 +538,8 @@ Parameters to set
  
-@@ -294,7 +294,7 @@ too.
- per-process ioprio and weight
- -----------------------------
+ For each group, there is only the following parameter to set.
  
--Unless the cgroups interface is used (see "4. BFQ group scheduling"),
-+Unless the cgroups interface is used (see "4. Group scheduling with BFQ"),
- weights can be assigned to processes only indirectly, through I/O
- priorities, and according to the relation:
- weight = (IOPRIO_BE_NR - ioprio) * 10.
+-weight (namely blkio.bfq.weight or io.bfq-weight): the weight of the
+-group inside its parent. Available values: 1..10000 (default 100). The
++weight (namely blkio.weight or io.weight): the weight of the group
++inside its parent. Available values: 1..10000 (default 100). The
+ linear mapping between ioprio and weights, described at the beginning
+ of the tunable section, is still valid, but all weights higher than
+ IOPRIO_BE_NR*10 are mapped to ioprio 0.
 -- 
 2.16.1
 
