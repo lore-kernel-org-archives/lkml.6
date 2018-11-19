@@ -3,67 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAF0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1103EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E17A32086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:01:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17A32086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id BF3622089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 23:01:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3622089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731940AbeKTJ1k (ORCPT
+        id S1731968AbeKTJ1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:27:40 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:52862 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731164AbeKTJ1k (ORCPT
+        Tue, 20 Nov 2018 04:27:52 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:39975 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731164AbeKTJ1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:27:40 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9E2D114E10BF9;
-        Mon, 19 Nov 2018 15:01:43 -0800 (PST)
-Date:   Mon, 19 Nov 2018 15:01:42 -0800 (PST)
-Message-Id: <20181119.150142.777293649598457239.davem@davemloft.net>
-To:     xuechaojing@huawei.com
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
-        tony.qu@huawei.com, luoshaokai@huawei.com
-Subject: Re: [PATCH 1/4] net-next/hinic:replace multiply and division
- operators
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181119061234.12839-1-xuechaojing@huawei.com>
-References: <20181119061234.12839-1-xuechaojing@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 19 Nov 2018 15:01:43 -0800 (PST)
+        Tue, 20 Nov 2018 04:27:52 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gOsXu-0005Qt-PK; Tue, 20 Nov 2018 00:01:34 +0100
+Date:   Tue, 20 Nov 2018 00:01:34 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
+ protection modes
+In-Reply-To: <49d27ed3-dc44-042c-4941-31dedb2a56d2@linux.intel.com>
+Message-ID: <alpine.DEB.2.21.1811192353170.1669@nanos.tec.linutronix.de>
+References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <alpine.DEB.2.21.1811192133240.1669@nanos.tec.linutronix.de> <nycvar.YFH.7.76.1811192153470.21108@cbobk.fhfr.pm>
+ <49d27ed3-dc44-042c-4941-31dedb2a56d2@linux.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xue Chaojing <xuechaojing@huawei.com>
-Date: Mon, 19 Nov 2018 06:12:31 +0000
+On Mon, 19 Nov 2018, Tim Chen wrote:
+> On 11/19/2018 12:55 PM, Jiri Kosina wrote:
+> > On Mon, 19 Nov 2018, Thomas Gleixner wrote:
+> > 
+> >>
+> >> So before that change IBPB was usable without STIBP, now not longer. What's
+> >> the rationale?
+> >>
+> >> This patch changes a gazillion things at once and is completely
+> >> unreviewable.
+> > 
+> > The patchset actually ties together IBPB and STIBP pretty closely, which 
+> > is IMO a good thing; there is no good reason why anone would want just one 
+> > of those (or each in a different mode), at least before this magical 
+> > coscheduling exists.
+> > 
+> > But I guess this fact should be documented somewhere.
+> > 
+> 
+> Yes, it wouldn't make sense for having just one of those if a task
+> is worried about attack from user space.
+> 
+> I'll document it.
 
-> @@ -530,7 +536,9 @@ int hinic_wq_allocate(struct hinic_wqs *wqs, struct hinic_wq *wq,
->  		return -EINVAL;
->  	}
->  
-> -	num_wqebbs_per_page = ALIGN(wq_page_size, wqebb_size) / wqebb_size;
-> +	wqebb_size_shift = ilog2(wqebb_size);
+What? IBPB makes tons of sense even without STIBP.
 
-You now have introduced the assumption that these various sizes are a power
-of two.
+Thanks,
 
-You should check for this, either at compile time or at run time, in
-order to avoid surprises and hard to debug issues in the future.
-
-Thank you.
+	tglx
