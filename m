@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B86AFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8C1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B4C214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91C80214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpPa8beg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B4C214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="deQvN4yT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C80214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404961AbeKTDXI (ORCPT
+        id S2404973AbeKTDXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35020 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:23:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbeKTDXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:07 -0500
+        id S2403980AbeKTDXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED3CC214C4;
-        Mon, 19 Nov 2018 16:58:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F07C214D9;
+        Mon, 19 Nov 2018 16:58:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646732;
-        bh=Fi+ozpFDSVTfLpbKmhUjBw39PmBXYVbp83seUkjS1uU=;
+        s=default; t=1542646735;
+        bh=iXbt385+ukAPqhbfKw5rqxjWHXZCUMG2B5zFMk6H/wM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpPa8begg8b61noZIRoswGWgfEdK7bevZ14niZ4MjMYmIIkTsGhTdWvJnWvbKYpXO
-         AHmHQJuCMHfjExTfDDW8iy0PbQFzVkO4+T6MTDdXuBDH3qSWP78Ld8CcX53PFWV7cU
-         e72o31zKgiVZDAfYCFEWn0SJR2BFDwWWVCSFPf1I=
+        b=deQvN4yTMIIlRIpyGQ4uIFJjKXnFL76lInB60wYkN0NQo7D47furqQHIX8nWcDYdw
+         5jJgvxkhPb5eUMatTzPmkxzRrG9UWwzk1NOuJgb9Q9o4hZaP+Sflwp4n+/xcIb/bwN
+         7i4h30KZrlqR4Y+se90/XxgLRKRzXFLHMPVAmRlE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stan Johnson <userm57@yahoo.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Michael Schmitz <schmitzmic@gmail.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 032/160] scsi: esp_scsi: Track residual for PIO transfers
-Date:   Mon, 19 Nov 2018 17:27:51 +0100
-Message-Id: <20181119162634.000997893@linuxfoundation.org>
+Subject: [PATCH 4.4 023/160] Bluetooth: btbcm: Add entry for BCM4335C0 UART bluetooth
+Date:   Mon, 19 Nov 2018 17:27:42 +0100
+Message-Id: <20181119162632.836253635@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -65,68 +64,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Finn Thain <fthain@telegraphics.com.au>
+From: Christian Hewitt <christianshewitt@gmail.com>
 
-[ Upstream commit fd47d919d0c336e7c22862b51ee94927ffea227a ]
+[ Upstream commit a357ea098c9605f60d92a66a9073f56ce25726da ]
 
-If a target disconnects during a PIO data transfer the command may fail
-when the target reconnects:
+This patch adds the device ID for the AMPAK AP6335 combo module used
+in the 1st generation WeTek Hub Android/LibreELEC HTPC box. The WiFI
+chip identifies itself as BCM4339, while Bluetooth identifies itself
+as BCM4335 (rev C0):
 
-scsi host1: DMA length is zero!
-scsi host1: cur adr[04380000] len[00000000]
+```
+[    4.864248] Bluetooth: hci0: BCM: chip id 86
+[    4.866388] Bluetooth: hci0: BCM: features 0x2f
+[    4.889317] Bluetooth: hci0: BCM4335C0
+[    4.889332] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0000
+[    9.778383] Bluetooth: hci0: BCM4335C0 (003.001.009) build 0268
+```
 
-The scsi bus is then reset. This happens because the residual reached
-zero before the transfer was completed.
+Output from hciconfig:
 
-The usual residual calculation relies on the Transfer Count registers.
-That works for DMA transfers but not for PIO transfers. Fix the problem
-by storing the PIO transfer residual and using that to correctly
-calculate bytes_sent.
+```
+hci0:	Type: Primary  Bus: UART
+	BD Address: 43:39:00:00:1F:AC  ACL MTU: 1021:8  SCO MTU: 64:1
+	UP RUNNING
+	RX bytes:7567 acl:234 sco:0 events:386 errors:0
+	TX bytes:53844 acl:77 sco:0 commands:304 errors:0
+	Features: 0xbf 0xfe 0xcf 0xfe 0xdb 0xff 0x7b 0x87
+	Packet type: DM1 DM3 DM5 DH1 DH3 DH5 HV1 HV2 HV3
+	Link policy: RSWITCH SNIFF
+	Link mode: SLAVE ACCEPT
+	Name: 'HUB'
+	Class: 0x0c0000
+	Service Classes: Rendering, Capturing
+	Device Class: Miscellaneous,
+	HCI Version: 4.0 (0x6)  Revision: 0x10c
+	LMP Version: 4.0 (0x6)  Subversion: 0x6109
+	Manufacturer: Broadcom Corporation (15)
+```
 
-Fixes: 6fe07aaffbf0 ("[SCSI] m68k: new mac_esp scsi driver")
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-Tested-by: Michael Schmitz <schmitzmic@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/esp_scsi.c |    1 +
- drivers/scsi/esp_scsi.h |    2 ++
- drivers/scsi/mac_esp.c  |    2 ++
- 3 files changed, 5 insertions(+)
+ drivers/bluetooth/btbcm.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/scsi/esp_scsi.c
-+++ b/drivers/scsi/esp_scsi.c
-@@ -1349,6 +1349,7 @@ static int esp_data_bytes_sent(struct es
- 
- 	bytes_sent = esp->data_dma_len;
- 	bytes_sent -= ecount;
-+	bytes_sent -= esp->send_cmd_residual;
- 
- 	/*
- 	 * The am53c974 has a DMA 'pecularity'. The doc states:
---- a/drivers/scsi/esp_scsi.h
-+++ b/drivers/scsi/esp_scsi.h
-@@ -540,6 +540,8 @@ struct esp {
- 
- 	void			*dma;
- 	int			dmarev;
-+
-+	u32			send_cmd_residual;
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -270,6 +270,7 @@ static const struct {
+ 	{ 0x4103, "BCM4330B1"	},	/* 002.001.003 */
+ 	{ 0x410e, "BCM43341B0"	},	/* 002.001.014 */
+ 	{ 0x4406, "BCM4324B3"	},	/* 002.004.006 */
++	{ 0x6109, "BCM4335C0"	},	/* 003.001.009 */
+ 	{ 0x610c, "BCM4354"	},	/* 003.001.012 */
+ 	{ }
  };
- 
- /* A front-end driver for the ESP chip should do the following in
---- a/drivers/scsi/mac_esp.c
-+++ b/drivers/scsi/mac_esp.c
-@@ -426,6 +426,8 @@ static void mac_esp_send_pio_cmd(struct
- 			scsi_esp_cmd(esp, ESP_CMD_TI);
- 		}
- 	}
-+
-+	esp->send_cmd_residual = esp_count;
- }
- 
- static int mac_esp_irq_pending(struct esp *esp)
 
 
