@@ -2,143 +2,115 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23788C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CFCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC09220823
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFEEF20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:40:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oZxjchV3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC09220823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="hndXFIt4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFEEF20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731582AbeKTJBa (ORCPT
+        id S1731563AbeKTJFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:01:30 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:47031 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730290AbeKTJB3 (ORCPT
+        Tue, 20 Nov 2018 04:05:51 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45390 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730899AbeKTJFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:01:29 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f23so22514193lfc.13;
-        Mon, 19 Nov 2018 14:35:37 -0800 (PST)
+        Tue, 20 Nov 2018 04:05:51 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so12274233pfd.12
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 14:39:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ux2pyNmxIyOzqMlFWi5eeemz5ezqgnqrVxGbZXBCCNo=;
-        b=oZxjchV3LcKsZBnS/wWX9ylcuytp6IL23VyaamsIESQK56ZcV+2UVPTP87EpNdtDe1
-         KeGnqmGZm9tvTPpzMY8seOt4agDMQjkCjgZdVwTyYGovX1rdMYmTHMUu7whOnmQUQUh0
-         2CFHUNItYt1OgQjV6OznpFO07uMMQuRFRSETwQf2FC+M+raTtKOgLn1IdPiMVJmPvskc
-         3pM+Ij8+UuRRFxP0rEngwNwhStR+L2iuJ7JiSzz5HbWEgJvyELAaHbD/TlZkIX/x9a7O
-         sbav9BXA0K2TfEeS6Blb5l7Gy+VhlkuZPO53jcaoq+bkKEPSk+y4DJaYa8NHQS9am0ww
-         wm8A==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=V9Dtv5lhjmiwwT+fmo/egRH1C+SB084sb2G6VU2EwTs=;
+        b=hndXFIt4AQzQsa0XxIMeK2XsVY5Q+I2utk62/J2/S5VX90fnjccjTyc1Ns1rxoeJpv
+         AmvOEuhjol3aKWY3TJa8hIdFOFZGfyqmxk/sxvBKqFH598mdskx1xeIhMLn9AhFvB65R
+         W6aW8XAw7A+1C5kBS3GSszvjfHt0hw+7pla+lVuivpk/PdSJ9PRyA918bTXwn8ay3pGA
+         CUh2RTf0u9twMjiQsu66TuaG4gBGet7S2g8WUdr27cTghc9YNmjkRc+hL9Es/FMT7FMq
+         HbdtlyOXff+WuKt4h7L84We3biqaEoeB9Da+5RM6DPGLEUZJ2TPfRIMGIe8BJ9Kahpof
+         Nh0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ux2pyNmxIyOzqMlFWi5eeemz5ezqgnqrVxGbZXBCCNo=;
-        b=sm7jx5Io5Pyh5xp27VipE6JvH7gg6nMstpND4Xbz1qLSPMras7iFpi5UAT5Rfy9/1A
-         2lMseyx0i9udnHTotSi9lVjpkZfETOpTsDLVMzWGUk68BDz7Wj5Rb082WwB1hD0cw1QU
-         km9ZzeMzL0EuqsGZr7Z6k0zuCzEdOKlCj9y1sC9j80iuoj6u5yo6Z9BPA5EsmMcM7AIn
-         SxmtVjs2uAb+SUClBTbu8fiyAeCezKNbaFYYTgQG9iajqPjOreS1g1EJHXM0NQhDsRok
-         wl3fSnhoQ84Ktzw0F2TTxsf7htxjTW1o6zYvVv5XRSUmaSIk/K5yRuiV7HyeZ9/y5N8o
-         4QGQ==
-X-Gm-Message-State: AGRZ1gJEdSkd7JZU9CUMfx0OavYdBt1QsLaTsgIun+PwgQYQ/i4A0kVi
-        HQF5oKF2qyX95vcKI5iMe6RojhXJ
-X-Google-Smtp-Source: AJdET5fQy6S60ouefco+WeUEdSZuJ6PzWCS10kqXCt5V7d8ojUHpIGbF6LkFHKTBF3ujHtYDoN1swQ==
-X-Received: by 2002:a19:c995:: with SMTP id z143mr10066804lff.79.1542666936015;
-        Mon, 19 Nov 2018 14:35:36 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
-        by smtp.googlemail.com with ESMTPSA id o72sm5948197lfg.33.2018.11.19.14.35.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 14:35:35 -0800 (PST)
-Subject: Re: [PATCH v1 4/4] ARM: tegra: Clear EMC interrupts on resume from
- LP1 on Tegra30+
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180830185404.7224-1-digetx@gmail.com>
- <20180830185404.7224-5-digetx@gmail.com>
- <9c085248-41df-c8be-294d-6bf8b95c1085@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <60898d23-63a1-caf5-8fd4-2bbd7bb6aaab@gmail.com>
-Date:   Tue, 20 Nov 2018 01:35:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V9Dtv5lhjmiwwT+fmo/egRH1C+SB084sb2G6VU2EwTs=;
+        b=gVolgZq9ftdgQB2U1pqKO1mO8UYAW4YZCiG1blRzAop/ZDgtdbKq79EPVRBJDTX0nW
+         uKieOZ4rpklfpq0CVROjzmIT7sC5y3SPtYUK/fiEG9DWtvfAbVihSt2dZDApxtUnAbDH
+         DKk1P3oZQvCw0bp6wn6tl+B+agaXb86Xo2nlPQ+miGdBfWuz2SOjuZEYbbz7u0WQjUts
+         dByzxKoIRV7l4fTmq9OsUHU3WKSaPZPrOn6V5qbCj2ZJnQbGFlpyqDl5aCH+xC3/A0Q0
+         eyoqRXkszinVs7hx0ybjvuLZA3/+0TNViS5TdSKl+InbTvg8QnDsyFil9z7OErg4U1t4
+         L8gA==
+X-Gm-Message-State: AGRZ1gL6jZ66zN75oOFMQWCo9+OftskKj4eYXJ/UdjeMrzHQh8/7frGp
+        eXpG1HOQfW4JEOsN5/RHOjlPOA==
+X-Google-Smtp-Source: AJdET5dL67Z9wwRUofI+pyUumlQ5s7g9cXLsWZDPYCemw4lMQt5kyq/sBHIJSTM3d1cgrONh2XKFQg==
+X-Received: by 2002:a62:e0d8:: with SMTP id d85mr24524708pfm.214.1542667199157;
+        Mon, 19 Nov 2018 14:39:59 -0800 (PST)
+Received: from cisco ([128.107.241.178])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm51384210pff.29.2018.11.19.14.39.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 14:39:57 -0800 (PST)
+Date:   Mon, 19 Nov 2018 15:39:54 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     ebiederm@xmission.com, linux-kernel@vger.kernel.org,
+        serge@hallyn.com, jannh@google.com, luto@kernel.org,
+        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
+        linux-man@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+Message-ID: <20181119223954.GA4992@cisco>
+References: <20181119103241.5229-1-christian@brauner.io>
+ <20181119103241.5229-3-christian@brauner.io>
 MIME-Version: 1.0
-In-Reply-To: <9c085248-41df-c8be-294d-6bf8b95c1085@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119103241.5229-3-christian@brauner.io>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.11.2018 1:00, Jon Hunter wrote:
-> 
-> On 30/08/2018 19:54, Dmitry Osipenko wrote:
->> Two interrupts are raised on resume from LP1 on Tegra30+: first is the
->> clock change completed interrupt which is set after updating timing
->> configuration, second is DLL alarm interrupt which is set when DLL
->> starts re-calibration after being reset. Clear these two interrupts
->> in the end of exiting from the self-refresh mode for consistency, that
->> will also allow to not receive spurious interrupts in the EMC driver
->> after resume from suspend.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  arch/arm/mach-tegra/sleep-tegra30.S | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
->> index 828f6c37afde..78c6e9fb56e7 100644
->> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->> @@ -26,6 +26,7 @@
->>  #include "irammap.h"
->>  #include "sleep.h"
->>  
->> +#define EMC_INTSTATUS			0x0
->>  #define EMC_CFG				0xc
->>  #define EMC_ADR_CFG			0x10
->>  #define EMC_TIMING_CONTROL		0x28
->> @@ -44,6 +45,9 @@
->>  #define EMC_XM2VTTGENPADCTRL		0x310
->>  #define EMC_XM2VTTGENPADCTRL2		0x314
->>  
->> +#define EMC_CLKCHANGE_COMPLETE_INT	(1 << 4)
->> +#define EMC_DLL_ALARM_INT		(1 << 7)
->> +
->>  #define MC_EMEM_ARB_CFG			0x90
->>  
->>  #define PMC_CTRL			0x0
->> @@ -539,6 +543,9 @@ zcal_done:
->>  
->>  	emc_timing_update r1, r0
->>  
->> +	mov	r1, #(EMC_CLKCHANGE_COMPLETE_INT | EMC_DLL_ALARM_INT)
->> +	str	r1, [r0, #EMC_INTSTATUS]	@ clear interrupts
->> +
->>  	/* Tegra114 had dual EMC channel, now config the other one */
->>  	cmp	r10, #TEGRA114
->>  	bne	__no_dual_emc_chanl
->>
-> 
-> Where are these interrupts enabled? I did not see where they are
-> enabled. I see that the Tegra24 EMC driver does poll these, but it did
-> not look like they were enabled. If they are enabled, I wondering if
-> they should be masked on entering self-refresh?
+On Mon, Nov 19, 2018 at 11:32:39AM +0100, Christian Brauner wrote:
+>
+> +/**
+> + *  sys_procfd_signal - send a signal to a process through a process file
+> + *                      descriptor
+> + *  @fd: the file descriptor of the process
+> + *  @sig: signal to be sent
+> + *  @info: the signal info
+> + *  @flags: future flags to be passed
+> + */
+> +SYSCALL_DEFINE4(procfd_signal, int, fd, int, sig, siginfo_t __user *, info,
+> +		int, flags)
+> +{
 
-EMC interrupt is not enabled on Tegra124. IIRC, it doesn't use the interrupt at all in the driver. Indeed, T124 EMC driver polls the interrupt status, but it clears the status before starting to poll. Probably I was just thinking about to write T30 EMC driver at that time and to utilize the interrupt.. 
+Can I just register an objection here that I think using a syscall
+just for this is silly?
 
-Seems it should be okay to drop this patch for now, but maybe then we will have to return to it sometime later. Up to you to decide.
+My understanding is that the concern is that some code might do:
+
+unknown_fd = recv_fd();
+ioctl(unknown_fd, SOME_IOCTL, NULL); // where SOME_IOCTL == PROC_FD_KILL
+// whoops, unknown_fd was a procfd and we killed a task!
+
+In my experience when writing fd sending/receiving code, the sender and
+receiver are fairly tightly coupled. Has anyone ever actually fixed a
+bug where they had an fd that they lost track of what "type" it was
+and screwed up like this? It seems completely theoretical to me.
+
+The ioctl() approach has the benefit of being extensible. Adding a
+syscall means that everyone has to do all the boilerplate for each new
+pid op in the kernel, arches, libc, strace, etc.
+
+Tycho
