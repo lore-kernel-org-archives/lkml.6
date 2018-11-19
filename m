@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE91BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13099C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8079121582
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8079121582
+	by mail.kernel.org (Postfix) with ESMTP id C27072086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 21:54:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C27072086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbeKTIUL (ORCPT
+        id S1731615AbeKTIUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 03:20:11 -0500
-Received: from mga09.intel.com ([134.134.136.24]:32094 "EHLO mga09.intel.com"
+        Tue, 20 Nov 2018 03:20:13 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32103 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731529AbeKTIUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 03:20:09 -0500
+        id S1731529AbeKTIUM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 03:20:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:29 -0800
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 13:54:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="93319899"
+   d="scan'208";a="93319908"
 Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:28 -0800
+  by orsmga008.jf.intel.com with ESMTP; 19 Nov 2018 13:54:31 -0800
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -55,9 +55,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v6 19/26] x86/cet/shstk: User-mode shadow stack support
-Date:   Mon, 19 Nov 2018 13:48:02 -0800
-Message-Id: <20181119214809.6086-20-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v6 22/26] x86/cet/shstk: ELF header parsing of Shadow Stack
+Date:   Mon, 19 Nov 2018 13:48:05 -0800
+Message-Id: <20181119214809.6086-23-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181119214809.6086-1-yu-cheng.yu@intel.com>
 References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
@@ -66,362 +66,495 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic shadow stack enabling/disabling routines.
-A task's shadow stack is allocated from memory with VM_SHSTK flag set
-and read-only protection.  It has a fixed size of RLIMIT_STACK.
+Look in .note.gnu.property of an ELF file and check if Shadow Stack needs
+to be enabled for the task.
 
+Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/cet.h                    |  34 ++++++
- arch/x86/include/asm/disabled-features.h      |   8 +-
- arch/x86/include/asm/msr-index.h              |  15 +++
- arch/x86/include/asm/processor.h              |   5 +
- arch/x86/kernel/Makefile                      |   2 +
- arch/x86/kernel/cet.c                         | 109 ++++++++++++++++++
- arch/x86/kernel/cpu/common.c                  |  25 ++++
- arch/x86/kernel/process.c                     |   2 +
- .../arch/x86/include/asm/disabled-features.h  |   8 +-
- 9 files changed, 206 insertions(+), 2 deletions(-)
- create mode 100644 arch/x86/include/asm/cet.h
- create mode 100644 arch/x86/kernel/cet.c
+ arch/x86/Kconfig                         |   4 +
+ arch/x86/include/asm/elf.h               |   5 +
+ arch/x86/include/uapi/asm/elf_property.h |  15 +
+ arch/x86/kernel/Makefile                 |   2 +
+ arch/x86/kernel/elf.c                    | 358 +++++++++++++++++++++++
+ fs/binfmt_elf.c                          |  15 +
+ include/uapi/linux/elf.h                 |   1 +
+ 7 files changed, 400 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/elf_property.h
+ create mode 100644 arch/x86/kernel/elf.c
 
-diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 86fb68f496a6..73dfb94cde71 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1925,6 +1925,9 @@ config X86_INTEL_CET
+ config ARCH_HAS_SHSTK
+ 	def_bool n
+ 
++config ARCH_HAS_PROGRAM_PROPERTIES
++	def_bool n
++
+ config X86_INTEL_SHADOW_STACK_USER
+ 	prompt "Intel Shadow Stack for user-mode"
+ 	def_bool n
+@@ -1932,6 +1935,7 @@ config X86_INTEL_SHADOW_STACK_USER
+ 	select ARCH_USES_HIGH_VMA_FLAGS
+ 	select X86_INTEL_CET
+ 	select ARCH_HAS_SHSTK
++	select ARCH_HAS_PROGRAM_PROPERTIES
+ 	---help---
+ 	  Shadow stack provides hardware protection against program stack
+ 	  corruption.  Only when all the following are true will an application
+diff --git a/arch/x86/include/asm/elf.h b/arch/x86/include/asm/elf.h
+index 69c0f892e310..557ed0ba71c7 100644
+--- a/arch/x86/include/asm/elf.h
++++ b/arch/x86/include/asm/elf.h
+@@ -381,4 +381,9 @@ struct va_alignment {
+ 
+ extern struct va_alignment va_align;
+ extern unsigned long align_vdso_addr(unsigned long);
++
++#ifdef CONFIG_ARCH_HAS_PROGRAM_PROPERTIES
++extern int arch_setup_features(void *ehdr, void *phdr, struct file *file,
++			       bool interp);
++#endif
+ #endif /* _ASM_X86_ELF_H */
+diff --git a/arch/x86/include/uapi/asm/elf_property.h b/arch/x86/include/uapi/asm/elf_property.h
 new file mode 100644
-index 000000000000..c952a2ec65fe
+index 000000000000..af361207718c
 --- /dev/null
-+++ b/arch/x86/include/asm/cet.h
-@@ -0,0 +1,34 @@
++++ b/arch/x86/include/uapi/asm/elf_property.h
+@@ -0,0 +1,15 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _ASM_X86_CET_H
-+#define _ASM_X86_CET_H
++#ifndef _UAPI_ASM_X86_ELF_PROPERTY_H
++#define _UAPI_ASM_X86_ELF_PROPERTY_H
 +
-+#ifndef __ASSEMBLY__
-+#include <linux/types.h>
-+
-+struct task_struct;
 +/*
-+ * Per-thread CET status
++ * pr_type
 + */
-+struct cet_status {
-+	unsigned long	shstk_base;
-+	unsigned long	shstk_size;
-+	unsigned int	shstk_enabled:1;
-+};
++#define GNU_PROPERTY_X86_FEATURE_1_AND (0xc0000002)
 +
-+#ifdef CONFIG_X86_INTEL_CET
-+int cet_setup_shstk(void);
-+void cet_disable_shstk(void);
-+void cet_disable_free_shstk(struct task_struct *p);
-+#else
-+static inline int cet_setup_shstk(void) { return -EINVAL; }
-+static inline void cet_disable_shstk(void) {}
-+static inline void cet_disable_free_shstk(struct task_struct *p) {}
-+#endif
++/*
++ * Bits for GNU_PROPERTY_X86_FEATURE_1_AND
++ */
++#define GNU_PROPERTY_X86_FEATURE_1_SHSTK	(0x00000002)
 +
-+#define cpu_x86_cet_enabled() \
-+	(cpu_feature_enabled(X86_FEATURE_SHSTK) || \
-+	 cpu_feature_enabled(X86_FEATURE_IBT))
-+
-+#endif /* __ASSEMBLY__ */
-+
-+#endif /* _ASM_X86_CET_H */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 33833d1909af..3624a11e5ba6 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -56,6 +56,12 @@
- # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+#define DISABLE_SHSTK	0
-+#else
-+#define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
-+#endif
-+
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -75,7 +81,7 @@
- #define DISABLED_MASK13	0
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
-+#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP|DISABLE_SHSTK)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
- #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 80f4a4f38c79..298721ff00f4 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -778,4 +778,19 @@
- #define MSR_VM_IGNNE                    0xc0010115
- #define MSR_VM_HSAVE_PA                 0xc0010117
- 
-+/* Control-flow Enforcement Technology MSRs */
-+#define MSR_IA32_U_CET		0x6a0 /* user mode cet setting */
-+#define MSR_IA32_S_CET		0x6a2 /* kernel mode cet setting */
-+#define MSR_IA32_PL0_SSP	0x6a4 /* kernel shstk pointer */
-+#define MSR_IA32_PL3_SSP	0x6a7 /* user shstk pointer */
-+#define MSR_IA32_INT_SSP_TAB	0x6a8 /* exception shstk table */
-+
-+/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
-+#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001ULL
-+#define MSR_IA32_CET_WRSS_EN		0x0000000000000002ULL
-+#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004ULL
-+#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008ULL
-+#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010ULL
-+#define MSR_IA32_CET_BITMAP_MASK	0xfffffffffffff000ULL
-+
- #endif /* _ASM_X86_MSR_INDEX_H */
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 071b2a6fff85..1222dc204c40 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -24,6 +24,7 @@ struct vm86;
- #include <asm/special_insns.h>
- #include <asm/fpu/types.h>
- #include <asm/unwind_hints.h>
-+#include <asm/cet.h>
- 
- #include <linux/personality.h>
- #include <linux/cache.h>
-@@ -500,6 +501,10 @@ struct thread_struct {
- 	unsigned int		sig_on_uaccess_err:1;
- 	unsigned int		uaccess_err:1;	/* uaccess failed */
- 
-+#ifdef CONFIG_X86_INTEL_CET
-+	struct cet_status	cet;
-+#endif
-+
- 	/* Floating point and extended processor state */
- 	struct fpu		fpu;
- 	/*
++#endif /* _UAPI_ASM_X86_ELF_PROPERTY_H */
 diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-index 8824d01c0c35..fbb2d91fb756 100644
+index fbb2d91fb756..36b14ef410c8 100644
 --- a/arch/x86/kernel/Makefile
 +++ b/arch/x86/kernel/Makefile
-@@ -139,6 +139,8 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
- obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
- obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+@@ -141,6 +141,8 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
  
-+obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
+ obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
+ 
++obj-$(CONFIG_ARCH_HAS_PROGRAM_PROPERTIES) += elf.o
 +
  ###
  # 64 bit specific files
  ifeq ($(CONFIG_X86_64),y)
-diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
 new file mode 100644
-index 000000000000..e6726e78e6cd
+index 000000000000..60e396e2abe9
 --- /dev/null
-+++ b/arch/x86/kernel/cet.c
-@@ -0,0 +1,109 @@
++++ b/arch/x86/kernel/elf.c
+@@ -0,0 +1,358 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * cet.c - Control-flow Enforcement (CET)
-+ *
-+ * Copyright (c) 2018, Intel Corporation.
-+ * Yu-cheng Yu <yu-cheng.yu@intel.com>
++ * Look at an ELF file's .note.gnu.property and determine if the file
++ * supports shadow stack and/or indirect branch tracking.
++ * The path from the ELF header to the note section is the following:
++ * elfhdr->elf_phdr->elf_note->property[].
 + */
 +
-+#include <linux/types.h>
-+#include <linux/mm.h>
-+#include <linux/mman.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/sched/signal.h>
-+#include <linux/compat.h>
-+#include <asm/msr.h>
-+#include <asm/user.h>
-+#include <asm/fpu/xstate.h>
-+#include <asm/fpu/types.h>
 +#include <asm/cet.h>
++#include <asm/elf_property.h>
++#include <asm/prctl.h>
++#include <asm/processor.h>
++#include <uapi/linux/elf-em.h>
++#include <uapi/linux/prctl.h>
++#include <linux/binfmts.h>
++#include <linux/elf.h>
++#include <linux/slab.h>
++#include <linux/fs.h>
++#include <linux/uaccess.h>
++#include <linux/string.h>
++#include <linux/compat.h>
 +
-+static int set_shstk_ptr(unsigned long addr)
++/*
++ * The .note.gnu.property layout:
++ *
++ *	struct elf_note {
++ *		u32 n_namesz; --> sizeof(n_name[]); always (4)
++ *		u32 n_ndescsz;--> sizeof(property[])
++ *		u32 n_type;   --> always NT_GNU_PROPERTY_TYPE_0
++ *	};
++ *	char n_name[4]; --> always 'GNU\0'
++ *
++ *	struct {
++ *		struct property_x86 {
++ *			u32 pr_type;
++ *			u32 pr_datasz;
++ *		};
++ *		u8 pr_data[pr_datasz];
++ *	}[];
++ */
++
++#define BUF_SIZE (PAGE_SIZE / 4)
++
++struct property_x86 {
++	u32 pr_type;
++	u32 pr_datasz;
++};
++
++typedef bool (test_item_fn)(void *buf, u32 *arg);
++typedef void *(next_item_fn)(void *buf, u32 *arg);
++
++static inline bool test_note_type_0(void *buf, u32 *align)
 +{
-+	u64 r;
++	struct elf_note *n = buf;
 +
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return -1;
-+
-+	if ((addr >= TASK_SIZE_MAX) || (!IS_ALIGNED(addr, 4)))
-+		return -1;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	wrmsrl(MSR_IA32_PL3_SSP, addr);
-+	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
-+	return 0;
++	return ((n->n_type == NT_GNU_PROPERTY_TYPE_0) && (n->n_namesz == 4) &&
++		(memcmp(n + 1, "GNU", 4) == 0));
 +}
 +
-+static unsigned long get_shstk_addr(void)
++static inline void *next_note(void *buf, u32 *align)
 +{
-+	unsigned long ptr;
++	struct elf_note *n = buf;
++	u64 size;
 +
-+	if (!current->thread.cet.shstk_enabled)
++	if (check_add_overflow((u64)sizeof(*n), (u64)n->n_namesz, &size))
++		return NULL;
++
++	size = round_up(size, *align);
++
++	if (check_add_overflow(size, (u64)n->n_descsz, &size))
++		return NULL;
++
++	size = round_up(size, *align);
++
++	if (buf + size < buf)
++		return NULL;
++	else
++		return (buf + size);
++}
++
++static inline bool test_property_x86(void *buf, u32 *max_type)
++{
++	struct property_x86 *pr = buf;
++
++	/*
++	 * Property types must be in ascending order.
++	 * Keep track of the max when testing each.
++	 */
++	if (pr->pr_type > *max_type)
++		*max_type = pr->pr_type;
++
++	return (pr->pr_type == GNU_PROPERTY_X86_FEATURE_1_AND);
++}
++
++static inline void *next_property(void *buf, u32 *max_type)
++{
++	struct property_x86 *pr = buf;
++
++	if ((buf + sizeof(*pr) +  pr->pr_datasz < buf) ||
++	    (pr->pr_type > GNU_PROPERTY_X86_FEATURE_1_AND) ||
++	    (pr->pr_type > *max_type))
++		return NULL;
++	else
++		return (buf + sizeof(*pr) + pr->pr_datasz);
++}
++
++/*
++ * Scan 'buf' for a pattern; return true if found.
++ * *pos is the distance from the beginning of buf to where
++ * the searched item or the next item is located.
++ */
++static int scan(u8 *buf, u32 buf_size, int item_size, test_item_fn test_item,
++		next_item_fn next_item, u32 *arg, u32 *pos)
++{
++	int found = 0;
++	u8 *p, *max;
++
++	max = buf + buf_size;
++	if (max < buf)
 +		return 0;
 +
-+	rdmsrl(MSR_IA32_PL3_SSP, ptr);
-+	return ptr;
-+}
++	p = buf;
 +
-+int cet_setup_shstk(void)
-+{
-+	unsigned long addr, size;
++	while ((p + item_size < max) && (p + item_size > buf)) {
++		if (test_item(p, arg)) {
++			found = 1;
++			break;
++		}
 +
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return -EOPNOTSUPP;
-+
-+	size = rlimit(RLIMIT_STACK);
-+	addr = do_mmap_locked(0, size, PROT_READ,
-+			      MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK);
-+
-+	/*
-+	 * Return actual error from do_mmap().
-+	 */
-+	if (addr >= TASK_SIZE_MAX)
-+		return addr;
-+
-+	set_shstk_ptr(addr + size - sizeof(u64));
-+	current->thread.cet.shstk_base = addr;
-+	current->thread.cet.shstk_size = size;
-+	current->thread.cet.shstk_enabled = 1;
-+	return 0;
-+}
-+
-+void cet_disable_shstk(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-+		return;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r &= ~(MSR_IA32_CET_SHSTK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	wrmsrl(MSR_IA32_PL3_SSP, 0);
-+	current->thread.cet.shstk_enabled = 0;
-+}
-+
-+void cet_disable_free_shstk(struct task_struct *tsk)
-+{
-+	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
-+	    !tsk->thread.cet.shstk_enabled)
-+		return;
-+
-+	if (tsk == current)
-+		cet_disable_shstk();
-+
-+	/*
-+	 * Free only when tsk is current or shares mm
-+	 * with current but has its own shstk.
-+	 */
-+	if (tsk->mm && (tsk->mm == current->mm) &&
-+	    (tsk->thread.cet.shstk_base)) {
-+		vm_munmap(tsk->thread.cet.shstk_base,
-+			  tsk->thread.cet.shstk_size);
-+		tsk->thread.cet.shstk_base = 0;
-+		tsk->thread.cet.shstk_size = 0;
++		p = next_item(p, arg);
 +	}
 +
-+	tsk->thread.cet.shstk_enabled = 0;
-+}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index ffb181f959d2..795e195bf2fe 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -52,6 +52,7 @@
- #include <asm/microcode_intel.h>
- #include <asm/intel-family.h>
- #include <asm/cpu_device_id.h>
-+#include <asm/cet.h>
- 
- #ifdef CONFIG_X86_LOCAL_APIC
- #include <asm/uv/uv.h>
-@@ -411,6 +412,29 @@ static __init int setup_disable_pku(char *arg)
- __setup("nopku", setup_disable_pku);
- #endif /* CONFIG_X86_64 */
- 
-+static __always_inline void setup_cet(struct cpuinfo_x86 *c)
-+{
-+	if (cpu_x86_cet_enabled())
-+		cr4_set_bits(X86_CR4_CET);
++	*pos = (p + item_size <= buf) ? 0 : (u32)(p - buf);
++	return found;
 +}
 +
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+static __init int setup_disable_shstk(char *s)
++/*
++ * Search a NT_GNU_PROPERTY_TYPE_0 for GNU_PROPERTY_X86_FEATURE_1_AND.
++ */
++static int find_feature_x86(struct file *file, unsigned long desc_size,
++			    loff_t file_offset, u8 *buf, u32 *feature)
 +{
-+	/* require an exact match without trailing characters */
-+	if (s[0] != '\0')
++	u32 buf_pos;
++	unsigned long read_size;
++	unsigned long done;
++	int found = 0;
++	int ret = 0;
++	u32 last_pr = 0;
++
++	*feature = 0;
++	buf_pos = 0;
++
++	for (done = 0; done < desc_size; done += buf_pos) {
++		read_size = desc_size - done;
++		if (read_size > BUF_SIZE)
++			read_size = BUF_SIZE;
++
++		ret = kernel_read(file, buf, read_size, &file_offset);
++
++		if (ret != read_size)
++			return (ret < 0) ? ret : -EIO;
++
++		ret = 0;
++		found = scan(buf, read_size, sizeof(struct property_x86),
++			     test_property_x86, next_property,
++			     &last_pr, &buf_pos);
++
++		if ((!buf_pos) || found)
++			break;
++
++		file_offset += buf_pos - read_size;
++	}
++
++	if (found) {
++		struct property_x86 *pr =
++			(struct property_x86 *)(buf + buf_pos);
++
++		if (pr->pr_datasz == 4) {
++			u32 *max =  (u32 *)(buf + read_size);
++			u32 *data = (u32 *)((u8 *)pr + sizeof(*pr));
++
++			if (data + 1 <= max) {
++				*feature = *data;
++			} else {
++				file_offset += buf_pos - read_size;
++				file_offset += sizeof(*pr);
++				ret = kernel_read(file, feature, 4,
++						  &file_offset);
++			}
++		}
++	}
++
++	return ret;
++}
++
++/*
++ * Search a PT_NOTE segment for NT_GNU_PROPERTY_TYPE_0.
++ */
++static int find_note_type_0(struct file *file, unsigned long note_size,
++			    loff_t file_offset, u32 align, u32 *feature)
++{
++	u8 *buf;
++	u32 buf_pos;
++	unsigned long read_size;
++	unsigned long done;
++	int found = 0;
++	int ret = 0;
++
++	buf = kmalloc(BUF_SIZE, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++
++	*feature = 0;
++	buf_pos = 0;
++
++	for (done = 0; done < note_size; done += buf_pos) {
++		read_size = note_size - done;
++		if (read_size > BUF_SIZE)
++			read_size = BUF_SIZE;
++
++		ret = kernel_read(file, buf, read_size, &file_offset);
++
++		if (ret != read_size) {
++			ret = (ret < 0) ? ret : -EIO;
++			kfree(buf);
++			return ret;
++		}
++
++		/*
++		 * item_size = sizeof(struct elf_note) + elf_note.n_namesz.
++		 * n_namesz is 4 for the note type we look for.
++		 */
++		ret = scan(buf, read_size, sizeof(struct elf_note) + 4,
++			      test_note_type_0, next_note,
++			      &align, &buf_pos);
++
++		file_offset += buf_pos - read_size;
++
++		if (ret && !found) {
++			struct elf_note *n =
++				(struct elf_note *)(buf + buf_pos);
++			u64 start = round_up(sizeof(*n) + n->n_namesz, align);
++			u64 total = 0;
++
++			if (check_add_overflow(start, (u64)n->n_descsz, &total)) {
++				ret = -EINVAL;
++				break;
++			}
++			total = round_up(total, align);
++
++			ret = find_feature_x86(file, n->n_descsz,
++					       file_offset + start,
++					       buf, feature);
++			found++;
++			file_offset += total;
++			buf_pos += total;
++		} else if (!buf_pos || ret) {
++			ret = 0;
++			*feature = 0;
++			break;
++		}
++	}
++
++	kfree(buf);
++	return ret;
++}
++
++#ifdef CONFIG_COMPAT
++static int check_notes_32(struct file *file, struct elf32_phdr *phdr,
++			  int phnum, u32 *feature)
++{
++	int i;
++	int err = 0;
++
++	for (i = 0; i < phnum; i++, phdr++) {
++		if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 4))
++			continue;
++
++		err = find_note_type_0(file, phdr->p_filesz, phdr->p_offset,
++				       phdr->p_align, feature);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef CONFIG_X86_64
++static int check_notes_64(struct file *file, struct elf64_phdr *phdr,
++			  int phnum, u32 *feature)
++{
++	int i;
++	int err = 0;
++
++	for (i = 0; i < phnum; i++, phdr++) {
++		if ((phdr->p_type != PT_NOTE) || (phdr->p_align != 8))
++			continue;
++
++		err = find_note_type_0(file, phdr->p_filesz, phdr->p_offset,
++				       phdr->p_align, feature);
++		if (err)
++			return err;
++	}
++
++	return 0;
++}
++#endif
++
++int arch_setup_features(void *ehdr_p, void *phdr_p,
++			struct file *file, bool interp)
++{
++	int err = 0;
++	u32 feature = 0;
++
++	struct elf64_hdr *ehdr64 = ehdr_p;
++
++	if (!cpu_x86_cet_enabled())
 +		return 0;
 +
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return 1;
++	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
++		struct elf64_phdr *phdr64 = phdr_p;
 +
-+	setup_clear_cpu_cap(X86_FEATURE_SHSTK);
-+	pr_info("x86: 'no_cet_shstk' specified, disabling Shadow Stack\n");
-+	return 1;
-+}
-+__setup("no_cet_shstk", setup_disable_shstk);
-+#endif
++		err = check_notes_64(file, phdr64, ehdr64->e_phnum,
++				     &feature);
++		if (err < 0)
++			goto out;
++	} else {
++#ifdef CONFIG_COMPAT
++		struct elf32_hdr *ehdr32 = ehdr_p;
 +
- /*
-  * Some CPU features depend on higher CPUID levels, which may not always
-  * be available due to CPUID level capping or broken virtualization
-@@ -1379,6 +1403,7 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	x86_init_rdrand(c);
- 	x86_init_cache_qos(c);
- 	setup_pku(c);
-+	setup_cet(c);
- 
- 	/*
- 	 * Clear/Set all flags overridden by options, need do it
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index c93fcfdf1673..4a776da4c28c 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -39,6 +39,7 @@
- #include <asm/desc.h>
- #include <asm/prctl.h>
- #include <asm/spec-ctrl.h>
-+#include <asm/cet.h>
- 
- /*
-  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
-@@ -134,6 +135,7 @@ void flush_thread(void)
- 	flush_ptrace_hw_breakpoint(tsk);
- 	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
- 
-+	cet_disable_shstk();
- 	fpu__clear(&tsk->thread.fpu);
- }
- 
-diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
-index 33833d1909af..3624a11e5ba6 100644
---- a/tools/arch/x86/include/asm/disabled-features.h
-+++ b/tools/arch/x86/include/asm/disabled-features.h
-@@ -56,6 +56,12 @@
- # define DISABLE_PTI		(1 << (X86_FEATURE_PTI & 31))
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_SHADOW_STACK_USER
-+#define DISABLE_SHSTK	0
++		if (ehdr32->e_ident[EI_CLASS] == ELFCLASS32) {
++			struct elf32_phdr *phdr32 = phdr_p;
++
++			err = check_notes_32(file, phdr32, ehdr32->e_phnum,
++					     &feature);
++			if (err < 0)
++				goto out;
++		}
 +#else
-+#define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
++	WARN_ONCE(1, "Exec of 32-bit app, but CONFIG_COMPAT is not enabled.\n");
++	return -ENOTSUPP;
++#endif
++	}
++
++	memset(&current->thread.cet, 0, sizeof(struct cet_status));
++
++	if (cpu_feature_enabled(X86_FEATURE_SHSTK)) {
++		if (feature & GNU_PROPERTY_X86_FEATURE_1_SHSTK) {
++			err = cet_setup_shstk();
++			if (err < 0)
++				goto out;
++		}
++	}
++
++out:
++	return err;
++}
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 54207327f98f..007ff0fbae84 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1081,6 +1081,21 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		goto out_free_dentry;
+ 	}
+ 
++#ifdef CONFIG_ARCH_HAS_PROGRAM_PROPERTIES
++	if (interpreter) {
++		retval = arch_setup_features(&loc->interp_elf_ex,
++					     interp_elf_phdata,
++					     interpreter, true);
++	} else {
++		retval = arch_setup_features(&loc->elf_ex,
++					     elf_phdata,
++					     bprm->file, false);
++	}
++
++	if (retval < 0)
++		goto out_free_dentry;
 +#endif
 +
+ 	if (elf_interpreter) {
+ 		unsigned long interp_map_addr = 0;
+ 
+diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
+index c5358e0ae7c5..5ef25a565e88 100644
+--- a/include/uapi/linux/elf.h
++++ b/include/uapi/linux/elf.h
+@@ -372,6 +372,7 @@ typedef struct elf64_shdr {
+ #define NT_PRFPREG	2
+ #define NT_PRPSINFO	3
+ #define NT_TASKSTRUCT	4
++#define NT_GNU_PROPERTY_TYPE_0 5
+ #define NT_AUXV		6
  /*
-  * Make sure to add features to the correct mask
-  */
-@@ -75,7 +81,7 @@
- #define DISABLED_MASK13	0
- #define DISABLED_MASK14	0
- #define DISABLED_MASK15	0
--#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP)
-+#define DISABLED_MASK16	(DISABLE_PKU|DISABLE_OSPKE|DISABLE_LA57|DISABLE_UMIP|DISABLE_SHSTK)
- #define DISABLED_MASK17	0
- #define DISABLED_MASK18	0
- #define DISABLED_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != 19)
+  * Note to userspace developers: size of NT_SIGINFO note may increase
 -- 
 2.17.1
 
