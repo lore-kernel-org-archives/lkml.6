@@ -2,56 +2,51 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71875C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4EBC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB2D2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE7B214C1
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvC35q+u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB2D2148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNKCCyuL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AE7B214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404244AbeKTDUj (ORCPT
+        id S2404258AbeKTDUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:20:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:20:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403780AbeKTDUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:20:37 -0500
+        id S2403780AbeKTDUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:20:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BEB02147A;
-        Mon, 19 Nov 2018 16:56:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB3BF2148E;
+        Mon, 19 Nov 2018 16:56:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646582;
-        bh=6sVxpi41vJBHzgnlF2g9xzX4MT3Esj4OyLiVGAoewTw=;
+        s=default; t=1542646585;
+        bh=ZVAcHvgvTG/YTcE+pqg54M1IfqK7u/tfAgFjv+2feoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bvC35q+uNuq7235Ob92j1a+5MaDn8xT/q6BZsKlsIWepYIRvZ6L5LccW3Xfldhp4I
-         OPBW0IUx2wO6RbPB83G+FDJLwQhR996yGhRxX3mEFH//a9JNjnZLQJUXY04h9NaEUE
-         81xBpO9gHetMknvdNynrxzLGQPIlblpMUCLLX/nU=
+        b=sNKCCyuL6etO+zOQNoxrRDjagsbmwrC6gQLqdOzIHEScVYU5/+HMGM/dsffAObvTG
+         5oCwuuO3++B70nb0F26WQSSEWW1H6mWHF5NZcM35hTe2PzcP5iNWjyv6YSZv0I4KPc
+         tnEvBWFwIQMs87IsoJJ8LuBH6PAmz/W2jNaJurbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 013/160] x86/fpu: Remove second definition of fpu in __fpu__restore_sig()
-Date:   Mon, 19 Nov 2018 17:27:32 +0100
-Message-Id: <20181119162631.631232155@linuxfoundation.org>
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 014/160] net: qla3xxx: Remove overflowing shift statement
+Date:   Mon, 19 Nov 2018 17:27:33 +0100
+Message-Id: <20181119162631.754347160@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -69,47 +64,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 6aa676761d4c1acfa31320e55fa1f83f3fcbbc7a ]
+[ Upstream commit 8c3bf9b62b667456a57aefcf1689e826df146159 ]
 
-Commit:
+Clang currently warns:
 
-  c5bedc6847c3b ("x86/fpu: Get rid of PF_USED_MATH usage, convert it to fpu->fpstate_active")
+drivers/net/ethernet/qlogic/qla3xxx.c:384:24: warning: signed shift
+result (0xF00000000) requires 37 bits to represent, but 'int' only has
+32 bits [-Wshift-overflow]
+                    ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
+                      ~~~~~~~~~~~~~~ ^  ~~
+1 warning generated.
 
-introduced the 'fpu' variable at top of __restore_xstate_sig(),
-which now shadows the other definition:
+The warning is certainly accurate since ISP_NVRAM_MASK is defined as
+(0x000F << 16) which is then shifted by 16, resulting in 64424509440,
+well above UINT_MAX.
 
-  arch/x86/kernel/fpu/signal.c:318:28: warning: symbol 'fpu' shadows an earlier one
-  arch/x86/kernel/fpu/signal.c:271:20: originally declared here
+Given that this is the only location in this driver where ISP_NVRAM_MASK
+is shifted again, it seems likely that ISP_NVRAM_MASK was originally
+defined without a shift and during the move of the shift to the
+definition, this statement wasn't properly removed (since ISP_NVRAM_MASK
+is used in the statenent right above this). Only the maintainers can
+confirm this since this statment has been here since the driver was
+first added to the kernel.
 
-Remove the shadowed definition of 'fpu', as the two definitions are the same.
-
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: c5bedc6847c3b ("x86/fpu: Get rid of PF_USED_MATH usage, convert it to fpu->fpstate_active")
-Link: http://lkml.kernel.org/r/20181016202525.29437-3-bigeasy@linutronix.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/127
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/fpu/signal.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/ethernet/qlogic/qla3xxx.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -294,7 +294,6 @@ static int __fpu__restore_sig(void __use
- 		 * thread's fpu state, reconstruct fxstate from the fsave
- 		 * header. Sanitize the copied state etc.
- 		 */
--		struct fpu *fpu = &tsk->thread.fpu;
- 		struct user_i387_ia32_struct env;
- 		int err = 0;
+--- a/drivers/net/ethernet/qlogic/qla3xxx.c
++++ b/drivers/net/ethernet/qlogic/qla3xxx.c
+@@ -380,8 +380,6 @@ static void fm93c56a_select(struct ql3_a
  
+ 	qdev->eeprom_cmd_data = AUBURN_EEPROM_CS_1;
+ 	ql_write_nvram_reg(qdev, spir, ISP_NVRAM_MASK | qdev->eeprom_cmd_data);
+-	ql_write_nvram_reg(qdev, spir,
+-			   ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
+ }
+ 
+ /*
 
 
