@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D3AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A19C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F55B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 858A120989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vamxsITT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F55B20989
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="z6dElTgB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 858A120989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732448AbeKTDC2 (ORCPT
+        id S1732461AbeKTDCb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731846AbeKTDC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:27 -0500
+        id S1731529AbeKTDC3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D48020989;
-        Mon, 19 Nov 2018 16:38:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3973820831;
+        Mon, 19 Nov 2018 16:38:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645498;
-        bh=XddCdSBIC4+QLmIczNXdoX6SHO7a7RJzxfNMmAWiX3Y=;
+        s=default; t=1542645500;
+        bh=tjyWBd0n/QO0q7yuzhpqrKl/UpNMWejs1prYNkpK6NY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vamxsITTTgWwFt7jnizp7kGSWby0kCbbSgyO1CoBFd2cLtpYtCpusfHXjClCF/lPd
-         UfIux1t8ilUq0wWkZjkeNfmI9iMgkURP+Kc6+7G7JGAjEOy6wSproyMP6Vx1+NB94Q
-         gnHt2Vba/ajuaZ7WjbCti7EOE38yuDmJjdDyMU6s=
+        b=z6dElTgBADCOp2sKo3a7id4sdlqBPnHFl4kD80UObiAS8VW9l7ThCYlO3KZrtc9qW
+         tkvOrscRLJxdcZyAihDmid2bACDUU9wrRX5ifBoIK/+e+KG7qxNFl/NtfnXF9XHQLv
+         plWQ/Ri4pnZ1QYgYA9vtaPsfeBTTNUzxTYSekXT0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: [PATCH 4.19 183/205] drm: panel-orientation-quirks: Add quirk for Acer One 10 (S1003)
-Date:   Mon, 19 Nov 2018 17:28:10 +0100
-Message-Id: <20181119162641.402275353@linuxfoundation.org>
+        stable@vger.kernel.org, Jonathan Calmels <jcalmels@nvidia.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.19 148/205] mount: Dont allow copying MNT_UNBINDABLE|MNT_LOCKED mounts
+Date:   Mon, 19 Nov 2018 17:27:35 +0100
+Message-Id: <20181119162638.453513392@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,59 +62,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 0e8afefd5da4875ddea9aa4ad17a2540a2bf9736 upstream.
+commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
 
-The Acer One 10 uses a clamshell design with a detachable keyboard.
-As such in normal operating mode, with the keyboard attach the device
-is in landscape mode (and the Acer logo at boot also shows in landscape
-mode).
+Jonathan Calmels from NVIDIA reported that he's able to bypass the
+mount visibility security check in place in the Linux kernel by using
+a combination of the unbindable property along with the private mount
+propagation option to allow a unprivileged user to see a path which
+was purposefully hidden by the root user.
 
-But the device uses a portrait screen rotated 90 degrees (sigh). This
-commit adds a quirk for this device so that we shown the fbcon the
-right way up and that we hint userspace to also show e.g. plymouth and
-gdm the right way up.
+Reproducer:
+  # Hide a path to all users using a tmpfs
+  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
+  root@castiana:~#
+
+  # As an unprivileged user, unshare user namespace and mount namespace
+  stgraber@castiana:~$ unshare -U -m -r
+
+  # Confirm the path is still not accessible
+  root@castiana:~# ls /sys/devices/
+
+  # Make /sys recursively unbindable and private
+  root@castiana:~# mount --make-runbindable /sys
+  root@castiana:~# mount --make-private /sys
+
+  # Recursively bind-mount the rest of /sys over to /mnnt
+  root@castiana:~# mount --rbind /sys/ /mnt
+
+  # Access our hidden /sys/device as an unprivileged user
+  root@castiana:~# ls /mnt/devices/
+  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
+  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
+  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
+
+Solve this by teaching copy_tree to fail if a mount turns out to be
+both unbindable and locked.
 
 Cc: stable@vger.kernel.org
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181012101610.29100-1-hdegoede@redhat.com
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_panel_orientation_quirks.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ fs/namespace.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
-+++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
-@@ -30,6 +30,12 @@ struct drm_dmi_panel_orientation_data {
- 	int orientation;
- };
- 
-+static const struct drm_dmi_panel_orientation_data acer_s1003 = {
-+	.width = 800,
-+	.height = 1280,
-+	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
-+};
-+
- static const struct drm_dmi_panel_orientation_data asus_t100ha = {
- 	.width = 800,
- 	.height = 1280,
-@@ -67,7 +73,13 @@ static const struct drm_dmi_panel_orient
- };
- 
- static const struct dmi_system_id orientation_data[] = {
--	{	/* Asus T100HA */
-+	{	/* Acer One 10 (S1003) */
-+		.matches = {
-+		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Acer"),
-+		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "One S1003"),
-+		},
-+		.driver_data = (void *)&acer_s1003,
-+	}, {	/* Asus T100HA */
- 		.matches = {
- 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
- 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T100HAN"),
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1734,8 +1734,14 @@ struct mount *copy_tree(struct mount *mn
+ 		for (s = r; s; s = next_mnt(s, r)) {
+ 			if (!(flag & CL_COPY_UNBINDABLE) &&
+ 			    IS_MNT_UNBINDABLE(s)) {
+-				s = skip_mnt_tree(s);
+-				continue;
++				if (s->mnt.mnt_flags & MNT_LOCKED) {
++					/* Both unbindable and locked. */
++					q = ERR_PTR(-EPERM);
++					goto out;
++				} else {
++					s = skip_mnt_tree(s);
++					continue;
++				}
+ 			}
+ 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+ 			    is_mnt_ns_file(s->mnt.mnt_root)) {
 
 
