@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0BDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BF8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62333208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A87A3208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/dwIuXQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62333208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r7CC0oS+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87A3208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391049AbeKTDTT (ORCPT
+        id S2404053AbeKTDTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:19:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58408 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:19:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404045AbeKTDTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:19:17 -0500
+        id S2391050AbeKTDTU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:19:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DBE521104;
-        Mon, 19 Nov 2018 16:55:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B19AB206BA;
+        Mon, 19 Nov 2018 16:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646503;
-        bh=9c4qztzH/PXI+i7FUlcPwuYXHHFgpu/lOErpfgZJvBg=;
+        s=default; t=1542646506;
+        bh=UG71cGrKpSDQpBOgh/T+G8Pd7SvFXLS+DESyHSukfPE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a/dwIuXQlvOaJ/L8g+ExlCx349U77P5kc5FQaZqrn/zCkl1uPfQoK+YAorIMwGDQS
-         UCB77MPIZs3XqE7Sy2j1TEUGfgknqO4Dz4E5QmVDU3jFoe4qBCmXLPOnI3kJQgOL2j
-         1RS3k3HEkBLHU1nkU+XVT+t3JfBW01rFKB95DpZI=
+        b=r7CC0oS+l8MIve6GwZH+Hcxx0ryM6YzNegtRe7FhHp8M94vsAytmgO1w+6hdpceLe
+         fAful2Z3UYtKvLopmjU209M7JIyR3BHln4Ntj/FVG+Tki60k8OYsLwG0hgIaBgJ4kw
+         dsGSY1uk0IUB5ZMpHRpwlTSkDFsFnRv3avMoSqns=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.9 65/83] ext4: fix buffer leak in __ext4_read_dirblock() on error path
-Date:   Mon, 19 Nov 2018 17:29:31 +0100
-Message-Id: <20181119162625.081671457@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.9 66/83] mount: Retest MNT_LOCKED in do_umount
+Date:   Mon, 19 Nov 2018 17:29:32 +0100
+Message-Id: <20181119162625.237158176@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -62,29 +62,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit de59fae0043f07de5d25e02ca360f7d57bfa5866 upstream.
+commit 25d202ed820ee347edec0bf3bf553544556bf64b upstream.
 
-Fixes: dc6982ff4db1 ("ext4: refactor code to read directory blocks ...")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 3.9
+It was recently pointed out that the one instance of testing MNT_LOCKED
+outside of the namespace_sem is in ksys_umount.
+
+Fix that by adding a test inside of do_umount with namespace_sem and
+the mount_lock held.  As it helps to fail fails the existing test is
+maintained with an additional comment pointing out that it may be racy
+because the locks are not held.
+
+Cc: stable@vger.kernel.org
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/namei.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/namespace.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -124,6 +124,7 @@ static struct buffer_head *__ext4_read_d
- 	if (!is_dx_block && type == INDEX) {
- 		ext4_error_inode(inode, func, line, block,
- 		       "directory leaf block found instead of index block");
-+		brelse(bh);
- 		return ERR_PTR(-EFSCORRUPTED);
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1599,8 +1599,13 @@ static int do_umount(struct mount *mnt,
+ 
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	event++;
+ 
++	/* Recheck MNT_LOCKED with the locks held */
++	retval = -EINVAL;
++	if (mnt->mnt.mnt_flags & MNT_LOCKED)
++		goto out;
++
++	event++;
+ 	if (flags & MNT_DETACH) {
+ 		if (!list_empty(&mnt->mnt_list))
+ 			umount_tree(mnt, UMOUNT_PROPAGATE);
+@@ -1614,6 +1619,7 @@ static int do_umount(struct mount *mnt,
+ 			retval = 0;
+ 		}
  	}
- 	if (!ext4_has_metadata_csum(inode->i_sb) ||
++out:
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ 	return retval;
+@@ -1704,7 +1710,7 @@ SYSCALL_DEFINE2(umount, char __user *, n
+ 		goto dput_and_out;
+ 	if (!check_mnt(mnt))
+ 		goto dput_and_out;
+-	if (mnt->mnt.mnt_flags & MNT_LOCKED)
++	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
+ 		goto dput_and_out;
+ 	retval = -EPERM;
+ 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
 
 
