@@ -2,171 +2,101 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C9EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D4FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70EF220851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:57:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70EF220851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DB81B208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:02:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB81B208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730769AbeKTFWn (ORCPT
+        id S1726564AbeKTF1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 00:22:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54872 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726167AbeKTFWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 00:22:42 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6DF963082E4C;
-        Mon, 19 Nov 2018 18:57:48 +0000 (UTC)
-Received: from llong.com (dhcp-17-55.bos.redhat.com [10.18.17.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F1BB5608E7;
-        Mon, 19 Nov 2018 18:57:46 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Tejun Heo <tj@kernel.org>,
+        Tue, 20 Nov 2018 00:27:13 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:52570 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeKTF1M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 00:27:12 -0500
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gOooJ-0008VP-6i; Mon, 19 Nov 2018 12:02:15 -0700
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gOooH-0004yY-LG; Mon, 19 Nov 2018 12:02:14 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Christian Brauner <christian@brauner.io>
+Cc:     Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v2 17/17] locking/lockdep: Check raw/non-raw locking conflicts
-Date:   Mon, 19 Nov 2018 13:55:26 -0500
-Message-Id: <1542653726-5655-18-git-send-email-longman@redhat.com>
-In-Reply-To: <1542653726-5655-1-git-send-email-longman@redhat.com>
-References: <1542653726-5655-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 19 Nov 2018 18:57:48 +0000 (UTC)
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        linux-man <linux-man@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20181119103241.5229-1-christian@brauner.io>
+        <20181119103241.5229-3-christian@brauner.io>
+        <CAKOZueshQ2DAwUYp+dLpmfYG6FtvCqeRQxH41SjNS+WqY3e0Fw@mail.gmail.com>
+        <20181119182902.fadw6qiu3eepndm3@brauner.io>
+Date:   Mon, 19 Nov 2018 13:02:06 -0600
+In-Reply-To: <20181119182902.fadw6qiu3eepndm3@brauner.io> (Christian Brauner's
+        message of "Mon, 19 Nov 2018 19:29:05 +0100")
+Message-ID: <87o9ak28nl.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1gOooH-0004yY-LG;;;mid=<87o9ak28nl.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/IAgxHXFWsW3kF6a7EpuFZNuQYr3Siskc=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A task holding a raw spinlock should not acquire a non-raw lock as that
-will break PREEMPT_RT kernel. Checking is now added and a lockdep warning
-will be printed if that happens.
+Christian Brauner <christian@brauner.io> writes:
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- include/linux/lockdep.h         |  6 ++++++
- include/linux/spinlock_types.h  |  4 ++--
- kernel/locking/lockdep.c        | 15 +++++++++++++--
- kernel/locking/spinlock_debug.c |  1 +
- 4 files changed, 22 insertions(+), 4 deletions(-)
+> On Mon, Nov 19, 2018 at 07:59:24AM -0800, Daniel Colascione wrote:
+>> You never addressed my comment on the previous patch about your use of
+>
+> Sorry, that thread exploded so quickly that I might have missed it.
+>
+>> private_data here. Why can't you use the struct pid reference that's
+>> already in the inode?
+>
+> If that's what people prefer we can probably use that. There was
+> precedent for stashing away such data in fs/proc/base.c already for
+> various other things including user namespaces and struct mm so I
+> followed this model. A prior version of my patch (I didn't send out) did
+> retrive the inode via proc_pid() in .open() took an additional reference
+> via get_pid() and dropped it in .release(). Do we prefer that?
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index b9435fb..9a6fe0e 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -150,12 +150,15 @@ struct lock_class_stats {
-  *    another lock within its critical section is not allowed.
-  * 3) LOCKDEP_FLAG_TERMINAL_NESTABLE: This is a terminal lock that can
-  *    allow one more regular terminal lock to be nested underneath it.
-+ * 4) LOCKDEP_FLAG_RAW: This is a raw spinlock. A task holding a raw
-+ *    spinlock should not acquire a non-raw lock.
-  *
-  * Only the least significant 4 bits of the flags will be copied to the
-  * held_lock structure.
-  */
- #define LOCKDEP_FLAG_TERMINAL		(1 << 0)
- #define LOCKDEP_FLAG_TERMINAL_NESTABLE	(1 << 1)
-+#define LOCKDEP_FLAG_RAW		(1 << 2)
- #define LOCKDEP_FLAG_NOVALIDATE 	(1 << 4)
- 
- #define LOCKDEP_HLOCK_FLAGS_MASK	0x0f
-@@ -333,6 +336,8 @@ extern void lockdep_init_map(struct lockdep_map *lock, const char *name,
- 	do { (lock)->dep_map.flags |= LOCKDEP_FLAG_TERMINAL; } while (0)
- #define lockdep_set_terminal_nestable_class(lock) \
- 	do { (lock)->dep_map.flags |= LOCKDEP_FLAG_TERMINAL_NESTABLE; } while (0)
-+#define lockdep_set_raw_class(lock) \
-+	do { (lock)->dep_map.flags |= LOCKDEP_FLAG_RAW; } while (0)
- 
- /*
-  * Compare locking classes
-@@ -448,6 +453,7 @@ static inline void lockdep_on(void)
- 		do { (void)(key); } while (0)
- #define lockdep_set_subclass(lock, sub)		do { } while (0)
- 
-+#define lockdep_set_raw_class(lock)		do { } while (0)
- #define lockdep_set_novalidate_class(lock)	do { } while (0)
- #define lockdep_set_terminal_class(lock)	do { } while (0)
- #define lockdep_set_terminal_nestable_class(lock)	do { } while (0)
-diff --git a/include/linux/spinlock_types.h b/include/linux/spinlock_types.h
-index 6a8086e..1d2114b 100644
---- a/include/linux/spinlock_types.h
-+++ b/include/linux/spinlock_types.h
-@@ -55,11 +55,11 @@
- 	SPIN_DEP_MAP_INIT(lockname, f) }
- 
- #define __RAW_SPIN_LOCK_UNLOCKED(lockname)	\
--	(raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname, 0)
-+	(raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname, LOCKDEP_FLAG_RAW)
- 
- #define __RAW_TERMINAL_SPIN_LOCK_UNLOCKED(lockname)	\
- 	(raw_spinlock_t) __RAW_SPIN_LOCK_INITIALIZER(lockname, \
--						     LOCKDEP_FLAG_TERMINAL)
-+					LOCKDEP_FLAG_TERMINAL|LOCKDEP_FLAG_RAW)
- 
- #define DEFINE_RAW_SPINLOCK(x)	raw_spinlock_t x = __RAW_SPIN_LOCK_UNLOCKED(x)
- #define DEFINE_RAW_TERMINAL_SPINLOCK(x)	\
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5a853a6..efafd2d 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3273,8 +3273,8 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 		 * one isn't a regular terminal lock.
- 		 */
- 		prev_type = hlock_is_terminal(hlock);
--		if (DEBUG_LOCKS_WARN_ON((prev_type == LOCKDEP_FLAG_TERMINAL) ||
--			((prev_type == LOCKDEP_FLAG_TERMINAL_NESTABLE) &&
-+		if (DEBUG_LOCKS_WARN_ON((prev_type & LOCKDEP_FLAG_TERMINAL) ||
-+			((prev_type & LOCKDEP_FLAG_TERMINAL_NESTABLE) &&
- 			 (flags_is_terminal(class->flags) !=
- 				LOCKDEP_FLAG_TERMINAL)))) {
- 			pr_warn("Terminal lock error: prev lock = %s, curr lock = %s\n",
-@@ -3282,6 +3282,17 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 			return 0;
- 		}
- 
-+		/*
-+		 * A task holding a raw spinlock should not acquire another
-+		 * non-raw lock.
-+		 */
-+		if (DEBUG_LOCKS_WARN_ON((prev_type & LOCKDEP_FLAG_RAW) &&
-+					!(class->flags & LOCKDEP_FLAG_RAW))) {
-+			pr_warn("Raw lock error: prev lock = %s, curr lock = %s\n",
-+				hlock->instance->name, class->name);
-+			return 0;
-+		}
-+
- 		if (hlock->class_idx == class_idx && nest_lock) {
- 			if (hlock->references) {
- 				/*
-diff --git a/kernel/locking/spinlock_debug.c b/kernel/locking/spinlock_debug.c
-index 9aa0fcc..1794d47 100644
---- a/kernel/locking/spinlock_debug.c
-+++ b/kernel/locking/spinlock_debug.c
-@@ -22,6 +22,7 @@ void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
- 	 */
- 	debug_check_no_locks_freed((void *)lock, sizeof(*lock));
- 	lockdep_init_map(&lock->dep_map, name, key, 0);
-+	lockdep_set_raw_class(lock);
- #endif
- 	lock->raw_lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
- 	lock->magic = SPINLOCK_MAGIC;
--- 
-1.8.3.1
+If you are using proc/<pid>/ directories as your file descriptors, you
+don't need to add an open or a release method at all.  The existing file
+descriptors hold a reference to the inode which holds a reference the
+the struct pid.
+
+The only time you need to get a reference is when you need a task
+and kill_pid_info already performs that work for you.
+
+So using proc_pid is all you need to do to get the pid from the existing
+file descriptors.
+
+Eric
 
