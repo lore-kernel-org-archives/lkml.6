@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA8A7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 445C5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B517721479
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E18921479
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="j3z03yny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B517721479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wWWUPTFJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E18921479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731935AbeKTDAk (ORCPT
+        id S1731953AbeKTDAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:00:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60574 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730941AbeKTDAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:00:39 -0500
+        id S1730931AbeKTDAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:00:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2B2C2086A;
-        Mon, 19 Nov 2018 16:36:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B018213A2;
+        Mon, 19 Nov 2018 16:36:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645391;
-        bh=pMtk7xogt68r2SlWJxdBTornVQwByp/EFIhe9G0G55k=;
+        s=default; t=1542645393;
+        bh=1VnsUHjYw9miQ5KDeVvDn+6q4S2pTycUS5T9EIIEjxU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j3z03ynycsL+NO9Xw0iEkOfDCj0k8hCv0fMsr2JD83BndRDv1ARAzSAgrteabTwkt
-         35LvqpB/QeroiiiFeg29EiVvELy9oxHaDuxvWX9t/HRXvxMeJBqFtzUaF8p2lZCfwF
-         zcCVegmN6UtZnjp4XX6qEL7gkMxXPKsJfK6OXPm0=
+        b=wWWUPTFJIT0pcIMoVpCupFc//9uMgywfRO9rmXrOSyjupKTB0sWyJzV8e+Gtm0xjE
+         yESui0Xi7rihTVfdeuS2/8nAR3LU/VdmN/xl+Nd3jWdnPgHFI3lySdDUA3gXXaPqMR
+         haKj6jDkS2zdb/xRzHJOwHmu4x8VmOQu2mnGqaV0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.19 142/205] ext4: fix buffer leak in ext4_xattr_get_block() on error path
-Date:   Mon, 19 Nov 2018 17:27:29 +0100
-Message-Id: <20181119162637.937085015@linuxfoundation.org>
+        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Jarod Wilson <jarod@redhat.com>
+Subject: [PATCH 4.19 107/205] bonding/802.3ad: fix link_failure_count tracking
+Date:   Mon, 19 Nov 2018 17:26:54 +0100
+Message-Id: <20181119162634.145838858@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,33 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Jarod Wilson <jarod@redhat.com>
 
-commit ecaaf408478b6fb4d9986f9b6652f3824e374f4c upstream.
+commit ea53abfab960909d622ca37bcfb8e1c5378d21cc upstream.
 
-Fixes: dec214d00e0d ("ext4: xattr inode deduplication")
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org # 4.13
+Commit 4d2c0cda07448ea6980f00102dc3964eb25e241c set slave->link to
+BOND_LINK_DOWN for 802.3ad bonds whenever invalid speed/duplex values
+were read, to fix a problem with slaves getting into weird states, but
+in the process, broke tracking of link failures, as going straight to
+BOND_LINK_DOWN when a link is indeed down (cable pulled, switch rebooted)
+means we broke out of bond_miimon_inspect()'s BOND_LINK_DOWN case because
+!link_state was already true, we never incremented commit, and never got
+a chance to call bond_miimon_commit(), where slave->link_failure_count
+would be incremented. I believe the simple fix here is to mark the slave
+as BOND_LINK_FAIL, and let bond_miimon_inspect() transition the link from
+_FAIL to either _UP or _DOWN, and in the latter case, we now get proper
+incrementing of link_failure_count again.
+
+Fixes: 4d2c0cda0744 ("bonding: speed/duplex update at NETDEV_UP event")
+CC: Mahesh Bandewar <maheshb@google.com>
+CC: David S. Miller <davem@davemloft.net>
+CC: netdev@vger.kernel.org
+CC: stable@vger.kernel.org
+Signed-off-by: Jarod Wilson <jarod@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/xattr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/bonding/bond_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -2282,8 +2282,10 @@ static struct buffer_head *ext4_xattr_ge
- 	if (!bh)
- 		return ERR_PTR(-EIO);
- 	error = ext4_xattr_check_block(inode, bh);
--	if (error)
-+	if (error) {
-+		brelse(bh);
- 		return ERR_PTR(error);
-+	}
- 	return bh;
- }
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -3111,13 +3111,13 @@ static int bond_slave_netdev_event(unsig
+ 	case NETDEV_CHANGE:
+ 		/* For 802.3ad mode only:
+ 		 * Getting invalid Speed/Duplex values here will put slave
+-		 * in weird state. So mark it as link-down for the time
++		 * in weird state. So mark it as link-fail for the time
+ 		 * being and let link-monitoring (miimon) set it right when
+ 		 * correct speeds/duplex are available.
+ 		 */
+ 		if (bond_update_speed_duplex(slave) &&
+ 		    BOND_MODE(bond) == BOND_MODE_8023AD)
+-			slave->link = BOND_LINK_DOWN;
++			slave->link = BOND_LINK_FAIL;
  
+ 		if (BOND_MODE(bond) == BOND_MODE_8023AD)
+ 			bond_3ad_adapter_speed_duplex_changed(slave);
 
 
