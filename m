@@ -2,171 +2,115 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A71C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3242FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD09120831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:27:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD09120831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E905E20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:28:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xcwy3LzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E905E20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730139AbeKTCvE (ORCPT
+        id S1730043AbeKTCwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:51:04 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47822 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729974AbeKTCvD (ORCPT
+        Mon, 19 Nov 2018 21:52:06 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33057 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729879AbeKTCwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:51:03 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAJGJbJU182975
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:26:57 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nuypek2y7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:26:56 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Mon, 19 Nov 2018 16:26:52 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Nov 2018 16:26:43 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAJGQgVV55508996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 19 Nov 2018 16:26:42 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E05AA4060;
-        Mon, 19 Nov 2018 16:26:42 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CB8DA4064;
-        Mon, 19 Nov 2018 16:26:29 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.205.9])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 19 Nov 2018 16:26:28 +0000 (GMT)
-Date:   Mon, 19 Nov 2018 08:26:24 -0800
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
-References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
- <20181116182836.GB17088@rapoport-lnx>
- <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
- <20181117143742.GB7861@bombadil.infradead.org>
- <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+        Mon, 19 Nov 2018 21:52:06 -0500
+Received: by mail-ua1-f65.google.com with SMTP id t8so3201500uap.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 08:27:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rjT56Y3Hb0xyMumXvOFYWzCrqANEbDFkwo4obTq7yfk=;
+        b=Xcwy3LzZQAQptpw75ewDX0jCn/iH+12JD/wHMlzH0HE4lfy6sp/acdgVgcirIsLU5M
+         HNLFmXCEig3Tj+ZHco3Rsj0epRg+KkIJQwgMfIJO5EGTXDATjvtGPa+C7YhjJVtRgGtj
+         pEGyTmij6v3T/msenqK26G1CKqgvsqMpu0sOrr6g33SCKvGiezICRmazN6GoMYA7z4jx
+         /ZAm/MpKIv2dl6eWu6X+HA8L4/rHJXaQt63yB1V3d24kHvpftquzS03HfbcWs9bZYTX0
+         uf6zBQqtdlNo1bxTIJJsbglfEOloNhg5vVsOeZayYhHp2JDjy4hQlvy/K6Dv2b5YEVSr
+         +xzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rjT56Y3Hb0xyMumXvOFYWzCrqANEbDFkwo4obTq7yfk=;
+        b=JwssZcPmjgmS0spdxtGAqTPsLNNkVpkAxP6F5jWU0jILlBZ+9jdwRpHeb7+2tywQDQ
+         JJtfHSNlLSi5eccZlcc0L1R2SeAde46YJYNxyrcwDVS7Cv8dxsLCdRcgmXFgOeeVxmQz
+         mQGZ9C2cuVizsEUQC4KNUs3IPDoJUKrcjUZZSpwQc3OUcU6dyfWjuHYkL9tuor+QfYRp
+         dQgQlNbUjtiadvoxfrDWkgEcOPMp5jePmW836i7Fvc/pvAlME1vaO8iyRFuUmfKecPKk
+         Ib8qb74BU6pi/0XqpHF1/QOx4kJDUxLWamDZuSLD2FOATL0p2iQjOqXIMqzYe2VrfZ/k
+         cfqA==
+X-Gm-Message-State: AGRZ1gILjQYmZOknVUM+7tzjqnHDTXXKPKJm4Kl4C/bJrJFI5cGmYWXr
+        +IhKxBQWDMRS19nH96FPpLJ2lu10bg/chYqW1ow/Cg==
+X-Google-Smtp-Source: AJdET5d8sj04KqWO/Bc6BrEIzxH8RxctnzNqGT+0m8sWlDo+WGd5x4/G4DHZ0oNzB7k9h7szWk5itA50FkiFrGA6WsM=
+X-Received: by 2002:a9f:2b44:: with SMTP id q4mr7066521uaj.126.1542644878352;
+ Mon, 19 Nov 2018 08:27:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18111916-0020-0000-0000-000002EA5729
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111916-0021-0000-0000-0000213984C7
-Message-Id: <20181119162623.GA13200@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-19_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811190150
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Mon, 19 Nov 2018 08:27:57
+ -0800 (PST)
+In-Reply-To: <CAJwJo6aXQUtciO7kPSENoajV6JUqUGJxCh_0yPf5D8GfbLegzA@mail.gmail.com>
+References: <20181118111751.6142-1-christian@brauner.io> <CAKOZuet3s0WxxPgrtrNkq8YiOWhYAiK6yEio6PKVV9J_H4_TSA@mail.gmail.com>
+ <CALCETrUd2Y2MmO8Qx8aUvQDOTNiyj35Y7bctPBZe0p2i1EUiLw@mail.gmail.com>
+ <CAKOZuev1JUGFWuwsKqS6rXcFMqpCHT1VAG2kwB4O=FHo6DAFiQ@mail.gmail.com>
+ <CALCETrVLP_mudJTW6EQpRr5GZ7kfuGci+QCT1uPrOVDTWcod-A@mail.gmail.com>
+ <a7f50692-667c-4efe-a2d0-fa324eebb90b@infradead.org> <CAKOZueutLc8d0Fe+7dNWiZKnALhTSST8+kCnOrL+OmB6coUmtA@mail.gmail.com>
+ <CALCETrVg71XBv-gMOtL-m0Dd0HNz8_oXOUDSWin5LeViAL0UYA@mail.gmail.com>
+ <CAKOZuesCKo4GH9fdum2EUFLrtTWam3aizcDQUn3-vCYg4T1P8w@mail.gmail.com>
+ <CALCETrUeNZPfrSYa9vH5Ukrk1Y+Kb9GkZOh6LkqG6Z9NpK5P0w@mail.gmail.com>
+ <CAKOZuevVk_aH_2TuiNcmxgMa+gHXMBXz6Uu5a6TDjoxjhaE36g@mail.gmail.com>
+ <CALCETrVscRwQG55-j1SKc2TmSb1-=5861804ojUuviNzdyDOrA@mail.gmail.com> <CAJwJo6aXQUtciO7kPSENoajV6JUqUGJxCh_0yPf5D8GfbLegzA@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Mon, 19 Nov 2018 08:27:57 -0800
+Message-ID: <CAKOZueu78Urbc-Vt--ZntGAG_i-LrNsPjGmRi7F8zuTUQ=iHug@mail.gmail.com>
+Subject: Re: [PATCH] proc: allow killing processes via file descriptors
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Christian Brauner <christian@brauner.io>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Serge Hallyn <serge@hallyn.com>, Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Jan Engelhardt <jengelh@inai.de>,
+        Andrei Vagin <avagin@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 08:43:09PM +0530, Souptick Joarder wrote:
-> Hi Mike,
-> 
-> On Sat, Nov 17, 2018 at 8:07 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Sat, Nov 17, 2018 at 12:26:38PM +0530, Souptick Joarder wrote:
-> > > On Fri, Nov 16, 2018 at 11:59 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > > > > + * vm_insert_range - insert range of kernel pages into user vma
-> > > > > + * @vma: user vma to map to
-> > > > > + * @addr: target user address of this page
-> > > > > + * @pages: pointer to array of source kernel pages
-> > > > > + * @page_count: no. of pages need to insert into user vma
-> > > > > + *
-> > > > > + * This allows drivers to insert range of kernel pages they've allocated
-> > > > > + * into a user vma. This is a generic function which drivers can use
-> > > > > + * rather than using their own way of mapping range of kernel pages into
-> > > > > + * user vma.
-> > > >
-> > > > Please add the return value and context descriptions.
-> > > >
-> > >
-> > > Sure I will wait for some time to get additional review comments and
-> > > add all of those requested changes in v2.
-> >
-> > You could send your proposed wording now which might remove the need
-> > for a v3 if we end up arguing about the wording.
-> 
-> Does this description looks good ?
-> 
-> /**
->  * vm_insert_range - insert range of kernel pages into user vma
->  * @vma: user vma to map to
->  * @addr: target user address of this page
->  * @pages: pointer to array of source kernel pages
->  * @page_count: number of pages need to insert into user vma
->  *
->  * This allows drivers to insert range of kernel pages they've allocated
->  * into a user vma. This is a generic function which drivers can use
->  * rather than using their own way of mapping range of kernel pages into
->  * user vma.
->  *
->  * Context - Process context. Called by mmap handlers.
+On Mon, Nov 19, 2018 at 8:13 AM, Dmitry Safonov <0x7f454c46@gmail.com> wrote:
+> I wonder how fast it would be holding a pid with another open()ed fd.
+> And then you need to read comm (or how you filter whom to kill).
+> It seems to me that procfs will be even slower with this safe-way.
+> But I might misunderstand the idea, excuses.
+>
+> So, I just wanted to gently remind about procfs with netlink socket[1].
 
-Context:
+We discussed netlink was extensively on the thread about
+/proc/pid/kill. For numerous reasons, it's not suitable for
+fundamental process management. We really need an FD-based interface
+to processes, just like we have FD-based interfaces to other resource
+types. We need something consistent and reliable, not an abuse of a
+monitoring interface.
 
->  * Return - int error value
+> Probably, if it's time to add a new API for procfs, netlink may be more
+> desirable.
 
-Return:
-
->  * 0                    - OK
->  * -EINVAL              - Invalid argument
->  * -ENOMEM              - No memory
->  * -EFAULT              - Bad address
->  * -EBUSY               - Device or resource busy
-
-I don't think that elaborate description of error values is needed, just "0
-on success and error code otherwise" would be sufficient.
-
->  */
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+Definitely not.
