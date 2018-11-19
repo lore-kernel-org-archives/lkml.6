@@ -7,44 +7,56 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B4CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BD7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 295012147D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB77820C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:43:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UefDmd1j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 295012147D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWFV7Yfr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB77820C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388062AbeKTDH5 (ORCPT
+        id S2388076AbeKTDIA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:07:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42244 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:08:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731911AbeKTDH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:07:56 -0500
+        id S1731911AbeKTDH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:07:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB0B420C01;
-        Mon, 19 Nov 2018 16:43:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3575521104;
+        Mon, 19 Nov 2018 16:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645825;
-        bh=yUs9LamEMRHuxnULiYtVg1i11VYPilqWk5HwyJvoga0=;
+        s=default; t=1542645828;
+        bh=WvU4THMIjFl9/H8Lfz5KU4pnV/BlCuxQD4uV3uk3Ni0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UefDmd1jSxOAngGZqCOK4K+n6xZVMSIdqPXRIBSxh4wp2Ej01ZwSuxs11qkwjfcei
-         11WfpwqqCA3uW780Lu2Z3KL+/q54xZU0ikZGfn9azezSlsOcXKxshv8kPZ75K8wbFk
-         +w3e6eeVPMkTltu8GOCgM75sImMyJxCATsfd0cus=
+        b=sWFV7YfrUhhWLKF0LnS9IvArc1p2SsGnYsqPfl33tgwVJqVRzFaNLFcWBkNtGQpOQ
+         LQJyljcK2gpodi9YORQpEE5aw8QJXLObaupDMBm07nQjjr7X2h3pGauhyaoJQPRDdR
+         mK/PMcdrt0pwj/qZfmsXEBMmErFhnxTwpP33FcBo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.18 103/171] Btrfs: fix data corruption due to cloning of eof block
-Date:   Mon, 19 Nov 2018 17:28:19 +0100
-Message-Id: <20181119162635.280411184@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "akataria@vmware.com" <akataria@vmware.com>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: [PATCH 4.18 104/171] clockevents/drivers/i8253: Add support for PIT shutdown quirk
+Date:   Mon, 19 Nov 2018 17:28:20 +0100
+Message-Id: <20181119162635.431363738@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -62,98 +74,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-commit ac765f83f1397646c11092a032d4f62c3d478b81 upstream.
+commit 35b69a420bfb56b7b74cb635ea903db05e357bec upstream.
 
-We currently allow cloning a range from a file which includes the last
-block of the file even if the file's size is not aligned to the block
-size. This is fine and useful when the destination file has the same size,
-but when it does not and the range ends somewhere in the middle of the
-destination file, it leads to corruption because the bytes between the EOF
-and the end of the block have undefined data (when there is support for
-discard/trimming they have a value of 0x00).
+Add support for platforms where pit_shutdown() doesn't work because of a
+quirk in the PIT emulation. On these platforms setting the counter register
+to zero causes the PIT to start running again, negating the shutdown.
 
-Example:
+Provide a global variable that controls whether the counter register is
+zero'ed, which platform specific code can override.
 
- $ mkfs.btrfs -f /dev/sdb
- $ mount /dev/sdb /mnt
-
- $ export foo_size=$((256 * 1024 + 100))
- $ xfs_io -f -c "pwrite -S 0x3c 0 $foo_size" /mnt/foo
- $ xfs_io -f -c "pwrite -S 0xb5 0 1M" /mnt/bar
-
- $ xfs_io -c "reflink /mnt/foo 0 512K $foo_size" /mnt/bar
-
- $ od -A d -t x1 /mnt/bar
- 0000000 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 0524288 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c
- *
- 0786528 3c 3c 3c 3c 00 00 00 00 00 00 00 00 00 00 00 00
- 0786544 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- *
- 0790528 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 1048576
-
-The bytes in the range from 786532 (512Kb + 256Kb + 100 bytes) to 790527
-(512Kb + 256Kb + 4Kb - 1) got corrupted, having now a value of 0x00 instead
-of 0xb5.
-
-This is similar to the problem we had for deduplication that got recently
-fixed by commit de02b9f6bb65 ("Btrfs: fix data corruption when
-deduplicating between different files").
-
-Fix this by not allowing such operations to be performed and return the
-errno -EINVAL to user space. This is what XFS is doing as well at the VFS
-level. This change however now makes us return -EINVAL instead of
--EOPNOTSUPP for cases where the source range maps to an inline extent and
-the destination range's end is smaller then the destination file's size,
-since the detection of inline extents is done during the actual process of
-dropping file extent items (at __btrfs_drop_extents()). Returning the
--EINVAL error is done early on and solely based on the input parameters
-(offsets and length) and destination file's size. This makes us consistent
-with XFS and anyone else supporting cloning since this case is now checked
-at a higher level in the VFS and is where the -EINVAL will be returned
-from starting with kernel 4.20 (the VFS changed was introduced in 4.20-rc1
-by commit 07d19dc9fbe9 ("vfs: avoid problematic remapping requests into
-partial EOF block"). So this change is more geared towards stable kernels,
-as it's unlikely the new VFS checks get removed intentionally.
-
-A test case for fstests follows soon, as well as an update to filter
-existing tests that expect -EOPNOTSUPP to accept -EINVAL as well.
-
-CC: <stable@vger.kernel.org> # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
+Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
+Cc: "jgross@suse.com" <jgross@suse.com>
+Cc: "akataria@vmware.com" <akataria@vmware.com>
+Cc: "olaf@aepfle.de" <olaf@aepfle.de>
+Cc: "apw@canonical.com" <apw@canonical.com>
+Cc: vkuznets <vkuznets@redhat.com>
+Cc: "jasowang@redhat.com" <jasowang@redhat.com>
+Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Cc: KY Srinivasan <kys@microsoft.com>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/1541303219-11142-2-git-send-email-mikelley@microsoft.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ioctl.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/clocksource/i8253.c |   14 ++++++++++++--
+ include/linux/i8253.h       |    1 +
+ 2 files changed, 13 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -4293,9 +4293,17 @@ static noinline int btrfs_clone_files(st
- 		goto out_unlock;
- 	if (len == 0)
- 		olen = len = src->i_size - off;
--	/* if we extend to eof, continue to block boundary */
--	if (off + len == src->i_size)
-+	/*
-+	 * If we extend to eof, continue to block boundary if and only if the
-+	 * destination end offset matches the destination file's size, otherwise
-+	 * we would be corrupting data by placing the eof block into the middle
-+	 * of a file.
-+	 */
-+	if (off + len == src->i_size) {
-+		if (!IS_ALIGNED(len, bs) && destoff + len < inode->i_size)
-+			goto out_unlock;
- 		len = ALIGN(src->i_size, bs) - off;
+--- a/drivers/clocksource/i8253.c
++++ b/drivers/clocksource/i8253.c
+@@ -20,6 +20,13 @@
+ DEFINE_RAW_SPINLOCK(i8253_lock);
+ EXPORT_SYMBOL(i8253_lock);
+ 
++/*
++ * Handle PIT quirk in pit_shutdown() where zeroing the counter register
++ * restarts the PIT, negating the shutdown. On platforms with the quirk,
++ * platform specific code can set this to false.
++ */
++bool i8253_clear_counter_on_shutdown __ro_after_init = true;
++
+ #ifdef CONFIG_CLKSRC_I8253
+ /*
+  * Since the PIT overflows every tick, its not very useful
+@@ -109,8 +116,11 @@ static int pit_shutdown(struct clock_eve
+ 	raw_spin_lock(&i8253_lock);
+ 
+ 	outb_p(0x30, PIT_MODE);
+-	outb_p(0, PIT_CH0);
+-	outb_p(0, PIT_CH0);
++
++	if (i8253_clear_counter_on_shutdown) {
++		outb_p(0, PIT_CH0);
++		outb_p(0, PIT_CH0);
 +	}
  
- 	if (len == 0) {
- 		ret = 0;
+ 	raw_spin_unlock(&i8253_lock);
+ 	return 0;
+--- a/include/linux/i8253.h
++++ b/include/linux/i8253.h
+@@ -21,6 +21,7 @@
+ #define PIT_LATCH	((PIT_TICK_RATE + HZ/2) / HZ)
+ 
+ extern raw_spinlock_t i8253_lock;
++extern bool i8253_clear_counter_on_shutdown;
+ extern struct clock_event_device i8253_clockevent;
+ extern void clockevent_i8253_init(bool oneshot);
+ 
 
 
