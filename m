@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D9DBC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B008CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49AA9206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:14:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49AA9206BA
+	by mail.kernel.org (Postfix) with ESMTP id 7E45820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:15:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E45820851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbeKSUh5 (ORCPT
+        id S1727778AbeKSUie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:37:57 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54005 "EHLO
+        Mon, 19 Nov 2018 15:38:34 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40829 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbeKSUh5 (ORCPT
+        with ESMTP id S1726287AbeKSUie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:37:57 -0500
+        Mon, 19 Nov 2018 15:38:34 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAJAEcBq2523806
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAJAFD9b2524091
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 19 Nov 2018 02:14:38 -0800
+        Mon, 19 Nov 2018 02:15:13 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAJAEcwS2523803;
-        Mon, 19 Nov 2018 02:14:38 -0800
-Date:   Mon, 19 Nov 2018 02:14:38 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAJAFDkd2524088;
+        Mon, 19 Nov 2018 02:15:13 -0800
+Date:   Mon, 19 Nov 2018 02:15:13 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-cfffbfeb424bc274aba3b5ed4afd5891662481a8@git.kernel.org>
-Cc:     hpa@zytor.com, bp@suse.de, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, mingo@kernel.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-          linux-kernel@vger.kernel.org, bp@suse.de, hpa@zytor.com
-In-Reply-To: <20181107170218.7596-5-bp@alien8.de>
-References: <20181107170218.7596-5-bp@alien8.de>
+Message-ID: <tip-70887cb23eda6bedac73eef227b55e3eb74e0cb7@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, bp@suse.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, bp@suse.de, hpa@zytor.com
+In-Reply-To: <20181107170218.7596-6-bp@alien8.de>
+References: <20181107170218.7596-6-bp@alien8.de>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/microcode] x86/microcode/AMD: Clean up per-family patch
- size checks
-Git-Commit-ID: cfffbfeb424bc274aba3b5ed4afd5891662481a8
+Subject: [tip:x86/microcode] x86/microcode/AMD: Cleanup verify_patch_size()
+ more
+Git-Commit-ID: 70887cb23eda6bedac73eef227b55e3eb74e0cb7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,66 +58,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  cfffbfeb424bc274aba3b5ed4afd5891662481a8
-Gitweb:     https://git.kernel.org/tip/cfffbfeb424bc274aba3b5ed4afd5891662481a8
+Commit-ID:  70887cb23eda6bedac73eef227b55e3eb74e0cb7
+Gitweb:     https://git.kernel.org/tip/70887cb23eda6bedac73eef227b55e3eb74e0cb7
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Sat, 28 Jul 2018 19:04:02 +0200
+AuthorDate: Thu, 18 Oct 2018 17:55:45 +0200
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Mon, 19 Nov 2018 10:51:00 +0100
+CommitDate: Mon, 19 Nov 2018 10:51:05 +0100
 
-x86/microcode/AMD: Clean up per-family patch size checks
+x86/microcode/AMD: Cleanup verify_patch_size() more
 
-Starting with family 0x15, the patch size verification is not needed
-anymore. Thus get rid of the need to update this checking function with
-each new family.
+Rename the variable which contains the patch size read out from the
+section header to sh_psize for better differentiation of all the "sizes"
+in that function.
 
-Keep the check for older families.
+Also, improve the comment above it.
+
+No functional changes.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
 Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/20181107170218.7596-5-bp@alien8.de
+Link: https://lkml.kernel.org/r/20181107170218.7596-6-bp@alien8.de
 ---
- arch/x86/kernel/cpu/microcode/amd.c | 21 ++++++++-------------
- 1 file changed, 8 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/microcode/amd.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
-index f8d60cb9bb9a..bf682deb84e8 100644
+index bf682deb84e8..a94a15aacfe7 100644
 --- a/arch/x86/kernel/cpu/microcode/amd.c
 +++ b/arch/x86/kernel/cpu/microcode/amd.c
-@@ -183,27 +183,22 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int si
+@@ -175,16 +175,18 @@ static bool verify_patch_section(const u8 *buf, size_t buf_size, bool early)
+ }
+ 
+ /*
+- * Check whether the passed remaining file @size is large enough to contain a
+- * patch of the indicated @patch_size (and also whether this size does not
+- * exceed the per-family maximum).
++ * Check whether the passed remaining file @buf_size is large enough to contain
++ * a patch of the indicated @sh_psize (and also whether this size does not
++ * exceed the per-family maximum). @sh_psize is the size read from the section
++ * header.
+  */
+-static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int size)
++static unsigned int
++verify_patch_size(u8 family, u32 sh_psize, unsigned int buf_size)
  {
  	u32 max_size;
  
-+	if (family >= 0x15)
-+		return min_t(u32, patch_size, size);
-+
+ 	if (family >= 0x15)
+-		return min_t(u32, patch_size, size);
++		return min_t(u32, sh_psize, buf_size);
+ 
  #define F1XH_MPB_MAX_SIZE 2048
  #define F14H_MPB_MAX_SIZE 1824
--#define F15H_MPB_MAX_SIZE 4096
--#define F16H_MPB_MAX_SIZE 3458
--#define F17H_MPB_MAX_SIZE 3200
- 
- 	switch (family) {
-+	case 0x10 ... 0x12:
-+		max_size = F1XH_MPB_MAX_SIZE;
-+		break;
- 	case 0x14:
- 		max_size = F14H_MPB_MAX_SIZE;
- 		break;
--	case 0x15:
--		max_size = F15H_MPB_MAX_SIZE;
--		break;
--	case 0x16:
--		max_size = F16H_MPB_MAX_SIZE;
--		break;
--	case 0x17:
--		max_size = F17H_MPB_MAX_SIZE;
--		break;
- 	default:
--		max_size = F1XH_MPB_MAX_SIZE;
-+		WARN(1, "%s: WTF family: 0x%x\n", __func__, family);
-+		return 0;
+@@ -202,12 +204,12 @@ static unsigned int verify_patch_size(u8 family, u32 patch_size, unsigned int si
  		break;
  	}
  
+-	if (patch_size > min_t(u32, size, max_size)) {
++	if (sh_psize > min_t(u32, buf_size, max_size)) {
+ 		pr_err("patch size mismatch\n");
+ 		return 0;
+ 	}
+ 
+-	return patch_size;
++	return sh_psize;
+ }
+ 
+ /*
+@@ -693,14 +695,14 @@ static void cleanup(void)
+  */
+ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ {
++	unsigned int sh_psize, crnt_size, ret;
+ 	struct microcode_header_amd *mc_hdr;
+ 	struct ucode_patch *patch;
+-	unsigned int patch_size, crnt_size, ret;
+ 	u32 proc_fam;
+ 	u16 proc_id;
+ 
+-	patch_size  = *(u32 *)(fw + 4);
+-	crnt_size   = patch_size + SECTION_HDR_SIZE;
++	sh_psize    = *(u32 *)(fw + 4);
++	crnt_size   = sh_psize + SECTION_HDR_SIZE;
+ 	mc_hdr	    = (struct microcode_header_amd *)(fw + SECTION_HDR_SIZE);
+ 	proc_id	    = mc_hdr->processor_rev_id;
+ 
+@@ -726,7 +728,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 	 * but is present in the leftover file length so we need to subtract
+ 	 * it before passing this value to the function below.
+ 	 */
+-	ret = verify_patch_size(family, patch_size, leftover - SECTION_HDR_SIZE);
++	ret = verify_patch_size(family, sh_psize, leftover - SECTION_HDR_SIZE);
+ 	if (!ret) {
+ 		pr_err("Patch-ID 0x%08x: size mismatch.\n", mc_hdr->patch_id);
+ 		return crnt_size;
+@@ -738,7 +740,7 @@ static int verify_and_add_patch(u8 family, u8 *fw, unsigned int leftover)
+ 		return -EINVAL;
+ 	}
+ 
+-	patch->data = kmemdup(fw + SECTION_HDR_SIZE, patch_size, GFP_KERNEL);
++	patch->data = kmemdup(fw + SECTION_HDR_SIZE, sh_psize, GFP_KERNEL);
+ 	if (!patch->data) {
+ 		pr_err("Patch data allocation failure.\n");
+ 		kfree(patch);
