@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99631C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A40C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 637EC20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E412A208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:40:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VX+Xj+l3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 637EC20831
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAp6sdGS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E412A208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732911AbeKTDEQ (ORCPT
+        id S1732547AbeKTDET (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:04:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37144 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:04:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731989AbeKTDEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:04:13 -0500
+        id S1732923AbeKTDET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:04:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21C3F20989;
-        Mon, 19 Nov 2018 16:40:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D1C1206BA;
+        Mon, 19 Nov 2018 16:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645603;
-        bh=/U2eXRjF2hRV8lfsgUUrT8Iw0aYLgtrSHJYlZ93Oc4o=;
+        s=default; t=1542645609;
+        bh=jRxWvsQ9alv37xgoUI1vL+6VWm+slxnwfxUg1SJfT9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VX+Xj+l3rrHgT1EWc+u6KPl6hia9+xZYKzHsvBTNM3QEqrZRv5KwIm227Wz2oeTlv
-         tffvFSos0ERzYscuK+4SdxlAeRuhqUqP+M9LLltGiLhXv/OniDYrzr/o5NV8gq0WAW
-         EvPkN75yRF3IUr67JnAYegN0/YTbq2xdHA0OvnWY=
+        b=oAp6sdGSaFtXgdeJHMOdhCbXdfoecKeak+meeWUZ6XmVpKgTJNhGu9eYg9ce/jWqb
+         RO1EU7hesib1j8eqdbpTudonHZR8KN2jNjVjyftHAmsluSk8ScDmzCIAvkQYBen2dn
+         Y/aemIK5+GK1eMcNXGBG0f1Hv92vT369ZKoSdrC0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.18 002/171] powerpc/64/module: REL32 relocation range check
-Date:   Mon, 19 Nov 2018 17:26:38 +0100
-Message-Id: <20181119162619.331598196@linuxfoundation.org>
+Subject: [PATCH 4.18 021/171] powerpc/boot: Ensure _zimage_start is a weak symbol
+Date:   Mon, 19 Nov 2018 17:26:57 +0100
+Message-Id: <20181119162623.182061032@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,46 +64,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Piggin <npiggin@gmail.com>
+From: Joel Stanley <joel@jms.id.au>
 
-[ Upstream commit b851ba02a6f3075f0f99c60c4bc30a4af80cf428 ]
+[ Upstream commit ee9d21b3b3583712029a0db65a4b7c081d08d3b3 ]
 
-The recent module relocation overflow crash demonstrated that we
-have no range checking on REL32 relative relocations. This patch
-implements a basic check, the same kernel that previously oopsed
-and rebooted now continues with some of these errors when loading
-the module:
+When building with clang crt0's _zimage_start is not marked weak, which
+breaks the build when linking the kernel image:
 
-  module_64: x_tables: REL32 527703503449812 out of range!
+ $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
+ 0000000000000058 g       .text  0000000000000000 _zimage_start
 
-Possibly other relocations (ADDR32, REL16, TOC16, etc.) should also have
-overflow checks.
+ ld: arch/powerpc/boot/wrapper.a(crt0.o): in function '_zimage_start':
+ (.text+0x58): multiple definition of '_zimage_start';
+ arch/powerpc/boot/pseries-head.o:(.text+0x0): first defined here
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Clang requires the .weak directive to appear after the symbol is
+declared. The binutils manual says:
+
+ This directive sets the weak attribute on the comma separated list of
+ symbol names. If the symbols do not already exist, they will be
+ created.
+
+So it appears this is different with clang. The only reference I could
+see for this was an OpenBSD mailing list post[1].
+
+Changing it to be after the declaration fixes building with Clang, and
+still works with GCC.
+
+ $ objdump -t arch/powerpc/boot/crt0.o |grep _zimage_start$
+ 0000000000000058  w      .text	0000000000000000 _zimage_start
+
+Reported to clang as https://bugs.llvm.org/show_bug.cgi?id=38921
+
+[1] https://groups.google.com/forum/#!topic/fa.openbsd.tech/PAgKKen2YCY
+
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/kernel/module_64.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ arch/powerpc/boot/crt0.S |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@ -685,7 +685,14 @@ int apply_relocate_add(Elf64_Shdr *sechd
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -47,8 +47,10 @@ p_end:		.long	_end
+ p_pstack:	.long	_platform_stack_top
+ #endif
  
- 		case R_PPC64_REL32:
- 			/* 32 bits relative (used by relative exception tables) */
--			*(u32 *)location = value - (unsigned long)location;
-+			/* Convert value to relative */
-+			value -= (unsigned long)location;
-+			if (value + 0x80000000 > 0xffffffff) {
-+				pr_err("%s: REL32 %li out of range!\n",
-+				       me->name, (long int)value);
-+				return -ENOEXEC;
-+			}
-+			*(u32 *)location = value;
- 			break;
- 
- 		case R_PPC64_TOCSAVE:
+-	.weak	_zimage_start
+ 	.globl	_zimage_start
++	/* Clang appears to require the .weak directive to be after the symbol
++	 * is defined. See https://bugs.llvm.org/show_bug.cgi?id=38921  */
++	.weak	_zimage_start
+ _zimage_start:
+ 	.globl	_zimage_start_lib
+ _zimage_start_lib:
 
 
