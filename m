@@ -2,156 +2,231 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D1AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7710C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6EEC206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 940C920823
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:28:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Ot+Q29MD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EEC206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QVu7EZSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940C920823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbeKTEwi (ORCPT
+        id S1730430AbeKTEwr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:52:38 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41762 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730128AbeKTEwh (ORCPT
+        Mon, 19 Nov 2018 23:52:47 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34497 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730346AbeKTEwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:52:37 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u6so4088968plm.8
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:27:55 -0800 (PST)
+        Mon, 19 Nov 2018 23:52:46 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h3so8706612pfg.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:28:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=w0viHMBWjRvrA/E8RRIxUD6DuZAiEKYp6PVzl4DQ7WE=;
-        b=Ot+Q29MDsNF0eymJcR/R9FLjhxGlfyLuhZj6T0kk3FF1v04tC0un8TFxi0XUOhKeOD
-         JRaa265WifQtlup4bxZO8r40/8hSU4DAHhMYqu+Zj9rWp7/+SNOkQmEt/N1bdBvE66Fl
-         ij+wBsJ19XShlZlTiUPi8mrhoxInE11WGfC2Ago2KdclnpxcZq5YsmaD233+PhiogPb4
-         bIaNtIrhT6qXzaxkC5hLCv5hSFDKc4CkaKz+E9UQqCsGN8oJ7z+ACnTEGl52kp1TN3II
-         F/91qcJsPBPHZmPcNedMzWxHlfg1NL73rI2pM/7tVjbZFbsUD/iUFMbjZ6l1uBBl5RlG
-         QuuA==
+        bh=bOob0epm6z41bmuNDKM3DGgWgU35X4Eqd37XHzurihc=;
+        b=QVu7EZSzvprnZ7jcuYrgKc8+div6LMpdATcOv0i1QNifK32HjDcwoZtrvCTgCdJT80
+         0+DPUH6IUVRHpa9LLAxAhLLgvWyR62xbSYF/3dZKtsLUQcXAMlJ1PWX/ShK4wUSbFNAV
+         gOWQGyZjemiaMLYa2EIwqwrVD0y6Iq8HUsycY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w0viHMBWjRvrA/E8RRIxUD6DuZAiEKYp6PVzl4DQ7WE=;
-        b=sPtaTSjCPuID/rm3KmkUZ9vGHoYruNrOwD+uNMRAKPNOeeHZwZLwOgwGFgb2rl2puQ
-         pzbbCNMdeZaawufrQNWxYI5XbbljyVvnzp+nR7Vz2FFrGucc7kt7c1n5s0mJ7EbHS+z3
-         tICnFDgfXEnPYa7QIiP8QUdRfnrq53189Pg+wSopZXEI75Ne7J9eqNzo0vC3vk+psoog
-         kg7iytCqfyiU6BeL1i9TLFARgBgkg/e9eYFjn3QWa/zpAGSnx0oyXW/evAE7w0fw0E+k
-         NA39C616nd3rcdALr0fApKY2g8uRowPi3/fcODNLWU3xWPJPFdU7zFgH5cAo5+wv+jsA
-         rhGw==
-X-Gm-Message-State: AA+aEWaZGPyxkFOqes45a9USiU3/0cDreta9CPnwZcAaNK9OwmNwWUUT
-        GWL4kCaH5O0J2PoiGEBiYsafVw==
-X-Google-Smtp-Source: AFSGD/Vwm7n9ehPjJSmzDASPDyS3wkhKNRf+1RESELqUXVpAn58aAmvtvzP5Mjmob2nFERssmFS/LQ==
-X-Received: by 2002:a17:902:4d46:: with SMTP id o6mr2703162plh.302.1542652074601;
-        Mon, 19 Nov 2018 10:27:54 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm50285206pfj.183.2018.11.19.10.27.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 10:27:53 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gOoH2-0004qA-Nt; Mon, 19 Nov 2018 11:27:52 -0700
-Date:   Mon, 19 Nov 2018 11:27:52 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <liguozhu@hisilicon.com>,
-        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+        bh=bOob0epm6z41bmuNDKM3DGgWgU35X4Eqd37XHzurihc=;
+        b=LbxghWeDQNoKTieU6Ulb4s+NfJBfMWNb6H6Q2wCRRCx/44mLZf0RBEO+LHWqogHdJI
+         BUSWePCtgxpET0gXESH3FneeQi4X/j+vCLC4eI621jE+JJozEwSa0TCG+4/hpoIFP8lq
+         u0jtt91k2K+sLjq9SvccHbAS+Z1NPznm58YTBXRDYIoqiuyrwYCDDa/OMK01aJ/jMYa6
+         XAzOm5QUGiMzL8f0kAjdLVBz0CCumoKL0X66igY9XG5SmzfbM0FutSZyEtzfBZeQVuo0
+         jHYo3FAap77hyJsUWskBA1/B6ku38XOhGQehDdqeyh4pobylgquEqgabzySGwThix6Xz
+         +mRg==
+X-Gm-Message-State: AGRZ1gK7cQsNUvSqGteGyzeyYOu6yY03jB0T7cXbTG311eVZvGP+nbcw
+        00Nc5CPYIU7Y+gk1oOHjTWun6A==
+X-Google-Smtp-Source: AJdET5ePT+dwVXOgpf7ovM/HMJAD24tSvxTFkkWCDK/l5RHN0nBHe+IMpD7nys3vLBy8pRjX1y98/g==
+X-Received: by 2002:a63:5153:: with SMTP id r19mr20972196pgl.281.1542652083298;
+        Mon, 19 Nov 2018 10:28:03 -0800 (PST)
+Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id w3sm42944675pge.8.2018.11.19.10.28.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 10:28:02 -0800 (PST)
+Date:   Mon, 19 Nov 2018 11:27:59 -0700
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
-        linuxarm@huawei.com, haojian.zhuang@linaro.org,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
-        linux-crypto@vger.kernel.org,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181119182752.GA4890@ziepe.ca>
-References: <20181112075807.9291-2-nek.in.cn@gmail.com>
- <20181113002354.GO3695@mtr-leonro.mtl.com>
- <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
- <20181114160017.GI3759@mtr-leonro.mtl.com>
- <20181115085109.GD157308@Turing-Arch-b>
- <20181115145455.GN3759@mtr-leonro.mtl.com>
- <20181119091405.GE157308@Turing-Arch-b>
- <20181119091910.GF157308@Turing-Arch-b>
- <20181119104801.GF8268@mtr-leonro.mtl.com>
- <20181119164853.GA4593@redhat.com>
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v1 3/5] perf cs-etm: Support for NO_SYNC packet
+Message-ID: <20181119182759.GA608@xps15>
+References: <1541912383-19915-1-git-send-email-leo.yan@linaro.org>
+ <1541912383-19915-4-git-send-email-leo.yan@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181119164853.GA4593@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1541912383-19915-4-git-send-email-leo.yan@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 11:48:54AM -0500, Jerome Glisse wrote:
+On Sun, Nov 11, 2018 at 12:59:41PM +0800, Leo Yan wrote:
+> As described in OpenCSD (CoreSight decoder lib), in the decoding stream
+> it includes one trace element with type OCSD_GEN_TRC_ELEM_NO_SYNC; the
+> element indicates 'either at start of decode, or after overflow / bad
+> packet', we should take it as a signal for the tracing off and this will
+> cause tracing discontinuity.  From the trace dump with 'perf script',
+> sometimes the element OCSD_GEN_TRC_ELEM_NO_SYNC collaborates with
+> element OCSD_GEN_TRC_ELEM_TRACE_ON to show the tracing flow have been
+> turned off and on, in this case the cs-etm code has handled TRACE_ON
+> packet well so we observe the tracing discontinuity; but in another case
+> it only inserts the element OCSD_GEN_TRC_ELEM_NO_SYNC into instructions
+> packets, we miss to handle the case if has only standalone NO_SYNC
+> element and users cannot receive the info for tracing discontinuity.
+> 
+> This patch introduces new type CS_ETM_TRACE_OFF to generate packet for
+> receiving element OCSD_GEN_TRC_ELEM_NO_SYNC from decoder; when generate
+> sample, CS_ETM_TRACE_OFF packet has almost the same behaviour with
 
-> Just to comment on this, any infiniband driver which use umem and do
-> not have ODP (here ODP for me means listening to mmu notifier so all
-> infiniband driver except mlx5) will be affected by same issue AFAICT.
-> 
-> AFAICT there is no special thing happening after fork() inside any of
-> those driver. So if parent create a umem mr before fork() and program
-> hardware with it then after fork() the parent might start using new
-> page for the umem range while the old memory is use by the child. The
-> reverse is also true (parent using old memory and child new memory)
-> bottom line you can not predict which memory the child or the parent
-> will use for the range after fork().
-> 
-> So no matter what you consider the child or the parent, what the hw
-> will use for the mr is unlikely to match what the CPU use for the
-> same virtual address. In other word:
-> 
-> Before fork:
->     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
->     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> 
-> Case 1:
->     CPU parent: virtual addr ptr1 -> physical address = 0xCAFE
->     CPU child:  virtual addr ptr1 -> physical address = 0xDEAD
->     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
-> 
-> Case 2:
->     CPU parent: virtual addr ptr1 -> physical address = 0xBEEF
->     CPU child:  virtual addr ptr1 -> physical address = 0xCAFE
->     HARDWARE:   virtual addr ptr1 -> physical address = 0xCAFE
+Here you have used the word "almost", leading me to beleive there are cases
+where the handling of TRACE_ON and NO_SYNC packets differ, but the
+implementation enacts the same behavior for both.
 
-IIRC this is solved in IB by automatically calling
-madvise(MADV_DONTFORK) before creating the MR.
+Mike or Robert, can you confirm that TRACE_ON and NO_SYNC packets should be
+treated the same way?
 
-MADV_DONTFORK
-  .. This is useful to prevent copy-on-write semantics from changing the
-  physical location of a page if the parent writes to it after a
-  fork(2) ..
+Leo, if handling of the TRACE_ON and NO_SYNC packets is the same then we should
+treat them the same way in cs_etm_decoder__gen_trace_elem_printer(), i.e simply
+call cs_etm_decoder__buffer_trace_on().  That way packet handling in cs-etm.c
+doesn't change.  Otherwise see my comments below.
 
-Jason
+> CS_ETM_TRACE_ON packet: both of them invokes cs_etm__flush() to generate
+> samples for the previous instructions packet, and in cs_etm__sample() it
+> also needs to generate samples if TRACE_OFF packet is followed by one
+> sequential instructions packet.  This patch also converts the address to
+> 0 for TRACE_OFF packet, this is same with TRACE_ON packet as well.
+> 
+> Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> ---
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++++++++++
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  7 ++++---
+>  tools/perf/util/cs-etm.c                        | 15 +++++++++++----
+>  3 files changed, 25 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> index 5efb616..9d52727 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> @@ -369,6 +369,14 @@ cs_etm_decoder__buffer_range(struct cs_etm_decoder *decoder,
+>  }
+>  
+>  static ocsd_datapath_resp_t
+> +cs_etm_decoder__buffer_trace_off(struct cs_etm_decoder *decoder,
+> +				 const uint8_t trace_chan_id)
+> +{
+> +	return cs_etm_decoder__buffer_packet(decoder, trace_chan_id,
+> +					     CS_ETM_TRACE_OFF);
+> +}
+> +
+> +static ocsd_datapath_resp_t
+>  cs_etm_decoder__buffer_trace_on(struct cs_etm_decoder *decoder,
+>  				const uint8_t trace_chan_id)
+>  {
+> @@ -389,6 +397,8 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+>  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
+>  		break;
+>  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
+> +		resp = cs_etm_decoder__buffer_trace_off(decoder,
+> +							trace_chan_id);
+
+If we want to handle NO_SYNC element types, why introduce a "trace_off"
+function?  Wouldn't it make more sense to call it
+cs_etm_decoder__buffer_no_sync() ?
+
+>  		decoder->trace_on = false;
+>  		break;
+>  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> index 9351bd1..a38c97c 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> @@ -23,9 +23,10 @@ struct cs_etm_buffer {
+>  };
+>  
+>  enum cs_etm_sample_type {
+> -	CS_ETM_EMPTY = 0,
+> -	CS_ETM_RANGE = 1 << 0,
+> -	CS_ETM_TRACE_ON = 1 << 1,
+> +	CS_ETM_EMPTY		= 0,
+> +	CS_ETM_RANGE		= 1 << 0,
+> +	CS_ETM_TRACE_ON		= 1 << 1,
+> +	CS_ETM_TRACE_OFF	= 1 << 2,
+
+CS_ETM_NO_SYNC, see above comment.  And please don't use indentation.
+
+
+>  };
+>  
+>  enum cs_etm_isa {
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index f4fa877..2a0cef9 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -517,8 +517,9 @@ static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
+>  
+>  static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+>  {
+> -	/* Returns 0 for the CS_ETM_TRACE_ON packet */
+> -	if (packet->sample_type == CS_ETM_TRACE_ON)
+> +	/* Returns 0 for TRACE_ON and TRACE_OFF packets */
+> +	if (packet->sample_type == CS_ETM_TRACE_ON ||
+> +	    packet->sample_type == CS_ETM_TRACE_OFF)
+>  		return 0;
+>  
+>  	return packet->start_addr;
+> @@ -527,8 +528,9 @@ static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
+>  static inline
+>  u64 cs_etm__last_executed_instr(const struct cs_etm_packet *packet)
+>  {
+> -	/* Returns 0 for the CS_ETM_TRACE_ON packet */
+> -	if (packet->sample_type == CS_ETM_TRACE_ON)
+> +	/* Returns 0 for TRACE_ON and TRACE_OFF packets */
+> +	if (packet->sample_type == CS_ETM_TRACE_ON ||
+> +	    packet->sample_type == CS_ETM_TRACE_OFF)
+>  		return 0;
+>  
+>  	return packet->end_addr - packet->last_instr_size;
+> @@ -930,6 +932,10 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+>  		if (etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
+>  			generate_sample = true;
+>  
+> +		/* Generate sample for tracing off packet */
+> +		if (etmq->prev_packet->sample_type == CS_ETM_TRACE_OFF)
+> +			generate_sample = true;
+> +
+>  		/* Generate sample for branch taken packet */
+>  		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+>  		    etmq->prev_packet->last_instr_taken_branch)
+> @@ -1085,6 +1091,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+>  					cs_etm__sample(etmq);
+>  					break;
+>  				case CS_ETM_TRACE_ON:
+> +				case CS_ETM_TRACE_OFF:
+>  					/*
+>  					 * Discontinuity in trace, flush
+>  					 * previous branch stack
+> -- 
+> 2.7.4
+> 
