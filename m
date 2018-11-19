@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4D6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017DDC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37F18214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF50214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:58:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/3frICR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37F18214DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kPiNupNs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF50214DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404902AbeKTDWy (ORCPT
+        id S2404914AbeKTDW5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:22:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34732 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:22:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404434AbeKTDWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:22:53 -0500
+        id S2404434AbeKTDW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:22:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13B8B2148E;
-        Mon, 19 Nov 2018 16:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C3F62148E;
+        Mon, 19 Nov 2018 16:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646718;
-        bh=unWvmDCp1pA0AJ11ySd2Mw4b1rgaj0rgSy9Vq5MliEE=;
+        s=default; t=1542646721;
+        bh=hTQ5fOrzzj2/gK2yFnokqDiYgTRqfKatlKZkXxlbesE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b/3frICRxmU6+ZiE7cp6oiIyHNxaW1R4KUCqWB80y8IiiYBzVjOCY1ve+JZKHMaPu
-         Ov/TfEaUXDO5khWk7Z1laEnvcSuAbnU+c1rpGyfxPISRuAS/xZWdOZwTgfwuXAYs/Y
-         9lDxCO3kmAhtOUzYvALqn75i+WKxXjcESW4cyooY=
+        b=kPiNupNskb/cZZCM8JO8eGKElAKrk7e4IdgeIhelChplFP2dqTpbNU1p2S2Cyk3/0
+         9eUL2d7uS7R2amo0Xvca9F9WqQsj0xaNzpnraROs3K1PHkxug1JrA6hI8urYNM1vdg
+         Lh8ZrF1PTiOFHrTiv5CKBNPx1h7z1BClEZCXGdCk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 027/160] ACPI / LPSS: Add alternative ACPI HIDs for Cherry Trail DMA controllers
-Date:   Mon, 19 Nov 2018 17:27:46 +0100
-Message-Id: <20181119162633.361000047@linuxfoundation.org>
+Subject: [PATCH 4.4 028/160] pinctrl: qcom: spmi-mpp: Fix drive strength setting
+Date:   Mon, 19 Nov 2018 17:27:47 +0100
+Message-Id: <20181119162633.483729642@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -64,47 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Stephen Boyd <swboyd@chromium.org>
 
-[ Upstream commit 240714061c58e6b1abfb3322398a7634151c06cb ]
+[ Upstream commit 89c68b102f13f123aaef22b292526d6b92501334 ]
 
-Bay and Cherry Trail DSTDs represent a different set of devices depending
-on which OS the device think it is booting. One set of decices for Windows
-and another set of devices for Android which targets the Android-x86 Linux
-kernel fork (which e.g. used to have its own display driver instead of
-using the i915 driver).
+It looks like we parse the drive strength setting here, but never
+actually write it into the hardware to update it. Parse the setting and
+then write it at the end of the pinconf setting function so that it
+actually sticks in the hardware.
 
-Which set of devices we are actually going to get is out of our control,
-this is controlled by the ACPI OSID variable, which gets either set through
-an EFI setup option, or sometimes is autodetected. So we need to support
-both.
-
-This commit adds support for the 80862286 and 808622C0 ACPI HIDs which we
-get for the first resp. second DMA controller on Cherry Trail devices when
-OSID is set to Android.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: 0e948042c420 ("pinctrl: qcom: spmi-mpp: Implement support for sink mode")
+Cc: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/acpi_lpss.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/qcom/pinctrl-spmi-mpp.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/acpi_lpss.c
-+++ b/drivers/acpi/acpi_lpss.c
-@@ -235,9 +235,11 @@ static const struct acpi_device_id acpi_
- 	{ "INT33FC", },
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-mpp.c
+@@ -459,7 +459,7 @@ static int pmic_mpp_config_set(struct pi
+ 			pad->dtest = arg;
+ 			break;
+ 		case PIN_CONFIG_DRIVE_STRENGTH:
+-			arg = pad->drive_strength;
++			pad->drive_strength = arg;
+ 			break;
+ 		case PMIC_MPP_CONF_AMUX_ROUTE:
+ 			if (arg >= PMIC_MPP_AMUX_ROUTE_ABUS4)
+@@ -503,6 +503,10 @@ static int pmic_mpp_config_set(struct pi
+ 	if (ret < 0)
+ 		return ret;
  
- 	/* Braswell LPSS devices */
-+	{ "80862286", LPSS_ADDR(lpss_dma_desc) },
- 	{ "80862288", LPSS_ADDR(bsw_pwm_dev_desc) },
- 	{ "8086228A", LPSS_ADDR(bsw_uart_dev_desc) },
- 	{ "8086228E", LPSS_ADDR(bsw_spi_dev_desc) },
-+	{ "808622C0", LPSS_ADDR(lpss_dma_desc) },
- 	{ "808622C1", LPSS_ADDR(bsw_i2c_dev_desc) },
++	ret = pmic_mpp_write(state, pad, PMIC_MPP_REG_SINK_CTL, pad->drive_strength);
++	if (ret < 0)
++		return ret;
++
+ 	val = pad->is_enabled << PMIC_MPP_REG_MASTER_EN_SHIFT;
  
- 	/* Broadwell LPSS devices */
+ 	return pmic_mpp_write(state, pad, PMIC_MPP_REG_EN_CTL, val);
 
 
