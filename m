@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBC9C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A888C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07CEE208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63199208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:57:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2Wiy/laA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07CEE208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXlaPpr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63199208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404438AbeKTDVS (ORCPT
+        id S2404451AbeKTDVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:21:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60906 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:21:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403835AbeKTDVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:21:18 -0500
+        id S2403835AbeKTDVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:21:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B75206BA;
-        Mon, 19 Nov 2018 16:57:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AA0B206BA;
+        Mon, 19 Nov 2018 16:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646623;
-        bh=QHD4vUgIigSFgjbMgRaLa3Zu29sCKDPulmj+pNlYagU=;
+        s=default; t=1542646625;
+        bh=ODP23PyZWUblQSrm1aPz1qdub9uqnYeLoZdCsr5aXEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Wiy/laA7UHnAnSS1RiReBDnhsg789eyaPsGKTvBgzbHYuqou2Ui5oci6F7oUw1aP
-         hOdJuz7V6zzJVGsHGGFNotPWiSs0X7X+aZTJqJxWY9V3PVmbYXAs7f1x3x5WJXOuXJ
-         E3YAduvwQCbrspnHHN5/24t8WSAyEEhHQbdjgn8c=
+        b=DXlaPpr2Z/YtizwkPfwCnku95Io5pmY2orJ9y6dyD30hC084pQUdAgVrgixQpf9Sa
+         Vyz3r7/FlDeHxsynj1giMBkaWniT/+2gY670O7DFwAusRQi4Se/w2vkN3YHwgnh2Lp
+         NjBt91MTV3WZad1e8AT1s7kDKQ5+xuNyAPmQ0RQA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>
-Subject: [PATCH 4.4 007/160] parisc: Fix map_pages() to not overwrite existing pte entries
-Date:   Mon, 19 Nov 2018 17:27:26 +0100
-Message-Id: <20181119162630.903225047@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Ploumistos <alex.ploumistos@gmail.com>,
+        Jeremy Cline <jcline@redhat.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 008/160] ALSA: hda - Add mic quirk for the Lenovo G50-30 (17aa:3905)
+Date:   Mon, 19 Nov 2018 17:27:27 +0100
+Message-Id: <20181119162631.026090639@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -61,41 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Jeremy Cline <jcline@redhat.com>
 
-commit 3c229b3f2dd8133f61bb81d3cb018be92f4bba39 upstream.
+commit e7bb6ad5685f05685dd8a6a5eda7bfcd14d5f95b upstream.
 
-Fix a long-existing small nasty bug in the map_pages() implementation which
-leads to overwriting already written pte entries with zero, *if* map_pages() is
-called a second time with an end address which isn't aligned on a pmd boundry.
-This happens for example if we want to remap only the text segment read/write
-in order to run alternative patching on the code. Exiting the loop when we
-reach the end address fixes this.
+The Lenovo G50-30, like other G50 models, has a Conexant codec that
+requires a quirk for its inverted stereo dmic.
 
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1249364
+Reported-by: Alexander Ploumistos <alex.ploumistos@gmail.com>
+Tested-by: Alexander Ploumistos <alex.ploumistos@gmail.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: Helge Deller <deller@gmx.de>
+Signed-off-by: Jeremy Cline <jcline@redhat.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/parisc/mm/init.c |    8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ sound/pci/hda/patch_conexant.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -491,12 +491,8 @@ static void __init map_pages(unsigned lo
- 						pte = pte_mkhuge(pte);
- 				}
- 
--				if (address >= end_paddr) {
--					if (force)
--						break;
--					else
--						pte_val(pte) = 0;
--				}
-+				if (address >= end_paddr)
-+					break;
- 
- 				set_pte(pg_table, pte);
- 
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -867,6 +867,7 @@ static const struct snd_pci_quirk cxt506
+ 	SND_PCI_QUIRK(0x17aa, 0x21da, "Lenovo X220", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x21db, "Lenovo X220-tablet", CXT_PINCFG_LENOVO_TP410),
+ 	SND_PCI_QUIRK(0x17aa, 0x38af, "Lenovo IdeaPad Z560", CXT_FIXUP_MUTE_LED_EAPD),
++	SND_PCI_QUIRK(0x17aa, 0x3905, "Lenovo G50-30", CXT_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x390b, "Lenovo G50-80", CXT_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3975, "Lenovo U300s", CXT_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "Lenovo IdeaPad U310", CXT_FIXUP_STEREO_DMIC),
 
 
