@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415C1C04EBA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F092EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B09321104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB3EB206BA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MU09mrfO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B09321104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aOcrcsh0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3EB206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390680AbeKTDRC (ORCPT
+        id S2403754AbeKTDRF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55152 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:17:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389075AbeKTDRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:17:02 -0500
+        id S2390681AbeKTDRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:17:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24A71208E3;
-        Mon, 19 Nov 2018 16:52:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCD92206BA;
+        Mon, 19 Nov 2018 16:52:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646368;
-        bh=n2EnXByrIYm0jQhoLHULd1xpM40pDqbcj0m9ipcAgE4=;
+        s=default; t=1542646371;
+        bh=BJhh5bizsN2q8ThiiEA3XgKptm/8ySvLu4kagAW4NAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MU09mrfOji7CpTtFDO0BRyBWLQ5fp/PmwM+KGhZDeBgc6J2ig8JbQUGm7m9g15lLH
-         OycoJhaX2B3yvoznk28QeJdRfqVC3HfNCtTdg6dOZNMmkI1tX0vo0o2Lr6MCUMufI7
-         d4KQiXch9YJcM3jHv96pCskWnfqQ/0/Pr/blsk1w=
+        b=aOcrcsh0HAcb/YuYyf4Os2scPwaUh1CMYpvQlaX4JrqTOCGKGe36pBF10c9k5kOL/
+         oz9+voiXnxENMqp9k9G4Vr5Y2RGUd1GJFAtgFkqtHVu9OxQNNhvUtOVCaPkv+9Prak
+         KPlcd9HR4zs2nvPSUwVMw6FpAG382RHitCEitmOI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Young_X <YangX92@hotmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 15/83] cdrom: fix improper type cast, which can leat to information leak.
-Date:   Mon, 19 Nov 2018 17:28:41 +0100
-Message-Id: <20181119162614.992862992@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 16/83] scsi: qla2xxx: Fix incorrect port speed being set for FC adapters
+Date:   Mon, 19 Nov 2018 17:28:42 +0100
+Message-Id: <20181119162615.133284023@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -63,35 +63,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Young_X <YangX92@hotmail.com>
+From: Himanshu Madhani <himanshu.madhani@cavium.com>
 
-commit e4f3aa2e1e67bb48dfbaaf1cad59013d5a5bc276 upstream.
+commit 4c1458df9635c7e3ced155f594d2e7dfd7254e21 upstream.
 
-There is another cast from unsigned long to int which causes
-a bounds check to fail with specially crafted input. The value is
-then used as an index in the slot array in cdrom_slot_status().
-
-This issue is similar to CVE-2018-16658 and CVE-2018-10940.
-
-Signed-off-by: Young_X <YangX92@hotmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: 6246b8a1d26c7c ("[SCSI] qla2xxx: Enhancements to support ISP83xx.")
+Fixes: 1bb395485160d2 ("qla2xxx: Correct iiDMA-update calling conventions.")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cdrom/cdrom.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_mbx.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/drivers/cdrom/cdrom.c
-+++ b/drivers/cdrom/cdrom.c
-@@ -2435,7 +2435,7 @@ static int cdrom_ioctl_select_disc(struc
- 		return -ENOSYS;
- 
- 	if (arg != CDSL_CURRENT && arg != CDSL_NONE) {
--		if ((int)arg >= cdi->capacity)
-+		if (arg >= cdi->capacity)
- 			return -EINVAL;
- 	}
- 
+--- a/drivers/scsi/qla2xxx/qla_mbx.c
++++ b/drivers/scsi/qla2xxx/qla_mbx.c
+@@ -3580,10 +3580,7 @@ qla2x00_set_idma_speed(scsi_qla_host_t *
+ 	mcp->mb[0] = MBC_PORT_PARAMS;
+ 	mcp->mb[1] = loop_id;
+ 	mcp->mb[2] = BIT_0;
+-	if (IS_CNA_CAPABLE(vha->hw))
+-		mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+-	else
+-		mcp->mb[3] = port_speed & (BIT_2|BIT_1|BIT_0);
++	mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
+ 	mcp->mb[9] = vha->vp_idx;
+ 	mcp->out_mb = MBX_9|MBX_3|MBX_2|MBX_1|MBX_0;
+ 	mcp->in_mb = MBX_3|MBX_1|MBX_0;
 
 
