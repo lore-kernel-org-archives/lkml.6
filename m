@@ -2,160 +2,112 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C40C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD2BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F247206BB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:43:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="m1elgbwD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F247206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 814DA2146D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:43:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814DA2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729587AbeKTBG5 (ORCPT
+        id S1729608AbeKTBHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:06:57 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:34158 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbeKTBG5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:06:57 -0500
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wAJEgjwu025681
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 23:42:46 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wAJEgjwu025681
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542638566;
-        bh=W+HmOS41MvFNGmZWp1Sg20VIsCpePisC0GdiMwACNfQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m1elgbwDv1PaN6mtmkL1OvpBLU0QZKvmnpp0wxF/JeDA3lEgYuWUUb+Z7pS2ZjDcs
-         l1kfQEab1HnnK310my3W06l9VjNaIng0EWim7cMrSpv9Xl43qzD3ahYEZpQT/6mk4N
-         4uzCeOjicsY9lozBQ0EDl6HCAr+Z8AXqNXfY+ReWazE92wpWH3jBn52eBTYgvqKIAy
-         c1OIUlmUCmX9c1Z6q0NKQ3pa+qByj1zb9GMMYE33sZI37wBN6rMTbknW1eWuYd1E13
-         ckcjh+FNLPP0hXjeA1OjkwShxAPMllxW9gafpvXPzJ5kvkLQpFvE4FYXyFRzRVDrTD
-         oxFccR664EqZg==
-X-Nifty-SrcIP: [209.85.217.53]
-Received: by mail-vs1-f53.google.com with SMTP id r14so17861261vsc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 06:42:46 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJhtpMXik47KJeyL1/+Zrowgev2q/rnSMyKxrUooeYMA/8xBLWR
-        MszQRHXML8aLap4kLUNinjs1j7JEyik6xRwrUsc=
-X-Google-Smtp-Source: AJdET5exihuHijzSuQYwoq5GEz1T3k7MbsYzbxrShlWGpV3sTjSnbYA600rgD2A0bYn76jr+ZVBGgNcoxOn6bV0yIqI=
-X-Received: by 2002:a67:485:: with SMTP id 127mr9617960vse.54.1542638564929;
- Mon, 19 Nov 2018 06:42:44 -0800 (PST)
+        Mon, 19 Nov 2018 20:07:40 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49024 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729225AbeKTBHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:07:40 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7F7BD20791; Mon, 19 Nov 2018 15:43:49 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 24C26206D8;
+        Mon, 19 Nov 2018 15:43:39 +0100 (CET)
+Date:   Mon, 19 Nov 2018 15:43:38 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        tpiepho@impinj.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+Message-ID: <20181119154338.2dfa7a5a@bbrezillon>
+In-Reply-To: <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+        <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+        <20181119151009.490413d9@bbrezillon>
+        <b22b9bb3-17e3-1971-6986-33132c5ae232@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
- <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
- <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
- <20181113000938.GA16783@google.com> <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
- <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
- <20181113190335.GA50985@google.com> <878t1w7hzi.fsf@igel.home>
- <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com> <20181115021116.GA195691@google.com>
-In-Reply-To: <20181115021116.GA195691@google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 19 Nov 2018 23:42:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASaEkUH4egjXVmyKP2awAEccF4_WJacxh=VWA+N3nB-qQ@mail.gmail.com>
-Message-ID: <CAK7LNASaEkUH4egjXVmyKP2awAEccF4_WJacxh=VWA+N3nB-qQ@mail.gmail.com>
-Subject: Re: [PATCH v3] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Alexander Kapshuk <alexander.kapshuk@gmail.com>,
-        Genki Sky <sky@genki.is>,
-        Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christian Kujau <lists@nerdbynature.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        schwab@linux-m68k.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:12 AM Brian Norris <briannorris@chromium.org> wrote:
->
-> git-diff-index does not refresh the index for you, so using it for a
-> "-dirty" check can give misleading results. Commit 6147b1cf19651
-> ("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-> fix this by switching to git-status, but it overlooked the fact that
-> git-status also writes to the .git directory of the source tree, which
-> is definitely not kosher for an out-of-tree (O=) build. That is getting
-> reverted.
->
-> Fortunately, git-status now supports avoiding writing to the index via
-> the --no-optional-locks flag, as of git 2.14. It still calculates an
-> up-to-date index, but it avoids writing it out to the .git directory.
->
-> So, let's retry the solution from commit 6147b1cf19651 using this new
-> flag first, and if it fails, we assume this is an older version of git
-> and just use the old git-diff-index method.
->
-> It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-> the output of git-status (you have to be careful about the difference
-> betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-> directly to grep and use a regex that's good enough for both the
-> git-status and git-diff-index version.
->
-> Cc: Genki Sky <sky@genki.is>
-> Cc: Christian Kujau <lists@nerdbynature.de>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> ---
-> v1 -> v2:
->  * handle empty (non-dirty) results properly, where
->      echo "${empty_variable}" | grep -qv "${something_else}"
->    always has a 0 exit status (a blank line is an inverted match for any
->    non-blank expression). Just pipe directly to grep instead, with a
->    hopefully-not-too-permissive regex to handle both versions.
->  * actually tested with dirty and non-dirty trees this time
->
-> v2 -> v3:
->  * switch to extended regex (-E), instead of relying on GNU extension
->    (\?)
-> ---
+On Mon, 19 Nov 2018 15:14:07 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
+> On 11/19/2018 03:10 PM, Boris Brezillon wrote:
+> > On Mon, 19 Nov 2018 14:49:31 +0100
+> > Marek Vasut <marek.vasut@gmail.com> wrote:
+> >   
+> >> On 11/19/2018 11:01 AM, Mason Yang wrote:  
+> >>> Document the bindings used by the Renesas R-Car D3 RPC controller.
+> >>>
+> >>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> >>> ---
+> >>>  .../devicetree/bindings/spi/spi-renesas-rpc.txt    | 33 ++++++++++++++++++++++
+> >>>  1 file changed, 33 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>> new file mode 100644
+> >>> index 0000000..8286cc8
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> >>> @@ -0,0 +1,33 @@
+> >>> +Renesas R-Car D3 RPC controller Device Tree Bindings
+> >>> +----------------------------------------------------
+> >>> +
+> >>> +Required properties:
+> >>> +- compatible: should be "renesas,rpc-r8a77995"
+> >>> +- #address-cells: should be 1
+> >>> +- #size-cells: should be 0
+> >>> +- reg: should contain 2 entries, one for the registers and one for the direct
+> >>> +       mapping area
+> >>> +- reg-names: should contain "rpc_regs" and "dirmap"
+> >>> +- interrupts: interrupt line connected to the RPC SPI controller    
+> >>
+> >> Do you also plan to support the RPC HF mode ? And if so, how would that
+> >> look in the bindings ?  
+> > 
+> > Not sure this approach is still accepted, but that's how we solved the
+> > problem for the flexcom block [1].
+> > 
+> > [1]https://elixir.bootlin.com/linux/v4.20-rc3/source/Documentation/devicetree/bindings/mfd/atmel-flexcom.txt  
+> 
+> That looks pretty horrible.
+> 
+> In U-Boot we check whether the device hanging under the controller node
+> is JEDEC SPI flash or CFI flash and based on that decide what the config
+> of the controller should be (SPI or HF). Not sure that's much better,but
+> at least it doesn't need extra nodes which do not really represent any
+> kind of real hardware.
+> 
 
-Applied to linux-kbuild.
-Thanks!
-
-
->  scripts/setlocalversion | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-> index 71f39410691b..365b3c2b8f43 100755
-> --- a/scripts/setlocalversion
-> +++ b/scripts/setlocalversion
-> @@ -73,8 +73,16 @@ scm_version()
->                         printf -- '-svn%s' "`git svn find-rev $head`"
->                 fi
->
-> -               # Check for uncommitted changes
-> -               if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-> +               # Check for uncommitted changes.
-> +               # First, with git-status, but --no-optional-locks is only
-> +               # supported in git >= 2.14, so fall back to git-diff-index if
-> +               # it fails. Note that git-diff-index does not refresh the
-> +               # index, so it may give misleading results. See
-> +               # git-update-index(1), git-diff-index(1), and git-status(1).
-> +               if {
-> +                       git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-> +                       git diff-index --name-only HEAD
-> +               } | grep -qvE '^(.. )?scripts/package'; then
->                         printf '%s' -dirty
->                 fi
->
-> --
-> 2.19.1.930.g4563a0d9d0-goog
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+The subnodes are not needed, you can just have a property that tells in
+which mode the controller is supposed to operate, and the MFD would
+create a sub-device that points to the same device_node. Or we can have
+a single driver that decides what to declare (a spi_controller or flash
+controller), but you'd still have to decide where to place this
+driver...
