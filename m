@@ -2,152 +2,168 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44755C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D82C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAA7520851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:00:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7F5620851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:01:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="lT+g3L9m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAA7520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="KbPkq3T/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7F5620851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729678AbeKTBYK (ORCPT
+        id S1729688AbeKTBYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:24:10 -0500
-Received: from mail-eopbgr680055.outbound.protection.outlook.com ([40.107.68.55]:18272
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Mon, 19 Nov 2018 20:24:51 -0500
+Received: from mail-eopbgr10067.outbound.protection.outlook.com ([40.107.1.67]:11392
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729376AbeKTBYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:24:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+        id S1729376AbeKTBYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:24:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rt8oPdvEFxAkjHK8LvvHQ3B5/5cQDMn/XMgxW3ANaCI=;
- b=lT+g3L9mDrQ4QQ1jV9IxzOi4q5thC0Ei4jkgLsWncIlNjvlbjF58aSuWSd1ZxLixzNA/cQWnhj5rk4lmGxUik9EO3ssKKzXdsoni1eIwrIA+i7lwGnZg9UOb/vP20JHM7+d5QktvmfMGc9UQ/LnfJWW2bOTqKP7VkdHkMu79E0I=
-Received: from BY1PR12MB0406.namprd12.prod.outlook.com (10.162.146.27) by
- BY1PR12MB0453.namprd12.prod.outlook.com (10.162.147.142) with Microsoft SMTP
+ bh=l2YgBDAny7oFh1Z8gMQhZYFrIAShUl3KsMpb6pYz+ZM=;
+ b=KbPkq3T/rvi1AOv+jSj1zM2W1uva4EKiqZvVYn8twaB4eykNfdwjQj4ro8VO5enJnJUfISopRhXSKs+kg09oTSRzxR6Rov19d7m4Al5SSVYDZTIglytpz+dj5UwKWwLhV9orIEiq7vNqWSz1ts8+r2OZqIMnOfKaNHsg+CrUahE=
+Received: from DB6PR05MB3256.eurprd05.prod.outlook.com (10.170.221.150) by
+ DB6PR05MB4727.eurprd05.prod.outlook.com (10.168.21.20) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Mon, 19 Nov 2018 15:00:15 +0000
-Received: from BY1PR12MB0406.namprd12.prod.outlook.com
- ([fe80::94cb:cedf:281:79f2]) by BY1PR12MB0406.namprd12.prod.outlook.com
- ([fe80::94cb:cedf:281:79f2%6]) with mapi id 15.20.1339.026; Mon, 19 Nov 2018
- 15:00:10 +0000
-From:   "Zuo, Jerry" <Jerry.Zuo@amd.com>
-To:     Lyude Paul <lyude@redhat.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
-CC:     "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        "Li, Roman" <Roman.Li@amd.com>, "S, Shirish" <Shirish.S@amd.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] drm/amd/dm: Don't forget to attach MST encoders
-Thread-Topic: [PATCH 1/2] drm/amd/dm: Don't forget to attach MST encoders
-Thread-Index: AQHUfgOWyt5HmDUVPUGZom7lCHrra6VXLz5g
-Date:   Mon, 19 Nov 2018 15:00:10 +0000
-Message-ID: <BY1PR12MB0406C1EC0BCD2F6A295CCE3AE5D80@BY1PR12MB0406.namprd12.prod.outlook.com>
-References: <20181116232443.1709-1-lyude@redhat.com>
- <20181116232443.1709-2-lyude@redhat.com>
-In-Reply-To: <20181116232443.1709-2-lyude@redhat.com>
-Accept-Language: en-CA, en-US
+ 15.20.1339.26; Mon, 19 Nov 2018 15:00:53 +0000
+Received: from DB6PR05MB3256.eurprd05.prod.outlook.com
+ ([fe80::38bb:b216:97b7:d1d2]) by DB6PR05MB3256.eurprd05.prod.outlook.com
+ ([fe80::38bb:b216:97b7:d1d2%2]) with mapi id 15.20.1339.026; Mon, 19 Nov 2018
+ 15:00:53 +0000
+From:   Tariq Toukan <tariqt@mellanox.com>
+To:     Aaron Lu <aaron.lu@intel.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?B?UGF3ZcWCIFN0YXN6ZXdza2k=?= <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Yoel Caspersen <yoel@kviknet.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Ian Kumlien <ian.kumlien@gmail.com>
+Subject: Re: [PATCH v2 RESEND 1/2] mm/page_alloc: free order-0 pages through
+ PCP in page_frag_free()
+Thread-Topic: [PATCH v2 RESEND 1/2] mm/page_alloc: free order-0 pages through
+ PCP in page_frag_free()
+Thread-Index: AQHUgA6W4ccJdHhjHUaAMoxtv40S0aVXMTCA
+Date:   Mon, 19 Nov 2018 15:00:53 +0000
+Message-ID: <be048469-d29d-e700-4858-4a5263a50eb6@mellanox.com>
+References: <20181119134834.17765-1-aaron.lu@intel.com>
+ <20181119134834.17765-2-aaron.lu@intel.com>
+In-Reply-To: <20181119134834.17765-2-aaron.lu@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P193CA0139.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:85::44) To DB6PR05MB3256.eurprd05.prod.outlook.com
+ (2603:10a6:6:1b::22)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jerry.Zuo@amd.com; 
-x-originating-ip: [165.204.55.250]
+ smtp.mailfrom=tariqt@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR12MB0453;20:Lj79GYyySyUmeTWSflsZRwrl3dvC5yV6nuZMT/LeZAC30d/Gl2x9D3OzvIZ1RWD4MHYhubwm3XnRqHtg0Pgbq/S5dMJwA5nakOgjnmiCseZP1yxVMQaxho11O6sLhlyM6uHLpVTDP4W/d3gZlL1u1nPsPNIxILZxwRJZ7DU/PU8DF77EHyaoAFUlrbY6eh0Oh+Z10tFdoUZ0hssu4wZk4iK5XvrK80U1yradq4mRjPTVCFO4Xk0hOpgS1dDbHybF
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(39860400002)(376002)(346002)(199004)(189003)(13464003)(2501003)(74316002)(9686003)(305945005)(72206003)(7736002)(6506007)(8936002)(229853002)(11346002)(81166006)(81156014)(8676002)(446003)(5660300001)(97736004)(186003)(26005)(2906002)(478600001)(68736007)(6116002)(3846002)(102836004)(86362001)(4326008)(71200400001)(110136005)(71190400001)(7696005)(25786009)(6436002)(55016002)(33656002)(53546011)(106356001)(551934003)(76176011)(99286004)(486006)(5024004)(66066001)(2900100001)(105586002)(256004)(6246003)(476003)(14444005)(316002)(54906003)(14454004)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR12MB0453;H:BY1PR12MB0406.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: 1b266621-f9c4-4dd0-dfd3-08d64e2fb391
+x-microsoft-exchange-diagnostics: 1;DB6PR05MB4727;6:Ukj8n3VGCD+JFyhVNgfps8fhDPLPK/HUs3kFBexwotVkPmm7YcR+F9s/qeoWgn6L1qfMY0neXttSg+EtHPEjOY5YLfiE5JDmOA3u/4Tl58GYUZ8hpBX8viMDWlDNDMw3HYnqT53WU1g5rbUg1DDV7Ib+3eS2Gfo7U9v44QE9rspH7bZn+AACo0MiLV72QwTwCzVdOzxzadp0/ef9qVbOVeEwSu9Lqh2u9GxARWkFm1fIn1kHnB0ygOy3PXhC5IpUlpOU9LH1trZhZFP0HF2c7hqUsBxPzraPB4FRCHpiDRLLSnSDmybPy8dSaqcajDrlSHkNwAsfoEdrvznY2ZmDegONorm9gwglFn6oGdCSVO/cwbCNMHbTu1o1aU+mxFqzoRruysYYV9T2AT5GCL2tPou5GD4yJcXaqG/CJFXNSKO6FV3Jn3EoBOBPGhxRX1KO09MU3nU2G5emPZ9pHqFqRg==;5:/xkGgglBg3Xc/X/Aye/EKAvNKxatIS9P6SXWaKP7dkcx94VQ/+2BJLgZKPpCVHzPCo5IQJtEGVoK4r/qgi5xyqztIBmu/mXdTOUrcxc7kiBkduVMY2uNLH8xWVo9ZMsPc/r9oER7WocmhEZsuz/8Y8Ty7g/KIbeEYIHPEdGyXL4=;7:Oi2yHVHVLBbJKTSDS/m8va+Z95kqP0JgD6PohPnHUe4J4fxFtXT8+CHUkWwoxMlqASXIlomVMpjKQKD7fF14KBF5eoro4a7FbgU9sB+OgnJRJOlhD5VAXM/37DbYG99vGK/1VQS+/Wl70Hr5G3ZuuQ==
+x-ms-office365-filtering-correlation-id: 7b67cf00-2e47-4a5e-c8ce-08d64e2fccf0
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY1PR12MB0453;
-x-ms-traffictypediagnostic: BY1PR12MB0453:
-x-microsoft-antispam-prvs: <BY1PR12MB0453D972C95E6C79C5809D33E5D80@BY1PR12MB0453.namprd12.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB6PR05MB4727;
+x-ms-traffictypediagnostic: DB6PR05MB4727:
+x-microsoft-antispam-prvs: <DB6PR05MB4727002664D61E75F3EFD323AED80@DB6PR05MB4727.eurprd05.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BY1PR12MB0453;BCL:0;PCL:0;RULEID:;SRVR:BY1PR12MB0453;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231415)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB6PR05MB4727;BCL:0;PCL:0;RULEID:;SRVR:DB6PR05MB4727;
 x-forefront-prvs: 08617F610C
-received-spf: None (protection.outlook.com: amd.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(346002)(39860400002)(396003)(199004)(189003)(2201001)(6246003)(81166006)(81156014)(31696002)(7736002)(66066001)(8936002)(71190400001)(68736007)(71200400001)(8676002)(2900100001)(2616005)(11346002)(476003)(36756003)(446003)(316002)(6512007)(6306002)(53936002)(2906002)(256004)(7416002)(86362001)(14444005)(39060400002)(3846002)(6116002)(5660300001)(97736004)(305945005)(4326008)(2501003)(52116002)(76176011)(31686004)(102836004)(386003)(53546011)(6506007)(99286004)(186003)(26005)(14454004)(54906003)(25786009)(110136005)(486006)(478600001)(6486002)(6436002)(229853002)(966005)(106356001)(105586002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR05MB4727;H:DB6PR05MB3256.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: 8uBQLFAz5EGj372vjtz8qm7gUpsbhl8hFQdqThN3QKYp0m3afZ/6Qocwonzx3xptt1a1WF12bld2xax4E/Dnl0foQ32SGuJhiY7iDRESbSW/+r0U8r3zcZgULG66/HsdklOuSTXrR0hoWqB+5HwUs9m5lUi8Tn7rks1wb2I1wFI0m8TEI075AEuo0LUK1R2caR+LSuUebk26NnlL6v00fB4g5kFBSJsjiZOdD8WtV8klynxQbFHYrVCiexazPogF82/Ub3g189uiw0iwb2T2vVe02FHXNlp6tlECeQnN65IpZlVW2PmrQVOm4HqbLs4NXutqlJT+uXpzvpTEnXfoEbZKSN/pJqfKOOl3f0HXIUI=
+x-microsoft-antispam-message-info: sgiQpIvKUc2E+cL8O1uBvSLignlOh9MVuKNeN2Wb10+bjtaYFpKOlKJPWu2ugXqBEECW5Tiv7WvdWu4R4gBQI7d/Wm+FwCEGI9FgBwtkUkiQ6nZIUAmLLIosezv+IKzXFz7UxSZe5hnPZTss1ryV29JqkZIFcsxulzPZBiSfM8pibD8JzU2MzSRg3mt+pTVGDJVMT4dPfjvVSY41rSu4PMTge0BBKoXRZ5jH0cCLwl5kQPbBVTlHB+gnxKpXY2oAxUa/ttjrxJuJxzdwNBQ22iFbsf9C4Pv1DmaCOEveJXiFl6fy2E+nwFqHQmNkMIN2ozzurlm1oVYHY31hgmP7+QZFRubSjK7l8wXiZMYAvkQ=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6A9C7ED5C96A7A499DA2C1C1F937C3B8@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b266621-f9c4-4dd0-dfd3-08d64e2fb391
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 15:00:10.1052
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b67cf00-2e47-4a5e-c8ce-08d64e2fccf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2018 15:00:53.2484
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR12MB0453
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR05MB4727
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Jerry (Fangzhi) Zuo <Jerry.Zuo@amd.com>
-
-The change fixed MST + SST daisy chain and S3 scenarios. The issue shows hu=
-ge delay in MST + SST daisy chain, and soft hang in S3 resume.
-
-The aux sequence is changed by failed iteration search in drm_connector_for=
-_each_possible_encoder().=20
-The failure of searching for the best encoder for the connector due to the =
-miss of attached encoder in the process of adding MST connector.=A0The iter=
-ation search takes time to push drm_dp_send_enum_path_resources() aux trans=
-action after the mode probe, and causes conflict to drm_dp_mst_i2c_xfer(), =
-leading to the aux transaction timeout.
-
------Original Message-----
-From: Lyude Paul <lyude@redhat.com>=20
-Sent: November 16, 2018 6:25 PM
-To: amd-gfx@lists.freedesktop.org
-Cc: Zuo, Jerry <Jerry.Zuo@amd.com>; Wentland, Harry <Harry.Wentland@amd.com=
->; Li, Sun peng (Leo) <Sunpeng.Li@amd.com>; Deucher, Alexander <Alexander.D=
-eucher@amd.com>; Koenig, Christian <Christian.Koenig@amd.com>; Zhou, David(=
-ChunMing) <David1.Zhou@amd.com>; David Airlie <airlied@linux.ie>; Li, Roman=
- <Roman.Li@amd.com>; S, Shirish <Shirish.S@amd.com>; Daniel Vetter <daniel.=
-vetter@ffwll.ch>; dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel=
-.org
-Subject: [PATCH 1/2] drm/amd/dm: Don't forget to attach MST encoders
-
-Drive-by fix, this is bound to cause problems somewhere.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/=
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index d02c32a1039c..0cca1809fdcd 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -342,6 +342,8 @@ dm_dp_add_mst_connector(struct drm_dp_mst_topology_mgr =
-*mgr,
- 		master->connector_id);
-=20
- 	aconnector->mst_encoder =3D dm_dp_create_fake_mst_encoder(master);
-+	drm_connector_attach_encoder(&aconnector->base,
-+				     &aconnector->mst_encoder->base);
-=20
- 	/*
- 	 * TODO: understand why this one is needed
---=20
-2.19.1
-
+DQoNCk9uIDE5LzExLzIwMTggMzo0OCBQTSwgQWFyb24gTHUgd3JvdGU6DQo+IHBhZ2VfZnJhZ19m
+cmVlKCkgY2FsbHMgX19mcmVlX3BhZ2VzX29rKCkgdG8gZnJlZSB0aGUgcGFnZSBiYWNrIHRvDQo+
+IEJ1ZGR5LiBUaGlzIGlzIE9LIGZvciBoaWdoIG9yZGVyIHBhZ2UsIGJ1dCBmb3Igb3JkZXItMCBw
+YWdlcywgaXQNCj4gbWlzc2VzIHRoZSBvcHRpbWl6YXRpb24gb3Bwb3J0dW5pdHkgb2YgdXNpbmcg
+UGVyLUNwdS1QYWdlcyBhbmQgY2FuDQo+IGNhdXNlIHpvbmUgbG9jayBjb250ZW50aW9uIHdoZW4g
+Y2FsbGVkIGZyZXF1ZW50bHkuDQo+IA0KPiBQYXdlxYIgU3Rhc3pld3NraSByZWNlbnRseSBzaGFy
+ZWQgaGlzIHJlc3VsdCBvZiAnaG93IExpbnV4IGtlcm5lbA0KPiBoYW5kbGVzIG5vcm1hbCB0cmFm
+ZmljJ1sxXSBhbmQgZnJvbSBwZXJmIGRhdGEsIEplc3BlciBEYW5nYWFyZCBCcm91ZXINCj4gZm91
+bmQgdGhlIGxvY2sgY29udGVudGlvbiBjb21lcyBmcm9tIHBhZ2UgYWxsb2NhdG9yOg0KPiANCj4g
+ICAgbWx4NWVfcG9sbF90eF9jcQ0KPiAgICB8DQo+ICAgICAtLTE2LjM0JS0tbmFwaV9jb25zdW1l
+X3NrYg0KPiAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8LS0xMi42NSUtLV9fZnJl
+ZV9wYWdlc19vaw0KPiAgICAgICAgICAgICAgIHwgICAgICAgICAgfA0KPiAgICAgICAgICAgICAg
+IHwgICAgICAgICAgIC0tMTEuODYlLS1mcmVlX29uZV9wYWdlDQo+ICAgICAgICAgICAgICAgfCAg
+ICAgICAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAg
+ICAgfC0tMTAuMTAlLS1xdWV1ZWRfc3Bpbl9sb2NrX3Nsb3dwYXRoDQo+ICAgICAgICAgICAgICAg
+fCAgICAgICAgICAgICAgICAgICAgIHwNCj4gICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAg
+ICAgICAgIC0tMC42NSUtLV9yYXdfc3Bpbl9sb2NrDQo+ICAgICAgICAgICAgICAgfA0KPiAgICAg
+ICAgICAgICAgIHwtLTEuNTUlLS1wYWdlX2ZyYWdfZnJlZQ0KPiAgICAgICAgICAgICAgIHwNCj4g
+ICAgICAgICAgICAgICAgLS0xLjQ0JS0tc2tiX3JlbGVhc2VfZGF0YQ0KPiANCj4gSmVzcGVyIGV4
+cGxhaW5lZCBob3cgaXQgaGFwcGVuZWQ6IG1seDUgZHJpdmVyIFJYLXBhZ2UgcmVjeWNsZQ0KPiBt
+ZWNoYW5pc20gaXMgbm90IGVmZmVjdGl2ZSBpbiB0aGlzIHdvcmtsb2FkIGFuZCBwYWdlcyBoYXZl
+IHRvIGdvDQo+IHRocm91Z2ggdGhlIHBhZ2UgYWxsb2NhdG9yLiBUaGUgbG9jayBjb250ZW50aW9u
+IGhhcHBlbnMgZHVyaW5nDQo+IG1seDUgRE1BIFRYIGNvbXBsZXRpb24gY3ljbGUuIEFuZCB0aGUg
+cGFnZSBhbGxvY2F0b3IgY2Fubm90IGtlZXANCj4gdXAgYXQgdGhlc2Ugc3BlZWRzLlsyXQ0KPiAN
+Cj4gSSB0aG91Z2h0IHRoYXQgX19mcmVlX3BhZ2VzX29rKCkgYXJlIG1vc3RseSBmcmVlaW5nIGhp
+Z2ggb3JkZXINCj4gcGFnZXMgYW5kIHRob3VnaHQgdGhpcyBpcyBhbiBsb2NrIGNvbnRlbnRpb24g
+Zm9yIGhpZ2ggb3JkZXIgcGFnZXMNCj4gYnV0IEplc3BlciBleHBsYWluZWQgaW4gZGV0YWlsIHRo
+YXQgX19mcmVlX3BhZ2VzX29rKCkgaGVyZSBhcmUNCj4gYWN0dWFsbHkgZnJlZWluZyBvcmRlci0w
+IHBhZ2VzIGJlY2F1c2UgbWx4NSBpcyB1c2luZyBvcmRlci0wIHBhZ2VzDQo+IHRvIHNhdGlzZnkg
+aXRzIHBhZ2UgcG9vbCBhbGxvY2F0aW9uIHJlcXVlc3QuWzNdDQo+IA0KPiBUaGUgZnJlZSBwYXRo
+IGFzIHBvaW50ZWQgb3V0IGJ5IEplc3BlciBpczoNCj4gc2tiX2ZyZWVfaGVhZCgpDQo+ICAgIC0+
+IHNrYl9mcmVlX2ZyYWcoKQ0KPiAgICAgIC0+IHBhZ2VfZnJhZ19mcmVlKCkNCj4gQW5kIHRoZSBw
+YWdlcyBiZWluZyBmcmVlZCBvbiB0aGlzIHBhdGggYXJlIG9yZGVyLTAgcGFnZXMuDQo+IA0KPiBG
+aXggdGhpcyBieSBkb2luZyBzaW1pbGFyIHRoaW5ncyBhcyBpbiBfX3BhZ2VfZnJhZ19jYWNoZV9k
+cmFpbigpIC0NCj4gc2VuZCB0aGUgYmVpbmcgZnJlZWQgcGFnZSB0byBQQ1AgaWYgaXQncyBhbiBv
+cmRlci0wIHBhZ2UsIG9yDQo+IGRpcmVjdGx5IHRvIEJ1ZGR5IGlmIGl0IGlzIGEgaGlnaCBvcmRl
+ciBwYWdlLg0KPiANCj4gV2l0aCB0aGlzIGNoYW5nZSwgUGF3ZcWCIGhhc24ndCBub3RpY2VkIGxv
+Y2sgY29udGVudGlvbiB5ZXQgaW4NCj4gaGlzIHdvcmtsb2FkIGFuZCBKZXNwZXIgaGFzIG5vdGlj
+ZWQgYSA3JSBwZXJmb3JtYW5jZSBpbXByb3ZlbWVudA0KPiB1c2luZyBhIG1pY3JvIGJlbmNobWFy
+ayBhbmQgbG9jayBjb250ZW50aW9uIGlzIGdvbmUuIElsaWFzJyB0ZXN0DQo+IG9uIGEgJ2xvdycg
+c3BlZWQgMUdiaXQgaW50ZXJmYWNlIG9uIGFuIGNvcnRleC1hNTMgc2hvd3MgfjExJQ0KPiBwZXJm
+b3JtYW5jZSBib29zdCB0ZXN0aW5nIHdpdGggNjRieXRlIHBhY2tldHMgYW5kIF9fZnJlZV9wYWdl
+c19vaygpDQo+IGRpc2FwcGVhcmVkIGZyb20gcGVyZiB0b3AuDQo+IA0KPiBbMV06IGh0dHBzOi8v
+d3d3LnNwaW5pY3MubmV0L2xpc3RzL25ldGRldi9tc2c1MzEzNjIuaHRtbA0KPiBbMl06IGh0dHBz
+Oi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL25ldGRldi9tc2c1MzE0MjEuaHRtbA0KPiBbM106IGh0
+dHBzOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL25ldGRldi9tc2c1MzE1NTYuaHRtbA0KPiANCj4g
+UmVwb3J0ZWQtYnk6IFBhd2XFgiBTdGFzemV3c2tpIDxwc3Rhc3pld3NraUBpdGNhcmUucGw+DQo+
+IEFuYWx5c2VkLWJ5OiBKZXNwZXIgRGFuZ2FhcmQgQnJvdWVyIDxicm91ZXJAcmVkaGF0LmNvbT4N
+Cj4gQWNrZWQtYnk6IFZsYXN0aW1pbCBCYWJrYSA8dmJhYmthQHN1c2UuY3o+DQo+IEFja2VkLWJ5
+OiBNZWwgR29ybWFuIDxtZ29ybWFuQHRlY2hzaW5ndWxhcml0eS5uZXQ+DQo+IEFja2VkLWJ5OiBK
+ZXNwZXIgRGFuZ2FhcmQgQnJvdWVyIDxicm91ZXJAcmVkaGF0LmNvbT4NCj4gQWNrZWQtYnk6IEls
+aWFzIEFwYWxvZGltYXMgPGlsaWFzLmFwYWxvZGltYXNAbGluYXJvLm9yZz4NCj4gVGVzdGVkLWJ5
+OiBJbGlhcyBBcGFsb2RpbWFzIDxpbGlhcy5hcGFsb2RpbWFzQGxpbmFyby5vcmc+DQo+IEFja2Vk
+LWJ5OiBBbGV4YW5kZXIgRHV5Y2sgPGFsZXhhbmRlci5oLmR1eWNrQGxpbnV4LmludGVsLmNvbT4N
+Cj4gQWNrZWQtYnk6IFRhcmlxIFRvdWthbiA8dGFyaXF0QG1lbGxhbm94LmNvbQ0KDQptaXNzaW5n
+ICc+JyBzaWduIGluIG15IGVtYWlsIHRhZy4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBBYXJvbiBMdSA8
+YWFyb24ubHVAaW50ZWwuY29tPg0KPiAtLS0NCg==
