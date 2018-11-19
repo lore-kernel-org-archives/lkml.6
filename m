@@ -2,127 +2,111 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E6BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5748FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879AC20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:18:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879AC20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 22BCC20831
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:19:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22BCC20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbeKTBly (ORCPT
+        id S1729741AbeKTBnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:41:54 -0500
-Received: from mout.gmx.net ([212.227.17.22]:60647 "EHLO mout.gmx.net"
+        Mon, 19 Nov 2018 20:43:03 -0500
+Received: from mga14.intel.com ([192.55.52.115]:62708 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbeKTBly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:41:54 -0500
-Received: from dhcp-41-57.bos.redhat.com ([66.187.233.206]) by mail.gmx.com
- (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0LZiQy-1fjxyz3sC4-00lVov; Mon, 19 Nov 2018 16:17:42 +0100
-Message-ID: <1542640658.12945.41.camel@gmx.us>
-Subject: Re: [PATCH] debugobjects: add a new Kconfig for POOL_SIZE
-From:   Qian Cai <cai@gmx.us>
-To:     Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux kernel <linux-kernel@vger.kernel.org>, arnd@arndb.de,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Date:   Mon, 19 Nov 2018 10:17:38 -0500
-In-Reply-To: <44517d7f-c34f-1424-d0db-601e590c626d@redhat.com>
-References: <20181118082255.1275-1-cai@gmx.us>
-         <alpine.DEB.2.21.1811181919170.9459@nanos.tec.linutronix.de>
-         <5939F7F3-E332-4112-861E-C6C0DF86717E@gmx.us>
-         <alpine.DEB.2.21.1811190904450.9459@nanos.tec.linutronix.de>
-         <trinity-0de3e85e-8526-4004-b346-3b64dd89bc78-1542634057117@msvc-mesg-gmx021>
-         <44517d7f-c34f-1424-d0db-601e590c626d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:sul65BZdqZ/akbWUU/353/EKgMPqsIrbEwmyM7t3tAFYlzV18Qc
- X+kwAkyfMPyPadAGHwVQrugv8pTuBCbREdF1hmDxA6R8dqf1CMffZ7T8PBobE+aL4CHbw+7
- P0bYuSTYN8wKWLod+EpgcfCsje8ctzhN4UrV2MEIA8gBtfy0fJVPFks4up9scTix4E9s4JZ
- 0zKTAdvcJj72qycQn0PIQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:aVcoSwanceg=:dQvKMELqi28MB6UlwFYawN
- 1JvtDkdxm3sBfxqaBbrkExg202jwrfQvZ8wngR+DeY1xSZc9G7zHn5Bz64FxsEgeIQgbzzXei
- 2LN+S5QM/4tCoUsW0BBWh8cfuQ5sKlhxkdsoHDw6+tJ0EqCFBI7jRvRMMta5HyWkVAb1hsr0E
- uuKZMJAgVVhzIPL/hlqpEj3c0qJFGtaAZPa9MjjY8VUuguMstm/VxKoqtONiVOeAnFbrQGz0O
- 9I8QcRDExlxYHDZnTRetd9fphC5l99kQMN1k3II0Lf4sjOAOaPvtbg6OWsgxMuQzscwy2GC8w
- 2k5UxrLOpFJkn7Ax06GzhEh/e8LXGU+IbEYrOOkxOWOHQUBttE6pGBEv3Uv4ZA2AIwZyU2BvO
- F7O21XFc4MuvjT/ODfz1begDwqy97srPe8iwJNBgtP1fix/VY5e5JhgTE+tq18wCeaQSJ/mu6
- 9sgncRkbMET2rB+SaCouq340qxGrl9hUSCSCVAWogm+x6ONd/Zg+PqmAVfVsYiIfgDz/KT/JQ
- r6TAxyAXGwieP0OwmnQENgPMeda9SOlOxkQaOyFhHKDTXVCuGjneIUXgzLRX5voS/d6+2gZle
- pCrhk8XM0wFNFyMCi9pSA8+OxkSfDlKe0dfZFIZXJ2htf4P8pFK4QDZ/MgFHOrjK7BUlXPsbJ
- uxOkOwNjgMjHGoRXeQnSUjI5qRQtkPSjNRNCz9pcXn4LQQS/aeOEVtYTszox2NjlXZfdUCDdm
- MRwQpme2uAnleXvqhUYq77idsvC4pDl9SkzcssctPk8JK9zIIq7bBAIXJF0okcnm7Ucplpha7
- K+RVgSZJ9ZZhwKqgIF99RmwUU8QK14Reem2Q84AkJ6spsWNJpGplr5b5db2QfmZRjMR7rYU0M
- pHDcC9lqYDzgTTCHxWH53SPGEEBPSfqrnw3mDXalfA+auytXbtpDY0nl6OYV4e
+        id S1729589AbeKTBnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:43:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 07:19:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="109370299"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Nov 2018 07:19:08 -0800
+Received: from [10.252.27.191] (abudanko-mobl.ccr.corp.intel.com [10.252.27.191])
+        by linux.intel.com (Postfix) with ESMTP id 5740D580032;
+        Mon, 19 Nov 2018 07:19:04 -0800 (PST)
+Subject: Re: [PATCH v1 2/2]: Documentation/admin-guide: introduce
+ perf-security.rst file
+To:     Jordan Glover <Golden_Miller83@protonmail.ch>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jonatan Corbet <corbet@lwn.net>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <0ac97cd0-4773-fff6-7d4e-74c4a1f076c4@linux.intel.com>
+ <a44df303-d962-c1a4-4fe0-6bad887ebcdc@linux.intel.com>
+ <aDN4nC6p93nK7ILVP3EH-Y4RcKK4KH0ppQKFkIgxTVxkfbOHWjAYJXdTeuq39nbPkySKItZ_8VHN2PfQS_T08GBzeooD5cvc2Xd8oZxSp9s=@protonmail.ch>
+ <20181119104646.GB9761@hirez.programming.kicks-ass.net>
+ <n06wPuXrWqZEywcNe2BID7GP8dShJlE4L4oLpxO9__duA3noKJO_maOemZwZGC7EHCW7Ur14war-RqLo5pco9uruYaGJMCPOyRVzPJrZyz4=@protonmail.ch>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <fa11032d-5260-651a-0d39-a1353ae898ad@linux.intel.com>
+Date:   Mon, 19 Nov 2018 18:19:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <n06wPuXrWqZEywcNe2BID7GP8dShJlE4L4oLpxO9__duA3noKJO_maOemZwZGC7EHCW7Ur14war-RqLo5pco9uruYaGJMCPOyRVzPJrZyz4=@protonmail.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-19 at 09:51 -0500, Waiman Long wrote:
-> On 11/19/2018 08:27 AM, Qian Cai wrote:
-> > On 11/19/18 at 3:09 AM, Thomas Gleixner wrote:
-> > 
-> > > Qian,
-> > > 
-> > > On Sun, 18 Nov 2018, Qian Cai wrote:
-> > > > > On Nov 18, 2018, at 1:21 PM, Thomas Gleixner <tglx@linutronix.de>
-> > > > > wrote:
-> > > > > On Sun, 18 Nov 2018, Qian Cai wrote:
-> > > > > > As the results, systems have 60+ CPUs with both timer and workqueue
-> > > > > > objects enabled could trigger "ODEBUG: Out of memory. ODEBUG
-> > > > > > disabled".
-> > > > > > 
-> > > > > > Hence, add a new Kconfig option so users could adjust
-> > > > > > ODEBUG_POOL_SIZE
-> > > > > > accordingly if either timer or workqueue objects are selected.
-> > > > > 
-> > > > > why do we need a config option, when the required number can be
-> > > > > deduced
-> > > > > already from the active CONFIG_DEBUG_OBJECTS_* and NR_CPUS?
-> > > > > 
-> > > > 
-> > > > It because I am worry about the coupling between the implementation
-> > > > details of
-> > > > timers and workqueue objects, and the computation in the code you
-> > > > mentioned
-> > > > here. For example, people could change workqueue.c to have different
-> > > > number
-> > > > of worekqueues initialized during the early boot in the future which is
-> > > > going to
-> > > > affect the required pool size, and I am not sure if people are going to
-> > > > adjust the
-> > > > code in debugobjects.c here as well when they made changes like that.
-> > > > 
-> > > > Also, the computation could become so complex depends on lots of config
-> > > > options like perf, hrtimer, and combinations that I have not tested so
-> > > > far which is
-> > > > difficult to exhausted all the possibilities.
-> > > > 
-> > > > Hence, I feel like the Kconfig option is more flexible and less error-
-> > > > prone.
-> > > 
-> > > Quite the contrary. Config options are a pain and truly error-prone if you
-> > > want to compile general purpose kernels as distributions do.
-> > > 
-> > 
-> > Ah, I never thought distributions people would
-> > enable those debugging options.
+Hi,
+
+On 19.11.2018 13:49, Jordan Glover wrote:
+> On Monday, November 19, 2018 11:46 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 > 
-> Distros like RHEL usually ship two kernels - one for production and one
-> for debug. The debug kernel does have debugobjects enabled.
+>> On Mon, Nov 19, 2018 at 10:35:59AM +0000, Jordan Glover wrote:
+>>
+>>> On Monday, November 19, 2018 6:42 AM, Alexey Budankov alexey.budankov@linux.intel.com wrote:
+>>>
+>>>> +>=3:
+>>>>
+>>>> -         Restrict *access* to PCL performance monitoring for unprivileged processes.
+>>>>
+>>>>
+>>>> -         This is the default on Debian and Android [7]_ , [8]_ .
+>>>>
+>>>>
+>>>
+>>> AFAIK there is no support for '+>=3' in mainline kernel[1].
+>>> Debian and Android use out-of-tree patch for that[2].
+>>> Maybe someone should upstream it?
+>>
+>> NAK still stands on that. Alternative's have been proposed but so far
+>> nobody that cared seems to care enough to implement those.
 > 
-Right, I can remember that now . However, if I understand correctly, since the
-early static pool size needs to be determined during the compilation time, it
-depends on the No. CPUs are from the machines that built the distro kernels.
-Then, when users use those distro kernels, they are not going to have correct
-the pool size according to the No. CPUs on their test machines.
+> So, I guess we can't document NAKed patches :)
+
+Please stay tuned for v2.
+
+Thanks,
+Alexey
+
+> 
+> Jordan
+> 
+> 
