@@ -6,56 +6,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CBEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F330FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1A4206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA27320C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkVCvUMm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D1A4206BA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rTEVEfyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA27320C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389904AbeKTDON (ORCPT
+        id S2389929AbeKTDOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:14:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51398 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:14:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388976AbeKTDOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:14:12 -0500
+        id S2388976AbeKTDOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:14:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4605E2145D;
-        Mon, 19 Nov 2018 16:49:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7018A208E4;
+        Mon, 19 Nov 2018 16:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646198;
-        bh=7SSoSd3sPinXgMkiazRklnCmaWb/JbkriscAq+WqDwI=;
+        s=default; t=1542646203;
+        bh=9hPjECk9raRnr5c8kWwnUN10ZqXtZAqEbXHXqDamP5I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dkVCvUMmnV1UO2nDxUVC+bwFC9ypds8ULf9qWdV7R0ctB1TsDD89s/DpyFW/9L39T
-         Ct0EjNhT949JUYQIgLVyM2nAtUvY9+1EZuT20DYDYztBfu3PQa5shvCbckuWltm9Ev
-         16FQGR3yPqZ7mBoXBc7VvnBFsfvd1nQMNSOQe1fw=
+        b=rTEVEfyi55K3qWNSBR0owzx5YoBYYTXj68t+n3/aU6Lz8ZLkQjww6km3Ty2i0myme
+         /Zt4x0qYOAw345orfUulHRizPhkdWQBgChSCoL17n6WAF9Ilws5PHJzeBxZvcheOvP
+         I6u2xSr5ubiDhCowb4YegKySTFjTEDlSeqxjMeJs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "akataria@vmware.com" <akataria@vmware.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>,
-        "apw@canonical.com" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: [PATCH 4.14 072/124] clockevents/drivers/i8253: Add support for PIT shutdown quirk
-Date:   Mon, 19 Nov 2018 17:28:46 +0100
-Message-Id: <20181119162627.060735893@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.14 038/124] xtensa: make sure bFLT stack is 16 byte aligned
+Date:   Mon, 19 Nov 2018 17:28:12 +0100
+Message-Id: <20181119162621.032014192@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -73,79 +60,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Kelley <mikelley@microsoft.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 35b69a420bfb56b7b74cb635ea903db05e357bec upstream.
+commit 0773495b1f5f1c5e23551843f87b5ff37e7af8f7 upstream.
 
-Add support for platforms where pit_shutdown() doesn't work because of a
-quirk in the PIT emulation. On these platforms setting the counter register
-to zero causes the PIT to start running again, negating the shutdown.
+Xtensa ABI requires stack alignment to be at least 16. In noMMU
+configuration ARCH_SLAB_MINALIGN is used to align stack. Make it at
+least 16.
 
-Provide a global variable that controls whether the counter register is
-zero'ed, which platform specific code can override.
+This fixes the following runtime error in noMMU configuration, caused by
+interaction between insufficiently aligned stack and alloca function,
+that results in corruption of on-stack variable in the libc function
+glob:
 
-Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
-Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
-Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
-Cc: "jgross@suse.com" <jgross@suse.com>
-Cc: "akataria@vmware.com" <akataria@vmware.com>
-Cc: "olaf@aepfle.de" <olaf@aepfle.de>
-Cc: "apw@canonical.com" <apw@canonical.com>
-Cc: vkuznets <vkuznets@redhat.com>
-Cc: "jasowang@redhat.com" <jasowang@redhat.com>
-Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
-Cc: KY Srinivasan <kys@microsoft.com>
+ Caught unhandled exception in 'sh' (pid = 47, pc = 0x02d05d65)
+  - should not happen
+  EXCCAUSE is 15
+
 Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/1541303219-11142-2-git-send-email-mikelley@microsoft.com
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/clocksource/i8253.c |   14 ++++++++++++--
- include/linux/i8253.h       |    1 +
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ arch/xtensa/include/asm/processor.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/clocksource/i8253.c
-+++ b/drivers/clocksource/i8253.c
-@@ -20,6 +20,13 @@
- DEFINE_RAW_SPINLOCK(i8253_lock);
- EXPORT_SYMBOL(i8253_lock);
+--- a/arch/xtensa/include/asm/processor.h
++++ b/arch/xtensa/include/asm/processor.h
+@@ -24,7 +24,11 @@
+ # error Linux requires the Xtensa Windowed Registers Option.
+ #endif
  
-+/*
-+ * Handle PIT quirk in pit_shutdown() where zeroing the counter register
-+ * restarts the PIT, negating the shutdown. On platforms with the quirk,
-+ * platform specific code can set this to false.
-+ */
-+bool i8253_clear_counter_on_shutdown __ro_after_init = true;
+-#define ARCH_SLAB_MINALIGN	XCHAL_DATA_WIDTH
++/* Xtensa ABI requires stack alignment to be at least 16 */
 +
- #ifdef CONFIG_CLKSRC_I8253
++#define STACK_ALIGN (XCHAL_DATA_WIDTH > 16 ? XCHAL_DATA_WIDTH : 16)
++
++#define ARCH_SLAB_MINALIGN STACK_ALIGN
+ 
  /*
-  * Since the PIT overflows every tick, its not very useful
-@@ -109,8 +116,11 @@ static int pit_shutdown(struct clock_eve
- 	raw_spin_lock(&i8253_lock);
- 
- 	outb_p(0x30, PIT_MODE);
--	outb_p(0, PIT_CH0);
--	outb_p(0, PIT_CH0);
-+
-+	if (i8253_clear_counter_on_shutdown) {
-+		outb_p(0, PIT_CH0);
-+		outb_p(0, PIT_CH0);
-+	}
- 
- 	raw_spin_unlock(&i8253_lock);
- 	return 0;
---- a/include/linux/i8253.h
-+++ b/include/linux/i8253.h
-@@ -21,6 +21,7 @@
- #define PIT_LATCH	((PIT_TICK_RATE + HZ/2) / HZ)
- 
- extern raw_spinlock_t i8253_lock;
-+extern bool i8253_clear_counter_on_shutdown;
- extern struct clock_event_device i8253_clockevent;
- extern void clockevent_i8253_init(bool oneshot);
- 
+  * User space process size: 1 GB.
 
 
