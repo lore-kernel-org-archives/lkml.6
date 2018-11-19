@@ -2,49 +2,50 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC65C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AE1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1E22148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EDA3208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:55:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cGr05+tS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1E22148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q36AoJ9N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EDA3208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403839AbeKTDTe (ORCPT
+        id S2403854AbeKTDTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:19:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58740 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:19:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390118AbeKTDTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:19:33 -0500
+        id S2403841AbeKTDTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:19:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8A932147A;
-        Mon, 19 Nov 2018 16:55:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 310C3208E3;
+        Mon, 19 Nov 2018 16:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646519;
-        bh=qZT3MOwh2L0w6dbmIrUtewbACQeOJvoe9miiYlp/X8g=;
+        s=default; t=1542646521;
+        bh=ywI6WPXchSNQpbWdSWEI+yeBFwqH/7XVDXPhi1LTyvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGr05+tSNNCZ0LVWQrIDnFRiEs0nKzpbq6Ldgjg+sT5hfQRjtg043wwR4xGOBorfO
-         JVhkxADXF/O2jaKweCGMAG2b0Q37hYbma+CBSfj0QEuMfXXsSNgNOKf5gJKVWdy/Ox
-         7tbH6r7LmqDMSka4U6cebFwmBFInt3R0OxFrBxPY=
+        b=Q36AoJ9NIncOm8qCIvD/E8xnndjNt4sPHVFifEOAtxsUMccWIXn8LZaURs7LxcYXe
+         YBMbsikVSsxFsy3I5Q/W8bmnjbDWmSqHrE/G9KlYi8BfFlcM4doayn7HPEtcl1g/ep
+         82nVm3zgnpUxQ+LfmpiVyjf1HbnFt561Awf6sQ7M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        stable@vger.kernel.org, Ronald Wahl <rwahl@gmx.de>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
         Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH 4.9 34/83] clk: s2mps11: Fix matching when built as module and DT node contains compatible
-Date:   Mon, 19 Nov 2018 17:29:00 +0100
-Message-Id: <20181119162619.288413072@linuxfoundation.org>
+Subject: [PATCH 4.9 35/83] clk: at91: Fix division by zero in PLL recalc_rate()
+Date:   Mon, 19 Nov 2018 17:29:01 +0100
+Message-Id: <20181119162619.472275187@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -62,75 +63,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Ronald Wahl <rwahl@gmx.de>
 
-commit 8985167ecf57f97061599a155bb9652c84ea4913 upstream.
+commit 0f5cb0e6225cae2f029944cb8c74617aab6ddd49 upstream.
 
-When driver is built as module and DT node contains clocks compatible
-(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
-module aliases won't match.
+Commit a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached MUL
+and DIV values") removed a check that prevents a division by zero. This
+now causes a stacktrace when booting the kernel on a at91 platform if
+the PLL DIV register contains zero. This commit reintroduces this check.
 
-The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
-The modalias from driver: platform:s2mps11-clk
-
-The devices are instantiated by parent's MFD.  However both Device Tree
-bindings and parent define the compatible for clocks devices.  In case
-of module matching this DT compatible will be used.
-
-The issue will not happen if this is a built-in (no need for module
-matching) or when clocks DT node does not contain compatible (not
-correct from bindings perspective but working for driver).
-
-Note when backporting to stable kernels: adjust the list of device ID
-entries.
-
+Fixes: a982e45dc150 ("clk: at91: PLL recalc_rate() now using cached...")
 Cc: <stable@vger.kernel.org>
-Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Ronald Wahl <rwahl@gmx.de>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index d44e0eea31ec..0934d3724495 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -245,6 +245,36 @@ static const struct platform_device_id s2mps11_clk_id[] = {
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+---
+ drivers/clk/at91/clk-pll.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/drivers/clk/at91/clk-pll.c
++++ b/drivers/clk/at91/clk-pll.c
+@@ -133,6 +133,9 @@ static unsigned long clk_pll_recalc_rate
+ {
+ 	struct clk_pll *pll = to_clk_pll(hw);
  
-+#ifdef CONFIG_OF
-+/*
-+ * Device is instantiated through parent MFD device and device matching is done
-+ * through platform_device_id.
-+ *
-+ * However if device's DT node contains proper clock compatible and driver is
-+ * built as a module, then the *module* matching will be done trough DT aliases.
-+ * This requires of_device_id table.  In the same time this will not change the
-+ * actual *device* matching so do not add .of_match_table.
-+ */
-+static const struct of_device_id s2mps11_dt_match[] = {
-+	{
-+		.compatible = "samsung,s2mps11-clk",
-+		.data = (void *)S2MPS11X,
-+	}, {
-+		.compatible = "samsung,s2mps13-clk",
-+		.data = (void *)S2MPS13X,
-+	}, {
-+		.compatible = "samsung,s2mps14-clk",
-+		.data = (void *)S2MPS14X,
-+	}, {
-+		.compatible = "samsung,s5m8767-clk",
-+		.data = (void *)S5M8767X,
-+	}, {
-+		/* Sentinel */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
-+#endif
++	if (!pll->div || !pll->mul)
++		return 0;
 +
- static struct platform_driver s2mps11_clk_driver = {
- 	.driver = {
- 		.name  = "s2mps11-clk",
+ 	return (parent_rate / pll->div) * (pll->mul + 1);
+ }
+ 
 
 
