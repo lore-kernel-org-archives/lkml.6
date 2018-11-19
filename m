@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA4FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B31CC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4810E20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC3FE21104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:53:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jeyote7t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4810E20851
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVUxrnOZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3FE21104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403784AbeKTDRO (ORCPT
+        id S2390704AbeKTDRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:17:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55368 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:17:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390166AbeKTDRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:17:12 -0500
+        id S2390166AbeKTDRR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:17:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F16520851;
-        Mon, 19 Nov 2018 16:52:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A717120851;
+        Mon, 19 Nov 2018 16:53:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646379;
-        bh=Z5UT/g9tbAbYhaItit+BKP+ZXkEBH4xKgSZsKzvWDYw=;
+        s=default; t=1542646384;
+        bh=cNK/PQFE6dLhahX8VrUPHqmA0uFNnLAMSe8mXLnnXA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jeyote7tWJ47ViYfoE5UmQnkgGsacgNPB7/y5/8LgBXJyNPnV9SK3JnW1X695cw1e
-         IiewP9Q5NGlywOqMdW+MKNnpFmL72Oby8GiwqgqIJ2+b+bqPnvUrka9wawDu8yesta
-         yR4tBHl8oPBZZiv9pSlRgobAdN/ciot9fOiOwWWc=
+        b=LVUxrnOZH4Io808yhZS4IMHW30CKx17pEDzTsfqZUZ/wwojeLHSiN36lZurkvTD1C
+         F4NyQG+ZgeLL3cLrGJ/TQnUXWyOyOAVVOwBjYfXs2QtozZVIgI3PuLq/Uc5KK/Y6QI
+         slg128wLq9FiMUovTJZXLWQ2U5JynhvHZxOYKQRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 19/83] fuse: Fix use-after-free in fuse_dev_do_write()
-Date:   Mon, 19 Nov 2018 17:28:45 +0100
-Message-Id: <20181119162615.686706557@linuxfoundation.org>
+        stable@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.9 20/83] fuse: fix blocked_waitq wakeup
+Date:   Mon, 19 Nov 2018 17:28:46 +0100
+Message-Id: <20181119162615.868998569@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 References: <20181119162612.046511542@linuxfoundation.org>
@@ -62,60 +61,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kirill Tkhai <ktkhai@virtuozzo.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit d2d2d4fb1f54eff0f3faa9762d84f6446a4bc5d0 upstream.
+commit 908a572b80f6e9577b45e81b3dfe2e22111286b8 upstream.
 
-After we found req in request_find() and released the lock,
-everything may happen with the req in parallel:
+Using waitqueue_active() is racy.  Make sure we issue a wake_up()
+unconditionally after storing into fc->blocked.  After that it's okay to
+optimize with waitqueue_active() since the first wake up provides the
+necessary barrier for all waiters, not the just the woken one.
 
-cpu0                              cpu1
-fuse_dev_do_write()               fuse_dev_do_write()
-  req = request_find(fpq, ...)    ...
-  spin_unlock(&fpq->lock)         ...
-  ...                             req = request_find(fpq, oh.unique)
-  ...                             spin_unlock(&fpq->lock)
-  queue_interrupt(&fc->iq, req);   ...
-  ...                              ...
-  ...                              ...
-  request_end(fc, req);
-    fuse_put_request(fc, req);
-  ...                              queue_interrupt(&fc->iq, req);
-
-
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Fixes: 46c34a348b0a ("fuse: no fc->lock for pqueue parts")
-Cc: <stable@vger.kernel.org> # v4.2
+Fixes: 3c18ef8117f0 ("fuse: optimize wake_up")
+Cc: <stable@vger.kernel.org> # v3.10
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/fuse/dev.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/fuse/dev.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 --- a/fs/fuse/dev.c
 +++ b/fs/fuse/dev.c
-@@ -1868,16 +1868,20 @@ static ssize_t fuse_dev_do_write(struct
- 
- 	/* Is it an interrupt reply? */
- 	if (req->intr_unique == oh.unique) {
-+		__fuse_get_request(req);
- 		spin_unlock(&fpq->lock);
- 
- 		err = -EINVAL;
--		if (nbytes != sizeof(struct fuse_out_header))
-+		if (nbytes != sizeof(struct fuse_out_header)) {
-+			fuse_put_request(fc, req);
- 			goto err_finish;
+@@ -383,12 +383,19 @@ static void request_end(struct fuse_conn
+ 	if (test_bit(FR_BACKGROUND, &req->flags)) {
+ 		spin_lock(&fc->lock);
+ 		clear_bit(FR_BACKGROUND, &req->flags);
+-		if (fc->num_background == fc->max_background)
++		if (fc->num_background == fc->max_background) {
+ 			fc->blocked = 0;
+-
+-		/* Wake up next waiter, if any */
+-		if (!fc->blocked && waitqueue_active(&fc->blocked_waitq))
+ 			wake_up(&fc->blocked_waitq);
++		} else if (!fc->blocked) {
++			/*
++			 * Wake up next waiter, if any.  It's okay to use
++			 * waitqueue_active(), as we've already synced up
++			 * fc->blocked with waiters with the wake_up() call
++			 * above.
++			 */
++			if (waitqueue_active(&fc->blocked_waitq))
++				wake_up(&fc->blocked_waitq);
 +		}
  
- 		if (oh.error == -ENOSYS)
- 			fc->no_interrupt = 1;
- 		else if (oh.error == -EAGAIN)
- 			queue_interrupt(&fc->iq, req);
-+		fuse_put_request(fc, req);
- 
- 		fuse_copy_finish(cs);
- 		return nbytes;
+ 		if (fc->num_background == fc->congestion_threshold &&
+ 		    fc->connected && fc->bdi_initialized) {
 
 
