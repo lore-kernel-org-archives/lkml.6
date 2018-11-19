@@ -2,383 +2,173 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61600C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302D5C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0352147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:53:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/+CN1Bg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0352147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EEAE521104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEAE521104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731154AbeKTESH (ORCPT
+        id S1731345AbeKTES7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:18:07 -0500
-Received: from casper.infradead.org ([85.118.1.10]:41258 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730274AbeKTESG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:18:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=NxUC/6YntL79MMsrRk8NNnbnAENGqFbB+t+It1tPOAI=; b=u/+CN1BgtPAnVFGgIs4p28xR+p
-        j0T2/d9VhLV45HSCvvQWkTfMIJ0x5DikOPCyeyoOiZbUOspKuF9b4fYeJU3TuGl8ZmjoCjfBr6OLM
-        7dC3suCv073C5Q7RuAnf9A64DGYqq8ZxZ5JQe4it4QXr5G+jdcAgQfdTQ8rvtHEfLOdkV0Ih3wPTD
-        VkX4r3YuPix3OJw6s0o/EKc4PvVp9X6OIPmbrRsiKEh1SJ3SgRk7l1VA7h+I/WWYVEtjlKfqMZoqf
-        UKacbg8BW0GBib0eHWgHRScJHHO0B7xVcqlbrvVNWYaR49ktt7yQtGZYls1jNqLcUWSdPv8c+hT4L
-        YwjdgKiQ==;
-Received: from 177.205.94.246.dynamic.adsl.gvt.net.br ([177.205.94.246] helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gOnjn-0007ea-36; Mon, 19 Nov 2018 17:53:31 +0000
-Date:   Mon, 19 Nov 2018 15:53:26 -0200
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Stakanov Schufter <stakanov@freenet.de>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
-Message-ID: <20181119155326.24f6083f@coco.lan>
-In-Reply-To: <s5hbm6l5cdi.wl-tiwai@suse.de>
-References: <s5hbm6l5cdi.wl-tiwai@suse.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+        Mon, 19 Nov 2018 23:18:59 -0500
+Received: from mga02.intel.com ([134.134.136.20]:31674 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730274AbeKTES6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 23:18:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 09:54:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,253,1539673200"; 
+   d="scan'208";a="107580423"
+Received: from unknown (HELO localhost.jf.intel.com) ([10.54.55.47])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Nov 2018 09:54:25 -0800
+From:   kan.liang@linux.intel.com
+To:     tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, yao.jin@linux.intel.com, sashal@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>, stable@kernel.org
+Subject: [PATCH V3] perf/x86/intel/uncore: Fix client IMC events return huge result
+Date:   Mon, 19 Nov 2018 09:53:48 -0800
+Message-Id: <20181119175348.9976-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Takashi,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Em Mon, 19 Nov 2018 16:13:29 +0100
-Takashi Iwai <tiwai@suse.de> escreveu:
+The client IMC bandwidth events return very huge result.
+  perf stat -e uncore_imc/data_reads/ -e uncore_imc/data_writes/ -I
+  10000 -a
+  10.000117222 34,788.76 MiB uncore_imc/data_reads/
+  10.000117222 8.26 MiB uncore_imc/data_writes/
+  20.000374584 34,842.89 MiB uncore_imc/data_reads/
+  20.000374584 10.45 MiB uncore_imc/data_writes/
+  30.000633299 37,965.29 MiB uncore_imc/data_reads/
+  30.000633299 323.62 MiB uncore_imc/data_writes/
+  40.000891548 41,012.88 MiB uncore_imc/data_reads/
+  40.000891548 6.98 MiB uncore_imc/data_writes/
+  50.001142480 1,125,899,906,621,494.75 MiB uncore_imc/data_reads/
+  50.001142480 6.97 MiB uncore_imc/data_writes/
 
-> Hi,
->=20
-> we've got a regression report on openSUSE Bugzilla regarding DVB-S PCI
-> card:
->   https://bugzilla.opensuse.org/show_bug.cgi?id=3D1116374
->=20
-> According to the reporter (Stakanov, Cc'ed), the card worked fine on
-> 4.18.15, but since 4.19, it doesn't give any channels, sound nor
-> picture, but only EPG is received.
+The client IMC events are freerunning counters. They still use the
+old event encoding format (0x1 for data_read and 0x2 for data write).
+The counter bit width is calculated by common code, which assume that
+the standard encoding format is used for the freerunning counters.
+Error bit width information is calculated.
 
-Receiving just EPG is weird.
+The patch intends to convert the old client IMC event encoding to the
+standard encoding format to apply to the common code.
 
->=20
-> The following errors might be relevant:
->=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [    4.845180] b2c2-flexcop: B2C2 FlexcopII/II(b)/III digital TV receiver=
- chip loaded successfully
-> [    4.869703] b2c2-flexcop: MAC address =3D xx:xx:xx:xx:xx:xx
-> [    5.100318] b2c2-flexcop: found 'ST STV0299 DVB-S' .
-> [    5.100323] b2c2_flexcop_pci 0000:06:06.0: DVB: registering adapter 0 =
-frontend 0 (ST STV0299 DVB-S)...
-> [    5.100370] b2c2-flexcop: initialization of 'Sky2PC/SkyStar 2 DVB-S re=
-v 2.6' at the 'PCI' bus controlled by a 'FlexCopIIb' complete
+Current common code uses event->attr.config which directly copy from
+user space. We should not implicitly modify it for a converted event.
+The event->hw.config is used to replace the event->attr.config in
+common code.
+For client IMC events, the event->attr.config is used to calculate a
+converted event with standard encoding format in the custom event_init().
+The converted event is stored in event->hw.config.
+For other events of freerunning counters, they already use the standard
+encoding format. The same value as event->attr.config is assigned to
+event->hw.config in common event_init().
 
+Fixes: commit 9aae1780e7e8 ("perf/x86/intel/uncore: Clean up client IMC uncore")
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@kernel.org
+---
 
-> [  117.513086] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
-requency 1549000 out of range (950000..2150)
-> [  124.905222] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
-requency 1880000 out of range (950000..2150)
-> [  127.337079] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 f=
-requency 1353500 out of range (950000..2150)
+Changes since V2:
+- Re-structure the change log.
 
-That indicates that it is trying to tune to an unsupported frequency. For
-DVB-S, all frequencies above should be in kHz.
+ arch/x86/events/intel/uncore.c     |  1 +
+ arch/x86/events/intel/uncore.h     | 12 ++++++------
+ arch/x86/events/intel/uncore_snb.c |  4 +++-
+ 3 files changed, 10 insertions(+), 7 deletions(-)
 
-It is very weird that the low frequency is bigger than the higher one.
-
-I suspect that this could be the root cause of the issue.
-
-Yet, the entry at stv0299 (with apparently is the used frontend)
-seems correct, as both min and max frequencies are in MHz:
-
-static const struct dvb_frontend_ops stv0299_ops =3D {
-	.delsys =3D { SYS_DVBS },
-	.info =3D {
-		.name			=3D "ST STV0299 DVB-S",
-		.frequency_min_hz	=3D  950 * MHz,
-		.frequency_max_hz	=3D 2150 * MHz,
-		.frequency_stepsize_hz	=3D  125 * kHz,
-		.symbol_rate_min	=3D 1000000,
-		.symbol_rate_max	=3D 45000000,
-		.symbol_rate_tolerance	=3D 500,	/* ppm */
-		.caps =3D FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
-		      FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 |
-		      FE_CAN_QPSK |
-		      FE_CAN_FEC_AUTO
-	},
-
-It could be some mistake at the tuner (if this driver loads a
-separate tuner).
-
-=46rom the code, it seems that this specific board uses this tuner
-from dvb-pll:
-
-static const struct dvb_pll_desc dvb_pll_samsung_tbmu24112 =3D {
-        .name =3D "Samsung TBMU24112",
-        .min    =3D  950000,
-        .max    =3D 2150000, /* guesses */
-        .iffreq =3D 0,
-        .count =3D 2,
-        .entries =3D {
-                { 1500000, 125, 0x84, 0x18 },
-                { 9999999, 125, 0x84, 0x08 },
-        }
-};
-
-Here, frequencies are in kHz. The code should be converting them to Hz=20
-if the TV standard is satellite.
-
-
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> The lspci shows:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> 06:06.0 Network controller: Techsan Electronics Co Ltd B2C2 FlexCopII DVB=
- chip / Technisat SkyStar2 DVB card (rev 02)
->         Subsystem: Techsan Electronics Co Ltd B2C2 FlexCopII DVB chip / T=
-echnisat SkyStar2 DVB card
->         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParEr=
-r- Stepping- SERR- FastB2B- DisINTx-
->         Status: Cap- 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dslow >TAbort- =
-<TAbort- <MAbort- >SERR- <PERR- INTx-
->         Latency: 32
->         Interrupt: pin A routed to IRQ 20
->         NUMA node: 0
->         Region 0: Memory at fe500000 (32-bit, non-prefetchable) [size=3D6=
-4K]
->         Region 1: I/O ports at b040 [size=3D32]
->         Kernel driver in use: b2c2_flexcop_pci
->         Kernel modules: b2c2_flexcop_pci
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
-> Other details can be found in the bugzilla entry above.
->=20
-> If any fix is known, please let me know.  I'll build a test kernel for
-> openSUSE to confirm it.
->=20
->=20
-> Thanks!
->=20
-> Takashi
-
-
-
-Thanks,
-Mauro
-
---
-
-Could you ask the user to apply the enclosed patch and provide us
-the results of those prints?
-
-diff --git a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst =
-b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-index 0f8b31874002..60874a1f3d89 100644
---- a/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-+++ b/Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _media_ioc_request_alloc:
-=20
-diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst =
-b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-index 6dd2d7fea714..3f481256f75a 100644
---- a/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-+++ b/Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _media_request_ioc_queue:
-=20
-diff --git a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst=
- b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-index febe888494c8..d9c4d308b477 100644
---- a/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-+++ b/Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _media_request_ioc_reinit:
-=20
-diff --git a/Documentation/media/uapi/mediactl/request-api.rst b/Documentat=
-ion/media/uapi/mediactl/request-api.rst
-index 5f4a23029c48..7a85b346db91 100644
---- a/Documentation/media/uapi/mediactl/request-api.rst
-+++ b/Documentation/media/uapi/mediactl/request-api.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _media-request-api:
-=20
-diff --git a/Documentation/media/uapi/mediactl/request-func-close.rst b/Doc=
-umentation/media/uapi/mediactl/request-func-close.rst
-index 098d7f2b9548..c85275a8870c 100644
---- a/Documentation/media/uapi/mediactl/request-func-close.rst
-+++ b/Documentation/media/uapi/mediactl/request-func-close.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _request-func-close:
-=20
-diff --git a/Documentation/media/uapi/mediactl/request-func-ioctl.rst b/Doc=
-umentation/media/uapi/mediactl/request-func-ioctl.rst
-index ff7b072a6999..8b69465bd2dd 100644
---- a/Documentation/media/uapi/mediactl/request-func-ioctl.rst
-+++ b/Documentation/media/uapi/mediactl/request-func-ioctl.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _request-func-ioctl:
-=20
-diff --git a/Documentation/media/uapi/mediactl/request-func-poll.rst b/Docu=
-mentation/media/uapi/mediactl/request-func-poll.rst
-index 85191254f381..8f58f9948cb6 100644
---- a/Documentation/media/uapi/mediactl/request-func-poll.rst
-+++ b/Documentation/media/uapi/mediactl/request-func-poll.rst
-@@ -1,4 +1,15 @@
--.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant=
--sections
-+.. SPDX License for this file: GPL-2.0 OR GFDL-1.1-or-later
-+..
-+.. For GPL-2.0, see LICENSES/preferred/GPL-2.0
-+..
-+.. For GFDL-1.1-or-later, see:
-+..
-+.. Permission is granted to copy, distribute and/or modify this document
-+.. under the terms of the GNU Free Documentation License, Version 1.1 or
-+.. any later version published by the Free Software Foundation, with no
-+.. Invariant Sections, no Front-Cover Texts and no Back-Cover Texts.
-+.. A copy of the license is included at
-+.. Documentation/media/uapi/fdl-appendix.rst.
-=20
- .. _request-func-poll:
-=20
-diff --git a/drivers/media/dvb-core/dvb_frontend.c b/drivers/media/dvb-core=
-/dvb_frontend.c
-index 961207cf09eb..bcdfe9939d64 100644
---- a/drivers/media/dvb-core/dvb_frontend.c
-+++ b/drivers/media/dvb-core/dvb_frontend.c
-@@ -917,6 +917,9 @@ static void dvb_frontend_get_frequency_limits(struct dv=
-b_frontend *fe,
- 			 "DVB: adapter %i frontend %u frequency limits undefined - fix the driv=
-er\n",
- 			 fe->dvb->num, fe->id);
-=20
-+printk("%s: frequencies: tuner: %u...%u, frontend: %u...%u",
-+       __func__, tuner_min, tuner_max, frontend_min, frontend_max);
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a461414b30..2690135bf83f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -740,6 +740,7 @@ static int uncore_pmu_event_init(struct perf_event *event)
+ 		/* fixed counters have event field hardcoded to zero */
+ 		hwc->config = 0ULL;
+ 	} else if (is_freerunning_event(event)) {
++		hwc->config = event->attr.config;
+ 		if (!check_valid_freerunning_event(box, event))
+ 			return -EINVAL;
+ 		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab885b1e9..cc6dd4f78158 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -285,8 +285,8 @@ static inline
+ unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
+ 					struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 	struct intel_uncore_pmu *pmu = box->pmu;
+ 
+ 	return pmu->type->freerunning[type].counter_base +
+@@ -360,7 +360,7 @@ static inline
+ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ 				     struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].bits;
+ }
+@@ -368,7 +368,7 @@ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ static inline int uncore_num_freerunning(struct intel_uncore_box *box,
+ 					 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].num_counters;
+ }
+@@ -382,8 +382,8 @@ static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
+ static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
+ 						 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 
+ 	return (type < uncore_num_freerunning_types(box, event)) &&
+ 	       (idx < uncore_num_freerunning(box, event));
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index 8527c3e1038b..48d7121f71c7 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -425,9 +425,11 @@ static int snb_uncore_imc_event_init(struct perf_event *event)
+ 
+ 	/* must be done before validate_group */
+ 	event->hw.event_base = base;
+-	event->hw.config = cfg;
+ 	event->hw.idx = idx;
+ 
++	/* Convert to standard encoding format for free running counters */
++	event->hw.config = ((cfg - 1) << 8) | 0x10ff;
 +
- 	/* If the standard is for satellite, convert frequencies to kHz */
- 	switch (c->delivery_system) {
- 	case SYS_DVBS:
-diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-fron=
-tends/dvb-pll.c
-index 6d4b2eec67b4..62e81010b8cc 100644
---- a/drivers/media/dvb-frontends/dvb-pll.c
-+++ b/drivers/media/dvb-frontends/dvb-pll.c
-@@ -857,6 +857,8 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_frontend=
- *fe, int pll_addr,
- 		fe->ops.tuner_ops.info.frequency_min_hz =3D desc->min;
- 		fe->ops.tuner_ops.info.frequency_max_hz =3D desc->max;
- 	}
-+printk("%s: delsys: %d, frequency range: %u..%u\n",
-+       __func__, c->delivery_system, fe->ops.tuner_ops.info.frequency_min_=
-hz, fe->ops.tuner_ops.info.frequency_max_hz);
-=20
- 	if (!desc->initdata)
- 		fe->ops.tuner_ops.init =3D NULL;
-
+ 	/* no group validation needed, we have free running counters */
+ 
+ 	return 0;
+-- 
+2.14.5
 
