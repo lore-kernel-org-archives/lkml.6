@@ -2,138 +2,131 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1238C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FDAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD63E2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 07:57:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD63E2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 157CA206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 08:02:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 157CA206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbeKSSUg (ORCPT
+        id S1726671AbeKSSZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 13:20:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33834 "EHLO mx1.redhat.com"
+        Mon, 19 Nov 2018 13:25:41 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36406 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726348AbeKSSUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 13:20:36 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3EDC788306;
-        Mon, 19 Nov 2018 07:57:45 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-26.pek2.redhat.com [10.72.8.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DD9925D9C8;
-        Mon, 19 Nov 2018 07:57:25 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 15:57:21 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 05/19] block: introduce bvec_last_segment()
-Message-ID: <20181119075720.GC16519@ming.t460p>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-6-ming.lei@redhat.com>
- <20181115232356.GA23238@vader>
+        id S1726348AbeKSSZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 13:25:41 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id AF48420CFD; Mon, 19 Nov 2018 09:02:47 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5A58A2039F;
+        Mon, 19 Nov 2018 09:02:47 +0100 (CET)
+Date:   Mon, 19 Nov 2018 09:02:46 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        Michal Simek <michals@xilinx.com>
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181119090246.49060019@bbrezillon>
+In-Reply-To: <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181118204324.373ca9cc@bbrezillon>
+        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115232356.GA23238@vader>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 19 Nov 2018 07:57:45 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 03:23:56PM -0800, Omar Sandoval wrote:
-> On Thu, Nov 15, 2018 at 04:52:52PM +0800, Ming Lei wrote:
-> > BTRFS and guard_bio_eod() need to get the last singlepage segment
-> > from one multipage bvec, so introduce this helper to make them happy.
+On Mon, 19 Nov 2018 06:20:28 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+
+> H Boris,
+> 
+> > -----Original Message-----
+> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
+> > Sent: Monday, November 19, 2018 1:13 AM
+> > To: Naga Sureshkumar Relli <nagasure@xilinx.com>
+> > Cc: miquel.raynal@bootlin.com; richard@nod.at; dwmw2@infradead.org;
+> > computersforpeace@gmail.com; marek.vasut@gmail.com; linux-mtd@lists.infradead.org; linux-
+> > kernel@vger.kernel.org; nagasuresh12@gmail.com; robh@kernel.org; Michal Simek
+> > <michals@xilinx.com>
+> > Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for Arasan NAND
+> > Flash Controller
 > > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Shaohua Li <shli@kernel.org>
-> > Cc: linux-raid@vger.kernel.org
-> > Cc: linux-erofs@lists.ozlabs.org
-> > Cc: David Sterba <dsterba@suse.com>
-> > Cc: linux-btrfs@vger.kernel.org
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: Gao Xiang <gaoxiang25@huawei.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: Coly Li <colyli@suse.de>
-> > Cc: linux-bcache@vger.kernel.org
-> > Cc: Boaz Harrosh <ooo@electrozaur.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: cluster-devel@redhat.com
-> 
-> Reviewed-by: Omar Sandoval <osandov@fb.com>
-> 
-> Minor comments below.
-> 
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  include/linux/bvec.h | 25 +++++++++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
+> > On Thu, 15 Nov 2018 09:34:16 +0000
+> > Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
+> >   
+> > > Hi Boris & Miquel,
+> > >
+> > > I am updating the driver by addressing your comments, and I have one
+> > > concern,  especially in anfc_read_page_hwecc(), there I am checking for erased pages bit flips.
+> > > Since Arasan NAND controller doesn't have multibit error detection
+> > > beyond 24-bit( it can correct up to 24 bit), i.e. there is no indication from controller to detect  
+> > uncorrectable error beyond 24bit.
 > > 
-> > diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-> > index 3d61352cd8cf..01616a0b6220 100644
-> > --- a/include/linux/bvec.h
-> > +++ b/include/linux/bvec.h
-> > @@ -216,4 +216,29 @@ static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
-> >  	.bi_bvec_done	= 0,						\
-> >  }
-> >  
-> > +/*
-> > + * Get the last singlepage segment from the multipage bvec and store it
-> > + * in @seg
-> > + */
-> > +static inline void bvec_last_segment(const struct bio_vec *bvec,
-> > +		struct bio_vec *seg)
-> 
-> Indentation is all messed up here.
+> > Do you mean that you can't detect uncorrectable errors, or just that it's not 100% sure to detect
+> > errors above max_strength?  
+> Yes, in Arasan NAND controller there is no way to detect uncorrectable errors beyond 24-bit.
 
-Will fix it.
+So how do you detect uncorrectable errors when the strength is less than
+24bits?
 
-> 
-> > +{
-> > +	unsigned total = bvec->bv_offset + bvec->bv_len;
-> > +	unsigned last_page = total / PAGE_SIZE;
-> > +
-> > +	if (last_page * PAGE_SIZE == total)
-> > +		last_page--;
-> 
-> I think this could just be
-> 
-> 	unsigned int last_page = (total - 1) / PAGE_SIZE;
+> >   
+> > > So I took some error count as default value(MULTI_BIT_ERR_CNT  16, I
+> > > put this based on the error count that I got while reading erased page on Micron device).
+> > > And during a page read, will just read the error count register and
+> > > compare this value with the default error count(16) and if it is more Than default then I am  
+> > checking for erased page bit flips.
+> > 
+> > Hm, that's wrong, especially if you set ecc_strength to something > 16.  
+> Ok
+> >   
+> > > I am doubting that this will not work in all cases.  
+> > 
+> > It definitely doesn't.  
+> Ok
+> >   
+> > > In my case it is just working because the error count that it got on an erased page is 16.
+> > > Could you please suggest a way to do detect erased_page bit flips when reading a page with  
+> > HW-ECC?.
+> > 
+> > I'm a bit lost. Is the problem only about bitflips in erase pages, or is it also impacting reads of
+> > written pages that lead to uncorrectable errors.  
+> Yes, it is for both. But in case of read errors that we can't detect beyond 24-bit, then the answer from HW design team
+> Is that the flash part is bad.
+> Unfortunately till now we haven't ran into that situation(read errors of written pages beyond 24-bit).
 
-This way is really elegant.
+Can you please run nandbiterrs (availaible in mtd-utils). I fear your
+device won't pass the test.
 
-Thanks,
-Ming
+> But we are hitting this because of erased page reading(needed in case of ubifs).
+> 
+> > 
+> > Don't you have a bit (or several bits) reporting when the ECC engine was not able to correct
+> > data? I you do, you should base the "detect bitflips in erase pages" logic on this information.  
+> Bit reporting for several bit errors is there only for Hamming(1bit correction and 2bit detection) but not in BCH.
+> 
+
+Then I tend to agree with Miquel: your ECC engine is broken, and I'm
+not even sure how to deal with that yet.
