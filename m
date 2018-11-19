@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E98C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF7FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DBF82145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CED221479
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NjO2ybbF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBF82145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0fLy/LkB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CED221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731693AbeKTC7k (ORCPT
+        id S1731703AbeKTC7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 21:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59224 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 21:59:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730350AbeKTC7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 21:59:40 -0500
+        id S1730350AbeKTC7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FB4D208E4;
-        Mon, 19 Nov 2018 16:35:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C190B20989;
+        Mon, 19 Nov 2018 16:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645331;
-        bh=WqLUQHYJev3D2MyFgpjWpttsEV7XVuqte9/WA516//o=;
+        s=default; t=1542645334;
+        bh=5RmWss2svd/hVniwv37FTp0eTGSCqZmtgdBgXskEbyM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NjO2ybbFU2OXW7UW7lbeYRg2X0xcDVC9IBJ9NKxhfFUpjAok0B5WZenKCA0JzEuhb
-         nu+41198pRK8pyGeCR0po2YDM43LqMHonk8+Pq4zK6gWya/pbJeN9SI/43gc1YjRsQ
-         XjF8olEcCzA+nKV3Ug3ilJFR8UKXi4iazqJPPNa8=
+        b=0fLy/LkB1Jk0Zq8mVTwcS4Qv5b7Z0Or+Qp/Mk8aLV0Tvqmw46fJMpM0cBU/IEeJJ5
+         iN/hlVPGVDjWPg1dqflaW3zIKTmdgTUQg/bRXGjDZqXnwyg3ggbwzIw7AK6dBu+CEt
+         jx8kG7jPgH1jhkUr/RDd0Bfthk6Xm1xAx5PxV6Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Lu Fengqi <lufq.fnst@cn.fujitsu.com>,
+        Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 123/205] btrfs: fix pinned underflow after transaction aborted
-Date:   Mon, 19 Nov 2018 17:27:10 +0100
-Message-Id: <20181119162636.290595761@linuxfoundation.org>
+Subject: [PATCH 4.19 124/205] Btrfs: fix missing data checksums after a ranged fsync (msync)
+Date:   Mon, 19 Nov 2018 17:27:11 +0100
+Message-Id: <20181119162636.426695453@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -63,101 +63,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit fcd5e74288f7d36991b1f0fb96b8c57079645e38 upstream.
+commit 008c6753f7e070c77c70d708a6bf0255b4381763 upstream.
 
-When running generic/475, we may get the following warning in dmesg:
+Recently we got a massive simplification for fsync, where for the fast
+path we no longer log new extents while their respective ordered extents
+are still running.
 
-[ 6902.102154] WARNING: CPU: 3 PID: 18013 at fs/btrfs/extent-tree.c:9776 btrfs_free_block_groups+0x2af/0x3b0 [btrfs]
-[ 6902.109160] CPU: 3 PID: 18013 Comm: umount Tainted: G        W  O      4.19.0-rc8+ #8
-[ 6902.110971] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-[ 6902.112857] RIP: 0010:btrfs_free_block_groups+0x2af/0x3b0 [btrfs]
-[ 6902.118921] RSP: 0018:ffffc9000459bdb0 EFLAGS: 00010286
-[ 6902.120315] RAX: ffff880175050bb0 RBX: ffff8801124a8000 RCX: 0000000000170007
-[ 6902.121969] RDX: 0000000000000002 RSI: 0000000000170007 RDI: ffffffff8125fb74
-[ 6902.123716] RBP: ffff880175055d10 R08: 0000000000000000 R09: 0000000000000000
-[ 6902.125417] R10: 0000000000000000 R11: 0000000000000000 R12: ffff880175055d88
-[ 6902.127129] R13: ffff880175050bb0 R14: 0000000000000000 R15: dead000000000100
-[ 6902.129060] FS:  00007f4507223780(0000) GS:ffff88017ba00000(0000) knlGS:0000000000000000
-[ 6902.130996] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 6902.132558] CR2: 00005623599cac78 CR3: 000000014b700001 CR4: 00000000003606e0
-[ 6902.134270] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 6902.135981] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 6902.137836] Call Trace:
-[ 6902.138939]  close_ctree+0x171/0x330 [btrfs]
-[ 6902.140181]  ? kthread_stop+0x146/0x1f0
-[ 6902.141277]  generic_shutdown_super+0x6c/0x100
-[ 6902.142517]  kill_anon_super+0x14/0x30
-[ 6902.143554]  btrfs_kill_super+0x13/0x100 [btrfs]
-[ 6902.144790]  deactivate_locked_super+0x2f/0x70
-[ 6902.146014]  cleanup_mnt+0x3b/0x70
-[ 6902.147020]  task_work_run+0x9e/0xd0
-[ 6902.148036]  do_syscall_64+0x470/0x600
-[ 6902.149142]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[ 6902.150375]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[ 6902.151640] RIP: 0033:0x7f45077a6a7b
-[ 6902.157324] RSP: 002b:00007ffd589f3e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-[ 6902.159187] RAX: 0000000000000000 RBX: 000055e8eec732b0 RCX: 00007f45077a6a7b
-[ 6902.160834] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000055e8eec73490
-[ 6902.162526] RBP: 0000000000000000 R08: 000055e8eec734b0 R09: 00007ffd589f26c0
-[ 6902.164141] R10: 0000000000000000 R11: 0000000000000246 R12: 000055e8eec73490
-[ 6902.165815] R13: 00007f4507ac61a4 R14: 0000000000000000 R15: 00007ffd589f40d8
-[ 6902.167553] irq event stamp: 0
-[ 6902.168998] hardirqs last  enabled at (0): [<0000000000000000>]           (null)
-[ 6902.170731] hardirqs last disabled at (0): [<ffffffff810cd810>] copy_process.part.55+0x3b0/0x1f00
-[ 6902.172773] softirqs last  enabled at (0): [<ffffffff810cd810>] copy_process.part.55+0x3b0/0x1f00
-[ 6902.174671] softirqs last disabled at (0): [<0000000000000000>]           (null)
-[ 6902.176407] ---[ end trace 463138c2986b275c ]---
-[ 6902.177636] BTRFS info (device dm-3): space_info 4 has 273465344 free, is not full
-[ 6902.179453] BTRFS info (device dm-3): space_info total=276824064, used=4685824, pinned=18446744073708158976, reserved=0, may_use=0, readonly=65536
+However that simplification introduced a subtle regression for the case
+where we use a ranged fsync (msync). Consider the following example:
 
-In the above line there's "pinned=18446744073708158976" which is an
-unsigned u64 value of -1392640, an obvious underflow.
+               CPU 0                                    CPU 1
 
-When transaction_kthread is running cleanup_transaction(), another
-fsstress is running btrfs_commit_transaction(). The
-btrfs_finish_extent_commit() may get the same range as
-btrfs_destroy_pinned_extent() got, which causes the pinned underflow.
+                                            mmap write to range [2Mb, 4Mb[
+  mmap write to range [512Kb, 1Mb[
+  msync range [512K, 1Mb[
+    --> triggers fast fsync
+        (BTRFS_INODE_NEEDS_FULL_SYNC
+         not set)
+    --> creates extent map A for this
+        range and adds it to list of
+        modified extents
+    --> starts ordered extent A for
+        this range
+    --> waits for it to complete
 
-Fixes: d4b450cd4b33 ("Btrfs: fix race between transaction commit and empty block group removal")
-CC: stable@vger.kernel.org # 4.4+
+                                            writeback triggered for range
+                                            [2Mb, 4Mb[
+                                              --> create extent map B and
+                                                  adds it to the list of
+                                                  modified extents
+                                              --> creates ordered extent B
+
+    --> start looking for and logging
+        modified extents
+    --> logs extent maps A and B
+    --> finds checksums for extent A
+        in the csum tree, but not for
+        extent B
+  fsync (msync) finishes
+
+                                              --> ordered extent B
+                                                  finishes and its
+                                                  checksums are added
+                                                  to the csum tree
+
+                                <power cut>
+
+After replaying the log, we have the extent covering the range [2Mb, 4Mb[
+but do not have the data checksum items covering that file range.
+
+This happens because at the very beginning of an fsync (btrfs_sync_file())
+we start and wait for IO in the given range [512Kb, 1Mb[ and therefore
+wait for any ordered extents in that range to complete before we start
+logging the extents. However if right before we start logging the extent
+in our range [512Kb, 1Mb[, writeback is started for any other dirty range,
+such as the range [2Mb, 4Mb[ due to memory pressure or a concurrent fsync
+or msync (btrfs_sync_file() starts writeback before acquiring the inode's
+lock), an ordered extent is created for that other range and a new extent
+map is created to represent that range and added to the inode's list of
+modified extents.
+
+That means that we will see that other extent in that list when collecting
+extents for logging (done at btrfs_log_changed_extents()) and log the
+extent before the respective ordered extent finishes - namely before the
+checksum items are added to the checksums tree, which is where
+log_extent_csums() looks for the checksums, therefore making us log an
+extent without logging its checksums. Before that massive simplification
+of fsync, this wasn't a problem because besides looking for checkums in
+the checksums tree, we also looked for them in any ordered extent still
+running.
+
+The consequence of data checksums missing for a file range is that users
+attempting to read the affected file range will get -EIO errors and dmesg
+reports the following:
+
+ [10188.358136] BTRFS info (device sdc): no csum found for inode 297 start 57344
+ [10188.359278] BTRFS warning (device sdc): csum failed root 5 ino 297 off 57344 csum 0x98f94189 expected csum 0x00000000 mirror 1
+
+So fix this by skipping extents outside of our logging range at
+btrfs_log_changed_extents() and leaving them on the list of modified
+extents so that any subsequent ranged fsync may collect them if needed.
+Also, if we find a hole extent outside of the range still log it, just
+to prevent having gaps between extent items after replaying the log,
+otherwise fsck will complain when we are not using the NO_HOLES feature
+(fstest btrfs/056 triggers such case).
+
+Fixes: e7175a692765 ("btrfs: remove the wait ordered logic in the log_one_extent path")
+CC: stable@vger.kernel.org # 4.19+
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Lu Fengqi <lufq.fnst@cn.fujitsu.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/disk-io.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ fs/btrfs/tree-log.c |   17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4359,13 +4359,23 @@ static int btrfs_destroy_pinned_extent(s
- 	unpin = pinned_extents;
- again:
- 	while (1) {
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -4399,6 +4399,23 @@ static int btrfs_log_changed_extents(str
+ 	logged_end = end;
+ 
+ 	list_for_each_entry_safe(em, n, &tree->modified_extents, list) {
 +		/*
-+		 * The btrfs_finish_extent_commit() may get the same range as
-+		 * ours between find_first_extent_bit and clear_extent_dirty.
-+		 * Hence, hold the unused_bg_unpin_mutex to avoid double unpin
-+		 * the same extent range.
++		 * Skip extents outside our logging range. It's important to do
++		 * it for correctness because if we don't ignore them, we may
++		 * log them before their ordered extent completes, and therefore
++		 * we could log them without logging their respective checksums
++		 * (the checksum items are added to the csum tree at the very
++		 * end of btrfs_finish_ordered_io()). Also leave such extents
++		 * outside of our range in the list, since we may have another
++		 * ranged fsync in the near future that needs them. If an extent
++		 * outside our range corresponds to a hole, log it to avoid
++		 * leaving gaps between extents (fsck will complain when we are
++		 * not using the NO_HOLES feature).
 +		 */
-+		mutex_lock(&fs_info->unused_bg_unpin_mutex);
- 		ret = find_first_extent_bit(unpin, 0, &start, &end,
- 					    EXTENT_DIRTY, NULL);
--		if (ret)
-+		if (ret) {
-+			mutex_unlock(&fs_info->unused_bg_unpin_mutex);
- 			break;
-+		}
- 
- 		clear_extent_dirty(unpin, start, end);
- 		btrfs_error_unpin_extent_range(fs_info, start, end);
-+		mutex_unlock(&fs_info->unused_bg_unpin_mutex);
- 		cond_resched();
- 	}
- 
++		if ((em->start > end || em->start + em->len <= start) &&
++		    em->block_start != EXTENT_MAP_HOLE)
++			continue;
++
+ 		list_del_init(&em->list);
+ 		/*
+ 		 * Just an arbitrary number, this can be really CPU intensive
 
 
