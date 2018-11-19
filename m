@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0F2C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E418C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4AD214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52881214D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:42:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oERvZVH7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA4AD214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDciELK2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52881214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387707AbeKTDGp (ORCPT
+        id S2387721AbeKTDGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:06:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40598 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732796AbeKTDGn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:06:43 -0500
+        id S1732796AbeKTDGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C135C2147D;
-        Mon, 19 Nov 2018 16:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E3B921104;
+        Mon, 19 Nov 2018 16:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645753;
-        bh=a7G45LUXh1RPNbk+3mx+mGpI2v27ZNuiz57milsLzK4=;
+        s=default; t=1542645756;
+        bh=vYFLsXONiKvXkr442Ad/M/01HYyuTL8MacC4ZQV/9K8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oERvZVH7fN7Lu8iyQ/IsDgTE4qaXO0sDYVQ2G2xvoTMGDR9Ph0RLhvdHxPBRMxuO2
-         jHGqwgPYVyGFhv/iUzvJdRd8kOsTU/ZvHY+VAB7BQpFrlERTjbFBIpzmUsrHuZlGxq
-         Td3tAPp/xGXD1DCOllmVnLK7jDNeh+qGa3dmuBaA=
+        b=MDciELK2Wbyvem8sOIoEZBLMpnVwOWHostkmc3p0/vegYAvbEYD5bwvo2lFY8FcA8
+         ArL7De6LdZmKJTOZ50Wu6po01otBE1yHxoSfwNiCszpyT/zA2iyzIYpHekwSl3F0Ej
+         8QTqNkU7qQwbIlpMBzzjEWqTr+5Ubp79P6F725PA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Quinn Tran <quinn.tran@cavium.com>,
         Himanshu Madhani <himanshu.madhani@cavium.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.18 039/171] scsi: qla2xxx: Fix incorrect port speed being set for FC adapters
-Date:   Mon, 19 Nov 2018 17:27:15 +0100
-Message-Id: <20181119162626.125237404@linuxfoundation.org>
+Subject: [PATCH 4.18 040/171] scsi: qla2xxx: Fix process response queue for ISP26XX and above
+Date:   Mon, 19 Nov 2018 17:27:16 +0100
+Message-Id: <20181119162626.281191233@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,34 +62,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Himanshu Madhani <himanshu.madhani@cavium.com>
+From: Quinn Tran <quinn.tran@cavium.com>
 
-commit 4c1458df9635c7e3ced155f594d2e7dfd7254e21 upstream.
+commit b86ac8fd4b2f6ec2f9ca9194c56eac12d620096f upstream.
 
-Fixes: 6246b8a1d26c7c ("[SCSI] qla2xxx: Enhancements to support ISP83xx.")
-Fixes: 1bb395485160d2 ("qla2xxx: Correct iiDMA-update calling conventions.")
+This patch improves performance for 16G and above adapter by removing
+additional call to process_response_queue().
+
+[mkp: typo]
+
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Quinn Tran <quinn.tran@cavium.com>
 Signed-off-by: Himanshu Madhani <himanshu.madhani@cavium.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/qla2xxx/qla_mbx.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c |    2 --
+ drivers/scsi/qla2xxx/qla_iocb.c |   17 -----------------
+ 2 files changed, 19 deletions(-)
 
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -3716,10 +3716,7 @@ qla2x00_set_idma_speed(scsi_qla_host_t *
- 	mcp->mb[0] = MBC_PORT_PARAMS;
- 	mcp->mb[1] = loop_id;
- 	mcp->mb[2] = BIT_0;
--	if (IS_CNA_CAPABLE(vha->hw))
--		mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
--	else
--		mcp->mb[3] = port_speed & (BIT_2|BIT_1|BIT_0);
-+	mcp->mb[3] = port_speed & (BIT_5|BIT_4|BIT_3|BIT_2|BIT_1|BIT_0);
- 	mcp->mb[9] = vha->vp_idx;
- 	mcp->out_mb = MBX_9|MBX_3|MBX_2|MBX_1|MBX_0;
- 	mcp->in_mb = MBX_3|MBX_1|MBX_0;
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -6972,7 +6972,6 @@ qla24xx_nvram_config(scsi_qla_host_t *vh
+ 	}
+ 	icb->firmware_options_2 &= cpu_to_le32(
+ 	    ~(BIT_3 | BIT_2 | BIT_1 | BIT_0));
+-	vha->flags.process_response_queue = 0;
+ 	if (ha->zio_mode != QLA_ZIO_DISABLED) {
+ 		ha->zio_mode = QLA_ZIO_MODE_6;
+ 
+@@ -6983,7 +6982,6 @@ qla24xx_nvram_config(scsi_qla_host_t *vh
+ 		icb->firmware_options_2 |= cpu_to_le32(
+ 		    (uint32_t)ha->zio_mode);
+ 		icb->interrupt_delay_timer = cpu_to_le16(ha->zio_timer);
+-		vha->flags.process_response_queue = 1;
+ 	}
+ 
+ 	if (rval) {
+--- a/drivers/scsi/qla2xxx/qla_iocb.c
++++ b/drivers/scsi/qla2xxx/qla_iocb.c
+@@ -1526,12 +1526,6 @@ qla24xx_start_scsi(srb_t *sp)
+ 
+ 	/* Set chip new ring index. */
+ 	WRT_REG_DWORD(req->req_q_in, req->ring_index);
+-	RD_REG_DWORD_RELAXED(&ha->iobase->isp24.hccr);
+-
+-	/* Manage unprocessed RIO/ZIO commands in response queue. */
+-	if (vha->flags.process_response_queue &&
+-		rsp->ring_ptr->signature != RESPONSE_PROCESSED)
+-		qla24xx_process_response_queue(vha, rsp);
+ 
+ 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
+ 	return QLA_SUCCESS;
+@@ -1725,12 +1719,6 @@ qla24xx_dif_start_scsi(srb_t *sp)
+ 
+ 	/* Set chip new ring index. */
+ 	WRT_REG_DWORD(req->req_q_in, req->ring_index);
+-	RD_REG_DWORD_RELAXED(&ha->iobase->isp24.hccr);
+-
+-	/* Manage unprocessed RIO/ZIO commands in response queue. */
+-	if (vha->flags.process_response_queue &&
+-	    rsp->ring_ptr->signature != RESPONSE_PROCESSED)
+-		qla24xx_process_response_queue(vha, rsp);
+ 
+ 	spin_unlock_irqrestore(&ha->hardware_lock, flags);
+ 
+@@ -1880,11 +1868,6 @@ qla2xxx_start_scsi_mq(srb_t *sp)
+ 	/* Set chip new ring index. */
+ 	WRT_REG_DWORD(req->req_q_in, req->ring_index);
+ 
+-	/* Manage unprocessed RIO/ZIO commands in response queue. */
+-	if (vha->flags.process_response_queue &&
+-		rsp->ring_ptr->signature != RESPONSE_PROCESSED)
+-		qla24xx_process_response_queue(vha, rsp);
+-
+ 	spin_unlock_irqrestore(&qpair->qp_lock, flags);
+ 	return QLA_SUCCESS;
+ 
 
 
