@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8C9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87454C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D35B21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0CA21479
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="L1OF7CXp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D35B21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5OX+E8g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E0CA21479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbeKTDAF (ORCPT
+        id S1731816AbeKTDAJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:00:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59828 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:00:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730366AbeKTDAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:00:04 -0500
+        id S1730366AbeKTDAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:00:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15732214C1;
-        Mon, 19 Nov 2018 16:35:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A423E214C4;
+        Mon, 19 Nov 2018 16:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645356;
-        bh=nP7/IFVyodYvE7h1GWvYYa7oJLlTcqeIotZYD4KYW3o=;
+        s=default; t=1542645360;
+        bh=Psk8i/19oaK+R5V0Rkuvxxam5qtGj4/SGTiMo1U2Wy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L1OF7CXp4+/JowghTC6242d5fadiSQALReYuv8sHft+nENeY6YwHfnB9ORUNbdeCN
-         J3pYVFvib8uPq8bMveFpxiLBNfbbenPvHFpMPG/Hlgt1NW6traWg6bkYmQ2eF2Rho1
-         BD67TnsvE9LB0I0RWoB6x//As7et50bb9vuv/LO0=
+        b=D5OX+E8gkVYKYxKuBWtAbhM9HTl4GiZyqAuSjmJs+hm8OvmR3X1qHX1JFPcSYSn9d
+         ACVqU13o6lE1QfquCfIeiX7oLj7jdgddlDK9ZkLRUx4mNRqswentiZDEjhziBFcI0H
+         0ojzbqMnIIilkVBc5CTveDwHnWroOKWwFPgTkV3c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Khoruzhick <vasilykh@arista.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.19 105/205] netfilter: conntrack: fix calculation of next bucket number in early_drop
-Date:   Mon, 19 Nov 2018 17:26:52 +0100
-Message-Id: <20181119162633.855865262@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.19 132/205] ext4: add missing brelse() add_new_gdb_meta_bg()s error path
+Date:   Mon, 19 Nov 2018 17:27:19 +0100
+Message-Id: <20181119162637.105927705@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,59 +62,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Khoruzhick <vasilykh@arista.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit f393808dc64149ccd0e5a8427505ba2974a59854 upstream.
+commit 61a9c11e5e7a0dab5381afa5d9d4dd5ebf18f7a0 upstream.
 
-If there's no entry to drop in bucket that corresponds to the hash,
-early_drop() should look for it in other buckets. But since it increments
-hash instead of bucket number, it actually looks in the same bucket 8
-times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
-reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
-most cases.
-
-Fix it by increasing bucket number instead of hash and rename _hash
-to bucket to avoid future confusion.
-
-Fixes: 3e86638e9a0b ("netfilter: conntrack: consider ct netns in early_drop logic")
-Cc: <stable@vger.kernel.org> # v4.7+
-Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 01f795f9e0d6 ("ext4: add online resizing support for meta_bg ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 3.7
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_conntrack_core.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ fs/ext4/resize.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -1073,19 +1073,22 @@ static unsigned int early_drop_list(stru
- 	return drops;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -926,6 +926,7 @@ static int add_new_gdb_meta_bg(struct su
+ 				     sizeof(struct buffer_head *),
+ 				     GFP_NOFS);
+ 	if (!n_group_desc) {
++		brelse(gdb_bh);
+ 		err = -ENOMEM;
+ 		ext4_warning(sb, "not enough memory for %lu groups",
+ 			     gdb_num + 1);
+@@ -941,8 +942,6 @@ static int add_new_gdb_meta_bg(struct su
+ 	kvfree(o_group_desc);
+ 	BUFFER_TRACE(gdb_bh, "get_write_access");
+ 	err = ext4_journal_get_write_access(handle, gdb_bh);
+-	if (unlikely(err))
+-		brelse(gdb_bh);
+ 	return err;
  }
  
--static noinline int early_drop(struct net *net, unsigned int _hash)
-+static noinline int early_drop(struct net *net, unsigned int hash)
- {
--	unsigned int i;
-+	unsigned int i, bucket;
- 
- 	for (i = 0; i < NF_CT_EVICTION_RANGE; i++) {
- 		struct hlist_nulls_head *ct_hash;
--		unsigned int hash, hsize, drops;
-+		unsigned int hsize, drops;
- 
- 		rcu_read_lock();
- 		nf_conntrack_get_ht(&ct_hash, &hsize);
--		hash = reciprocal_scale(_hash++, hsize);
-+		if (!i)
-+			bucket = reciprocal_scale(hash, hsize);
-+		else
-+			bucket = (bucket + 1) % hsize;
- 
--		drops = early_drop_list(net, &ct_hash[hash]);
-+		drops = early_drop_list(net, &ct_hash[bucket]);
- 		rcu_read_unlock();
- 
- 		if (drops) {
 
 
