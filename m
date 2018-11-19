@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0965BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872F8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E9322360
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CBD5223C7
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXIy5zgo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E9322360
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFTwzgIW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBD5223C7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405293AbeKTDY2 (ORCPT
+        id S2405304AbeKTDYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36798 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:27 -0500
+        id S2404390AbeKTDY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9524A22353;
-        Mon, 19 Nov 2018 17:00:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F3C921731;
+        Mon, 19 Nov 2018 17:00:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646811;
-        bh=+Kr8Mx8OxrelcekNH/cA5qDIyCk7NjFt93THmdpixgY=;
+        s=default; t=1542646813;
+        bh=Ovxc716odfBS4c8AvygHDr7E0r/j68pKwGsd7xmEEeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXIy5zgo6ZR0X/NhCHusBZf8DVrbWdrcmc+YDrv7sAciSFT76IgE+pMEJl/cGoJFH
-         cqBfPqtVVNdy+r1EUd2UFHeZMdmNbBypMOznaeJb6WbenR7PrywGdajxebJ59GBesr
-         60p2ZOxexeS9+5rSHnxiwRxVF7qWiKO+9BvoyQjU=
+        b=EFTwzgIWTYD9rmtTcRk/FHoC2eK7s5ucYl0OLccfZ80G9hmeseqmSK18BURdIDlKx
+         gyT3X8AFpHTftmtyTvm7YFnW3IVgLWMDIBubUH/zdVqhsp2QifBtdk4/+DbenGVWDw
+         d/iG+k3WB5J8atMQvzSTXTu4GcpmFV1Lf3hs3QGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 098/160] drm/omap: fix memory barrier bug in DMM driver
-Date:   Mon, 19 Nov 2018 17:28:57 +0100
-Message-Id: <20181119162640.582220192@linuxfoundation.org>
+Subject: [PATCH 4.4 099/160] media: pci: cx23885: handle adding to list failure
+Date:   Mon, 19 Nov 2018 17:28:58 +0100
+Message-Id: <20181119162640.641904034@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,74 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 538f66ba204944470a653a4cccc5f8befdf97c22 ]
+[ Upstream commit c5d59528e24ad22500347b199d52b9368e686a42 ]
 
-A DMM timeout "timed out waiting for done" has been observed on DRA7
-devices. The timeout happens rarely, and only when the system is under
-heavy load.
+altera_hw_filt_init() which calls append_internal() assumes
+that the node was successfully linked in while in fact it can
+silently fail. So the call-site needs to set return to -ENOMEM
+on append_internal() returning NULL and exit through the err path.
 
-Debugging showed that the timeout can be made to happen much more
-frequently by optimizing the DMM driver, so that there's almost no code
-between writing the last DMM descriptors to RAM, and writing to DMM
-register which starts the DMM transaction.
+Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
 
-The current theory is that a wmb() does not properly ensure that the
-data written to RAM is observable by all the components in the system.
-
-This DMM timeout has caused interesting (and rare) bugs as the error
-handling was not functioning properly (the error handling has been fixed
-in previous commits):
-
- * If a DMM timeout happened when a GEM buffer was being pinned for
-   display on the screen, a timeout error would be shown, but the driver
-   would continue programming DSS HW with broken buffer, leading to
-   SYNCLOST floods and possible crashes.
-
- * If a DMM timeout happened when other user (say, video decoder) was
-   pinning a GEM buffer, a timeout would be shown but if the user
-   handled the error properly, no other issues followed.
-
- * If a DMM timeout happened when a GEM buffer was being released, the
-   driver does not even notice the error, leading to crashes or hang
-   later.
-
-This patch adds wmb() and readl() calls after the last bit is written to
-RAM, which should ensure that the execution proceeds only after the data
-is actually in RAM, and thus observable by DMM.
-
-The read-back should not be needed. Further study is required to understand
-if DMM is somehow special case and read-back is ok, or if DRA7's memory
-barriers do not work correctly.
-
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/media/pci/cx23885/altera-ci.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-+++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-@@ -262,6 +262,17 @@ static int dmm_txn_commit(struct dmm_txn
- 	}
+--- a/drivers/media/pci/cx23885/altera-ci.c
++++ b/drivers/media/pci/cx23885/altera-ci.c
+@@ -660,6 +660,10 @@ static int altera_hw_filt_init(struct al
+ 		}
  
- 	txn->last_pat->next_pa = 0;
-+	/* ensure that the written descriptors are visible to DMM */
-+	wmb();
-+
-+	/*
-+	 * NOTE: the wmb() above should be enough, but there seems to be a bug
-+	 * in OMAP's memory barrier implementation, which in some rare cases may
-+	 * cause the writes not to be observable after wmb().
-+	 */
-+
-+	/* read back to ensure the data is in RAM */
-+	readl(&txn->last_pat->next_pa);
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->filts_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -694,6 +698,7 @@ err:
+ 		     __func__, ret);
  
- 	/* write to PAT_DESCR to clear out any pending transaction */
- 	writel(0x0, dmm->base + reg[PAT_DESCR][engine->id]);
+ 	kfree(pid_filt);
++	kfree(inter);
+ 
+ 	return ret;
+ }
+@@ -728,6 +733,10 @@ int altera_ci_init(struct altera_ci_conf
+ 		}
+ 
+ 		temp_int = append_internal(inter);
++		if (!temp_int) {
++			ret = -ENOMEM;
++			goto err;
++		}
+ 		inter->cis_used = 1;
+ 		inter->dev = config->dev;
+ 		inter->fpga_rw = config->fpga_rw;
+@@ -796,6 +805,7 @@ err:
+ 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
+ 
+ 	kfree(state);
++	kfree(inter);
+ 
+ 	return ret;
+ }
 
 
