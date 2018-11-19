@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A62C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D87C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BFD20831
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CF002086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 19:53:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="O41se4Hn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04BFD20831
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="wS5UPwp8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF002086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730516AbeKTGSt (ORCPT
+        id S1730559AbeKTGSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 01:18:49 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40379 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730018AbeKTGSs (ORCPT
+        Tue, 20 Nov 2018 01:18:52 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54108 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTGSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 01:18:48 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q26so6461243wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:53:38 -0800 (PST)
+        Tue, 20 Nov 2018 01:18:49 -0500
+Received: by mail-wm1-f68.google.com with SMTP id g131so6157271wmg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 11:53:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=SUhn6ll/JtrCSQiWAzUXFknZ+uLXu9qskXJMh5DKybQ=;
-        b=O41se4Hn2yhz8mZzd+C2ySX+tkXa1tvdJ8wmno6P2FvOetGJNmN6ouNQ399IX7/z4C
-         0d8xUO6+/yyoOfEyragu4+B/eIx6klVAu8m4fT+1ctlK1CCIlk/GALMO0wpqldddvjRo
-         Qu6DAANWJLKLjeHRLEFlFuMR1CdQy3wgOxIDY9uO8MPzbQsTBbu2v/7qzwnvRUCGpk/o
-         Qgsj2WrC1nZgNvLoNTlKpuaoLSCmjQFZw9pLv+glTc9craJBdRuByJnDoOM3LTg44uw3
-         uEFB+uaf+OX29Q87FauiHKkHk3g6EhQSrq2fYwLHf582ggvCgh5+FGlh27O20lcUlj3W
-         w2uQ==
+        bh=Jnh3ZNR/Fcg+7gTBnx75uTTp6wDqPloHA9MJBWzeT3M=;
+        b=wS5UPwp8aX0dDRTEokwMnx6RKskiZEysjBl7k9qWiIPj3jzEnZd0dtFRqQ4DJsDq3T
+         /02NXB37XYCsooWnx3Vdc/2imjcfeG83eeu/A78AclgghT1MArAwNkskK8yq1+l/TmmC
+         XhVpx/m4xCVDbzdklQNImOKnxeGtn28iK2PFHRUy9Ao0mLcgD9YwR/NxDAGZaSE7DbrX
+         vUbEW+Xt1FgUQU8KrCqfKQdN1crBpIH+wabGWKb7OutU1id4H7CtNK/y5ty0daXs2jKs
+         JERpiXXLTySxFX7p7QB9ns5tuF4aBzJg51Yi9Sq3nHottaKCNM+6EtoGMGd2f8hGpWZ8
+         FoSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=SUhn6ll/JtrCSQiWAzUXFknZ+uLXu9qskXJMh5DKybQ=;
-        b=hNGOBng5DjLTLbSmK8ZHXABj9LTs7hO5SWn01Pao/h6ZJF9DPhUOe2Og5lxeZKpZc6
-         jqwNJRtqCksereMyfXqZwahW8HHHAqCw3fp3yRpewelnDL77FJ1NWjdgqv7IE6P7SaQH
-         HFfnUpzWVnGOXZEbhabJ+o8N4pbAZOApHvY+zUXQaBU0OaKxLK99UZVEgSPLZXBPtWs0
-         HDOw/MzJ/c3G5mBH2ofmX0maSOFfA9v7tLh74Kwez1uqPXr5WE3ZXcjyupZ63ffyBONj
-         ZvtU5+yBS4ZPOP8QmnZcnsskONmSsQiCrKxhWPbm7DbOZtVriVCuqZszp/FRGfIu5JFk
-         e1SQ==
-X-Gm-Message-State: AA+aEWafItz/NKOtPagxxq5/gWtVzo6mXxEJi82loRTJ12X8dZv0pW22
-        +ogfaS9AXoRLwOnizqcXmHIpXQ==
-X-Google-Smtp-Source: AJdET5fMyL9ndsMCUSHOgGxJNZIM8E+aBvjIuonzmMqwNk1J/xtiNk645BYsaHRZoWCuZKVSnvABQA==
-X-Received: by 2002:a1c:1f43:: with SMTP id f64mr4312141wmf.64.1542657217537;
-        Mon, 19 Nov 2018 11:53:37 -0800 (PST)
+        bh=Jnh3ZNR/Fcg+7gTBnx75uTTp6wDqPloHA9MJBWzeT3M=;
+        b=W0UPbcXfMXIncU/QsQePHyLkcs/tmXTu8vvb/dn9tRa3jmK2gwrQ8YGy0K1LiV5qgb
+         OyY050TUGFswhOdLJ56XKkle8nstNGqq3u4e/63csuKoJqn+vRWAWSLgBAztqvUVnOXH
+         tzsc0J1T1jf3OEKFqEBZTZ+4YYMxFmizzzgp7ccObTnSxo9OqrCVhjWQmBIfAs+UdHmJ
+         +M/J9cx6n06iHPoa1lxpigSXVlTVNt4xvuei3WLz01F9bUUssCAzTUul4QYQ5IjLfkLz
+         LPxwZI7jhbv3PjG77bcxldHAFqpHeCLQz0GuW7kOxavaeCzyc7aGno4StcVAM06LlelY
+         pKsQ==
+X-Gm-Message-State: AA+aEWYR/IlO9I6dwLeKUXMsrfbI8lHc0f4NU7ouUSOsp6R3GXJoe+Ca
+        8m6mn8JVa+Sva6zsxLD4MjLBLA==
+X-Google-Smtp-Source: AJdET5es0eUjkSB08eugl2wCxgB8mmEwRdfRMha8bUwiqRvPlkGZq3/WoXsd7R9UYmvHyJVYhru95A==
+X-Received: by 2002:a1c:ca02:: with SMTP id a2mr8298468wmg.139.1542657218501;
+        Mon, 19 Nov 2018 11:53:38 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id i16sm22954132wmd.28.2018.11.19.11.53.36
+        by smtp.googlemail.com with ESMTPSA id i16sm22954132wmd.28.2018.11.19.11.53.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Nov 2018 11:53:36 -0800 (PST)
+        Mon, 19 Nov 2018 11:53:37 -0800 (PST)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     davem@davemloft.net, ebiggers@kernel.org,
         herbert@gondor.apana.org.au, nhorman@tuxdriver.com
 Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
         Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v2 01/11] crypto: move crypto_alg_get/crypto_alg_put to linux/crypto.h
-Date:   Mon, 19 Nov 2018 19:53:20 +0000
-Message-Id: <1542657210-37739-2-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v2 02/11] crypto: crypto_user_stat: made crypto_user_stat optional
+Date:   Mon, 19 Nov 2018 19:53:21 +0000
+Message-Id: <1542657210-37739-3-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542657210-37739-1-git-send-email-clabbe@baylibre.com>
 References: <1542657210-37739-1-git-send-email-clabbe@baylibre.com>
@@ -74,61 +74,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we will need crypto_alg_get/crypto_alg_put for "locking"
-crypto_alg when updating stats, we need it to be via linux/crypto.h
+Even if CRYPTO_STATS is set to n, some part of CRYPTO_STATS are
+compiled.
+This patch made all part of crypto_user_stat uncompiled in that case.
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- crypto/internal.h      | 12 ------------
- include/linux/crypto.h | 12 ++++++++++++
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ crypto/Makefile                      |  3 ++-
+ crypto/algapi.c                      |  2 ++
+ include/crypto/internal/cryptouser.h | 17 +++++++++++++++++
+ include/linux/crypto.h               |  2 ++
+ 4 files changed, 23 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/internal.h b/crypto/internal.h
-index ef769b5e8ad3..d81f033aeb5c 100644
---- a/crypto/internal.h
-+++ b/crypto/internal.h
-@@ -91,18 +91,6 @@ unsigned int crypto_alg_extsize(struct crypto_alg *alg);
- int crypto_type_has_alg(const char *name, const struct crypto_type *frontend,
- 			u32 type, u32 mask);
+diff --git a/crypto/Makefile b/crypto/Makefile
+index abbd86fdbad2..22f9f84f961d 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -54,7 +54,8 @@ cryptomgr-y := algboss.o testmgr.o
  
--static inline struct crypto_alg *crypto_alg_get(struct crypto_alg *alg)
--{
--	refcount_inc(&alg->cra_refcnt);
--	return alg;
--}
--
--static inline void crypto_alg_put(struct crypto_alg *alg)
--{
--	if (refcount_dec_and_test(&alg->cra_refcnt) && alg->cra_destroy)
--		alg->cra_destroy(alg);
--}
--
- static inline int crypto_tmpl_get(struct crypto_template *tmpl)
- {
- 	return try_module_get(tmpl->module);
+ obj-$(CONFIG_CRYPTO_MANAGER2) += cryptomgr.o
+ obj-$(CONFIG_CRYPTO_USER) += crypto_user.o
+-crypto_user-y := crypto_user_base.o crypto_user_stat.o
++crypto_user-y := crypto_user_base.o
++crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
+ obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
+ obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
+ obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index 2545c5f89c4c..f5396c88e8cd 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -258,6 +258,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+ 	list_add(&alg->cra_list, &crypto_alg_list);
+ 	list_add(&larval->alg.cra_list, &crypto_alg_list);
+ 
++#ifdef CONFIG_CRYPTO_STATS
+ 	atomic_set(&alg->encrypt_cnt, 0);
+ 	atomic_set(&alg->decrypt_cnt, 0);
+ 	atomic64_set(&alg->encrypt_tlen, 0);
+@@ -265,6 +266,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+ 	atomic_set(&alg->verify_cnt, 0);
+ 	atomic_set(&alg->cipher_err_cnt, 0);
+ 	atomic_set(&alg->sign_cnt, 0);
++#endif
+ 
+ out:
+ 	return larval;
+diff --git a/include/crypto/internal/cryptouser.h b/include/crypto/internal/cryptouser.h
+index 8db299c25566..3492ab42eefb 100644
+--- a/include/crypto/internal/cryptouser.h
++++ b/include/crypto/internal/cryptouser.h
+@@ -3,6 +3,23 @@
+ 
+ struct crypto_alg *crypto_alg_match(struct crypto_user_alg *p, int exact);
+ 
++#ifdef CONFIG_CRYPTO_STATS
+ int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb);
+ int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs);
+ int crypto_dump_reportstat_done(struct netlink_callback *cb);
++#else
++static int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
++{
++	return -ENOTSUPP;
++}
++
++static int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs)
++{
++	return -ENOTSUPP;
++}
++
++static int crypto_dump_reportstat_done(struct netlink_callback *cb)
++{
++	return -ENOTSUPP;
++}
++#endif
 diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-index 3634ad6fe202..ac8f4168a831 100644
+index ac8f4168a831..9dc8d50dc578 100644
 --- a/include/linux/crypto.h
 +++ b/include/linux/crypto.h
-@@ -607,6 +607,18 @@ int crypto_unregister_algs(struct crypto_alg *algs, int count);
-  */
- int crypto_has_alg(const char *name, u32 type, u32 mask);
+@@ -515,6 +515,7 @@ struct crypto_alg {
+ 	
+ 	struct module *cra_module;
  
-+static inline struct crypto_alg *crypto_alg_get(struct crypto_alg *alg)
-+{
-+	refcount_inc(&alg->cra_refcnt);
-+	return alg;
-+}
-+
-+static inline void crypto_alg_put(struct crypto_alg *alg)
-+{
-+	if (refcount_dec_and_test(&alg->cra_refcnt) && alg->cra_destroy)
-+		alg->cra_destroy(alg);
-+}
-+
- /*
-  * Transforms: user-instantiated objects which encapsulate algorithms
-  * and core processing logic.  Managed via crypto_alloc_*() and
++#ifdef CONFIG_CRYPTO_STATS
+ 	union {
+ 		atomic_t encrypt_cnt;
+ 		atomic_t compress_cnt;
+@@ -552,6 +553,7 @@ struct crypto_alg {
+ 		atomic_t compute_shared_secret_cnt;
+ 	};
+ 	atomic_t sign_cnt;
++#endif /* CONFIG_CRYPTO_STATS */
+ 
+ } CRYPTO_MINALIGN_ATTR;
+ 
 -- 
 2.18.1
 
