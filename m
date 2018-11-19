@@ -2,246 +2,153 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D8DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FE2C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF0E620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D6A2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 10:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="b4XYqDS9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0E620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2hxaN5C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0D6A2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728092AbeKSU5H (ORCPT
+        id S1727778AbeKSU5u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 15:57:07 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33380 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbeKSU5G (ORCPT
+        Mon, 19 Nov 2018 15:57:50 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40959 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727619AbeKSU5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 15:57:06 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z11so11028831pgu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:33:54 -0800 (PST)
+        Mon, 19 Nov 2018 15:57:49 -0500
+Received: by mail-wr1-f67.google.com with SMTP id p4so22273244wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 02:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=q/4wi++Ns1g9+eCwVy989457KzjcxKCXuJuZZxdu53c=;
-        b=b4XYqDS98E9YovsIH0PlBxkLil/0orlc3MiP60OAosuIc6soAn2MjRBXEo+O9/5det
-         Zk2fEylexrARnI+iTxWH5NP3XPxN8hBASfVdvZVynARAC8p6nQiuKQpGdwnNgeM51Ngr
-         59TxFWs2XjRx7LBxTTmdGWURvhTgBQvIn0RrvMHd3ljfeT2lmegDStico+PV/Eh86QWA
-         gs9BaHnamAzbzb25/3nwMuVk6adLCJ3X3q1yioeI7RaI+Spt+X/8SYXaMsbPe44z3mw7
-         8rYXnYXUndWZL8sTCnvq/DHT/DvO/1FsYVeuR4XUjkn5U5x1n0s2mZsV6fwyHqeTbWc7
-         U/Uw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=iL05uSSIvpNAEkXjPa4LLsPBFMnCpnvcdfAc7Vp2A5U=;
+        b=J2hxaN5CgQwX3XH/86Da0A57BLs8NYJ8juPTSrnowTgszBdtNhDye09DYxM78q2BE+
+         +ZHxy5iCAg9M4JKk1wT00JAcjorZhunK9l42+pYRJuPsgH6GZFCS5IXb0Hy8SVdgc/Mk
+         SD9HgD6PUDRerWtSHLriKPYP1sBOyjQxUVX0o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=q/4wi++Ns1g9+eCwVy989457KzjcxKCXuJuZZxdu53c=;
-        b=AHR9LYri7bhlvEkuctGTHqQ08vYawCKt960Hei3OUiQxvBHWlWDlOKbI/kvm2eeI2d
-         Au6vtVstlzg8KXwPC1zvbMGOoF74u8KWKlU3ctQIT+icvw3n7u6+Zvv0F3AmhPsvYY34
-         rb5dgzZD5E1BsuxrF1MDH1nSGzkM3dkDTgiy6pxyI6xPc6jBQfAw+cNUbcukRiKDGq3K
-         s4ie1rcQEBd0t0oZ+SnbtLLqia53w5cXYEDkiQeJK5p564SV8x7HdGgI0rT12LxJU397
-         TyM2pgcUfLpGG3KU0YhZWJkIyFppOQ9KK3j8G70QISBnh2X+lHaNOR+vPKlHJro1SoRm
-         zfNA==
-X-Gm-Message-State: AGRZ1gKwtaABDCl/xSBMDla8JKgfI6vdXw2Vj1m2AeOmaIoxPWpFqIOH
-        NJDbuN/sPb913vDFQ7Ao8SCCAJT2Gr5s2Q==
-X-Google-Smtp-Source: AJdET5cfjWlV7j9q1rNiz3TJRBsc7aixXBb9YeoOGK7nL4lYr/OUdQJVjnsxkcWSKlYg4CODia7oQA==
-X-Received: by 2002:a63:e348:: with SMTP id o8mr19305080pgj.158.1542623633660;
-        Mon, 19 Nov 2018 02:33:53 -0800 (PST)
-Received: from localhost.localdomain ([2404:4404:133a:4500:9d11:de0b:446c:8485])
-        by smtp.gmail.com with ESMTPSA id d21sm32958139pgv.37.2018.11.19.02.33.47
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iL05uSSIvpNAEkXjPa4LLsPBFMnCpnvcdfAc7Vp2A5U=;
+        b=lR/47b6gvsOy3CTGu6ElHZCg5zPX+i4zVtcwv4rVn3Tls4P8N9hM/MLkYZLGspDwXy
+         SkHX9dShJjq/x1Kj5fE3LVftNucy2wq0IpsS2lIVFhFM1s7cvA+EsKub2LD/Wyb1jYi3
+         Rbkc8ERVg6Lf+RSsuszMJLadWIVckGEERFBmgeOR6gOaLqNurJeq+RXLP+VUYM9ii6LZ
+         Fe9bk/WY3F3AY8hXUpRpLj78MVWDlmLU8u7uDtq+/XblLi/sSJi4Uy8uNzSp/qq6x188
+         GWGNuONddfr52dMlb28tmQOFwcvM4Yp1oaHrMYzqiJ8r3Qfn9KOOCT7IV/2AKOFs7bjR
+         BNAw==
+X-Gm-Message-State: AGRZ1gL5Ky/H3N38ZyeCEafdWAi7ByzYfxVRkHy1l3DT0lorNS2Kq+6x
+        TFrJoWRlnJ/5Q3d4J5CQifMV8Q==
+X-Google-Smtp-Source: AJdET5fGybOqVpQ/4Qigr+E46Add4Df19BCn58+A5mX7Y2M3uFblQbDmYkRrettjKRivqQMP6EARfw==
+X-Received: by 2002:a5d:4708:: with SMTP id y8-v6mr17550396wrq.16.1542623675257;
+        Mon, 19 Nov 2018 02:34:35 -0800 (PST)
+Received: from localhost.localdomain ([37.162.18.180])
+        by smtp.gmail.com with ESMTPSA id e9sm14973298wro.16.2018.11.19.02.34.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 02:33:53 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     ebiederm@xmission.com, linux-kernel@vger.kernel.org
-Cc:     serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org, Christian Brauner <christian@brauner.io>
-Subject: [PATCH] procfd_signal.2: document procfd_signal syscall
-Date:   Mon, 19 Nov 2018 11:32:40 +0100
-Message-Id: <20181119103241.5229-4-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119103241.5229-1-christian@brauner.io>
-References: <20181119103241.5229-1-christian@brauner.io>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 19 Nov 2018 02:34:34 -0800 (PST)
+From:   Paolo Valente <paolo.valente@linaro.org>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ulf.hansson@linaro.org, linus.walleij@linaro.org,
+        broonie@kernel.org, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Paolo Valente <paolo.valente@linaro.org>
+Subject: [PATCH V2 00/10] unify the interface of the proportional-share policy in blkio/io
+Date:   Mon, 19 Nov 2018 11:34:14 +0100
+Message-Id: <20181119103424.3853-1-paolo.valente@linaro.org>
+X-Mailer: git-send-email 2.16.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-Changelog:
-v1:
-- patch introduced
----
- man2/procfd_signal.2 | 147 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 147 insertions(+)
- create mode 100644 man2/procfd_signal.2
+Hi,
+here is the V2 of this patch series. Let me rephrase the description
+of the series, in view of the fact that CFQ will be gone with legacy
+block.
 
-diff --git a/man2/procfd_signal.2 b/man2/procfd_signal.2
-new file mode 100644
-index 000000000..6af0b74f4
---- /dev/null
-+++ b/man2/procfd_signal.2
-@@ -0,0 +1,147 @@
-+.\" Copyright (C) 2018 Christian Brauner <christian@brauner.io>
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH PROCFD_SIGNAL 2 2017-09-15 "Linux" "Linux Programmer's Manual"
-+.SH NAME
-+procfd_signal \- send signal to a process through a process descriptor
-+.SH SYNOPSIS
-+.nf
-+.B #include <sys/types.h>
-+.B #include <signal.h>
-+.PP
-+.BI "int procfd_signal(int " fd ", int " sig ", siginfo_t *" info ", int " flags );
-+.fi
-+.SH DESCRIPTION
-+.BR procfd_signal ()
-+sends the signal specified in
-+.I sig
-+to the process identified by the file descriptor
-+.IR fd .
-+The permissions required to send a signal are the same as for
-+.BR kill (2).
-+As with
-+.BR kill (2),
-+the null signal (0) can be used to check if a process with a given
-+PID exists.
-+.PP
-+The optional
-+.I info
-+argument specifies the data to accompany the signal.
-+This argument is a pointer to a structure of type
-+.IR siginfo_t ,
-+described in
-+.BR sigaction (2)
-+(and defined by including
-+.IR <sigaction.h> ).
-+The caller should set the following fields in this structure:
-+.TP
-+.I si_code
-+This must be one of the
-+.B SI_*
-+codes in the Linux kernel source file
-+.IR include/asm-generic/siginfo.h ,
-+with the restriction that the code must be negative
-+(i.e., cannot be
-+.BR SI_USER ,
-+which is used by the kernel to indicate a signal sent by
-+.BR kill (2))
-+and cannot (since Linux 2.6.39) be
-+.BR SI_TKILL
-+(which is used by the kernel to indicate a signal sent using
-+.\" tkill(2) or
-+.BR tgkill (2)).
-+.TP
-+.I si_pid
-+This should be set to a process ID,
-+typically the process ID of the sender.
-+.TP
-+.I si_uid
-+This should be set to a user ID,
-+typically the real user ID of the sender.
-+.TP
-+.I si_value
-+This field contains the user data to accompany the signal.
-+For more information, see the description of the last
-+.RI ( "union sigval" )
-+argument of
-+.BR sigqueue (3).
-+.PP
-+Internally, the kernel sets the
-+.I si_signo
-+field to the value specified in
-+.IR sig ,
-+so that the receiver of the signal can also obtain
-+the signal number via that field.
-+.PP
-+The
-+.I flags
-+argument is reserved for future extension and must be set to 0.
-+.PP
-+.SH RETURN VALUE
-+On success, this system call returns 0.
-+On error, it returns \-1 and
-+.I errno
-+is set to indicate the error.
-+.SH ERRORS
-+.TP
-+.B EBADF
-+.I fd
-+is not a valid file descriptor.
-+.TP
-+.B EINVAL
-+An invalid signal was specified.
-+.TP
-+.B EINVAL
-+.I fd
-+does not refer to a process.
-+.TP
-+.B EINVAL
-+The flags argument was not 0.
-+.TP
-+.B EPERM
-+The caller does not have permission to send the signal to the target.
-+For the required permissions, see
-+.BR kill (2).
-+Or:
-+.I uinfo->si_code
-+is invalid.
-+.TP
-+.B ESRCH
-+The process or process group does not exist.
-+Note that an existing process might be a zombie,
-+a process that has terminated execution, but
-+has not yet been
-+.BR wait (2)ed
-+for.
-+.SH CONFORMING TO
-+This system call is Linux-specific.
-+.SH SEE ALSO
-+.BR kill (2),
-+.BR sigaction (2),
-+.BR sigprocmask (2),
-+.BR tgkill (2),
-+.BR pthread_sigqueue (3),
-+.BR rt_sigqueueinfo (2),
-+.BR sigqueue (3),
-+.BR signal (7)
--- 
-2.19.1
+The current implementation of cgroups doesn't allow two or more
+entities, e.g., I/O schedulers, to share the same files.  Thus, to
+enable people to set group weights with BFQ, I resorted to making BFQ
+create its own version of the same interface files used by CFQ (before
+going away with legacy block), by prepending a bfq prefix.
 
+Actually, no legacy code uses these different names, or is likely to
+do so.  Having these two sets of names is simply a source of
+confusion, as pointed out also, e.g., by Lennart Poettering (CCed
+here), and acknowledged by Tejun [2].
+
+In [1] we agreed on a solution that solves this problem, by actually
+making it possible to share cgroups files.  Both writing to and
+reading from a shared file trigger the appropriate operation for each
+of the entities that share the file.  In particular, in case of
+reading,
+- if all entities produce the same output, the this common output is
+ shown only once;
+- if the outputs differ, then every per-entity output is shown,
+ followed by the name of the entity that produced that output.
+
+With this solution, legacy code that, e.g., sets group weights, just
+works, regardless of the I/O scheduler actually implementing
+proportional share.
+
+But note that this extension is not restricted to only blkio/io.  The
+general group interface now enables files to be shared among multiple
+entities of any kind.
+
+(I have also added a patch to fix some clerical errors in bfq doc,
+which I found while making the latter consistent with the new
+interface.)
+
+CHANGES FROM V1:
+- Removed patch that introduced a function to only find kernfs nodes,
+  without increasing ref counters
+- Changed commit messages and BFQ documentation, to comply with the
+  fact that there won't be CFQ any longer
+
+Thanks,
+Paolo
+
+Angelo Ruocco (5):
+  cgroup: link cftypes of the same subsystem with the same name
+  cgroup: add owner name to cftypes
+  block, bfq: align min and default weights with the old cfq default
+  cgroup: make all functions of all cftypes be invoked
+  block, throttle: allow sharing cgroup statistic files
+
+Paolo Valente (5):
+  cgroup: add hook seq_show_cft with also the owning cftype as parameter
+  block, cgroup: pass cftype to functions that need to use it
+  block, bfq: use standard file names for the proportional-share policy
+  doc, bfq-iosched: fix a few clerical errors
+  doc, bfq-iosched: make it consistent with the new cgroup interface
+
+ Documentation/block/bfq-iosched.txt |  34 ++---
+ block/bfq-cgroup.c                  | 148 +++++++++++++-------
+ block/bfq-iosched.h                 |   4 +-
+ block/blk-cgroup.c                  |  22 +--
+ block/blk-throttle.c                |  24 ++--
+ include/linux/blk-cgroup.h          |  10 +-
+ include/linux/cgroup-defs.h         |  14 +-
+ include/linux/cgroup.h              |  13 ++
+ kernel/cgroup/cgroup.c              | 262 +++++++++++++++++++++++++++++-------
+ 9 files changed, 390 insertions(+), 141 deletions(-)
+
+--
+2.16.1
