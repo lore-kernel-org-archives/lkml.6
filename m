@@ -2,138 +2,237 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA09BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5F4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07CC2146D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4220621104
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 18:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MsjE8AHq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B07CC2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4wuLrom"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4220621104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbeKTEZn (ORCPT
+        id S1731728AbeKTC7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 23:25:43 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34273 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730227AbeKTEZm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 23:25:42 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so8672236pfg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 10:01:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MgahdtnYV32tyTGT6Q6qYILjgWU8vS94WNHJ16VkQL0=;
-        b=MsjE8AHqOTkfoJWpebl+tpxtfNlNmed5qqOm2Gn0fZ2giDQDEbQcvoZyn4S3T5Miy9
-         n7l0azdmhCXoaAdY4d3q2MM9ioP4sjGmo0SgACMGRsjWWHHc/U6t5TqG9QTdlQSKBTV5
-         BxLjox6/HO7azwt961teqQ8sHdDjGXkK7yLJ6N2xAnOdu0P6TrZJVt+O/wtWfIKU4PRy
-         EI+C9Ft9fkuoSt2z0D6RZCs8HIoFswPy1JFiw+dMMrC5h6t3yqz1k3Zff9IaRro8TwW7
-         V0yplHDIUdK2/jqUqD1Sth1evWmlqKj7g1svgdnSW/mALXPD2f/+nA3arLozfruttbhC
-         S4pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MgahdtnYV32tyTGT6Q6qYILjgWU8vS94WNHJ16VkQL0=;
-        b=mDYR8oUCGwwUGu8EXE2g0+aixoghkUJDrm7HfLrCZE3BgBfZk3mGuHg+TISzFttA6L
-         9CfoCaEYrRq/ws5gi0CfMEMLzIeJXKc4AW+MCPy1u7AnTASunsxl40cMJc4sKWxMsMD1
-         X22CN8KQbJkO+wtAyHwYIajUTYqP/o29deedZR0w1K3A1soQX+cuBlV4ngnt5fMDZxWG
-         yDIR0kGg3TbAjqmEzp2enfgybCuKdC5l+PA8ktqmWfdbG43UHX0jPXcQSJA4V55PIrWx
-         S+8Glgw4rxs4CON5g2Y3rLI37eYCsmOJd3bvG3/dFfi0LQLginjEoPGiUBBWh/l24fi4
-         sqhw==
-X-Gm-Message-State: AGRZ1gKpGwELZ0iIUci/kIsnpd9BpJBa2egkuuuJxlFd6cE+IyOENJbC
-        nLLbZcqNms86mSKhPM6F6MpQK+YWQFKErBYvlhpxFQ==
-X-Google-Smtp-Source: AJdET5ez1+TLV2ljhvoP0C5vVPcFdoakXgFCkL/SIgsEeus4TZzvamsoEvKy84rAnlNjcQGw9aHFWAvX7NVf4JVdOnI=
-X-Received: by 2002:a63:e156:: with SMTP id h22mr21165415pgk.255.1542650465972;
- Mon, 19 Nov 2018 10:01:05 -0800 (PST)
+        Mon, 19 Nov 2018 21:59:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730350AbeKTC7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 21:59:48 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B65BE2147D;
+        Mon, 19 Nov 2018 16:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542645340;
+        bh=MEOH7hMu/3S4DZVDME5fnqG9tjntyU13s64M27H5XpM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S4wuLromIzgITyRNvqMv5ppv5R0LpFzNH/K1qA2SDnv3FIZanDBj8YjKJBSp/l4me
+         fNFShO0P96Wt2OokOPHtFItb3bv+3UoH5omFvy3q7xaKvbGXIA4eXtNeoUT3ZIuYVT
+         /B39OeJn29BguvexzOi9qSyCitphC8n1XI/qfpAM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 126/205] Btrfs: fix infinite loop on inode eviction after deduplication of eof block
+Date:   Mon, 19 Nov 2018 17:27:13 +0100
+Message-Id: <20181119162636.616211799@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
+References: <20181119162616.586062722@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <1542623503-3755-1-git-send-email-yamada.masahiro@socionext.com>
- <1542623503-3755-3-git-send-email-yamada.masahiro@socionext.com> <20181119123732.zcb6axl25bixgtly@ltop.local>
-In-Reply-To: <20181119123732.zcb6axl25bixgtly@ltop.local>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 19 Nov 2018 10:00:54 -0800
-Message-ID: <CAKwvOdk7WAeLPibZojsPFjvnnWWL8xE0D8=SxxWjNeoO3EY9rQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] build_bug.h: remove most of dummy BUILD_BUG_ON
- stubs for sparse
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, josh@joshtriplett.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 4:37 AM Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
->
-> On Mon, Nov 19, 2018 at 07:31:43PM +0900, Masahiro Yamada wrote:
-> > The introduction of these dummy BUILD_BUG_ON stubs dates back to
-> > commit 903c0c7cdc21 ("sparse: define dummy BUILD_BUG_ON definition
-> > for sparse").
-> >
-> > At that time, BUILD_BUG_ON() was implemented with the negative array
-> > trick *and* the link-time trick, like this:
-> >
-> >   extern int __build_bug_on_failed;
-> >   #define BUILD_BUG_ON(condition)                                \
-> >           do {                                                   \
-> >                   ((void)sizeof(char[1 - 2*!!(condition)]));     \
-> >                   if (condition) __build_bug_on_failed = 1;      \
-> >           } while(0)
-> >
-> > Sparse is more strict about the negative array trick than GCC because
-> > Sparse requires the array length to be really constant.
-> >
-> > Here is the simple test code for the macro above:
-> >
-> >   static const int x = 0;
-> >   BUILD_BUG_ON(x);
-> >
-> > GCC is absolutely fine with it (-Wvla was not enabled at that time),
-> > but Sparse warns like this:
-> >
-> >   error: bad constant expression
-> >   error: cannot size expression
-> >
-> > (If you are using a newer version of Sparse, you will see a different
-> > warning message, "warning: Variable length array is used".)
-> >
-> > Anyway, Sparse was producing many false positive warnings, hence
-> > silenced.
-> >
-> > With the previous commit, the leftover negative array trick is gone.
-> > Sparse is fine with the current BUILD_BUG_ON(), which is implemented
-> > by using the 'error' attribute. (assuming your Sparse version supports
-> > -Wno-unknown-attribute option)
-> >
-> > I am keeping the stub for BUILD_BUG_ON_ZERO(). Otherwise, Sparse
-> > would complain about the following code, which GCC is fine with:
-> >
-> >   static const int x = 0;
-> >   int y = BUILD_BUG_ON_ZERO(x);
-> >
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > Acked-by: Kees Cook <keescook@chromium.org>
->
-> Reviewed-by: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Clang builds not affected. Tested a quick arm64 defconfig build with
-Clang + this patch.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+------------------
 
--- 
-Thanks,
-~Nick Desaulniers
+From: Filipe Manana <fdmanana@suse.com>
+
+commit 11023d3f5fdf89bba5e1142127701ca6e6014587 upstream.
+
+If we attempt to deduplicate the last block of a file A into the middle of
+a file B, and file A's size is not a multiple of the block size, we end
+rounding the deduplication length to 0 bytes, to avoid the data corruption
+issue fixed by commit de02b9f6bb65 ("Btrfs: fix data corruption when
+deduplicating between different files"). However a length of zero will
+cause the insertion of an extent state with a start value greater (by 1)
+then the end value, leading to a corrupt extent state that will trigger a
+warning and cause chaos such as an infinite loop during inode eviction.
+Example trace:
+
+ [96049.833585] ------------[ cut here ]------------
+ [96049.833714] WARNING: CPU: 0 PID: 24448 at fs/btrfs/extent_io.c:436 insert_state+0x101/0x120 [btrfs]
+ [96049.833767] CPU: 0 PID: 24448 Comm: xfs_io Not tainted 4.19.0-rc7-btrfs-next-39 #1
+ [96049.833768] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
+ [96049.833780] RIP: 0010:insert_state+0x101/0x120 [btrfs]
+ [96049.833783] RSP: 0018:ffffafd2c3707af0 EFLAGS: 00010282
+ [96049.833785] RAX: 0000000000000000 RBX: 000000000004dfff RCX: 0000000000000006
+ [96049.833786] RDX: 0000000000000007 RSI: ffff99045c143230 RDI: ffff99047b2168a0
+ [96049.833787] RBP: ffff990457851cd0 R08: 0000000000000001 R09: 0000000000000000
+ [96049.833787] R10: ffffafd2c3707ab8 R11: 0000000000000000 R12: ffff9903b93b12c8
+ [96049.833788] R13: 000000000004e000 R14: ffffafd2c3707b80 R15: ffffafd2c3707b78
+ [96049.833790] FS:  00007f5c14e7d700(0000) GS:ffff99047b200000(0000) knlGS:0000000000000000
+ [96049.833791] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [96049.833792] CR2: 00007f5c146abff8 CR3: 0000000115f4c004 CR4: 00000000003606f0
+ [96049.833795] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ [96049.833796] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ [96049.833796] Call Trace:
+ [96049.833809]  __set_extent_bit+0x46c/0x6a0 [btrfs]
+ [96049.833823]  lock_extent_bits+0x6b/0x210 [btrfs]
+ [96049.833831]  ? _raw_spin_unlock+0x24/0x30
+ [96049.833841]  ? test_range_bit+0xdf/0x130 [btrfs]
+ [96049.833853]  lock_extent_range+0x8e/0x150 [btrfs]
+ [96049.833864]  btrfs_double_extent_lock+0x78/0xb0 [btrfs]
+ [96049.833875]  btrfs_extent_same_range+0x14e/0x550 [btrfs]
+ [96049.833885]  ? rcu_read_lock_sched_held+0x3f/0x70
+ [96049.833890]  ? __kmalloc_node+0x2b0/0x2f0
+ [96049.833899]  ? btrfs_dedupe_file_range+0x19a/0x280 [btrfs]
+ [96049.833909]  btrfs_dedupe_file_range+0x270/0x280 [btrfs]
+ [96049.833916]  vfs_dedupe_file_range_one+0xd9/0xe0
+ [96049.833919]  vfs_dedupe_file_range+0x131/0x1b0
+ [96049.833924]  do_vfs_ioctl+0x272/0x6e0
+ [96049.833927]  ? __fget+0x113/0x200
+ [96049.833931]  ksys_ioctl+0x70/0x80
+ [96049.833933]  __x64_sys_ioctl+0x16/0x20
+ [96049.833937]  do_syscall_64+0x60/0x1b0
+ [96049.833939]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [96049.833941] RIP: 0033:0x7f5c1478ddd7
+ [96049.833943] RSP: 002b:00007ffe15b196a8 EFLAGS: 00000202 ORIG_RAX: 0000000000000010
+ [96049.833945] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5c1478ddd7
+ [96049.833946] RDX: 00005625ece322d0 RSI: 00000000c0189436 RDI: 0000000000000004
+ [96049.833947] RBP: 0000000000000000 R08: 00007f5c14a46f48 R09: 0000000000000040
+ [96049.833948] R10: 0000000000000541 R11: 0000000000000202 R12: 0000000000000000
+ [96049.833949] R13: 0000000000000000 R14: 0000000000000004 R15: 00005625ece322d0
+ [96049.833954] irq event stamp: 6196
+ [96049.833956] hardirqs last  enabled at (6195): [<ffffffff91b00663>] console_unlock+0x503/0x640
+ [96049.833958] hardirqs last disabled at (6196): [<ffffffff91a037dd>] trace_hardirqs_off_thunk+0x1a/0x1c
+ [96049.833959] softirqs last  enabled at (6114): [<ffffffff92600370>] __do_softirq+0x370/0x421
+ [96049.833964] softirqs last disabled at (6095): [<ffffffff91a8dd4d>] irq_exit+0xcd/0xe0
+ [96049.833965] ---[ end trace db7b05f01b7fa10c ]---
+ [96049.935816] R13: 0000000000000000 R14: 00005562e5259240 R15: 00007ffff092b910
+ [96049.935822] irq event stamp: 6584
+ [96049.935823] hardirqs last  enabled at (6583): [<ffffffff91b00663>] console_unlock+0x503/0x640
+ [96049.935825] hardirqs last disabled at (6584): [<ffffffff91a037dd>] trace_hardirqs_off_thunk+0x1a/0x1c
+ [96049.935827] softirqs last  enabled at (6328): [<ffffffff92600370>] __do_softirq+0x370/0x421
+ [96049.935828] softirqs last disabled at (6313): [<ffffffff91a8dd4d>] irq_exit+0xcd/0xe0
+ [96049.935829] ---[ end trace db7b05f01b7fa123 ]---
+ [96049.935840] ------------[ cut here ]------------
+ [96049.936065] WARNING: CPU: 1 PID: 24463 at fs/btrfs/extent_io.c:436 insert_state+0x101/0x120 [btrfs]
+ [96049.936107] CPU: 1 PID: 24463 Comm: umount Tainted: G        W         4.19.0-rc7-btrfs-next-39 #1
+ [96049.936108] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.11.2-0-gf9626ccb91-prebuilt.qemu-project.org 04/01/2014
+ [96049.936117] RIP: 0010:insert_state+0x101/0x120 [btrfs]
+ [96049.936119] RSP: 0018:ffffafd2c3637bc0 EFLAGS: 00010282
+ [96049.936120] RAX: 0000000000000000 RBX: 000000000004dfff RCX: 0000000000000006
+ [96049.936121] RDX: 0000000000000007 RSI: ffff990445cf88e0 RDI: ffff99047b2968a0
+ [96049.936122] RBP: ffff990457851cd0 R08: 0000000000000001 R09: 0000000000000000
+ [96049.936123] R10: ffffafd2c3637b88 R11: 0000000000000000 R12: ffff9904574301e8
+ [96049.936124] R13: 000000000004e000 R14: ffffafd2c3637c50 R15: ffffafd2c3637c48
+ [96049.936125] FS:  00007fe4b87e72c0(0000) GS:ffff99047b280000(0000) knlGS:0000000000000000
+ [96049.936126] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ [96049.936128] CR2: 00005562e52618d8 CR3: 00000001151c8005 CR4: 00000000003606e0
+ [96049.936129] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ [96049.936131] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ [96049.936131] Call Trace:
+ [96049.936141]  __set_extent_bit+0x46c/0x6a0 [btrfs]
+ [96049.936154]  lock_extent_bits+0x6b/0x210 [btrfs]
+ [96049.936167]  btrfs_evict_inode+0x1e1/0x5a0 [btrfs]
+ [96049.936172]  evict+0xbf/0x1c0
+ [96049.936174]  dispose_list+0x51/0x80
+ [96049.936176]  evict_inodes+0x193/0x1c0
+ [96049.936180]  generic_shutdown_super+0x3f/0x110
+ [96049.936182]  kill_anon_super+0xe/0x30
+ [96049.936189]  btrfs_kill_super+0x13/0x100 [btrfs]
+ [96049.936191]  deactivate_locked_super+0x3a/0x70
+ [96049.936193]  cleanup_mnt+0x3b/0x80
+ [96049.936195]  task_work_run+0x93/0xc0
+ [96049.936198]  exit_to_usermode_loop+0xfa/0x100
+ [96049.936201]  do_syscall_64+0x17f/0x1b0
+ [96049.936202]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+ [96049.936204] RIP: 0033:0x7fe4b80cfb37
+ [96049.936206] RSP: 002b:00007ffff092b688 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+ [96049.936207] RAX: 0000000000000000 RBX: 00005562e5259060 RCX: 00007fe4b80cfb37
+ [96049.936208] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 00005562e525faa0
+ [96049.936209] RBP: 00005562e525faa0 R08: 00005562e525f770 R09: 0000000000000015
+ [96049.936210] R10: 00000000000006b4 R11: 0000000000000246 R12: 00007fe4b85d1e64
+ [96049.936211] R13: 0000000000000000 R14: 00005562e5259240 R15: 00007ffff092b910
+ [96049.936211] R13: 0000000000000000 R14: 00005562e5259240 R15: 00007ffff092b910
+ [96049.936216] irq event stamp: 6616
+ [96049.936219] hardirqs last  enabled at (6615): [<ffffffff91b00663>] console_unlock+0x503/0x640
+ [96049.936219] hardirqs last disabled at (6616): [<ffffffff91a037dd>] trace_hardirqs_off_thunk+0x1a/0x1c
+ [96049.936222] softirqs last  enabled at (6328): [<ffffffff92600370>] __do_softirq+0x370/0x421
+ [96049.936222] softirqs last disabled at (6313): [<ffffffff91a8dd4d>] irq_exit+0xcd/0xe0
+ [96049.936223] ---[ end trace db7b05f01b7fa124 ]---
+
+The second stack trace, from inode eviction, is repeated forever due to
+the infinite loop during eviction.
+
+This is the same type of problem fixed way back in 2015 by commit
+113e8283869b ("Btrfs: fix inode eviction infinite loop after extent_same
+ioctl") and commit ccccf3d67294 ("Btrfs: fix inode eviction infinite loop
+after cloning into it").
+
+So fix this by returning immediately if the deduplication range length
+gets rounded down to 0 bytes, as there is nothing that needs to be done in
+such case.
+
+Example reproducer:
+
+ $ mkfs.btrfs -f /dev/sdb
+ $ mount /dev/sdb /mnt
+
+ $ xfs_io -f -c "pwrite -S 0xe6 0 100" /mnt/foo
+ $ xfs_io -f -c "pwrite -S 0xe6 0 1M" /mnt/bar
+
+ # Unmount the filesystem and mount it again so that we start without any
+ # extent state records when we ask for the deduplication.
+ $ umount /mnt
+ $ mount /dev/sdb /mnt
+
+ $ xfs_io -c "dedupe /mnt/foo 0 500K 100" /mnt/bar
+
+ # This unmount triggers the infinite loop.
+ $ umount /mnt
+
+A test case for fstests will follow soon.
+
+Fixes: de02b9f6bb65 ("Btrfs: fix data corruption when deduplicating between different files")
+CC: <stable@vger.kernel.org> # 4.19+
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/btrfs/ioctl.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -3489,6 +3489,8 @@ static int btrfs_extent_same_range(struc
+ 			const u64 sz = BTRFS_I(src)->root->fs_info->sectorsize;
+ 
+ 			len = round_down(i_size_read(src), sz) - loff;
++			if (len == 0)
++				return 0;
+ 			olen = len;
+ 		}
+ 	}
+
+
