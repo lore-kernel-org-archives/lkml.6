@@ -4,46 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5AFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE317C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5CC521104
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 862992145D
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:41:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8gNskm7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5CC521104
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDOjLqW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 862992145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbeKTDF7 (ORCPT
+        id S2387491AbeKTDGC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:05:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39532 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:06:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732645AbeKTDF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:05:58 -0500
+        id S1732645AbeKTDGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:06:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E249A21104;
-        Mon, 19 Nov 2018 16:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B87021104;
+        Mon, 19 Nov 2018 16:41:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645708;
-        bh=yd2mqDX9kYnex8YexW29/c79NhHXkhYVFqGgkvQFNEY=;
+        s=default; t=1542645710;
+        bh=LUqQEEi1OnGbMulW/Bi/MMJVwIlzLC5XEXSuEXyvqwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U8gNskm75+aepU/o250nqghKuZHAiQtSmdAgDONJEIbIJ2WshPW3/kH4gJ9f4fBoy
-         0HzDcz+8WnhUiBmpkBoppVbE7fm73h0TjuN2SAIFvAL4OE7KVa7B2jHAmaPBNHWgeZ
-         S9sXh83eMuoWlFrjTV3vPXni8cFI8GWt3igu5ZrQ=
+        b=EDOjLqW+Bs18DDE/Jl7xZZTclIYqjrD7w3RrB2vZIN08bOa/ot8sZmyQXsOLL0Phv
+         XA4gFL9VHG00u7NrMyPJjRvR+PiRq79ZwB9LVYSbIfil7TLmSN/XWeM/M1dIrjQIkS
+         onMOuJZJm8kcmd9pxzpUW/VdDbe8yDIKjRYhwulo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PATCH 4.18 059/171] xtensa: add NOTES section to the linker script
-Date:   Mon, 19 Nov 2018 17:27:35 +0100
-Message-Id: <20181119162629.565257282@linuxfoundation.org>
+Subject: [PATCH 4.18 060/171] xtensa: make sure bFLT stack is 16 byte aligned
+Date:   Mon, 19 Nov 2018 17:27:36 +0100
+Message-Id: <20181119162629.729019208@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -63,42 +62,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 4119ba211bc4f1bf638f41e50b7a0f329f58aa16 upstream.
+commit 0773495b1f5f1c5e23551843f87b5ff37e7af8f7 upstream.
 
-This section collects all source .note.* sections together in the
-vmlinux image. Without it .note.Linux section may be placed at address
-0, while the rest of the kernel is at its normal address, resulting in a
-huge vmlinux.bin image that may not be linked into the xtensa Image.elf.
+Xtensa ABI requires stack alignment to be at least 16. In noMMU
+configuration ARCH_SLAB_MINALIGN is used to align stack. Make it at
+least 16.
+
+This fixes the following runtime error in noMMU configuration, caused by
+interaction between insufficiently aligned stack and alloca function,
+that results in corruption of on-stack variable in the libc function
+glob:
+
+ Caught unhandled exception in 'sh' (pid = 47, pc = 0x02d05d65)
+  - should not happen
+  EXCCAUSE is 15
 
 Cc: stable@vger.kernel.org
 Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/xtensa/boot/Makefile        |    2 +-
- arch/xtensa/kernel/vmlinux.lds.S |    1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/xtensa/include/asm/processor.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/xtensa/boot/Makefile
-+++ b/arch/xtensa/boot/Makefile
-@@ -34,7 +34,7 @@ boot-elf boot-redboot: $(addprefix $(obj
- 		       $(addprefix $(obj)/,$(host-progs))
- 	$(Q)$(MAKE) $(build)=$(obj)/$@ $(MAKECMDGOALS)
+--- a/arch/xtensa/include/asm/processor.h
++++ b/arch/xtensa/include/asm/processor.h
+@@ -24,7 +24,11 @@
+ # error Linux requires the Xtensa Windowed Registers Option.
+ #endif
  
--OBJCOPYFLAGS = --strip-all -R .comment -R .note.gnu.build-id -O binary
-+OBJCOPYFLAGS = --strip-all -R .comment -R .notes -O binary
+-#define ARCH_SLAB_MINALIGN	XCHAL_DATA_WIDTH
++/* Xtensa ABI requires stack alignment to be at least 16 */
++
++#define STACK_ALIGN (XCHAL_DATA_WIDTH > 16 ? XCHAL_DATA_WIDTH : 16)
++
++#define ARCH_SLAB_MINALIGN STACK_ALIGN
  
- vmlinux.bin: vmlinux FORCE
- 	$(call if_changed,objcopy)
---- a/arch/xtensa/kernel/vmlinux.lds.S
-+++ b/arch/xtensa/kernel/vmlinux.lds.S
-@@ -131,6 +131,7 @@ SECTIONS
-   .fixup   : { *(.fixup) }
- 
-   EXCEPTION_TABLE(16)
-+  NOTES
-   /* Data section */
- 
-   _sdata = .;
+ /*
+  * User space process size: 1 GB.
 
 
