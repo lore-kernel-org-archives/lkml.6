@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B24CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20974C04EBA
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 223F8215EA
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA7C821707
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="efBg+DuX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 223F8215EA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2CLZOMzJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA7C821707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405184AbeKTDYE (ORCPT
+        id S2405197AbeKTDYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36266 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:03 -0500
+        id S2404390AbeKTDYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B5132154B;
-        Mon, 19 Nov 2018 16:59:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F27A721582;
+        Mon, 19 Nov 2018 16:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646787;
-        bh=OsYOE4P8vtfmEdOoYcN8iA798KOXkLdhOsKrcVgYVh4=;
+        s=default; t=1542646790;
+        bh=9TM6fTcgyujrbLa7e6bjApQTRJdk6fmwrfsMndsWMNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=efBg+DuXjMVGsYyG2Y+sRA2qZ2T4M0VBs76RQ4V+KeS7v2NMCmBzdF17L3GVeZirw
-         G6Sa8cO8DZ6i+OQD3Ktmks4YBLKbqknoOmyBUitp2CK+4pNj1wtf+2E4lYqGTMLxlc
-         u2ws54JSdODyQdQIi4Nl3dNQPmdW1DUeyNGIybwU=
+        b=2CLZOMzJyNdbVtOUQnuZ1p4dkOXT3zQKCXQPSNEEUlMvIGMP5gSP9OM4XuCXkN3OE
+         38xhP6TeLyjBe/J4FiSMVDSIgu8jjL/Is5JxXdF1yktUB1OYbUNw/okWEEHuL+qaFp
+         wBf/sXsJVV+uc1ZNETpXqBlSHUCPrPKLSCOz+hNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Omar Sandoval <osandov@fb.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Josef Bacik <josef@toxicpanda.com>,
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 090/160] btrfs: make sure we create all new block groups
-Date:   Mon, 19 Nov 2018 17:28:49 +0100
-Message-Id: <20181119162639.948945153@linuxfoundation.org>
+Subject: [PATCH 4.4 091/160] Btrfs: fix wrong dentries after fsync of file that got its parent replaced
+Date:   Mon, 19 Nov 2018 17:28:50 +0100
+Message-Id: <20181119162640.060269598@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,49 +62,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 545e3366db823dc3342ca9d7fea803f829c9062f upstream.
+commit 0f375eed92b5a407657532637ed9652611a682f5 upstream.
 
-Allocating new chunks modifies both the extent and chunk tree, which can
-trigger new chunk allocations.  So instead of doing list_for_each_safe,
-just do while (!list_empty()) so we make sure we don't exit with other
-pending bg's still on our list.
+In a scenario like the following:
+
+  mkdir /mnt/A               # inode 258
+  mkdir /mnt/B               # inode 259
+  touch /mnt/B/bar           # inode 260
+
+  sync
+
+  mv /mnt/B/bar /mnt/A/bar
+  mv -T /mnt/A /mnt/B
+  fsync /mnt/B/bar
+
+  <power fail>
+
+After replaying the log we end up with file bar having 2 hard links, both
+with the name 'bar' and one in the directory with inode number 258 and the
+other in the directory with inode number 259. Also, we end up with the
+directory inode 259 still existing and with the directory inode 258 still
+named as 'A', instead of 'B'. In this scenario, file 'bar' should only
+have one hard link, located at directory inode 258, the directory inode
+259 should not exist anymore and the name for directory inode 258 should
+be 'B'.
+
+This incorrect behaviour happens because when attempting to log the old
+parents of an inode, we skip any parents that no longer exist. Fix this
+by forcing a full commit if an old parent no longer exists.
+
+A test case for fstests follows soon.
 
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent-tree.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/btrfs/tree-log.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -9912,7 +9912,7 @@ error:
- void btrfs_create_pending_block_groups(struct btrfs_trans_handle *trans,
- 				       struct btrfs_root *root)
- {
--	struct btrfs_block_group_cache *block_group, *tmp;
-+	struct btrfs_block_group_cache *block_group;
- 	struct btrfs_root *extent_root = root->fs_info->extent_root;
- 	struct btrfs_block_group_item item;
- 	struct btrfs_key key;
-@@ -9920,7 +9920,10 @@ void btrfs_create_pending_block_groups(s
- 	bool can_flush_pending_bgs = trans->can_flush_pending_bgs;
+--- a/fs/btrfs/tree-log.c
++++ b/fs/btrfs/tree-log.c
+@@ -5240,9 +5240,33 @@ static int btrfs_log_all_parents(struct
  
- 	trans->can_flush_pending_bgs = false;
--	list_for_each_entry_safe(block_group, tmp, &trans->new_bgs, bg_list) {
-+	while (!list_empty(&trans->new_bgs)) {
-+		block_group = list_first_entry(&trans->new_bgs,
-+					       struct btrfs_block_group_cache,
-+					       bg_list);
- 		if (ret)
- 			goto next;
+ 			dir_inode = btrfs_iget(root->fs_info->sb, &inode_key,
+ 					       root, NULL);
+-			/* If parent inode was deleted, skip it. */
+-			if (IS_ERR(dir_inode))
+-				continue;
++			/*
++			 * If the parent inode was deleted, return an error to
++			 * fallback to a transaction commit. This is to prevent
++			 * getting an inode that was moved from one parent A to
++			 * a parent B, got its former parent A deleted and then
++			 * it got fsync'ed, from existing at both parents after
++			 * a log replay (and the old parent still existing).
++			 * Example:
++			 *
++			 * mkdir /mnt/A
++			 * mkdir /mnt/B
++			 * touch /mnt/B/bar
++			 * sync
++			 * mv /mnt/B/bar /mnt/A/bar
++			 * mv -T /mnt/A /mnt/B
++			 * fsync /mnt/B/bar
++			 * <power fail>
++			 *
++			 * If we ignore the old parent B which got deleted,
++			 * after a log replay we would have file bar linked
++			 * at both parents and the old parent B would still
++			 * exist.
++			 */
++			if (IS_ERR(dir_inode)) {
++				ret = PTR_ERR(dir_inode);
++				goto out;
++			}
  
+ 			ret = btrfs_log_inode(trans, root, dir_inode,
+ 					      LOG_INODE_ALL, 0, LLONG_MAX, ctx);
 
 
