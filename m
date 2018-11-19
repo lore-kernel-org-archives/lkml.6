@@ -2,49 +2,49 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 633C0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA4ABC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D6322086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A588F2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:36:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp2TNMRh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D6322086A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsnWib1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A588F2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbeKTDBC (ORCPT
+        id S1732058AbeKTDBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:01:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32770 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:01:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730931AbeKTDBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:01:01 -0500
+        id S1730931AbeKTDBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:01:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF4D02147D;
-        Mon, 19 Nov 2018 16:36:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 454FA214C1;
+        Mon, 19 Nov 2018 16:36:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645412;
-        bh=6chEzC1K5yjV6wRb+fyTECAiaBmuapAfXvEOmFOZgdI=;
+        s=default; t=1542645414;
+        bh=E6lNrUAR3TGgctcwM6mXVyFahLy0JTZDewNxd31WbeQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wp2TNMRhEvohna/vn7A5nhP5kz3vwO3nnzGDUF8JzZIDeau7IKBNH4w5DArsygGC7
-         lzpu0G7wdNZ+5r4a87uHD3jNEqxbE07W4cgEXMV9w5ArM70NswIAQuo2PqKif2D9PU
-         tO3bJljWDb8L81tlSTT8SZEW1ClbR17MPr2c7vaU=
+        b=GsnWib1+WOUQZsmwdjG6L3nz2c1OI9ewuuvya8zMFrGLMouR1C/COQr9s12BwJ2Bk
+         U8TNsUR5v6XwvODguQSv1PeTCTAzY+8ko2RFElw1AxT08g1mEEidRKimtGX8Bj3FY8
+         mXuW3IhLPt6H+2oIh61yZsWKHbWqCUYT7r9Av2k4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
         Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 4.19 153/205] kdb: use correct pointer when btc calls btt
-Date:   Mon, 19 Nov 2018 17:27:40 +0100
-Message-Id: <20181119162638.885529246@linuxfoundation.org>
+Subject: [PATCH 4.19 154/205] kdb: print real address of pointers instead of hashed addresses
+Date:   Mon, 19 Nov 2018 17:27:41 +0100
+Message-Id: <20181119162638.966390715@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -64,61 +64,165 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit dded2e159208a9edc21dd5c5f583afa28d378d39 upstream.
+commit 568fb6f42ac6851320adaea25f8f1b94de14e40a upstream.
 
-On a powerpc 8xx, 'btc' fails as follows:
+Since commit ad67b74d2469 ("printk: hash addresses printed with %p"),
+all pointers printed with %p are printed with hashed addresses
+instead of real addresses in order to avoid leaking addresses in
+dmesg and syslog. But this applies to kdb too, with is unfortunate:
 
-Entering kdb (current=0x(ptrval), pid 282) due to Keyboard Entry
-kdb> btc
-btc: cpu status: Currently on cpu 0
-Available cpus: 0
-kdb_getarea: Bad address 0x0
+    Entering kdb (current=0x(ptrval), pid 329) due to Keyboard Entry
+    kdb> ps
+    15 sleeping system daemon (state M) processes suppressed,
+    use 'ps A' to see all.
+    Task Addr       Pid   Parent [*] cpu State Thread     Command
+    0x(ptrval)      329      328  1    0   R  0x(ptrval) *sh
 
-when booting the kernel with 'debug_boot_weak_hash', it fails as well
+    0x(ptrval)        1        0  0    0   S  0x(ptrval)  init
+    0x(ptrval)        3        2  0    0   D  0x(ptrval)  rcu_gp
+    0x(ptrval)        4        2  0    0   D  0x(ptrval)  rcu_par_gp
+    0x(ptrval)        5        2  0    0   D  0x(ptrval)  kworker/0:0
+    0x(ptrval)        6        2  0    0   D  0x(ptrval)  kworker/0:0H
+    0x(ptrval)        7        2  0    0   D  0x(ptrval)  kworker/u2:0
+    0x(ptrval)        8        2  0    0   D  0x(ptrval)  mm_percpu_wq
+    0x(ptrval)       10        2  0    0   D  0x(ptrval)  rcu_preempt
 
-Entering kdb (current=0xba99ad80, pid 284) due to Keyboard Entry
-kdb> btc
-btc: cpu status: Currently on cpu 0
-Available cpus: 0
-kdb_getarea: Bad address 0xba99ad80
+The whole purpose of kdb is to debug, and for debugging real addresses
+need to be known. In addition, data displayed by kdb doesn't go into
+dmesg.
 
-On other platforms, Oopses have been observed too, see
-https://github.com/linuxppc/linux/issues/139
-
-This is due to btc calling 'btt' with %p pointer as an argument.
-
-This patch replaces %p by %px to get the real pointer value as
-expected by 'btt'
+This patch replaces all %p by %px in kdb in order to display real
+addresses.
 
 Fixes: ad67b74d2469 ("printk: hash addresses printed with %p")
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/debug/kdb/kdb_bt.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/debug/kdb/kdb_main.c    |   14 +++++++-------
+ kernel/debug/kdb/kdb_support.c |   12 ++++++------
+ 2 files changed, 13 insertions(+), 13 deletions(-)
 
---- a/kernel/debug/kdb/kdb_bt.c
-+++ b/kernel/debug/kdb/kdb_bt.c
-@@ -179,14 +179,14 @@ kdb_bt(int argc, const char **argv)
- 				kdb_printf("no process for cpu %ld\n", cpu);
- 				return 0;
- 			}
--			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
-+			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
- 			kdb_parse(buf);
- 			return 0;
+--- a/kernel/debug/kdb/kdb_main.c
++++ b/kernel/debug/kdb/kdb_main.c
+@@ -1192,7 +1192,7 @@ static int kdb_local(kdb_reason_t reason
+ 	if (reason == KDB_REASON_DEBUG) {
+ 		/* special case below */
+ 	} else {
+-		kdb_printf("\nEntering kdb (current=0x%p, pid %d) ",
++		kdb_printf("\nEntering kdb (current=0x%px, pid %d) ",
+ 			   kdb_current, kdb_current ? kdb_current->pid : 0);
+ #if defined(CONFIG_SMP)
+ 		kdb_printf("on processor %d ", raw_smp_processor_id());
+@@ -1208,7 +1208,7 @@ static int kdb_local(kdb_reason_t reason
+ 		 */
+ 		switch (db_result) {
+ 		case KDB_DB_BPT:
+-			kdb_printf("\nEntering kdb (0x%p, pid %d) ",
++			kdb_printf("\nEntering kdb (0x%px, pid %d) ",
+ 				   kdb_current, kdb_current->pid);
+ #if defined(CONFIG_SMP)
+ 			kdb_printf("on processor %d ", raw_smp_processor_id());
+@@ -2048,7 +2048,7 @@ static int kdb_lsmod(int argc, const cha
+ 		if (mod->state == MODULE_STATE_UNFORMED)
+ 			continue;
+ 
+-		kdb_printf("%-20s%8u  0x%p ", mod->name,
++		kdb_printf("%-20s%8u  0x%px ", mod->name,
+ 			   mod->core_layout.size, (void *)mod);
+ #ifdef CONFIG_MODULE_UNLOAD
+ 		kdb_printf("%4d ", module_refcount(mod));
+@@ -2059,7 +2059,7 @@ static int kdb_lsmod(int argc, const cha
+ 			kdb_printf(" (Loading)");
+ 		else
+ 			kdb_printf(" (Live)");
+-		kdb_printf(" 0x%p", mod->core_layout.base);
++		kdb_printf(" 0x%px", mod->core_layout.base);
+ 
+ #ifdef CONFIG_MODULE_UNLOAD
+ 		{
+@@ -2341,7 +2341,7 @@ void kdb_ps1(const struct task_struct *p
+ 		return;
+ 
+ 	cpu = kdb_process_cpu(p);
+-	kdb_printf("0x%p %8d %8d  %d %4d   %c  0x%p %c%s\n",
++	kdb_printf("0x%px %8d %8d  %d %4d   %c  0x%px %c%s\n",
+ 		   (void *)p, p->pid, p->parent->pid,
+ 		   kdb_task_has_cpu(p), kdb_process_cpu(p),
+ 		   kdb_task_state_char(p),
+@@ -2354,7 +2354,7 @@ void kdb_ps1(const struct task_struct *p
+ 		} else {
+ 			if (KDB_TSK(cpu) != p)
+ 				kdb_printf("  Error: does not match running "
+-				   "process table (0x%p)\n", KDB_TSK(cpu));
++				   "process table (0x%px)\n", KDB_TSK(cpu));
  		}
- 		kdb_printf("btc: cpu status: ");
- 		kdb_parse("cpu\n");
- 		for_each_online_cpu(cpu) {
--			sprintf(buf, "btt 0x%p\n", KDB_TSK(cpu));
-+			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
- 			kdb_parse(buf);
- 			touch_nmi_watchdog();
+ 	}
+ }
+@@ -2692,7 +2692,7 @@ int kdb_register_flags(char *cmd,
+ 	for_each_kdbcmd(kp, i) {
+ 		if (kp->cmd_name && (strcmp(kp->cmd_name, cmd) == 0)) {
+ 			kdb_printf("Duplicate kdb command registered: "
+-				"%s, func %p help %s\n", cmd, func, help);
++				"%s, func %px help %s\n", cmd, func, help);
+ 			return 1;
  		}
+ 	}
+--- a/kernel/debug/kdb/kdb_support.c
++++ b/kernel/debug/kdb/kdb_support.c
+@@ -40,7 +40,7 @@
+ int kdbgetsymval(const char *symname, kdb_symtab_t *symtab)
+ {
+ 	if (KDB_DEBUG(AR))
+-		kdb_printf("kdbgetsymval: symname=%s, symtab=%p\n", symname,
++		kdb_printf("kdbgetsymval: symname=%s, symtab=%px\n", symname,
+ 			   symtab);
+ 	memset(symtab, 0, sizeof(*symtab));
+ 	symtab->sym_start = kallsyms_lookup_name(symname);
+@@ -88,7 +88,7 @@ int kdbnearsym(unsigned long addr, kdb_s
+ 	char *knt1 = NULL;
+ 
+ 	if (KDB_DEBUG(AR))
+-		kdb_printf("kdbnearsym: addr=0x%lx, symtab=%p\n", addr, symtab);
++		kdb_printf("kdbnearsym: addr=0x%lx, symtab=%px\n", addr, symtab);
+ 	memset(symtab, 0, sizeof(*symtab));
+ 
+ 	if (addr < 4096)
+@@ -149,7 +149,7 @@ int kdbnearsym(unsigned long addr, kdb_s
+ 		symtab->mod_name = "kernel";
+ 	if (KDB_DEBUG(AR))
+ 		kdb_printf("kdbnearsym: returns %d symtab->sym_start=0x%lx, "
+-		   "symtab->mod_name=%p, symtab->sym_name=%p (%s)\n", ret,
++		   "symtab->mod_name=%px, symtab->sym_name=%px (%s)\n", ret,
+ 		   symtab->sym_start, symtab->mod_name, symtab->sym_name,
+ 		   symtab->sym_name);
+ 
+@@ -887,13 +887,13 @@ void debug_kusage(void)
+ 		   __func__, dah_first);
+ 	if (dah_first) {
+ 		h_used = (struct debug_alloc_header *)debug_alloc_pool;
+-		kdb_printf("%s: h_used %p size %d\n", __func__, h_used,
++		kdb_printf("%s: h_used %px size %d\n", __func__, h_used,
+ 			   h_used->size);
+ 	}
+ 	do {
+ 		h_used = (struct debug_alloc_header *)
+ 			  ((char *)h_free + dah_overhead + h_free->size);
+-		kdb_printf("%s: h_used %p size %d caller %p\n",
++		kdb_printf("%s: h_used %px size %d caller %px\n",
+ 			   __func__, h_used, h_used->size, h_used->caller);
+ 		h_free = (struct debug_alloc_header *)
+ 			  (debug_alloc_pool + h_free->next);
+@@ -902,7 +902,7 @@ void debug_kusage(void)
+ 		  ((char *)h_free + dah_overhead + h_free->size);
+ 	if ((char *)h_used - debug_alloc_pool !=
+ 	    sizeof(debug_alloc_pool_aligned))
+-		kdb_printf("%s: h_used %p size %d caller %p\n",
++		kdb_printf("%s: h_used %px size %d caller %px\n",
+ 			   __func__, h_used, h_used->size, h_used->caller);
+ out:
+ 	spin_unlock(&dap_lock);
 
 
