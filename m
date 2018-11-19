@@ -2,103 +2,109 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF0F3C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B09C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9315620851
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:40:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9315620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C160F20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 12:41:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="YLPygiRe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C160F20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728844AbeKSXEG (ORCPT
+        id S1728869AbeKSXEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 18:04:06 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38094 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728724AbeKSXEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 18:04:06 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 482A3AE55;
-        Mon, 19 Nov 2018 12:40:34 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 13:40:33 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        pifang@redhat.com, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, aarcange@redhat.com,
-        Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181119124033.GJ22247@dhcp22.suse.cz>
-References: <20181115073052.GA23831@dhcp22.suse.cz>
- <20181115075349.GL2653@MiWiFi-R3L-srv>
- <20181115083055.GD23831@dhcp22.suse.cz>
- <20181115131211.GP2653@MiWiFi-R3L-srv>
- <20181115131927.GT23831@dhcp22.suse.cz>
- <20181115133840.GR2653@MiWiFi-R3L-srv>
- <20181115143204.GV23831@dhcp22.suse.cz>
- <20181116012433.GU2653@MiWiFi-R3L-srv>
- <20181116091409.GD14706@dhcp22.suse.cz>
- <20181119105202.GE18471@MiWiFi-R3L-srv>
+        Mon, 19 Nov 2018 18:04:49 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:40292 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728724AbeKSXEt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 18:04:49 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id BF76A10C1605;
+        Mon, 19 Nov 2018 04:41:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542631278; bh=F/lL5bPeEpK1wkZhlwxly1NwJSypToXOf9t0LA+Tm/4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=YLPygiReVpSV8nNFqgslHsFftdYF5/xmsLuFG//NF2FnKupCLUcprA5NaQjvhe5Gx
+         IKhF7QMm7Y5ctjiRopIDw4uKpVavs2hkkpb1BHc6ke669MTfnpTbkI3fs9WbPN2tbz
+         6pKkOU+WdOynuL0uIYykxNtR0E/bIUDbfwFfjEkOOls27VvxCQAjI8caviGerkN7YP
+         6GwnklhxzB+r00FBjoz2r7BI+9jLzxXSZLVcyGrdzjSIAf0Q6WCwG355RQKW/bEAEQ
+         WxsMFxm0LDLXRhDKdrepGbWV8zNlpx65aCl7CH5I3iBkyHDGrn3xhpkC5jVhIbJVEW
+         z3yCBv8hgTHdw==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 84BE23A1E;
+        Mon, 19 Nov 2018 04:41:18 -0800 (PST)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 19 Nov 2018 04:41:18 -0800
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 19 Nov 2018 13:41:15 +0100
+Received: from [10.0.2.15] (10.107.19.165) by DE02WEHTCA.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 19 Nov
+ 2018 13:41:14 +0100
+Subject: Re: [PATCH][i3c-next] i3c: master: fix mask operation by using the
+ correct operator
+To:     Colin King <colin.king@canonical.com>,
+        Vitor Soares <vitor.soares@synopsys.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     <kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20181116184223.28240-1-colin.king@canonical.com>
+From:   vitor <vitor.soares@synopsys.com>
+Message-ID: <7d569740-e5d3-b8a6-79cf-9885039e53de@synopsys.com>
+Date:   Mon, 19 Nov 2018 12:41:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119105202.GE18471@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181116184223.28240-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.19.165]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 19-11-18 18:52:02, Baoquan He wrote:
-[...]
+Hi Coling,
 
-There are few stacks directly in the offline path but those should be
-OK.
-The real culprit seems to be the swap in code
 
-> [  +1.734416] CPU: 255 PID: 5558 Comm: stress Tainted: G             L    4.20.0-rc2+ #7
-> [  +0.007927] Hardware name:  9008/IT91SMUB, BIOS BLXSV512 03/22/2018
-> [  +0.006297] Call Trace:
-> [  +0.002537]  dump_stack+0x46/0x60
-> [  +0.003386]  __migration_entry_wait.cold.65+0x5/0x14
-> [  +0.005043]  do_swap_page+0x84e/0x960
-> [  +0.003727]  ? arch_tlb_finish_mmu+0x29/0xc0
-> [  +0.006412]  __handle_mm_fault+0x933/0x1330
-> [  +0.004265]  handle_mm_fault+0xc4/0x250
-> [  +0.003915]  __do_page_fault+0x2b7/0x510
-> [  +0.003990]  do_page_fault+0x2c/0x110
-> [  +0.003729]  ? page_fault+0x8/0x30
-> [  +0.003462]  page_fault+0x1e/0x30
+Thanks for your report.
 
-There are many traces to this path. We are 
-	/*
-	 * Once page cache replacement of page migration started, page_count
-	 * *must* be zero. And, we don't want to call wait_on_page_locked()
-	 * against a page without get_page().
-	 * So, we use get_page_unless_zero(), here. Even failed, page fault
-	 * will occur again.
-	 */
-	if (!get_page_unless_zero(page))
-		goto out;
-	pte_unmap_unlock(ptep, ptl);
-	wait_on_page_locked(page);
-
-taking a reference to the page under the migration. I have to think
-about this much more but I suspec this is just calling for a problem.
-
-Cc migration experts. For you background information. We are seeing
-memory offline not being able to converge because few heavily used pages
-fail to migrate away - e.g. http://lkml.kernel.org/r/20181116012433.GU2653@MiWiFi-R3L-srv
-A debugging page to dump stack for these pages http://lkml.kernel.org/r/20181116091409.GD14706@dhcp22.suse.cz
-shows that references are taken from the swap in code (above). How are
-we supposed to converge when the swapin code waits for the migration to
-finish with the reference count elevated?
--- 
-Michal Hocko
-SUSE Labs
+On 16/11/18 18:42, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> The masking operation on status is using a bitwise 'or' rather than
+> a bitwise 'and' operator, and hence the result is always non-zero
+> which is probably not what is intended. Fix this by using the correct
+> operator.
+>
+> Detected by CoverityScan, CID#1475523 ("Wrong operator used")
+>
+> Fixes: 88acc98a712a ("i3c: master: Add driver for Synopsys DesignWare IP")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>   drivers/i3c/master/dw-i3c-master.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+> index 0153e6e9de52..b532e2c9cf5c 100644
+> --- a/drivers/i3c/master/dw-i3c-master.c
+> +++ b/drivers/i3c/master/dw-i3c-master.c
+> @@ -1085,7 +1085,7 @@ static irqreturn_t dw_i3c_master_irq_handler(int irq, void *dev_id)
+>   
+>   	spin_lock(&master->xferqueue.lock);
+>   	dw_i3c_master_end_xfer_locked(master, status);
+> -	if (status | INTR_TRANSFER_ERR_STAT)
+> +	if (status & INTR_TRANSFER_ERR_STAT)
+>   		writel(INTR_TRANSFER_ERR_STAT, master->regs + INTR_STATUS);
+>   	spin_unlock(&master->xferqueue.lock);
+>   
+Acked-by: Vitor Soares <vitor.soares@synopsys.com>
