@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F080C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D3AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46345213A2
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F55B20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:38:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bURHZUjk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46345213A2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vamxsITT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F55B20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732434AbeKTDC0 (ORCPT
+        id S1732448AbeKTDC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:02:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34678 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:02:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731481AbeKTDCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:02:24 -0500
+        id S1731846AbeKTDC1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:02:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC8F208E4;
-        Mon, 19 Nov 2018 16:38:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D48020989;
+        Mon, 19 Nov 2018 16:38:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645495;
-        bh=AyNR4wqfVa62+6mSLTtaiZUUqi/+XWWKMmRuL1e8d0E=;
+        s=default; t=1542645498;
+        bh=XddCdSBIC4+QLmIczNXdoX6SHO7a7RJzxfNMmAWiX3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bURHZUjkyjOk7W6xYHFQdaqFTU0LOJkizHXymUvBr41GJ3oqALMiA2oxuTnng3892
-         ayAauE427wRGKD1QZCMi+od7QXAMwvbPRU7dS+SLXToznmbYmfaevVDlGNvqIiiDty
-         MGl8nwHfQZ831Z8+GbhACo+yA2886/gQR4eRSc9A=
+        b=vamxsITTTgWwFt7jnizp7kGSWby0kCbbSgyO1CoBFd2cLtpYtCpusfHXjClCF/lPd
+         UfIux1t8ilUq0wWkZjkeNfmI9iMgkURP+Kc6+7G7JGAjEOy6wSproyMP6Vx1+NB94Q
+         gnHt2Vba/ajuaZ7WjbCti7EOE38yuDmJjdDyMU6s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.19 147/205] mount: Retest MNT_LOCKED in do_umount
-Date:   Mon, 19 Nov 2018 17:27:34 +0100
-Message-Id: <20181119162638.372543174@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH 4.19 183/205] drm: panel-orientation-quirks: Add quirk for Acer One 10 (S1003)
+Date:   Mon, 19 Nov 2018 17:28:10 +0100
+Message-Id: <20181119162641.402275353@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -62,61 +62,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 25d202ed820ee347edec0bf3bf553544556bf64b upstream.
+commit 0e8afefd5da4875ddea9aa4ad17a2540a2bf9736 upstream.
 
-It was recently pointed out that the one instance of testing MNT_LOCKED
-outside of the namespace_sem is in ksys_umount.
+The Acer One 10 uses a clamshell design with a detachable keyboard.
+As such in normal operating mode, with the keyboard attach the device
+is in landscape mode (and the Acer logo at boot also shows in landscape
+mode).
 
-Fix that by adding a test inside of do_umount with namespace_sem and
-the mount_lock held.  As it helps to fail fails the existing test is
-maintained with an additional comment pointing out that it may be racy
-because the locks are not held.
+But the device uses a portrait screen rotated 90 degrees (sigh). This
+commit adds a quirk for this device so that we shown the fbcon the
+right way up and that we hint userspace to also show e.g. plymouth and
+gdm the right way up.
 
 Cc: stable@vger.kernel.org
-Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
-Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181012101610.29100-1-hdegoede@redhat.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/namespace.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_panel_orientation_quirks.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1540,8 +1540,13 @@ static int do_umount(struct mount *mnt,
+--- a/drivers/gpu/drm/drm_panel_orientation_quirks.c
++++ b/drivers/gpu/drm/drm_panel_orientation_quirks.c
+@@ -30,6 +30,12 @@ struct drm_dmi_panel_orientation_data {
+ 	int orientation;
+ };
  
- 	namespace_lock();
- 	lock_mount_hash();
--	event++;
- 
-+	/* Recheck MNT_LOCKED with the locks held */
-+	retval = -EINVAL;
-+	if (mnt->mnt.mnt_flags & MNT_LOCKED)
-+		goto out;
++static const struct drm_dmi_panel_orientation_data acer_s1003 = {
++	.width = 800,
++	.height = 1280,
++	.orientation = DRM_MODE_PANEL_ORIENTATION_RIGHT_UP,
++};
 +
-+	event++;
- 	if (flags & MNT_DETACH) {
- 		if (!list_empty(&mnt->mnt_list))
- 			umount_tree(mnt, UMOUNT_PROPAGATE);
-@@ -1555,6 +1560,7 @@ static int do_umount(struct mount *mnt,
- 			retval = 0;
- 		}
- 	}
-+out:
- 	unlock_mount_hash();
- 	namespace_unlock();
- 	return retval;
-@@ -1645,7 +1651,7 @@ int ksys_umount(char __user *name, int f
- 		goto dput_and_out;
- 	if (!check_mnt(mnt))
- 		goto dput_and_out;
--	if (mnt->mnt.mnt_flags & MNT_LOCKED)
-+	if (mnt->mnt.mnt_flags & MNT_LOCKED) /* Check optimistically */
- 		goto dput_and_out;
- 	retval = -EPERM;
- 	if (flags & MNT_FORCE && !capable(CAP_SYS_ADMIN))
+ static const struct drm_dmi_panel_orientation_data asus_t100ha = {
+ 	.width = 800,
+ 	.height = 1280,
+@@ -67,7 +73,13 @@ static const struct drm_dmi_panel_orient
+ };
+ 
+ static const struct dmi_system_id orientation_data[] = {
+-	{	/* Asus T100HA */
++	{	/* Acer One 10 (S1003) */
++		.matches = {
++		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Acer"),
++		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "One S1003"),
++		},
++		.driver_data = (void *)&acer_s1003,
++	}, {	/* Asus T100HA */
+ 		.matches = {
+ 		  DMI_EXACT_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+ 		  DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "T100HAN"),
 
 
