@@ -2,88 +2,89 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1DFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BC6CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2802D208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2802D208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id F350F20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 22:45:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IxzOxstR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F350F20C01
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731670AbeKTJLK (ORCPT
+        id S1731697AbeKTJLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 04:11:10 -0500
-Received: from mga06.intel.com ([134.134.136.31]:49661 "EHLO mga06.intel.com"
+        Tue, 20 Nov 2018 04:11:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730462AbeKTJLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 04:11:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 14:45:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,254,1539673200"; 
-   d="scan'208";a="90584132"
-Received: from yyu32-desk1.sc.intel.com ([143.183.136.147])
-  by orsmga007.jf.intel.com with ESMTP; 19 Nov 2018 14:45:16 -0800
-Message-ID: <6bb299d4a59540727cd27bf015b2b2ff5014aab4.camel@intel.com>
-Subject: Re: [RFC PATCH v6 09/11] x86/vsyscall/32: Add ENDBR32 to vsyscall
- entry point
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
+        id S1730419AbeKTJLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 04:11:33 -0500
+Received: from localhost (c-71-205-112-160.hsd1.co.comcast.net [71.205.112.160])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D76620851;
+        Mon, 19 Nov 2018 22:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542667540;
+        bh=6S+0gpAKECLqYOcVG4p3IANncMPDtBcaJviHc6zdYjI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IxzOxstRAQEUgQg58O/jofWvAzvJiloLueNSgsPRgLOduv5/4OFcntn/PLSaf9Btf
+         IJHj73eUJRx4YNG2WZEbgHBx8qNWCHviZfJzA7kLXwcIEFHhReW8HIwM4cq1KRPIrF
+         mn1parOoKoD11N3uhoCTYKWjQ4PrECgot26ZD/f4=
+From:   Andy Lutomirski <luto@kernel.org>
+To:     x86@kernel.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>
-Date:   Mon, 19 Nov 2018 14:40:00 -0800
-In-Reply-To: <CALCETrUkXMHcwX8u+mGDD9Vj+iQE7CRMHL7jQnfAT6WXV8SBEQ@mail.gmail.com>
-References: <20181119214934.6174-1-yu-cheng.yu@intel.com>
-         <20181119214934.6174-10-yu-cheng.yu@intel.com>
-         <CALCETrUkXMHcwX8u+mGDD9Vj+iQE7CRMHL7jQnfAT6WXV8SBEQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 00/13] x86/fault: #PF improvements, mostly related to USER bit
+Date:   Mon, 19 Nov 2018 14:45:24 -0800
+Message-Id: <cover.1542667307.git.luto@kernel.org>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-19 at 14:23 -0800, Andy Lutomirski wrote:
-> On Mon, Nov 19, 2018 at 1:55 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > 
-> > From: "H.J. Lu" <hjl.tools@gmail.com>
-> > 
-> > Add ENDBR32 to vsyscall entry point.
-> 
-> $SUBJECT should be "x86/vdso/32: Add ENDBR32 to __kernel_vsyscall entry
-> point".
+This series is a whole bunch of page fault cleanups, plus a couple
+of OOPS diagnostic improvements.  The overall goals are to clean up
+handling of the faulting CPL, the USER bit in the error_code, and
+the log messages generated by #PF OOPSes.
 
-I will fix it.
+This series can also be seen as CET preparation.  CET introduces the
+WRUSS instruction, which is the very first way for CPL 0 code to
+cause a #PF fault with the USER bit set.  Let's get the page fault
+code into shape before we start using WRUSS :)
 
-Yu-cheng
+Andy Lutomirski (13):
+  x86/fault: Check user_mode(regs) when avoiding an mmap_sem deadlock
+  x86/fault: Check user_mode(regs) when validating a stack extension
+  x86/cpufeatures, x86/fault: Mark SMAP as disabled when configured out
+  x86/fault: Fold smap_violation() into do_user_addr_fault()
+  x86/fault: Fix SMAP #PF handling buglet for implicit supervisor
+    accesses
+  x86/fault: Improve the condition for signalling vs OOPSing
+  x86/fault: Make error_code sanitization more robust
+  x86/fault: Don't set thread.cr2, etc before OOPSing
+  x86/fault: Remove sw_error_code
+  x86/fault: Don't try to recover from an implicit supervisor access
+  x86/oops: Show the correct CS value in show_regs()
+  x86/fault: Decode page fault OOPSes better
+  x86/vsyscall/64: Use X86_PF constants in the simulated #PF error code
+
+ arch/x86/entry/vsyscall/vsyscall_64.c    |   2 +-
+ arch/x86/include/asm/disabled-features.h |   8 +-
+ arch/x86/kernel/process_64.c             |   5 +-
+ arch/x86/mm/fault.c                      | 224 ++++++++++++++---------
+ 4 files changed, 150 insertions(+), 89 deletions(-)
+
+-- 
+2.17.2
+
