@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FECC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961FAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DED62148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6147E214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:45:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LpWfE0qy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DED62148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="miJh3Lpo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6147E214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388640AbeKTDJy (ORCPT
+        id S2388654AbeKTDJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:09:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45138 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:09:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387778AbeKTDJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:09:53 -0500
+        id S2387778AbeKTDJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:09:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 838942148E;
-        Mon, 19 Nov 2018 16:45:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 218E92145D;
+        Mon, 19 Nov 2018 16:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645942;
-        bh=9sAIUatzSAS7+IQvEUg18ABAvwRI1VQfyx2yBNE8+CA=;
+        s=default; t=1542645944;
+        bh=5rmo0Ko0AUnAWtDY1QpNvaT3+lqMIiIfQovPOROmrHI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LpWfE0qyaAIrN+6VqVkrIXz9uSTQktUarKltgYk9MKMu2XP5z6P/02bt7TmbS10ec
-         +zL4YywKCGfG7mi0mDDVLN46j8EM+tilqtdGn9xClPwV26WwcQ21FbwMzJtQGfTGCR
-         4lYc9Z0qyMA5YLZxOlrhLtYe25lfIJwdWRGHyGG0=
+        b=miJh3LpoY45SGimbuDqGUOZpT2KAjGKcuWUZ6pDx+3bQWkb1ddAmCJyzz9FG/teAH
+         dEhHx7N+aehQMc8v3FTtsOR9g5BsWcuM2zEtD+OJiQofbJYOshfISiWf5lAAyy3lYF
+         K22y3TBY1xlbDBcI+LGI6r3jqDCRLwqk8G2yWORc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Rex Zhu <Rex.Zhu@amd.com>,
+        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.18 146/171] drm/amdgpu: Fix typo in amdgpu_vmid_mgr_init
-Date:   Mon, 19 Nov 2018 17:29:02 +0100
-Message-Id: <20181119162639.404803206@linuxfoundation.org>
+Subject: [PATCH 4.18 147/171] drm/amdgpu: add missing CHIP_HAINAN in amdgpu_ucode_get_load_type
+Date:   Mon, 19 Nov 2018 17:29:03 +0100
+Message-Id: <20181119162639.510229607@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,32 +63,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rex Zhu <Rex.Zhu@amd.com>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-commit 3df27645395e8f79c0dc20a15cf1da61f376000d upstream.
+commit d9997b64c52b70bd98c48f443f068253621d1ffc upstream.
 
-fix a typo in for loop: i->j
+This caused a confusing error message, but there is functionally
+no problem since the default method is DIRECT.
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Rex Zhu <Rex.Zhu@amd.com>
+Reviewed-by: Michel Dänzer <michel.daenzer@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ids.c
-@@ -574,7 +574,7 @@ void amdgpu_vmid_mgr_init(struct amdgpu_
- 		/* skip over VMID 0, since it is the system VM */
- 		for (j = 1; j < id_mgr->num_ids; ++j) {
- 			amdgpu_vmid_reset(adev, i, j);
--			amdgpu_sync_create(&id_mgr->ids[i].active);
-+			amdgpu_sync_create(&id_mgr->ids[j].active);
- 			list_add_tail(&id_mgr->ids[j].list, &id_mgr->ids_lru);
- 		}
- 	}
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ucode.c
+@@ -277,6 +277,7 @@ amdgpu_ucode_get_load_type(struct amdgpu
+ 	case CHIP_PITCAIRN:
+ 	case CHIP_VERDE:
+ 	case CHIP_OLAND:
++	case CHIP_HAINAN:
+ 		return AMDGPU_FW_LOAD_DIRECT;
+ #endif
+ #ifdef CONFIG_DRM_AMDGPU_CIK
 
 
