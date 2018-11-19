@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CF1C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11EEC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21D2208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B480208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MwtVc0xj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21D2208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9pSBt8R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B480208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389674AbeKTDNZ (ORCPT
+        id S2389706AbeKTDN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50160 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389110AbeKTDNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:24 -0500
+        id S2389229AbeKTDN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E666E2089F;
-        Mon, 19 Nov 2018 16:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84E8520823;
+        Mon, 19 Nov 2018 16:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646152;
-        bh=2bF35K38H6Znm+NOjcf+THSF/1XIB/QSfk1I1KZv4Rc=;
+        s=default; t=1542646155;
+        bh=5g8zovuRGi46AnDtso5t+bnGv3vGOLsLd/hod8TLe+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MwtVc0xjaa2OxuzouSDyCI7u8BWVUtuyUuRnq0xVmEX4dqKq4+2Fiay+HBkXJ2WwL
-         gnKGitkBqNhUhegk04Lg/ZlvAl1ciPbsW31pzei62k6iPrCbKGj7SZVIvwUXcJWw5F
-         1n92zzh/uD8LRTSgVN5GpvBy+i2OqGQOk9YiWEq4=
+        b=S9pSBt8RJZL82li2RUBROXCqw8LSvxFFNuyo/aOBgbsFhTiNJTx4baX/BxYIoT6t6
+         LMIZ6K5U1WnZitKF319sBdphHihc6+v8Cgc1+ltWnXo1qHzg9J1j7BPOz0Ku/08rM6
+         Meof4zxcssYo4KoSDFd6U9M1AKyw//yF+sf2bMAo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changwei Ge <ge.changwei@h3c.com>,
-        Changkuo Shi <shi.changkuo@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, Wengang Wang <wen.gang.wang@oracle.com>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
         Mark Fasheh <mark@fasheh.com>,
         Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 056/124] ocfs2: fix a misuse a of brelse after failing ocfs2_check_dir_entry
-Date:   Mon, 19 Nov 2018 17:28:30 +0100
-Message-Id: <20181119162624.384996613@linuxfoundation.org>
+Subject: [PATCH 4.14 057/124] ocfs2: free up write context when direct IO failed
+Date:   Mon, 19 Nov 2018 17:28:31 +0100
+Message-Id: <20181119162624.584031057@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -68,54 +68,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Changwei Ge <ge.changwei@h3c.com>
+From: Wengang Wang <wen.gang.wang@oracle.com>
 
-commit 29aa30167a0a2e6045a0d6d2e89d8168132333d5 upstream.
+commit 5040f8df56fb90c7919f1c9b0b6e54c843437456 upstream.
 
-Somehow, file system metadata was corrupted, which causes
-ocfs2_check_dir_entry() to fail in function ocfs2_dir_foreach_blk_el().
+The write context should also be freed even when direct IO failed.
+Otherwise a memory leak is introduced and entries remain in
+oi->ip_unwritten_list causing the following BUG later in unlink path:
 
-According to the original design intention, if above happens we should
-skip the problematic block and continue to retrieve dir entry.  But
-there is obviouse misuse of brelse around related code.
+  ERROR: bug expression: !list_empty(&oi->ip_unwritten_list)
+  ERROR: Clear inode of 215043, inode has unwritten extents
+  ...
+  Call Trace:
+  ? __set_current_blocked+0x42/0x68
+  ocfs2_evict_inode+0x91/0x6a0 [ocfs2]
+  ? bit_waitqueue+0x40/0x33
+  evict+0xdb/0x1af
+  iput+0x1a2/0x1f7
+  do_unlinkat+0x194/0x28f
+  SyS_unlinkat+0x1b/0x2f
+  do_syscall_64+0x79/0x1ae
+  entry_SYSCALL_64_after_hwframe+0x151/0x0
 
-After failure of ocfs2_check_dir_entry(), current code just moves to
-next position and uses the problematic buffer head again and again
-during which the problematic buffer head is released for multiple times.
-I suppose, this a serious issue which is long-lived in ocfs2.  This may
-cause other file systems which is also used in a the same host insane.
+This patch also logs, with frequency limit, direct IO failures.
 
-So we should also consider about bakcporting this patch into linux
--stable.
-
-Link: http://lkml.kernel.org/r/HK2PR06MB045211675B43EED794E597B6D56E0@HK2PR06MB0452.apcprd06.prod.outlook.com
-Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
-Suggested-by: Changkuo Shi <shi.changkuo@h3c.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Link: http://lkml.kernel.org/r/20181102170632.25921-1-wen.gang.wang@oracle.com
+Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+Reviewed-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Joseph Qi <jiangqi903@gmail.com>
 Cc: Mark Fasheh <mark@fasheh.com>
 Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ocfs2/dir.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ocfs2/aops.c            |   12 ++++++++++--
+ fs/ocfs2/cluster/masklog.h |    9 +++++++++
+ 2 files changed, 19 insertions(+), 2 deletions(-)
 
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -1896,8 +1896,7 @@ static int ocfs2_dir_foreach_blk_el(stru
- 				/* On error, skip the f_pos to the
- 				   next block. */
- 				ctx->pos = (ctx->pos | (sb->s_blocksize - 1)) + 1;
--				brelse(bh);
--				continue;
-+				break;
- 			}
- 			if (le64_to_cpu(de->inode)) {
- 				unsigned char d_type = DT_UNKNOWN;
+--- a/fs/ocfs2/aops.c
++++ b/fs/ocfs2/aops.c
+@@ -2404,8 +2404,16 @@ static int ocfs2_dio_end_io(struct kiocb
+ 	/* this io's submitter should not have unlocked this before we could */
+ 	BUG_ON(!ocfs2_iocb_is_rw_locked(iocb));
+ 
+-	if (bytes > 0 && private)
+-		ret = ocfs2_dio_end_io_write(inode, private, offset, bytes);
++	if (bytes <= 0)
++		mlog_ratelimited(ML_ERROR, "Direct IO failed, bytes = %lld",
++				 (long long)bytes);
++	if (private) {
++		if (bytes > 0)
++			ret = ocfs2_dio_end_io_write(inode, private, offset,
++						     bytes);
++		else
++			ocfs2_dio_free_write_ctx(inode, private);
++	}
+ 
+ 	ocfs2_iocb_clear_rw_locked(iocb);
+ 
+--- a/fs/ocfs2/cluster/masklog.h
++++ b/fs/ocfs2/cluster/masklog.h
+@@ -178,6 +178,15 @@ do {									\
+ 			      ##__VA_ARGS__);				\
+ } while (0)
+ 
++#define mlog_ratelimited(mask, fmt, ...)				\
++do {									\
++	static DEFINE_RATELIMIT_STATE(_rs,				\
++				      DEFAULT_RATELIMIT_INTERVAL,	\
++				      DEFAULT_RATELIMIT_BURST);		\
++	if (__ratelimit(&_rs))						\
++		mlog(mask, fmt, ##__VA_ARGS__);				\
++} while (0)
++
+ #define mlog_errno(st) ({						\
+ 	int _st = (st);							\
+ 	if (_st != -ERESTARTSYS && _st != -EINTR &&			\
 
 
