@@ -2,149 +2,136 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0002DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10684C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFBDF2080C
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFBDF2080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C78CE20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 14:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78CE20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbeKTA0Q (ORCPT
+        id S1729419AbeKTA3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 19:26:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53000 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728258AbeKTA0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 19:26:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BD453AF4D;
-        Mon, 19 Nov 2018 14:02:31 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     oneukum@suse.com, stern@rowland.harvard.edu
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        gregkh@linuxfoundation.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH v2] usb: hub: add retry routine after intr URB sumbit error
-Date:   Mon, 19 Nov 2018 15:02:08 +0100
-Message-Id: <20181119140208.11590-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.1
+        Mon, 19 Nov 2018 19:29:34 -0500
+Received: from mga17.intel.com ([192.55.52.151]:15864 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729331AbeKTA3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 19:29:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 06:05:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,252,1539673200"; 
+   d="scan'208";a="101452753"
+Received: from tmuluk-mobl4.ger.corp.intel.com (HELO localhost) ([10.249.254.135])
+  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2018 06:05:44 -0800
+Date:   Mon, 19 Nov 2018 16:05:43 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jethro Beekman <jethro@fortanix.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rich Felker <dalias@libc.org>,
+        "nhorman@redhat.com" <nhorman@redhat.com>,
+        "npmccallum@redhat.com" <npmccallum@redhat.com>,
+        "Ayoun, Serge" <serge.ayoun@intel.com>,
+        "shay.katz-zamir@intel.com" <shay.katz-zamir@intel.com>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Subject: Re: RFC: userspace exception fixups
+Message-ID: <20181119140543.GF8755@linux.intel.com>
+References: <CALCETrWdpoDkbZjkucKL91GWpDPG9p=VqYrULade2pFDR7S=GQ@mail.gmail.com>
+ <20181118071548.GA4795@linux.intel.com>
+ <20181118130203.GA18934@linux.intel.com>
+ <ce304dba-0b02-02e2-4de8-212cd3bd1876@fortanix.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce304dba-0b02-02e2-4de8-212cd3bd1876@fortanix.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The hub sends hot-plug events to the host trough it's interrupt URB. The
-driver takes care of completing the URB and re-submitting it. Completion
-errors are handled in the hub_event() work, yet submission errors are
-ignored, rendering the device unresponsive. All further events are lost.
+On Mon, Nov 19, 2018 at 05:17:26AM +0000, Jethro Beekman wrote:
+> On 2018-11-18 18:32, Jarkko Sakkinen wrote:
+> > On Sun, Nov 18, 2018 at 09:15:48AM +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Nov 01, 2018 at 10:53:40AM -0700, Andy Lutomirski wrote:
+> > > > Hi all-
+> > > > 
+> > > > The people working on SGX enablement are grappling with a somewhat
+> > > > annoying issue: the x86 EENTER instruction is used from user code and
+> > > > can, as part of its normal-ish operation, raise an exception.  It is
+> > > > also highly likely to be used from a library, and signal handling in
+> > > > libraries is unpleasant at best.
+> > > > 
+> > > > There's been some discussion of adding a vDSO entry point to wrap
+> > > > EENTER and do something sensible with the exceptions, but I'm
+> > > > wondering if a more general mechanism would be helpful.
+> > > 
+> > > I haven't really followed all of this discussion because I've been busy
+> > > working on the patch set but for me all of these approaches look awfully
+> > > complicated.
+> > > 
+> > > I'll throw my own suggestion and apologize if this has been already
+> > > suggested and discarded: return-to-AEP.
+> > > 
+> > > My idea is to do just a small extension to SGX AEX handling. At the
+> > > moment hardware will RAX, RBX and RCX with ERESUME parameters. We can
+> > > fill extend this by filling other three spare registers with exception
+> > > information.
+> > > 
+> > > AEP handler can then do whatever it wants to do with this information
+> > > or just do ERESUME.
+> > 
+> > A correction here. In practice this will add a requirement to have a bit
+> > more complicated AEP code (check the regs for exceptions) than before
+> > and not just bytes for ENCLU.
+> > 
+> > e.g. AEP handler should be along the lines
+> > 
+> > 1. #PF (or #UD or) happens. Kernel fills the registers when it cannot
+> >     handle the exception and returns back to user space i.e. to the
+> >     AEP handler.
+> > 2. Check the registers containing exception information. If they have
+> >     been filled, take whatever actions user space wants to take.
+> > 3. Otherwise, just ERESUME.
+> > 
+> >  From my point of view this is making the AEP parameter useful. Its
+> > standard use is just weird (always point to a place just containing
+> > ENCLU bytes, why the heck it even exists).
+> 
+> I like this solution. Keeps things simple. One question: when an exception
+> occurs, how does the kernel know whether to set special registers or send a
+> signal?
 
-It is fairly hard to find this issue in the wild, since you have to time
-the USB hot-plug event with the URB submission failure. For instance it
-could be the system running out of memory or some malfunction in the USB
-controller driver. Nevertheless, it's pretty reasonable to think it'll
-happen sometime. One can trigger this issue using eBPF's function
-override feature (see BCC's inject.py script).
+Yes, and AFAIK people do in many cases people want to do something else
+than just direct ERESUME in AEP handler so would neither be a major
+bummer for user space. If I remember correctly you have such?
 
-This patch adds a retry routine to the event of a submission error. The
-HUB driver will try to re-submit the URB once every second until it's
-successful or the HUB is disconnected.
+You can check the cases that we have for SIGSEGV (namely EPCM conflict)
+from Sean's patch 08/23.
 
-As some USB subsystems already take care of this issue, the
-implementation was inspired from usbhid/hid_core.c's.
+I'm open for expanding the scope. It is the easy part after there is
+consensus for the handling mechanism :-)
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
----
-
-v2: as per Alan's and Oliver's comments:
-  - Rename timer
-  - Delete the timer on disconnect
-  - Don't reset HUB nor exponential slowdown the timer, 1s fixed retry
-    period
-  - Check for -ESHUTDOWN prior kicking the timer
-
- drivers/usb/core/hub.c | 24 +++++++++++++++++++++++-
- drivers/usb/core/hub.h |  1 +
- 2 files changed, 24 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index c6077d582d29..937ece45ea1f 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -607,6 +607,22 @@ static int hub_port_status(struct usb_hub *hub, int port1,
- 				   status, change, NULL);
- }
- 
-+static void hub_retry_irq_urb(struct timer_list *t)
-+{
-+	struct usb_hub *hub = from_timer(hub, t, irq_urb_retry);
-+	int status;
-+
-+	if (hub->disconnected || hub->quiescing)
-+		return;
-+
-+	dev_err(hub->intfdev, "retrying int urb\n");
-+	status = usb_submit_urb(hub->urb, GFP_ATOMIC);
-+	if (status && status != -ENODEV && status != -EPERM &&
-+	    status != -ESHUTDOWN)
-+		mod_timer(&hub->irq_urb_retry,
-+			  jiffies + msecs_to_jiffies(MSEC_PER_SEC));
-+}
-+
- static void kick_hub_wq(struct usb_hub *hub)
- {
- 	struct usb_interface *intf;
-@@ -713,8 +729,12 @@ static void hub_irq(struct urb *urb)
- 		return;
- 
- 	status = usb_submit_urb(hub->urb, GFP_ATOMIC);
--	if (status != 0 && status != -ENODEV && status != -EPERM)
-+	if (status != 0 && status != -ENODEV && status != -EPERM &&
-+	    status != -ESHUTDOWN) {
- 		dev_err(hub->intfdev, "resubmit --> %d\n", status);
-+		mod_timer(&hub->irq_urb_retry,
-+			  jiffies + msecs_to_jiffies(MSEC_PER_SEC));
-+	}
- }
- 
- /* USB 2.0 spec Section 11.24.2.3 */
-@@ -1268,6 +1288,7 @@ static void hub_quiesce(struct usb_hub *hub, enum hub_quiescing_type type)
- 	}
- 
- 	/* Stop hub_wq and related activity */
-+	del_timer_sync(&hub->irq_urb_retry);
- 	usb_kill_urb(hub->urb);
- 	if (hub->has_indicators)
- 		cancel_delayed_work_sync(&hub->leds);
-@@ -1800,6 +1821,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	INIT_DELAYED_WORK(&hub->leds, led_work);
- 	INIT_DELAYED_WORK(&hub->init_work, NULL);
- 	INIT_WORK(&hub->events, hub_event);
-+	timer_setup(&hub->irq_urb_retry, hub_retry_irq_urb, 0);
- 	usb_get_intf(intf);
- 	usb_get_dev(hdev);
- 
-diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
-index 4accfb63f7dc..b0740cf5ef19 100644
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -69,6 +69,7 @@ struct usb_hub {
- 	struct delayed_work	leds;
- 	struct delayed_work	init_work;
- 	struct work_struct      events;
-+	struct timer_list	irq_urb_retry;
- 	struct usb_port		**ports;
- };
- 
--- 
-2.19.1
-
+/Jarkko
