@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A52EC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17144C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75892148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D23012148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:04:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wXnjN7IO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C75892148E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuSQDiCq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23012148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406601AbeKTD2z (ORCPT
+        id S2406612AbeKTD26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:28:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43402 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:28:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405880AbeKTD2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:28:54 -0500
+        id S2405880AbeKTD25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:28:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B0B5214D9;
-        Mon, 19 Nov 2018 17:04:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 274C52146D;
+        Mon, 19 Nov 2018 17:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542647077;
-        bh=oIJfj/0OTyV8QqAJN3G4Xgf/ywIvfGQsVnzNmmh0NmU=;
+        s=default; t=1542647079;
+        bh=mcooEFy4V21rTj7GUPBRsMt24wf2PZoJTUzROqmURlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wXnjN7IOdgXlZR9K17QjLCg4qbvQgMY3sU7zV96I1rV6lqCISQwbuVGyU6KRfUdIf
-         g2RbbzFVbtsymFXz++bhsMusUxd4T5yvQzpGGSTOMhO+mEBxJ10eS/ORpx3mZQL9Pw
-         QkPvabrufiZdkDnBxpO8AqZuHpvmTPd1AVfAhDt4=
+        b=UuSQDiCqcnamN3gDQSzJTaJJVIPgoKU9DM4Fcs5DAu/0Fyr9RJ4Wq6M9U/SNXkgzE
+         gd9npcrujeQbyUj9Pne5Tmsix/ImNmhw2wsEB6cmvAOT6MFMmmd92/LzlAvoN8CWed
+         p9O1EgegJ3WJBouG/BIqsHkJFHHRg1Fuexf272O4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, rostedt@goodmis.org,
-        He Zhe <zhe.he@windriver.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH 3.18 42/90] printk: Fix panic caused by passing log_buf_len to command line
-Date:   Mon, 19 Nov 2018 17:29:24 +0100
-Message-Id: <20181119162627.543481335@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 3.18 43/90] NFSv4.1: Fix the r/wsize checking
+Date:   Mon, 19 Nov 2018 17:29:25 +0100
+Message-Id: <20181119162627.729145573@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162620.585061184@linuxfoundation.org>
 References: <20181119162620.585061184@linuxfoundation.org>
@@ -64,65 +62,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
+commit 943cff67b842839f4f35364ba2db5c2d3f025d94 upstream.
 
-log_buf_len_setup does not check input argument before passing it to
-simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
-without its value, is set in command line and thus causes the following
-panic.
+The intention of nfs4_session_set_rwsize() was to cap the r/wsize to the
+buffer sizes negotiated by the CREATE_SESSION. The initial code had a
+bug whereby we would not check the values negotiated by nfs_probe_fsinfo()
+(the assumption being that CREATE_SESSION will always negotiate buffer values
+that are sane w.r.t. the server's preferred r/wsizes) but would only check
+values set by the user in the 'mount' command.
 
-PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
-...
-[    0.000000] Call Trace:
-[    0.000000]  simple_strtoull+0x29/0x70
-[    0.000000]  memparse+0x26/0x90
-[    0.000000]  log_buf_len_setup+0x17/0x22
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4ee
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
+The code was changed in 4.11 to _always_ set the r/wsize, meaning that we
+now never use the server preferred r/wsizes. This is the regression that
+this patch fixes.
+Also rename the function to nfs4_session_limit_rwsize() in order to avoid
+future confusion.
 
-This patch adds a check to prevent the panic.
-
-Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
-Cc: stable@vger.kernel.org
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+Fixes: 033853325fe3 (NFSv4.1 respect server's max size in CREATE_SESSION")
+Cc: stable@vger.kernel.org # v4.11+
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/printk/printk.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/nfs/nfs4client.c |   16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -844,7 +844,12 @@ static void __init log_buf_len_update(un
- /* save requested log_buf_len since it's too early to process it */
- static int __init log_buf_len_setup(char *str)
- {
--	unsigned size = memparse(str, &str);
-+	unsigned int size;
-+
-+	if (!str)
-+		return -EINVAL;
-+
-+	size = memparse(str, &str);
+--- a/fs/nfs/nfs4client.c
++++ b/fs/nfs/nfs4client.c
+@@ -891,10 +891,10 @@ EXPORT_SYMBOL_GPL(nfs4_set_ds_client);
  
- 	log_buf_len_update(size);
+ /*
+  * Session has been established, and the client marked ready.
+- * Set the mount rsize and wsize with negotiated fore channel
+- * attributes which will be bound checked in nfs_server_set_fsinfo.
++ * Limit the mount rsize, wsize and dtsize using negotiated fore
++ * channel attributes.
+  */
+-static void nfs4_session_set_rwsize(struct nfs_server *server)
++static void nfs4_session_limit_rwsize(struct nfs_server *server)
+ {
+ #ifdef CONFIG_NFS_V4_1
+ 	struct nfs4_session *sess;
+@@ -907,9 +907,11 @@ static void nfs4_session_set_rwsize(stru
+ 	server_resp_sz = sess->fc_attrs.max_resp_sz - nfs41_maxread_overhead;
+ 	server_rqst_sz = sess->fc_attrs.max_rqst_sz - nfs41_maxwrite_overhead;
+ 
+-	if (!server->rsize || server->rsize > server_resp_sz)
++	if (server->dtsize > server_resp_sz)
++		server->dtsize = server_resp_sz;
++	if (server->rsize > server_resp_sz)
+ 		server->rsize = server_resp_sz;
+-	if (!server->wsize || server->wsize > server_rqst_sz)
++	if (server->wsize > server_rqst_sz)
+ 		server->wsize = server_rqst_sz;
+ #endif /* CONFIG_NFS_V4_1 */
+ }
+@@ -956,12 +958,12 @@ static int nfs4_server_common_setup(stru
+ 			(unsigned long long) server->fsid.minor);
+ 	nfs_display_fhandle(mntfh, "Pseudo-fs root FH");
+ 
+-	nfs4_session_set_rwsize(server);
+-
+ 	error = nfs_probe_fsinfo(server, mntfh, fattr);
+ 	if (error < 0)
+ 		goto out;
+ 
++	nfs4_session_limit_rwsize(server);
++
+ 	if (server->namelen == 0 || server->namelen > NFS4_MAXNAMLEN)
+ 		server->namelen = NFS4_MAXNAMLEN;
  
 
 
