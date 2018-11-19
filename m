@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725A0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 456BAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33769208E3
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07300208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:39:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/y7zq8f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33769208E3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJ1wSWr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07300208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732744AbeKTDDe (ORCPT
+        id S1732756AbeKTDDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:03:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36230 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:03:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731810AbeKTDDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:03:33 -0500
+        id S1731810AbeKTDDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:03:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53F9C208E3;
-        Mon, 19 Nov 2018 16:39:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4B36206BA;
+        Mon, 19 Nov 2018 16:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542645563;
-        bh=OrPfj55GmKZIIWp0iPBhtB7B/dJBAYr/eLYG8fU/A9g=;
+        s=default; t=1542645566;
+        bh=SZSUn6e3uyRQgGhprXeSl2lC5x4TYn9skgYg/AIyty4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N/y7zq8fZzTOSm3rMz4VWlmC3HxV3QzM7I1KdT2cujb0lYNovHI/H1fPZlRl6JNE0
-         faYpKthOACbM6CEtXyW+nzYbUDDfNAxqaYc0yQa1Nf0uotIcR3trIcAkdKKU5fIpwY
-         5Fht6482RBQVBTZrx7TUnf6toNYIfVzozC4sb17k=
+        b=iJ1wSWr22ACUZ2LGxQoIWkYf3cCvrK00uwHxRglHPzxfvp91CKQnWuaYK9M/ruHAE
+         xZUsMLujEAtTp7KOOrz33vSzmAVID4zB/jXVvsD5z5w7HToXw5TpjRTXMum1e1Z0r3
+         KT7Lg7txQrULndnk5pwQ0hnRsNxgOszAg/aLA25Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Jan-Marek Glogowski <glogow@fbihome.de>,
-        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
-        <ville.syrjala@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>,
+        stable@vger.kernel.org, Animesh Manna <animesh.manna@intel.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Jose Roberto de Souza <jose.souza@intel.com>,
+        Manasi Navare <manasi.d.navare@intel.com>,
         Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 4.19 191/205] drm/i915/dp: Restrict link retrain workaround to external monitors
-Date:   Mon, 19 Nov 2018 17:28:18 +0100
-Message-Id: <20181119162642.003859535@linuxfoundation.org>
+Subject: [PATCH 4.19 192/205] drm/i915/icl: Fix the macros for DFLEXDPMLE register bits
+Date:   Mon, 19 Nov 2018 17:28:19 +0100
+Message-Id: <20181119162642.062073992@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
 References: <20181119162616.586062722@linuxfoundation.org>
@@ -67,57 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
+From: Manasi Navare <manasi.d.navare@intel.com>
 
-commit f9776280c29e77a18cbc7ebb6d48f7885e494990 upstream.
+commit e528c2affcf216b3d02b22004895cb678769629b upstream.
 
-Commit '3cf71bc9904d ("drm/i915: Re-apply "Perform link quality check,
-unconditionally during long pulse"")' applies a work around for sinks
-that don't signal link loss. The work around does not need to have to be
-that broad as the issue was seen with only one particular monitor; limit
-this only for external displays as eDP features like PSR turn off the link
-and the driver ends up retraining the link seeeing that link is not
-synchronized.
+This patch fixes the macros used for defining the DFLEXDPMLE
+register bit fields. This accounts for changes in the spec.
 
-Cc: Lyude Paul <lyude@redhat.com>
-Cc: Jan-Marek Glogowski <glogow@fbihome.de>
-Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-References: 3cf71bc9904d ("drm/i915: Re-apply "Perform link quality check, unconditionally during long pulse"")
-Signed-off-by: Dhinakaran Pandiyan <dhinakaran.pandiyan@intel.com>
-Reviewed-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180927205735.16651-2-dhinakaran.pandiyan@intel.com
-(cherry picked from commit f24f6eb95807bca0dbd8dc5b2f3a4099000f4472)
-Fixes: 399334708b4f ("drm/i915: Re-apply "Perform link quality check, unconditionally during long pulse"")
-Cc: stable@vger.kernel.org
+Fixes: a2bc69a1a9d6 ("drm/i915/icl: Add register definition for DFLEXDPMLE")
+Cc: Animesh Manna <animesh.manna@intel.com>
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Cc: Jose Roberto de Souza <jose.souza@intel.com>
+Cc: <stable@vger.kernel.org> # v4.19+
+Signed-off-by: Manasi Navare <manasi.d.navare@intel.com>
+Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181023191248.26418-1-manasi.d.navare@intel.com
+(cherry picked from commit b4335ec0a3ee6229a570755f8fb95dc8a7c694f2)
 Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/i915/i915_reg.h |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i915/intel_dp.c
-+++ b/drivers/gpu/drm/i915/intel_dp.c
-@@ -4739,12 +4739,13 @@ intel_dp_long_pulse(struct intel_connect
- 		 */
- 		status = connector_status_disconnected;
- 		goto out;
--	} else {
--		/*
--		 * Some external monitors do not signal loss of link
--		 * synchronization with an IRQ_HPD, so force a link status
--		 * check.
--		 */
-+	}
-+
-+	/*
-+	 * Some external monitors do not signal loss of link synchronization
-+	 * with an IRQ_HPD, so force a link status check.
-+	 */
-+	if (!intel_dp_is_edp(intel_dp)) {
- 		struct intel_encoder *encoder = &dp_to_dig_port(intel_dp)->base;
+--- a/drivers/gpu/drm/i915/i915_reg.h
++++ b/drivers/gpu/drm/i915/i915_reg.h
+@@ -2097,8 +2097,12 @@ enum i915_power_well_id {
  
- 		intel_dp_retrain_link(encoder, ctx);
+ /* ICL PHY DFLEX registers */
+ #define PORT_TX_DFLEXDPMLE1		_MMIO(0x1638C0)
+-#define   DFLEXDPMLE1_DPMLETC_MASK(n)	(0xf << (4 * (n)))
+-#define   DFLEXDPMLE1_DPMLETC(n, x)	((x) << (4 * (n)))
++#define   DFLEXDPMLE1_DPMLETC_MASK(tc_port)	(0xf << (4 * (tc_port)))
++#define   DFLEXDPMLE1_DPMLETC_ML0(tc_port)	(1 << (4 * (tc_port)))
++#define   DFLEXDPMLE1_DPMLETC_ML1_0(tc_port)	(3 << (4 * (tc_port)))
++#define   DFLEXDPMLE1_DPMLETC_ML3(tc_port)	(8 << (4 * (tc_port)))
++#define   DFLEXDPMLE1_DPMLETC_ML3_2(tc_port)	(12 << (4 * (tc_port)))
++#define   DFLEXDPMLE1_DPMLETC_ML3_0(tc_port)	(15 << (4 * (tc_port)))
+ 
+ /* BXT PHY Ref registers */
+ #define _PORT_REF_DW3_A			0x16218C
 
 
