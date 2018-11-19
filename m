@@ -2,102 +2,165 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B3DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8368C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BBB321527
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 768662154B
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnWJGO9R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBB321527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="nRo9bT/Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768662154B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405141AbeKTDXy (ORCPT
+        id S2405151AbeKTDX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:23:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404671AbeKTDXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:23:53 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01454214E0;
-        Mon, 19 Nov 2018 16:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646777;
-        bh=jT9dEe2cWN/dJRx6K52neWHdvQmOpfqgE6OcLQX4JQ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KnWJGO9R3nK/OojDnV/TP5NAAfE8wFzrJRVdZ+dVOwmwPihGPgdi9oakdI47hFiU9
-         KYlR4RnG6GS3lr/leCDkWAiCkD0GKX5qPiBrmVtu6IxMtHZYEOWvafylajt4CK791y
-         fghHV2l6tr2EOM/3Y6jM7yaKYieDg7TePJTmQ4KA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 086/160] btrfs: iterate all devices during trim, instead of fs_devices::alloc_list
-Date:   Mon, 19 Nov 2018 17:28:45 +0100
-Message-Id: <20181119162639.583338236@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
-References: <20181119162630.031306128@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 19 Nov 2018 22:23:56 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34915 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405131AbeKTDXz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:23:55 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t15-v6so6006537wmt.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 08:59:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dnO+KI2zslD6ss3tS/w0B8InB8HwqMSPdTgrBSwIvRw=;
+        b=nRo9bT/YdQmkQZkECAaVZuEw0/7HpDP3kZDW3tmRomIqFozct9haS6Nm57xuB/9rnF
+         qFNJ/+YZiK7tFEWJXODuaBXldeHItg2qeJbKYbcEMh8DleXsl/nnafWRAWvCKjpeN/s9
+         hmiEEyF/k7y5yT4WRp3i1MqLR5HbhpciMWHHRT1nub7jlp1zOCHBGWQeApnE+8XhsOrG
+         76Bg3hzoXTXewjNQgWSW9pgpyC8JpkomOtRMOYnx4HyLSz/xlbKzwzAQJHOXGrJPKrXD
+         ZCNCPiY5bQol0EvRNPCsG8EQ9zF2O0Nk8Hm+j4stN+1xWXnSeCSv+HkBO1hBI089Kli/
+         /aHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dnO+KI2zslD6ss3tS/w0B8InB8HwqMSPdTgrBSwIvRw=;
+        b=VHWkyzBE+kkjlvTdZK6bnLUykvCxtDgYVadmmmESLSX+Zm3dWdcF1uKtO2cL0VbBkz
+         FpuLX7O00k01TQYCRb6DdvXsGHG2FIzoNnAEtjbjbNmz+AIHH3g85bRcJRKUr453RnBh
+         bOrOCLn+Qpp/DfYAU627RVGKia6WS6r0ALqT2j4vTup1q3LRWza+Z5IwNh7mAMjziu2n
+         gAyLFVZZ5T1DJiaV9mKjmIZm2UX3uf9TxEFLkx6VCQcbfyvwATBfGpYIXRmRTNeR9ugx
+         BaEE45nGj0RvDEZXt3CtF7nNRGYjYAb576Pm8XLsGytECymyUDH6IBUQ8edTsIDvnpSr
+         lbSA==
+X-Gm-Message-State: AA+aEWYEKmc/aqTAR7DLKbKbZ4PJGiaUbJ90azpBnjsCW6ZemKrUIi/s
+        /boqGb35eVoM+fH6bnlFW44PhF4iCURAc48JGOSZHA==
+X-Google-Smtp-Source: AJdET5dadd0fqJg2TdztWRlj6ZXlGkLKoFS2ZPDp2Umbo9zkWkGZvHcbdZ5G4Km94PMDMqlYez0i7ANCAXsxBPjOLgs=
+X-Received: by 2002:a1c:110b:: with SMTP id 11mr5052294wmr.83.1542646776903;
+ Mon, 19 Nov 2018 08:59:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com> <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com>
+In-Reply-To: <20181119161917.GF13298@linux.intel.com>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Mon, 19 Nov 2018 08:59:24 -0800
+Message-ID: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Nov 19, 2018 at 8:19 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> On Mon, Nov 19, 2018 at 07:29:25AM -0800, Andy Lutomirski wrote:
+> > On Thu, Nov 15, 2018 at 5:08 PM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > >
+> > > Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
+> > > can be used by applications to set aside private regions of code and
+> > > data. The code outside the enclave is disallowed to access the memory
+> > > inside the enclave by the CPU access control.
+> > >
+> > > SGX driver provides a ioctl API for loading and initializing enclaves.
+> > > Address range for enclaves is reserved with mmap() and they are
+> > > destroyed with munmap(). Enclave construction, measurement and
+> > > initialization is done with the provided the ioctl API.
+> > >
+> >
+> > I brought this up a while back, and I think I should re-ask it now
+> > that this driver is getting close to ready:
+> >
+> > As it stands, there's just one SGX character device, and I imagine
+> > that it'll be available to unprivileged applications.  I'm concerned
+> > that this isn't quite what we want.  I certainly think that everyone,
+> > or at least almost everyone, ought to be able to run normal enclaves.
+> > But I think that we should consider restricting who can run specially
+> > privileged enclaves.  In particular, the ability to run enclaves with
+> > the provisioning bit set is somewhat sensitive, since it effectively
+> > allows access to a stable fingerprint of the system.  Before flexible
+> > LC, this wasn't such a big deal, since only Intel's provisioning
+> > enclave could see the key, and Intel's enclave has some degree of
+> > control of what is done with the key.  With flex LC, this protection
+> > is lost.
+> >
+> > But this is maybe more of a big deal than just access to a stable
+> > fingerprint.  The ability to provision a remote attestation protocol
+> > is a key part of running SGX malware, and SGX malware is surely going
+> > to exist some day.  (Sure, Intel will try to block access to the
+> > actual attestation service for malware, but I doubt that Intel will be
+> > able to fully defend it.)
+> >
+> > So I propose that there be a few device nodes.  Maybe
+> > /dev/sgx/unprivilegd and /dev/sgx/provisioning?  The default mode of
+> > the latter could be 0600.  If you've opened the unprivileged node, you
+> > can only run enclaves without any special permission bits set.
+>
+> What would the use case for unprivileged i.e. this configuration would
+> mean depending on permissions?
 
-------------------
+Everything except the quoting/provisioning code would use the unprivileged node.
 
-From: Jeff Mahoney <jeffm@suse.com>
+>
+> There would be three types of users:
+>
+> 1. Ones that have access to neither of the devices.
+> 2. Ones that have access to unprivileged. Who are these?
 
-commit d4e329de5e5e21594df2e0dd59da9acee71f133b upstream.
+Either 0666 (world) or an sgx group.
 
-btrfs_trim_fs iterates over the fs_devices->alloc_list while holding the
-device_list_mutex.  The problem is that ->alloc_list is protected by the
-chunk mutex.  We don't want to hold the chunk mutex over the trim of the
-entire file system.  Fortunately, the ->dev_list list is protected by
-the dev_list mutex and while it will give us all devices, including
-read-only devices, we already just skip the read-only devices.  Then we
-can continue to take and release the chunk mutex while scanning each
-device.
+> 3. Ones that have access to provisioning.
 
-Fixes: 499f377f49f ("btrfs: iterate over unused chunk space in FITRIM")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Root only.
 
----
- fs/btrfs/extent-tree.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The idea here is that, under normal circumstances, provisioning only
+runs once, or at least only runs rarely.  So, rather than the SDK
+running provisioning whenever it feels like doing so (which is the
+current behavior, I imagine, although I haven't looked), there would
+be a privileged program, perhaps a systemd unit that runs when needed,
+that produces the key material needed for remote attestation, and
+non-root users that need attestation would get the keying material
+from the provisioning service.  And the provisioning service could
+implement its own policy.  Ideally, the service wouldn't give the
+sealed keys to users at all but would, instead, just provide the
+entire attestation service over a UNIX socket, which would make
+provisioning capabilities revocable.
 
---- a/fs/btrfs/extent-tree.c
-+++ b/fs/btrfs/extent-tree.c
-@@ -10751,8 +10751,8 @@ int btrfs_trim_fs(struct btrfs_root *roo
- 	}
- 
- 	mutex_lock(&root->fs_info->fs_devices->device_list_mutex);
--	devices = &root->fs_info->fs_devices->alloc_list;
--	list_for_each_entry(device, devices, dev_alloc_list) {
-+	devices = &root->fs_info->fs_devices->devices;
-+	list_for_each_entry(device, devices, dev_list) {
- 		ret = btrfs_trim_free_extents(device, range->minlen,
- 					      &group_trimmed);
- 		if (ret)
+Does this make sense?
 
-
+--Andy
