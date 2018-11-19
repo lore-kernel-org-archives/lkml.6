@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0577FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084D9C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46B0214C4
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7AC214C4
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:46:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTWZj8vu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46B0214C4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wRWXGIvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E7AC214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388951AbeKTDLB (ORCPT
+        id S2387961AbeKTDLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:11:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46672 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:11:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728537AbeKTDLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:11:00 -0500
+        id S1728537AbeKTDLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:11:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D2DA206BA;
-        Mon, 19 Nov 2018 16:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 037C2206BA;
+        Mon, 19 Nov 2018 16:46:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646007;
-        bh=uYef1V5vak6qoGRvItaTjStsF2FXFJtAb3BzVGYBRTc=;
+        s=default; t=1542646010;
+        bh=ODUaUoxNnrZNfvCr9auWYjY9acOyYKwI6L2mU9fX3ZY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oTWZj8vuoqT0rDIW6cw5Vx0m5KUSqGCglWvHHLjSWb4ksTSgqjqJBIEovZ1eSaggj
-         i2A+wFgimrMq1B9nMjChEmoVIQdp1eCL7crkXqpE38zycas3y7MZO8WOWuUmCT+bhJ
-         GNb8XcoTFZAVH1qjZLadiQqdf1BIbF7+yfRyVn4A=
+        b=wRWXGIvdW9bq9aumPRAwISS5cFnbtN30SksSBskMcUNl9KvkK1QY5ZQ2z+GEgdxCr
+         HsnD4i0bqBf/tmfvqrT9jZRDYWY1l0+YWDHb4xS7BoXmGPf4aKWr4EeNBOdyPfQe13
+         bgJtBATKd5hSEpszAjoFfbNioNcLuG80+j2Jl+Vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: [PATCH 4.18 157/171] drm/i915: Dont unset intel_connector->mst_port
-Date:   Mon, 19 Nov 2018 17:29:13 +0100
-Message-Id: <20181119162640.331356202@linuxfoundation.org>
+Subject: [PATCH 4.18 158/171] drm/i915: Skip vcpi allocation for MSTB ports that are gone
+Date:   Mon, 19 Nov 2018 17:29:14 +0100
+Message-Id: <20181119162640.406980679@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
 References: <20181119162618.909354448@linuxfoundation.org>
@@ -64,101 +64,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lyude Paul <lyude@redhat.com>
 
-commit 80c188695a77eddaa6e8885510ff4ef59fd478c3 upstream.
+commit c02ba4ef16eefe663fdefcccaa57fad32d5481bf upstream.
 
-Currently we set intel_connector->mst_port to NULL to signify that the
-MST port has been removed from the system so that we can prevent further
-action on the port such as connector probes, mode probing, etc.
-However, we're going to need access to intel_connector->mst_port in
-order to fixup ->best_encoder() so that it can always return the correct
-encoder for an MST port to prevent legacy DPMS prop changes from
-failing. This should be safe, so instead keep intel_connector->mst_port
-always set and instead just check the status of
-drm_connector->regustered to signify whether or not the connector has
-disappeared from the system.
+Since we need to be able to allow DPMS on->off prop changes after an MST
+port has disappeared from the system, we need to be able to make sure we
+can compute a config for the resulting atomic commit. Currently this is
+impossible when the port has disappeared, since the VCPI slot searching
+we try to do in intel_dp_mst_compute_config() will fail with -EINVAL.
 
-Changes since v2:
-- Add a comment to mst_port_gone (Jani Nikula)
-- Change mst_port_gone to a u8 instead of a bool, per the kernel bot.
-  Apparently bool is discouraged in structs these days
-Changes since v4:
-- Don't use mst_port_gone at all! Just check if the connector is
-  registered or not - Daniel Vetter
+Since the only commits we want to allow on no-longer-present MST ports
+are ones that shut off display hardware, we already know that no VCPI
+allocations are needed. So, hardcode the VCPI slot count to 0 when
+intel_dp_mst_compute_config() is called on an MST port that's gone.
+
+Changes since V4:
+- Don't use mst_port_gone at all, just check whether or not the drm
+  connector is registered - Daniel Vetter
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: stable@vger.kernel.org
-Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-4-lyude@redhat.com
-(cherry picked from commit 6ed5bb1fbad34382c8cfe9a9bf737e9a43053df5)
+Link: https://patchwork.freedesktop.org/patch/msgid/20181008232437.5571-5-lyude@redhat.com
+(cherry picked from commit f67207d78ceaf98b7531bc22df6f21328559c8d4)
 Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/intel_dp_mst.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/i915/intel_dp_mst.c |   24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
 --- a/drivers/gpu/drm/i915/intel_dp_mst.c
 +++ b/drivers/gpu/drm/i915/intel_dp_mst.c
-@@ -307,9 +307,8 @@ static int intel_dp_mst_get_ddc_modes(st
- 	struct edid *edid;
- 	int ret;
+@@ -38,11 +38,11 @@ static bool intel_dp_mst_compute_config(
+ 	struct intel_dp_mst_encoder *intel_mst = enc_to_mst(&encoder->base);
+ 	struct intel_digital_port *intel_dig_port = intel_mst->primary;
+ 	struct intel_dp *intel_dp = &intel_dig_port->dp;
+-	struct intel_connector *connector =
+-		to_intel_connector(conn_state->connector);
++	struct drm_connector *connector = conn_state->connector;
++	void *port = to_intel_connector(connector)->port;
+ 	struct drm_atomic_state *state = pipe_config->base.state;
+ 	int bpp;
+-	int lane_count, slots;
++	int lane_count, slots = 0;
+ 	const struct drm_display_mode *adjusted_mode = &pipe_config->base.adjusted_mode;
+ 	int mst_pbn;
+ 	bool reduce_m_n = drm_dp_has_quirk(&intel_dp->desc,
+@@ -70,17 +70,23 @@ static bool intel_dp_mst_compute_config(
  
--	if (!intel_dp) {
-+	if (!READ_ONCE(connector->registered))
- 		return intel_connector_update_modes(connector, NULL);
--	}
+ 	pipe_config->port_clock = intel_dp_max_link_rate(intel_dp);
  
- 	edid = drm_dp_mst_get_edid(connector, &intel_dp->mst_mgr, intel_connector->port);
- 	ret = intel_connector_update_modes(connector, edid);
-@@ -324,9 +323,10 @@ intel_dp_mst_detect(struct drm_connector
- 	struct intel_connector *intel_connector = to_intel_connector(connector);
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
+-	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, connector->port))
++	if (drm_dp_mst_port_has_audio(&intel_dp->mst_mgr, port))
+ 		pipe_config->has_audio = true;
  
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return connector_status_disconnected;
--	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr, intel_connector->port);
-+	return drm_dp_mst_detect_port(connector, &intel_dp->mst_mgr,
-+				      intel_connector->port);
- }
+ 	mst_pbn = drm_dp_calc_pbn_mode(adjusted_mode->crtc_clock, bpp);
+ 	pipe_config->pbn = mst_pbn;
  
- static void
-@@ -366,7 +366,7 @@ intel_dp_mst_mode_valid(struct drm_conne
- 	int bpp = 24; /* MST uses fixed bpp */
- 	int max_rate, mode_rate, max_lanes, max_link_clock;
+-	slots = drm_dp_atomic_find_vcpi_slots(state, &intel_dp->mst_mgr,
+-					      connector->port, mst_pbn);
+-	if (slots < 0) {
+-		DRM_DEBUG_KMS("failed finding vcpi slots:%d\n", slots);
+-		return false;
++	/* Zombie connectors can't have VCPI slots */
++	if (READ_ONCE(connector->registered)) {
++		slots = drm_dp_atomic_find_vcpi_slots(state,
++						      &intel_dp->mst_mgr,
++						      port,
++						      mst_pbn);
++		if (slots < 0) {
++			DRM_DEBUG_KMS("failed finding vcpi slots:%d\n",
++				      slots);
++			return false;
++		}
+ 	}
  
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return MODE_ERROR;
- 
- 	if (mode->flags & DRM_MODE_FLAG_DBLSCAN)
-@@ -398,7 +398,7 @@ static struct drm_encoder *intel_mst_ato
- 	struct intel_dp *intel_dp = intel_connector->mst_port;
- 	struct intel_crtc *crtc = to_intel_crtc(state->crtc);
- 
--	if (!intel_dp)
-+	if (!READ_ONCE(connector->registered))
- 		return NULL;
- 	return &intel_dp->mst_encoders[crtc->pipe]->base.base;
- }
-@@ -510,7 +510,6 @@ static void intel_dp_register_mst_connec
- static void intel_dp_destroy_mst_connector(struct drm_dp_mst_topology_mgr *mgr,
- 					   struct drm_connector *connector)
- {
--	struct intel_connector *intel_connector = to_intel_connector(connector);
- 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
- 
- 	DRM_DEBUG_KMS("[CONNECTOR:%d:%s]\n", connector->base.id, connector->name);
-@@ -519,10 +518,6 @@ static void intel_dp_destroy_mst_connect
- 	if (dev_priv->fbdev)
- 		drm_fb_helper_remove_one_connector(&dev_priv->fbdev->helper,
- 						   connector);
--	/* prevent race with the check in ->detect */
--	drm_modeset_lock(&connector->dev->mode_config.connection_mutex, NULL);
--	intel_connector->mst_port = NULL;
--	drm_modeset_unlock(&connector->dev->mode_config.connection_mutex);
- 
- 	drm_connector_unreference(connector);
- }
+ 	intel_link_compute_m_n(bpp, lane_count,
 
 
