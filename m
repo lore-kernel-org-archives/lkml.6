@@ -2,55 +2,50 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6980AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF47C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E342145D
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F7720C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 16:49:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="u7Jnqv8+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E342145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hv8EPJkk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F7720C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389767AbeKTDNl (ORCPT
+        id S2389778AbeKTDNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:13:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50566 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:13:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388931AbeKTDNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:13:40 -0500
+        id S2388931AbeKTDNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:13:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556FB208E4;
-        Mon, 19 Nov 2018 16:49:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16886206BA;
+        Mon, 19 Nov 2018 16:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646168;
-        bh=p0RakgUMiWdvLz8WpXd6UarS8P5ezl39+eLS6ukKhYA=;
+        s=default; t=1542646170;
+        bh=dy6oD/qNGFDZ/TDAiAlt8cT3bxPoveEbwCb/BvjR2hQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u7Jnqv8+UaMSZju2vHnNnIzv9nDXVp+g8B7hGEC3F7GwG9Bj1qJ8amdXllDVi4bNz
-         iNVgJdS6X1I3ScZollEjUdVzkEV1xrvaeD4plEdzQG7rLdMzVQ+VknKhvXKDcJsNum
-         TOj+ZiV1Nhhz904CcraiiLhp9Vf8Lz5T0UMNTnM4=
+        b=hv8EPJkkULFega9+hGURMZVKDh66zSIF1ldlgv10ugX0pJEx+hI9CCT9kb7/Y2dzO
+         jxtEtFsD72rJ59Blpg0zj10qR87ZwIFn0AeWrZU210f3yfzQFnDz1/cYkhEZAzJQEU
+         E+Avbiw6bxP5wMqNZIF+tPvRGoGuiEqRESW8f7dY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        Zhangjin Wu <wuzhangjin@gmail.com>,
-        Huacai Chen <chenhuacai@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 035/124] MIPS: Loongson-3: Fix CPU UART irq delivery problem
-Date:   Mon, 19 Nov 2018 17:28:09 +0100
-Message-Id: <20181119162620.447043496@linuxfoundation.org>
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.14 062/124] of, numa: Validate some distance map rules
+Date:   Mon, 19 Nov 2018 17:28:36 +0100
+Message-Id: <20181119162625.467356259@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
 References: <20181119162612.951907286@linuxfoundation.org>
@@ -68,94 +63,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d06f8a2f1befb5a3d0aa660ab1c05e9b744456ea ]
+From: John Garry <john.garry@huawei.com>
 
-Masking/unmasking the CPU UART irq in CP0_Status (and redirecting it to
-other CPUs) may cause interrupts be lost, especially in multi-package
-machines (Package-0's UART irq cannot be delivered to others). So make
-mask_loongson_irq() and unmask_loongson_irq() be no-ops.
+commit 89c38422e072bb453e3045b8f1b962a344c3edea upstream.
 
-The original problem (UART IRQ may deliver to any core) is also because
-of masking/unmasking the CPU UART irq in CP0_Status. So it is safe to
-remove all of the stuff.
+Currently the NUMA distance map parsing does not validate the distance
+table for the distance-matrix rules 1-2 in [1].
 
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/20433/
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@linux-mips.org
-Cc: Fuxin Zhang <zhangfx@lemote.com>
-Cc: Zhangjin Wu <wuzhangjin@gmail.com>
-Cc: Huacai Chen <chenhuacai@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+However the arch NUMA code may enforce some of these rules, but not all.
+Such is the case for the arm64 port, which does not enforce the rule that
+the distance between separates nodes cannot equal LOCAL_DISTANCE.
+
+The patch adds the following rules validation:
+- distance of node to self equals LOCAL_DISTANCE
+- distance of separate nodes > LOCAL_DISTANCE
+
+This change avoids a yet-unresolved crash reported in [2].
+
+A note on dealing with symmetrical distances between nodes:
+
+Validating symmetrical distances between nodes is difficult. If it were
+mandated in the bindings that every distance must be recorded in the
+table, then it would be easy. However, it isn't.
+
+In addition to this, it is also possible to record [b, a] distance only
+(and not [a, b]). So, when processing the table for [b, a], we cannot
+assert that current distance of [a, b] != [b, a] as invalid, as [a, b]
+distance may not be present in the table and current distance would be
+default at REMOTE_DISTANCE.
+
+As such, we maintain the policy that we overwrite distance [a, b] = [b, a]
+for b > a. This policy is different to kernel ACPI SLIT validation, which
+allows non-symmetrical distances (ACPI spec SLIT rules allow it). However,
+the distance debug message is dropped as it may be misleading (for a distance
+which is later overwritten).
+
+Some final notes on semantics:
+
+- It is implied that it is the responsibility of the arch NUMA code to
+  reset the NUMA distance map for an error in distance map parsing.
+
+- It is the responsibility of the FW NUMA topology parsing (whether OF or
+  ACPI) to enforce NUMA distance rules, and not arch NUMA code.
+
+[1] Documents/devicetree/bindings/numa.txt
+[2] https://www.spinics.net/lists/arm-kernel/msg683304.html
+
+Cc: stable@vger.kernel.org # 4.7
+Signed-off-by: John Garry <john.garry@huawei.com>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/mips/loongson64/loongson-3/irq.c | 43 ++-------------------------
- 1 file changed, 3 insertions(+), 40 deletions(-)
+ drivers/of/of_numa.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/loongson64/loongson-3/irq.c b/arch/mips/loongson64/loongson-3/irq.c
-index cbeb20f9fc95..2e115ab66a00 100644
---- a/arch/mips/loongson64/loongson-3/irq.c
-+++ b/arch/mips/loongson64/loongson-3/irq.c
-@@ -102,45 +102,8 @@ static struct irqaction cascade_irqaction = {
- 	.name = "cascade",
- };
+--- a/drivers/of/of_numa.c
++++ b/drivers/of/of_numa.c
+@@ -126,9 +126,14 @@ static int __init of_numa_parse_distance
+ 		distance = of_read_number(matrix, 1);
+ 		matrix++;
  
--static inline void mask_loongson_irq(struct irq_data *d)
--{
--	clear_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
--	irq_disable_hazard();
--
--	/* Workaround: UART IRQ may deliver to any core */
--	if (d->irq == LOONGSON_UART_IRQ) {
--		int cpu = smp_processor_id();
--		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
--		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
--		u64 intenclr_addr = smp_group[node_id] |
--			(u64)(&LOONGSON_INT_ROUTER_INTENCLR);
--		u64 introuter_lpc_addr = smp_group[node_id] |
--			(u64)(&LOONGSON_INT_ROUTER_LPC);
--
--		*(volatile u32 *)intenclr_addr = 1 << 10;
--		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
--	}
--}
--
--static inline void unmask_loongson_irq(struct irq_data *d)
--{
--	/* Workaround: UART IRQ may deliver to any core */
--	if (d->irq == LOONGSON_UART_IRQ) {
--		int cpu = smp_processor_id();
--		int node_id = cpu_logical_map(cpu) / loongson_sysconf.cores_per_node;
--		int core_id = cpu_logical_map(cpu) % loongson_sysconf.cores_per_node;
--		u64 intenset_addr = smp_group[node_id] |
--			(u64)(&LOONGSON_INT_ROUTER_INTENSET);
--		u64 introuter_lpc_addr = smp_group[node_id] |
--			(u64)(&LOONGSON_INT_ROUTER_LPC);
--
--		*(volatile u32 *)intenset_addr = 1 << 10;
--		*(volatile u8 *)introuter_lpc_addr = 0x10 + (1<<core_id);
--	}
--
--	set_c0_status(0x100 << (d->irq - MIPS_CPU_IRQ_BASE));
--	irq_enable_hazard();
--}
-+static inline void mask_loongson_irq(struct irq_data *d) { }
-+static inline void unmask_loongson_irq(struct irq_data *d) { }
++		if ((nodea == nodeb && distance != LOCAL_DISTANCE) ||
++		    (nodea != nodeb && distance <= LOCAL_DISTANCE)) {
++			pr_err("Invalid distance[node%d -> node%d] = %d\n",
++			       nodea, nodeb, distance);
++			return -EINVAL;
++		}
++
+ 		numa_set_distance(nodea, nodeb, distance);
+-		pr_debug("distance[node%d -> node%d] = %d\n",
+-			 nodea, nodeb, distance);
  
-  /* For MIPS IRQs which shared by all cores */
- static struct irq_chip loongson_irq_chip = {
-@@ -183,7 +146,7 @@ void __init mach_init_irq(void)
- 	chip->irq_set_affinity = plat_set_irq_affinity;
- 
- 	irq_set_chip_and_handler(LOONGSON_UART_IRQ,
--			&loongson_irq_chip, handle_level_irq);
-+			&loongson_irq_chip, handle_percpu_irq);
- 
- 	/* setup HT1 irq */
- 	setup_irq(LOONGSON_HT1_IRQ, &cascade_irqaction);
--- 
-2.17.1
-
+ 		/* Set default distance of node B->A same as A->B */
+ 		if (nodeb > nodea)
 
 
