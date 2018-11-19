@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB4CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D18C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B915621722
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7757821731
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 17:00:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHreqX2O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B915621722
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ghmu1Slq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7757821731
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405235AbeKTDYP (ORCPT
+        id S2405246AbeKTDYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 22:24:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36492 "EHLO mail.kernel.org"
+        Mon, 19 Nov 2018 22:24:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404390AbeKTDYO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 22:24:14 -0500
+        id S2404390AbeKTDYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 22:24:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CF8321508;
-        Mon, 19 Nov 2018 16:59:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BCDA21707;
+        Mon, 19 Nov 2018 17:00:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542646798;
-        bh=7yw9h76s1OhIEOg9Ej+ZcrBUXq0RFIe0RTT8UGZTGu4=;
+        s=default; t=1542646800;
+        bh=JfBiSP4Yo/01vX/rAgrEF8Eo965RyLqk631JypG4kow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UHreqX2OuIPBwLXwUXXjhofrlWJhuC0h2Iy40A0h5zNDuzCPOXYT6OUGgcZnAX0Fn
-         /1qwb+kXZkdFRZ28x6wxOo6aAwEkTfNSr12zWEa1uLZn5JYeD+CZYfRQm2lHW6gkPH
-         GeKRBrqa7gH25Uvy3edHB1ym0/y7T/rS00GxP6Gs=
+        b=Ghmu1SlqueL/p2xj1ctcLfEe9tG8s/TzYVy6yphDT5zBsFM4eLgrvddFQ1HEGFN72
+         q03Rr8dFL1IdBQdCR83z0wHK5opBTiN/NcdTWgIWdSecsIxhYXKQTQw3cG2FAzfM5Q
+         we5j2SrPHYFevVeHXY2hh5nFH47XlmxX3WAMDYio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.liu@linux.alibaba.com>,
-        Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 093/160] Btrfs: fix null pointer dereference on compressed write path error
-Date:   Mon, 19 Nov 2018 17:28:52 +0100
-Message-Id: <20181119162640.195279590@linuxfoundation.org>
+Subject: [PATCH 4.4 094/160] btrfs: set max_extent_size properly
+Date:   Mon, 19 Nov 2018 17:28:53 +0100
+Message-Id: <20181119162640.270230156@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
 References: <20181119162630.031306128@linuxfoundation.org>
@@ -63,46 +62,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Josef Bacik <jbacik@fb.com>
 
-commit 3527a018c00e5dbada2f9d7ed5576437b6dd5cfb upstream.
+commit ad22cf6ea47fa20fbe11ac324a0a15c0a9a4a2a9 upstream.
 
-At inode.c:compress_file_range(), under the "free_pages_out" label, we can
-end up dereferencing the "pages" pointer when it has a NULL value. This
-case happens when "start" has a value of 0 and we fail to allocate memory
-for the "pages" pointer. When that happens we jump to the "cont" label and
-then enter the "if (start == 0)" branch where we immediately call the
-cow_file_range_inline() function. If that function returns 0 (success
-creating an inline extent) or an error (like -ENOMEM for example) we jump
-to the "free_pages_out" label and then access "pages[i]" leading to a NULL
-pointer dereference, since "nr_pages" has a value greater than zero at
-that point.
+We can't use entry->bytes if our entry is a bitmap entry, we need to use
+entry->max_extent_size in that case.  Fix up all the logic to make this
+consistent.
 
-Fix this by setting "nr_pages" to 0 when we fail to allocate memory for
-the "pages" pointer.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201119
-Fixes: 771ed689d2cd ("Btrfs: Optimize compressed writeback and reads")
 CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <jbacik@fb.com>
 Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/btrfs/free-space-cache.c |   30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -481,6 +481,7 @@ again:
- 		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
- 		if (!pages) {
- 			/* just bail out to the uncompressed code */
-+			nr_pages = 0;
- 			goto cont;
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -1784,6 +1784,13 @@ static int search_bitmap(struct btrfs_fr
+ 	return -1;
+ }
+ 
++static inline u64 get_max_extent_size(struct btrfs_free_space *entry)
++{
++	if (entry->bitmap)
++		return entry->max_extent_size;
++	return entry->bytes;
++}
++
+ /* Cache the size of the max extent in bytes */
+ static struct btrfs_free_space *
+ find_free_space(struct btrfs_free_space_ctl *ctl, u64 *offset, u64 *bytes,
+@@ -1805,8 +1812,8 @@ find_free_space(struct btrfs_free_space_
+ 	for (node = &entry->offset_index; node; node = rb_next(node)) {
+ 		entry = rb_entry(node, struct btrfs_free_space, offset_index);
+ 		if (entry->bytes < *bytes) {
+-			if (entry->bytes > *max_extent_size)
+-				*max_extent_size = entry->bytes;
++			*max_extent_size = max(get_max_extent_size(entry),
++					       *max_extent_size);
+ 			continue;
  		}
  
+@@ -1824,8 +1831,8 @@ find_free_space(struct btrfs_free_space_
+ 		}
+ 
+ 		if (entry->bytes < *bytes + align_off) {
+-			if (entry->bytes > *max_extent_size)
+-				*max_extent_size = entry->bytes;
++			*max_extent_size = max(get_max_extent_size(entry),
++					       *max_extent_size);
+ 			continue;
+ 		}
+ 
+@@ -1837,8 +1844,10 @@ find_free_space(struct btrfs_free_space_
+ 				*offset = tmp;
+ 				*bytes = size;
+ 				return entry;
+-			} else if (size > *max_extent_size) {
+-				*max_extent_size = size;
++			} else {
++				*max_extent_size =
++					max(get_max_extent_size(entry),
++					    *max_extent_size);
+ 			}
+ 			continue;
+ 		}
+@@ -2696,8 +2705,8 @@ static u64 btrfs_alloc_from_bitmap(struc
+ 
+ 	err = search_bitmap(ctl, entry, &search_start, &search_bytes, true);
+ 	if (err) {
+-		if (search_bytes > *max_extent_size)
+-			*max_extent_size = search_bytes;
++		*max_extent_size = max(get_max_extent_size(entry),
++				       *max_extent_size);
+ 		return 0;
+ 	}
+ 
+@@ -2734,8 +2743,9 @@ u64 btrfs_alloc_from_cluster(struct btrf
+ 
+ 	entry = rb_entry(node, struct btrfs_free_space, offset_index);
+ 	while (1) {
+-		if (entry->bytes < bytes && entry->bytes > *max_extent_size)
+-			*max_extent_size = entry->bytes;
++		if (entry->bytes < bytes)
++			*max_extent_size = max(get_max_extent_size(entry),
++					       *max_extent_size);
+ 
+ 		if (entry->bytes < bytes ||
+ 		    (!entry->bitmap && entry->offset < min_start)) {
 
 
