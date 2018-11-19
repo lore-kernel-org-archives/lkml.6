@@ -2,99 +2,97 @@ Return-Path: <SRS0=tadO=N6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E500FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D13C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:28:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B5A2086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:28:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B5A2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A837206BB
+	for <linux-kernel@archiver.kernel.org>; Mon, 19 Nov 2018 15:28:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="KIAf2P88"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A837206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729844AbeKTBwX (ORCPT
+        id S1729860AbeKTBw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 19 Nov 2018 20:52:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45692 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729825AbeKTBwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Nov 2018 20:52:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1FD34AD91;
-        Mon, 19 Nov 2018 15:28:26 +0000 (UTC)
-Date:   Mon, 19 Nov 2018 16:28:25 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: i2c-hid: Disable runtime PM for LG touchscreen
-In-Reply-To: <20181114072457.19793-1-kai.heng.feng@canonical.com>
-Message-ID: <nycvar.YFH.7.76.1811191628190.21108@cbobk.fhfr.pm>
-References: <20181114072457.19793-1-kai.heng.feng@canonical.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mon, 19 Nov 2018 20:52:29 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40609 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729746AbeKTBw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Nov 2018 20:52:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=CgSBa2lOOWltF0vvpytwhnaY/O6GLg6OyNRbAYC/q90=;
+        b=KIAf2P88fbDaFwJsDABF85Rw1tDmNPrYd7zpawDgrgPznldH9ZO70COPXGKsKzKO0Av1VzqBawhQE+uO4GdJl1AtiYli5Di3nZbPxsygOnEP2+rpPrm+dUCWFXblxJJVmHqtwO6ZBGgkGQbqTT0WvDHa3OA1pFal/Lu66pVRcOU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gOlTS-0007n1-6r; Mon, 19 Nov 2018 16:28:30 +0100
+Date:   Mon, 19 Nov 2018 16:28:30 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     Quentin Schulz <quentin.schulz@bootlin.com>, davem@davemloft.net,
+        f.fainelli@gmail.com, allan.nielsen@microchip.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH net-next v3 1/6] net: phy: mscc: migrate to
+ phy_select/restore_page functions
+Message-ID: <20181119152830.GE26852@lunn.ch>
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+ <20181008100728.24959-2-quentin.schulz@bootlin.com>
+ <mvm8t1pazea.fsf@suse.de>
+ <20181119151057.GC26852@lunn.ch>
+ <mvm4lcdaynt.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <mvm4lcdaynt.fsf@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018, Kai-Heng Feng wrote:
-
-> LG touchscreen (1fd2:8001) stops working after reboot:
-> [ 4.859153] i2c_hid i2c-SAPS2101:00: i2c_hid_get_input: incomplete report (64/66)
-> [ 4.936070] i2c_hid i2c-SAPS2101:00: i2c_hid_get_input: incomplete report (64/66)
-> [ 9.948224] i2c_hid i2c-SAPS2101:00: failed to reset device.
+On Mon, Nov 19, 2018 at 04:13:10PM +0100, Andreas Schwab wrote:
+> On Nov 19 2018, Andrew Lunn <andrew@lunn.ch> wrote:
 > 
-> The device in question stops working after receives SLEEP, ON, SLEEP
-> commands in a short period. The scenario is like this:
-> - Once the desktop session closes, it also closed the hid device, so the
-> device gets runtime suspended and receives a SLEEP command.
-> - Before calling shutdown callback, it gets runtime resumed and received
-> an ON command.
-> - In the shutdown callback, it receives another SLEEP command.
+> > On Mon, Nov 19, 2018 at 03:57:17PM +0100, Andreas Schwab wrote:
+> >> On Okt 08 2018, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
+> >> 
+> >> > The Microsemi PHYs have multiple banks of registers (called pages).
+> >> > Registers can only be accessed from one page, if we need a register from
+> >> > another page, we need to switch the page and the registers of all other
+> >> > pages are not accessible anymore.
+> >> >
+> >> > Basically, to read register 5 from page 0, 1, 2, etc., you do the same
+> >> > phy_read(phydev, 5); but you need to set the desired page beforehand.
+> >> >
+> >> > In order to guarantee that two concurrent functions do not change the
+> >> > page, we need to do some locking per page. This can be achieved with the
+> >> > use of phy_select_page and phy_restore_page functions but phy_write/read
+> >> > calls in-between those two functions shall be replaced by their
+> >> > lock-free alternative __phy_write/read.
+> >> >
+> >> > Let's migrate this driver to those functions.
+> >> 
+> >> This has some serious locking problem.
+> >
+> > Hi Andreas
+> >
+> > Could you be more specific. Are you getting a deadlock? A WARN_ON?
 > 
-> I failed to find a reliable interval between ON/SLEEP commands that can
-> make it work, so let's simply disable runtime PM for the device.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/hid/hid-ids.h              | 1 +
->  drivers/hid/i2c-hid/i2c-hid-core.c | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> index c0d668944dbe..bd636f529fad 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -707,6 +707,7 @@
->  #define USB_VENDOR_ID_LG		0x1fd2
->  #define USB_DEVICE_ID_LG_MULTITOUCH	0x0064
->  #define USB_DEVICE_ID_LG_MELFAS_MT	0x6007
-> +#define I2C_DEVICE_ID_LG_8001		0x8001
->  
->  #define USB_VENDOR_ID_LOGITECH		0x046d
->  #define USB_DEVICE_ID_LOGITECH_AUDIOHUB 0x0a0e
-> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-> index 3cde7c1b9c33..8555ce7e737b 100644
-> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> @@ -177,6 +177,8 @@ static const struct i2c_hid_quirks {
->  		I2C_HID_QUIRK_NO_RUNTIME_PM },
->  	{ I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
->  		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
-> +	{ USB_VENDOR_ID_LG, I2C_DEVICE_ID_LG_8001,
-> +		I2C_HID_QUIRK_NO_RUNTIME_PM },
->  	{ 0, 0 }
->  };
+> See the stack trace.  That's where it hangs.
 
-Applied.
+So you never said it hangs. The stacktrace helps, but a description of
+what actually happens also helps. And i expect Quentin has booted this
+code lots of times and not had a hang. So some hits how to reproduce
+it would also help. Maybe your kernel config?
 
--- 
-Jiri Kosina
-SUSE Labs
+I'm interested because he is using the core mdio locking
+primitives. If those are broken, i want to know.
 
+Thanks
+	Andrew
