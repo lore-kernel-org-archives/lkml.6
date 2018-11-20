@@ -2,158 +2,446 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF64C04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD3BC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 883662075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:11:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PROhLoyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 883662075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A3812075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:15:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3812075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbeKTWkl (ORCPT
+        id S1729488AbeKTWo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:40:41 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:47025 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728977AbeKTWkl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:40:41 -0500
-Received: by mail-pl1-f196.google.com with SMTP id t13so899181ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:11:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=gCcw7MN6qkoDs4X0IDlObJgLgWIeo6hhbO50aVJaj4s=;
-        b=PROhLoygR80X/t/uEFI3iPh41J+/KT1bMtj3zN7XggIb6vP0XDuTUysL2QruXjjjN+
-         TKrvHmNcPYpMSDxGHgWBMZnuT6/7LTAOWXfws3O+ksV1LemrRS4Uyq17eXWzoWGQ9nFS
-         onWY5iNRl2FD6LHClrVad72Kxk1Ku1mOvuJ9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=gCcw7MN6qkoDs4X0IDlObJgLgWIeo6hhbO50aVJaj4s=;
-        b=U18bPD3g8GIql2KspYWt+yESmKpunBUNnaiSrIazo1Zn2K+2iY3dh2UVAh3OfWkyc2
-         MJpXLqf4wQPJvlqsmzdqMCcpEdJ/tkd1snDnhPyCxDsNYfW8GCJuepKtqXqAG7dFh/7h
-         OBX8MLynzJE1XrgXXIuHsgYSVEthlATa6DkKqOUxb4nd2vhswXlqrvTUu66/KD86xYGL
-         f5dp92iN3f+QWayZBZJn+xDPhzZfMN4tvQ3GV7vORHUGIiAqir0WeRpi/iXiyapvVykb
-         CbRflHpXOyZNM0BoTahjEy/bgbhHGEVlwnDoIRJD2XrJKSoUN3g41jPvNzRy4X7lJVGJ
-         Hn0w==
-X-Gm-Message-State: AA+aEWaOu55TAdhwicpyYrgaCH7V0SWRz1xMDh6IFz49Tb1nerw1plFm
-        t5H7UggIr3PuW8+qXgcTKcEq
-X-Google-Smtp-Source: AFSGD/XV9aTJBGRlwII+LVqYMLsymcCGVJAkDWhYSVGVFdue6/VAHx9reaGbnSuB1XQmk54PSr+KGw==
-X-Received: by 2002:a17:902:d891:: with SMTP id b17mr2010033plz.80.1542715910932;
-        Tue, 20 Nov 2018 04:11:50 -0800 (PST)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id 64sm11769456pff.101.2018.11.20.04.11.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 04:11:50 -0800 (PST)
-Date:   Tue, 20 Nov 2018 17:41:39 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        service@rdamicro.com,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 12/16] clocksource: Add clock driver for RDA8810PL SoC
-Message-ID: <20181120121139.GB13485@mani>
-References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
- <20181119170939.19153-13-manivannan.sadhasivam@linaro.org>
- <0df98ec5-1189-7297-b58d-8c0f5cbfa2ac@linaro.org>
+        Tue, 20 Nov 2018 17:44:28 -0500
+Received: from mx.socionext.com ([202.248.49.38]:5774 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728884AbeKTWo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:44:28 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 20 Nov 2018 21:15:33 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 3AD0060062;
+        Tue, 20 Nov 2018 21:15:33 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Tue, 20 Nov 2018 21:15:33 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id A866740387;
+        Tue, 20 Nov 2018 21:15:32 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 70B55120455;
+        Tue, 20 Nov 2018 21:15:32 +0900 (JST)
+Date:   Tue, 20 Nov 2018 21:15:31 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [RESEND PATCH v3 2/2] PCI: uniphier: Add UniPhier PCIe host controller support
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+In-Reply-To: <20181119161653.GA32232@e107981-ln.cambridge.arm.com>
+References: <1539667641-26024-3-git-send-email-hayashi.kunihiko@socionext.com> <20181119161653.GA32232@e107981-ln.cambridge.arm.com>
+Message-Id: <20181120211531.3607.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <0df98ec5-1189-7297-b58d-8c0f5cbfa2ac@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Hi Lorenzo,
 
-On Tue, Nov 20, 2018 at 11:32:52AM +0100, Daniel Lezcano wrote:
-> 
-> Hi Manivannan,
-> 
-> 
-> On 19/11/2018 18:09, Manivannan Sadhasivam wrote:
-> > Add clock driver for RDA Micro RDA8810PL SoC supporting OSTIMER
-> > and HWTIMER.
-> 
-> As it is a new driver, can you elaborate the log and describe the timer.
->
+Thank you for reviewing it.
 
-Sure, will add the brief in commit description and also in driver.
- 
-> > Signed-off-by: Andreas Färber <afaerber@suse.de>
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Mon, 19 Nov 2018 16:17:20 +0000 <lorenzo.pieralisi@arm.com> wrote:
+
+> On Tue, Oct 16, 2018 at 02:27:21PM +0900, Kunihiko Hayashi wrote:
+> > This introduces specific glue layer for UniPhier platform to support
+> > PCIe host controller that is based on the DesignWare PCIe core, and
+> > this driver supports Root Complex (host) mode.
+> > 
+> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > > ---
+> >  drivers/pci/controller/dwc/Kconfig         |   9 +
+> >  drivers/pci/controller/dwc/Makefile        |   1 +
+> >  drivers/pci/controller/dwc/pcie-uniphier.c | 433 +++++++++++++++++++++++++++++
 > 
-> [ ... ]
-> 
-> > +static int __init rda_timer_init(struct device_node *node)
+> The driver needs a MAINTAINERS entry too.
+
+Okay. I'll add it in v4.
+
+
+> >  3 files changed, 443 insertions(+)
+> >  create mode 100644 drivers/pci/controller/dwc/pcie-uniphier.c
+> > 
+> > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > index 91b0194..d8fdb02 100644
+> > --- a/drivers/pci/controller/dwc/Kconfig
+> > +++ b/drivers/pci/controller/dwc/Kconfig
+> > @@ -193,4 +193,13 @@ config PCIE_HISI_STB
+> >  	help
+> >            Say Y here if you want PCIe controller support on HiSilicon STB SoCs
+> >  
+> > +config PCIE_UNIPHIER
+> > +	bool "Socionext UniPhier PCIe controllers"
+> > +	depends on OF && (ARCH_UNIPHIER || COMPILE_TEST)
+> > +	depends on PCI_MSI_IRQ_DOMAIN
+> > +	select PCIE_DW_HOST
+> > +	help
+> > +	  Say Y here if you want PCIe controller support on UniPhier SoCs.
+> > +	  This driver supports LD20 and PXs3 SoCs.
+> > +
+> >  endmenu
+> > diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> > index 5d2ce72..cbde733 100644
+> > --- a/drivers/pci/controller/dwc/Makefile
+> > +++ b/drivers/pci/controller/dwc/Makefile
+> > @@ -14,6 +14,7 @@ obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+> >  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+> >  obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
+> >  obj-$(CONFIG_PCIE_HISI_STB) += pcie-histb.o
+> > +obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+> >  
+> >  # The following drivers are for devices that use the generic ACPI
+> >  # pci_root.c driver but don't support standard ECAM config access.
+> > diff --git a/drivers/pci/controller/dwc/pcie-uniphier.c b/drivers/pci/controller/dwc/pcie-uniphier.c
+> > new file mode 100644
+> > index 0000000..2689449
+> > --- /dev/null
+> > +++ b/drivers/pci/controller/dwc/pcie-uniphier.c
+> > @@ -0,0 +1,433 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * PCIe host controller driver for UniPhier SoCs
+> > + * Copyright 2018 Socionext Inc.
+> > + * Author: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > + */
+> > +
+> > +#include <linux/bitops.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/irqchip/chained_irq.h>
+> > +#include <linux/irqdomain.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/phy/phy.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> > +
+> > +#include "pcie-designware.h"
+> > +
+> > +#define PCL_PINCTRL0			0x002c
+> > +#define PCL_PERST_PLDN_REGEN		BIT(12)
+> > +#define PCL_PERST_NOE_REGEN		BIT(11)
+> > +#define PCL_PERST_OUT_REGEN		BIT(8)
+> > +#define PCL_PERST_PLDN_REGVAL		BIT(4)
+> > +#define PCL_PERST_NOE_REGVAL		BIT(3)
+> > +#define PCL_PERST_OUT_REGVAL		BIT(0)
+> > +
+> > +#define PCL_PIPEMON			0x0044
+> > +#define PCL_PCLK_ALIVE			BIT(15)
+> > +
+> > +#define PCL_APP_READY_CTRL		0x8008
+> > +#define PCL_APP_LTSSM_ENABLE		BIT(0)
+> > +
+> > +#define PCL_APP_PM0			0x8078
+> > +#define PCL_SYS_AUX_PWR_DET		BIT(8)
+> > +
+> > +#define PCL_RCV_INT			0x8108
+> > +#define PCL_RCV_INT_ALL_ENABLE		GENMASK(20, 17)
+> > +#define PCL_CFG_BW_MGT_STATUS		BIT(4)
+> > +#define PCL_CFG_LINK_AUTO_BW_STATUS	BIT(3)
+> > +#define PCL_CFG_AER_RC_ERR_MSI_STATUS	BIT(2)
+> > +#define PCL_CFG_PME_MSI_STATUS		BIT(1)
+> > +
+> > +#define PCL_RCV_INTX			0x810c
+> > +#define PCL_RCV_INTX_ALL_ENABLE		GENMASK(19, 16)
+> > +#define PCL_RCV_INTX_ALL_STATUS		GENMASK(3, 0)
+> > +
+> > +#define PCL_STATUS_LINK			0x8140
+> > +#define PCL_RDLH_LINK_UP		BIT(1)
+> > +#define PCL_XMLH_LINK_UP		BIT(0)
+> > +
+> > +struct uniphier_pcie_priv {
+> > +	void __iomem *base;
+> > +	struct dw_pcie pci;
+> > +	struct clk *clk;
+> > +	struct reset_control *rst;
+> > +	struct phy *phy;
+> > +	struct irq_domain *legacy_irq_domain;
+> > +};
+> > +
+> > +#define to_uniphier_pcie(x)	dev_get_drvdata((x)->dev)
+> > +
+> > +static void uniphier_pcie_ltssm_enable(struct uniphier_pcie_priv *priv)
 > > +{
-> > +	unsigned long rate = 2000000;
-> > +	int ostimer_irq, ret;
+> > +	u32 val;
 > > +
-> > +	rda_timer_base = of_io_request_and_map(node, 0, "rda-timer");
-> > +	if (IS_ERR(rda_timer_base)) {
-> > +		pr_err("Can't map timer registers");
-> > +		return PTR_ERR(rda_timer_base);
-> > +	}
+> > +	val = readl(priv->base + PCL_APP_READY_CTRL);
+> > +	val |= PCL_APP_LTSSM_ENABLE;
+> > +	writel(val, priv->base + PCL_APP_READY_CTRL);
+> > +}
 > > +
-> > +	ostimer_irq = of_irq_get_byname(node, "ostimer");
-> > +	if (ostimer_irq <= 0) {
-> > +		pr_err("Can't parse ostimer IRQ");
-> > +		return -EINVAL;
-> > +	}
+> > +static void uniphier_pcie_ltssm_disable(struct uniphier_pcie_priv *priv)
+> > +{
+> > +	u32 val;
 > > +
-> > +	clocksource_register_hz(&rda_clocksource, rate);
+> > +	val = readl(priv->base + PCL_APP_READY_CTRL);
+> > +	val &= ~PCL_APP_LTSSM_ENABLE;
+> > +	writel(val, priv->base + PCL_APP_READY_CTRL);
+> > +}
+> 
+> A single function with an "enable" parameter would do.
+
+I'll merge them into a single function.
+
+
+> > +static void uniphier_pcie_init_rc(struct uniphier_pcie_priv *priv)
+> > +{
+> > +	u32 val;
 > > +
-> > +	ret = request_irq(ostimer_irq, rda_ostimer_interrupt, IRQF_TIMER,
-> > +			  "rda-ostimer", &rda_clockevent);
+> > +	/* use auxiliary power detection */
+> > +	val = readl(priv->base + PCL_APP_PM0);
+> > +	val |= PCL_SYS_AUX_PWR_DET;
+> > +	writel(val, priv->base + PCL_APP_PM0);
+> > +
+> > +	/* assert PERST# */
+> > +	val = readl(priv->base + PCL_PINCTRL0);
+> > +	val &= ~(PCL_PERST_NOE_REGVAL | PCL_PERST_OUT_REGVAL
+> > +		 | PCL_PERST_PLDN_REGVAL);
+> > +	val |= PCL_PERST_NOE_REGEN | PCL_PERST_OUT_REGEN
+> > +		| PCL_PERST_PLDN_REGEN;
+> > +	writel(val, priv->base + PCL_PINCTRL0);
+> > +
+> > +	uniphier_pcie_ltssm_disable(priv);
+> > +
+> > +	usleep_range(100000, 200000);
+> > +
+> > +	/* deassert PERST# */
+> > +	val = readl(priv->base + PCL_PINCTRL0);
+> > +	val |= PCL_PERST_OUT_REGVAL | PCL_PERST_OUT_REGEN;
+> > +	writel(val, priv->base + PCL_PINCTRL0);
+> > +}
+> > +
+> > +static int uniphier_pcie_wait_rc(struct uniphier_pcie_priv *priv)
+> > +{
+> > +	u32 status;
+> > +	int ret;
+> > +
+> > +	/* wait PIPE clock */
+> > +	ret = readl_poll_timeout(priv->base + PCL_PIPEMON, status,
+> > +				 status & PCL_PCLK_ALIVE, 100000, 1000000);
 > > +	if (ret) {
-> > +		pr_err("failed to request irq %d\n", ostimer_irq);
+> > +		dev_err(priv->pci.dev,
+> > +			"Failed to initialize controller in RC mode\n");
 > > +		return ret;
 > > +	}
 > > +
-> 
-> Use the timer-of API.
-> 
-
-Okay, will use it for both IO and IRQ requests.
-
-Thanks,
-Mani
-
+> > +	return 0;
+> > +}
 > > +
-> > +TIMER_OF_DECLARE(rda8810pl, "rda,8810pl-timer", rda_timer_init);
+> > +static int uniphier_pcie_link_up(struct dw_pcie *pci)
+> 
+> This function returns a bool value, make it return a bool.
+
+This function is registered in struct dw_pcie_ops.link_up, that is defined
+in pcie-designware.h as follows:
+
+       int     (*link_up)(struct dw_pcie *pcie);
+
+Changing the return type of this function makes type mismatch,
+so I think it's difficult to change it.
+
+
+> > +{
+> > +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> > +	u32 val, mask;
+> > +
+> > +	val = readl(priv->base + PCL_STATUS_LINK);
+> > +	mask = PCL_RDLH_LINK_UP | PCL_XMLH_LINK_UP;
+> > +
+> > +	return (val & mask) == mask;
+> > +}
+> > +
+> > +static int uniphier_pcie_establish_link(struct dw_pcie *pci)
+> > +{
+> > +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> > +	int ret;
+> > +
+> > +	if (dw_pcie_link_up(pci))
+> > +		return 0;
+> > +
+> > +	uniphier_pcie_ltssm_enable(priv);
+> > +
+> > +	ret = dw_pcie_wait_for_link(pci);
+> 
+> dw_pcie_wait_for_link() already prints an error, I do not see
+> what this additional warning is adding.
+
+Surely it's redundant, enough for previous error message.
+
+> > +	if (ret == -ETIMEDOUT)
+> > +		dev_warn(pci->dev, "Link not up\n");
 > 
 > 
-> Thanks
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void uniphier_pcie_stop_link(struct dw_pcie *pci)
+> > +{
+> > +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> > +
+> > +	uniphier_pcie_ltssm_disable(priv);
+> > +}
+> > +
+> > +static int uniphier_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
+> > +				  irq_hw_number_t hwirq)
+> > +{
+> > +	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+> > +	irq_set_chip_data(irq, domain->host_data);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct irq_domain_ops uniphier_intx_domain_ops = {
+> > +	.map = uniphier_pcie_intx_map,
+> > +	.xlate = pci_irqd_intx_xlate,
+> > +};
 > 
->   -- Daniel
+> - You should define a proper IRQ chip implementation
+> - INTX are level interrupts, so handle_level_irq() is the flow handler
+> - Using pci_irqd_intx_xlate() is wrong, please update the DT bindings
+>   as I explained
 > 
+> Take a look at pci-ftpci100.c and use that approach to implement INTX
+> handling.
+
+I understand. With referenct to pci-ftpci100.c,
+I'll change to level interrupts, remove xlate, replace dummy_irq_chip with
+own irqchip including mask/unmask/ack functions.
+
+
+> > +static void uniphier_pcie_irq_enable(struct uniphier_pcie_priv *priv)
+> > +{
+> > +	writel(PCL_RCV_INT_ALL_ENABLE, priv->base + PCL_RCV_INT);
+> > +	writel(PCL_RCV_INTX_ALL_ENABLE, priv->base + PCL_RCV_INTX);
+> > +}
+> > +
+> > +static void uniphier_pcie_irq_disable(struct uniphier_pcie_priv *priv)
+> > +{
+> > +	writel(0, priv->base + PCL_RCV_INT);
+> > +	writel(0, priv->base + PCL_RCV_INTX);
+> > +}
+> > +
+> > +static void uniphier_pcie_irq_handler(struct irq_desc *desc)
+> > +{
+> > +	struct pcie_port *pp = irq_desc_get_handler_data(desc);
+> > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> > +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> > +	unsigned long reg;
+> > +	u32 val, bit, virq;
+> > +
+> > +	/* INT for debug */
+> > +	val = readl(priv->base + PCL_RCV_INT);
+> > +
+> > +	if (val & PCL_CFG_BW_MGT_STATUS)
+> > +		dev_dbg(pci->dev, "Link Bandwidth Management Event\n");
+> > +	if (val & PCL_CFG_LINK_AUTO_BW_STATUS)
+> > +		dev_dbg(pci->dev, "Link Autonomous Bandwidth Event\n");
+> > +	if (val & PCL_CFG_AER_RC_ERR_MSI_STATUS)
+> > +		dev_dbg(pci->dev, "Root Error\n");
+> > +	if (val & PCL_CFG_PME_MSI_STATUS)
+> > +		dev_dbg(pci->dev, "PME Interrupt\n");
+> > +
+> > +	writel(val, priv->base + PCL_RCV_INT);
 > 
-> -- 
->  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> What's writing to PCL_RCV_INT needed for ?
+
+Each status bit is cleared by writing 1 to the bit.
+This writel() can clear asserted bit.
+
+
+> > +	/* INTx */
+> > +	chained_irq_enter(chip, desc);
+> > +
+> > +	val = readl(priv->base + PCL_RCV_INTX);
+> > +	reg = FIELD_GET(PCL_RCV_INTX_ALL_STATUS, val);
+> > +
+> > +	for_each_set_bit(bit, &reg, PCI_NUM_INTX) {
+> > +		virq = irq_linear_revmap(priv->legacy_irq_domain, bit);
+> > +		generic_handle_irq(virq);
+> > +	}
+> > +
+> > +	writel(val, priv->base + PCL_RCV_INTX);
+> > +
+> > +	chained_irq_exit(chip, desc);
+> > +}
+> > +
+> > +static int uniphier_pcie_config_legacy_irq(struct pcie_port *pp)
+> > +{
+> > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > +	struct uniphier_pcie_priv *priv = to_uniphier_pcie(pci);
+> > +	struct device_node *np = pci->dev->of_node;
+> > +	struct device_node *np_intc;
+> > +
+> > +	np_intc = of_get_child_by_name(np, "legacy-interrupt-controller");
+> > +	if (!np_intc) {
+> > +		dev_err(pci->dev, "Failed to get legacy-interrupt-controller node\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	pp->irq = irq_of_parse_and_map(np_intc, 0);
+> > +	if (!pp->irq) {
+> > +		dev_err(pci->dev, "Failed to get an IRQ entry in legacy-interrupt-controller\n");
+> > +		return -EINVAL;
+> > +	}
+> > +	irq_set_chained_handler_and_data(pp->irq, uniphier_pcie_irq_handler,
+> > +					 pp);
+> > +
+> > +	priv->legacy_irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
+> > +						&uniphier_intx_domain_ops, pp);
+> > +	if (!priv->legacy_irq_domain) {
+> > +		dev_err(pci->dev, "Failed to get INTx domain\n");
+> > +		return -ENODEV;
+> > +	}
 > 
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+> 	priv->legacy_irq_domain = irq_domain_add_linear(np_intc, PCI_NUM_INTX,
+> 						&uniphier_intx_domain_ops, pp);
+> 	if (!priv->legacy_irq_domain) {
+> 		dev_err(pci->dev, "Failed to get INTx domain\n");
+> 		return -ENODEV;
+> 	}
 > 
+> First add IRQs to the domain, then
+> 
+> 	irq_set_chained_handler_and_data(pp->irq, uniphier_pcie_irq_handler,
+> 					 pp);
+> 
+> set up the cascaded handler.
+
+I see. I'll change the order.
+
+Thank you,
+
+---
+Best Regards,
+Kunihiko Hayashi
+
+
