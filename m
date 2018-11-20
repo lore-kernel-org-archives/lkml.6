@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53115C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5691EC18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E32208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:54:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E32208E4
+	by mail.kernel.org (Postfix) with ESMTP id 0CDD520989
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDD520989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbeKUBXo (ORCPT
+        id S1730087AbeKUBYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:23:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39262 "EHLO mx1.suse.de"
+        Tue, 20 Nov 2018 20:24:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39284 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729286AbeKUBXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:23:43 -0500
+        id S1729294AbeKUBXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:23:44 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0ADF4ADCE;
+        by mx1.suse.de (Postfix) with ESMTP id 83F4CAE02;
         Tue, 20 Nov 2018 14:54:09 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
@@ -33,9 +33,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 05/16] staging: vchiq_arm: get rid of vchi_mh.h
-Date:   Tue, 20 Nov 2018 15:53:40 +0100
-Message-Id: <20181120145351.30390-6-nsaenzjulienne@suse.de>
+Subject: [PATCH 07/16] staging: vchiq-core: get rid of is_master distinction
+Date:   Tue, 20 Nov 2018 15:53:42 +0100
+Message-Id: <20181120145351.30390-8-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120145351.30390-1-nsaenzjulienne@suse.de>
 References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
@@ -46,292 +46,535 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The concept of VCHI_MEM_HANDLE_T is introduced by this header file and
-was meant to be used with bulk transfers. After a quick look in
-vchiq_core.c it is pretty clear that it actually accomplishes nothing
-nor alters the bulk transfers in any way.
+VCHIQ bulk transfers are what most people call DMA transfers. The CPU
+sends a list of physical addresses to the VideoCore which then access
+the memory directly without the need for CPU interaction.  With this
+setup we call the CPU the "slave" and the VideoCore the "master".
+
+There seems to be an option to switch roles in vchiq. Which nobody is
+using nor is properly implemented. So we get rid of the "is_master == 1"
+option, and all the related code.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../vc04_services/interface/vchi/vchi.h       |  3 --
- .../vc04_services/interface/vchi/vchi_mh.h    | 42 -------------------
- .../interface/vchiq_arm/vchiq_2835_arm.c      |  6 +--
- .../interface/vchiq_arm/vchiq_arm.c           | 27 ++++++------
- .../interface/vchiq_arm/vchiq_core.c          | 17 ++++----
- .../interface/vchiq_arm/vchiq_core.h          | 10 ++---
- .../interface/vchiq_arm/vchiq_if.h            |  8 ++--
- 7 files changed, 27 insertions(+), 86 deletions(-)
- delete mode 100644 drivers/staging/vc04_services/interface/vchi/vchi_mh.h
+ .../interface/vchiq_arm/vchiq_2835_arm.c      |  12 +-
+ .../interface/vchiq_arm/vchiq_core.c          | 300 +++---------------
+ .../interface/vchiq_arm/vchiq_core.h          |  11 +-
+ 3 files changed, 38 insertions(+), 285 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
-index 379a16ebfd5b..e326926eac31 100644
---- a/drivers/staging/vc04_services/interface/vchi/vchi.h
-+++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
-@@ -36,7 +36,6 @@
- 
- #include "interface/vchi/vchi_cfg.h"
- #include "interface/vchi/vchi_common.h"
--#include "vchi_mh.h"
- 
- /******************************************************************************
-  Global defs
-@@ -239,7 +238,6 @@ extern int32_t vchi_bulk_queue_receive(VCHI_SERVICE_HANDLE_T handle,
- 
- // Prepare interface for a transfer from the other side into relocatable memory.
- int32_t vchi_bulk_queue_receive_reloc(const VCHI_SERVICE_HANDLE_T handle,
--				      VCHI_MEM_HANDLE_T h_dst,
- 				      uint32_t offset,
- 				      uint32_t data_size,
- 				      const VCHI_FLAGS_T flags,
-@@ -261,7 +259,6 @@ extern int32_t vchi_bulk_queue_transmit(VCHI_SERVICE_HANDLE_T handle,
- #endif
- 
- extern int32_t vchi_bulk_queue_transmit_reloc(VCHI_SERVICE_HANDLE_T handle,
--					      VCHI_MEM_HANDLE_T h_src,
- 					      uint32_t offset,
- 					      uint32_t data_size,
- 					      VCHI_FLAGS_T flags,
-diff --git a/drivers/staging/vc04_services/interface/vchi/vchi_mh.h b/drivers/staging/vc04_services/interface/vchi/vchi_mh.h
-deleted file mode 100644
-index 198bd076b666..000000000000
---- a/drivers/staging/vc04_services/interface/vchi/vchi_mh.h
-+++ /dev/null
-@@ -1,42 +0,0 @@
--/**
-- * Copyright (c) 2010-2012 Broadcom. All rights reserved.
-- *
-- * Redistribution and use in source and binary forms, with or without
-- * modification, are permitted provided that the following conditions
-- * are met:
-- * 1. Redistributions of source code must retain the above copyright
-- *    notice, this list of conditions, and the following disclaimer,
-- *    without modification.
-- * 2. Redistributions in binary form must reproduce the above copyright
-- *    notice, this list of conditions and the following disclaimer in the
-- *    documentation and/or other materials provided with the distribution.
-- * 3. The names of the above-listed copyright holders may not be used
-- *    to endorse or promote products derived from this software without
-- *    specific prior written permission.
-- *
-- * ALTERNATIVELY, this software may be distributed under the terms of the
-- * GNU General Public License ("GPL") version 2, as published by the Free
-- * Software Foundation.
-- *
-- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-- */
--
--#ifndef VCHI_MH_H_
--#define VCHI_MH_H_
--
--#include <linux/types.h>
--
--typedef int32_t VCHI_MEM_HANDLE_T;
--#define VCHI_MEM_HANDLE_INVALID 0
--
--#endif
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index 83d740feab96..014583cdf367 100644
+index 014583cdf367..ecee54a31f8d 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -247,13 +247,10 @@ remote_event_signal(REMOTE_EVENT_T *event)
+@@ -163,7 +163,7 @@ int vchiq_platform_init(struct platform_device *pdev, VCHIQ_STATE_T *state)
+ 	*(char **)&g_fragments_base[i * g_fragments_size] = NULL;
+ 	sema_init(&g_free_fragments_sema, MAX_FRAGMENTS);
+ 
+-	if (vchiq_init_state(state, vchiq_slot_zero, 0) != VCHIQ_SUCCESS)
++	if (vchiq_init_state(state, vchiq_slot_zero) != VCHIQ_SUCCESS)
+ 		return -EINVAL;
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -278,16 +278,6 @@ vchiq_complete_bulk(VCHIQ_BULK_T *bulk)
+ 			      bulk->actual);
+ }
+ 
+-void
+-vchiq_transfer_bulk(VCHIQ_BULK_T *bulk)
+-{
+-	/*
+-	 * This should only be called on the master (VideoCore) side, but
+-	 * provide an implementation to avoid the need for ifdefery.
+-	 */
+-	BUG();
+-}
+-
+ void
+ vchiq_dump_platform_state(void *dump_context)
+ {
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 8c7bda2e7cb6..34a892011296 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -85,8 +85,6 @@ int vchiq_core_log_level = VCHIQ_LOG_DEFAULT;
+ int vchiq_core_msg_log_level = VCHIQ_LOG_DEFAULT;
+ int vchiq_sync_log_level = VCHIQ_LOG_DEFAULT;
+ 
+-static atomic_t pause_bulks_count = ATOMIC_INIT(0);
+-
+ static DEFINE_SPINLOCK(service_spinlock);
+ DEFINE_SPINLOCK(bulk_waiter_spinlock);
+ static DEFINE_SPINLOCK(quota_spinlock);
+@@ -1222,32 +1220,7 @@ notify_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue,
+ 		(queue == &service->bulk_tx) ? 't' : 'r',
+ 		queue->process, queue->remote_notify, queue->remove);
+ 
+-	if (service->state->is_master) {
+-		while (queue->remote_notify != queue->process) {
+-			VCHIQ_BULK_T *bulk =
+-				&queue->bulks[BULK_INDEX(queue->remote_notify)];
+-			int msgtype = (bulk->dir == VCHIQ_BULK_TRANSMIT) ?
+-				VCHIQ_MSG_BULK_RX_DONE : VCHIQ_MSG_BULK_TX_DONE;
+-			int msgid = VCHIQ_MAKE_MSG(msgtype, service->localport,
+-				service->remoteport);
+-			/* Only reply to non-dummy bulk requests */
+-			if (bulk->remote_data) {
+-				status = queue_message(
+-						service->state,
+-						NULL,
+-						msgid,
+-						memcpy_copy_callback,
+-						&bulk->actual,
+-						4,
+-						0);
+-				if (status != VCHIQ_SUCCESS)
+-					break;
+-			}
+-			queue->remote_notify++;
+-		}
+-	} else {
+-		queue->remote_notify = queue->process;
+-	}
++	queue->remote_notify = queue->process;
+ 
+ 	if (status == VCHIQ_SUCCESS) {
+ 		while (queue->remove != queue->remote_notify) {
+@@ -1385,63 +1358,6 @@ poll_services(VCHIQ_STATE_T *state)
+ 	}
+ }
+ 
+-/* Called by the slot handler or application threads, holding the bulk mutex. */
+-static int
+-resolve_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
+-{
+-	VCHIQ_STATE_T *state = service->state;
+-	int resolved = 0;
+-
+-	while ((queue->process != queue->local_insert) &&
+-		(queue->process != queue->remote_insert)) {
+-		VCHIQ_BULK_T *bulk = &queue->bulks[BULK_INDEX(queue->process)];
+-
+-		vchiq_log_trace(vchiq_core_log_level,
+-			"%d: rb:%d %cx - li=%x ri=%x p=%x",
+-			state->id, service->localport,
+-			(queue == &service->bulk_tx) ? 't' : 'r',
+-			queue->local_insert, queue->remote_insert,
+-			queue->process);
+-
+-		WARN_ON(!((int)(queue->local_insert - queue->process) > 0));
+-		WARN_ON(!((int)(queue->remote_insert - queue->process) > 0));
+-
+-		if (mutex_lock_killable(&state->bulk_transfer_mutex))
+-			break;
+-
+-		vchiq_transfer_bulk(bulk);
+-		mutex_unlock(&state->bulk_transfer_mutex);
+-
+-		if (SRVTRACE_ENABLED(service, VCHIQ_LOG_INFO)) {
+-			const char *header = (queue == &service->bulk_tx) ?
+-				"Send Bulk to" : "Recv Bulk from";
+-			if (bulk->actual != VCHIQ_BULK_ACTUAL_ABORTED)
+-				vchiq_log_info(SRVTRACE_LEVEL(service),
+-					"%s %c%c%c%c d:%d len:%d %pK<->%pK",
+-					header,
+-					VCHIQ_FOURCC_AS_4CHARS(
+-						service->base.fourcc),
+-					service->remoteport, bulk->size,
+-					bulk->data, bulk->remote_data);
+-			else
+-				vchiq_log_info(SRVTRACE_LEVEL(service),
+-					"%s %c%c%c%c d:%d ABORTED - tx len:%d,"
+-					" rx len:%d %pK<->%pK",
+-					header,
+-					VCHIQ_FOURCC_AS_4CHARS(
+-						service->base.fourcc),
+-					service->remoteport,
+-					bulk->size, bulk->remote_size,
+-					bulk->data, bulk->remote_data);
+-		}
+-
+-		vchiq_complete_bulk(bulk);
+-		queue->process++;
+-		resolved++;
+-	}
+-	return resolved;
+-}
+-
+ /* Called with the bulk_mutex held */
+ static void
+ abort_outstanding_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
+@@ -1492,65 +1408,6 @@ abort_outstanding_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
+ 	}
+ }
+ 
+-/* Called from the slot handler thread */
+-static void
+-pause_bulks(VCHIQ_STATE_T *state)
+-{
+-	if (unlikely(atomic_inc_return(&pause_bulks_count) != 1)) {
+-		WARN_ON_ONCE(1);
+-		atomic_set(&pause_bulks_count, 1);
+-		return;
+-	}
+-
+-	/* Block bulk transfers from all services */
+-	mutex_lock(&state->bulk_transfer_mutex);
+-}
+-
+-/* Called from the slot handler thread */
+-static void
+-resume_bulks(VCHIQ_STATE_T *state)
+-{
+-	int i;
+-
+-	if (unlikely(atomic_dec_return(&pause_bulks_count) != 0)) {
+-		WARN_ON_ONCE(1);
+-		atomic_set(&pause_bulks_count, 0);
+-		return;
+-	}
+-
+-	/* Allow bulk transfers from all services */
+-	mutex_unlock(&state->bulk_transfer_mutex);
+-
+-	if (state->deferred_bulks == 0)
+-		return;
+-
+-	/* Deal with any bulks which had to be deferred due to being in
+-	 * paused state.  Don't try to match up to number of deferred bulks
+-	 * in case we've had something come and close the service in the
+-	 * interim - just process all bulk queues for all services */
+-	vchiq_log_info(vchiq_core_log_level, "%s: processing %d deferred bulks",
+-		__func__, state->deferred_bulks);
+-
+-	for (i = 0; i < state->unused_service; i++) {
+-		VCHIQ_SERVICE_T *service = state->services[i];
+-		int resolved_rx = 0;
+-		int resolved_tx = 0;
+-
+-		if (!service || (service->srvstate != VCHIQ_SRVSTATE_OPEN))
+-			continue;
+-
+-		mutex_lock(&service->bulk_mutex);
+-		resolved_rx = resolve_bulks(service, &service->bulk_rx);
+-		resolved_tx = resolve_bulks(service, &service->bulk_tx);
+-		mutex_unlock(&service->bulk_mutex);
+-		if (resolved_rx)
+-			notify_bulks(service, &service->bulk_rx, 1);
+-		if (resolved_tx)
+-			notify_bulks(service, &service->bulk_tx, 1);
+-	}
+-	state->deferred_bulks = 0;
+-}
+-
+ static int
+ parse_open(VCHIQ_STATE_T *state, VCHIQ_HEADER_T *header)
+ {
+@@ -1871,73 +1728,16 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 			up(&state->connect);
+ 			break;
+ 		case VCHIQ_MSG_BULK_RX:
+-		case VCHIQ_MSG_BULK_TX: {
+-			VCHIQ_BULK_QUEUE_T *queue;
+-
+-			WARN_ON(!state->is_master);
+-			queue = (type == VCHIQ_MSG_BULK_RX) ?
+-				&service->bulk_tx : &service->bulk_rx;
+-			if ((service->remoteport == remoteport)
+-				&& (service->srvstate ==
+-				VCHIQ_SRVSTATE_OPEN)) {
+-				VCHIQ_BULK_T *bulk;
+-				int resolved = 0;
+-
+-				DEBUG_TRACE(PARSE_LINE);
+-				if (mutex_lock_killable(
+-					&service->bulk_mutex) != 0) {
+-					DEBUG_TRACE(PARSE_LINE);
+-					goto bail_not_ready;
+-				}
+-
+-				WARN_ON(!(queue->remote_insert < queue->remove +
+-					VCHIQ_NUM_SERVICE_BULKS));
+-				bulk = &queue->bulks[
+-					BULK_INDEX(queue->remote_insert)];
+-				bulk->remote_data =
+-					(void *)(long)((int *)header->data)[0];
+-				bulk->remote_size = ((int *)header->data)[1];
+-				wmb();
+-
+-				vchiq_log_info(vchiq_core_log_level,
+-					"%d: prs %s@%pK (%d->%d) %x@%pK",
+-					state->id, msg_type_str(type),
+-					header, remoteport, localport,
+-					bulk->remote_size, bulk->remote_data);
+-
+-				queue->remote_insert++;
+-
+-				if (atomic_read(&pause_bulks_count)) {
+-					state->deferred_bulks++;
+-					vchiq_log_info(vchiq_core_log_level,
+-						"%s: deferring bulk (%d)",
+-						__func__,
+-						state->deferred_bulks);
+-					if (state->conn_state !=
+-						VCHIQ_CONNSTATE_PAUSE_SENT)
+-						vchiq_log_error(
+-							vchiq_core_log_level,
+-							"%s: bulks paused in "
+-							"unexpected state %s",
+-							__func__,
+-							conn_state_names[
+-							state->conn_state]);
+-				} else if (state->conn_state ==
+-					VCHIQ_CONNSTATE_CONNECTED) {
+-					DEBUG_TRACE(PARSE_LINE);
+-					resolved = resolve_bulks(service,
+-						queue);
+-				}
+-
+-				mutex_unlock(&service->bulk_mutex);
+-				if (resolved)
+-					notify_bulks(service, queue,
+-						1/*retry_poll*/);
+-			}
+-		} break;
++		case VCHIQ_MSG_BULK_TX:
++			/*
++			 * We should never receive a bulk request from the
++			 * other side since we're not setup to perform as the
++			 * master.
++			 */
++			WARN_ON(1);
++			break;
+ 		case VCHIQ_MSG_BULK_RX_DONE:
+ 		case VCHIQ_MSG_BULK_TX_DONE:
+-			WARN_ON(state->is_master);
+ 			if ((service->remoteport == remoteport)
+ 				&& (service->srvstate !=
+ 				VCHIQ_SRVSTATE_FREE)) {
+@@ -2026,8 +1826,6 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 					NULL, NULL, 0, QMFLAGS_NO_MUTEX_UNLOCK)
+ 				    == VCHIQ_RETRY)
+ 					goto bail_not_ready;
+-				if (state->is_master)
+-					pause_bulks(state);
+ 			}
+ 			/* At this point slot_mutex is held */
+ 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_PAUSED);
+@@ -2039,8 +1837,6 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 				state->id, header, size);
+ 			/* Release the slot mutex */
+ 			mutex_unlock(&state->slot_mutex);
+-			if (state->is_master)
+-				resume_bulks(state);
+ 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_CONNECTED);
+ 			vchiq_platform_resumed(state);
+ 			break;
+@@ -2119,8 +1915,6 @@ slot_handler_func(void *v)
+ 				break;
+ 
+ 			case VCHIQ_CONNSTATE_PAUSING:
+-				if (state->is_master)
+-					pause_bulks(state);
+ 				if (queue_message(state, NULL,
+ 					VCHIQ_MAKE_MSG(VCHIQ_MSG_PAUSE, 0, 0),
+ 					NULL, NULL, 0,
+@@ -2129,8 +1923,6 @@ slot_handler_func(void *v)
+ 					vchiq_set_conn_state(state,
+ 						VCHIQ_CONNSTATE_PAUSE_SENT);
+ 				} else {
+-					if (state->is_master)
+-						resume_bulks(state);
+ 					/* Retry later */
+ 					state->poll_needed = 1;
+ 				}
+@@ -2145,8 +1937,6 @@ slot_handler_func(void *v)
+ 					VCHIQ_MAKE_MSG(VCHIQ_MSG_RESUME, 0, 0),
+ 					NULL, NULL, 0, QMFLAGS_NO_MUTEX_LOCK)
+ 					!= VCHIQ_RETRY) {
+-					if (state->is_master)
+-						resume_bulks(state);
+ 					vchiq_set_conn_state(state,
+ 						VCHIQ_CONNSTATE_CONNECTED);
+ 					vchiq_platform_resumed(state);
+@@ -2364,8 +2154,7 @@ vchiq_init_slots(void *mem_base, int mem_size)
  }
  
  VCHIQ_STATUS_T
--vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, VCHI_MEM_HANDLE_T memhandle,
--	void *offset, int size, int dir)
-+vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, void *offset, int size, int dir)
+-vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
+-		 int is_master)
++vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
  {
- 	struct vchiq_pagelist_info *pagelistinfo;
+ 	VCHIQ_SHARED_STATE_T *local;
+ 	VCHIQ_SHARED_STATE_T *remote;
+@@ -2374,8 +2163,7 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
+ 	int i;
  
--	WARN_ON(memhandle != VCHI_MEM_HANDLE_INVALID);
--
- 	pagelistinfo = create_pagelist((char __user *)offset, size,
- 				       (dir == VCHIQ_BULK_RECEIVE)
- 				       ? PAGELIST_READ
-@@ -262,7 +259,6 @@ vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, VCHI_MEM_HANDLE_T memhandle,
- 	if (!pagelistinfo)
+ 	vchiq_log_warning(vchiq_core_log_level,
+-		"%s: slot_zero = %pK, is_master = %d",
+-		__func__, slot_zero, is_master);
++		"%s: slot_zero = %pK", __func__, slot_zero);
+ 
+ 	if (vchiq_states[0]) {
+ 		pr_err("%s: VCHIQ state already initialized\n", __func__);
+@@ -2441,13 +2229,8 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
+ 	if (VCHIQ_VERSION < slot_zero->version)
+ 		slot_zero->version = VCHIQ_VERSION;
+ 
+-	if (is_master) {
+-		local = &slot_zero->master;
+-		remote = &slot_zero->slave;
+-	} else {
+-		local = &slot_zero->slave;
+-		remote = &slot_zero->master;
+-	}
++	local = &slot_zero->slave;
++	remote = &slot_zero->master;
+ 
+ 	if (local->initialised) {
+ 		vchiq_loud_error_header();
+@@ -2455,16 +2238,13 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
+ 			vchiq_loud_error("local state has already been "
+ 				"initialised");
+ 		else
+-			vchiq_loud_error("master/slave mismatch - two %ss",
+-				is_master ? "master" : "slave");
++			vchiq_loud_error("master/slave mismatch two slaves");
+ 		vchiq_loud_error_footer();
  		return VCHIQ_ERROR;
- 
--	bulk->handle = memhandle;
- 	bulk->data = (void *)(unsigned long)pagelistinfo->dma_addr;
- 
- 	/*
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 76de36e9e3b6..525458551a22 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -419,9 +419,9 @@ vchiq_bulk_transmit(VCHIQ_SERVICE_HANDLE_T handle, const void *data,
- 	switch (mode) {
- 	case VCHIQ_BULK_MODE_NOCALLBACK:
- 	case VCHIQ_BULK_MODE_CALLBACK:
--		status = vchiq_bulk_transfer(handle,
--			VCHI_MEM_HANDLE_INVALID, (void *)data, size, userdata,
--			mode, VCHIQ_BULK_TRANSMIT);
-+		status = vchiq_bulk_transfer(handle, (void *)data, size,
-+					     userdata, mode,
-+					     VCHIQ_BULK_TRANSMIT);
- 		break;
- 	case VCHIQ_BULK_MODE_BLOCKING:
- 		status = vchiq_blocking_bulk_transfer(handle,
-@@ -444,9 +444,8 @@ vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T handle, void *data,
- 	switch (mode) {
- 	case VCHIQ_BULK_MODE_NOCALLBACK:
- 	case VCHIQ_BULK_MODE_CALLBACK:
--		status = vchiq_bulk_transfer(handle,
--			VCHI_MEM_HANDLE_INVALID, data, size, userdata,
--			mode, VCHIQ_BULK_RECEIVE);
-+		status = vchiq_bulk_transfer(handle, data, size, userdata,
-+					     mode, VCHIQ_BULK_RECEIVE);
- 		break;
- 	case VCHIQ_BULK_MODE_BLOCKING:
- 		status = vchiq_blocking_bulk_transfer(handle,
-@@ -513,9 +512,8 @@ vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
- 		}
  	}
  
--	status = vchiq_bulk_transfer(handle, VCHI_MEM_HANDLE_INVALID,
--		data, size, &waiter->bulk_waiter, VCHIQ_BULK_MODE_BLOCKING,
--		dir);
-+	status = vchiq_bulk_transfer(handle, data, size, &waiter->bulk_waiter,
-+				     VCHIQ_BULK_MODE_BLOCKING, dir);
- 	if ((status != VCHIQ_RETRY) || fatal_signal_pending(current) ||
- 		!waiter->bulk_waiter.bulk) {
- 		VCHIQ_BULK_T *bulk = waiter->bulk_waiter.bulk;
-@@ -1149,14 +1147,13 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 				current->pid);
- 			args.userdata = &waiter->bulk_waiter;
+ 	memset(state, 0, sizeof(VCHIQ_STATE_T));
+ 
+-	state->is_master = is_master;
+-
+ 	/*
+ 		initialize shared state pointers
+ 	 */
+@@ -2971,7 +2751,7 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
+ 		mutex_lock(&state->sync_mutex);
+ 		/* fall through */
+ 	case VCHIQ_SRVSTATE_OPEN:
+-		if (state->is_master || close_recvd) {
++		if (close_recvd) {
+ 			if (!do_abort_bulks(service))
+ 				status = VCHIQ_RETRY;
  		}
--		status = vchiq_bulk_transfer
--			(args.handle,
--			 VCHI_MEM_HANDLE_INVALID,
--			 args.data, args.size,
--			 args.userdata, args.mode,
--			 dir);
-+
-+		status = vchiq_bulk_transfer(args.handle, args.data, args.size,
-+					     args.userdata, args.mode, dir);
-+
- 		if (!waiter)
+@@ -3018,11 +2798,9 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
+ 			/* This happens when a process is killed mid-close */
  			break;
-+
- 		if ((status != VCHIQ_RETRY) || fatal_signal_pending(current) ||
- 			!waiter->bulk_waiter.bulk) {
- 			if (waiter->bulk_waiter.bulk) {
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 89f1ccdc3b98..8c7bda2e7cb6 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -3313,10 +3313,10 @@ vchiq_remove_service(VCHIQ_SERVICE_HANDLE_T handle)
-  * When called in blocking mode, the userdata field points to a bulk_waiter
-  * structure.
-  */
--VCHIQ_STATUS_T
--vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
--	VCHI_MEM_HANDLE_T memhandle, void *offset, int size, void *userdata,
--	VCHIQ_BULK_MODE_T mode, VCHIQ_BULK_DIR_T dir)
-+VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
-+				   void *offset, int size, void *userdata,
-+				   VCHIQ_BULK_MODE_T mode,
-+				   VCHIQ_BULK_DIR_T dir)
- {
- 	VCHIQ_SERVICE_T *service = find_service_by_handle(handle);
- 	VCHIQ_BULK_QUEUE_T *queue;
-@@ -3328,10 +3328,8 @@ vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 
+-		if (!state->is_master) {
+-			if (!do_abort_bulks(service)) {
+-				status = VCHIQ_RETRY;
+-				break;
+-			}
++		if (!do_abort_bulks(service)) {
++			status = VCHIQ_RETRY;
++			break;
+ 		}
+ 
+ 		if (status == VCHIQ_SUCCESS)
+@@ -3327,6 +3105,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 	const int dir_msgtype = (dir == VCHIQ_BULK_TRANSMIT) ?
  		VCHIQ_MSG_BULK_TX : VCHIQ_MSG_BULK_RX;
  	VCHIQ_STATUS_T status = VCHIQ_ERROR;
++	int payload[2];
  
--	if (!service ||
--		 (service->srvstate != VCHIQ_SRVSTATE_OPEN) ||
--		 ((memhandle == VCHI_MEM_HANDLE_INVALID) && (offset == NULL)) ||
--		 (vchiq_check_service(service) != VCHIQ_SUCCESS))
-+	if (!service || service->srvstate != VCHIQ_SRVSTATE_OPEN ||
-+	    !offset || vchiq_check_service(service) != VCHIQ_SUCCESS)
- 		goto error_exit;
+ 	if (!service || service->srvstate != VCHIQ_SRVSTATE_OPEN ||
+ 	    !offset || vchiq_check_service(service) != VCHIQ_SUCCESS)
+@@ -3406,32 +3185,25 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
+ 		goto unlock_both_error_exit;
  
- 	switch (mode) {
-@@ -3388,8 +3386,7 @@ vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 	bulk->size = size;
- 	bulk->actual = VCHIQ_BULK_ACTUAL_ABORTED;
+-	if (state->is_master) {
+-		queue->local_insert++;
+-		if (resolve_bulks(service, queue))
+-			request_poll(state, service,
+-				(dir == VCHIQ_BULK_TRANSMIT) ?
+-				VCHIQ_POLL_TXNOTIFY : VCHIQ_POLL_RXNOTIFY);
+-	} else {
+-		int payload[2] = { (int)(long)bulk->data, bulk->size };
+-
+-		status = queue_message(state,
+-				       NULL,
+-				       VCHIQ_MAKE_MSG(dir_msgtype,
+-						      service->localport,
+-						      service->remoteport),
+-				       memcpy_copy_callback,
+-				       &payload,
+-				       sizeof(payload),
+-				       QMFLAGS_IS_BLOCKING |
+-				       QMFLAGS_NO_MUTEX_LOCK |
+-				       QMFLAGS_NO_MUTEX_UNLOCK);
+-		if (status != VCHIQ_SUCCESS) {
+-			goto unlock_both_error_exit;
+-		}
+-		queue->local_insert++;
++	payload[0] = (int)(long)bulk->data;
++	payload[1] = bulk->size;
++	status = queue_message(state,
++			       NULL,
++			       VCHIQ_MAKE_MSG(dir_msgtype,
++					      service->localport,
++					      service->remoteport),
++			       memcpy_copy_callback,
++			       &payload,
++			       sizeof(payload),
++			       QMFLAGS_IS_BLOCKING |
++			       QMFLAGS_NO_MUTEX_LOCK |
++			       QMFLAGS_NO_MUTEX_UNLOCK);
++	if (status != VCHIQ_SUCCESS) {
++		goto unlock_both_error_exit;
+ 	}
  
--	if (vchiq_prepare_bulk_data(bulk, memhandle, offset, size, dir) !=
--		VCHIQ_SUCCESS)
-+	if (vchiq_prepare_bulk_data(bulk, offset, size, dir) != VCHIQ_SUCCESS)
- 		goto unlock_error_exit;
++	queue->local_insert++;
++
+ 	mutex_unlock(&state->slot_mutex);
+ 	mutex_unlock(&service->bulk_mutex);
  
- 	wmb();
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-index 10deb5745dda..daada568f400 100644
+index daada568f400..5b1696422e21 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-@@ -242,7 +242,6 @@ typedef struct vchiq_bulk_struct {
- 	short mode;
- 	short dir;
- 	void *userdata;
--	VCHI_MEM_HANDLE_T handle;
- 	void *data;
- 	int size;
- 	void *remote_data;
-@@ -566,9 +565,9 @@ extern void
- remote_event_pollall(VCHIQ_STATE_T *state);
+@@ -400,7 +400,6 @@ struct vchiq_state_struct {
+ 	int id;
+ 	int initialised;
+ 	VCHIQ_CONNSTATE_T conn_state;
+-	int is_master;
+ 	short version_common;
  
- extern VCHIQ_STATUS_T
--vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
--	VCHI_MEM_HANDLE_T memhandle, void *offset, int size, void *userdata,
--	VCHIQ_BULK_MODE_T mode, VCHIQ_BULK_DIR_T dir);
-+vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *offset, int size,
-+		    void *userdata, VCHIQ_BULK_MODE_T mode,
-+		    VCHIQ_BULK_DIR_T dir);
+ 	VCHIQ_SHARED_STATE_T *local;
+@@ -489,10 +488,6 @@ struct vchiq_state_struct {
+ 	/* Signalled when a free data slot becomes available. */
+ 	struct semaphore data_quota_event;
  
- extern void
- vchiq_dump_state(void *dump_context, VCHIQ_STATE_T *state);
-@@ -624,8 +623,7 @@ unlock_service(VCHIQ_SERVICE_T *service);
- ** implementations must be provided. */
- 
- extern VCHIQ_STATUS_T
--vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk,
--	VCHI_MEM_HANDLE_T memhandle, void *offset, int size, int dir);
-+vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, void *offset, int size, int dir);
- 
- extern void
- vchiq_transfer_bulk(VCHIQ_BULK_T *bulk);
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-index 87829a244465..7b948a173e29 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
-@@ -34,8 +34,6 @@
- #ifndef VCHIQ_IF_H
- #define VCHIQ_IF_H
- 
--#include "interface/vchi/vchi_mh.h"
+-	/* Incremented when there are bulk transfers which cannot be processed
+-	 * whilst paused and must be processed on resume */
+-	int deferred_bulks;
 -
- #define VCHIQ_SERVICE_HANDLE_INVALID 0
+ 	struct state_stats_struct {
+ 		int slot_stalls;
+ 		int data_stalls;
+@@ -529,8 +524,7 @@ extern VCHIQ_SLOT_ZERO_T *
+ vchiq_init_slots(void *mem_base, int mem_size);
  
- #define VCHIQ_SLOT_SIZE     4096
-@@ -156,11 +154,11 @@ extern VCHIQ_STATUS_T vchiq_bulk_receive(VCHIQ_SERVICE_HANDLE_T service,
- 	void *data, unsigned int size, void *userdata,
- 	VCHIQ_BULK_MODE_T mode);
- extern VCHIQ_STATUS_T vchiq_bulk_transmit_handle(VCHIQ_SERVICE_HANDLE_T service,
--	VCHI_MEM_HANDLE_T handle, const void *offset, unsigned int size,
-+	const void *offset, unsigned int size,
- 	void *userdata,	VCHIQ_BULK_MODE_T mode);
- extern VCHIQ_STATUS_T vchiq_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T service,
--	VCHI_MEM_HANDLE_T handle, void *offset, unsigned int size,
--	void *userdata, VCHIQ_BULK_MODE_T mode);
-+	void *offset, unsigned int size, void *userdata,
-+	VCHIQ_BULK_MODE_T mode);
- extern int   vchiq_get_client_id(VCHIQ_SERVICE_HANDLE_T service);
- extern void *vchiq_get_service_userdata(VCHIQ_SERVICE_HANDLE_T service);
- extern int   vchiq_get_service_fourcc(VCHIQ_SERVICE_HANDLE_T service);
+ extern VCHIQ_STATUS_T
+-vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
+-	int is_master);
++vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero);
+ 
+ extern VCHIQ_STATUS_T
+ vchiq_connect_internal(VCHIQ_STATE_T *state, VCHIQ_INSTANCE_T instance);
+@@ -625,9 +619,6 @@ unlock_service(VCHIQ_SERVICE_T *service);
+ extern VCHIQ_STATUS_T
+ vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, void *offset, int size, int dir);
+ 
+-extern void
+-vchiq_transfer_bulk(VCHIQ_BULK_T *bulk);
+-
+ extern void
+ vchiq_complete_bulk(VCHIQ_BULK_T *bulk);
+ 
 -- 
 2.19.1
 
