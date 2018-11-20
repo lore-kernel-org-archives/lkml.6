@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375CCC04EBA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7FAC4161B
 	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E365214D9
+	by mail.kernel.org (Postfix) with ESMTP id 3B33F2146D
 	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:53:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E365214D9
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B33F2146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbeKUO0K (ORCPT
+        id S1727862AbeKUO0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:26:10 -0500
-Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:13925 "EHLO
-        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726791AbeKUO0J (ORCPT
+        Wed, 21 Nov 2018 09:26:11 -0500
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:2110 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726773AbeKUO0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:26:09 -0500
+        Wed, 21 Nov 2018 09:26:10 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 20 Nov 2018 19:52:52 -0800
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 20 Nov 2018 19:52:59 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 61629B1873;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 90DA7B1875;
         Tue, 20 Nov 2018 22:53:30 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -40,103 +40,77 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
         <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v6 04/10] fork: provide a function for copying init_mm
-Date:   Tue, 20 Nov 2018 12:35:39 -0800
-Message-ID: <20181120203545.34928-5-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v6 07/10] x86/kgdb: avoid redundant comparison of patched code
+Date:   Tue, 20 Nov 2018 12:35:42 -0800
+Message-ID: <20181120203545.34928-8-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120203545.34928-1-namit@vmware.com>
 References: <20181120203545.34928-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a function for copying init_mm. This function will be later used
-for setting a temporary mm.
+text_poke() already ensures that the written value is the correct one
+and fails if that is not the case. There is no need for an additional
+comparison. Remove it.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/sched/task.h |  1 +
- kernel/fork.c              | 24 ++++++++++++++++++------
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ arch/x86/kernel/kgdb.c | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 108ede99e533..ac0a675678f5 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -74,6 +74,7 @@ extern void exit_itimers(struct signal_struct *);
- extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
-+struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff89c7b..01d3f5b39363 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1297,13 +1297,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- 		complete_vfork_done(tsk);
- }
- 
--/*
-- * Allocate a new mm structure and copy contents from the
-- * mm structure of the passed in task structure.
-+/**
-+ * dup_mm() - duplicates an existing mm structure
-+ * @tsk: the task_struct with which the new mm will be associated.
-+ * @oldmm: the mm to duplicate.
-+ *
-+ * Allocates a new mm structure and copy contents from the provided
-+ * @oldmm structure.
-+ *
-+ * Return: the duplicated mm or NULL on failure.
-  */
--static struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk,
-+				struct mm_struct *oldmm)
+diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
+index 2636ca8394bd..86484510bf54 100644
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -751,7 +751,6 @@ void kgdb_arch_set_pc(struct pt_regs *regs, unsigned long ip)
+ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
  {
--	struct mm_struct *mm, *oldmm = current->mm;
-+	struct mm_struct *mm;
  	int err;
+-	char opc[BREAK_INSTR_SIZE];
  
- 	mm = allocate_mm();
-@@ -1370,7 +1377,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
- 	}
+ 	bpt->type = BP_BREAKPOINT;
+ 	err = probe_kernel_read(bpt->saved_instr, (char *)bpt->bpt_addr,
+@@ -770,11 +769,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
+ 		return -EBUSY;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+-	if (memcmp(opc, arch_kgdb_ops.gdb_bpt_instr, BREAK_INSTR_SIZE))
+-		return -EINVAL;
+ 	bpt->type = BP_POKE_BREAKPOINT;
  
- 	retval = -ENOMEM;
--	mm = dup_mm(tsk);
-+	mm = dup_mm(tsk, current->mm);
- 	if (!mm)
- 		goto fail_nomem;
+ 	return err;
+@@ -782,9 +776,6 @@ int kgdb_arch_set_breakpoint(struct kgdb_bkpt *bpt)
  
-@@ -2176,6 +2183,11 @@ struct task_struct *fork_idle(int cpu)
- 	return task;
- }
+ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ {
+-	int err;
+-	char opc[BREAK_INSTR_SIZE];
+-
+ 	if (bpt->type != BP_POKE_BREAKPOINT)
+ 		goto knl_write;
+ 	/*
+@@ -795,10 +786,7 @@ int kgdb_arch_remove_breakpoint(struct kgdb_bkpt *bpt)
+ 		goto knl_write;
+ 	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+ 		       BREAK_INSTR_SIZE);
+-	err = probe_kernel_read(opc, (char *)bpt->bpt_addr, BREAK_INSTR_SIZE);
+-	if (err || memcmp(opc, bpt->saved_instr, BREAK_INSTR_SIZE))
+-		goto knl_write;
+-	return err;
++	return 0;
  
-+struct mm_struct *copy_init_mm(void)
-+{
-+	return dup_mm(NULL, &init_mm);
-+}
-+
- /*
-  *  Ok, this is the main fork-routine.
-  *
+ knl_write:
+ 	return probe_kernel_write((char *)bpt->bpt_addr,
 -- 
 2.17.1
 
