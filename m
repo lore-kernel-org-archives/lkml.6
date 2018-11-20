@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F93C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A714C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C8B20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:52:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5C8B20831
+	by mail.kernel.org (Postfix) with ESMTP id F37DF20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F37DF20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730239AbeKUEWi (ORCPT
+        id S1730423AbeKUEWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:22:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52270 "EHLO mx1.redhat.com"
+        Tue, 20 Nov 2018 23:22:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33612 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729563AbeKUEWf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:22:35 -0500
+        id S1730248AbeKUEWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:22:42 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E7003086265;
-        Tue, 20 Nov 2018 17:52:13 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B22E3082B43;
+        Tue, 20 Nov 2018 17:52:20 +0000 (UTC)
 Received: from llong.com (ovpn-120-174.rdu2.redhat.com [10.10.120.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6DA6F54577;
-        Tue, 20 Nov 2018 17:52:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 28D98648B4;
+        Tue, 20 Nov 2018 17:52:18 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -43,214 +43,148 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Dennis Zhou <dennis@kernel.org>,
         Shakeel Butt <shakeelb@google.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v4 2/5] cgroup: Allow reenabling of controller in bypass mode
-Date:   Tue, 20 Nov 2018 12:51:26 -0500
-Message-Id: <1542736289-31338-3-git-send-email-longman@redhat.com>
+Subject: [PATCH v4 5/5] cgroup: Document bypass mode
+Date:   Tue, 20 Nov 2018 12:51:29 -0500
+Message-Id: <1542736289-31338-6-git-send-email-longman@redhat.com>
 In-Reply-To: <1542736289-31338-1-git-send-email-longman@redhat.com>
 References: <1542736289-31338-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 20 Nov 2018 17:52:13 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 20 Nov 2018 17:52:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bypassable controllers set to bypass mode in the parent's
-"cgroup.subtree_control" can now be optionally enabled by writing the
-controller name with the '+' prefix to "cgroup.controllers". Using the
-'#' prefix will reset it back to the bypass state.
-
-This capability allows a cgroup parent to individually enable bypassable
-controllers in a subset of its children instead of either all or none
-of them. This increases the flexibility each controller has in shaping
-the effective cgroup hierarchy to best suit its need.
+The cgroup-v2.rst file is updated to document the new bypass mode.
 
 Signed-off-by: Waiman Long <longman@redhat.com>
 ---
- include/linux/cgroup-defs.h |   7 +++
- kernel/cgroup/cgroup.c      | 109 ++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 113 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 66 ++++++++++++++++++++++++---------
+ 1 file changed, 48 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
-index 5bff798..ab1b355 100644
---- a/include/linux/cgroup-defs.h
-+++ b/include/linux/cgroup-defs.h
-@@ -388,6 +388,13 @@ struct cgroup {
- 	u16 old_subtree_ss_mask;
- 	u16 old_subtree_bypass;
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 07e0613..17e6584 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -372,9 +372,16 @@ disabled by writing to the "cgroup.subtree_control" file::
  
-+	/*
-+	 * The bitmask of subsystems that are set in its parent's
-+	 * ->subtree_bypass and explicitly enabled in this cgroup.
-+	 */
-+	u16 enable_ss_mask;
-+	u16 old_enable_ss_mask;
-+
- 	/* Private pointers for each registered subsystem */
- 	struct cgroup_subsys_state __rcu *subsys[CGROUP_SUBSYS_COUNT];
+   # echo "+cpu +memory -io" > cgroup.subtree_control
  
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index a361c10..fa538f2 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -424,7 +424,7 @@ static u16 cgroup_control(struct cgroup *cgrp, bool show_bypass)
- 	u16 root_ss_mask = cgrp->root->subsys_mask;
+-Only controllers which are listed in "cgroup.controllers" can be
+-enabled.  When multiple operations are specified as above, either they
+-all succeed or fail.  If multiple operations on the same controller
++The prefixes '+', '-' and '#' are used to enable, disable or put
++a controller in the bypass mode respectively.  In the bypass mode,
++a controller is disabled in a cgroup, but it can be enabled again in
++its child cgroups as it will still be listed in "cgroup.controllers".
++Bypass mode can only be used on bypassable controllers.  Currently,
++only the cpu controller is bypassable.
++
++Only controllers which are listed in "cgroup.controllers" can be enabled
++or bypassed.  When multiple operations are specified as above, either
++they all succeed or fail.  If multiple operations on the same controller
+ are specified, the last one is effective.
  
- 	if (parent) {
--		u16 ss_mask = parent->subtree_control;
-+		u16 ss_mask = parent->subtree_control|cgrp->enable_ss_mask;
+ Enabling a controller in a cgroup indicates that the distribution of
+@@ -399,6 +406,20 @@ prefixed controller interface files from C and D.  This means that the
+ controller interface files - anything which doesn't start with
+ "cgroup." are owned by the parent rather than the cgroup itself.
  
- 		if (show_bypass)
- 			ss_mask |= parent->subtree_bypass;
-@@ -447,7 +447,7 @@ static u16 cgroup_ss_mask(struct cgroup *cgrp, bool show_bypass)
- 	struct cgroup *parent = cgroup_parent(cgrp);
++Once a bypassable controller is put into bypass mode in
++"cgroup.subtree_control", that controller can optionally be enabled
++again in child cgroups by writing the controller name with the '+ prefix
++into "cgroup.controllers".  Writing the controller name with the '#'
++prefix into "cgroup.controllers" resets the state back to bypass mode.
++The state of a bypassable controller cannot be changed anymore if it
++is enabled or bypassed in its "cgroup.subtree_control".
++
++The use of bypass mode thus allows a cgroup parent to have the ability
++to selectively enable a bypassable controller in a subset of its child
++cgroups instead of in either all or none of them. In other words, a
++bypassable can be enabled only on the cgroups that actually need it,
++if desired.
++
  
- 	if (parent) {
--		u16 ss_mask = parent->subtree_ss_mask;
-+		u16 ss_mask = parent->subtree_ss_mask|cgrp->enable_ss_mask;
+ Top-down Constraint
+ ~~~~~~~~~~~~~~~~~~~
+@@ -406,10 +427,11 @@ Top-down Constraint
+ Resources are distributed top-down and a cgroup can further distribute
+ a resource only if the resource has been distributed to it from the
+ parent.  This means that all non-root "cgroup.subtree_control" files
+-can only contain controllers which are enabled in the parent's
+-"cgroup.subtree_control" file.  A controller can be enabled only if
+-the parent has the controller enabled and a controller can't be
+-disabled if one or more children have it enabled.
++can only contain controllers which are enabled or bypassed in the
++parent's "cgroup.subtree_control" file.  A controller can be enabled
++or bypassed only if the parent has the controller enabled or bypassed
++and the state of a controller can't be changed if one or more children
++have it enabled or bypassed.
  
  
- 		if (show_bypass)
-@@ -2874,6 +2874,7 @@ static void cgroup_save_control(struct cgroup *cgrp)
- 		dsct->old_subtree_control = dsct->subtree_control;
- 		dsct->old_subtree_ss_mask = dsct->subtree_ss_mask;
- 		dsct->old_subtree_bypass  = dsct->subtree_bypass;
-+		dsct->old_enable_ss_mask  = dsct->enable_ss_mask;
- 		dsct->old_dom_cgrp = dsct->dom_cgrp;
- 	}
- }
-@@ -2919,6 +2920,7 @@ static void cgroup_restore_control(struct cgroup *cgrp)
- 		dsct->subtree_control = dsct->old_subtree_control;
- 		dsct->subtree_ss_mask = dsct->old_subtree_ss_mask;
- 		dsct->subtree_bypass  = dsct->old_subtree_bypass;
-+		dsct->enable_ss_mask  = dsct->old_enable_ss_mask;
- 		dsct->dom_cgrp = dsct->old_dom_cgrp;
- 	}
- }
-@@ -3197,7 +3199,8 @@ static ssize_t cgroup_subtree_control_write(struct kernfs_open_file *of,
- 	}
+ No Internal Process Constraint
+@@ -834,11 +856,18 @@ All cgroup core files are prefixed with "cgroup."
+ 	should be granted along with the containing directory.
  
- 	cgroup_for_each_live_child(child, cgrp)
--		child_enable |= child->subtree_control|child->subtree_bypass;
-+		child_enable |= child->subtree_control|child->subtree_bypass|
-+				child->enable_ss_mask;
+   cgroup.controllers
+-	A read-only space separated values file which exists on all
++	A read-write space separated values file which exists on all
+ 	cgroups.
  
- 	/*
- 	 * Cannot change the state of a controller if enabled in children.
-@@ -3230,6 +3233,105 @@ static ssize_t cgroup_subtree_control_write(struct kernfs_open_file *of,
- 	return ret ?: nbytes;
- }
+ 	It shows space separated list of all controllers available to
+-	the cgroup.  The controllers are not ordered.
++	the cgroup.  Controller names with '#' prefix are in bypass mode.
++	The controllers are not ordered.
++
++	When a controller is set into bypass mode in its parent's
++	"cgroup.subtree_control", its name prefixed with '+' or '#'
++	can be written to enable it or reset it back to bypass mode
++	respectively.  Controllers not in bypass mode are not allowed
++	to be written.
  
-+/*
-+ * Change bypass status of controllers for a cgroup in the default hierarchy.
-+ */
-+static ssize_t cgroup_controllers_write(struct kernfs_open_file *of,
-+					char *buf, size_t nbytes,
-+					loff_t off)
-+{
-+	u16 enable = 0, bypass = 0;
-+	struct cgroup *cgrp, *parent;
-+	struct cgroup_subsys *ss;
-+	char *tok;
-+	int ssid, ret;
-+
-+	/*
-+	 * Parse input - space separated list of subsystem names prefixed
-+	 * with either + or #.
-+	 */
-+	buf = strstrip(buf);
-+	while ((tok = strsep(&buf, " "))) {
-+		if (tok[0] == '\0')
-+			continue;
-+		do_each_subsys_mask(ss, ssid, ~cgrp_dfl_inhibit_ss_mask) {
-+			if (!cgroup_ssid_enabled(ssid) ||
-+			    strcmp(tok + 1, ss->name))
-+				continue;
-+
-+			if (*tok == '+') {
-+				enable |= 1 << ssid;
-+				bypass &= ~(1 << ssid);
-+			} else if (*tok == '#') {
-+				bypass |= 1 << ssid;
-+				enable &= ~(1 << ssid);
-+			} else {
-+				return -EINVAL;
-+			}
-+			break;
-+		} while_each_subsys_mask();
-+		if (ssid == CGROUP_SUBSYS_COUNT)
-+			return -EINVAL;
-+	}
-+
-+	cgrp = cgroup_kn_lock_live(of->kn, true);
-+	if (!cgrp)
-+		return -ENODEV;
-+
-+	/*
-+	 * Write to root cgroup's controllers file is not allowed.
-+	 */
-+	parent = cgroup_parent(cgrp);
-+	if (!parent) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Only controllers set into bypass mode in the parent cgroup
-+	 * can be specified here.
-+	 */
-+	if (~parent->subtree_bypass & (enable|bypass)) {
-+		ret = -ENOENT;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Mask off irrelevant bits.
-+	 */
-+	enable &= ~cgrp->enable_ss_mask;
-+	bypass &=  cgrp->enable_ss_mask;
-+
-+	if (!(enable|bypass)) {
-+		ret = 0;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * We cannot change the bypass state of a controller that is enabled
-+	 * in subtree_control.
-+	 */
-+	if ((cgrp->subtree_control|cgrp->subtree_bypass) & (enable|bypass)) {
-+		ret = -EBUSY;
-+		goto out_unlock;
-+	}
-+
-+	/* Save and update control masks and prepare csses */
-+	cgroup_save_control(cgrp);
-+
-+	cgrp->enable_ss_mask |= enable;
-+	cgrp->enable_ss_mask &= ~bypass;
-+
-+	ret = cgroup_apply_control(cgrp);
-+	cgroup_finalize_control(cgrp, ret);
-+	kernfs_activate(cgrp->kn);
-+	ret = 0;
-+
-+out_unlock:
-+	cgroup_kn_unlock(of->kn);
-+	return ret ?: nbytes;
-+}
-+
- /**
-  * cgroup_enable_threaded - make @cgrp threaded
-  * @cgrp: the target cgroup
-@@ -4573,6 +4675,7 @@ static ssize_t cgroup_threads_write(struct kernfs_open_file *of,
- 	{
- 		.name = "cgroup.controllers",
- 		.seq_show = cgroup_controllers_show,
-+		.write = cgroup_controllers_write,
- 	},
- 	{
- 		.name = "cgroup.subtree_control",
+   cgroup.subtree_control
+ 	A read-write space separated values file which exists on all
+@@ -848,12 +877,12 @@ All cgroup core files are prefixed with "cgroup."
+ 	which are enabled to control resource distribution from the
+ 	cgroup to its children.
+ 
+-	Space separated list of controllers prefixed with '+' or '-'
+-	can be written to enable or disable controllers.  A controller
+-	name prefixed with '+' enables the controller and '-'
+-	disables.  If a controller appears more than once on the list,
+-	the last one is effective.  When multiple enable and disable
+-	operations are specified, either all succeed or all fail.
++	Space separated list of controllers prefixed with '+', '-' or
++	'#' can be written to enable, disable or bypass controllers
++	respectively.  If a controller appears more than once on
++	the list, the last one is effective.  When multiple enable,
++	disable or bypass operations are specified, either all succeed
++	or all fail.
+ 
+   cgroup.events
+ 	A read-only flat-keyed file which exists on non-root cgroups.
+@@ -904,17 +933,18 @@ Controllers
+ CPU
+ ---
+ 
+-The "cpu" controllers regulates distribution of CPU cycles.  This
++The "cpu" controller regulates distribution of CPU cycles.  This
+ controller implements weight and absolute bandwidth limit models for
+ normal scheduling policy and absolute bandwidth allocation model for
+-realtime scheduling policy.
++realtime scheduling policy.  The cpu controller is bypassable.
+ 
+ WARNING: cgroup2 doesn't yet support control of realtime processes and
+ the cpu controller can only be enabled when all RT processes are in
+ the root cgroup.  Be aware that system management software may already
+ have placed RT processes into nonroot cgroups during the system boot
+ process, and these processes may need to be moved to the root cgroup
+-before the cpu controller can be enabled.
++before the cpu controller can be enabled unless bypass mode is used
++in those non-root cgroups.
+ 
+ 
+ CPU Interface Files
 -- 
 1.8.3.1
 
