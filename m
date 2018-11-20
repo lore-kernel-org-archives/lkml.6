@@ -2,129 +2,125 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC076C32788
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A7EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD071208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:32:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD071208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id A0BC520831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:32:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U6QOMPNJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BC520831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbeKUCCJ (ORCPT
+        id S1730151AbeKUCCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:02:09 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:50173 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725898AbeKUCCJ (ORCPT
+        Tue, 20 Nov 2018 21:02:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33558 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbeKUCBp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:02:09 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKFTWsK005364;
-        Tue, 20 Nov 2018 09:32:18 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2ntg9sv8js-1;
-        Tue, 20 Nov 2018 09:32:17 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 2E940611E126;
-        Tue, 20 Nov 2018 09:32:17 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
- 15:32:16 +0000
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAKFWFsk019092; Tue,
- 20 Nov 2018 15:32:16 GMT
-Date:   Tue, 20 Nov 2018 15:32:15 +0000
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
-Subject: Re: Applied "regulator: wm8994: Pass descriptor instead of GPIO
- number" to the regulator tree
-Message-ID: <20181120153215.GC16508@imbe.wolfsonmicro.main>
-References: <20180517164120.485F844007E@finisterre.ee.mobilebroadband>
- <CGME20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137@eucas1p2.samsung.com>
- <66d3b74c-0152-b17b-89d4-a21d33445b25@samsung.com>
- <20181120144700.GB16508@imbe.wolfsonmicro.main>
- <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=521 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1811200138
+        Tue, 20 Nov 2018 21:01:45 -0500
+Received: by mail-wm1-f66.google.com with SMTP id 79so5272299wmo.0;
+        Tue, 20 Nov 2018 07:32:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=SxxJgmbLU8DQm4q7pBzucwRse/NWd1WEcuZvJUw+NKI=;
+        b=U6QOMPNJUyhfC/t+E0nqJFlqLMKQKzaoeT366uCCF1TyI92BG03x7DFM04vXwIE1Ji
+         sCDCWvteWf3q7ZWdFbBqJ3e6bV50Fy0idU8XJ/KMZvo4CqAbszPFPwBxKB39W5i2vxfm
+         H9ZcMvq2iLFseuYaNaxQiEf/HP988C7/VbUZV1lox/9vlE33Q6ymBCfIPY/55aSMh6Ke
+         U+zAOlUhzAFXTS8k6eMCRVjd2yAh4HOHsQrBiLIoa/gtoutKFwit5aARaUTw4caMM0Vz
+         w6eZ1qq65QKqUcOfzVPyK17o3XdEnGkAL1z+7g2i9sz2KMrl/ckhZroNeJitqUaoSMBm
+         RLMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SxxJgmbLU8DQm4q7pBzucwRse/NWd1WEcuZvJUw+NKI=;
+        b=U69Qt54nBbvo//ACs8eykhpq5riRMGuQW/sef4FFUlAUy1AVQKrhG5Eiqf2nrRveXO
+         vDAuG38gOv/U+UeC8qenZEiqL9ScwQPFlNUjGkziOYQDqOYNY261jEiKT6fnrjYBNiGw
+         znpjWBcKpeK+FCBaahwvDf2WZsxN0lpMnM1GjS74Nlo0yaq3vPJKrT2YLWcpC1PV3jiv
+         sZ+K8g89j8tMihXG0hGW1F7aqyJwTRtlpyFIJ7aCL9QqgMtI+8QWhJ+x+U6fVP1+nI6T
+         ICGMRoUM0JpuHdUTwQxuHTEiJtzke3g/wGZud56bUOY6oNfzY4NK5bCHx39PcA+2ho/3
+         BkIQ==
+X-Gm-Message-State: AA+aEWYMb7f+6xP2raNjLCrxxuJwM8EiGkc9UbclCsytfAYJNuIzt9Tx
+        l2B5svchlfHFhHdKOvIUszs=
+X-Google-Smtp-Source: AFSGD/UITQpPW0oxdnxd9LS+wO5wcZmacLQ4zsE094U9DFK8WoHB2t0iXybI3xpcq3qOsRotRqQ+2g==
+X-Received: by 2002:a1c:7209:: with SMTP id n9mr2485909wmc.5.1542727921993;
+        Tue, 20 Nov 2018 07:32:01 -0800 (PST)
+Received: from NewMoon.iit.local ([90.147.180.254])
+        by smtp.gmail.com with ESMTPSA id k73sm14677464wmd.36.2018.11.20.07.32.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 07:32:00 -0800 (PST)
+From:   Andrea Merello <andrea.merello@gmail.com>
+To:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, appana.durga.rao@xilinx.com,
+        dmaengine@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, radhey.shyam.pandey@xilinx.com,
+        Andrea Merello <andrea.merello@gmail.com>
+Subject: [PATCH v6 3/7] dt-bindings: dmaengine: xilinx_dma: add optional xlnx,sg-length-width property
+Date:   Tue, 20 Nov 2018 16:31:47 +0100
+Message-Id: <20181120153151.18024-3-andrea.merello@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120153151.18024-1-andrea.merello@gmail.com>
+References: <20181120153151.18024-1-andrea.merello@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 03:58:59PM +0100, Marek Szyprowski wrote:
-> Hi Charles,
-> 
-> On 2018-11-20 15:47, Charles Keepax wrote:
-> > On Tue, Nov 20, 2018 at 02:43:32PM +0100, Marek Szyprowski wrote:
-> >> On 2018-05-17 18:41, Mark Brown wrote:
-> >>> Subject: [PATCH] regulator: wm8994: Pass descriptor instead of GPIO number
-> >> This patch causes following kernel warning on Samsung Exynos4412 based
-> >> Trats2 board:
-> >>
-> >> wm8994 4-001a: Failed to get supply 'DBVDD1': -517
-> >> wm8994 4-001a: Failed to get supplies: -517
-> > How is the wm8994 being registered on this board? I am having
-> > difficulty finding a device tree or a board file that relates to
-> > the board and includes the wm8994.
-> 
-> 
-> Please check arch/arm/boot/dts/exynos4412-trats2.dts details. The I2C device
-> is defined in exynos4412-midas.dtsi, it uses "wlf,wm1811" compatible.
-> 
+The width of the "length register" cannot be autodetected, and it is now
+specified with a DT property. Add documentation for it.
 
-Ok got it, thanks.
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Reviewed-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+---
+Changes in v2:
+	- change property name
+	- property is now optional
+	- cc DT maintainer
+Changes in v3:
+	- reword
+	- cc DT maintainerS and ML
+Changes in v4:
+	- specify the unit, the valid range and the default value
+Changes in v5:
+	- commit message trivial fix
+	- fix spaces before tab
+Changes in v6:
+	None
+---
+ Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> 
-> >>> @@ -203,6 +203,18 @@ static const struct i2c_board_info wm1277_devs[] = {
-> >>>  	{ I2C_BOARD_INFO("wm8958", 0x1a),  /* WM8958 is the superset */
-> >>>  	  .platform_data = &wm8994_pdata,
-> >>>  	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2,
-> >>> +	  .dev_name = "wm8958",
-> >>> +	},
-> >>> +};
-> >>> +
-> >>> +static struct gpiod_lookup_table wm8994_gpiod_table = {
-> >>> +	.dev_id = "i2c-wm8958", /* I2C device name */
-> >>> +	.table = {
-> >>> +		GPIO_LOOKUP("GPION", 6,
-> >>> +			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
-> >>> +		GPIO_LOOKUP("GPION", 4,
-> >>> +			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
-> >>> +		{ },
-> >>>  	},
-> >>>  };
-> > If its being done through a board file I guess you will need the
-> > equivalent of this.
-> 
-> 
-> No board file, everything in DT.
-> 
+diff --git a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+index 174af2c45e77..2fce9fb4b270 100644
+--- a/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
++++ b/Documentation/devicetree/bindings/dma/xilinx/xilinx_dma.txt
+@@ -41,6 +41,10 @@ Optional properties:
+ - xlnx,include-sg: Tells configured for Scatter-mode in
+ 	the hardware.
+ Optional properties for AXI DMA:
++- xlnx,sg-length-width: Should be set to the width in bits of the length
++	register as configured in h/w. Takes values {8...26}. If the property
++	is missing or invalid then the default value 23 is used. This is the
++	maximum value that is supported by all IP versions.
+ - xlnx,mcdma: Tells whether configured for multi-channel mode in the hardware.
+ Optional properties for VDMA:
+ - xlnx,flush-fsync: Tells which channel to Flush on Frame sync.
+-- 
+2.17.1
 
-This is really weird, because the error in your log relates to
-DBVDD1 which is an independent regulator supplied by a separate
-regulator. I am really having some difficulty seeing how the
-patch interfers. It is definitely that patch which causes the
-issue, like you revert it and things work again?
-
-Thanks,
-Charles
