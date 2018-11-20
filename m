@@ -2,95 +2,226 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8AEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1566FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8154E206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:07:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8154E206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C8AE6208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:10:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AE6208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbeKTOeh (ORCPT
+        id S1731336AbeKTOhE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 09:34:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730180AbeKTOeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 09:34:37 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 66D8A3082141;
-        Tue, 20 Nov 2018 04:07:33 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-61.pek2.redhat.com [10.72.12.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3BAFE5D75E;
-        Tue, 20 Nov 2018 04:07:22 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, akpm@linux-foundation.org, dyoung@redhat.com,
-        bhe@redhat.com
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com> <20181114112600.GD13926@zn.tnic>
- <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
- <20181115103959.GB26448@zn.tnic>
- <c3347d48-aa32-e8e4-c99b-baf2e6a21dc2@redhat.com>
- <20181118115251.GB19380@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <e7237f99-67cf-f3b5-e078-81208d68baf2@redhat.com>
-Date:   Tue, 20 Nov 2018 12:07:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 20 Nov 2018 09:37:04 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:35911 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727880AbeKTOhE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 09:37:04 -0500
+X-UUID: 4ca6aa6169574b08a57506ee4e294684-20181120
+X-UUID: 4ca6aa6169574b08a57506ee4e294684-20181120
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 203659341; Tue, 20 Nov 2018 12:09:50 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 20 Nov 2018 12:09:49 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by mtkcas08.mediatek.inc
+ (172.21.101.126) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
+ 2018 12:09:48 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 20 Nov 2018 12:09:42 +0800
+Message-ID: <1542686982.26483.1.camel@mtksdaap41>
+Subject: Re: [PATCH v5 05/12] drm: mediatek: Omit warning on probe defers
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     <matthias.bgg@kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <p.zabel@pengutronix.de>,
+        <airlied@linux.ie>, <mturquette@baylibre.com>,
+        <sboyd@codeaurora.org>, <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>, <sean.wang@mediatek.com>,
+        <sean.wang@kernel.org>, <rdunlap@infradead.org>, <wens@csie.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
+Date:   Tue, 20 Nov 2018 12:09:42 +0800
+In-Reply-To: <1542686700.9073.15.camel@mtksdaap41>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+         <20181116125449.23581-6-matthias.bgg@kernel.org>
+         <1542605939.32082.12.camel@mtksdaap41>
+         <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
+         <1542686700.9073.15.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20181118115251.GB19380@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 20 Nov 2018 04:07:33 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年11月18日 19:52, Borislav Petkov 写道:
-> On Fri, Nov 16, 2018 at 11:25:55AM +0800, lijiang wrote:
->> For the pci mmconfig issue, it should be good enough that the e820 reserved region
->> [mem 0x0000000078000000-0x000000008fffffff] is only passed to the second kernel, but
->> the pci mmconfig region is not the same in another machine.
-> 
-> Yes. And now the question is, *which* reserved regions need to be mapped
-> for the second kernel to function properly? How do we figure that out?
-> 
->> A simple case, hotplug a pci network card and use the ssh/nfs to dump the vmcore.
->> If the pci mmconfig region is not reserved in kdump kernel, the pci hotplug device
->> could not be recognized. So the pci network card won't work.
-> 
-> Yes that's a good example; put *that* example in your commit message.
-> 
->> Here, there is an example about SME kdump. Maybe it can help to better understand.
-> 
-> You keep pasting that and I've read it already. And you keep repeating
-> that the reserved regions need to be mapped in the second kernel and I'm
-> asking, how do we determine *which* regions should we pass to the second
-> kernel?
-> 
-> If we should pass *all* reserved regions, why?
-> 
-> IOW, I'm looking for the *why* first.
-> 
-> Thx.
-> 
+Hi,
 
-I guess you have gotten the answer what you want from Dave's reply.
+On Tue, 2018-11-20 at 12:05 +0800, CK Hu wrote:
+> Hi, Matthias:
+> 
+> On Mon, 2018-11-19 at 10:26 +0100, Matthias Brugger wrote:
+> > 
+> > On 19/11/2018 06:38, CK Hu wrote:
+> > > Hi, Matthias:
+> > > 
+> > > On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
+> > >> From: Matthias Brugger <mbrugger@suse.com>
+> > >>
+> > >> It can happen that the mmsys clock drivers aren't probed before the
+> > >> platform driver gets invoked. The platform driver used to print a warning
+> > >> that the driver failed to get the clocks. Omit this error on
+> > >> the defered probe path.
+> > > 
+> > > This patch looks good to me, but you have not modified the sub driver in
+> > > HDMI path. We could let HDMI path print the warning and someone send
+> > > another patch later, or you modify for HDMI path in this patch.
+> > 
+> > Sure, I'll add this in v6. After inspecting the code, I think we will need to
+> > also check for not initialized clocks in mtk_mdp_comp_init, as the driver for
+> > now does not even check if the clocks are present. What do you think?
+> 
+> Yes, we do really need to consider mdp driver because mmsys clock
+> include mdp clock. You remind me that mmsys control 4 major function:
+> drm routing, drm clock, mdp routing, and mdp clock. Your design let the
+> mmsys device as drm device (control drm routing) and create a sub device
+> as clock device (control drm clock, mdp clock). If one day mdp device
+> (may need control drm routing) need to control the register of mdp
 
-Thank you, Boris. Also thanks for Dave's explanation in detail.
+Sorry for typo: 'mdp device (may need control mdp routing)'
 
 Regards,
-Lianbo
+CK
+
+> routing, would mdp device be a sub device? Or we need not to consider
+> this because it need not to access mmsys register now?
+> 
+> Regards,
+> CK
+> 
+> > 
+> > I'll address the coding style issue you metioned below as well.
+> > 
+> > Regards,
+> > Matthias
+> > 
+> > >>
+> > >> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> > >> ---
+> > >>  drivers/gpu/drm/mediatek/mtk_disp_color.c | 4 +++-
+> > >>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c   | 4 +++-
+> > >>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c  | 4 +++-
+> > >>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c    | 3 ++-
+> > >>  drivers/gpu/drm/mediatek/mtk_dsi.c        | 6 ++++--
+> > >>  5 files changed, 15 insertions(+), 6 deletions(-)
+> > >>
+> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_color.c b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> > >> index f609b62b8be6..1ea3178d4c18 100644
+> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_color.c
+> > >> @@ -126,7 +126,9 @@ static int mtk_disp_color_probe(struct platform_device *pdev)
+> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+> > >>  				&mtk_disp_color_funcs);
+> > >>  	if (ret) {
+> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+> > >> +		if (ret != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
+> > >> +					ret);
+> > > 
+> > > I would like one more blank line here.
+> > > 
+> > >>  		return ret;
+> > >>  	}
+> > >>  
+> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> > >> index 28d191192945..5ebbcaa4e70e 100644
+> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl.c
+> > >> @@ -293,7 +293,9 @@ static int mtk_disp_ovl_probe(struct platform_device *pdev)
+> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+> > >>  				&mtk_disp_ovl_funcs);
+> > >>  	if (ret) {
+> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+> > >> +		if (ret != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
+> > >> +					ret);
+> > > 
+> > > I would like to align to the right of '('.
+> > > 
+> > > Regards,
+> > > CK
+> > > 
+> > >>  		return ret;
+> > >>  	}
+> > >>  
+> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > >> index b0a5cffe345a..59a08ed5fea5 100644
+> > >> --- a/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > >> +++ b/drivers/gpu/drm/mediatek/mtk_disp_rdma.c
+> > >> @@ -295,7 +295,9 @@ static int mtk_disp_rdma_probe(struct platform_device *pdev)
+> > >>  	ret = mtk_ddp_comp_init(dev, dev->of_node, &priv->ddp_comp, comp_id,
+> > >>  				&mtk_disp_rdma_funcs);
+> > >>  	if (ret) {
+> > >> -		dev_err(dev, "Failed to initialize component: %d\n", ret);
+> > >> +		if (ret != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to initialize component: %d\n",
+> > >> +					ret);
+> > >>  		return ret;
+> > >>  	}
+> > >>  
+> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > >> index b06cd9d4b525..b76a2d071a97 100644
+> > >> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > >> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > >> @@ -566,7 +566,8 @@ static int mtk_ddp_probe(struct platform_device *pdev)
+> > >>  
+> > >>  	ddp->clk = devm_clk_get(dev, NULL);
+> > >>  	if (IS_ERR(ddp->clk)) {
+> > >> -		dev_err(dev, "Failed to get clock\n");
+> > >> +		if (PTR_ERR(ddp->clk) != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to get clock\n");
+> > >>  		return PTR_ERR(ddp->clk);
+> > >>  	}
+> > >>  
+> > >> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > >> index 90109a0d6fff..cc6de75636c3 100644
+> > >> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > >> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > >> @@ -1103,14 +1103,16 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+> > >>  	dsi->engine_clk = devm_clk_get(dev, "engine");
+> > >>  	if (IS_ERR(dsi->engine_clk)) {
+> > >>  		ret = PTR_ERR(dsi->engine_clk);
+> > >> -		dev_err(dev, "Failed to get engine clock: %d\n", ret);
+> > >> +		if (ret != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to get engine clock: %d\n", ret);
+> > >>  		return ret;
+> > >>  	}
+> > >>  
+> > >>  	dsi->digital_clk = devm_clk_get(dev, "digital");
+> > >>  	if (IS_ERR(dsi->digital_clk)) {
+> > >>  		ret = PTR_ERR(dsi->digital_clk);
+> > >> -		dev_err(dev, "Failed to get digital clock: %d\n", ret);
+> > >> +		if (ret != -EPROBE_DEFER)
+> > >> +			dev_err(dev, "Failed to get digital clock: %d\n", ret);
+> > >>  		return ret;
+> > >>  	}
+> > >>  
+> > > 
+> > > 
+> 
+
+
