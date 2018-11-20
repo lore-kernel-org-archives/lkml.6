@@ -2,106 +2,114 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE9AC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AF2C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6B85208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D2B206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1dmlJaq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6B85208E4
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RbXAzjN/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D2B206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbeKUC6S (ORCPT
+        id S1728533AbeKUC6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:58:18 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33428 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728601AbeKUC6R (ORCPT
+        Tue, 20 Nov 2018 21:58:11 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59272 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbeKUC6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:58:17 -0500
-Received: by mail-qk1-f195.google.com with SMTP id o89so3241674qko.0;
-        Tue, 20 Nov 2018 08:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6pLLM1p+5cDN52i8L+l5I/RKjfgAuOq/8xc6t5eHQeA=;
-        b=Q1dmlJaqef4PhMUe8KijF7vIIIQS/5OPUDZ76zqN9VTRe3/eXoy3K4ifcH/33T68vy
-         ydDsdzCnml+hVBgexIcWmYgG5c19ZDDCoW+8WPcss4AhjWlpuO4AZDw5CDgrQ9vinafm
-         QYyzS2Ddi8K9t4Uqk4ZMZmMBRhaxeGJQDBiZtlo+9xDem/jc5cFPoyRQKMUlHGGvQmeW
-         0is3bdkuDj/ZhDl/9jTEOdjhwbfCrZ9LG5iZjounIfuwVo3XqGWSf6w9KG5BSOJfUxFo
-         04pPI4WxX0FmPvvEcltUAJtrmcvXDpJAlWx9juT3oINlVeRaIbVnoF6PGQm4cAdiQbQB
-         tbcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6pLLM1p+5cDN52i8L+l5I/RKjfgAuOq/8xc6t5eHQeA=;
-        b=KEU0/uk02N5liAR1gz9NW7EHEFFUbq8uv4f4oZSOHTLlpROg0VsTD8rtmzuOuDWMEz
-         CD72qL+h4hkZsX6GRcHi+l9s55CPeMp2yFrnrNrSMqf+VUiA36/a4Oi6TMcUTp9O+IiW
-         bQvv6Rlw9Vu0gBoxs+ibalFUX3vHkVarkVa7z7XJhhXeBWb2cO8xONimFS+xPHTTvxIu
-         nUKSbXGrxZROBl48IGDowmGl1olpUHjMCnrOkRTIuh8tpLOnAsAuzSPANFOZVIIv1B5F
-         TbQ18Yz5MPIdS0S4x/QjoxXDB/wU5PojewnS6S6rq40gWkyABuPFP/9dgB6lISi/pd7I
-         UZRw==
-X-Gm-Message-State: AA+aEWYcuif5mKnQH7oExXGJe6cLZmRvX2q46UGQ7vEtKuj/xWPZejO+
-        EEoltxHSBILWhDXx4RienZE=
-X-Google-Smtp-Source: AFSGD/W6OC/zC6WUidHtw2jYLzMq/iMNXmGM/O8tXzXhxNVWg5GECEtRq5t+S/KUiJW/TPmY5/sP4w==
-X-Received: by 2002:ae9:e102:: with SMTP id g2mr2195104qkm.343.1542731298599;
-        Tue, 20 Nov 2018 08:28:18 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:4b6a])
-        by smtp.gmail.com with ESMTPSA id n8sm24250696qtk.91.2018.11.20.08.28.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:28:17 -0800 (PST)
-Date:   Tue, 20 Nov 2018 08:28:16 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Paolo Valente <paolo.valente@linaro.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-Message-ID: <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
-References: <20181119103424.3853-1-paolo.valente@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119103424.3853-1-paolo.valente@linaro.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Tue, 20 Nov 2018 21:58:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=wepC6k0DZ7ytTPlaRYAYRc/LgBo2aJvAbnA6zoLwJNs=; b=RbXAzjN/JAyZ
+        LnvJkQTj21GWg3n0ks8bWk1G4hhIdLJasEgdCypMs20PlxQfWHSqgcXkoAy8JdPKp6v+ihDzYxumd
+        teU2ytiTVb+MUEKbugLSK32HltIfZF2a6eKODaRzcyEr44p+gUMI7lwWjbS9DJ2HQxDK9u69TVp1v
+        kfgO4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gP8sk-0001mJ-KL; Tue, 20 Nov 2018 16:28:10 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 593C51124DC2; Tue, 20 Nov 2018 16:28:10 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Properly expose requested_microamps in sysfs" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181120162810.593C51124DC2@debutante.sirena.org.uk>
+Date:   Tue, 20 Nov 2018 16:28:10 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Paolo.
+The patch
 
-On Mon, Nov 19, 2018 at 11:34:14AM +0100, Paolo Valente wrote:
-> - if all entities produce the same output, the this common output is
->  shown only once;
-> - if the outputs differ, then every per-entity output is shown,
->  followed by the name of the entity that produced that output.
+   regulator: core: Properly expose requested_microamps in sysfs
 
-So, this doesn't make sense to me.  One set of numbers is meaningful,
-the other not and the user doesn't have a way to tell which one is.
-It makes no sense to present both numbers.
+has been applied to the regulator tree at
 
-Thanks.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 7b51a821211eb6217f60962c31f30cb73e30a0c7 Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Mon, 19 Nov 2018 16:26:48 -0800
+Subject: [PATCH] regulator: core: Properly expose requested_microamps in sysfs
+
+The "requested_microamps" sysfs attribute was only being exposed for
+"current" regulators.  This didn't make sense.  Allow it to be exposed
+always.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index d7ffd7b12472..ff5ca185bb8f 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -4565,10 +4565,6 @@ static umode_t regulator_attr_is_visible(struct kobject *kobj,
+ 	if (attr == &dev_attr_bypass.attr)
+ 		return ops->get_bypass ? mode : 0;
+ 
+-	/* some attributes are type-specific */
+-	if (attr == &dev_attr_requested_microamps.attr)
+-		return rdev->desc->type == REGULATOR_CURRENT ? mode : 0;
+-
+ 	/* constraints need specific supporting methods */
+ 	if (attr == &dev_attr_min_microvolts.attr ||
+ 	    attr == &dev_attr_max_microvolts.attr)
 -- 
-tejun
+2.19.0.rc2
+
