@@ -2,38 +2,39 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B7FC46462
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83098C46463
 	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317DE208E4
+	by mail.kernel.org (Postfix) with ESMTP id 607EE20C01
 	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 317DE208E4
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607EE20C01
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730514AbeKUDuW (ORCPT
+        id S1730530AbeKUDuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:50:22 -0500
-Received: from anholt.net ([50.246.234.109]:50704 "EHLO anholt.net"
+        Tue, 20 Nov 2018 22:50:24 -0500
+Received: from anholt.net ([50.246.234.109]:50718 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730458AbeKUDuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:50:22 -0500
+        id S1730478AbeKUDuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:50:23 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id CF40310A15B1;
-        Tue, 20 Nov 2018 09:20:08 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id EEFC210A165F;
+        Tue, 20 Nov 2018 09:20:09 -0800 (PST)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id iob7z-d-gMCf; Tue, 20 Nov 2018 09:20:07 -0800 (PST)
+        with LMTP id CIIWyPnsIOTZ; Tue, 20 Nov 2018 09:20:06 -0800 (PST)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 6395510A165F;
-        Tue, 20 Nov 2018 09:20:02 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id 5A31B10A15EC;
+        Tue, 20 Nov 2018 09:20:01 -0800 (PST)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 1DA2C2FE1FEB; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
+        id 100DB2FE1FE8; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
 From:   Eric Anholt <eric@anholt.net>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -46,9 +47,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com,
         Eric Anholt <eric@anholt.net>
-Subject: [PATCH 5/8] dt-bindings: soc: Add a new binding for the BCM2835 PM node.
-Date:   Tue, 20 Nov 2018 09:19:57 -0800
-Message-Id: <20181120172000.15102-6-eric@anholt.net>
+Subject: [PATCH 2/8] soc: bcm: bcm2835-pm: Rename the driver to its new "PM" name.
+Date:   Tue, 20 Nov 2018 09:19:54 -0800
+Message-Id: <20181120172000.15102-3-eric@anholt.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120172000.15102-1-eric@anholt.net>
 References: <20181120172000.15102-1-eric@anholt.net>
@@ -59,64 +60,240 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This binding supersedes the bcm2835-pm-wdt binding which only covered
-enough to provide a watchdog, but the HW block is actually mostly
-about power domains.
+This is the name of the block we're controlling.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- .../bindings/soc/bcm/brcm,bcm2835-pm.txt      | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+ drivers/soc/bcm/bcm2835-pm.c | 92 ++++++++++++++++++------------------
+ 1 file changed, 47 insertions(+), 45 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
-new file mode 100644
-index 000000000000..7818d33a158f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
-@@ -0,0 +1,42 @@
-+BCM2835 PM (Power domains, watchdog)
-+
-+The PM block controls power domains and some reset lines, and includes
-+a watchdog timer.  This binding supersedes the brcm,bcm2835-pm-wdt
-+binding which covered some of PM's register range and functionality.
-+
-+Required properties:
-+
-+- compatible:		Should be "brcm,bcm2835-pm"
-+- reg:			Specifies base physical address and size of the two
-+			  register ranges ("PM" and "ASYNC_BRIDGE" in that
-+			  order)
-+- clocks:		a) v3d: The V3D clock from CPRMAN
-+			b) peri_image: The PERI_IMAGE clock from CPRMAN
-+			c) h264: The H264 clock from CPRMAN
-+			d) isp: The ISP clock from CPRMAN
-+- #reset-cells: 	Should be 1.  This property follows the reset controller
-+			  bindings[1].
-+- #power-domain-cells:	Should be 1.  This property follows the power domain
-+			  bindings[2].
-+
-+Optional properties:
-+
-+- timeout-sec:	Contains the watchdog timeout in seconds
-+
-+[1] Documentation/devicetree/bindings/reset/reset.txt
-+[2] Documentation/devicetree/bindings/power/power_domain.txt
-+
-+Example:
-+
-+pm {
-+	compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
-+	#power-domain-cells = <1>;
-+	#reset-cells = <1>;
-+	reg = <0x7e100000 0x114>,
-+	      <0x7e00a000 0x24>;
-+	clocks = <&clocks BCM2835_CLOCK_V3D>,
-+		 <&clocks BCM2835_CLOCK_PERI_IMAGE>,
-+		 <&clocks BCM2835_CLOCK_H264>,
-+		 <&clocks BCM2835_CLOCK_ISP>;
-+	clock-names = "v3d", "peri_image", "h264", "isp";
-+};
+diff --git a/drivers/soc/bcm/bcm2835-pm.c b/drivers/soc/bcm/bcm2835-pm.c
+index ed05514cc2dc..ca37145e4e40 100644
+--- a/drivers/soc/bcm/bcm2835-pm.c
++++ b/drivers/soc/bcm/bcm2835-pm.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ /*
+- * Watchdog driver for Broadcom BCM2835
++ * PM driver for Broadcom BCM2835
+  *
+  * "bcm2708_wdog" driver written by Luke Diamand that was obtained from
+  * branch "rpi-3.6.y" of git://github.com/raspberrypi/linux.git was used
+@@ -42,7 +42,7 @@
+ #define SECS_TO_WDOG_TICKS(x) ((x) << 16)
+ #define WDOG_TICKS_TO_SECS(x) ((x) >> 16)
+ 
+-struct bcm2835_wdt {
++struct bcm2835_pm {
+ 	void __iomem		*base;
+ 	spinlock_t		lock;
+ };
+@@ -50,60 +50,60 @@ struct bcm2835_wdt {
+ static unsigned int heartbeat;
+ static bool nowayout = WATCHDOG_NOWAYOUT;
+ 
+-static bool bcm2835_wdt_is_running(struct bcm2835_wdt *wdt)
++static bool bcm2835_wdt_is_running(struct bcm2835_pm *pm)
+ {
+ 	uint32_t cur;
+ 
+-	cur = readl(wdt->base + PM_RSTC);
++	cur = readl(pm->base + PM_RSTC);
+ 
+ 	return !!(cur & PM_RSTC_WRCFG_FULL_RESET);
+ }
+ 
+ static int bcm2835_wdt_start(struct watchdog_device *wdog)
+ {
+-	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
++	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
+ 	uint32_t cur;
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&wdt->lock, flags);
++	spin_lock_irqsave(&pm->lock, flags);
+ 
+ 	writel_relaxed(PM_PASSWORD | (SECS_TO_WDOG_TICKS(wdog->timeout) &
+-				PM_WDOG_TIME_SET), wdt->base + PM_WDOG);
+-	cur = readl_relaxed(wdt->base + PM_RSTC);
++				PM_WDOG_TIME_SET), pm->base + PM_WDOG);
++	cur = readl_relaxed(pm->base + PM_RSTC);
+ 	writel_relaxed(PM_PASSWORD | (cur & PM_RSTC_WRCFG_CLR) |
+-		  PM_RSTC_WRCFG_FULL_RESET, wdt->base + PM_RSTC);
++		  PM_RSTC_WRCFG_FULL_RESET, pm->base + PM_RSTC);
+ 
+-	spin_unlock_irqrestore(&wdt->lock, flags);
++	spin_unlock_irqrestore(&pm->lock, flags);
+ 
+ 	return 0;
+ }
+ 
+ static int bcm2835_wdt_stop(struct watchdog_device *wdog)
+ {
+-	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
++	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
+ 
+-	writel_relaxed(PM_PASSWORD | PM_RSTC_RESET, wdt->base + PM_RSTC);
++	writel_relaxed(PM_PASSWORD | PM_RSTC_RESET, pm->base + PM_RSTC);
+ 	return 0;
+ }
+ 
+ static unsigned int bcm2835_wdt_get_timeleft(struct watchdog_device *wdog)
+ {
+-	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
++	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
+ 
+-	uint32_t ret = readl_relaxed(wdt->base + PM_WDOG);
++	uint32_t ret = readl_relaxed(pm->base + PM_WDOG);
+ 	return WDOG_TICKS_TO_SECS(ret & PM_WDOG_TIME_SET);
+ }
+ 
+-static void __bcm2835_restart(struct bcm2835_wdt *wdt)
++static void __bcm2835_restart(struct bcm2835_pm *pm)
+ {
+ 	u32 val;
+ 
+ 	/* use a timeout of 10 ticks (~150us) */
+-	writel_relaxed(10 | PM_PASSWORD, wdt->base + PM_WDOG);
+-	val = readl_relaxed(wdt->base + PM_RSTC);
++	writel_relaxed(10 | PM_PASSWORD, pm->base + PM_WDOG);
++	val = readl_relaxed(pm->base + PM_RSTC);
+ 	val &= PM_RSTC_WRCFG_CLR;
+ 	val |= PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
+-	writel_relaxed(val, wdt->base + PM_RSTC);
++	writel_relaxed(val, pm->base + PM_RSTC);
+ 
+ 	/* No sleeping, possibly atomic. */
+ 	mdelay(1);
+@@ -112,9 +112,9 @@ static void __bcm2835_restart(struct bcm2835_wdt *wdt)
+ static int bcm2835_restart(struct watchdog_device *wdog,
+ 			   unsigned long action, void *data)
+ {
+-	struct bcm2835_wdt *wdt = watchdog_get_drvdata(wdog);
++	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
+ 
+-	__bcm2835_restart(wdt);
++	__bcm2835_restart(pm);
+ 
+ 	return 0;
+ }
+@@ -151,7 +151,7 @@ static void bcm2835_power_off(void)
+ 	struct device_node *np =
+ 		of_find_compatible_node(NULL, NULL, "brcm,bcm2835-pm-wdt");
+ 	struct platform_device *pdev = of_find_device_by_node(np);
+-	struct bcm2835_wdt *wdt = platform_get_drvdata(pdev);
++	struct bcm2835_pm *pm = platform_get_drvdata(pdev);
+ 	u32 val;
+ 
+ 	/*
+@@ -159,38 +159,39 @@ static void bcm2835_power_off(void)
+ 	 * from the normal (full) reset. bootcode.bin will not reboot after a
+ 	 * hard reset.
+ 	 */
+-	val = readl_relaxed(wdt->base + PM_RSTS);
++	val = readl_relaxed(pm->base + PM_RSTS);
+ 	val |= PM_PASSWORD | PM_RSTS_RASPBERRYPI_HALT;
+-	writel_relaxed(val, wdt->base + PM_RSTS);
++	writel_relaxed(val, pm->base + PM_RSTS);
+ 
+ 	/* Continue with normal reset mechanism */
+-	__bcm2835_restart(wdt);
++	__bcm2835_restart(pm);
+ }
+ 
+-static int bcm2835_wdt_probe(struct platform_device *pdev)
++static int bcm2835_pm_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	struct device *dev = &pdev->dev;
+-	struct bcm2835_wdt *wdt;
++	struct bcm2835_pm *pm;
+ 	int err;
+ 
+-	wdt = devm_kzalloc(dev, sizeof(struct bcm2835_wdt), GFP_KERNEL);
+-	if (!wdt)
++	pm = devm_kzalloc(dev, sizeof(struct bcm2835_pm), GFP_KERNEL);
++	if (!pm)
+ 		return -ENOMEM;
+-	platform_set_drvdata(pdev, wdt);
++	platform_set_drvdata(pdev, pm);
+ 
+-	spin_lock_init(&wdt->lock);
++	spin_lock_init(&pm->lock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	wdt->base = devm_ioremap_resource(dev, res);
+-	if (IS_ERR(wdt->base))
+-		return PTR_ERR(wdt->base);
++	pm->base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(pm->base))
++		return PTR_ERR(pm->base);
+ 
+-	watchdog_set_drvdata(&bcm2835_wdt_wdd, wdt);
++#if defined(CONFIG_WATCHDOG_CORE)
++	watchdog_set_drvdata(&bcm2835_wdt_wdd, pm);
+ 	watchdog_init_timeout(&bcm2835_wdt_wdd, heartbeat, dev);
+ 	watchdog_set_nowayout(&bcm2835_wdt_wdd, nowayout);
+ 	bcm2835_wdt_wdd.parent = dev;
+-	if (bcm2835_wdt_is_running(wdt)) {
++	if (bcm2835_wdt_is_running(pm)) {
+ 		/*
+ 		 * The currently active timeout value (set by the
+ 		 * bootloader) may be different from the module
+@@ -210,6 +211,7 @@ static int bcm2835_wdt_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Failed to register watchdog device");
+ 		return err;
+ 	}
++#endif
+ 
+ 	if (pm_power_off == NULL)
+ 		pm_power_off = bcm2835_power_off;
+@@ -218,7 +220,7 @@ static int bcm2835_wdt_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static int bcm2835_wdt_remove(struct platform_device *pdev)
++static int bcm2835_pm_remove(struct platform_device *pdev)
+ {
+ 	if (pm_power_off == bcm2835_power_off)
+ 		pm_power_off = NULL;
+@@ -226,21 +228,21 @@ static int bcm2835_wdt_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static const struct of_device_id bcm2835_wdt_of_match[] = {
++static const struct of_device_id bcm2835_pm_of_match[] = {
+ 	{ .compatible = "brcm,bcm2835-pm-wdt", },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, bcm2835_wdt_of_match);
++MODULE_DEVICE_TABLE(of, bcm2835_pm_of_match);
+ 
+-static struct platform_driver bcm2835_wdt_driver = {
+-	.probe		= bcm2835_wdt_probe,
+-	.remove		= bcm2835_wdt_remove,
++static struct platform_driver bcm2835_pm_driver = {
++	.probe		= bcm2835_pm_probe,
++	.remove		= bcm2835_pm_remove,
+ 	.driver = {
+-		.name =		"bcm2835-wdt",
+-		.of_match_table = bcm2835_wdt_of_match,
++		.name =		"bcm2835-pm",
++		.of_match_table = bcm2835_pm_of_match,
+ 	},
+ };
+-module_platform_driver(bcm2835_wdt_driver);
++module_platform_driver(bcm2835_pm_driver);
+ 
+ module_param(heartbeat, uint, 0);
+ MODULE_PARM_DESC(heartbeat, "Initial watchdog heartbeat in seconds");
+@@ -250,5 +252,5 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+ 				__MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
+ 
+ MODULE_AUTHOR("Lubomir Rintel <lkundrak@v3.sk>");
+-MODULE_DESCRIPTION("Driver for Broadcom BCM2835 watchdog timer");
++MODULE_DESCRIPTION("Driver for Broadcom BCM2835 PM/WDT");
+ MODULE_LICENSE("GPL");
 -- 
 2.19.1
 
