@@ -2,164 +2,142 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21896C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0360C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED0D1206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:03:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED0D1206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5931F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:03:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5931F206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeKUFdm (ORCPT
+        id S1726459AbeKUFeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 00:33:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60080 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbeKUFdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 00:33:42 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C56A1BF7;
-        Tue, 20 Nov 2018 11:03:02 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2B48D3F5AF;
-        Tue, 20 Nov 2018 11:03:02 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 8D1031AE07D8; Tue, 20 Nov 2018 19:03:17 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 19:03:17 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Jan Glauber <Jan.Glauber@cavium.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: dcache_readdir NULL inode oops
-Message-ID: <20181120190317.GA29161@arm.com>
-References: <20181109143744.GA12128@hc>
- <20181109155856.GC2091@brain-police>
- <20181110111656.GA16667@hc>
- <20181120182854.GC28838@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120182854.GC28838@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 21 Nov 2018 00:34:18 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:57994 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726001AbeKUFeR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 00:34:17 -0500
+Received: from mr6.cc.vt.edu (mr6.cc.ipv6.vt.edu [IPv6:2607:b400:92:8500:0:af:2d00:4488])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id wAKJ3cxA019062
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 14:03:38 -0500
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+        by mr6.cc.vt.edu (8.14.7/8.14.7) with ESMTP id wAKJ3WDk004157
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 14:03:38 -0500
+Received: by mail-qt1-f197.google.com with SMTP id b16so973213qtc.22
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:03:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=QTkKDErc6r689Sg9iRsb9haYyB+sFdp4VijLGNcLpCA=;
+        b=hPgFOhz8kSq4BLPAhyYoZhseH8Kiu+9xW+dneZbaqTSHyWFKbW67Vf3yRHxigdUwoY
+         TErX8pgcQrmKBLvC8OwvS1QDcYNVmT56Mp0IF1wm36BMfEPgo39O/oyIp97dYA5UHT6Y
+         l3nH2XzPMQvkKhuVIk51A2fk0Jye/SrdHaEUHuywHn9SYq0YfJ+8qPAbdSry4W25X7fm
+         0w8YF9vK2QxfssNWhXZDiBngIat7K+e4C3TenUNPDGjuMu0gN6eCVI+F44Qa47fv4zWx
+         mVQ75wx/1BqAOvV6zjBgnPo/gZCcwwWgyjanxnRSN9x5achTas9M5th4qV8Li9UBfgtv
+         kXqw==
+X-Gm-Message-State: AA+aEWYLiVIfCIRdTp4lMOEx85Uy976m5zP9jFLrOEcSvUcRFxuhOMxO
+        rsQ3EAPzkfUx0UIByWbQUuzapcSsJurzx/oY2ekVaiGg1MKsevPzOA1nJGJvo13Bs9lUNtOf4xS
+        o9Ppunwwvjjddza/mhjPiIjDASsiG09eRKbY=
+X-Received: by 2002:a37:6413:: with SMTP id y19mr2838294qkb.215.1542740612705;
+        Tue, 20 Nov 2018 11:03:32 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/X1Ii3wjtsVtaXEdCog0VOZ69ACQZzKipZb18f8fCGvGLSPgvGaTfoAKx+DHxbx2ebGKsI0+w==
+X-Received: by 2002:a37:6413:: with SMTP id y19mr2838277qkb.215.1542740612411;
+        Tue, 20 Nov 2018 11:03:32 -0800 (PST)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id n26sm7326271qkg.74.2018.11.20.11.03.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 11:03:29 -0800 (PST)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        kernelnewbies@kernelnewbies.org,
+        Jungseok Lee <jungseoklee85@gmail.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        mark.rutland@arm.com, Sungjinn Chung <barami97@gmail.com>
+Subject: Re: [ARM64] Printing IRQ stack usage information
+In-Reply-To: <CAOuPNLgGuomqaQVtj=1O8tYV_Bq8cqf5HqCxJ-LSGeQOVffnzw@mail.gmail.com>
+References: <CAOuPNLiLj9be5iUdpUiLqiTge-xYY_v4_VLs-ah2_PygG7vxdg@mail.gmail.com> <28496.1542300549@turing-police.cc.vt.edu> <CAOuPNLj8wj=tPJo8L3oS7o8iTQcyhZ0W-GH6xmP_GsG4r7YdAQ@mail.gmail.com> <49219.1542367988@turing-police.cc.vt.edu> <CAOuPNLg4tM6Cw8Yf9rdpkBOU=+Fh654yFQeAhJf1y88Gb3MAew@mail.gmail.com> <5997.1542386778@turing-police.cc.vt.edu> <CAOuPNLiX0zhxiRAx03YjVU6cocwWbgY9naxeYPRKmT+3PoGhRw@mail.gmail.com> <15703.1542393111@turing-police.cc.vt.edu> <CAOuPNLiJmtXft6g63oATMrrrcd3jQGCfxsAzXLx8Kz=_zsR4Kg@mail.gmail.com>
+ <CAOuPNLgGuomqaQVtj=1O8tYV_Bq8cqf5HqCxJ-LSGeQOVffnzw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1542740607_2819P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 20 Nov 2018 14:03:28 -0500
+Message-ID: <38799.1542740608@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 06:28:54PM +0000, Will Deacon wrote:
-> On Sat, Nov 10, 2018 at 11:17:03AM +0000, Jan Glauber wrote:
-> > On Fri, Nov 09, 2018 at 03:58:56PM +0000, Will Deacon wrote:
-> > > On Fri, Nov 09, 2018 at 02:37:51PM +0000, Jan Glauber wrote:
-> > > > I'm seeing the following oops reproducible with upstream kernel on arm64
-> > > > (ThunderX2):
-> > > 
-> > > [...]
-> > > 
-> > > > It happens after 1-3 hours of running 'stress-ng --dev 128'. This testcase
-> > > > does a scandir of /dev and then calls random stuff like ioctl, lseek,
-> > > > open/close etc. on the entries. I assume no files are deleted under /dev
-> > > > during the testcase.
-> > > >
-> > > > The NULL pointer is the inode pointer of next. The next dentry->d_flags is
-> > > > DCACHE_RCUACCESS when this happens.
-> > > >
-> > > > Any hints on how to further debug this?
-> > > 
-> > > Can you reproduce the issue with vanilla -rc1 and do you have a "known good"
-> > > kernel?
-> > 
-> > I can try out -rc1, but IIRC this wasn't bisectible as the bug was present at
-> > least back to 4.14. I need to double check that as there were other issues
-> > that are resolved now so I may confuse things here. I've defintely seen
-> > the same bug with 4.18.
-> > 
-> > Unfortunately I lost access to the machine as our data center seems to be
-> > moving currently so it might take some days until I can try -rc1.
-> 
-> Ok, I've just managed to reproduce this in a KVM guest running v4.20-rc3 on
-> both the host and the guest, so if anybody has any ideas of things to try then
-> I'm happy to give them a shot. In the meantime, I'll try again with a bunch of
-> debug checks enabled.
+--==_Exmh_1542740607_2819P
+Content-Type: text/plain; charset=us-ascii
 
-Weee, I eventually hit a use-after-free from KASAN. See below.
+On Tue, 20 Nov 2018 18:21:33 +0530, Pintu Agarwal said:
 
-Will
+> + sp = current_stack_pointer;
+> + if (on_irq_stack(sp, cpu)) {
+> +         stack_start = (unsigned long)per_cpu(irq_stack, cpu);
+> +         last_usage = per_cpu(irq_stack_usage, cpu);
+> +         curr_usage = sp - stack_start;
+> +         pr_info("cpu:%d : sp: %lu, stack_start: %lu, usage: %lu\n", cpu, sp, stack_start, (sp - stack_start));
+> +         if (curr_usage > last_usage)
+> +                 per_cpu(irq_stack_usage, cpu) = curr_usage;
+> + }
 
---->8
+This code only works if called from the function that uses the deepest
+amount of stack, because curr_usage depends on the current stack
+pointer.  If some other routine went 2,934 bytes further into the stack
+and then returned, you'll never know.
 
-[  615.973367] ==================================================================
-[  615.974675] BUG: KASAN: use-after-free in next_positive.isra.2+0x188/0x1a0
-[  615.975574] Read of size 8 at addr ffff8002fb33c190 by task stress-ng-dev/3145
-[  615.977348] 
-[  615.977692] CPU: 16 PID: 3145 Comm: stress-ng-dev Tainted: G      D           4.20.0-rc3-00012-g40b114779944 #2
-[  615.980171] Hardware name: linux,dummy-virt (DT)
-[  615.981325] Call trace:
-[  615.981765]  dump_backtrace+0x0/0x280
-[  615.982386]  show_stack+0x14/0x20
-[  615.983125]  dump_stack+0xc4/0xec
-[  615.983141]  print_address_description+0x60/0x25c
-[  615.985226]  kasan_report+0x1a8/0x358
-[  615.986161]  __asan_report_load8_noabort+0x18/0x20
-[  615.986978]  next_positive.isra.2+0x188/0x1a0
-[  615.987767]  dcache_readdir+0x2cc/0x488
-[  615.988428]  iterate_dir+0x168/0x448
-[  615.989342]  ksys_getdents64+0xe8/0x248
-[  615.990334]  __arm64_sys_getdents64+0x68/0x98
-[  615.990341]  el0_svc_common+0x104/0x210
-[  615.990345]  el0_svc_handler+0x48/0xb0
-[  615.990349]  el0_svc+0x8/0xc
-[  615.990356] 
-[  615.994175] Allocated by task 2720:
-[  615.994184]  kasan_kmalloc.part.1+0x40/0x108
-[  615.994188]  kasan_kmalloc+0xb4/0xc8
-[  615.994192]  kasan_slab_alloc+0x14/0x20
-[  615.994195]  kmem_cache_alloc+0x130/0x1f8
-[  615.994203]  __d_alloc+0x30/0x848
-[  615.994215]  d_alloc+0x30/0x1d0
-[  616.000554]  d_alloc_name+0x84/0xb0
-[  616.000562]  devpts_pty_new+0x2e0/0x5e8
-[  616.000568]  ptmx_open+0x14c/0x288
-[  616.000576]  chrdev_open+0x194/0x408
-[  616.000586]  do_dentry_open+0x2e8/0xac8
-[  616.004282]  vfs_open+0x8c/0xc0
-[  616.004286]  path_openat+0x694/0x33e8
-[  616.004288]  do_filp_open+0x13c/0x200
-[  616.004296]  do_sys_open+0x1dc/0x2e0
-[  616.006865]  __arm64_sys_openat+0x88/0xc8
-[  616.006872]  el0_svc_common+0x104/0x210
-[  616.006876]  el0_svc_handler+0x48/0xb0
-[  616.006880]  el0_svc+0x8/0xc
-[  616.006881] 
-[  616.006883] Freed by task 0:
-[  616.006889]  __kasan_slab_free+0x114/0x228
-[  616.006897]  kasan_slab_free+0x10/0x18
-[  616.012068]  kmem_cache_free+0x60/0x1e8
-[  616.012071]  __d_free+0x18/0x20
-[  616.012081]  rcu_process_callbacks+0x46c/0x940
-[  616.012086]  __do_softirq+0x28c/0x6cc
-[  616.012087] 
-[  616.012100] The buggy address belongs to the object at ffff8002fb33c100
-[  616.012100]  which belongs to the cache dentry of size 192
-[  616.017462] The buggy address is located 144 bytes inside of
-[  616.017462]  192-byte region [ffff8002fb33c100, ffff8002fb33c1c0)
-[  616.017465] The buggy address belongs to the page:
-[  616.017470] page:ffff7e000beccf00 count:1 mapcount:0 mapping:ffff800358c13400 index:0x0 compound_mapcount: 0
-[  616.017477] flags: 0x1ffff00000010200(slab|head)
-[  616.017488] raw: 1ffff00000010200 dead000000000100 dead000000000200 ffff800358c13400
-[  616.024873] raw: 0000000000000000 0000000080400040 00000001ffffffff 0000000000000000
-[  616.024875] page dumped because: kasan: bad access detected
-[  616.024876] 
-[  616.024877] Memory state around the buggy address:
-[  616.024882]  ffff8002fb33c080: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-[  616.024885]  ffff8002fb33c100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  616.024887] >ffff8002fb33c180: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-[  616.024889]                          ^
-[  616.024891]  ffff8002fb33c200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  616.024893]  ffff8002fb33c280: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-[  616.024894] ==================================================================
+What you want instead is a way to see what the deepest point reached during
+the current call, and compare that to the previous low.
+
+How to detect the used stack? Go look at how the code currently
+detects how deep the kernel stacks reached. (Hint 1: look at check_stack_usage()
+in kernel/exit.c and stack_not_used().  Hint 2: what other support code
+is implied by the implementation of stack_not used()?
+
+> Which is the best place to invoke this ?
+> I have the following option:
+> 1. kernel/softirq.c => __do_softirq()
+> 2. arch/arm64/kernel/smp.c => handle_IPI()
+> 3. kernel/softirq.c => irq_exit()
+> 4. ???
+
+Pondering the above, what other implementations might work? Hint: if
+you have a similar irq_stack_not_used() function, do you need any
+additional code in *any* of those 4 places?
+
+(And yes, I could just splat out the needed code - but you'd learn nowhere
+near as much that way.. :)
+
+
+
+
+--==_Exmh_1542740607_2819P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQEVAwUBW/Raf40DS38y7CIcAQJlIAf/ZwgLssOW1kKbDHlhdiZqMxTkeroALLNs
+PsLoezZywUY+BnN27zys0F6zRG6t11P29NhoI5sCMSHwRliulMmfFb2AABtlW93e
+R2Y6YbgbI47wnZw4KUDB09ty14r+DlT7O1ETBqIsmtkeGx1JVBePnRGGiljGIJV4
+Jfj8aGNzKPqt4X/nt/by2frSne7H6kkoCOjvcjKzCLFXkGTSuiiYxyq/ldu299nW
+OR2+9XtfukCMe0jOvVdWagj70C4EkoLlAjjGOFvmX8ogBrtMkklgBkehaYBc99sL
+JkrRRC8VZzTxzw1CQEh91DMrxtZaY7nSjSNSysMACB6U1fTOfywB7g==
+=TbrW
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1542740607_2819P--
