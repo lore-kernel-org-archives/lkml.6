@@ -2,106 +2,376 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A37C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8B4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AA5820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:37:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AA5820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D2C0208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:47:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ik0VpDYg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D2C0208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbeKTOEk (ORCPT
+        id S1730664AbeKTOOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 09:04:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbeKTOEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 09:04:40 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 39FF83001709;
-        Tue, 20 Nov 2018 03:37:41 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-61.pek2.redhat.com [10.72.12.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 30ABC10021B6;
-        Tue, 20 Nov 2018 03:37:32 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-To:     Borislav Petkov <bp@alien8.de>, Dave Young <dyoung@redhat.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, akpm@linux-foundation.org, bhe@redhat.com
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com> <20181114112600.GD13926@zn.tnic>
- <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
- <20181115103959.GB26448@zn.tnic>
- <20181119095515.GC14045@dhcp-128-65.nay.redhat.com>
- <20181119102812.GA14688@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <a1c58bb8-390b-e249-599f-c973d575e1ca@redhat.com>
-Date:   Tue, 20 Nov 2018 11:37:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 20 Nov 2018 09:14:06 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:42476 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730224AbeKTOOG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 09:14:06 -0500
+Received: by mail-qk1-f194.google.com with SMTP id m5so776066qka.9
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 19:47:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=Vffzc8/Krv4oxHxEle6OPcQMi0BSshGPW06vksyMUnY=;
+        b=ik0VpDYgvNLIY2tAf5zgRfCIp+OP9mTC7WIdCX9SrDwSJAt/wFlXdIGNINFQIRmC2r
+         6nK+VkjlMpbngJcvk2WYPgEZcFMVSWEVlBwDFE16I0JHNQ/5xJ2BFHHv1SKkortbvKgE
+         XSwMVcppVcSiXGdFn06WjuWtrRVzSVdkcMMm0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=Vffzc8/Krv4oxHxEle6OPcQMi0BSshGPW06vksyMUnY=;
+        b=AG7ygiD3ZSRFX+rp9YqmURPO5AVQFjGwEt2TeFjV2AsbOTdl3K/2JvPXoL6tt4mp1S
+         vrIRujSqEVdPNQsulkUCPeRNpe8j3/6xfRwiAXUT18L0WGo86gJhmtFLGjIjrh4LFfEc
+         MXZcrY9fpF12BRfuxcHfgX1o9hhLvx3p1bEy8fGYbbFxQ1pgA2/r6TY2R1EBntUhxYf7
+         rnuHHw+2/GjlozCj2fqzEmjr+V3r/E4jSNHqW35KJ5oNuDc/MzQcHJcyBif+S7CPW+pZ
+         P8aJ944q3q1PAf0uF6awjFShN7yvZIZF/Vt1dXLcBTdzuaFFdTN+iQ37pPmXYvTQHBlx
+         WHfw==
+X-Gm-Message-State: AGRZ1gLSzuRmO98SDhBywREwKdM9X9Cs2rXE1mMn3V7605qHsC4N5dHe
+        3vX1YDafQy9mIk2AY/w7pqLdeQ==
+X-Google-Smtp-Source: AFSGD/V4OtFYLII07e/vfrenP0zRHq1tF0olxCS3+7C5Cz3CHWtFV2rrXoNxGkbG3wCF7OPEFqED3A==
+X-Received: by 2002:ac8:7616:: with SMTP id t22mr335563qtq.375.1542685625250;
+        Mon, 19 Nov 2018 19:47:05 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id o128sm11651876qkc.7.2018.11.19.19.47.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 19:47:04 -0800 (PST)
+Date:   Mon, 19 Nov 2018 22:47:00 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2 5/9] kbuild: simplify dependency generation for
+ CONFIG_TRIM_UNUSED_KSYMS
+In-Reply-To: <1542675930-21114-6-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1811192245001.20453@knanqh.ubzr>
+References: <1542675930-21114-1-git-send-email-yamada.masahiro@socionext.com> <1542675930-21114-6-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181119102812.GA14688@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Tue, 20 Nov 2018 03:37:41 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年11月19日 18:28, Borislav Petkov 写道:
-> On Mon, Nov 19, 2018 at 05:55:15PM +0800, Dave Young wrote:
->> Another thing is it is not worth to get the exact info, the 1st kernel
->> reserved part is just fine to be reserved as well in 2nd kernel, no 
->> side effects.  Actually there might be some obscure use cases we
->> do not find which rely those reserved memory ranges so it is better to
->> have.
-> 
-> That makes sense as an argument. The cleaner thing would be to figure
-> out only *which* ranges we're going to need but that is probably harder
-> than simply exporting what the first kernel sees. But why we're doing
-> it, needs to be in the commit message so that it is clear when bug
-> hunting later.
-> 
-> ...
-> 
->> The basic problem is that this device is in PCI segment 1 and
->> the kernel PCI probing cannot find it without all the e820 i/o
->> reservations being present in the e820 table. And the crash kernel
->> does not have those reservations because the kexec command does not
->> pass i/o reservation via the memmap= command line option. (This
->> problem does not show up for other vendors, as SGI is apparently the
->> only one using extended PCI. The lookup of devices in PCI segment 0
->> actually fails for everyone, but devices in segment 0 are then found
->> by some legacy lookup method.) The workaround for this is to fix kexec
->> to pass i/o reserved areas to the crash kernel.
-> 
-> Yap, this is the *why* I'm looking for. Lianbo, in your next submission,
-> please add Dave's explanations to your commit messages.
-> Ok. Thank you, Dave and Boris. I will add Dave's explanations to patch log.
+On Tue, 20 Nov 2018, Masahiro Yamada wrote:
 
-BTW: Boris has mentioned the solution which adds the new descriptor 'IORES_DESC_RESERVED'.
-
-Which solution do you prefer? Add the new I/O resource descriptor 'IORES_DESC_RESERVED'(patch v7)
-or exactly comparing a string(patch v6)?
-
-These two solutions are good to me. 
-
-Thanks.
-Lianbo
-> If it says "we need to do X" in the commit message, without a reason
-> given *why* we need to, then there's no way for us to know *why* we did
-> it, when looking at this months from now. And we absolutely need the
-> *why* when staring at the code and fixing the next bug/issue.
+> My main motivation of this commit is to clean up scripts/Kbuild.include
+> and scripts/Makefile.build.
 > 
-> Thx.
+> Currently, CONFIG_TRIM_UNUSED_KSYMS works with a tricky gimmick;
+> possibly exported symbols are detected by letting $(CPP) replace
+> EXPORT_SYMBOL* with a special string '=== __KSYM_*===', which is
+> post-processed by sed, and passed to fixdep. The extra preprocessing
+> is costly, and hacking cmd_and_fixdep is ugly.
+> 
+> I came up with a new way to find exported symbols; insert a dummy
+> symbol __ksym_marker_* to each potentially exported symbol. Those
+> dummy symbols are picked up by $(NM), post-processed by sed, then
+> appended to .*.cmd files. I collected the post-process part to a
+> new shell script scripts/gen_ksymdeps.sh for readability. The dummy
+> symbols are put into the .discard.* section so that the linker
+> script rips them off the final vmlinux or modules.
+> 
+> A nice side-effect is building with CONFIG_TRIM_UNUSED_KSYMS will
+> be much faster.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+Nice work.
+
+Reviewed-by: Nicolas Pitre <nico@linaro.org>
+
+> ---
+> 
+> Changes in v2:
+>   - Let gen_ksymdeps.sh add dependencies to .*.cmd file directly
+>   - Fix typos
+> 
+>  include/asm-generic/export.h | 13 ++++++++-----
+>  include/linux/export.h       | 18 +++++++++---------
+>  scripts/Kbuild.include       | 28 ----------------------------
+>  scripts/Makefile.build       |  7 +++++++
+>  scripts/basic/fixdep.c       | 31 ++++---------------------------
+>  scripts/gen_ksymdeps.sh      | 25 +++++++++++++++++++++++++
+>  6 files changed, 53 insertions(+), 69 deletions(-)
+>  create mode 100755 scripts/gen_ksymdeps.sh
+> 
+> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+> index 4d73e6e..294d6ae 100644
+> --- a/include/asm-generic/export.h
+> +++ b/include/asm-generic/export.h
+> @@ -59,16 +59,19 @@ __kcrctab_\name:
+>  .endm
+>  #undef __put
+>  
+> -#if defined(__KSYM_DEPS__)
+> -
+> -#define __EXPORT_SYMBOL(sym, val, sec)	=== __KSYM_##sym ===
+> -
+> -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> +#if defined(CONFIG_TRIM_UNUSED_KSYMS)
+>  
+>  #include <linux/kconfig.h>
+>  #include <generated/autoksyms.h>
+>  
+> +.macro __ksym_marker sym
+> +	.section ".discard.ksym","a"
+> +__ksym_marker_\sym:
+> +	 .previous
+> +.endm
+> +
+>  #define __EXPORT_SYMBOL(sym, val, sec)				\
+> +	__ksym_marker sym;					\
+>  	__cond_export_sym(sym, val, sec, __is_defined(__KSYM_##sym))
+>  #define __cond_export_sym(sym, val, sec, conf)			\
+>  	___cond_export_sym(sym, val, sec, conf)
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index ce764a5..fd8711e 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -92,22 +92,22 @@ struct kernel_symbol {
+>   */
+>  #define __EXPORT_SYMBOL(sym, sec)
+>  
+> -#elif defined(__KSYM_DEPS__)
+> +#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> +
+> +#include <generated/autoksyms.h>
+>  
+>  /*
+>   * For fine grained build dependencies, we want to tell the build system
+>   * about each possible exported symbol even if they're not actually exported.
+> - * We use a string pattern that is unlikely to be valid code that the build
+> - * system filters out from the preprocessor output (see ksym_dep_filter
+> - * in scripts/Kbuild.include).
+> + * We use a symbol pattern __ksym_marker_<symbol> that the build system filters
+> + * from the $(NM) output (see scripts/gen_ksymdeps.sh). These symbols are
+> + * discarded in the final link stage.
+>   */
+> -#define __EXPORT_SYMBOL(sym, sec)	=== __KSYM_##sym ===
+> -
+> -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> -
+> -#include <generated/autoksyms.h>
+> +#define __ksym_marker(sym)	\
+> +	static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
+>  
+>  #define __EXPORT_SYMBOL(sym, sec)				\
+> +	__ksym_marker(sym);					\
+>  	__cond_export_sym(sym, sec, __is_defined(__KSYM_##sym))
+>  #define __cond_export_sym(sym, sec, conf)			\
+>  	___cond_export_sym(sym, sec, conf)
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index 6cf6a8b..4b943f4 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -260,39 +260,11 @@ if_changed_dep = $(if $(strip $(any-prereq) $(arg-check) ),                  \
+>  	@set -e;                                                             \
+>  	$(cmd_and_fixdep), @:)
+>  
+> -ifndef CONFIG_TRIM_UNUSED_KSYMS
+> -
+>  cmd_and_fixdep =                                                             \
+>  	$(echo-cmd) $(cmd_$(1));                                             \
+>  	scripts/basic/fixdep $(depfile) $@ '$(make-cmd)' > $(dot-target).cmd;\
+>  	rm -f $(depfile);
+>  
+> -else
+> -
+> -# Filter out exported kernel symbol names from the preprocessor output.
+> -# See also __KSYM_DEPS__ in include/linux/export.h.
+> -# We disable the depfile generation here, so as not to overwrite the existing
+> -# depfile while fixdep is parsing it.
+> -flags_nodeps = $(filter-out -Wp$(comma)-M%, $($(1)))
+> -ksym_dep_filter =                                                            \
+> -	case "$(1)" in                                                       \
+> -	  cc_*_c|cpp_i_c)                                                    \
+> -	    $(CPP) $(call flags_nodeps,c_flags) -D__KSYM_DEPS__ $< ;;        \
+> -	  as_*_S|cpp_s_S)                                                    \
+> -	    $(CPP) $(call flags_nodeps,a_flags) -D__KSYM_DEPS__ $< ;;        \
+> -	  boot*|build*|cpp_its_S|*cpp_lds_S|dtc|host*|vdso*) : ;;            \
+> -	  *) echo "Don't know how to preprocess $(1)" >&2; false ;;          \
+> -	esac | tr ";" "\n" | sed -n 's/^.*=== __KSYM_\(.*\) ===.*$$/_\1/p'
+> -
+> -cmd_and_fixdep =                                                             \
+> -	$(echo-cmd) $(cmd_$(1));                                             \
+> -	$(ksym_dep_filter) |                                                 \
+> -		scripts/basic/fixdep -e $(depfile) $@ '$(make-cmd)'          \
+> -			> $(dot-target).cmd;	                             \
+> -	rm -f $(depfile);
+> -
+> -endif
+> -
+>  # Usage: $(call if_changed_rule,foo)
+>  # Will check if $(cmd_foo) or any of the prerequisites changed,
+>  # and if so will execute $(rule_foo).
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 4f94579..c23ee45 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -254,9 +254,15 @@ objtool_dep = $(objtool_obj)					\
+>  	      $(wildcard include/config/orc/unwinder.h		\
+>  			 include/config/stack/validation.h)
+>  
+> +ifdef CONFIG_TRIM_UNUSED_KSYMS
+> +cmd_gen_ksymdeps = \
+> +	$(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ >> $(dot-target).cmd;
+> +endif
+> +
+>  define rule_cc_o_c
+>  	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
+>  	$(call cmd_and_fixdep,cc_o_c)					  \
+> +	$(cmd_gen_ksymdeps)						  \
+>  	$(cmd_checkdoc)							  \
+>  	$(call echo-cmd,objtool) $(cmd_objtool)				  \
+>  	$(cmd_modversions_c)						  \
+> @@ -265,6 +271,7 @@ endef
+>  
+>  define rule_as_o_S
+>  	$(call cmd_and_fixdep,as_o_S)					  \
+> +	$(cmd_gen_ksymdeps)						  \
+>  	$(call echo-cmd,objtool) $(cmd_objtool)				  \
+>  	$(cmd_modversions_S)
+>  endef
+> diff --git a/scripts/basic/fixdep.c b/scripts/basic/fixdep.c
+> index 850966f3..facbd60 100644
+> --- a/scripts/basic/fixdep.c
+> +++ b/scripts/basic/fixdep.c
+> @@ -105,8 +105,7 @@
+>  
+>  static void usage(void)
+>  {
+> -	fprintf(stderr, "Usage: fixdep [-e] <depfile> <target> <cmdline>\n");
+> -	fprintf(stderr, " -e  insert extra dependencies given on stdin\n");
+> +	fprintf(stderr, "Usage: fixdep <depfile> <target> <cmdline>\n");
+>  	exit(1);
+>  }
+>  
+> @@ -131,21 +130,6 @@ static void print_dep(const char *m, int slen, const char *dir)
+>  	printf(".h) \\\n");
+>  }
+>  
+> -static void do_extra_deps(void)
+> -{
+> -	char buf[80];
+> -
+> -	while (fgets(buf, sizeof(buf), stdin)) {
+> -		int len = strlen(buf);
+> -
+> -		if (len < 2 || buf[len - 1] != '\n') {
+> -			fprintf(stderr, "fixdep: bad data on stdin\n");
+> -			exit(1);
+> -		}
+> -		print_dep(buf, len - 1, "include/ksym");
+> -	}
+> -}
+> -
+>  struct item {
+>  	struct item	*next;
+>  	unsigned int	len;
+> @@ -293,7 +277,7 @@ static int is_ignored_file(const char *s, int len)
+>   * assignments are parsed not only by make, but also by the rather simple
+>   * parser in scripts/mod/sumversion.c.
+>   */
+> -static void parse_dep_file(char *m, const char *target, int insert_extra_deps)
+> +static void parse_dep_file(char *m, const char *target)
+>  {
+>  	char *p;
+>  	int is_last, is_target;
+> @@ -369,9 +353,6 @@ static void parse_dep_file(char *m, const char *target, int insert_extra_deps)
+>  		exit(1);
+>  	}
+>  
+> -	if (insert_extra_deps)
+> -		do_extra_deps();
+> -
+>  	printf("\n%s: $(deps_%s)\n\n", target, target);
+>  	printf("$(deps_%s):\n", target);
+>  }
+> @@ -379,13 +360,9 @@ static void parse_dep_file(char *m, const char *target, int insert_extra_deps)
+>  int main(int argc, char *argv[])
+>  {
+>  	const char *depfile, *target, *cmdline;
+> -	int insert_extra_deps = 0;
+>  	void *buf;
+>  
+> -	if (argc == 5 && !strcmp(argv[1], "-e")) {
+> -		insert_extra_deps = 1;
+> -		argv++;
+> -	} else if (argc != 4)
+> +	if (argc != 4)
+>  		usage();
+>  
+>  	depfile = argv[1];
+> @@ -395,7 +372,7 @@ int main(int argc, char *argv[])
+>  	printf("cmd_%s := %s\n\n", target, cmdline);
+>  
+>  	buf = read_file(depfile);
+> -	parse_dep_file(buf, target, insert_extra_deps);
+> +	parse_dep_file(buf, target);
+>  	free(buf);
+>  
+>  	return 0;
+> diff --git a/scripts/gen_ksymdeps.sh b/scripts/gen_ksymdeps.sh
+> new file mode 100755
+> index 0000000..1324986
+> --- /dev/null
+> +++ b/scripts/gen_ksymdeps.sh
+> @@ -0,0 +1,25 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +set -e
+> +
+> +# List of exported symbols
+> +ksyms=$($NM $1 | sed -n 's/.*__ksym_marker_\(.*\)/\1/p' | tr A-Z a-z)
+> +
+> +if [ -z "$ksyms" ]; then
+> +	exit 0
+> +fi
+> +
+> +echo
+> +echo "ksymdeps_$1 := \\"
+> +
+> +for s in $ksyms
+> +do
+> +	echo $s | sed -e 's:^_*:    $(wildcard include/ksym/:' \
+> +			-e 's:__*:/:g' -e 's/$/.h) \\/'
+> +done
+> +
+> +echo
+> +echo "$1: \$(ksymdeps_$1)"
+> +echo
+> +echo "\$(ksymdeps_$1):"
+> -- 
+> 2.7.4
+> 
 > 
