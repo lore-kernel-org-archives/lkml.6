@@ -2,260 +2,96 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0CDC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46ABC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80CD2075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80CD2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A9E72075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:25:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BKK9u8qK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9E72075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732816AbeKTRuc (ORCPT
+        id S1731658AbeKTRxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 12:50:32 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43760 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726840AbeKTRub (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 12:50:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EDB95AED6;
-        Tue, 20 Nov 2018 07:22:48 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dkiper@oracle.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH 1/2] x86/boot: revert commit ae7e1238e68f2a (Add ACPI RSDP address to setup_header)
-Date:   Tue, 20 Nov 2018 08:22:44 +0100
-Message-Id: <20181120072245.5378-2-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181120072245.5378-1-jgross@suse.com>
-References: <20181120072245.5378-1-jgross@suse.com>
+        Tue, 20 Nov 2018 12:53:05 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:41820 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbeKTRxF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 12:53:05 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAK7PP79047827;
+        Tue, 20 Nov 2018 01:25:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1542698725;
+        bh=O+ejHN4WSccVyDskA1roUPk/Q5ZS4XxehQPkmbSvQkA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=BKK9u8qK/vEW23Zx9OJuKYLq3WU12q4qPO17dKvHS4wAL9k8IAN3n+SDQ/nKpgRLE
+         Hah7hum9VPdfnmpwtrvaW9feirStfbSCJVtdfLq7BnDGSy3L07ugPpG1ZVWd7GVo4+
+         mjlkOkJeh5IoTfZirjl4xe7u3u3WJsTrRMChgk04=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAK7PO0i045260
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Nov 2018 01:25:25 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 20
+ Nov 2018 01:25:24 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 20 Nov 2018 01:25:24 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAK7PMHK019469;
+        Tue, 20 Nov 2018 01:25:23 -0600
+Subject: Re: [PATCH 1/4] mmc: sdhci-omap: Fix DCRC error handling during
+ tuning
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Kishon <kishon@ti.com>, Adrian Hunter <adrian.hunter@intel.com>
+References: <20181119111618.2745-1-faiz_abbas@ti.com>
+ <20181119111618.2745-2-faiz_abbas@ti.com>
+ <CAPDyKFo==Up-pTGZcjMvKWY70-m7i44A5Yr_qJjtpBFjWK8J5g@mail.gmail.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <4ff41f24-e152-521e-3fd7-0083b0d4ff98@ti.com>
+Date:   Tue, 20 Nov 2018 12:58:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFo==Up-pTGZcjMvKWY70-m7i44A5Yr_qJjtpBFjWK8J5g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Anvin pointed out that commit ae7e1238e68f2a ("x86/boot: Add
-ACPI RSDP address to setup_header") should be reverted as setup_header
-should contain only items set by legacy BIOS.
+Hi Uffe
 
-So revert said commit. Instead of fully reverting the depending
-commit e7b66d16fe4172 ("x86/acpi, x86/boot: Take RSDP address for boot
-params if available") just remove the setup_header reference in order
-to replace it by a boot_params in a followup patch.
+On 19/11/18 6:48 PM, Ulf Hansson wrote:
+> On 19 November 2018 at 12:16, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>> Commit 7d33c3581536 ("mmc: sdhci-omap: Workaround for Errata i802")
+>> disabled DCRC interrupts during tuning. This write to the interrupt
+>> enable register gets overwritten in sdhci_prepare_data() and the
+>> interrupt is not in fact disabled. Fix this by disabling the interrupt
+>> in the host->ier variable.
+>>
+>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> 
+> Should we have fixes/stable tag?
+> 
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- Documentation/x86/boot.txt            | 32 +-------------------------------
- arch/x86/boot/header.S                |  6 +-----
- arch/x86/include/asm/x86_init.h       |  2 --
- arch/x86/include/uapi/asm/bootparam.h |  4 ----
- arch/x86/kernel/acpi/boot.c           |  2 +-
- arch/x86/kernel/head32.c              |  1 -
- arch/x86/kernel/head64.c              |  2 --
- arch/x86/kernel/setup.c               | 17 -----------------
- 8 files changed, 3 insertions(+), 63 deletions(-)
+Ok. Will add that.
 
-diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
-index 7727db8f94bc..5e9b826b5f62 100644
---- a/Documentation/x86/boot.txt
-+++ b/Documentation/x86/boot.txt
-@@ -61,18 +61,6 @@ Protocol 2.12:	(Kernel 3.8) Added the xloadflags field and extension fields
- 	 	to struct boot_params for loading bzImage and ramdisk
- 		above 4G in 64bit.
- 
--Protocol 2.13:	(Kernel 3.14) Support 32- and 64-bit flags being set in
--		xloadflags to support booting a 64-bit kernel from 32-bit
--		EFI
--
--Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
--		address of the ACPI RSDP table.
--		The bootloader updates version with:
--		0x8000 | min(kernel-version, bootloader-version)
--		kernel-version being the protocol version supported by
--		the kernel and bootloader-version the protocol version
--		supported by the bootloader.
--
- **** MEMORY LAYOUT
- 
- The traditional memory map for the kernel loader, used for Image or
-@@ -209,7 +197,6 @@ Offset	Proto	Name		Meaning
- 0258/8	2.10+	pref_address	Preferred loading address
- 0260/4	2.10+	init_size	Linear memory required during initialization
- 0264/4	2.11+	handover_offset	Offset of handover entry point
--0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
- 
- (1) For backwards compatibility, if the setup_sects field contains 0, the
-     real value is 4.
-@@ -322,7 +309,7 @@ Protocol:	2.00+
-   Contains the magic number "HdrS" (0x53726448).
- 
- Field name:	version
--Type:		modify
-+Type:		read
- Offset/size:	0x206/2
- Protocol:	2.00+
- 
-@@ -330,12 +317,6 @@ Protocol:	2.00+
-   e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
-   10.17.
- 
--  Up to protocol version 2.13 this information is only read by the
--  bootloader. From protocol version 2.14 onwards the bootloader will
--  write the used protocol version or-ed with 0x8000 to the field. The
--  used protocol version will be the minimum of the supported protocol
--  versions of the bootloader and the kernel.
--
- Field name:	realmode_swtch
- Type:		modify (optional)
- Offset/size:	0x208/4
-@@ -763,17 +744,6 @@ Offset/size:	0x264/4
- 
-   See EFI HANDOVER PROTOCOL below for more details.
- 
--Field name:	acpi_rsdp_addr
--Type:		write
--Offset/size:	0x268/8
--Protocol:	2.14+
--
--  This field can be set by the boot loader to tell the kernel the
--  physical address of the ACPI RSDP table.
--
--  A value of 0 indicates the kernel should fall back to the standard
--  methods to locate the RSDP.
--
- 
- **** THE IMAGE CHECKSUM
- 
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 4c881c850125..850b8762e889 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -300,7 +300,7 @@ _start:
- 	# Part 2 of the header, from the old setup.S
- 
- 		.ascii	"HdrS"		# header signature
--		.word	0x020e		# header version number (>= 0x0105)
-+		.word	0x020d		# header version number (>= 0x0105)
- 					# or else old loadlin-1.5 will fail)
- 		.globl realmode_swtch
- realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
-@@ -558,10 +558,6 @@ pref_address:		.quad LOAD_PHYSICAL_ADDR	# preferred load addr
- init_size:		.long INIT_SIZE		# kernel initialization size
- handover_offset:	.long 0			# Filled in by build.c
- 
--acpi_rsdp_addr:		.quad 0			# 64-bit physical pointer to the
--						# ACPI RSDP table, added with
--						# version 2.14
--
- # End of setup header #####################################################
- 
- 	.section ".entrytext", "ax"
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 0f842104862c..b85a7c54c6a1 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -303,6 +303,4 @@ extern void x86_init_noop(void);
- extern void x86_init_uint_noop(unsigned int unused);
- extern bool x86_pnpbios_disabled(void);
- 
--void x86_verify_bootdata_version(void);
--
- #endif
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 22f89d040ddd..a06cbf019744 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -16,9 +16,6 @@
- #define RAMDISK_PROMPT_FLAG		0x8000
- #define RAMDISK_LOAD_FLAG		0x4000
- 
--/* version flags */
--#define VERSION_WRITTEN	0x8000
--
- /* loadflags */
- #define LOADED_HIGH	(1<<0)
- #define KASLR_FLAG	(1<<1)
-@@ -89,7 +86,6 @@ struct setup_header {
- 	__u64	pref_address;
- 	__u32	init_size;
- 	__u32	handover_offset;
--	__u64	acpi_rsdp_addr;
- } __attribute__((packed));
- 
- struct sys_desc_table {
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 92c76bf97ad8..fb3b1f3a5aba 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1776,5 +1776,5 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 
- u64 x86_default_get_root_pointer(void)
- {
--	return boot_params.hdr.acpi_rsdp_addr;
-+	return 0;
- }
-diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
-index 76fa3b836598..ec6fefbfd3c0 100644
---- a/arch/x86/kernel/head32.c
-+++ b/arch/x86/kernel/head32.c
-@@ -37,7 +37,6 @@ asmlinkage __visible void __init i386_start_kernel(void)
- 	cr4_init_shadow();
- 
- 	sanitize_boot_params(&boot_params);
--	x86_verify_bootdata_version();
- 
- 	x86_early_init_platform_quirks();
- 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 7663a8eb602b..16b1cbd3a61e 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -457,8 +457,6 @@ void __init x86_64_start_reservations(char *real_mode_data)
- 	if (!boot_params.hdr.version)
- 		copy_bootdata(__va(real_mode_data));
- 
--	x86_verify_bootdata_version();
--
- 	x86_early_init_platform_quirks();
- 
- 	switch (boot_params.hdr.hardware_subarch) {
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index b74e7bfed6ab..d494b9bfe618 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1280,23 +1280,6 @@ void __init setup_arch(char **cmdline_p)
- 	unwind_init();
- }
- 
--/*
-- * From boot protocol 2.14 onwards we expect the bootloader to set the
-- * version to "0x8000 | <used version>". In case we find a version >= 2.14
-- * without the 0x8000 we assume the boot loader supports 2.13 only and
-- * reset the version accordingly. The 0x8000 flag is removed in any case.
-- */
--void __init x86_verify_bootdata_version(void)
--{
--	if (boot_params.hdr.version & VERSION_WRITTEN)
--		boot_params.hdr.version &= ~VERSION_WRITTEN;
--	else if (boot_params.hdr.version >= 0x020e)
--		boot_params.hdr.version = 0x020d;
--
--	if (boot_params.hdr.version < 0x020e)
--		boot_params.hdr.acpi_rsdp_addr = 0;
--}
--
- #ifdef CONFIG_X86_32
- 
- static struct resource video_ram_resource = {
--- 
-2.16.4
-
+Thanks,
+Faiz
