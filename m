@@ -2,94 +2,169 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C524C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7047DC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC5A206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:58:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC5A206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 275FB206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:01:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275FB206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725986AbeKTS0B (ORCPT
+        id S1726040AbeKTS3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:26:01 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49268 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKTS0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:26:01 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 59FE5207B0; Tue, 20 Nov 2018 08:58:13 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2E0EF20745;
-        Tue, 20 Nov 2018 08:58:03 +0100 (CET)
-Date:   Tue, 20 Nov 2018 08:58:03 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 0/3] arm64: dts: allwinner: h6: orangepi: Enable USB 2.0
- and LEDs
-Message-ID: <20181120075803.6735awl2zd5ak2fo@flea>
-References: <20181120065311.30009-1-wens@csie.org>
+        Tue, 20 Nov 2018 13:29:31 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36380 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725780AbeKTS3a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 13:29:30 -0500
+Received: by mail-ua1-f68.google.com with SMTP id j3so337446uap.3;
+        Tue, 20 Nov 2018 00:01:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/i/NMJE34HRbvX9W/5vg6A1j8yPDWGSRqnxkRrtKchI=;
+        b=FfWxYYgfa+KRTm+Vre+UNCSKuxLwJfcq6v1gUxJjV5J2MMN4TOPgCdAPFQu4qVZQJ/
+         2JE/vkkvzRbREj2Z51Rvk2Nbj16Q0xDVvzRyBGkYrG+SSKxNKrGKEKFE5Ce1x+33sfQP
+         GnHp6NsmVr1NcJnVE4ZQLVr7qf+xI5y2d2TFcRE2GPLI6hiHkjtprBUOZl1qojo+oXNF
+         gRatoiDG3ajVCUUmgSD34broiTWt1F1HvF0dIaMRg+31Ps0hGtbT9asgmaipiCgdwHqU
+         ZIOhtPEMun/ij0pKuAyimA7jsJglNpUBlttD0ZzDbcmDWZmGXHEs8CPN7/pGfI0CYth9
+         qBlg==
+X-Gm-Message-State: AA+aEWaA+21G4w7RX0q5McpP8nUXx/xYPvGADtLccBOYjzZHn9H8iUau
+        3TC+VPpNA+1UNH+kx53JFj7t2uiPRftvS3kpPJLc/6NH
+X-Google-Smtp-Source: AFSGD/VVvA6zbzCj2u+xlT/G7mkCfzQj9pJW1bBRAOhFEdxZRGbaFcyCzvHtxV20SMVIAfnGVT956/HcG5R+z76WliU=
+X-Received: by 2002:ab0:465:: with SMTP id 92mr445526uav.28.1542700901707;
+ Tue, 20 Nov 2018 00:01:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qndgcgymmap35tri"
-Content-Disposition: inline
-In-Reply-To: <20181120065311.30009-1-wens@csie.org>
-User-Agent: NeoMutt/20180716
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw> <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+In-Reply-To: <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 20 Nov 2018 09:01:29 +0100
+Message-ID: <CAMuHMdVjqkHsqEjEgBWg0eGtE-9ND+a=OeHwu=r39LrfkQq=Yw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+To:     masonccyang@mxic.com.tw
+Cc:     Mark Brown <broonie@kernel.org>, Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Mason,
 
---qndgcgymmap35tri
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 19, 2018 at 11:01 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
+> Add a driver for Renesas R-Car D3 RPC SPI controller driver.
+>
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-On Tue, Nov 20, 2018 at 02:53:08PM +0800, Chen-Yu Tsai wrote:
-> Hi,
->=20
-> This small series enables USB 2.0 and LEDs on the Orange Pi Lite 2 and
-> Orange Pi One Plus. The two features are unrelated, but included in the
-> same series as the patch contexts overlap.
->=20
-> Patch one adds a fixed regulator to represent the board-wide 5V rail.
-> While not strictly necessary, this helps define the relationship between
-> regulators.
->=20
-> Patch two enables USB 2.0 host and OTG. Note that VBUS on both ports are
-> directly tied to the 5V rail, without any power switches or current
-> limiters.
->=20
-> Patch three add device nodes for the two LEDs. These LEDs are driven
-> directly by the GPIO pins, without a current limiting resistor. At the
-> default drive strength, the LEDs are quite bright.
+Thanks for your patch!
 
-Applied all three patches, thanks!
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,750 @@
 
-Maxime
+> +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
+> +{
+> +       int ret;
+> +
+> +       if (rpc->cur_speed_hz == freq)
+> +               return 0;
+> +
+> +       clk_disable_unprepare(rpc->clk_rpc);
+> +       ret = clk_set_rate(rpc->clk_rpc, freq);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = clk_prepare_enable(rpc->clk_rpc);
+> +       if (ret)
+> +               return ret;
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The clk_{disable_unprepare,prepare_enable}() may be needed on the Macronix
+controller you based this driver on, but will be futile on Renesas SoCs.
 
---qndgcgymmap35tri
-Content-Type: application/pgp-signature; name="signature.asc"
+As the RPC is part of the CPG/MSSR clock domain, its clock will be controlled
+by the Runtime PM.  As you've already called pm_runtime_get_sync() from your
+.probe() calback, Runtime PM will have enabled the clock.
+If you disable it manually, you create an imbalance between automatic and
+manual clock control.
 
------BEGIN PGP SIGNATURE-----
+So please don't control the clock explicitly, but always use
+pm_runtime_*() calls.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/O+iwAKCRDj7w1vZxhR
-xZ3AAPsFC8kMp8Uxd5tj0Ipt4mbbGZ9pyPDEwTSbz9Ic+87CKwD+NlAmH3P3Lc0K
-5AOCcs5OmpVxZ4AzJLZhW3UrccjCDgI=
-=9eHS
------END PGP SIGNATURE-----
+> +static int __maybe_unused rpc_spi_runtime_suspend(struct device *dev)
+> +{
+> +       struct platform_device *pdev = to_platform_device(dev);
+> +       struct spi_master *master = platform_get_drvdata(pdev);
+> +       struct rpc_spi *rpc = spi_master_get_devdata(master);
+> +
+> +       clk_disable_unprepare(rpc->clk_rpc);
 
---qndgcgymmap35tri--
+At this point, the clock is enabled due to Runtime PM, and you disable it
+manually.
+During system suspend, the clock will be disabled by the PM framework
+again, leading to a negative enable count.
+I expect you to see warning splats during system suspend.
+Hence please drop the explicit clock management from this function.
+
+I'm not familiar with the spimem framework, but for a normal SPI controller,
+you want to call spi_master_resume(master) here.
+See e.g. commit c1ca59c22c56930b ("spi: rspi: Fix invalid SPI use during
+system suspend")
+
+> +
+> +       return 0;
+> +}
+> +
+> +static int __maybe_unused rpc_spi_runtime_resume(struct device *dev)
+> +{
+> +       struct platform_device *pdev = to_platform_device(dev);
+> +       struct spi_master *master = platform_get_drvdata(pdev);
+> +       struct rpc_spi *rpc = spi_master_get_devdata(master);
+> +       int ret;
+> +
+> +       ret = clk_prepare_enable(rpc->clk_rpc);
+> +       if (ret)
+> +               dev_err(dev, "Can't enable rpc->clk_rpc\n");
+
+Likewise, please drop the explicit clock management here. The PM core
+code will handle it through the clock domain.
+
++ spi_master_resume(master)
+
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct dev_pm_ops rpc_spi_dev_pm_ops = {
+> +       SET_RUNTIME_PM_OPS(rpc_spi_runtime_suspend,
+> +                          rpc_spi_runtime_resume, NULL)
+
+Ah, you only use these for Runtime PM.  Not needed, as Runtime PM handles
+the clock domain without any callbacks.
+
+With spi_master_{suspend,resume}() added, you can use SIMPLE_DEV_PM_OPS(),
+and make everything work during/after system suspend.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
