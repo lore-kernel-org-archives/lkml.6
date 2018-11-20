@@ -2,431 +2,166 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDED0C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C0AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 889CA206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:46:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="k8nUSNnJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 889CA206BA
+	by mail.kernel.org (Postfix) with ESMTP id E1D8520831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D8520831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbeKUDQv (ORCPT
+        id S1730065AbeKUDRg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:16:51 -0500
-Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:22208
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726499AbeKUDQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:16:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3g6IbCz0fSt3TvdIdueq9sqX+bd5IoQWJ03u3ZOLVKs=;
- b=k8nUSNnJMeVQLoqEheia33f4PNhaTANUBCgXSEglq23BmOI44oEtHrztg8mZOlwoXLsPSnOKBhcmagx4GcOeEpN4tU0vzarlGNt+9V2hwm5EUPNwPK4twkUO+w9sS7zNtm9ZWFKsL+/e/CnrziLcsl0gxD59zA4kDgAT7EkUfQw=
-Received: from AM0PR08MB3025.eurprd08.prod.outlook.com (52.134.93.10) by
- AM0PR08MB3860.eurprd08.prod.outlook.com (20.178.82.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Tue, 20 Nov 2018 16:46:37 +0000
-Received: from AM0PR08MB3025.eurprd08.prod.outlook.com
- ([fe80::e84e:50fd:edd6:66e4]) by AM0PR08MB3025.eurprd08.prod.outlook.com
- ([fe80::e84e:50fd:edd6:66e4%3]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 16:46:37 +0000
-From:   Brian Starkey <Brian.Starkey@arm.com>
-To:     Liam Mark <lmark@codeaurora.org>
-CC:     nd <nd@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+        Tue, 20 Nov 2018 22:17:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:55854 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbeKUDRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:17:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63ADE1DC8;
+        Tue, 20 Nov 2018 08:47:32 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 178723F5AF;
+        Tue, 20 Nov 2018 08:47:30 -0800 (PST)
+Subject: Re: WARN_ON after gic_reserve_range
+To:     Jan Glauber <Jan.Glauber@cavium.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        "Richter, Robert" <Robert.Richter@cavium.com>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        Martijn Coenen <maco@android.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Todd Kjos <tkjos@android.com>,
-        Arve Hjonnevag <arve@android.com>,
-        "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-        Laura Abbott <labbott@redhat.com>
-Subject: Re: [RFC PATCH v2] android: ion: How to properly clean caches for
- uncached allocations
-Thread-Topic: [RFC PATCH v2] android: ion: How to properly clean caches for
- uncached allocations
-Thread-Index: AQHUcjBnSvenHVoYw0amObMa8s0GR6VY/NIA
-Date:   Tue, 20 Nov 2018 16:46:37 +0000
-Message-ID: <20181120164636.jcw7li2uaa3cmwc3@DESKTOP-E1NTVVP.localdomain>
-References: <alpine.DEB.2.02.1802282111320.22860@lmark-linux.qualcomm.com>
- <b1479541-13bd-85ea-f9c7-25264c91f9b9@redhat.com>
- <alpine.DEB.2.02.1803081635170.20592@lmark-linux.qualcomm.com>
- <alpine.DEB.2.10.1811011454430.23412@lmark-linux.qualcomm.com>
-In-Reply-To: <alpine.DEB.2.10.1811011454430.23412@lmark-linux.qualcomm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: NeoMutt/20171215
-x-originating-ip: [217.140.106.55]
-x-clientproxiedby: LO2P265CA0006.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:62::18) To AM0PR08MB3025.eurprd08.prod.outlook.com
- (2603:10a6:208:5c::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Brian.Starkey@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3860;6:kv/ni7hM5RGbpeSFHFx6oy7p6JOOYkySr2yqZHGRLyXCfRDjx+v42VdhnJx96EbEculh8Ql6JXxhmAOW1mVFqzxkDJUdcf5sOX0FrQxj8Lvq17tg0iW4I29ODZJ0hiOj/j6rXaMEjDi5h41reQdCLrAo6DIKonqie7LnvY0ku8Aaih+sN65RRTD+dEdg44DrLZBtaWlcCONqqi2sMxIbQFPsqwIJbuA8/OOdsI8TGbX/XauPJTKD0mF96HeGgAm0aBP6Gw6kxcAYIv6gaaAX6T6uZ5vMt7ao77Sgc1CdLJIouaWnnyfahCRYPNwMyxt1u7ZBTscTlg9R8WipNwa+xbkWL2W8SMgl2gEF1uLuj16lWEqaAbGWY8TFRTyvDWMw86KeIFJmIScyzLubwIrRxVvfJeiGGFSIJJI3Ls6a/EDUUgx2ARIJlwTCemoQ3WSgKJzraziMiqOJRb5r56w8mA==;5:U93EbkJW303kmayBPRi4g95uDHCEDcJPyYSBGgyWPvsWJe5h42vwRpWiLHC97cqn/SfLObm7LSYU5m57WhnQycRFC6QcqNmHpRI55vL7nS4Z9rppMfUir5xL6t08XztK3bjXzDmbOiN2hmDlk3LN6HohN5glQBJegtQm7L7xe9s=;7:ungN4q0Vv608rLsIgJz63tMScx+WHMPNHbLMkwC5FHl0of4RiFdRlCzfLv7CC6fTD9UtSmrrzZDITI8vYr9+2TTMps/9GyxUR136xNHjxRwZ/boj8zokNbc02zo+9qgzuY+E6rDzTzZZc9gcxfu3cw==
-x-ms-office365-filtering-correlation-id: 56333362-2a26-4c53-24b3-08d64f07bd03
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3860;
-x-ms-traffictypediagnostic: AM0PR08MB3860:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB386015EECAF141F6C2C6EE94F0D90@AM0PR08MB3860.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231442)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3860;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3860;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(376002)(346002)(366004)(54094003)(189003)(199004)(6486002)(6916009)(66066001)(72206003)(478600001)(6246003)(4326008)(14454004)(53936002)(7736002)(6116002)(3846002)(97736004)(1076002)(6512007)(2900100001)(9686003)(26005)(186003)(58126008)(6506007)(102836004)(386003)(575784001)(316002)(99286004)(54906003)(86362001)(305945005)(33896004)(76176011)(71190400001)(71200400001)(93886005)(106356001)(68736007)(105586002)(217873002)(5024004)(14444005)(256004)(52116002)(476003)(25786009)(11346002)(446003)(486006)(229853002)(5660300001)(81166006)(8936002)(81156014)(8676002)(2906002)(7416002)(44832011)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3860;H:AM0PR08MB3025.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: hPY3Tx+tlDNeQ/12frWsxA9OpQM5SC4fJeaVxDA+GYOx2wCpZ2Olowt29jP4dxSxMIP6GGyHUE4FF4lAkx397zhanLfOfMV5rANoiTqwk4ZpS5kotxJRkEoOyCpvdp75FAz0zibL9C/9fPpVR59GCG3YdEzwdoOy9hcrMqMxIxzOzS1bPzRX2M3bFRxP48JiBvj8a9bQHhHLZxLVVBFc+6fGRWpSKNQVpv0KrUwwyjc8Q7LrtM6GGWZNH6OKbcKrqZ7H7UEu3hbVXHeXBOrGx8aOQxLckhCbH1MK0Ll3ns9WzvlXAvDxXRkhsspdMYbC2/gvn5QiWnhOJJ1L7Q6gkPGjLRjknl00fJZQzrwirTU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <024C20124D7AD343B3917FF41C1293B3@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20181120162305.GA2088@hc>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <e00f8604-216c-f427-fbb1-6ddffb073411@arm.com>
+Date:   Tue, 20 Nov 2018 16:47:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56333362-2a26-4c53-24b3-08d64f07bd03
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 16:46:37.7562
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3860
+In-Reply-To: <20181120162305.GA2088@hc>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Liam,
+[+ Ard]
 
-I'm missing a bit of context here, but I did read the v1 thread.
-Please accept my apologies if I'm re-treading trodden ground.
+Hi Jan,
 
-I do know we're chasing nebulous ion "problems" on our end, which
-certainly seem to be related to what you're trying to fix here.
+On 20/11/2018 16:23, Jan Glauber wrote:
+> Hi Marc,
+> 
+> with 4.20-rc3 I see two WARN_ON's firing on a ThunderX2 system that come from
+> commit 3fb68faee867 (irqchip/gic-v3-its: Register LPI tables with EFI config table).
+> 
+> Global efi_memreserve_root is NULL as it will only be set when early initcalls are
+> running, but from the backtrace the WARN_ON's are running even earlier (init_IRQ).
+> 
+> Am I the only one seeing this?
 
-On Thu, Nov 01, 2018 at 03:15:06PM -0700, Liam Mark wrote:
->Based on the suggestions from Laura I created a first draft for a change
->which will attempt to ensure that uncached mappings are only applied to
->ION memory who's cache lines have been cleaned.
->It does this by providing cached mappings (for uncached ION allocations)
->until the ION buffer is dma mapped and successfully cleaned, then it drops
->the userspace mappings and when pages are accessed they are faulted back
->in and uncached mappings are created.
+You're not the only one, and this is due to 63eb322d89 ("efi: Permit
+calling efi_mem_reserve_persistent() from atomic context"). Reverting
+this commit is not really an option though (even if it gets rid of the
+warning and allows kexec to work).
 
-If I understand right, there's no way to portably clean the cache of
-the kernel mapping before we map the pages into userspace. Is that
-right?
-
-Alternatively, can we just make ion refuse to give userspace a
-non-cached mapping for pages which are mapped in the kernel as cached?
-Would userspace using the dma-buf sync ioctl around its accesses do
-the "right thing" in that case?
-
-Given that as you pointed out, the kernel does still have a cached
-mapping to these pages, trying to give the CPU a non-cached mapping of
-those same pages while preserving consistency seems fraught. Wouldn't
-it be better to make sure all CPU mappings are cached, and have CPU
-clients use the dma_buf_{begin,end}_cpu_access() hooks to get
-consistency where needed?
-
->
->This change has the following potential disadvantages:
->- It assumes that userpace clients won't attempt to access the buffer
->while it is being mapped as we are removing the userpspace mappings at
->this point (though it is okay for them to have it mapped)
->- It assumes that kernel clients won't hold a kernel mapping to the buffer
->(ie dma_buf_kmap) while it is being dma-mapped. What should we do if there
->is a kernel mapping at the time of dma mapping, fail the mapping, warn?
->- There may be a performance penalty as a result of having to fault in the
->pages after removing the userspace mappings.
-
-I wonder if the dma-buf sync ioctl might provide a way for userspace
-to opt-in to when the zap/fault happens. Zap on (DMA_BUF_SYNC_WRITE |
-DMA_BUF_SYNC_WRITE_END) and fault on (DMA_BUF_SYNC_READ |
-DMA_BUF_SYNC_START)
-
->
->It passes basic testing involving reading writing and reading from
->uncached system heap allocations before and after dma mapping.
->
->Please let me know if this is heading in the right direction and if there
->are any concerns.
->
->Signed-off-by: Liam Mark <lmark at codeaurora.org>
->---
-> drivers/staging/android/ion/ion.c | 146 +++++++++++++++++++++++++++++++++=
-++++-
-> drivers/staging/android/ion/ion.h |   9 +++
-> 2 files changed, 152 insertions(+), 3 deletions(-)
->
->diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/i=
-on/ion.c
->index 99073325b0c0..3dc0f5a265bf 100644
->--- a/drivers/staging/android/ion/ion.c
->+++ b/drivers/staging/android/ion/ion.c
->@@ -96,6 +96,7 @@ static struct ion_buffer *ion_buffer_create(struct ion_h=
-eap *heap,
-> 	}
->
-> 	INIT_LIST_HEAD(&buffer->attachments);
->+	INIT_LIST_HEAD(&buffer->vmas);
-> 	mutex_init(&buffer->lock);
-> 	mutex_lock(&dev->buffer_lock);
-> 	ion_buffer_add(dev, buffer);
->@@ -117,6 +118,7 @@ void ion_buffer_destroy(struct ion_buffer *buffer)
-> 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
-> 	}
-> 	buffer->heap->ops->free(buffer);
->+	vfree(buffer->pages);
-> 	kfree(buffer);
-> }
->
->@@ -245,11 +247,29 @@ static void ion_dma_buf_detatch(struct dma_buf *dmab=
-uf,
-> 	kfree(a);
-> }
->
->+static bool ion_buffer_uncached_clean(struct ion_buffer *buffer)
->+{
->+	return buffer->uncached_clean;
->+}
-
-nit: The function name sounds like a verb to me - as in "calling this
-will clean the buffer". I feel ion_buffer_is_uncached_clean() would
-read better.
+Ard and me are looking into it.
 
 Thanks,
--Brian
 
->+
->+/* expect buffer->lock to be already taken */
->+static void ion_buffer_zap_mappings(struct ion_buffer *buffer)
->+{
->+	struct ion_vma_list *vma_list;
->+
->+	list_for_each_entry(vma_list, &buffer->vmas, list) {
->+		struct vm_area_struct *vma =3D vma_list->vma;
->+
->+		zap_page_range(vma, vma->vm_start, vma->vm_end - vma->vm_start);
->+	}
->+}
->+
-> static struct sg_table *ion_map_dma_buf(struct dma_buf_attachment *attach=
-ment,
-> 					enum dma_data_direction direction)
-> {
-> 	struct ion_dma_buf_attachment *a =3D attachment->priv;
-> 	struct sg_table *table;
->+	struct ion_buffer *buffer =3D attachment->dmabuf->priv;
->
-> 	table =3D a->table;
->
->@@ -257,6 +277,19 @@ static struct sg_table *ion_map_dma_buf(struct dma_bu=
-f_attachment *attachment,
-> 			direction))
-> 		return ERR_PTR(-ENOMEM);
->
->+	if (!ion_buffer_cached(buffer)) {
->+		mutex_lock(&buffer->lock);
->+		if (!ion_buffer_uncached_clean(buffer)) {
->+			ion_buffer_zap_mappings(buffer);
->+			if (buffer->kmap_cnt > 0) {
->+				pr_warn_once("%s: buffer still mapped in the kernel\n",
->+					     __func__);
->+			}
->+			buffer->uncached_clean =3D true;
->+		}
->+		mutex_unlock(&buffer->lock);
->+	}
->+
-> 	return table;
-> }
->
->@@ -267,6 +300,94 @@ static void ion_unmap_dma_buf(struct dma_buf_attachme=
-nt *attachment,
-> 	dma_unmap_sg(attachment->dev, table->sgl, table->nents, direction);
-> }
->
->+static void __ion_vm_open(struct vm_area_struct *vma, bool lock)
->+{
->+	struct ion_buffer *buffer =3D vma->vm_private_data;
->+	struct ion_vma_list *vma_list;
->+
->+	vma_list =3D kmalloc(sizeof(*vma_list), GFP_KERNEL);
->+	if (!vma_list)
->+		return;
->+	vma_list->vma =3D vma;
->+
->+	if (lock)
->+		mutex_lock(&buffer->lock);
->+	list_add(&vma_list->list, &buffer->vmas);
->+	if (lock)
->+		mutex_unlock(&buffer->lock);
->+}
->+
->+static void ion_vm_open(struct vm_area_struct *vma)
->+{
->+	__ion_vm_open(vma, true);
->+}
->+
->+static void ion_vm_close(struct vm_area_struct *vma)
->+{
->+	struct ion_buffer *buffer =3D vma->vm_private_data;
->+	struct ion_vma_list *vma_list, *tmp;
->+
->+	mutex_lock(&buffer->lock);
->+	list_for_each_entry_safe(vma_list, tmp, &buffer->vmas, list) {
->+		if (vma_list->vma !=3D vma)
->+			continue;
->+		list_del(&vma_list->list);
->+		kfree(vma_list);
->+		break;
->+	}
->+	mutex_unlock(&buffer->lock);
->+}
->+
->+static int ion_vm_fault(struct vm_fault *vmf)
->+{
->+	struct vm_area_struct *vma =3D vmf->vma;
->+	struct ion_buffer *buffer =3D vma->vm_private_data;
->+	unsigned long pfn;
->+	int ret;
->+
->+	mutex_lock(&buffer->lock);
->+	if (!buffer->pages || !buffer->pages[vmf->pgoff]) {
->+		mutex_unlock(&buffer->lock);
->+		return VM_FAULT_ERROR;
->+	}
->+
->+	vma->vm_page_prot =3D pgprot_writecombine(vma->vm_page_prot);
->+	pfn =3D page_to_pfn(buffer->pages[vmf->pgoff]);
->+	ret =3D vm_insert_pfn(vma, vmf->address, pfn);
->+	mutex_unlock(&buffer->lock);
->+	if (ret)
->+		return VM_FAULT_ERROR;
->+
->+	return VM_FAULT_NOPAGE;
->+}
->+
->+static const struct vm_operations_struct ion_vma_ops =3D {
->+	.open =3D ion_vm_open,
->+	.close =3D ion_vm_close,
->+	.fault =3D ion_vm_fault,
->+};
->+
->+static int ion_init_fault_pages(struct ion_buffer *buffer)
->+{
->+	int num_pages =3D PAGE_ALIGN(buffer->size) / PAGE_SIZE;
->+	struct scatterlist *sg;
->+	int i, j, k =3D 0;
->+	struct sg_table *table =3D buffer->sg_table;
->+
->+	buffer->pages =3D vmalloc(sizeof(struct page *) * num_pages);
->+	if (!buffer->pages)
->+		return -ENOMEM;
->+
->+	for_each_sg(table->sgl, sg, table->nents, i) {
->+		struct page *page =3D sg_page(sg);
->+
->+		for (j =3D 0; j < sg->length / PAGE_SIZE; j++)
->+			buffer->pages[k++] =3D page++;
->+	}
->+
->+	return 0;
->+}
->+
-> static int ion_mmap(struct dma_buf *dmabuf, struct vm_area_struct *vma)
-> {
-> 	struct ion_buffer *buffer =3D dmabuf->priv;
->@@ -278,12 +399,31 @@ static int ion_mmap(struct dma_buf *dmabuf, struct v=
-m_area_struct *vma)
-> 		return -EINVAL;
-> 	}
->
->-	if (!(buffer->flags & ION_FLAG_CACHED))
->-		vma->vm_page_prot =3D pgprot_writecombine(vma->vm_page_prot);
->-
-> 	mutex_lock(&buffer->lock);
->+
->+	if (!ion_buffer_cached(buffer)) {
->+		if (!ion_buffer_uncached_clean(buffer)) {
->+			if (!buffer->pages)
->+				ret =3D ion_init_fault_pages(buffer);
->+
->+			if (ret)
->+				goto end;
->+
->+			vma->vm_private_data =3D buffer;
->+			vma->vm_ops =3D &ion_vma_ops;
->+			vma->vm_flags |=3D VM_IO | VM_PFNMAP | VM_DONTEXPAND |
->+					 VM_DONTDUMP;
->+			__ion_vm_open(vma, false);
->+		} else {
->+			vma->vm_page_prot =3D
->+				pgprot_writecombine(vma->vm_page_prot);
->+		}
->+	}
->+
-> 	/* now map it to userspace */
-> 	ret =3D buffer->heap->ops->map_user(buffer->heap, buffer, vma);
->+
->+end:
-> 	mutex_unlock(&buffer->lock);
->
-> 	if (ret)
->diff --git a/drivers/staging/android/ion/ion.h b/drivers/staging/android/i=
-on/ion.h
->index c006fc1e5a16..438c9f4fa125 100644
->--- a/drivers/staging/android/ion/ion.h
->+++ b/drivers/staging/android/ion/ion.h
->@@ -44,6 +44,11 @@ struct ion_platform_heap {
-> 	void *priv;
-> };
->
->+struct ion_vma_list {
->+	struct list_head list;
->+	struct vm_area_struct *vma;
->+};
->+
-> /**
->  * struct ion_buffer - metadata for a particular buffer
->  * @ref:		reference count
->@@ -59,6 +64,7 @@ struct ion_platform_heap {
->  * @kmap_cnt:		number of times the buffer is mapped to the kernel
->  * @vaddr:		the kernel mapping if kmap_cnt is not zero
->  * @sg_table:		the sg table for the buffer if dmap_cnt is not zero
->+ * @vmas:		list of vma's mapping for uncached buffer
->  */
-> struct ion_buffer {
-> 	union {
->@@ -76,6 +82,9 @@ struct ion_buffer {
-> 	void *vaddr;
-> 	struct sg_table *sg_table;
-> 	struct list_head attachments;
->+	struct list_head vmas;
->+	struct page **pages;
->+	bool uncached_clean;
-> };
->
-> void ion_buffer_destroy(struct ion_buffer *buffer);
->--=20
->1.9.1
->
->
->Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
->a Linux Foundation Collaborative Project
->
+	M.
+
+> 
+> [    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-v3-its.c:1696 its_init+0x36c/0x608
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc3-jang+ #69
+> [    0.000000] pstate: 60000089 (nZCv daIf -PAN -UAO)
+> [    0.000000] pc : its_init+0x36c/0x608
+> [    0.000000] lr : its_init+0x368/0x608
+> [    0.000000] sp : ffff000008e53c60
+> [    0.000000] x29: ffff000008e53c60 x28: ffff7dfffe6807a4 
+> [    0.000000] x27: 0000000000000001 x26: ffff80267b4c2100 
+> [    0.000000] x25: ffff000008ffe930 x24: ffff000008e5d9c8 
+> [    0.000000] x23: ffff80267bc10300 x22: ffff000008e5d9c8 
+> [    0.000000] x21: ffff000008e59000 x20: ffff000008f12000 
+> [    0.000000] x19: ffff000008ffe000 x18: ffffffffffffffff 
+> [    0.000000] x17: 0000000000000009 x16: 0000000000000000 
+> [    0.000000] x15: ffff000008e59648 x14: ffff000088fa616f 
+> [    0.000000] x13: ffff000008fa617d x12: ffff000008e7e000 
+> [    0.000000] x11: ffff000008e53900 x10: ffff000008e59eb0 
+> [    0.000000] x9 : ffff000008e3e018 x8 : ffff00000875ac58 
+> [    0.000000] x7 : 206f6e203a746e65 x6 : 000000000000018c 
+> [    0.000000] x5 : 0000000000000001 x4 : 0000000000000000 
+> [    0.000000] x3 : 0000000000000001 x2 : 4f419eae5e0eb800 
+> [    0.000000] x1 : 0000000000000000 x0 : 00000000ffffffed 
+> [    0.000000] Call trace:
+> [    0.000000]  its_init+0x36c/0x608
+> [    0.000000]  gic_init_bases+0x288/0x300
+> [    0.000000]  gic_acpi_init+0x124/0x248
+> [    0.000000]  acpi_match_madt+0x4c/0x88
+> [    0.000000]  acpi_table_parse_entries_array+0x134/0x220
+> [    0.000000]  acpi_table_parse_entries+0x70/0x98
+> [    0.000000]  acpi_table_parse_madt+0x40/0x50
+> [    0.000000]  __acpi_probe_device_table+0x88/0xe4
+> [    0.000000]  irqchip_init+0x38/0x40
+> [    0.000000]  init_IRQ+0xcc/0x100
+> [    0.000000]  start_kernel+0x2fc/0x490
+> [    0.000000] ---[ end trace 41868d15bb5cf8f6 ]---
+> 
+> --Jan
+> 
+
+
+-- 
+Jazz is not dead. It just smells funny...
