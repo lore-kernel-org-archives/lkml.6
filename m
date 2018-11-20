@@ -2,116 +2,139 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37EEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C355FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9696120870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79C33208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 07:04:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pQBWyHJ+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9696120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kVAxWiqz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C33208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbeKTRZR (ORCPT
+        id S1732484AbeKTRbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 12:25:17 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34856 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731443AbeKTRZR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 12:25:17 -0500
-Received: by mail-it1-f193.google.com with SMTP id v11so1994848itj.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 22:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=i3PwowH+vLolCmpbpViKW5ox7LPqkilUaDWH43SyWCM=;
-        b=pQBWyHJ+JyPqkCF9s7Fr40XVrww7wUYDiW3Ha4bBgGgyh4Vg3T3DKQt2uh0063q6Lz
-         6l3UFNPoLYYWOL4kE17LnhDW4g5tIwtm3S0vmBv24lhYcmdlQ3mgIJHdHQZjr3OmpPdv
-         yMUqnrMMvt4XKQwRF1wf3Q6FbfAluSIkl706G0JizUEbBB0ZO8UYePsZdYXyYfKVLcpW
-         Dwl3vtev+6oK6IxGmMxEwpFLPpUcHQSEMpcB5E+sldWQw92Dhz0KaT199DWNPNPa4+ml
-         Mj/X4m9ZikJ0koqI67jbxDL2DvL0rooobxL53sy3OYJwvATHZTZOdsrACkxosqDjlDo6
-         ZLvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=i3PwowH+vLolCmpbpViKW5ox7LPqkilUaDWH43SyWCM=;
-        b=ps8D8v3f2rPgPBxqBQPrH9OyYMXh80UXfA/WPmlA9c8pJ6whkUlESiSH42U6gj6VRb
-         paR6bh33cN8txFjZ4wPIpfjfL8ox7yfU7RP+O28h2jUq5Z71hlE5NlVHMLSTnd8zwmwp
-         72il1H/8pfvk9CbmFDiDxFKec6cPG/lccFj894m/vFWMjwWXhoQieKIYNK0iEQbAy5vL
-         b+jhKL5aPLmp4AP8YcEk9q0RXCl4b1oIFPPmtwJAylg+8VtcoBPVVQbpXT/EGUs+agVr
-         k0igrFSIinfXefRFDsUWfJg6Fyh6tPNj+m2Ma+sZKyq+xqwn5evvVxmCEMeqiiddd8Zm
-         fVwQ==
-X-Gm-Message-State: AA+aEWYHafJEo4lcScajDNCKuS2OGcthp2YyZkPPkT2Bfd703t/I7+Qv
-        nf+eBhZq5GGg+6f6vxxZxWjIlwVC9SECvQRDZmf9Tg==
-X-Google-Smtp-Source: AJdET5ePW7bS3yjeh6nKor3VPsW9kVVb6o86SXtbYzM8MMx4xXd6JQt+rwWNkE/Fr0csNi/0CcORJ7eZaHViuYxryxM=
-X-Received: by 2002:a24:b009:: with SMTP id d9-v6mr1083216itf.166.1542697063832;
- Mon, 19 Nov 2018 22:57:43 -0800 (PST)
+        Tue, 20 Nov 2018 12:31:52 -0500
+Received: from mail-eopbgr130079.outbound.protection.outlook.com ([40.107.13.79]:54068
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728703AbeKTRbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 12:31:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZfXx6xDYWF7P56tM56/SbE0PWAFn7bhkrkRGHN5UZJ4=;
+ b=kVAxWiqz9zaH1BnMDl85qYqSSup/7dTRKFB7i8pd8M34WkCCNdbdeqspJKp9ZrivSk8ysUWHDS1dXcXbFiVl3u1PgNPYk7QrWw5BzUXDG8V7hR5RfSnkC3uhixlFR+2zK3g0bOq4JkXcHMnD5agFZtHVVcFvDvi6WkFP+kMMWbw=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3690.eurprd04.prod.outlook.com (52.134.70.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Tue, 20 Nov 2018 07:04:13 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b%2]) with mapi id 15.20.1294.048; Tue, 20 Nov 2018
+ 07:04:13 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Topic: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Index: AQHUa2Ref+fMFTxEzkOrPUZd06/1XqVYZ5yw
+Date:   Tue, 20 Nov 2018 07:04:13 +0000
+Message-ID: <DB3PR0402MB3916F18E9BA6F2D885A3D0E2F5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3690;6:8nT1b+MMa3X4zBWU3l8wdNf+5Cxx+DbudignnYQszDIqerLw5kMZnzU2uuDRtKgpCnCk7u2efWOp+wBHHFbeu98mY+AjESAGvxxUSBwObUsBboIAF0Ems0tA6fIf7VqEnEalTscM3THduXeppMuZ2TDlGCpe+++EHG0GNVFCSWX5TC/r7RrTo61LilZP2eJ5cuBqlx07YTlO1BwQCLWb5zBSywzEjc127UAsSP4VAilM4x6wdacvJH8iDJAKRi32L635qfAU94L6Uo/aXuOWR76ofbx0VV7hRvbzuyBgQ1sASl55JPh+EEl9GLImZKPapcvkYk0WyPFO407DiK2+NmJci87ZNvow9H2bH+z6WY/odYfBbEHNHrUydfWf39fghhIncOGAD0YE5C4pjxvQIWDlVxIY6etUZ1PVOOsUm/NhflUVnIGI6lVJmiocr/TrA1asaIrKvTDqes/+KorcdA==;5:jH8eXZxa2a3qjyIMbUXl90V9T63ZsaHQJps3EKtSN5v7vR1lzDJ8uY840xbrXiApvyyA4JYVUz8oGbbj60S1t2DdBedrq6x/QRyV/0GGx/CucdK1hG/yka5S77fok1i565G8Psc0bDjjIpuRFtnQpM+SCKzFAGzmG2t65FivIn0=;7:CdqEoIGUeyjhmKmhU6jpZyNiXNPLx0tBGZnY+gHXoN1+FSbO3oxAoC1po9F6L+50DjNFQQBABqRLeffKIwHddxU3Z8w66qQoMZjsBpEoe6NttqPoaWDyZoorrOfrT1BRogKlr7y6eY033R0KACRwIQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: e7db5ad3-79d0-4ab3-d9ec-08d64eb660b7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3690;
+x-ms-traffictypediagnostic: DB3PR0402MB3690:
+x-microsoft-antispam-prvs: <DB3PR0402MB3690474D932EE212AF9156FEF5D90@DB3PR0402MB3690.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3690;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3690;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(346002)(366004)(376002)(13464003)(189003)(199004)(9686003)(68736007)(11346002)(55016002)(74316002)(446003)(2201001)(7696005)(53936002)(6246003)(97736004)(305945005)(2900100001)(25786009)(486006)(14444005)(256004)(44832011)(3846002)(476003)(86362001)(66066001)(6116002)(26005)(186003)(102836004)(316002)(5660300001)(33656002)(2906002)(6436002)(53546011)(71190400001)(7736002)(6506007)(2501003)(76176011)(81156014)(81166006)(105586002)(8676002)(4326008)(106356001)(8936002)(478600001)(14454004)(110136005)(39060400002)(229853002)(71200400001)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3690;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: AVuhakgwYssNig1UQLAKzNlOV562hlycUmi/irKNGf6ctwAhYTbgCFrWP/HMW2Xwu6UuL9L1Uzr0qCVc4Bbh6fr9J7AadlFJzTQM+bG+R6BV6XRskiCEtfqxwg5Mthvj1yAzNVOY/2Xjpmx2mKIv7kLC0qOfXtWGx8W/JktZ9iTtu5KOrUnngpg2d4gnRsWL/hewFE7W4OfnoloH3Xo6Gd+blgTjyXjl2++o1iddtDwRTs/PrKGGCQQJN9A8vaW9WEdz2gm0UWRmhawEEh9Z4hojmrSlefR5PMbtCQd1dwwok5OERyUtIyWhSI1tRnvnU7TmH9pYBHrj5l5fp/4oLRBhwQgqX12L2u6Sc2sBL2k=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Mon, 19 Nov 2018 22:57:23
- -0800 (PST)
-In-Reply-To: <20181117140356.GA29895@fieldses.org>
-References: <000000000000222b58057a7d9f39@google.com> <9d9ad7f2781bf15af4bd6ccc9feee35c7cd17979.camel@kernel.org>
- <87bm6svhhl.fsf@notabene.neil.brown.name> <b49e02d54460c79c4e5472983f6b9390005881b8.camel@kernel.org>
- <CACT4Y+Z3zM0z9PScAKjyjspu35B-6OgTT_qEwc+AB_MFzJkL0A@mail.gmail.com>
- <87bm6pewnm.fsf@notabene.neil.brown.name> <CACT4Y+Ysn70kTSgp_KZ5aRGuiNK0wUcqbjAH8xBJ8MqV+mFyqQ@mail.gmail.com>
- <c76712278e2d7f5c4c8cfbab687a941bf493b0c6.camel@kernel.org> <20181117140356.GA29895@fieldses.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 20 Nov 2018 07:57:23 +0100
-Message-ID: <CACT4Y+ag3mJNGUkjHQSyikT9xMJSjuY3fhSJ-2QH0eL1bTPhYw@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in locks_delete_block
-To:     Bruce Fields <bfields@fieldses.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@suse.com>,
-        syzbot <syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7db5ad3-79d0-4ab3-d9ec-08d64eb660b7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 07:04:13.1969
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3690
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 17, 2018 at 3:03 PM, Bruce Fields <bfields@fieldses.org> wrote:
-> On Sat, Nov 17, 2018 at 08:33:27AM -0500, Jeff Layton wrote:
->> Thanks for the explanation, Dmitry. I've added the tag to the patch in
->> my tree. It should show up in linux-next soon.
->>
->> I still find it a little misleading to say that syzbot reported a bug
->> when it actually found a bug inside an earlier version of the patch, but
->> I'll just learn to get over it.
->
-> The usual tag for someone that found a bug in an earlier version of a
-> patch would be Reviewed-by:.  Is there any reason we can't use that
-> here?  The "syzbot+..." email should be enough on its own, I can't see a
-> reason why their scripts would need to require a particular tag.  Or
-> maybe we could use Tested-by:, or some other tag made up for this case?
->
-> I do worry that someone who sees "Reported-by:..." might for example
-> mistakenly assume that it would help to backport that patch if they see
-> a similar-looking oops.
-
-I see. It may also be picked by scripts that detects patches that need
-to be backported to stable because of the "Reported-by: syzbot" tag.
-This is somewhat unfortunate.
-
-There is no problem parsing another tag on syzbot side. Does Tested-by
-look good to you? If it found a bug in the patch and then it was
-fixed, Tested-by looks reasonable. And we also detect
-Reported-and-tested-by already because that's what syzbot suggests
-after it tested a proposed fix for a bug.
-
-I am somewhat concerned how to spread this information across all
-kernel developers. There is effectively no way to do this. We can't
-expect people to read docs, they generally don't. I guess I just
-document this at "See https://goo.gl/tpsmEJ for more information" and
-then we can point other people there if/when this concern pops up
-again.
+R2VudGxlIFBpbmcuLi4NCg0KQmVzdCBSZWdhcmRzIQ0KQW5zb24gSHVhbmcNCg0KPiAtLS0tLU9y
+aWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBBbnNvbiBIdWFuZw0KPiBTZW50OiAyMDE4xOox
+MNTCMjTI1SAxNDo0MA0KPiBUbzogcnVpLnpoYW5nQGludGVsLmNvbTsgZWR1YmV6dmFsQGdtYWls
+LmNvbTsgbGludXgtcG1Admdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnDQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBueHAuY29tPg0KPiBTdWJqZWN0
+OiBbUEFUQ0hdIHRoZXJtYWw6IGlteDogZml4IGZvciBkZXBlbmRlbmN5IG9uIGNwdS1mcmVxDQo+
+IA0KPiBUaGUgdGhlcm1hbCBkcml2ZXIgaXMgYSBzdGFuZGFsb25lIGRyaXZlciBmb3IgbW9uaXRv
+cmluZyBTb0MgdGVtcGVyYXR1cmUgYnkNCj4gZW5hYmxpbmcgdGhlcm1hbCBzZW5zb3IsIHNvIGl0
+IGNhbiBiZSBlbmFibGVkIGV2ZW4gd2hlbiBDT05GSUdfQ1BVX0ZSRVEgaXMNCj4gTk9UIHNldC4g
+U28gcmVtb3ZlIHRoZSBkZXBlbmRlbmN5IHdpdGggQ1BVX1RIRVJNQUwuDQo+IA0KPiBBZGQgQ09O
+RklHX0NQVV9GUkVRIGNoZWNrIGZvciBjcHUtZnJlcSByZWxhdGVkIG9wZXJhdGlvbiBpbiB0aGVy
+bWFsIGRyaXZlcg0KPiB0byBtYWtlIHRoZXJtYWwgZHJpdmVyIHByb2JlIHN1Y2Nlc3NmdWxseSB3
+aGVuIENPTkZJR19DUFVfRlJFUSBpcyBOT1QNCj4gc2V0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
+QW5zb24gSHVhbmcgPEFuc29uLkh1YW5nQG54cC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy90aGVy
+bWFsL0tjb25maWcgICAgICAgfCAyICstDQo+ICBkcml2ZXJzL3RoZXJtYWwvaW14X3RoZXJtYWwu
+YyB8IDQgKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKyksIDEgZGVsZXRp
+b24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3RoZXJtYWwvS2NvbmZpZyBiL2RyaXZl
+cnMvdGhlcm1hbC9LY29uZmlnIGluZGV4DQo+IDE3NzVkNDQuLmM4YTYzNTIgMTAwNjQ0DQo+IC0t
+LSBhL2RyaXZlcnMvdGhlcm1hbC9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC9LY29u
+ZmlnDQo+IEBAIC0yMTIsNyArMjEyLDcgQEAgY29uZmlnIEhJU0lfVEhFUk1BTA0KPiANCj4gIGNv
+bmZpZyBJTVhfVEhFUk1BTA0KPiAgCXRyaXN0YXRlICJUZW1wZXJhdHVyZSBzZW5zb3IgZHJpdmVy
+IGZvciBGcmVlc2NhbGUgaS5NWCBTb0NzIg0KPiAtCWRlcGVuZHMgb24gKEFSQ0hfTVhDICYmIENQ
+VV9USEVSTUFMKSB8fCBDT01QSUxFX1RFU1QNCj4gKwlkZXBlbmRzIG9uIEFSQ0hfTVhDIHx8IENP
+TVBJTEVfVEVTVA0KPiAgCWRlcGVuZHMgb24gTlZNRU0gfHwgIU5WTUVNDQo+ICAJZGVwZW5kcyBv
+biBNRkRfU1lTQ09ODQo+ICAJZGVwZW5kcyBvbiBPRg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy90
+aGVybWFsL2lteF90aGVybWFsLmMgYi9kcml2ZXJzL3RoZXJtYWwvaW14X3RoZXJtYWwuYw0KPiBp
+bmRleCAxNTY2MTU0Li44NzM4NmQxIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3RoZXJtYWwvaW14
+X3RoZXJtYWwuYw0KPiArKysgYi9kcml2ZXJzL3RoZXJtYWwvaW14X3RoZXJtYWwuYw0KPiBAQCAt
+NjQ4LDYgKzY0OCw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkDQo+IG9mX2lt
+eF90aGVybWFsX21hdGNoW10gPSB7ICB9OyAgTU9EVUxFX0RFVklDRV9UQUJMRShvZiwNCj4gb2Zf
+aW14X3RoZXJtYWxfbWF0Y2gpOw0KPiANCj4gKyNpZmRlZiBDT05GSUdfQ1BVX0ZSRVENCj4gIC8q
+DQo+ICAgKiBDcmVhdGUgY29vbGluZyBkZXZpY2UgaW4gY2FzZSBubyAjY29vbGluZy1jZWxscyBw
+cm9wZXJ0eSBpcyBhdmFpbGFibGUgaW4NCj4gICAqIENQVSBub2RlDQo+IEBAIC02NjgsNiArNjY5
+LDcgQEAgc3RhdGljIGludCBpbXhfdGhlcm1hbF9yZWdpc3Rlcl9sZWdhY3lfY29vbGluZyhzdHJ1
+Y3QNCj4gaW14X3RoZXJtYWxfZGF0YSAqZGF0YSkNCj4gDQo+ICAJcmV0dXJuIDA7DQo+ICB9DQo+
+ICsjZW5kaWYNCj4gDQo+ICBzdGF0aWMgaW50IGlteF90aGVybWFsX3Byb2JlKHN0cnVjdCBwbGF0
+Zm9ybV9kZXZpY2UgKnBkZXYpICB7IEBAIC03NDMsNg0KPiArNzQ1LDcgQEAgc3RhdGljIGludCBp
+bXhfdGhlcm1hbF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCXJlZ21h
+cF93cml0ZShtYXAsIGRhdGEtPnNvY2RhdGEtPnNlbnNvcl9jdHJsICsgUkVHX1NFVCwNCj4gIAkJ
+ICAgICBkYXRhLT5zb2NkYXRhLT5wb3dlcl9kb3duX21hc2spOw0KPiANCj4gKyNpZmRlZiBDT05G
+SUdfQ1BVX0ZSRVENCj4gIAlkYXRhLT5wb2xpY3kgPSBjcHVmcmVxX2NwdV9nZXQoMCk7DQo+ICAJ
+aWYgKCFkYXRhLT5wb2xpY3kpIHsNCj4gIAkJcHJfZGVidWcoIiVzOiBDUFVGcmVxIHBvbGljeSBu
+b3QgZm91bmRcbiIsIF9fZnVuY19fKTsgQEAgLTc1NSw2DQo+ICs3NTgsNyBAQCBzdGF0aWMgaW50
+IGlteF90aGVybWFsX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAJCQki
+ZmFpbGVkIHRvIHJlZ2lzdGVyIGNwdWZyZXEgY29vbGluZyBkZXZpY2U6ICVkXG4iLCByZXQpOw0K
+PiAgCQlyZXR1cm4gcmV0Ow0KPiAgCX0NCj4gKyNlbmRpZg0KPiANCj4gIAlkYXRhLT50aGVybWFs
+X2NsayA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LCBOVUxMKTsNCj4gIAlpZiAoSVNfRVJSKGRh
+dGEtPnRoZXJtYWxfY2xrKSkgew0KPiAtLQ0KPiAyLjcuNA0KDQo=
