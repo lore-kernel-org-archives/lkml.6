@@ -2,252 +2,600 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEEA4C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F8DC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32075206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC3F020831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:53:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=lemmela.net header.i=@lemmela.net header.b="pzZkF1Wk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32075206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemmela.net
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E9dyXCfN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3F020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbeKUEXX (ORCPT
+        id S1730667AbeKUEXa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:23:23 -0500
-Received: from mail1.kuutio.org ([92.222.216.83]:34466 "EHLO mail1.kuutio.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbeKUEWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:22:54 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail1.kuutio.org (Postfix) with ESMTP id 292E920791;
-        Tue, 20 Nov 2018 18:52:31 +0100 (CET)
-Authentication-Results: mail1.kuutio.org (amavisd-new);
-        dkim=pass (4096-bit key) reason="pass (just generated, assumed good)"
-        header.d=lemmela.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lemmela.net; h=
-        references:in-reply-to:x-mailer:message-id:date:date:subject
-        :subject:from:from:received:received; s=dkim; t=1542736350; x=
-        1545328351; bh=McHTmJfwqv5vT4ak3tr5W+9VZ0cs/KhRnl4KNDz2q2E=; b=p
-        zZkF1WklDQo/6xhMiQjkiOFYPi6md2vt0MNYfTYA1xGFis2nklWby8iWH80Us0jS
-        LoXoUstHkxihnhnulB6HHNCIXBM5sTuvCP3mPmZ/oURpnPBWuY7K2gYWbGT4LKxQ
-        nNLNUHdQr4+uP1jlHFFfQN9YzlfatCUwq+b3ax7GwHcMQYRSwcOUoRuBNcV8+nrZ
-        P7z/KSAb3MX2ItcFEKXaijZvVq5xQlcECQKhxC/MT4YNNPjamXFB1J043Jo9GadW
-        Wdfi/s9fefOrghBGQ4owj/S+wuh/YDRYFkCSgmBoHepRiub6OkNdm29pkAOmBOhV
-        sMS3pAOonQT+sX6NoRmv8cdSLEalVU97t5s1Xj34N88zAFsuTKPLdpRdF/Y7eT5S
-        7RtP+y2qtceWAcv8Q2F96xOIu0jXmFHi/Wyg+o6awJZvUPeFITlzEiAH9+X1FDEp
-        Ge3MxnU9j3aclQbs4Km29FjBgUgC4OP7pvW7NVeHG7JMyyCZHdyw24dI37Gdx/9h
-        lhQcK0GjuP9NtJYXN+ndQKTdFkdEPi0o88zIFIpEVzJVlb5wGgv4qiO6HVCmz7Hc
-        olhHsyNSsKivXrHlE9PMpGx8myyMfRYNek8cpwwwqYu8yrj+lH3Sw3T82ArqG7JS
-        baB+Qc4VHvYuGJCVBxB2l/Oo4JIv53kvg1nxleC7XA=
-X-Virus-Scanned: amavisd-new at kuutio.org
-Received: from mail1.kuutio.org ([127.0.0.1])
-        by localhost (mail1.kuutio.org [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id jhQKm35LsGka; Tue, 20 Nov 2018 18:52:30 +0100 (CET)
-Received: from build.kuutio.org (unknown [IPv6:2001:998:13:e4::69])
-        by mail1.kuutio.org (Postfix) with ESMTPSA id 2CC6820926;
-        Tue, 20 Nov 2018 18:52:29 +0100 (CET)
-From:   Oskari Lemmela <oskari@lemmela.net>
-To:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Quentin Schulz <quentin.schulz@bootlin.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Oskari Lemmela <oskari@lemmela.net>
-Subject: [PATCH v6 6/8] power: supply: add AC power supply driver for AXP813
-Date:   Tue, 20 Nov 2018 19:52:09 +0200
-Message-Id: <20181120175211.3913-7-oskari@lemmela.net>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181120175211.3913-1-oskari@lemmela.net>
-References: <20181120175211.3913-1-oskari@lemmela.net>
+        Tue, 20 Nov 2018 23:23:30 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44605 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727182AbeKUEX3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:23:29 -0500
+Received: by mail-pl1-f196.google.com with SMTP id s5-v6so1402922plq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:53:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nOH4yTuEH8ged2dL4qd4DxqOeca+SesrNIymIiQJNuQ=;
+        b=E9dyXCfN2skhZ9blSa2rqFLFyltlM+CzgBrQV6yNEq9XKdcZdGrxh1lnKYyo90anOk
+         41vJZPOQhS0e0IQfZheJ/YeiCs7TmdpFmwN+j9fuIhDhlyemSinL0miadp7K97JJYotX
+         PoD0KLRDZU0xb/4bT2ruLZdS840QUpSqo/Wak=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nOH4yTuEH8ged2dL4qd4DxqOeca+SesrNIymIiQJNuQ=;
+        b=I1gOi6LHrPS5BTf5xH/iTDBugTukrJGz4gYdPTQy+CjgFY5z0Y7vYtT5q77RxE3gSM
+         JENX/DIN+vEPj3xmMxLzMQtWmTkuvan5xybAR9i0NjRkEw2Jk5Whq2G+zjTAunbpk0sb
+         jr+qsgJR3Te/apT2GeKyHhPv5wKS4qNrEioCbRwtO3K6yCYw7ct2cIp6NxLsPzw6RRCB
+         HVKvSb7Mlc0moAmJEh/SvOSVny0nZHc1ApVos9yJq7kSppOitwL2t1akiiVabD0G7Yaa
+         O0ycLXqXH1TtufjkD1T4fCfjo4R/Zs0gnmid6zXSGtWMZRm+JEEfmSaHWUDSq4T4TIOn
+         GKag==
+X-Gm-Message-State: AA+aEWbPnS1zMHgFxWDRd9NkqJ0892jAy2RbcKPBR+cZOKA35+Zwuikc
+        aU63kkMjOx1kKXMebnvbm1J+LQ==
+X-Google-Smtp-Source: AFSGD/W7DeN44FF5smHAvsWJV5Fbuv0ub+nbNF5uGgjVvAQSsaNvHgyZJix1/I1E+atpHhEZj4/hJg==
+X-Received: by 2002:a63:8441:: with SMTP id k62mr2772010pgd.392.1542736386999;
+        Tue, 20 Nov 2018 09:53:06 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id k129sm51807764pgk.29.2018.11.20.09.53.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 09:53:05 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>, evgreen@chromium.org,
+        swboyd@chromium.org, Dmitry Osipenko <digetx@gmail.com>,
+        ryandcase@chromium.org, David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] regulator: core: Only count load for enabled consumers
+Date:   Tue, 20 Nov 2018 09:52:53 -0800
+Message-Id: <20181120175255.227783-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-AXP813 and AXP803 PMICs can control input current and minimum voltage.
+In general when the consumer of a regulator requests that the
+regulator be disabled it no longer will be drawing much load from the
+regulator--it should just be the leakage current and that should be
+very close to 0.
 
-Both of these values are configurable.
+Up to this point the regulator framework has continued to count a
+consumer's load request for disabled regulators.  This has led to code
+patterns that look like this:
 
-Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+  enable_my_thing():
+    regular_set_load(reg, load_uA)
+    regulator_enable(reg)
+
+  disable_my_thing():
+    regulator_disable(reg)
+    regulator_set_load(reg, 0)
+
+Sometimes disable_my_thing() sets a nominal (<= 100 uA) load instead
+of setting a 0 uA load.  I will make the assertion that nearly all (if
+not all) places where we set a nominal load of 100 uA or less we end
+up with a result that is the same as if we had set a load of 0 uA.
+Specifically:
+- The whole point of setting the load is to help set the operating
+  mode of the regulator.  Higher loads may need less efficient
+  operating modes.
+- The only time this matters at all is if there is another consumer of
+  the regulator that wants the regulator on.  If there are no other
+  consumers of the regulator then the regulator will turn off and we
+  don't care about the operating mode.
+- If there's another consumer that actually wants the regulator on
+  then presumably it is requesting a load that makes our nominal
+  <= 100 uA load insignificant.
+
+A quick survey of the existing callers to regulator_set_load() to see
+how everyone uses it:
+
+--
+
+Places that set a load of 0 on every disable:
+  drivers/bluetooth/hci_qca.c
+  drivers/net/wireless/ath/ath10k/snoc.c
+  drivers/remoteproc/qcom_q6v5_mss.c
+  drivers/scsi/ufs/ufshcd.c
+
+Places that set a nominal disable load (<= 100 uA):
+  drivers/gpu/drm/msm/dsi/dsi_host.c:
+    git grep -A10 'struct msm_dsi_config' | grep -A10 regs | grep '{.*}'
+  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:
+    git grep -A10 'struct msm_dsi_phy_cfg' | grep -A10 regs | grep '{.*}'
+  drivers/gpu/drm/msm/edp/edp_ctrl.c
+
+Places that appear to continue to request load when disabled; I
+believe this is not intentional and is a bug.  AKA: either the
+regulator will be left in a higher power operating mode sometimes when
+it doesn't need to or it is understood that there are no other
+consumers of these rails and thus the regulator_set_load() shouldn't
+have been needed at all (we should just force the regulator to high
+power all the time in that case):
+  drivers/phy/qualcomm/phy-qcom-ufs.c
+  drivers/phy/qualcomm/phy-qcom-usb-hs.c
+  drivers/remoteproc/qcom_q6v5_pas.c
+  drivers/remoteproc/qcom_wcnss.c (*)
+  drivers/remoteproc/qcom_wcnss_iris.c
+
+(*) Quick glance makes me feel like this driver is buggy since
+wcnss_start() enables regulators but wcnss_stop() doesn't disable
+them.
+
+--
+
+Given the above argument, I propose changing the regulator core to
+only consider loads from consumers that are currently enabled.  If
+later we find a use case where we really need to count a non-zero load
+when a consumer requests that a regulator be disabled we could just
+count load like this in the system_load for the regulator.  If somehow
+that's not possible I suppose we could add consider adding a new API
+regulator_set_disabled_load().
+
+In order to accomplish the above, we need to start tracking the enable
+count per regulator consumer (it used to be tracked only globally
+across all consumers of a given regulator).  This means:
+- We can (and will) spit errors out for code that used to be invalid
+  but was never caught before.  Specifically if someone leaves a
+  regulator enabled and calls regulator_put() we'll yell.  We'll also
+  yell if a single consumer calls more disables than enables.
+- We now need to deal with "always-on" regulators slightly
+  differently.  It's assumed that an always-on regulator could still
+  transition between power modes, so if all of the active consumers of
+  an always-on regulator don't need the regulator on we should still
+  remove their requested load from the total.  The core used to have
+  some optimizations where it didn't bother keeping track of the
+  enable counts for always-on regulators because they were, well,
+  always on.  While we could keep the optimization still for some
+  cases, it's cleaner to just remove it.  A later patch will attempt
+  to get some efficiency back by not propogating enables up
+  unnecessarily.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
- drivers/power/supply/axp20x_ac_power.c | 94 ++++++++++++++++++++++++++
- include/linux/mfd/axp20x.h             |  1 +
- 2 files changed, 95 insertions(+)
+Please give this patch lots of extra review.  It seems to work for me,
+but I haven't done massive amounts of stress testing on it and I don't
+touch every use case of the regulator core.  Thanks!
 
-diff --git a/drivers/power/supply/axp20x_ac_power.c b/drivers/power/supply/axp20x_ac_power.c
-index 0771f951b11f..59b4c8d3b961 100644
---- a/drivers/power/supply/axp20x_ac_power.c
-+++ b/drivers/power/supply/axp20x_ac_power.c
-@@ -27,6 +27,16 @@
- #define AXP20X_PWR_STATUS_ACIN_PRESENT	BIT(7)
- #define AXP20X_PWR_STATUS_ACIN_AVAIL	BIT(6)
+Changes in v2:
+- Squashed in debugfs change (Mark Brown).
+- Took out of the series (Mark Brown).
+- Two typos in the commit message (Marc Gonzalez).
+- In force_disable don't zero enable_count--we don't zero use_count.
+
+ drivers/regulator/core.c         | 193 +++++++++++++++++++++++--------
+ drivers/regulator/internal.h     |   2 +
+ include/linux/regulator/driver.h |   1 -
+ 3 files changed, 144 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 1acf6567f40a..1271b5406ad7 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -99,7 +99,7 @@ struct regulator_supply_alias {
+ };
  
-+#define AXP813_VHOLD_MASK		GENMASK(5, 3)
-+#define AXP813_VHOLD_UV_TO_BIT(x)	((((x) / 100000) - 40) << 3)
-+#define AXP813_VHOLD_REG_TO_UV(x)	\
-+	(((((x) & AXP813_VHOLD_MASK) >> 3) + 40) * 100000)
-+
-+#define AXP813_CURR_LIMIT_MASK		GENMASK(2, 0)
-+#define AXP813_CURR_LIMIT_UA_TO_BIT(x)	(((x) / 500000) - 3)
-+#define AXP813_CURR_LIMIT_REG_TO_UA(x)	\
-+	((((x) & AXP813_CURR_LIMIT_MASK) + 3) * 500000)
-+
- #define DRVNAME "axp20x-ac-power-supply"
+ static int _regulator_is_enabled(struct regulator_dev *rdev);
+-static int _regulator_disable(struct regulator_dev *rdev);
++static int _regulator_disable(struct regulator *regulator);
+ static int _regulator_get_voltage(struct regulator_dev *rdev);
+ static int _regulator_get_current_limit(struct regulator_dev *rdev);
+ static unsigned int _regulator_get_mode(struct regulator_dev *rdev);
+@@ -766,8 +766,10 @@ static ssize_t regulator_total_uA_show(struct device *dev,
+ 	int uA = 0;
  
- struct axp20x_ac_power {
-@@ -102,6 +112,57 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
+ 	regulator_lock(rdev);
+-	list_for_each_entry(regulator, &rdev->consumer_list, list)
+-		uA += regulator->uA_load;
++	list_for_each_entry(regulator, &rdev->consumer_list, list) {
++		if (regulator->enable_count)
++			uA += regulator->uA_load;
++	}
+ 	regulator_unlock(rdev);
+ 	return sprintf(buf, "%d\n", uA);
+ }
+@@ -940,8 +942,10 @@ static int drms_uA_update(struct regulator_dev *rdev)
+ 		return -EINVAL;
  
- 		return 0;
+ 	/* calc total requested load */
+-	list_for_each_entry(sibling, &rdev->consumer_list, list)
+-		current_uA += sibling->uA_load;
++	list_for_each_entry(sibling, &rdev->consumer_list, list) {
++		if (sibling->enable_count)
++			current_uA += sibling->uA_load;
++	}
  
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
-+		ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL, &reg);
-+		if (ret)
-+			return ret;
+ 	current_uA += rdev->constraints->system_load;
+ 
+@@ -2026,6 +2030,9 @@ static void _regulator_put(struct regulator *regulator)
+ 
+ 	lockdep_assert_held_once(&regulator_list_mutex);
+ 
++	/* Docs say you must disable before calling regulator_put() */
++	WARN_ON(regulator->enable_count);
 +
-+		val->intval = AXP813_VHOLD_REG_TO_UV(reg);
+ 	rdev = regulator->rdev;
+ 
+ 	debugfs_remove_recursive(regulator->debugfs);
+@@ -2419,15 +2426,75 @@ static int _regulator_do_enable(struct regulator_dev *rdev)
+ 	return 0;
+ }
+ 
++/**
++ * _regulator_handle_consumer_enable - handle that a consumer enabled
++ * @regulator: regulator source
++ *
++ * Some things on a regulator consumer (like the contribution towards total
++ * load on the regulator) only have an effect when the consumer wants the
++ * regulator enabled.  Explained in example with two consumers of the same
++ * regulator:
++ *   consumer A: set_load(100);       => total load = 0
++ *   consumer A: regulator_enable();  => total load = 100
++ *   consumer B: set_load(1000);      => total load = 100
++ *   consumer B: regulator_enable();  => total load = 1100
++ *   consumer A: regulator_disable(); => total_load = 1000
++ *
++ * This function (together with _regulator_handle_consumer_disable) is
++ * responsible for keeping track of the refcount for a given regulator consumer
++ * and applying / unapplying these things.
++ *
++ * Returns 0 upon no error; -error upon error.
++ */
++static int _regulator_handle_consumer_enable(struct regulator *regulator)
++{
++	struct regulator_dev *rdev = regulator->rdev;
 +
-+		return 0;
++	lockdep_assert_held_once(&rdev->mutex.base);
 +
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		ret = regmap_read(power->regmap, AXP813_ACIN_PATH_CTRL, &reg);
-+		if (ret)
-+			return ret;
++	regulator->enable_count++;
++	if (regulator->uA_load && regulator->enable_count == 1)
++		return drms_uA_update(rdev);
 +
-+		val->intval = AXP813_CURR_LIMIT_REG_TO_UA(reg);
-+		/* AXP813 datasheet defines values 11x as 4000mA */
-+		if (val->intval > 4000000)
-+			val->intval = 4000000;
++	return 0;
++}
 +
-+		return 0;
++/**
++ * _regulator_handle_consumer_disable - handle that a consumer disabled
++ * @regulator: regulator source
++ *
++ * The opposite of _regulator_handle_consumer_enable().
++ *
++ * Returns 0 upon no error; -error upon error.
++ */
++static int _regulator_handle_consumer_disable(struct regulator *regulator)
++{
++	struct regulator_dev *rdev = regulator->rdev;
 +
-+	default:
++	lockdep_assert_held_once(&rdev->mutex.base);
++
++	if (!regulator->enable_count) {
++		rdev_err(rdev, "Underflow of regulator enable count\n");
 +		return -EINVAL;
 +	}
 +
-+	return -EINVAL;
++	regulator->enable_count--;
++	if (regulator->uA_load && regulator->enable_count == 0)
++		return drms_uA_update(rdev);
++
++	return 0;
 +}
 +
-+static int axp813_ac_power_set_property(struct power_supply *psy,
-+					enum power_supply_property psp,
-+					const union power_supply_propval *val)
-+{
-+	struct axp20x_ac_power *power = power_supply_get_drvdata(psy);
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_VOLTAGE_MIN:
-+		if (val->intval < 4000000 || val->intval > 4700000)
-+			return -EINVAL;
-+
-+		return regmap_update_bits(power->regmap, AXP813_ACIN_PATH_CTRL,
-+					  AXP813_VHOLD_MASK,
-+					  AXP813_VHOLD_UV_TO_BIT(val->intval));
-+
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		if (val->intval < 1500000 || val->intval > 4000000)
-+			return -EINVAL;
-+
-+		return regmap_update_bits(power->regmap, AXP813_ACIN_PATH_CTRL,
-+					  AXP813_CURR_LIMIT_MASK,
-+					  AXP813_CURR_LIMIT_UA_TO_BIT(val->intval));
-+
- 	default:
- 		return -EINVAL;
+ /* locks held by regulator_enable() */
+-static int _regulator_enable(struct regulator_dev *rdev)
++static int _regulator_enable(struct regulator *regulator)
+ {
++	struct regulator_dev *rdev = regulator->rdev;
+ 	int ret;
+ 
+ 	lockdep_assert_held_once(&rdev->mutex.base);
+ 
+ 	if (rdev->supply) {
+-		ret = _regulator_enable(rdev->supply->rdev);
++		ret = _regulator_enable(rdev->supply);
+ 		if (ret < 0)
+ 			return ret;
  	}
-@@ -109,6 +170,13 @@ static int axp20x_ac_power_get_property(struct power_supply *psy,
- 	return -EINVAL;
+@@ -2439,9 +2506,9 @@ static int _regulator_enable(struct regulator_dev *rdev)
+ 			goto err_disable_supply;
+ 	}
+ 
+-	/* check voltage and requested load before enabling */
+-	if (regulator_ops_is_valid(rdev, REGULATOR_CHANGE_DRMS))
+-		drms_uA_update(rdev);
++	ret = _regulator_handle_consumer_enable(regulator);
++	if (ret < 0)
++		goto err_disable_supply;
+ 
+ 	if (rdev->use_count == 0) {
+ 		/* The regulator may on if it's not switchable or left on */
+@@ -2450,18 +2517,18 @@ static int _regulator_enable(struct regulator_dev *rdev)
+ 			if (!regulator_ops_is_valid(rdev,
+ 					REGULATOR_CHANGE_STATUS)) {
+ 				ret = -EPERM;
+-				goto err_disable_supply;
++				goto err_consumer_disable;
+ 			}
+ 
+ 			ret = _regulator_do_enable(rdev);
+ 			if (ret < 0)
+-				goto err_disable_supply;
++				goto err_consumer_disable;
+ 
+ 			_notifier_call_chain(rdev, REGULATOR_EVENT_ENABLE,
+ 					     NULL);
+ 		} else if (ret < 0) {
+ 			rdev_err(rdev, "is_enabled() failed: %d\n", ret);
+-			goto err_disable_supply;
++			goto err_consumer_disable;
+ 		}
+ 		/* Fallthrough on positive return values - already enabled */
+ 	}
+@@ -2470,9 +2537,12 @@ static int _regulator_enable(struct regulator_dev *rdev)
+ 
+ 	return 0;
+ 
++err_consumer_disable:
++	_regulator_handle_consumer_disable(regulator);
++
+ err_disable_supply:
+ 	if (rdev->supply)
+-		_regulator_disable(rdev->supply->rdev);
++		_regulator_disable(rdev->supply);
+ 
+ 	return ret;
+ }
+@@ -2492,13 +2562,10 @@ int regulator_enable(struct regulator *regulator)
+ {
+ 	struct regulator_dev *rdev = regulator->rdev;
+ 	struct ww_acquire_ctx ww_ctx;
+-	int ret = 0;
+-
+-	if (regulator->always_on)
+-		return 0;
++	int ret;
+ 
+ 	regulator_lock_dependent(rdev, &ww_ctx);
+-	ret = _regulator_enable(rdev);
++	ret = _regulator_enable(regulator);
+ 	regulator_unlock_dependent(rdev, &ww_ctx);
+ 
+ 	return ret;
+@@ -2537,8 +2604,9 @@ static int _regulator_do_disable(struct regulator_dev *rdev)
  }
  
-+static int axp813_ac_power_prop_writeable(struct power_supply *psy,
-+					  enum power_supply_property psp)
-+{
-+	return psp == POWER_SUPPLY_PROP_VOLTAGE_MIN ||
-+	       psp == POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT;
-+}
-+
- static enum power_supply_property axp20x_ac_power_properties[] = {
- 	POWER_SUPPLY_PROP_HEALTH,
- 	POWER_SUPPLY_PROP_PRESENT,
-@@ -123,6 +191,14 @@ static enum power_supply_property axp22x_ac_power_properties[] = {
- 	POWER_SUPPLY_PROP_ONLINE,
- };
- 
-+static enum power_supply_property axp813_ac_power_properties[] = {
-+	POWER_SUPPLY_PROP_HEALTH,
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_VOLTAGE_MIN,
-+	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-+};
-+
- static const struct power_supply_desc axp20x_ac_power_desc = {
- 	.name = "axp20x-ac",
- 	.type = POWER_SUPPLY_TYPE_MAINS,
-@@ -139,6 +215,16 @@ static const struct power_supply_desc axp22x_ac_power_desc = {
- 	.get_property = axp20x_ac_power_get_property,
- };
- 
-+static const struct power_supply_desc axp813_ac_power_desc = {
-+	.name = "axp813-ac",
-+	.type = POWER_SUPPLY_TYPE_MAINS,
-+	.properties = axp813_ac_power_properties,
-+	.num_properties = ARRAY_SIZE(axp813_ac_power_properties),
-+	.property_is_writeable = axp813_ac_power_prop_writeable,
-+	.get_property = axp20x_ac_power_get_property,
-+	.set_property = axp813_ac_power_set_property,
-+};
-+
- struct axp_data {
- 	const struct power_supply_desc	*power_desc;
- 	bool				acin_adc;
-@@ -154,6 +240,11 @@ static const struct axp_data axp22x_data = {
- 	.acin_adc = false,
- };
- 
-+static const struct axp_data axp813_data = {
-+	.power_desc = &axp813_ac_power_desc,
-+	.acin_adc = false,
-+};
-+
- static int axp20x_ac_power_probe(struct platform_device *pdev)
+ /* locks held by regulator_disable() */
+-static int _regulator_disable(struct regulator_dev *rdev)
++static int _regulator_disable(struct regulator *regulator)
  {
- 	struct axp20x_dev *axp20x = dev_get_drvdata(pdev->dev.parent);
-@@ -234,6 +325,9 @@ static const struct of_device_id axp20x_ac_power_match[] = {
- 	}, {
- 		.compatible = "x-powers,axp221-ac-power-supply",
- 		.data = &axp22x_data,
-+	}, {
-+		.compatible = "x-powers,axp813-ac-power-supply",
-+		.data = &axp813_data,
- 	}, { /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, axp20x_ac_power_match);
-diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-index 517e60eecbcb..2302b620d238 100644
---- a/include/linux/mfd/axp20x.h
-+++ b/include/linux/mfd/axp20x.h
-@@ -266,6 +266,7 @@ enum axp20x_variants {
- #define AXP288_RT_BATT_V_H		0xa0
- #define AXP288_RT_BATT_V_L		0xa1
++	struct regulator_dev *rdev = regulator->rdev;
+ 	int ret = 0;
  
-+#define AXP813_ACIN_PATH_CTRL		0x3a
- #define AXP813_ADC_RATE			0x85
+ 	lockdep_assert_held_once(&rdev->mutex.base);
+@@ -2573,17 +2641,17 @@ static int _regulator_disable(struct regulator_dev *rdev)
  
- /* Fuel Gauge */
+ 		rdev->use_count = 0;
+ 	} else if (rdev->use_count > 1) {
+-		if (regulator_ops_is_valid(rdev, REGULATOR_CHANGE_DRMS))
+-			drms_uA_update(rdev);
+-
+ 		rdev->use_count--;
+ 	}
+ 
++	if (ret == 0)
++		ret = _regulator_handle_consumer_disable(regulator);
++
+ 	if (ret == 0 && rdev->coupling_desc.n_coupled > 1)
+ 		ret = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+ 
+ 	if (ret == 0 && rdev->supply)
+-		ret = _regulator_disable(rdev->supply->rdev);
++		ret = _regulator_disable(rdev->supply);
+ 
+ 	return ret;
+ }
+@@ -2604,13 +2672,10 @@ int regulator_disable(struct regulator *regulator)
+ {
+ 	struct regulator_dev *rdev = regulator->rdev;
+ 	struct ww_acquire_ctx ww_ctx;
+-	int ret = 0;
+-
+-	if (regulator->always_on)
+-		return 0;
++	int ret;
+ 
+ 	regulator_lock_dependent(rdev, &ww_ctx);
+-	ret = _regulator_disable(rdev);
++	ret = _regulator_disable(regulator);
+ 	regulator_unlock_dependent(rdev, &ww_ctx);
+ 
+ 	return ret;
+@@ -2659,10 +2724,17 @@ int regulator_force_disable(struct regulator *regulator)
+ 	int ret;
+ 
+ 	regulator_lock_dependent(rdev, &ww_ctx);
+-	regulator->uA_load = 0;
++
+ 	ret = _regulator_force_disable(regulator->rdev);
++
+ 	if (rdev->coupling_desc.n_coupled > 1)
+ 		regulator_balance_voltage(rdev, PM_SUSPEND_ON);
++
++	if (regulator->uA_load) {
++		regulator->uA_load = 0;
++		ret = drms_uA_update(rdev);
++	}
++
+ 	regulator_unlock_dependent(rdev, &ww_ctx);
+ 
+ 	if (rdev->supply)
+@@ -2679,14 +2751,11 @@ static void regulator_disable_work(struct work_struct *work)
+ 						  disable_work.work);
+ 	struct ww_acquire_ctx ww_ctx;
+ 	int count, i, ret;
++	struct regulator *regulator;
++	int total_count = 0;
+ 
+ 	regulator_lock_dependent(rdev, &ww_ctx);
+ 
+-	BUG_ON(!rdev->deferred_disables);
+-
+-	count = rdev->deferred_disables;
+-	rdev->deferred_disables = 0;
+-
+ 	/*
+ 	 * Workqueue functions queue the new work instance while the previous
+ 	 * work instance is being processed. Cancel the queued work instance
+@@ -2695,11 +2764,22 @@ static void regulator_disable_work(struct work_struct *work)
+ 	 */
+ 	cancel_delayed_work(&rdev->disable_work);
+ 
+-	for (i = 0; i < count; i++) {
+-		ret = _regulator_disable(rdev);
+-		if (ret != 0)
+-			rdev_err(rdev, "Deferred disable failed: %d\n", ret);
++	list_for_each_entry(regulator, &rdev->consumer_list, list) {
++		count = regulator->deferred_disables;
++
++		if (!count)
++			continue;
++
++		total_count += count;
++		regulator->deferred_disables = 0;
++
++		for (i = 0; i < count; i++) {
++			ret = _regulator_disable(regulator);
++			if (ret != 0)
++				rdev_err(rdev, "Deferred disable failed: %d\n", ret);
++		}
+ 	}
++	WARN_ON(!total_count);
+ 
+ 	if (rdev->coupling_desc.n_coupled > 1)
+ 		regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+@@ -2723,14 +2803,11 @@ int regulator_disable_deferred(struct regulator *regulator, int ms)
+ {
+ 	struct regulator_dev *rdev = regulator->rdev;
+ 
+-	if (regulator->always_on)
+-		return 0;
+-
+ 	if (!ms)
+ 		return regulator_disable(regulator);
+ 
+ 	regulator_lock(rdev);
+-	rdev->deferred_disables++;
++	regulator->deferred_disables++;
+ 	mod_delayed_work(system_power_efficient_wq, &rdev->disable_work,
+ 			 msecs_to_jiffies(ms));
+ 	regulator_unlock(rdev);
+@@ -4137,16 +4214,30 @@ EXPORT_SYMBOL_GPL(regulator_get_error_flags);
+  * DRMS will sum the total requested load on the regulator and change
+  * to the most efficient operating mode if platform constraints allow.
+  *
++ * NOTE: when a regulator consumer requests to have a regulator
++ * disabled then any load that consumer requested no longer counts
++ * toward the total requested load.  If the regulator is re-enabled
++ * then the previously requested load will start counting again.
++ *
++ * If a regulator is an always-on regulator then an individual consumer's
++ * load will still be removed if that consumer is fully disabled.
++ *
+  * On error a negative errno is returned.
+  */
+ int regulator_set_load(struct regulator *regulator, int uA_load)
+ {
+ 	struct regulator_dev *rdev = regulator->rdev;
+-	int ret;
++	int old_uA_load;
++	int ret = 0;
+ 
+ 	regulator_lock(rdev);
++	old_uA_load = regulator->uA_load;
+ 	regulator->uA_load = uA_load;
+-	ret = drms_uA_update(rdev);
++	if (regulator->enable_count && old_uA_load != uA_load) {
++		ret = drms_uA_update(rdev);
++		if (ret < 0)
++			regulator->uA_load = old_uA_load;
++	}
+ 	regulator_unlock(rdev);
+ 
+ 	return ret;
+@@ -4317,11 +4408,8 @@ int regulator_bulk_enable(int num_consumers,
+ 	int ret = 0;
+ 
+ 	for (i = 0; i < num_consumers; i++) {
+-		if (consumers[i].consumer->always_on)
+-			consumers[i].ret = 0;
+-		else
+-			async_schedule_domain(regulator_bulk_enable_async,
+-					      &consumers[i], &async_domain);
++		async_schedule_domain(regulator_bulk_enable_async,
++				      &consumers[i], &async_domain);
+ 	}
+ 
+ 	async_synchronize_full_domain(&async_domain);
+@@ -5217,8 +5305,11 @@ static void regulator_summary_show_subtree(struct seq_file *s,
+ 
+ 		switch (rdev->desc->type) {
+ 		case REGULATOR_VOLTAGE:
+-			seq_printf(s, "%37dmA %5dmV %5dmV",
++			seq_printf(s, "%3d %33dmA%c%5dmV %5dmV",
++				   consumer->enable_count,
+ 				   consumer->uA_load / 1000,
++				   consumer->uA_load && !consumer->enable_count ?
++				   '*' : ' ',
+ 				   consumer->voltage[PM_SUSPEND_ON].min_uV / 1000,
+ 				   consumer->voltage[PM_SUSPEND_ON].max_uV / 1000);
+ 			break;
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index 943926a156f2..6017f15c5d75 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -42,6 +42,8 @@ struct regulator {
+ 	unsigned int always_on:1;
+ 	unsigned int bypass:1;
+ 	int uA_load;
++	unsigned int enable_count;
++	unsigned int deferred_disables;
+ 	struct regulator_voltage voltage[REGULATOR_STATES_NUM];
+ 	const char *supply_name;
+ 	struct device_attribute dev_attr;
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 7065031f0846..389bcaf7900f 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -474,7 +474,6 @@ struct regulator_dev {
+ 	struct regmap *regmap;
+ 
+ 	struct delayed_work disable_work;
+-	int deferred_disables;
+ 
+ 	void *reg_data;		/* regulator_dev data */
+ 
 -- 
-2.17.1
+2.19.1.1215.g8438c0b245-goog
 
