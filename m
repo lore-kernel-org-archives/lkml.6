@@ -2,209 +2,107 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8427C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E001C28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD4B2206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:45:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD4B2206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AA077206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:46:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2bkaT4p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA077206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729252AbeKUCP3 convert rfc822-to-8bit (ORCPT
+        id S1728384AbeKUCQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:15:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51172 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbeKUCP3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:15:29 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BDFDC88304;
-        Tue, 20 Nov 2018 15:45:42 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-174.rdu2.redhat.com [10.10.120.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A1A21001F52;
-        Tue, 20 Nov 2018 15:45:41 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: scale the static pool size
-To:     Qian Cai <cai@gmx.us>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux kernel <linux-kernel@vger.kernel.org>
-References: <20181120064254.1594-1-cai@gmx.us>
- <f4c9756e-08c9-ce18-19a8-771977e95ac9@redhat.com>
- <0DFA87D5-2B2D-48A6-933A-B94E6258395A@gmx.us>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <2501687d-a315-3eed-4f2a-2c5f0f49f631@redhat.com>
-Date:   Tue, 20 Nov 2018 10:45:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <0DFA87D5-2B2D-48A6-933A-B94E6258395A@gmx.us>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 20 Nov 2018 15:45:42 +0000 (UTC)
+        Tue, 20 Nov 2018 21:16:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42913 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeKUCQI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 21:16:08 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 64so1171648pfr.9;
+        Tue, 20 Nov 2018 07:46:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kDTNf0YfFqmPIA1/Izli7zQXedYowG6g+6+gdNz3G1k=;
+        b=I2bkaT4pycDlR63CnTw+LcgtoihDjkoAbDAoIEayFGe0O54ZGs+Za/i1NnV9unl2qc
+         n1qEyz6zKhzq85Kx91XmNi9VTOr2yZsC0wySIZUThUoN02M9yaikcbTO+cVSbb6+1R+Y
+         5TIHspzc2e2ldo8K2MrjorO05wOeABzID0Jocr1z2/wO1R1jTVg0wGAjOQ87YAq0Fwpr
+         Q/M0AEJKHFlYsd9Z1G0UvNAL/r/Ml93uGUU0prr5wJ3U/mgYLMHBuYAm9kFdiF9QTXuH
+         BEMP6fTLkePkwiGkanb09ZAKZonqHx2RIgqAwDu16GwDHIM0BCSHIZmly010D6b6B+4/
+         Amng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kDTNf0YfFqmPIA1/Izli7zQXedYowG6g+6+gdNz3G1k=;
+        b=XurAnBecO81pRp/QnitU35N3H7eTDQrv3t3lqqDGVNoSAUFOAtxLX2++FYxd9fRCsf
+         SruGJqy+GGNi7T/mK53x3AjZFLpPDhVblfZkmKzC/XcOwwJzDdmxPclb/GktQu5FWLFu
+         S+A5Ts8PWvHvofTC9Pw/jPaqx+QJ1+ND6Zv1HW+f81FF4Nf5pVJ7pHQgpmlwFsFkJCQb
+         feYdKNHtSsFRfI46XcI0M7JRMO56kQxUQGTKH29hKZ6QMO9103RQiLw+H09DFGov5VNT
+         q8mGoLpapFA4Z32/jA0HF1INzEfXaxtBaySo6EPgIgmiL83iIbue7IYFjjCfrdGh6JXH
+         dW/Q==
+X-Gm-Message-State: AA+aEWZP5HXxOcMkTb5AY5OrUkeaOqHMUVILUxa4suFtb6AEqaeVQNcE
+        VAO7LZQp/XEQlmHqyVHsy5I=
+X-Google-Smtp-Source: AFSGD/W7l3HuINN23UnBtDu7PDb2C7ptl8Dd/7Zh2XOvfEMIMse2rxGjIsCy3MvP8CoC0t7j0k/uuQ==
+X-Received: by 2002:a63:2141:: with SMTP id s1mr2390804pgm.148.1542728781340;
+        Tue, 20 Nov 2018 07:46:21 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id h17-v6sm61988023pfj.125.2018.11.20.07.46.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 07:46:20 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     lorenzo.pieralisi@arm.com, daniel.lezcano@linaro.org,
+        rjw@rjwysocki.net
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2] cpuidle: big.LITTLE: add of_node_put()
+Date:   Tue, 20 Nov 2018 10:46:17 -0500
+Message-Id: <20181120154617.20903-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 10:12 AM, Qian Cai wrote:
->
->> On Nov 20, 2018, at 8:50 AM, Waiman Long <longman@redhat.com> wrote:
->>
->> On 11/20/2018 01:42 AM, Qian Cai wrote:
->>> The current value of the early boot static pool size is not big enough
->>> for systems with large number of CPUs with timer or/and workqueue
->>> objects selected. As the results, systems have 60+ CPUs with both timer
->>> and workqueue objects enabled could trigger "ODEBUG: Out of memory.
->>> ODEBUG disabled". Hence, fixed it by computing it according to
->>> CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
->>>
->>> Signed-off-by: Qian Cai <cai@gmx.us>
->>> ---
->>> lib/debugobjects.c | 53 +++++++++++++++++++++++++++++++++++++++++++++-
->>> 1 file changed, 52 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
->>> index 70935ed91125..372dc34206d5 100644
->>> --- a/lib/debugobjects.c
->>> +++ b/lib/debugobjects.c
->>> @@ -23,7 +23,53 @@
->>> #define ODEBUG_HASH_BITS	14
->>> #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
->>>
->>> +/*
->>> + * Some debug objects are allocated during the early boot. Enabling some
->>> + * options like timers or workqueue objects may increase the size required
->>> + * significantly with large number of CPUs. For example,
->>> + *
->>> + * No. CPUs x 2 (worker pool) objects:
->>> + *
->>> + * start_kernel
->>> + *   workqueue_init_early
->>> + *     init_worker_pool
->>> + *       init_timer_key
->>> + *         debug_object_init
->>> + *
->>> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
->>> + *
->>> + * sched_init
->>> + *   hrtick_rq_init
->>> + *     hrtimer_init
->>> + *
->>> + * CONFIG_DEBUG_OBJECTS_WORK:
->>> + * No. CPUs x 6 (workqueue) objects:
->>> + *
->>> + * workqueue_init_early
->>> + *   alloc_workqueue
->>> + *     __alloc_workqueue_key
->>> + *       alloc_and_link_pwqs
->>> + *         init_pwq
->>> + *
->>> + * Also, plus No. CPUs objects:
->>> + *
->>> + * perf_event_init
->>> + *    __init_srcu_struct
->>> + *      init_srcu_struct_fields
->>> + *        init_srcu_struct_nodes
->>> + *          __init_work
->>> + *
->>> + * Increase the number a bit more in case the implmentatins are changed in
->>> + * the future.
->>> + */
->>> +#if defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_TIMERS) && \
->>> +!defined(CONFIG_DEBUG_OBJECTS_WORK)
->>> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 10)
->>> +#elif defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_WORK)
->>> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 30)
->>> +#else
->>> #define ODEBUG_POOL_SIZE	1024
->>> +#endif /* CONFIG_NR_CPUS */
->>> #define ODEBUG_POOL_MIN_LEVEL	256
->>>
->> CONFIG_NR_CPUS is always defined. You don't need to put that as a #if
->> condition. Where does the scaling factor 30 come from? It looks high to me.
-> Hmm, looks like some architectures could have it undefined since it depends
-> on CONFIG_SMP where the later can be disabled. For example alpha,
->
-> config NR_CPUS
->         int "Maximum number of CPUs (2-32)"
->         range 2 32
->         depends on SMP
-include/linux/threads.h:
-#ifndef CONFIG_NR_CPUS
-/* FIXME: This should be fixed in the arch's Kconfig */
-#define CONFIG_NR_CPUS    1
-#endif
+The of_node_put() is missing.So we call the of_node_put() to release
+the refcount.
 
-> Scaling factor 30 came from the data, with all the debug_objects options
-> enabled, I have,
->
-> 64-CPU:   ODEBUG: 1114 of 1114 active objects replaced
-> 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
->
-> I also give a bit room for growth in the future since the implementation details
-> could always change.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+Changes in v2
+-update changelog
+-do that right after its last use 
+ to also cover error handling.
+---
+ drivers/cpuidle/cpuidle-big_little.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-(4378-1114)/(256-64) = 17
-
-So the max scaling factor is 17. I would say you could round it up to 20
-at most.
-
-Cheers,
-Longman
+diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
+index db2ede565f1a..650f063ef809 100644
+--- a/drivers/cpuidle/cpuidle-big_little.c
++++ b/drivers/cpuidle/cpuidle-big_little.c
+@@ -174,8 +174,12 @@ static int __init bl_idle_init(void)
+ 	/*
+ 	 * Initialize the driver just for a compliant set of machines
+ 	 */
+-	if (!of_match_node(compatible_machine_match, root))
++	if (!of_match_node(compatible_machine_match, root)){
++		of_node_put(root);
+ 		return -ENODEV;
++	}
++
++	of_node_put(root);
+ 
+ 	if (!mcpm_is_available())
+ 		return -EUNATCH;
+-- 
+2.17.0
 
