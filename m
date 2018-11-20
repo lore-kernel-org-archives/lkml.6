@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D534AC18E01
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D6EC41538
 	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378AE2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 378AE2147A
+	by mail.kernel.org (Postfix) with ESMTP id A21D0208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A21D0208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728485AbeKTUch (ORCPT
+        id S1728466AbeKTUcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:32:37 -0500
-Received: from shell.v3.sk ([90.176.6.54]:50142 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbeKTUcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 15:32:36 -0500
+Received: from shell.v3.sk ([90.176.6.54]:50152 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728387AbeKTUcf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:32:35 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 62469C6FB8;
-        Tue, 20 Nov 2018 11:04:16 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id C979DC6FB4;
+        Tue, 20 Nov 2018 11:04:14 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id sQIk_S4aGlIf; Tue, 20 Nov 2018 11:03:59 +0100 (CET)
+        with ESMTP id Pf93HEUX0det; Tue, 20 Nov 2018 11:03:59 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 94960C6FB9;
-        Tue, 20 Nov 2018 11:03:49 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id F2035C6FB8;
+        Tue, 20 Nov 2018 11:03:48 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id YSJvy85yLFKV; Tue, 20 Nov 2018 11:03:45 +0100 (CET)
+        with ESMTP id SaJD7j4gb1rM; Tue, 20 Nov 2018 11:03:45 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 5BBF8C6FBC;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 10ADDC6FB1;
         Tue, 20 Nov 2018 11:03:42 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
         Libin Yang <lbyang@marvell.com>,
         Albert Wang <twang13@marvell.com>
-Subject: [PATCH v3 11/14] [media] marvell-ccic: rename the clocks
-Date:   Tue, 20 Nov 2018 11:03:16 +0100
-Message-Id: <20181120100318.367987-12-lkundrak@v3.sk>
+Subject: [PATCH v3 10/14] [media] marvell-ccic/mmp: enable clock before accessing registers
+Date:   Tue, 20 Nov 2018 11:03:15 +0100
+Message-Id: <20181120100318.367987-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120100318.367987-1-lkundrak@v3.sk>
 References: <20181120100318.367987-1-lkundrak@v3.sk>
@@ -61,34 +61,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the names more suitable for devicetree bindings.
-
-There are no board files utilizing this, thus we seem to be at liberty
-at renaming this without consequences.
+The access to REG_CLKCTRL or REG_CTRL1 without the clock enabled hangs
+the machine. Enable the clock first.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
-Changes since v2:
-- This patch was added to the series
-
- drivers/media/platform/marvell-ccic/mmp-driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/marvell-ccic/mmp-driver.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
 edia/platform/marvell-ccic/mmp-driver.c
-index 05cba74c0d13..5c61317f56bc 100644
+index f2e43b23af18..05cba74c0d13 100644
 --- a/drivers/media/platform/marvell-ccic/mmp-driver.c
 +++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
-@@ -33,7 +33,7 @@ MODULE_ALIAS("platform:mmp-camera");
- MODULE_AUTHOR("Jonathan Corbet <corbet@lwn.net>");
- MODULE_LICENSE("GPL");
+@@ -144,6 +144,7 @@ static int mmpcam_power_up(struct mcam_camera *mcam)
+  * Turn on power and clocks to the controller.
+  */
+ 	mmpcam_power_up_ctlr(cam);
++	mcam_clk_enable(mcam);
+ /*
+  * Provide power to the sensor.
+  */
+@@ -157,8 +158,6 @@ static int mmpcam_power_up(struct mcam_camera *mcam)
+ 	gpio_set_value(pdata->sensor_reset_gpio, 1); /* reset is active low */
+ 	mdelay(5);
 =20
--static char *mcam_clks[] =3D {"CCICAXICLK", "CCICFUNCLK", "CCICPHYCLK"};
-+static char *mcam_clks[] =3D {"axi", "func", "phy"};
+-	mcam_clk_enable(mcam);
+-
+ 	return 0;
+ }
 =20
- struct mmp_camera {
- 	void __iomem *power_regs;
 --=20
 2.19.1
 
