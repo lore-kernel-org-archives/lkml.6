@@ -2,114 +2,127 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B22C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86290C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D11205C9
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AF902146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:50:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="jhNnycJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D11205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="jcwyVjbt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AF902146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbeKUGQK (ORCPT
+        id S1727461AbeKUGVk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:16:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37291 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbeKUGQK (ORCPT
+        Wed, 21 Nov 2018 01:21:40 -0500
+Received: from mail-vk1-f178.google.com ([209.85.221.178]:46829 "EHLO
+        mail-vk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbeKUGVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:16:10 -0500
-Received: by mail-wr1-f68.google.com with SMTP id j10so3250118wru.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:45:21 -0800 (PST)
+        Wed, 21 Nov 2018 01:21:40 -0500
+Received: by mail-vk1-f178.google.com with SMTP id j23so682119vke.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:50:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=vVprXwRXv5LDaHl3diFepqVNNJ8b7iqUd3Gf8qAT4W8=;
-        b=jhNnycJkhfalgae2wROZkxnBUAtuN0QQVUbhBt0ANAzZB0M9xblOiSAKhxRLplEYjP
-         U3o9w5GvaOBmj7zseOsdlyNzYyIHXCZ5/VNQkQtiSxntMHC9Eq4dVYkNLpcflfcK1A01
-         LrlPBMZ4a2wIILSlXY9APjGfwBaMz92gmFSRd1pR/RBduS2svSQkSagOqlif9dUllvfw
-         zdwHW78DfOIQg2RwLOJEiYEl/c7S1FQ9E7U0Ucw99zYT47A1q289DLCUxliP0lcGXJl2
-         k2o44CaruegpFDLBtp9vTqAAzcHsvJcf9xAEz+S8vXNzjYGnUfdfrv9pI6/jMvrJeaik
-         rKWA==
+        d=kylehuey.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FEn3i1uP4tJa6vP5eIWtYU8rt+lYiVOO+KFwOrhPUqg=;
+        b=jcwyVjbt53OYfBSllpv1PQF3SrIMCYDH8pYe0Tlxd6+uGOG4nfMBuHAenO171g0KTY
+         5z/3zWInY5OvHJmdPKysMoxqOlTPEGG8bPUO5Yu76+j30TiiL6J9+H7F42U1u+hdGOpc
+         x+qORy1jGnS1bB2bhxETIb42KdH+wIoNJROGoVOPcJNaKggU7zxs31csck7nRD2zonzX
+         GAzGrSvMmx/o7knAx4TwS4vrLwzB8UteSVymV9otkTp7aJwhaXOzhU7wdnX1V81Omwcp
+         L5ZlfN7aEwwrJfzcOXrR+HiCCv8vCFmL8UNVI6L9aK4qwVfu3SiF69IDMyaZjx/6vbkF
+         TTPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=vVprXwRXv5LDaHl3diFepqVNNJ8b7iqUd3Gf8qAT4W8=;
-        b=Zf7SYFEgRvpIBRdiJfGWnhrTVqTka9rkNPq59BlSdISFqa6DBP/ZNnQyKmt1UAQMOP
-         cy14mLZAd1NXbyzzwDzWdci7sf2EvLbaOTfYgEoi+0aRy4nkHapekHX2JIR0qImUkFDC
-         mf7SoUo3bmtmUEVyZcsVWmysaOGem2TOSJj9/5Ut0DRF9nG7WujfkJyQKDnELsZKJyEW
-         yTHlEIuPj+Fgi3ZMjFeUOixNZwgR8L9Zf0wMvtpkGFPjzBVF5o0Od5K8BH/gK80IRjU+
-         l3KuDRWbwZAQDTBUzKMilx4bht/v1qXIl/MywOispwI4qZXbtqTo6c6EJRvWBnLxb3zb
-         1R6A==
-X-Gm-Message-State: AA+aEWYNZdLFfZ7i+m6NvJWvgaC3mokd8KdPitXp+FTXNFG6o/Faiy72
-        Cl9oOXm0u+UX0TXfKtY8aCp75w==
-X-Google-Smtp-Source: AFSGD/XyV6laC+AnagfYPDqsgTH2o2XAWERtiMf0vJ0YsEBfgLj9lSsPsair/b0Suf4D4/Z9DDWZVQ==
-X-Received: by 2002:adf:9421:: with SMTP id 30mr3436183wrq.54.1542743120324;
-        Tue, 20 Nov 2018 11:45:20 -0800 (PST)
-Received: from linux.fritz.box (p200300D993C74C00FC5A0EA9BDDF9934.dip0.t-ipconnect.de. [2003:d9:93c7:4c00:fc5a:ea9:bddf:9934])
-        by smtp.googlemail.com with ESMTPSA id j124-v6sm1520352wmb.1.2018.11.20.11.45.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 11:45:19 -0800 (PST)
-Subject: Re: [PATCH v11 1/3] ipc: Allow boot time extension of IPCMNI from 32k
- to 16M
-To:     Waiman Long <longman@redhat.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Takashi Iwai <tiwai@suse.de>, Davidlohr Bueso <dbueso@suse.de>
-References: <1541794292-19425-1-git-send-email-longman@redhat.com>
- <1541794292-19425-2-git-send-email-longman@redhat.com>
-From:   Manfred Spraul <manfred@colorfullife.com>
-Message-ID: <f9e476ce-9381-3738-159d-2c555580961a@colorfullife.com>
-Date:   Tue, 20 Nov 2018 20:45:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FEn3i1uP4tJa6vP5eIWtYU8rt+lYiVOO+KFwOrhPUqg=;
+        b=TWgmQ7FOhJrCWzSQNMd3nT9McZCw1il+2TPK6kmwskQEYc8YhQKGd70rSNH3dEOUx9
+         DcIY4ylmK/KPIrIsJdCSAddv2KeGoaBKSVMjVFmFCLXQrsRS2InzH8FzXUyQ1eFLYsTD
+         7ymJ0qGtiHf7eWXoj6xVyM28EvWaYylLjBarFebg16UTpZCFTKyHItM3GA63bKhybJ+b
+         TEGXut92VRP1SQE8aPZt8wkQY2QjFJ6hnPYkzb5QG+DQ4MZwYNbHoM5BPdNfKCi+HIyj
+         jhjFVbI9YTFGNdxY/CPppviq7q/zZ/2FtQjjp7OPZg3ixQxPlVnY8GedkqboznZUgsx0
+         Txnw==
+X-Gm-Message-State: AA+aEWZWsdHzcq+8svwO3xnqiT4RE/FaJuFuJrIzbPQ2aVukan3nFZrJ
+        HoU97fE6OPMDvUY5M1+eSJyf1GsTRyY2eJuGqqLsdA==
+X-Google-Smtp-Source: AFSGD/XQC9cO3VLo+Sa0m+5rj+2lxhQS9672Y7vjWaAgoXKLYb+SyAQa1p/aD7r9lO+sWUTf1lu3vPy9P7E2p+ACwwI=
+X-Received: by 2002:a1f:f8cf:: with SMTP id w198mr1414447vkh.82.1542743449774;
+ Tue, 20 Nov 2018 11:50:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1541794292-19425-2-git-send-email-longman@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120170842.GZ2131@hirez.programming.kicks-ass.net> <CABPqkBQyvbM0AAJRRQQeBUZOuPHr2qjD+qWe53zJg84kzR3=Ng@mail.gmail.com>
+In-Reply-To: <CABPqkBQyvbM0AAJRRQQeBUZOuPHr2qjD+qWe53zJg84kzR3=Ng@mail.gmail.com>
+From:   Kyle Huey <me@kylehuey.com>
+Date:   Tue, 20 Nov 2018 11:50:18 -0800
+Message-ID: <CAP045ArbBzW+MWv+uKoAr6gswRWp6vKWoPV2bMrG8ZSnO-zHoA@mail.gmail.com>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Robert O'Callahan" <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/9/18 9:11 PM, Waiman Long wrote:
-> The maximum number of unique System V IPC identifiers was limited to
-> 32k.  That limit should be big enough for most use cases.
->
-> However, there are some users out there requesting for more, especially
-> those that are migrating from Solaris which uses 24 bits for unique
-> identifiers. To satisfy the need of those users, a new boot time kernel
-> option "ipcmni_extend" is added to extend the IPCMNI value to 16M. This
-> is a 512X increase which should be big enough for users out there that
-> need a large number of unique IPC identifier.
->
-> The use of this new option will change the pattern of the IPC identifiers
-> returned by functions like shmget(2). An application that depends on
-> such pattern may not work properly.  So it should only be used if the
-> users really need more than 32k of unique IPC numbers.
->
-> This new option does have the side effect of reducing the maximum number
-> of unique sequence numbers from 64k down to 128. So it is a trade-off.
->
-> The computation of a new IPC id is not done in the performance critical
-> path.  So a little bit of additional overhead shouldn't have any real
-> performance impact.
->
-> Signed-off-by: Waiman Long <longman@redhat.com>
-Acked-by: Manfred Spraul <manfred@colorfullife.com>
+On Tue, Nov 20, 2018 at 10:16 AM Stephane Eranian <eranian@google.com> wrote:
+> I would like to understand better the PMU behavior you are relying upon and
+> why the V4 freeze approach is breaking it. Could you elaborate?
+
+I investigated a bit more to write this response and discovered that
+my initial characterization of the problem as an overcount during
+replay is incorrect; what we are actually seeing is an undercount
+during recording.
+
+rr relies on the userspace retired-conditional-branches counter being
+exactly the same between recording and replay. The primary reason we
+do this is to establish a program "timeline", allowing us to find the
+correct place to inject asynchronous signals during replay (the
+program counter plus the retired-conditional-branches counter value
+uniquely identifies a point in most programs). Because we run the rcb
+counter during recording, we piggy back on it by programming it to
+interrupt the program every few hundred thousand branches to give us a
+chance to context switch to a different program thread.
+
+We've found that with counter freezing enabled, when the PMI fires,
+the reported value of the retired conditional branches counter is low
+by something on the order of 10 branches. In a single threaded
+program, although the PMI fires, we don't actually record a context
+switch or the counter value at this point. We continue on to the next
+tracee event (e.g. a syscall) and record the counter value at that
+point. Then, during replay, we replay to the syscall and check that
+the replay counter value matches the recorded value and find that it
+is too high. (NB: during a single threaded replay the PMI is not used
+here because there is no asynchronous event.) Repeatedly recording the
+same program produces traces that have different recorded
+retired-conditional-branch counter values after the first PMI fired
+during recording, but during replay we always count off the same
+number of branches, further suggesting that the replay value is
+correct. And finally, recordings made on a kernel with counter
+freezing active still fail to replay on a kernel without counter
+freezing active.
+
+I don't know what the underlying mechanism for the loss of counter
+events is (e.g. whether it's incorrect code in the interrupt handler,
+a silicon bug, or what) but it's clear that the counter freezing
+implementation is causing events to be lost.
+
+- Kyle
+
+- Kyle
