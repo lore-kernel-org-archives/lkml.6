@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40575C04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C63C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA8D208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DA8D208E4
+	by mail.kernel.org (Postfix) with ESMTP id 787ED20C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787ED20C01
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeKTTXB (ORCPT
+        id S1727095AbeKTTXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:23:01 -0500
+        Tue, 20 Nov 2018 14:23:08 -0500
 Received: from mga07.intel.com ([134.134.136.100]:57263 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbeKTTXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:23:01 -0500
+        id S1727003AbeKTTXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:23:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:00 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="106105741"
+   d="scan'208";a="106105770"
 Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:54:57 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:03 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V7 RESEND 02/21] swap: Add __swap_duplicate_locked()
-Date:   Tue, 20 Nov 2018 16:54:30 +0800
-Message-Id: <20181120085449.5542-3-ying.huang@intel.com>
+Subject: [PATCH -V7 RESEND 04/21] swap: Support PMD swap mapping in put_swap_page()
+Date:   Tue, 20 Nov 2018 16:54:32 +0800
+Message-Id: <20181120085449.5542-5-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
 References: <20181120085449.5542-1-ying.huang@intel.com>
@@ -57,13 +57,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The part of __swap_duplicate() with lock held is separated into a new
-function __swap_duplicate_locked().  Because we will add more logic
-about the PMD swap mapping into __swap_duplicate() and keep the most
-PTE swap mapping related logic in __swap_duplicate_locked().
-
-Just mechanical code refactoring, there is no any functional change in
-this patch.
+Previously, during swapout, all PMD page mapping will be split and
+replaced with PTE swap mapping.  And when clearing the SWAP_HAS_CACHE
+flag for the huge swap cluster in put_swap_page(), the huge swap
+cluster will be split.  Now, during swapout, the PMD page mappings to
+the THP will be changed to PMD swap mappings to the corresponding swap
+cluster.  So when clearing the SWAP_HAS_CACHE flag, the huge swap
+cluster will only be split if the PMD swap mapping count is 0.
+Otherwise, we will keep it as the huge swap cluster.  So that we can
+swapin a THP in one piece later.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -79,106 +81,60 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/swapfile.c | 63 ++++++++++++++++++++++++++++-----------------------
- 1 file changed, 35 insertions(+), 28 deletions(-)
+ mm/swapfile.c | 31 ++++++++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 7 deletions(-)
 
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index ec210be02c3b..f3c175d830b1 100644
+index 37e20ce4983c..f30eed59c355 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -3441,32 +3441,12 @@ void si_swapinfo(struct sysinfo *val)
- 	spin_unlock(&swap_lock);
- }
+@@ -1314,6 +1314,15 @@ void swap_free(swp_entry_t entry)
  
--/*
-- * Verify that a swap entry is valid and increment its swap map count.
-- *
-- * Returns error code in following case.
-- * - success -> 0
-- * - swp_entry is invalid -> EINVAL
-- * - swp_entry is migration entry -> EINVAL
-- * - swap-cache reference is requested but there is already one. -> EEXIST
-- * - swap-cache reference is requested but the entry is not used. -> ENOENT
-- * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-- */
--static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-+static int __swap_duplicate_locked(struct swap_info_struct *p,
-+				   unsigned long offset, unsigned char usage)
- {
--	struct swap_info_struct *p;
--	struct swap_cluster_info *ci;
--	unsigned long offset;
- 	unsigned char count;
- 	unsigned char has_cache;
--	int err = -EINVAL;
--
--	p = get_swap_device(entry);
--	if (!p)
--		goto out;
--
--	offset = swp_offset(entry);
--	ci = lock_cluster_or_swap_info(p, offset);
-+	int err = 0;
- 
- 	count = p->swap_map[offset];
- 
-@@ -3476,12 +3456,11 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- 	 */
- 	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
- 		err = -ENOENT;
--		goto unlock_out;
-+		goto out;
- 	}
- 
- 	has_cache = count & SWAP_HAS_CACHE;
- 	count &= ~SWAP_HAS_CACHE;
--	err = 0;
- 
- 	if (usage == SWAP_HAS_CACHE) {
- 
-@@ -3508,11 +3487,39 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
- 
- 	p->swap_map[offset] = count | has_cache;
- 
--unlock_out:
-+out:
-+	return err;
-+}
-+
-+/*
-+ * Verify that a swap entry is valid and increment its swap map count.
+ /*
+  * Called after dropping swapcache to decrease refcnt to swap entries.
 + *
-+ * Returns error code in following case.
-+ * - success -> 0
-+ * - swp_entry is invalid -> EINVAL
-+ * - swp_entry is migration entry -> EINVAL
-+ * - swap-cache reference is requested but there is already one. -> EEXIST
-+ * - swap-cache reference is requested but the entry is not used. -> ENOENT
-+ * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
-+ */
-+static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
-+{
-+	struct swap_info_struct *p;
-+	struct swap_cluster_info *ci;
-+	unsigned long offset;
-+	int err = -EINVAL;
-+
-+	p = get_swap_device(entry);
-+	if (!p)
-+		goto out;
-+
-+	offset = swp_offset(entry);
-+	ci = lock_cluster_or_swap_info(p, offset);
-+	err = __swap_duplicate_locked(p, offset, usage);
- 	unlock_cluster_or_swap_info(p, ci);
-+
-+	put_swap_device(p);
- out:
--	if (p)
--		put_swap_device(p);
- 	return err;
- }
++ * When a THP is added into swap cache, the SWAP_HAS_CACHE flag will
++ * be set in the swap_map[] of all swap entries in the huge swap
++ * cluster backing the THP.  This huge swap cluster will not be split
++ * unless the THP is split even if its PMD swap mapping count dropped
++ * to 0.  Later, when the THP is removed from swap cache, the
++ * SWAP_HAS_CACHE flag will be cleared in the swap_map[] of all swap
++ * entries in the huge swap cluster.  And this huge swap cluster will
++ * be split if its PMD swap mapping count is 0.
+  */
+ void put_swap_page(struct page *page, swp_entry_t entry)
+ {
+@@ -1332,15 +1341,23 @@ void put_swap_page(struct page *page, swp_entry_t entry)
  
+ 	ci = lock_cluster_or_swap_info(si, offset);
+ 	if (size == SWAPFILE_CLUSTER) {
+-		VM_BUG_ON(!cluster_is_huge(ci));
++		VM_BUG_ON(!IS_ALIGNED(offset, size));
+ 		map = si->swap_map + offset;
+-		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+-			val = map[i];
+-			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+-			if (val == SWAP_HAS_CACHE)
+-				free_entries++;
++		/*
++		 * No PMD swap mapping, the swap cluster will be freed
++		 * if all swap entries becoming free, otherwise the
++		 * huge swap cluster will be split.
++		 */
++		if (!cluster_swapcount(ci)) {
++			for (i = 0; i < SWAPFILE_CLUSTER; i++) {
++				val = map[i];
++				VM_BUG_ON(!(val & SWAP_HAS_CACHE));
++				if (val == SWAP_HAS_CACHE)
++					free_entries++;
++			}
++			if (free_entries != SWAPFILE_CLUSTER)
++				cluster_clear_huge(ci);
+ 		}
+-		cluster_clear_huge(ci);
+ 		if (free_entries == SWAPFILE_CLUSTER) {
+ 			unlock_cluster_or_swap_info(si, ci);
+ 			spin_lock(&si->lock);
 -- 
 2.18.1
 
