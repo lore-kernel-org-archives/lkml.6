@@ -2,162 +2,107 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7D0C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D1FC28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B612080F
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF2572147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:46:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="0KqtUWHA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B612080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="Y/528pzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF2572147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeKUIRh (ORCPT
+        id S1726179AbeKUIRx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:17:37 -0500
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:60491 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725939AbeKUIRg (ORCPT
+        Wed, 21 Nov 2018 03:17:53 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42825 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeKUIRx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:17:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1542750381; x=1574286381;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=E8Cv1jVOYyVT9xK6rqBcVwMN7EPVaji1/ATmt84YejA=;
-  b=0KqtUWHAlUc8usLXZKev0aqUuCdjs4soT4CkZTnhgapu2CaF/A+8nMiP
-   KkC1JeuzU+/X03hrSGxw/JALXjMsmWsJ7NvlX418hRH5n7dtvF/TNVBrf
-   nNNH3OElWqdJt2zUOT8/8o7JMAg175J1TixQaEPI9x1o0V+4oEFLc3sWp
-   8=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EkAABmf/RbhiWd50NaChwBAQEEAQE?=
- =?us-ascii?q?HBAEBgVIGAQELAQGDaicKjGWNK5c3gXoLAQGEbIN4IjUIDQEDAQECAQECAQE?=
- =?us-ascii?q?CEAEBAQoJCwgpL0IBEAGBYiKCZQEBAQECARIoPwULAgEIGB4QVwIEARIIGoJ?=
- =?us-ascii?q?/gXoIngkCgRCJWAEBAYIdiieMBYIWgRGDEoRTK4VbAosNlGoJBZEdIJEBLJd?=
- =?us-ascii?q?UAgQCBAUCFIFIAYILcIM8gicOCY4cQAExggmKeYEfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EkAABmf/RbhiWd50NaChwBAQEEAQEHBAEBgVIGAQELA?=
- =?us-ascii?q?QGDaicKjGWNK5c3gXoLAQGEbIN4IjUIDQEDAQECAQECAQECEAEBAQoJCwgpL?=
- =?us-ascii?q?0IBEAGBYiKCZQEBAQECARIoPwULAgEIGB4QVwIEARIIGoJ/gXoIngkCgRCJW?=
- =?us-ascii?q?AEBAYIdiieMBYIWgRGDEoRTK4VbAosNlGoJBZEdIJEBLJdUAgQCBAUCFIFIA?=
- =?us-ascii?q?YILcIM8gicOCY4cQAExggmKeYEfAQE?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa8.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Nov 2018 15:46:20 -0600
-Received: from pps.filterd (m0134318.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKLh4VY173928;
-        Tue, 20 Nov 2018 16:46:20 -0500
-Received: from esa1.dell-outbound2.iphmx.com (esa1.dell-outbound2.iphmx.com [68.232.153.201])
-        by mx0a-00154901.pphosted.com with ESMTP id 2ntegghycm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 16:46:20 -0500
-Cc:     <baicar.tyler@gmail.com>, <Austin.Bolen@dell.com>,
-        <Shyam.Iyer@dell.com>, <lukas@wunner.de>, <bhelgaas@google.com>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>, <ruscur@russell.cc>,
-        <sbobroff@linux.ibm.com>, <oohall@gmail.com>,
-        <linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
-Received: from ausc60ps301.us.dell.com ([143.166.148.206])
-  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 21 Nov 2018 03:45:41 +0600
-X-LoopCount0: from 10.166.134.85
-X-IronPort-AV: E=Sophos;i="5.56,258,1539666000"; 
-   d="scan'208";a="1228364035"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <okaya@kernel.org>, <mr.nuke.me@gmail.com>, <keith.busch@intel.com>
-Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
- AER
-Thread-Topic: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
- AER
-Thread-Index: AQHUfTk2X+FUHiVWnkuZssuLn5DqDg==
-Date:   Tue, 20 Nov 2018 21:46:13 +0000
-Message-ID: <4728316eb84446358e0a07bbf1e42b57@ausx13mps321.AMER.DELL.COM>
-References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
- <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
- <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
- <20181119165318.GB26595@localhost.localdomain>
- <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
- <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
- <20181119174127.GE26595@localhost.localdomain>
- <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
- <20181119181051.GA26707@localhost.localdomain>
- <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
- <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
- <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
- <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
- <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
- <9c9531c7efb846438f03f744b9afc466@ausx13mps321.AMER.DELL.COM>
- <3b18a9fa-7bdd-0fb4-285d-4efb454be50a@kernel.org>
- <e86f04ef8c054d61969862a6e7b72d0d@ausx13mps321.AMER.DELL.COM>
- <314e59da-48e1-545b-3ee9-6e5056b90fd9@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.178.128.193]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 21 Nov 2018 03:17:53 -0500
+Received: by mail-vs1-f65.google.com with SMTP id b74so2017805vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 13:46:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kylehuey.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=c4Mx4xoo0SOnqc8GkEhoqygnyA2JFl4/0RvL1igw+gs=;
+        b=Y/528pzZjps892DM9klEZqgYVl275V5S1qHOGcc2si0xaCIjEtNcNre1XbDzpPCLNH
+         Bs3TN9oCOjP6Es9ZYOmrqaO7fFbK+qOboW4muV/QkvnNa+ltTJsJYNoCu1tUzms/PXJP
+         2GavqqGN23RLnLo4MNRcZgPXpWwapDGwVgdsrDbIZ61HKCjnZ0egdSumfQw1J+o96pYh
+         WoJA2tDo2nGnpJWW4BFyQqHy49B7YOCRXBcezgFICurQ9Sc2tJNQYU42C/a7vV8v1dsI
+         4t0UNoXsek/+cdfjSxVVN3rvgCFNRY88tF5ob3QVGPdAN+yf6j61pGloMTAC7Z1XRo+Y
+         f/Hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=c4Mx4xoo0SOnqc8GkEhoqygnyA2JFl4/0RvL1igw+gs=;
+        b=doYP9wBiNdC4fZzEHO/rJ2LySP0/SvyvaaEzVL9+xbpSLy9q6DKN2BwDyVIn5h3ws1
+         Z3RL1Jrx3SvAyIrlEcZtmjMIBbLLUNs687fbasONK41EfGofFKcVJyClrB2xENln04Fw
+         rY4Ufom/HQsQ4dQ9Tr1HKkUFha831TwwQHiX54CapZ+mqbtxDenMnu/JFu3TN6tBnA1o
+         A+X27g3Jv6np0dot7ogOpN0YHb/JzF710ueLRipR123nkGXZLeuKk5Qlne47AXGgKzWu
+         k9oaZ4TeWZseiXWfpxDyDzlVwhxP9IB9II7VDDl08+zwh7WvZdsu+4jLDTGIEyu7gxf3
+         j92A==
+X-Gm-Message-State: AGRZ1gLXLMdXsHMf9+YFrB2ol/VIJgv3znUYsuXMj5d/Lhyjs+D/14fx
+        WjUo4zgUpynaJrKX6nvWOFrWBP5LF/viXrXRHzFcyA==
+X-Google-Smtp-Source: AJdET5dDfxOCigjPGMpAEXMwcoCxHthq6WWLhlSgPIZAntWs8t1hNrODE4TzB92Dpp4m+ICzgB42NMqncAXntClyHSU=
+X-Received: by 2002:a67:6346:: with SMTP id x67mr1600973vsb.114.1542750396637;
+ Tue, 20 Nov 2018 13:46:36 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811200190
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120194129.GC13936@tassilo.jf.intel.com> <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
+ <20181120201144.GD13936@tassilo.jf.intel.com> <CAP045AoF7-3VBjhaij8JrVLuw+1dUxmLAGthPJm7CsTyY7T9nA@mail.gmail.com>
+ <20181120211803.GF13936@tassilo.jf.intel.com>
+In-Reply-To: <20181120211803.GF13936@tassilo.jf.intel.com>
+From:   Kyle Huey <me@kylehuey.com>
+Date:   Tue, 20 Nov 2018 13:46:05 -0800
+Message-ID: <CAP045AprqsgphfBpUe37MjVFu4T9KTb_mYuMj=q0T+9-kbK0qw@mail.gmail.com>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Robert O'Callahan" <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 03:02 PM, Sinan Kaya wrote:=0A=
-> On 11/20/2018 3:44 PM, Alex_Gagniuc@Dellteam.com wrote:=0A=
->> I'd prefer "sure" instead of "think". "I think it breaks some system I'm=
-=0A=
->> not telling you about" doesn't help much in figuring out how not to=0A=
->> break said system(s).:)=0A=
-> =0A=
-> Sorry, I thought I mentioned why it would break but let me repeat.=0A=
-=0A=
-Why, yes, but bets are still being placed on the systems allegedly =0A=
-suffering from this.=0A=
-=0A=
-=0A=
-> The systems I have seen rely on the HEST table presence as an indicator=
-=0A=
-> to the OS that firmware first is enabled. If you go look at the _OSC bits=
-=0A=
-> on such systems, it still says OS owns the AER service.=0A=
-> =0A=
-> The assumption here is that HEST table has precedence over the _OSC bits.=
-=0A=
-> That's what needs to be clarified in the UEFI forum.=0A=
-> =0A=
-> If this code is to go in and ignore the HEST table presence, then firmwar=
-e=0A=
-> will think that it owns AER service and OS will think that it owns AER=0A=
-> service too.=0A=
-=0A=
-So this seems like exactly the scenario we were hypothesizing.=0A=
-=0A=
-  * System boots up with FFS enabled. Everything is fine so far.=0A=
-  * OSPM requests control of AER (set bit 3 in _OSC)=0A=
-  * FW grants OS control of AER (set bit 3 in _OSC reply)=0A=
-=0A=
-That's how things are designed to work.=0A=
-=0A=
-=0A=
-Now, let's assume, for the sake of argument, that the firmware on those =0A=
-system's is broken, and it didn't intend to give the OS control of AER. =0A=
-OSPM checking HEST instead of _OSC is still wrong, according to the =0A=
-spec. Two wrongs don't make a right, they just don't crash.=0A=
-=0A=
-I think the correct way is to identify those broken systems, and add =0A=
-quirks for them. Continuing to have inconsistent and over-complicated =0A=
-logic that is not spec compliant is not any better.=0A=
-=0A=
-Alex=0A=
+On Tue, Nov 20, 2018 at 1:18 PM Andi Kleen <ak@linux.intel.com> wrote:
+>
+> > I suppose that's fair that it's better for some use cases. The flip
+> > side is that it's no longer possible to get exactly accurate counts
+> > from user space if you're using the PMI (because any events between
+> > the overflow itself and the transition to the PMI handler are
+> > permanently lost) which is catastrophically bad for us :)
+>
+> Yes that's a fair point. For most usages it doesn't matter.
+>
+> I suspect that's a case for supporting opt-out for freezing
+> per perf event, and rr using that.
+
+I don't see how you could easily opt-out on a per perf event basis. If
+I'm reading the SDM correctly the Freeze_PerfMon_On_PMI setting is
+global and affects all counters on that CPU. Even counters that don't
+use the PMI at all will still be frozen if another counter overflows
+and counter freezing is enabled. It would seem that a counter that
+wants to use counter freezing and a counter that wants the behavior we
+want would be mutually exclusive. I suppose the kernel could handle
+all of that but it's a bit involved.
+
+- Kyle
