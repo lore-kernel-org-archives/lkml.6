@@ -2,67 +2,155 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07010C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D890C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC838206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:12:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC838206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4680A20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:13:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4680A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbeKUAlt (ORCPT
+        id S1729150AbeKUAnJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:41:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:7274 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbeKUAls (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:41:48 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8C60B3154852;
-        Tue, 20 Nov 2018 14:12:28 +0000 (UTC)
-Received: from treble (ovpn-122-214.rdu2.redhat.com [10.10.122.214])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 120785D760;
-        Tue, 20 Nov 2018 14:12:27 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 08:12:25 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Artem Savkov <asavkov@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] objtool: read_symbols() fixes
-Message-ID: <20181120141225.c3kufvm2fwjvy3lk@treble>
-References: <20181112125519.26855-1-asavkov@redhat.com>
- <20181120080548.26082-1-asavkov@redhat.com>
+        Tue, 20 Nov 2018 19:43:09 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:38015 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKUAnJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:43:09 -0500
+Received: from [107.15.85.130] (helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gOqtQ-0005Db-UN; Mon, 19 Nov 2018 16:15:43 -0500
+Date:   Tue, 20 Nov 2018 09:13:29 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     davem@davemloft.net, ebiggers@kernel.org,
+        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 01/10] crypto: crypto_user_stat: made crypto_user_stat
+ optional
+Message-ID: <20181120141329.GC20562@hmswarspite.think-freely.org>
+References: <1542717146-34917-1-git-send-email-clabbe@baylibre.com>
+ <1542717146-34917-2-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120080548.26082-1-asavkov@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 20 Nov 2018 14:12:28 +0000 (UTC)
+In-Reply-To: <1542717146-34917-2-git-send-email-clabbe@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 09:05:46AM +0100, Artem Savkov wrote:
-> The series started with 'parent symbol search' patch, but I found another issue
-> in read_symbols() while testing the failure-path.
+On Tue, Nov 20, 2018 at 12:32:17PM +0000, Corentin Labbe wrote:
+> Even if CRYPTO_STATS is set to n, some part of CRYPTO_STATS are
+> compiled.
+> This patch made all part of crypto_user_stat uncompiled in that case.
 > 
-> Artem Savkov (2):
->   objtool: fix failed cold symbol doublefree
->   objtool: fix .cold functions parent symbols search
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  crypto/Makefile                      |  3 ++-
+>  crypto/algapi.c                      |  2 ++
+>  include/crypto/internal/cryptouser.h | 17 +++++++++++++++++
+>  include/linux/crypto.h               |  2 ++
+>  4 files changed, 23 insertions(+), 1 deletion(-)
 > 
->  tools/objtool/elf.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
+> diff --git a/crypto/Makefile b/crypto/Makefile
+> index abbd86fdbad2..22f9f84f961d 100644
+> --- a/crypto/Makefile
+> +++ b/crypto/Makefile
+> @@ -54,7 +54,8 @@ cryptomgr-y := algboss.o testmgr.o
+>  
+>  obj-$(CONFIG_CRYPTO_MANAGER2) += cryptomgr.o
+>  obj-$(CONFIG_CRYPTO_USER) += crypto_user.o
+> -crypto_user-y := crypto_user_base.o crypto_user_stat.o
+> +crypto_user-y := crypto_user_base.o
+> +crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
+>  obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
+>  obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
+>  obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
+> diff --git a/crypto/algapi.c b/crypto/algapi.c
+> index 2545c5f89c4c..f5396c88e8cd 100644
+> --- a/crypto/algapi.c
+> +++ b/crypto/algapi.c
+> @@ -258,6 +258,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+>  	list_add(&alg->cra_list, &crypto_alg_list);
+>  	list_add(&larval->alg.cra_list, &crypto_alg_list);
+>  
+> +#ifdef CONFIG_CRYPTO_STATS
+>  	atomic_set(&alg->encrypt_cnt, 0);
+>  	atomic_set(&alg->decrypt_cnt, 0);
+>  	atomic64_set(&alg->encrypt_tlen, 0);
+> @@ -265,6 +266,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
+>  	atomic_set(&alg->verify_cnt, 0);
+>  	atomic_set(&alg->cipher_err_cnt, 0);
+>  	atomic_set(&alg->sign_cnt, 0);
+> +#endif
+>  
+If you created a helper function in crypto_user_stat.c to initalize all the
+stats, you could ifdef it in the cryptouser.h header if unconfigured, and avoid
+the ifdef leakage to this file above.
 
-Thanks, looking good.  I'll run the patches through 0-day testing and
-then send them onto the -tip tree.
+Neil
 
--- 
-Josh
+>  out:
+>  	return larval;
+> diff --git a/include/crypto/internal/cryptouser.h b/include/crypto/internal/cryptouser.h
+> index 8db299c25566..3492ab42eefb 100644
+> --- a/include/crypto/internal/cryptouser.h
+> +++ b/include/crypto/internal/cryptouser.h
+> @@ -3,6 +3,23 @@
+>  
+>  struct crypto_alg *crypto_alg_match(struct crypto_user_alg *p, int exact);
+>  
+> +#ifdef CONFIG_CRYPTO_STATS
+>  int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb);
+>  int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs);
+>  int crypto_dump_reportstat_done(struct netlink_callback *cb);
+> +#else
+> +static int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +
+> +static int crypto_dump_reportstat_done(struct netlink_callback *cb)
+> +{
+> +	return -ENOTSUPP;
+> +}
+> +#endif
+> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
+> index 3634ad6fe202..3e05053b8d57 100644
+> --- a/include/linux/crypto.h
+> +++ b/include/linux/crypto.h
+> @@ -515,6 +515,7 @@ struct crypto_alg {
+>  	
+>  	struct module *cra_module;
+>  
+> +#ifdef CONFIG_CRYPTO_STATS
+>  	union {
+>  		atomic_t encrypt_cnt;
+>  		atomic_t compress_cnt;
+> @@ -552,6 +553,7 @@ struct crypto_alg {
+>  		atomic_t compute_shared_secret_cnt;
+>  	};
+>  	atomic_t sign_cnt;
+> +#endif /* CONFIG_CRYPTO_STATS */
+>  
+>  } CRYPTO_MINALIGN_ATTR;
+>  
+> -- 
+> 2.18.1
+> 
+> 
