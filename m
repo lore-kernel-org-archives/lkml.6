@@ -2,116 +2,130 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89347C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E0CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593F52075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593F52075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A0103208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:03:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0103208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732363AbeKTQ3y (ORCPT
+        id S1732450AbeKTQbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 11:29:54 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:45356 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732199AbeKTQ3y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 11:29:54 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gOz7B-0000Ca-SE; Tue, 20 Nov 2018 14:02:26 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gOz73-00065g-AM; Tue, 20 Nov 2018 14:02:17 +0800
-Date:   Tue, 20 Nov 2018 14:02:17 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
-        Martin Willi <martin@strongswan.org>
-Subject: [RFC PATCH v2 0/4] Exporting existing crypto API code through zinc
-Message-ID: <20181120060217.t4nccaqpwnxkl4tx@gondor.apana.org.au>
-References: <20181105232526.173947-1-ebiggers@kernel.org>
- <20181105232526.173947-11-ebiggers@kernel.org>
- <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com>
- <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com>
- <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
- <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
+        Tue, 20 Nov 2018 11:31:10 -0500
+Received: from nautica.notk.org ([91.121.71.147]:60520 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726982AbeKTQbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 11:31:10 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 34024C009; Tue, 20 Nov 2018 07:03:46 +0100 (CET)
+Date:   Tue, 20 Nov 2018 07:03:31 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dominique Martinet <dominique.martinet@cea.fr>
+Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] 9p/net: put a lower bound on msize
+Message-ID: <20181120060331.GA6675@nautica>
+References: <20181102223908.GA9565@nautica>
+ <1541407968-31350-1-git-send-email-asmadeus@codewreck.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1541407968-31350-1-git-send-email-asmadeus@codewreck.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 01:24:51PM +0800, Herbert Xu wrote:
->
-> In response to Martin's patch-set which I merged last week, I think
-> here is quick way out for the zinc interface.
+Dominique Martinet wrote on Mon, Nov 05, 2018:
+> From: Dominique Martinet <dominique.martinet@cea.fr>
 > 
-> Going through the past zinc discussions it would appear that
-> everybody is quite happy with the zinc interface per se.  The
-> most contentious areas are in fact the algorithm implementations
-> under zinc, as well as the conversion of the crypto API algorithms
-> over to using the zinc interface (e.g., you can no longer access
-> specific implementations).
+> If the requested msize is too small (either from command line argument
+> or from the server version reply), we won't get any work done.
+> If it's *really* too small, nothing will work, and this got caught by
+> syzbot recently (on a new kmem_cache_create_usercopy() call)
 > 
-> My proposal is to merge the zinc interface as is, but to invert
-> how we place the algorithm implementations.  IOW the implementations
-> should stay where they are now, with in the crypto API.  However,
-> we will provide direct access to them for zinc without going through
-> the crypto API.  IOW we'll just export the functions directly.
+> Just set a minimum msize to 4k in both code paths, until someone
+> complains they have a use-case for a smaller msize.
 > 
-> Here is a proof of concept patch to do it for chacha20-generic.
-> It basically replaces patch 3 in the October zinc patch series.
-> Actually this patch also exports the arm/x86 chacha20 functions
-> too so they are ready for use by zinc.
+> We need to check in both mount option and server reply individually
+> because the msize for the first version request would be unchecked
+> with just a global check on clnt->msize.
 > 
-> If everyone is happy with this then we can immediately add the
-> zinc interface and expose the existing crypto API algorithms
-> through it.  This would allow wireguard to be merged right away.
+> Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+> Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+> Cc: Eric Van Hensbergen <ericvh@gmail.com>
+> Cc: Latchesar Ionkov <lucho@ionkov.net>
+> ---
+>  net/9p/client.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> In parallel, the discussions over replacing the implementations
-> underneath can carry on without stalling the whole project.
-> 
-> PS This patch is totally untested :)
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 2c9a17b9b46b..b1163ebdc622 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct p9_client *clnt)
+>  				ret = r;
+>  				continue;
+>  			}
+> +			if (r < 4096) {
 
-Here is an updated version demonstrating how we could access the
-accelerated versions of chacha20.  It also includes a final patch
-to deposit the new zinc version of x86-64 chacha20 into
-arch/x86/crypto where it can be used by both the crypto API as well
-as zinc.
+This should read if (option < 4096), amending what I've put in for -next
+last week :(
 
-The key differences between this and the last zinc patch series:
+Reviews wanted!
 
-1. The crypto API algorithms remain individually accessible, this
-is crucial as these algorithm names are exported to user-space so
-changing the names to foo-zinc is not going to work.
 
-2. The arch-specific algorithm code lives in their own module rather
-than in a monolithic module.
+> +				p9_debug(P9_DEBUG_ERROR,
+> +					 "msize should be at least 4k\n");
+> +				ret = -EINVAL;
+> +				continue;
+> +			}
+>  			clnt->msize = option;
+>  			break;
+>  		case Opt_trans:
+> @@ -983,10 +989,18 @@ static int p9_client_version(struct p9_client *c)
+>  	else if (!strncmp(version, "9P2000", 6))
+>  		c->proto_version = p9_proto_legacy;
+>  	else {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "server returned an unknown version: %s\n", version);
+>  		err = -EREMOTEIO;
+>  		goto error;
+>  	}
+>  
+> +	if (msize < 4096) {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "server returned a msize < 4096: %d\n", msize);
+> +		err = -EREMOTEIO;
+> +		goto error;
+> +	}
+>  	if (msize < c->msize)
+>  		c->msize = msize;
+>  
+> @@ -1043,6 +1057,13 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+>  	if (clnt->msize > clnt->trans_mod->maxsize)
+>  		clnt->msize = clnt->trans_mod->maxsize;
+>  
+> +	if (clnt->msize < 4096) {
+> +		p9_debug(P9_DEBUG_ERROR,
+> +			 "Please specify a msize of at least 4k\n");
+> +		err = -EINVAL;
+> +		goto free_client;
+> +	}
+> +
+>  	err = p9_client_version(clnt);
+>  	if (err)
+>  		goto close_trans;
 
-Cheers,
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Dominique
