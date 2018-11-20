@@ -2,125 +2,113 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFC4C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62210C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045AC20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:26:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Jhub1oxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045AC20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 61C8C2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C8C2087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbeKTUyo (ORCPT
+        id S1728184AbeKTUzG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:54:44 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:19577 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbeKTUyo (ORCPT
+        Tue, 20 Nov 2018 15:55:06 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:40776 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726398AbeKTUzG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:54:44 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf3e14c0000>; Tue, 20 Nov 2018 02:26:20 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 20 Nov 2018 02:26:19 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 20 Nov 2018 02:26:19 -0800
-Received: from [10.26.11.164] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
- 2018 10:26:17 +0000
-Subject: Re: [PATCH v1 2/4] ARM: tegra: Fix DRAM refresh-interval clobbering
- on resume from LP1 on Tegra30
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20180830185404.7224-1-digetx@gmail.com>
- <20180830185404.7224-3-digetx@gmail.com>
- <4f61bf5f-0aa8-df6e-109b-194b08f3374e@nvidia.com>
- <cee4398b-edb8-4c9d-7830-6f52fffd6e1c@gmail.com>
- <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <d0894c7c-be5a-5541-fab5-90bfd7d25dab@nvidia.com>
-Date:   Tue, 20 Nov 2018 10:26:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 15:55:06 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gP3Ep-0005LI-Tz; Tue, 20 Nov 2018 11:26:36 +0100
+Date:   Tue, 20 Nov 2018 11:26:35 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v3] x86/fpu: Disable BH while while loading FPU registers in
+ __fpu__restore_sig()
+Message-ID: <20181120102635.ddv3fvavxajjlfqk@linutronix.de>
+References: <20181119160410.ne7oiq2gkwt6jiqg@linutronix.de>
+ <20181119181000.GH14688@zn.tnic>
 MIME-Version: 1.0
-In-Reply-To: <2096a744-d80b-42ad-a285-7bc1c1d3a5ed@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542709580; bh=ariAlSx91gwsyHsXGVBJDoXd3HlI7BHx3L+hBe4/te8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Jhub1oxE1yzTvU9mH8AOL3tvyczyTlsTJBL8j5wfORdQ3ORspS+kNIFt15Be2MlPS
-         nyxAL/+lnM6CK3lMdfEfNI41OYYkSPebyANDeVz6m7gkWLiQ1vA1CgbrhFeWq8legu
-         3S5g7YygNbytjDtFrp2pqu6SV9s/Jv58lNn7yVChoosUUfwiotcVFhIOlWAt4iOwCB
-         f7ds/T+4zLwAccGt2GMlFkegxsDS7IoQp/V/4fSYRPdPZDbsbDHZzeTbTGqmSsyrA2
-         xYQtTqoOvGXzlVO6o7zuK8cO+CvwOBxgL27rkszQZnGfV7XOqLUqrjnLeEaFT0rPlX
-         LBhailzQAxumQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181119181000.GH14688@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The sequence
+   fpu->initialized = 1; /* step A */
+   preempt_disable();	 /* step B */
+   fpu__restore(fpu);
+   preempt_enable();
 
-On 19/11/2018 22:32, Dmitry Osipenko wrote:
-> On 20.11.2018 1:09, Dmitry Osipenko wrote:
->> On 20.11.2018 0:34, Jon Hunter wrote:
->>>
->>> On 30/08/2018 19:54, Dmitry Osipenko wrote:
->>>> The DRAM refresh-interval is getting erroneously set to "1" on exiting
->>>> from memory self-refreshing mode. The clobbered interval causes the
->>>> "refresh request overflow timeout" error raised by the External Memory
->>>> Controller on exiting from LP1 on Tegra30.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  arch/arm/mach-tegra/sleep-tegra30.S | 2 --
->>>>  1 file changed, 2 deletions(-)
->>>>
->>>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
->>>> index 801fe58978ae..99ac9c6dcf7c 100644
->>>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->>>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->>>> @@ -29,7 +29,6 @@
->>>>  #define EMC_CFG				0xc
->>>>  #define EMC_ADR_CFG			0x10
->>>>  #define EMC_TIMING_CONTROL		0x28
->>>> -#define EMC_REFRESH			0x70
->>>>  #define EMC_NOP				0xdc
->>>>  #define EMC_SELF_REF			0xe0
->>>>  #define EMC_MRW				0xe8
->>>> @@ -459,7 +458,6 @@ emc_wait_auto_cal_onetime:
->>>>  	cmp	r10, #TEGRA30
->>>>  	streq	r1, [r0, #EMC_NOP]
->>>>  	streq	r1, [r0, #EMC_NOP]
->>>> -	streq	r1, [r0, #EMC_REFRESH]
->>>>  
->>>>  	emc_device_mask r1, r0
->>>
->>> This does look incorrect and it appears Tegra20 has the same bug.
->>
->> Indeed.. somehow this doesn't cause any problems on T20. Maybe this affects only specific timing configurations and it's just a luck that "refresh overflow" isn't getting raised.
-> 
-> Ah, T20 exit_selfrefresh_loop doesn't latch registers.. that's probably why it stayed unnoticed.
+is racy in regard to a context switch.
+For 32bit frames __fpu__restore_sig() prepares the FPU state within
+fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+particular) does not modify fpu->state it uses fpu__drop() which sets
+fpu->initialized to 0.
+After fpu->initialized is cleared, the CPU's FPU state is not saved to
+fpu->state during a context switch. It then loads the new state to
+fpu->state from userland and ensures it is sane. The new state is loaded
+via fpu__restore(). The code sets then fpu->initializes to 1 in order to
+avoid fpu__initialize() doing anything (overwrite the new state) which
+is part of fpu__restore().
 
-Good to know.
+A context switch between step A and B would save CPU's current FPU
+registers to fpu->state and overwrite the newly prepared state. This
+looks like tiny race window but the Kernel Test Robot reported this back
+in 2016 while we had lazy FPU support. Borislav Petkov made the link
+between that report and another patch that has been posted.
+Since the removal of the lazy FPU support, this race goes unnoticed
+because the warning has been removed.
 
-Cheers Jon
+Disable bottom halfes around the restore sequence to avoid the race. BH
+needs to be disabled because BH is allowed to run (even with preemption
+disabled) and might invoke kernel_fpu_begin() by doing IPsec.
 
+Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
+Cc: stable@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v2…v3: Rewording parts of the commit message as per Borislav Petkov.
+v1…v2: A more verbose commit as message.
+
+ arch/x86/kernel/fpu/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 61a949d84dfa5..d99a8ee9e185e 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
+ 
++		local_bh_disable();
+ 		fpu->initialized = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
+ 
+ 		return err;
+ 	} else {
 -- 
-nvpublic
+2.19.1
+
