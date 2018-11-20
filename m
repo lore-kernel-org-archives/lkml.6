@@ -2,109 +2,132 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6E5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3595C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BFA20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lC7rNopo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9BFA20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 325CE20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 325CE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbeKTVYj (ORCPT
+        id S1728925AbeKTVYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:24:39 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18629 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728393AbeKTVYj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:24:39 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf3e83b0000>; Tue, 20 Nov 2018 02:55:55 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 20 Nov 2018 02:56:06 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 20 Nov 2018 02:56:06 -0800
-Received: from [10.26.11.164] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
- 2018 10:56:04 +0000
-Subject: Re: [PATCH 4.14 000/124] 4.14.82-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20181119162612.951907286@linuxfoundation.org>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <4041340b-1a1b-9381-e270-ab84f7a43f06@nvidia.com>
-Date:   Tue, 20 Nov 2018 10:56:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 16:24:42 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52935 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728393AbeKTVYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:24:42 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 329A7206D8; Tue, 20 Nov 2018 11:56:08 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F19E22037D;
+        Tue, 20 Nov 2018 11:55:57 +0100 (CET)
+Date:   Tue, 20 Nov 2018 11:55:57 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v4 03/26] clk: sunxi-ng: Add check for maximum rate to
+ NKM PLLs
+Message-ID: <20181120105557.3mysirc3ga2h2334@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-4-jagan@amarulasolutions.com>
+ <20181113132658.niwy6bqdqzaeqpv2@flea>
+ <CAMty3ZBTaeMBFYwyJ+8HqHBDAfEOPEYBt01jho1H4c3SBKbvEw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542711355; bh=m9WWHjU2X7pV7RiMMhzq0zo0t61I8KyMQ+3IjM+bJS4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=lC7rNopoQEUpDmWDtsrk6tlP+DKL/4lG+wUovKFpWeXhpLteD23Ug9rEjNzC9B/K4
-         0Hc3PoX/74Tw5GXlNB4CVNnozwSJCh1m0MlqScxV16VMCaqUl1c6Uc0JvpTADTJX3x
-         HYKwBPi16++vMIxh34ZIHV+5g9rzLsOVnJeR5RYXhqt7HvJ+Rt9RKoCOslwSNuWnHd
-         jCJ7oQGarNrBfA5kVnJRcCN0syopxRawhyYp89+SmSDL7qCvAWyVFGZYOrtsSxUqH3
-         eNn7SLMK27/vus9W3Fkgl7win7J04wx/B1XBtqnE7k+BlXZvsd8fLi8q2FQKahkKKp
-         55vzHSdvd7H1g==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="a27mgq4savd3egd2"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBTaeMBFYwyJ+8HqHBDAfEOPEYBt01jho1H4c3SBKbvEw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 19/11/2018 16:27, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.82 release.
-> There are 124 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Nov 21 16:25:07 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.82-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-All tests are passing for Tegra ...
+--a27mgq4savd3egd2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+On Thu, Nov 15, 2018 at 08:51:04PM +0530, Jagan Teki wrote:
+> > >  drivers/clk/sunxi-ng/ccu_nkm.c | 3 +++
+> > >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> > >  2 files changed, 4 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/cc=
+u_nkm.c
+> > > index 6b5ad990f802..b8b66cdd30bf 100644
+> > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > @@ -128,6 +128,9 @@ static unsigned long ccu_nkm_round_rate(struct cc=
+u_mux_internal *mux,
+> > >       if (rate < nkm->min_rate)
+> > >               return nkm->min_rate;
+> > >
+> > > +     if (nkm->max_rate && rate > nkm->max_rate)
+> > > +             return nkm->max_rate;
+> > > +
+> >
+> > I would expect the test to be the same for the minimum and maximum case=
+s.
+>=20
+> I don't have proper use-case for max rate test, I do verify by using
+> higher the rate on dclock, but nor sure.  May be I can skip the
+> max_rate patch?
 
-Linux version:	4.14.82-rc1-g43bb46e
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
+So you're sending more patches that you haven't really tested?
+Why are you sending them then?
 
-Cheers
-Jon
+> Apart from this, any idea about this issue where SUN4I_TCON0_DCLK_REG
+> will only work with div upto 6 on A64 DSI panels[1], did you find the
+> same issue on A33?
 
--- 
-nvpublic
+IIRC my panel was falling into the case where the divider was 4, so
+I've not fallen into that case.
+
+> With parent rate 330MHz, the resulting tcon divider for 30MHz [2]
+> clock is 11 and for the same for 55MHz [3] clock is 6.
+
+I'm not sure what the question is?
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--a27mgq4savd3egd2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PoPQAKCRDj7w1vZxhR
+xSLGAP9Qr44NyVb197rOJlOKTTntni3+46QV9pevbQM76nN3TgEAgaYjL5W+4KIG
+hTGncT/uJU90x586s+G6e7AB/3s8/A4=
+=07n9
+-----END PGP SIGNATURE-----
+
+--a27mgq4savd3egd2--
