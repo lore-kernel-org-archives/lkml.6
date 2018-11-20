@@ -2,100 +2,148 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C080C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F15C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082F820989
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082F820989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 0657E20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:22:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0657E20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730547AbeKUDu1 (ORCPT
+        id S1730383AbeKUDw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:50:27 -0500
-Received: from anholt.net ([50.246.234.109]:50728 "EHLO anholt.net"
+        Tue, 20 Nov 2018 22:52:57 -0500
+Received: from foss.arm.com ([217.140.101.70]:57798 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730478AbeKUDuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:50:25 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B148710A15EC;
-        Tue, 20 Nov 2018 09:20:11 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id PE7nu4Ye7OkQ; Tue, 20 Nov 2018 09:20:10 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 7313B10A173B;
-        Tue, 20 Nov 2018 09:20:02 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 2AB032FE1FED; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 7/8] ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block.
-Date:   Tue, 20 Nov 2018 09:19:59 -0800
-Message-Id: <20181120172000.15102-8-eric@anholt.net>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120172000.15102-1-eric@anholt.net>
-References: <20181120172000.15102-1-eric@anholt.net>
+        id S1726314AbeKUDw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:52:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3584E1DC8;
+        Tue, 20 Nov 2018 09:22:43 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 882593F5AF;
+        Tue, 20 Nov 2018 09:22:41 -0800 (PST)
+Subject: Re: [PATCH 1/4] KVM: arm/arm64: vgic: Do not cond_resched_lock() with
+ IRQs disabled
+To:     Christoffer Dall <christoffer.dall@arm.com>
+Cc:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-rt-users@vger.kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, bigeasy@linutronix.de, stable@vger.kernel.org
+References: <1542647279-46609-1-git-send-email-julien.thierry@arm.com>
+ <1542647279-46609-2-git-send-email-julien.thierry@arm.com>
+ <20181120141832.GA11162@e113682-lin.lund.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <76a488a9-893c-ffbe-16f2-23735af8126a@arm.com>
+Date:   Tue, 20 Nov 2018 17:22:39 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181120141832.GA11162@e113682-lin.lund.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was covering part of the PM block's range, up to the WDT regs.  To
-support the rest of the PM block's functionality, we need the full
-register range plus the AXI Async Bridge regs for PM sequencing.
 
-This doesn't convert any of the consumers over to the new binding yet,
-since we will need to be careful in coordinating our usage of firmware
-services that might power domains on and off versus the bcm2835-pm
-driver's access of those same domains.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- arch/arm/boot/dts/bcm283x.dtsi | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+On 20/11/18 14:18, Christoffer Dall wrote:
+> On Mon, Nov 19, 2018 at 05:07:56PM +0000, Julien Thierry wrote:
+>> To change the active state of an MMIO, halt is requested for all vcpus of
+>> the affected guest before modifying the IRQ state. This is done by calling
+>> cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
+>> disabled at this point and running a vcpu cannot get rescheduled.
+> 
+> "running a vcpu cannot get rescheduled" ?
 
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index 31b29646b14c..bd5be68b4561 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -121,8 +121,16 @@
- 		};
- 
- 		watchdog@7e100000 {
--			compatible = "brcm,bcm2835-pm-wdt";
--			reg = <0x7e100000 0x28>;
-+			compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
-+			#power-domain-cells = <1>;
-+			#reset-cells = <1>;
-+			reg = <0x7e100000 0x114>,
-+			      <0x7e00a000 0x24>;
-+			clocks = <&clocks BCM2835_CLOCK_V3D>,
-+				 <&clocks BCM2835_CLOCK_PERI_IMAGE>,
-+				 <&clocks BCM2835_CLOCK_H264>,
-+				 <&clocks BCM2835_CLOCK_ISP>;
-+			clock-names = "v3d", "peri_image", "h264", "isp";
- 		};
- 
- 		clocks: cprman@7e101000 {
+Yes, that doesn't make much sense :\ . I guess I just meant "a vcpu 
+cannot get rescheduled on this cpu".
+
+I'll rewrite this.
+
+> 
+>>
+>> Solve this by waiting for all vcpus to be halted after emmiting the halt
+>> request.
+>>
+>> Fixes commit 6c1b7521f4a07cc63bbe2dfe290efed47cdb780a ("KVM: arm/arm64:
+>> Factor out functionality to get vgic mmio requester_vcpu")
+>>
+>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: stable@vger.kernel.org
+>> ---
+>>   virt/kvm/arm/vgic/vgic-mmio.c | 33 +++++++++++----------------------
+>>   1 file changed, 11 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
+>> index f56ff1c..eefd877 100644
+>> --- a/virt/kvm/arm/vgic/vgic-mmio.c
+>> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
+>> @@ -313,27 +313,6 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>>
+>>   	spin_lock_irqsave(&irq->irq_lock, flags);
+>>
+>> -	/*
+>> -	 * If this virtual IRQ was written into a list register, we
+>> -	 * have to make sure the CPU that runs the VCPU thread has
+>> -	 * synced back the LR state to the struct vgic_irq.
+>> -	 *
+>> -	 * As long as the conditions below are true, we know the VCPU thread
+>> -	 * may be on its way back from the guest (we kicked the VCPU thread in
+>> -	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
+>> -	 * so we release and re-acquire the spin_lock to let the other thread
+>> -	 * sync back the IRQ.
+>> -	 *
+>> -	 * When accessing VGIC state from user space, requester_vcpu is
+>> -	 * NULL, which is fine, because we guarantee that no VCPUs are running
+>> -	 * when accessing VGIC state from user space so irq->vcpu->cpu is
+>> -	 * always -1.
+>> -	 */
+>> -	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
+>> -	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
+>> -	       irq->vcpu->cpu != -1) /* VCPU thread is running */
+>> -		cond_resched_lock(&irq->irq_lock);
+>> -
+>>   	if (irq->hw) {
+>>   		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
+>>   	} else {
+>> @@ -368,8 +347,18 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>>    */
+>>   static void vgic_change_active_prepare(struct kvm_vcpu *vcpu, u32 intid)
+>>   {
+>> -	if (intid > VGIC_NR_PRIVATE_IRQS)
+>> +	if (intid > VGIC_NR_PRIVATE_IRQS) {
+>> +		struct kvm_vcpu *tmp;
+>> +		int i;
+>> +
+>>   		kvm_arm_halt_guest(vcpu->kvm);
+>> +
+>> +		/* Wait for each vcpu to be halted */
+>> +		kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
+>> +			while (tmp->cpu != -1)
+>> +				cond_resched();
+> 
+> We used to have something like this which Andre then found out it could
+> deadlock the system, because the VCPU making this request wouldn't have
+> called kvm_arch_vcpu_put, and its cpu value would still have a value.
+> 
+> That's why we have the vcpu && vcpu != requester check.
+> 
+
+I see, thanks for pointing that out. I'll fix this in the next iteration.
+
+Thanks,
+
 -- 
-2.19.1
-
+Julien Thierry
