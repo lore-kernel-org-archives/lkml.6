@@ -2,198 +2,104 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A134C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFE0C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A96D206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A96D206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 37B5A20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:07:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="oIg8ANg7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37B5A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729359AbeKUAfz (ORCPT
+        id S1729385AbeKUAgl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:35:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33048 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729179AbeKUAfz (ORCPT
+        Tue, 20 Nov 2018 19:36:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43949 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbeKUAgl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:35:55 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKDtehA130336
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:06:35 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nvj59vthc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:06:34 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 20 Nov 2018 14:06:30 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 20 Nov 2018 14:06:27 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAKE6QDK57344198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 14:06:26 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A135CAE04D;
-        Tue, 20 Nov 2018 14:06:26 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A51D7AE055;
-        Tue, 20 Nov 2018 14:06:24 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.151])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue, 20 Nov 2018 14:06:24 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 15:06:21 +0100
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v3 7/7] cgroup: document cgroup v2 freezer interface
-References: <20181117003830.15344-1-guro@fb.com>
- <20181117003830.15344-8-guro@fb.com>
- <20181117080227.GA22672@rapoport-lnx>
- <20181119174241.GA7273@tower.DHCP.thefacebook.com>
+        Tue, 20 Nov 2018 19:36:41 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so1042593pfk.10
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 06:07:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fOgWAi0O2tc9zB8aSd5VFAaRe8eYerzgVbt612r4NZ8=;
+        b=oIg8ANg7wQ/exYQkot06N8fRBsE2Ju++kbCxrDg/BSChoG5rt9BMuJwIyUJj917Eft
+         XoHCYZXrsbdK1WtFNdxarLV5fq8CizUM3rPgFkYCmDXrKdmvfGigHJ2ziqyCVPl+1eFJ
+         RYhz+jBcxyBQrclGgwSdFRobj6nzLfHG6Ex+Mly1pZ4tIAmNoErfOI5VwVMpXIstdiuK
+         8qvXr93EU6luYB7XqBCZN48JRD/cG5/ckm1vm5xR/HENr13VWdZ5UEN0EtIWH8h6zqV5
+         d4zZe7HTzVW5g76QO6wDpPZC3xiHTC4AsyrCAsxVKKg7XdObfBX5W18uzL+9oRpW1MCY
+         aXmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fOgWAi0O2tc9zB8aSd5VFAaRe8eYerzgVbt612r4NZ8=;
+        b=l0BMtdcfUHX0POk8nH6vE0o7Q03qDLwI+21bX+yPGth23OjZVLk3wt514ywiwNw5Fk
+         BfdRNCW4fJl5VRUW/L5/UDE/WTTRbE2DfraK3r0Rw7zbkcYLLTv/g1wdPhxZMlhzwQLP
+         +I6XA88XqK0z7lguU+sAceQx/mb6qj3otrxqatOtJTBwAxYOyI3DpMZxWxqeba7t22SF
+         40aYAAudhEUNe7ciZcyjmoqqS/xyo9cb5Tjwo5Rcjji3N1jZnlilPdseBUgsg/Vkgp8i
+         SGro46c4ISkN41op8SFLlhqUJkz7/cOEUbQyZP/f0g3ARQhC+ukj804GarA+ihgBWRYo
+         rrHA==
+X-Gm-Message-State: AA+aEWaahxXoqFq+UP3khvHG4XQz+AemFMvaQrJPc+VdOs7Ol/rSWsbc
+        M1kbMlFJhlfVv/siuWFwp5Sn9w==
+X-Google-Smtp-Source: AFSGD/WSlZUjWgxK/mJ/VVJixGqMe8p7r/f8oXuREhDktsYhhKxUheKyVQZRAHkl/rerdsk6hVU5PA==
+X-Received: by 2002:a63:de04:: with SMTP id f4mr2008851pgg.292.1542722841869;
+        Tue, 20 Nov 2018 06:07:21 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain (fmdmzpr04-ext.fm.intel.com. [192.55.54.39])
+        by smtp.gmail.com with ESMTPSA id d6sm30886589pgc.89.2018.11.20.06.07.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 06:07:20 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 64EBE302653; Tue, 20 Nov 2018 17:07:15 +0300 (+03)
+Date:   Tue, 20 Nov 2018 17:07:15 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [RFC PATCH 3/3] mm, fault_around: do not take a reference to a
+ locked page
+Message-ID: <20181120140715.mouc7okin3ht5krr@kshutemo-mobl1>
+References: <20181120134323.13007-1-mhocko@kernel.org>
+ <20181120134323.13007-4-mhocko@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181119174241.GA7273@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18112014-0012-0000-0000-000002CD65AD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112014-0013-0000-0000-000021028EAE
-Message-Id: <20181120140621.GC24627@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811200126
+In-Reply-To: <20181120134323.13007-4-mhocko@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 05:42:48PM +0000, Roman Gushchin wrote:
-> On Sat, Nov 17, 2018 at 12:02:28AM -0800, Mike Rapoport wrote:
-> > Hi,
-> > 
-> > On Fri, Nov 16, 2018 at 04:38:30PM -0800, Roman Gushchin wrote:
-> > > Describe cgroup v2 freezer interface in the cgroup v2 admin guide.
-> > > 
-> > > Signed-off-by: Roman Gushchin <guro@fb.com>
-> > > Cc: Tejun Heo <tj@kernel.org>
-> > > Cc: linux-doc@vger.kernel.org
-> > > Cc: kernel-team@fb.com
-> > > ---
-> > >  Documentation/admin-guide/cgroup-v2.rst | 26 +++++++++++++++++++++++++
-> > >  1 file changed, 26 insertions(+)
-> > > 
-> > > diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-> > > index 184193bcb262..a065c0bed88c 100644
-> > > --- a/Documentation/admin-guide/cgroup-v2.rst
-> > > +++ b/Documentation/admin-guide/cgroup-v2.rst
-> > > @@ -862,6 +862,8 @@ All cgroup core files are prefixed with "cgroup."
-> > >  	  populated
-> > >  		1 if the cgroup or its descendants contains any live
-> > >  		processes; otherwise, 0.
-> > > +	  frozen
-> > > +		1 if the cgroup is frozen; otherwise, 0.
-> > > 
-> > >    cgroup.max.descendants
-> > >  	A read-write single value files.  The default is "max".
-> > > @@ -895,6 +897,30 @@ All cgroup core files are prefixed with "cgroup."
-> > >  		A dying cgroup can consume system resources not exceeding
-> > >  		limits, which were active at the moment of cgroup deletion.
-> > > 
-> > > +  cgroup.freeze
-> > > +	A read-write single value file which exists on non-root cgroups.
-> > > +	Allowed values are "0" and "1". The default is "0".
-> > > +
-> > > +	Writing "1" to the file causes freezing of the cgroup and all
-> > > +	descendant cgroups. This means that all belonging processes will
-> > > +	be stopped and will not run until the cgroup will be explicitly
-> > > +	unfrozen. Freezing of the cgroup may take some time; when the process
-> > 
-> > "when the process is complete" sounds somewhat ambiguous, it's unclear
-> > whether freezing is complete or the process that's being frozen is
-> > complete.
-> > 
-> > Maybe "when this action is completed"?
-> > 
-> > > +	is complete, the "frozen" value in the cgroup.events control file
-> > > +	will be updated and the corresponding notification will be issued.
-> > 
-> > Can you please clarify how exactly cgroup.events would be updated?
-> > 
-> > > +	Cgroup can be frozen either by its own settings, either by settings
-> > 
-> >       ^ A cgroup ... and maybe there are more "a" and "the" that should be
-> > fixed, it's hard for me to tell.
-> > 
-> > Also, I believe "either ..., or ..." sounds better than "either ...,
-> > either ..."
-> > 
-> > > +	of any ancestor cgroups. If any of ancestor cgroups is frozen, the
-> > > +	cgroup will remain frozen.
-> > > +
-> > > +	Processes in the frozen cgroup can be killed by a fatal signal.
-> > > +	They also can enter and leave a frozen cgroup: either by an explicit
-> > > +	move by a user, either if freezing of the cgroup races with fork().
-> > 
-> > ditto
-> > 
-> > > +	If a cgroup is moved to a frozen cgroup, it stops. If a process is
-> > 
-> >             ^ process?
-> > 
-> > > +	moving out of a frozen cgroup, it becomes running.
-> > 
-> >        ^ moved
+On Tue, Nov 20, 2018 at 02:43:23PM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> Hello, Mike!
-> 
-> Thanks for the review! I agree with all comments above; fixes queued for v4.
-> 
-> > 
-> > > +	Frozen status of a cgroup doesn't affect any cgroup tree operations:
-> > > +	it's possible to delete a frozen (and empty) cgroup, as well as
-> > > +	create new sub-cgroups.
-> > 
-> > Maybe it's also worth adding that freezing a process has no effect on its
-> > memory consumption, at least directly.
-> 
-> Hm, isn't it the expected behavior?
+> filemap_map_pages takes a speculative reference to each page in the
+> range before it tries to lock that page. While this is correct it
+> also can influence page migration which will bail out when seeing
+> an elevated reference count. The faultaround code would bail on
+> seeing a locked page so we can pro-actively check the PageLocked
+> bit before page_cache_get_speculative and prevent from pointless
+> reference count churn.
 
-You'd be surprised ;-)
-Just recently I had a couple of questions about the memory consumption of
-the frozen processes.
- 
-> In any case, I assume that cgroup.freeze knob description is not the best place
-> for a such explanations. Maybe it's better to add a standalone paragraph with
-> the description of the frozen process state, what's expected to work, what's
-> not, etc. I'd return to this question a bit later, when we'll agree on the user
-> interface and the implementation.
+Looks fine to me.
 
-Sure.
- 
-> Thanks!
-> 
+But please drop a line of comment in the code. As is it might be confusing
+for a reader.
 
 -- 
-Sincerely yours,
-Mike.
-
+ Kirill A. Shutemov
