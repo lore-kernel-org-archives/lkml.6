@@ -2,229 +2,127 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE952C04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 373CBC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F122148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F122148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D6C4920831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:54:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hXmLqSAW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C4920831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbeKTTX7 (ORCPT
+        id S1726756AbeKTTWd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:23:59 -0500
-Received: from mga09.intel.com ([134.134.136.24]:17618 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeKTTX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:23:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="106105951"
-Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:52 -0800
-From:   Huang Ying <ying.huang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V7 RESEND 19/21] swap: Support PMD swap mapping in common path
-Date:   Tue, 20 Nov 2018 16:54:47 +0800
-Message-Id: <20181120085449.5542-20-ying.huang@intel.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
-References: <20181120085449.5542-1-ying.huang@intel.com>
+        Tue, 20 Nov 2018 14:22:33 -0500
+Received: from mail-wr1-f42.google.com ([209.85.221.42]:33451 "EHLO
+        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbeKTTWd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:22:33 -0500
+Received: by mail-wr1-f42.google.com with SMTP id u9-v6so1056683wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:54:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YiKsH2SBRwXR72JBpKIZpb0ghcQkW9elVqNf5LWnQT0=;
+        b=hXmLqSAWDMex4iTP3Mer0QRAX49i9/A7QUwDkE+1poZEcOrwciJzIPwE9uob6C9ikN
+         /DVM9iett35HJAj4udLLpJY0Dwzs+Cp6t6tfXbHEYuC0VN868ypMyJU7m9Qww6dme+Fp
+         ITkPKQvkclzPsK7qzAErvewuDpa2dESkAS4fk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YiKsH2SBRwXR72JBpKIZpb0ghcQkW9elVqNf5LWnQT0=;
+        b=jKkojvw+YSS7f2B3KYmPoraFm0iGKr3Vus9CxcFE6pgJYlywky7/Sj2ftl1kirLrqm
+         lcxx1K6refkU6K4X3zypwWBkf8Nl7f4cADJnso6k6PeXuVuYsRcaikKOTPfxgyfuBsSX
+         1yQhCW2WJUwQO/LZKKlR1iMbqwR2ZXkLv5H/6FysEsbv0SMpBu8xrG9quYcJLQg97q9v
+         hVlBjcOW+q4lVCcW9u0AbbbSKj0MCO8sCfWDQE2NWPOddLXtAuksbZFm0gEbJ7y0z0TH
+         x6YMVUTaW+hdEMGz9frBShXWSo6Ak5sR/m4Q6Ky5d0qBAhruMwF/Js7EAIDLfEUpdEkx
+         tTVg==
+X-Gm-Message-State: AA+aEWZczKojD7lGmot55Npuw8HHy4FHxCPmJrU3SCRq+BK0VYKSK0EX
+        tHwyTV1cgDn7XR298FkLx4t8Bg==
+X-Google-Smtp-Source: AFSGD/VJwIdKJdQCwN67JNgT+ozSKe1cS/CCWCFNYxTsBGjT3ilsSOwBHIEd1TZGHd6+2QezEdHVKw==
+X-Received: by 2002:a5d:6b81:: with SMTP id n1mr1181837wrx.149.1542704071194;
+        Tue, 20 Nov 2018 00:54:31 -0800 (PST)
+Received: from [192.168.0.40] (98.242.136.77.rev.sfr.net. [77.136.242.98])
+        by smtp.googlemail.com with ESMTPSA id z8sm23242622wrr.52.2018.11.20.00.54.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 00:54:30 -0800 (PST)
+Subject: Re: [PATCH] thermal: imx: fix for dependency on cpu-freq
+To:     Anson Huang <anson.huang@nxp.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+References: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
+ <28d501b1-8016-cc1a-3f7c-ac485ab81aa2@linaro.org>
+ <DB3PR0402MB391662A8DA6A1F43F26F095BF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e4cf8bad-9a4f-32e5-2f0e-be44257b5fe2@linaro.org>
+Date:   Tue, 20 Nov 2018 09:54:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <DB3PR0402MB391662A8DA6A1F43F26F095BF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Original code is only for PMD migration entry, it is revised to
-support PMD swap mapping.
+On 20/11/2018 09:47, Anson Huang wrote:
+> Hi, Daniel
+> 
+> Best Regards!
+> Anson Huang
+> 
+>> -----Original Message-----
+>> From: Daniel Lezcano [mailto:daniel.lezcano@linaro.org]
+>> Sent: 2018年11月20日 16:45
+>> To: Anson Huang <anson.huang@nxp.com>; rui.zhang@intel.com;
+>> edubezval@gmail.com; linux-pm@vger.kernel.org;
+>> linux-kernel@vger.kernel.org
+>> Cc: dl-linux-imx <linux-imx@nxp.com>
+>> Subject: Re: [PATCH] thermal: imx: fix for dependency on cpu-freq
+>>
+>> On 24/10/2018 08:39, Anson Huang wrote:
+>>> The thermal driver is a standalone driver for monitoring SoC
+>>> temperature by enabling thermal sensor, so it can be enabled even when
+>>> CONFIG_CPU_FREQ is NOT set. So remove the dependency with
+>> CPU_THERMAL.
+>>>
+>>> Add CONFIG_CPU_FREQ check for cpu-freq related operation in thermal
+>>> driver to make thermal driver probe successfully when CONFIG_CPU_FREQ
+>>> is NOT set.
+>>>
+>>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>>> ---
+>>
+>> Why not simply kill this legacy code ?
+> 
+> Because killing legacy code will have old dtb compatible issue, old dtb
+> will NOT have cpufreq cooling function.
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
----
- fs/proc/task_mmu.c | 12 +++++-------
- mm/gup.c           | 36 ++++++++++++++++++++++++------------
- mm/huge_memory.c   |  7 ++++---
- mm/mempolicy.c     |  2 +-
- 4 files changed, 34 insertions(+), 23 deletions(-)
+Yeah, I imagine that is the reason why you want to keep the legacy code
+but do you really care about old DTB based boards? Are they still
+updated with newer *upstream vanilla* kernels?
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 39e96a21366e..0e65233f2cc2 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -986,7 +986,7 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
- 		pmd = pmd_clear_soft_dirty(pmd);
- 
- 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
--	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
-+	} else if (is_swap_pmd(pmd)) {
- 		pmd = pmd_swp_clear_soft_dirty(pmd);
- 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
- 	}
-@@ -1316,9 +1316,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 			if (pm->show_pfn)
- 				frame = pmd_pfn(pmd) +
- 					((addr & ~PMD_MASK) >> PAGE_SHIFT);
--		}
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
--		else if (is_swap_pmd(pmd)) {
-+		} else if (IS_ENABLED(CONFIG_HAVE_PMD_SWAP_ENTRY) &&
-+			   is_swap_pmd(pmd)) {
- 			swp_entry_t entry = pmd_to_swp_entry(pmd);
- 			unsigned long offset;
- 
-@@ -1331,10 +1330,9 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 			flags |= PM_SWAP;
- 			if (pmd_swp_soft_dirty(pmd))
- 				flags |= PM_SOFT_DIRTY;
--			VM_BUG_ON(!is_pmd_migration_entry(pmd));
--			page = migration_entry_to_page(entry);
-+			if (is_pmd_migration_entry(pmd))
-+				page = migration_entry_to_page(entry);
- 		}
--#endif
- 
- 		if (page && page_mapcount(page) == 1)
- 			flags |= PM_MMAP_EXCLUSIVE;
-diff --git a/mm/gup.c b/mm/gup.c
-index aa43620a3270..3ecaee6dd290 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -215,6 +215,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 	spinlock_t *ptl;
- 	struct page *page;
- 	struct mm_struct *mm = vma->vm_mm;
-+	swp_entry_t entry;
- 
- 	pmd = pmd_offset(pudp, address);
- 	/*
-@@ -242,18 +243,22 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 	if (!pmd_present(pmdval)) {
- 		if (likely(!(flags & FOLL_MIGRATION)))
- 			return no_page_table(vma, flags);
--		VM_BUG_ON(thp_migration_supported() &&
--				  !is_pmd_migration_entry(pmdval));
--		if (is_pmd_migration_entry(pmdval))
-+		entry = pmd_to_swp_entry(pmdval);
-+		if (thp_migration_supported() && is_migration_entry(entry)) {
- 			pmd_migration_entry_wait(mm, pmd);
--		pmdval = READ_ONCE(*pmd);
--		/*
--		 * MADV_DONTNEED may convert the pmd to null because
--		 * mmap_sem is held in read mode
--		 */
--		if (pmd_none(pmdval))
-+			pmdval = READ_ONCE(*pmd);
-+			/*
-+			 * MADV_DONTNEED may convert the pmd to null because
-+			 * mmap_sem is held in read mode
-+			 */
-+			if (pmd_none(pmdval))
-+				return no_page_table(vma, flags);
-+			goto retry;
-+		}
-+		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
- 			return no_page_table(vma, flags);
--		goto retry;
-+		WARN_ON(1);
-+		return no_page_table(vma, flags);
- 	}
- 	if (pmd_devmap(pmdval)) {
- 		ptl = pmd_lock(mm, pmd);
-@@ -275,11 +280,18 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 		return no_page_table(vma, flags);
- 	}
- 	if (unlikely(!pmd_present(*pmd))) {
-+		entry = pmd_to_swp_entry(*pmd);
- 		spin_unlock(ptl);
- 		if (likely(!(flags & FOLL_MIGRATION)))
- 			return no_page_table(vma, flags);
--		pmd_migration_entry_wait(mm, pmd);
--		goto retry_locked;
-+		if (thp_migration_supported() && is_migration_entry(entry)) {
-+			pmd_migration_entry_wait(mm, pmd);
-+			goto retry_locked;
-+		}
-+		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
-+			return no_page_table(vma, flags);
-+		WARN_ON(1);
-+		return no_page_table(vma, flags);
- 	}
- 	if (unlikely(!pmd_trans_huge(*pmd))) {
- 		spin_unlock(ptl);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index c2b23dfb0d55..e7b0840fcb8c 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2139,7 +2139,7 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
- static pmd_t move_soft_dirty_pmd(pmd_t pmd)
- {
- #ifdef CONFIG_MEM_SOFT_DIRTY
--	if (unlikely(is_pmd_migration_entry(pmd)))
-+	if (unlikely(is_swap_pmd(pmd)))
- 		pmd = pmd_swp_mksoft_dirty(pmd);
- 	else if (pmd_present(pmd))
- 		pmd = pmd_mksoft_dirty(pmd);
-@@ -2223,11 +2223,12 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 	preserve_write = prot_numa && pmd_write(*pmd);
- 	ret = 1;
- 
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-+#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
- 	if (is_swap_pmd(*pmd)) {
- 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
- 
--		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
-+		VM_BUG_ON(!IS_ENABLED(CONFIG_THP_SWAP) &&
-+			  !is_migration_entry(entry));
- 		if (is_write_migration_entry(entry)) {
- 			pmd_t newpmd;
- 			/*
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 5837a067124d..7a5c1d2faea2 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -436,7 +436,7 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
- 	struct queue_pages *qp = walk->private;
- 	unsigned long flags;
- 
--	if (unlikely(is_pmd_migration_entry(*pmd))) {
-+	if (unlikely(is_swap_pmd(*pmd))) {
- 		ret = 1;
- 		goto unlock;
- 	}
+
 -- 
-2.18.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
