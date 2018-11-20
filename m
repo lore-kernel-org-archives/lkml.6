@@ -6,111 +6,118 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06F09C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F95C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96087204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A01B206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="aijjU6DY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96087204FD
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V7BxuBmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A01B206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729575AbeKUCzF (ORCPT
+        id S1729715AbeKUCza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:55:05 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54128 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725904AbeKUCzF (ORCPT
+        Tue, 20 Nov 2018 21:55:30 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41021 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbeKUCza (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:55:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=at3fvwn+KrKO/rVkxWNYDOmKEaGFuH3qzbPEqHl2C70=; b=aijjU6DYwe1yEhUPH5oimJVwR
-        EGoHQ23cpejJNkkXKpGBKvKAsikcLQQeh0lmF3CMR37fc144FoAxghHG1igCcq5bnQc9iJpaBmnl+
-        AJ5yppOdVulSuc96hLeXKtgolUxYEdpgSp8KX6swG/RYof6Qv0Zt97J/HwamzNzESZerc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP8pk-0001ln-OE; Tue, 20 Nov 2018 16:25:04 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 2FE311124DC2; Tue, 20 Nov 2018 16:25:04 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 16:25:04 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>, digetx@gmail.com,
-        ryandcase@chromium.org, David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 7/7] regulator: core: Remove loop disabling supplies in
- regulator_force_disable()
-Message-ID: <20181120162504.GJ3894@sirena.org.uk>
-References: <20181120002654.1891-1-dianders@chromium.org>
- <20181120002654.1891-7-dianders@chromium.org>
- <20181120155458.GG3894@sirena.org.uk>
- <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
+        Tue, 20 Nov 2018 21:55:30 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d18so618677qto.8;
+        Tue, 20 Nov 2018 08:25:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LvDXexURC7JDXtx8bhwlzEV40rN1puHR+/+gNK58vJE=;
+        b=V7BxuBmDWakSa2+zGHLwmteCApPcPjLgSrRaw4oHnEWl0xgIuDq5bWKa+MLoHQfmZa
+         Eqf0u4C1mpVU3D4SF6vUbM1tYDFaWrO1NjUAsTtKsIGKZcrWBH8/T6DgxzBj59MRd+D4
+         jS6eV8YGQ6IxAqjDr4Ibsbp153cY7RNbToyMuGeJpZ3ZK7CWeNf7DwHT3M/CKkN8LsOB
+         cMwM4gcLAb2wm4DDZwX6FW3Ai9ysAPJCq6UmoD0UFXVUHutQ0mLZCWhQfa8WTc48OfOI
+         cGISfKkDHkHh5it1ERt+LuCblgYjpkPKFm81BKcYN89fkY7sHCE/6141J96eBfe+RBVC
+         DfKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LvDXexURC7JDXtx8bhwlzEV40rN1puHR+/+gNK58vJE=;
+        b=lYRtfmPfJe2UcL6MykQBHGX1s/MLQjBgkPVZbwWoxItJMZw7jcuw2VsWSA5Z4BjYW3
+         145eTVyS1Abo/2ul0p/0W2d+mB4nbywdLGpD+AnJC12UrLtuTBSw8R9GG9HATiLBb3RC
+         xKkPvshPOVOao3KaTZ25t8J5NBVLW8agOTwAMTkOVQRlYz6WV5DzZVrn2W+pX+bX6GDF
+         a8mur4cSE0Hj8C7Z/3BdLQZHn3y1zWEoZixNOBsbMs4l4zGbXVvuuB+IIClUtTvEALxk
+         7M8Dyy99fGC0Q0k0tk58Afckh4f46+DRKuK6mn0lyTzLQGQpNqOy5G8PijifMQxihKWv
+         TR2Q==
+X-Gm-Message-State: AGRZ1gIVfar4E4S27HDAXXL5ETHm6VPutIYWGobaR7oujNX66glajJ6x
+        iaUBqYNyz1SlrxxA6scnBq3ILUij
+X-Google-Smtp-Source: AJdET5ewDHSWzUIhjG3n/dNAQwsATqsoHFBqb8mJcSZkAiUQHvwbK5ARhiJ8qSFYwVBLyHB4T+7PYQ==
+X-Received: by 2002:ac8:7598:: with SMTP id s24mr2594022qtq.6.1542731131927;
+        Tue, 20 Nov 2018 08:25:31 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:4b6a])
+        by smtp.gmail.com with ESMTPSA id b8sm27944903qka.79.2018.11.20.08.25.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 08:25:31 -0800 (PST)
+Date:   Tue, 20 Nov 2018 08:25:29 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v3 4/7] cgroup: cgroup v2 freezer
+Message-ID: <20181120162529.GU2509588@devbig004.ftw2.facebook.com>
+References: <20181117003830.15344-1-guro@fb.com>
+ <20181117003830.15344-5-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aznLbwQ42o7LEaqN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181117003830.15344-5-guro@fb.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Nov 16, 2018 at 04:38:27PM -0800, Roman Gushchin wrote:
+> +void cgroup_freezer_migrate_task(struct task_struct *task,
+> +				 struct cgroup *src, struct cgroup *dst)
+> +{
+> +	lockdep_assert_held(&css_set_lock);
+> +
+> +	/*
+> +	 * Kernel threads are not supposed to be frozen at all.
+> +	 */
+> +	if (task->flags & PF_KTHREAD)
+> +		return;
+> +
+> +	/*
+> +	 * Adjust counters of freezing and frozen tasks.
+> +	 */
+> +	if (test_bit(CGRP_FREEZE, &src->flags)) {
+> +		src->freezer.nr_tasks_to_freeze--;
+> +		WARN_ON_ONCE(src->freezer.nr_tasks_to_freeze < 0);
+> +	}
+> +
+> +	/*
+> +	 * If the task is frozen, let's bump nr_tasks_to_freeze even
+> +	 * if the target cgroup isn't frozen: the counter will be decreased
+> +	 * in cgroup_leave_frozen().
+> +	 */
+> +	if (test_bit(CGRP_FREEZE, &dst->flags) || task->frozen)
+> +		dst->freezer.nr_tasks_to_freeze++;
+> +
+> +	if (task->frozen) {
+> +		src->freezer.nr_frozen_tasks--;
+> +		dst->freezer.nr_frozen_tasks++;
+> +		WARN_ON_ONCE(src->freezer.nr_frozen_tasks < 0);
+> +		WARN_ON_ONCE(dst->freezer.nr_frozen_tasks >
+> +			     dst->freezer.nr_tasks_to_freeze);
+> +	}
 
---aznLbwQ42o7LEaqN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+If a non-frozen task is being moved into a frozen cgroup, shouldn't
+that also trigger frozen state update?
 
-On Tue, Nov 20, 2018 at 08:04:57AM -0800, Doug Anderson wrote:
+Thanks.
 
-> In general it's hard for me to reason about how the system in general
-> should behave after regulator_force_disable() is called.  Is it
-> basically expected that the system will panic soon after?
-> Specifically other consumers of the same regulator will think it's on
-> but it won't actually be on.  What should happen if one of those other
-> consumers calls disable/enable?  Should the regulator turn back on?
-> ...or is the regulator permanently off until the system reboots?
-
-If something has been forced off the system is in very serious trouble
-and had a cricial safety problem, though the fact that there's error
-handling code that did the force disable might mean that there's some
-ability to recover the situation - for example, this might be part of
-thermal management or something like charger management.  Other drivers
-do get notified if something gets forced off so a well written system
-will ensure that other users of a regulator that can get force disabled
-will have handling for this as should userspace.  We don't have any such
-full systems in mainline, though - it is a really uncommon case.
-
-The usage in the Adreno drivers just looks to be another completely
-out of expectation regulator API usage in the QC code.  I do wish there
-were a way to flag API calls as needing review :(
-
---aznLbwQ42o7LEaqN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0NV8ACgkQJNaLcl1U
-h9CllQf/c3nEJiuxm0cFd2sgAj07C0ivBaapX023nBIVeQPnU6hzBTIR5kjM6Qc2
-wvL9iPK+wzOPSi1/TZF6hvqpcBuakHTzfy08qx14tuc7oWnPzcA+7llM6d1IepqA
-veSUyhOG8uSDOaSqx9nOP3yudn5GvcVo05hTzGnQgYOwHTDXiO5lB/dRL+CwEOmz
-uYNCP7Qb2Rh9X3ReCAU//mp5XLArbDYiojBlAx0WxYp49hD8Ox7WWO4wlxKqas11
-DlIU5TqKTz/Uq7JfogIo0UdfhGjl2iyode95N0w+1+CBEjPud+ZfVHDLafZ9a/ij
-hyJf/N7vMipIJZzotQbzS8v7BnZYLg==
-=hfMO
------END PGP SIGNATURE-----
-
---aznLbwQ42o7LEaqN--
+-- 
+tejun
