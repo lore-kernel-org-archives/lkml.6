@@ -1,163 +1,124 @@
 Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A3CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A66C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E37FF21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:33:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46E8220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:33:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TstsiSgr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E37FF21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="bxZJdZWO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46E8220870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=impinj.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbeKTMAH (ORCPT
+        id S1732561AbeKTMAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 07:00:07 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:25488 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbeKTMAG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 07:00:06 -0500
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id wAK1XGJm000409
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 10:33:17 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAK1XGJm000409
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542677597;
-        bh=PwZNHY2T5e6fraX8J2a9TUhGJWKSVLwRTSBfNlG6ytg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TstsiSgr5RcClFrqlgD2V6RQMUMJE5EOJRD3VCEbVWep9zCPedl8s6fh/vOW7TIBC
-         8kRSIA1asoaLLoKH8K06iGL2+QwsR/LpkRMPFIx7oBr+a1IwNA8mjOi49PUYhenQpj
-         2Ex7IT2njVklGqXRQXzh2GpUJpMXUOcrnAnldb+GzcWgj8PiVkCNmSzNaYdaVLe2KI
-         fm0Fx93/DXpgLPKyPodLIQ9S3hgLzWpQHAclc4UMgyG/n7tChhdfBV4WJEmj1KY6VO
-         QUwLgO2GEPIkPTf6JtrxTEBhvf84X8t8eCkpvxaYVWTOGu9iH6VwkDNnJ9qpzgICLu
-         NSoHZDvrShzbQ==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id h18so160413vsj.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 17:33:17 -0800 (PST)
-X-Gm-Message-State: AA+aEWa15m5m7XiRDQTMnTSDFIFbfSIqsfhkntBivMzsUIGxK/+vNEta
-        55hgvm/JT26OmXSCFF0YiAgLFwV+MAw0vuoQMZ8=
-X-Google-Smtp-Source: AJdET5dOcPw1L0UNgTRUlEbS1rA4UtcvjU2gszXln07Q9nI7Z+EftfihQFD1qjMEhqC6fMDmE1W5TsuQUGx7SApxHTI=
-X-Received: by 2002:a67:485:: with SMTP id 127mr28319vse.54.1542677596203;
- Mon, 19 Nov 2018 17:33:16 -0800 (PST)
+        Tue, 20 Nov 2018 07:00:17 -0500
+Received: from mail-eopbgr780109.outbound.protection.outlook.com ([40.107.78.109]:41376
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726119AbeKTMAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 07:00:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tZtcE1DUJh0hLFiUZCEjAMx4RsBHscpfLE/bEx5KdZY=;
+ b=bxZJdZWOSKl5A1GUSpo1pzrBu7UV6Wq8UYEQYqiDsoH+JQm+6laoJSIYGgJihB/7kBiDrD4WwvUd9+IeYpjTtoKkn84P4iLOONtHPeJMIC1onPwq/LdES6G92kRmtPfYG0+3EbDgPk8AtQVxklu19a4G4UUN7YyBa6eyGLFefFA=
+Received: from CY4PR0601MB3697.namprd06.prod.outlook.com (52.132.101.36) by
+ CY4PR0601MB3585.namprd06.prod.outlook.com (52.132.100.164) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.29; Tue, 20 Nov 2018 01:33:41 +0000
+Received: from CY4PR0601MB3697.namprd06.prod.outlook.com
+ ([fe80::c090:3ad2:d81c:8407]) by CY4PR0601MB3697.namprd06.prod.outlook.com
+ ([fe80::c090:3ad2:d81c:8407%5]) with mapi id 15.20.1294.048; Tue, 20 Nov 2018
+ 01:33:41 +0000
+From:   Trent Piepho <tpiepho@impinj.com>
+To:     "stefan@agner.ch" <stefan@agner.ch>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
+Thread-Topic: [PATCH 2/2] PCI: imx6: limit DBI register length
+Thread-Index: AQHUf+wekJAOTeBt1UC5el66NNl6l6VX4kkA
+Date:   Tue, 20 Nov 2018 01:33:41 +0000
+Message-ID: <1542677620.30311.589.camel@impinj.com>
+References: <20181119094144.4127-1-stefan@agner.ch>
+         <20181119094144.4127-2-stefan@agner.ch>
+In-Reply-To: <20181119094144.4127-2-stefan@agner.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=tpiepho@impinj.com; 
+x-originating-ip: [216.207.205.253]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR0601MB3585;6:aPVDds+MESSMwG9E0+326pkdAyXdvTEWkHIU8lwqtWuanPHxvMiXpfK69iSPukd4mRD/BriEFdu7XB2wv5A1UGTkwyWwi5QiWhggd0vyOFpPnkymqgM8mY6fbseEtYZI37Xnj+ag4/9kMwEOYE5+sp0RaTeT0lN39HpM9syFIf268y0pfTELl0rmKTGHfcEk8FpVroycH8nsSoYVpeLy6q9qh8w4QCjMpbsdReo58FO6yv+uhGvqt4MqssJm6iTXi8mfutCSGlEmooTvdXyDmckpC0WAlwLGtufMEGT/qfIeh53bJLuqAPqcnAkssEBtjhB3mK/fLjPobb6Pe4tuRFx+hCmX/irn8VK/PnkgzmWC6Yl/aSR/FdgXOCxg9+4VsZbliMmFPfU+5lCSaEvObe2MuxYEiQO/WF+nxrapDKfFXlCXlGln/eS0mXTgRNvja+hKg3c+k4uasn4LJr9++w==;5:spl1TQRStXb8yctCCqnuglgB26X4P88koGo5eNjD9fYzUOJpzGeO0qV/DeeMXBkQJPH9+UaENHICCb3fpoIgzJdgbSsm7BJO/NMLaepGy5IFhZz0upfZr4XLNpXngDY/enFRGg2FwVvfggb8TvrQAdDBKnz25Mei2qLGJ+98rqw=;7:SMtqEoPdzX3XPxaLf/t0SVrE9iqw+plnrL55AgCkI0E64A5Qk0Fyn60RhiSw7DgrSSaVcee6SSXi0rCy1s+azSt6EjoR26Q3HhhEQtvWETfo5/gIM0YAk6JvRVP+afbXB4QPzmTwPwSvA7U1pXQ/Pw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f979fcf8-8f76-40ab-38f8-08d64e8833d5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:CY4PR0601MB3585;
+x-ms-traffictypediagnostic: CY4PR0601MB3585:
+x-microsoft-antispam-prvs: <CY4PR0601MB3585541486EF41D63D37436CD3D90@CY4PR0601MB3585.namprd06.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231442)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY4PR0601MB3585;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0601MB3585;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(366004)(136003)(376002)(346002)(199004)(189003)(8676002)(478600001)(81166006)(229853002)(8936002)(5660300001)(97736004)(4001150100001)(256004)(2501003)(36756003)(6436002)(446003)(7736002)(305945005)(39060400002)(11346002)(486006)(81156014)(25786009)(476003)(2616005)(4326008)(53936002)(6246003)(3846002)(6116002)(2906002)(6486002)(68736007)(6512007)(316002)(71200400001)(110136005)(86362001)(26005)(99286004)(6506007)(71190400001)(105586002)(2900100001)(102836004)(54906003)(106356001)(186003)(66066001)(14454004)(103116003)(2201001)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR0601MB3585;H:CY4PR0601MB3697.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: impinj.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: EPWelmOjaHDiTKZ8HxEvSN062f4Wd541TiO2cmru0A4tmYJ8uR22RRYMXqV1FH1Ot8kiBxmPhrEU5bqXUag8vF/uLlGOlbpe1OSJS1qkPKtQsGDeyngx5bztoX3mG8w/yFnY86KoQ9twxkgaNXxsvQlcb+hpqaXVRQ1s9A0qJ6zNELDVzEkxt962I+S6Uu9vorLeuRG4xlw/8nJfU54mJa4s4krZziZ5F0XGBwJgsv4Dfz4SBM6e0s6UAnF6He7cwQ0j3YsSIB1ZrU4mx8VtagnYuFCpVmO/jxH+MXY5ZGqKzSbO+aLgGFzAVkCCSL57FTcF8v07vcifsPetC/XV1nFSQbEVw2XxL9+SH/ML6TE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <397B3FDFC7CCB44D9F7ADC0353EA0472@namprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1542623503-3755-1-git-send-email-yamada.masahiro@socionext.com> <20181119123334.6xr23ok4uy5cflzy@ltop.local>
-In-Reply-To: <20181119123334.6xr23ok4uy5cflzy@ltop.local>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 20 Nov 2018 10:32:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARrYp1KYe9GveVYz1oOj2_O5TXE368kKvSY2ASAYBeoKg@mail.gmail.com>
-Message-ID: <CAK7LNARrYp1KYe9GveVYz1oOj2_O5TXE368kKvSY2ASAYBeoKg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] compiler_types.h: make __builtin_types_compatible_p()
- noop for Sparse
-To:     Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: impinj.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f979fcf8-8f76-40ab-38f8-08d64e8833d5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 01:33:41.0384
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0601MB3585
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 9:35 PM Luc Van Oostenryck
-<luc.vanoostenryck@gmail.com> wrote:
->
-> On Mon, Nov 19, 2018 at 07:31:41PM +0900, Masahiro Yamada wrote:
-> > When I tried to delete BUILD_BUG_ON stubs for sparse, the kbuild test
-> > robot reported lots of Sparse warnings from container_of(), which
-> > seem false positive.
-> >
-> > The following checker in container_of() seems to be causing something
-> > strange for Sparse.
-> >
-> >   BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) &&   \
-> >                    !__same_type(*(ptr), void),                    \
-> >                    "pointer type mismatch in container_of()");    \
-> >
-> > I narrowed down the problem into the following test code:
-> >
-> >   --------------------(test_code.c begin)--------------------
-> >   struct foo {
-> >           int (*callback)(void);
-> >   };
-> >
-> >   void assert(int);
-> >
-> >   static inline struct foo *get_foo(void)
-> >   {
-> >           assert(__builtin_types_compatible_p(void, void));
-> >
-> >           return (struct foo *)0;
-> >   }
-> >
-> >   int test(void);
-> >   int test(void)
-> >   {
-> >           return get_foo()->callback();
-> >   }
-> >   ---------------------(test_code.c end)---------------------
-> >
-> > Of course, GCC (and Clang as well) can compile it:
-> >
-> >   $ gcc -Wall -c -o test_code.o test_code.c
-> >
-> > However, Sparse complains about this obviously correct code:
-> >
-> >   $ sparse test_code.c
-> >   test_code.c:9:45: warning: unknown expression (4 0)
-> >   test_code.c:9:51: warning: unknown expression (4 0)
-> >
-> > Interstingly, just removing the 'inline' keyword in the test code
-> > makes Sparse happy.
-> >
-> > I concluded that Sparse cannot handle __builtin_types_compatible_p()
-> > correctly.
->
-> I think it's only caused by comparing 'void' (which is never
-> an l-value).
-> I'll investigate. Thanks for the small test-case.
-
-
-Yes, please.
-
-
-> > Make it no-op.
->
-> ...
->
-> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> > index 4a3f9c0..9e7da0b 100644
-> > --- a/include/linux/compiler_types.h
-> > +++ b/include/linux/compiler_types.h
-> > @@ -23,6 +23,7 @@
-> >  extern void __chk_user_ptr(const volatile void __user *);
-> >  extern void __chk_io_ptr(const volatile void __iomem *);
-> >  # define ACCESS_PRIVATE(p, member) (*((typeof((p)->member) __force *) &(p)->member))
-> > +# define __builtin_types_compatible_p(t1, t2)        (1)
->
-> Now, BUILD_BUG_ON() becomes a no-op for sparse but all the other usages
-> of __builtin_types_compatible_p() become potentially wrong and can now
-> create their onw false warnings.
-
-You are right.
-This patch is probably a bad idea.
-
-
-Thanks.
-
-
--- 
-Best Regards
-Masahiro Yamada
+T24gTW9uLCAyMDE4LTExLTE5IGF0IDEwOjQxICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IA0KPiAgDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGlteDZfcGNpZV9kcnZkYXRhIGlteDZxX3Bj
+aWVfZHJ2ZGF0YSA9IHsNCj4gKwkudmFyaWFudCA9IElNWDZRLA0KPiArCS5kYmlfbGVuZ3RoID0g
+MHgxNWMsDQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGlteDZfcGNpZV9kcnZk
+YXRhIGlteDZzeF9wY2llX2RydmRhdGEgPSB7DQo+ICsJLnZhcmlhbnQgPSBJTVg2U1gsDQo+ICt9
+Ow0KPiArDQo+ICtzdGF0aWMgY29uc3Qgc3RydWN0IGlteDZfcGNpZV9kcnZkYXRhIGlteDZxcF9w
+Y2llX2RydmRhdGEgPSB7DQo+ICsJLnZhcmlhbnQgPSBJTVg2UVAsDQo+ICt9Ow0KPiArDQo+ICtz
+dGF0aWMgY29uc3Qgc3RydWN0IGlteDZfcGNpZV9kcnZkYXRhIGlteDdkX3BjaWVfZHJ2ZGF0YSA9
+IHsNCj4gKwkudmFyaWFudCA9IElNWDdELA0KPiArfTsNCj4gKw0KPiAgc3RhdGljIGNvbnN0IHN0
+cnVjdCBvZl9kZXZpY2VfaWQgaW14Nl9wY2llX29mX21hdGNoW10gPSB7DQo+IC0JeyAuY29tcGF0
+aWJsZSA9ICJmc2wsaW14NnEtcGNpZSIsICAuZGF0YSA9ICh2b2lkICopSU1YNlEsICB9LA0KPiAt
+CXsgLmNvbXBhdGlibGUgPSAiZnNsLGlteDZzeC1wY2llIiwgLmRhdGEgPSAodm9pZCAqKUlNWDZT
+WCwgfSwNCj4gLQl7IC5jb21wYXRpYmxlID0gImZzbCxpbXg2cXAtcGNpZSIsIC5kYXRhID0gKHZv
+aWQgKilJTVg2UVAsIH0sDQo+IC0JeyAuY29tcGF0aWJsZSA9ICJmc2wsaW14N2QtcGNpZSIsICAu
+ZGF0YSA9ICh2b2lkICopSU1YN0QsICB9LA0KPiArCXsgLmNvbXBhdGlibGUgPSAiZnNsLGlteDZx
+LXBjaWUiLCAgLmRhdGEgPSAmaW14NnFfcGNpZV9kcnZkYXRhLCAgfSwNCj4gKwl7IC5jb21wYXRp
+YmxlID0gImZzbCxpbXg2c3gtcGNpZSIsIC5kYXRhID0gJmlteDZzeF9wY2llX2RydmRhdGEsIH0s
+DQo+ICsJeyAuY29tcGF0aWJsZSA9ICJmc2wsaW14NnFwLXBjaWUiLCAuZGF0YSA9ICZpbXg2cXBf
+cGNpZV9kcnZkYXRhLCB9LA0KPiArCXsgLmNvbXBhdGlibGUgPSAiZnNsLGlteDdkLXBjaWUiLCAg
+LmRhdGEgPSAmaW14N2RfcGNpZV9kcnZkYXRhLCAgfSwNCj4gIAl7fSwNCj4gIH07DQoNCkluc3Rl
+YWQgb2YgbWFraW5nIGEgc2luZ2xlIGRydmRhdGEgc3RydWN0IGZvciBlYWNoIHR5cGUsIHRoaXMg
+Y291bGQgdXNlDQphbiBhcnJheToNCg0Kc3RhdGljIGNvbnN0IHN0cnVjdCBpbXg2X3BjaWVfZHJ2
+ZGF0YSBkcnZkYXRhW10gPSB7DQoJW0lNWDZRXSAgPSB7IC52YXJpYW50ID0gSU1YNlEsIC5kYmlf
+bGVuZ3RoID0gMHgxNWMgfSwNCglbSU1YNlNYXSA9IHsgLnZhcmlhbnQgPSBJTVg2U1ggfSwNCglb
+Li4uXQ0KfTsNCg0Kc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgaW14Nl9wY2llX29m
+X21hdGNoW10gPSB7DQoJeyAuY29tcGF0aWJsZSA9ICJmc2wsaW14NnEtcGNpZSIsICAuZGF0YSA9
+ICZkcnZkYXRhW0lNWDZRXSwgfSwNCgl7IC5jb21wYXRpYmxlID0gImZzbCxpbXg2c3gtcGNpZSIs
+IC5kYXRhID0gJmRydmRhdGFbSU1YNlNYXSwgfSwNCgkuLi4NCn07DQo=
