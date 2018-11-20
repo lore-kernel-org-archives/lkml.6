@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79EAC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67625C04EBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7102F2080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7102F2080C
+	by mail.kernel.org (Postfix) with ESMTP id 15D982080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D982080C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbeKTKyw (ORCPT
+        id S1732594AbeKTKyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:54:52 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:52336 "EHLO
+        Tue, 20 Nov 2018 05:54:54 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:33593 "EHLO
         mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732053AbeKTKyv (ORCPT
+        with ESMTP id S1732535AbeKTKyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:54:51 -0500
+        Tue, 20 Nov 2018 05:54:52 -0500
 Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42zRQ25jScz1qvvq;
-        Tue, 20 Nov 2018 01:28:26 +0100 (CET)
+        by mail-out.m-online.net (Postfix) with ESMTP id 42zRQ71cMdz1qvvv;
+        Tue, 20 Nov 2018 01:28:31 +0100 (CET)
 Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42zRQ24wYBz1qr2m;
-        Tue, 20 Nov 2018 01:28:26 +0100 (CET)
+        by mail.m-online.net (Postfix) with ESMTP id 42zRQ70wZWz1qr2m;
+        Tue, 20 Nov 2018 01:28:31 +0100 (CET)
 X-Virus-Scanned: amavisd-new at mnet-online.de
 Received: from mail.mnet-online.de ([192.168.8.182])
         by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 3OhI4bkXQ8yo; Tue, 20 Nov 2018 01:28:23 +0100 (CET)
-X-Auth-Info: bz5QkkU0d9gqRBi2XDd7cKJgssPJphGaMjGJsy7ears=
+        with ESMTP id 5dW2DDuhZ1F0; Tue, 20 Nov 2018 01:28:29 +0100 (CET)
+X-Auth-Info: IQshYVo+L9b6QQ7lVw9D7xvT9EHYBwIMozp/ZnSXp7M=
 Received: from crub.agik.hopto.org (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 20 Nov 2018 01:28:22 +0100 (CET)
+        Tue, 20 Nov 2018 01:28:29 +0100 (CET)
 From:   Anatolij Gustschin <agust@denx.de>
 To:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, atull@kernel.org,
         mdf@kernel.org
-Subject: [PATCH v2 1/3] usb: misc: add driver for FT232H based FPGA configuration devices
-Date:   Tue, 20 Nov 2018 01:28:19 +0100
-Message-Id: <20181120002821.12794-2-agust@denx.de>
+Subject: [PATCH v2 3/3] fpga: Add fpga manager driver for ARRI Altera FPP
+Date:   Tue, 20 Nov 2018 01:28:21 +0100
+Message-Id: <20181120002821.12794-4-agust@denx.de>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181120002821.12794-1-agust@denx.de>
 References: <20181120002821.12794-1-agust@denx.de>
@@ -55,1746 +55,662 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add USB interface driver for ARRI FPGA configuration devices based on
-FTDI FT232H chip. Depending on USB PID the driver registers different
-platform devices describing an FPGA configuration interface.
-
-One FPGA configuration interface type is the usual SPI bus with
-additional control and status GPIOs. For this interface type the
-FTDI MPSSE mode is utilized to support SPI bus and GPIO-L/H pins
-for SPI bus chipselect and SPI slave device I/O. Subsequent patch
-adds an MPSSE SPI controller driver for USB-SPI bus support.
-The actual FPGA configuration driver for SPI bus is already
-available in the FPGA manager framework (altera-ps-spi module).
-
-Another FPGA configuration interface type is the FT245 FIFO
-(connected via CPLD) with additional control and status GPIOs
-on FT232H ACBUS. This interface is used to configure FPGAs using
-Altera fast passive parallel (FPP) interface. Subsequent patch
-will add an FPP FPGA manager driver for it.
-
-The FTDI protocol code and prototypes was borrowed from libftdi.
+Add FPGA manager driver for loading ARRI Altera FPGAs via fast
+passive parallel (FPP) interface using FTDI FT232H chip.
 
 Signed-off-by: Anatolij Gustschin <agust@denx.de>
 ---
- MAINTAINERS                     |    8 +
- drivers/usb/misc/Kconfig        |    9 +
- drivers/usb/misc/Makefile       |    1 +
- drivers/usb/misc/ft232h-intf.c  | 1464 +++++++++++++++++++++++++++++++
- include/linux/usb/ft232h-intf.h |  187 ++++
- 5 files changed, 1669 insertions(+)
- create mode 100644 drivers/usb/misc/ft232h-intf.c
- create mode 100644 include/linux/usb/ft232h-intf.h
+ .../ABI/testing/sysfs-driver-ftdi-fifo-fpp    |   7 +
+ drivers/fpga/Kconfig                          |   7 +
+ drivers/fpga/Makefile                         |   1 +
+ drivers/fpga/ftdi-fifo-fpp.c                  | 594 ++++++++++++++++++
+ 4 files changed, 609 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
+ create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b755a89fa325..aaafa11f860f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15388,6 +15388,14 @@ S:	Maintained
- F:	Documentation/usb/acm.txt
- F:	drivers/usb/class/cdc-acm.*
- 
-+USB ARRI FPGA CONFIGURATION ADAPTER DRIVER
-+M:	Anatolij Gustschin <agust@denx.de>
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	drivers/usb/misc/ft232h-intf.c
-+F:	drivers/spi/spi-ftdi-mpsse.c
-+F:	include/linux/usb/ft232h-intf.h
-+
- USB AR5523 WIRELESS DRIVER
- M:	Pontus Fuchs <pontus.fuchs@gmail.com>
- L:	linux-wireless@vger.kernel.org
-diff --git a/drivers/usb/misc/Kconfig b/drivers/usb/misc/Kconfig
-index 68d2f2cd17dd..41304ac7f0e3 100644
---- a/drivers/usb/misc/Kconfig
-+++ b/drivers/usb/misc/Kconfig
-@@ -275,3 +275,12 @@ config USB_CHAOSKEY
- 
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called chaoskey.
-+
-+config USB_FT232H_INTF
-+	tristate "FTDI FT232H FPGA configuration interface driver"
-+	help
-+	  Enable driver support for the FT232H based USB-GPIO/SPI/FIFO
-+	  interface adapter for FPGA configuration. Additional drivers
-+	  such as spi-ftdi-mpsse, altera-ps-spi, ftdi-fifo-fpp and
-+	  fpga-mgr must be enabled in order to use the functionality of
-+	  the device.
-diff --git a/drivers/usb/misc/Makefile b/drivers/usb/misc/Makefile
-index 109f54f5b9aa..3618d8c7bfdd 100644
---- a/drivers/usb/misc/Makefile
-+++ b/drivers/usb/misc/Makefile
-@@ -31,3 +31,4 @@ obj-$(CONFIG_USB_CHAOSKEY)		+= chaoskey.o
- 
- obj-$(CONFIG_USB_SISUSBVGA)		+= sisusbvga/
- obj-$(CONFIG_USB_LINK_LAYER_TEST)	+= lvstest.o
-+obj-$(CONFIG_USB_FT232H_INTF)		+= ft232h-intf.o
-diff --git a/drivers/usb/misc/ft232h-intf.c b/drivers/usb/misc/ft232h-intf.c
+diff --git a/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
 new file mode 100644
-index 000000000000..4f58ef552319
+index 000000000000..084e691d0983
 --- /dev/null
-+++ b/drivers/usb/misc/ft232h-intf.c
-@@ -0,0 +1,1464 @@
++++ b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
+@@ -0,0 +1,7 @@
++What:		/sys/bus/platform/devices/ftdi-fifo-fpp-mgr.N/cfg_mode
++Date:		Nov 2018
++Kernel Version:	4.21
++Contact:	Anatolij Gustschin <agust@denx.de>
++Description:
++		Contains either "fifo" or "bitbang" and controls if fifo
++		of bitbang configuration mode is used in the driver.
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 205042b441ea..584866a27c35 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -59,6 +59,13 @@ config FPGA_MGR_ALTERA_CVP
+ 	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V
+ 	  and Arria 10 Altera FPGAs using the CvP interface over PCIe.
+ 
++config FPGA_MGR_FTDI_FIFO_FPP
++	tristate "Altera FPP over FT232H FIFO"
++	depends on USB_FT232H_INTF
++	help
++	  FPGA manager driver support for Altera fast passive parallel
++	  interface (FPP) over FT232H FT245 FIFO.
++
+ config FPGA_MGR_ZYNQ_FPGA
+ 	tristate "Xilinx Zynq FPGA"
+ 	depends on ARCH_ZYNQ || COMPILE_TEST
+diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+index 7a2d73ba7122..8c1d714bd440 100644
+--- a/drivers/fpga/Makefile
++++ b/drivers/fpga/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_FPGA)			+= fpga-mgr.o
+ # FPGA Manager Drivers
+ obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
+ obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)	+= altera-ps-spi.o
++obj-$(CONFIG_FPGA_MGR_FTDI_FIFO_FPP)	+= ftdi-fifo-fpp.o
+ obj-$(CONFIG_FPGA_MGR_ICE40_SPI)	+= ice40-spi.o
+ obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)	+= machxo2-spi.o
+ obj-$(CONFIG_FPGA_MGR_SOCFPGA)		+= socfpga.o
+diff --git a/drivers/fpga/ftdi-fifo-fpp.c b/drivers/fpga/ftdi-fifo-fpp.c
+new file mode 100644
+index 000000000000..652a5430bdf2
+--- /dev/null
++++ b/drivers/fpga/ftdi-fifo-fpp.c
+@@ -0,0 +1,594 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * FTDI FT232H interface driver for ARRI FPGA configuration
++ * Altera FPGA firmware upload via FPP using FT232H Bitbang/FT245-FIFO.
 + *
 + * Copyright (C) 2017 - 2018 DENX Software Engineering
 + * Anatolij Gustschin <agust@denx.de>
-+ *
-+ *    Figure: FT232H, FPGA Devices and Drivers Relationship
-+ *
-+ *      +-------------+
-+ *      |             |
-+ *      |  STRATIX V  |PS-SPI         FT245 FIFO & GPIO
-+ *      |             +-----+    +-------------------+
-+ *      |  on Board 1 |     +    +                   |
-+ *      |             |                         +----+---+
-+ *      |  PCIe       |   ADBUS&ACBUS           |  CPLD  |
-+ *      +---+---------+ Connection Options      +----+---+
-+ *          ^          (MPSSE or FIFO&GPIO)          |
-+ *          +                  +              +------+-------+
-+ *     altera-cvp  +-----------+----------+   |     FPP      |
-+ *                 |        FT232H        |   |              |
-+ *                 |     0x0403:0x7148    |   |   ARRIA 10   |
-+ *                 |     0x0403:0x7149    |   |              |
-+ *                 +----------+-----------+   |  on Board 2  |
-+ *                            |               |              |
-+ *                +-----------+------------+  |        PCIe  |
-+ *        creates | ft232h-intf (USB misc) |  +----------+---+
-+ *       platform |     bulk/ctrl xfer     |             ^
-+ *        devices |ACBUS GPIO Ctrl (0x7148)|             |
-+ *         below  |MPSSE GPIO Ctrl (0x7149)|             |
-+ *                +-------+-------+--------+             |
-+ *                        |       |                      |
-+ *           for     +----+       +------+    for        |
-+ *        PID 0x7149 |                   | PID 0x7148    |
-+ *         +---------+--------+  +-------+---------+     |
-+ *         |  ftdi-mpsse-spi  |  |                 |     |
-+ *         | altera-ps-spi in |  |ftdi-fifo-fpp-mgr|     |
-+ *         |   spi_board_info |  |                 |     |
-+ *         +---------+--------+  +--------+--------+     |
-+ *                   ^                    ^              |
-+ *        Drivers:   |                    |              |
-+ *                   +                    |              |
-+ *      MPSSE SPI master(spi-ftdi-mpsse)  |              +
-+ *                   ^                    |              |
-+ *                   |                    +              +
-+ *             altera-ps-spi        ftdi-fifo-fpp    altera-cvp
-+ *              FPGA Manager         FPGA Manager   FPGA Manager
-+ *
-+ *
-+ * When using your custom USB product ID, this FT232H interface driver
-+ * also allows to register the GPIO controller for CBUS pins or for
-+ * MPSSE GPIO pins. Below are examples how to use the driver as CBUS-
-+ * or MPSSE-GPIO controller.
-+ *
-+ * For CBUS-GPIOs add new entry with your PID to ft232h_intf_table[]:
-+ * static const struct ft232h_intf_info ftdi_cbus_gpio_intf_info = {
-+ *	.use_cbus_gpio_ctrl = true,
-+ * };
-+ * { USB_DEVICE(FTDI_VID, PID),
-+ *   .driver_info = (kernel_ulong_t)&ftdi_cbus_gpio_intf_info },
-+ *
-+ * For MPSSE-GPIO add new entry with your PID to ft232h_intf_table[]:
-+ * static const struct ft232h_intf_info ftdi_mpsse_gpio_intf_info = {
-+ *	.use_mpsse_gpio_ctrl = true,
-+ * };
-+ * { USB_DEVICE(FTDI_VID, PID),
-+ *   .driver_info = (kernel_ulong_t)&ftdi_mpsse_gpio_intf_info },
-+ *
-+ * With custom USB product IDs it is also possible to use FT232H SPI bus
-+ * with different SPI slave devices attached (e.g. SPI-NOR flash chips,
-+ * spidev, etc.). Example below shows how to add a bus with two SPI slave
-+ * devices for your USB PID:
-+ *
-+ * static struct spi_board_info ftdi_spi_bus_info[] = {
-+ *	{
-+ *	.modalias	= "w25q32",
-+ *	.mode		= SPI_MODE_0,
-+ *	.max_speed_hz	= 60000000,
-+ *	.bus_num	= 0,
-+ *	.chip_select	= 0, // TCK/SK at ADBUS0
-+ *	},
-+ *	{
-+ *	.modalias	= "spidev",
-+ *	.mode		= SPI_MODE_0 | SPI_LSB_FIRST | SPI_CS_HIGH,
-+ *	.max_speed_hz	= 30000000,
-+ *	.bus_num	= 0,
-+ *	.chip_select	= 5, // GPIOH0 at ACBUS0
-+ *	},
-+ * };
-+ *
-+ * static const struct mpsse_spi_platform_data ftdi_spi_bus_plat_data = {
-+ *	.ops		= &ft232h_intf_ops,
-+ *	.spi_info	= ftdi_spi_bus_info,
-+ *	.spi_info_len	= ARRAY_SIZE(ftdi_spi_bus_info),
-+ * };
-+ *
-+ * static const struct ft232h_intf_info ftdi_spi_bus_intf_info = {
-+ *	.probe  = ft232h_intf_spi_probe,
-+ *	.remove  = ft232h_intf_spi_remove,
-+ *	.plat_data  = &ftdi_spi_bus_plat_data,
-+ * };
-+ * { USB_DEVICE(FTDI_VID, YOUR_PID),
-+ *	.driver_info = (kernel_ulong_t)&ftdi_spi_bus_intf_info },
 + */
 +
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/device.h>
++#include <linux/bitops.h>
 +#include <linux/delay.h>
-+#include <linux/printk.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio/machine.h>
-+#include <linux/idr.h>
-+#include <linux/mutex.h>
-+#include <linux/platform_device.h>
++#include <linux/fpga/fpga-mgr.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/sizes.h>
 +#include <linux/slab.h>
-+#include <linux/spi/spi.h>
-+#include <linux/usb/ch9.h>
++#include <linux/gpio/consumer.h>
++#include <linux/platform_device.h>
 +#include <linux/usb.h>
 +#include <linux/usb/ft232h-intf.h>
 +
-+struct ft232h_intf_priv {
-+	struct usb_interface	*intf;
-+	struct usb_device	*udev;
-+	struct mutex		io_mutex; /* sync I/O with disconnect */
-+	struct mutex		ops_mutex;
-+	int			bitbang_enabled;
-+	int			id;
++#define	BULK_OUT_BUF_SZ	SZ_1M
++#define	MAX_RETRIES	10
++
++/*
++ * With logic of CPLD we can write the state of nConfig pin and
++ * read back the state of some pins (conf_done, init_done, nStatus).
++ * Status header and bit assignment in data register on CPLD.
++ */
++#define INPUT_HEADER_0	0xA5
++#define INPUT_HEADER_1	0x5A
++#define IN_CONF_DONE	BIT(0)
++#define IN_INIT_DONE	BIT(1)
++#define IN_ADDR_SELECT	BIT(4)
++#define IN_BOARD_REV	BIT(5)
++#define OUT_NCONFIG	BIT(0)
++#define OUT_RESET_N	BIT(1)
++
++enum fpp_board_rev {
++	BOARD_REVA = 1,
++	BOARD_REVB = 2,
++};
++
++enum fpp_addr_sel {
++	ADDR_SELECT_INVALID,
++	ADDR_SELECT_GND,
++	ADDR_SELECT_NC
++};
++
++struct fpp_mgr_ops {
++	int (*write_init)(struct fpga_manager *mgr,
++			  struct fpga_image_info *info,
++			  const char *buf, size_t count);
++	int (*write)(struct fpga_manager *mgr, const char *buf, size_t count);
++	int (*write_complete)(struct fpga_manager *mgr,
++			      struct fpga_image_info *info);
++};
++
++struct fpp_fpga_mgr_priv {
++	struct platform_device		*pdev;
++	struct usb_interface		*intf;
++	const struct ft232h_intf_ops	*iops;
++	struct fpga_manager	*mgr;
++	struct fpp_mgr_ops	*ops;
++	struct gpio_desc	*nconfig;
++	struct gpio_desc	*conf_done;
++	char			cfg_mode[8];
++	u8			out_data_port;
 +	int			index;
-+	u8			bulk_in;
-+	u8			bulk_out;
-+	size_t			bulk_in_sz;
-+	void			*bulk_in_buf;
-+
-+	const struct usb_device_id	*usb_dev_id;
-+	struct ft232h_intf_info		*info;
-+	struct platform_device		*fifo_pdev;
-+	struct platform_device		*spi_pdev;
-+	struct gpiod_lookup_table	*lookup_fifo;
-+	struct gpiod_lookup_table	*lookup_cs;
-+
-+	struct gpio_chip	cbus_gpio;
-+	const char		*cbus_gpio_names[4];
-+	u8			cbus_pin_offsets[4];
-+	u8			cbus_mask;
-+	u8			pinbuf[4];
-+	u8			eeprom[FTDI_MAX_EEPROM_SIZE];
-+
-+	struct gpio_chip	mpsse_gpio;
-+	u8			gpiol_mask;
-+	u8			gpioh_mask;
-+	u8			gpiol_dir;
-+	u8			gpioh_dir;
-+	u8			tx_buf[4];
++	void			*bulk_buf;
++	char			usb_dev_id[32];
++	char			fpga_mgr_name[64];
++	enum fpp_board_rev	rev;
++	enum fpp_addr_sel	addr_sel;
 +};
 +
-+/* Device info struct used for device specific init. */
-+struct ft232h_intf_info {
-+	unsigned int use_cbus_gpio_ctrl;
-+	unsigned int use_mpsse_gpio_ctrl;
-+	int (*probe)(struct usb_interface *intf, const void *plat_data);
-+	int (*remove)(struct usb_interface *intf);
-+	const void *plat_data; /* optional, passed to probe() */
-+};
-+
-+static DEFINE_IDA(ftdi_devid_ida);
-+
-+/* Use baudrate calculation borrowed from libftdi */
-+static int ftdi_to_clkbits(int baudrate, unsigned int clk, int clk_div,
-+			   unsigned long *encoded_divisor)
++static int fpp_fpga_mgr_set_data_port(struct fpp_fpga_mgr_priv *priv,
++				      u8 bitmask, u8 value)
 +{
-+	static const char frac_code[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
-+	int best_baud = 0;
-+	int div, best_div;
-+
-+	if (baudrate >= clk / clk_div) {
-+		*encoded_divisor = 0;
-+		best_baud = clk / clk_div;
-+	} else if (baudrate >= clk / (clk_div + clk_div / 2)) {
-+		*encoded_divisor = 1;
-+		best_baud = clk / (clk_div + clk_div / 2);
-+	} else if (baudrate >= clk / (2 * clk_div)) {
-+		*encoded_divisor = 2;
-+		best_baud = clk / (2 * clk_div);
-+	} else {
-+		/*
-+		 * Divide by 16 to have 3 fractional bits and
-+		 * one bit for rounding
-+		 */
-+		div = clk * 16 / clk_div / baudrate;
-+		if (div & 1)	/* Decide if to round up or down */
-+			best_div = div / 2 + 1;
-+		else
-+			best_div = div / 2;
-+		if (best_div > 0x20000)
-+			best_div = 0x1ffff;
-+		best_baud = clk * 16 / clk_div / best_div;
-+		if (best_baud & 1)	/* Decide if to round up or down */
-+			best_baud = best_baud / 2 + 1;
-+		else
-+			best_baud = best_baud / 2;
-+		*encoded_divisor = (best_div >> 3) |
-+				   (frac_code[best_div & 0x7] << 14);
-+	}
-+	return best_baud;
-+}
-+
-+#define H_CLK	120000000
-+#define C_CLK	48000000
-+static int ftdi_convert_baudrate(struct ft232h_intf_priv *priv, int baud,
-+				 u16 *value, u16 *index)
-+{
-+	unsigned long encoded_divisor = 0;
-+	int best_baud = 0;
-+
-+	if (baud <= 0)
-+		return -EINVAL;
++	struct device *dev = &priv->pdev->dev;
++	struct bulk_desc desc;
++	u8 *data;
++	int ret;
 +
 +	/*
-+	 * On H Devices, use 12000000 baudrate when possible.
-+	 * We have a 14 bit divisor, a 1 bit divisor switch (10 or 16),
-+	 * three fractional bits and a 120 MHz clock. Assume AN_120
-+	 * "Sub-integer divisors between 0 and 2 are not allowed" holds
-+	 * for DIV/10 CLK too, so /1, /1.5 and /2 can be handled the same
++	 * With CPLD connected (in FT245 FIFO mode) we use ACBUS8&9
++	 * pins to switch between data and command mode:
++	 * ACBUS8&9 == 0, 0  --> normal mode (data communication)
++	 * ACBUS8&9 == 1, 0  --> command mode
 +	 */
-+	if (baud * 10 > H_CLK / 0x3fff) {
-+		best_baud = ftdi_to_clkbits(baud, H_CLK, 10, &encoded_divisor);
-+		encoded_divisor |= 0x20000;	/* switch on CLK/10 */
-+	} else {
-+		best_baud = ftdi_to_clkbits(baud, C_CLK, 16, &encoded_divisor);
-+	}
++	gpiod_set_raw_value_cansleep(priv->nconfig, 1);
++	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
++	msleep(50);
 +
-+	if (best_baud <= 0) {
-+		pr_err("Invalid baudrate: %d\n", best_baud);
-+		return -EINVAL;
-+	}
-+
-+	/* Check within tolerance (about 5%) */
-+	if ((best_baud * 2 < baud) ||
-+	    (best_baud < baud
-+		? (best_baud * 21 < baud * 20)
-+		: (baud * 21 < best_baud * 20))) {
-+		pr_err("Unsupported baudrate.\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Split into "value" and "index" values */
-+	*value = (u16)(encoded_divisor & 0xffff);
-+	*index = (u16)(((encoded_divisor >> 8) & 0xff00) | priv->index);
-+
-+	dev_dbg(&priv->intf->dev, "best baud %d, v/i: %d, %d\n",
-+		best_baud, *value, *index);
-+	return best_baud;
-+}
-+
-+/*
-+ * ftdi_ctrl_xfer - FTDI control endpoint transfer
-+ * @intf: USB interface pointer
-+ * @desc: pointer to descriptor struct for control transfer
-+ *
-+ * Return:
-+ * Return: If successful, the number of bytes transferred. Otherwise,
-+ * a negative error number.
-+ */
-+static int ftdi_ctrl_xfer(struct usb_interface *intf, struct ctrl_desc *desc)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct usb_device *udev = priv->udev;
-+	unsigned int pipe;
-+	int ret;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		ret = -ENODEV;
-+		goto exit;
-+	}
-+
-+	if (!desc->data && desc->size)
-+		desc->data = priv->bulk_in_buf;
-+
-+	if (desc->dir_out)
-+		pipe = usb_sndctrlpipe(udev, 0);
-+	else
-+		pipe = usb_rcvctrlpipe(udev, 0);
-+
-+	ret = usb_control_msg(udev, pipe, desc->request, desc->requesttype,
-+			      desc->value, desc->index, desc->data, desc->size,
-+			      desc->timeout);
-+	if (ret < 0)
-+		dev_dbg(&udev->dev, "ctrl msg failed: %d\n", ret);
-+exit:
-+	mutex_unlock(&priv->io_mutex);
-+	return ret;
-+}
-+
-+/*
-+ * ftdi_bulk_xfer - FTDI bulk endpoint transfer
-+ * @intf: USB interface pointer
-+ * @desc: pointer to descriptor struct for bulk-in or bulk-out transfer
-+ *
-+ * Return:
-+ * If successful, 0. Otherwise a negative error number. The number of
-+ * actual bytes transferred will be stored in the @desc->act_len field
-+ * of the descriptor struct.
-+ */
-+static int ftdi_bulk_xfer(struct usb_interface *intf, struct bulk_desc *desc)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct usb_device *udev = priv->udev;
-+	unsigned int pipe;
-+	int ret;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		ret = -ENODEV;
-+		goto exit;
-+	}
-+
-+	if (desc->dir_out)
-+		pipe = usb_sndbulkpipe(udev, priv->bulk_out);
-+	else
-+		pipe = usb_rcvbulkpipe(udev, priv->bulk_in);
-+
-+	ret = usb_bulk_msg(udev, pipe, desc->data, desc->len,
-+			   &desc->act_len, desc->timeout);
-+	if (ret)
-+		dev_dbg(&udev->dev, "bulk msg failed: %d\n", ret);
-+
-+exit:
-+	mutex_unlock(&priv->io_mutex);
-+	return ret;
-+}
-+
-+/*
-+ * ftdi_set_baudrate - set the device baud rate
-+ * @intf: USB interface pointer
-+ * @baudrate: baud rate value to set
-+ *
-+ * Return: If successful, 0. Otherwise a negative error number.
-+ */
-+static int ftdi_set_baudrate(struct usb_interface *intf, int baudrate)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct ctrl_desc desc;
-+	u16 index, value;
-+	int ret;
-+
-+	if (priv->bitbang_enabled)
-+		baudrate *= 4;
-+
-+	ret = ftdi_convert_baudrate(priv, baudrate, &value, &index);
-+	if (ret < 0)
-+		return ret;
-+
-+	desc.dir_out = true;
-+	desc.request = FTDI_SIO_SET_BAUDRATE_REQUEST;
-+	desc.requesttype = USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT;
-+	desc.value = value;
-+	desc.index = index;
-+	desc.data = NULL;
-+	desc.size = 0;
-+	desc.timeout = USB_CTRL_SET_TIMEOUT;
-+
-+	ret = ftdi_ctrl_xfer(intf, &desc);
-+	if (ret < 0) {
-+		dev_dbg(&intf->dev, "failed to set baudrate: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * ftdi_read_data - read from FTDI bulk-in endpoint
-+ * @intf: USB interface pointer
-+ * @buf:  pointer to data buffer
-+ * @len:  length in bytes of the data to read
-+ *
-+ * The two modem status bytes transferred in every read will
-+ * be removed and will not appear in the data buffer.
-+ *
-+ * Return:
-+ * If successful, the number of data bytes received (can be 0).
-+ * Otherwise, a negative error number.
-+ */
-+static int ftdi_read_data(struct usb_interface *intf, void *buf, size_t len)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct bulk_desc desc;
-+	int ret;
-+
-+	desc.act_len = 0;
-+	desc.dir_out = false;
-+	desc.data = priv->bulk_in_buf;
-+	/* Device sends 2 additional status bytes, read at least len + 2 */
-+	desc.len = min_t(size_t, len + 2, priv->bulk_in_sz);
-+	desc.timeout = FTDI_USB_READ_TIMEOUT;
-+
-+	ret = ftdi_bulk_xfer(intf, &desc);
++	/* Write commands to CPLD */
++	ret = priv->iops->set_bitmode(priv->intf, 0x00, BITMODE_SYNCFF);
 +	if (ret)
 +		return ret;
 +
-+	/* Only status bytes and no data? */
-+	if (desc.act_len <= 2)
-+		return 0;
++	if (value)
++		priv->out_data_port |= bitmask;
++	else
++		priv->out_data_port &= ~bitmask;
 +
-+	/* Skip first two status bytes */
-+	ret = desc.act_len - 2;
-+	if (ret > len)
-+		ret = len;
-+	memcpy(buf, desc.data + 2, ret);
-+	return ret;
-+}
++	data = priv->bulk_buf;
++	*data = priv->out_data_port;
 +
-+/*
-+ * ftdi_write_data - write to FTDI bulk-out endpoint
-+ * @intf: USB interface pointer
-+ * @buf:  pointer to data buffer
-+ * @len:  length in bytes of the data to send
-+ *
-+ * Return:
-+ * If successful, the number of bytes transferred. Otherwise a negative
-+ * error number.
-+ */
-+static int ftdi_write_data(struct usb_interface *intf,
-+			   const char *buf, size_t len)
-+{
-+	struct bulk_desc desc;
-+	int ret;
-+
-+	desc.act_len = 0;
 +	desc.dir_out = true;
-+	desc.data = (char *)buf;
-+	desc.len = len;
++	desc.act_len = 0;
++	desc.len = 1;
++	desc.data = data;
 +	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
 +
-+	ret = ftdi_bulk_xfer(intf, &desc);
-+	if (ret < 0)
++	ret = priv->iops->bulk_xfer(priv->intf, &desc);
++	if (ret) {
++		dev_err(dev, "Writing in SYNCFF mode failed: %d\n", ret);
 +		return ret;
-+
-+	return desc.act_len;
-+}
-+
-+/*
-+ * ftdi_set_bitmode - configure bitbang mode
-+ * @intf: USB interface pointer
-+ * @bitmask: line configuration bitmask
-+ * @mode: bitbang mode to set
-+ *
-+ * Return:
-+ * If successful, 0. Otherwise a negative error number.
-+ */
-+static int ftdi_set_bitmode(struct usb_interface *intf, unsigned char bitmask,
-+			    unsigned char mode)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct ctrl_desc desc;
-+	int ret;
-+
-+	desc.dir_out = true;
-+	desc.data = NULL;
-+	desc.request = FTDI_SIO_SET_BITMODE_REQUEST;
-+	desc.requesttype = USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_OUT;
-+	desc.index = 1;
-+	desc.value = (mode << 8) | bitmask;
-+	desc.size = 0;
-+	desc.timeout = USB_CTRL_SET_TIMEOUT;
-+
-+	ret = ftdi_ctrl_xfer(intf, &desc);
-+	if (ret < 0)
-+		return ret;
-+
-+	switch (mode) {
-+	case BITMODE_BITBANG:
-+	case BITMODE_CBUS:
-+	case BITMODE_SYNCBB:
-+	case BITMODE_SYNCFF:
-+		priv->bitbang_enabled = 1;
-+		break;
-+	case BITMODE_MPSSE:
-+	case BITMODE_RESET:
-+	default:
-+		priv->bitbang_enabled = 0;
-+		break;
 +	}
++
++	msleep(50);
++	/* Switch back to data mode with ACBUS8&9 back to low */
++	gpiod_set_raw_value_cansleep(priv->nconfig, 0);
++	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
++	msleep(50);
 +
 +	return 0;
 +}
 +
-+/*
-+ * ftdi_disable_bitbang - disable bitbang mode
-+ * @intf: USB interface pointer
-+ *
-+ * Return:
-+ * If successful, 0. Otherwise a negative error number.
-+ */
-+static int ftdi_disable_bitbang(struct usb_interface *intf)
++static int fpp_fpga_mgr_bitbang_write_init(struct fpga_manager *mgr,
++					   struct fpga_image_info *info,
++					   const char *buf, size_t count)
 +{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++	struct device *dev = &priv->pdev->dev;
++	int retries = MAX_RETRIES;
 +	int ret;
 +
-+	ret = ftdi_set_bitmode(intf, 0, BITMODE_RESET);
-+	if (ret < 0) {
-+		dev_dbg(&intf->dev, "disable bitbang failed: %d\n", ret);
-+		return ret;
-+	}
++	gpiod_set_value_cansleep(priv->nconfig, 0);
++	msleep(50);
++	gpiod_set_value_cansleep(priv->nconfig, 1);
++	msleep(50);
++	gpiod_set_value_cansleep(priv->nconfig, 0);
 +
-+	return 0;
-+}
++	/* Wait for CONF_DONE to get low */
++	do {
++		msleep(50);
 +
-+static int ftdi_read_eeprom(struct ft232h_intf_priv *priv)
-+{
-+	struct ctrl_desc desc;
-+	unsigned int i;
-+	int ret;
-+
-+	desc.dir_out = false;
-+	desc.request = FTDI_SIO_READ_EEPROM_REQUEST;
-+	desc.requesttype = USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN;
-+	desc.value = 0;
-+	desc.size = 2;
-+	desc.timeout = USB_CTRL_GET_TIMEOUT;
-+
-+	for (i = 0; i < FTDI_MAX_EEPROM_SIZE / 2; i++) {
-+		desc.index = i;
-+		desc.data = &priv->eeprom[i * 2];
-+
-+		ret = ftdi_ctrl_xfer(priv->intf, &desc);
++		ret = gpiod_get_value_cansleep(priv->conf_done);
 +		if (ret < 0) {
-+			dev_dbg(&priv->intf->dev, "EEPROM read failed: %d\n",
-+				ret);
++			dev_err(dev, "Failed to get CONF_DONE pin: %d\n", ret);
 +			return ret;
 +		}
++
++		if (!ret)
++			break;
++	} while (--retries > 0);
++
++	if (!retries) {
++		dev_warn(dev, "CONF_DONE low wait timeout\n");
++		return -ETIMEDOUT;
 +	}
 +
-+	print_hex_dump_debug("EEPROM: ", DUMP_PREFIX_OFFSET, 16, 1,
-+			     priv->eeprom, sizeof(priv->eeprom), 1);
-+	return 0;
-+}
-+
-+/*
-+ * ACBUS GPIO functions
-+ */
-+static const char *ftdi_acbus_names[5] = {
-+	"ACBUS5", "ACBUS6", NULL, "ACBUS8", "ACBUS9"
-+};
-+
-+static int ftdi_cbus_gpio_read_pins(struct ft232h_intf_priv *priv,
-+				    unsigned char *pins)
-+{
-+	struct gpio_chip *chip = &priv->cbus_gpio;
-+	struct ctrl_desc desc;
-+	int ret;
-+
-+	desc.dir_out = false;
-+	desc.request = FTDI_SIO_READ_PINS_REQUEST;
-+	desc.requesttype = USB_TYPE_VENDOR | USB_RECIP_DEVICE | USB_DIR_IN;
-+	desc.value = 0;
-+	desc.index = 1;
-+	desc.data = &priv->pinbuf[0];
-+	desc.size = 1;
-+	desc.timeout = USB_CTRL_GET_TIMEOUT;
-+
-+	ret = ftdi_ctrl_xfer(priv->intf, &desc);
-+	if (ret < 0) {
-+		dev_dbg(chip->parent, "failed to get pin values: %d\n", ret);
-+		return ret;
-+	}
-+
-+	*pins = priv->pinbuf[0];
-+	return 0;
-+}
-+
-+static inline void ftdi_cbus_init_gpio_data(struct ft232h_intf_priv *priv,
-+					    int gpio_num, int cbus_num)
-+{
-+	switch (cbus_num) {
-+	case 5:
-+	case 6:
-+		priv->cbus_pin_offsets[gpio_num] = cbus_num - 5;
-+		break;
-+	case 8:
-+	case 9:
-+		priv->cbus_pin_offsets[gpio_num] = cbus_num - 6;
-+		break;
-+	default:
-+		return;
-+	}
-+
-+	priv->cbus_gpio_names[gpio_num] = ftdi_acbus_names[cbus_num - 5];
-+}
-+
-+static int ftdi_cbus_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+	int ret;
-+	u8 pins = 0;
-+
-+	ret = ftdi_cbus_gpio_read_pins(priv, &pins);
-+	if (ret)
-+		return ret;
-+
-+	offs = priv->cbus_pin_offsets[offset];
-+
-+	return !!(pins & BIT(offs));
-+}
-+
-+static void ftdi_cbus_gpio_set(struct gpio_chip *chip,
-+			       unsigned int offset, int value)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+	int ret;
-+
-+	offs = priv->cbus_pin_offsets[offset];
-+
-+	if (value)
-+		priv->cbus_mask |= BIT(offs);
-+	else
-+		priv->cbus_mask &= ~BIT(offs);
-+
-+	ret = ftdi_set_bitmode(priv->intf, priv->cbus_mask, BITMODE_CBUS);
-+	if (ret < 0)
-+		dev_dbg(chip->parent, "setting pin value failed: %d\n", ret);
-+}
-+
-+static int ftdi_cbus_gpio_direction_input(struct gpio_chip *chip,
-+					  unsigned int offset)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+
-+	offs = priv->cbus_pin_offsets[offset];
-+	/* Direction bits are in the upper nibble */
-+	priv->cbus_mask &= ~(BIT(offs) << 4);
-+
-+	return ftdi_set_bitmode(priv->intf, priv->cbus_mask, BITMODE_CBUS);
-+}
-+
-+static int ftdi_cbus_gpio_direction_output(struct gpio_chip *chip,
-+					   unsigned int offset, int value)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	unsigned int offs;
-+
-+	offs = priv->cbus_pin_offsets[offset];
-+	priv->cbus_mask |= BIT(offs) << 4;
-+
-+	if (value)
-+		priv->cbus_mask |= BIT(offs);
-+	else
-+		priv->cbus_mask &= ~BIT(offs);
-+
-+	return ftdi_set_bitmode(priv->intf, priv->cbus_mask, BITMODE_CBUS);
-+}
-+
-+static int ft232h_intf_add_cbus_gpio(struct ft232h_intf_priv *priv)
-+{
-+	struct device *dev = &priv->intf->dev;
-+	char **names, *label;
-+	int ngpio = 0;
-+	int i, ret;
-+	u8 val;
-+
-+	ret = ftdi_read_eeprom(priv);
++	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_BITBANG);
 +	if (ret < 0)
 +		return ret;
 +
-+	/* Check if I/O mode is enabled for supported pins 5, 6, 8, 9 */
-+	for (i = 5; i < 10; i++) {
-+		val = priv->eeprom[0x18 + i / 2] >> (i % 2 ? 4 : 0);
-+		if ((val & 0x0f) == FTDI_232H_CBUS_IOMODE) {
-+			dev_dbg(dev, "gpio-%d @ ACBUS%d\n",
-+				priv->cbus_gpio.ngpio, i);
-+			priv->cbus_gpio.ngpio++;
-+			ftdi_cbus_init_gpio_data(priv, ngpio++, i);
-+		}
++	/* Set max. working baud rate (for hardware without CPLD) */
++	return priv->iops->set_baudrate(priv->intf, 700000);
++}
++
++static int fpp_fpga_mgr_bitbang_write(struct fpga_manager *mgr,
++				      const char *buf, size_t count)
++{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++	struct bulk_desc desc;
++	size_t blk_sz;
++	int ret;
++
++	desc.data = priv->bulk_buf;
++	desc.dir_out = true;
++	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
++
++	while (count) {
++		blk_sz = min_t(size_t, count, BULK_OUT_BUF_SZ);
++		memcpy(priv->bulk_buf, buf, blk_sz);
++		desc.act_len = 0;
++		desc.len = blk_sz;
++		ret = priv->iops->bulk_xfer(priv->intf, &desc);
++		if (ret < 0)
++			return ret;
++
++		buf += desc.act_len;
++		count -= desc.act_len;
 +	}
 +
-+	if (!priv->cbus_gpio.ngpio) {
-+		dev_warn(dev, "I/O mode disabled in EEPROM\n");
-+		return -ENODEV;
-+	}
-+
-+	label = devm_kasprintf(dev, GFP_KERNEL, "ftdi-cbus-gpio.%d", priv->id);
-+	if (!label)
-+		return -ENOMEM;
-+
-+	priv->cbus_gpio.label = label;
-+	priv->cbus_gpio.parent = dev;
-+	priv->cbus_gpio.owner = THIS_MODULE;
-+	priv->cbus_gpio.base = -1;
-+	priv->cbus_gpio.can_sleep = true;
-+	priv->cbus_gpio.set = ftdi_cbus_gpio_set;
-+	priv->cbus_gpio.get = ftdi_cbus_gpio_get;
-+	priv->cbus_gpio.direction_input = ftdi_cbus_gpio_direction_input;
-+	priv->cbus_gpio.direction_output = ftdi_cbus_gpio_direction_output;
-+
-+	names = devm_kcalloc(dev, priv->cbus_gpio.ngpio, sizeof(char *),
-+			     GFP_KERNEL);
-+	if (!names)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < priv->cbus_gpio.ngpio; i++) {
-+		if (!priv->cbus_gpio_names[i])
-+			continue;
-+		names[i] = devm_kasprintf(dev, GFP_KERNEL, "cbus.%d-%s",
-+					  priv->id, priv->cbus_gpio_names[i]);
-+		if (!names[i])
-+			return -ENOMEM;
-+	}
-+
-+	priv->cbus_gpio.names = (const char *const *)names;
-+
-+	ret = devm_gpiochip_add_data(dev, &priv->cbus_gpio, priv);
-+	if (ret) {
-+		dev_warn(dev, "failed to add CBUS gpiochip: %d\n", ret);
-+		return ret;
-+	}
-+
-+	dev_info(dev, "using %d CBUS pins\n", priv->cbus_gpio.ngpio);
 +	return 0;
 +}
 +
-+/*
-+ * MPSSE CS and GPIO-L/-H support
-+ */
-+#define SET_BITS_LOW	0x80
-+#define GET_BITS_LOW	0x81
-+#define SET_BITS_HIGH	0x82
-+#define GET_BITS_HIGH	0x83
-+
-+static int ftdi_mpsse_get_port_pins(struct ft232h_intf_priv *priv, bool low)
++static int fpp_fpga_mgr_bitbang_write_complete(struct fpga_manager *mgr,
++					       struct fpga_image_info *info)
 +{
-+	struct device *dev = &priv->intf->dev;
-+	int ret, tout = 10;
-+	u8 rxbuf[4];
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++	struct device *dev = &priv->pdev->dev;
++	int retries = MAX_RETRIES;
++	int ret;
 +
-+	if (low)
-+		priv->tx_buf[0] = GET_BITS_LOW;
-+	else
-+		priv->tx_buf[0] = GET_BITS_HIGH;
-+
-+	ret = ftdi_write_data(priv->intf, priv->tx_buf, 1);
-+	if (ret < 0) {
-+		dev_dbg_ratelimited(dev, "Writing port pins cmd failed: %d\n",
-+				    ret);
-+		return ret;
-+	}
-+
-+	rxbuf[0] = 0;
++	/* Wait for CONF_DONE to get high */
 +	do {
-+		usleep_range(5000, 5200);
-+		ret = ftdi_read_data(priv->intf, rxbuf, 1);
-+		tout--;
-+		if (!tout) {
-+			dev_err(dev, "Timeout when getting port pins\n");
-+			return -ETIMEDOUT;
-+		}
-+	} while (ret == 0);
++		msleep(50);
 +
-+	if (ret < 0)
-+		return ret;
++		ret = gpiod_get_value_cansleep(priv->conf_done);
++		if (ret < 0)
++			return ret;
 +
-+	if (ret != 1)
++		if (ret)
++			break;
++	} while (--retries > 0);
++
++	if (!retries) {
++		dev_warn(dev, "CONF_DONE wait timeout\n");
++		return -ETIMEDOUT;
++	}
++
++	priv->iops->disable_bitbang(priv->intf);
++	return 0;
++}
++
++static inline bool status_hdr_is_valid(u8 *buf)
++{
++	return buf[0] == INPUT_HEADER_0 && buf[1] == INPUT_HEADER_1;
++}
++
++static int fpp_fpga_mgr_read_status(struct fpp_fpga_mgr_priv *priv, u8 *status)
++{
++	struct device *dev = &priv->pdev->dev;
++	u8 *inbuf = priv->bulk_buf;
++	int retries = MAX_RETRIES;
++	int ret;
++
++	if (!status)
 +		return -EINVAL;
 +
-+	if (low)
-+		priv->gpiol_mask = rxbuf[0];
-+	else
-+		priv->gpioh_mask = rxbuf[0];
-+
-+	return 0;
-+}
-+
-+static int ftdi_mpsse_set_port_pins(struct ft232h_intf_priv *priv, bool low)
-+{
-+	struct device *dev = &priv->intf->dev;
-+	int ret;
-+
-+	if (low) {
-+		priv->tx_buf[0] = SET_BITS_LOW;
-+		priv->tx_buf[1] = priv->gpiol_mask;
-+		priv->tx_buf[2] = priv->gpiol_dir;
-+	} else {
-+		priv->tx_buf[0] = SET_BITS_HIGH;
-+		priv->tx_buf[1] = priv->gpioh_mask;
-+		priv->tx_buf[2] = priv->gpioh_dir;
-+	}
-+
-+	ret = ftdi_write_data(priv->intf, priv->tx_buf, 3);
-+	if (ret < 0) {
-+		dev_dbg_ratelimited(dev, "Failed to set GPIO pins: %d\n",
-+				    ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ftdi_mpsse_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	int ret, val;
-+	bool low;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		mutex_unlock(&priv->io_mutex);
-+		return -ENODEV;
-+	}
-+	mutex_unlock(&priv->io_mutex);
-+
-+	dev_dbg(chip->parent, "%s: offset %d\n", __func__, offset);
-+
-+	low = offset < 5 ? true : false;
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	ret = ftdi_mpsse_get_port_pins(priv, low);
-+	if (ret < 0) {
-+		mutex_unlock(&priv->ops_mutex);
-+		return ret;
-+	}
-+
-+	if (low)
-+		val = priv->gpiol_mask & (BIT(offset) << 3);
-+	else
-+		val = priv->gpioh_mask & BIT(offset - 5);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+
-+	return !!val;
-+}
-+
-+static void ftdi_mpsse_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+				int value)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	bool low;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		mutex_unlock(&priv->io_mutex);
-+		return;
-+	}
-+	mutex_unlock(&priv->io_mutex);
-+
-+	dev_dbg(chip->parent, "%s: offset %d, val %d\n",
-+		__func__, offset, value);
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	if (offset < 5) {
-+		low = true;
-+		if (value)
-+			priv->gpiol_mask |= (BIT(offset) << 3);
-+		else
-+			priv->gpiol_mask &= ~(BIT(offset) << 3);
-+	} else {
-+		low = false;
-+		if (value)
-+			priv->gpioh_mask |= BIT(offset - 5);
-+		else
-+			priv->gpioh_mask &= ~BIT(offset - 5);
-+	}
-+
-+	ftdi_mpsse_set_port_pins(priv, low);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+}
-+
-+static int ftdi_mpsse_gpio_direction_input(struct gpio_chip *chip,
-+					   unsigned int offset)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	bool low;
-+	int ret;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		mutex_unlock(&priv->io_mutex);
-+		return -ENODEV;
-+	}
-+	mutex_unlock(&priv->io_mutex);
-+
-+	dev_dbg(chip->parent, "%s: offset %d\n", __func__, offset);
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	if (offset < 5) {
-+		low = true;
-+		priv->gpiol_dir &= ~(BIT(offset) << 3);
-+	} else {
-+		low = false;
-+		priv->gpioh_dir &= ~BIT(offset - 5);
-+	}
-+
-+	ret = ftdi_mpsse_set_port_pins(priv, low);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+
-+	return ret;
-+}
-+
-+static int ftdi_mpsse_gpio_direction_output(struct gpio_chip *chip,
-+					    unsigned int offset, int value)
-+{
-+	struct ft232h_intf_priv *priv = gpiochip_get_data(chip);
-+	bool low;
-+	int ret;
-+
-+	mutex_lock(&priv->io_mutex);
-+	if (!priv->intf) {
-+		mutex_unlock(&priv->io_mutex);
-+		return -ENODEV;
-+	}
-+	mutex_unlock(&priv->io_mutex);
-+
-+	dev_dbg(chip->parent, "%s: offset %d, val %d\n",
-+		__func__, offset, value);
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	if (offset < 5) {
-+		low = true;
-+		priv->gpiol_dir |= BIT(offset) << 3;
-+
-+		if (value)
-+			priv->gpiol_mask |= BIT(offset) << 3;
-+		else
-+			priv->gpiol_mask &= ~(BIT(offset) << 3);
-+	} else {
-+		low = false;
-+		priv->gpioh_dir |= BIT(offset - 5);
-+
-+		if (value)
-+			priv->gpioh_mask |= BIT(offset - 5);
-+		else
-+			priv->gpioh_mask &= ~BIT(offset - 5);
-+	}
-+
-+	ret = ftdi_mpsse_set_port_pins(priv, low);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+
-+	return ret;
-+}
-+
-+static int ftdi_mpsse_init_pins(struct usb_interface *intf, bool low,
-+				u8 bits, u8 direction)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	int ret;
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	if (low) {
-+		priv->gpiol_mask = bits;
-+		priv->gpiol_dir = direction;
-+	} else {
-+		priv->gpioh_mask = bits;
-+		priv->gpioh_dir = direction;
-+	}
-+	ret = ftdi_mpsse_set_port_pins(priv, low);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+
-+	return ret;
-+}
-+
-+static int ftdi_mpsse_cfg_bus_pins(struct usb_interface *intf,
-+				   u8 dir_bits, u8 value_bits)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	int ret;
-+
-+	mutex_lock(&priv->ops_mutex);
-+
-+	priv->gpiol_dir &= ~7;
-+	priv->gpiol_dir |= (dir_bits & 7);
-+
-+	priv->gpiol_mask &= ~7;
-+	priv->gpiol_mask |= (value_bits & 7);
-+
-+	ret = ftdi_mpsse_set_port_pins(priv, true);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+
-+	return ret;
-+}
-+
-+static int ft232h_intf_add_mpsse_gpio(struct ft232h_intf_priv *priv)
-+{
-+	struct device *dev = &priv->intf->dev;
-+	char **names, *label;
-+	int i, ret;
-+
-+	label = devm_kasprintf(dev, GFP_KERNEL, "ftdi-mpsse-gpio.%d", priv->id);
-+	if (!label)
-+		return -ENOMEM;
-+
-+	priv->mpsse_gpio.label = label;
-+	priv->mpsse_gpio.parent = dev;
-+	priv->mpsse_gpio.owner = THIS_MODULE;
-+	priv->mpsse_gpio.base = -1;
-+	priv->mpsse_gpio.ngpio = 13;
-+	priv->mpsse_gpio.can_sleep = true;
-+	priv->mpsse_gpio.set = ftdi_mpsse_gpio_set;
-+	priv->mpsse_gpio.get = ftdi_mpsse_gpio_get;
-+	priv->mpsse_gpio.direction_input = ftdi_mpsse_gpio_direction_input;
-+	priv->mpsse_gpio.direction_output = ftdi_mpsse_gpio_direction_output;
-+
-+	names = devm_kcalloc(dev, priv->mpsse_gpio.ngpio, sizeof(char *),
-+			     GFP_KERNEL);
-+	if (!names)
-+		return -ENOMEM;
-+
-+	names[0] = devm_kasprintf(dev, GFP_KERNEL, "mpsse.%d-CS", priv->id);
-+	if (!names[0])
-+		return -ENOMEM;
-+
-+	for (i = 1; i < priv->mpsse_gpio.ngpio; i++) {
-+		int offs;
-+
-+		offs = i < 5 ? 1 : 5;
-+		names[i] = devm_kasprintf(dev, GFP_KERNEL,
-+					  "mpsse.%d-GPIO%c%d", priv->id,
-+					  i < 5 ? 'L' : 'H', i - offs);
-+		if (!names[i])
-+			return -ENOMEM;
-+	}
-+
-+	priv->mpsse_gpio.names = (const char *const *)names;
-+
-+	ret = ftdi_set_bitmode(priv->intf, 0x00, BITMODE_MPSSE);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to set MPSSE mode\n");
-+		return ret;
-+	}
-+
-+	ret = devm_gpiochip_add_data(dev, &priv->mpsse_gpio, priv);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to add MPSSE GPIO chip: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void ftdi_lock(struct usb_interface *intf)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+
-+	mutex_lock(&priv->ops_mutex);
-+}
-+
-+static void ftdi_unlock(struct usb_interface *intf)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+
-+	mutex_unlock(&priv->ops_mutex);
-+}
-+
-+static const struct ft232h_intf_ops ft232h_intf_ops = {
-+	.ctrl_xfer = ftdi_ctrl_xfer,
-+	.bulk_xfer = ftdi_bulk_xfer,
-+	.read_data = ftdi_read_data,
-+	.write_data = ftdi_write_data,
-+	.lock = ftdi_lock,
-+	.unlock = ftdi_unlock,
-+	.set_bitmode = ftdi_set_bitmode,
-+	.set_baudrate = ftdi_set_baudrate,
-+	.disable_bitbang = ftdi_disable_bitbang,
-+	.init_pins = ftdi_mpsse_init_pins,
-+	.cfg_bus_pins = ftdi_mpsse_cfg_bus_pins,
-+};
-+
-+/*
-+ * FPGA config interface: FPP via FT245 FIFO
-+ */
-+#define FPP_INTF_DEVNAME	"ftdi-fifo-fpp-mgr"
-+
-+static struct dev_io_desc_data fpga_cfg_fpp_dev_io[2] = {
-+	{ "nconfig", 0, GPIO_ACTIVE_LOW },
-+	{ "conf_done", 1, GPIO_ACTIVE_HIGH },
-+};
-+
-+static const struct fifo_fpp_mgr_platform_data fpga_cfg_fpp_plat_data = {
-+	.ops = &ft232h_intf_ops,
-+	.io_data = fpga_cfg_fpp_dev_io,
-+	.io_data_len = ARRAY_SIZE(fpga_cfg_fpp_dev_io),
-+	.nconfig_num = 8,
-+	.conf_done_num = 9,
-+};
-+
-+static int ft232h_intf_fpp_probe(struct usb_interface *intf,
-+				 const void *plat_data)
-+{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	const struct fifo_fpp_mgr_platform_data *pd = plat_data;
-+	struct device *dev = &intf->dev;
-+	struct platform_device *pdev;
-+	struct gpiod_lookup_table *lookup;
-+	char *cfgdone, *ncfg, *ptr;
-+	size_t lookup_size;
-+	int i, ret, gpios = 0;
-+
-+	dev_dbg(dev, "%s: plat_data %p\n", __func__, pd);
-+	if (!pd) {
-+		dev_err(dev, "%s: Missing platform data\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	ret = ft232h_intf_add_cbus_gpio(priv);
-+	if (ret < 0)
-+		return ret;
-+
-+	lookup_size = sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup);
-+	lookup = devm_kzalloc(dev, lookup_size, GFP_KERNEL);
-+	if (!lookup)
-+		return -ENOMEM;
-+
-+	lookup->dev_id = devm_kasprintf(dev, GFP_KERNEL, "%s.%d",
-+					FPP_INTF_DEVNAME, priv->id);
-+	if (!lookup->dev_id)
-+		return -ENOMEM;
-+
-+	ncfg = devm_kasprintf(dev, GFP_KERNEL, "ACBUS%d", pd->nconfig_num);
-+	if (!ncfg)
-+		return -ENOMEM;
-+
-+	cfgdone = devm_kasprintf(dev, GFP_KERNEL, "ACBUS%d", pd->conf_done_num);
-+	if (!cfgdone)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < priv->cbus_gpio.ngpio; i++) {
-+		if (!priv->cbus_gpio.names[i])
-+			continue;
-+
-+		ptr = strstr(priv->cbus_gpio.names[i], "ACBUS");
-+		if (!ptr)
-+			continue;
-+
-+		if (!strncmp(ptr, ncfg, 6)) {
-+			lookup->table[0].chip_hwnum = i;
-+			gpios++;
-+			continue;
++	/* Wait until CPLD sends valid header and status register */
++	do {
++		ret = priv->iops->read_data(priv->intf, inbuf, 64);
++		if (ret < 0) {
++			dev_err(dev, "Can't read status data: %d\n", ret);
++			return ret;
 +		}
-+		if (!strncmp(ptr, cfgdone, 6)) {
-+			lookup->table[1].chip_hwnum = i;
-+			gpios++;
++
++		/* Check input buffer header */
++		if (ret >= 4 && status_hdr_is_valid(inbuf)) {
++			*status = inbuf[2];
++			return 0;
 +		}
-+	}
 +
-+	/* Does GPIO controller provide all needed ACBUS pins? */
-+	if (gpios < 2) {
-+		dev_err(dev, "Missing control GPIOs\n");
-+		return -ENODEV;
-+	}
++		/* Wait and read back status again */
++		msleep(100); /* CPLD sends status every 100ms */
++	} while (--retries > 0);
 +
-+	for (i = 0; i < pd->io_data_len; i++) {
-+		lookup->table[i].chip_label = priv->cbus_gpio.label;
-+		lookup->table[i].idx = 0;
-+		lookup->table[i].con_id = pd->io_data[i].con_id;
-+		lookup->table[i].flags = pd->io_data[i].flags;
-+	}
-+
-+	priv->lookup_fifo = lookup;
-+	gpiod_add_lookup_table(priv->lookup_fifo);
-+
-+	pdev = platform_device_register_data(dev, FPP_INTF_DEVNAME,
-+					     priv->id, pd, sizeof(*pd));
-+	if (IS_ERR(pdev)) {
-+		gpiod_remove_lookup_table(priv->lookup_fifo);
-+		return PTR_ERR(pdev);
-+	}
-+
-+	priv->fifo_pdev = pdev;
-+
-+	dev_dbg(dev, "%s: fifo pdev %p\n", __func__, pdev);
-+	return 0;
++	dev_warn(dev, "Timeout when reading status\n");
++	return -ETIMEDOUT;
 +}
 +
-+static int ft232h_intf_fpp_remove(struct usb_interface *intf)
++static int fpp_fpga_mgr_ft245_fifo_write_init(struct fpga_manager *mgr,
++					      struct fpga_image_info *info,
++					      const char *buf, size_t count)
 +{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct device *dev = &intf->dev;
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++	struct device *dev = &priv->pdev->dev;
++	int retries = MAX_RETRIES;
++	int ret;
++	u8 status;
 +
-+	dev_dbg(dev, "%s\n", __func__);
-+	platform_device_unregister(priv->fifo_pdev);
-+	gpiod_remove_lookup_table(priv->lookup_fifo);
-+	return 0;
-+}
++	gpiod_direction_output_raw(priv->conf_done, 0);
 +
-+/*
-+ * FPGA config interface: PS-SPI via MPSSE
-+ */
-+#define SPI_INTF_DEVNAME	"ftdi-mpsse-spi"
-+
-+static struct spi_board_info fpga_cfg_spi_info[] = {
-+	{
-+	.modalias	= "fpga-passive-serial",
-+	.mode		= SPI_MODE_0 | SPI_LSB_FIRST,
-+	.max_speed_hz	= 30000000,
-+	.bus_num	= 0,
-+	.chip_select	= 0,
-+	},
-+};
-+
-+static struct dev_io_desc_data fpga_cfg_spi_dev_io[3] = {
-+	{ "confd", 1, GPIO_ACTIVE_HIGH },
-+	{ "nstat", 2, GPIO_ACTIVE_LOW },
-+	{ "nconfig", 3, GPIO_ACTIVE_LOW },
-+};
-+
-+static const struct mpsse_spi_platform_data fpga_cfg_spi_plat_data = {
-+	.ops		= &ft232h_intf_ops,
-+	.spi_info	= fpga_cfg_spi_info,
-+	.spi_info_len	= ARRAY_SIZE(fpga_cfg_spi_info),
-+	.io_data	= fpga_cfg_spi_dev_io,
-+	.io_data_len	= ARRAY_SIZE(fpga_cfg_spi_dev_io),
-+};
-+
-+static struct platform_device *mpsse_dev_register(struct ft232h_intf_priv *priv,
-+				const struct mpsse_spi_platform_data *pd)
-+{
-+	struct device *parent = &priv->intf->dev;
-+	struct platform_device *pdev;
-+	struct gpiod_lookup_table *lookup;
-+	size_t lookup_size, tbl_size;
-+	int i, ret;
-+
-+	pdev = platform_device_alloc(SPI_INTF_DEVNAME, 0);
-+	if (!pdev)
-+		return NULL;
-+
-+	pdev->dev.parent = parent;
-+	pdev->dev.fwnode = NULL;
-+	priv->spi_pdev = pdev;
-+
-+	tbl_size = pd->spi_info_len + 1;
-+	lookup_size = sizeof(*lookup) + tbl_size * sizeof(struct gpiod_lookup);
-+	lookup = devm_kzalloc(parent, lookup_size, GFP_KERNEL);
-+	if (!lookup) {
-+		ret = -ENOMEM;
-+		goto err;
-+	}
-+
-+	for (i = 0; i < pd->spi_info_len; i++) {
-+		dev_dbg(parent, "INFO: %s cs %d\n",
-+			pd->spi_info[i].modalias, pd->spi_info[i].chip_select);
-+	}
-+
-+	ret = platform_device_add_data(pdev, pd, sizeof(*pd));
++	/* Set/reset nConfig via commands to CPLD */
++	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
 +	if (ret)
-+		goto err;
++		return ret;
++	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 0);
++	if (ret)
++		return ret;
++	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
++	if (ret)
++		return ret;
 +
-+	pdev->id = priv->id;
++	/* In FT245 FIFO mode we need sync FIFO mode to talk to FPGA */
++	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
++	if (ret)
++		return ret;
 +
-+	ret = ft232h_intf_add_mpsse_gpio(priv);
-+	if (ret < 0)
-+		goto err;
++	/* Wait until FPGA is ready for loading (conf_done zero) or timeout */
++	do {
++		ret = fpp_fpga_mgr_read_status(priv, &status);
++		if (!ret) {
++			/* Check conf_done status */
++			if ((status & IN_CONF_DONE) == 0)
++				break;
++		}
++	} while (--retries > 0);
 +
-+	lookup->dev_id = devm_kasprintf(parent, GFP_KERNEL, "%s.%d",
-+					pdev->name, pdev->id);
-+	if (!lookup->dev_id) {
-+		ret = -ENOMEM;
-+		goto err;
++	if (!retries) {
++		dev_warn(dev, "CONF_DONE wait timeout\n");
++		return -ETIMEDOUT;
 +	}
 +
-+	for (i = 0; i < pd->spi_info_len; i++) {
-+		lookup->table[i].chip_label = priv->mpsse_gpio.label;
-+		lookup->table[i].chip_hwnum = pd->spi_info[i].chip_select;
-+		lookup->table[i].idx = i;
-+		lookup->table[i].con_id = NULL;
-+		if (pd->spi_info[i].mode & SPI_CS_HIGH)
-+			lookup->table[i].flags = GPIO_ACTIVE_HIGH;
-+		else
-+			lookup->table[i].flags = GPIO_ACTIVE_LOW;
-+	}
-+
-+	priv->lookup_cs = lookup;
-+	gpiod_add_lookup_table(priv->lookup_cs);
-+
-+	ret = platform_device_add(pdev);
-+	if (ret < 0)
-+		goto err_add;
-+
-+	dev_dbg(&pdev->dev, "%s done\n", __func__);
-+	return pdev;
-+
-+err_add:
-+	gpiod_remove_lookup_table(priv->lookup_cs);
-+err:
-+	platform_device_put(pdev);
-+	return ERR_PTR(ret);
++	/* Configure for max. baud rate (3MHz * 4 in bitbang mode) */
++	return priv->iops->set_baudrate(priv->intf, 3000000);
 +}
 +
-+static int ft232h_intf_spi_probe(struct usb_interface *intf,
-+				 const void *plat_data)
++static int fpp_fpga_mgr_ft245_fifo_write(struct fpga_manager *mgr,
++					 const char *buf, size_t count)
 +{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct device *dev = &intf->dev;
-+	struct platform_device *pdev;
++	return fpp_fpga_mgr_bitbang_write(mgr, buf, count);
++}
 +
-+	pdev = mpsse_dev_register(priv, plat_data);
-+	if (IS_ERR(pdev)) {
-+		dev_err(dev, "%s: Can't create MPSSE SPI device %ld\n",
-+			__func__, PTR_ERR(pdev));
-+		return PTR_ERR(pdev);
++static int fpp_fpga_mgr_ft245_fifo_write_complete(struct fpga_manager *mgr,
++						  struct fpga_image_info *info)
++{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++	struct device *dev = &priv->pdev->dev;
++	int retries = MAX_RETRIES;
++	int ret;
++	u8 mask, status;
++
++	mask = IN_CONF_DONE | IN_INIT_DONE;
++
++	do {
++		ret = fpp_fpga_mgr_read_status(priv, &status);
++		if (!ret) {
++			/* Check conf_done/init_done status */
++			if ((status & mask) == mask)
++				break;
++		}
++	} while (--retries > 0);
++
++	if (!retries) {
++		dev_warn(dev, "INIT_DONE wait timeout\n");
++		return -ETIMEDOUT;
 +	}
 +
-+	priv->spi_pdev = pdev;
-+	return 0;
++	/* Release Reset_n, keep nCONFIG high, too! */
++	return fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG | OUT_RESET_N, 1);
 +}
 +
-+static int ft232h_intf_spi_remove(struct usb_interface *intf)
++static enum fpga_mgr_states fpp_fpga_mgr_state(struct fpga_manager *mgr)
 +{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	struct device *dev = &intf->dev;
-+
-+	dev_dbg(dev, "%s: spi pdev %p\n", __func__, priv->spi_pdev);
-+	gpiod_remove_lookup_table(priv->lookup_cs);
-+	platform_device_unregister(priv->spi_pdev);
-+	return 0;
++	return FPGA_MGR_STATE_UNKNOWN;
 +}
 +
-+static const struct ft232h_intf_info fpga_cfg_spi_intf_info = {
-+	.probe  = ft232h_intf_spi_probe,
-+	.remove  = ft232h_intf_spi_remove,
-+	.plat_data  = &fpga_cfg_spi_plat_data,
++static int fpp_fpga_mgr_write_init(struct fpga_manager *mgr,
++				   struct fpga_image_info *info,
++				   const char *buf, size_t count)
++{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++
++	if (info && info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
++		dev_err(&mgr->dev, "Partial reconfiguration not supported.\n");
++		return -EINVAL;
++	}
++
++	if (priv->ops->write_init)
++		return priv->ops->write_init(mgr, info, buf, count);
++
++	return -ENODEV;
++}
++
++static int fpp_fpga_mgr_write(struct fpga_manager *mgr, const char *buf,
++			      size_t count)
++{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++
++	if (priv->ops->write)
++		return priv->ops->write(mgr, buf, count);
++
++	return -ENODEV;
++}
++
++static int fpp_fpga_mgr_write_complete(struct fpga_manager *mgr,
++				       struct fpga_image_info *info)
++{
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++
++	if (priv->ops->write_complete)
++		return priv->ops->write_complete(mgr, info);
++
++	return -ENODEV;
++}
++
++static struct fpp_mgr_ops fpp_mgr_bitbang_ops = {
++	.write_init	= fpp_fpga_mgr_bitbang_write_init,
++	.write		= fpp_fpga_mgr_bitbang_write,
++	.write_complete	= fpp_fpga_mgr_bitbang_write_complete,
 +};
 +
-+static const struct ft232h_intf_info fpga_cfg_fifo_intf_info = {
-+	.probe = ft232h_intf_fpp_probe,
-+	.remove = ft232h_intf_fpp_remove,
-+	.plat_data = &fpga_cfg_fpp_plat_data,
++static struct fpp_mgr_ops fpp_mgr_ft245_fifo_ops = {
++	.write_init	= fpp_fpga_mgr_ft245_fifo_write_init,
++	.write		= fpp_fpga_mgr_ft245_fifo_write,
++	.write_complete	= fpp_fpga_mgr_ft245_fifo_write_complete,
 +};
 +
-+static int ft232h_intf_probe(struct usb_interface *intf,
-+			     const struct usb_device_id *id)
++static const struct fpga_manager_ops fpp_fpga_mgr_ops = {
++	.state		= fpp_fpga_mgr_state,
++	.write_init	= fpp_fpga_mgr_write_init,
++	.write		= fpp_fpga_mgr_write,
++	.write_complete	= fpp_fpga_mgr_write_complete,
++};
++
++static ssize_t cfg_mode_show(struct device *dev, struct device_attribute *attr,
++			     char *buf)
 +{
-+	struct ft232h_intf_priv *priv;
-+	struct device *dev = &intf->dev;
-+	struct usb_host_interface *iface_desc;
-+	struct usb_endpoint_descriptor *endpoint;
-+	const struct ft232h_intf_info *info;
-+	unsigned int i;
-+	int ret = 0;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct fpga_manager *mgr = platform_get_drvdata(pdev);
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++
++	return snprintf(buf, PAGE_SIZE, "%s\n", priv->cfg_mode);
++}
++
++static ssize_t cfg_mode_store(struct device *dev, struct device_attribute *attr,
++			      const char *buf, size_t count)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct fpga_manager *mgr = platform_get_drvdata(pdev);
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
++
++	if (!count || count > sizeof(priv->cfg_mode))
++		return -EINVAL;
++
++	if (!strncmp(buf, "fifo", 4)) {
++		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode));
++		priv->cfg_mode[4] = 0;
++		priv->ops = &fpp_mgr_ft245_fifo_ops;
++		gpiod_direction_output_raw(priv->conf_done, 0);
++	} else if (!strncmp(buf, "bitbang", 7)) {
++		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode));
++		priv->cfg_mode[7] = 0;
++		priv->ops = &fpp_mgr_bitbang_ops;
++		gpiod_direction_input(priv->conf_done);
++	} else {
++		return -EINVAL;
++	}
++
++	return count;
++}
++
++static DEVICE_ATTR_RW(cfg_mode);
++
++static int fpp_fpga_mgr_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct fpp_fpga_mgr_priv *priv;
++	struct fpga_manager *mgr;
++	struct fifo_fpp_mgr_platform_data *pd;
++	int ret, retries = MAX_RETRIES;
++	char id_string[8];
++	u8 status = 0;
++
++	pd = dev->platform_data;
++	if (!pd) {
++		dev_err(dev, "Missing platform data.\n");
++		return -EINVAL;
++	}
++
++	if (!pd->ops ||
++	    !pd->ops->bulk_xfer || !pd->ops->ctrl_xfer ||
++	    !pd->ops->read_data || !pd->ops->write_data ||
++	    !pd->ops->set_bitmode || !pd->ops->set_baudrate ||
++	    !pd->ops->disable_bitbang)
++		return -EINVAL;
 +
 +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
 +	if (!priv)
 +		return -ENOMEM;
 +
-+	iface_desc = intf->cur_altsetting;
++	priv->intf = to_usb_interface(dev->parent);
++	priv->iops = pd->ops;
 +
-+	for (i = 0; i < iface_desc->desc.bNumEndpoints; i++) {
-+		endpoint = &iface_desc->endpoint[i].desc;
-+
-+		if (usb_endpoint_is_bulk_out(endpoint))
-+			priv->bulk_out = endpoint->bEndpointAddress;
-+
-+		if (usb_endpoint_is_bulk_in(endpoint)) {
-+			priv->bulk_in = endpoint->bEndpointAddress;
-+			priv->bulk_in_sz = usb_endpoint_maxp(endpoint);
-+		}
-+	}
-+
-+	priv->usb_dev_id = id;
-+	priv->index = 1;
-+	priv->intf = intf;
-+	priv->info = (struct ft232h_intf_info *)id->driver_info;
-+
-+	info = priv->info;
-+	if (!info) {
-+		dev_err(dev, "Missing device specific driver info...\n");
++	ret = sscanf(dev_name(dev->parent), "%s", priv->usb_dev_id);
++	if (ret != 1) {
++		dev_err(dev, "Can't get parent device name: %d\n", ret);
 +		return -ENODEV;
 +	}
 +
-+	mutex_init(&priv->io_mutex);
-+	mutex_init(&priv->ops_mutex);
-+	usb_set_intfdata(intf, priv);
++	priv->pdev = pdev;
++	priv->ops = &fpp_mgr_ft245_fifo_ops;
++	strncpy(priv->cfg_mode, "fifo", sizeof(priv->cfg_mode));
 +
-+	priv->bulk_in_buf = devm_kmalloc(dev, priv->bulk_in_sz, GFP_KERNEL);
-+	if (!priv->bulk_in_buf)
-+		return -ENOMEM;
-+
-+	priv->udev = usb_get_dev(interface_to_usbdev(intf));
-+
-+	priv->id = ida_simple_get(&ftdi_devid_ida, 0, 0, GFP_KERNEL);
-+	if (priv->id < 0)
-+		return priv->id;
-+
-+	if (info->probe) {
-+		ret = info->probe(intf, info->plat_data);
-+		if (ret < 0)
-+			goto err;
-+		return 0;
++	priv->nconfig = devm_gpiod_get(dev, "nconfig", GPIOD_OUT_LOW);
++	if (IS_ERR(priv->nconfig)) {
++		ret = PTR_ERR(priv->nconfig);
++		dev_err(dev, "Failed to get nconfig gpio: %d\n", ret);
++		return ret;
 +	}
 +
-+	/* for simple GPIO-only devices */
-+	ret = -ENODEV;
-+	if (info->use_cbus_gpio_ctrl)
-+		ret = ft232h_intf_add_cbus_gpio(priv);
-+	else if (info->use_mpsse_gpio_ctrl)
-+		ret = ft232h_intf_add_mpsse_gpio(priv);
-+	if (!ret)
-+		return 0;
-+err:
-+	ida_simple_remove(&ftdi_devid_ida, priv->id);
++	priv->conf_done = devm_gpiod_get(dev, "conf_done", GPIOD_OUT_LOW);
++	if (IS_ERR(priv->conf_done)) {
++		ret = PTR_ERR(priv->conf_done);
++		dev_err(dev, "Failed to get conf_done gpio: %d\n", ret);
++		goto err_cfg1;
++	}
++
++	priv->bulk_buf = devm_kmalloc(dev, BULK_OUT_BUF_SZ,
++				      GFP_KERNEL | GFP_DMA32);
++	if (!priv->bulk_buf) {
++		ret = -ENOMEM;
++		goto err_cfg2;
++	}
++
++	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
++	if (ret)
++		goto err_cfg2;
++
++	/* Read status register from CPLD */
++	do {
++		ret = fpp_fpga_mgr_read_status(priv, &status);
++		if (!ret)
++			break;
++	} while (--retries > 0);
++
++	if (!retries) {
++		ret = -ETIMEDOUT;
++		goto err_cfg2;
++	}
++
++	priv->rev = (status & IN_BOARD_REV) ? BOARD_REVB : BOARD_REVA;
++
++	if (priv->rev == BOARD_REVB) {
++		priv->addr_sel = (status & IN_ADDR_SELECT) ?
++				 ADDR_SELECT_NC : ADDR_SELECT_GND;
++		if (priv->addr_sel == ADDR_SELECT_NC)
++			strncpy(id_string, "right", sizeof(id_string));
++		else
++			strncpy(id_string, "left", sizeof(id_string));
++	} else {
++		priv->addr_sel = ADDR_SELECT_INVALID;
++		strncpy(id_string, "single", sizeof(id_string));
++	}
++
++	dev_info(dev, "Board Rev %d, Addr Sel %d\n", priv->rev, priv->addr_sel);
++
++	/* Use unique board ID and USB bus/port in FPGA manager name */
++	snprintf(priv->fpga_mgr_name, sizeof(priv->fpga_mgr_name),
++		 "ftdi-fpp-fpga-mgr %s %s", id_string, priv->usb_dev_id);
++
++	mgr = devm_fpga_mgr_create(dev, priv->fpga_mgr_name,
++				   &fpp_fpga_mgr_ops, priv);
++	if (!mgr)
++		goto err_cfg2;
++
++	platform_set_drvdata(pdev, mgr);
++
++	ret = fpga_mgr_register(mgr);
++	if (ret) {
++		dev_err(dev, "unable to register FPGA manager\n");
++		goto err_cfg2;
++	}
++
++	ret = device_create_file(dev, &dev_attr_cfg_mode);
++	if (ret)
++		dev_warn(dev, "Can't create cfg_mode interface %d\n", ret);
++
++	return 0;
++
++err_cfg2:
++	devm_gpiod_put(dev, priv->conf_done);
++err_cfg1:
++	devm_gpiod_put(dev, priv->nconfig);
 +	return ret;
 +}
 +
-+static void ft232h_intf_disconnect(struct usb_interface *intf)
++static int fpp_fpga_mgr_remove(struct platform_device *pdev)
 +{
-+	struct ft232h_intf_priv *priv = usb_get_intfdata(intf);
-+	const struct ft232h_intf_info *info;
++	struct fpga_manager *mgr = platform_get_drvdata(pdev);
++	struct fpp_fpga_mgr_priv *priv = mgr->priv;
 +
-+	info = (struct ft232h_intf_info *)priv->usb_dev_id->driver_info;
-+	if (info && info->remove)
-+		info->remove(intf);
-+
-+	if (info->use_mpsse_gpio_ctrl)
-+		devm_gpiochip_remove(&intf->dev, &priv->mpsse_gpio);
-+
-+	if (info->use_cbus_gpio_ctrl)
-+		devm_gpiochip_remove(&intf->dev, &priv->cbus_gpio);
-+
-+	mutex_lock(&priv->io_mutex);
-+	priv->intf = NULL;
-+	usb_set_intfdata(intf, NULL);
-+	mutex_unlock(&priv->io_mutex);
-+
-+	usb_put_dev(priv->udev);
-+	ida_simple_remove(&ftdi_devid_ida, priv->id);
++	device_remove_file(&pdev->dev, &dev_attr_cfg_mode);
++	fpga_mgr_unregister(mgr);
++	devm_gpiod_put(&pdev->dev, priv->conf_done);
++	devm_gpiod_put(&pdev->dev, priv->nconfig);
++	return 0;
 +}
 +
-+#define FTDI_VID			0x0403
-+#define ARRI_FPP_INTF_PRODUCT_ID	0x7148
-+#define ARRI_SPI_INTF_PRODUCT_ID	0x7149
-+
-+static struct usb_device_id ft232h_intf_table[] = {
-+	{ USB_DEVICE(FTDI_VID, ARRI_FPP_INTF_PRODUCT_ID),
-+		.driver_info = (kernel_ulong_t)&fpga_cfg_fifo_intf_info },
-+	{ USB_DEVICE(FTDI_VID, ARRI_SPI_INTF_PRODUCT_ID),
-+		.driver_info = (kernel_ulong_t)&fpga_cfg_spi_intf_info },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(usb, ft232h_intf_table);
-+
-+static struct usb_driver ft232h_intf_driver = {
-+	.name		= KBUILD_MODNAME,
-+	.id_table	= ft232h_intf_table,
-+	.probe		= ft232h_intf_probe,
-+	.disconnect	= ft232h_intf_disconnect,
++static struct platform_driver fpp_fpga_mgr_driver = {
++	.driver.name	= "ftdi-fifo-fpp-mgr",
++	.probe		= fpp_fpga_mgr_probe,
++	.remove		= fpp_fpga_mgr_remove,
 +};
 +
-+module_usb_driver(ft232h_intf_driver);
++module_platform_driver(fpp_fpga_mgr_driver);
 +
-+MODULE_ALIAS("ft232h-intf");
++MODULE_ALIAS("platform:ftdi-fifo-fpp-mgr");
 +MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
-+MODULE_DESCRIPTION("FT232H to FPGA interface driver");
++MODULE_DESCRIPTION("FT232H Bitbang/FT245-FIFO FPP FPGA Manager Driver");
 +MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/usb/ft232h-intf.h b/include/linux/usb/ft232h-intf.h
-new file mode 100644
-index 000000000000..f83fae050968
---- /dev/null
-+++ b/include/linux/usb/ft232h-intf.h
-@@ -0,0 +1,187 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Common definitions for FTDI FT232H interface device
-+ *
-+ * Copyright (C) 2017 - 2018 DENX Software Engineering
-+ * Anatolij Gustschin <agust@denx.de>
-+ */
-+
-+#ifndef __LINUX_FT232H_INTF_H
-+#define __LINUX_FT232H_INTF_H
-+
-+/* Used FTDI USB Requests */
-+#define FTDI_SIO_RESET_REQUEST		0x00
-+#define FTDI_SIO_SET_BAUDRATE_REQUEST	0x03
-+#define FTDI_SIO_SET_BITMODE_REQUEST	0x0B
-+#define FTDI_SIO_READ_PINS_REQUEST	0x0C
-+#define FTDI_SIO_READ_EEPROM_REQUEST	0x90
-+
-+/* MPSSE Commands */
-+#define TX_BYTES_RE_MSB		0x10 /* tx on +ve clk (rising edge) */
-+#define TX_BYTES_FE_MSB		0x11 /* tx on -ve clk (falling edge) */
-+#define RX_BYTES_RE_MSB		0x20
-+#define RX_BYTES_FE_MSB		0x24
-+#define TXF_RXR_BYTES_MSB	0x31 /* tx on -ve clk, rx on +ve */
-+#define TXR_RXF_BYTES_MSB	0x34 /* tx on +ve clk, rx on -ve */
-+
-+#define TX_BYTES_RE_LSB		0x18 /* tx on +ve clk */
-+#define TX_BYTES_FE_LSB		0x19 /* tx on -ve clk */
-+#define RX_BYTES_RE_LSB		0x28
-+#define RX_BYTES_FE_LSB		0x2C
-+#define TXF_RXR_BYTES_LSB	0x39 /* tx on -ve clk, rx on +ve */
-+#define TXR_RXF_BYTES_LSB	0x3C /* tx on +ve clk, rx on -ve */
-+
-+#define LOOPBACK_ON		0x84
-+#define LOOPBACK_OFF		0x85
-+#define TCK_DIVISOR		0x86
-+#define DIS_DIV_5		0x8A
-+#define EN_DIV_5		0x8B
-+#define EN_3_PHASE		0x8C
-+#define DIS_3_PHASE		0x8D
-+#define DIS_ADAPTIVE		0x97
-+
-+/* For EEPROM I/O mode */
-+#define FTDI_MAX_EEPROM_SIZE	256
-+#define FTDI_232H_CBUS_IOMODE	0x08
-+
-+#define FTDI_USB_READ_TIMEOUT	5000
-+#define FTDI_USB_WRITE_TIMEOUT	5000
-+
-+/* MPSSE bitbang modes (copied from libftdi) */
-+enum ftdi_mpsse_mode {
-+	BITMODE_RESET	= 0x00,	/* switch off bitbang mode */
-+	BITMODE_BITBANG	= 0x01,	/* asynchronous bitbang mode */
-+	BITMODE_MPSSE	= 0x02,	/* MPSSE mode, on 2232x chips */
-+	BITMODE_SYNCBB	= 0x04,	/* synchronous bitbang mode  */
-+	BITMODE_MCU	= 0x08,	/* MCU Host Bus Emulation mode */
-+				/* CPU-style fifo mode gets set via EEPROM */
-+	BITMODE_OPTO	= 0x10,	/* Fast Opto-Isolated Serial Interface Mode */
-+	BITMODE_CBUS	= 0x20,	/* Bitbang on CBUS pins, EEPROM config needed */
-+	BITMODE_SYNCFF	= 0x40,	/* Single Channel Synchronous FIFO mode */
-+	BITMODE_FT1284	= 0x80,	/* FT1284 mode, available on 232H chips */
-+};
-+
-+struct ctrl_desc {
-+	unsigned int dir_out;
-+	u8 request;
-+	u8 requesttype;
-+	u16 value;
-+	u16 index;
-+	u16 size;
-+	void *data;
-+	int timeout;
-+};
-+
-+struct bulk_desc {
-+	unsigned int dir_out;
-+	void *data;
-+	int len;
-+	int act_len;
-+	int timeout;
-+};
-+
-+/*
-+ * struct ft232h_intf_ops - FT232H interface operations for upper drivers
-+ *
-+ * @bulk_xfer: FTDI USB bulk transfer
-+ * @ctrl_xfer: FTDI USB control transfer
-+ * @read_data: read 'len' bytes from FTDI device to the given buffer
-+ * @write_data: write 'len' bytes from the given buffer to the FTDI device
-+ * @lock: lock the interface for an operation sequence. Used when multiple
-+ *	  command and/or data operations must be executed in a specific order
-+ *	  (when other intermediate command/data transfers may not interfere)
-+ * @unlock: unlock the previously locked interface
-+ * @set_bitmode: configure FTDI bit mode
-+ * @set_baudrate: configure FTDI baudrate
-+ * @disable_bitbang: turn off bitbang mode
-+ * @init_pins: initialize GPIOL/GPIOH port pins in MPSSE mode
-+ * @cfg_bus_pins: configure MPSSE SPI bus pins
-+ *
-+ * Common FT232H interface USB xfer and device configuration operations used
-+ * in FIFO-FPP, MPSSE-SPI or MPSSE-I2C drivers. Many of them are like FTDI
-+ * protocol functions, which I mainly borrowed from libftdi
-+ */
-+struct ft232h_intf_ops {
-+	int (*bulk_xfer)(struct usb_interface *intf, struct bulk_desc *desc);
-+	int (*ctrl_xfer)(struct usb_interface *intf, struct ctrl_desc *desc);
-+	int (*read_data)(struct usb_interface *intf, void *buf, size_t len);
-+	int (*write_data)(struct usb_interface *intf, const char *buf,
-+			  size_t len);
-+	void (*lock)(struct usb_interface *intf);
-+	void (*unlock)(struct usb_interface *intf);
-+	int (*set_bitmode)(struct usb_interface *intf, unsigned char bitmask,
-+			   unsigned char mode);
-+	int (*set_baudrate)(struct usb_interface *intf, int baudrate);
-+	int (*disable_bitbang)(struct usb_interface *intf);
-+	int (*init_pins)(struct usb_interface *intf, bool low, u8 bits, u8 dir);
-+	int (*cfg_bus_pins)(struct usb_interface *intf, u8 dir_bits,
-+			    u8 value_bits);
-+};
-+
-+/*
-+ * struct dev_io_desc_data - Descriptor of FT232H pin used by attached device
-+ * @con_id: Name of the GPIO pin
-+ * @idx: Index of the pin
-+ * @flags: GPIOD flags of the pin
-+ *
-+ * Description of a GPIO used by device connected to FT232H
-+ */
-+struct dev_io_desc_data {
-+	const char *con_id;
-+	unsigned int idx;
-+	unsigned int flags;
-+};
-+
-+/*
-+ * struct fifo_fpp_mgr_platform_data - FIFO/FPP device platform data
-+ * @ops: USB interface operations used in FPP manager driver
-+ * @io_data: Array with descriptors of used I/O pins
-+ * @io_data_len: Length of io_data array
-+ * @nconfig_num: ACBUS pin number of the NCONFIG pin
-+ * @conf_done_num: ACBUS pin number of the CONF_DONE pin
-+ *
-+ * FIFO/FPP fpga manager specific platform data
-+ */
-+struct fifo_fpp_mgr_platform_data {
-+	const struct ft232h_intf_ops *ops;
-+	struct dev_io_desc_data *io_data;
-+	size_t io_data_len;
-+	int nconfig_num;
-+	int conf_done_num;
-+};
-+
-+/*
-+ * struct mpsse_spi_platform_data - MPSSE SPI bus platform data
-+ * @ops: USB interface operations used in MPSSE SPI controller driver
-+ * @spi_info: Array with spi_board_info structures of attached SPI slaves
-+ * @spi_info_len: Length of spi_info array
-+ * @io_data: Array with descriptors of used I/O pins
-+ * @io_data_len: Length of io_data array
-+ *
-+ * MPSSE SPI specific platform data describing attached SPI slaves and
-+ * their additional I/O pins
-+ */
-+struct mpsse_spi_platform_data {
-+	const struct ft232h_intf_ops *ops;
-+	struct spi_board_info *spi_info;
-+	size_t spi_info_len;
-+	struct dev_io_desc_data *io_data;
-+	size_t io_data_len;
-+};
-+
-+/*
-+ * Value HIGH. rate is 12000000 / ((1 + value) * 2)
-+ */
-+static inline int div_value(int rate)
-+{
-+	int r;
-+
-+	if (rate >= 6000000)
-+		return 0;
-+	r = 6000000 / rate - 1;
-+	if (r < 0xffff)
-+		return r;
-+	return 0xffff;
-+}
-+
-+#endif /* __LINUX_FT232H_INTF_H */
 -- 
 2.17.1
-
 
