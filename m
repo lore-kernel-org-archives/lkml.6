@@ -2,149 +2,153 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51D5CC46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C708C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1EF20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4118E2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:32:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="X8nz6Xcg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1EF20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="scRpg9ao"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4118E2087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbeKTWBs (ORCPT
+        id S1729304AbeKTWAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:01:48 -0500
-Received: from mail-eopbgr140058.outbound.protection.outlook.com ([40.107.14.58]:5602
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729131AbeKTWBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:01:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CfJwZpzBtweWq/5Ms5ndxC0eIp/x8udJKohs6IMKoWk=;
- b=X8nz6Xcg1+tfUoUt6j7G9tBbd6KY1Hy+2nY8PhAsRF0p059B+eBoHFcAFpmx+vEa7QYTRT/VseZdnuujuAU2Db6zkDIuxUF8t+OO16huZxqdU5TX29g7Mm2dIFagnAty5v8dnF/cwjaqnQ7PQWrciJIxyv+FLNfxdJ/eLey1Uck=
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
- HE1PR0401MB2297.eurprd04.prod.outlook.com (10.168.32.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Tue, 20 Nov 2018 11:33:01 +0000
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 11:33:01 +0000
-From:   "M.h. Lian" <minghuan.lian@nxp.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: RE: [PATCHv2 25/25] arm64: defconfig: Enable
- CONFIG_PCI_LAYERSCAPE_GEN4
-Thread-Topic: [PATCHv2 25/25] arm64: defconfig: Enable
- CONFIG_PCI_LAYERSCAPE_GEN4
-Thread-Index: AQHUgLNaVV8sIDTU2EqiS5vX7AF+faVYiBxQ
-Date:   Tue, 20 Nov 2018 11:33:00 +0000
-Message-ID: <HE1PR0401MB2235E2730953E918EFF77F17E8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
-References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
- <20181120092615.11680-26-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181120092615.11680-26-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=minghuan.lian@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2297;6:CyA5O370X07UQP9vew7zmh5A931rspiBRM38w2jlWPJk54Gp1RdDDPcpP/BRkP87ZrUXHKLya0j/0H/4dLhwN+b8T8JKmXYEu3feIo5ZDbIYtGV/Zm7aAmj3CLnH2A3SowfmBxR4wjugBi5AqfhqwSOZ+BHGFKJR0fBY0GdB1mp/AdOnvnpkoMRc7C58VSVG7gkLhWd52E5ZcaMdyRYHdEcnThROHFGs2vaJa3Iw+p2VDdcMUnEaqYCO1c6TB3oDd4aYShgr9e5SQNioH0+CdzfsfR9FxhXnvKjfMdwXJazUhQ67GP9Q89LwDJFeNIAqaQqciIvF/4ipAjQel9IA5cIQlsRj6/oqfFY644jZ+bLMGz78VLYSovdo6d1ARTALJXT0WKVcQpaHGY6ixvf+yBSzaKvgAaUB4+3rqTMETruiiSHQJCvXFZ5gA1N7aSnl3OAu2+1auHwpD++vNalTDw==;5:jac/Yx18/IoGxjermeFrxRcZUwBKdHskoV4BY25RIxkS2ycDY8OPCFgRCISndQwwJeLP5SrpOzKau1pTf560ze1/XMj+/cd75lejw987ZHtTaXw/3/lS+6Bdc6DLYfDK6aQ3Pifdngr1SsWjVqhfZzjAHMMI+IH4+n6tFhRLvW8=;7:gs2UjrA3e6O9DhWxV75W6ekRwfIw9ExUFils8z0yNVe8zett4XOZKvsbJTTyRFsxAI3rt2LrJ8WOTkm28yoYFCkSGjJUeMzVvEH4ZVMgfiEFhpjSsj0YNyYJeI2VdojUEsbQwK6DSnMEcW3BRzCHhg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 70e58da4-0cbc-4b30-d0b2-08d64edbeda8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2297;
-x-ms-traffictypediagnostic: HE1PR0401MB2297:
-x-microsoft-antispam-prvs: <HE1PR0401MB2297957C2DB7A43A3C526510E8D90@HE1PR0401MB2297.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB2297;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2297;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(366004)(39860400002)(189003)(199004)(13464003)(11346002)(446003)(3846002)(6506007)(6116002)(9686003)(33656002)(5660300001)(106356001)(99286004)(26005)(2900100001)(486006)(76176011)(7696005)(14454004)(2501003)(6246003)(476003)(6436002)(2906002)(53546011)(102836004)(8936002)(55016002)(105586002)(478600001)(81166006)(81156014)(8676002)(7736002)(256004)(305945005)(2201001)(97736004)(74316002)(53936002)(229853002)(316002)(71200400001)(25786009)(186003)(7416002)(71190400001)(68736007)(54906003)(110136005)(86362001)(4326008)(66066001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2297;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: dzTGpxZHATguHZdzTrYrXpU9bVl+eoBwQe95gdEusviSuVpdra5LjnuuUKjKl6exGudMJzJ+mJUuy4VQ9EBu7iaWcibu0F7Sj9ecBjJERbUXQsu1BN4nzfeGyU77jB41NOrKuNQFLmCmd5Q7f0qzgGN0u7HGt1cICx5KkvbiB9hNPtuvV+oRrzC7EZAfc2sUiBqfyF1ap4TV4yAzmTBV1nOHuny1jzphX/NZ81wRn7QY2wOm2uSe2LrawmMdIDDq4bRJffq7kGlJGRbV1/EXXm9q34foiFthO1mFCoZqb656gyjz0wTAFOaTTtgPcWnG6L6xGIjkWzGyhOGc1V+aovcIfvBR/HVtzA253ZBz2is=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 17:00:55 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40839 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729108AbeKTWAy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:00:54 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v5so1078254lfe.7;
+        Tue, 20 Nov 2018 03:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uhw1sUpgQSTG0IBqcQMsPrfFM1/Orv0BAbIhIkfvVAY=;
+        b=scRpg9aow4DT0etuX/g3W3/sg6UCx1wyfEAIO0B9bOvryxJ7HLqbRoOOcjeOXtZ/r5
+         bKn2We2H7CusPGp7cQa/DClw1vu4BrdP2AZqK653Fw4aRX+OLEwpO5qExt+R6jNhkn5K
+         MwAElfeEZQa7iW2m5j5f3yugLjp6UpGIXjWJfYk4qIieQ7XBsXVYLIPGOmsmuUPaNbD3
+         zL5/XDLAqAZAKBaeBE6F417zWKPQCjk8IghgL077AdgHg9fUWpkiBnbQ8FkJapBX8/1j
+         3RDh8vSCgzUcuHgV9vEXqtD7WGCmngv4F3gPVK0ca7f0MHk2FTrr1Ldg871VwVbdxZaJ
+         Csag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uhw1sUpgQSTG0IBqcQMsPrfFM1/Orv0BAbIhIkfvVAY=;
+        b=YLA0fRnwO3C3VGW+fDW4byRFX3uelAQDtLt99/mgo5KgQrRoabbbJegSKwFLJ7Fkfk
+         T9ltUa4SIICtMFq31fTLU8QKkkfNvuK2tLY6KxeQXiHvlBXk8IVX345JMvwQjZFQXts8
+         hQYemZtbKAoJBWFbRqhsMRRo6V6Q9iPdvhMQAt8hl8CKm4WN3YU+UFoumsRbWLgzBw0d
+         44MQ7uHAQg/mVNaWRAktCHeO7gMYfDYqMbNjSuuAC2YV1NPOHQtIJ2HrLGH42JCJW+Rv
+         XHXu4QWRNGOBjPY/7DGtj4suMJcXjfL0euR7j7JcbpmGikXOatldePFBmqRUbATssGaw
+         OolA==
+X-Gm-Message-State: AGRZ1gICC+gZe0tKFKaHeHuD4wvBdIIPDwK1PG04YMESxjNrVaxjcL0r
+        4lN+1bMsKyy/gDzmrSvBXHLsBcvr
+X-Google-Smtp-Source: AJdET5f72LJuohBerisM3nOcXEdGwMZzn0yTx2OrXNzoKBTmIclfJ3fsdZ4HXtI0In/WtZ+WHqsLCw==
+X-Received: by 2002:a19:4bc9:: with SMTP id y192mr916681lfa.49.1542713531364;
+        Tue, 20 Nov 2018 03:32:11 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
+        by smtp.googlemail.com with ESMTPSA id s8-v6sm5092481ljh.14.2018.11.20.03.32.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 03:32:10 -0800 (PST)
+Subject: Re: [PATCH v1 4/4] ARM: tegra: Clear EMC interrupts on resume from
+ LP1 on Tegra30+
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180830185404.7224-1-digetx@gmail.com>
+ <20180830185404.7224-5-digetx@gmail.com>
+ <9c085248-41df-c8be-294d-6bf8b95c1085@nvidia.com>
+ <60898d23-63a1-caf5-8fd4-2bbd7bb6aaab@gmail.com>
+ <d60c4888-c95a-4ec5-ba0d-992970089449@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0f4dfa92-e534-4ea5-cdad-1a68465384e5@gmail.com>
+Date:   Tue, 20 Nov 2018 14:32:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70e58da4-0cbc-4b30-d0b2-08d64edbeda8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 11:33:01.0009
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2297
+In-Reply-To: <d60c4888-c95a-4ec5-ba0d-992970089449@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 20.11.2018 13:27, Jon Hunter wrote:
+> 
+> On 19/11/2018 22:35, Dmitry Osipenko wrote:
+>> On 20.11.2018 1:00, Jon Hunter wrote:
+>>>
+>>> On 30/08/2018 19:54, Dmitry Osipenko wrote:
+>>>> Two interrupts are raised on resume from LP1 on Tegra30+: first is the
+>>>> clock change completed interrupt which is set after updating timing
+>>>> configuration, second is DLL alarm interrupt which is set when DLL
+>>>> starts re-calibration after being reset. Clear these two interrupts
+>>>> in the end of exiting from the self-refresh mode for consistency, that
+>>>> will also allow to not receive spurious interrupts in the EMC driver
+>>>> after resume from suspend.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  arch/arm/mach-tegra/sleep-tegra30.S | 7 +++++++
+>>>>  1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> index 828f6c37afde..78c6e9fb56e7 100644
+>>>> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+>>>> @@ -26,6 +26,7 @@
+>>>>  #include "irammap.h"
+>>>>  #include "sleep.h"
+>>>>  
+>>>> +#define EMC_INTSTATUS			0x0
+>>>>  #define EMC_CFG				0xc
+>>>>  #define EMC_ADR_CFG			0x10
+>>>>  #define EMC_TIMING_CONTROL		0x28
+>>>> @@ -44,6 +45,9 @@
+>>>>  #define EMC_XM2VTTGENPADCTRL		0x310
+>>>>  #define EMC_XM2VTTGENPADCTRL2		0x314
+>>>>  
+>>>> +#define EMC_CLKCHANGE_COMPLETE_INT	(1 << 4)
+>>>> +#define EMC_DLL_ALARM_INT		(1 << 7)
+>>>> +
+>>>>  #define MC_EMEM_ARB_CFG			0x90
+>>>>  
+>>>>  #define PMC_CTRL			0x0
+>>>> @@ -539,6 +543,9 @@ zcal_done:
+>>>>  
+>>>>  	emc_timing_update r1, r0
+>>>>  
+>>>> +	mov	r1, #(EMC_CLKCHANGE_COMPLETE_INT | EMC_DLL_ALARM_INT)
+>>>> +	str	r1, [r0, #EMC_INTSTATUS]	@ clear interrupts
+>>>> +
+>>>>  	/* Tegra114 had dual EMC channel, now config the other one */
+>>>>  	cmp	r10, #TEGRA114
+>>>>  	bne	__no_dual_emc_chanl
+>>>>
+>>>
+>>> Where are these interrupts enabled? I did not see where they are
+>>> enabled. I see that the Tegra24 EMC driver does poll these, but it did
+>>> not look like they were enabled. If they are enabled, I wondering if
+>>> they should be masked on entering self-refresh?
+>>
+>> EMC interrupt is not enabled on Tegra124. IIRC, it doesn't use the interrupt at all in the driver. Indeed, T124 EMC driver polls the interrupt status, but it clears the status before starting to poll. Probably I was just thinking about to write T30 EMC driver at that time and to utilize the interrupt.. 
+>>
+>> Seems it should be okay to drop this patch for now, but maybe then we will have to return to it sometime later. Up to you to decide.
+> 
+> I would be tempted to drop for now. If you have such a driver maybe the
+> driver should mask any interrupts it uses on suspending.
 
-reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-
-> -----Original Message-----
-> From: Z.q. Hou
-> Sent: Tuesday, November 20, 2018 5:28 PM
-> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
-> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
-> catalin.marinas@arm.com; will.deacon@arm.com
-> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
-> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
-> <zhiqiang.hou@nxp.com>
-> Subject: [PATCHv2 25/25] arm64: defconfig: Enable
-> CONFIG_PCI_LAYERSCAPE_GEN4
->=20
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->=20
-> Enable the PCIe Gen4 controller driver for Layerscape SoCs.
->=20
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V2:
->  - New patch
->=20
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index ad92daeac585..6b4385f26e85 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -83,6 +83,7 @@ CONFIG_PCI_HOST_THUNDER_PEM=3Dy
-> CONFIG_PCI_HOST_THUNDER_ECAM=3Dy  CONFIG_PCIE_ROCKCHIP_HOST=3Dm
-> CONFIG_PCI_LAYERSCAPE=3Dy
-> +CONFIG_PCI_LAYERSCAPE_GEN4=3Dy
->  CONFIG_PCI_HISI=3Dy
->  CONFIG_PCIE_QCOM=3Dy
->  CONFIG_PCIE_ARMADA_8K=3Dy
-> --
-> 2.17.1
-
+I don't have such driver yet. Masking interrupts on suspend and clearing status on resume within the driver should result in possibility to miss some trouble that happened between "CPU wake"->"EMC driver resuming", but probably that's not too important and unlikely to happen.
