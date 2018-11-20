@@ -2,94 +2,82 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4876BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C53C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12F71206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:02:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TZEJjFAm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F71206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D985206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:02:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D985206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbeKTUaf (ORCPT
+        id S1728252AbeKTUbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:30:35 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44970 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeKTUaf (ORCPT
+        Tue, 20 Nov 2018 15:31:02 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:56414 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbeKTUbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:30:35 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k19-v6so1075955lji.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 02:02:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+D6yY7Cfdn/qNniqdYwcc09iY07oQJ8kQYvIwB2yU6A=;
-        b=TZEJjFAmI8+W9i9LygDdCdU5V3NvxTkX+YIM52DOFNCFh5OoytXLXwG0LIbUQL3CGw
-         WHSZonMobR46rU2Iv922HRMNKgzfURe95PLLXluRTuiQGmRrIWPSEotEeB0XiynU/qdF
-         XAP/hpckQDoebVlcWcuaFhAzTxfvPpYcl0DFw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+D6yY7Cfdn/qNniqdYwcc09iY07oQJ8kQYvIwB2yU6A=;
-        b=PIU57UAmQ9nuxjNylm2N4h64fkUeeE3I5bu/gt2iSoD/C6CnxR+FsS5SIri5rRrBcG
-         HQFoY6rajtPbTEoC8GNac1GYtXH1WaYiglspUlOznD9MRpiJ2L+MMYMP/SHg79ga62sj
-         Cg2sS1NvC/1LDHwRGopEYHpCg2Gb2hbYax9j13Bvg4gQJZ8fHqXKywgfDc4/Qb4qnsKS
-         KUcbA6N6M7GTe361E4QfJk60ey2MliQHitz8hn1QKt8oCDLe35Nj/pArCuhIuDWyRtgj
-         tnblL/o0U0pLjjFF9uvZ9Ap6TvsG5tKEslap/mh05XveymPn6+b3c6p2h3khph6tOxcl
-         pEgQ==
-X-Gm-Message-State: AA+aEWYGyOeA27BeZ2goJVkpF9DsgEusSCQ5kIOTeiDAxZZ/Y7zCkGTO
-        tSl2T7gaV7OlfqgGi7uxdT6ocyzzT29egAAGxLQ4Vw==
-X-Google-Smtp-Source: AFSGD/Xg997BTw997N2nDG1nh21PTWwpmzRZ3GX+6ZDyvUNKHBF+d52Z3DYXlXcEyGfjhzrF/bNsvnXFINbVRsTF388=
-X-Received: by 2002:a2e:29d7:: with SMTP id p84-v6mr807920ljp.12.1542708136101;
- Tue, 20 Nov 2018 02:02:16 -0800 (PST)
+        Tue, 20 Nov 2018 15:31:02 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42zh8f1sM9z1qxVH;
+        Tue, 20 Nov 2018 11:02:42 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42zh8f0PqLz1qrn7;
+        Tue, 20 Nov 2018 11:02:42 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id bQdbdZVPVkx8; Tue, 20 Nov 2018 11:02:35 +0100 (CET)
+X-Auth-Info: THz1PUJYvGanoOaGpah04NLfeUmkXy7yeAc8abl4o+TJEulGRFXlivWBytyz5UG5
+Received: from hawking (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 20 Nov 2018 11:02:35 +0100 (CET)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     fthain@telegraphics.com.au,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>, schivers@csc.com.au,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        schmitzmic@gmail.com, John Stultz <john.stultz@linaro.org>,
+        linux-m68k@lists.linux-m68k.org,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 07/14] m68k: atari: Convert to clocksource API
+References: <cover.1542589838.git.fthain@telegraphics.com.au>
+        <b94b3aed32c0ae0f5de786ffc746ffb20fbe2d1e.1542589838.git.fthain@telegraphics.com.au>
+        <CACRpkdZOoA8y7nAmE2JAQT8QgfNSpzXPVdjZfDBrnsy2jmgW7w@mail.gmail.com>
+X-Yow:  I'm CONTROLLED by the CIA!!  EVERYONE is controlled by the CIA!!
+Date:   Tue, 20 Nov 2018 11:02:35 +0100
+In-Reply-To: <CACRpkdZOoA8y7nAmE2JAQT8QgfNSpzXPVdjZfDBrnsy2jmgW7w@mail.gmail.com>
+        (Linus Walleij's message of "Tue, 20 Nov 2018 09:10:36 +0100")
+Message-ID: <mvmk1l8m5hg.fsf@linux-m68k.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
 MIME-Version: 1.0
-References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
-In-Reply-To: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 20 Nov 2018 11:02:03 +0100
-Message-ID: <CACRpkdZj4g9Ht-4sHjFMCmaeZnwmM3AcMaN2rQ65O1Ykgp2eWg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] add SAMA5D2 PIOBU GPIO driver
-To:     Andrei.Stefanescu@microchip.com
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Cristian.Birsan@microchip.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrei,
+On Nov 20 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On Tue, Nov 20, 2018 at 9:08 AM <Andrei.Stefanescu@microchip.com> wrote:
+> Yes you already see the same as I see: this chip MK68901 has
+> no less than four timers. I bet the kernel is just using one of them,
+> out of habit.
 
-> On SAMA5D2 SoC the PIOBU pins do not lose their
-> voltage during Backup/Self-refresh mode. This can
-> be useful, for example, when the voltage must remain
-> positive for a peripheral during Backup/Self-refresh
-> mode (suspend-to ram is the Linux equivalent state).
->
-> v2:
+Note that not all timers can be used freely.  Some of them are hardwired
+to generate the clock for the serial interfaces.
 
-This version looks good to me, I'm just waiting for a DT
-binding review.
+Andreas.
 
-Yours,
-Linus Walleij
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
