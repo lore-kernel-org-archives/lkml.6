@@ -2,84 +2,95 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46B2C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2776EC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 947B42087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:51:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E060A206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W5TKq7FX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 947B42087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E4CPpLzQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E060A206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeKTXUE (ORCPT
+        id S1728128AbeKTXUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 20 Nov 2018 18:20:04 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36565 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKTXUD (ORCPT
+Received: from merlin.infradead.org ([205.233.59.134]:57082 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbeKTXUE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:20:03 -0500
-Received: by mail-lj1-f193.google.com with SMTP id g11-v6so1530403ljk.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:51:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PutlsevFzKB0Xb1+ujrc6qu0Vmdkj6S5dtY8hPFM5mA=;
-        b=W5TKq7FXqVu2vH82EYJQ/t03VPS+9X24ayT3j0GN38UGk2y+HIeDq7UYZ0O68+ek5g
-         lsXUCfp9DgbdVgV7BC36oBswiWJ4rSvcpWgyGJtXBqC/7vopMCQrxiBZ6l+/TwBLNWoy
-         qn22yvNNFhWTnD4jedQwwVCfU/a4s1b08Bw2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PutlsevFzKB0Xb1+ujrc6qu0Vmdkj6S5dtY8hPFM5mA=;
-        b=WdX00W/o1+/9u8D/toRYfWNSBXnW/+hyDp7kwLpKwWeI/A1N9mEjbhX6HiT+S3K8vU
-         7COY/Vuf7G26r8rMGBAeZO06iCfjeBzUe+15PiOejyNeTKRx1HysGh42F5Rx/+q4fMLI
-         16KxTEcua469jhjxbol/aW/L7bR/czbn+JMQ5mVKwgQ8hmnqTSULDzuwVPB9FClvgr91
-         bQCUsq6H9dyiAkeoswIUNb836Rn32F9hM3t4s2kGSQtPfYRYdWiJAseHSE2HC9BDWlpo
-         +1lrcJYP9KEvNijMVMNVwuy/k2DtrLgPUoM1+wT1/QfXd9N4G7u7hNsrPhmVTUM1296r
-         wT+w==
-X-Gm-Message-State: AA+aEWaYKvXc/WDLj6eV/EjUEDol9lrYQIatFrK0T/fARgDMBAC3oHr+
-        0dQYDAQGRo/QBcCPMAZLnt47IkO3QXyPacXjA2wQTQ==
-X-Google-Smtp-Source: AFSGD/WvVCv7SPSL/dkS66Z6i6xwfb3ZU2rGeuqOm8KvcGtmZMQ8V4PJ02m+Cd/JcVqyWwI1Bn160WjxtGAaq5CZyGI=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr1141464ljj.9.1542718263381;
- Tue, 20 Nov 2018 04:51:03 -0800 (PST)
+        Tue, 20 Nov 2018 18:20:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RXt0H+C/9LjdmgoCE38nD3tQGNQsl0pifO6VCuu8L6M=; b=E4CPpLzQsm50KxwadWqvnpI3f
+        iNiDrRVU1AVDCLcmTeBiQ6vlNXqW32gy+PX9EBq8Demuv8SYbrl0pBYD1bVPh0UFYUujomISMWgQW
+        R01+jFbJcpKNkm65j05TpLidTNwS1ED71XKNJdqs3ywQDM6CleuFOhc+l23c54vJY4O98VjBxCuih
+        LokwOB7SNe4nlWX+Kykt21NroVqlSATFHjUMt4X3/GyjiPAngm/TysKSf3Htvot9asa4RuwCONO0l
+        lu73469af9Rwv7m5isbwkB4UVt3LJeIDE1svWkfcMCkBOH8vNF7aBzHBskDi/umFV1VsogZW5UMr6
+        rTFdWEKJQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP5UN-0007eQ-PT; Tue, 20 Nov 2018 12:50:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6870E2029F87F; Tue, 20 Nov 2018 13:50:40 +0100 (CET)
+Date:   Tue, 20 Nov 2018 13:50:40 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Chris Wilson <chris@chris-wilson.co.uk>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, hpa@zytor.com,
+        Petri Latvala <petri.latvala@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH] perf/x86: Bump INTEL_PMC_MAX_FIXED for Icelake
+Message-ID: <20181120125040.GN2131@hirez.programming.kicks-ass.net>
+References: <20181114142518.15380-1-chris@chris-wilson.co.uk>
 MIME-Version: 1.0
-References: <20181106154022.9209-1-colin.king@canonical.com>
-In-Reply-To: <20181106154022.9209-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 20 Nov 2018 13:50:51 +0100
-Message-ID: <CACRpkdbhQCjKJOf8FVDBrsOOTxccUnGGZP4Lz5ez_GqHyLgkJA@mail.gmail.com>
-Subject: Re: [PATCH][drm-next] drm/panel: s6d16d0: fix spelling mistake
- "enble" -> "enable"
-To:     Colin King <colin.king@canonical.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Dave Airlie <airlied@linux.ie>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114142518.15380-1-chris@chris-wilson.co.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 4:40 PM Colin King <colin.king@canonical.com> wrote:
+On Wed, Nov 14, 2018 at 02:25:18PM +0000, Chris Wilson wrote:
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to spelling mistake in DRM_DEV_ERROR error message
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> I am not aware of what the consequences are of bumping this limit, so
+> please take the patch with a pinch of salt and more of a heads up!
 
-Patch applied.
+Yeah, this will only make your warning go away, but is not suitable for
+upstream. The upstream icelake enablement would be a much larger patch
+that actually enables the new PMU features.
 
-Yours,
-Linus Walleij
+So I suggest you carry this in your CI tree until the icelake patches
+are allowed to go public.
+
+> diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+> index 8bdf74902293..ab4cf7c12c40 100644
+> --- a/arch/x86/include/asm/perf_event.h
+> +++ b/arch/x86/include/asm/perf_event.h
+> @@ -7,7 +7,7 @@
+>   */
+>  
+>  #define INTEL_PMC_MAX_GENERIC				       32
+> -#define INTEL_PMC_MAX_FIXED					3
+> +#define INTEL_PMC_MAX_FIXED					4
+>  #define INTEL_PMC_IDX_FIXED				       32
+>  
+>  #define X86_PMC_IDX_MAX					       64
+> -- 
+> 2.19.1
+> 
