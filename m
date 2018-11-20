@@ -2,155 +2,155 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D890C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 224CCC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4680A20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4680A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
+	by mail.kernel.org (Postfix) with ESMTP id 98C87206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C87206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729150AbeKUAnJ (ORCPT
+        id S1729371AbeKUAoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:43:09 -0500
-Received: from charlotte.tuxdriver.com ([70.61.120.58]:38015 "EHLO
-        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKUAnJ (ORCPT
+        Tue, 20 Nov 2018 19:44:15 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:10136 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725995AbeKUAoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:43:09 -0500
-Received: from [107.15.85.130] (helo=localhost)
-        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
-        (Exim 4.63)
-        (envelope-from <nhorman@tuxdriver.com>)
-        id 1gOqtQ-0005Db-UN; Mon, 19 Nov 2018 16:15:43 -0500
-Date:   Tue, 20 Nov 2018 09:13:29 -0500
-From:   Neil Horman <nhorman@tuxdriver.com>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     davem@davemloft.net, ebiggers@kernel.org,
-        herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] crypto: crypto_user_stat: made crypto_user_stat
- optional
-Message-ID: <20181120141329.GC20562@hmswarspite.think-freely.org>
-References: <1542717146-34917-1-git-send-email-clabbe@baylibre.com>
- <1542717146-34917-2-git-send-email-clabbe@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542717146-34917-2-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 20 Nov 2018 19:44:14 -0500
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 20 Nov 2018 23:14:51 +0900
+Received: from vbox.ree.adwin.renesas.com (unknown [10.226.37.67])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 19B3840121CB;
+        Tue, 20 Nov 2018 23:14:48 +0900 (JST)
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v8] clk: Add (devm_)clk_get_optional() functions
+Date:   Tue, 20 Nov 2018 14:14:45 +0000
+Message-Id: <20181120141445.21378-1-phil.edworthy@renesas.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 12:32:17PM +0000, Corentin Labbe wrote:
-> Even if CRYPTO_STATS is set to n, some part of CRYPTO_STATS are
-> compiled.
-> This patch made all part of crypto_user_stat uncompiled in that case.
-> 
-> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
-> ---
->  crypto/Makefile                      |  3 ++-
->  crypto/algapi.c                      |  2 ++
->  include/crypto/internal/cryptouser.h | 17 +++++++++++++++++
->  include/linux/crypto.h               |  2 ++
->  4 files changed, 23 insertions(+), 1 deletion(-)
-> 
-> diff --git a/crypto/Makefile b/crypto/Makefile
-> index abbd86fdbad2..22f9f84f961d 100644
-> --- a/crypto/Makefile
-> +++ b/crypto/Makefile
-> @@ -54,7 +54,8 @@ cryptomgr-y := algboss.o testmgr.o
->  
->  obj-$(CONFIG_CRYPTO_MANAGER2) += cryptomgr.o
->  obj-$(CONFIG_CRYPTO_USER) += crypto_user.o
-> -crypto_user-y := crypto_user_base.o crypto_user_stat.o
-> +crypto_user-y := crypto_user_base.o
-> +crypto_user-$(CONFIG_CRYPTO_STATS) += crypto_user_stat.o
->  obj-$(CONFIG_CRYPTO_CMAC) += cmac.o
->  obj-$(CONFIG_CRYPTO_HMAC) += hmac.o
->  obj-$(CONFIG_CRYPTO_VMAC) += vmac.o
-> diff --git a/crypto/algapi.c b/crypto/algapi.c
-> index 2545c5f89c4c..f5396c88e8cd 100644
-> --- a/crypto/algapi.c
-> +++ b/crypto/algapi.c
-> @@ -258,6 +258,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
->  	list_add(&alg->cra_list, &crypto_alg_list);
->  	list_add(&larval->alg.cra_list, &crypto_alg_list);
->  
-> +#ifdef CONFIG_CRYPTO_STATS
->  	atomic_set(&alg->encrypt_cnt, 0);
->  	atomic_set(&alg->decrypt_cnt, 0);
->  	atomic64_set(&alg->encrypt_tlen, 0);
-> @@ -265,6 +266,7 @@ static struct crypto_larval *__crypto_register_alg(struct crypto_alg *alg)
->  	atomic_set(&alg->verify_cnt, 0);
->  	atomic_set(&alg->cipher_err_cnt, 0);
->  	atomic_set(&alg->sign_cnt, 0);
-> +#endif
->  
-If you created a helper function in crypto_user_stat.c to initalize all the
-stats, you could ifdef it in the cryptouser.h header if unconfigured, and avoid
-the ifdef leakage to this file above.
+This adds clk_get_optional() and devm_clk_get_optional() functions to get
+optional clocks.
+They behave the same as (devm_)clk_get except where there is no clock
+producer. In this case, instead of returning -ENOENT, the function
+returns NULL. This makes error checking simpler and allows
+clk_prepare_enable, etc to be called on the returned reference
+without additional checks.
 
-Neil
+Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+v8:
+ - Remove else clause
+v7:
+ - Instead of messing with the core functions, simply wrap them for the
+   _optional() versions. By putting clk_get_optional() inline in the header
+   file, we can get rid of the arch specific patches as well.
+v6:
+ - Add doxygen style comment for devm_clk_get_optional() args
+v5:
+ - No changes.
+v4:
+ - No changes.
+v3:
+ - No changes.
+---
+ drivers/clk/clk-devres.c | 11 +++++++++++
+ include/linux/clk.h      | 27 +++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
->  out:
->  	return larval;
-> diff --git a/include/crypto/internal/cryptouser.h b/include/crypto/internal/cryptouser.h
-> index 8db299c25566..3492ab42eefb 100644
-> --- a/include/crypto/internal/cryptouser.h
-> +++ b/include/crypto/internal/cryptouser.h
-> @@ -3,6 +3,23 @@
->  
->  struct crypto_alg *crypto_alg_match(struct crypto_user_alg *p, int exact);
->  
-> +#ifdef CONFIG_CRYPTO_STATS
->  int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb);
->  int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs);
->  int crypto_dump_reportstat_done(struct netlink_callback *cb);
-> +#else
-> +static int crypto_dump_reportstat(struct sk_buff *skb, struct netlink_callback *cb)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static int crypto_reportstat(struct sk_buff *in_skb, struct nlmsghdr *in_nlh, struct nlattr **attrs)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +
-> +static int crypto_dump_reportstat_done(struct netlink_callback *cb)
-> +{
-> +	return -ENOTSUPP;
-> +}
-> +#endif
-> diff --git a/include/linux/crypto.h b/include/linux/crypto.h
-> index 3634ad6fe202..3e05053b8d57 100644
-> --- a/include/linux/crypto.h
-> +++ b/include/linux/crypto.h
-> @@ -515,6 +515,7 @@ struct crypto_alg {
->  	
->  	struct module *cra_module;
->  
-> +#ifdef CONFIG_CRYPTO_STATS
->  	union {
->  		atomic_t encrypt_cnt;
->  		atomic_t compress_cnt;
-> @@ -552,6 +553,7 @@ struct crypto_alg {
->  		atomic_t compute_shared_secret_cnt;
->  	};
->  	atomic_t sign_cnt;
-> +#endif /* CONFIG_CRYPTO_STATS */
->  
->  } CRYPTO_MINALIGN_ATTR;
->  
-> -- 
-> 2.18.1
-> 
-> 
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 12c87457eca1..c6f4a1a92c5f 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -34,6 +34,17 @@ struct clk *devm_clk_get(struct device *dev, const char *id)
+ }
+ EXPORT_SYMBOL(devm_clk_get);
+ 
++struct clk *devm_clk_get_optional(struct device *dev, const char *id)
++{
++	struct clk *clk = devm_clk_get(dev, id);
++
++	if (clk == ERR_PTR(-ENOENT))
++		clk = NULL;
++
++	return clk;
++}
++EXPORT_SYMBOL(devm_clk_get_optional);
++
+ struct clk_bulk_devres {
+ 	struct clk_bulk_data *clks;
+ 	int num_clks;
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index a7773b5c0b9f..3ea3c78f62dd 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -383,6 +383,17 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+  */
+ struct clk *devm_clk_get(struct device *dev, const char *id);
+ 
++/**
++ * devm_clk_get_optional - lookup and obtain a managed reference to an optional
++ *			   clock producer.
++ * @dev: device for clock "consumer"
++ * @id: clock consumer ID
++ *
++ * Behaves the same as devm_clk_get except where there is no clock producer. In
++ * this case, instead of returning -ENOENT, the function returns NULL.
++ */
++struct clk *devm_clk_get_optional(struct device *dev, const char *id);
++
+ /**
+  * devm_get_clk_from_child - lookup and obtain a managed reference to a
+  *			     clock producer from child node.
+@@ -718,6 +729,12 @@ static inline struct clk *devm_clk_get(struct device *dev, const char *id)
+ 	return NULL;
+ }
+ 
++static inline struct clk *devm_clk_get_optional(struct device *dev,
++						const char *id)
++{
++	return NULL;
++}
++
+ static inline int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+ 						 struct clk_bulk_data *clks)
+ {
+@@ -862,6 +879,16 @@ static inline void clk_bulk_disable_unprepare(int num_clks,
+ 	clk_bulk_unprepare(num_clks, clks);
+ }
+ 
++static inline struct clk *clk_get_optional(struct device *dev, const char *id)
++{
++	struct clk *clk = clk_get(dev, id);
++
++	if (clk == ERR_PTR(-ENOENT))
++		clk = NULL;
++
++	return clk;
++}
++
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk *of_clk_get(struct device_node *np, int index);
+ struct clk *of_clk_get_by_name(struct device_node *np, const char *name);
+-- 
+2.17.1
+
