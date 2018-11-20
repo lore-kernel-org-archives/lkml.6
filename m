@@ -6,182 +6,199 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A3DC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 577F5C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:38:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83692075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C83692075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AC512075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:38:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC512075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729829AbeKUBHR (ORCPT
+        id S1729451AbeKUBIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:07:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:49976 "EHLO foss.arm.com"
+        Tue, 20 Nov 2018 20:08:20 -0500
+Received: from mga14.intel.com ([192.55.52.115]:43015 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726040AbeKUBHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:07:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E405EBD;
-        Tue, 20 Nov 2018 06:37:49 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EDF83F5A0;
-        Tue, 20 Nov 2018 06:37:47 -0800 (PST)
-Subject: Re: [PATCH 1/4] KVM: arm/arm64: vgic: Do not cond_resched_lock() with
- IRQs disabled
-To:     Christoffer Dall <christoffer.dall@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, bigeasy@linutronix.de, stable@vger.kernel.org
-References: <1542647279-46609-1-git-send-email-julien.thierry@arm.com>
- <1542647279-46609-2-git-send-email-julien.thierry@arm.com>
- <20181120141832.GA11162@e113682-lin.lund.arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <0e12d8a7-2a76-e04a-ab18-ed9fc69d5d47@arm.com>
-Date:   Tue, 20 Nov 2018 14:37:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1726040AbeKUBIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:08:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 06:38:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,257,1539673200"; 
+   d="scan'208";a="92611581"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga006.jf.intel.com with ESMTP; 20 Nov 2018 06:38:50 -0800
+Subject: Re: [PATCH] xhci: workaround CSS timeout on AMD SNPS 3.0 xHC.
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>,
+        "Singh, Sandeep" <Sandeep.Singh@amd.com>
+Cc:     "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "Shah, Nehal-bakulchandra" <Nehal-bakulchandra.Shah@amd.com>
+References: <1542356426-10299-1-git-send-email-Sandeep.Singh@amd.com>
+ <0B58593B-1CE2-49EB-9F13-A2BC449AB8E8@canonical.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <63e848ea-3694-fef1-fab0-8c17000a3581@linux.intel.com>
+Date:   Tue, 20 Nov 2018 16:42:34 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181120141832.GA11162@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <0B58593B-1CE2-49EB-9F13-A2BC449AB8E8@canonical.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 14:18, Christoffer Dall wrote:
-> On Mon, Nov 19, 2018 at 05:07:56PM +0000, Julien Thierry wrote:
->> To change the active state of an MMIO, halt is requested for all vcpus of
->> the affected guest before modifying the IRQ state. This is done by calling
->> cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
->> disabled at this point and running a vcpu cannot get rescheduled.
+On 16.11.2018 10:35, Kai Heng Feng wrote:
+> Hi Sandeep,
 > 
-> "running a vcpu cannot get rescheduled" ?
+>> On Nov 16, 2018, at 16:21, Singh, Sandeep <Sandeep.Singh@amd.com> wrote:
+>>
+>> From: Sandeep Singh <sandeep.singh@amd.com>
+>>
+>> Occasionally AMD SNPS 3.0 xHC does not respond to
+>> CSS when set, also it does not flag anything on SRE and HCE
+>> to point the internal xHC errors on USBSTS register. This stalls
+>> the entire system wide suspend and there is no point in stalling
+>> just because of xHC CSS is not responding.
+>>
+>> To work around this problem, if the xHC does not flag
+>> anything on SRE and HCE, we can skip the CSS
+>> timeout and allow the system to continue the suspend. Once the
+>> system resume happens we can internally reset the controller
+>> using XHCI_RESET_ON_RESUME quirk.
+> 
+> What happens to the connected and suspended USB devices?
+> Do USB devices lose remote wakeup functionality when this happens?
 > 
 >>
->> Solve this by waiting for all vcpus to be halted after emmiting the halt
->> request.
->>
->> Fixes commit 6c1b7521f4a07cc63bbe2dfe290efed47cdb780a ("KVM: arm/arm64:
->> Factor out functionality to get vgic mmio requester_vcpu")
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: stable@vger.kernel.org
+>> Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+>> Signed-off-by: Sandeep Singh <Sandeep.Singh@amd.com>
+>> cc: Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
 >> ---
->>  virt/kvm/arm/vgic/vgic-mmio.c | 33 +++++++++++----------------------
->>  1 file changed, 11 insertions(+), 22 deletions(-)
+>> drivers/usb/host/xhci-pci.c |  4 ++++
+>> drivers/usb/host/xhci.c     | 25 +++++++++++++++++++++++++
+>> drivers/usb/host/xhci.h     |  1 +
+>> 3 files changed, 30 insertions(+)
 >>
->> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
->> index f56ff1c..eefd877 100644
->> --- a/virt/kvm/arm/vgic/vgic-mmio.c
->> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
->> @@ -313,27 +313,6 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+>> index 01c5705..72493c4 100644
+>> --- a/drivers/usb/host/xhci-pci.c
+>> +++ b/drivers/usb/host/xhci-pci.c
+>> @@ -139,6 +139,10 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+>> 		 pdev->device == 0x43bb))
+>> 		xhci->quirks |= XHCI_SUSPEND_DELAY;
 >>
->>  	spin_lock_irqsave(&irq->irq_lock, flags);
->>
->> -	/*
->> -	 * If this virtual IRQ was written into a list register, we
->> -	 * have to make sure the CPU that runs the VCPU thread has
->> -	 * synced back the LR state to the struct vgic_irq.
->> -	 *
->> -	 * As long as the conditions below are true, we know the VCPU thread
->> -	 * may be on its way back from the guest (we kicked the VCPU thread in
->> -	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
->> -	 * so we release and re-acquire the spin_lock to let the other thread
->> -	 * sync back the IRQ.
->> -	 *
->> -	 * When accessing VGIC state from user space, requester_vcpu is
->> -	 * NULL, which is fine, because we guarantee that no VCPUs are running
->> -	 * when accessing VGIC state from user space so irq->vcpu->cpu is
->> -	 * always -1.
->> -	 */
->> -	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
->> -	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
->> -	       irq->vcpu->cpu != -1) /* VCPU thread is running */
->> -		cond_resched_lock(&irq->irq_lock);
->> -
->>  	if (irq->hw) {
->>  		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
->>  	} else {
->> @@ -368,8 +347,18 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
->>   */
->>  static void vgic_change_active_prepare(struct kvm_vcpu *vcpu, u32 intid)
->>  {
->> -	if (intid > VGIC_NR_PRIVATE_IRQS)
->> +	if (intid > VGIC_NR_PRIVATE_IRQS) {
->> +		struct kvm_vcpu *tmp;
->> +		int i;
+>> +	if (pdev->vendor == PCI_VENDOR_ID_AMD &&
+>> +	    (pdev->device == 0x15e0 || pdev->device == 0x15e1))
+>> +		xhci->quirks |= XHCI_SNPS_BROKEN_SUSPEND;
 >> +
->>  		kvm_arm_halt_guest(vcpu->kvm);
+>> 	if (pdev->vendor == PCI_VENDOR_ID_AMD)
+>> 		xhci->quirks |= XHCI_TRUST_TX_LENGTH;
+>>
+>> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+>> index 0420eef..965b503 100644
+>> --- a/drivers/usb/host/xhci.c
+>> +++ b/drivers/usb/host/xhci.c
+>> @@ -970,6 +970,7 @@ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
+>> 	unsigned int		delay = XHCI_MAX_HALT_USEC;
+>> 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
+>> 	u32			command;
+>> +	u32			res;
+>>
+>> 	if (!hcd->state)
+>> 		return 0;
+>> @@ -1025,10 +1026,32 @@ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
+>> 	writel(command, &xhci->op_regs->command);
+>> 	if (xhci_handshake(&xhci->op_regs->status,
+>> 				STS_SAVE, 0, 10 * 1000)) {
+>> +		if (xhci->quirks & XHCI_SNPS_BROKEN_SUSPEND) {
+>> +		       /*
+>> +			* AMD SNPS xHC 3.0 occasionally does not clear the
+>> +			* SSS bit of USBSTS and when driver tries to poll
+>> +			* to see if the xHC clears BIT(8) which never happens
+>> +			* and driver assumes that controller is not responding
+>> +			* and times out. To workaround this, its good to check
+>> +			* if SRE and HCE bits are not set (as per xhci
+>> +			* Section 5.4.2) and bypass the timeout.
+>> +			*/
 >> +
->> +		/* Wait for each vcpu to be halted */
->> +		kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
->> +			while (tmp->cpu != -1)
->> +				cond_resched();
+>> +			res = readl(&xhci->op_regs->status);
+>> +			if (res & STS_SAVE) {
+>> +				if (((res & STS_SRE) == 0) &&
+>> +				    ((res & STS_HCE) == 0)) {
+>> +					xhci->quirks |= XHCI_RESET_ON_RESUME;
+
+Better to use some other way or variable, after this change quirks would become dynamic,
+and depend on each other.
+
+>> +					goto complete_suspend;
+>> +				}
+>> +			}
 > 
-> We used to have something like this which Andre then found out it could
-> deadlock the system, because the VCPU making this request wouldn't have
-> called kvm_arch_vcpu_put, and its cpu value would still have a value.
+> Maybe merge the two “ifs”? There are no other conditions to handle.
+>> Kai-Heng
+
+Or drop the if (res & STS_SAVE) check completely.
+Only reason we are here is because STS_SAVE is still set.
+
+I think the goto statement is not needed either, how about something like
+
+if (BROKEN_SUSPEND_QUIRK && !(SRE || HCE))
+   set some reset on resume flag
+else
+   unlock
+   return -ETIMEDOUT
+   
 > 
-> That's why we have the vcpu && vcpu != requester check.
+>> +		}
+>> +
+>> 		xhci_warn(xhci, "WARN: xHC save state timeout\n");
+>> 		spin_unlock_irq(&xhci->lock);
+>> 		return -ETIMEDOUT;
+>> 	}
+>> + complete_suspend:
+>> 	spin_unlock_irq(&xhci->lock);
+>>
+>> 	/*
+>> @@ -1213,6 +1236,8 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
+>> 	usb_hcd_poll_rh_status(xhci->shared_hcd);
+>> 	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
+>> 	usb_hcd_poll_rh_status(hcd);
+>> +	if (xhci->quirks & XHCI_SNPS_BROKEN_SUSPEND)
+>> +		xhci->quirks &= ~XHCI_RESET_ON_RESUME;
 
-Ah, I now remember that one. I guess it is a matter of skipping the
-requester vcpu in the kvm_for_each_vcpu loop.
+Again, I don't think its a good idea to create this kind of quirk dependency,
+what about if a future controller needs both SNPS_BROKEN_SUSPEND and
+always a RESET_ON_RESUME?
 
-Thanks,
+-Mathias
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>>
+>> 	return retval;
+>> }
+>> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+>> index bf0b369..eb99782 100644
+>> --- a/drivers/usb/host/xhci.h
+>> +++ b/drivers/usb/host/xhci.h
+>> @@ -1849,6 +1849,7 @@ struct xhci_hcd {
+>> #define XHCI_INTEL_USB_ROLE_SW	BIT_ULL(31)
+>> #define XHCI_ZERO_64B_REGS	BIT_ULL(32)
+>> #define XHCI_DEFAULT_PM_RUNTIME_ALLOW	BIT_ULL(33)
+>> +#define XHCI_SNPS_BROKEN_SUSPEND	BIT_ULL(34)
+>>
+>> 	unsigned int		num_active_eps;
+>> 	unsigned int		limit_active_eps;
+>> -- 
+>> 2.7.4
+>>
+> 
+
