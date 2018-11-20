@@ -2,106 +2,133 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E943C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B97C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848452075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:38:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLvSqx/A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848452075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B447420989
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B447420989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeKTTGi (ORCPT
+        id S1726477AbeKTTIZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:06:38 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:40097 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeKTTGi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:06:38 -0500
-Received: by mail-oi1-f195.google.com with SMTP id t204so853150oie.7
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kqJYfxRnFQiop1CyETTyAIIILPqYb9mzoIqszr+2Z5Q=;
-        b=dLvSqx/Atg+ftvB41Y6e6IStG/Z2hiJWYrdi1+EXg0atsTuG53SwZudggMJRduLLsF
-         fItL9SFwftNltcZVO8nZ94EhF499enzW0flWkEdWZ1OfKSQLTa4JB05cW3YcEdw28x+m
-         fBbm1Arr955LY2Zuq67jbU3MI7q+uUeY/FyIY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kqJYfxRnFQiop1CyETTyAIIILPqYb9mzoIqszr+2Z5Q=;
-        b=GRjYdTGi1zfL+XbqBi8tdhgStK8DvS8cAr0hfYunpV+iIJOtRiUzysot317CCgit9l
-         fuFRa+hU9opAfnOw4qevyErBErNYbadfx4xlE4vRgbSePpalUmu/6lLu9Mi1ogKFrTa2
-         GFPHo6oZtry5Q81CYK5miwQiM6z6wOYSBlxVjdie/xAzKCxqIwg+nrsxZgJubwXlWg7I
-         75092dqkJijsoSUEr0/OvGI0mUCEencr7jx8kDOBdKxHsLM7ME8mAyDV9KOvy5fawXPq
-         blkOm2JpqvuJ3qlyoNX0nB6jcPphprwZC2izLS9ti7pg0+M1t0sJpu9enN7NAe3bs/E+
-         Lfiw==
-X-Gm-Message-State: AGRZ1gIp68NNoUDAOeX9Rb1nNZrXcIAPy0fPz5Ao0Aus3+ssH0vnW5gU
-        EhAtEcEKzP3EZB58zoWs3gK3+yzeSpGUnUZWX/pgYQ==
-X-Google-Smtp-Source: AJdET5dH3mFvHlcJepXyphU2K0uXXmnNxnH/HgzVA7Qw0i0FlRouZdfALwtD8LHyG/E1dQeD8y5teRRaLwoTkXV2Nrs=
-X-Received: by 2002:aca:dd08:: with SMTP id u8-v6mr580144oig.94.1542703121752;
- Tue, 20 Nov 2018 00:38:41 -0800 (PST)
+        Tue, 20 Nov 2018 14:08:25 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49939 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725898AbeKTTIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:08:25 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 94DF2207B0; Tue, 20 Nov 2018 09:40:26 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5F16120745;
+        Tue, 20 Nov 2018 09:40:16 +0100 (CET)
+Date:   Tue, 20 Nov 2018 09:40:16 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v2 01/14] ARM: add CONFIG_ARCH_SUNXI_V7 for
+ differentiate ARMv5/v7 Allwinner SoCs
+Message-ID: <20181120084016.nrvpylj64ok3d5ch@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com>
+ <abbb75165c8ef41da6963d72f4155ad6ae79140c.1542546735.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-References: <20181113095142.32015-1-benjamin.gaignard@st.com>
- <20181113095142.32015-3-benjamin.gaignard@st.com> <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
-In-Reply-To: <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Tue, 20 Nov 2018 09:38:30 +0100
-Message-ID: <CA+M3ks6nnj69KJay=nGS=RP2jEkPa0wibfVkwYN9-CSq=fHowg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: stm32: protect configuration registers with
- a hwspinlock
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7zekhgszpvxaw4mg"
+Content-Disposition: inline
+In-Reply-To: <abbb75165c8ef41da6963d72f4155ad6ae79140c.1542546735.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 19 nov. 2018 =C3=A0 13:20, Linus Walleij <linus.walleij@linaro.org>=
- a =C3=A9crit :
->
-> On Tue, Nov 13, 2018 at 10:51 AM Benjamin Gaignard
-> <benjamin.gaignard@linaro.org> wrote:
->
-> > If a hwspinlock if defined in device tree use it to protect
-> > configuration registers.
-> >
-> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->
-> Patch applied with Alex' ACK.
 
-Thanks
+--7zekhgszpvxaw4mg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Out of curiosity: what is it protecting against?
-> I would guess simultaneous access from another CPU
-> but the commit doesn't say.
->
-> Simultaneous access from two CPUs makes it extra important
-> that all register access is read-modify-write, so I'd have a second
-> check over the code to make sure this is the case.
+Hi,
 
-Yes it is to protect configuration registers from being used at the same by
-cortexA and cortexM.
+On Sun, Nov 18, 2018 at 05:17:00PM +0300, Mesih Kilinc wrote:
+> Allwinner also has some ARMv5 SoCs.
+>=20
+> In order to add support for them, add a CONFIG_ARCH_SUNXI_V7 bool config
+> which is selected when a ARMv7 soc is selected, and make CONFIG_ARCH_SUNXI
+> a common option which is selected by both V7 and V5 sunxi option.
+>=20
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
 
->
-> Yours,
-> Linus Walleij
+I'm not sure why Icenowy has her SoB here?
+
+> ---
+>  arch/arm/mach-sunxi/Kconfig  | 25 +++++++++++++++++--------
+>  arch/arm/mach-sunxi/Makefile |  2 +-
+>  2 files changed, 18 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
+> index d9c8ecf..5db17ec 100644
+> --- a/arch/arm/mach-sunxi/Kconfig
+> +++ b/arch/arm/mach-sunxi/Kconfig
+> @@ -6,31 +6,38 @@ menuconfig ARCH_SUNXI
+>  	select GENERIC_IRQ_CHIP
+>  	select GPIOLIB
+>  	select PINCTRL
+> -	select PM_OPP
+> -	select SUN4I_TIMER
+>  	select RESET_CONTROLLER
+> +	help
+> +	  Support for Allwinner ARM-based family of processors
+> =20
+>  if ARCH_SUNXI
+> =20
+> +if ARCH_MULTI_V7
+> +
+> +config ARCH_SUNXI_V7
+> +	bool
+> +	select PM_OPP
+> +	select SUN4I_TIMER
+> +
+>  config MACH_SUN4I
+>  	bool "Allwinner A10 (sun4i) SoCs support"
+> -	default ARCH_SUNXI
+> +	select ARCH_SUNXI_V7
+
+It changes the behaviour a bit. It used to be enabled by default, it
+doesn't anymore.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--7zekhgszpvxaw4mg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PIcAAKCRDj7w1vZxhR
+xXGIAPwPGwDSRKZg49st+Az9UNsk2Bi9+r0OXyVH2rkz58+rlAD9HAoYmcO62gbM
+qRK7QGlAXoJQzUU1EJIhRprl/An3QgU=
+=MIN4
+-----END PGP SIGNATURE-----
+
+--7zekhgszpvxaw4mg--
