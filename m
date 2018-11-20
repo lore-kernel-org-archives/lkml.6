@@ -2,113 +2,224 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15268C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4DEC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC704208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:16:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HU6qKGTa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC704208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D75AC20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:17:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75AC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727118AbeKTTpA (ORCPT
+        id S1727236AbeKTTp2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:45:00 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33191 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeKTTpA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:45:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so5488pfb.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 01:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aMeyIyaguMhD5iGlEmNOaT3eb3ZgThhc+yd1X2UTIwc=;
-        b=HU6qKGTafwfuCYwxrrf3WkEk8Z/NRCzKvl2P9STWNb5AxWcDrRLPjIgk5ZxhJh96W/
-         Wr2d+wkGpxBTsusTSMPpcXX9rqC5l19B7HmSjK/eBASe/OmFUpl5MUL2nGSUomX9nTKW
-         KP3GTDWeMJtqgsCJpnH1yheS/u4pX7AuLDCEY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aMeyIyaguMhD5iGlEmNOaT3eb3ZgThhc+yd1X2UTIwc=;
-        b=HWqbGM3F7xFZHYCJlFGodI+kopS0xamUxbtXa+oP5voGCgfZkd2821n+Puk9aemMMd
-         M5I/ewy7Ee9E7Um6siqdz7aqsdO5nCcCgQPlSTErsLWk2Qq9i8JoLG9lSVxoDaLx1aZ7
-         poMjvBH0q7JFtUY9jjKyn9fez+Vpx8y3eGPeEsdhHQzqPe+vQkPLjBZd4c+8Jo7C3myj
-         D6mvUHkQjo2sOqVU5WSvrTS6/Xqy7Hlky6uPMnJkrLpK7HhSFJc2hy+pZiiwoXYdEGaE
-         buo7VoVzWPAEigmzgNE3c70TL8rDTxxxPGvr62kurJjT7Yhoyd3PCvj2of7fIqU/QYI7
-         AkWw==
-X-Gm-Message-State: AA+aEWZiyTx1cMu70iXJYYKMpiMyH48UjjEMirAoJva6+xhmEgYDiNNX
-        auJypKIjbE7C6ajM6chZtCFIcw==
-X-Google-Smtp-Source: AFSGD/V1UDihNou9XMWZFmeFEhLzJNFwEOTn+CtzQ+xtw287UNekMHHQ8Xf9iHfuZXFaQi2++p96QA==
-X-Received: by 2002:a63:170c:: with SMTP id x12mr1158879pgl.364.1542705414076;
-        Tue, 20 Nov 2018 01:16:54 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id n22sm56857707pfh.166.2018.11.20.01.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 01:16:53 -0800 (PST)
-Date:   Tue, 20 Nov 2018 14:46:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
+        Tue, 20 Nov 2018 14:45:28 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58870 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726479AbeKTTp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:45:28 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6AC8BD0E67533;
+        Tue, 20 Nov 2018 17:17:18 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
+ 17:17:09 +0800
+Date:   Tue, 20 Nov 2018 09:16:50 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Kenneth Lee <liguozhu@hisilicon.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Tim Sell <timothy.sell@unisys.com>,
+        <linux-doc@vger.kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
+        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        "Doug Ledford" <dledford@redhat.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
         <u.kleine-koenig@pengutronix.de>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Michal.Vokac@ysoft.com, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-pwm@vger.kernel.org,
-        l.majewski@majess.pl,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW@karo-electronics.de>,
-        vincent.guittot@gmail.com
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181120091651.cqqqi3tr43q3jnp3@vireshk-i7>
-References: <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
- <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <CACRpkdZAew3bUea=iR4t-a7SVSMf=-CTeWfeU215uT_jQ-o81A@mail.gmail.com>
- <20181119083230.re3dtq4alnrojbnd@pengutronix.de>
- <CACRpkdYeSTZSvK9URE5ZvwnGTXVCZad=ptCmUBrbDyozoJnfSQ@mail.gmail.com>
+        David Kershner <david.kershner@unisys.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
+        linux-netdev <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-accelerators@lists.ozlabs.org>,
+        "Jean-Philippe Brucker" <jean-philippe.brucker@arm.com>,
+        <iommu@lists.linux-foundation.org>
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181120091650.0000419a@huawei.com>
+In-Reply-To: <20181120032939.GR4890@ziepe.ca>
+References: <20181112075807.9291-1-nek.in.cn@gmail.com>
+        <20181112075807.9291-2-nek.in.cn@gmail.com>
+        <20181113002354.GO3695@mtr-leonro.mtl.com>
+        <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
+        <20181114160017.GI3759@mtr-leonro.mtl.com>
+        <20181115085109.GD157308@Turing-Arch-b>
+        <20181115145455.GN3759@mtr-leonro.mtl.com>
+        <20181119091405.GE157308@Turing-Arch-b>
+        <20181119184954.GB4890@ziepe.ca>
+        <20181120030702.GH157308@Turing-Arch-b>
+        <20181120032939.GR4890@ziepe.ca>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYeSTZSvK9URE5ZvwnGTXVCZad=ptCmUBrbDyozoJnfSQ@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-11-18, 09:35, Linus Walleij wrote:
-> The whole issue with splash screens and different hardware
-> turned over to Linux in running state is a bit imperfect I would
-> say, I think Viresh was working on boot constraints to get
-> handover of different systems components into some kind
-> of shape but maybe that stopped short because of the
-> complexities involved.
++CC Jean-Phillipe and iommu list.
 
-It got stuck mostly due to lack of use-cases where that can be useful.
-All I could find until now is LCD and earlycon stuff.
 
-Though things may change soon after the interconnect subsystem gets
-merged, as we will have bootloader requirements for each and every
-device in that case which the boot loader enables and passes on to
-kernel.
+On Mon, 19 Nov 2018 20:29:39 -0700
+Jason Gunthorpe <jgg@ziepe.ca> wrote:
 
--- 
-viresh
+> On Tue, Nov 20, 2018 at 11:07:02AM +0800, Kenneth Lee wrote:
+> > On Mon, Nov 19, 2018 at 11:49:54AM -0700, Jason Gunthorpe wrote:  
+> > > Date: Mon, 19 Nov 2018 11:49:54 -0700
+> > > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > > To: Kenneth Lee <liguozhu@hisilicon.com>
+> > > CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
+> > >  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
+> > >  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+> > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+> > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
+> > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+> > >  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
+> > >  <u.kleine-koenig@pengutronix.de>, David Kershner
+> > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
+> > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
+> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
+> > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
+> > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
+> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > > User-Agent: Mutt/1.9.4 (2018-02-28)
+> > > Message-ID: <20181119184954.GB4890@ziepe.ca>
+> > > 
+> > > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
+> > >    
+> > > > If the hardware cannot share page table with the CPU, we then need to have
+> > > > some way to change the device page table. This is what happen in ODP. It
+> > > > invalidates the page table in device upon mmu_notifier call back. But this cannot
+> > > > solve the COW problem: if the user process A share a page P with device, and A 
+> > > > forks a new process B, and it continue to write to the page. By COW, the
+> > > > process B will keep the page P, while A will get a new page P'. But you have
+> > > > no way to let the device know it should use P' rather than P.  
+> > > 
+> > > Is this true? I thought mmu_notifiers covered all these cases.
+> > > 
+> > > The mm_notifier for A should fire if B causes the physical address of
+> > > A's pages to change via COW. 
+> > > 
+> > > And this causes the device page tables to re-synchronize.  
+> > 
+> > I don't see such code. The current do_cow_fault() implemenation has nothing to
+> > do with mm_notifer.  
+> 
+> Well, that sure sounds like it would be a bug in mmu_notifiers..
+> 
+> But considering Jean's SVA stuff seems based on mmu notifiers, I have
+> a hard time believing that it has any different behavior from RDMA's
+> ODP, and if it does have different behavior, then it is probably just
+> a bug in the ODP implementation.
+> 
+> > > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
+> > > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
+> > > > to write any code for that. Because it has been done by IOMMU framework. If it  
+> > > 
+> > > Looks like the IOMMU code uses mmu_notifier, so it is identical to
+> > > IB's ODP. The only difference is that IB tends to have the IOMMU page
+> > > table in the device, not in the CPU.
+> > > 
+> > > The only case I know if that is different is the new-fangled CAPI
+> > > stuff where the IOMMU can directly use the CPU's page table and the
+> > > IOMMU page table (in device or CPU) is eliminated.  
+> >
+> > Yes. We are not focusing on the current implementation. As mentioned in the
+> > cover letter. We are expecting Jean Philips' SVA patch:
+> > git://linux-arm.org/linux-jpb.  
+> 
+> This SVA stuff does not look comparable to CAPI as it still requires
+> maintaining seperate IOMMU page tables.
+> 
+> Also, those patches from Jean have a lot of references to
+> mmu_notifiers (ie look at iommu_mmu_notifier).
+> 
+> Are you really sure it is actually any different at all?
+> 
+> > > Anyhow, I don't think a single instance of hardware should justify an
+> > > entire new subsystem. Subsystems are hard to make and without multiple
+> > > hardware examples there is no way to expect that it would cover any
+> > > future use cases.  
+> > 
+> > Yes. That's our first expectation. We can keep it with our driver. But because
+> > there is no user driver support for any accelerator in mainline kernel. Even the
+> > well known QuickAssit has to be maintained out of tree. So we try to see if
+> > people is interested in working together to solve the problem.  
+> 
+> Well, you should come with patches ack'ed by these other groups.
+> 
+> > > If all your driver needs is to mmap some PCI bar space, route
+> > > interrupts and do DMA mapping then mediated VFIO is probably a good
+> > > choice.   
+> > 
+> > Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opinion and
+> > try not to add complexity to the mm subsystem.  
+> 
+> Why would a mediated VFIO driver touch the mm subsystem? Sounds like
+> you don't have a VFIO driver if it needs to do stuff like that...
+> 
+> > > If it needs to do a bunch of other stuff, not related to PCI bar
+> > > space, interrupts and DMA mapping (ie special code for compression,
+> > > crypto, AI, whatever) then you should probably do what Jerome said and
+> > > make a drivers/char/hisillicon_foo_bar.c that exposes just what your
+> > > hardware does.  
+> > 
+> > Yes. If no other accelerator driver writer is interested. That is the
+> > expectation:)  
+> 
+> I don't think it matters what other drivers do. 
+> 
+> If your driver does not need any other kernel code then VFIO is
+> sensible. In this kind of world you will probably have a RDMA-like
+> userspace driver that can bring this to a common user space API, even
+> if one driver use VFIO and a different driver uses something else.
+> 
+> > You create some connections (queues) to NIC, RSA, and AI engine. Then you got
+> > data direct from the NIC and pass the pointer to RSA engine for decryption. The
+> > CPU then finish some data taking or operation and then pass through to the AI
+> > engine for CNN calculation....This will need a place to maintain the same
+> > address space by some means.  
+> 
+> How is this any different from what we have today? 
+> 
+> SVA is not something even remotely new, IB has been doing various
+> versions of it for 20 years.
+> 
+> Jason
+
+
