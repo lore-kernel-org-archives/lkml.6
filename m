@@ -2,126 +2,237 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0839C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0978EC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 931E820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:19:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dlzG7UHl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 931E820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C104A20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:33:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C104A20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732005AbeKTQqz (ORCPT
+        id S1732153AbeKTRBU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 11:46:55 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33481 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731499AbeKTQqy (ORCPT
+        Tue, 20 Nov 2018 12:01:20 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:45654 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726979AbeKTRBT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 11:46:54 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so491029plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 22:19:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8tTu90lz7d1RXsDHTFCmwgIPgGmA7/ELT7ZzFdY+mrA=;
-        b=dlzG7UHlEmaVHwnDXWktec0VjIgYl+PFDKLFEw/yKQfdp9EjPys2BUXmtZS+yimXqy
-         +VG2/x8jkt1HLjDSuHTB69sX93ee0ZoZaWSDMAWLVdVD0mSU3SVwBgSowgsbFZBGEnsq
-         MDyXbNBdMK4VrRl+TC/RxCzwacHB1bS0UKv3U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8tTu90lz7d1RXsDHTFCmwgIPgGmA7/ELT7ZzFdY+mrA=;
-        b=B2J66pP6ghZli4Z3F8WERBEWDFU6d74HGYO+uEwLZI06hZeiKThz/ruZRh1XvAlHNI
-         xIF1LI4p5R0iUIBgGsNstbB8C+jRdcEWo42ELt/kIJn0NoDMeG8lJIzfVVsvAJXwP7ih
-         WmukqgHVvKSM5vIBPJuGZiKBlgdif8C4A4Vvum0Gu2mYPAaXLRYTfRbtXnfXwbzjN10G
-         7yVq38nV3eXpZK+z7SaF/9c5to2NvTbStjE1Mp5Ww3mTXcSJhwhdVAMmSkMakeQAqatM
-         HB9ks16z4bZNoAlG9My3FvB+x8O4oPEgcElzYJ/5lQmhybU4Ge/Bj9BkabeSY824VCbV
-         JJYQ==
-X-Gm-Message-State: AA+aEWYIAeKn3Y+oXeaXnezBJkEvUesKx/TSwf3BSqQKKyCh0r+DlpP6
-        Pk9hSKMvOd4z4DvnaXFMATOqLg==
-X-Google-Smtp-Source: AFSGD/UbGXgwgZF08N/6enFLwjZA+acQG4sQYNb3p2qKJTGwXMc38AIY3ZHX7iF/uRbLfg0vCv0EIg==
-X-Received: by 2002:a17:902:2bc5:: with SMTP id l63-v6mr882510plb.241.1542694768993;
-        Mon, 19 Nov 2018 22:19:28 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id g2sm718142pfi.95.2018.11.19.22.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 22:19:27 -0800 (PST)
-Date:   Tue, 20 Nov 2018 11:49:25 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, tkjos@google.com,
-        joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v9 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
-Message-ID: <20181120061925.t6j5jjepziq2gcsh@vireshk-i7>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-16-quentin.perret@arm.com>
+        Tue, 20 Nov 2018 12:01:19 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gOzbX-0000eH-Rg; Tue, 20 Nov 2018 14:33:47 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gOzbV-0001Zk-89; Tue, 20 Nov 2018 14:33:45 +0800
+Date:   Tue, 20 Nov 2018 14:33:45 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
+Subject: Re: [PATCH v4 00/14] crypto: Adiantum support
+Message-ID: <20181120063345.ccnzw5x3kh2fphnv@gondor.apana.org.au>
+References: <20181117012631.23528-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181119141857.8625-16-quentin.perret@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181117012631.23528-1-ebiggers@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-11-18, 14:18, Quentin Perret wrote:
->  static int cpufreq_init(struct cpufreq_policy *policy)
->  {
-> +	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
->  	struct cpufreq_frequency_table *freq_table;
->  	struct opp_table *opp_table = NULL;
->  	struct private_data *priv;
-> @@ -160,7 +203,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  	unsigned int transition_latency;
->  	bool fallback = false;
->  	const char *name;
-> -	int ret;
-> +	int ret, nr_opp;
->  
->  	cpu_dev = get_cpu_device(policy->cpu);
->  	if (!cpu_dev) {
-> @@ -237,6 +280,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  		ret = -EPROBE_DEFER;
->  		goto out_free_opp;
->  	}
-> +	nr_opp = ret;
->  
->  	if (fallback) {
->  		cpumask_setall(policy->cpus);
-> @@ -280,6 +324,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
->  	policy->cpuinfo.transition_latency = transition_latency;
->  	policy->dvfs_possible_from_any_cpu = true;
->  
-> +	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
-> +
->  	return 0;
->  
->  out_free_cpufreq_table:
+On Fri, Nov 16, 2018 at 05:26:17PM -0800, Eric Biggers wrote:
+> Hello,
+> 
+> We've been working to find a way to bring storage encryption to
+> entry-level Android devices like the inexpensive "Android Go" devices
+> sold in developing countries, and some smartwatches.  Unfortunately,
+> often these devices still ship with no encryption, since for cost
+> reasons they have to use older CPUs like ARM Cortex-A7; and these CPUs
+> lack the ARMv8 Cryptography Extensions, making AES-XTS much too slow.
+> 
+> We're trying to change this, since we believe encryption is for
+> everyone, not just those who can afford it.  And while it's unknown how
+> long CPUs without AES support will be around, there will likely always
+> be a "low end"; and in any case it's immensely valuable to provide a
+> software-optimized cipher that doesn't depend on hardware support.
+> Lack of hardware support should not be an excuse for no encryption.
+> 
+> But after an extensive search (e.g. see [1]) we were unable to find an
+> existing cipher that simultaneously meets the very strict performance
+> requirements on ARM processors, is secure (including having sufficient
+> security parameters as well as sufficient cryptanalysis of any
+> primitive(s) used), is suitable for practical use in dm-crypt and
+> fscrypt, *and* avoids any particularly controversial primitive.
+> 
+> Therefore, we (well, Paul Crowley did the real work) designed a new
+> encryption mode, Adiantum.  In essence, Adiantum makes it secure to use
+> the ChaCha stream cipher for disk encryption.  Adiantum is specified by
+> our paper here: https://eprint.iacr.org/2018/720.pdf ("Adiantum:
+> length-preserving encryption for entry-level processors").  Reference
+> code and test vectors are here: https://github.com/google/adiantum.
+> Most of the high-level concepts of Adiantum are not new; similar
+> existing modes include XCB, HCTR, and HCH.  Adiantum and these modes are
+> true wide-block modes (tweakable super-pseudorandom permutations), so
+> they actually provide a stronger notion of security than XTS.
+> 
+> Adiantum is an improved version of our previous algorithm, HPolyC [2].
+> Like HPolyC, Adiantum uses XChaCha12, two passes of an
+> ε-almost-∆-universal (εA∆U) hash function, and one AES-256 encryption of
+> a single 16-byte block.  On ARM Cortex-A7, on 4096-byte messages
+> Adiantum is about 4x faster than AES-256-XTS (about 5x for decryption),
+> and about 30% faster than Speck128/256-XTS.
+> 
+> Adiantum is a construction, not a primitive.  Its security is reducible
+> to that of XChaCha12 and AES-256, subject to a security bound; the proof
+> is in Section 5 of our paper.  Therefore, one need not "trust" Adiantum;
+> they only need trust XChaCha12 and AES-256.  Note that of these two
+> primitives, AES-256 currently has the lower security margin.
+> 
+> Adiantum is ~20% faster than HPolyC, with no loss of security; in fact,
+> Adiantum's security bound is slightly better than HPolyC's.  It does
+> this by choosing a faster εA∆U hash function: it still uses Poly1305's
+> εA∆U hash function, but now a hash function from the "NH" family of hash
+> functions is used to "compress" the message by 32x first.  NH is εAU (as
+> shown in the UMAC paper[3]) but is over twice as fast as Poly1305.  Key
+> agility is reduced, but that's acceptable for disk encryption.
+> 
+> NH is also very simple, and it's easy to implement in SIMD assembly,
+> e.g. in ARM NEON.  Now, to get good performance only a SIMD
+> implementation of NH is required, not Poly1305.  Therefore, Adiantum can
+> be easier to port to new platforms than HPolyC, despite Adiantum's
+> slightly increased complexity.  For now this patchset only includes an
+> ARM32 NEON implementation of NH, but as a proof of concept I've also
+> written SSE2, AVX2, and ARM64 NEON implementations of NH; see
+> https://github.com/google/adiantum/tree/master/benchmark/src.
+> 
+> This patchset adds Adiantum to Linux's crypto API, focusing on generic
+> and ARM32 implementations.  Patches 1-9 add support for XChaCha20 and
+> XChaCha12.  Patches 10-13 add NHPoly1305 support, needed for Adiantum
+> hashing.  Patch 14 adds Adiantum support as a skcipher template.
+> 
+> This patchset applies to cryptodev.  It can also be found in git at
+> branch "adiantum-v4" of:
+> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+> 
+> With this patchset, Adiantum is already usable in dm-crypt via the
+> "capi:" cipher syntax.  I'll also be adding Adiantum support to fscrypt
+> via the patch https://patchwork.kernel.org/patch/10669339/, but I
+> dropped it from this series for now since it will be taken through the
+> fscrypt git tree instead.  Note that in fscrypt, Adiantum will also fix
+> an information leak in filenames encryption when filenames share a
+> common prefix, and Adiantum's long IV support make it safe to use the
+> same key for many files, improving performance even more.
+> 
+> Again, for more details please read our paper:
+> 
+>     Adiantum: length-preserving encryption for entry-level processors
+>     (https://eprint.iacr.org/2018/720.pdf)
+> 
+> References:
+>   [1] https://www.spinics.net/lists/linux-crypto/msg33000.html
+>   [2] https://patchwork.kernel.org/cover/10558059/
+>   [3] https://fastcrypto.org/umac/umac_proc.pdf
+> 
+> Changed since v3:
+>   - Rebase onto cryptodev because of recent ChaCha20 changes.
+>   - Drop fscrypt patch; I'm sending it as a standalone patch.
+> 
+> Changed since v2:
+>   - Simplify the generic NH implementation.
+>   - Add patches to reduce atomic walks and disabling preemption.
+>   - Split Poly1305 changes into two patches.
+>   - Add tcrypt test mode for Adiantum.
+>   - Make NEON 'chacha_permute' a function rather than a macro.
+>   - Use .base.* style when declaring algorithms.
+>   - Replace BUG_ON() in chacha_permute() with WARN_ON_ONCE().
+>   - Set Adiantum instance {min,max}_keysize correctly in all cases.
+>   - Make the Adiantum template take the nhpoly1305 driver name as
+>     optional third argument (useful for testing).
+> 
+>   Thanks to Ard Biesheuvel for reviewing the patches.
+> 
+> Changed since v1:
+>   - Replace HPolyC with Adiantum (uses a faster hash function).
+>   - Drop ARM accelerated Poly1305.
+>   - Add fscrypt patch.
+> 
+> Eric Biggers (14):
+>   crypto: chacha20-generic - add HChaCha20 library function
+>   crypto: chacha20-generic - don't unnecessarily use atomic walk
+>   crypto: chacha20-generic - add XChaCha20 support
+>   crypto: chacha20-generic - refactor to allow varying number of rounds
+>   crypto: chacha - add XChaCha12 support
+>   crypto: arm/chacha20 - limit the preemption-disabled section
+>   crypto: arm/chacha20 - add XChaCha20 support
+>   crypto: arm/chacha20 - refactor to allow varying number of rounds
+>   crypto: arm/chacha - add XChaCha12 support
+>   crypto: poly1305 - use structures for key and accumulator
+>   crypto: poly1305 - add Poly1305 core API
+>   crypto: nhpoly1305 - add NHPoly1305 support
+>   crypto: arm/nhpoly1305 - add NEON-accelerated NHPoly1305
+>   crypto: adiantum - add Adiantum support
+> 
+>  arch/arm/crypto/Kconfig                       |    7 +-
+>  arch/arm/crypto/Makefile                      |    6 +-
+>  ...hacha20-neon-core.S => chacha-neon-core.S} |   98 +-
+>  arch/arm/crypto/chacha-neon-glue.c            |  201 ++
+>  arch/arm/crypto/chacha20-neon-glue.c          |  127 -
+>  arch/arm/crypto/nh-neon-core.S                |  116 +
+>  arch/arm/crypto/nhpoly1305-neon-glue.c        |   77 +
+>  arch/arm64/crypto/chacha20-neon-glue.c        |   40 +-
+>  arch/x86/crypto/chacha20_glue.c               |   48 +-
+>  arch/x86/crypto/poly1305_glue.c               |   20 +-
+>  crypto/Kconfig                                |   46 +-
+>  crypto/Makefile                               |    4 +-
+>  crypto/adiantum.c                             |  658 ++++
+>  crypto/chacha20_generic.c                     |  137 -
+>  crypto/chacha20poly1305.c                     |   10 +-
+>  crypto/chacha_generic.c                       |  217 ++
+>  crypto/nhpoly1305.c                           |  254 ++
+>  crypto/poly1305_generic.c                     |  174 +-
+>  crypto/tcrypt.c                               |   12 +
+>  crypto/testmgr.c                              |   30 +
+>  crypto/testmgr.h                              | 2856 ++++++++++++++++-
+>  drivers/char/random.c                         |   51 +-
+>  drivers/crypto/caam/caamalg.c                 |    2 +-
+>  drivers/crypto/caam/caamalg_qi2.c             |    8 +-
+>  drivers/crypto/caam/compat.h                  |    2 +-
+>  include/crypto/chacha.h                       |   54 +
+>  include/crypto/chacha20.h                     |   28 -
+>  include/crypto/nhpoly1305.h                   |   74 +
+>  include/crypto/poly1305.h                     |   28 +-
+>  lib/Makefile                                  |    2 +-
+>  lib/{chacha20.c => chacha.c}                  |   59 +-
+>  31 files changed, 4931 insertions(+), 515 deletions(-)
+>  rename arch/arm/crypto/{chacha20-neon-core.S => chacha-neon-core.S} (90%)
+>  create mode 100644 arch/arm/crypto/chacha-neon-glue.c
+>  delete mode 100644 arch/arm/crypto/chacha20-neon-glue.c
+>  create mode 100644 arch/arm/crypto/nh-neon-core.S
+>  create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+>  create mode 100644 crypto/adiantum.c
+>  delete mode 100644 crypto/chacha20_generic.c
+>  create mode 100644 crypto/chacha_generic.c
+>  create mode 100644 crypto/nhpoly1305.c
+>  create mode 100644 include/crypto/chacha.h
+>  delete mode 100644 include/crypto/chacha20.h
+>  create mode 100644 include/crypto/nhpoly1305.h
+>  rename lib/{chacha20.c => chacha.c} (58%)
 
-I haven't gone deep into the series, but why don't we need something
-like em_unregister_perf_domain()? That can be used if the cpufreq
-driver goes away. Else loading/unloading/loading the cpufreq driver
-may register the perf-domain callback again.
-
+All applied.  Thanks.
 -- 
-viresh
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
