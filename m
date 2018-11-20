@@ -2,111 +2,103 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19ECC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FB3C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 952DC20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:56:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="hbjAb5V3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952DC20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id EC0C220831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:57:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC0C220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbeKUD0i (ORCPT
+        id S1730307AbeKUD1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:26:38 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:50614 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeKUD0i (ORCPT
+        Tue, 20 Nov 2018 22:27:42 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33300 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbeKUD1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:26:38 -0500
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2D9CB5C07DC;
-        Tue, 20 Nov 2018 17:56:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1542732990;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BqrfJ+I52Jx51dIsjCuNPQOMCb/LgMKWtrx0o0ko4zs=;
-        b=hbjAb5V36OmtPmrGkOiERyaNOcI5Pz9eAB9G7o91B17+i3+rHR/vUAiDtDLSoYlFM/QhO4
-        IbIPx+Nbg7pBkji/j+7/8hA5/x8Ce6YMijEJu0CWN3gndbrqb27PZJi7lihbG2U5ZB+lKX
-        u1XmncOddLTiaTn7fE6I+TT5jh9LQ50=
-From:   Stefan Agner <stefan@agner.ch>
-To:     lorenzo.pieralisi@arm.com, jingoohan1@gmail.com,
-        gustavo.pimentel@synopsys.com, l.stach@pengutronix.de,
-        tpiepho@impinj.com
-Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v3 2/2] PCI: imx6: limit DBI register length
-Date:   Tue, 20 Nov 2018 17:56:26 +0100
-Message-Id: <20181120165626.26424-2-stefan@agner.ch>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120165626.26424-1-stefan@agner.ch>
-References: <20181120165626.26424-1-stefan@agner.ch>
+        Tue, 20 Nov 2018 22:27:42 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B974C80854; Tue, 20 Nov 2018 17:57:30 +0100 (CET)
+Date:   Tue, 20 Nov 2018 17:57:33 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel@vger.kernel.org, rppt@linux.ibm.com,
+        timmurray@google.com, joelaf@google.com, surenb@google.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+Message-ID: <20181120165732.GA13147@amd>
+References: <20181031150625.147369-1-dancol@google.com>
+ <20181105132205.138695-1-dancol@google.com>
+ <20181119105426.GD28607@amd>
+ <1c5caa66-3c61-cb57-754a-f099200c73b2@suse.cz>
+ <20181120094950.11978b68@lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="KsGdsel6WgEHnImy"
+Content-Disposition: inline
+In-Reply-To: <20181120094950.11978b68@lwn.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define the length of the DBI registers. This makes sure that
-the kernel does not access registers beyond that point, avoiding
-the following abort on a i.MX 6Quad:
-  # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
-  [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
-  ...
-  [  100.056423] PC is at dw_pcie_read+0x50/0x84
-  [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
-  ...
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
----
-Changes in v3:
-- Rebase on pci/dwc
+--KsGdsel6WgEHnImy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- drivers/pci/controller/dwc/pci-imx6.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+On Tue 2018-11-20 09:49:50, Jonathan Corbet wrote:
+> On Tue, 20 Nov 2018 10:05:21 +0100
+> Vlastimil Babka <vbabka@suse.cz> wrote:
+>=20
+> > Why can't the documentation describe the current implementation, and
+> > change in the future if the implementation changes? I doubt somebody
+> > would ever rely on the pid being reused while having the descriptor
+> > open. How would that make sense?
+>=20
+> In the hopes of ending this discussion, I'm going to go ahead and apply
+> this.  Documenting current behavior is good, especially in situations
+> where that behavior can surprise people; if the implementation changes,
+> the docs can change with it.
 
-diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-index cdcf54ff30fb..7015bda22aef 100644
---- a/drivers/pci/controller/dwc/pci-imx6.c
-+++ b/drivers/pci/controller/dwc/pci-imx6.c
-@@ -43,6 +43,7 @@ enum imx6_pcie_variants {
- 
- struct imx6_pcie_drvdata {
- 	enum imx6_pcie_variants variant;
-+	int			dbi_length;
- };
- 
- struct imx6_pcie {
-@@ -981,6 +982,8 @@ static int imx6_pcie_probe(struct platform_device *pdev)
- 		break;
- 	}
- 
-+	pci->dbi_length = imx6_pcie->drvdata->dbi_length;
-+
- 	/* Grab turnoff reset */
- 	imx6_pcie->turnoff_reset = devm_reset_control_get_optional_exclusive(dev, "turnoff");
- 	if (IS_ERR(imx6_pcie->turnoff_reset)) {
-@@ -1052,7 +1055,7 @@ static void imx6_pcie_shutdown(struct platform_device *pdev)
- }
- 
- static const struct imx6_pcie_drvdata drvdata[] = {
--	[IMX6Q] = { .variant = IMX6Q },
-+	[IMX6Q] = { .variant = IMX6Q, .dbi_length = 0x15c },
- 	[IMX6SX] = { .variant = IMX6SX },
- 	[IMX6QP] = { .variant = IMX6QP },
- 	[IMX7D] = { .variant = IMX7D },
--- 
-2.19.1
+I'd still prefer changing from "does not" to "may not".
 
+It is really simple change, and once we documented a behaviour, we
+really should not be changing it.
+
+Thanks,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--KsGdsel6WgEHnImy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlv0PPwACgkQMOfwapXb+vIm1wCgtqq+S/IMFCHeWfVA9EAAo+l5
+f4IAni29EPb2X3/9RSgyLOSK4XjdQmfa
+=K4i7
+-----END PGP SIGNATURE-----
+
+--KsGdsel6WgEHnImy--
