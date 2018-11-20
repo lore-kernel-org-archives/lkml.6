@@ -2,412 +2,110 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E52C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E6DC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 173AB20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:45:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173AB20684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jmondi.org
+	by mail.kernel.org (Postfix) with ESMTP id 1663920684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:48:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jOOpq+fr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1663920684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbeKUEPe (ORCPT
+        id S1728897AbeKUETC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:15:34 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:56639 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeKUEPe (ORCPT
+        Tue, 20 Nov 2018 23:19:02 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37107 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbeKUETC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:15:34 -0500
-X-Originating-IP: 204.239.253.218
-Received: from w540 (unknown [204.239.253.218])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 86C79C0003;
-        Tue, 20 Nov 2018 17:44:41 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 18:44:25 +0100
-From:   jacopo mondi <jacopo@jmondi.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     kieran.bingham@ideasonboard.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sakari.ailus@iki.fi,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
-Message-ID: <20181120174425.GF28299@w540>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
- <5238fa80-7678-97a8-47ee-6a26970d862d@lucaceresoli.net>
- <07ee8a2c-81a8-ca32-96cf-67d6a883e3f5@ideasonboard.com>
- <e6143de9-f253-1a89-21e0-d1e2c0444e7b@lucaceresoli.net>
- <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
- <6729cf7d-bd5d-d762-3f4a-f53a8791a397@lucaceresoli.net>
+        Tue, 20 Nov 2018 23:19:02 -0500
+Received: by mail-vs1-f65.google.com with SMTP id h18so1604241vsj.4
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:48:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dN5F5JjkX8qXx7CGqsA8pOnFZ6513BsOrkwubwTzl6Y=;
+        b=jOOpq+fraVncoarOWAFx7rMbxvglr0X2TN6+XPIecpWtseOivq4bhl37mS3+xWv5ly
+         ZNkbsAR5kshlnNE9NSiHy1bH1cBqpNQUiVo1rixFectKn9dyHQoMVJoNJG397AEDj94j
+         R4phZwjjJm9+u7s08ZtUKj/gpxNk8kCww5609VfLpSTGaL2FEtg5tNF3HybFRh4i7RGH
+         Cl1AmXMT0SE3OwNPy5meSuwYf3oaeC70T9NFj1cfhmvSV7hpgEDxX+zOAjKFbBa+eOM2
+         8lmcKz2pONp0+gymZnM0h1gER/alu22Km85bq8k/5wfR7m9hTw/WOd0Hvx9aSkKk2d4C
+         TJww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dN5F5JjkX8qXx7CGqsA8pOnFZ6513BsOrkwubwTzl6Y=;
+        b=kUAdoA/VcaO0RhWBVa44Km4/o2e6fGmPPYdbXuXxEnVG0IN+d/bd7C8OtgZmXdHH/3
+         i8Wa4aFYjr0nYn/Nw2GjhVzXcrOsf1GAq3ch07y72lqDqPJuH3jOWGuMUKZVDYbDvNHA
+         ubav9iBBe1KJYgq8j1nXuo14mcukkoOrckhgvPaWSAZdW5uoIk7iCG0CisH8ILoCKjhV
+         F89ED3lY7ODyTacAy5MRGESmX1lalrCGLOFfXPxqkfODH6+fMG+avAXdorpfQIiqtrP5
+         dxqmlugagvzMYVl+HKMQxlnURL7fmskjHPDPh747LlufvXAdgzkjJpEW/jj1FAy4C+YH
+         kDRA==
+X-Gm-Message-State: AGRZ1gLnmBdiN4UuD1igRnQfDZ/rm3l1Wy1KgY06UE6qIFafdKFZxF4W
+        CL/TDiQdcfu7Xz5EPU8vcka//e+dliBxbgSqau2t+Q==
+X-Google-Smtp-Source: AJdET5fzyAyh8Scry+3EDV54//ltBPMntEiwOTwDIzRN82jcDHZQ2nUKBhK9rR+lfp9UjCs4AGwoSQzT74Yy2fBuS/s=
+X-Received: by 2002:a67:b44:: with SMTP id 65mr1272308vsl.77.1542736119374;
+ Tue, 20 Nov 2018 09:48:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2E/hm+v6kSLEYT3h"
-Content-Disposition: inline
-In-Reply-To: <6729cf7d-bd5d-d762-3f4a-f53a8791a397@lucaceresoli.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20181031150625.147369-1-dancol@google.com> <20181105132205.138695-1-dancol@google.com>
+ <20181119105426.GD28607@amd> <1c5caa66-3c61-cb57-754a-f099200c73b2@suse.cz>
+ <20181120091829.GD16916@amd> <20181120173912.GD3065@bombadil.infradead.org>
+In-Reply-To: <20181120173912.GD3065@bombadil.infradead.org>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 20 Nov 2018 09:48:27 -0800
+Message-ID: <CAKOZuevidVnZ+9vB1CxsetPVH=2P7eoORA1F445HOp-jS5rwOA@mail.gmail.com>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Pavel Machek <pavel@ucw.cz>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Tim Murray <timmurray@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---2E/hm+v6kSLEYT3h
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Luca,
-
-On Tue, Nov 20, 2018 at 11:51:37AM +0100, Luca Ceresoli wrote:
-> Hi Kieran,
+On Tue, Nov 20, 2018 at 9:39 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On 20/11/18 01:32, Kieran Bingham wrote:
-> > Hi Luca,
+> On Tue, Nov 20, 2018 at 10:18:29AM +0100, Pavel Machek wrote:
+> > > would ever rely on the pid being reused while having the descriptor
+> > > open. How would that make sense?
 > >
-> > My apologies for my travel induced delay in responding here,
+> > I agree this is corner space, but users might be surprised that
+> > keeping FDs of /proc/pid/X would lead to PID space exhaustion, for
+> > example.
 >
-> No problem.
->
-> > On 14/11/2018 02:04, Luca Ceresoli wrote:
-> [...]
-> >>>>> +static int max9286_probe(struct i2c_client *client,
-> >>>>> +			 const struct i2c_device_id *did)
-> >>>>> +{
-> >>>>> +	struct max9286_device *dev;
-> >>>>> +	unsigned int i;
-> >>>>> +	int ret;
-> >>>>> +
-> >>>>> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> >>>>> +	if (!dev)
-> >>>>> +		return -ENOMEM;
-> >>>>> +
-> >>>>> +	dev->client = client;
-> >>>>> +	i2c_set_clientdata(client, dev);
-> >>>>> +
-> >>>>> +	for (i = 0; i < MAX9286_N_SINKS; i++)
-> >>>>> +		max9286_init_format(&dev->fmt[i]);
-> >>>>> +
-> >>>>> +	ret = max9286_parse_dt(dev);
-> >>>>> +	if (ret)
-> >>>>> +		return ret;
-> >>>>> +
-> >>>>> +	dev->regulator = regulator_get(&client->dev, "poc");
-> >>>>> +	if (IS_ERR(dev->regulator)) {
-> >>>>> +		if (PTR_ERR(dev->regulator) != -EPROBE_DEFER)
-> >>>>> +			dev_err(&client->dev,
-> >>>>> +				"Unable to get PoC regulator (%ld)\n",
-> >>>>> +				PTR_ERR(dev->regulator));
-> >>>>> +		ret = PTR_ERR(dev->regulator);
-> >>>>> +		goto err_free;
-> >>>>> +	}
-> >>>>> +
-> >>>>> +	/*
-> >>>>> +	 * We can have multiple MAX9286 instances on the same physical I2C
-> >>>>> +	 * bus, and I2C children behind ports of separate MAX9286 instances
-> >>>>> +	 * having the same I2C address. As the MAX9286 starts by default with
-> >>>>> +	 * all ports enabled, we need to disable all ports on all MAX9286
-> >>>>> +	 * instances before proceeding to further initialize the devices and
-> >>>>> +	 * instantiate children.
-> >>>>> +	 *
-> >>>>> +	 * Start by just disabling all channels on the current device. Then,
-> >>>>> +	 * if all other MAX9286 on the parent bus have been probed, proceed
-> >>>>> +	 * to initialize them all, including the current one.
-> >>>>> +	 */
-> >>>>> +	max9286_i2c_mux_close(dev);
-> >>>>> +
-> >>>>> +	/*
-> >>>>> +	 * The MAX9286 initialises with auto-acknowledge enabled by default.
-> >>>>> +	 * This means that if multiple MAX9286 devices are connected to an I2C
-> >>>>> +	 * bus, another MAX9286 could ack I2C transfers meant for a device on
-> >>>>> +	 * the other side of the GMSL links for this MAX9286 (such as a
-> >>>>> +	 * MAX9271). To prevent that disable auto-acknowledge early on; it
-> >>>>> +	 * will be enabled later as needed.
-> >>>>> +	 */
-> >>>>> +	max9286_configure_i2c(dev, false);
-> >>>>> +
-> >>>>> +	ret = device_for_each_child(client->dev.parent, &client->dev,
-> >>>>> +				    max9286_is_bound);
-> >>>>> +	if (ret)
-> >>>>> +		return 0;
-> >>>>> +
-> >>>>> +	dev_dbg(&client->dev,
-> >>>>> +		"All max9286 probed: start initialization sequence\n");
-> >>>>> +	ret = device_for_each_child(client->dev.parent, NULL,
-> >>>>> +				    max9286_init);
-> >>>>
-> >>>> I can't manage to like this initialization sequence, sorry. If at all
-> >>>> possible, each max9286 should initialize itself independently from each
-> >>>> other, like any normal driver.
-> >>>
-> >>> Yes, I think we're in agreement here, but unfortunately this section is
-> >>> a workaround for the fact that our devices share a common address space.
-> >>>
-> >>> We (currently) *must* disable both devices before we start the
-> >>> initialisation process for either on our platform currently...
-> >>
-> >> The model I proposed in my review to patch 1/4 (split remote physical
-> >> address from local address pool) allows to avoid this workaround.
-> >
-> >
-> > Having just talked this through with Jacopo I think I see that we have
-> > two topics getting intertwined here too.
-> >
-> >  - Address translation so that we can separate the camera addressing
-> >
-> >  - our 'device_is_bound/device_for_each_child()' workaround which lets
-> >    us make sure the buses are closed before we power on any camera
-> >    device.
-> >
-> >
-> > For the upstream process of this driver - I will remove the
-> > 'device_is_bound()/device_for_each_child()' workarounds.
-> >
-> >
-> > It is /ugly/ and needs more consideration, but I believe we do still
-> > need it (or something similar) for our platform currently.
-> >
-> >
-> >
-> > The other side of that is the address translation. I think I was wrong
-> > earlier and may have said we have address translation on both sides.
-> >
-> >
-> > I think I now see that we only have some minimal translation for two
-> > addresses on the remote (max9271) side, not the local (max9286) side.
->
-> Can the remote (max9271) translate addresses for transactions
-> originating from the local side? This would make it possible to do a
-> proper address translation, although 2 addresses is a quite small amount.
->
+> We have a limit on the number of FDs a process can have open for a reason.
+> Well, for many reasons.
 
-Yes, that's true for systems with a single max9286 [1]
-
-We have a system with 2 de-serializers, and what happens is the
-following:
-
-The system starts with the following configuration:
-
-1)
-                    +------- max9271@40
-                    +------- max9271@40
-Soc ----> max9286 --+------- max9271@40
-                    +------- max9271@40
-
-with a single max9286 it would be easy. We operate on one channel at
-the time, do the reprogramming (or set up the translation, for the TI
-chip use case) when adding the adapter for the channel, and then we
-can talk with all remotes, which now have a different address
-
-2)
-                    +-------- max9271@50
-                    +--- / -- max9271@40
-Soc ----> max9286 --+--- / -- max9271@40
-                    +--- / -- max9271@40
-
-
-                    +--- / -- max9271@50
-                    +-------- max9271@51
-Soc ----> max9286 --+--- / -- max9271@40
-                    +--- / -- max9271@40
-
-                    +--- / -- max9271@50
-                    +--- / -- max9271@51
-Soc ----> max9286 --+-------- max9271@52
-                    +--- / -- max9271@40
-
-                    +--- / -- max9271@50
-                    +--- / -- max9271@51
-Soc ----> max9286 --+--- / -- max9271@52
-                    +-------- max9271@53
-
-Of course, to do the reprogramming, we need to initially send messages
-to the default 0x40 address each max9271 boots with. If we don't close
-all channels but the one we intend to reprogram, all remotes would
-receive the same message, and thus will be re-programmed to the same
-address (not nice). [2]
-
-Now, if you have two max9286, installed on the same i2c bus, then you
-need to make sure all channels of the 'others' are closed, before you
-can reprogram your remotes, otherwise, you would end up reprogramming
-all the remotes of the 'others' when trying to reprogram yours, as our
-local de-serializers, bounces everything they receives, not directed
-to them, to their remote sides.
-
-3)
-                       +-------- max9271@50
-                       +--- / -- max9271@40
-Soc --+-> max9286@4c --+--- / -- max9271@40
-      |                +--- / -- max9271@40
-      |
-      |-> max9286@6c --+-------- max9271@50  <-- not nice
-                       +-------- max9271@50
-                       +-------- max9271@50
-                       +-------- max9271@50
-
-                       +--- / -- max9271@50
-                       +-------- max9271@51
-Soc --+-> max9286@4c --+--- / -- max9271@40
-      |                +--- / -- max9271@40
-      |
-      |-> max9286@6c --+-------- max9271@51 <-- not nice
-                       +-------- max9271@51
-                       +-------- max9271@51
-                       +-------- max9271@51
-
-....
-
-With the (not nice) 'max9286_is_bound()' we make sure we close all
-channels on all max9286 first
-
-4)
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-Soc --+-> max9286@4c --+--- / -- max9271@40
-      |                +--- / -- max9271@40
-      |
-      |-> max9286@6c --+--- / -- max9271@40
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-
-And then only the last one to probe calls the re-programming
-phase for all its fellows de-serializers on the bus.
-
-5)
-                       +-------- max9271@50
-                       +--- / -- max9271@40
-Soc --+-> max9286@4c --+--- / -- max9271@40
-      |                +--- / -- max9271@40
-      |
-      |-> max9286@6c --+--- / -- max9271@40
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-    ....
-
-
-                       +--- / -- max9271@50
-                       +--- / -- max9271@51
-Soc --+-> max9286@4c --+--- / -- max9271@52
-      |                +--- / -- max9271@53
-      |
-      |-> max9286@6c --+-------- max9271@54
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-                       +--- / -- max9271@40
-
-When addr reprogramming is done, we enter the image streaming phase,
-with all channels open, as now, all remotes, have a different i2c
-address assigned.
-
-Suggestions on how to better handle this are very welcome. The point
-here is that, to me, this is a gmsl-specific implementation thing.
-
-Do you think for your chips, if they do translations, can you easy mask
-them with the i2c address you want (being that specified in the remote
-node or selected from an i2c-addr-pool, or something else) without
-having to care about others remotes to be accidentally programmed to
-an i2c address they're not intended to be assigned to.
-
-Hope this helps clarify your concerns, and I think the actual issue
-to discuss, at least on bindings, would be the i2c-address assignment
-method, as this impacts GMSL, as well as other implementation that
-would use the same binding style as this patches.
-
-Thanks
-   j
-
-[1] I still don't get why 'addr translation' >> 'addr reprogramming'.
-Even the GMSL application development examples uses addr reprogramming,
-so I guess this is how those chips are supposed to work.
-
-[2] If your local side supports address translation, you don't need to
-talk with the remote side to 'mask' it, so you don't need this workaround.
-
-> BTW all the TI chips I'm looking at can do address translation but, as
-> far as I understand, only when acting as "slave proxy", i.e. when
-> attached to the bus master. If the Maxim chips do the same, the "remote
-> translation" would be unusable.
->
-> > We have the ability to reprogram addresses through, and that's what we
-> > are using.
->
-> Sadly, it looks pretty much unavoidable...
->
-> > There's a lot more local discussion going on here that I may have missed
-> > so I hope Jacopo, Niklas, or Laurent may add more here if relevant :)
-> >
-> >
-> >
-> >
-> >>> That said - I think this section needs to be removed from the upstream
-> >>> part at least for now. I think we should probably carry this
-> >>> 'workaround' separately.
-> >>>
-> >>> This part is the core issue that I talked about in my presentation at
-> >>> ALS-Japan [0]
-> >>>
-> >>>  [0] https://sched.co/EaXa
-> >>
-> >> Oh, interesting, I hadn't noticed that you gave this talk -- at the same
-> >> conference as Vladimir's talk! No video recording apparently, but are
-> >> slides available at least?
-> >
-> > Hrm ... I was sure I uploaded to the conference so that they should have
-> > been available on that URL - but they are not showing.
-> >
-> > They are available here:
-> >
-> > 	https://www.slideshare.net/KieranBingham/gmsl-in-linux
->
-> Thanks.
->
-> > (Please excuse the incorrect date on the first slide :D)
-> >
-> > I had put a proposal in to give this talk again at ELCE but
-> > unfortunately it didn't get accepted.
-> >
-> > Seems it really would have been useful to have a slot. Lets hope next
-> > ELCE is too late and we work out a good system by then :)
->
-> Indeed it would have been!
->
-> But hey, The FOSDEM CFPs are still open!
->
-> Bye,
-> --
-> Luca
-
---2E/hm+v6kSLEYT3h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJb9Ef5AAoJEHI0Bo8WoVY8tJMP/03uHNwpVvR9XFTK6R6Fb9iZ
-UhSw1e9SVKLsIYIYr1u1Ej9c35v3hV0EqeEBJzj6rwhlpbbL+J1NvRIg5oKxO2KM
-JuWyaXxYL174I2UCrZ+YA2RFdZZbw2eJMkYBRb6NrX6G3UYOurl1hCjPb1WoT4RA
-vEljoVIuIeHyYdwOyGDegXx8d7onC9dF6uisfeMDcWjDkW25xoyMPXlwE6oDNWt6
-2Zr0LcUCIz6WTC2ZWfQBcaaZpGv/srb8eUyX+x7WX8TGib+oDELU18ppjlH+EfUi
-JhW3G9zP1kylV6NTkmlg/c3S1N8++d6MF2IIV8CV6KhdYEd0m0UUuWNdERncdwx/
-TyhpSj6Jl1fANBsw+rLT6KSCeCNHKaLKIBm4GTPJ/JN1yK8A+Zh/Q1V3CkQxauuh
-LP1EcGhKqriTJuSsH7oBYOe1OfxA0nZwwAoTV1LybNBNUQVP7Gev8a74pVw6JADh
-MjBDkD80YhvQgzPE7j5s5sg/2wmwlg9DiEvvEhSiDhhylyA4ZjnCCoVTqxBhvuXB
-Q/IV76rmV05KryA0W/qnVHMWoSjywVOs0pN4jsBWWJ0PgMuS5l+01ArsQzlM5RUG
-ruxa/kJ97SFVVL9OfWVPEC6AXopRhQMeWVikezjXBIY0HNX2I4UC87FYkznByLiP
-bugiQNSW5wFWPrKAoyVj
-=jDlT
------END PGP SIGNATURE-----
-
---2E/hm+v6kSLEYT3h--
+And the typical limit is too low. (I've seen people clamp it to 1024
+for some reason.) A file descriptor is just a handle to a kernel
+resource. All kernel resources held on behalf of applications need
+*some* kind of management interface. File descriptors provide a
+consistent and uniform instance of such a management interface. Unless
+there's a very good reason, nobody should be using non-FD handles for
+kernel resource management. A low default FD table size limit is not
+an example of one of these good reasons, not when we can raise FD
+table size limit. In general, the software projects should not have to
+put up with ugly workarounds for limitations they impose on
+themselves.
