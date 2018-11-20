@@ -2,715 +2,1005 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67625C04EBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAEBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D982080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D982080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id D9B282080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:29:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9B282080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbeKTKyy (ORCPT
+        id S1732484AbeKTK4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:54:54 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:33593 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732535AbeKTKyw (ORCPT
+        Tue, 20 Nov 2018 05:56:05 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43226 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728979AbeKTK4E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:54:52 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42zRQ71cMdz1qvvv;
-        Tue, 20 Nov 2018 01:28:31 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42zRQ70wZWz1qr2m;
-        Tue, 20 Nov 2018 01:28:31 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 5dW2DDuhZ1F0; Tue, 20 Nov 2018 01:28:29 +0100 (CET)
-X-Auth-Info: IQshYVo+L9b6QQ7lVw9D7xvT9EHYBwIMozp/ZnSXp7M=
-Received: from crub.agik.hopto.org (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 20 Nov 2018 01:28:29 +0100 (CET)
-From:   Anatolij Gustschin <agust@denx.de>
-To:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, atull@kernel.org,
-        mdf@kernel.org
-Subject: [PATCH v2 3/3] fpga: Add fpga manager driver for ARRI Altera FPP
-Date:   Tue, 20 Nov 2018 01:28:21 +0100
-Message-Id: <20181120002821.12794-4-agust@denx.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181120002821.12794-1-agust@denx.de>
-References: <20181120002821.12794-1-agust@denx.de>
+        Tue, 20 Nov 2018 05:56:04 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <dann.frazier@canonical.com>)
+        id 1gOtvC-0001BL-Fi
+        for linux-kernel@vger.kernel.org; Tue, 20 Nov 2018 00:29:42 +0000
+Received: by mail-io1-f72.google.com with SMTP id n22so166753iob.9
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 16:29:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Tc/+bOiLQB2Gu5uW7S6Vbsvz/BU355eODSf9/tRo7bc=;
+        b=R2OPYZqofaOpG597uHQJgl+Xr3mNdwzWcVPR+G8C9nfF07M4py2p6FRXg5reOeMEPI
+         L55BH+cUt0rc7cOE8cw3w6oQsMVwV3fWZhOUTUshdFUqMH+s/DhPmsLw6vqyXxHoo6LY
+         EGBCjqXzEah7bvokk3RemoWLfjuFg+dhxV3ZgtYYkva5Qqzu+Ru3v3wbw2BApm2jLR5X
+         uAA1cvImLmdbtCk88zSqv9IkHZ66pjgUOlFLaWQa7lopThtX7HwZcBs2yR7L7k8jWP91
+         bITPrb6XLXhwDOlp1U2/G3nlrG/VGfPFknfCuth0iTcLzgxFhC9IF2IeFT4ZdARDz5nG
+         EcMw==
+X-Gm-Message-State: AGRZ1gJOGfKGhefWEdlARjsbLgIYYT2rUbEOKzOmHoKM2knlXjVU33Zk
+        JkJRBaLFFoSoUl2nsE3MB5Fs/QGLRYKX7IRdPJUStnQxUggcQ/SBF1YMy1a67wSLG/bA+PenXOb
+        qqcNfIN9xUSzzS3EJ+9f/0je6gT8KeQn+AFSrLSLwFw==
+X-Received: by 2002:a6b:6e07:: with SMTP id d7mr18249892ioh.8.1542673780266;
+        Mon, 19 Nov 2018 16:29:40 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/VO+kiut3E9y0YRfoEigdYh1ZQ1Sr3WIyGnwaYJs6qODA0c/ElFLIJM+ZIHpYz59ai/f7BpZg==
+X-Received: by 2002:a6b:6e07:: with SMTP id d7mr18249864ioh.8.1542673779629;
+        Mon, 19 Nov 2018 16:29:39 -0800 (PST)
+Received: from xps13.canonical.com (c-107-2-141-103.hsd1.co.comcast.net. [107.2.141.103])
+        by smtp.gmail.com with ESMTPSA id 188-v6sm16606197itz.4.2018.11.19.16.29.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Nov 2018 16:29:38 -0800 (PST)
+Date:   Mon, 19 Nov 2018 17:29:37 -0700
+From:   dann frazier <dann.frazier@canonical.com>
+To:     Xue Chaojing <xuechaojing@huawei.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, wulike1@huawei.com, chiqijun@huawei.com,
+        fy.wang@huawei.com, zhaochen6@huawei.com, tony.qu@huawei.com,
+        luoshaokai@huawei.com, ike.pan@canonical.com
+Subject: Re: [PATCH v2] net-next/hinic: add checksum offload and TSO support
+Message-ID: <20181120002844.GA24531@xps13.dannf>
+References: <20181018150251.28802-1-xuechaojing@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181018150251.28802-1-xuechaojing@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add FPGA manager driver for loading ARRI Altera FPGAs via fast
-passive parallel (FPP) interface using FTDI FT232H chip.
+On Thu, Oct 18, 2018 at 03:02:51PM +0000, Xue Chaojing wrote:
+> From: Zhao Chen <zhaochen6@huawei.com>
+> 
+> This patch adds checksum offload and TSO support for the HiNIC
+> driver. Perfomance test (Iperf) shows more than 100% improvement
+> in TCP streams.
 
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
----
- .../ABI/testing/sysfs-driver-ftdi-fifo-fpp    |   7 +
- drivers/fpga/Kconfig                          |   7 +
- drivers/fpga/Makefile                         |   1 +
- drivers/fpga/ftdi-fifo-fpp.c                  | 594 ++++++++++++++++++
- 4 files changed, 609 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
- create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+We're seeing a regression with this patch on the HiSilicon D06
+platform (only platform we've tested). With 4.20-rc3, we do see
+improved performance initially (~10s), but if we do a longer iperf run
+- we're testing w/ 900s - performance drop significantly to around
+200Mbps. Correlated with this drop are a flood of messages like:
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
-new file mode 100644
-index 000000000000..084e691d0983
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
-@@ -0,0 +1,7 @@
-+What:		/sys/bus/platform/devices/ftdi-fifo-fpp-mgr.N/cfg_mode
-+Date:		Nov 2018
-+Kernel Version:	4.21
-+Contact:	Anatolij Gustschin <agust@denx.de>
-+Description:
-+		Contains either "fifo" or "bitbang" and controls if fifo
-+		of bitbang configuration mode is used in the driver.
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 205042b441ea..584866a27c35 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -59,6 +59,13 @@ config FPGA_MGR_ALTERA_CVP
- 	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V
- 	  and Arria 10 Altera FPGAs using the CvP interface over PCIe.
- 
-+config FPGA_MGR_FTDI_FIFO_FPP
-+	tristate "Altera FPP over FT232H FIFO"
-+	depends on USB_FT232H_INTF
-+	help
-+	  FPGA manager driver support for Altera fast passive parallel
-+	  interface (FPP) over FT232H FT245 FIFO.
-+
- config FPGA_MGR_ZYNQ_FPGA
- 	tristate "Xilinx Zynq FPGA"
- 	depends on ARCH_ZYNQ || COMPILE_TEST
-diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
-index 7a2d73ba7122..8c1d714bd440 100644
---- a/drivers/fpga/Makefile
-+++ b/drivers/fpga/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_FPGA)			+= fpga-mgr.o
- # FPGA Manager Drivers
- obj-$(CONFIG_FPGA_MGR_ALTERA_CVP)	+= altera-cvp.o
- obj-$(CONFIG_FPGA_MGR_ALTERA_PS_SPI)	+= altera-ps-spi.o
-+obj-$(CONFIG_FPGA_MGR_FTDI_FIFO_FPP)	+= ftdi-fifo-fpp.o
- obj-$(CONFIG_FPGA_MGR_ICE40_SPI)	+= ice40-spi.o
- obj-$(CONFIG_FPGA_MGR_MACHXO2_SPI)	+= machxo2-spi.o
- obj-$(CONFIG_FPGA_MGR_SOCFPGA)		+= socfpga.o
-diff --git a/drivers/fpga/ftdi-fifo-fpp.c b/drivers/fpga/ftdi-fifo-fpp.c
-new file mode 100644
-index 000000000000..652a5430bdf2
---- /dev/null
-+++ b/drivers/fpga/ftdi-fifo-fpp.c
-@@ -0,0 +1,594 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Altera FPGA firmware upload via FPP using FT232H Bitbang/FT245-FIFO.
-+ *
-+ * Copyright (C) 2017 - 2018 DENX Software Engineering
-+ * Anatolij Gustschin <agust@denx.de>
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/delay.h>
-+#include <linux/fpga/fpga-mgr.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/sizes.h>
-+#include <linux/slab.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/platform_device.h>
-+#include <linux/usb.h>
-+#include <linux/usb/ft232h-intf.h>
-+
-+#define	BULK_OUT_BUF_SZ	SZ_1M
-+#define	MAX_RETRIES	10
-+
-+/*
-+ * With logic of CPLD we can write the state of nConfig pin and
-+ * read back the state of some pins (conf_done, init_done, nStatus).
-+ * Status header and bit assignment in data register on CPLD.
-+ */
-+#define INPUT_HEADER_0	0xA5
-+#define INPUT_HEADER_1	0x5A
-+#define IN_CONF_DONE	BIT(0)
-+#define IN_INIT_DONE	BIT(1)
-+#define IN_ADDR_SELECT	BIT(4)
-+#define IN_BOARD_REV	BIT(5)
-+#define OUT_NCONFIG	BIT(0)
-+#define OUT_RESET_N	BIT(1)
-+
-+enum fpp_board_rev {
-+	BOARD_REVA = 1,
-+	BOARD_REVB = 2,
-+};
-+
-+enum fpp_addr_sel {
-+	ADDR_SELECT_INVALID,
-+	ADDR_SELECT_GND,
-+	ADDR_SELECT_NC
-+};
-+
-+struct fpp_mgr_ops {
-+	int (*write_init)(struct fpga_manager *mgr,
-+			  struct fpga_image_info *info,
-+			  const char *buf, size_t count);
-+	int (*write)(struct fpga_manager *mgr, const char *buf, size_t count);
-+	int (*write_complete)(struct fpga_manager *mgr,
-+			      struct fpga_image_info *info);
-+};
-+
-+struct fpp_fpga_mgr_priv {
-+	struct platform_device		*pdev;
-+	struct usb_interface		*intf;
-+	const struct ft232h_intf_ops	*iops;
-+	struct fpga_manager	*mgr;
-+	struct fpp_mgr_ops	*ops;
-+	struct gpio_desc	*nconfig;
-+	struct gpio_desc	*conf_done;
-+	char			cfg_mode[8];
-+	u8			out_data_port;
-+	int			index;
-+	void			*bulk_buf;
-+	char			usb_dev_id[32];
-+	char			fpga_mgr_name[64];
-+	enum fpp_board_rev	rev;
-+	enum fpp_addr_sel	addr_sel;
-+};
-+
-+static int fpp_fpga_mgr_set_data_port(struct fpp_fpga_mgr_priv *priv,
-+				      u8 bitmask, u8 value)
-+{
-+	struct device *dev = &priv->pdev->dev;
-+	struct bulk_desc desc;
-+	u8 *data;
-+	int ret;
-+
-+	/*
-+	 * With CPLD connected (in FT245 FIFO mode) we use ACBUS8&9
-+	 * pins to switch between data and command mode:
-+	 * ACBUS8&9 == 0, 0  --> normal mode (data communication)
-+	 * ACBUS8&9 == 1, 0  --> command mode
-+	 */
-+	gpiod_set_raw_value_cansleep(priv->nconfig, 1);
-+	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
-+	msleep(50);
-+
-+	/* Write commands to CPLD */
-+	ret = priv->iops->set_bitmode(priv->intf, 0x00, BITMODE_SYNCFF);
-+	if (ret)
-+		return ret;
-+
-+	if (value)
-+		priv->out_data_port |= bitmask;
-+	else
-+		priv->out_data_port &= ~bitmask;
-+
-+	data = priv->bulk_buf;
-+	*data = priv->out_data_port;
-+
-+	desc.dir_out = true;
-+	desc.act_len = 0;
-+	desc.len = 1;
-+	desc.data = data;
-+	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
-+
-+	ret = priv->iops->bulk_xfer(priv->intf, &desc);
-+	if (ret) {
-+		dev_err(dev, "Writing in SYNCFF mode failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	msleep(50);
-+	/* Switch back to data mode with ACBUS8&9 back to low */
-+	gpiod_set_raw_value_cansleep(priv->nconfig, 0);
-+	gpiod_set_raw_value_cansleep(priv->conf_done, 0);
-+	msleep(50);
-+
-+	return 0;
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write_init(struct fpga_manager *mgr,
-+					   struct fpga_image_info *info,
-+					   const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	gpiod_set_value_cansleep(priv->nconfig, 0);
-+	msleep(50);
-+	gpiod_set_value_cansleep(priv->nconfig, 1);
-+	msleep(50);
-+	gpiod_set_value_cansleep(priv->nconfig, 0);
-+
-+	/* Wait for CONF_DONE to get low */
-+	do {
-+		msleep(50);
-+
-+		ret = gpiod_get_value_cansleep(priv->conf_done);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to get CONF_DONE pin: %d\n", ret);
-+			return ret;
-+		}
-+
-+		if (!ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE low wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_BITBANG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Set max. working baud rate (for hardware without CPLD) */
-+	return priv->iops->set_baudrate(priv->intf, 700000);
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write(struct fpga_manager *mgr,
-+				      const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct bulk_desc desc;
-+	size_t blk_sz;
-+	int ret;
-+
-+	desc.data = priv->bulk_buf;
-+	desc.dir_out = true;
-+	desc.timeout = FTDI_USB_WRITE_TIMEOUT;
-+
-+	while (count) {
-+		blk_sz = min_t(size_t, count, BULK_OUT_BUF_SZ);
-+		memcpy(priv->bulk_buf, buf, blk_sz);
-+		desc.act_len = 0;
-+		desc.len = blk_sz;
-+		ret = priv->iops->bulk_xfer(priv->intf, &desc);
-+		if (ret < 0)
-+			return ret;
-+
-+		buf += desc.act_len;
-+		count -= desc.act_len;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fpp_fpga_mgr_bitbang_write_complete(struct fpga_manager *mgr,
-+					       struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	/* Wait for CONF_DONE to get high */
-+	do {
-+		msleep(50);
-+
-+		ret = gpiod_get_value_cansleep(priv->conf_done);
-+		if (ret < 0)
-+			return ret;
-+
-+		if (ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	priv->iops->disable_bitbang(priv->intf);
-+	return 0;
-+}
-+
-+static inline bool status_hdr_is_valid(u8 *buf)
-+{
-+	return buf[0] == INPUT_HEADER_0 && buf[1] == INPUT_HEADER_1;
-+}
-+
-+static int fpp_fpga_mgr_read_status(struct fpp_fpga_mgr_priv *priv, u8 *status)
-+{
-+	struct device *dev = &priv->pdev->dev;
-+	u8 *inbuf = priv->bulk_buf;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+
-+	if (!status)
-+		return -EINVAL;
-+
-+	/* Wait until CPLD sends valid header and status register */
-+	do {
-+		ret = priv->iops->read_data(priv->intf, inbuf, 64);
-+		if (ret < 0) {
-+			dev_err(dev, "Can't read status data: %d\n", ret);
-+			return ret;
-+		}
-+
-+		/* Check input buffer header */
-+		if (ret >= 4 && status_hdr_is_valid(inbuf)) {
-+			*status = inbuf[2];
-+			return 0;
-+		}
-+
-+		/* Wait and read back status again */
-+		msleep(100); /* CPLD sends status every 100ms */
-+	} while (--retries > 0);
-+
-+	dev_warn(dev, "Timeout when reading status\n");
-+	return -ETIMEDOUT;
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write_init(struct fpga_manager *mgr,
-+					      struct fpga_image_info *info,
-+					      const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+	u8 status;
-+
-+	gpiod_direction_output_raw(priv->conf_done, 0);
-+
-+	/* Set/reset nConfig via commands to CPLD */
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
-+	if (ret)
-+		return ret;
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 0);
-+	if (ret)
-+		return ret;
-+	ret = fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG, 1);
-+	if (ret)
-+		return ret;
-+
-+	/* In FT245 FIFO mode we need sync FIFO mode to talk to FPGA */
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait until FPGA is ready for loading (conf_done zero) or timeout */
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret) {
-+			/* Check conf_done status */
-+			if ((status & IN_CONF_DONE) == 0)
-+				break;
-+		}
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "CONF_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Configure for max. baud rate (3MHz * 4 in bitbang mode) */
-+	return priv->iops->set_baudrate(priv->intf, 3000000);
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write(struct fpga_manager *mgr,
-+					 const char *buf, size_t count)
-+{
-+	return fpp_fpga_mgr_bitbang_write(mgr, buf, count);
-+}
-+
-+static int fpp_fpga_mgr_ft245_fifo_write_complete(struct fpga_manager *mgr,
-+						  struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+	struct device *dev = &priv->pdev->dev;
-+	int retries = MAX_RETRIES;
-+	int ret;
-+	u8 mask, status;
-+
-+	mask = IN_CONF_DONE | IN_INIT_DONE;
-+
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret) {
-+			/* Check conf_done/init_done status */
-+			if ((status & mask) == mask)
-+				break;
-+		}
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		dev_warn(dev, "INIT_DONE wait timeout\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* Release Reset_n, keep nCONFIG high, too! */
-+	return fpp_fpga_mgr_set_data_port(priv, OUT_NCONFIG | OUT_RESET_N, 1);
-+}
-+
-+static enum fpga_mgr_states fpp_fpga_mgr_state(struct fpga_manager *mgr)
-+{
-+	return FPGA_MGR_STATE_UNKNOWN;
-+}
-+
-+static int fpp_fpga_mgr_write_init(struct fpga_manager *mgr,
-+				   struct fpga_image_info *info,
-+				   const char *buf, size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (info && info->flags & FPGA_MGR_PARTIAL_RECONFIG) {
-+		dev_err(&mgr->dev, "Partial reconfiguration not supported.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (priv->ops->write_init)
-+		return priv->ops->write_init(mgr, info, buf, count);
-+
-+	return -ENODEV;
-+}
-+
-+static int fpp_fpga_mgr_write(struct fpga_manager *mgr, const char *buf,
-+			      size_t count)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (priv->ops->write)
-+		return priv->ops->write(mgr, buf, count);
-+
-+	return -ENODEV;
-+}
-+
-+static int fpp_fpga_mgr_write_complete(struct fpga_manager *mgr,
-+				       struct fpga_image_info *info)
-+{
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (priv->ops->write_complete)
-+		return priv->ops->write_complete(mgr, info);
-+
-+	return -ENODEV;
-+}
-+
-+static struct fpp_mgr_ops fpp_mgr_bitbang_ops = {
-+	.write_init	= fpp_fpga_mgr_bitbang_write_init,
-+	.write		= fpp_fpga_mgr_bitbang_write,
-+	.write_complete	= fpp_fpga_mgr_bitbang_write_complete,
-+};
-+
-+static struct fpp_mgr_ops fpp_mgr_ft245_fifo_ops = {
-+	.write_init	= fpp_fpga_mgr_ft245_fifo_write_init,
-+	.write		= fpp_fpga_mgr_ft245_fifo_write,
-+	.write_complete	= fpp_fpga_mgr_ft245_fifo_write_complete,
-+};
-+
-+static const struct fpga_manager_ops fpp_fpga_mgr_ops = {
-+	.state		= fpp_fpga_mgr_state,
-+	.write_init	= fpp_fpga_mgr_write_init,
-+	.write		= fpp_fpga_mgr_write,
-+	.write_complete	= fpp_fpga_mgr_write_complete,
-+};
-+
-+static ssize_t cfg_mode_show(struct device *dev, struct device_attribute *attr,
-+			     char *buf)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", priv->cfg_mode);
-+}
-+
-+static ssize_t cfg_mode_store(struct device *dev, struct device_attribute *attr,
-+			      const char *buf, size_t count)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	if (!count || count > sizeof(priv->cfg_mode))
-+		return -EINVAL;
-+
-+	if (!strncmp(buf, "fifo", 4)) {
-+		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode));
-+		priv->cfg_mode[4] = 0;
-+		priv->ops = &fpp_mgr_ft245_fifo_ops;
-+		gpiod_direction_output_raw(priv->conf_done, 0);
-+	} else if (!strncmp(buf, "bitbang", 7)) {
-+		strncpy(priv->cfg_mode, buf, sizeof(priv->cfg_mode));
-+		priv->cfg_mode[7] = 0;
-+		priv->ops = &fpp_mgr_bitbang_ops;
-+		gpiod_direction_input(priv->conf_done);
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(cfg_mode);
-+
-+static int fpp_fpga_mgr_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct fpp_fpga_mgr_priv *priv;
-+	struct fpga_manager *mgr;
-+	struct fifo_fpp_mgr_platform_data *pd;
-+	int ret, retries = MAX_RETRIES;
-+	char id_string[8];
-+	u8 status = 0;
-+
-+	pd = dev->platform_data;
-+	if (!pd) {
-+		dev_err(dev, "Missing platform data.\n");
-+		return -EINVAL;
-+	}
-+
-+	if (!pd->ops ||
-+	    !pd->ops->bulk_xfer || !pd->ops->ctrl_xfer ||
-+	    !pd->ops->read_data || !pd->ops->write_data ||
-+	    !pd->ops->set_bitmode || !pd->ops->set_baudrate ||
-+	    !pd->ops->disable_bitbang)
-+		return -EINVAL;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->intf = to_usb_interface(dev->parent);
-+	priv->iops = pd->ops;
-+
-+	ret = sscanf(dev_name(dev->parent), "%s", priv->usb_dev_id);
-+	if (ret != 1) {
-+		dev_err(dev, "Can't get parent device name: %d\n", ret);
-+		return -ENODEV;
-+	}
-+
-+	priv->pdev = pdev;
-+	priv->ops = &fpp_mgr_ft245_fifo_ops;
-+	strncpy(priv->cfg_mode, "fifo", sizeof(priv->cfg_mode));
-+
-+	priv->nconfig = devm_gpiod_get(dev, "nconfig", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->nconfig)) {
-+		ret = PTR_ERR(priv->nconfig);
-+		dev_err(dev, "Failed to get nconfig gpio: %d\n", ret);
-+		return ret;
-+	}
-+
-+	priv->conf_done = devm_gpiod_get(dev, "conf_done", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->conf_done)) {
-+		ret = PTR_ERR(priv->conf_done);
-+		dev_err(dev, "Failed to get conf_done gpio: %d\n", ret);
-+		goto err_cfg1;
-+	}
-+
-+	priv->bulk_buf = devm_kmalloc(dev, BULK_OUT_BUF_SZ,
-+				      GFP_KERNEL | GFP_DMA32);
-+	if (!priv->bulk_buf) {
-+		ret = -ENOMEM;
-+		goto err_cfg2;
-+	}
-+
-+	ret = priv->iops->set_bitmode(priv->intf, 0xff, BITMODE_SYNCFF);
-+	if (ret)
-+		goto err_cfg2;
-+
-+	/* Read status register from CPLD */
-+	do {
-+		ret = fpp_fpga_mgr_read_status(priv, &status);
-+		if (!ret)
-+			break;
-+	} while (--retries > 0);
-+
-+	if (!retries) {
-+		ret = -ETIMEDOUT;
-+		goto err_cfg2;
-+	}
-+
-+	priv->rev = (status & IN_BOARD_REV) ? BOARD_REVB : BOARD_REVA;
-+
-+	if (priv->rev == BOARD_REVB) {
-+		priv->addr_sel = (status & IN_ADDR_SELECT) ?
-+				 ADDR_SELECT_NC : ADDR_SELECT_GND;
-+		if (priv->addr_sel == ADDR_SELECT_NC)
-+			strncpy(id_string, "right", sizeof(id_string));
-+		else
-+			strncpy(id_string, "left", sizeof(id_string));
-+	} else {
-+		priv->addr_sel = ADDR_SELECT_INVALID;
-+		strncpy(id_string, "single", sizeof(id_string));
-+	}
-+
-+	dev_info(dev, "Board Rev %d, Addr Sel %d\n", priv->rev, priv->addr_sel);
-+
-+	/* Use unique board ID and USB bus/port in FPGA manager name */
-+	snprintf(priv->fpga_mgr_name, sizeof(priv->fpga_mgr_name),
-+		 "ftdi-fpp-fpga-mgr %s %s", id_string, priv->usb_dev_id);
-+
-+	mgr = devm_fpga_mgr_create(dev, priv->fpga_mgr_name,
-+				   &fpp_fpga_mgr_ops, priv);
-+	if (!mgr)
-+		goto err_cfg2;
-+
-+	platform_set_drvdata(pdev, mgr);
-+
-+	ret = fpga_mgr_register(mgr);
-+	if (ret) {
-+		dev_err(dev, "unable to register FPGA manager\n");
-+		goto err_cfg2;
-+	}
-+
-+	ret = device_create_file(dev, &dev_attr_cfg_mode);
-+	if (ret)
-+		dev_warn(dev, "Can't create cfg_mode interface %d\n", ret);
-+
-+	return 0;
-+
-+err_cfg2:
-+	devm_gpiod_put(dev, priv->conf_done);
-+err_cfg1:
-+	devm_gpiod_put(dev, priv->nconfig);
-+	return ret;
-+}
-+
-+static int fpp_fpga_mgr_remove(struct platform_device *pdev)
-+{
-+	struct fpga_manager *mgr = platform_get_drvdata(pdev);
-+	struct fpp_fpga_mgr_priv *priv = mgr->priv;
-+
-+	device_remove_file(&pdev->dev, &dev_attr_cfg_mode);
-+	fpga_mgr_unregister(mgr);
-+	devm_gpiod_put(&pdev->dev, priv->conf_done);
-+	devm_gpiod_put(&pdev->dev, priv->nconfig);
-+	return 0;
-+}
-+
-+static struct platform_driver fpp_fpga_mgr_driver = {
-+	.driver.name	= "ftdi-fifo-fpp-mgr",
-+	.probe		= fpp_fpga_mgr_probe,
-+	.remove		= fpp_fpga_mgr_remove,
-+};
-+
-+module_platform_driver(fpp_fpga_mgr_driver);
-+
-+MODULE_ALIAS("platform:ftdi-fifo-fpp-mgr");
-+MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
-+MODULE_DESCRIPTION("FT232H Bitbang/FT245-FIFO FPP FPGA Manager Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+   [ 1070.047048] ITS queue timeout (65440 65504 1120)
+   [ 1070.051658] ITS cmd its_build_inv_cmd failed
 
+I don't know if that's an issue with the patch or a platform issue it
+happens to tickle.
+
+  -dann
+
+> Signed-off-by: Zhao Chen <zhaochen6@huawei.com>
+> Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
+> ---
+> v2: made all the local variables from longest to shortest line.
+> 
+>  .../net/ethernet/huawei/hinic/hinic_hw_dev.h  |   2 +
+>  .../net/ethernet/huawei/hinic/hinic_hw_qp.c   | 121 +++++--
+>  .../net/ethernet/huawei/hinic/hinic_hw_qp.h   |  27 ++
+>  .../net/ethernet/huawei/hinic/hinic_hw_wq.c   |  14 +
+>  .../net/ethernet/huawei/hinic/hinic_hw_wq.h   |   2 +
+>  .../net/ethernet/huawei/hinic/hinic_hw_wqe.h  |  97 ++++--
+>  .../net/ethernet/huawei/hinic/hinic_main.c    |  23 +-
+>  .../net/ethernet/huawei/hinic/hinic_port.c    |  32 ++
+>  .../net/ethernet/huawei/hinic/hinic_port.h    |  18 ++
+>  drivers/net/ethernet/huawei/hinic/hinic_tx.c  | 295 +++++++++++++++++-
+>  10 files changed, 571 insertions(+), 60 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
+> index 0f5563f3b779..097b5502603f 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_dev.h
+> @@ -58,6 +58,8 @@ enum hinic_port_cmd {
+>  
+>  	HINIC_PORT_CMD_GET_GLOBAL_QPN   = 102,
+>  
+> +	HINIC_PORT_CMD_SET_TSO          = 112,
+> +
+>  	HINIC_PORT_CMD_GET_CAP          = 170,
+>  };
+>  
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> index cb239627770f..967c993d5303 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> @@ -70,8 +70,6 @@
+>  #define SQ_MASKED_IDX(sq, idx)  ((idx) & (sq)->wq->mask)
+>  #define RQ_MASKED_IDX(rq, idx)  ((idx) & (rq)->wq->mask)
+>  
+> -#define TX_MAX_MSS_DEFAULT      0x3E00
+> -
+>  enum sq_wqe_type {
+>  	SQ_NORMAL_WQE = 0,
+>  };
+> @@ -494,33 +492,16 @@ static void sq_prepare_ctrl(struct hinic_sq_ctrl *ctrl, u16 prod_idx,
+>  			  HINIC_SQ_CTRL_SET(SQ_NORMAL_WQE, DATA_FORMAT)     |
+>  			  HINIC_SQ_CTRL_SET(ctrl_size, LEN);
+>  
+> -	ctrl->queue_info = HINIC_SQ_CTRL_SET(TX_MAX_MSS_DEFAULT,
+> -					     QUEUE_INFO_MSS);
+> +	ctrl->queue_info = HINIC_SQ_CTRL_SET(HINIC_MSS_DEFAULT,
+> +					     QUEUE_INFO_MSS) |
+> +			   HINIC_SQ_CTRL_SET(1, QUEUE_INFO_UC);
+>  }
+>  
+>  static void sq_prepare_task(struct hinic_sq_task *task)
+>  {
+> -	task->pkt_info0 =
+> -		HINIC_SQ_TASK_INFO0_SET(0, L2HDR_LEN) |
+> -		HINIC_SQ_TASK_INFO0_SET(HINIC_L4_OFF_DISABLE, L4_OFFLOAD) |
+> -		HINIC_SQ_TASK_INFO0_SET(HINIC_OUTER_L3TYPE_UNKNOWN,
+> -					INNER_L3TYPE) |
+> -		HINIC_SQ_TASK_INFO0_SET(HINIC_VLAN_OFF_DISABLE,
+> -					VLAN_OFFLOAD) |
+> -		HINIC_SQ_TASK_INFO0_SET(HINIC_PKT_NOT_PARSED, PARSE_FLAG);
+> -
+> -	task->pkt_info1 =
+> -		HINIC_SQ_TASK_INFO1_SET(HINIC_MEDIA_UNKNOWN, MEDIA_TYPE) |
+> -		HINIC_SQ_TASK_INFO1_SET(0, INNER_L4_LEN) |
+> -		HINIC_SQ_TASK_INFO1_SET(0, INNER_L3_LEN);
+> -
+> -	task->pkt_info2 =
+> -		HINIC_SQ_TASK_INFO2_SET(0, TUNNEL_L4_LEN) |
+> -		HINIC_SQ_TASK_INFO2_SET(0, OUTER_L3_LEN)  |
+> -		HINIC_SQ_TASK_INFO2_SET(HINIC_TUNNEL_L4TYPE_UNKNOWN,
+> -					TUNNEL_L4TYPE)    |
+> -		HINIC_SQ_TASK_INFO2_SET(HINIC_OUTER_L3TYPE_UNKNOWN,
+> -					OUTER_L3TYPE);
+> +	task->pkt_info0 = 0;
+> +	task->pkt_info1 = 0;
+> +	task->pkt_info2 = 0;
+>  
+>  	task->ufo_v6_identify = 0;
+>  
+> @@ -529,6 +510,86 @@ static void sq_prepare_task(struct hinic_sq_task *task)
+>  	task->zero_pad = 0;
+>  }
+>  
+> +void hinic_task_set_l2hdr(struct hinic_sq_task *task, u32 len)
+> +{
+> +	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(len, L2HDR_LEN);
+> +}
+> +
+> +void hinic_task_set_outter_l3(struct hinic_sq_task *task,
+> +			      enum hinic_l3_offload_type l3_type,
+> +			      u32 network_len)
+> +{
+> +	task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l3_type, OUTER_L3TYPE) |
+> +			   HINIC_SQ_TASK_INFO2_SET(network_len, OUTER_L3LEN);
+> +}
+> +
+> +void hinic_task_set_inner_l3(struct hinic_sq_task *task,
+> +			     enum hinic_l3_offload_type l3_type,
+> +			     u32 network_len)
+> +{
+> +	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l3_type, INNER_L3TYPE);
+> +	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(network_len, INNER_L3LEN);
+> +}
+> +
+> +void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
+> +			      enum hinic_l4_offload_type l4_type,
+> +			      u32 tunnel_len)
+> +{
+> +	task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l4_type, TUNNEL_L4TYPE) |
+> +			   HINIC_SQ_TASK_INFO2_SET(tunnel_len, TUNNEL_L4LEN);
+> +}
+> +
+> +void hinic_set_cs_inner_l4(struct hinic_sq_task *task, u32 *queue_info,
+> +			   enum hinic_l4_offload_type l4_offload,
+> +			   u32 l4_len, u32 offset)
+> +{
+> +	u32 tcp_udp_cs = 0, sctp = 0;
+> +	u32 mss = HINIC_MSS_DEFAULT;
+> +
+> +	if (l4_offload == TCP_OFFLOAD_ENABLE ||
+> +	    l4_offload == UDP_OFFLOAD_ENABLE)
+> +		tcp_udp_cs = 1;
+> +	else if (l4_offload == SCTP_OFFLOAD_ENABLE)
+> +		sctp = 1;
+> +
+> +	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l4_offload, L4_OFFLOAD);
+> +	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(l4_len, INNER_L4LEN);
+> +
+> +	*queue_info |= HINIC_SQ_CTRL_SET(offset, QUEUE_INFO_PLDOFF) |
+> +		       HINIC_SQ_CTRL_SET(tcp_udp_cs, QUEUE_INFO_TCPUDP_CS) |
+> +		       HINIC_SQ_CTRL_SET(sctp, QUEUE_INFO_SCTP);
+> +
+> +	*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
+> +	*queue_info |= HINIC_SQ_CTRL_SET(mss, QUEUE_INFO_MSS);
+> +}
+> +
+> +void hinic_set_tso_inner_l4(struct hinic_sq_task *task, u32 *queue_info,
+> +			    enum hinic_l4_offload_type l4_offload,
+> +			    u32 l4_len, u32 offset, u32 ip_ident, u32 mss)
+> +{
+> +	u32 tso = 0, ufo = 0;
+> +
+> +	if (l4_offload == TCP_OFFLOAD_ENABLE)
+> +		tso = 1;
+> +	else if (l4_offload == UDP_OFFLOAD_ENABLE)
+> +		ufo = 1;
+> +
+> +	task->ufo_v6_identify = ip_ident;
+> +
+> +	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(l4_offload, L4_OFFLOAD);
+> +	task->pkt_info0 |= HINIC_SQ_TASK_INFO0_SET(tso || ufo, TSO_FLAG);
+> +	task->pkt_info1 |= HINIC_SQ_TASK_INFO1_SET(l4_len, INNER_L4LEN);
+> +
+> +	*queue_info |= HINIC_SQ_CTRL_SET(offset, QUEUE_INFO_PLDOFF) |
+> +		       HINIC_SQ_CTRL_SET(tso, QUEUE_INFO_TSO) |
+> +		       HINIC_SQ_CTRL_SET(ufo, QUEUE_INFO_UFO) |
+> +		       HINIC_SQ_CTRL_SET(!!l4_offload, QUEUE_INFO_TCPUDP_CS);
+> +
+> +	/* set MSS value */
+> +	*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
+> +	*queue_info |= HINIC_SQ_CTRL_SET(mss, QUEUE_INFO_MSS);
+> +}
+> +
+>  /**
+>   * hinic_sq_prepare_wqe - prepare wqe before insert to the queue
+>   * @sq: send queue
+> @@ -612,6 +673,16 @@ struct hinic_sq_wqe *hinic_sq_get_wqe(struct hinic_sq *sq,
+>  	return &hw_wqe->sq_wqe;
+>  }
+>  
+> +/**
+> + * hinic_sq_return_wqe - return the wqe to the sq
+> + * @sq: send queue
+> + * @wqe_size: the size of the wqe
+> + **/
+> +void hinic_sq_return_wqe(struct hinic_sq *sq, unsigned int wqe_size)
+> +{
+> +	hinic_return_wqe(sq->wq, wqe_size);
+> +}
+> +
+>  /**
+>   * hinic_sq_write_wqe - write the wqe to the sq
+>   * @sq: send queue
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> index 6c84f83ec283..a0dc63a4bfc7 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> @@ -149,6 +149,31 @@ int hinic_get_sq_free_wqebbs(struct hinic_sq *sq);
+>  
+>  int hinic_get_rq_free_wqebbs(struct hinic_rq *rq);
+>  
+> +void hinic_task_set_l2hdr(struct hinic_sq_task *task, u32 len);
+> +
+> +void hinic_task_set_outter_l3(struct hinic_sq_task *task,
+> +			      enum hinic_l3_offload_type l3_type,
+> +			      u32 network_len);
+> +
+> +void hinic_task_set_inner_l3(struct hinic_sq_task *task,
+> +			     enum hinic_l3_offload_type l3_type,
+> +			     u32 network_len);
+> +
+> +void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
+> +			      enum hinic_l4_offload_type l4_type,
+> +			      u32 tunnel_len);
+> +
+> +void hinic_set_cs_inner_l4(struct hinic_sq_task *task,
+> +			   u32 *queue_info,
+> +			   enum hinic_l4_offload_type l4_offload,
+> +			   u32 l4_len, u32 offset);
+> +
+> +void hinic_set_tso_inner_l4(struct hinic_sq_task *task,
+> +			    u32 *queue_info,
+> +			    enum hinic_l4_offload_type l4_offload,
+> +			    u32 l4_len,
+> +			    u32 offset, u32 ip_ident, u32 mss);
+> +
+>  void hinic_sq_prepare_wqe(struct hinic_sq *sq, u16 prod_idx,
+>  			  struct hinic_sq_wqe *wqe, struct hinic_sge *sges,
+>  			  int nr_sges);
+> @@ -159,6 +184,8 @@ void hinic_sq_write_db(struct hinic_sq *sq, u16 prod_idx, unsigned int wqe_size,
+>  struct hinic_sq_wqe *hinic_sq_get_wqe(struct hinic_sq *sq,
+>  				      unsigned int wqe_size, u16 *prod_idx);
+>  
+> +void hinic_sq_return_wqe(struct hinic_sq *sq, unsigned int wqe_size);
+> +
+>  void hinic_sq_write_wqe(struct hinic_sq *sq, u16 prod_idx,
+>  			struct hinic_sq_wqe *wqe, struct sk_buff *skb,
+>  			unsigned int wqe_size);
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
+> index 3e3181c089bd..f92f1bf3901a 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.c
+> @@ -774,6 +774,20 @@ struct hinic_hw_wqe *hinic_get_wqe(struct hinic_wq *wq, unsigned int wqe_size,
+>  	return WQ_PAGE_ADDR(wq, *prod_idx) + WQE_PAGE_OFF(wq, *prod_idx);
+>  }
+>  
+> +/**
+> + * hinic_return_wqe - return the wqe when transmit failed
+> + * @wq: wq to return wqe
+> + * @wqe_size: wqe size
+> + **/
+> +void hinic_return_wqe(struct hinic_wq *wq, unsigned int wqe_size)
+> +{
+> +	int num_wqebbs = ALIGN(wqe_size, wq->wqebb_size) / wq->wqebb_size;
+> +
+> +	atomic_sub(num_wqebbs, &wq->prod_idx);
+> +
+> +	atomic_add(num_wqebbs, &wq->delta);
+> +}
+> +
+>  /**
+>   * hinic_put_wqe - return the wqe place to use for a new wqe
+>   * @wq: wq to return wqe
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
+> index 9c030a0f035e..9b66545ba563 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wq.h
+> @@ -104,6 +104,8 @@ void hinic_wq_free(struct hinic_wqs *wqs, struct hinic_wq *wq);
+>  struct hinic_hw_wqe *hinic_get_wqe(struct hinic_wq *wq, unsigned int wqe_size,
+>  				   u16 *prod_idx);
+>  
+> +void hinic_return_wqe(struct hinic_wq *wq, unsigned int wqe_size);
+> +
+>  void hinic_put_wqe(struct hinic_wq *wq, unsigned int wqe_size);
+>  
+>  struct hinic_hw_wqe *hinic_read_wqe(struct hinic_wq *wq, unsigned int wqe_size,
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
+> index bc73485483c5..9754d6ed5f4a 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_wqe.h
+> @@ -62,19 +62,33 @@
+>  			(((val) >> HINIC_CMDQ_WQE_HEADER_##member##_SHIFT) \
+>  			 & HINIC_CMDQ_WQE_HEADER_##member##_MASK)
+>  
+> -#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_SHIFT    0
+> -#define HINIC_SQ_CTRL_TASKSECT_LEN_SHIFT        16
+> -#define HINIC_SQ_CTRL_DATA_FORMAT_SHIFT         22
+> -#define HINIC_SQ_CTRL_LEN_SHIFT                 29
+> -
+> -#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_MASK     0xFF
+> -#define HINIC_SQ_CTRL_TASKSECT_LEN_MASK         0x1F
+> -#define HINIC_SQ_CTRL_DATA_FORMAT_MASK          0x1
+> -#define HINIC_SQ_CTRL_LEN_MASK                  0x3
+> -
+> -#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_SHIFT      13
+> -
+> -#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_MASK       0x3FFF
+> +#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_SHIFT           0
+> +#define HINIC_SQ_CTRL_TASKSECT_LEN_SHIFT               16
+> +#define HINIC_SQ_CTRL_DATA_FORMAT_SHIFT                22
+> +#define HINIC_SQ_CTRL_LEN_SHIFT                        29
+> +
+> +#define HINIC_SQ_CTRL_BUFDESC_SECT_LEN_MASK            0xFF
+> +#define HINIC_SQ_CTRL_TASKSECT_LEN_MASK                0x1F
+> +#define HINIC_SQ_CTRL_DATA_FORMAT_MASK                 0x1
+> +#define HINIC_SQ_CTRL_LEN_MASK                         0x3
+> +
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_PLDOFF_SHIFT          2
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_UFO_SHIFT             10
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_TSO_SHIFT             11
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_TCPUDP_CS_SHIFT       12
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_SHIFT             13
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_SCTP_SHIFT            27
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_UC_SHIFT              28
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_PRI_SHIFT             29
+> +
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_PLDOFF_MASK           0xFF
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_UFO_MASK              0x1
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_TSO_MASK              0x1
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_TCPUDP_CS_MASK	       0x1
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_MSS_MASK              0x3FFF
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_SCTP_MASK             0x1
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_UC_MASK               0x1
+> +#define HINIC_SQ_CTRL_QUEUE_INFO_PRI_MASK              0x7
+>  
+>  #define HINIC_SQ_CTRL_SET(val, member)          \
+>  		(((u32)(val) & HINIC_SQ_CTRL_##member##_MASK) \
+> @@ -84,6 +98,10 @@
+>  		(((val) >> HINIC_SQ_CTRL_##member##_SHIFT) \
+>  		 & HINIC_SQ_CTRL_##member##_MASK)
+>  
+> +#define HINIC_SQ_CTRL_CLEAR(val, member)	\
+> +		((u32)(val) & (~(HINIC_SQ_CTRL_##member##_MASK \
+> +		 << HINIC_SQ_CTRL_##member##_SHIFT)))
+> +
+>  #define HINIC_SQ_TASK_INFO0_L2HDR_LEN_SHIFT     0
+>  #define HINIC_SQ_TASK_INFO0_L4_OFFLOAD_SHIFT    8
+>  #define HINIC_SQ_TASK_INFO0_INNER_L3TYPE_SHIFT  10
+> @@ -108,28 +126,28 @@
+>  
+>  /* 8 bits reserved */
+>  #define HINIC_SQ_TASK_INFO1_MEDIA_TYPE_SHIFT    8
+> -#define HINIC_SQ_TASK_INFO1_INNER_L4_LEN_SHIFT  16
+> -#define HINIC_SQ_TASK_INFO1_INNER_L3_LEN_SHIFT  24
+> +#define HINIC_SQ_TASK_INFO1_INNER_L4LEN_SHIFT   16
+> +#define HINIC_SQ_TASK_INFO1_INNER_L3LEN_SHIFT   24
+>  
+>  /* 8 bits reserved */
+>  #define HINIC_SQ_TASK_INFO1_MEDIA_TYPE_MASK     0xFF
+> -#define HINIC_SQ_TASK_INFO1_INNER_L4_LEN_MASK   0xFF
+> -#define HINIC_SQ_TASK_INFO1_INNER_L3_LEN_MASK   0xFF
+> +#define HINIC_SQ_TASK_INFO1_INNER_L4LEN_MASK    0xFF
+> +#define HINIC_SQ_TASK_INFO1_INNER_L3LEN_MASK    0xFF
+>  
+>  #define HINIC_SQ_TASK_INFO1_SET(val, member)    \
+>  		(((u32)(val) & HINIC_SQ_TASK_INFO1_##member##_MASK) <<  \
+>  		 HINIC_SQ_TASK_INFO1_##member##_SHIFT)
+>  
+> -#define HINIC_SQ_TASK_INFO2_TUNNEL_L4_LEN_SHIFT 0
+> -#define HINIC_SQ_TASK_INFO2_OUTER_L3_LEN_SHIFT  12
+> -#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_SHIFT 19
+> +#define HINIC_SQ_TASK_INFO2_TUNNEL_L4LEN_SHIFT  0
+> +#define HINIC_SQ_TASK_INFO2_OUTER_L3LEN_SHIFT   8
+> +#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_SHIFT 16
+>  /* 1 bit reserved */
+> -#define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_SHIFT  22
+> +#define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_SHIFT  24
+>  /* 8 bits reserved */
+>  
+> -#define HINIC_SQ_TASK_INFO2_TUNNEL_L4_LEN_MASK  0xFFF
+> -#define HINIC_SQ_TASK_INFO2_OUTER_L3_LEN_MASK   0x7F
+> -#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_MASK  0x3
+> +#define HINIC_SQ_TASK_INFO2_TUNNEL_L4LEN_MASK   0xFF
+> +#define HINIC_SQ_TASK_INFO2_OUTER_L3LEN_MASK    0xFF
+> +#define HINIC_SQ_TASK_INFO2_TUNNEL_L4TYPE_MASK  0x7
+>  /* 1 bit reserved */
+>  #define HINIC_SQ_TASK_INFO2_OUTER_L3TYPE_MASK   0x3
+>  /* 8 bits reserved */
+> @@ -187,12 +205,15 @@
+>  		 sizeof(struct hinic_sq_task) + \
+>  		 (nr_sges) * sizeof(struct hinic_sq_bufdesc))
+>  
+> -#define HINIC_SCMD_DATA_LEN             16
+> +#define HINIC_SCMD_DATA_LEN                     16
+> +
+> +#define HINIC_MAX_SQ_BUFDESCS                   17
+>  
+> -#define HINIC_MAX_SQ_BUFDESCS           17
+> +#define HINIC_SQ_WQE_MAX_SIZE                   320
+> +#define HINIC_RQ_WQE_SIZE                       32
+>  
+> -#define HINIC_SQ_WQE_MAX_SIZE           320
+> -#define HINIC_RQ_WQE_SIZE               32
+> +#define HINIC_MSS_DEFAULT		        0x3E00
+> +#define HINIC_MSS_MIN		                0x50
+>  
+>  enum hinic_l4offload_type {
+>  	HINIC_L4_OFF_DISABLE            = 0,
+> @@ -211,6 +232,26 @@ enum hinic_pkt_parsed {
+>  	HINIC_PKT_PARSED     = 1,
+>  };
+>  
+> +enum hinic_l3_offload_type {
+> +	L3TYPE_UNKNOWN = 0,
+> +	IPV6_PKT = 1,
+> +	IPV4_PKT_NO_CHKSUM_OFFLOAD = 2,
+> +	IPV4_PKT_WITH_CHKSUM_OFFLOAD = 3,
+> +};
+> +
+> +enum hinic_l4_offload_type {
+> +	OFFLOAD_DISABLE     = 0,
+> +	TCP_OFFLOAD_ENABLE  = 1,
+> +	SCTP_OFFLOAD_ENABLE = 2,
+> +	UDP_OFFLOAD_ENABLE  = 3,
+> +};
+> +
+> +enum hinic_l4_tunnel_type {
+> +	NOT_TUNNEL,
+> +	TUNNEL_UDP_NO_CSUM,
+> +	TUNNEL_UDP_CSUM,
+> +};
+> +
+>  enum hinic_outer_l3type {
+>  	HINIC_OUTER_L3TYPE_UNKNOWN              = 0,
+>  	HINIC_OUTER_L3TYPE_IPV6                 = 1,
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_main.c b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+> index 4a8f82938ed5..fdf2bdb6b0d0 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_main.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_main.c
+> @@ -805,7 +805,8 @@ static const struct net_device_ops hinic_netdev_ops = {
+>  
+>  static void netdev_features_init(struct net_device *netdev)
+>  {
+> -	netdev->hw_features = NETIF_F_SG | NETIF_F_HIGHDMA;
+> +	netdev->hw_features = NETIF_F_SG | NETIF_F_HIGHDMA | NETIF_F_IP_CSUM |
+> +			      NETIF_F_IPV6_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
+>  
+>  	netdev->vlan_features = netdev->hw_features;
+>  
+> @@ -863,6 +864,20 @@ static void link_status_event_handler(void *handle, void *buf_in, u16 in_size,
+>  	*out_size = sizeof(*ret_link_status);
+>  }
+>  
+> +static int set_features(struct hinic_dev *nic_dev,
+> +			netdev_features_t pre_features,
+> +			netdev_features_t features, bool force_change)
+> +{
+> +	netdev_features_t changed = force_change ? ~0 : pre_features ^ features;
+> +	int err = 0;
+> +
+> +	if (changed & NETIF_F_TSO)
+> +		err = hinic_port_set_tso(nic_dev, (features & NETIF_F_TSO) ?
+> +					 HINIC_TSO_ENABLE : HINIC_TSO_DISABLE);
+> +
+> +	return err;
+> +}
+> +
+>  /**
+>   * nic_dev_init - Initialize the NIC device
+>   * @pdev: the NIC pci device
+> @@ -963,7 +978,12 @@ static int nic_dev_init(struct pci_dev *pdev)
+>  	hinic_hwdev_cb_register(nic_dev->hwdev, HINIC_MGMT_MSG_CMD_LINK_STATUS,
+>  				nic_dev, link_status_event_handler);
+>  
+> +	err = set_features(nic_dev, 0, nic_dev->netdev->features, true);
+> +	if (err)
+> +		goto err_set_features;
+> +
+>  	SET_NETDEV_DEV(netdev, &pdev->dev);
+> +
+>  	err = register_netdev(netdev);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to register netdev\n");
+> @@ -973,6 +993,7 @@ static int nic_dev_init(struct pci_dev *pdev)
+>  	return 0;
+>  
+>  err_reg_netdev:
+> +err_set_features:
+>  	hinic_hwdev_cb_unregister(nic_dev->hwdev,
+>  				  HINIC_MGMT_MSG_CMD_LINK_STATUS);
+>  	cancel_work_sync(&rx_mode_work->work);
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.c b/drivers/net/ethernet/huawei/hinic/hinic_port.c
+> index 4d4e3f05fb5f..7575a7d3bd9f 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_port.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_port.c
+> @@ -377,3 +377,35 @@ int hinic_port_get_cap(struct hinic_dev *nic_dev,
+>  
+>  	return 0;
+>  }
+> +
+> +/**
+> + * hinic_port_set_tso - set port tso configuration
+> + * @nic_dev: nic device
+> + * @state: the tso state to set
+> + *
+> + * Return 0 - Success, negative - Failure
+> + **/
+> +int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state)
+> +{
+> +	struct hinic_hwdev *hwdev = nic_dev->hwdev;
+> +	struct hinic_hwif *hwif = hwdev->hwif;
+> +	struct hinic_tso_config tso_cfg = {0};
+> +	struct pci_dev *pdev = hwif->pdev;
+> +	u16 out_size;
+> +	int err;
+> +
+> +	tso_cfg.func_id = HINIC_HWIF_FUNC_IDX(hwif);
+> +	tso_cfg.tso_en = state;
+> +
+> +	err = hinic_port_msg_cmd(hwdev, HINIC_PORT_CMD_SET_TSO,
+> +				 &tso_cfg, sizeof(tso_cfg),
+> +				 &tso_cfg, &out_size);
+> +	if (err || out_size != sizeof(tso_cfg) || tso_cfg.status) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to set port tso, ret = %d\n",
+> +			tso_cfg.status);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_port.h b/drivers/net/ethernet/huawei/hinic/hinic_port.h
+> index 9404365195dd..f6e3220fe28f 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_port.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_port.h
+> @@ -72,6 +72,11 @@ enum hinic_speed {
+>  	HINIC_SPEED_UNKNOWN = 0xFF,
+>  };
+>  
+> +enum hinic_tso_state {
+> +	HINIC_TSO_DISABLE = 0,
+> +	HINIC_TSO_ENABLE  = 1,
+> +};
+> +
+>  struct hinic_port_mac_cmd {
+>  	u8              status;
+>  	u8              version;
+> @@ -167,6 +172,17 @@ struct hinic_port_cap {
+>  	u8      rsvd2[3];
+>  };
+>  
+> +struct hinic_tso_config {
+> +	u8	status;
+> +	u8	version;
+> +	u8	rsvd0[6];
+> +
+> +	u16	func_id;
+> +	u16	rsvd1;
+> +	u8	tso_en;
+> +	u8	resv2[3];
+> +};
+> +
+>  int hinic_port_add_mac(struct hinic_dev *nic_dev, const u8 *addr,
+>  		       u16 vlan_id);
+>  
+> @@ -195,4 +211,6 @@ int hinic_port_set_func_state(struct hinic_dev *nic_dev,
+>  int hinic_port_get_cap(struct hinic_dev *nic_dev,
+>  		       struct hinic_port_cap *port_cap);
+>  
+> +int hinic_port_set_tso(struct hinic_dev *nic_dev, enum hinic_tso_state state);
+> +
+>  #endif
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_tx.c b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+> index c5fca0356c9c..11e73e67358d 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_tx.c
+> @@ -26,6 +26,13 @@
+>  #include <linux/skbuff.h>
+>  #include <linux/smp.h>
+>  #include <asm/byteorder.h>
+> +#include <linux/ip.h>
+> +#include <linux/tcp.h>
+> +#include <linux/sctp.h>
+> +#include <linux/ipv6.h>
+> +#include <net/ipv6.h>
+> +#include <net/checksum.h>
+> +#include <net/ip6_checksum.h>
+>  
+>  #include "hinic_common.h"
+>  #include "hinic_hw_if.h"
+> @@ -45,9 +52,31 @@
+>  #define CI_UPDATE_NO_PENDING            0
+>  #define CI_UPDATE_NO_COALESC            0
+>  
+> -#define HW_CONS_IDX(sq)         be16_to_cpu(*(u16 *)((sq)->hw_ci_addr))
+> +#define HW_CONS_IDX(sq)                 be16_to_cpu(*(u16 *)((sq)->hw_ci_addr))
+>  
+> -#define MIN_SKB_LEN             64
+> +#define MIN_SKB_LEN                     17
+> +
+> +#define	MAX_PAYLOAD_OFFSET	        221
+> +#define TRANSPORT_OFFSET(l4_hdr, skb)	((u32)((l4_hdr) - (skb)->data))
+> +
+> +union hinic_l3 {
+> +	struct iphdr *v4;
+> +	struct ipv6hdr *v6;
+> +	unsigned char *hdr;
+> +};
+> +
+> +union hinic_l4 {
+> +	struct tcphdr *tcp;
+> +	struct udphdr *udp;
+> +	unsigned char *hdr;
+> +};
+> +
+> +enum hinic_offload_type {
+> +	TX_OFFLOAD_TSO     = BIT(0),
+> +	TX_OFFLOAD_CSUM    = BIT(1),
+> +	TX_OFFLOAD_VLAN    = BIT(2),
+> +	TX_OFFLOAD_INVALID = BIT(3),
+> +};
+>  
+>  /**
+>   * hinic_txq_clean_stats - Clean the statistics of specific queue
+> @@ -175,18 +204,263 @@ static void tx_unmap_skb(struct hinic_dev *nic_dev, struct sk_buff *skb,
+>  			 DMA_TO_DEVICE);
+>  }
+>  
+> +static void get_inner_l3_l4_type(struct sk_buff *skb, union hinic_l3 *ip,
+> +				 union hinic_l4 *l4,
+> +				 enum hinic_offload_type offload_type,
+> +				 enum hinic_l3_offload_type *l3_type,
+> +				 u8 *l4_proto)
+> +{
+> +	u8 *exthdr;
+> +
+> +	if (ip->v4->version == 4) {
+> +		*l3_type = (offload_type == TX_OFFLOAD_CSUM) ?
+> +			   IPV4_PKT_NO_CHKSUM_OFFLOAD :
+> +			   IPV4_PKT_WITH_CHKSUM_OFFLOAD;
+> +		*l4_proto = ip->v4->protocol;
+> +	} else if (ip->v4->version == 6) {
+> +		*l3_type = IPV6_PKT;
+> +		exthdr = ip->hdr + sizeof(*ip->v6);
+> +		*l4_proto = ip->v6->nexthdr;
+> +		if (exthdr != l4->hdr) {
+> +			int start = exthdr - skb->data;
+> +			__be16 frag_off;
+> +
+> +			ipv6_skip_exthdr(skb, start, l4_proto, &frag_off);
+> +		}
+> +	} else {
+> +		*l3_type = L3TYPE_UNKNOWN;
+> +		*l4_proto = 0;
+> +	}
+> +}
+> +
+> +static void get_inner_l4_info(struct sk_buff *skb, union hinic_l4 *l4,
+> +			      enum hinic_offload_type offload_type, u8 l4_proto,
+> +			      enum hinic_l4_offload_type *l4_offload,
+> +			      u32 *l4_len, u32 *offset)
+> +{
+> +	*l4_offload = OFFLOAD_DISABLE;
+> +	*offset = 0;
+> +	*l4_len = 0;
+> +
+> +	switch (l4_proto) {
+> +	case IPPROTO_TCP:
+> +		*l4_offload = TCP_OFFLOAD_ENABLE;
+> +		/* doff in unit of 4B */
+> +		*l4_len = l4->tcp->doff * 4;
+> +		*offset = *l4_len + TRANSPORT_OFFSET(l4->hdr, skb);
+> +		break;
+> +
+> +	case IPPROTO_UDP:
+> +		*l4_offload = UDP_OFFLOAD_ENABLE;
+> +		*l4_len = sizeof(struct udphdr);
+> +		*offset = TRANSPORT_OFFSET(l4->hdr, skb);
+> +		break;
+> +
+> +	case IPPROTO_SCTP:
+> +		/* only csum offload support sctp */
+> +		if (offload_type != TX_OFFLOAD_CSUM)
+> +			break;
+> +
+> +		*l4_offload = SCTP_OFFLOAD_ENABLE;
+> +		*l4_len = sizeof(struct sctphdr);
+> +		*offset = TRANSPORT_OFFSET(l4->hdr, skb);
+> +		break;
+> +
+> +	default:
+> +		break;
+> +	}
+> +}
+> +
+> +static __sum16 csum_magic(union hinic_l3 *ip, unsigned short proto)
+> +{
+> +	return (ip->v4->version == 4) ?
+> +		csum_tcpudp_magic(ip->v4->saddr, ip->v4->daddr, 0, proto, 0) :
+> +		csum_ipv6_magic(&ip->v6->saddr, &ip->v6->daddr, 0, proto, 0);
+> +}
+> +
+> +static int offload_tso(struct hinic_sq_task *task, u32 *queue_info,
+> +		       struct sk_buff *skb)
+> +{
+> +	u32 offset, l4_len, ip_identify, network_hdr_len;
+> +	enum hinic_l3_offload_type l3_offload;
+> +	enum hinic_l4_offload_type l4_offload;
+> +	union hinic_l3 ip;
+> +	union hinic_l4 l4;
+> +	u8 l4_proto;
+> +
+> +	if (!skb_is_gso(skb))
+> +		return 0;
+> +
+> +	if (skb_cow_head(skb, 0) < 0)
+> +		return -EPROTONOSUPPORT;
+> +
+> +	if (skb->encapsulation) {
+> +		u32 gso_type = skb_shinfo(skb)->gso_type;
+> +		u32 tunnel_type = 0;
+> +		u32 l4_tunnel_len;
+> +
+> +		ip.hdr = skb_network_header(skb);
+> +		l4.hdr = skb_transport_header(skb);
+> +		network_hdr_len = skb_inner_network_header_len(skb);
+> +
+> +		if (ip.v4->version == 4) {
+> +			ip.v4->tot_len = 0;
+> +			l3_offload = IPV4_PKT_WITH_CHKSUM_OFFLOAD;
+> +		} else if (ip.v4->version == 6) {
+> +			l3_offload = IPV6_PKT;
+> +		} else {
+> +			l3_offload = 0;
+> +		}
+> +
+> +		hinic_task_set_outter_l3(task, l3_offload,
+> +					 skb_network_header_len(skb));
+> +
+> +		if (gso_type & SKB_GSO_UDP_TUNNEL_CSUM) {
+> +			l4.udp->check = ~csum_magic(&ip, IPPROTO_UDP);
+> +			tunnel_type = TUNNEL_UDP_CSUM;
+> +		} else if (gso_type & SKB_GSO_UDP_TUNNEL) {
+> +			tunnel_type = TUNNEL_UDP_NO_CSUM;
+> +		}
+> +
+> +		l4_tunnel_len = skb_inner_network_offset(skb) -
+> +				skb_transport_offset(skb);
+> +		hinic_task_set_tunnel_l4(task, tunnel_type, l4_tunnel_len);
+> +
+> +		ip.hdr = skb_inner_network_header(skb);
+> +		l4.hdr = skb_inner_transport_header(skb);
+> +	} else {
+> +		ip.hdr = skb_network_header(skb);
+> +		l4.hdr = skb_transport_header(skb);
+> +		network_hdr_len = skb_network_header_len(skb);
+> +	}
+> +
+> +	/* initialize inner IP header fields */
+> +	if (ip.v4->version == 4)
+> +		ip.v4->tot_len = 0;
+> +	else
+> +		ip.v6->payload_len = 0;
+> +
+> +	get_inner_l3_l4_type(skb, &ip, &l4, TX_OFFLOAD_TSO, &l3_offload,
+> +			     &l4_proto);
+> +
+> +	hinic_task_set_inner_l3(task, l3_offload, network_hdr_len);
+> +
+> +	ip_identify = 0;
+> +	if (l4_proto == IPPROTO_TCP)
+> +		l4.tcp->check = ~csum_magic(&ip, IPPROTO_TCP);
+> +
+> +	get_inner_l4_info(skb, &l4, TX_OFFLOAD_TSO, l4_proto, &l4_offload,
+> +			  &l4_len, &offset);
+> +
+> +	hinic_set_tso_inner_l4(task, queue_info, l4_offload, l4_len, offset,
+> +			       ip_identify, skb_shinfo(skb)->gso_size);
+> +
+> +	return 1;
+> +}
+> +
+> +static int offload_csum(struct hinic_sq_task *task, u32 *queue_info,
+> +			struct sk_buff *skb)
+> +{
+> +	enum hinic_l4_offload_type l4_offload;
+> +	u32 offset, l4_len, network_hdr_len;
+> +	enum hinic_l3_offload_type l3_type;
+> +	union hinic_l3 ip;
+> +	union hinic_l4 l4;
+> +	u8 l4_proto;
+> +
+> +	if (skb->ip_summed != CHECKSUM_PARTIAL)
+> +		return 0;
+> +
+> +	if (skb->encapsulation) {
+> +		u32 l4_tunnel_len;
+> +
+> +		ip.hdr = skb_network_header(skb);
+> +
+> +		if (ip.v4->version == 4)
+> +			l3_type = IPV4_PKT_NO_CHKSUM_OFFLOAD;
+> +		else if (ip.v4->version == 6)
+> +			l3_type = IPV6_PKT;
+> +		else
+> +			l3_type = L3TYPE_UNKNOWN;
+> +
+> +		hinic_task_set_outter_l3(task, l3_type,
+> +					 skb_network_header_len(skb));
+> +
+> +		l4_tunnel_len = skb_inner_network_offset(skb) -
+> +				skb_transport_offset(skb);
+> +
+> +		hinic_task_set_tunnel_l4(task, TUNNEL_UDP_NO_CSUM,
+> +					 l4_tunnel_len);
+> +
+> +		ip.hdr = skb_inner_network_header(skb);
+> +		l4.hdr = skb_inner_transport_header(skb);
+> +		network_hdr_len = skb_inner_network_header_len(skb);
+> +	} else {
+> +		ip.hdr = skb_network_header(skb);
+> +		l4.hdr = skb_transport_header(skb);
+> +		network_hdr_len = skb_network_header_len(skb);
+> +	}
+> +
+> +	get_inner_l3_l4_type(skb, &ip, &l4, TX_OFFLOAD_CSUM, &l3_type,
+> +			     &l4_proto);
+> +
+> +	hinic_task_set_inner_l3(task, l3_type, network_hdr_len);
+> +
+> +	get_inner_l4_info(skb, &l4, TX_OFFLOAD_CSUM, l4_proto, &l4_offload,
+> +			  &l4_len, &offset);
+> +
+> +	hinic_set_cs_inner_l4(task, queue_info, l4_offload, l4_len, offset);
+> +
+> +	return 1;
+> +}
+> +
+> +static int hinic_tx_offload(struct sk_buff *skb, struct hinic_sq_task *task,
+> +			    u32 *queue_info)
+> +{
+> +	enum hinic_offload_type offload = 0;
+> +	int enabled;
+> +
+> +	enabled = offload_tso(task, queue_info, skb);
+> +	if (enabled > 0) {
+> +		offload |= TX_OFFLOAD_TSO;
+> +	} else if (enabled == 0) {
+> +		enabled = offload_csum(task, queue_info, skb);
+> +		if (enabled)
+> +			offload |= TX_OFFLOAD_CSUM;
+> +	} else {
+> +		return -EPROTONOSUPPORT;
+> +	}
+> +
+> +	if (offload)
+> +		hinic_task_set_l2hdr(task, skb_network_offset(skb));
+> +
+> +	/* payload offset should not more than 221 */
+> +	if (HINIC_SQ_CTRL_GET(*queue_info, QUEUE_INFO_PLDOFF) >
+> +	    MAX_PAYLOAD_OFFSET) {
+> +		return -EPROTONOSUPPORT;
+> +	}
+> +
+> +	/* mss should not less than 80 */
+> +	if (HINIC_SQ_CTRL_GET(*queue_info, QUEUE_INFO_MSS) < HINIC_MSS_MIN) {
+> +		*queue_info = HINIC_SQ_CTRL_CLEAR(*queue_info, QUEUE_INFO_MSS);
+> +		*queue_info |= HINIC_SQ_CTRL_SET(HINIC_MSS_MIN, QUEUE_INFO_MSS);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+>  {
+>  	struct hinic_dev *nic_dev = netdev_priv(netdev);
+> +	u16 prod_idx, q_id = skb->queue_mapping;
+>  	struct netdev_queue *netdev_txq;
+>  	int nr_sges, err = NETDEV_TX_OK;
+>  	struct hinic_sq_wqe *sq_wqe;
+>  	unsigned int wqe_size;
+>  	struct hinic_txq *txq;
+>  	struct hinic_qp *qp;
+> -	u16 prod_idx;
+>  
+> -	txq = &nic_dev->txqs[skb->queue_mapping];
+> +	txq = &nic_dev->txqs[q_id];
+>  	qp = container_of(txq->sq, struct hinic_qp, sq);
+>  
+>  	if (skb->len < MIN_SKB_LEN) {
+> @@ -236,15 +510,23 @@ netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+>  process_sq_wqe:
+>  	hinic_sq_prepare_wqe(txq->sq, prod_idx, sq_wqe, txq->sges, nr_sges);
+>  
+> +	err = hinic_tx_offload(skb, &sq_wqe->task, &sq_wqe->ctrl.queue_info);
+> +	if (err)
+> +		goto offload_error;
+> +
+>  	hinic_sq_write_wqe(txq->sq, prod_idx, sq_wqe, skb, wqe_size);
+>  
+>  flush_skbs:
+> -	netdev_txq = netdev_get_tx_queue(netdev, skb->queue_mapping);
+> +	netdev_txq = netdev_get_tx_queue(netdev, q_id);
+>  	if ((!skb->xmit_more) || (netif_xmit_stopped(netdev_txq)))
+>  		hinic_sq_write_db(txq->sq, prod_idx, wqe_size, 0);
+>  
+>  	return err;
+>  
+> +offload_error:
+> +	hinic_sq_return_wqe(txq->sq, wqe_size);
+> +	tx_unmap_skb(nic_dev, skb, txq->sges);
+> +
+>  skb_error:
+>  	dev_kfree_skb_any(skb);
+>  
+> @@ -252,7 +534,8 @@ netdev_tx_t hinic_xmit_frame(struct sk_buff *skb, struct net_device *netdev)
+>  	u64_stats_update_begin(&txq->txq_stats.syncp);
+>  	txq->txq_stats.tx_dropped++;
+>  	u64_stats_update_end(&txq->txq_stats.syncp);
+> -	return err;
+> +
+> +	return NETDEV_TX_OK;
+>  }
+>  
+>  /**
