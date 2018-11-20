@@ -2,442 +2,124 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D21CDC04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3B6C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7007521104
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="UDYdmPai"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7007521104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id CD96420831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD96420831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbeKTSgc (ORCPT
+        id S1726253AbeKTSfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:36:32 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:8423 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbeKTSga (ORCPT
+        Tue, 20 Nov 2018 13:35:48 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:36863 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTSfr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:36:30 -0500
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="23487245"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Nov 2018 01:08:41 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 20 Nov 2018 01:08:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dMW7YkuIRgGofzlypO1eZjqLZwbyxlPxqkNV+WLjqWg=;
- b=UDYdmPaiylq0NPBsPKB8J7lm+vzoo8ATZfa3VxPIZEbKgEBltoX60mmf43FtKDB3kb7gXkzJHnjYwrPympmAHlRARBWvkjSLTOxsDnuBc27FsNSL+5DB2rBlshsDinRcAm2WRrC38BMH8naVQNKiBTRWdZxqwsSSHTcEPRFfwHc=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2260.namprd11.prod.outlook.com (10.174.113.135) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Tue, 20 Nov 2018 08:08:38 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::853f:28dc:6c66:cfb1]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::853f:28dc:6c66:cfb1%4]) with mapi id 15.20.1339.026; Tue, 20 Nov 2018
- 08:08:38 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <linus.walleij@linaro.org>, <gregkh@linuxfoundation.org>,
-        <Nicolas.Ferre@microchip.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <Ludovic.Desroches@microchip.com>, <Cristian.Birsan@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH v2 2/2] gpio: add driver for SAMA5D2 PIOBU pins
-Thread-Topic: [PATCH v2 2/2] gpio: add driver for SAMA5D2 PIOBU pins
-Thread-Index: AQHUgKg+jtQwbw5Ftk+WoFtT+pmzKQ==
-Date:   Tue, 20 Nov 2018 08:08:38 +0000
-Message-ID: <1542701330-23466-3-git-send-email-andrei.stefanescu@microchip.com>
-References: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
-In-Reply-To: <1542701330-23466-1-git-send-email-andrei.stefanescu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0183.eurprd07.prod.outlook.com
- (2603:10a6:802:3e::31) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2260;6:FP6N+sH1AqfhDFwsafZxUp0mCJrFsDcvQ3EXdICXTd53PzIPAJj7VXHNnRd4kXaq5qOg37WQhcvr9UrtSmNecD0RYRHG84KE9U6UEirMUEgGK3mohpwXk4Wi1ZQgIxJVxsqYINBqATFvNLRG5+sFl0BYno993QyvQdTVPV+aNGa1jhqOKgt6IvqIFB8GiBGq7kiP8Da6CEF7XzrLi4LZV5oPPprMB7gO1wbQJvaCOQndVZ3smFvzSPejyvnGkD8UMH9biMspo16wQmMtGc0q+HYmd8TtSPfp9Y4YkJptd4jjraHuBk9vxTdKNih7bR9GcKn60r778t5ruTE1EFIfF8as8a3dhgQdaBLeh5J1bYEA1d9B2lBFem9HQgBnBXodInyfCbbT1p7t6WFHIMng8g3zkHaUrjybepC2P0PQRCuBs7/2hkKrTUALQHi2Yhi6xt81DEv2K8xW0L+tL92YMw==;5:jt9P6SF4scBl+HvhQZqEe3kw3EQ2YZc6pI2OlGUoPh+bCBhwVsf/a12EGeRh7H8+24KeukcmYRhmoWaYNkiyT1IdVXCJx6snXuwXFAkGDLDfDUQzhvMFrRYs0bnGmCK/VvCLaoMTnBKAvexus75n9ekRzLSTfDbtbSUVK1TKgXo=;7:AmqKgDcbHC9ZJ6357PsCJAml5QyeOa5UOO3NDsGCp36K8LGL30ND0sUD1HkGns6s6CxO3bWFT8rMmM9ba1iw/2+MtydW9XoCsbQNu1EEH+ilombt+n9JTHFyNdXDgWEA9X+WNcmtCbDj3NwVXRU6wQ==
-x-ms-office365-filtering-correlation-id: 8f7d9926-833b-4cdc-3af5-08d64ebf607c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2260;
-x-ms-traffictypediagnostic: BN6PR1101MB2260:
-x-microsoft-antispam-prvs: <BN6PR1101MB226017C21A098CDDF2E2A5A8EDD90@BN6PR1101MB2260.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231442)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2260;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2260;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(396003)(366004)(39860400002)(346002)(199004)(189003)(6486002)(14454004)(11346002)(53936002)(2616005)(446003)(476003)(2900100001)(2501003)(6512007)(86362001)(106356001)(575784001)(2906002)(36756003)(316002)(486006)(8676002)(72206003)(81166006)(81156014)(478600001)(105586002)(6116002)(3846002)(71190400001)(71200400001)(256004)(14444005)(68736007)(6436002)(97736004)(102836004)(4326008)(386003)(6506007)(186003)(7736002)(305945005)(76176011)(5660300001)(25786009)(99286004)(26005)(8936002)(66066001)(110136005)(52116002)(107886003)(54906003)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2260;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: quGL6w6EmLpNCPv9M/jp2F1x/GVtaI2ekWpfhCwax1/3R4rpmGVRnhAhDlwDQoI2YzT5PtM9i3FNyvhTUX23PtHZ7HSQBEcZhNlH0WLC7o8EKBTC/09K2t6uNQmfDyogNf8xv17Zmy92dASRUS5xQDvrbpYKw/ZpjGJMGGcdSeqMdiUDL9nwA4r/+tgfJbnaEyAbbyTLgQRKkUcaP5vqbz5j3rX8IVJ03AmTSScaCmhqPkmH3gElF1nrxhqF/Ge/VT5ILW3E2aZ6G9KbPPfOupsQ6k27H7xygtVs3lt+K3w/k02Od8+25vjtW823AZVpKSmbEqLnNOfohfubK403lTCWz4CNdF8/d8gmvBWwgxY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 13:35:47 -0500
+Received: by mail-vk1-f194.google.com with SMTP id u62so211608vkb.3;
+        Tue, 20 Nov 2018 00:07:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f/NzGAtWOo6r/kd1EgAzjZ9E9JLoC9aZ9LqLBnKlFzg=;
+        b=OtwHoSS+QCFqTKYc+rwjtkagw08bD3wJdtKo4ofXbXSVjpwesaKxYnjlcbNAYQY1Xq
+         i/7hJ+6380wT4YIn0W7UnvkpPifbXOJznecWnGBAb9xQmwEE8jVumnvrRPLnRy0GXbmz
+         nEhSRO6UVM4C4TpIheVsjl4mA4tVWI0ceLUP8Gptwjgep3GRpouPOGrrYC//lstOsYL2
+         KdOb1hudY3ngBb/KkUFltwa88kIT3R8h9D0Q5JcHORymwgpCRSLbtiObWqIOpK+4S2df
+         vgobXSzSB1UfcyWJqg4u5J/J9eNr+UKC1qw7vAYUhvigeWcknkCgl+1w6sxZFxcIgRwF
+         7SOA==
+X-Gm-Message-State: AA+aEWYWVrolLwvbu5ZXIPp0yAjFNvZ9F2wwbWMiDIQ+gcZkOOt2ODMq
+        yCxiEKUCRH03HXmjjA/i/fxJMbo/RZR7Dvq4yD4=
+X-Google-Smtp-Source: AFSGD/U8VN9UdaZSHhL5BxzLUzpooSMVvpYt2G0Fj6oI/537vpc5yNbgXwodxx9a7LGTKgo/YooHYoHzU37sEVOeAHM=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr411358vkd.74.1542701278174;
+ Tue, 20 Nov 2018 00:07:58 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f7d9926-833b-4cdc-3af5-08d64ebf607c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 08:08:38.7728
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2260
-X-OriginatorOrg: microchip.com
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw> <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+In-Reply-To: <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 20 Nov 2018 09:07:44 +0100
+Message-ID: <CAMuHMdXhx2iudXaPQto-c1kYAYdKc1T9vMr5yYNqONJwoNmRCw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+To:     masonccyang@mxic.com.tw
+Cc:     Mark Brown <broonie@kernel.org>, Trent Piepho <tpiepho@impinj.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
+        zhengxunli@mxic.com.tw
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PIOBU pins do not lose their voltage during Backup/Self-refresh.
-This patch adds a simple GPIO controller for them and a
-maintainer for the driver.
+Hi Mason,
 
-This driver adds support for using the pins as GPIO
-offering the possibility to read/set the voltage.
+On Mon, Nov 19, 2018 at 11:02 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
+> Document the bindings used by the Renesas R-Car D3 RPC controller.
+>
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
----
- MAINTAINERS                       |   7 ++
- drivers/gpio/Kconfig              |  11 ++
- drivers/gpio/Makefile             |   1 +
- drivers/gpio/gpio-sama5d2-piobu.c | 253 ++++++++++++++++++++++++++++++++++=
-++++
- 4 files changed, 272 insertions(+)
- create mode 100644 drivers/gpio/gpio-sama5d2-piobu.c
+Thanks for your patch
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f485597..88369f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9760,6 +9760,13 @@ M:	Nicolas Ferre <nicolas.ferre@microchip.com>
- S:	Supported
- F:	drivers/power/reset/at91-sama5d2_shdwc.c
-=20
-+MICROCHIP SAMA5D2-COMPATIBLE PIOBU GPIO
-+M:	Andrei Stefanescu <andrei.stefanescu@microchip.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	linux-gpio@vger.kernel.org
-+F:	drivers/gpio/gpio-sama5d2-piobu.c
-+F:	Documentation/devicetree/bindings/gpio/gpio-sama5d2-piobu.txt
-+
- MICROCHIP SPI DRIVER
- M:	Nicolas Ferre <nicolas.ferre@microchip.com>
- S:	Supported
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 833a1b5..1c41fac 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -429,6 +429,17 @@ config GPIO_REG
- 	  A 32-bit single register GPIO fixed in/out implementation.  This
- 	  can be used to represent any register as a set of GPIO signals.
-=20
-+config GPIO_SAMA5D2_PIOBU
-+	tristate "SAMA5D2 PIOBU GPIO support"
-+	depends on MFD_SYSCON
-+	select GPIO_SYSCON
-+	help
-+	  Say yes here to use the PIOBU pins as GPIOs.
-+
-+	  PIOBU pins on the SAMA5D2 can be used as GPIOs.
-+	  The difference from regular GPIOs is that they
-+	  maintain their value during backup/self-refresh.
-+
- config GPIO_SIOX
- 	tristate "SIOX GPIO support"
- 	depends on SIOX
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 671c447..f18d345 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -108,6 +108,7 @@ obj-$(CONFIG_GPIO_RDC321X)	+=3D gpio-rdc321x.o
- obj-$(CONFIG_GPIO_RCAR)		+=3D gpio-rcar.o
- obj-$(CONFIG_GPIO_REG)		+=3D gpio-reg.o
- obj-$(CONFIG_ARCH_SA1100)	+=3D gpio-sa1100.o
-+obj-$(CONFIG_GPIO_SAMA5D2_PIOBU)	+=3D gpio-sama5d2-piobu.o
- obj-$(CONFIG_GPIO_SCH)		+=3D gpio-sch.o
- obj-$(CONFIG_GPIO_SCH311X)	+=3D gpio-sch311x.o
- obj-$(CONFIG_GPIO_SNPS_CREG)	+=3D gpio-creg-snps.o
-diff --git a/drivers/gpio/gpio-sama5d2-piobu.c b/drivers/gpio/gpio-sama5d2-=
-piobu.c
-new file mode 100644
-index 0000000..db0cb5d
---- /dev/null
-+++ b/drivers/gpio/gpio-sama5d2-piobu.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SAMA5D2 PIOBU GPIO controller
-+ *
-+ * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries
-+ *
-+ * Author: Andrei Stefanescu <andrei.stefanescu@microchip.com>
-+ *
-+ */
-+#include <linux/bits.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define PIOBU_NUM 8
-+#define PIOBU_REG_SIZE 4
-+
-+/*
-+ * backup mode protection register for tamper detection
-+ * normal mode protection register for tamper detection
-+ * wakeup signal generation
-+ */
-+#define PIOBU_BMPR 0x7C
-+#define PIOBU_NMPR 0x80
-+#define PIOBU_WKPR 0x90
-+
-+#define PIOBU_BASE 0x18 /* PIOBU offset from SECUMOD base register address=
-. */
-+
-+#define PIOBU_DET_OFFSET 16
-+
-+/* In the datasheet this bit is called OUTPUT */
-+#define PIOBU_DIRECTION BIT(8)
-+#define PIOBU_OUT BIT(8)
-+#define PIOBU_IN 0
-+
-+#define PIOBU_SOD BIT(9)
-+#define PIOBU_PDS BIT(10)
-+
-+#define PIOBU_HIGH BIT(9)
-+#define PIOBU_LOW 0
-+
-+struct sama5d2_piobu {
-+	struct gpio_chip chip;
-+	struct regmap *regmap;
-+};
-+
-+/**
-+ * sama5d2_piobu_setup_pin() - prepares a pin for set_direction call
-+ *
-+ * Do not consider pin for tamper detection (normal and backup modes)
-+ * Do not consider pin as tamper wakeup interrupt source
-+ */
-+static int sama5d2_piobu_setup_pin(struct gpio_chip *chip, unsigned int pi=
-n)
-+{
-+	int ret;
-+	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
-+						   chip);
-+	unsigned int mask =3D BIT(PIOBU_DET_OFFSET + pin);
-+
-+	ret =3D regmap_update_bits(piobu->regmap, PIOBU_BMPR, mask, 0);
-+	if (ret)
-+		return ret;
-+
-+	ret =3D regmap_update_bits(piobu->regmap, PIOBU_NMPR, mask, 0);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(piobu->regmap, PIOBU_WKPR, mask, 0);
-+}
-+
-+/**
-+ * sama5d2_piobu_write_value() - writes value & mask at the pin's PIOBU re=
-gister
-+ */
-+static int sama5d2_piobu_write_value(struct gpio_chip *chip, unsigned int =
-pin,
-+				     unsigned int mask, unsigned int value)
-+{
-+	int reg;
-+	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
-+						   chip);
-+
-+	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
-+
-+	return regmap_update_bits(piobu->regmap, reg, mask, value);
-+}
-+
-+/**
-+ * sama5d2_piobu_read_value() - read the value with masking from the pin's=
- PIOBU
-+ *			      register
-+ */
-+static int sama5d2_piobu_read_value(struct gpio_chip *chip, unsigned int p=
-in,
-+				    unsigned int mask)
-+{
-+	struct sama5d2_piobu *piobu =3D container_of(chip, struct sama5d2_piobu,
-+						   chip);
-+	unsigned int val, reg;
-+	int ret;
-+
-+	reg =3D PIOBU_BASE + pin * PIOBU_REG_SIZE;
-+	ret =3D regmap_read(piobu->regmap, reg, &val);
-+	if (ret < 0)
-+		return ret;
-+
-+	return val & mask;
-+}
-+
-+/**
-+ * sama5d2_piobu_set_direction() - mark pin as input or output
-+ */
-+static int sama5d2_piobu_set_direction(struct gpio_chip *chip,
-+				       unsigned int direction,
-+				       unsigned int pin)
-+{
-+	return sama5d2_piobu_write_value(chip, pin, PIOBU_DIRECTION, direction);
-+}
-+
-+/**
-+ * sama5d2_piobu_get_direction() - gpiochip get_direction
-+ */
-+static int sama5d2_piobu_get_direction(struct gpio_chip *chip,
-+				       unsigned int pin)
-+{
-+	int ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_DIRECTION);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (ret =3D=3D PIOBU_IN) ? 1 : 0;
-+}
-+
-+/**
-+ * sama5d2_piobu_direction_input() - gpiochip direction_input
-+ */
-+static int sama5d2_piobu_direction_input(struct gpio_chip *chip,
-+					 unsigned int pin)
-+{
-+	return sama5d2_piobu_set_direction(chip, PIOBU_IN, pin);
-+}
-+
-+/**
-+ * sama5d2_piobu_direction_output() - gpiochip direction_output
-+ */
-+static int sama5d2_piobu_direction_output(struct gpio_chip *chip,
-+					  unsigned int pin, int value)
-+{
-+	return sama5d2_piobu_set_direction(chip, PIOBU_OUT, pin);
-+}
-+
-+/**
-+ * sama5d2_piobu_get() - gpiochip get
-+ */
-+static int sama5d2_piobu_get(struct gpio_chip *chip, unsigned int pin)
-+{
-+	/* if pin is input, read value from PDS else read from SOD */
-+	int ret =3D sama5d2_piobu_get_direction(chip, pin);
-+
-+	if (ret =3D=3D 1)
-+		ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_PDS);
-+	else if (!ret)
-+		ret =3D sama5d2_piobu_read_value(chip, pin, PIOBU_SOD);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return !!ret;
-+}
-+
-+/**
-+ * sama5d2_piobu_set() - gpiochip set
-+ */
-+static void sama5d2_piobu_set(struct gpio_chip *chip, unsigned int pin,
-+			      int value)
-+{
-+	if (!value)
-+		value =3D PIOBU_LOW;
-+	else
-+		value =3D PIOBU_HIGH;
-+
-+	sama5d2_piobu_write_value(chip, pin, PIOBU_SOD, value);
-+}
-+
-+static int sama5d2_piobu_probe(struct platform_device *pdev)
-+{
-+	struct sama5d2_piobu *piobu;
-+	int ret, i;
-+
-+	piobu =3D devm_kzalloc(&pdev->dev, sizeof(*piobu), GFP_KERNEL);
-+	if (!piobu)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, piobu);
-+	piobu->chip.label =3D pdev->name;
-+	piobu->chip.parent =3D &pdev->dev;
-+	piobu->chip.of_node =3D pdev->dev.of_node;
-+	piobu->chip.owner =3D THIS_MODULE,
-+	piobu->chip.get_direction =3D sama5d2_piobu_get_direction,
-+	piobu->chip.direction_input =3D sama5d2_piobu_direction_input,
-+	piobu->chip.direction_output =3D sama5d2_piobu_direction_output,
-+	piobu->chip.get =3D sama5d2_piobu_get,
-+	piobu->chip.set =3D sama5d2_piobu_set,
-+	piobu->chip.base =3D -1,
-+	piobu->chip.ngpio =3D PIOBU_NUM,
-+	piobu->chip.can_sleep =3D 0,
-+
-+	piobu->regmap =3D syscon_node_to_regmap(pdev->dev.parent->of_node);
-+	if (IS_ERR(piobu->regmap)) {
-+		dev_err(&pdev->dev, "Failed to get syscon regmap %ld\n",
-+			PTR_ERR(piobu->regmap));
-+		return PTR_ERR(piobu->regmap);
-+	}
-+
-+	ret =3D devm_gpiochip_add_data(&pdev->dev, &piobu->chip, piobu);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to add gpiochip %d\n", ret);
-+		return ret;
-+	}
-+
-+	for (i =3D 0; i < PIOBU_NUM; ++i) {
-+		ret =3D sama5d2_piobu_setup_pin(&piobu->chip, i);
-+		if (ret) {
-+			dev_err(&pdev->dev, "Failed to setup pin: %d %d\n",
-+				i, ret);
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id sama5d2_piobu_ids[] =3D {
-+	{ .compatible =3D "microchip,sama5d2-piobu" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, sama5d2_piobu_ids);
-+
-+static struct platform_driver sama5d2_piobu_driver =3D {
-+	.driver =3D {
-+		.name		=3D "sama5d2-piobu",
-+		.of_match_table	=3D of_match_ptr(sama5d2_piobu_ids)
-+	},
-+	.probe =3D sama5d2_piobu_probe,
-+};
-+
-+module_platform_driver(sama5d2_piobu_driver);
-+
-+MODULE_VERSION("1.0");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("SAMA5D2 PIOBU controller driver");
-+MODULE_AUTHOR("Andrei Stefanescu <andrei.stefanescu@microchip.com>");
---=20
-2.7.4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+> @@ -0,0 +1,33 @@
+> +Renesas R-Car D3 RPC controller Device Tree Bindings
 
+R-Car Gen3
+
+> +----------------------------------------------------
+> +
+> +Required properties:
+> +- compatible: should be "renesas,rpc-r8a77995"
+
+Please use "renesas,r8a77995-rpc".
+
+> +- #address-cells: should be 1
+> +- #size-cells: should be 0
+> +- reg: should contain 2 entries, one for the registers and one for the direct
+> +       mapping area
+> +- reg-names: should contain "rpc_regs" and "dirmap"
+> +- interrupts: interrupt line connected to the RPC SPI controller
+> +- clock-names: should contain "clk_rpc"
+> +- clocks: should contain 1 entries for the CPG Module 917 clocks
+
+... for the module's clock
+
+> +
+> +Example:
+> +
+> +       rpc: spi@ee200000 {
+> +               compatible = "renesas,rpc-r8a77995";
+> +               reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
+> +               reg-names = "rpc_regs", "dirmap";
+> +               clocks = <&cpg CPG_MOD 917>;
+> +               clock-names = "clk_rpc";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+
+power-domains?
+resets?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
