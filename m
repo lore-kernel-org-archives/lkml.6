@@ -2,151 +2,107 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDD7C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B877BC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E0292087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E0292087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 71E95206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:35:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWPaFLDj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E95206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbeKUBES (ORCPT
+        id S1729823AbeKUBE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:04:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52706 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeKUBES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:04:18 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5B35237E60;
-        Tue, 20 Nov 2018 14:34:51 +0000 (UTC)
-Received: from [10.36.117.138] (ovpn-117-138.ams2.redhat.com [10.36.117.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 04A1E2707A;
-        Tue, 20 Nov 2018 14:34:49 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/3] mm, memory_hotplug: deobfuscate migration part of
- offlining
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181120134323.13007-1-mhocko@kernel.org>
- <20181120134323.13007-3-mhocko@kernel.org>
- <f25bfa30-96cf-799c-6885-86a3a537a977@redhat.com>
- <20181120143422.GN22247@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <bcd55324-1dc9-904e-d457-ebce7684712f@redhat.com>
-Date:   Tue, 20 Nov 2018 15:34:49 +0100
+        Tue, 20 Nov 2018 20:04:26 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41341 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725968AbeKUBEZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:04:25 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so1083080pfi.8;
+        Tue, 20 Nov 2018 06:34:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9RL4t5TyE+hL/OxCs1olaiD9t2q/9+1+CLGPVCwlmTU=;
+        b=VWPaFLDj9cRNe2Cedy8AJtGBypZbIlO201Cnq0T7v82nhIDA5TNn5nrXwxnysTfSQx
+         UXNppnt/t4I+u49QV5OIIqacE0EvGosL+H2IeXXXfn3e7eOhBlMRflNY28vOIRAYV7tk
+         z0FMMuh4nN8TWJUegKqI8ljaCnr524XaJd3DrhCZWkegAmlw4Yd3g815+hkkL60z37jp
+         NY+z8xvs2VXjLPLlfllJyn3lgGR7w/H5MZ3dHcURK8SyjxV4DUxeMwDBPX+D19Ay/JoV
+         FnbQ4G0qTxk+BE+qkFAJnMDT2B/CQ38mEueE0PMBrUsjiZEN6iORvZ02QlkjkH+bUmAk
+         iXvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9RL4t5TyE+hL/OxCs1olaiD9t2q/9+1+CLGPVCwlmTU=;
+        b=Ag9j9qRe5ajLz3oZBAzXFBQWCe6YVVr9V/o0MP8SjhJZZ+qlm9RHNQmMtyIX5iIAQS
+         dOAB8RlIJWMSmsI6czdkKZJfB2YlPhr5ABg1dhEFT7k/8Yt2hzxfyhBi8Iaj/3ETrWBJ
+         VheAu8oy853H+ygtbnnqXbsDbad7q7i0jbP1yMqgMw71ROvkwyui1PFFSfqr7VSGll10
+         Bkz182H23oe9HUqS81bUtE3gFU9U0qePAxo/U2Rt0sTsfCCGjqm9RAcLkSrgtPwhvPJh
+         7v/2pkcon+raiP2B/lBAbjDb262sGyLQCp5HiMxinVtUllaN0m+51djD/SUtJGEaR27w
+         T0dg==
+X-Gm-Message-State: AGRZ1gJ06QWrSz88/R7Mw63F6R/c6dOQn1Amu/BBuHJKWDj9O8xiPG1h
+        MbTsWKxzoPp/1GdYv/aULGsuC7q/
+X-Google-Smtp-Source: AJdET5e0srY9kp4/Dq/ey5Nvxul/jsmTiT4ZqIHlSHvBnmqXMtlMn8Y1Ao66J//uL44/iZNFxZv2Iw==
+X-Received: by 2002:a62:81c1:: with SMTP id t184mr2434251pfd.246.1542724498672;
+        Tue, 20 Nov 2018 06:34:58 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f193-v6sm62514131pfc.74.2018.11.20.06.34.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 06:34:57 -0800 (PST)
+Subject: Re: [PATCH] watchdog: cpwd: add of_node_put()
+To:     Yangtao Li <tiny.windzz@gmail.com>, wim@linux-watchdog.org
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181120132359.19799-1-tiny.windzz@gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8abef7ab-1d77-cf88-748c-11e54c760f34@roeck-us.net>
+Date:   Tue, 20 Nov 2018 06:34:56 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181120143422.GN22247@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181120132359.19799-1-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 20 Nov 2018 14:34:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.11.18 15:34, Michal Hocko wrote:
-> On Tue 20-11-18 15:26:43, David Hildenbrand wrote:
-> [...]
->>> +	do {
->>> +		for (pfn = start_pfn; pfn;)
->>> +		{
->>
->> { on a new line looks weird.
->>
->>> +			/* start memory hot removal */
->>> +			ret = -EINTR;
->>
->> I think we can move that into the "if (signal_pending(current))"
->>
->> (if my eyes are not wrong, this will not be touched otherwise)
+On 11/20/18 5:23 AM, Yangtao Li wrote:
+> use of_node_put() to release the refcount.
 > 
-> Better?
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>   drivers/watchdog/cpwd.c | 1 +
+>   1 file changed, 1 insertion(+)
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 9cd161db3061..6bc3aee30f5e 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1592,11 +1592,10 @@ static int __ref __offline_pages(unsigned long start_pfn,
->  	}
->  
->  	do {
-> -		for (pfn = start_pfn; pfn;)
-> -		{
-> +		for (pfn = start_pfn; pfn;) {
->  			/* start memory hot removal */
-> -			ret = -EINTR;
->  			if (signal_pending(current)) {
-> +				ret = -EINTR;
->  				reason = "signal backoff";
->  				goto failed_removal_isolated;
->  			}
+> diff --git a/drivers/watchdog/cpwd.c b/drivers/watchdog/cpwd.c
+> index aee0b25cf10d..d3a81642ada5 100644
+> --- a/drivers/watchdog/cpwd.c
+> +++ b/drivers/watchdog/cpwd.c
+> @@ -617,6 +617,7 @@ static int cpwd_probe(struct platform_device *op)
+>   
+>   	platform_set_drvdata(op, p);
+>   	cpwd_device = p;
+> +	of_node_put(options);
+
+It would be better to do that right after its last use to also cover
+error handling.
+
+Guenter
+
+>   	return 0;
+>   
+>   out_unregister:
 > 
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
-
-:)
-
--- 
-
-Thanks,
-
-David / dhildenb
