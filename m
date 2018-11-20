@@ -2,134 +2,124 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6D5C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE24C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23381206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B10E206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:10:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixa1xoiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23381206BB
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RZKFGtyv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B10E206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730375AbeKUDlV (ORCPT
+        id S1730353AbeKUDkn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:41:21 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40824 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726975AbeKUDlV (ORCPT
+        Tue, 20 Nov 2018 22:40:43 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730316AbeKUDkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:41:21 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so1875064lfe.7;
-        Tue, 20 Nov 2018 09:11:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GtnldkNx/quPG/3MRPa2USGgB956m1vPJrQH1NspkFA=;
-        b=ixa1xoiGcOLWIIrNO5/0PTt3WoUh85/Hxv/iTdjIEq+lHvslCE/UMdw9ZAWG3P/sNW
-         M0ja0kcUzEh9mq32EFzJrZM9eeiT5oybz5V1zWGwwwtllbT/aLahaj7MaCB6p2Nx8ZI3
-         nZzb9zAYGnOuWJKFFFAXxohu+8gxmqFpls0v1i4gUVDpqMek0r9z3PQBKbz57c0Clac6
-         XHgtqVMcLwYVrhkvC1Ju6HEy+0uk6mmWpa8cQP+/vN6VFnkT4y2BxTNloB/GGe4VS+fI
-         dUTYNZicm179qFT8Vwif3GTl9XGegpvoCtt7jIaWlAVEeNEr21mA3Ig1d4NPqd+nzEx5
-         zCqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GtnldkNx/quPG/3MRPa2USGgB956m1vPJrQH1NspkFA=;
-        b=uIfawIbQCbvq+S75/SB/OBkfb2ll9QlrAJfo1ot/7TTBIcNzd5VbRY79FXEnMu/qsp
-         GBDi/3HuS38BakPmq0SFzelMQfN9XPFWb527+dylGdp2TTxONrr2k2+z0jItm3fprt6D
-         w2XXvkJ3J3rdgJNUzkdeZcbeb1C4pd+7uHduUBI02d1oPX6M7zSXiLWh3oXlPjPSyB+T
-         Mvj2XFRLtnKmM22p7ifrV3d0RbtJvhRSMEuZ22s34N7oIziGfdWgVR2Nw/yprvMnjpMV
-         WDW6QnuSRLO/0Zk8M60DmvO9DL77mYTXK5SmbWDHtgA6ZtHUOgvZBxL/Yf/a3dNgXctF
-         qNbA==
-X-Gm-Message-State: AGRZ1gI4SsnRTW/ns8Ldeac+C6yXadfjb6h1aXVry/7qouDvae3M0RVg
-        1nLLon8CzK97vxibRXBnnuE=
-X-Google-Smtp-Source: AJdET5f6/Zg+o1aRHB5NUWr8mNMJBgpd3zslzteoUj7+E8I+FT6N4PzpfRd/hxeRZbvLX+93e7wD6A==
-X-Received: by 2002:a19:94d5:: with SMTP id o82mr1508543lfk.155.1542733868126;
-        Tue, 20 Nov 2018 09:11:08 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 10sm6035942lff.62.2018.11.20.09.11.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 09:11:07 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gP9YJ-0003nV-N8; Tue, 20 Nov 2018 18:11:07 +0100
-Date:   Tue, 20 Nov 2018 18:11:07 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] serdev: make serdev_device_write() more usable
-Message-ID: <20181120171107.GI19900@localhost>
-References: <20181114150904.19653-1-johan@kernel.org>
- <CAL_JsqJyTVsN1=YpeHNtTr+Tpw9Qmqd=mWfhg-d3WgzUX7DqKw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJyTVsN1=YpeHNtTr+Tpw9Qmqd=mWfhg-d3WgzUX7DqKw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 20 Nov 2018 22:40:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=hg8gBcn1dml9Di/gaFGKpCyTQDxzv59Uq4nMZNXOqc8=; b=RZKFGtyvxq3J
+        6h23Ce6qydtURskvBXG2/7P/L+Hofj4c+D6hxpUgqDDviNP/6Q6hIptKalvRXCVoImMRYQ0nQraDu
+        4nT1svjCuOwkI6drQc2F/ym9dQPsKt+QdlAZi309Kn2p0kkbluMizR2fn0nQUCVyGQ4E5DwLlSU16
+        PNa2k=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gP9Xi-0001qT-3K; Tue, 20 Nov 2018 17:10:30 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B0B7F1124DC2; Tue, 20 Nov 2018 17:10:29 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Don't double-disable supplies in regulator_disable_deferred()" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181120171029.B0B7F1124DC2@debutante.sirena.org.uk>
+Date:   Tue, 20 Nov 2018 17:10:29 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:16:35AM -0600, Rob Herring wrote:
-> On Wed, Nov 14, 2018 at 9:10 AM Johan Hovold <johan@kernel.org> wrote:
-> >
-> > This series make the synchronous serdev_device_write() helper more
-> > usable by
-> >
-> >         1) allowing drivers to pass a zero timeout to indicate that they
-> >            want to wait forever;
-> >
-> >         2) returning the number of bytes actually written (buffered)
-> >            if the helper is interrupted;
-> >
-> >         3) make the helper use interruptible wait so that the helper can
-> >            be used on behalf of user space.
-> >
-> > Finally, the two write functions are documented using kernel-doc.
-> >
-> > Turns out I was using the wrong timeout for two gnss drivers that
-> > expected the helper to wait indefinitely. I've fixed up those separately
-> > (by using MAX_SCHEDULE_TIMEOUT for now), but for the helper to be usable
-> > when using flow control we really want it to be interruptible.
-> >
-> > Besides the two gnss drivers, there's currently only one other in-kernel
-> > user of this helper and that driver (rave-sp) uses a non-zero timeout
-> > and doesn't check the return value and therefore does not need to be
-> > updated.
-> >
-> > Note that this series depends on the two above mentioned GNSS fixes
-> > (submitted for v4.20-rc3).
-> >
-> > Johan
-> >
-> >
-> > Johan Hovold (4):
-> >   serdev: use zero to indicate infinite write timeout
-> >   serdev: make synchronous write return bytes written
-> >   serdev: make synchronous write helper interruptible
-> >   serdev: document the write functions using kernel-doc
-> 
-> Other than the one nit, for the series:
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
+The patch
 
-Thanks for reviewing.
+   regulator: core: Don't double-disable supplies in regulator_disable_deferred()
 
-Greg, note that these still depend on the two gnss fixes currently in
-your char-misc-linus branch.
+has been applied to the regulator tree at
 
-Johan
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8ff00ba79283e691ae294a158879237179c683eb Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Mon, 19 Nov 2018 16:26:50 -0800
+Subject: [PATCH] regulator: core: Don't double-disable supplies in
+ regulator_disable_deferred()
+
+In the commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for
+regulators locking") disabling of the supply was moved into
+_regulator_disable().  That means regulator_disable_work() shouldn't
+be disabling since that double-disables the supply.
+
+Fixes: f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators locking")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f937a33e5f02..cfc2b8f6453b 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -2670,16 +2670,6 @@ static void regulator_disable_work(struct work_struct *work)
+ 		regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+ 
+ 	regulator_unlock_dependent(rdev, &ww_ctx);
+-
+-	if (rdev->supply) {
+-		for (i = 0; i < count; i++) {
+-			ret = regulator_disable(rdev->supply);
+-			if (ret != 0) {
+-				rdev_err(rdev,
+-					 "Supply disable failed: %d\n", ret);
+-			}
+-		}
+-	}
+ }
+ 
+ /**
+-- 
+2.19.0.rc2
+
