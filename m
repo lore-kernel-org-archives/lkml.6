@@ -6,81 +6,182 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB07C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7945EC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9574206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9574206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 1AC2C206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:50:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC2C206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbeKUARy (ORCPT
+        id S1728217AbeKUAUK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:17:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55028 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726119AbeKUARy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:17:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6FACDAFE5;
-        Tue, 20 Nov 2018 13:48:38 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Quentin Schulz <quentin.schulz@bootlin.com>
-Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
-Subject: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
-References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
-        <20181008100728.24959-2-quentin.schulz@bootlin.com>
-        <mvm8t1pazea.fsf@suse.de>
-X-Yow:  Did you GAIN WEIGHT in th' past 5 MINUTES or am I just DREAMING of two
- BROCCOLI FLORETS lying in an empty GAS TANK?
-Date:   Tue, 20 Nov 2018 14:48:37 +0100
-In-Reply-To: <mvm8t1pazea.fsf@suse.de> (Andreas Schwab's message of "Mon, 19
-        Nov 2018 15:57:17 +0100")
-Message-ID: <mvma7m3n9l6.fsf_-_@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
+        Tue, 20 Nov 2018 19:20:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46252 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725950AbeKUAUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:20:10 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E822C028358;
+        Tue, 20 Nov 2018 13:50:55 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-174.rdu2.redhat.com [10.10.120.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 110DD60154;
+        Tue, 20 Nov 2018 13:50:53 +0000 (UTC)
+Subject: Re: [PATCH] debugobjects: scale the static pool size
+To:     Qian Cai <cai@gmx.us>, akpm@linux-foundation.org,
+        tglx@linutronix.de
+Cc:     yang.shi@linux.alibaba.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <20181120064254.1594-1-cai@gmx.us>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <f4c9756e-08c9-ce18-19a8-771977e95ac9@redhat.com>
+Date:   Tue, 20 Nov 2018 08:50:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20181120064254.1594-1-cai@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 20 Nov 2018 13:50:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Don't use locking phy_read/phy_write functions while inside
-phy_select_patch/phy_restore_page region.
+On 11/20/2018 01:42 AM, Qian Cai wrote:
+> The current value of the early boot static pool size is not big enough
+> for systems with large number of CPUs with timer or/and workqueue
+> objects selected. As the results, systems have 60+ CPUs with both timer
+> and workqueue objects enabled could trigger "ODEBUG: Out of memory.
+> ODEBUG disabled". Hence, fixed it by computing it according to
+> CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
+>
+> Signed-off-by: Qian Cai <cai@gmx.us>
+> ---
+>  lib/debugobjects.c | 53 +++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 52 insertions(+), 1 deletion(-)
+>
+> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> index 70935ed91125..372dc34206d5 100644
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -23,7 +23,53 @@
+>  #define ODEBUG_HASH_BITS	14
+>  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+>  
+> +/*
+> + * Some debug objects are allocated during the early boot. Enabling some
+> + * options like timers or workqueue objects may increase the size required
+> + * significantly with large number of CPUs. For example,
+> + *
+> + * No. CPUs x 2 (worker pool) objects:
+> + *
+> + * start_kernel
+> + *   workqueue_init_early
+> + *     init_worker_pool
+> + *       init_timer_key
+> + *         debug_object_init
+> + *
+> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
+> + *
+> + * sched_init
+> + *   hrtick_rq_init
+> + *     hrtimer_init
+> + *
+> + * CONFIG_DEBUG_OBJECTS_WORK:
+> + * No. CPUs x 6 (workqueue) objects:
+> + *
+> + * workqueue_init_early
+> + *   alloc_workqueue
+> + *     __alloc_workqueue_key
+> + *       alloc_and_link_pwqs
+> + *         init_pwq
+> + *
+> + * Also, plus No. CPUs objects:
+> + *
+> + * perf_event_init
+> + *    __init_srcu_struct
+> + *      init_srcu_struct_fields
+> + *        init_srcu_struct_nodes
+> + *          __init_work
+> + *
+> + * Increase the number a bit more in case the implmentatins are changed in
+> + * the future.
+> + */
+> +#if defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_TIMERS) && \
+> +!defined(CONFIG_DEBUG_OBJECTS_WORK)
+> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 10)
+> +#elif defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_WORK)
+> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 30)
+> +#else
+>  #define ODEBUG_POOL_SIZE	1024
+> +#endif /* CONFIG_NR_CPUS */
+>  #define ODEBUG_POOL_MIN_LEVEL	256
+>  
 
-Fixes: 6a0bfbbe20 ("net: phy: mscc: migrate to phy_select/restore_page functions")
-Signed-off-by: Andreas Schwab <schwab@suse.de>
----
- drivers/net/phy/mscc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+CONFIG_NR_CPUS is always defined. You don't need to put that as a #if
+condition. Where does the scaling factor 30 come from? It looks high to me.
 
-diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
-index a2e59f4f6f..a398ab9410 100644
---- a/drivers/net/phy/mscc.c
-+++ b/drivers/net/phy/mscc.c
-@@ -814,10 +814,10 @@ static int vsc85xx_default_config(struct phy_device *phydev)
- 	if (rc < 0)
- 		goto out_unlock;
- 
--	reg_val = phy_read(phydev, MSCC_PHY_RGMII_CNTL);
-+	reg_val = __phy_read(phydev, MSCC_PHY_RGMII_CNTL);
- 	reg_val &= ~(RGMII_RX_CLK_DELAY_MASK);
- 	reg_val |= (RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS);
--	phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
-+	__phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
- 
- out_unlock:
- 	rc = phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
--- 
-2.19.1
+For UP system, CONFIG_NR_CPUS will be 1. I think it is better to have a
+guarantee minimum plus a multiplier of the # of configured CPUs.
+Something like
 
+512 + CONFIG_NR_CPUS * <multiplier>
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+where <multiplier> should be the sum of all early allocation objects
+that scale with the number of cpus. The guarantee minimum will cover
+other miscellaneous objects.
+
+Cheers,
+Longman
+
