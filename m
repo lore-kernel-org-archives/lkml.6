@@ -2,101 +2,93 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E12C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95751C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1CE820684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:18:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1A3F20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:18:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OEx/fUP2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CE820684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="NV3ZF9sk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1A3F20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729107AbeKUCsQ (ORCPT
+        id S1729293AbeKUCse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:48:16 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:43528 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbeKUCsQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:48:16 -0500
-Received: by mail-yb1-f193.google.com with SMTP id h187-v6so947865ybg.10;
-        Tue, 20 Nov 2018 08:18:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/OLQeObNGd0IBy4Pr7rtk0Du4O9Sp4NE2NCjWtQiVNQ=;
-        b=OEx/fUP2CieC2K6VApF5yHUn4YOqeIzlNvYwkf80lGKgIssnrURiCic/xU5APVrMY0
-         QKA7mjU7FJYaQ6KIpmJAJ2F8x1U02avEvLh/81vjdGx+XvIrVbEBpu0mrDHDAMW+iy7O
-         sa5p3jneIpm76MYCxtx05hNVvA5rJb8fppb5MJXwuMch8AQneH1AkRM2ZzVyXhV6V1D+
-         nUBZ0wm5jo+SycWHIyIA+x/I9tX396mKr6Dhlkx/cfCyXyjA1VMbcdaCUji/sEW4epFD
-         1L4wSSZSwd9X6EnhliXT60nXyzLjyGiUHyj7yJInU3lRj+i9FnTOBop7/5apaQGEohmG
-         UY2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/OLQeObNGd0IBy4Pr7rtk0Du4O9Sp4NE2NCjWtQiVNQ=;
-        b=JNIhpa3mso8W23SSwOcwJqkakV2SvMXxgE0YAgnD/AhRRNkcIsC2i2+9/MZk3ksEYC
-         4BKnqiX8i/gSXDRa5s33iJt0q8w8S7PUuPHbvTnrhbRlBMX74dgDt7YGzSFBx5+UKKe6
-         IMDR+py3uTm7oRqZruLkrOrhxw1qwPIp0bCoPNcuMVmjpUUc5l1eOYMpXxVwpllSAMN1
-         /OLaTWsrQ4/5nBqfPs57YsgbpXd+OVi0gVTBTMtIa2IOi2sG1eh//ax+lRaZtByZtHtI
-         NCC5rgQPxx+dnN6PBEE54IXsur5QbX1NdsaPq2dMt99HRlJ4rj/ZL+iagYSWW3gQlvRO
-         rsxA==
-X-Gm-Message-State: AA+aEWYQoNpfThgi7nb1ABXsAKGqJ2Fs32paSvty4dxQMDn8jvqduVed
-        KHejK1v0NkYUxooVA9YqSTQ=
-X-Google-Smtp-Source: AFSGD/W/QQ+DAdafg4XaYpXkjNlIJ27YrSlE24i7EW1UcD7T2e35EyHuqFu2wqlutHVr4dtO4hQ3og==
-X-Received: by 2002:a25:8445:: with SMTP id r5-v6mr1977184ybm.182.1542730701122;
-        Tue, 20 Nov 2018 08:18:21 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:4b6a])
-        by smtp.gmail.com with ESMTPSA id p201sm2906019ywe.45.2018.11.20.08.18.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:18:20 -0800 (PST)
-Date:   Tue, 20 Nov 2018 08:18:18 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Roman Gushchin <guroan@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v3 3/7] cgroup: protect cgroup->nr_(dying_)descendants by
- css_set_lock
-Message-ID: <20181120161818.GT2509588@devbig004.ftw2.facebook.com>
-References: <20181117003830.15344-1-guro@fb.com>
- <20181117003830.15344-4-guro@fb.com>
+        Tue, 20 Nov 2018 21:48:34 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:45703 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725876AbeKUCsd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 21:48:33 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 438d852e;
+        Tue, 20 Nov 2018 16:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=euFlACP5z0hFCwbRb9B+FEUe/+s=; b=NV3ZF9
+        sk2oud19Wiwwh5Z3Sh+o9+N1jXFm9a+fcYU+m0zkEnYNHXZE+CdB7F83JwtybPxo
+        d6Fl/qKH4q2e7R8EZNH8y3yu49TK6iF/KFwUI0tutGysVxbAdbYsZA5mUMLhhAWN
+        lMiejz35FG9ECdp1Ka63i8vD+IUwtDaU8PMywuain3JMIhW2griQX32+l3RojLUM
+        3lNjeKvFU27tYCEVop/6dYGrvNZLMOmqyCbDdft0agzWaXzH38CFJLJpNHfOQC/k
+        9Zg6hN/DnAPJm41KGRjWXF1JYtkaC4zHTQ6I4p743oNQkLDwSbIG95HOwIxcUQTH
+        pEpevcZUyCpM0vSA==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0c96e3d5 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Tue, 20 Nov 2018 16:12:29 +0000 (UTC)
+Received: by mail-oi1-f180.google.com with SMTP id p82-v6so1936345oih.11;
+        Tue, 20 Nov 2018 08:18:36 -0800 (PST)
+X-Gm-Message-State: AA+aEWZYmH3arnYUAzJiZXjDzkZxysw20FeRs6aszrwDDOlTZdOeRmio
+        HTkl4ceZ96eZmtvtcRu3FbZ2GMcZorB2mKmy/mA=
+X-Google-Smtp-Source: AJdET5f89Ec9WDXthH/5vAoxfzAdMIAEVCRTELzByONegk0EVO7Sx9lUq1KSI098o/3dUjvyyWaISYTTtwiNxlXvFl8=
+X-Received: by 2002:aca:3f87:: with SMTP id m129-v6mr1357137oia.228.1542730716096;
+ Tue, 20 Nov 2018 08:18:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181117003830.15344-4-guro@fb.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
+ <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+ <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
+ <20181117001718.GA175522@gmail.com> <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+ <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au> <20181120060217.t4nccaqpwnxkl4tx@gondor.apana.org.au>
+In-Reply-To: <20181120060217.t4nccaqpwnxkl4tx@gondor.apana.org.au>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Tue, 20 Nov 2018 17:18:24 +0100
+X-Gmail-Original-Message-ID: <CAHmME9qOFA2hEe-8hb3CxEPsLbwNm8oev4SO5WBDhA+pxqadGA@mail.gmail.com>
+Message-ID: <CAHmME9qOFA2hEe-8hb3CxEPsLbwNm8oev4SO5WBDhA+pxqadGA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 0/4] Exporting existing crypto API code through zinc
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Eric Biggers <ebiggers@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Martin Willi <martin@strongswan.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 04:38:26PM -0800, Roman Gushchin wrote:
-> Now the number of descendant cgroups and the number of dying
-> descendant cgroups are synchronized using the cgroup_mutex.
-> 
-> The number of descendant cgroups will be required by the cgroup v2
-> freezer, which will use it to determine if a cgroup is frozen
-> (depending on total number of descendants and number of frozen
-> descendants). It's not always acceptable to grab the cgroup_mutex,
-> especially from quite hot paths (e.g. exit()).
-> 
-> To avoid this, let's additionally synchronize these counters
-> using the css_set_lock.
+Hi Herbert,
 
-Can you change it so that writes are cgroup_mutex and css_set_lock
-protected and reads can be done under either cgroup_mutex or
-css_set_lock?
+On Tue, Nov 20, 2018 at 7:02 AM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> Here is an updated version demonstrating how we could access the
+> accelerated versions of chacha20.  It also includes a final patch
+> to deposit the new zinc version of x86-64 chacha20 into
+> arch/x86/crypto where it can be used by both the crypto API as well
+> as zinc.
 
-Thanks.
+N'ack. As I mentioned in the last email, this really isn't okay, and
+mostly defeats the purpose of Zinc in the first place, adding
+complexity in a discombobulated half-baked way. Your proposal seems to
+be the worst of all worlds. Having talked to lots of people about the
+design of Zinc at this point to very positive reception, I'm going to
+move forward with submitting v9, once I rebase with the required
+changes for Eric's latest merge.
 
--- 
-tejun
+Jason
