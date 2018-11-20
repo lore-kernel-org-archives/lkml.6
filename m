@@ -2,156 +2,83 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D77EC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65AB6C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B0120684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3140420684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="eeZNHoEa";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="MMI2nc56"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B0120684
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tv+IJpr8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3140420684
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeKUEJa (ORCPT
+        id S1729298AbeKUEJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:09:30 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40178 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728189AbeKUEJa (ORCPT
+        Tue, 20 Nov 2018 23:09:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60860 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729143AbeKUEJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:09:30 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKHbo4s005616;
-        Tue, 20 Nov 2018 09:39:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=pLJmpNR42xWZjxlbuIeDtN22i4yM9M666IQ0eJ+zUWE=;
- b=eeZNHoEayLd+/OY/3OCsM130voVvzOjUGlyozABQBQRTamNvk+NPplKvc0ZI9FlcoD0U
- E2hkx/DJ7DHTtjJX+lim+ViqW2s9fWooCv7pWyYFbQsY4PKiS6LXK57sBqtziZpyL9Sb
- /RKnEsU7p7Y/4JxyaFuPLccQ42lfoqEl6Nc= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2nvp2g883b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 20 Nov 2018 09:39:07 -0800
-Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
- frc-hub06.TheFacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 20 Nov 2018 09:39:06 -0800
-Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
- frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 20 Nov 2018 09:39:06 -0800
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 20 Nov 2018 09:39:06 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pLJmpNR42xWZjxlbuIeDtN22i4yM9M666IQ0eJ+zUWE=;
- b=MMI2nc565gQ6iZaY393AK5mY2Ygac1Lv6kRflUhgZ/A+AXR7puxaEJzu4Ze4qqBUaSuhD+bZVnt18gmzQ4VWz0F3wBxoWo00V4PLIGmCN6lrUDsea0fCK0smZOfesIM7+SsHZPNH04y2wbPT6pzZgpk+N1Zd2eNJBzjjQH1KBjA=
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
- BY2PR15MB0422.namprd15.prod.outlook.com (10.163.109.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.26; Tue, 20 Nov 2018 17:39:03 +0000
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::1d40:c1ed:72a7:38a6]) by BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::1d40:c1ed:72a7:38a6%3]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 17:39:03 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Tejun Heo <tj@kernel.org>
-CC:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v3 4/7] cgroup: cgroup v2 freezer
-Thread-Topic: [PATCH v3 4/7] cgroup: cgroup v2 freezer
-Thread-Index: AQHUfg31+N8cXqD8i0C7qWHjcgNkRKVY3zGA//98A4CAAIbyAP//fA6AgACHjYCAAA35gA==
-Date:   Tue, 20 Nov 2018 17:39:03 +0000
-Message-ID: <20181120173858.GC21462@tower.DHCP.thefacebook.com>
-References: <20181117003830.15344-1-guro@fb.com>
- <20181117003830.15344-5-guro@fb.com>
- <20181120162529.GU2509588@devbig004.ftw2.facebook.com>
- <20181120163304.GA21462@tower.DHCP.thefacebook.com>
- <20181120163604.GX2509588@devbig004.ftw2.facebook.com>
- <20181120164349.GB21462@tower.DHCP.thefacebook.com>
- <20181120164859.GY2509588@devbig004.ftw2.facebook.com>
-In-Reply-To: <20181120164859.GY2509588@devbig004.ftw2.facebook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR04CA0047.namprd04.prod.outlook.com
- (2603:10b6:300:ee::33) To BY2PR15MB0167.namprd15.prod.outlook.com
- (2a01:111:e400:58e0::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::5:fc42]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR15MB0422;20:oSBl8MnEO8SL/6SjPYyaocSCiwKKki3X4xHH/TFIQsZM4SQuT6Qsj6mtdvTpVbVRKDyimn3y5c997XeoWEt5jZ5ubIpzpkp4HKTMEb3sb6H2Lx2KiUVnGc53C6Q9BAauB1grkm6Mle+incTb/gjOValXBwSaYhfjyfNRmiDigMA=
-x-ms-office365-filtering-correlation-id: a3910b0f-0d62-4db1-6bf4-08d64f0f0fbc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0422;
-x-ms-traffictypediagnostic: BY2PR15MB0422:
-x-microsoft-antispam-prvs: <BY2PR15MB042235330D01DDB4502E29DEBED90@BY2PR15MB0422.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3002001)(93006095)(93001095)(3231442)(11241501184)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0422;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0422;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(136003)(366004)(39860400002)(189003)(199004)(4326008)(53936002)(39060400002)(6246003)(6436002)(1076002)(9686003)(305945005)(33896004)(256004)(6512007)(6116002)(486006)(186003)(14444005)(6486002)(86362001)(476003)(7736002)(105586002)(6506007)(106356001)(11346002)(76176011)(8676002)(446003)(229853002)(5660300001)(81156014)(54906003)(316002)(81166006)(386003)(33656002)(478600001)(93886005)(6916009)(8936002)(46003)(14454004)(99286004)(71190400001)(102836004)(68736007)(52116002)(97736004)(2900100001)(25786009)(2906002)(71200400001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0422;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: CF+cSAUWbVBJULVlXKbg+nk4qHI8UpYY7cbHrWQoUdfj0AjeLKpsomONQGlBkcTNrk35PVALzvY58X7oo34e6AGwHg15f8DkT/tGIue8RN6nz2YP6fjEDk0lhWLxCo0Zpvx0JcI/ekW//bxTAzIGt2d/EGR50y9umauNDfEddLHLkEy9a9w4gVcb8bMCYLyDHQrLMYWkuw6olv2Gg/ZDeKzN8ijSS5u9VvVvqiLHQQuqgx9idH+RuXnXdZkYFpKfq16nUWHv//glxOdsJnxBEyhb3Ix9h0/W97kv+6gal+bRDXUEz3IjnVNHT5r1XHj4UKNPLLPUqtx++waiD2o6jtSSpq4GunQnXdjc80Nhe4g=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <ED3B4FA8405D0345AAFB57A5FA827BF5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 23:09:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ObZd+2EAI/2J8E0S2Wv13fI9xuoKlVew8XcoQeC5j/4=; b=Tv+IJpr8CPpzFfehFjbBjdRb/
+        OaKzzc0bj9mdT3kc2xzyXbwqCoReDDPX7rxId5rRqMcOAm5a0qNhlzWnQH4Mtgrj1Nw+8Fpj4KO3s
+        bT7L4EsSPmS8LJTixx4khS4ErYT+StLQDyUAlQszY8+GQOMHurf3OC8j+gtXzyQZ4rsdzRq1h+Saa
+        THqk3rJwYgXp2JnGm344LMXbNy3EL2H+WXTD/xt2IJE9ptOlb8LPAqdpG/KJeTz6Jca/PvMfbpaH0
+        Q6aAQ+VPajLkbMMFVMurwZ6UWI6KwLaU+jpsWjNvtDdX9E4/xESOeMHXYP5GQc/HlVRlcykMEn61X
+        JGLhNmnLA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP9zU-0003Be-QJ; Tue, 20 Nov 2018 17:39:12 +0000
+Date:   Tue, 20 Nov 2018 09:39:12 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel@vger.kernel.org, rppt@linux.ibm.com,
+        timmurray@google.com, joelaf@google.com, surenb@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2] Document /proc/pid PID reuse behavior
+Message-ID: <20181120173912.GD3065@bombadil.infradead.org>
+References: <20181031150625.147369-1-dancol@google.com>
+ <20181105132205.138695-1-dancol@google.com>
+ <20181119105426.GD28607@amd>
+ <1c5caa66-3c61-cb57-754a-f099200c73b2@suse.cz>
+ <20181120091829.GD16916@amd>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3910b0f-0d62-4db1-6bf4-08d64f0f0fbc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 17:39:03.0833
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0422
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_07:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120091829.GD16916@amd>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 08:48:59AM -0800, Tejun Heo wrote:
-> Hello,
->=20
-> On Tue, Nov 20, 2018 at 04:43:52PM +0000, Roman Gushchin wrote:
-> > > But that wouldn't udpate the cgroup's frozen state and generate
-> > > notifications, right?
-> >=20
-> > Why? The task will be eventually trapped into cgroup_enter_frozen(),
-> > and from there cgroup_update_frozen() will be called.
->=20
-> Because the cgroup is no longer frozen?
->=20
-> > You are right, that notification will not be issued, because the cgroup
-> > is not changing its state (frozen->frozen). I'm not sure that it makes
-> > sense to change the cgroup state back and forth in this case. Are there
-> > any reasons I'm missing?
->=20
-> Imagine the task being trapped in nfs or wherever and not getting into
-> the freezer for an extended period of time.
+On Tue, Nov 20, 2018 at 10:18:29AM +0100, Pavel Machek wrote:
+> > would ever rely on the pid being reused while having the descriptor
+> > open. How would that make sense?
+> 
+> I agree this is corner space, but users might be surprised that
+> keeping FDs of /proc/pid/X would lead to PID space exhaustion, for
+> example.
 
-Yeah, it's a good point. I've thought about it mostly in the fork() context=
-,
-where if freezing of a cgroup races with fork(), it makes no sense to
-switch the cgroup state back and forth. But that case is different, as
-the child will be trapped just on the return path from fork() call.
+We have a limit on the number of FDs a process can have open for a reason.
+Well, for many reasons.
 
-Thanks!
