@@ -2,125 +2,94 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD4BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C4A9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A50A20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:07:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LrHhgcaz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A50A20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id D2E9320851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:09:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E9320851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbeKTUf3 (ORCPT
+        id S1726921AbeKTUhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:35:29 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58688 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeKTUf3 (ORCPT
+        Tue, 20 Nov 2018 15:37:43 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:48435 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeKTUhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:35:29 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAKA6bT7048269;
-        Tue, 20 Nov 2018 04:06:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542708397;
-        bh=st1wmS97hcI8VjZoTGm8GuDrZ/ekpNFP9w2qqupKLBg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=LrHhgcaz/IpuzQTJBvc+lWR/lh5/kBinFL3BNzq9WYL4VcHWAVPLE8YwCDSh3r1e4
-         mlx6iz6IXKRZbe7vD+8Zo1JA4hqthmkbXYtVXtcWomDa9xBDz47g26C1Pz+UQDrIB9
-         lP/y8dFdK2GfjLXk1R2rMS6vMpUMowXeXIUCLaHs=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAKA6al5130666
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 04:06:36 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 20
- Nov 2018 04:06:36 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 20 Nov 2018 04:06:36 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAKA6Wfa029020;
-        Tue, 20 Nov 2018 04:06:33 -0600
-Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-CC:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        <kernel@collabora.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Bastian Stender <bst@pengutronix.de>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
- <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
- <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
- <20181107084741.GA31092@kunai>
- <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <327f0d23-efd7-a8e3-23d8-945132573c06@ti.com>
-Date:   Tue, 20 Nov 2018 15:39:16 +0530
+        Tue, 20 Nov 2018 15:37:42 -0500
+Received: from [192.168.178.52] ([109.104.39.179]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MxE5Y-1fVoqA1a1I-00xZ39; Tue, 20 Nov 2018 11:08:58 +0100
+Subject: Re: [PATCH 00/16] staging: vchiq: dead code removal & misc fixes
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        dave.stevenson@raspberrypi.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20181114125942.25163-1-nsaenzjulienne@suse.de>
+ <1128999886.40745.1542556549581@email.ionos.de>
+ <20181120095751.GB17738@kroah.com>
+ <17a08397268fddb774ca0d1620d67ca38633a284.camel@suse.de>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <fae40a52-34cc-65a2-09d3-936cf122f8c0@i2se.com>
+Date:   Tue, 20 Nov 2018 11:08:54 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <17a08397268fddb774ca0d1620d67ca38633a284.camel@suse.de>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
+X-Provags-ID: V03:K1:3c4sjDHsaEyS76kRe36tm10JS+Tl8bMW2CfVI+AwSD0ztBcE4u7
+ 0d6ntkXlSeoeZ+/bqXks5PSfLGBvvL702ckjwmg53zkf1t8tN7DWAr9Mx4u0NjANlGV+qR9
+ BwaJ3f07X92njOlFhUNYSxrO/Avc2zJ6k5V0gkBieuzuUVEQpSvSCyYXkLo5l2Jt5ysm+Cf
+ ySKI0d/HP5OzVxWtdv3vA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cfknC8PUjLU=:zKA/KVXuS6ACQ+gT/4a0cg
+ 3FSNlODldfJGHwHZbjhnz7FcHjb9v2McTdtpSgWrjlncst0Vz5kNCndowyeYX4/lkRZEV8TfX
+ eKt+zQwfkA/F+UzTqMqGgw2egxqyf3elmxUoy0DSx1Q4c3LDVMQPK1QKt7Z4v700JIV6aw+FB
+ VJxWc7ob6HHvm67mEwBIjSQn0mzlD2dWbGH+m4bj4O6VKGQNVqLs3Yrvo1QbDT5JO9gQMq1Yh
+ adxwp9aAUANbdP4XAt4z8J5U1uxVjTj+6cedhHmesdovBIcG83/Z5aYEo33/bT+sQ5vXXgSUn
+ oo/jShgNfvxK0381d6jRJ0PjkTMZYqdfmQmM+JGbJgZGLm0XuIW4TaHfUoE627+N+ZnLEt3c9
+ Cl8A+p6J6A+nRvRuDZL137GBdPq1AavC0EHpy8k1dr03TGGzjU9eKDe0FlG6zIcilrBq23W+q
+ N4fVY9DTTXsFb+VdGgGoAKvDPdWjggmHGLfHi5ltPo+dA2A7pcNsND7VRiUWl01AHeENEFnpo
+ r8P3kCWiTXJKbMY4tgt8XmBx9DkM1v6zXO/VBb41RYSeVrD/M1IJ/7DPrmpHMmUvU+bc1uusr
+ jOP+XsZdlpZ9ttm+txzct1GA7kF+fyyiLiQV+pGd1PrWCTfaUPhwsYO0opRC3LwoRsTtMUGIc
+ uj83z2opul4mpRxl5bfIAcmadx4GFmdzw91ZIn5kRPg4YCsuzLyZpPaPmUfTjyWekym4yutM0
+ o+Hcrzvek1CiPfT44kDoCuZxjVwGKUYei6ixjDXceZ+xxrfYOJ/M6MONCmc10+c+4J6focFgQ
+ NJQu8taAjV4YcJ/UN7j1G+NgW88bQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uffe,
-
-On 20/11/18 2:54 PM, Ulf Hansson wrote:
-> On 7 November 2018 at 09:47, Wolfram Sang <wsa@the-dreams.de> wrote:
+Am 20.11.18 um 11:04 schrieb Nicolas Saenz Julienne:
+> On Tue, 2018-11-20 at 10:57 +0100, Greg KH wrote:
+>> On Sun, Nov 18, 2018 at 04:55:49PM +0100, Stefan Wahren wrote:
+>>> Hi Nicolas,
+>>>
+>>>
+>>> without a changelog i won't start a review.
+>> What do you mean by this?  The individual patches have a "changelog"
+>> in
+>> them, this is just a summary of the overall changes.
 >>
->>> That also happens to be one of the cards we deploy; However i did
->>> wonder about adding a quirk but decided against it as it was not clear
->>> to me from the specification that CACHE ON really is meant to complete
->>> within GENERIC_CMD6_TIMEOUT. That and i fret about ending up in hit-a-
->>> mole games as the failure is really quite tedious (boot failure).
+>> What do you feel is missing here?
+> Hi Greg,
+> I did send an RFC version of this, to which Stephan made several
+> comments. I should have added the changelog to the proper series
+> submission. I've been busy with work, but I'll send the updated version
+> during the day.
+Thanks Stefan
+>
+> Regards,
+> Nicolas
+>
+>> thanks,
 >>
->> I agree that we should use the more defensive variant as a default. I
->> mean there should be no performance regression since most cards will
->> respond just faster, or? The only downside I could see is that we might
->> miss a real timeout with no bounds set and might get stuck?
-> 
-> Well, you have a point, but still it's kind of nice to know which
-> cards are behaving well and which ones that doesn't. Hence I think I
-> prefer to stick using a quirk, unless you have a strong opinion.
-> 
-> Note that, in this case we can use CMD13 to poll for busy, which then
-> means it also works for those hosts that doesn't support HW busy
-> detection, without getting additional delays. If this hasn't been the
-> case, we must be using a quirk, but now we are more free to choose.
-> 
->> Maybe it is
->> worth contacting eMMC spec people to at least know what is the expected
->> behaviour?
-> 
-> According to the spec, the GENERIC_CMD6_TIMEOUT should be sufficient.
-> So this card is not conforming to the spec, I think it's as simple as
-> that.
-> 
-
-Is the QUIRK patch acceptable as it is or do you require some sort of
-errata from the card manufacturers?
-
-Thanks,
-Faiz
+>> greg k-h
