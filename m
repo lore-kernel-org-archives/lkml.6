@@ -2,108 +2,94 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6132AC04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FACC04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26E5E208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3098420672
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:02:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="pobvoXCk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26E5E208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ocQJN3yO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3098420672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbeKTXbW (ORCPT
+        id S1729882AbeKTXb5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:31:22 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52734 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbeKTXbW (ORCPT
+        Tue, 20 Nov 2018 18:31:57 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38110 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbeKTXb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:31:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=By1XcD31rX/VPT7M9w25J7fJhEmJOCMqmsU+wmh5StE=; b=pobvoXCkoQsaKWHNQcYq8EB07
-        COJk50c0E9pM55Uolsd977jAvP2dH1Z3Vt29UzZWHSMzb/md6otT9awKTPcmMoAlESaF/MOtXwx9E
-        9jQqQ+qK4qs0weqxHqEsEjTi8dms8X2AsP/Kr2EW6DN1FY3pK+KCf4teds4Z5hQ5a3rXg=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP5fP-0001ch-HG; Tue, 20 Nov 2018 13:02:11 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id EC2EF1124DC1; Tue, 20 Nov 2018 13:02:10 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 13:02:10 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Tomer Maimon <tmaimon77@gmail.com>
-Cc:     olof@lixom.net, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Patrick Venture <venture@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Joel Stanley <joel@jms.id.au>, linux-spi@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 1/1] spi: npcm: fix uninitialized 'val' warning in
- receive function
-Message-ID: <20181120130210.GA3894@sirena.org.uk>
-References: <20181118123504.83082-1-tmaimon77@gmail.com>
- <20181118123504.83082-2-tmaimon77@gmail.com>
- <CAOesGMjUJ1+qmbPWcVFm1F_F0fcdg-54YY6o4iK=PYWoAuEczA@mail.gmail.com>
- <CAP6Zq1j46ch8UUxJkO7SnrHWyP3Y7g58Fodejr98WN-TW8jhEw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
-In-Reply-To: <CAP6Zq1j46ch8UUxJkO7SnrHWyP3Y7g58Fodejr98WN-TW8jhEw@mail.gmail.com>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 20 Nov 2018 18:31:57 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so977166pfi.5;
+        Tue, 20 Nov 2018 05:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=qA2M3gyf7tWKriE7DGWPlyQR3HbBH/LFqU20I/0lZ7Y=;
+        b=ocQJN3yOFfwfAM1tLaNVhHZmBaZjETYvg9ZlSUAB+CbJF5R1XzJK5BapiybDV6A10L
+         6r8wTkG0sfRysnAhznW8DcmuMxspDT7AdVA2PDQGSZhoGLorqWvAWMK5j5ghzLxSFxBt
+         wucSjnLLgo+Ljy3F5HaNt/nsDuAR1WcsdU9xXsPelpG7DynFf10u5VD/iCOooS07XMCO
+         CuXkPDhTo+DLWBrmXjXWejPuSEKSHFIWuUJsO+Cy1SgoUkPWD+vxaes3PTBiMwHm9fx1
+         wS2fZqEtacLiwpBiO4lt4Jh3H5+Ldtw2z+W2ax6zFBNPPOlMtG4aHnqx+VWQhMInfctb
+         RqSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=qA2M3gyf7tWKriE7DGWPlyQR3HbBH/LFqU20I/0lZ7Y=;
+        b=ZyRxhekv4bHZjaKQvcZL9minRGYAGxUNuIH9aGRBZfQ9WrSQrf0LYw4WssAvNTYd8G
+         q9DjKXqwS/9VI+NMxu5tgKe6Hr1yq9PhRv7MayCdhdY3G1EasanXQXQ9YRu98oX75dLS
+         sQZJg+eU8Tixy3Xo25FXAjBSRQNZixRDp2VgOCGy6Gks87aTAFcgXfnNM9muak9M5mAw
+         JDjgrd3J+saIUa4YuO34yIZ3K4teGBuT8BcVuDikjw4WOGVLDOkMYBg1bAo+cdjDRj5F
+         XsECzoqIrkmkvhaolPKLqDlTPKnNU3lWjPHxU8kLURATT4JKxbyMhqK7NIDN42r6pOrp
+         9RDg==
+X-Gm-Message-State: AA+aEWbfRWzLbKHzHlj7/VQKSq9EfSI8dPBe5/pxTcXsMmfEiKHo5/Ft
+        eQxCHxKAquVkdW6AzK1brsY=
+X-Google-Smtp-Source: AFSGD/VlrcFE7tKbovFzf8N2e2W6bQVF/n8iGcfWP/uKWTpZjlNssWFtWOF/cQz4icLx6y+Uyz3zxw==
+X-Received: by 2002:a63:200e:: with SMTP id g14mr1809566pgg.235.1542718973563;
+        Tue, 20 Nov 2018 05:02:53 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm70021706pfc.16.2018.11.20.05.02.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 05:02:52 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     davem@davemloft.net, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au
+Cc:     linux-ide@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] ide: pmac: add of_node_put()
+Date:   Tue, 20 Nov 2018 08:02:49 -0500
+Message-Id: <20181120130249.19525-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+use of_node_put() to release the refcount.
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/ide/pmac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Tue, Nov 20, 2018 at 12:51:19PM +0200, Tomer Maimon wrote:
+diff --git a/drivers/ide/pmac.c b/drivers/ide/pmac.c
+index c5b902b86b44..203ed4adc04a 100644
+--- a/drivers/ide/pmac.c
++++ b/drivers/ide/pmac.c
+@@ -920,6 +920,7 @@ static u8 pmac_ide_cable_detect(ide_hwif_t *hwif)
+ 	struct device_node *root = of_find_node_by_path("/");
+ 	const char *model = of_get_property(root, "model", NULL);
+ 
++	of_node_put(root);
+ 	/* Get cable type from device-tree. */
+ 	if (cable && !strncmp(cable, "80-", 3)) {
+ 		/* Some drives fail to detect 80c cable in PowerBook */
+-- 
+2.17.0
 
-> We just tried to reduce the number of lines to minimum, so we have debug it
-> quite a lot (with all the numbers that can
-> get from priv->tx_bytes) and the only numbers that minimum function return
-> are 0, 1 or 2.
-
-> But in the end of the day,  we don't have an issue with your solution as
-> long it will be done also in the transfer function.
-
-In general it's better to have the code be obviously correct than to try
-to push down the line count - it saves people the effort of figuring out
-if things are safe every time they look at it.
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0BdAACgkQJNaLcl1U
-h9ASIQf/cI3kpprBTkLEFxruAQbRVP4iqcAlySu6P7KxALXVKRtjn5bSW6zo68KR
-pdQQSaIy69W6iehi7+9YacuKmtJcDiqfRItJLuj5FK4PM0Wfv5SjLEs5oS5SahGi
-+CZsjlLWD7IKm/eiBfgpujOh1SuuAhJd0VuuEFkWE9ICbZWqaXYNTa4+5UVjwKPJ
-FQqUz1BO7UYUZ9rsECcO0IpJBThxcdSrSl3UV5CAivmve0HEo3FTD6Os9wO8wAx1
-e5+3m35TBPjUatI3kdyB9PrQNSroqgGe5Ou3atz7GXwXPR5eA0Zt391/0I53kPsx
-vc11Ia8qPkKFJBlJQKYJRNzdRMdBXw==
-=b+mA
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
