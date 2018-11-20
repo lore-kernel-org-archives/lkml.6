@@ -2,131 +2,70 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8C7C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D434EC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A5092075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJh3/FBv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A5092075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 05A6220851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A6220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728489AbeKUAab (ORCPT
+        id S1729240AbeKUAaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:30:31 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36968 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeKUAaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:30:30 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 80so952554pge.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 06:01:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
-        b=GJh3/FBvAImQxMJCmTqAUB+F4ewRctJxtZTladXv5ZCfji4jkAQwT9VXE0Vk+J1H8C
-         XWPTEvztUZ/272eQNE1WEEueMz/aFV1SIA+7Uy2wSVOHH2Rcx6YNrwM6rRuR0at6wJov
-         HvVorEo6o3ArmxryHePMvKq7z/KnCnCBcrQEeUgF7Uxed3AgEZzMmPYmUeDQg8iyoznE
-         5n2ILqpYY2KzqSfp+NDmvt91IKIsVvheV6tvlS6pLCkqoUkUQRPFhQSGpWEfcj93YkqJ
-         1iliHRSSi4G545CxJvQSqFL9VMTL0gOOMSA/mZQgInuCRWTL63MHG57HZW5kpRNVYlF/
-         6D4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
-        b=TrHtyuDX7aayib1Vs5/EB5i8XYkT7kQKMC2NaGUjLZxA0748eNXB6wXqKqeryfaKI7
-         As2LAHbU46kPPpd5uUj5XIW3Sy6d2kl9WTrCf7viA+nfizHPk7iNtrFzJRqBEsOCN6U6
-         nKBA2VEt4QNWNrh4cbMqY/kcaJnBvhvLThSLeR2H/1cjF8UylkW0rwK0TEqXaogiG+/b
-         +Qcvzizr86YIlW4eXZ0hl05lvA9WXT3iRnL9g0s9yKiuDrMRdj4R0v8SWPS7U0EICywh
-         UOMvCIxCY8MdyhaYysqkx4Dz+R+rgvej/vwUaqC/iai5NsXaDHgksT7QdGxkAbRazbym
-         evKg==
-X-Gm-Message-State: AGRZ1gLBOAEvx5su9jy85Bd0HsVtvpX9ly1yqceSNFbXm2ihhoB0nK+d
-        KI7Rk21QYFdX1VCNHJufKW8=
-X-Google-Smtp-Source: AJdET5eJMztj/Bls5sZ/jGrj0OwtfBCdjpRKYRIOm8+SU0OKdhgnFIhU6dq2rqiv4ptr/YI/ivQA0A==
-X-Received: by 2002:a62:1a44:: with SMTP id a65mr2366212pfa.30.1542722473030;
-        Tue, 20 Nov 2018 06:01:13 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id i63-v6sm9551776pfi.66.2018.11.20.06.01.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 06:01:12 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     linux@armlinux.org.uk, akpm@linux-foundation.org,
-        rppt@linux.vnet.ibm.com, robh@kernel.org, mhocko@suse.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] arm: add missing of_node_put()
-Date:   Tue, 20 Nov 2018 09:01:09 -0500
-Message-Id: <20181120140109.20334-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 20 Nov 2018 19:30:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56752 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725846AbeKUAaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:30:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7DB52B028;
+        Tue, 20 Nov 2018 14:01:27 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+        <20181008100728.24959-2-quentin.schulz@bootlin.com>
+        <mvm8t1pazea.fsf@suse.de> <mvma7m3n9l6.fsf_-_@suse.de>
+        <20181120135508.paxzs63cqy2llc7d@qschulz>
+X-Yow:  CHUBBY CHECKER owns my BUILDING!
+Date:   Tue, 20 Nov 2018 15:01:25 +0100
+In-Reply-To: <20181120135508.paxzs63cqy2llc7d@qschulz> (Quentin Schulz's
+        message of "Tue, 20 Nov 2018 14:55:08 +0100")
+Message-ID: <mvm5zwrn8zu.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use of_node_put() to release the refcount.
+On Nov 20 2018, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- arch/arm/kernel/devtree.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+> You also need to prefix your patch with [PATCH net-next] instead of only
+> [PATCH]. This is specific to the net subsystem.
 
-diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
-index e3057c1b55b9..9576adf0d15b 100644
---- a/arch/arm/kernel/devtree.c
-+++ b/arch/arm/kernel/devtree.c
-@@ -101,7 +101,7 @@ void __init arm_dt_init_cpu_maps(void)
- 		if (!cell || prop_bytes < sizeof(*cell)) {
- 			pr_debug(" * %pOF missing reg property\n", cpu);
- 			of_node_put(cpu);
--			return;
-+			goto out;
- 		}
- 
- 		/*
-@@ -115,7 +115,7 @@ void __init arm_dt_init_cpu_maps(void)
- 
- 		if (prop_bytes || (hwid & ~MPIDR_HWID_BITMASK)) {
- 			of_node_put(cpu);
--			return;
-+			goto out;
- 		}
- 
- 		/*
-@@ -129,7 +129,7 @@ void __init arm_dt_init_cpu_maps(void)
- 			if (WARN(tmp_map[j] == hwid,
- 				 "Duplicate /cpu reg properties in the DT\n")) {
- 				of_node_put(cpu);
--				return;
-+				goto out;
- 			}
- 
- 		/*
-@@ -171,7 +171,7 @@ void __init arm_dt_init_cpu_maps(void)
- 
- 	if (!bootcpu_valid) {
- 		pr_warn("DT missing boot CPU MPIDR[23:0], fall back to default cpu_logical_map\n");
--		return;
-+		goto out;
- 	}
- 
- 	/*
-@@ -184,6 +184,8 @@ void __init arm_dt_init_cpu_maps(void)
- 		cpu_logical_map(i) = tmp_map[i];
- 		pr_debug("cpu logical map 0x%x\n", cpu_logical_map(i));
- 	}
-+out:
-+	of_node_put(cpus);
- }
- 
- bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+Why next?  This is a bug fix that needs to go in now, not next.
+
+> Use scripts/get_maintainer.pl on your patch to get the people to put in
+> Cc and in To.
+
+The same people as the original patch the added the bug.  Why would it
+be different now?
+
+Andreas.
+
 -- 
-2.17.0
-
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
