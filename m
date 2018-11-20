@@ -2,109 +2,139 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5230C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A961C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A065214D9
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:55:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="H1N3wco9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A065214D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EB56214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:05:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB56214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeKUG0R (ORCPT
+        id S1726772AbeKUGg1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:26:17 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44845 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbeKUG0R (ORCPT
+        Wed, 21 Nov 2018 01:36:27 -0500
+Received: from hera.aquilenet.fr ([185.233.100.1]:47400 "EHLO
+        hera.aquilenet.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbeKUGg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:26:17 -0500
-Received: by mail-vs1-f65.google.com with SMTP id g68so1824977vsd.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:55:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kYVR6WxMSD2Ly1obkFCk4J7fsBZbqRtYof4ux6e/Pcw=;
-        b=H1N3wco95Fro27YYiZCg8/b9YZ70PIHWolfSQjrLdwl25EAkUP7hZPLYS86ZhuiBqW
-         stfef/y79JA+4ZIi4f8N+F2tMoPsvlM1mYehkiee45Uh6bvVV+TWmqJkB7GiBR2dxzKa
-         WwpoG04rp3OHzNVOYTtsXBbPEv2v6p8QQa2wZHLUwD+SjM7JRxFbdHeiej28N3pgDzJZ
-         Pq2DNqbzNhIkJfTb+f/70gxmpdqh6CU8XVLs2M3yGGhfQaDdius/jQFxXJQlgHUEo6w3
-         lWn231VaeK/jsqWxK6zfMuGtgD+qSmsCFdpDjtya7vdX79aciC9ItxVHenlVfxxMBzi2
-         TUSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kYVR6WxMSD2Ly1obkFCk4J7fsBZbqRtYof4ux6e/Pcw=;
-        b=Rg5G/iLat/PWCn12AwDebEHLByzlO+XABpePkEXIeKsDiCnq0wLWMx5U8Iv0qX8YAo
-         SFUqeHhkufdizlP2m1ZsY056pvIMEmPLjEchObvAFW2Z1yBmI321ARiI1cFTV7bFr+dQ
-         o4s7YSvWJLbppyq5ARTEkDL+WkGRPcuRgIVHXbABz7fG/MZX8PIS+kk3reWmpvH+n9k3
-         S7KSbOTMfiQJI/+MypZALFltGOyDqIVuQF7CKBJR1Cqk+IYvk9TvRCq4j5G/4MiKGv6+
-         Q0bR0Qq+yfEuYmD/MPSszR6819ryjfcxWrm05ntRQmCbME5Rxi8NPMVYb80lotvvDV6L
-         joEA==
-X-Gm-Message-State: AGRZ1gJaCaCZJoE3CMBI28P58ehRHZZx4HGxQ4TiZVuhz0IIolqdUGhX
-        61ePov41cCSoVDOQP5oZvkRgUT/5NrwlH+iFVETqJA==
-X-Google-Smtp-Source: AFSGD/XDkiKIIXlHfDzFLJJBP5MveFJ8Gf8jLxE+1mnuIhCqpKkdCrxcNi0XBz5JDTW11DBJYtuk+nMCK45baZP5Afc=
-X-Received: by 2002:a67:db06:: with SMTP id z6mr1476864vsj.73.1542743725946;
- Tue, 20 Nov 2018 11:55:25 -0800 (PST)
+        Wed, 21 Nov 2018 01:36:27 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by hera.aquilenet.fr (Postfix) with ESMTP id B91FA35A8;
+        Tue, 20 Nov 2018 21:05:33 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at aquilenet.fr
+Received: from hera.aquilenet.fr ([127.0.0.1])
+        by localhost (hera.aquilenet.fr [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id UGCeDk08eBse; Tue, 20 Nov 2018 21:05:31 +0100 (CET)
+Received: from function (unknown [212.51.165.254])
+        by hera.aquilenet.fr (Postfix) with ESMTPSA id 4FDD235B2;
+        Tue, 20 Nov 2018 21:05:31 +0100 (CET)
+Received: from samy by function with local (Exim 4.91)
+        (envelope-from <samuel.thibault@ens-lyon.org>)
+        id 1gPCH4-0005XY-Ul; Tue, 20 Nov 2018 21:05:30 +0100
+Date:   Tue, 20 Nov 2018 21:05:30 +0100
+From:   Samuel Thibault <samuel.thibault@ens-lyon.org>
+To:     akpm@linux-foundation.org, speakup@braille.uwo.ca,
+        linux-kernel@vger.kernel.org
+Subject: staging/speakup_soft: Fix alternate speech with other synths
+Message-ID: <20181120200530.xlntzbyfrq3xjz6n@function>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        akpm@linux-foundation.org, speakup@braille.uwo.ca,
+        linux-kernel@vger.kernel.org
+References: <20181023193624.6oftkzsziwz5jm7o@function>
 MIME-Version: 1.0
-References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
- <20181120194129.GC13936@tassilo.jf.intel.com>
-In-Reply-To: <20181120194129.GC13936@tassilo.jf.intel.com>
-From:   Kyle Huey <me@kylehuey.com>
-Date:   Tue, 20 Nov 2018 11:54:56 -0800
-Message-ID: <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
-Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Kan Liang <kan.liang@linux.intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Robert O'Callahan" <robert@ocallahan.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023193624.6oftkzsziwz5jm7o@function>
+Organization: I am not organized
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:41 AM Andi Kleen <ak@linux.intel.com> wrote:
->
-> > rr, a userspace record and replay debugger[0], uses the PMU interrupt
-> > (PMI) to stop a program during replay to inject asynchronous events
-> > such as signals. With perf counter freezing enabled we are reliably
-> > seeing perf event overcounts during replay. This behavior is easily
->
-> It's hard to see how it could over count since the PMU freezes
-> earlier than the PMI with freezing. So it should count less.
-> Did you mean under count?
+When switching from speakup_soft to another synth, speakup_soft would
+keep calling synth_buffer_getc() from softsynthx_read.
 
-Yes, I did mean under count, see my last email.
+Let's thus make synth.c export the knowledge of the current synth, so
+that speakup_soft can determine whether it should be running.
 
-> > Given that we're already at rc3, and that this renders rr unusable,
-> > we'd ask that counter freezing be disabled for the 4.20 release.
->
-> The boot option should be good enough for the release?
+speakup_soft also needs to set itself alive, otherwise the switch would
+let it remain silent.
 
-I'm not entirely sure what you mean here. We want you to flip the
-default boot option so this feature is off for this release. i.e. rr
-should work by default on 4.20 and people should have to opt into the
-inaccurate behavior if they want faster PMI servicing.
+Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+---
+ drivers/staging/speakup/speakup_soft.c |   16 +++++++++++-----
+ drivers/staging/speakup/spk_priv.h     |    1 +
+ drivers/staging/speakup/synth.c        |    6 ++++++
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-> A reasonable future option would be to expose an option to disable it in
-> the perf_event. Then rr could set it.
+--- a/drivers/staging/speakup/speakup_soft.c
++++ b/drivers/staging/speakup/speakup_soft.c
+@@ -208,12 +208,15 @@ static ssize_t softsynthx_read(struct fi
+ 		return -EINVAL;
+ 
+ 	spin_lock_irqsave(&speakup_info.spinlock, flags);
++	synth_soft.alive = 1;
+ 	while (1) {
+ 		prepare_to_wait(&speakup_event, &wait, TASK_INTERRUPTIBLE);
+-		if (!unicode)
+-			synth_buffer_skip_nonlatin1();
+-		if (!synth_buffer_empty() || speakup_info.flushing)
+-			break;
++		if (synth_current() == &synth_soft) {
++			if (!unicode)
++				synth_buffer_skip_nonlatin1();
++			if (!synth_buffer_empty() || speakup_info.flushing)
++				break;
++		}
+ 		spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+ 		if (fp->f_flags & O_NONBLOCK) {
+ 			finish_wait(&speakup_event, &wait);
+@@ -233,6 +236,8 @@ static ssize_t softsynthx_read(struct fi
+ 
+ 	/* Keep 3 bytes available for a 16bit UTF-8-encoded character */
+ 	while (chars_sent <= count - bytes_per_ch) {
++		if (synth_current() != &synth_soft)
++			break;
+ 		if (speakup_info.flushing) {
+ 			speakup_info.flushing = 0;
+ 			ch = '\x18';
+@@ -329,7 +334,8 @@ static __poll_t softsynth_poll(struct fi
+ 	poll_wait(fp, &speakup_event, wait);
+ 
+ 	spin_lock_irqsave(&speakup_info.spinlock, flags);
+-	if (!synth_buffer_empty() || speakup_info.flushing)
++	if (synth_current() == &synth_soft &&
++	    (!synth_buffer_empty() || speakup_info.flushing))
+ 		ret = EPOLLIN | EPOLLRDNORM;
+ 	spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+ 	return ret;
+--- a/drivers/staging/speakup/spk_priv.h
++++ b/drivers/staging/speakup/spk_priv.h
+@@ -72,6 +72,7 @@ int synth_request_region(unsigned long s
+ int synth_release_region(unsigned long start, unsigned long n);
+ int synth_add(struct spk_synth *in_synth);
+ void synth_remove(struct spk_synth *in_synth);
++struct spk_synth *synth_current(void);
+ 
+ extern struct speakup_info_t speakup_info;
+ 
+--- a/drivers/staging/speakup/synth.c
++++ b/drivers/staging/speakup/synth.c
+@@ -495,4 +495,10 @@ void synth_remove(struct spk_synth *in_s
+ }
+ EXPORT_SYMBOL_GPL(synth_remove);
+ 
++struct spk_synth *synth_current(void)
++{
++	return synth;
++}
++EXPORT_SYMBOL_GPL(synth_current);
++
+ short spk_punc_masks[] = { 0, SOME, MOST, PUNC, PUNC | B_SYM };
 
-- Kyle
