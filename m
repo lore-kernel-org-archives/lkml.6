@@ -2,122 +2,246 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57DCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAF3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0D720671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:49:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wNdO9R2x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0D720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A47620851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A47620851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeKTVRe (ORCPT
+        id S1728793AbeKTVU0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:17:34 -0500
-Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:24640
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727613AbeKTVRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:17:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9A7q6csEpLQibjL/+y6Sb9qnsgg7wDOLWBP8SraSzQo=;
- b=wNdO9R2x0MZFO18TjDJkChQSpf+teKhWm40vDUAQaux1FqOJLXFEz7f6ER6Mh4Bmc90Z2exOTaAg7Y3r/WldvB1bB31uWLsedyR1xqhvuP6dXZWPReF95lkQF/MMTsuLwHenrA55Yscu7wBuWHGmZZIM07KsEezU5m17u8aEpe8=
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
- VI1PR04MB5936.eurprd04.prod.outlook.com (20.178.205.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.20; Tue, 20 Nov 2018 10:48:59 +0000
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::8484:31d3:d034:a547]) by VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::8484:31d3:d034:a547%5]) with mapi id 15.20.1361.013; Tue, 20 Nov 2018
- 10:48:59 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>
-CC:     Richard Zhu <hongxing.zhu@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "cphealy@gmail.com" <cphealy@gmail.com>,
-        Aisheng DONG <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
-Thread-Topic: [PATCH 3/3] PCI: imx: Add support for i.MX8MQ
-Thread-Index: AQHUfqElwnFd442790GkPu5+DDDqQaVYgASA
-Date:   Tue, 20 Nov 2018 10:48:59 +0000
-Message-ID: <ce2ac1a880ce2a7a39f0e42b5059676daa748e52.camel@nxp.com>
-References: <20181117181225.10737-1-andrew.smirnov@gmail.com>
-         <20181117181225.10737-4-andrew.smirnov@gmail.com>
-In-Reply-To: <20181117181225.10737-4-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5936;6:mxhJ58+5aKxm7dlEitXlAmVG9glAXkqHIRGB86XqlkCe8o1XJiRozmeRSjFDwGlAnj1F+Gf8qELksBs5lFyRPljSJF1KpCEFngu8VsWpHafDaR0zlGosDtVAMGgWFE3ZxsEaYTVrDqsrRu+bIdpp2h5MEqplmc/z11nuJURjqd3MerQ1MFCGz1fiW93M7yBS7ztywvx+tEe0Bco0FwReB5bd7vf6ZXHlHWW/XOtF2IgUrt51UVPU98mC0i0wOa+Q4cqq3BuP2Q604WFsDuqaciqGOxROavap5jsYk42oBHP97eaVN57OFBHqWcE1nxBp9OFndnZpGWarbczU56EXpT/4YbTiwTNxZw9zoZys4/7Qono2nHvLpurNm0Q7BQm9IkJNI1n4DP0yluD3Of1fYYixkn4Lm4AX99DQULjtncd/Cg4iMAWhrmHCEycCFhi1/lu9qfUhZiABZ6RPsMtZMA==;5:itOs7slbiLSPt2ODrn2ckl7GvhRZa2UkM9W8gFnB/y0YV9yVtF2a1nU7td+OT5kotWfXjbktdYQsdDtV+AKXIQ1iugO/UW0g8urlmSZPCVk5Vg8+A2rJhEf7fB7HoDvDF0u29z4Nvpx0Cs+VZIEBrQ8QIMW1GsYS7OrCGF1rzA8=;7:avYXc0r54LjlkEufPVRxVPHqzdFkkBN73MHqUZ16Vm96dfljVY+fIpQBI2gO9FnFZq1d0tO1whPB1t6jNp4df18IcYYifJEAzJNhkOFnNdZY4KBzYb9cP5rT/anJZC6ka7njAMgMM631paMpz3vt8w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 29ba472c-1abc-4a8c-5511-08d64ed5c733
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5936;
-x-ms-traffictypediagnostic: VI1PR04MB5936:
-x-microsoft-antispam-prvs: <VI1PR04MB5936C98D5C7C06EC5F2D1175EED90@VI1PR04MB5936.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5936;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5936;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(366004)(199004)(189003)(6486002)(25786009)(305945005)(4326008)(118296001)(2900100001)(14454004)(7416002)(478600001)(39060400002)(2501003)(256004)(71190400001)(36756003)(4001150100001)(6246003)(7736002)(6916009)(71200400001)(6512007)(229853002)(53936002)(97736004)(6436002)(5640700003)(99286004)(6506007)(102836004)(26005)(186003)(2351001)(316002)(54906003)(44832011)(86362001)(486006)(66066001)(446003)(3846002)(105586002)(6116002)(106356001)(2906002)(11346002)(5660300001)(476003)(2616005)(1361003)(76176011)(81166006)(8936002)(8676002)(68736007)(50226002)(81156014)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5936;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 5xI1PGgfkl7LUyu5zjQIMuyBBY0TlU0dR1mHm612Y4cLJAnnF6slmb5bAAJ86gQ+jeLEDRvc0OrNlaqom+R4mnYCYA+ZfvBim53DGs0PSeXYK4vankt29ja1GEXohkJkJyAQnm1zwJzlQ/YbW0HLZLTZf9cSfBOgC/eba8NSZtpQXvP8ohQMDbpQhxDWUxqFBp//KqtOY6v+WuvOB2Ongnf1u+hgqhqw/sAEp+4Yz0kW1nWXjB30B12tNMDcI7Hm0tZh2zCBH7szeAhVWE4L5s3tGZf5qwQk0jiPGHP0FXArhJ37idUluN/C5f3tZ3V/GFFF07yYye5LIbC7fWSRs03DLuqBSswpWX2cBykNvUw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0A2AC41B31FD1147A77BC27AE8F297AF@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 20 Nov 2018 16:20:26 -0500
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:60722 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728190AbeKTVU0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:20:26 -0500
+Received: from [109.168.11.45] (port=57818 helo=[192.168.101.125])
+        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1gP3d3-006A8B-AS; Tue, 20 Nov 2018 11:51:37 +0100
+Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
+To:     kieran.bingham@ideasonboard.com, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sakari.ailus@iki.fi
+Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
+ <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
+ <5238fa80-7678-97a8-47ee-6a26970d862d@lucaceresoli.net>
+ <07ee8a2c-81a8-ca32-96cf-67d6a883e3f5@ideasonboard.com>
+ <e6143de9-f253-1a89-21e0-d1e2c0444e7b@lucaceresoli.net>
+ <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <6729cf7d-bd5d-d762-3f4a-f53a8791a397@lucaceresoli.net>
+Date:   Tue, 20 Nov 2018 11:51:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29ba472c-1abc-4a8c-5511-08d64ed5c733
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:48:59.4533
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5936
+In-Reply-To: <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDE4LTExLTE3IGF0IDEwOjEyIC0wODAwLCBBbmRyZXkgU21pcm5vdiB3cm90ZToN
-Cj4gQEAgLTkyMSw3ICsxMDA0LDI4IEBAIHN0YXRpYyBpbnQgaW14Nl9wY2llX3Byb2JlKHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+IC0JY2FzZSBJTVg3RDoNCj4gKwljYXNlIElNWDhN
-UToNCj4gKwkJaWYgKG9mX3Byb3BlcnR5X3JlYWRfdTMyKG5vZGUsICJmc2wsaW9tdXgtZ3ByMXgi
-LA0KPiArCQkJCQkgJmlteDZfcGNpZS0+Z3ByMXgpKSB7DQo+ICsJCQlkZXZfZXJyKGRldiwgIkZh
-aWxlZCB0byBnZXQgR1BSMXggYWRkcmVzc1xuIik7DQo+ICsJCQlyZXR1cm4gLUVJTlZBTDsNCj4g
-KwkJfQ0KDQpUaGlzIGlzIGZvciBkaXN0aW5ndWlzaGluZyBtdWx0aXBsZSBjb250cm9sbGVycyBv
-biB0aGUgU09DIGJ1dCBvdGhlcg0KcmVnaXN0ZXJzIGFuZCBiaXRzIG1pZ2h0IGRpZmZlci4gSXNu
-J3QgaXQgcHJlZmVyYWJsZSB0byBoYXZlIGEgcHJvcGVydHkNCmZvciBjb250cm9sbGVyIGlkIGlu
-c3RlYWQgb2YgYWRkaW5nIG1hbnkgcmVnaXN0ZXJzIHRvIERUPw0KDQo+ICsNCj4gKwkJaWYgKG9m
-X3Byb3BlcnR5X3JlYWRfdTMyX2FycmF5KA0KPiArCQkJICAgIG5vZGUsICJmc2wsZ3ByMTItZGV2
-aWNlLXR5cGUiLA0KPiArCQkJICAgIGlteDZfcGNpZS0+ZGV2aWNlX3R5cGUsDQo+ICsJCQkgICAg
-QVJSQVlfU0laRShpbXg2X3BjaWUtPmRldmljZV90eXBlKSkpIHsNCj4gKwkJCWRldl9lcnIoZGV2
-LCAiRmFpbGVkIHRvIGdldCBkZXZpY2UgdHlwZQ0KPiBtYXNrL3ZhbHVlXG4iKTsNCj4gKwkJCXJl
-dHVybiAtRUlOVkFMOw0KPiArCQl9DQoNClRoZSBkZXZpY2UgdHlwZSBjYW4gYmUgc2V0IG9uIG11
-bHRpcGxlIFNPQ3MsIHdoeSBhcmUgeW91IGFkZGluZyBhDQptYW5kYXRvcnkgcHJvcGVydHkgb25s
-eSBmb3IgOG0/DQoNClRoZXJlIHNob3VsZCBwcm9iYWJseSBiZSBhIHNlcGFyYXRlIHBhdGNoIHdp
-dGggZG9jdW1lbnRlZCBEVCBiaW5kaW5ncy4NCg0KLS0NClJlZ2FyZHMsDQpMZW9uYXJkDQo=
+Hi Kieran,
+
+On 20/11/18 01:32, Kieran Bingham wrote:
+> Hi Luca,
+> 
+> My apologies for my travel induced delay in responding here,
+
+No problem.
+
+> On 14/11/2018 02:04, Luca Ceresoli wrote:
+[...]
+>>>>> +static int max9286_probe(struct i2c_client *client,
+>>>>> +			 const struct i2c_device_id *did)
+>>>>> +{
+>>>>> +	struct max9286_device *dev;
+>>>>> +	unsigned int i;
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+>>>>> +	if (!dev)
+>>>>> +		return -ENOMEM;
+>>>>> +
+>>>>> +	dev->client = client;
+>>>>> +	i2c_set_clientdata(client, dev);
+>>>>> +
+>>>>> +	for (i = 0; i < MAX9286_N_SINKS; i++)
+>>>>> +		max9286_init_format(&dev->fmt[i]);
+>>>>> +
+>>>>> +	ret = max9286_parse_dt(dev);
+>>>>> +	if (ret)
+>>>>> +		return ret;
+>>>>> +
+>>>>> +	dev->regulator = regulator_get(&client->dev, "poc");
+>>>>> +	if (IS_ERR(dev->regulator)) {
+>>>>> +		if (PTR_ERR(dev->regulator) != -EPROBE_DEFER)
+>>>>> +			dev_err(&client->dev,
+>>>>> +				"Unable to get PoC regulator (%ld)\n",
+>>>>> +				PTR_ERR(dev->regulator));
+>>>>> +		ret = PTR_ERR(dev->regulator);
+>>>>> +		goto err_free;
+>>>>> +	}
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * We can have multiple MAX9286 instances on the same physical I2C
+>>>>> +	 * bus, and I2C children behind ports of separate MAX9286 instances
+>>>>> +	 * having the same I2C address. As the MAX9286 starts by default with
+>>>>> +	 * all ports enabled, we need to disable all ports on all MAX9286
+>>>>> +	 * instances before proceeding to further initialize the devices and
+>>>>> +	 * instantiate children.
+>>>>> +	 *
+>>>>> +	 * Start by just disabling all channels on the current device. Then,
+>>>>> +	 * if all other MAX9286 on the parent bus have been probed, proceed
+>>>>> +	 * to initialize them all, including the current one.
+>>>>> +	 */
+>>>>> +	max9286_i2c_mux_close(dev);
+>>>>> +
+>>>>> +	/*
+>>>>> +	 * The MAX9286 initialises with auto-acknowledge enabled by default.
+>>>>> +	 * This means that if multiple MAX9286 devices are connected to an I2C
+>>>>> +	 * bus, another MAX9286 could ack I2C transfers meant for a device on
+>>>>> +	 * the other side of the GMSL links for this MAX9286 (such as a
+>>>>> +	 * MAX9271). To prevent that disable auto-acknowledge early on; it
+>>>>> +	 * will be enabled later as needed.
+>>>>> +	 */
+>>>>> +	max9286_configure_i2c(dev, false);
+>>>>> +
+>>>>> +	ret = device_for_each_child(client->dev.parent, &client->dev,
+>>>>> +				    max9286_is_bound);
+>>>>> +	if (ret)
+>>>>> +		return 0;
+>>>>> +
+>>>>> +	dev_dbg(&client->dev,
+>>>>> +		"All max9286 probed: start initialization sequence\n");
+>>>>> +	ret = device_for_each_child(client->dev.parent, NULL,
+>>>>> +				    max9286_init);
+>>>>
+>>>> I can't manage to like this initialization sequence, sorry. If at all
+>>>> possible, each max9286 should initialize itself independently from each
+>>>> other, like any normal driver.
+>>>
+>>> Yes, I think we're in agreement here, but unfortunately this section is
+>>> a workaround for the fact that our devices share a common address space.
+>>>
+>>> We (currently) *must* disable both devices before we start the
+>>> initialisation process for either on our platform currently...
+>>
+>> The model I proposed in my review to patch 1/4 (split remote physical
+>> address from local address pool) allows to avoid this workaround.
+> 
+> 
+> Having just talked this through with Jacopo I think I see that we have
+> two topics getting intertwined here too.
+> 
+>  - Address translation so that we can separate the camera addressing
+> 
+>  - our 'device_is_bound/device_for_each_child()' workaround which lets
+>    us make sure the buses are closed before we power on any camera
+>    device.
+> 
+> 
+> For the upstream process of this driver - I will remove the
+> 'device_is_bound()/device_for_each_child()' workarounds.
+> 
+> 
+> It is /ugly/ and needs more consideration, but I believe we do still
+> need it (or something similar) for our platform currently.
+> 
+> 
+> 
+> The other side of that is the address translation. I think I was wrong
+> earlier and may have said we have address translation on both sides.
+> 
+> 
+> I think I now see that we only have some minimal translation for two
+> addresses on the remote (max9271) side, not the local (max9286) side.
+
+Can the remote (max9271) translate addresses for transactions
+originating from the local side? This would make it possible to do a
+proper address translation, although 2 addresses is a quite small amount.
+
+BTW all the TI chips I'm looking at can do address translation but, as
+far as I understand, only when acting as "slave proxy", i.e. when
+attached to the bus master. If the Maxim chips do the same, the "remote
+translation" would be unusable.
+
+> We have the ability to reprogram addresses through, and that's what we
+> are using.
+
+Sadly, it looks pretty much unavoidable...
+
+> There's a lot more local discussion going on here that I may have missed
+> so I hope Jacopo, Niklas, or Laurent may add more here if relevant :)
+> 
+> 
+> 
+> 
+>>> That said - I think this section needs to be removed from the upstream
+>>> part at least for now. I think we should probably carry this
+>>> 'workaround' separately.
+>>>
+>>> This part is the core issue that I talked about in my presentation at
+>>> ALS-Japan [0]
+>>>
+>>>  [0] https://sched.co/EaXa
+>>
+>> Oh, interesting, I hadn't noticed that you gave this talk -- at the same
+>> conference as Vladimir's talk! No video recording apparently, but are
+>> slides available at least?
+> 
+> Hrm ... I was sure I uploaded to the conference so that they should have
+> been available on that URL - but they are not showing.
+> 
+> They are available here:
+> 
+> 	https://www.slideshare.net/KieranBingham/gmsl-in-linux
+
+Thanks.
+
+> (Please excuse the incorrect date on the first slide :D)
+> 
+> I had put a proposal in to give this talk again at ELCE but
+> unfortunately it didn't get accepted.
+>
+> Seems it really would have been useful to have a slot. Lets hope next
+> ELCE is too late and we work out a good system by then :)
+
+Indeed it would have been!
+
+But hey, The FOSDEM CFPs are still open!
+
+Bye,
+-- 
+Luca
