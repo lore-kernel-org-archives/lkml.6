@@ -3,67 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C407C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1657AC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D20120684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:16:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D20120684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
+	by mail.kernel.org (Postfix) with ESMTP id 2209A20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2209A20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728488AbeKUCqG (ORCPT
+        id S1728572AbeKUCqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:46:06 -0500
-Received: from ms.lwn.net ([45.79.88.28]:55652 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728271AbeKUCqG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:46:06 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id DF4892E4;
-        Tue, 20 Nov 2018 16:16:11 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 09:16:10 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     Alessia Mantegazza <amantegazza@vaga.pv.it>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] doc:it_IT: update italian documentation
-Message-ID: <20181120091610.35ebffee@lwn.net>
-In-Reply-To: <20181108232417.14982-1-federico.vaga@vaga.pv.it>
-References: <20181108232417.14982-1-federico.vaga@vaga.pv.it>
-Organization: LWN.net
+        Tue, 20 Nov 2018 21:46:42 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:48628 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727733AbeKUCql (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 21:46:41 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKGGF3b007354;
+        Tue, 20 Nov 2018 10:16:33 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2ntg9svadv-1;
+        Tue, 20 Nov 2018 10:16:32 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 393436255C7E;
+        Tue, 20 Nov 2018 10:19:16 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
+ 16:16:31 +0000
+Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ wAKGGU4L028766;        Tue, 20 Nov 2018 16:16:30 GMT
+Subject: Re: Applied "regulator: wm8994: Pass descriptor instead of GPIO
+ number" to the regulator tree
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+References: <20180517164120.485F844007E@finisterre.ee.mobilebroadband>
+ <CGME20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137@eucas1p2.samsung.com>
+ <66d3b74c-0152-b17b-89d4-a21d33445b25@samsung.com>
+ <20181120144700.GB16508@imbe.wolfsonmicro.main>
+ <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
+ <20181120153215.GC16508@imbe.wolfsonmicro.main>
+ <20181120153610.GD16508@imbe.wolfsonmicro.main>
+ <9314db6c-9498-579d-430c-5a2992fe513e@samsung.com>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <59879030-93a4-f562-b03b-c5e579d44e89@opensource.cirrus.com>
+Date:   Tue, 20 Nov 2018 16:16:30 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9314db6c-9498-579d-430c-5a2992fe513e@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=575 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811200144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  9 Nov 2018 00:24:14 +0100
-Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+On 20/11/18 15:56, Marek Szyprowski wrote:
+> Hi Charles,
+> 
+> On 2018-11-20 16:36, Charles Keepax wrote:
+>> On Tue, Nov 20, 2018 at 03:32:15PM +0000, Charles Keepax wrote:
+>>> On Tue, Nov 20, 2018 at 03:58:59PM +0100, Marek Szyprowski wrote:
+>>>> On 2018-11-20 15:47, Charles Keepax wrote:
+>>>>> On Tue, Nov 20, 2018 at 02:43:32PM +0100, Marek Szyprowski wrote:
+>>>>>> On 2018-05-17 18:41, Mark Brown wrote:
+>>>>>>> Subject: [PATCH] regulator: wm8994: Pass descriptor instead of GPIO number
+>>>>>> This patch causes following kernel warning on Samsung Exynos4412 based
+>>>>>> Trats2 board:
+>>>>>>
+>>>>>> wm8994 4-001a: Failed to get supply 'DBVDD1': -517
+>>>>>> wm8994 4-001a: Failed to get supplies: -517
+>>> This is really weird, because the error in your log relates to
+>>> DBVDD1 which is an independent regulator supplied by a separate
+>>> regulator. I am really having some difficulty seeing how the
+>>> patch interfers. It is definitely that patch which causes the
+>>> issue, like you revert it and things work again?
+>> Wait does the board still boot just you have an extra probe defer
+>> now? Or does it actually fail?
+> 
+> The board boots fine. The only new thing is the mentioned warning, which
+> I would
+> 
+> like to have fixed.
+> 
+> 
+> Best regards
+> 
 
-> In this small patch set there is the V3 of
-> "doc:it_IT: add some process/* translations" in which I fixed
-> the recent conflicts in docs-next.
-> I took the occasion to add other two simple patches that fix:
-> - a missing translation in locking.rst
-> - apply a patch from the official documentation to the italian one
+-517 is EPROBE_DEFER. This isn't something  that needs "fixing" unless the
+driver is never able to probe.
 
-OK, I have applied the set, apologies for taking so long.
+If the wm8994 eventually probes ok after retries it's not a problem,
+it's normal kernel behaviour.
 
-I do have one request: there are an awful lot of entries that simply say
-"ancora da tradurre" in here; those are not going to bring much joy to
-your readers.  Can I ask that you try to reduce those in number, either by
-doing the work or concluding that it won't happen and just removing them?
-No timelines or anything - I'd just be happy to see the work go in that
-direction.
-
-Thanks,
-
-jon
+If the wm8994 driver never manages to probe successfully it should mean that
+the driver which supplies DBVDD1 isn't available.
