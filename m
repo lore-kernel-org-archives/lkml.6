@@ -2,82 +2,123 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C53C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE49C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D985206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:02:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D985206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id BEE3F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE3F206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728252AbeKTUbC (ORCPT
+        id S1728320AbeKTUcS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:31:02 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:56414 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeKTUbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:31:02 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42zh8f1sM9z1qxVH;
-        Tue, 20 Nov 2018 11:02:42 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42zh8f0PqLz1qrn7;
-        Tue, 20 Nov 2018 11:02:42 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id bQdbdZVPVkx8; Tue, 20 Nov 2018 11:02:35 +0100 (CET)
-X-Auth-Info: THz1PUJYvGanoOaGpah04NLfeUmkXy7yeAc8abl4o+TJEulGRFXlivWBytyz5UG5
-Received: from hawking (charybdis-ext.suse.de [195.135.221.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 20 Nov 2018 11:02:35 +0100 (CET)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     fthain@telegraphics.com.au,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>, schivers@csc.com.au,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        schmitzmic@gmail.com, John Stultz <john.stultz@linaro.org>,
-        linux-m68k@lists.linux-m68k.org,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 07/14] m68k: atari: Convert to clocksource API
-References: <cover.1542589838.git.fthain@telegraphics.com.au>
-        <b94b3aed32c0ae0f5de786ffc746ffb20fbe2d1e.1542589838.git.fthain@telegraphics.com.au>
-        <CACRpkdZOoA8y7nAmE2JAQT8QgfNSpzXPVdjZfDBrnsy2jmgW7w@mail.gmail.com>
-X-Yow:  I'm CONTROLLED by the CIA!!  EVERYONE is controlled by the CIA!!
-Date:   Tue, 20 Nov 2018 11:02:35 +0100
-In-Reply-To: <CACRpkdZOoA8y7nAmE2JAQT8QgfNSpzXPVdjZfDBrnsy2jmgW7w@mail.gmail.com>
-        (Linus Walleij's message of "Tue, 20 Nov 2018 09:10:36 +0100")
-Message-ID: <mvmk1l8m5hg.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
+        Tue, 20 Nov 2018 15:32:18 -0500
+Received: from shell.v3.sk ([90.176.6.54]:50076 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726620AbeKTUcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:32:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 97470C6FBD;
+        Tue, 20 Nov 2018 11:03:55 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 2pmrLRmepOWw; Tue, 20 Nov 2018 11:03:50 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 93F7FC6FB3;
+        Tue, 20 Nov 2018 11:03:44 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id L6jYDEugBb8L; Tue, 20 Nov 2018 11:03:41 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 5E227C6FB5;
+        Tue, 20 Nov 2018 11:03:40 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: [PATCH v3 05/14] media: dt-bindings: marvell,mmp2-ccic: Add Marvell MMP2 camera
+Date:   Tue, 20 Nov 2018 11:03:10 +0100
+Message-Id: <20181120100318.367987-6-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181120100318.367987-1-lkundrak@v3.sk>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Nov 20 2018, Linus Walleij <linus.walleij@linaro.org> wrote:
+Add Marvell MMP2 camera host interface.
 
-> Yes you already see the same as I see: this chip MK68901 has
-> no less than four timers. I bet the kernel is just using one of them,
-> out of habit.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-Note that not all timers can be used freely.  Some of them are hardwired
-to generate the clock for the serial interfaces.
+---
+Changes since v2:
+- Added #clock-cells, clock-names, port
 
-Andreas.
+ .../bindings/media/marvell,mmp2-ccic.txt      | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-=
+ccic.txt
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.tx=
+t b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+new file mode 100644
+index 000000000000..e5e8ca90e7f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
+@@ -0,0 +1,37 @@
++Marvell MMP2 camera host interface
++
++Required properties:
++ - compatible: Should be "marvell,mmp2-ccic"
++ - reg: register base and size
++ - interrupts: the interrupt number
++ - #clock-cells: must be 0
++ - any required generic properties defined in video-interfaces.txt
++
++Optional properties:
++ - clocks: input clock (see clock-bindings.txt)
++ - clock-names: names of the clocks used, may include "axi", "func" and
++                "phy"
++ - clock-output-names: should contain the name of the clock driving the
++                       sensor master clock MCLK
++
++Required subnodes:
++ - port: the parallel bus interface port with a single endpoint linked t=
+o
++         the sensor's endpoint as described in video-interfaces.txt
++
++Example:
++
++	camera0: camera@d420a000 {
++		compatible =3D "marvell,mmp2-ccic";
++		reg =3D <0xd420a000 0x800>;
++		interrupts =3D <42>;
++		clocks =3D <&soc_clocks MMP2_CLK_CCIC0>;
++		clock-names =3D "axi";
++		#clock-cells =3D <0>;
++		clock-output-names =3D "mclk";
++
++		port {
++			camera0_0: endpoint {
++				remote-endpoint =3D <&ov7670_0>;
++			};
++		};
++	};
+--=20
+2.19.1
+
