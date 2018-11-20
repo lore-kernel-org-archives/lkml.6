@@ -2,93 +2,100 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE8FC04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D377AC04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C672206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:30:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FAHsm6fD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C672206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A1EDD206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:32:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EDD206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbeKTX74 (ORCPT
+        id S1727792AbeKUABX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:59:56 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40509 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbeKTX74 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:59:56 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b22-v6so1009585pls.7;
-        Tue, 20 Nov 2018 05:30:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Jj+IBPS75yOfj3K1NF/fGtDTYWZ8n1i3EaUHftboACg=;
-        b=FAHsm6fDINrGw8wMygdx2fSENuQEwt0x2CZon4ougH539Y48NqbJnT9lz39OTGijFH
-         IDrniuiTXAh/6Ah6sZHUqOqUEeMg/gETFAeIlW4k6dngyqWmGkKpUfZjGqjIgXReNhaJ
-         qcuI+rZ03WPiIVxt3Qbq7rsC4jkkh82xf1EhjqpE059GXqVeBaYpx3hZXFzXCMvP7T7C
-         Z0ba76jamXN9OW1NxHNirEZT2LFaa2o6HuVxPhaL01Lq+WuKbOigz0dDAPMTa3GXo/Bj
-         cuzz/4DFmHV+Ht8o7pJ1w5piaCraf7PnkfeKMMNH04yCc/e6qyij3itl2fqPNFtbxP9F
-         uPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Jj+IBPS75yOfj3K1NF/fGtDTYWZ8n1i3EaUHftboACg=;
-        b=VsZBdvxVaWRxEMwBQWcfbw+2NLktGXnF0alygbcSkH1K00Tm2QC6rCEn+Qr7YEv1nA
-         tonwte9bXFs2gROfnEbQOpryavgF0dfl6XTao4XhF20P3/L/sc8waYlDWgnCoWXeU8w+
-         228IBmsgglWojrEiNGEkQP8gUM0AmX4cvhEJhvVJg8H/U2a83Au7cqVVnRVQHxeHoAcA
-         meHYvAdcsACWEqJ1Ox6A5EON5S32M89HFrTCJxz1oLv3Zb8CMSI/3uXyOQUxLUNyqMrx
-         8546m6ihlX2U65/nyWBG5eOHhMiU0QfgOHTQPGIUtA70+N6cGbo/SUFCs0x5QECwKudS
-         Tt2w==
-X-Gm-Message-State: AA+aEWb+KzNl/tp7JM3XNpR/tNPerZLovJDfzn3mk6vkw0q7F8KY0VFP
-        kfWZ/sAyU8Ra/UNYRlRetCo=
-X-Google-Smtp-Source: AFSGD/Vi6EWAH5TOjtTqqv64+sWF84fQudtTJvW/N8Jc+U7WdyfNF6OROv0D4eT6AFcgz/xzhW+PRg==
-X-Received: by 2002:a17:902:9f93:: with SMTP id g19mr2170449plq.195.1542720646991;
-        Tue, 20 Nov 2018 05:30:46 -0800 (PST)
-Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id p6sm22330209pfn.53.2018.11.20.05.30.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 05:30:46 -0800 (PST)
-From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     davem@davemloft.net
-Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH] sbus: char: add of_node_put()
-Date:   Tue, 20 Nov 2018 08:30:40 -0500
-Message-Id: <20181120133040.19889-1-tiny.windzz@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Tue, 20 Nov 2018 19:01:23 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56433 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726911AbeKUABW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:01:22 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E3F90206A1; Tue, 20 Nov 2018 14:32:10 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 99BEC2037D;
+        Tue, 20 Nov 2018 14:32:10 +0100 (CET)
+Date:   Tue, 20 Nov 2018 14:32:09 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     masonccyang@mxic.com.tw, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+        zhengxunli@mxic.com.tw
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+Message-ID: <20181120143209.49217efb@bbrezillon>
+In-Reply-To: <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+        <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+        <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
+        <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
+        <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-use of_node_put() to release the refcount.
+On Tue, 20 Nov 2018 14:09:05 +0100
+Marek Vasut <marek.vasut@gmail.com> wrote:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
----
- drivers/sbus/char/display7seg.c | 1 +
- 1 file changed, 1 insertion(+)
+> On 11/20/2018 08:23 AM, masonccyang@mxic.com.tw wrote:
+> > Hi Marek,  
+> 
+> Hi,
+> 
+> >> Marek Vasut <marek.vasut@gmail.com>
+> >> 2018/11/19 下午 10:12
+> >>
+> >> To
+> >>  
+> >> > +
+> >> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
+> >> > +{
+> >> > +   int ret;
+> >> > +
+> >> > +   if (rpc->cur_speed_hz == freq)
+> >> > +      return 0;
+> >> > +
+> >> > +   clk_disable_unprepare(rpc->clk_rpc);
+> >> > +   ret = clk_set_rate(rpc->clk_rpc, freq);
+> >> > +   if (ret)
+> >> > +      return ret;
+> >> > +
+> >> > +   ret = clk_prepare_enable(rpc->clk_rpc);
+> >> > +   if (ret)
+> >> > +      return ret;  
+> >>
+> >> Is this clock disable/update/enable really needed ? I'd think that
+> >> clk_set_rate() would handle the rate update correctly.  
+> > 
+> > This is for run time PM mechanism in spi-mem layer and __spi_sync(),
+> > you may refer to another patch [1].
+> > 
+> > [1]
+> > https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-4.21&id=b942d80b0a394e8ea18fce3b032b4700439e8ca3  
+> 
+> I think Geert commented on the clock topic, so let's move it there.
+> Disabling and enabling clock to change their rate looks real odd to me.
 
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index 5c8ed7350a04..a36e4cf1841d 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -220,6 +220,7 @@ static int d7s_probe(struct platform_device *op)
- 	dev_set_drvdata(&op->dev, p);
- 	d7s_device = p;
- 	err = 0;
-+	of_node_put(opts);
- 
- out:
- 	return err;
--- 
-2.17.0
-
+Look at the CLK_SET_RATE_GATE definition and its users and you'll see
+it's not unusual to have such constraints on clks. Maybe your HW does
+not have such constraints, but it's not particularly odd to do that
+(though it could probably be automated by the clk framework somehow).
