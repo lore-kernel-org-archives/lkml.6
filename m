@@ -2,91 +2,273 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E31DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF42C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 132402075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17733208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:17:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fC4Gt25I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132402075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOITQS20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17733208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731019AbeKTPnD (ORCPT
+        id S1731736AbeKTPpE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 10:43:03 -0500
-Received: from ozlabs.org ([203.11.71.1]:43569 "EHLO ozlabs.org"
+        Tue, 20 Nov 2018 10:45:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726902AbeKTPnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 10:43:03 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726902AbeKTPpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 10:45:04 -0500
+Received: from localhost (unknown [77.138.135.184])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42zYnc03j2z9s4s;
-        Tue, 20 Nov 2018 16:15:47 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1542690948;
-        bh=QxLkMQbvhflfLrIZw4eY1Kz5jKaCI7eYw0ylTZeOOYA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=fC4Gt25IpsFGfGdCbfkXonDueDKcPQcLgTvrhZnNDo6aFYofLqJb87ON1lnVDVjCU
-         q15fK/m/4bRzGeb7fQFBbBbM8oA2LUGnQyDXDk3vuYt4Z6OBTMZOFiopQWHbuiaTJn
-         BLvPcjsSqsqLMy+EzL64IbvU7/GGvIhCi3F1iGIylwTp+7EEvUtKvvCkopiGYA9F4E
-         3TKgswYyzWrcjpVTiiNWmTUUjeEYMh+2p7rdAq772GQLNNBK3ZOPeX/r1x44QvM09X
-         iwfq65bGlx7WBKLkpSxrva2T6VVRkC13s4cnvA+dFkaLs7DvpMwCiwVYRj41WUqk8Q
-         Q+8PAJ/MZZgsQ==
-Date:   Tue, 20 Nov 2018 16:15:46 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Xin Long <lucien.xin@gmail.com>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Message-ID: <20181120161546.1098b346@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id ACB292075B;
+        Tue, 20 Nov 2018 05:17:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542691069;
+        bh=sSs4NBjtggHh+00w/aU3U3/f5Gi3zhcKsoyFM8wyybk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QOITQS201IVvPCnW/caBs/hcoL4+5OEgGc4gQZ/moeI4CsUUV28665KMEKBTpb/qz
+         HY+3f83NEMwRTx6VQXXUSgBiofsm2OlmXuQhO+AXYT4ewbyPfBZp963UsaGIhAOCBo
+         quw5a/lTTIlZy40ds80+jC1EKQBXiFGnVlz2yIRw=
+Date:   Tue, 20 Nov 2018 07:17:44 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Kenneth Lee <nek.in.cn@gmail.com>,
+        Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com,
+        linuxarm@huawei.com, haojian.zhuang@linaro.org,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        David Kershner <david.kershner@unisys.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, guodong.xu@linaro.org,
+        linux-netdev <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        linux-crypto@vger.kernel.org,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-accelerators@lists.ozlabs.org
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181120051743.GD25178@mtr-leonro.mtl.com>
+References: <20181112075807.9291-1-nek.in.cn@gmail.com>
+ <20181112075807.9291-2-nek.in.cn@gmail.com>
+ <20181113002354.GO3695@mtr-leonro.mtl.com>
+ <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
+ <20181114160017.GI3759@mtr-leonro.mtl.com>
+ <20181115085109.GD157308@Turing-Arch-b>
+ <20181115145455.GN3759@mtr-leonro.mtl.com>
+ <20181119091405.GE157308@Turing-Arch-b>
+ <20181119184954.GB4890@ziepe.ca>
+ <20181120030702.GH157308@Turing-Arch-b>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vsxwVg0T9.VYGn8MnutzUEE"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="g7w8+K/95kPelPD2"
+Content-Disposition: inline
+In-Reply-To: <20181120030702.GH157308@Turing-Arch-b>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vsxwVg0T9.VYGn8MnutzUEE
-Content-Type: text/plain; charset=US-ASCII
+
+--g7w8+K/95kPelPD2
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Nov 20, 2018 at 11:07:02AM +0800, Kenneth Lee wrote:
+> On Mon, Nov 19, 2018 at 11:49:54AM -0700, Jason Gunthorpe wrote:
+> > Date: Mon, 19 Nov 2018 11:49:54 -0700
+> > From: Jason Gunthorpe <jgg@ziepe.ca>
+> > To: Kenneth Lee <liguozhu@hisilicon.com>
+> > CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com=
+>,
+> >  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexand=
+er
+> >  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+> >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+> >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mai=
+ling
+> >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+> >  Doug Ledford <dledford@redhat.com>, Uwe Kleine-K=F6nig
+> >  <u.kleine-koenig@pengutronix.de>, David Kershner
+> >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
+> >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Du=
+nlap
+> >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
+> >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David =
+S.
+> >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
+> > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > User-Agent: Mutt/1.9.4 (2018-02-28)
+> > Message-ID: <20181119184954.GB4890@ziepe.ca>
+> >
+> > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
+> >
+> > > If the hardware cannot share page table with the CPU, we then need to=
+ have
+> > > some way to change the device page table. This is what happen in ODP.=
+ It
+> > > invalidates the page table in device upon mmu_notifier call back. But=
+ this cannot
+> > > solve the COW problem: if the user process A share a page P with devi=
+ce, and A
+> > > forks a new process B, and it continue to write to the page. By COW, =
+the
+> > > process B will keep the page P, while A will get a new page P'. But y=
+ou have
+> > > no way to let the device know it should use P' rather than P.
+> >
+> > Is this true? I thought mmu_notifiers covered all these cases.
+> >
+> > The mm_notifier for A should fire if B causes the physical address of
+> > A's pages to change via COW.
+> >
+> > And this causes the device page tables to re-synchronize.
+>
+> I don't see such code. The current do_cow_fault() implemenation has nothi=
+ng to
+> do with mm_notifer.
+>
+> >
+> > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it =
+support
+> > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you=
+ don't need
+> > > to write any code for that. Because it has been done by IOMMU framewo=
+rk. If it
+> >
+> > Looks like the IOMMU code uses mmu_notifier, so it is identical to
+> > IB's ODP. The only difference is that IB tends to have the IOMMU page
+> > table in the device, not in the CPU.
+> >
+> > The only case I know if that is different is the new-fangled CAPI
+> > stuff where the IOMMU can directly use the CPU's page table and the
+> > IOMMU page table (in device or CPU) is eliminated.
+> >
+>
+> Yes. We are not focusing on the current implementation. As mentioned in t=
+he
+> cover letter. We are expecting Jean Philips' SVA patch:
+> git://linux-arm.org/linux-jpb.
+>
+> > Anyhow, I don't think a single instance of hardware should justify an
+> > entire new subsystem. Subsystems are hard to make and without multiple
+> > hardware examples there is no way to expect that it would cover any
+> > future use cases.
+>
+> Yes. That's our first expectation. We can keep it with our driver. But be=
+cause
+> there is no user driver support for any accelerator in mainline kernel. E=
+ven the
+> well known QuickAssit has to be maintained out of tree. So we try to see =
+if
+> people is interested in working together to solve the problem.
+>
+> >
+> > If all your driver needs is to mmap some PCI bar space, route
+> > interrupts and do DMA mapping then mediated VFIO is probably a good
+> > choice.
+>
+> Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opini=
+on and
+> try not to add complexity to the mm subsystem.
+>
+> >
+> > If it needs to do a bunch of other stuff, not related to PCI bar
+> > space, interrupts and DMA mapping (ie special code for compression,
+> > crypto, AI, whatever) then you should probably do what Jerome said and
+> > make a drivers/char/hisillicon_foo_bar.c that exposes just what your
+> > hardware does.
+>
+> Yes. If no other accelerator driver writer is interested. That is the
+> expectation:)
+>
+> But we really like to have a public solution here. Consider this scenario:
+>
+> You create some connections (queues) to NIC, RSA, and AI engine. Then you=
+ got
+> data direct from the NIC and pass the pointer to RSA engine for decryptio=
+n. The
+> CPU then finish some data taking or operation and then pass through to th=
+e AI
+> engine for CNN calculation....This will need a place to maintain the same
+> address space by some means.
 
-Commit
+You are using NIC terminology, in the documentation, you wrote that it is n=
+eeded
+for DPDK use and I don't really understand, why do we need another shiny new
+interface for DPDK.
 
-  69fec325a643 ("Revert "sctp: remove sctp_transport_pmtu_check"")
+>
+> It is not complex, but it is helpful.
+>
+> >
+> > If you have networking involved in here then consider RDMA,
+> > particularly if this functionality is already part of the same
+> > hardware that the hns infiniband driver is servicing.
+> >
+> > 'computational MRs' are a reasonable approach to a side-car offload of
+> > already existing RDMA support.
+>
+> OK. Thanks. I will spend some time on it. But personally, I really don't =
+like
+> RDMA's complexity. I cannot even try one single function without a...some
+> expensive hardwares and complexity connection in the lab. This is not lik=
+e a
+> open source way.
 
-is missing a Signed-off-by from its author.
+It is not very accurate. We have RXE driver which is virtual RDMA device
+which is implemented purely in SW. It struggles from bad performance and
+sporadic failures, but it is enough to try RDMA on your laptop in VM.
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks
 
---Sig_/vsxwVg0T9.VYGn8MnutzUEE
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>
+> >
+> > Jason
+>
+
+--g7w8+K/95kPelPD2
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvzmIIACgkQAVBC80lX
-0GyEzggAiFFfFHS/Bf54O6F9vw3vVvg8FXsO06bPcbyho6gAcKRVOp26qnNEJZah
-glO+0ZpPgkDYx8G3Icw2Scz3FVY3j38l03GcvVXfC7X0Q9TsagYEBYjQOt1W4xkw
-9ZEfbUj6ugaCLvGtUyA3fQoIi6EQlEa1MOctXEdCCekH9unV6FCWKi51y0asTKAR
-6AGxMvA9/Zn5AUhTmzUmhj/BBB7AkyExQRTjaw2uqFQd0J9r9/BMoknF0/bZEqFM
-PWl4DpP/Vg9TdOotwINBxnZlE29K9LPLXYcxg9a8tqfn2LsOXrhiAlUHXTmqSzrF
-Oj6pz1xeYhebvBYxCtZ9NBEZsQOBdA==
-=4G96
+iQIcBAEBAgAGBQJb85j3AAoJEORje4g2clinCzcQALTEmtC5tWhaxj2FyJvJYyOv
+S1bTcT7nO5VNULTjooacNWtFUJpuoSfUCQOEguiB/37F2G27Qd8uR8tBnVheBCeh
+Gho5oBNDOJNfgGGJ09SWbTZVOycfUyWAl4cMeLCSNJ6lb3iAmu5EAE0dySZf2dJW
+PMtnzuQM9hiqSeqWnSna9BJRtQI8Y8oWmoaT0aYVkTwsnB1Blw+g/r1FsQI1gTt3
+3lYbmOf1EgdU3WHsd3FTRrvkmkkkCDPl/6cCwo9ilNbMmAzFf7H/Fi+yNwYzhAs5
+3BN5EKv4ZdImI654067p2z9K5CjvEC24mGSGNBWPTESK3UYR9r+sdSzeSJNesDMi
+mVpk2dmqsvnn/JX78whbhsuvvFWyOk0xEfawzPQio8Ya2tnrJD8nW+6i58Lok1EF
+/FKd2XkvDrE2Y21UVUtDyPFHYdAsiBZCL/VX/Vo/eBYsYOzkZW69npCI9dnSNFbO
+yGrnpTpsc2iG8YwwKzPbVtGxjOGmEOauPJo4O5aj+xcnsrg7RKJ9sncw94ltEtoJ
+U4cKaWXB/okFbBi7WHWfvYGo6dsa3NV2ULX5V1vF9iEkCDU+ECQSSrtJeAGwdyd6
+KMJZHHUKiF816glIcJCzNI3wqDBOe5GxZqHPnlLOkL/N114Ka+g0X+AlFmoXj3bZ
+JtoStRrcGOTsZsGDKwdx
+=gp0U
 -----END PGP SIGNATURE-----
 
---Sig_/vsxwVg0T9.VYGn8MnutzUEE--
+--g7w8+K/95kPelPD2--
