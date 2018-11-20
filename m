@@ -2,136 +2,118 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A3BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6AEC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF6B12080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:47:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FC832080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:51:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SR9jqmhN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6B12080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U8vxFEXQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC832080C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731836AbeKTNNx (ORCPT
+        id S1730463AbeKTNSZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 08:13:53 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40280 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728794AbeKTNNw (ORCPT
+        Tue, 20 Nov 2018 08:18:25 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37669 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728794AbeKTNSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 08:13:52 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i12so235011pfo.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 18:47:04 -0800 (PST)
+        Tue, 20 Nov 2018 08:18:24 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so221218pge.4
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 18:51:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BHkbtNvMLbLuIMAwi7snocSkhgR95jxZ77GlQYCvGW4=;
-        b=SR9jqmhNXGOLL6oBfDpA4L4G5Nd4TBuPRpj+2aC+/x4OmYuUJ78RCHYritI/m17WMJ
-         6bltvBfLQKb5R5qy9AwOPYbDEprfKhcFRujQR1xqEa7+lYvMh34uNc9I0gRWqp9yozGU
-         YggtQdCGbH70j50JJ+XUSeiwCX7lWz/8zA7s9CoQZAWx9iEnibgZeifmNdxWuMeuf/yW
-         PXw/PGqYjlTYVL0mWb6gSwSER41Srbimr55a1DawSqFW62hpiNT5mP8Hx7ASRIaF/mL+
-         CLAdpfj7EkS59x8y9ASLL419CSRLgV96rdufF83OWc67M+VAYFXtOKQKywqmW5plPHSY
-         hzRA==
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=W9aL9ykX88NSPE7+sMeumq/IC/Ndf6IJyG6e/7w4838=;
+        b=U8vxFEXQZqsAFGjqxZSDsq9F1xaGPKi1lR5xqvMhMZhrcRg9Hfka8ofgPSGuXFsqf8
+         lBZSeRvWou2IahhEr+bNdUrlr6ppoDu7vf8j6jWcnU6N0Ee5h+XBenTpDkeQmEtjGYL2
+         bkunUoh3QY1pTfDB3OpO1a5D5zvv4RZzA9Xdg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BHkbtNvMLbLuIMAwi7snocSkhgR95jxZ77GlQYCvGW4=;
-        b=bMOS58brjuV3DsD3QTrFp+7DN7VGqnkHTf2a6lmvGGMrnm22gOL7ZoG1aNj00pidBq
-         hLYmsW/RxaSZnFEW1nIJstEm+E8tAtDTMWiuPnPEzxOBcG7Gs3TjXh48Cm6SMRIxL4Gy
-         3Tdjwqoggo8dk+hGb8f5w5UAYS6gTI2BE0nHBOsZb3ztu/aSz8Tw6KOEQNDiAoDwWhIA
-         evNMhEIuKX3K284kJlcZBAn/yLPQiloBdA4upEr2ZhebIR/9bfBf8yLKULD+Zxd4CviB
-         oSHccKTfQ4CXna7P2pUXEFJam7c0qtVfjziGtJr3Yl3U6KvfaIQFhn6dyQ5ZVlhkxUUz
-         Nadw==
-X-Gm-Message-State: AGRZ1gK/1uRqbnCGLZWqfC9rDzIzN5xtr7ROs1voFB86Y+9wZAw+TZNR
-        yXLxgpH67K2pyTltatVF7RY=
-X-Google-Smtp-Source: AFSGD/WMRqq0xkeLn6FQbvo8TGb4hAHSJQ/d3RpQaUoJXp7pHlD7oefwCxQoic2xkPU+8pobXHgh5Q==
-X-Received: by 2002:a63:4665:: with SMTP id v37mr204309pgk.425.1542682023606;
-        Mon, 19 Nov 2018 18:47:03 -0800 (PST)
-Received: from localhost ([175.223.45.197])
-        by smtp.gmail.com with ESMTPSA id p15-v6sm70724036pfj.72.2018.11.19.18.47.01
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W9aL9ykX88NSPE7+sMeumq/IC/Ndf6IJyG6e/7w4838=;
+        b=hAlEY/ua1OUjC/UlFTWb9//gTH6q9CJpeiF3t64PE1PhqraBwXMQQEArl4ue3GeByv
+         X2U/uqyWikaPZNzX2dPXrZ3x0JHSdyTxI4gOzY8fUk++l6zgdpS+JapZ9FYVl9WTu12/
+         kRE8COipjJlVntBLJ8094ZvswgLd1gMDXr1aDBwbgmT6mj4LcJx6cab7haEP0KChxkUe
+         SPUjC5D9j21fnYAgv+5FJ5FuaUSWRlG7zGglizhY25VU5UddUI0lnVmb2nMJwGcJYPSp
+         Hvw+OpXzNX43PpnY9ow7gDM9uSwDqD/3//ZKoISFYDA+YZn9jIfbS2FhLNInkcK/7HNj
+         SuMA==
+X-Gm-Message-State: AA+aEWZg2LSQJrtzCGEuA1vEg33+kupBjuCvv3OTDX2eAq2IFymZSex/
+        m6t1kwfo7i3snosaM16zHubxzKiNQQ==
+X-Google-Smtp-Source: AFSGD/V2pZmb/vVyldDySk46Y1nbIovGWC8m7neXrNCCvQacy6r3uFqvqIAnvAgur5M+PTAAZObkmg==
+X-Received: by 2002:a63:9b11:: with SMTP id r17mr242464pgd.416.1542682294236;
+        Mon, 19 Nov 2018 18:51:34 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2405:204:7280:70ee:bd9e:c1c9:b807:673a])
+        by smtp.gmail.com with ESMTPSA id p9-v6sm41532360pfa.22.2018.11.19.18.51.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 18:47:02 -0800 (PST)
-Date:   Tue, 20 Nov 2018 11:46:59 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH 3/6] zram: introduce ZRAM_IDLE flag
-Message-ID: <20181120024659.GC4231@jagdpanzerIV>
-References: <20181116072035.155108-1-minchan@kernel.org>
- <20181116072035.155108-4-minchan@kernel.org>
+        Mon, 19 Nov 2018 18:51:33 -0800 (PST)
+Date:   Tue, 20 Nov 2018 08:21:23 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        amit.kucheria@linaro.org, linus.walleij@linaro.org,
+        zhao_steven@263.net, service@rdamicro.com
+Subject: Re: [PATCH 01/16] dt-bindings: Add RDA Micro vendor prefix
+Message-ID: <20181120025123.GA5885@Mani-XPS-13-9360>
+References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
+ <20181119170939.19153-2-manivannan.sadhasivam@linaro.org>
+ <e8749128-00e1-551c-8285-fcaef8029484@suse.de>
+ <20181119172958.GA20692@Mani-XPS-13-9360>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181116072035.155108-4-minchan@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119172958.GA20692@Mani-XPS-13-9360>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Nov 19, 2018 at 10:59:58PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Nov 19, 2018 at 06:22:02PM +0100, Andreas Färber wrote:
+> > Am 19.11.18 um 18:09 schrieb Manivannan Sadhasivam:
+> > > From: Andreas Färber <afaerber@suse.de>
+> > > 
+> > > RDA Microelectronics is a Chinese SoC manufacturer.
+> > > 
+> > > Cc: service@rdamicro.com
+> > > Signed-off-by: Andreas Färber <afaerber@suse.de>
+> > 
+> > This one is lacking your Signed-off-by, all others that I was CC'ed on
+> > had it.
+> >
+> 
+> Yeah. I thought I have to only Sign off the commits which I have
+> modified. Will fix it in next revision.
+>
 
-On (11/16/18 16:20), Minchan Kim wrote:
-[..]
-> +static ssize_t idle_store(struct device *dev,
-> +		struct device_attribute *attr, const char *buf, size_t len)
-> +{
-> +	struct zram *zram = dev_to_zram(dev);
-> +	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
-> +	int index;
-> +
-> +	down_read(&zram->init_lock);
-> +	if (!init_done(zram)) {
-> +		up_read(&zram->init_lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	for (index = 0; index < nr_pages; index++) {
-> +		zram_slot_lock(zram, index);
-> +		if (!zram_allocated(zram, index))
-> +			goto next;
-> +
-> +		zram_set_flag(zram, index, ZRAM_IDLE);
-> +next:
-> +		zram_slot_unlock(zram, index);
-> +	}
-> +
-> +	up_read(&zram->init_lock);
-> +
-> +	return len;
-> +}
+Since RDA is merged into Unisoc Communications, this will also be
+updated as "rda Unisoc Communications, Inc.".
 
-This is one way of doing it.
+Thanks,
+Mani
 
-The other one could, probabaly, be a bit more friendly to the cache
-lines and CPU cycles. Basically, have a static timestamp variable,
-which would keep the timestamp of last idle_store().
-
-static idle_snapshot_ts;
-
-static ssize_t idle_store(struct device *dev,
-			  struct device_attribute *attr,
-			  const char *buf, size_t len)
-{
-	idle_snapshot_ts = ktime();
-}
-
-And then in read_block_state() compare handle access time and
-idle_snapshot_ts (if it's not 0). If the page was not modified/access
-since the last idle_snapshot_ts (handle access time <= idle_snapshot_ts),
-then it's idle, otherwise (handle access time > idle_snapshot_ts) it's
-not idle.
-
-Would this do the trick?
-
-	-ss
+> Thanks,
+> Mani
+> 
+> > Cheers,
+> > Andreas
+> > 
+> > -- 
+> > SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> > GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> > HRB 21284 (AG Nürnberg)
