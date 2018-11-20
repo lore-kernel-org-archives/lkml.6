@@ -2,115 +2,85 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27748C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18AE8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45E32080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:31:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45E32080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id CF9DE208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:31:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ee5xn6HM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9DE208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbeKTK5Y (ORCPT
+        id S1732502AbeKTK5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:57:24 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:40109 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeKTK5Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:57:24 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gOtwG-0006Wt-0X; Tue, 20 Nov 2018 01:30:48 +0100
-Date:   Tue, 20 Nov 2018 01:30:47 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [Patch v5 11/16] x86/speculation: Add Spectre v2 app to app
- protection modes
-In-Reply-To: <eb6a2309-40ee-ed89-aefe-7834fd0e4139@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1811200122580.1669@nanos.tec.linutronix.de>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com> <ca5dd01c12789d3f75ab1b73bfcac3bdaea93dd6.1542418937.git.tim.c.chen@linux.intel.com> <alpine.DEB.2.21.1811191423140.1537@nanos.tec.linutronix.de>
- <eb6a2309-40ee-ed89-aefe-7834fd0e4139@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 20 Nov 2018 05:57:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45870 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbeKTK5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:57:36 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54F762080C;
+        Tue, 20 Nov 2018 00:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542673877;
+        bh=E7upPq2gD7Nr8VX4UWzwK7oWG+Zf8DGwPNdKKZdZxac=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ee5xn6HMw9LZbqmnCTGX3odFgJ3XfwKCgfExXh/ymyVl9VKSOd2308buaX5vRuL7/
+         LdzKPNHvTUmzPXZnM+YtHlmd2td6Y+RpX5Zt9guH3zltnlS6Egw3P6c2UY6hFVTgv4
+         v9XxGyMwPFGYJ97Kcp7YTKjadYSselRi1JH7ZxVA=
+Subject: Re: [PATCH 4.19 000/205] 4.19.3-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah@kernel.org
+References: <20181119162616.586062722@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <525ec96e-8a7c-70a7-559f-0bd278102fdb@kernel.org>
+Date:   Mon, 19 Nov 2018 17:31:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <20181119162616.586062722@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018, Tim Chen wrote:
-> On 11/19/2018 05:32 AM, Thomas Gleixner wrote:
-> > On Fri, 16 Nov 2018, Tim Chen wrote:
-> >> The protection mode can be specified by the spectre_v2_app2app
-> >> boot parameter with the following semantics:
-> >>
-> >> spectre_v2_app2app=
-> >> 	off    - Turn off mitigation
-> >> 	lite   - Protect processes which are marked non-dumpable
-> >> 	strict - Protect all processes
-> >> 	auto   - Kernel selects the mode
-> > 
-> > Is there any reason why we need yet another naming convention?
-> > 
-> > pti= 				on, off, auto
-> > 
-> > spectre_v2=			on, off, auto
-> > 
-> > spec_store_bypass_disable =	on, off, auto, prctl, seccomp
+On 11/19/18 9:25 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.3 release.
+> There are 205 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The "on" option is set by spectre_v2=on so is not specified here.
+> Responses should be made by Wed Nov 21 16:24:55 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.3-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-What has spectre_v2=on to do with spectre_v2_app2app=on?
+Compiled and booted on my test system. No dmesg regressions.
 
-Exactly nothing. You can have 'on' for both. The only side effect of
-spectre_v2=on is that it also forces spectre_v2_app2app to 'on'
-irrespective of what eventually was added for spectre_v2_app2app= on the
-command line.
-
-> What will you like to name the "lite" and "strict" option instead?
-
-'prctl' and 'on' and if we add 'seccomp' then this is exactly the same as
-we have for ssbd.
-
-> > Can we please have a full documentation for all the spectre_v2 stuff
-> > similar to l1tf?
-> > 
-> Sure.  Can we do that as a separate patch?  I'll need some time 
-> and internal review for any spectre_v2 documentation that's produced.
-
-I'm not taking that stuff without proper documentation. I complained about
-that vs. L1TF and got told that no sysadmin cares, but L1TF has shown that
-they care very much and appreciate proper documentation.
-
-Nobody can oracle the protection scope out of that inconsistent command
-line maze.
-
-Thanks,
-
-	tglx
-
+thanks,
+-- Shuah
 
