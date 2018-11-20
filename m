@@ -2,92 +2,112 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F41C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF8C18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:53:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0BD021479
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:50:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh5UR860"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BD021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C909720851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:52:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C909720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbeKTTSn (ORCPT
+        id S1726604AbeKTTUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:18:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50934 "EHLO mail.kernel.org"
+        Tue, 20 Nov 2018 14:20:42 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50323 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725866AbeKTTSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:18:43 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7297B2146D;
-        Tue, 20 Nov 2018 08:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542703844;
-        bh=8iX2/DR6H2ndPbUY3ULY2FOnOtA7vDlnRddgQuJ91bw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hh5UR860ATWi086vJMDTEUUYyCr3WQ6jhhWYvIfl6p6zFbSRl0HZyJUwC11Kv1b7c
-         W4G06vTzaOgzzeFs8yWyIXrzp0EhuT8duM1YHmP3a33KVobmTEnVAVPls8EeaCS0HL
-         hkijhA9VitPE012vRkbLX3ULSKR3zxnF7Y9oCbF4=
-Date:   Tue, 20 Nov 2018 09:50:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.19 000/205] 4.19.3-stable review
-Message-ID: <20181120085006.GC19763@kroah.com>
-References: <20181119162616.586062722@linuxfoundation.org>
- <CA+G9fYvn6UhEL+f2Cchxb+winFWEmkCzSpsAH33+dwdeF4H12w@mail.gmail.com>
+        id S1725898AbeKTTUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:20:41 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9D26A2074F; Tue, 20 Nov 2018 09:52:39 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6F5A6206D8;
+        Tue, 20 Nov 2018 09:52:29 +0100 (CET)
+Date:   Tue, 20 Nov 2018 09:52:29 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v2 11/14] dt-bindings: clock: Add Allwinner suniv
+ F1C100s CCU
+Message-ID: <20181120085229.suf3affnix3d7bi2@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com>
+ <5f0322d5e37726f0c597b919f59e121f0b2855c3.1542546735.git.mesihkilinc@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="x6dkfyopoy5uzc7a"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYvn6UhEL+f2Cchxb+winFWEmkCzSpsAH33+dwdeF4H12w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <5f0322d5e37726f0c597b919f59e121f0b2855c3.1542546735.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 01:35:39PM +0530, Naresh Kamboju wrote:
-> On Mon, 19 Nov 2018 at 22:01, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.19.3 release.
-> > There are 205 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Wed Nov 21 16:24:55 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.3-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
 
-Wonderful, thanks for testing all of these and letting me know.
+--x6dkfyopoy5uzc7a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-greg k-h
+On Sun, Nov 18, 2018 at 05:17:10PM +0300, Mesih Kilinc wrote:
+> Add compatiple string for Allwinner suniv F1C100s CCU.
+> Add clock and reset definitions.
+>=20
+> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> ---
+>  .../devicetree/bindings/clock/sunxi-ccu.txt        |  1 +
+>  include/dt-bindings/clock/suniv-ccu-f1c100s.h      | 69 ++++++++++++++++=
+++++++
+>  include/dt-bindings/reset/suniv-ccu-f1c100s.h      | 37 ++++++++++++
+>  3 files changed, 107 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
+>  create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Docu=
+mentation/devicetree/bindings/clock/sunxi-ccu.txt
+> index 47d2e90..92c16eb 100644
+> --- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+> +++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
+> @@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
+> =20
+>  Required properties :
+>  - compatible: must contain one of the following compatibles:
+> +		- "allwinner,suniv-f1c100s-ccu"
+
+Letters come after the numbers in alphabetical order, so that should
+be moved at the end of that list (and you have that issue in a couple
+of other patches).
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--x6dkfyopoy5uzc7a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PLTQAKCRDj7w1vZxhR
+xRW9AP4wogVwb2BGDjY1CIHtmXYM9Ryx+9n5D1NMV5/1Hriu9gD9H9JA5u6+33n+
+rauUIyuNPoLKtlWELTd62XM03RwYwA0=
+=qNcn
+-----END PGP SIGNATURE-----
+
+--x6dkfyopoy5uzc7a--
