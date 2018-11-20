@@ -2,80 +2,85 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C2C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB07C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A16206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:43:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89A16206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C9574206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9574206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728468AbeKUAMu (ORCPT
+        id S1728493AbeKUARy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:12:50 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44320 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKUAMu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:12:50 -0500
-Received: by mail-ed1-f68.google.com with SMTP id y56so1928490edd.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 05:43:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pm9BFsTZwttpokAoTBqiBJjRdorII9/av+J2UcJN2SQ=;
-        b=cGfmwIMh3H9zJKuRlWajW+WP3hSzWXPM9EH9S6Qj9gPNeFOhXcIMLle+ioQizp3cwM
-         PWADBp3eGI/1obW8GaygJF9jQhc/X0Hi4GfY886uCn1OWyeGJGQP19+3gldMU4REw/ZL
-         W4aSqiaGWYnR14uqWvV/Xb944cgD96oLq1Yrmxo66pbWusc6+BTOcWQ9xrp1p1+63W2O
-         laajhzYUKOUjYRKZnO6fg+x0L7Q72AG5EhDo1W19Poa3lHVppJ7EUxgs46689PyIl2kO
-         NVFPy3k6PUUcfx2WmTgg1BfhcMV/RqHGvcPdck+ZLqgNGbua9/BgRsZWXg0UkX5dzUk1
-         WyTQ==
-X-Gm-Message-State: AA+aEWbvEyPIvGV0vvtMlXstlKHXsZojy9ITRCPgvzv5v7yHgxlfbUEg
-        OvdKMrLHC4EeWAtbL44tnpM=
-X-Google-Smtp-Source: AFSGD/XKJcgq7UxS8sK4BF9W5DdSiizRqG1frM+FYHacR/P/cQdpf8YXqg3zL15b4TxtJ8tl730Q2Q==
-X-Received: by 2002:aa7:d394:: with SMTP id x20mr2279753edq.193.1542721415022;
-        Tue, 20 Nov 2018 05:43:35 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id 49sm8428786edz.59.2018.11.20.05.43.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 05:43:33 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     <linux-mm@kvack.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH 0/3] few memory offlining enhancements
-Date:   Tue, 20 Nov 2018 14:43:20 +0100
-Message-Id: <20181120134323.13007-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 20 Nov 2018 19:17:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55028 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726119AbeKUARy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:17:54 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6FACDAFE5;
+        Tue, 20 Nov 2018 13:48:38 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
+Subject: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+        <20181008100728.24959-2-quentin.schulz@bootlin.com>
+        <mvm8t1pazea.fsf@suse.de>
+X-Yow:  Did you GAIN WEIGHT in th' past 5 MINUTES or am I just DREAMING of two
+ BROCCOLI FLORETS lying in an empty GAS TANK?
+Date:   Tue, 20 Nov 2018 14:48:37 +0100
+In-Reply-To: <mvm8t1pazea.fsf@suse.de> (Andreas Schwab's message of "Mon, 19
+        Nov 2018 15:57:17 +0100")
+Message-ID: <mvma7m3n9l6.fsf_-_@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.90 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have been chasing memory offlining not making progress recently. On
-the way I have noticed few weird decisions in the code. The migration
-itself is restricted without a reasonable justification and the retry
-loop around the migration is quite messy. This is addressed by patch 1
-and patch 2.
+Don't use locking phy_read/phy_write functions while inside
+phy_select_patch/phy_restore_page region.
 
-Patch 3 is targeting on the faultaround code which has been a hot
-candidate for the initial issue reported upstream [1] and that I am
-debugging internally. It turned out to be not the main contributor
-in the end but I believe we should address it regardless. See the patch
-description for more details.
+Fixes: 6a0bfbbe20 ("net: phy: mscc: migrate to phy_select/restore_page functions")
+Signed-off-by: Andreas Schwab <schwab@suse.de>
+---
+ drivers/net/phy/mscc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] http://lkml.kernel.org/r/20181114070909.GB2653@MiWiFi-R3L-srv
+diff --git a/drivers/net/phy/mscc.c b/drivers/net/phy/mscc.c
+index a2e59f4f6f..a398ab9410 100644
+--- a/drivers/net/phy/mscc.c
++++ b/drivers/net/phy/mscc.c
+@@ -814,10 +814,10 @@ static int vsc85xx_default_config(struct phy_device *phydev)
+ 	if (rc < 0)
+ 		goto out_unlock;
+ 
+-	reg_val = phy_read(phydev, MSCC_PHY_RGMII_CNTL);
++	reg_val = __phy_read(phydev, MSCC_PHY_RGMII_CNTL);
+ 	reg_val &= ~(RGMII_RX_CLK_DELAY_MASK);
+ 	reg_val |= (RGMII_RX_CLK_DELAY_1_1_NS << RGMII_RX_CLK_DELAY_POS);
+-	phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
++	__phy_write(phydev, MSCC_PHY_RGMII_CNTL, reg_val);
+ 
+ out_unlock:
+ 	rc = phy_restore_page(phydev, rc, rc > 0 ? 0 : rc);
+-- 
+2.19.1
 
 
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
