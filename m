@@ -2,140 +2,107 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA8FC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB34C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D0A2075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:23:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="f8GNKaqN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D0A2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E8072075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:25:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E8072075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729500AbeKTWwL (ORCPT
+        id S1729537AbeKTWyB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:52:11 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:5551 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbeKTWwK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:52:10 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf3fcbe0000>; Tue, 20 Nov 2018 04:23:26 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 20 Nov 2018 04:23:17 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 20 Nov 2018 04:23:17 -0800
-Received: from [10.19.64.176] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
- 2018 12:23:14 +0000
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-To:     Tony Lindgren <tony@atomide.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
- <20180703084516.GT112168@atomide.com>
- <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
- <20181113180656.GE53235@atomide.com>
- <46d271b2-35d3-6353-c530-3292cdac53ab@ti.com>
- <20181119161906.GP53235@atomide.com> <20181119171406.GQ53235@atomide.com>
-CC:     Belisko Marek <marek.belisko@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>
-From:   Laxman Dewangan <ldewangan@nvidia.com>
-Message-ID: <3f2dc0f7-8f01-d6a1-bc0d-8c2586f6091b@nvidia.com>
-Date:   Tue, 20 Nov 2018 17:52:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 20 Nov 2018 17:54:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48072 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728375AbeKTWyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:54:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 895E080D;
+        Tue, 20 Nov 2018 04:25:07 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 996853F5B7;
+        Tue, 20 Nov 2018 04:25:05 -0800 (PST)
+Date:   Tue, 20 Nov 2018 12:24:58 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "mick@ics.forth.gr" <mick@ics.forth.gr>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "zong@andestech.com" <zong@andestech.com>,
+        "alankao@andestech.com" <alankao@andestech.com>
+Subject: Re: [RFC PATCH] Documentation: DT: arm: add support for sockets
+ defining package boundaries
+Message-ID: <20181120122458.GA13255@e107155-lin>
+References: <20181107171344.983-1-sudeep.holla@arm.com>
+ <5bea0ecf.1c69fb81.7820a.2052@mx.google.com>
+ <e599eaf5-381b-e2e0-067a-4225bb348b80@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <20181119171406.GQ53235@atomide.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542716606; bh=ILNDH4X7AMR5fQvIfj24/ek95ctOEnwRHpZvnQSQZUw=;
-        h=X-PGP-Universal:Subject:To:References:CC:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding;
-        b=f8GNKaqNCbFV7v+62NBJx3k+uupGuXJX9Y8ORRu0OWn6kGJtm3PrM5P8gN/ff80UZ
-         XsxVmpwW1kAJrkCXRZvTKuMN4wQqFmt4SJudFqyPe808KUfsvwtraQJxRLH8jW9BDn
-         hQdTtPMnj5GUX8XILEVveKXmdlf3dP+2sXv/RIKisTy66VH1MWFsrkIS1B3/GmDt0t
-         abntFgVmrKqaWSy6J4HJ08pbJ3r3b978otMZ9jEfDw9533i6/ZRxqcX2Q1wJQ5ARaF
-         DA5FejBxgfPZa+PgIWdjRhzQDwEe97hZaRj2g3J3KX8ebD/H/+ci/Pkk3KmOdv+N87
-         ie/zZxjJ3L2JA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e599eaf5-381b-e2e0-067a-4225bb348b80@wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 05:18:42PM -0800, Atish Patra wrote:
+> On 11/12/18 3:37 PM, Rob Herring wrote:
+> > On Wed, Nov 07, 2018 at 05:13:44PM +0000, Sudeep Holla wrote:
+> > > The current ARM DT topology description provides the operating system
+> > > with a topological view of the system that is based on leaf nodes
+> > > representing either cores or threads (in an SMT system) and a
+> > > hierarchical set of cluster nodes that creates a hierarchical topology
+> > > view of how those cores and threads are grouped.
+> > > 
+> > > However this hierarchical representation of clusters does not allow to
+> > > describe what topology level actually represents the physical package or
+> > > the socket boundary, which is a key piece of information to be used by
+> > > an operating system to optimize resource allocation and scheduling.
+> > > 
+> > > Lets add a new "socket" node type in the cpu-map node to describe the
+> > > same.
+> > > 
+> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > ---
+> > >   .../devicetree/bindings/arm/topology.txt      | 52 ++++++++++++++-----
+> > >   1 file changed, 39 insertions(+), 13 deletions(-)
+> > > 
+> > > (Note patch generated with -b option to avoid 60+ of whitespace changes)
+> > > 
+> > > Hi Rob,
+> > > 
+> > > You had expressed your interest to generalise the CPU topology bindings
+> > > accross multiple architectures. Do you want to move to the generic
+> > > bindings before adding this $subject socket support or is it OK to
+> > > finalise on this and then move the majority(based on the agreement)
+> > > to generic binding.
+> > 
+> > Doesn't really matter to me as long as Risc-V folks are in agreement.
+> > 
+> > Otherwise, this looks fine to me.
+> > 
+> > Rob
+> > 
+> > 
+> I can apply this patch in my unify topology series and resend everything
+> together as one series.
 
+Thanks for that. You can drop RFC when reposting. Remember to use -b
+for ignoring space changes on this patch along with -M for renames in
+your original patch series.
 
-On Monday 19 November 2018 10:44 PM, Tony Lindgren wrote:
-> Hi,
->
-> * Tony Lindgren <tony@atomide.com> [181119 16:19]:
->> * Peter Ujfalusi <peter.ujfalusi@ti.com> [181119 10:16]:
->>> On 2018-11-13 20:06, Tony Lindgren wrote:
->>>> Looks like the IRQ_TYPE_NONE issue still is there for omap5 and
->>>> should be fixed with IRQ_TYPE_HIGH.
->>>>
->>>> No idea about why palmas interrupts would stop working though,
->>>> Peter, do you have any ideas on this one?
->>> No, I don't.
->>> The INT polarity can be changed in Palmas.
->>> based on the pdata->irq_flags (queried via irqd_get_trigger_type())
->>> the code  configures it:
->>>
->>> if (pdata->irq_flags & IRQ_TYPE_LEVEL_HIGH)
->>> 	reg = PALMAS_POLARITY_CTRL_INT_POLARITY;
->>> else
->>> 	reg = 0;
->>>
->>> and we pass the same irq_flags to the regmap_add_irq_chip()
->>> IRQ_TYPE_LEVEL_HIGH == IRQF_TRIGGER_HIGH == 0x00000004
->>>
->>> A change in DT should be enough, no need to patch palmas.c, imho.
->> But it's not. I'm now wondering if wakeupgen is inverting the
->> polarity for this interrupt?
->>
->> GIC docs say this about SPI interrupts:
->>
->> "SPI is triggered on a rising edge or is active-HIGH level-sensitive."
->>
->> So when setting IRQ_TYPE_LEVEL_HIGH in dts, we still must not
->> invert the polarity in palmas while tegra needs to. So either
->> tegra114 hardware is inverting the polarity, or omap5 wakeupgen
->> is.
->>
->> Does the palmas trm say which way PALMAS_POLARITY_CTRL
->> triggers if PALMAS_POLARITY_CTRL_INT_POLARITY is set?
->>
->> Also note that dra7 is using a gpio for palmas interrupt.
-> Well so commit 7e9d474954f4 ("ARM: tegra: Correct polarity for
-> Tegra114 PMIC interrupt") states that tegra114 inverts the
-> polarity of the PMIC interrupt. So adding Jon and Thierry to Cc.
->
-> So it seems that commit df545d1cd01a ("mfd: palmas: Provide
-> irq flags through DT/platform data") wrongly sets the
-> PALMAS_POLARITY_CTRL_INT_POLARITY on IRQ_TYPE_LEVEL_HIGH
-> while it should set it on IRQ_TYPE_LEVEL_LOW.
-
-When I implemented, ARM GIC interrupt driver did not support the 
-IRQ_TYPE_LEVEL_LOW. If we set this then it produces warning.
-[Commit ID commit df545d1cd01aab3ba3f687d5423e6c3687b069d8
-mfd: palmas: Provide irq flags through DT/platform data]
-
-So from DT we can not really set the IRQ_TYPE_LEVEL_LOW as irq flag.
-
-
-
+--
+Regards,
+Sudeep
