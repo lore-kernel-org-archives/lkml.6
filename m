@@ -7,64 +7,73 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55584C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F5CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA8C20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D51F420870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:13:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEY7Pidr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FA8C20870
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDhyjCUw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D51F420870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730427AbeKTMfG (ORCPT
+        id S1730814AbeKTMkO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 07:35:06 -0500
-Received: from mail-qk1-f172.google.com ([209.85.222.172]:33537 "EHLO
-        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbeKTMfF (ORCPT
+        Tue, 20 Nov 2018 07:40:14 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45633 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729549AbeKTMkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 07:35:05 -0500
-Received: by mail-qk1-f172.google.com with SMTP id o89so587239qko.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 18:08:25 -0800 (PST)
+        Tue, 20 Nov 2018 07:40:13 -0500
+Received: by mail-io1-f65.google.com with SMTP id w7so231334iom.12;
+        Mon, 19 Nov 2018 18:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=8ifr/tA1Oq03JptVcO1xiYkZqFO6YkZpfKl1IHfQszI=;
-        b=ZEY7PidrCU0ArRwoXLpHdRRE17UsPb+faBW0h3EkMj6bAJWXk62oe+zG64SnZgvLA2
-         49mdAlL6+jBj3wAM5oCoEobnjblNv/uU5MMtQovK6qxRvGdQHivZCOvvluWc7uFh5R5Q
-         21NA75bNCpDTSt1lfWWr/+OTQVkYwdhARDqeok/Y30D5ifVk59XcLGlBP8VaSZNCpW9n
-         SWmxICjyFijW606wgreOGMm+n9Ynw5r1sXh3yqfCbEjeyo7gfeZjvuUTi+dmnv3Vs7mp
-         QLgI29ioqd6oPAexG2LMlaUu3cDReVNBLSfxNu23XrmXa4k6l07PtnZhsACpaHbLIDgM
-         QMGg==
+        bh=0o6x8LHZlmsB8IsUWSeWQr8y1noQmGzj1ql3R/6AFBI=;
+        b=fDhyjCUwwBBve4lguGvph3JF2dK9tSXCvyhzfcqrtLxuLsyXm7tVpBVxzdkbgwWMLc
+         VRcOEKg7T3ndFQjYTTxBXjxP8Vq6RSq4u/TCezb0bns2DIZ4JbminMLjMX+KKo7cO9Sk
+         On7nbQ71AodZyQypmarVbXuQlpwpGbfa19ApaUDnQ4PXknhdOfAgT+exC8W7xrmrzPRF
+         lgIW8Lfq17atyeOwndqJxJNM9chKWp3BZHAlUEqtksILQjzRip+QDBjI9uHMHaj2LFbR
+         7ASKtcgMiffqW+VS53EbYO1hfLp1NzRbWe7TUxYlc+17O+fGuZywSPK/TSc+/VPPm+D4
+         rv8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8ifr/tA1Oq03JptVcO1xiYkZqFO6YkZpfKl1IHfQszI=;
-        b=b+PHUqLlgz5/aZW+Dhl6ZXNCs9JHxEgSosLzD+KA6Nir8Xs3iI3D6weMeKKXevJA1v
-         cNAh8eKPV/uQU+09yCvkuCxYRjIpXRSc6q6X0uZnrpis49WEqCsGYyTJ3FlcO++jjhG8
-         cXuTjrgBo713NuY6nMfqJwrTi7GeSzeiDlJkpGGocE5gZKXpfIh2Qr9dMRmJ0ILxyIS1
-         tkffY33XwTrP2K7S7TALs23Ev9jqjGJaBALodFMugV2M3+jRGTAsqn11ZGa705uYYoPp
-         +E/YhK/HJWMmWKFuVEAD7j5GhFu633ofpFDDvLS9FztllLqzUuwsGPuevQCgTG5JQbj5
-         3auQ==
-X-Gm-Message-State: AA+aEWY89JgkhzmsnNCHgHebyuCVNzZcddFiPtrzDqVCGr2UeUxls18M
-        q3Qk1M4rAeFJX3g+GKVYnoznDKO1xGLc2k161jA=
-X-Google-Smtp-Source: AFSGD/XP63GuLluiiFO0BZM82AvuqeeQnYRs3Dagkhe9s4HvG6BJja/mW6/RwTAE7Ct06zz6KwLJl+wGNt85vGVHOuc=
-X-Received: by 2002:a0c:c404:: with SMTP id r4mr128336qvi.131.1542679704616;
- Mon, 19 Nov 2018 18:08:24 -0800 (PST)
+        bh=0o6x8LHZlmsB8IsUWSeWQr8y1noQmGzj1ql3R/6AFBI=;
+        b=IPVhQ7YzD4HBwe+TlnLWKirOImof2lCnfk6SR1pChWGmuSXjmjW/ysb3okfej/OUjg
+         YMaBhRv1gMIfcYv1FJRXnUe5b2/9o6CA3AlyB7KNKwZBzdDTi6i2mcwXtQrFI4oJ2p79
+         3Hk9Ld/L3y7YdxuPbHwMsVOBXBCUo0inXSiJz9tyyKxBXCyObXvilCwju9rxYKfXF4TD
+         6jJBfGGLXyOPO/Eaet8MrPIMwiVsJfqgUY9Eo0FOLfNg46xGwnGR+c+YNx7Xb4ks5RSK
+         ujaCNQ/ApYAszfkHTqHvqg9avSioL9tKLI6g93uFqh9NMCZ+O8tVeTjsgcuz/z5XMLCf
+         wfJA==
+X-Gm-Message-State: AA+aEWYFZMU2cEbcD4lixvQdxrKkqjIjy4cc2LwHDII8doF6M/QyYxof
+        0oLlneclJLuzuuHjpEHC8loZQXxxFzN9dHGnC7M=
+X-Google-Smtp-Source: AFSGD/XPgpvMAg7G2JPzf434huuDMlLJlcUd7plDLsDkqK6Bw1nGtInMDjuc5qpMQ0fEa78Oy7Zd6WfQEhZNK09cDNQ=
+X-Received: by 2002:a6b:b2d2:: with SMTP id b201mr91332iof.303.1542680011758;
+ Mon, 19 Nov 2018 18:13:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119141003.6470-1-smuchun@gmail.com> <CALAqxLUUpGfDzOoDyPA4LFyzFyVmiT4wKLUWa5Tin8eypJBCDQ@mail.gmail.com>
-In-Reply-To: <CALAqxLUUpGfDzOoDyPA4LFyzFyVmiT4wKLUWa5Tin8eypJBCDQ@mail.gmail.com>
-From:   Muchun Song <smuchun@gmail.com>
-Date:   Tue, 20 Nov 2018 10:08:13 +0800
-Message-ID: <CAPSr9jFVDaXUZw0LKEX81TrCmeQ+tw1bt0g_tK7J1s9qtOdEwg@mail.gmail.com>
-Subject: Re: [PATCH] timers: Make the lower-level timer function first call
- than higher-level
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     tglx@linutronix.de, sboyd@kernel.org, linux-kernel@vger.kernel.org
+References: <20181103065732.12134-1-jprvita@endlessm.com> <20181105091917.GD4439@amd>
+ <CA+A7VXXUB2CZUyPtaMya7in7ntO_unbqVnaZyfCBT_BXtAxeQQ@mail.gmail.com>
+ <CAD8Lp46Go79C_xOkzM-hq4umET1M62Ofqw48swn1JNocifET3Q@mail.gmail.com>
+ <c883a2be-e772-2e18-f074-d2ad5f27f42b@redhat.com> <20181111122243.GB28794@amd>
+In-Reply-To: <20181111122243.GB28794@amd>
+From:   =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@gmail.com>
+Date:   Mon, 19 Nov 2018 18:12:55 -0800
+Message-ID: <CA+A7VXWwfh-jdiq60kwY65k29BXP6PNOc9=X7b6SYF9=T65UUA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI / battery: Fix reporting "Not charging" when
+ capacity is 100%
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Daniel Drake <drake@endlessm.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        LKML <linux-kernel@vger.kernel.org>, linux@endlessm.com,
+        =?UTF-8?Q?Jo=C3=A3o_Paulo_Rechi_Vita?= <jprvita@endlessm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,58 +81,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,
-
-Thanks for your review.
-
-John Stultz <john.stultz@linaro.org> =E4=BA=8E2018=E5=B9=B411=E6=9C=8820=E6=
-=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8A=E5=8D=882:16=E5=86=99=E9=81=93=EF=BC=9A
+On Sun, Nov 11, 2018 at 4:22 AM Pavel Machek <pavel@ucw.cz> wrote:
 >
-> On Mon, Nov 19, 2018 at 6:10 AM, Muchun Song <smuchun@gmail.com> wrote:
-> > The elements of the heads array are a linked list of timer events that
-> > expire at the current time. And it can contain up to LVL_DEPTH levels
-> > and the lower the level represents the smaller the time granularity.
+> On Sun 2018-11-11 12:57:12, Hans de Goede wrote:
+> > Hi,
 > >
-> > Now the result is that the function, which will be called when the time=
-r
-> > expires, in the higher-level is called first than the lower-level funct=
-ion.
-> > I think it might be better to call the lower-level timer function first
-> > than the higher-level function. Because the lower-level has the smaller
-> > granularity and delay has less impact on higher-level. So fix it.
+> > On 11/7/18 5:53 AM, Daniel Drake wrote:
+> > >On Mon, Nov 5, 2018 at 1:19 AM Pavel Machek <pavel@ucw.cz> wrote:
+> > >>Plus, I don't think "100% charge" is right test for "battery full". A=
+t
+> > >>least on thinkpads, there's configuration option, and it is common
+> > >>_not_ to charge batterry above 95% or so (to increase its lifetime).
+> > >
+> > >Hans also touched on this area in his response:
+> > >
+> > >>As for this kernel-side fix I do not believe that fixing thus in
+> > >>the kernel is the right thing to do. We try to stay away from
+> > >>heuristics using full_charge_capacity in the kernel since that
+> > >>is not really reliable / deterministic.
+> > >
+> > >I'm not fully convinced by this argument though.
+> > >
+> > >The ACPI spec is not very clear on what conditions you should apply to
+> > >decide when the battery is full. Instead, ACPI seems to provide a
+> > >pretty decent amount of data, and the decision about whether to
+> > >interpret that as "battery full" is left for consumers.
+> >
+> > Right, but in this case the "discharging" status bit is explicitly
+> > set, to me it feels wrong to report "full", when the firmware
+> > is reporting "discharging" IMHO, at best we are "not charging"
+> > (on AC, below the threshold where a new charge cycle starts) and
+> > that is what we are currently reporting.
+> >
+> > Anu heurstics to decide that "not charging" is close enough to full
+> > to report it as full to the user belongs in userspace IMHO.
+> >
+> > Anyways this ultimately is Rafael's call. If Rafael is ok with this
+> > patch then I would like to see Pavel's comment addressed and otherwise
+> > it is fine with me.
+> >
+
+If we can get to an agreement on this I'll send a v2 without division.
+
+> > Note that we will still often get the case where a laptop is charged,
+> > reports full, is unplugged for 5 minutes and then replugged and then
+> > reports a capacity of 97% combined with "not charging", so we will
+> > still need to fix userspace to handle this.
 >
-> Interesting.
+
+Yes, I agree that should be addressed in userspace, as it is pretty
+much a policy decision.
+
+> For the record, I don't think I'm okay with this.
 >
-> Do you have any specific examples of where this was helpful?  Maybe
-> data on how much this helped the case your concerned about?
+> There's nothing special about 100% charge.
 >
 
-                     heads(with HZ > 100)
-+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-|  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |
-+--+--+--+--+--+--+-----+-----+-----+-----+-----+-----+
-   |     |     |
-   |     |     |
-   |     |     +--->timer4--->timer5
-   |     +--->timer1--->timer2--->timer3
-   +--->timer0
+I don't agree there is nothing special about 100% charge. There is a
+separate state to represent battery full for a reason, which is the
+user wanting to know when their battery is 100% charged and not being
+discharged.
 
-If we have 6 timers that expire at the current time. And the heads array
-layout as shown above. The collect_expired_timers() will return 3. If timer=
-0
-belong to the first wheel level(level 0), timer1-3 belong to level 2 and
-timer4-5 belong to level 5.
+> This changes userland ABI and I don't think it has good enough reasons
+to do that.
+>
 
-Follow the current code logic, the timer0 function is called until the
-function call of timer1-5 is completed. So the delay of timer0 is the time
-spent by other timer function calls. If we can call the timer function in
-the following order, this should be more friendly to lower-level timers.
+This only changes which state will be reported when the battery is
+100% charged and not discharging, it does not introduce / remove any
+values. I don't think that is considered ABI change, and on other
+hardware like the Dell Latitude 5480,
+/sys/class/power_supply/<supply_name>/status already reports "Full"
+under these conditions. I still believe it is a bug that makes the ABI
+inconsistent across different hardware.
 
-        timer0->timer1->->timer2->->timer3->->timer4->->timer5
-
-Although not friendly to higher-level timers, higher-level has larger
-granularity. Therefore the delay has less impact on higher-level.
-
-Is it right?
-
-Thanks.
+--
+Jo=C3=A3o Paulo Rechi Vita
+http://about.me/jprvita
