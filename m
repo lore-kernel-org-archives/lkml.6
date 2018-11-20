@@ -2,141 +2,165 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE688C46465
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 298F9C46466
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7765F2080F
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF7BE214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxsD3v0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7765F2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="yyoSq5Ep"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF7BE214C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727217AbeKUHPM (ORCPT
+        id S1727133AbeKUHQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 02:15:12 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42491 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbeKUHPL (ORCPT
+        Wed, 21 Nov 2018 02:16:10 -0500
+Received: from esa5.dell-outbound.iphmx.com ([68.232.153.95]:6528 "EHLO
+        esa5.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725937AbeKUHQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 02:15:11 -0500
-Received: by mail-io1-f68.google.com with SMTP id x6so2410715ioa.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 12:44:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc;
-        bh=ca+kKfTYUEeOXGZ8qwsABx9DnazmQXqzRwbzeXPkKkQ=;
-        b=kxsD3v0Lf+5TNQjUmFi/Nv+LHi1MqUxSwrUkHXMUxadFB5OsQT5FLDJ9uyWg/zq/am
-         oNfmR1F+Iy8W7mxpuj6Z67jHhbF0NaQSyxb0XzTUKzcMQmNcXOrdrRy/10v3VOK5sdLe
-         Ot81ABJGzvU09KsMg4922yFfChr90ASRklE7FQN3NMOFb+OhskHMLLAl3qODBOekWB7W
-         G6Mkr5w86I/AhU38zCZIlYW8PqT347hih5HggxmkbQgMgR9eBukF6cHs00A81+ryxSZC
-         seMkMoN+wNdW4tE6Ww6icuJ1+uSK+JbVgfxS8jduB3t/1dJrG49fDDmGA1nKcINaXIzS
-         KAKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc;
-        bh=ca+kKfTYUEeOXGZ8qwsABx9DnazmQXqzRwbzeXPkKkQ=;
-        b=f2JbZCDbevS03ID8Z+dztyFhwIeFLucwCn8qR5yLkhOEBL6D0HMLG4wm0EMpNt1tAg
-         TIl5O09IAQaXCapvpVdY4uyUFIYUMmUPwQWcQlk9WUiHK51e02rHNF36Lzr7rosSlCis
-         pEHFFRqbd0wyDv2CU2fGSxE3g0jNAkV3x+MtkvQAwJnbHSGMYOOtaDeKTs0lS3b4uyRQ
-         QD9X0PHRlEEpIrhE2zSOArseXs1PDgHNx1y39hCOK2KJ/CyNLymS2ra25+EE8tqRUvsK
-         xEnYVvsE8kDGJBxuceeJTehYY/gfC0BmcmG74TthxTGevJeIX5TmJ8nvdS8sjxacPbrB
-         Vfhg==
-X-Gm-Message-State: AA+aEWbNtcDnLr7sSW4H1DFBARrcD2zfKyg228/Tsr77dQZ2S73HDt/w
-        LM50CmarpQMEc20bSEMeSAg4dvWHO7V2pwExA7s=
-X-Google-Smtp-Source: AFSGD/WZtT16vXecXpj7zFlkUBBuXjnac43n3MMUF9abuygZoycchWl8BOPTLzv7BdFNZhl55lmmfGXgc3EkZAf2+QI=
-X-Received: by 2002:a6b:d005:: with SMTP id x5mr2782463ioa.46.1542746649545;
- Tue, 20 Nov 2018 12:44:09 -0800 (PST)
+        Wed, 21 Nov 2018 02:16:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1542746699; x=1574282699;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=ul/Qwa4C0Z9giykch425HBPzkowp1Hdp/zq4CDc+lkg=;
+  b=yyoSq5EpWkuAI+4NJk2E5yxnEg+PEbkmliwiiqliA/oity/eYDy65vxa
+   nYVnpkSfCgK97KXEk8v5nKF1vLsHNsa0yl0HeOk6RsDREXQtGodMhbSZ/
+   fFKAtMDZdYLrGl+DwUrVNQlk7Q1XYX7MqBdmJ6r0Up0UI1XqKWl0jITlK
+   4=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EXAAD2cfRbhyeV50NjHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUQcBAQsBAYNqJwqMBl+NK5c3gXoLAQGEbIN4IjQJDQEDAQECAQECAQE?=
+ =?us-ascii?q?CEAEBAQoLCQgpL0IBEAGBYiKCZgEBAQMSKD8QAgEIGB4QVwIEARIIGoJ/ggK?=
+ =?us-ascii?q?eHgKBEIlYAQEBgh2KKIwFghaBEYMShH6FWwKLDZRqCQWRHSCRASyXVAIEAgQ?=
+ =?us-ascii?q?FAhSBRoIOcIM8gicOCY4cQAExggmKeYEfAQE?=
+X-IPAS-Result: =?us-ascii?q?A2EXAAD2cfRbhyeV50NjHAEBAQQBAQcEAQGBUQcBAQsBA?=
+ =?us-ascii?q?YNqJwqMBl+NK5c3gXoLAQGEbIN4IjQJDQEDAQECAQECAQECEAEBAQoLCQgpL?=
+ =?us-ascii?q?0IBEAGBYiKCZgEBAQMSKD8QAgEIGB4QVwIEARIIGoJ/ggKeHgKBEIlYAQEBg?=
+ =?us-ascii?q?h2KKIwFghaBEYMShH6FWwKLDZRqCQWRHSCRASyXVAIEAgQFAhSBRoIOcIM8g?=
+ =?us-ascii?q?icOCY4cQAExggmKeYEfAQE?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa5.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Nov 2018 14:44:42 -0600
+Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKKhJ1s169771;
+        Tue, 20 Nov 2018 15:44:49 -0500
+Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
+        by mx0a-00154901.pphosted.com with ESMTP id 2nte3vk7y9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Nov 2018 15:44:48 -0500
+Cc:     <baicar.tyler@gmail.com>, <Austin.Bolen@dell.com>,
+        <Shyam.Iyer@dell.com>, <lukas@wunner.de>, <bhelgaas@google.com>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>, <ruscur@russell.cc>,
+        <sbobroff@linux.ibm.com>, <oohall@gmail.com>,
+        <linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>
+Received: from ausc60ps301.us.dell.com ([143.166.148.206])
+  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 21 Nov 2018 02:44:43 +0600
+X-LoopCount0: from 10.166.134.85
+X-IronPort-AV: E=Sophos;i="5.56,258,1539666000"; 
+   d="scan'208";a="1228347735"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <okaya@kernel.org>, <mr.nuke.me@gmail.com>, <keith.busch@intel.com>
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Topic: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Index: AQHUfTk2X+FUHiVWnkuZssuLn5DqDg==
+Date:   Tue, 20 Nov 2018 20:44:46 +0000
+Message-ID: <e86f04ef8c054d61969862a6e7b72d0d@ausx13mps321.AMER.DELL.COM>
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+ <b9a739c8-80bd-e04c-ac19-97bc54f20eff@kernel.org>
+ <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
+ <20181119165318.GB26595@localhost.localdomain>
+ <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
+ <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
+ <20181119174127.GE26595@localhost.localdomain>
+ <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
+ <20181119181051.GA26707@localhost.localdomain>
+ <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
+ <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
+ <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
+ <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
+ <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
+ <9c9531c7efb846438f03f744b9afc466@ausx13mps321.AMER.DELL.COM>
+ <3b18a9fa-7bdd-0fb4-285d-4efb454be50a@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.178.128.193]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20181114072926.13312-1-lijiang@redhat.com> <20181114072926.13312-2-lijiang@redhat.com>
- <20181114112600.GD13926@zn.tnic> <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
- <20181115103959.GB26448@zn.tnic>
-In-Reply-To: <20181115103959.GB26448@zn.tnic>
-Reply-To: bjorn@helgaas.com
-From:   Bjorn Helgaas <bjorn.helgaas@gmail.com>
-Date:   Tue, 20 Nov 2018 14:43:57 -0600
-Message-ID: <CABhMZUUscS3jUZUSM5Y6EYJK6weo7Mjj5-EAKGvbw0qEe+38zw@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-To:     bp@alien8.de
-Cc:     lijiang@redhat.com, Bjorn Helgaas <helgaas@kernel.org>,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        x86 <x86@kernel.org>, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>, dyoung@redhat.com,
-        bhe@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811200182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 4:40 AM Borislav Petkov <bp@alien8.de> wrote:
->
-> + Bjorn.
->
-> On Thu, Nov 15, 2018 at 01:44:07PM +0800, lijiang wrote:
-> > At present, the upstream kernel does not pass the e820 reserved ranges to the
-> > second kernel, which might cause two problems:
-> >
-> > The first one is the MMCONFIG issue, the PCI MMCONFIG(extended mode) requires
-> > the reserved region otherwise it falls back to legacy mode, which might lead to
-> > the hot-plug device could not be recognized in kdump kernel.
->
-> Well, this still doesn't explain it fully. Let's look at a box:
->
-> [    0.000000] e820: BIOS-provided physical RAM map:
-> [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x00000000000997ff] usable
-> [    0.000000] BIOS-e820: [mem 0x0000000000099800-0x000000000009ffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x0000000065642fff] usable
-> [    0.000000] BIOS-e820: [mem 0x0000000065643000-0x0000000067fb8fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000067fb9000-0x00000000689e8fff] ACPI NVS
-> [    0.000000] BIOS-e820: [mem 0x00000000689e9000-0x0000000068bf5fff] ACPI data
-> [    0.000000] BIOS-e820: [mem 0x0000000068bf6000-0x000000006f7fffff] usable
-> [    0.000000] BIOS-e820: [mem 0x000000006f800000-0x000000008fffffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fd000000-0x00000000fe7fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000fec80000-0x00000000fed00fff] reserved
-> [    0.000000] BIOS-e820: [mem 0x00000000ff800000-0x00000001007fffff] reserved
-> [    0.000000] BIOS-e820: [mem 0x0000000100800000-0x000000603fffffff] usable
->
-> this one has 8 reserved regions. Does that mean that we need to pass
-> them *all* 8 to the second kernel so that MMCONFIG works?
->
-> Or is it only one reserved region which is needed for MMCONFIG?
->
-> Bjorn, do you know what the detection logic should be to map the correct
-> reserved region (or regions) for MMCONFIG?
-
-MMCONFIG (aka ECAM) space is described in the ACPI MCFG table.  The
-generic code to read that is in drivers/acpi/pci_mcfg.c (ignore all
-the quirks at the top) and the generic code to use it is
-drivers/pci/ecam.c.
-
-Unfortunately x86 doesn't use any of that generic path.  It uses the
-same MCFG table, but it's parsed in arch/x86/pci/mmconfig-shared.c,
-and the code there checks to ensure the ECAM regions are reserved
-somehow by firmware, e.g., via the e820 table.  There's a bunch of
-grungy device-dependent code there, too, possibly to work around
-firmware defects, or (just as likely) to compensate for Linux defects
-that were *attributed* to firmware.
-
-I think you should regard correct MCFG/ECAM usage in the kdump kernel
-as a requirement.  If you don't have ECAM (a) PCI devices won't work
-at all on non-x86 systems that use only ECAM for config access, (b)
-you won't be able to access devices on non-0 segments (granted, there
-aren't very many of these yet, but there will be more in the future),
-and (c) you won't be able to access extended config space (addresses
-0x100-0xfff), which means none of the Extended Capabilities will be
-available (AER, ACS, ATS, etc).
-
-Bjorn
+On 11/19/2018 07:54 PM, Sinan Kaya wrote:=0A=
+> On 11/19/2018 6:49 PM, Alex_Gagniuc@Dellteam.com wrote:=0A=
+>> On 11/19/2018 02:33 PM, Sinan Kaya wrote:=0A=
+>>> However; table assumes governance about for which entities firmware fir=
+st=0A=
+>>> should be enabled. There is no cross reference to _OSC or permission=0A=
+>>> negotiation like _OST.=0A=
+>>=0A=
+>> Well, from an OSPM perspective, is FFS something that can be enabled or=
+=0A=
+>> disabled? FFS seems to be static to OSPM, which would change the sort of=
+=0A=
+>> assumptions we can reasonably make here.=0A=
+> =0A=
+> IMO, it can be enabled/disabled in BIOS. I have seen this implementation =
+before.=0A=
+> If the trigger is the presence of a statically compiled ACPI HEST table (=
+as the=0A=
+> current code does); presence of FFS would be static from OSPM perspective=
+.=0A=
+> BIOS could patch this table or hide it during boot.=0A=
+> =0A=
+> If FFS were to be negotiated via _OSC as indirectly implied in this serie=
+s, then=0A=
+> same BIOS could patch the ACPI table to return different values for the _=
+OSC=0A=
+> return.=0A=
+=0A=
+It is theoretically possible to have proprietary BIOS settings to =0A=
+disable FFS. The platform vendors that I've spoken to do not offer this =0A=
+option. Though even if, hypothetically, BIOS clears the FFS bit in HEST, =
+=0A=
+it won't stop it from commandeering the CPU and doing whatever it wants.=0A=
+=0A=
+Although, I'm not quite sure why we'd want to negotiate FFS itself. FFS =0A=
+is too big of a can of worms (goes far beyond AER error reporting), when =
+=0A=
+what we really care about is if OS can use a specific feature or not.=0A=
+>> Cool. While the UEFI Secret Society debates, can we figure out if/how=0A=
+>> [patch 1/2] breaks those systems, or is it only [patch 2/2] of this=0A=
+>> series that we suspect?=0A=
+> =0A=
+> I went back and looked at both patches. Both of them are removing referen=
+ces to=0A=
+> HEST table. I think both patches are impacted by this discussion.=0A=
+=0A=
+I'd prefer "sure" instead of "think". "I think it breaks some system I'm =
+=0A=
+not telling you about" doesn't help much in figuring out how not to =0A=
+break said system(s). :)=0A=
+=0A=
+Alex=0A=
