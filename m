@@ -2,141 +2,97 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BAC6C04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDCCC04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3575C213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3575C213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FBCF20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:17:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="YuDQIIAO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FBCF20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbeKTSn7 (ORCPT
+        id S1726452AbeKTSpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:43:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45177 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeKTSn7 (ORCPT
+        Tue, 20 Nov 2018 13:45:19 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39391 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbeKTSpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:43:59 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK8F4Rq2908776
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 20 Nov 2018 00:15:04 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK8F3OH2908773;
-        Tue, 20 Nov 2018 00:15:03 -0800
-Date:   Tue, 20 Nov 2018 00:15:03 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-dae0a10593007d049ea71601357ac41d4f247ee9@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, brgerst@gmail.com, hpa@zytor.com,
-        tglx@linutronix.de, dave.hansen@linux.intel.com,
-        luto@amacapital.net, yu-cheng.yu@intel.com, luto@kernel.org,
-        riel@surriel.com, torvalds@linux-foundation.org,
-        dvlasenk@redhat.com, bp@alien8.de, peterz@infradead.org,
-        mingo@kernel.org
-Reply-To: bp@alien8.de, peterz@infradead.org, mingo@kernel.org,
-          yu-cheng.yu@intel.com, riel@surriel.com, luto@kernel.org,
-          luto@amacapital.net, torvalds@linux-foundation.org,
-          dvlasenk@redhat.com, tglx@linutronix.de,
-          dave.hansen@linux.intel.com, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, brgerst@gmail.com
-In-Reply-To: <fe93332eded3d702f0b0b4cf83928d6830739ba3.1542667307.git.luto@kernel.org>
-References: <fe93332eded3d702f0b0b4cf83928d6830739ba3.1542667307.git.luto@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/cpufeatures, x86/fault: Mark SMAP as disabled when
- configured out
-Git-Commit-ID: dae0a10593007d049ea71601357ac41d4f247ee9
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 20 Nov 2018 13:45:19 -0500
+Received: by mail-io1-f65.google.com with SMTP id j18-v6so750010iog.6
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:17:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EN13+x57Xzr6TnkLrLpREMPW7SiFINiSFJgP5nHjE8o=;
+        b=YuDQIIAOJY2gkSBL8WW/q0m02MBJaAFHqfqgKN6JMfAPoA9OsaMNcqsAjNMtNNxouK
+         lMxCtW+kzUZxpw/hRD0zD6tfPOmDddp+/QBEsoBLiydSIvEGORXqPXmkLMcCKwC7tKBS
+         DzmtqTRqGtZHDaohzLgzs0WMLNXNnKxbAqII0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EN13+x57Xzr6TnkLrLpREMPW7SiFINiSFJgP5nHjE8o=;
+        b=iBgMScYfPdgMgzYo8HCOh7rSc7dgmDkOyLquhlHy5EoA1IqI+FdZ1I9VWXmWp+isDZ
+         7ZZ5uGXJZoWTBOHhGAz79i2/mH3zfQvMHd7CjNnzFlctcIn7oanH5mKKH/kszrTcfEkE
+         0NnVp8ajFr1TiulOWfPDIP63kCfKd7kCaLlZBvX9iiAVPH6fwlVui5mT19+j2W2igGTh
+         IfEbQe11MUPc7IewuGvALSEAnVeQjlmZ8Ogw4iloAzKlHnvop25HswR2h1mRjJyf35hk
+         VbyB3qz3+BHcGDadg5M8b7OS8G9YsUDcmkQR1WHLPSXTaCm7V9D4yYbVdhWWznIAPCjZ
+         DWvg==
+X-Gm-Message-State: AA+aEWacrYX3OD9XLXA00iQBLyOc1KZh3OSL1VfidBdBpGDbMcnf5aH8
+        SzGVAZGUS0LfwowHS5/NUzrWxqRwKOnoVKM55g+RHg==
+X-Google-Smtp-Source: AFSGD/VglVwchQXK0XQToj2ueOzf7LhgoIauWaMw6Zt4Hz8FFEtnhr5RpTPgumt6YxWNp4npcXxj9sULixOcCCBFs+M=
+X-Received: by 2002:a6b:fe13:: with SMTP id x19mr787582ioh.294.1542701847561;
+ Tue, 20 Nov 2018 00:17:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <cover.1542149969.git.rgb@redhat.com> <218e806e61cd5ae2fd38f9d546f953f86c763b58.1542149969.git.rgb@redhat.com>
+ <CAJfpegtA74ULckL+PXoM9_pynV78EKOpQ603iZrp=hfR0z0z7w@mail.gmail.com> <20181119225856.dt3l7qzg2ftggon4@madcap2.tricolour.ca>
+In-Reply-To: <20181119225856.dt3l7qzg2ftggon4@madcap2.tricolour.ca>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 20 Nov 2018 09:17:15 +0100
+Message-ID: <CAJfpegt8H-8-PJyJbGe9zQB1DxBQLoMA0QRhc-gAH=mw6YKhVw@mail.gmail.com>
+Subject: Re: [RFC PATCH ghak100 V1 1/2] audit: avoid fcaps on MNT_FORCE
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>, sgrubb@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dae0a10593007d049ea71601357ac41d4f247ee9
-Gitweb:     https://git.kernel.org/tip/dae0a10593007d049ea71601357ac41d4f247ee9
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Mon, 19 Nov 2018 14:45:27 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Nov 2018 08:44:28 +0100
+On Mon, Nov 19, 2018 at 11:59 PM Richard Guy Briggs <rgb@redhat.com> wrote:
 
-x86/cpufeatures, x86/fault: Mark SMAP as disabled when configured out
+> The simple answer is that the audit PATH record format expects the four
+> cap_f* fields to be there and a best effort is being attempted to fill
+> in that information in an expected way with meaningful values.  Perhaps
+> better to accept that it is unreasonable to expect any fcaps on any
+> umount operation and simply ignore those fields in the PATH record for
+> umount syscall events.
 
-Add X86_FEATURE_SMAP to the disabled features mask as appropriate
-and use cpu_feature_enabled() in the fault code.  This lets us get
-rid of a redundant IS_ENABLED(CONFIG_X86_SMAP).
+When there's a mount there are in fact two objects belonging to the
+exact same path, each having completely independent metadata:  the
+mount point and the root of the mount.  For example:
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/fe93332eded3d702f0b0b4cf83928d6830739ba3.1542667307.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/include/asm/disabled-features.h | 8 +++++++-
- arch/x86/mm/fault.c                      | 5 +----
- 2 files changed, 8 insertions(+), 5 deletions(-)
+stat /mnt
+umount /mnt
+stat /mnt
 
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 33833d1909af..a5ea841cc6d2 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -16,6 +16,12 @@
- # define DISABLE_MPX	(1<<(X86_FEATURE_MPX & 31))
- #endif
- 
-+#ifdef CONFIG_X86_SMAP
-+# define DISABLE_SMAP	0
-+#else
-+# define DISABLE_SMAP	(1<<(X86_FEATURE_SMAP & 31))
-+#endif
-+
- #ifdef CONFIG_X86_INTEL_UMIP
- # define DISABLE_UMIP	0
- #else
-@@ -68,7 +74,7 @@
- #define DISABLED_MASK6	0
- #define DISABLED_MASK7	(DISABLE_PTI)
- #define DISABLED_MASK8	0
--#define DISABLED_MASK9	(DISABLE_MPX)
-+#define DISABLED_MASK9	(DISABLE_MPX|DISABLE_SMAP)
- #define DISABLED_MASK10	0
- #define DISABLED_MASK11	0
- #define DISABLED_MASK12	0
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 8624cb7d8d65..39e39cd42097 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1150,10 +1150,7 @@ static int fault_in_kernel_space(unsigned long address)
- 
- static inline bool smap_violation(int error_code, struct pt_regs *regs)
- {
--	if (!IS_ENABLED(CONFIG_X86_SMAP))
--		return false;
--
--	if (!static_cpu_has(X86_FEATURE_SMAP))
-+	if (!cpu_feature_enabled(X86_FEATURE_SMAP))
- 		return false;
- 
- 	if (error_code & X86_PF_USER)
+The first stat will show the root of the mount, the second one will
+show the mount point.
+Which one is the relevant for audit?
+
+Not saying audit should be doing getxattr on any of them, just trying
+to see more clearly.
+
+Thanks,
+Miklos
