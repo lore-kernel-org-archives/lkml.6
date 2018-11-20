@@ -2,356 +2,222 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EADC04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFDBC04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFF02087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFF02087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AC75B2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUg4cUck"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC75B2087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbeKTXhO (ORCPT
+        id S1726896AbeKTXiN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:37:14 -0500
-Received: from mga09.intel.com ([134.134.136.24]:37353 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725902AbeKTXhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:37:14 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 05:08:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,257,1539673200"; 
-   d="scan'208";a="109809152"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.177])
-  by orsmga001.jf.intel.com with ESMTP; 20 Nov 2018 05:08:05 -0800
-Date:   Tue, 20 Nov 2018 15:08:05 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     "Winkler, Tomas" <tomas.winkler@intel.com>
-Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Microchip (AT91) SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v9 05/17] tpm: declare struct tpm_header
-Message-ID: <20181120130805.GD8813@linux.intel.com>
-References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
- <20181118124753.18613-6-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA235BB@hasmsx108.ger.corp.intel.com>
+        Tue, 20 Nov 2018 18:38:13 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42346 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbeKTXiN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 18:38:13 -0500
+Received: by mail-wr1-f67.google.com with SMTP id q18so1896944wrx.9;
+        Tue, 20 Nov 2018 05:09:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7NZ/xVlUfPpnqYC9BP/cMc65vHefuKvjMR7MCkPyfeg=;
+        b=QUg4cUckU0TJ9Rfn2S+mKU38UqCf5W5oSxfTsxRIVTUOGkQv6ldQptI/4mJ9SH1w/z
+         JFFxcGKBF0oY47gIwf0XukiWNiuKrCRF6qm2EMlqtrSLRbQ7V59lNHp0DC5fa8T+BS/1
+         0E5hsvU+iDlrZwCzsCySlLi5h52n8HlD7nKCXLlaox/vrj85dptJXhgygb9qrtyC5oek
+         E9G59cAU8/TPqkMyCwBDUNPw7oWpAx8odWtoEzMXcnZJO09ht1ueIclJqL4bEUa/zW/D
+         95/KbNhDm6Er5TrYJkShBmLoEnnA2vB2bQ7Qy9Wp/X9fE8Oc9Pkudf+NLN1gay+hNGV7
+         F5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7NZ/xVlUfPpnqYC9BP/cMc65vHefuKvjMR7MCkPyfeg=;
+        b=dNuGPryGGNu7DYzPmkGFoMrAGf+Y2lAq9IVGs2mkFAtkkJBtfZLiuMmitPStIouiKT
+         NewKX/ADwMzvoCygf2k0ERlrtnnZRJJLZSrB+e3OaBhG1yOgHyIJLlk8I2DQjR0y0YlP
+         F/muiEtcCdSWPu/QTGjQ62SBogfwoGkr0eybRt4GHJHvf5JeY5h+lY7IKKsaLIqYbDSO
+         JQMs1D5ODffgmdretL0ULnHZ3uPXYOfBzoDW++oDeaNJN2hbpyHodDTklMEFFeN/GKYx
+         fpc+jOZQInWs3pkgiybwLigsy/gRf0+tZIlPBKWUrF4UP1dEFoLwWBD+LeP9WKlNGqtR
+         DH9Q==
+X-Gm-Message-State: AA+aEWZ1Hll+KDaH/25LjB5HMv9t+PTYgoiOP1ox5A2gPg3sLG5+xNv1
+        9q2FjFQHXp+y/KUnyWyFoGjp3BPDvRU=
+X-Google-Smtp-Source: AFSGD/VcF3kJaHeI8rUV56S5HZfi/kj8OjOtyVqXlWDy42Lmx+cPeLy95VfmXizNTbvdFUDDQrr64A==
+X-Received: by 2002:a5d:64c7:: with SMTP id y7mr1884663wrv.207.1542719347389;
+        Tue, 20 Nov 2018 05:09:07 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id v189-v6sm33598381wmd.40.2018.11.20.05.09.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 05:09:06 -0800 (PST)
+Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
+To:     masonccyang@mxic.com.tw
+Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
+ <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
+ <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
+Date:   Tue, 20 Nov 2018 14:09:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA235BB@hasmsx108.ger.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:33:31PM +0000, Winkler, Tomas wrote:
+On 11/20/2018 08:23 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
+
+Hi,
+
+>> Marek Vasut <marek.vasut@gmail.com>
+>> 2018/11/19 下午 10:12
+>>
+>> To
+>>
+>> > +
+>> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
+>> > +{
+>> > +   int ret;
+>> > +
+>> > +   if (rpc->cur_speed_hz == freq)
+>> > +      return 0;
+>> > +
+>> > +   clk_disable_unprepare(rpc->clk_rpc);
+>> > +   ret = clk_set_rate(rpc->clk_rpc, freq);
+>> > +   if (ret)
+>> > +      return ret;
+>> > +
+>> > +   ret = clk_prepare_enable(rpc->clk_rpc);
+>> > +   if (ret)
+>> > +      return ret;
+>>
+>> Is this clock disable/update/enable really needed ? I'd think that
+>> clk_set_rate() would handle the rate update correctly.
 > 
-> > 
-> > Decleare struct tpm_header that replaces struct tpm_input_header and
-> Typo 
-
-Thanks, will fix for the next version.
-
-> > struct tpm_output_header.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > ---
-> >  drivers/char/tpm/tpm-interface.c  |  9 ++++-----
-> >  drivers/char/tpm/tpm.h            | 27 ++++++++++++---------------
-> >  drivers/char/tpm/tpm2-cmd.c       |  4 ++--
-> >  drivers/char/tpm/tpm2-space.c     |  6 +++---
-> >  drivers/char/tpm/tpm_i2c_atmel.c  |  5 ++---
-> > drivers/char/tpm/tpm_vtpm_proxy.c |  8 ++++----
-> >  drivers/char/tpm/xen-tpmfront.c   |  2 +-
-> >  7 files changed, 28 insertions(+), 33 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-
-> > interface.c
-> > index 7ac6ada8428c..cb0d44c158ae 100644
-> > --- a/drivers/char/tpm/tpm-interface.c
-> > +++ b/drivers/char/tpm/tpm-interface.c
-> > @@ -67,7 +67,7 @@ static int tpm_validate_command(struct tpm_chip
-> > *chip,
-> >  				 const u8 *cmd,
-> >  				 size_t len)
-> >  {
-> > -	const struct tpm_input_header *header = (const void *)cmd;
-> > +	const struct tpm_header *header = (const void *)cmd;
+> This is for run time PM mechanism in spi-mem layer and __spi_sync(),
+> you may refer to another patch [1].
 > 
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-4.21&id=b942d80b0a394e8ea18fce3b032b4700439e8ca3
+
+I think Geert commented on the clock topic, so let's move it there.
+Disabling and enabling clock to change their rate looks real odd to me.
+
+>> > +   rpc->cur_speed_hz = freq;
+>> > +   return ret;
+>> > +}
+>> > +
+>> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
+>> > +{
+>> > +   /*
+>> > +    * NOTE: The 0x260 are undocumented bits, but they must be set.
+>> > +    */
+>>
+>> FYI:
+>>
+> http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/spi/renesas_rpc_spi.c#l207
+>>
+>> I think the STRTIM should be 6 .
+>>
 > 
-> Sometimes it is casted (void *), sometimes (struct tpm_header *)
-> Better to use one convention 
+> In my D3 Draak board, the STRTIM is 0x3 for on board qspi flash and
+> mx25uw51245g.
+> And this is also refer to Renesas R-Car Gen3 bare-metal code,
+> mini-monitor v4.01.
 
-I would prefer (const void *) because it is shorter form, and no
-need to duplicate the type name two times, that way also more
-readable. Anyway, agreed that we do have inconsistency with these.
+The copy of minimon I have says 6 , but maybe this is flash specific ?
 
+[...]
+
+>> > +         writel(rpc->cmd, rpc->regs + RPC_SMCMR);
+>> > +         writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
+>> > +         writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
+>> > +         writel(rpc->smenr, rpc->regs + RPC_SMENR);
+>> > +         writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
+>> > +         ret = wait_msg_xfer_end(rpc);
+>> > +         if (ret)
+>> > +            goto out;
+>> > +
+>> > +         data = readl(rpc->regs + RPC_SMRDR0);
+>> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
+>> > +         pos += nbytes;
+>> > +      }
+>> > +   } else {
+>> > +      writel(rpc->cmd, rpc->regs + RPC_SMCMR);
+>> > +      writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
+>> > +      writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
+>> > +      writel(rpc->smenr, rpc->regs + RPC_SMENR);
+>> > +      writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
+>> > +      ret = wait_msg_xfer_end(rpc);
+>> > +   }
+>> > +out:
+>>
+>> Dont you need to stop the RPC somehow in case the transmission fails ?
 > 
-> >  	int i;
-> >  	u32 cc;
-> >  	u32 attrs;
-> > @@ -166,7 +166,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> > *chip,
-> >  				u8 *buf, size_t bufsiz,
-> >  				unsigned int flags)
-> >  {
-> > -	struct tpm_output_header *header = (void *)buf;
-> > +	struct tpm_header *header = (void *)buf;
-> >  	int rc;
-> >  	ssize_t len = 0;
-> >  	u32 count, ordinal;
-> > @@ -316,7 +316,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip
-> > *chip,  ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
-> >  		     u8 *buf, size_t bufsiz, unsigned int flags)  {
-> > -	struct tpm_output_header *header = (struct tpm_output_header
-> > *)buf;
-> > +	struct tpm_header *header = (struct tpm_header *)buf;
-> >  	/* space for header and handles */
-> >  	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
-> >  	unsigned int delay_msec = TPM2_DURATION_SHORT; @@ -381,8
-> > +381,7 @@ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct
-> > tpm_space *space,
-> >  			 struct tpm_buf *buf, size_t min_rsp_body_length,
-> >  			 unsigned int flags, const char *desc)  {
-> > -	const struct tpm_output_header *header =
-> > -		(struct tpm_output_header *)buf->data;
-> > +	const struct tpm_header *header = (struct tpm_header *)buf->data;
-> >  	int err;
-> >  	ssize_t len;
-> > 
-> > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h index
-> > 49bca4d1e786..86fa8ac0ae20 100644
-> > --- a/drivers/char/tpm/tpm.h
-> > +++ b/drivers/char/tpm/tpm.h
-> > @@ -273,16 +273,13 @@ struct tpm_chip {
-> > 
-> >  #define to_tpm_chip(d) container_of(d, struct tpm_chip, dev)
-> > 
-> > -struct tpm_input_header {
-> > -	__be16	tag;
-> > -	__be32	length;
-> > -	__be32	ordinal;
-> > -} __packed;
-> > -
-> > -struct tpm_output_header {
-> > -	__be16	tag;
-> > -	__be32	length;
-> > -	__be32	return_code;
-> > +struct tpm_header {
-> Does it deserve kdoc? 
+> It seems there is no any RPC registers bit to monitor xfer fail !
 
-Could be done if this is needed at some point in include/linux/tpm.h.
-Do not see it right now as high priority.
+What happens if wait_msg_xfer_end() returns non-zero ? I guess that
+means the transfer timed out ?
 
-> > +	__be16 tag;
-> > +	__be32 length;
-> > +	union {
-> > +		__be32 ordinal;
-> > +		__be32 return_code;
-> > +	};
-> >  } __packed;
-> > 
-> >  #define TPM_TAG_RQU_COMMAND 193
-> > @@ -401,8 +398,8 @@ struct tpm_buf {
-> > 
-> >  static inline void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)  {
-> > -	struct tpm_input_header *head;
-> > -	head = (struct tpm_input_header *)buf->data;
-> > +	struct tpm_header *head = (struct tpm_header *)buf->data;
-> > +
-> >  	head->tag = cpu_to_be16(tag);
-> >  	head->length = cpu_to_be32(sizeof(*head));
-> >  	head->ordinal = cpu_to_be32(ordinal);
-> > @@ -428,14 +425,14 @@ static inline void tpm_buf_destroy(struct tpm_buf
-> > *buf)
-> > 
-> >  static inline u32 tpm_buf_length(struct tpm_buf *buf)  {
-> > -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> > >data;
-> No blank after ) in casting. 
+[...]
 
-And also here void casting would make sense.
-
+>> > +static const struct of_device_id rpc_spi_of_ids[] = {
+>> > +   { .compatible = "renesas,rpc-r8a77995", },
+>> > +   { /* sentinel */ }
+>> > +};
+>> > +MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
+>> > +
+>> > +static struct platform_driver rpc_spi_driver = {
+>> > +   .probe = rpc_spi_probe,
+>> > +   .remove = rpc_spi_remove,
+>> > +   .driver = {
+>> > +      .name = "rpc-spi",
+>> > +      .of_match_table = rpc_spi_of_ids,
+>> > +      .pm = &rpc_spi_dev_pm_ops,
+>> > +   },
+>> > +};
+>> > +module_platform_driver(rpc_spi_driver);
+>> > +
+>> > +MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
+>> > +MODULE_DESCRIPTION("Renesas R-Car D3 RPC SPI controller driver");
+>>
+>> This is not D3 specific and not SPI-only controller btw.
 > 
-> > +	struct tpm_header *head = (struct tpm_header *) buf->data;
-> > 
-> >  	return be32_to_cpu(head->length);
-> >  }
-> > 
-> >  static inline u16 tpm_buf_tag(struct tpm_buf *buf)  {
-> > -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> > >data;
-> > +	struct tpm_header *head = (struct tpm_header *) buf->data;
-> > 
-> >  	return be16_to_cpu(head->tag);
-> >  }
-> > @@ -444,7 +441,7 @@ static inline void tpm_buf_append(struct tpm_buf
-> > *buf,
-> >  				  const unsigned char *new_data,
-> >  				  unsigned int new_len)
-> >  {
-> > -	struct tpm_input_header *head = (struct tpm_input_header *) buf-
-> > >data;
-> > +	struct tpm_header *head = (struct tpm_header *) buf->data;
-> No blank after ) in casting.
-> >  	u32 len = tpm_buf_length(buf);
-> > 
-> >  	/* Return silently if overflow has already happened. */ diff --git
-> > a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c index
-> > 2bcf470c8e5d..ab03f8600f89 100644
-> > --- a/drivers/char/tpm/tpm2-cmd.c
-> > +++ b/drivers/char/tpm/tpm2-cmd.c
-> > @@ -784,7 +784,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
-> >   */
-> >  int tpm2_probe(struct tpm_chip *chip)
-> >  {
-> > -	struct tpm_output_header *out;
-> > +	struct tpm_header *out;
-> >  	struct tpm_buf buf;
-> >  	int rc;
-> > 
-> > @@ -797,7 +797,7 @@ int tpm2_probe(struct tpm_chip *chip)
-> >  	rc = tpm_transmit_cmd(chip, NULL, &buf, 0, 0, NULL);
-> >  	/* We ignore TPM return codes on purpose. */
-> >  	if (rc >=  0) {
-> > -		out = (struct tpm_output_header *)buf.data;
-> > +		out = (struct tpm_header *)buf.data;
-> >  		if (be16_to_cpu(out->tag) == TPM2_ST_NO_SESSIONS)
-> >  			chip->flags |= TPM_CHIP_FLAG_TPM2;
-> >  	}
-> > diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
-> > index 5ecc73988f7c..862ee1ce1755 100644
-> > --- a/drivers/char/tpm/tpm2-space.c
-> > +++ b/drivers/char/tpm/tpm2-space.c
-> > @@ -334,7 +334,7 @@ static int tpm2_map_response_header(struct
-> > tpm_chip *chip, u32 cc, u8 *rsp,
-> >  				    size_t len)
-> >  {
-> >  	struct tpm_space *space = &chip->work_space;
-> > -	struct tpm_output_header *header = (void *)rsp;
-> > +	struct tpm_header *header = (void *)rsp;
-> >  	u32 phandle;
-> >  	u32 phandle_type;
-> >  	u32 vhandle;
-> > @@ -394,7 +394,7 @@ static int tpm2_map_response_body(struct tpm_chip
-> > *chip, u32 cc, u8 *rsp,
-> >  				  size_t len)
-> >  {
-> >  	struct tpm_space *space = &chip->work_space;
-> > -	struct tpm_output_header *header = (void *)rsp;
-> > +	struct tpm_header *header = (void *)rsp;
-> >  	struct tpm2_cap_handles *data;
-> >  	u32 phandle;
-> >  	u32 phandle_type;
-> > @@ -492,7 +492,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
-> > int tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
-> >  		      u32 cc, u8 *buf, size_t *bufsiz)  {
-> > -	struct tpm_output_header *header = (void *)buf;
-> > +	struct tpm_header *header = (void *)buf;
-> >  	int rc;
-> > 
-> >  	if (!space)
-> > diff --git a/drivers/char/tpm/tpm_i2c_atmel.c
-> > b/drivers/char/tpm/tpm_i2c_atmel.c
-> > index 95ce2e9ccdc6..4720b2442ffe 100644
-> > --- a/drivers/char/tpm/tpm_i2c_atmel.c
-> > +++ b/drivers/char/tpm/tpm_i2c_atmel.c
-> > @@ -46,7 +46,7 @@ struct priv_data {
-> >  	/* This is the amount we read on the first try. 25 was chosen to fit a
-> >  	 * fair number of read responses in the buffer so a 2nd retry can be
-> >  	 * avoided in small message cases. */
-> > -	u8 buffer[sizeof(struct tpm_output_header) + 25];
-> > +	u8 buffer[sizeof(struct tpm_header) + 25];
-> >  };
-> > 
-> >  static int i2c_atmel_send(struct tpm_chip *chip, u8 *buf, size_t len) @@ -
-> > 72,8 +72,7 @@ static int i2c_atmel_recv(struct tpm_chip *chip, u8 *buf,
-> > size_t count)  {
-> >  	struct priv_data *priv = dev_get_drvdata(&chip->dev);
-> >  	struct i2c_client *client = to_i2c_client(chip->dev.parent);
-> > -	struct tpm_output_header *hdr =
-> > -		(struct tpm_output_header *)priv->buffer;
-> > +	struct tpm_header *hdr = (struct tpm_header *)priv->buffer;
-> >  	u32 expected_len;
-> >  	int rc;
-> > 
-> > diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c
-> > b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > index 5f95fbfb7f6b..28eb5ab15b99 100644
-> > --- a/drivers/char/tpm/tpm_vtpm_proxy.c
-> > +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
-> > @@ -303,9 +303,9 @@ static int vtpm_proxy_tpm_op_recv(struct tpm_chip
-> > *chip, u8 *buf, size_t count)  static int
-> > vtpm_proxy_is_driver_command(struct tpm_chip *chip,
-> >  					u8 *buf, size_t count)
-> >  {
-> > -	struct tpm_input_header *hdr = (struct tpm_input_header *)buf;
-> > +	struct tpm_header *hdr = (struct tpm_header *)buf;
-> > 
-> > -	if (count < sizeof(struct tpm_input_header))
-> > +	if (count < sizeof(struct tpm_header))
-> >  		return 0;
-> > 
-> >  	if (chip->flags & TPM_CHIP_FLAG_TPM2) { @@ -402,7 +402,7 @@
-> > static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)  {
-> >  	struct tpm_buf buf;
-> >  	int rc;
-> > -	const struct tpm_output_header *header;
-> > +	const struct tpm_header *header;
-> >  	struct proxy_dev *proxy_dev = dev_get_drvdata(&chip->dev);
-> > 
-> >  	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-> > @@ -427,7 +427,7 @@ static int vtpm_proxy_request_locality(struct
-> > tpm_chip *chip, int locality)
-> >  		goto out;
-> >  	}
-> > 
-> > -	header = (const struct tpm_output_header *)buf.data;
-> > +	header = (const struct tpm_header *)buf.data;
-> >  	rc = be32_to_cpu(header->return_code);
-> >  	if (rc)
-> >  		locality = -1;
-> > diff --git a/drivers/char/tpm/xen-tpmfront.c b/drivers/char/tpm/xen-
-> > tpmfront.c index b150f87f38f5..1259e935fd58 100644
-> > --- a/drivers/char/tpm/xen-tpmfront.c
-> > +++ b/drivers/char/tpm/xen-tpmfront.c
-> > @@ -163,7 +163,7 @@ static int vtpm_send(struct tpm_chip *chip, u8 *buf,
-> > size_t count)
-> >  	wmb();
-> >  	notify_remote_via_evtchn(priv->evtchn);
-> > 
-> > -	ordinal = be32_to_cpu(((struct tpm_input_header*)buf)->ordinal);
-> > +	ordinal = be32_to_cpu(((struct tpm_header *)buf)->ordinal);
-> >  	duration = tpm_calc_ordinal_duration(chip, ordinal);
-> > 
-> >  	if (wait_for_tpm_stat(chip, VTPM_STATUS_IDLE, duration,
-> > --
-> > 2.19.1
+> In R-Car Gen3, there are some registers(i.e,. RPC_PHYCNT) in different
+> setting
+> for R-Car H3, M3-W, V3M, V3H, D3, M3-N and E3 model.
 > 
+> I test this patch is based on D3 Draak board, it works fine but I am not
+> sure
+> if these registers setting is ok for others R-Card model.
+> 
+> I think this could be a reference when patch others Gen3 model is needed.
+You can take a look into the U-Boot driver(s) I linked, that's used on
+the other SoCs you listed (except for V3H).
 
-Thank you. Really useful feedback.
-
-/Jarkko
+-- 
+Best regards,
+Marek Vasut
