@@ -2,169 +2,104 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C09C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82125C28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8657C2075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n5Lzqv/K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8657C2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C1E720851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1E720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728457AbeKUAYe (ORCPT
+        id S1728778AbeKUAYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:24:34 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57976 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKUAYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:24:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=f4caVRl1YSFu92WRfBk2pZCc3fhCI/oytYx9ZPmT6d0=; b=n5Lzqv/KKtzAvjQTqyazlr3Dl
-        beXEgrkW1IXcMpW76Zn4riDYe8V33wLN6rPAX0e9LR9vibJqeyt1t9wLSmI/f7W/9vjaxhZWw6Uyr
-        UxDFbj4hZWHYFs9Zxj5ss9+7ap24TxZ7DuRjpECYJkaytfGqgH2LW6YqNp2YSaNwJpbEevMdQgoqc
-        vCrAGefWtOAO9H9mmEe0WYuFMCk5Z97VzFN071a5dpZxmDj0jx9KHgcHRs7vuqBOyEKg+abFy2BfD
-        psAqvoglJ/JeIn6oGWpiHH2uaDa1W05RPdK2WSiv1W/s0ANPKvnPNLFZB05b4Zdbfs9iVw7zmPST2
-        iwDKAOk3A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gP6UW-0008FI-Sx; Tue, 20 Nov 2018 13:55:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 709D42029F87F; Tue, 20 Nov 2018 14:54:59 +0100 (CET)
-Date:   Tue, 20 Nov 2018 14:54:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH 08/25] vtime: Exit vtime before exit_notify()
-Message-ID: <20181120135459.GR2131@hirez.programming.kicks-ass.net>
-References: <1542163569-20047-1-git-send-email-frederic@kernel.org>
- <1542163569-20047-9-git-send-email-frederic@kernel.org>
+        Tue, 20 Nov 2018 19:24:37 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:56890 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725843AbeKUAYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:24:37 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id EE28920D31; Tue, 20 Nov 2018 14:55:19 +0100 (CET)
+Received: from qschulz (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A7D0220745;
+        Tue, 20 Nov 2018 14:55:09 +0100 (CET)
+Date:   Tue, 20 Nov 2018 14:55:08 +0100
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
+        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
+Message-ID: <20181120135508.paxzs63cqy2llc7d@qschulz>
+References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
+ <20181008100728.24959-2-quentin.schulz@bootlin.com>
+ <mvm8t1pazea.fsf@suse.de>
+ <mvma7m3n9l6.fsf_-_@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ntnyqwowhkgpjtiz"
 Content-Disposition: inline
-In-Reply-To: <1542163569-20047-9-git-send-email-frederic@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <mvma7m3n9l6.fsf_-_@suse.de>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 03:45:52AM +0100, Frederic Weisbecker wrote:
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index d458d65..27e0544 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -265,6 +265,8 @@ struct task_cputime {
->  enum vtime_state {
->  	/* Task is sleeping or running in a CPU with VTIME inactive: */
->  	VTIME_INACTIVE = 0,
-> +	/* Task has passed exit_notify() */
-> +	VTIME_DEAD,
 
-How does it make sense for VTIME_DEAD > VTIME_INACTIVE ?
+--ntnyqwowhkgpjtiz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->  	/* Task is idle */
->  	VTIME_IDLE,
->  	/* Task runs in kernelspace in a CPU with VTIME active: */
+Hi Andreas,
 
+On Tue, Nov 20, 2018 at 02:48:37PM +0100, Andreas Schwab wrote:
+> Don't use locking phy_read/phy_write functions while inside
+> phy_select_patch/phy_restore_page region.
+>=20
+> Fixes: 6a0bfbbe20 ("net: phy: mscc: migrate to phy_select/restore_page fu=
+nctions")
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
 
-> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-> index f64afd7..a0c3a82 100644
-> --- a/kernel/sched/cputime.c
-> +++ b/kernel/sched/cputime.c
-> @@ -813,17 +813,31 @@ void vtime_task_switch_generic(struct task_struct *prev)
->  {
->  	struct vtime *vtime = &prev->vtime;
->  
-> -	write_seqcount_begin(&vtime->seqcount);
-> -	if (vtime->state == VTIME_IDLE)
-> -		vtime_account_idle(prev);
-> -	else
-> -		__vtime_account_kernel(prev, vtime);
-> -	vtime->state = VTIME_INACTIVE;
-> -	vtime->cpu = -1;
-> -	write_seqcount_end(&vtime->seqcount);
-> +	/*
-> +	 * Flush the prev task vtime, unless it has passed
-> +	 * vtime_exit_task(), in which case there is nothing
-> +	 * left to account.
-> +	 */
-> +	if (vtime->state != VTIME_DEAD) {
-> +		write_seqcount_begin(&vtime->seqcount);
-> +		if (vtime->state == VTIME_IDLE)
-> +			vtime_account_idle(prev);
-> +		else
-> +			__vtime_account_kernel(prev, vtime);
-> +		vtime->state = VTIME_INACTIVE;
-> +		vtime->cpu = -1;
-> +		write_seqcount_end(&vtime->seqcount);
-> +	}
->  
->  	vtime = &current->vtime;
->  
-> +	/*
-> +	 * Ignore the next task if it has been preempted after
-> +	 * vtime_exit_task().
-> +	 */
-> +	if (vtime->state == VTIME_DEAD)
-> +		return;
-> +
->  	write_seqcount_begin(&vtime->seqcount);
->  	if (is_idle_task(current))
->  		vtime->state = VTIME_IDLE;
+Have you tested this patch? Does it solve your issue?
 
-Bit inconsistent; having the one as a indent and the other as an early
-return.
+Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+anyway since it's to be done.
 
-> @@ -850,6 +864,30 @@ void vtime_init_idle(struct task_struct *t, int cpu)
->  	local_irq_restore(flags);
->  }
->  
-> +/*
-> + * This is the final settlement point after which we don't account
-> + * anymore vtime for this task.
-> + */
-> +void vtime_exit_task(struct task_struct *t)
-> +{
-> +	struct vtime *vtime = &t->vtime;
-> +	unsigned long flags;
+You need to send your patch as a mail separate to this patch series.
+You also need to prefix your patch with [PATCH net-next] instead of only
+[PATCH]. This is specific to the net subsystem.
 
-Note that the code in vtime_task_switch_generic() (above) relies on @t
-== current (which is true, but not explicit).
+Use scripts/get_maintainer.pl on your patch to get the people to put in
+Cc and in To.
 
-> +	local_irq_save(flags);
-> +	write_seqcount_begin(&vtime->seqcount);
-> +	/*
-> +	 * A task that has never run on a nohz_full CPU hasn't
-> +	 * been tracked by vtime. Thus it's in VTIME_INACTIVE
-> +	 * state. Nothing to account for it.
-> +	 */
-> +	if (vtime->state != VTIME_INACTIVE)
-> +		vtime_account_system(t, vtime);
-> +	vtime->state = VTIME_DEAD;
-> +	vtime->cpu = -1;
-> +	write_seqcount_end(&vtime->seqcount);
-> +	local_irq_restore(flags);
-> +}
-> +
->  u64 task_gtime(struct task_struct *t)
->  {
->  	struct vtime *vtime = &t->vtime;
-> -- 
-> 2.7.4
-> 
+Thanks,
+Quentin
+
+--ntnyqwowhkgpjtiz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlv0EjwACgkQhLiadT7g
+8aMwkBAAlxyAg33/B6pRIqeuRGnreLcxBPkH2jhQsxDU/vaKz8rt51V2AVQI6DfA
+A2cLtqV8S0yec8Z3ZoD4bQGCqTwRm2pm/28jILlfZIHrX6hkDdi1Iqtb1cDh2oc1
+7DLnPtg+t9XHQYeYbouDw1bsNmDToN/ZQHU11r8NPUdKFhgs2On0rQxygOqKX6DE
+ZJhfdnFuKGeqKnrbUZYy4CU8o7n3cCu0DoMQP48Etn/K+mlHnvSyj4r/RFDw21pD
+INhNvFCjcfsKRbHNx5i48KX23wb74tec11J7Y95MLxoRRxU5F3hWUhGrrV1br7M4
+JCz76BsLnIr+wmZsoEEfri6yWbeoZIq+WJPW0S1N8BQhez+DWZCLyLjpWawxuWFQ
+ohveKoEuR4NXjhuqLEPvKHTISAG4tHkUiLV9M8I7zgLUOvdd17E5vA/G6SAbuTc7
+12IWm37LdUp+9e8Y9rTWdubBg51bfIUb43KriB9hWek3XVswi7QkVKEuFzLxz6Ws
+KWXKOP0IaxbtS/i6Rdn1SIJ8GTfoikAzDEMFgNths7R8Fx1fvONMEKTeYb7JF5AF
+FWad5HJm3Br6fZyUqbvpFFJ+poebiqavH1LNE8HjTxbfnuetu/RPZaFQ+JO98MBN
+ewcszCCIwphpF0i8juSBwr9nRRBZhNZFgpEvKDbzl88VfyU37yc=
+=FCjc
+-----END PGP SIGNATURE-----
+
+--ntnyqwowhkgpjtiz--
