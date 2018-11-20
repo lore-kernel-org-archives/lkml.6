@@ -2,165 +2,105 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D60C04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B882C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 152C020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:51:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 152C020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 8431720831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 03:56:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8431720831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tencent.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730776AbeKTOSa (ORCPT
+        id S1730820AbeKTOXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 09:18:30 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:64809 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730148AbeKTOSa (ORCPT
+        Tue, 20 Nov 2018 09:23:53 -0500
+Received: from mail2.tencent.com ([163.177.67.195]:33324 "EHLO
+        mail2.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730148AbeKTOXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 09:18:30 -0500
-X-UUID: 64cc824e71ef4b888f80d3bb9b63cb14-20181120
-X-UUID: 64cc824e71ef4b888f80d3bb9b63cb14-20181120
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 981300466; Tue, 20 Nov 2018 11:51:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 20 Nov 2018 11:51:20 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 20 Nov 2018 11:51:20 +0800
-Message-ID: <1542685880.5132.11.camel@mtksdaap41>
-Subject: Re: [PATCH v1 02/11] clk: mediatek: add new member to mtk_pll_data
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-CC:     Rob Herring <robh@kernel.org>, <srv_heupstream@mediatek.com>,
-        <jamesjj.liao@mediatek.com>, <sboyd@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>, <fan.chen@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <owen.chen@mediatek.com>, <linux-clk@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 20 Nov 2018 11:51:20 +0800
-In-Reply-To: <CANMq1KBjtyQFyJ-mZBndPDSfSDnD0K8izy39jp9zKE4xfiCiog@mail.gmail.com>
-References: <20181106064206.17535-1-weiyi.lu@mediatek.com>
-         <20181106064206.17535-4-weiyi.lu@mediatek.com>
-         <CANMq1KBjtyQFyJ-mZBndPDSfSDnD0K8izy39jp9zKE4xfiCiog@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 20 Nov 2018 09:23:53 -0500
+Received: from EXHUB-SZMail05.tencent.com (unknown [10.14.6.11])
+        by mail2.tencent.com (Postfix) with ESMTP id 7F43C8EDEB;
+        Tue, 20 Nov 2018 11:56:49 +0800 (CST)
+Received: from EXMBX-SZMAIL022.tencent.com ([fe80::dcc:e364:cd45:89d9]) by
+ EXHUB-SZMail05.tencent.com ([::1]) with mapi id 14.03.0415.000; Tue, 20 Nov
+ 2018 11:56:47 +0800
+From:   =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
+To:     Christian Brauner <christian@brauner.io>,
+        Todd Kjos <tkjos@google.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        =?utf-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        "dave@stgolabs.net" <dave@stgolabs.net>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V4] binder: ipc namespace support for android binder
+Thread-Topic: [PATCH V4] binder: ipc namespace support for android binder
+Thread-Index: AdSAhQCNOWQOOCZBTaKM+8Nt+bdtxQ==
+Date:   Tue, 20 Nov 2018 03:56:45 +0000
+Message-ID: <5FBCBE569E134E4CA167B91C0A77FD610198FA2BCD@EXMBX-SZMAIL022.tencent.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.96.209.54]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-13 at 08:18 -0800, Nicolas Boichat wrote:
-> On Mon, Nov 5, 2018 at 10:43 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
-> >
-> > From: Owen Chen <owen.chen@mediatek.com>
-> >
-> > 1. pcwibits: The integer bits of pcw for plls is extend to 8 bits,
-> >    add a variable to indicate this change and
-> >    backward-compatible.
-> > 2. fmin: The pll freqency lower-bound is vary from 1GMhz to
-> >    1.5Ghz, add a variable to indicate platform-dependent.
-> >
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > ---
-> >  drivers/clk/mediatek/clk-mtk.h |  2 ++
-> >  drivers/clk/mediatek/clk-pll.c | 10 +++++++---
-> >  2 files changed, 9 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-> > index f83c2bbb677e..1882221fe994 100644
-> > --- a/drivers/clk/mediatek/clk-mtk.h
-> > +++ b/drivers/clk/mediatek/clk-mtk.h
-> > @@ -215,7 +215,9 @@ struct mtk_pll_data {
-> >         const struct clk_ops *ops;
-> >         u32 rst_bar_mask;
-> >         unsigned long fmax;
-> > +       unsigned long fmin;
-> 
-> Minor nit: I'd put fmin before fmax in the structure.
-> 
-
-OK, thanks for the suggestion. will fix in next version
-
-> >         int pcwbits;
-> > +       int pcwibits;
-> >         uint32_t pcw_reg;
-> >         int pcw_shift;
-> >         const struct mtk_pll_div_table *div_table;
-> > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> > index f54e4015b0b1..0ec2c62d9383 100644
-> > --- a/drivers/clk/mediatek/clk-pll.c
-> > +++ b/drivers/clk/mediatek/clk-pll.c
-> 
-> I'd add a note next to:
-> #define INTEGER_BITS            7
-> to say that this is the default, and can be overridden with pcwibits.
-> 
-
-OK, thanks for the suggestion. will add in next version
-
-> > @@ -69,11 +69,13 @@ static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
-> >  {
-> >         int pcwbits = pll->data->pcwbits;
-> >         int pcwfbits;
-> > +       int ibits;
-> >         u64 vco;
-> >         u8 c = 0;
-> >
-> >         /* The fractional part of the PLL divider. */
-> > -       pcwfbits = pcwbits > INTEGER_BITS ? pcwbits - INTEGER_BITS : 0;
-> > +       ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-> > +       pcwfbits = pcwbits > ibits ? pcwbits - ibits : 0;
-> >
-> >         vco = (u64)fin * pcw;
-> >
-> > @@ -138,9 +140,10 @@ static void mtk_pll_set_rate_regs(struct mtk_clk_pll *pll, u32 pcw,
-> >  static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
-> >                 u32 freq, u32 fin)
-> >  {
-> > -       unsigned long fmin = 1000 * MHZ;
-> > +       unsigned long fmin = pll->data->fmin ? pll->data->fmin : 1000 * MHZ;
-> 
-> I'd put parentheses around (1000 * MHZ), to avoid the need to think
-> about precedence...
-> 
-
-OK, thanks for the suggestion. will add in next version
-
-> >         const struct mtk_pll_div_table *div_table = pll->data->div_table;
-> >         u64 _pcw;
-> > +       int ibits;
-> >         u32 val;
-> >
-> >         if (freq > pll->data->fmax)
-> > @@ -164,7 +167,8 @@ static void mtk_pll_calc_values(struct mtk_clk_pll *pll, u32 *pcw, u32 *postdiv,
-> >         }
-> >
-> >         /* _pcw = freq * postdiv / fin * 2^pcwfbits */
-> > -       _pcw = ((u64)freq << val) << (pll->data->pcwbits - INTEGER_BITS);
-> > +       ibits = pll->data->pcwibits ? pll->data->pcwibits : INTEGER_BITS;
-> > +       _pcw = ((u64)freq << val) << (pll->data->pcwbits - ibits);
-> >         do_div(_pcw, fin);
-> >
-> >         *pcw = (u32)_pcw;
-> > --
-> > 2.18.0
-> >
-> 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
-
+PiBPbiBGcmksIE5vdiAxNiwgMjAxOCBhdCAxMToxOTo0MUFNIC0wODAwLCBUb2RkIEtqb3Mgd3Jv
+dGU6DQo+ID4gT24gVGh1LCBOb3YgMTUsIDIwMTggYXQgMjo1NCBQTSBncmVna2hAbGludXhmb3Vu
+ZGF0aW9uLm9yZw0KPiA+IDxncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+ID4g
+Li4uDQo+ID4gPg0KPiA+ID4gQSBudW1iZXIgb2YgdXMgaGF2ZSB0YWxrZWQgYWJvdXQgdGhpcyBp
+biB0aGUgcGx1bWJlcnMgQW5kcm9pZCB0cmFjaywgYW5kDQo+ID4gPiBhIGRpZmZlcmVudCBwcm9w
+b3NhbCBmb3IgaG93IHRvIHNvbHZlIHRoaXMgaGFzIGJlZW4gbWFkZSB0aGF0IHNob3VsZCBiZQ0K
+PiA+ID4gbXVjaCBtb3JlIHJlc2lsaWFudC4gIFNvIEkgd2lsbCBkcm9wIHRoaXMgcGF0Y2ggZnJv
+bSBteSBxdWV1ZSBhbmQgd2FpdA0KPiA+ID4gZm9yIHRoZSBwYXRjaGVzIGJhc2VkIG9uIHRoZSBk
+aXNjdXNzaW9ucyB3ZSBoYWQgdGhlcmUuDQo+ID4gPg0KPiA+ID4gSSB0aGluayB0aGVyZSdzIHNv
+bWUgbm90ZXMvc2xpZGVzIG9uIHRoZSBkaXNjdXNzaW9uIG9ubGluZSBzb21ld2hlcmUsDQo+ID4g
+PiBidXQgaXQgaGFzbid0IGJlZW4gcHVibGlzaGVkIGFzIHRoZSBjb25mZXJlbmNlIGlzIHN0aWxs
+IGhhcHBlbmluZywNCj4gPiA+IG90aGVyd2lzZSBJIHdvdWxkIGxpbmsgdG8gaXQgaGVyZS4uLg0K
+PiA+DQo+ID4gSGVyZSBpcyBhIGxpbmsgdG8gdGhlIHNlc3Npb24gd2hlcmUgeW91IGNhbiBsb29r
+IGF0IHRoZSBzbGlkZXMgWzFdLg0KPiA+IFRoZXJlIHdhcyBjb25zZW5zdXMgdGhhdCAiYmluZGVy
+ZnMiIChzbGlkZSA1KSB3YXMgdGhlIG1vc3QgcHJvbWlzaW5nDQo+ID4gLS0gYnV0IHdvdWxkIGJl
+IGJlaGluZCBhIGNvbmZpZyBvcHRpb24gdG8gcHJvdmlkZSBiYWNrd2FyZHMNCj4gPiBjb21wYXRp
+YmlsaXR5IGZvciBub24tY29udGFpbmVyIHVzZS1jYXNlcy4NCj4gPg0KPiA+IFRoZSBldGhlcnBh
+ZCBub3RlcyBhcmUgYXQgWzJdIChsb29rIGF0ICJEeW5hbWljYWxseSBBbGxvY2F0ZWQgQmluZGVy
+DQo+ID4gRGV2aWNlcyIgc2VjdGlvbikNCj4gPg0KPiA+IENocmlzdGlhbiBCcmF1bmVyIHdpbGwg
+YmUgc2VuZGluZyBvdXQgbW9yZSBkZXRhaWxzLg0KPiANCj4gT2ssIHNvcnJ5IGZvciB0aGUgZGVs
+YXkgSSBnb3QgY2F1Z2h0IHVwIGluIG90aGVyIHdvcmsuDQo+IA0KPiBUaGUgaWRlYSBpcyB0byBp
+bXBsZW1lbnQgYmluZGVyZnMgd2hpY2ggSSdtIHN0YXJ0aW5nIHRvIHdvcmsgb24uDQo+IGJpbmRl
+cmZzIHdpbGwgYmUgYSBzZXBhcmF0ZSBwc2V1ZG8tZmlsZXN5c3RlbSB0aGF0IHdpbGwgYmUgbW91
+bnRhYmxlDQo+IHBlci1pcGMgbmFtZXNwYWNlLg0KPiBUaGlzIGhhcyB0aGUgYWR2YW50YWdlIHRo
+YXQgdGhlIGlwYyBuYW1lc3BhY2UgaXMgYXR0YWNoZWQgdG8gdGhlDQo+IHN1cGVyYmxvY2sgb2Yg
+dGhlIG1vdW50IGFuZCBjYW4gYmUgZWFzaWx5IHJldHJpZXZlZCBieSB0aGUgYmluZGVyDQo+IGRy
+aXZlci4gSXQgYWxzbyBpbXBsaWVzIHRoYXQgLSBpbiBjb250cmFzdCB0byB0aGUgcHJvcG9zZWQg
+cGF0Y2ggaGVyZSAtDQo+IGFuIG9wZW4oKSBvbiBhIGdpdmVuIGJpbmRlciBkZXZpY2Ugd2lsbCBu
+b3QgYmUgYWJsZSB0byBjaGFuZ2UgdGhlIGlwYw0KPiBuYW1lc3BhY2Ugb2Ygc2FpZCBkZXZpY2Vz
+LiBUaGUgb2J2aW91cyBjb3JvbGxhcnkgaXMgdGhhdCB5b3UgY2FuDQo+IGJpbmQtbW91bnQgYmlu
+ZGVyIGRldmljZXMgb3IgdGhlIHdob2xlIGJpbmRlcmZzIG1vdW50IGJldHdlZW4gZGlmZmVyZW50
+DQo+IGlwYyBuYW1lc3BhY2VzIGFuZCBnaXZlbiB0aGUgcmlnaHQgcGVybWlzc2lvbnMgKENBUF9J
+UENfT1dORVIgaW4gdGhlDQo+IG93bmluZyB1c2VybnMgb2YgdGhlIGlwY25zKSBjYW4gc2VlIHNl
+cnZpY2VzIG9uIHRoZSBob3N0IHdoaWNoIGlzDQo+IHNvbWV0aGluZyB0aGF0IHBlb3BsZSB3YW50
+ZWQgdG8gYmUgYWJsZSB0byBkby4NCj4gQWRkaXRpb25hbGx5LCBlYWNoIGJpbmRlcmZzIG1vdW50
+IHdpbGwgY29tZSB3aXRoIGEgYmluZGVyLWNvbnRyb2wNCj4gZGV2aWNlLiBUaGlzIGRldmljZSBp
+cyBmdW5jdGlvbmFsbHkgc2ltaWxhciB0byBsb29wLWNvbnRyb2wgYW5kIHdpbGwNCj4gYWxsb3cg
+Zm9yIGR5bmFtaWMgYWxsb2NhdGlvbiAoYW5kIHBvc3NpYmx5IGRlYWxsb2NhdGlvbikgb2YgYmlu
+ZGVyDQo+IGRldmljZXMuIFdpdGggdGhpcyB3ZSBjYW4gcmVtb3ZlIHRoZSByZXN0cmljdGlvbiB0
+byBoYXJkLWNvZGUgdGhlIG51bWJlcg0KPiBvZiBiaW5kZXIgZGV2aWNlcyBhdCBjb21waWxlIHRp
+bWUuDQo+IEJhY2t3YXJkcyBjb21wYXRpYmlsaXR5IGNhbiBlaXRoZXIgYmUgZ3VhcmFudGVlZCBi
+eSBoaWRpbmcgYmluZGVyZnMNCj4gYmVoaW5kIGEgY29tcGlsZSBmbGFnIG9yIGJ5IHNwZWNpYWwt
+Y2FzaW5nIHRoZSBpbml0YWwgYmluZGVyZnMgbW91bnQgdG8NCj4gcHJlLWNyZWF0ZSB0aGUgc3Rh
+bmRhcmQgYmluZGVyIGRldmljZXMuIFRoZSBqdXJ5IGlzIHN0aWxsIG91dCBvbiB0aGlzLg0KPiAN
+Cj4gQ2hyaXN0aWFuDQo+IA0KDQpTaW5jZSB5b3UgYXJlIHdvcmtpbmcgb24gdGhpcywgSSB3aWxs
+IHdpdGhkcmF3IHRoaXMgcGF0Y2guIFdlIHdpbGwgZXZhbHVhdGUgDQp3aGV0aGVyIHRvIHlvdXIg
+c29sdXRpb24gaW4gb3VyIGVudmlyb25tZW50IGFmdGVyIHlvdSBpbXBsZW1lbnQgaXQuIA0K
