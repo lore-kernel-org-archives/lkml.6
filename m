@@ -2,96 +2,55 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98943C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97340C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B591206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:16:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B591206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E2BE8206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:17:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2BE8206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729686AbeKUDq0 (ORCPT
+        id S1730295AbeKUDr2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:46:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48031 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726975AbeKUDq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:46:26 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 073EC20745; Tue, 20 Nov 2018 18:16:13 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D13AD2037D;
-        Tue, 20 Nov 2018 18:16:12 +0100 (CET)
-Date:   Tue, 20 Nov 2018 18:16:12 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Romain Izard <romain.izard.pro@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
-Message-ID: <20181120171612.GF8367@piout.net>
-References: <20181120165737.4998-1-romain.izard.pro@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120165737.4998-1-romain.izard.pro@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 20 Nov 2018 22:47:28 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:43302 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbeKUDr2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:47:28 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id EFB8014E219FB;
+        Tue, 20 Nov 2018 09:17:15 -0800 (PST)
+Date:   Tue, 20 Nov 2018 09:17:15 -0800 (PST)
+Message-Id: <20181120.091715.960440705045872524.davem@davemloft.net>
+To:     lucien.xin@gmail.com
+Cc:     sfr@canb.auug.org.au, netdev@vger.kernel.org,
+        linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CADvbK_fBH5zL6H+j3vZPT3BuG5m0_tDKJ=YUzEe5PeMCz4y9pQ@mail.gmail.com>
+References: <20181120161546.1098b346@canb.auug.org.au>
+        <CADvbK_fBH5zL6H+j3vZPT3BuG5m0_tDKJ=YUzEe5PeMCz4y9pQ@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 20 Nov 2018 09:17:16 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Romain,
+From: Xin Long <lucien.xin@gmail.com>
+Date: Tue, 20 Nov 2018 17:25:30 +0900
 
-On 20/11/2018 17:57:37+0100, Romain Izard wrote:
-> The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
-> different clocks for the peripherals in the SoC. The Static Memory
-> controller is connected to the divided master clock.
-> 
-> Unfortunately, the device tree does not correctly show this and uses the
-> master clock directly. This clock is then used by the code for the NAND
-> controller to calculate the timings for the controller, and we end up with
-> slow NAND Flash access.
-> 
-> Fix the device tree, and the performance of Flash access is improved.
-> 
-> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> ---
->  arch/arm/boot/dts/sama5d2.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-> index 61f68e5c48e9..b405992eb601 100644
-> --- a/arch/arm/boot/dts/sama5d2.dtsi
-> +++ b/arch/arm/boot/dts/sama5d2.dtsi
-> @@ -308,7 +308,7 @@
->  				  0x1 0x0 0x60000000 0x10000000
->  				  0x2 0x0 0x70000000 0x10000000
->  				  0x3 0x0 0x80000000 0x10000000>;
-> -			clocks = <&mck>;
-> +			clocks = <&h32ck>;
+> Do I need to do something for this one now?
 
-You will have to rebase on top of at91-dt. And if I'm not mistaken, this
-line should be:
-
-+			clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
-
->  			status = "disabled";
->  
->  			nand_controller: nand-controller {
-> -- 
-> 2.17.1
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+No, there is nothing you can do about it :-)
