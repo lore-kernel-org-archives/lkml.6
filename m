@@ -2,119 +2,147 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A51EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77728C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34782087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oF2nzZc+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34782087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 463C22087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:29:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 463C22087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbeKUC6Y (ORCPT
+        id S1730005AbeKUC7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:58:24 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59554 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728633AbeKUC6T (ORCPT
+        Tue, 20 Nov 2018 21:59:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44033 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbeKUC7s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:58:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=96eH3oitSAD2IR5LVXbKviUW1DL/OBsFfJZWc9ivvTA=; b=oF2nzZc+qfIS
-        T989k4wyvw4yMkw1uNLpr8NArlYbvVeYgTMcSHJ4ufZZlx7c2UzatHs8+BmQ+BBKcOR2lilQ6YcfZ
-        nO7rB2D1udj3dpZvRhNWtA6cUV+9ecGhSy3oRtKqhbrWLznHO8WtgAm5KzpV2A6m7ugFQj1CgCHpG
-        D8SgY=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP8ss-0001mn-MC; Tue, 20 Nov 2018 16:28:18 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 563011124DC2; Tue, 20 Nov 2018 16:28:18 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: core: Export regulator_lock and regulator_unlock" to the regulator tree
-In-Reply-To: 
-Message-Id: <20181120162818.563011124DC2@debutante.sirena.org.uk>
-Date:   Tue, 20 Nov 2018 16:28:18 +0000 (GMT)
+        Tue, 20 Nov 2018 21:59:48 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAKGTF0G3039515
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 20 Nov 2018 08:29:15 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAKGTEMn3039512;
+        Tue, 20 Nov 2018 08:29:14 -0800
+Date:   Tue, 20 Nov 2018 08:29:14 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-68239654acafe6aad5a3c1dc7237e60accfebc03@git.kernel.org>
+Cc:     dave.hansen@linux.intel.com, Jason@zx2c4.com, riel@surriel.com,
+        pbonzini@redhat.com, x86@kernel.org, hpa@zytor.com,
+        mingo@kernel.org, kvm@vger.kernel.org, bigeasy@linutronix.de,
+        bp@suse.de, tglx@linutronix.de, rkrcmar@redhat.com,
+        luto@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: bp@suse.de, tglx@linutronix.de, bigeasy@linutronix.de,
+          kvm@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, luto@kernel.org,
+          rkrcmar@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+          pbonzini@redhat.com, Jason@zx2c4.com, riel@surriel.com
+In-Reply-To: <20160226074940.GA28911@pd.tnic>
+References: <20181120102635.ddv3fvavxajjlfqk@linutronix.de>
+        <20160226074940.GA28911@pd.tnic>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/fpu: Disable bottom halves while loading FPU
+ registers
+Git-Commit-ID: 68239654acafe6aad5a3c1dc7237e60accfebc03
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Commit-ID:  68239654acafe6aad5a3c1dc7237e60accfebc03
+Gitweb:     https://git.kernel.org/tip/68239654acafe6aad5a3c1dc7237e60accfebc03
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Tue, 20 Nov 2018 11:26:35 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 20 Nov 2018 17:22:42 +0100
 
-   regulator: core: Export regulator_lock and regulator_unlock
+x86/fpu: Disable bottom halves while loading FPU registers
 
-has been applied to the regulator tree at
+The sequence
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+  fpu->initialized = 1;		/* step A */
+  preempt_disable();		/* step B */
+  fpu__restore(fpu);
+  preempt_enable();
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+in __fpu__restore_sig() is racy in regard to a context switch.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+For 32bit frames, __fpu__restore_sig() prepares the FPU state within
+fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+particular) does not modify fpu->state it uses fpu__drop() which sets
+fpu->initialized to 0.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+After fpu->initialized is cleared, the CPU's FPU state is not saved
+to fpu->state during a context switch. The new state is loaded via
+fpu__restore(). It gets loaded into fpu->state from userland and
+ensured it is sane. fpu->initialized is then set to 1 in order to avoid
+fpu__initialize() doing anything (overwrite the new state) which is part
+of fpu__restore().
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+A context switch between step A and B above would save CPU's current FPU
+registers to fpu->state and overwrite the newly prepared state. This
+looks like a tiny race window but the Kernel Test Robot reported this
+back in 2016 while we had lazy FPU support. Borislav Petkov made the
+link between that report and another patch that has been posted. Since
+the removal of the lazy FPU support, this race goes unnoticed because
+the warning has been removed.
 
-Thanks,
-Mark
+Disable bottom halves around the restore sequence to avoid the race. BH
+need to be disabled because BH is allowed to run (even with preemption
+disabled) and might invoke kernel_fpu_begin() by doing IPsec.
 
-From 14a742724fc0f089893c6f70a62d30ab418ed7ff Mon Sep 17 00:00:00 2001
-From: Dmitry Osipenko <digetx@gmail.com>
-Date: Tue, 20 Nov 2018 04:20:19 +0300
-Subject: [PATCH] regulator: core: Export regulator_lock and regulator_unlock
+ [ bp: massage commit message a bit. ]
 
-This fixes compiling regulator drivers that use these function when
-these drivers are built as kernel modules.
-
-Fixes: f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators locking")
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: stable@vger.kernel.org
+Cc: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181120102635.ddv3fvavxajjlfqk@linutronix.de
+Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
 ---
- drivers/regulator/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/kernel/fpu/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index fd237bc0fa7c..f937a33e5f02 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -211,6 +211,7 @@ void regulator_lock(struct regulator_dev *rdev)
- {
- 	regulator_lock_nested(rdev, NULL);
- }
-+EXPORT_SYMBOL_GPL(regulator_lock);
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 61a949d84dfa..d99a8ee9e185 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
  
- /**
-  * regulator_unlock - unlock a single regulator
-@@ -232,6 +233,7 @@ void regulator_unlock(struct regulator_dev *rdev)
++		local_bh_disable();
+ 		fpu->initialized = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
  
- 	mutex_unlock(&regulator_nesting_mutex);
- }
-+EXPORT_SYMBOL_GPL(regulator_unlock);
- 
- static bool regulator_supply_is_couple(struct regulator_dev *rdev)
- {
--- 
-2.19.0.rc2
-
+ 		return err;
+ 	} else {
