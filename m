@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D78C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D19DC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 700D820C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 700D820C01
+	by mail.kernel.org (Postfix) with ESMTP id DC7B82146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC7B82146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbeKTTXR (ORCPT
+        id S1727226AbeKTTXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:23:17 -0500
+        Tue, 20 Nov 2018 14:23:22 -0500
 Received: from mga07.intel.com ([134.134.136.100]:57263 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726196AbeKTTXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:23:15 -0500
+        id S1726196AbeKTTXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:23:21 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:15 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="106105804"
+   d="scan'208";a="106105826"
 Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:12 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:18 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
         Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V7 RESEND 07/21] swap: Support PMD swap mapping in split_swap_cluster()
-Date:   Tue, 20 Nov 2018 16:54:35 +0800
-Message-Id: <20181120085449.5542-8-ying.huang@intel.com>
+Subject: [PATCH -V7 RESEND 09/21] swap: Swapin a THP in one piece
+Date:   Tue, 20 Nov 2018 16:54:37 +0800
+Message-Id: <20181120085449.5542-10-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
 References: <20181120085449.5542-1-ying.huang@intel.com>
@@ -57,26 +57,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When splitting a THP in swap cache or failing to allocate a THP when
-swapin a huge swap cluster, the huge swap cluster will be split.  In
-addition to clear the huge flag of the swap cluster, the PMD swap
-mapping count recorded in cluster_count() will be set to 0.  But we
-will not touch PMD swap mappings themselves, because it is hard to
-find them all sometimes.  When the PMD swap mappings are operated
-later, it will be found that the huge swap cluster has been split and
-the PMD swap mappings will be split at that time.
+With this patch, when page fault handler find a PMD swap mapping, it
+will swap in a THP in one piece.  This avoids the overhead of
+splitting/collapsing before/after the THP swapping.  And improves the
+swap performance greatly for reduced page fault count etc.
 
-Unless splitting a THP in swap cache (specified via "force"
-parameter), split_swap_cluster() will return -EEXIST if there is
-SWAP_HAS_CACHE flag in swap_map[offset].  Because this indicates there
-is a THP corresponds to this huge swap cluster, and it isn't desired
-to split the THP.
+do_huge_pmd_swap_page() is added in the patch to implement this.  It
+is similar to do_swap_page() for normal page swapin.
 
-When splitting a THP in swap cache, the position to call
-split_swap_cluster() is changed to before unlocking sub-pages.  So
-that all sub-pages will be kept locked from the THP has been split to
-the huge swap cluster is split.  This makes the code much easier to be
-reasoned.
+If failing to allocate a THP, the huge swap cluster and the PMD swap
+mapping will be split to fallback to normal page swapin.
+
+If the huge swap cluster has been split already, the PMD swap mapping
+will be split to fallback to normal page swapin.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
@@ -92,143 +85,249 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- include/linux/swap.h |  6 +++--
- mm/huge_memory.c     | 18 +++++++++-----
- mm/swapfile.c        | 58 +++++++++++++++++++++++++++++++-------------
- 3 files changed, 57 insertions(+), 25 deletions(-)
+ include/linux/huge_mm.h |   9 +++
+ mm/huge_memory.c        | 174 ++++++++++++++++++++++++++++++++++++++++
+ mm/memory.c             |  16 ++--
+ 3 files changed, 193 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index a24d101b131d..441da4a832a6 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -617,11 +617,13 @@ static inline swp_entry_t get_swap_page(struct page *page)
- 
- #endif /* CONFIG_SWAP */
- 
-+#define SSC_SPLIT_CACHED	0x1
-+
- #ifdef CONFIG_THP_SWAP
--extern int split_swap_cluster(swp_entry_t entry);
-+extern int split_swap_cluster(swp_entry_t entry, unsigned long flags);
- extern int split_swap_cluster_map(swp_entry_t entry);
- #else
--static inline int split_swap_cluster(swp_entry_t entry)
-+static inline int split_swap_cluster(swp_entry_t entry, unsigned long flags)
- {
- 	return 0;
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index f4dbd0662438..909321c772b5 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -373,4 +373,13 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma,
  }
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 
++#ifdef CONFIG_THP_SWAP
++extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
++#else /* CONFIG_THP_SWAP */
++static inline int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
++{
++	return 0;
++}
++#endif /* CONFIG_THP_SWAP */
++
+ #endif /* _LINUX_HUGE_MM_H */
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index f8480465bd5f..a38d549fb4dc 100644
+index eeea00070da8..561f3fb3d888 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -2524,6 +2524,17 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+@@ -33,6 +33,8 @@
+ #include <linux/page_idle.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/oom.h>
++#include <linux/delayacct.h>
++#include <linux/swap.h>
  
- 	unfreeze_page(head);
- 
-+	/*
-+	 * Split swap cluster before unlocking sub-pages.  So all
-+	 * sub-pages will be kept locked from THP has been split to
-+	 * swap cluster is split.
-+	 */
-+	if (PageSwapCache(head)) {
-+		swp_entry_t entry = { .val = page_private(head) };
-+
-+		split_swap_cluster(entry, SSC_SPLIT_CACHED);
-+	}
-+
- 	for (i = 0; i < HPAGE_PMD_NR; i++) {
- 		struct page *subpage = head + i;
- 		if (subpage == page)
-@@ -2747,12 +2758,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
- 		spin_unlock(&pgdata->split_queue_lock);
- 		__split_huge_page(page, list, flags);
--		if (PageSwapCache(head)) {
--			swp_entry_t entry = { .val = page_private(head) };
--
--			ret = split_swap_cluster(entry);
--		} else
--			ret = 0;
-+		ret = 0;
- 	} else {
- 		if (IS_ENABLED(CONFIG_DEBUG_VM) && mapcount) {
- 			pr_alert("total_mapcount: %u, page_count(): %u\n",
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index e83e3c93f3b3..a57967292a8d 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1469,23 +1469,6 @@ void put_swap_page(struct page *page, swp_entry_t entry)
- 	unlock_cluster_or_swap_info(si, ci);
+ #include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+@@ -1668,6 +1670,178 @@ static void __split_huge_swap_pmd(struct vm_area_struct *vma,
+ 	pmd_populate(mm, pmd, pgtable);
  }
  
--#ifdef CONFIG_THP_SWAP
--int split_swap_cluster(swp_entry_t entry)
--{
--	struct swap_info_struct *si;
--	struct swap_cluster_info *ci;
--	unsigned long offset = swp_offset(entry);
--
--	si = _swap_info_get(entry);
--	if (!si)
--		return -EBUSY;
--	ci = lock_cluster(si, offset);
--	cluster_clear_huge(ci);
--	unlock_cluster(ci);
--	return 0;
--}
--#endif
--
- static int swp_entry_cmp(const void *ent1, const void *ent2)
- {
- 	const swp_entry_t *e1 = ent1, *e2 = ent2;
-@@ -4071,6 +4054,47 @@ int split_swap_cluster_map(swp_entry_t entry)
- 	unlock_cluster(ci);
- 	return 0;
- }
-+
-+/*
-+ * We will not try to split all PMD swap mappings to the swap cluster,
-+ * because we haven't enough information available for that.  Later,
-+ * when the PMD swap mapping is duplicated or swapin, etc, the PMD
-+ * swap mapping will be split and fallback to the PTE operations.
-+ */
-+int split_swap_cluster(swp_entry_t entry, unsigned long flags)
++#ifdef CONFIG_THP_SWAP
++static int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
++			       unsigned long address, pmd_t orig_pmd)
 +{
-+	struct swap_info_struct *si;
-+	struct swap_cluster_info *ci;
-+	unsigned long offset = swp_offset(entry);
++	struct mm_struct *mm = vma->vm_mm;
++	spinlock_t *ptl;
 +	int ret = 0;
 +
-+	si = get_swap_device(entry);
-+	if (!si)
-+		return -EINVAL;
-+	ci = lock_cluster(si, offset);
-+	/* The swap cluster has been split by someone else, we are done */
-+	if (!cluster_is_huge(ci))
-+		goto out;
-+	VM_BUG_ON(!IS_ALIGNED(offset, SWAPFILE_CLUSTER));
-+	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
-+	/*
-+	 * If not requested, don't split swap cluster that has SWAP_HAS_CACHE
-+	 * flag.  When the flag is cleared later, the huge swap cluster will
-+	 * be split if there is no PMD swap mapping.
-+	 */
-+	if (!(flags & SSC_SPLIT_CACHED) &&
-+	    si->swap_map[offset] & SWAP_HAS_CACHE) {
-+		ret = -EEXIST;
-+		goto out;
-+	}
-+	cluster_set_swapcount(ci, 0);
-+	cluster_clear_huge(ci);
++	ptl = pmd_lock(mm, pmd);
++	if (pmd_same(*pmd, orig_pmd))
++		__split_huge_swap_pmd(vma, address, pmd);
++	else
++		ret = -ENOENT;
++	spin_unlock(ptl);
 +
-+out:
-+	unlock_cluster(ci);
-+	put_swap_device(si);
 +	return ret;
 +}
- #endif
++
++int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
++{
++	struct page *page;
++	struct mem_cgroup *memcg;
++	struct vm_area_struct *vma = vmf->vma;
++	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
++	swp_entry_t entry;
++	pmd_t pmd;
++	int i, locked, exclusive = 0, ret = 0;
++
++	entry = pmd_to_swp_entry(orig_pmd);
++	VM_BUG_ON(non_swap_entry(entry));
++	delayacct_set_flag(DELAYACCT_PF_SWAPIN);
++retry:
++	page = lookup_swap_cache(entry, NULL, vmf->address);
++	if (!page) {
++		page = read_swap_cache_async(entry, GFP_HIGHUSER_MOVABLE, vma,
++					     haddr, false);
++		if (!page) {
++			/*
++			 * Back out if somebody else faulted in this pmd
++			 * while we released the pmd lock.
++			 */
++			if (likely(pmd_same(*vmf->pmd, orig_pmd))) {
++				/*
++				 * Failed to allocate huge page, split huge swap
++				 * cluster, and fallback to swapin normal page
++				 */
++				ret = split_swap_cluster(entry, 0);
++				/* Somebody else swapin the swap entry, retry */
++				if (ret == -EEXIST) {
++					ret = 0;
++					goto retry;
++				/* swapoff occurs under us */
++				} else if (ret == -EINVAL)
++					ret = 0;
++				else
++					goto fallback;
++			}
++			delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++			goto out;
++		}
++
++		/* Had to read the page from swap area: Major fault */
++		ret = VM_FAULT_MAJOR;
++		count_vm_event(PGMAJFAULT);
++		count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
++	} else if (!PageTransCompound(page))
++		goto fallback;
++
++	locked = lock_page_or_retry(page, vma->vm_mm, vmf->flags);
++
++	delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++	if (!locked) {
++		ret |= VM_FAULT_RETRY;
++		goto out_release;
++	}
++
++	/*
++	 * Make sure try_to_free_swap or reuse_swap_page or swapoff did not
++	 * release the swapcache from under us.  The page pin, and pmd_same
++	 * test below, are not enough to exclude that.  Even if it is still
++	 * swapcache, we need to check that the page's swap has not changed.
++	 */
++	if (unlikely(!PageSwapCache(page) || page_private(page) != entry.val))
++		goto out_page;
++
++	if (mem_cgroup_try_charge_delay(page, vma->vm_mm, GFP_KERNEL,
++					&memcg, true)) {
++		ret = VM_FAULT_OOM;
++		goto out_page;
++	}
++
++	/*
++	 * Back out if somebody else already faulted in this pmd.
++	 */
++	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
++	spin_lock(vmf->ptl);
++	if (unlikely(!pmd_same(*vmf->pmd, orig_pmd)))
++		goto out_nomap;
++
++	if (unlikely(!PageUptodate(page))) {
++		ret = VM_FAULT_SIGBUS;
++		goto out_nomap;
++	}
++
++	/*
++	 * The page isn't present yet, go ahead with the fault.
++	 *
++	 * Be careful about the sequence of operations here.
++	 * To get its accounting right, reuse_swap_page() must be called
++	 * while the page is counted on swap but not yet in mapcount i.e.
++	 * before page_add_anon_rmap() and swap_free(); try_to_free_swap()
++	 * must be called after the swap_free(), or it will never succeed.
++	 */
++
++	add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
++	add_mm_counter(vma->vm_mm, MM_SWAPENTS, -HPAGE_PMD_NR);
++	pmd = mk_huge_pmd(page, vma->vm_page_prot);
++	if ((vmf->flags & FAULT_FLAG_WRITE) && reuse_swap_page(page, NULL)) {
++		pmd = maybe_pmd_mkwrite(pmd_mkdirty(pmd), vma);
++		vmf->flags &= ~FAULT_FLAG_WRITE;
++		ret |= VM_FAULT_WRITE;
++		exclusive = RMAP_EXCLUSIVE;
++	}
++	for (i = 0; i < HPAGE_PMD_NR; i++)
++		flush_icache_page(vma, page + i);
++	if (pmd_swp_soft_dirty(orig_pmd))
++		pmd = pmd_mksoft_dirty(pmd);
++	do_page_add_anon_rmap(page, vma, haddr,
++			      exclusive | RMAP_COMPOUND);
++	mem_cgroup_commit_charge(page, memcg, true, true);
++	activate_page(page);
++	set_pmd_at(vma->vm_mm, haddr, vmf->pmd, pmd);
++
++	swap_free(entry, HPAGE_PMD_NR);
++	if (mem_cgroup_swap_full(page) ||
++	    (vma->vm_flags & VM_LOCKED) || PageMlocked(page))
++		try_to_free_swap(page);
++	unlock_page(page);
++
++	if (vmf->flags & FAULT_FLAG_WRITE) {
++		spin_unlock(vmf->ptl);
++		ret |= do_huge_pmd_wp_page(vmf, pmd);
++		if (ret & VM_FAULT_ERROR)
++			ret &= VM_FAULT_ERROR;
++		goto out;
++	}
++
++	/* No need to invalidate - it was non-present before */
++	update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
++	spin_unlock(vmf->ptl);
++out:
++	return ret;
++out_nomap:
++	mem_cgroup_cancel_charge(page, memcg, true);
++	spin_unlock(vmf->ptl);
++out_page:
++	unlock_page(page);
++out_release:
++	put_page(page);
++	return ret;
++fallback:
++	delayacct_clear_flag(DELAYACCT_PF_SWAPIN);
++	if (!split_huge_swap_pmd(vmf->vma, vmf->pmd, vmf->address, orig_pmd))
++		ret = VM_FAULT_FALLBACK;
++	else
++		ret = 0;
++	if (page)
++		put_page(page);
++	return ret;
++}
++#endif
++
+ /*
+  * Return true if we do MADV_FREE successfully on entire pmd page.
+  * Otherwise, return false.
+diff --git a/mm/memory.c b/mm/memory.c
+index 5f805c0a6894..bbc3a08d10bb 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3864,13 +3864,17 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
  
- static int __init swapfile_init(void)
+ 		barrier();
+ 		if (unlikely(is_swap_pmd(orig_pmd))) {
+-			VM_BUG_ON(thp_migration_supported() &&
+-					  !is_pmd_migration_entry(orig_pmd));
+-			if (is_pmd_migration_entry(orig_pmd))
++			if (thp_migration_supported() &&
++			    is_pmd_migration_entry(orig_pmd)) {
+ 				pmd_migration_entry_wait(mm, vmf.pmd);
+-			return 0;
+-		}
+-		if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
++				return 0;
++			} else if (IS_ENABLED(CONFIG_THP_SWAP)) {
++				ret = do_huge_pmd_swap_page(&vmf, orig_pmd);
++				if (!(ret & VM_FAULT_FALLBACK))
++					return ret;
++			} else
++				VM_BUG_ON(1);
++		} else if (pmd_trans_huge(orig_pmd) || pmd_devmap(orig_pmd)) {
+ 			if (pmd_protnone(orig_pmd) && vma_is_accessible(vma))
+ 				return do_huge_pmd_numa_page(&vmf, orig_pmd);
+ 
 -- 
 2.18.1
 
