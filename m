@@ -2,102 +2,103 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6BCC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:05:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72308C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A30206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:05:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="causubHd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A30206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 82C35206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82C35206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbeKUEfs (ORCPT
+        id S1727868AbeKUEf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:35:48 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33967 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbeKUEfs (ORCPT
+        Tue, 20 Nov 2018 23:35:56 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59341 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbeKUEf4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:35:48 -0500
-Received: by mail-qk1-f195.google.com with SMTP id a132so3416030qkg.1;
-        Tue, 20 Nov 2018 10:05:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=P3GqPkO2lYkTGily+voGd+zaChSnpbMaoctm3VXIpgk=;
-        b=causubHdPnUhSDv/ISzoaFvFGS46PBzlZpf976UTnSjl3c2LhMmWXr2T7skAJuNC8B
-         dsjOPJIntx4v7/K1noE5BjSIQXZrDIqzGoXX09Y5btaEV/QPm3DzWqTLtuUj8pSuMwds
-         D6L0JQ6OrD2z3JZwHeGSvPqGiZMPBj/1hbABPFg5azkIZKGbVUuv/zbLowf3c7KiG+ZX
-         BuKBO4JES74/LhLG4VgWiohPd4lPbS2ftDD7vgiMHpNdj+TSUpRc8sjKDTj35RS6THpB
-         q50lTuBCn4/2yRxdbk5s3q4gN0bTXxCx53vcw41YpW25ocKH4mGES1pTL4lSowgU5eIz
-         GLvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P3GqPkO2lYkTGily+voGd+zaChSnpbMaoctm3VXIpgk=;
-        b=fZ84tGTMgUPdkY2ZVs2jjWfGt++248Qici4lZe3jN+exkOi+kMz6su9hALpPyZ9Yv7
-         UYuTdgVyhLn7aGplN11Gg9DjmIWnm3Q3Vo/Cbg4kwtJRho2KqsIWWiwlqhmgnoA9EW2G
-         dzifnAAfybnCKjZfnjIykFXshEvD+somLtSav2EzCWEva51iuXTFTsBmcuL6gd+BvFmS
-         /fcUs2vK1nnDGrXpeYdGF2sGGzI5W+1WNFu22bs5qa8R/m/XGjYfyDbbIA8DNiezZWjO
-         Q8BIOLiC74tQkYEcZ8t0NemQTVKwFllr4ORlflq24T1QCCnC7cnzO8fg/1yumTZuknXt
-         i8hw==
-X-Gm-Message-State: AA+aEWZyEdYttuRcGfrd9gyL9LHuHgNNK7h5SmiMxnpVpESeQPV/e0Fd
-        F+82y+mETdljWmgZjGTQmVQ=
-X-Google-Smtp-Source: AFSGD/Um/zwjfMVLf2+qpUTvlXzzsjAsONUZHbusABw+uQFvxbX4xCsi1gdaCdlNDzQoetk7aL2qnA==
-X-Received: by 2002:a37:c12:: with SMTP id 18mr2617487qkm.317.1542737123354;
-        Tue, 20 Nov 2018 10:05:23 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:4b6a])
-        by smtp.gmail.com with ESMTPSA id i26sm31075704qtc.13.2018.11.20.10.05.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 10:05:22 -0800 (PST)
-Date:   Tue, 20 Nov 2018 10:05:20 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v3 4/7] cgroup: cgroup v2 freezer
-Message-ID: <20181120180520.GZ2509588@devbig004.ftw2.facebook.com>
-References: <20181117003830.15344-1-guro@fb.com>
- <20181117003830.15344-5-guro@fb.com>
- <20181120162529.GU2509588@devbig004.ftw2.facebook.com>
- <20181120163304.GA21462@tower.DHCP.thefacebook.com>
- <20181120163604.GX2509588@devbig004.ftw2.facebook.com>
- <20181120164349.GB21462@tower.DHCP.thefacebook.com>
- <20181120164859.GY2509588@devbig004.ftw2.facebook.com>
- <20181120173858.GC21462@tower.DHCP.thefacebook.com>
+        Tue, 20 Nov 2018 23:35:56 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAKI5CTd3062917
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 20 Nov 2018 10:05:12 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAKI5BtK3062914;
+        Tue, 20 Nov 2018 10:05:11 -0800
+Date:   Tue, 20 Nov 2018 10:05:11 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Artem Savkov <tipbot@zytor.com>
+Message-ID: <tip-0b9301fb632f7111a3293a30cc5b20f1b82ed08d@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, mingo@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, jpoimboe@redhat.com,
+        asavkov@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          torvalds@linux-foundation.org, peterz@infradead.org,
+          hpa@zytor.com, tglx@linutronix.de, jpoimboe@redhat.com,
+          asavkov@redhat.com
+In-Reply-To: <beac5a9b7da9e8be90223459dcbe07766ae437dd.1542736240.git.jpoimboe@redhat.com>
+References: <beac5a9b7da9e8be90223459dcbe07766ae437dd.1542736240.git.jpoimboe@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:core/urgent] objtool: Fix double-free in .cold detection error
+ path
+Git-Commit-ID: 0b9301fb632f7111a3293a30cc5b20f1b82ed08d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181120173858.GC21462@tower.DHCP.thefacebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Commit-ID:  0b9301fb632f7111a3293a30cc5b20f1b82ed08d
+Gitweb:     https://git.kernel.org/tip/0b9301fb632f7111a3293a30cc5b20f1b82ed08d
+Author:     Artem Savkov <asavkov@redhat.com>
+AuthorDate: Tue, 20 Nov 2018 11:52:15 -0600
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Nov 2018 18:59:00 +0100
 
-On Tue, Nov 20, 2018 at 05:39:03PM +0000, Roman Gushchin wrote:
-> Yeah, it's a good point. I've thought about it mostly in the fork() context,
-> where if freezing of a cgroup races with fork(), it makes no sense to
-> switch the cgroup state back and forth. But that case is different, as
-> the child will be trapped just on the return path from fork() call.
+objtool: Fix double-free in .cold detection error path
 
-I think it'd be best to tie the task counter transitions to cgroup
-state update and propagation so that the state is always reflective of
-the task states.
+If read_symbols() fails during second list traversal (the one dealing
+with ".cold" subfunctions) it frees the symbol, but never deletes it
+from the list/hash_table resulting in symbol being freed again in
+elf_close(). Fix it by just returning an error, leaving cleanup to
+elf_close().
 
-Thanks.
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
+Link: http://lkml.kernel.org/r/beac5a9b7da9e8be90223459dcbe07766ae437dd.1542736240.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ tools/objtool/elf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-tejun
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index 6dbb9fae0f9d..e7a7ac40e045 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -312,7 +312,7 @@ static int read_symbols(struct elf *elf)
+ 			if (!pfunc) {
+ 				WARN("%s(): can't find parent function",
+ 				     sym->name);
+-				goto err;
++				return -1;
+ 			}
+ 
+ 			sym->pfunc = pfunc;
