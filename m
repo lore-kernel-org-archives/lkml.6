@@ -2,353 +2,173 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52F87C46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68174C32788
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC1D2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC1D2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 23F74214ED
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:27:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IX40Tgd7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F74214ED
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeKUI72 (ORCPT
+        id S1726200AbeKUI62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:59:28 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56521 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbeKUI72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:59:28 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2E657207BD; Tue, 20 Nov 2018 23:27:57 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E30032072D;
-        Tue, 20 Nov 2018 23:27:56 +0100 (CET)
-Date:   Tue, 20 Nov 2018 23:27:57 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guan Xuetao <gxt@mprc.pku.edu.cn>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 01/20] lib/vsprintf: Print time and date in human
- readable format via %pt
-Message-ID: <20181120222756.GI8367@piout.net>
-References: <20181113171729.19645-1-andriy.shevchenko@linux.intel.com>
- <20181113171729.19645-2-andriy.shevchenko@linux.intel.com>
+        Wed, 21 Nov 2018 03:58:28 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:33953 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeKUI62 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:58:28 -0500
+Received: by mail-it1-f194.google.com with SMTP id x124so11171312itd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 14:27:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=8iTMUup+fMq2xCHtBbPhYH3+pQ2W/gi6YpVLC3y7gvg=;
+        b=IX40Tgd7V8wwI8qipmhkzVGsrgOK85aWBcakbhj8AZUlEHs1Wl9s9fqrKJPWkI5vIO
+         8I5bw3ZFjvE59cEEl2rWo2D8I30fjzmJbPuMh5Ns56BxUMRm+hbcmqp6um/Ql08NUUfJ
+         If4LyzmTckYOOvYUvMj7r1bw4ERR0cpNM7d48=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=8iTMUup+fMq2xCHtBbPhYH3+pQ2W/gi6YpVLC3y7gvg=;
+        b=KDA8l8ovKmmA7ZfcDqWPbr0rUs7iyVBDBastSYy52N5O9WukQ+Rejc15Cz1Y3/Me4U
+         9Zjp6SjBG7xP8qtOkWPh6DgYIDmQtleUf27GawATKv4V00ETh73O+9LY06Z/u7x5FodA
+         axGVyfCw/7O7iX541+7lUOd5eaGIeu+C/Ll7Rs6RlBSzWs+CyHQaI4JvfxHZWPP9Z4EL
+         Qf/m4JFPqG9jmMXmfUQnPbnL/KWRSYhYJaV72x8JkVkbl8M/CCoRJjY9wONBibjPOwQj
+         x3v0LTPyrm1o8KHq9Os2fVuKs7z05pYqZG0PElqEjiSRGHSr1DsdpLVBPyxGz5NjJS7x
+         HidQ==
+X-Gm-Message-State: AA+aEWaa9XgyAZPrhgI+4DPG6j936syYfsLeEaYaPdPa/wdvw34a7/9s
+        5pE6qmjltPVCKr2OD2cB91oFEd47fU1OjgqIWhEAaw==
+X-Google-Smtp-Source: AFSGD/Xk+7mtS7dZzbB6WkKwQB58nvoZoEs/WHCDJd8uSjdTo5aT7caplkpWaj/kqWtOthRTAaHWisdA8bNWKTpUH70=
+X-Received: by 2002:a24:108a:: with SMTP id 132-v6mr3616335ity.78.1542752824198;
+ Tue, 20 Nov 2018 14:27:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113171729.19645-2-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:70c8:0:0:0:0:0 with HTTP; Tue, 20 Nov 2018 14:26:23
+ -0800 (PST)
+In-Reply-To: <9f63ea203ec54a86f1edc636e44acc9b5e51aea1.camel@collabora.co.uk>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+ <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com> <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+ <20181107084741.GA31092@kunai> <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
+ <20181120102300.GA1056@kunai> <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
+ <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
+ <515b72f2bd526d144fdc662126aa6e1e8484a25c.camel@collabora.co.uk>
+ <CAPDyKFoCyXSQ9bVD9iYYcr4Y7e87Ltdt2+QNg0euvNijRGi83Q@mail.gmail.com> <9f63ea203ec54a86f1edc636e44acc9b5e51aea1.camel@collabora.co.uk>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 20 Nov 2018 23:26:23 +0100
+Message-ID: <CAPDyKFr+PhPhZLbHa0bS+yxB_H+NyuAFd1mpJOw3of4JVpHRQQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+To:     Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        kernel@collabora.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Hal Emmerich <hal@halemmerich.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 20 November 2018 at 15:55, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+> On Tue, 2018-11-20 at 15:24 +0100, Ulf Hansson wrote:
+>> On 20 November 2018 at 15:00, Sjoerd Simons
+>> <sjoerd.simons@collabora.co.uk> wrote:
+>> > On Tue, 2018-11-20 at 14:08 +0100, Ulf Hansson wrote:
+>> > > + Hal Emmerich
+>> > >
+>> > > On 20 November 2018 at 12:38, Sjoerd Simons
+>> > > <sjoerd.simons@collabora.co.uk> wrote:
+>> > > > On Tue, 2018-11-20 at 11:23 +0100, Wolfram Sang wrote:
+>> > > > So if you know the pattern, or just happen to hit it often in
+>> > > > e.g.
+>> > > > automated testing, it does show up during development.
+>> > > > Otherwise it
+>> > > > can
+>> > > > appear to "happen once in a while randomly".
+>> > >
+>> > > I don't quite follow. As far as I understand, the extended
+>> > > timeout is
+>> > > needed when turning the cache on.
+>> > >
+>> > > The above seems more related to flushing the cache, no? Flushing
+>> > > have
+>> > > no timeout (also reported to be an issue [1]), which happens
+>> > > either
+>> > > at
+>> > > _mmc_hw_reset() or at _mmc_suspend().
+>> > >
+>> > > What is the relation here?
+>> >
+>> > Yes it's the kinda of behaviour you would expect on a flush indeed!
+>> > I
+>> > don't know what the card actaully does when turning the cache on,
+>> > whether it's actually flush of something persistent when turning
+>> > the
+>> > cache on after a hard poweroff or doing some other validation.
+>> >
+>> > All i can share is what our testing seems to indicate, which is
+>> > that
+>> > there is a wide spread in the time the card needs *and* there seems
+>> > to
+>> > be strong correlation to the I/O activity before the hard power off
+>> > and
+>> > the time taken by "cache on".
+>>
+>> So the hard power off, means that you are cutting the power to the
+>> platform and not doing a graceful power off? Just so I understand
+>> correctly.
+>
+> Correct. With hard power off i mean cutting the power to the board in
+> some way. When doing a gracefull power off, the issue does not occur on
+> my boards (cache on is fast). Presumably as the eMMC got its cache
+> flushed as part of the shutdown procedure..
 
-(Please update my email address).
+Okay, got it.
 
-On 13/11/2018 19:17:10+0200, Andy Shevchenko wrote:
-> There are users which print time and date represented by content of
-> struct rtc_time in human readable format.
-> 
-> Instead of open coding that each time introduce %ptR[dt][rv] specifier.
-> 
-> Note, users have to select PRINTK_PEXT_TIMEDATE option in a Kconfig.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Guan Xuetao <gxt@mprc.pku.edu.cn>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Jason Wessel <jason.wessel@windriver.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  Documentation/core-api/printk-formats.rst |  20 ++++
->  lib/test_printf.c                         |   6 +
->  lib/vsprintf.c                            | 140 ++++++++++++++++++++++
->  3 files changed, 166 insertions(+)
-> 
-> diff --git a/Documentation/core-api/printk-formats.rst b/Documentation/core-api/printk-formats.rst
-> index ff48b55040ef..8342a65eab0b 100644
-> --- a/Documentation/core-api/printk-formats.rst
-> +++ b/Documentation/core-api/printk-formats.rst
-> @@ -412,6 +412,26 @@ Examples::
->  
->  Passed by reference.
->  
-> +Time and date (struct rtc_time)
-> +-------------------------------
-> +
-> +::
-> +
-> +	%ptR		YYYY-mm-dd HH:MM:SS
-> +	%ptRd		YYYY-mm-dd
-> +	%ptRt		HH:MM:SS
-> +	%ptR[dt][rv]
-> +
-> +For printing date and time as represented by struct rtc_time structure in
-> +human readable format.
-> +
-> +By default year will be incremented by 1900 and month by 1. Use %ptRr (raw)
-> +to suppress this behaviour. On the other hand when %ptRv is applied
-> +validation mechanism will be in use, i.e. numbers out of range will be
-> +replaced by ** or ****.
-> +
-> +Passed by reference.
-> +
->  struct clk
->  ----------
->  
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 53527ea822b5..97b7d14961d6 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -418,6 +418,11 @@ struct_va_format(void)
->  {
->  }
->  
-> +static void __init
-> +struct_rtc_time(void)
-> +{
-> +}
-> +
->  static void __init
->  struct_clk(void)
->  {
-> @@ -529,6 +534,7 @@ test_pointer(void)
->  	uuid();
->  	dentry();
->  	struct_va_format();
-> +	struct_rtc_time();
->  	struct_clk();
->  	bitmap();
->  	netdev_features();
-> diff --git a/lib/vsprintf.c b/lib/vsprintf.c
-> index 37a54a6dd594..8455cbda8d6c 100644
-> --- a/lib/vsprintf.c
-> +++ b/lib/vsprintf.c
-> @@ -30,6 +30,7 @@
->  #include <linux/ioport.h>
->  #include <linux/dcache.h>
->  #include <linux/cred.h>
-> +#include <linux/rtc.h>
->  #include <linux/uuid.h>
->  #include <linux/of.h>
->  #include <net/addrconf.h>
-> @@ -822,6 +823,20 @@ static const struct printf_spec default_dec_spec = {
->  	.precision = -1,
->  };
->  
-> +static const struct printf_spec default_dec02_spec = {
-> +	.base = 10,
-> +	.field_width = 2,
-> +	.precision = -1,
-> +	.flags = ZEROPAD,
-> +};
-> +
-> +static const struct printf_spec default_dec04_spec = {
-> +	.base = 10,
-> +	.field_width = 4,
-> +	.precision = -1,
-> +	.flags = ZEROPAD,
-> +};
-> +
->  static noinline_for_stack
->  char *resource_string(char *buf, char *end, struct resource *res,
->  		      struct printf_spec spec, const char *fmt)
-> @@ -1549,6 +1564,127 @@ char *address_val(char *buf, char *end, const void *addr, const char *fmt)
->  	return special_hex_number(buf, end, num, size);
->  }
->  
-> +static noinline_for_stack
-> +char *date_str(char *buf, char *end, const struct rtc_time *tm, bool v, bool r)
-> +{
-> +	int year = tm->tm_year + (r ? 0 : 1900);
-> +	int mon = tm->tm_mon + (r ? 0 : 1);
-> +
-> +	if (unlikely(v && (unsigned int)tm->tm_year > 200))
-> +		buf = string(buf, end, "****", default_str_spec);
+>
+>> > > Using no limit of the timeout, would mean we may hang for ~10
+>> > > minutes
+>> > > (MMC_OPS_TIMEOUT_MS) instead, no thanks.
+>> >
+>> > Probably a silly question, but would this actually cause e.g. boot
+>> > to
+>> > hang while waiting for the card (assuming rootfs is somewhere
+>> > else)?
+>>
+>> Nope.
+>>
+>> [...]
+>
+> Then i'm probably just being dense, but i'm unsure what the issue is
+> with waiting for 10 minuts in this case. Apart from having to wait for
+> 10 minutes before the user gets an indication in the kernel that the
+> card is not usable?
 
-I think you should drop the validation option. This is only used in a
-deprecated ABI and is mostly wrong as many RTCs will still be valid
-after 2100.
+Exactly, to long timeouts is never good. Then it's better to timeout
+in a reasonable time and log some error message to the let user know
+of what went wrong.
 
-> +	else
-> +		buf = number(buf, end, year, default_dec04_spec);
-> +
-> +	if (buf < end)
-> +		*buf = '-';
-> +	buf++;
-> +
-> +	if (unlikely(v && (unsigned int)tm->tm_mon > 11))
-> +		buf = string(buf, end, "**", default_str_spec);
-> +	else
-> +		buf = number(buf, end, mon, default_dec02_spec);
-> +
-> +	if (buf < end)
-> +		*buf = '-';
-> +	buf++;
-> +
-> +	if (unlikely(v && (unsigned int)tm->tm_mday > 31))
-> +		buf = string(buf, end, "**", default_str_spec);
+To sum up, if someone wants to send a patch changing the timeout for
+enabling the cache to let's say 1500 ms (and by adding a comment why),
+I am fine to take it. In other words, lets drop the quirk-approach as
+people seems more in favor of general change of the default behavior.
 
-Same here, this doesn't protect February, April, June, September and
-November. There is one RTC that think that 31st of November is valid.
-
-> +	else
-> +		buf = number(buf, end, tm->tm_mday, default_dec02_spec);
-> +
-> +	return buf;
-> +}
-> +
-> +static noinline_for_stack
-> +char *time_str(char *buf, char *end, const struct rtc_time *tm, bool v, bool r)
-> +{
-> +	if (unlikely(v && (unsigned int)tm->tm_hour > 24))
-> +		buf = string(buf, end, "**", default_str_spec);
-> +	else
-> +		buf = number(buf, end, tm->tm_hour, default_dec02_spec);
-> +
-> +	if (buf < end)
-> +		*buf = ':';
-> +	buf++;
-> +
-> +	if (unlikely(v && (unsigned int)tm->tm_min > 59))
-> +		buf = string(buf, end, "**", default_str_spec);
-> +	else
-> +		buf = number(buf, end, tm->tm_min, default_dec02_spec);
-> +
-> +	if (buf < end)
-> +		*buf = ':';
-> +	buf++;
-> +
-> +	if (unlikely(v && (unsigned int)tm->tm_sec > 59))
-> +		buf = string(buf, end, "**", default_str_spec);
-
-Some RTCs will consider 60 valid. So, really, instead of fixing all of
-those, I'd just get rid of the validation option.
-
-> +	else
-> +		buf = number(buf, end, tm->tm_sec, default_dec02_spec);
-> +
-> +	return buf;
-> +}
-> +
-> +static noinline_for_stack
-> +char *rtc_str(char *buf, char *end, const struct rtc_time *tm, const char *fmt)
-> +{
-> +	bool have_t = true, have_d = true;
-> +	bool validate = false;
-> +	bool raw = false;
-> +	int count = 2;
-> +	bool found;
-> +
-> +	switch (fmt[count]) {
-> +	case 'd':
-> +		have_t = false;
-> +		count++;
-> +		break;
-> +	case 't':
-> +		have_d = false;
-> +		count++;
-> +		break;
-> +	}
-> +
-> +	found = true;
-> +	do {
-> +		switch (fmt[count++]) {
-> +		case 'r':
-> +			raw = true;
-> +			break;
-> +		case 'v':
-> +			validate = true;
-> +			break;
-> +		default:
-> +			found = false;
-> +			break;
-> +		}
-> +	} while (found);
-> +
-> +	if (have_d)
-> +		buf = date_str(buf, end, tm, validate, raw);
-> +	if (have_d && have_t) {
-> +		if (buf < end)
-> +			*buf = ' ';
-
-I'd go for ISO 8601 and use a 'T' here.
-
-> +		buf++;
-> +	}
-> +	if (have_t)
-> +		buf = time_str(buf, end, tm, validate, raw);
-> +
-> +	return buf;
-> +}
-> +
-> +static noinline_for_stack
-> +char *timeanddate(char *buf, char *end, void *ptr, struct printf_spec spec,
-> +		  const char *fmt)
-> +{
-> +	switch (fmt[1]) {
-> +	case 'R':
-> +		return rtc_str(buf, end, (const struct rtc_time *)ptr, fmt);
-> +	default:
-> +		return ptr_to_id(buf, end, ptr, spec);
-> +	}
-> +}
-> +
->  static noinline_for_stack
->  char *clock(char *buf, char *end, struct clk *clk, struct printf_spec spec,
->  	    const char *fmt)
-> @@ -1828,6 +1964,8 @@ char *device_node_string(char *buf, char *end, struct device_node *dn,
->   * - 'd[234]' For a dentry name (optionally 2-4 last components)
->   * - 'D[234]' Same as 'd' but for a struct file
->   * - 'g' For block_device name (gendisk + partition number)
-> + * - 't[R][dt][rv]' For time and date as represented:
-> + *      R    struct rtc_time
->   * - 'C' For a clock, it prints the name (Common Clock Framework) or address
->   *       (legacy clock framework) of the clock
->   * - 'Cn' For a clock, it prints the name (Common Clock Framework) or address
-> @@ -1952,6 +2090,8 @@ char *pointer(const char *fmt, char *buf, char *end, void *ptr,
->  		return address_val(buf, end, ptr, fmt);
->  	case 'd':
->  		return dentry_name(buf, end, ptr, spec, fmt);
-> +	case 't':
-> +		return timeanddate(buf, end, ptr, spec, fmt);
->  	case 'C':
->  		return clock(buf, end, ptr, spec, fmt);
->  	case 'D':
-> -- 
-> 2.19.1
-> 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kind regards
+Uffe
