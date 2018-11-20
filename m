@@ -6,160 +6,140 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 940AAC18DF5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A30C28CF8
 	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5242147A
+	by mail.kernel.org (Postfix) with ESMTP id 879CF2147D
 	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5242147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879CF2147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbeKUBZA (ORCPT
+        id S1730127AbeKUBZB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 20 Nov 2018 20:25:01 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44230 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730098AbeKUBZA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 20:25:00 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50346 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727466AbeKUBY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:24:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F790EBD;
-        Tue, 20 Nov 2018 06:55:27 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D76C13F5A0;
-        Tue, 20 Nov 2018 06:55:24 -0800 (PST)
-Subject: Re: [PATCH v1 1/1] arm64: Early boot time stamps
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        andrew.murray@arm.com, james.morse@arm.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181119214443.25175-1-pasha.tatashin@soleen.com>
- <20181119214443.25175-2-pasha.tatashin@soleen.com>
- <d66a60d9-6772-a951-9da4-c07443b48aad@arm.com>
- <CA+CK2bAKcdZRRMwhcQ0QnBJ3_6bg=zhaeM7v74f+QFwkw9h17A@mail.gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <01ae5979-9bcd-dd59-adda-efbf69f388ca@arm.com>
-Date:   Tue, 20 Nov 2018 14:55:23 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <CA+CK2bAKcdZRRMwhcQ0QnBJ3_6bg=zhaeM7v74f+QFwkw9h17A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: from beast.luon.net (unknown [IPv6:2001:470:78b1:0:40e2:7ff:fef4:3122])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sjoerd)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2E9B02722C6;
+        Tue, 20 Nov 2018 14:55:27 +0000 (GMT)
+Received: by beast.luon.net (Postfix, from userid 1000)
+        id 79F813E238F; Tue, 20 Nov 2018 15:55:24 +0100 (CET)
+Message-ID: <9f63ea203ec54a86f1edc636e44acc9b5e51aea1.camel@collabora.co.uk>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+From:   Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        kernel@collabora.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Hal Emmerich <hal@halemmerich.com>
+Date:   Tue, 20 Nov 2018 15:55:24 +0100
+In-Reply-To: <CAPDyKFoCyXSQ9bVD9iYYcr4Y7e87Ltdt2+QNg0euvNijRGi83Q@mail.gmail.com>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+         <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
+         <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+         <20181107084741.GA31092@kunai>
+         <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
+         <20181120102300.GA1056@kunai>
+         <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
+         <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
+         <515b72f2bd526d144fdc662126aa6e1e8484a25c.camel@collabora.co.uk>
+         <CAPDyKFoCyXSQ9bVD9iYYcr4Y7e87Ltdt2+QNg0euvNijRGi83Q@mail.gmail.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.1-1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 14:40, Pavel Tatashin wrote:
->>> +static __init void sched_clock_early_init(void)
->>> +{
->>> +     u64 freq = arch_timer_get_cntfrq();
->>> +     u64 (*read_time)(void) = arch_counter_get_cntvct;
->>
->> We already have arch_timer_read_counter which is exposed from
->> arm_arch_timer.h.
+On Tue, 2018-11-20 at 15:24 +0100, Ulf Hansson wrote:
+> On 20 November 2018 at 15:00, Sjoerd Simons
+> <sjoerd.simons@collabora.co.uk> wrote:
+> > On Tue, 2018-11-20 at 14:08 +0100, Ulf Hansson wrote:
+> > > + Hal Emmerich
+> > > 
+> > > On 20 November 2018 at 12:38, Sjoerd Simons
+> > > <sjoerd.simons@collabora.co.uk> wrote:
+> > > > On Tue, 2018-11-20 at 11:23 +0100, Wolfram Sang wrote:
+> > > > So if you know the pattern, or just happen to hit it often in
+> > > > e.g.
+> > > > automated testing, it does show up during development.
+> > > > Otherwise it
+> > > > can
+> > > > appear to "happen once in a while randomly".
+> > > 
+> > > I don't quite follow. As far as I understand, the extended
+> > > timeout is
+> > > needed when turning the cache on.
+> > > 
+> > > The above seems more related to flushing the cache, no? Flushing
+> > > have
+> > > no timeout (also reported to be an issue [1]), which happens
+> > > either
+> > > at
+> > > _mmc_hw_reset() or at _mmc_suspend().
+> > > 
+> > > What is the relation here?
+> > 
+> > Yes it's the kinda of behaviour you would expect on a flush indeed!
+> > I
+> > don't know what the card actaully does when turning the cache on,
+> > whether it's actually flush of something persistent when turning
+> > the
+> > cache on after a hard poweroff or doing some other validation.
+> > 
+> > All i can share is what our testing seems to indicate, which is
+> > that
+> > there is a wide spread in the time the card needs *and* there seems
+> > to
+> > be strong correlation to the I/O activity before the hard power off
+> > and
+> > the time taken by "cache on".
 > 
-> OK
+> So the hard power off, means that you are cutting the power to the
+> platform and not doing a graceful power off? Just so I understand
+> correctly.
+
+Correct. With hard power off i mean cutting the power to the board in
+some way. When doing a gracefull power off, the issue does not occur on
+my boards (cache on is fast). Presumably as the eMMC got its cache
+flushed as part of the shutdown procedure..
+
+> > > Using no limit of the timeout, would mean we may hang for ~10
+> > > minutes
+> > > (MMC_OPS_TIMEOUT_MS) instead, no thanks.
+> > 
+> > Probably a silly question, but would this actually cause e.g. boot
+> > to
+> > hang while waiting for the card (assuming rootfs is somewhere
+> > else)?
 > 
->>
->>> +
->>> +     /* Early clock is available only on platforms with known freqs */
->>
->> This comment is misleading. It should read something like:
->>
->>         /*
->>          * The arm64 boot protocol mandates that CNTFRQ_EL0 reflects
->>          * the timer frequency. To avoid breakage on misconfigured
->>          * systems, do not register the early sched_clock if the
->>          * programmed value if zero. Other random values will just
->>          * result in random output.
->>          */
->>
+> Nope.
 > 
-> OK
-> 
->>> +     if (!freq)
->>> +             return;
->>> +
->>> +     sched_clock_register(read_time, BITS_PER_LONG, freq);
->>
->> This doesn't seem right. The counter has an architected minimum of 56
->> bits, and you can't assume that it is going to be more than that.
-> 
-> Yeah, I saw 56 is used in arm_arch_timer.c, but I could not find where
-> this minimum is defined in aarch64 specs. I will change it to 56.
+> [...]
 
-See D10.1.2 (The system counter) in the ARM ARM[1], which says:
+Then i'm probably just being dense, but i'm unsure what the issue is
+with waiting for 10 minuts in this case. Apart from having to wait for
+10 minutes before the user gets an indication in the kernel that the
+card is not usable?
 
-<quote>
-The Generic Timer provides a system counter with the following
-specification:
-Width	At least 56 bits wide.
-	The value returned by any 64-bit read of the counter is
-	zero-extended to 64 bits.
-</quote>
-
-This is not AArch64-specific though, and 32bit systems implementing the
-generic timers have the exact same requirements.
-
-> I will send v2 soon.
-
-Please wait a bit and give others a chance to review this too.
-
-Thanks,
-
-	M.
-
-[1] https://static.docs.arm.com/ddi0487/da/DDI0487D_a_armv8_arm.pdf
 -- 
-Jazz is not dead. It just smells funny...
+Sjoerd Simons
+Collabora Ltd.
