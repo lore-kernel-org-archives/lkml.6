@@ -2,575 +2,718 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6007C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B08BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7490520831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:26:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7490520831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 88A1E2089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88A1E2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732192AbeKTMxX (ORCPT
+        id S1732415AbeKTM4I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 07:53:23 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31965 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730393AbeKTMxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 07:53:23 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 18:26:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,255,1539673200"; 
-   d="gz'50?scan'50,208,50";a="281374715"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 19 Nov 2018 18:26:33 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gOvkG-00010t-Sm; Tue, 20 Nov 2018 10:26:32 +0800
-Date:   Tue, 20 Nov 2018 10:25:51 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Wengang Wang <wen.gang.wang@oracle.com>
-Cc:     kbuild-all@01.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, iamjoonsoo.kim@lge.com,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, wen.gang.wang@oracle.com
-Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
-Message-ID: <201811201055.CkIJN8eZ%fengguang.wu@intel.com>
-References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
+        Tue, 20 Nov 2018 07:56:08 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60774 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727688AbeKTM4H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 07:56:07 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 274038E7E0C41;
+        Tue, 20 Nov 2018 10:29:20 +0800 (CST)
+Received: from localhost (10.67.212.75) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 20 Nov
+ 2018 10:29:11 +0800
+Date:   Tue, 20 Nov 2018 10:30:55 +0800
+From:   Kenneth Lee <liguozhu@hisilicon.com>
+To:     Leon Romanovsky <leon@kernel.org>
+CC:     Tim Sell <timothy.sell@unisys.com>, <linux-doc@vger.kernel.org>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
+        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
+        Christoph Lameter <cl@linux.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>,
+        Doug Ledford <dledford@redhat.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "David Kershner" <david.kershner@unisys.com>,
+        Kenneth Lee <nek.in.cn@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
+        linux-netdev <netdev@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        <linux-crypto@vger.kernel.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        <linux-accelerators@lists.ozlabs.org>,
+        Jerome Glisse <jglisse@redhat.com>
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181120023055.GG157308@Turing-Arch-b>
+References: <20181112075807.9291-1-nek.in.cn@gmail.com>
+ <20181112075807.9291-2-nek.in.cn@gmail.com>
+ <20181113002354.GO3695@mtr-leonro.mtl.com>
+ <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
+ <20181114160017.GI3759@mtr-leonro.mtl.com>
+ <20181115085109.GD157308@Turing-Arch-b>
+ <20181115145455.GN3759@mtr-leonro.mtl.com>
+ <20181119091405.GE157308@Turing-Arch-b>
+ <20181119091910.GF157308@Turing-Arch-b>
+ <20181119104801.GF8268@mtr-leonro.mtl.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20181117013335.32220-1-wen.gang.wang@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181119104801.GF8268@mtr-leonro.mtl.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Nov 19, 2018 at 12:48:01PM +0200, Leon Romanovsky wrote:
+> Date: Mon, 19 Nov 2018 12:48:01 +0200
+> From: Leon Romanovsky <leon@kernel.org>
+> To: Kenneth Lee <liguozhu@hisilicon.com>
+> CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+>  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+>  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+>  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+>  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
+>  list <linux-rdma@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Jason
+>  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+>  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
+>  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
+>  Hovold <johan@kernel.org>, Cyrille Pitchen
+>  <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+>  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+>  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
+>  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Zhou Wang
+>  <wangzhou1@hisilicon.com>, linux-crypto@vger.kernel.org, Philippe
+>  Ombredanne <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
+>  "David S. Miller" <davem@davemloft.net>,
+>  linux-accelerators@lists.ozlabs.org, Jerome Glisse <jglisse@redhat.com>
+> Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> User-Agent: Mutt/1.10.1 (2018-07-13)
+> Message-ID: <20181119104801.GF8268@mtr-leonro.mtl.com>
+> 
+> On Mon, Nov 19, 2018 at 05:19:10PM +0800, Kenneth Lee wrote:
+> > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
+> > > Date: Mon, 19 Nov 2018 17:14:05 +0800
+> > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > To: Leon Romanovsky <leon@kernel.org>
+> > > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+> > >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+> > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+> > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
+> > >  list <linux-rdma@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>, Jason
+> > >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+> > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
+> > >  <david.kershner@unisys.com>, Kenneth Lee <nek.in.cn@gmail.com>, Johan
+> > >  Hovold <johan@kernel.org>, Cyrille Pitchen
+> > >  <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
+> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Zhou Wang
+> > >  <wangzhou1@hisilicon.com>, linux-crypto@vger.kernel.org, Philippe
+> > >  Ombredanne <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>,
+> > >  "David S. Miller" <davem@davemloft.net>,
+> > >  linux-accelerators@lists.ozlabs.org
+> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > > User-Agent: Mutt/1.5.21 (2010-09-15)
+> > > Message-ID: <20181119091405.GE157308@Turing-Arch-b>
+> > >
+> > > On Thu, Nov 15, 2018 at 04:54:55PM +0200, Leon Romanovsky wrote:
+> > > > Date: Thu, 15 Nov 2018 16:54:55 +0200
+> > > > From: Leon Romanovsky <leon@kernel.org>
+> > > > To: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > CC: Kenneth Lee <nek.in.cn@gmail.com>, Tim Sell <timothy.sell@unisys.com>,
+> > > >  linux-doc@vger.kernel.org, Alexander Shishkin
+> > > >  <alexander.shishkin@linux.intel.com>, Zaibo Xu <xuzaibo@huawei.com>,
+> > > >  zhangfei.gao@foxmail.com, linuxarm@huawei.com, haojian.zhuang@linaro.org,
+> > > >  Christoph Lameter <cl@linux.com>, Hao Fang <fanghao11@huawei.com>, Gavin
+> > > >  Schenk <g.schenk@eckelmann.de>, RDMA mailing list
+> > > >  <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>, Jason
+> > > >  Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+> > > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
+> > > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
+> > > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
+> > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> > > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
+> > > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
+> > > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
+> > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > > > User-Agent: Mutt/1.10.1 (2018-07-13)
+> > > > Message-ID: <20181115145455.GN3759@mtr-leonro.mtl.com>
+> > > >
+> > > > On Thu, Nov 15, 2018 at 04:51:09PM +0800, Kenneth Lee wrote:
+> > > > > On Wed, Nov 14, 2018 at 06:00:17PM +0200, Leon Romanovsky wrote:
+> > > > > > Date: Wed, 14 Nov 2018 18:00:17 +0200
+> > > > > > From: Leon Romanovsky <leon@kernel.org>
+> > > > > > To: Kenneth Lee <nek.in.cn@gmail.com>
+> > > > > > CC: Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org,
+> > > > > >  Alexander Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
+> > > > > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
+> > > > > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
+> > > > > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
+> > > > > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
+> > > > > >  Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, Uwe
+> > > > > >  Kleine-König <u.kleine-koenig@pengutronix.de>, David Kershner
+> > > > > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
+> > > > > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
+> > > > > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
+> > > > > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
+> > > > > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
+> > > > > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
+> > > > > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, Kenneth Lee
+> > > > > >  <liguozhu@hisilicon.com>, "David S. Miller" <davem@davemloft.net>,
+> > > > > >  linux-accelerators@lists.ozlabs.org
+> > > > > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+> > > > > > User-Agent: Mutt/1.10.1 (2018-07-13)
+> > > > > > Message-ID: <20181114160017.GI3759@mtr-leonro.mtl.com>
+> > > > > >
+> > > > > > On Wed, Nov 14, 2018 at 10:58:09AM +0800, Kenneth Lee wrote:
+> > > > > > >
+> > > > > > > 在 2018/11/13 上午8:23, Leon Romanovsky 写道:
+> > > > > > > > On Mon, Nov 12, 2018 at 03:58:02PM +0800, Kenneth Lee wrote:
+> > > > > > > > > From: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > > > > >
+> > > > > > > > > WarpDrive is a general accelerator framework for the user application to
+> > > > > > > > > access the hardware without going through the kernel in data path.
+> > > > > > > > >
+> > > > > > > > > The kernel component to provide kernel facility to driver for expose the
+> > > > > > > > > user interface is called uacce. It a short name for
+> > > > > > > > > "Unified/User-space-access-intended Accelerator Framework".
+> > > > > > > > >
+> > > > > > > > > This patch add document to explain how it works.
+> > > > > > > > + RDMA and netdev folks
+> > > > > > > >
+> > > > > > > > Sorry, to be late in the game, I don't see other patches, but from
+> > > > > > > > the description below it seems like you are reinventing RDMA verbs
+> > > > > > > > model. I have hard time to see the differences in the proposed
+> > > > > > > > framework to already implemented in drivers/infiniband/* for the kernel
+> > > > > > > > space and for the https://github.com/linux-rdma/rdma-core/ for the user
+> > > > > > > > space parts.
+> > > > > > >
+> > > > > > > Thanks Leon,
+> > > > > > >
+> > > > > > > Yes, we tried to solve similar problem in RDMA. We also learned a lot from
+> > > > > > > the exist code of RDMA. But we we have to make a new one because we cannot
+> > > > > > > register accelerators such as AI operation, encryption or compression to the
+> > > > > > > RDMA framework:)
+> > > > > >
+> > > > > > Assuming that you did everything right and still failed to use RDMA
+> > > > > > framework, you was supposed to fix it and not to reinvent new exactly
+> > > > > > same one. It is how we develop kernel, by reusing existing code.
+> > > > >
+> > > > > Yes, but we don't force other system such as NIC or GPU into RDMA, do we?
+> > > >
+> > > > You don't introduce new NIC or GPU, but proposing another interface to
+> > > > directly access HW memory and bypass kernel for the data path. This is
+> > > > whole idea of RDMA and this is why it is already present in the kernel.
+> > > >
+> > > > Various hardware devices are supported in our stack allow a ton of crazy
+> > > > stuff, including GPUs interconnections and NIC functionalities.
+> > >
+> > > Yes. We don't want to invent new wheel. That is why we did it behind VFIO in RFC
+> > > v1 and v2. But finally we were persuaded by Mr. Jerome Glisse that VFIO was not
+> > > a good place to solve the problem.
+> 
+> I saw a couple of his responses, he constantly said to you that you are
+> reinventing the wheel.
+> https://lore.kernel.org/lkml/20180904150019.GA4024@redhat.com/
+> 
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+No. I think he asked me did not create trouble in VFIO but just use common
+interface from dma_buf and iommu itself. That is exactly what I am doing.
 
-Hi Wengang,
+> > >
+> > > And currently, as you see, IB is bound with devices doing RDMA. The register
+> > > function, ib_register_device() hint that it is a netdev (get_netdev() callback), it know
+> > > about gid, pkey, and Memory Window. IB is not simply a address space management
+> > > framework. And verbs to IB are not transparent. If we start to add
+> > > compression/decompression, AI (RNN, CNN stuff) operations, and encryption/decryption
+> > > to the verbs set. It will become very complexity. Or maybe I misunderstand the
+> > > IB idea? But I don't see compression hardware is integrated in the mainline
+> > > Kernel. Could you directly point out which one I can used as a reference?
+> > >
+> 
+> I strongly advise you to read the code, not all drivers are implementing
+> gids, pkeys and get_netdev() callback.
+> 
+> Yes, you are misunderstanding drivers/infiniband subsystem. We have
+> plenty options to expose APIs to the user space applications, starting
+> from standard verbs API and ending with private objects which are
+> understandable by specific device/driver.
+> 
+> IB stack provides secure FD to access device, by creating context,
+> after that you can send direct commands to the FW (see mlx5 DEVX
+> or hfi1) in sane way.
+> 
+> So actually, you will need to register your device, declare your own
+> set of objects (similar to mlx5 include/uapi/rdma/mlx5_user_ioctl_*.h).
+> 
+> In regards to reference of compression hardware, I don't have.
+> But there is an example of how T10-DIF can be implemented in verbs
+> layer:
+> https://www.openfabrics.org/images/2018workshop/presentations/307_TOved_T10-DIFOffload.pdf
+> Or IPsec crypto:
+> https://www.spinics.net/lists/linux-rdma/msg48906.html
+> 
 
-Thank you for the patch! Perhaps something to improve:
+OK. I will spend some time on it first. But according to current discussion,
+Don't you think I should avoid all these complexities but simply use SVM/SVA on
+iommu or let the user application use the kernel-allocated VMA and page? It
+does not create anything new. Just a new user of IOMMU and its SVM/SVA
+capability.
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.20-rc3 next-20181119]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> > > >
+> > > > >
+> > > > > I assume you would not agree to register a zip accelerator to infiniband? :)
+> > > >
+> > > > "infiniband" name in the "drivers/infiniband/" is legacy one and the
+> > > > current code supports IB, RoCE, iWARP and OmniPath as a transport layers.
+> > > > For a lone time, we wanted to rename that folder to be "drivers/rdma",
+> > > > but didn't find enough brave men/women to do it, due to backport mess
+> > > > for such move.
+> > > >
+> > > > The addition of zip accelerator to RDMA is possible and depends on how
+> > > > you will model such new functionality - new driver, or maybe new ULP.
+> > > >
+> > > > >
+> > > > > Further, I don't think it is wise to break an exist system (RDMA) to fulfill a
+> > > > > totally new scenario. The better choice is to let them run in parallel for some
+> > > > > time and try to merge them accordingly.
+> > > >
+> > > > Awesome, so please run your code out-of-tree for now and once you are ready
+> > > > for submission let's try to merge it.
+> > >
+> > > Yes, yes. We know trust need time to gain. But the fact is that there is no
+> > > accelerator user driver can be added to mainline kernel. We should raise the
+> > > topic time to time. So to help the communication to fix the gap, right?
+> > >
+> > > We are also opened to cooperate with IB to do it within the IB framework. But
+> > > please let me know where to start. I feel it is quite wired to make a
+> > > ib_register_device for a zip or RSA accelerator.
+> 
+> Most of ib_ prefixes in drivers/infinband/ are legacy names. You can
+> rename them to be rdma_register_device() if it helps.
+> 
+> So from implementation point of view, as I wrote above.
+> Create minimal driver to register, expose MR to user space, add your own
+> objects and capabilities through our new KABI and implement user space part
+> in github.com/linux-rdma/rdma-core.
 
-url:    https://github.com/0day-ci/linux/commits/Wengang-Wang/mm-use-this_cpu_cmpxchg_double-in-put_cpu_partial/20181119-215159
-config: x86_64-kexec (attached as .config)
-compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-reproduce:
-        # save the attached .config to linux build tree
-        make ARCH=x86_64 
+I don't think it is just a name. But anyway, let me spend some time to try the
+possibility.
 
-All warnings (new ones prefixed by >>):
+> 
+> > >
+> > > >
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > Another problem we tried to address is the way to pin the memory for dma
+> > > > > > > operation. The RDMA way to pin the memory cannot avoid the page lost due to
+> > > > > > > copy-on-write operation during the memory is used by the device. This may
+> > > > > > > not be important to RDMA library. But it is important to accelerator.
+> > > > > >
+> > > > > > Such support exists in drivers/infiniband/ from late 2014 and
+> > > > > > it is called ODP (on demand paging).
+> > > > >
+> > > > > I reviewed ODP and I think it is a solution bound to infiniband. It is part of
+> > > > > MR semantics and required a infiniband specific hook
+> > > > > (ucontext->invalidate_range()). And the hook requires the device to be able to
+> > > > > stop using the page for a while for the copying. It is ok for infiniband
+> > > > > (actually, only mlx5 uses it). I don't think most accelerators can support
+> > > > > this mode. But WarpDrive works fully on top of IOMMU interface, it has no this
+> > > > > limitation.
+> > > >
+> > > > 1. It has nothing to do with infiniband.
+> > >
+> > > But it must be a ib_dev first.
+> 
+> It is just a name.
+> 
+> > >
+> > > > 2. MR and uncontext are verbs semantics and needed to ensure that host
+> > > > memory exposed to user is properly protected from security point of view.
+> > > > 3. "stop using the page for a while for the copying" - I'm not fully
+> > > > understand this claim, maybe this article will help you to better
+> > > > describe : https://lwn.net/Articles/753027/
+> > >
+> > > This topic was being discussed in RFCv2. The key problem here is that:
+> > >
+> > > The device need to hold the memory for its own calculation, but the CPU/software
+> > > want to stop it for a while for synchronizing with disk or COW.
+> > >
+> > > If the hardware support SVM/SVA (Shared Virtual Memory/Address), it is easy, the
+> > > device share page table with CPU, the device will raise a page fault when the
+> > > CPU downgrade the PTE to read-only.
+> > >
+> > > If the hardware cannot share page table with the CPU, we then need to have
+> > > some way to change the device page table. This is what happen in ODP. It
+> > > invalidates the page table in device upon mmu_notifier call back. But this cannot
+> > > solve the COW problem: if the user process A share a page P with device, and A
+> > > forks a new process B, and it continue to write to the page. By COW, the
+> > > process B will keep the page P, while A will get a new page P'. But you have
+> > > no way to let the device know it should use P' rather than P.
+> 
+> I didn't hear about such issue and we supported fork for a long time.
+> 
+> > >
+> > > This may be OK for RDMA application. Because RDMA is a big thing and we can ask
+> > > the programmer to avoid the situation. But for a accelerator, I don't think we
+> > > can ask a programmer to care for this when use a zlib.
+> > >
+> > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
+> > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
+> > > to write any code for that. Because it has been done by IOMMU framework. If it
+> > > dose not, you have to use the kernel allocated memory which has the same IOVA as
+> > > the VA in user space. So we can still maintain a unify address space among the
+> > > devices and the applicatin.
+> > >
+> > > > 4. mlx5 supports ODP not because of being partially IB device,
+> > > > but because HW performance oriented implementation is not an easy task.
+> > > >
+> > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > Hope this can help the understanding.
+> > > > > >
+> > > > > > Yes, it helped me a lot.
+> > > > > > Now, I'm more than before convinced that this whole patchset shouldn't
+> > > > > > exist in the first place.
+> > > > >
+> > > > > Then maybe you can tell me how I can register my accelerator to the user space?
+> > > >
+> > > > Write kernel driver and write user space part of it.
+> > > > https://github.com/linux-rdma/rdma-core/
+> > > >
+> > > > I have no doubts that your colleagues who wrote and maintain
+> > > > drivers/infiniband/hw/hns driver know best how to do it.
+> > > > They did it very successfully.
+> > > >
+> > > > Thanks
+> > > >
+> > > > >
+> > > > > >
+> > > > > > To be clear, NAK.
+> > > > > >
+> > > > > > Thanks
+> > > > > >
+> > > > > > >
+> > > > > > > Cheers
+> > > > > > >
+> > > > > > > >
+> > > > > > > > Hard NAK from RDMA side.
+> > > > > > > >
+> > > > > > > > Thanks
+> > > > > > > >
+> > > > > > > > > Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+> > > > > > > > > ---
+> > > > > > > > >   Documentation/warpdrive/warpdrive.rst       | 260 +++++++
+> > > > > > > > >   Documentation/warpdrive/wd-arch.svg         | 764 ++++++++++++++++++++
+> > > > > > > > >   Documentation/warpdrive/wd.svg              | 526 ++++++++++++++
+> > > > > > > > >   Documentation/warpdrive/wd_q_addr_space.svg | 359 +++++++++
+> > > > > > > > >   4 files changed, 1909 insertions(+)
+> > > > > > > > >   create mode 100644 Documentation/warpdrive/warpdrive.rst
+> > > > > > > > >   create mode 100644 Documentation/warpdrive/wd-arch.svg
+> > > > > > > > >   create mode 100644 Documentation/warpdrive/wd.svg
+> > > > > > > > >   create mode 100644 Documentation/warpdrive/wd_q_addr_space.svg
+> > > > > > > > >
+> > > > > > > > > diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
+> > > > > > > > > new file mode 100644
+> > > > > > > > > index 000000000000..ef84d3a2d462
+> > > > > > > > > --- /dev/null
+> > > > > > > > > +++ b/Documentation/warpdrive/warpdrive.rst
+> > > > > > > > > @@ -0,0 +1,260 @@
+> > > > > > > > > +Introduction of WarpDrive
+> > > > > > > > > +=========================
+> > > > > > > > > +
+> > > > > > > > > +*WarpDrive* is a general accelerator framework for the user application to
+> > > > > > > > > +access the hardware without going through the kernel in data path.
+> > > > > > > > > +
+> > > > > > > > > +It can be used as the quick channel for accelerators, network adaptors or
+> > > > > > > > > +other hardware for application in user space.
+> > > > > > > > > +
+> > > > > > > > > +This may make some implementation simpler.  E.g.  you can reuse most of the
+> > > > > > > > > +*netdev* driver in kernel and just share some ring buffer to the user space
+> > > > > > > > > +driver for *DPDK* [4] or *ODP* [5]. Or you can combine the RSA accelerator with
+> > > > > > > > > +the *netdev* in the user space as a https reversed proxy, etc.
+> > > > > > > > > +
+> > > > > > > > > +*WarpDrive* takes the hardware accelerator as a heterogeneous processor which
+> > > > > > > > > +can share particular load from the CPU:
+> > > > > > > > > +
+> > > > > > > > > +.. image:: wd.svg
+> > > > > > > > > +        :alt: WarpDrive Concept
+> > > > > > > > > +
+> > > > > > > > > +The virtual concept, queue, is used to manage the requests sent to the
+> > > > > > > > > +accelerator. The application send requests to the queue by writing to some
+> > > > > > > > > +particular address, while the hardware takes the requests directly from the
+> > > > > > > > > +address and send feedback accordingly.
+> > > > > > > > > +
+> > > > > > > > > +The format of the queue may differ from hardware to hardware. But the
+> > > > > > > > > +application need not to make any system call for the communication.
+> > > > > > > > > +
+> > > > > > > > > +*WarpDrive* tries to create a shared virtual address space for all involved
+> > > > > > > > > +accelerators. Within this space, the requests sent to queue can refer to any
+> > > > > > > > > +virtual address, which will be valid to the application and all involved
+> > > > > > > > > +accelerators.
+> > > > > > > > > +
+> > > > > > > > > +The name *WarpDrive* is simply a cool and general name meaning the framework
+> > > > > > > > > +makes the application faster. It includes general user library, kernel
+> > > > > > > > > +management module and drivers for the hardware. In kernel, the management
+> > > > > > > > > +module is called *uacce*, meaning "Unified/User-space-access-intended
+> > > > > > > > > +Accelerator Framework".
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +How does it work
+> > > > > > > > > +================
+> > > > > > > > > +
+> > > > > > > > > +*WarpDrive* uses *mmap* and *IOMMU* to play the trick.
+> > > > > > > > > +
+> > > > > > > > > +*Uacce* creates a chrdev for the device registered to it. A "queue" will be
+> > > > > > > > > +created when the chrdev is opened. The application access the queue by mmap
+> > > > > > > > > +different address region of the queue file.
+> > > > > > > > > +
+> > > > > > > > > +The following figure demonstrated the queue file address space:
+> > > > > > > > > +
+> > > > > > > > > +.. image:: wd_q_addr_space.svg
+> > > > > > > > > +        :alt: WarpDrive Queue Address Space
+> > > > > > > > > +
+> > > > > > > > > +The first region of the space, device region, is used for the application to
+> > > > > > > > > +write request or read answer to or from the hardware.
+> > > > > > > > > +
+> > > > > > > > > +Normally, there can be three types of device regions mmio and memory regions.
+> > > > > > > > > +It is recommended to use common memory for request/answer descriptors and use
+> > > > > > > > > +the mmio space for device notification, such as doorbell. But of course, this
+> > > > > > > > > +is all up to the interface designer.
+> > > > > > > > > +
+> > > > > > > > > +There can be two types of device memory regions, kernel-only and user-shared.
+> > > > > > > > > +This will be explained in the "kernel APIs" section.
+> > > > > > > > > +
+> > > > > > > > > +The Static Share Virtual Memory region is necessary only when the device IOMMU
+> > > > > > > > > +does not support "Share Virtual Memory". This will be explained after the
+> > > > > > > > > +*IOMMU* idea.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +Architecture
+> > > > > > > > > +------------
+> > > > > > > > > +
+> > > > > > > > > +The full *WarpDrive* architecture is represented in the following class
+> > > > > > > > > +diagram:
+> > > > > > > > > +
+> > > > > > > > > +.. image:: wd-arch.svg
+> > > > > > > > > +        :alt: WarpDrive Architecture
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +The user API
+> > > > > > > > > +------------
+> > > > > > > > > +
+> > > > > > > > > +We adopt a polling style interface in the user space: ::
+> > > > > > > > > +
+> > > > > > > > > +        int wd_request_queue(struct wd_queue *q);
+> > > > > > > > > +        void wd_release_queue(struct wd_queue *q);
+> > > > > > > > > +
+> > > > > > > > > +        int wd_send(struct wd_queue *q, void *req);
+> > > > > > > > > +        int wd_recv(struct wd_queue *q, void **req);
+> > > > > > > > > +        int wd_recv_sync(struct wd_queue *q, void **req);
+> > > > > > > > > +        void wd_flush(struct wd_queue *q);
+> > > > > > > > > +
+> > > > > > > > > +wd_recv_sync() is a wrapper to its non-sync version. It will trapped into
+> > > > > > > > > +kernel and waits until the queue become available.
+> > > > > > > > > +
+> > > > > > > > > +If the queue do not support SVA/SVM. The following helper function
+> > > > > > > > > +can be used to create Static Virtual Share Memory: ::
+> > > > > > > > > +
+> > > > > > > > > +        void *wd_preserve_share_memory(struct wd_queue *q, size_t size);
+> > > > > > > > > +
+> > > > > > > > > +The user API is not mandatory. It is simply a suggestion and hint what the
+> > > > > > > > > +kernel interface is supposed to support.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +The user driver
+> > > > > > > > > +---------------
+> > > > > > > > > +
+> > > > > > > > > +The queue file mmap space will need a user driver to wrap the communication
+> > > > > > > > > +protocol. *UACCE* provides some attributes in sysfs for the user driver to
+> > > > > > > > > +match the right accelerator accordingly.
+> > > > > > > > > +
+> > > > > > > > > +The *UACCE* device attribute is under the following directory:
+> > > > > > > > > +
+> > > > > > > > > +/sys/class/uacce/<dev-name>/params
+> > > > > > > > > +
+> > > > > > > > > +The following attributes is supported:
+> > > > > > > > > +
+> > > > > > > > > +nr_queue_remained (ro)
+> > > > > > > > > +        number of queue remained
+> > > > > > > > > +
+> > > > > > > > > +api_version (ro)
+> > > > > > > > > +        a string to identify the queue mmap space format and its version
+> > > > > > > > > +
+> > > > > > > > > +device_attr (ro)
+> > > > > > > > > +        attributes of the device, see UACCE_DEV_xxx flag defined in uacce.h
+> > > > > > > > > +
+> > > > > > > > > +numa_node (ro)
+> > > > > > > > > +        id of numa node
+> > > > > > > > > +
+> > > > > > > > > +priority (rw)
+> > > > > > > > > +        Priority or the device, bigger is higher
+> > > > > > > > > +
+> > > > > > > > > +(This is not yet implemented in RFC version)
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +The kernel API
+> > > > > > > > > +--------------
+> > > > > > > > > +
+> > > > > > > > > +The *uacce* kernel API is defined in uacce.h. If the hardware support SVM/SVA,
+> > > > > > > > > +The driver need only the following API functions: ::
+> > > > > > > > > +
+> > > > > > > > > +        int uacce_register(uacce);
+> > > > > > > > > +        void uacce_unregister(uacce);
+> > > > > > > > > +        void uacce_wake_up(q);
+> > > > > > > > > +
+> > > > > > > > > +*uacce_wake_up* is used to notify the process who epoll() on the queue file.
+> > > > > > > > > +
+> > > > > > > > > +According to the IOMMU capability, *uacce* categories the devices as follow:
+> > > > > > > > > +
+> > > > > > > > > +UACCE_DEV_NOIOMMU
+> > > > > > > > > +        The device has no IOMMU. The user process cannot use VA on the hardware
+> > > > > > > > > +        This mode is not recommended.
+> > > > > > > > > +
+> > > > > > > > > +UACCE_DEV_SVA (UACCE_DEV_PASID | UACCE_DEV_FAULT_FROM_DEV)
+> > > > > > > > > +        The device has IOMMU which can share the same page table with user
+> > > > > > > > > +        process
+> > > > > > > > > +
+> > > > > > > > > +UACCE_DEV_SHARE_DOMAIN
+> > > > > > > > > +        The device has IOMMU which has no multiple page table and device page
+> > > > > > > > > +        fault support
+> > > > > > > > > +
+> > > > > > > > > +If the device works in mode other than UACCE_DEV_NOIOMMU, *uacce* will set its
+> > > > > > > > > +IOMMU to IOMMU_DOMAIN_UNMANAGED. So the driver must not use any kernel
+> > > > > > > > > +DMA API but the following ones from *uacce* instead: ::
+> > > > > > > > > +
+> > > > > > > > > +        uacce_dma_map(q, va, size, prot);
+> > > > > > > > > +        uacce_dma_unmap(q, va, size, prot);
+> > > > > > > > > +
+> > > > > > > > > +*uacce_dma_map/unmap* is valid only for UACCE_DEV_SVA device. It creates a
+> > > > > > > > > +particular PASID and page table for the kernel in the IOMMU (Not yet
+> > > > > > > > > +implemented in the RFC)
+> > > > > > > > > +
+> > > > > > > > > +For the UACCE_DEV_SHARE_DOMAIN device, uacce_dma_map/unmap is not valid.
+> > > > > > > > > +*Uacce* call back start_queue only when the DUS and DKO region is mmapped. The
+> > > > > > > > > +accelerator driver must use those dma buffer, via uacce_queue->qfrs[], on
+> > > > > > > > > +start_queue call back. The size of the queue file region is defined by
+> > > > > > > > > +uacce->ops->qf_pg_start[].
+> > > > > > > > > +
+> > > > > > > > > +We have to do it this way because most of current IOMMU cannot support the
+> > > > > > > > > +kernel and user virtual address at the same time. So we have to let them both
+> > > > > > > > > +share the same user virtual address space.
+> > > > > > > > > +
+> > > > > > > > > +If the device have to support kernel and user at the same time, both kernel
+> > > > > > > > > +and the user should use these DMA API. This is not convenient. A better
+> > > > > > > > > +solution is to change the future DMA/IOMMU design to let them separate the
+> > > > > > > > > +address space between the user and kernel space. But it is not going to be in
+> > > > > > > > > +a short time.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +Multiple processes support
+> > > > > > > > > +==========================
+> > > > > > > > > +
+> > > > > > > > > +In the latest mainline kernel (4.19) when this document is written, the IOMMU
+> > > > > > > > > +subsystem do not support multiple process page tables yet.
+> > > > > > > > > +
+> > > > > > > > > +Most IOMMU hardware implementation support multi-process with the concept
+> > > > > > > > > +of PASID. But they may use different name, e.g. it is call sub-stream-id in
+> > > > > > > > > +SMMU of ARM. With PASID or similar design, multi page table can be added to
+> > > > > > > > > +the IOMMU and referred by its PASID.
+> > > > > > > > > +
+> > > > > > > > > +*JPB* has a patchset to enable this[1]_. We have tested it with our hardware
+> > > > > > > > > +(which is known as *D06*). It works well. *WarpDrive* rely on them to support
+> > > > > > > > > +UACCE_DEV_SVA. If it is not enabled, *WarpDrive* can still work. But it
+> > > > > > > > > +support only one process, the device will be set to UACCE_DEV_SHARE_DOMAIN
+> > > > > > > > > +even it is set to UACCE_DEV_SVA initially.
+> > > > > > > > > +
+> > > > > > > > > +Static Share Virtual Memory is mainly used by UACCE_DEV_SHARE_DOMAIN device.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +Legacy Mode Support
+> > > > > > > > > +===================
+> > > > > > > > > +For the hardware without IOMMU, WarpDrive can still work, the only problem is
+> > > > > > > > > +VA cannot be used in the device. The driver should adopt another strategy for
+> > > > > > > > > +the shared memory. It is only for testing, and not recommended.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +The Folk Scenario
+> > > > > > > > > +=================
+> > > > > > > > > +For a process with allocated queues and shared memory, what happen if it forks
+> > > > > > > > > +a child?
+> > > > > > > > > +
+> > > > > > > > > +The fd of the queue will be duplicated on folk, so the child can send request
+> > > > > > > > > +to the same queue as its parent. But the requests which is sent from processes
+> > > > > > > > > +except for the one who open the queue will be blocked.
+> > > > > > > > > +
+> > > > > > > > > +It is recommended to add O_CLOEXEC to the queue file.
+> > > > > > > > > +
+> > > > > > > > > +The queue mmap space has a VM_DONTCOPY in its VMA. So the child will lost all
+> > > > > > > > > +those VMAs.
+> > > > > > > > > +
+> > > > > > > > > +This is why *WarpDrive* does not adopt the mode used in *VFIO* and *InfiniBand*.
+> > > > > > > > > +Both solutions can set any user pointer for hardware sharing. But they cannot
+> > > > > > > > > +support fork when the dma is in process. Or the "Copy-On-Write" procedure will
+> > > > > > > > > +make the parent process lost its physical pages.
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +The Sample Code
+> > > > > > > > > +===============
+> > > > > > > > > +There is a sample user land implementation with a simple driver for Hisilicon
+> > > > > > > > > +Hi1620 ZIP Accelerator.
+> > > > > > > > > +
+> > > > > > > > > +To test, do the following in samples/warpdrive (for the case of PC host): ::
+> > > > > > > > > +        ./autogen.sh
+> > > > > > > > > +        ./conf.sh       # or simply ./configure if you build on target system
+> > > > > > > > > +        make
+> > > > > > > > > +
+> > > > > > > > > +Then you can get test_hisi_zip in the test subdirectory. Copy it to the target
+> > > > > > > > > +system and make sure the hisi_zip driver is enabled (the major and minor of
+> > > > > > > > > +the uacce chrdev can be gotten from the dmesg or sysfs), and run: ::
+> > > > > > > > > +        mknod /dev/ua1 c <major> <minior>
+> > > > > > > > > +        test/test_hisi_zip -z < data > data.zip
+> > > > > > > > > +        test/test_hisi_zip -g < data > data.gzip
+> > > > > > > > > +
+> > > > > > > > > +
+> > > > > > > > > +References
+> > > > > > > > > +==========
+> > > > > > > > > +.. [1] https://patchwork.kernel.org/patch/10394851/
+> > > > > > > > > +
+> > > > > > > > > +.. vim: tw=78
+> > > > > [...]
+> > > > > > > > > --
+> > > > > > > > > 2.17.1
+> > > > > > > > >
+> >
+> > I don't know if Mr. Jerome Glisse in the list. I think I should cc him for my
+> > respectation  to his help on last RFC.
+> >
+> > - Kenneth
 
->> mm/slub.o: warning: objtool: get_partial_node.isra.19()+0x27e: unreachable instruction
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
-
---vkogqOf2sHV7VnPd
-Content-Type: application/gzip
-Content-Disposition: attachment; filename=".config.gz"
-Content-Transfer-Encoding: base64
-
-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
-
---vkogqOf2sHV7VnPd--
