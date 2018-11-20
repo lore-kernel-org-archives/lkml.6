@@ -2,108 +2,102 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B93EC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:58:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403CFC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C6420685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:57:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C065B20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePl5YJim"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11C6420685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="h3rwxnyQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C065B20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbeKUD2D (ORCPT
+        id S1730372AbeKUD20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:28:03 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40847 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729299AbeKUD2D (ORCPT
+        Tue, 20 Nov 2018 22:28:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53420 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726911AbeKUD2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:28:03 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so2737705wrt.7;
-        Tue, 20 Nov 2018 08:57:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=PQtXbiUxnj9lxKfzPmiU/8R4P/UiXSZCFvt2FxxOm9c=;
-        b=ePl5YJimxYINQ5HZhB1NeC9td+O0luVkwJDmMomGR/glwWMFXYm/yMOGBiUvSTSsYJ
-         3byjzEjjfPOzg3lLqPDhvEn4aj3pM61rfrTtoTIe4pHDLY31T+nf9DVt+59AZTdn0MVC
-         b0T+XxgSmfpLLZAJMaKIq/qtyqZpGnoqBTz3VeZY/VPMSGMxnlOUwkQvme/mZRBytH4O
-         +1KUdl7e5Ka/IbW/m27FskmiNPej3aA32DQhcL6eqtS4WKlXeqbwEi7VP410w/5eURDX
-         KlNay3a10Zilfze/VpPyiJmDxNzVT04fo4mWGo5hRhv9HMy/NvIcSw5NGzU7SKuOGyNf
-         rb6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PQtXbiUxnj9lxKfzPmiU/8R4P/UiXSZCFvt2FxxOm9c=;
-        b=nHiuPvIzlR+0OBZQbCW0cLU/mlkkfo0d5sW3Tgl/K2rOU4DCApmU/mkAQ60QhnIMM6
-         Uzj+ms+e202rmOpUsJ1MBYaJKwYq0i44J8JXj4zmlvC1hkInblvcJgLSE4WrwrFPOhqH
-         oW2dRJFujjYMJGVxsvwJCSJUIc3rwKuT6Z2/Srj2I1BkHGutGwvjTzt2SakAcgITDTfq
-         CZovzV98OX5hTZX9+aigOwpdMKa4XINKb19ZEjjfzP3u4YfvksipEwO2vsexl4eTccMB
-         NR6nbxZbAo0+h9n6tuSwp4QXsZdNtJZVOUl6oat0gLxR3o6ORI2cWk7uKOkM3ph/Gnw/
-         +7hg==
-X-Gm-Message-State: AA+aEWYPqOxM+6eCRHawKRm4GkZUljMFWOlwmn6wo01obiM4K/XoBeQX
-        K4OuYrQ3oJFucMhvnExnLNk=
-X-Google-Smtp-Source: AFSGD/X/RMRMcPcHCk4XFXuf0r+8ALKrsPBPyx2nePEhqtXor1REyIU+z08BAse/IUaLgIW77TfMuA==
-X-Received: by 2002:adf:ba8b:: with SMTP id p11-v6mr2834369wrg.203.1542733075333;
-        Tue, 20 Nov 2018 08:57:55 -0800 (PST)
-Received: from localhost.localdomain (static-css-cqn-143221.business.bouyguestelecom.com. [176.149.143.221])
-        by smtp.gmail.com with ESMTPSA id 6-v6sm35287504wmg.19.2018.11.20.08.57.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:57:54 -0800 (PST)
-From:   Romain Izard <romain.izard.pro@gmail.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Romain Izard <romain.izard.pro@gmail.com>
-Subject: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
-Date:   Tue, 20 Nov 2018 17:57:37 +0100
-Message-Id: <20181120165737.4998-1-romain.izard.pro@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Nov 2018 22:28:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+0BJ+oOrAhIs6pbR+2gNDWdvStfwUVcd4odyDq5JR1s=; b=h3rwxnyQm6wsK5np4HPU/ydDa
+        hEVDcT+3R8Nfqu/otxWS71YlOB68/V0AqM9Qi+wn8OgAgjkk75Zslqn79xGvyN7Kvp9/ubYHlP+An
+        XBL+9JSk/Bx19IQfVhYMKqPONS1qMzECKFfPTH4+L+Mr2Mmlm+pIw04e/Cep6sHIcZKr8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gP9Lr-0001ou-CR; Tue, 20 Nov 2018 16:58:15 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id E951A1124DC2; Tue, 20 Nov 2018 16:58:14 +0000 (GMT)
+Date:   Tue, 20 Nov 2018 16:58:14 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Osipenko <digetx@gmail.com>, ryandcase@chromium.org,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 5/7] regulator: core: add enable_count for consumers to
+ debug fs
+Message-ID: <20181120165814.GM3894@sirena.org.uk>
+References: <20181120002654.1891-1-dianders@chromium.org>
+ <20181120002654.1891-5-dianders@chromium.org>
+ <20181120161055.GI3894@sirena.org.uk>
+ <CAD=FV=UO1Dt3SeDs22EgH-95dWX+jq0sU7zzRgew11_DVw43cg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="F7w+4yMapWozG0Ib"
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UO1Dt3SeDs22EgH-95dWX+jq0sU7zzRgew11_DVw43cg@mail.gmail.com>
+X-Cookie: fortune: No such file or directory
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
-different clocks for the peripherals in the SoC. The Static Memory
-controller is connected to the divided master clock.
 
-Unfortunately, the device tree does not correctly show this and uses the
-master clock directly. This clock is then used by the code for the NAND
-controller to calculate the timings for the controller, and we end up with
-slow NAND Flash access.
+--F7w+4yMapWozG0Ib
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fix the device tree, and the performance of Flash access is improved.
+On Tue, Nov 20, 2018 at 08:52:14AM -0800, Doug Anderson wrote:
 
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
----
- arch/arm/boot/dts/sama5d2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> I don't want to send v2 of things while you're still reviewing.  If
+> you have a chance give me a ping when you're ready for me to send out
+> v2 of things.  ...otherwise I'll plan to send it out later today or
+> tomorrow morning.
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 61f68e5c48e9..b405992eb601 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -308,7 +308,7 @@
- 				  0x1 0x0 0x60000000 0x10000000
- 				  0x2 0x0 0x70000000 0x10000000
- 				  0x3 0x0 0x80000000 0x10000000>;
--			clocks = <&mck>;
-+			clocks = <&h32ck>;
- 			status = "disabled";
- 
- 			nand_controller: nand-controller {
--- 
-2.17.1
+I'm pretty much done for today so probably easier to just resend now,
+I've got other things in my queue to review anyway!
 
+--F7w+4yMapWozG0Ib
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0PSYACgkQJNaLcl1U
+h9CwNgf/SgaXlhuqiNRv/lXtD2mLIzDTktcmdbLW5fZrcZOJ6mePEJWVdP5ARBUz
+EAjA9FvRebY1kf8eE2by9LNVHU9XJYJF7qCEwh7YcV2yd2ri0cipW5IgyoA036x9
+ACbEukCpP0DXvrIny+XqLlCLRpW7qLForPn3Tzsek9WT0XbjVtcOUxJFQvHQfqNw
+J5dEBfqae5JLzEFKN3yZba288tot6k2F8hjl9nYRRryPDD70iNKQVS7gJHIFABtD
+c8UrQk4DvoyV1XEJZcoXeHY++qhPvCbwH3GxnrRR75OAj1PuxHE7gAqFdJel3WrF
+5Ify5U7b9oLKsTWft0N0723rLpJvIw==
+=5XJc
+-----END PGP SIGNATURE-----
+
+--F7w+4yMapWozG0Ib--
