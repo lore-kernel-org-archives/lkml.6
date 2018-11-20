@@ -2,131 +2,204 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDEC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:07:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1282C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410962146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79AA42146D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NolKvM+z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410962146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="KRlc58UW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79AA42146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeKUJjF (ORCPT
+        id S1726728AbeKUJj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 04:39:05 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50856 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeKUJjF (ORCPT
+        Wed, 21 Nov 2018 04:39:28 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:11324 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725889AbeKUJj2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 04:39:05 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAKN73f3043795;
-        Tue, 20 Nov 2018 17:07:03 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542755223;
-        bh=ckDKzDv74ZNO4z7WmGEsXZV25XcaquiTbZAt2DmHPlU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NolKvM+z5B1HO1i99Pp3v3aL96klO6K6DJ9xd1/DTzo7Cec4VNVqeReAd8K2XXXLV
-         WHZri3TBgRMvgzV5p4VPsBTWFkSvTnhN1/5Gz75OvuOG1dBM9Y8CTUUD+MXPwsdBjZ
-         RLFLsrpdNd9u8dkq6qq1w9VpW+nd6hQxRlGGNgS8=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAKN72K7130922
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 17:07:03 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 20
- Nov 2018 17:07:02 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 20 Nov 2018 17:07:02 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAKN6w7Q021270;
-        Tue, 20 Nov 2018 17:06:59 -0600
-Subject: Re: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate
- resources
-To:     "J, KEERTHY" <j-keerthy@ti.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        <stable@vger.kernel.org>, Lokesh Vutla <lokeshvutla@ti.com>
-References: <20181113135051.15308-1-brgl@bgdev.pl>
- <20181113135051.15308-2-brgl@bgdev.pl>
- <c092b014-d5cf-f1ad-de91-6696b05cdf17@ti.com>
- <63ac671f-b202-2533-3878-af16149fbdbb@ti.com>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
-Date:   Wed, 21 Nov 2018 04:36:58 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <63ac671f-b202-2533-3878-af16149fbdbb@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 21 Nov 2018 04:39:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1542755272; x=1574291272;
+  h=from:to:cc:subject:date:message-id;
+  bh=gWNVaT5q2FRSp5GUYA68hoc8M4aM1LrstfAQE97W0LA=;
+  b=KRlc58UWMfiy+OIHzeBTbo3qLt8348AMwMiyfGJ137E/EeKAp/4/g/lK
+   x2SuxPxgzJkDpeirXZ+XrpBiSqCARgR2c4tjIU+8pFjPca7EIGHsONYQH
+   hdaUuCocntv5C0qu5kL2a1qRcBq0AyxLuVvq6QxUEcT6dPD4FRkcfomEe
+   MZIE4A8gZRyHVHAB4l3nYN2jo0bxCe0M4Uu4ZUc2tqzmxieil9IYXwPdc
+   Tb/NvZWyoVeCytBMrXTyl7nks7LDKVNoyirrluB8/i3AKa9ApHSfXou/U
+   Bu7O/azrT+65uAeTvtUNL7DoYWIl6gFKrZAPUl1mShk7bjBeZeiHkEKsM
+   g==;
+X-IronPort-AV: E=Sophos;i="5.56,258,1539619200"; 
+   d="scan'208";a="94745438"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Nov 2018 07:07:52 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 20 Nov 2018 14:50:37 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 20 Nov 2018 15:07:52 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     palmer@sifive.com, linux-kernel@vger.kernel.org,
+        atish.patra@wdc.com, anup@brainfault.org, jeremy.linton@arm.com,
+        sudeep.holla@arm.com, schwab@suse.de
+Subject: [PATCH] RISC-V: Fix of_node_* refcount
+Date:   Tue, 20 Nov 2018 15:07:50 -0800
+Message-Id: <1542755270-10433-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/18 12:08 PM, J, KEERTHY wrote:
-> 
-> 
-> On 11/20/2018 2:22 AM, Sekhar Nori wrote:
->> On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
->>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>>
->>> Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
->>> IRQ numbering") the davinci GPIO driver fails to probe if we boot
->>> in legacy mode from any of the board files. Since the driver now
->>> expects every interrupt to be defined as a separate resource, split
->>> the definition in devices-da8xx.c instead of having a single continuous
->>> interrupt range.
->>>
->>> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ
->>> numbering")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->>
->> There are a number of other boards that need such fixing too. And the
->> commit in question does not do a good job of explaining why it was
->> needed in the first place. The description  just repeats what can be
->> inferred by reading the patch.
-> 
-> Cc Lokesh
-> 
-> Sekhar,
-> 
-> DT explicitly mentions every IRQ number. The patch in discussion
-> explicitly calls platform_get_irq for all the interrupts which to me is
-> the right thing to do as: platform_get_irq-->
-> of_irq_get-->irq_create_of_mapping--> sequence is to be done for every IRQ.
-> 
-> k3-am654 definitely will need explicit calls to platform_get_irq as it
-> will be involving interrupt router and interrupt numbers need not be
-> continuous.
-> 
-> So i do not think reverting the patch is the right idea.
+Fix of_node* refcount at various places by using of_node_put.
 
-Well, all of this description of patch motivation should have been in
-the patch description to begin with.
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+---
+ arch/riscv/kernel/cacheinfo.c  | 11 +++++++++++
+ arch/riscv/kernel/cpu.c        |  1 +
+ arch/riscv/kernel/cpufeature.c |  2 ++
+ arch/riscv/kernel/perf_event.c |  1 +
+ arch/riscv/kernel/smpboot.c    |  6 +++++-
+ 5 files changed, 20 insertions(+), 1 deletion(-)
 
-Bartosz, can you please extend this patch to fix this problem for other
-DaVinci SoCs too? I am on the road this week, but will do my best to
-queue these fixes at the earliest .
+diff --git a/arch/riscv/kernel/cacheinfo.c b/arch/riscv/kernel/cacheinfo.c
+index cb35ffd8..638dee3f 100644
+--- a/arch/riscv/kernel/cacheinfo.c
++++ b/arch/riscv/kernel/cacheinfo.c
+@@ -28,6 +28,7 @@ static int __init_cache_level(unsigned int cpu)
+ {
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	struct device_node *np = of_cpu_device_node_get(cpu);
++	struct device_node *prev = NULL;
+ 	int levels = 0, leaves = 0, level;
+ 
+ 	if (of_property_read_bool(np, "cache-size"))
+@@ -39,7 +40,10 @@ static int __init_cache_level(unsigned int cpu)
+ 	if (leaves > 0)
+ 		levels = 1;
+ 
++	prev = np;
+ 	while ((np = of_find_next_cache_node(np))) {
++		of_node_put(prev);
++		prev = np;
+ 		if (!of_device_is_compatible(np, "cache"))
+ 			break;
+ 		if (of_property_read_u32(np, "cache-level", &level))
+@@ -55,8 +59,10 @@ static int __init_cache_level(unsigned int cpu)
+ 		levels = level;
+ 	}
+ 
++	of_node_put(np);
+ 	this_cpu_ci->num_levels = levels;
+ 	this_cpu_ci->num_leaves = leaves;
++
+ 	return 0;
+ }
+ 
+@@ -65,6 +71,7 @@ static int __populate_cache_leaves(unsigned int cpu)
+ 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
+ 	struct cacheinfo *this_leaf = this_cpu_ci->info_list;
+ 	struct device_node *np = of_cpu_device_node_get(cpu);
++	struct device_node *prev = NULL;
+ 	int levels = 1, level = 1;
+ 
+ 	if (of_property_read_bool(np, "cache-size"))
+@@ -74,7 +81,10 @@ static int __populate_cache_leaves(unsigned int cpu)
+ 	if (of_property_read_bool(np, "d-cache-size"))
+ 		ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
+ 
++	prev = np;
+ 	while ((np = of_find_next_cache_node(np))) {
++		of_node_put(prev);
++		prev = np;
+ 		if (!of_device_is_compatible(np, "cache"))
+ 			break;
+ 		if (of_property_read_u32(np, "cache-level", &level))
+@@ -89,6 +99,7 @@ static int __populate_cache_leaves(unsigned int cpu)
+ 			ci_leaf_init(this_leaf++, np, CACHE_TYPE_DATA, level);
+ 		levels = level;
+ 	}
++	of_node_put(np);
+ 
+ 	return 0;
+ }
+diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+index 3a5a2ee3..7b3eb970 100644
+--- a/arch/riscv/kernel/cpu.c
++++ b/arch/riscv/kernel/cpu.c
+@@ -155,6 +155,7 @@ static int c_show(struct seq_file *m, void *v)
+ 	    && strcmp(compat, "riscv"))
+ 		seq_printf(m, "uarch\t\t: %s\n", compat);
+ 	seq_puts(m, "\n");
++	of_node_put(node);
+ 
+ 	return 0;
+ }
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 0339087a..a6e369ed 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -56,8 +56,10 @@ void riscv_fill_hwcap(void)
+ 
+ 	if (of_property_read_string(node, "riscv,isa", &isa)) {
+ 		pr_warning("Unable to find \"riscv,isa\" devicetree entry");
++		of_node_put(node);
+ 		return;
+ 	}
++	of_node_put(node);
+ 
+ 	for (i = 0; i < strlen(isa); ++i)
+ 		elf_hwcap |= isa2hwcap[(unsigned char)(isa[i])];
+diff --git a/arch/riscv/kernel/perf_event.c b/arch/riscv/kernel/perf_event.c
+index a243fae1..667ee70d 100644
+--- a/arch/riscv/kernel/perf_event.c
++++ b/arch/riscv/kernel/perf_event.c
+@@ -476,6 +476,7 @@ int __init init_hw_perf_events(void)
+ 
+ 		if (of_id)
+ 			riscv_pmu = of_id->data;
++		of_node_put(node);
+ 	}
+ 
+ 	perf_pmu_register(riscv_pmu->pmu, "cpu", PERF_TYPE_RAW);
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index 18cda0e8..fc185eca 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -57,12 +57,15 @@ void __init setup_smp(void)
+ 
+ 	while ((dn = of_find_node_by_type(dn, "cpu"))) {
+ 		hart = riscv_of_processor_hartid(dn);
+-		if (hart < 0)
++		if (hart < 0) {
++			of_node_put(dn);
+ 			continue;
++		}
+ 
+ 		if (hart == cpuid_to_hartid_map(0)) {
+ 			BUG_ON(found_boot_cpu);
+ 			found_boot_cpu = 1;
++			of_node_put(dn);
+ 			continue;
+ 		}
+ 
+@@ -70,6 +73,7 @@ void __init setup_smp(void)
+ 		set_cpu_possible(cpuid, true);
+ 		set_cpu_present(cpuid, true);
+ 		cpuid++;
++		of_node_put(dn);
+ 	}
+ 
+ 	BUG_ON(!found_boot_cpu);
+-- 
+2.7.4
 
-Thanks,
-Sekhar
