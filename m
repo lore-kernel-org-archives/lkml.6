@@ -2,184 +2,103 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91DCBC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96EFC46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B12F3208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Xjc3wQtB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B12F3208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id BB71120685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB71120685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbeKUElb (ORCPT
+        id S1728416AbeKUElf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:41:31 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:47782 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726136AbeKUEla (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:41:30 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAKI41an173962;
-        Tue, 20 Nov 2018 18:10:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=+FleD2jvplUQTK4dXnc9yuaVF9SlYpamG9qgytQMyDY=;
- b=Xjc3wQtB0u4lTRh1dAyn2wyYvVGLBqK8a5qEEh6GBpbBIKIzBTsSRDuP/uryWkokfKvs
- URxOUGkH4oVRCWo2SolahgW2bYdjIhaFKL/p5adwwRhLD3RssTMVvYfa+K3Ltupk5lEY
- M0VZncZwuCloFSd02wC7pLDLEQSoxfBl8nxnk1+WNIYqxA7IkNbkDEZNIrxhreMcljwz
- DCdgZhJbklL44s7iIR/lze2I03RN8jfvhyvUlIK6/bdR8GUqhxIWiJjWfEO5olYL2/8x
- nywF1ZMWoOkuxzXCqYjEZ3nTehsroqd56wQC4BBJ5oOu7ycF3IKIvjDfvgh9NKnMNESJ 3g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ntadtwg9h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 18:10:42 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAKIAZuo015246
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 18:10:35 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAKIAXRC029232;
-        Tue, 20 Nov 2018 18:10:34 GMT
-Received: from [10.159.138.59] (/10.159.138.59)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 20 Nov 2018 10:10:33 -0800
-Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
-        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
- <5BF36EE9.9090808@huawei.com>
-From:   Wengang Wang <wen.gang.wang@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <86571591-473f-0d05-58c8-ba5e592cc551@oracle.com>
-Date:   Tue, 20 Nov 2018 10:10:31 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 20 Nov 2018 23:41:35 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45375 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbeKUElf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:41:35 -0500
+Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr04-ext.fm.intel.com [192.55.54.39])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAKIAJZC3063572
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Tue, 20 Nov 2018 10:10:20 -0800
+Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
+ early init
+To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+References: <20181113130730.44844-1-namit@vmware.com>
+ <20181113130730.44844-3-namit@vmware.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
+Date:   Tue, 20 Nov 2018 10:10:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <5BF36EE9.9090808@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181113130730.44844-3-namit@vmware.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9083 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811200160
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zhong,
+On 11/13/18 5:07 AM, Nadav Amit wrote:
+> There is no apparent reason not to use text_poke_early() while we are
+> during early-init and we do not patch code that might be on the stack
+> (i.e., we'll return to the middle of the patched code). This appears to
+> be the case of jump-labels, so do so.
+> 
+> This is required for the next patches that would set a temporary mm for
+> patching, which is initialized after some static-keys are
+> enabled/disabled.
+> 
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+> ---
+>  arch/x86/kernel/jump_label.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+> index aac0c1f7e354..ed5fe274a7d8 100644
+> --- a/arch/x86/kernel/jump_label.c
+> +++ b/arch/x86/kernel/jump_label.c
+> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+>  	jmp.offset = jump_entry_target(entry) -
+>  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
+>  
+> -	if (early_boot_irqs_disabled)
+> +	/*
+> +	 * As long as we're UP and not yet marked RO, we can use
+> +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+> +	 * SYSTEM_SCHEDULING before going either.
+> +	 */
+> +	if (system_state == SYSTEM_BOOTING)
+>  		poker = text_poke_early;
+>  
+>  	if (type == JUMP_LABEL_JMP) {
+> 
 
+Can't we make this test in text_poke() directly, please?
 
-On 2018/11/19 18:18, zhong jiang wrote:
-> On 2018/11/17 9:33, Wengang Wang wrote:
->> The this_cpu_cmpxchg makes the do-while loop pass as long as the
->> s->cpu_slab->partial as the same value. It doesn't care what happened to
->> that slab. Interrupt is not disabled, and new alloc/free can happen in the
->> interrupt handlers. Theoretically, after we have a reference to the it,
->> stored in _oldpage_, the first slab on the partial list on this CPU can be
->> moved to kmem_cache_node and then moved to different kmem_cache_cpu and
->> then somehow can be added back as head to partial list of current
->> kmem_cache_cpu, though that is a very rare case. If that rare case really
->> happened, the reading of oldpage->pobjects may get a 0xdead0000
->> unexpectedly, stored in _pobjects_, if the reading happens just after
->> another CPU removed the slab from kmem_cache_node, setting lru.prev to
->> LIST_POISON2 (0xdead000000000200). The wrong _pobjects_(negative) then
->> prevents slabs from being moved to kmem_cache_node and being finally freed.
->>
->> We see in a vmcore, there are 375210 slabs kept in the partial list of one
->> kmem_cache_cpu, but only 305 in-use objects in the same list for
->> kmalloc-2048 cache. We see negative values for page.pobjects, the last page
->> with negative _pobjects_ has the value of 0xdead0004, the next page looks
->> good (_pobjects is 1).
->>
->> For the fix, I wanted to call this_cpu_cmpxchg_double with
->> oldpage->pobjects, but failed due to size difference between
->> oldpage->pobjects and cpu_slab->partial. So I changed to call
->> this_cpu_cmpxchg_double with _tid_. I don't really want no alloc/free
->> happen in between, but just want to make sure the first slab did expereince
->> a remove and re-add. This patch is more to call for ideas.
-> Have you hit the really issue or just review the code ?
-Yup, I hit the real issue. The root cause is out by reviewing the code.
-
-> I did hit the issue and fixed in the upstream patch unpredictably by the following patch.
-> e5d9998f3e09 ("slub: make ->cpu_partial unsigned int")
-I am not sure if the patch you mentioned intended to fix the problem here.
-With that patch the negative page->pobjects would become a large 
-positive value,
-it will win the compare with s->cpu_partial and go ahead to unfreeze the 
-partial slabs.
-Though it may be not a perfect fix for this issue, it really fixes (or 
-workarounds) the issue here.
-I'd like to skip my patch..
-
-thanks,
-wengang
-
-> Thanks,
-> zhong jiang
->> Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
->> ---
->>   mm/slub.c | 20 +++++++++++++++++---
->>   1 file changed, 17 insertions(+), 3 deletions(-)
->>
->> diff --git a/mm/slub.c b/mm/slub.c
->> index e3629cd..26539e6 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
->> @@ -2248,6 +2248,7 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
->>   {
->>   #ifdef CONFIG_SLUB_CPU_PARTIAL
->>   	struct page *oldpage;
->> +	unsigned long tid;
->>   	int pages;
->>   	int pobjects;
->>   
->> @@ -2255,8 +2256,12 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
->>   	do {
->>   		pages = 0;
->>   		pobjects = 0;
->> -		oldpage = this_cpu_read(s->cpu_slab->partial);
->>   
->> +		tid = this_cpu_read(s->cpu_slab->tid);
->> +		/* read tid before reading oldpage */
->> +		barrier();
->> +
->> +		oldpage = this_cpu_read(s->cpu_slab->partial);
->>   		if (oldpage) {
->>   			pobjects = oldpage->pobjects;
->>   			pages = oldpage->pages;
->> @@ -2283,8 +2288,17 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
->>   		page->pobjects = pobjects;
->>   		page->next = oldpage;
->>   
->> -	} while (this_cpu_cmpxchg(s->cpu_slab->partial, oldpage, page)
->> -								!= oldpage);
->> +		/* we dont' change tid, but want to make sure it didn't change
->> +		 * in between. We don't really hope alloc/free not happen on
->> +		 * this CPU, but don't want the first slab be removed from and
->> +		 * then re-added as head to this partial list. If that case
->> +		 * happened, pobjects may read 0xdead0000 when this slab is just
->> +		 * removed from kmem_cache_node by other CPU setting lru.prev
->> +		 * to LIST_POISON2.
->> +		 */
->> +	} while (this_cpu_cmpxchg_double(s->cpu_slab->partial, s->cpu_slab->tid,
->> +					 oldpage, tid, page, tid) == 0);
->> +
->>   	if (unlikely(!s->cpu_partial)) {
->>   		unsigned long flags;
->>   
->
+	-hpa
 
