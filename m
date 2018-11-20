@@ -2,44 +2,44 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF47C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816C0C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9B420831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9B420831
+	by mail.kernel.org (Postfix) with ESMTP id 7E86A20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E86A20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbeKUA4L (ORCPT
+        id S1729619AbeKUA5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:56:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41554 "EHLO mx1.redhat.com"
+        Tue, 20 Nov 2018 19:57:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50333 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbeKUA4K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:56:10 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1726005AbeKUA5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:57:07 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D4A583084258;
-        Tue, 20 Nov 2018 14:26:45 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4325E31819E1;
+        Tue, 20 Nov 2018 14:27:42 +0000 (UTC)
 Received: from [10.36.117.138] (ovpn-117-138.ams2.redhat.com [10.36.117.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FEA52719A;
-        Tue, 20 Nov 2018 14:26:44 +0000 (UTC)
-Subject: Re: [RFC PATCH 2/3] mm, memory_hotplug: deobfuscate migration part of
- offlining
-To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DA33B5D75E;
+        Tue, 20 Nov 2018 14:27:40 +0000 (UTC)
+Subject: Re: [RFC PATCH 1/3] mm, memory_hotplug: try to migrate full section
+ worth of pages
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
         Oscar Salvador <OSalvador@suse.com>,
         Pavel Tatashin <pasha.tatashin@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
+        LKML <linux-kernel@vger.kernel.org>
 References: <20181120134323.13007-1-mhocko@kernel.org>
- <20181120134323.13007-3-mhocko@kernel.org>
+ <20181120134323.13007-2-mhocko@kernel.org>
+ <65271adc-93b4-19fc-e54b-11db582359c5@redhat.com>
+ <20181120142517.GL22247@dhcp22.suse.cz>
 From:   David Hildenbrand <david@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
@@ -86,131 +86,42 @@ Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
  +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
  SE+xAvmumFBY
 Organization: Red Hat GmbH
-Message-ID: <f25bfa30-96cf-799c-6885-86a3a537a977@redhat.com>
-Date:   Tue, 20 Nov 2018 15:26:43 +0100
+Message-ID: <e7935648-104d-a0b8-f5ad-4460f2815b9b@redhat.com>
+Date:   Tue, 20 Nov 2018 15:27:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181120134323.13007-3-mhocko@kernel.org>
+In-Reply-To: <20181120142517.GL22247@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 20 Nov 2018 14:26:46 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 20 Nov 2018 14:27:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.11.18 14:43, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On 20.11.18 15:25, Michal Hocko wrote:
+> On Tue 20-11-18 15:18:41, David Hildenbrand wrote:
+> [...]
+>> (we could also check for pending signals inside that function if really
+>> required)
 > 
-> Memory migration might fail during offlining and we keep retrying in
-> that case. This is currently obfuscate by goto retry loop. The code
-> is hard to follow and as a result it is even suboptimal becase each
-> retry round scans the full range from start_pfn even though we have
-> successfully scanned/migrated [start_pfn, pfn] range already. This
-> is all only because check_pages_isolated failure has to rescan the full
-> range again.
+> do_migrate_pages is not the proper layer to check signals. Because the
+> loop only isolates pages and that is not expensive. The most expensive
+> part is deeper down in the migration core. We wait for page lock or
+> writeback and that can take a long. None of that is killable wait which
+> is a larger surgery but something that we should consider should there
+> be any need to address this.
+
+Indeed, that makes sense.
+
 > 
-> De-obfuscate the migration retry loop by promoting it to a real for
-> loop. In fact remove the goto altogether by making it a proper double
-> loop (yeah, gotos are nasty in this specific case). In the end we
-> will get a slightly more optimal code which is better readable.
+>> Reviewed-by: David Hildenbrand <david@redhat.com>
 > 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memory_hotplug.c | 60 +++++++++++++++++++++++----------------------
->  1 file changed, 31 insertions(+), 29 deletions(-)
+> Thanks!
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 6263c8cd4491..9cd161db3061 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1591,38 +1591,40 @@ static int __ref __offline_pages(unsigned long start_pfn,
->  		goto failed_removal_isolated;
->  	}
->  
-> -	pfn = start_pfn;
-> -repeat:
-> -	/* start memory hot removal */
-> -	ret = -EINTR;
-> -	if (signal_pending(current)) {
-> -		reason = "signal backoff";
-> -		goto failed_removal_isolated;
-> -	}
-> +	do {
-> +		for (pfn = start_pfn; pfn;)
-> +		{
-
-{ on a new line looks weird.
-
-> +			/* start memory hot removal */
-> +			ret = -EINTR;
-
-I think we can move that into the "if (signal_pending(current))"
-
-(if my eyes are not wrong, this will not be touched otherwise)
-
-> +			if (signal_pending(current)) {
-> +				reason = "signal backoff";
-> +				goto failed_removal_isolated;
-> +			}
->  
-> -	cond_resched();
-> -	lru_add_drain_all();
-> -	drain_all_pages(zone);
-> +			cond_resched();
-> +			lru_add_drain_all();
-> +			drain_all_pages(zone);
->  
-> -	pfn = scan_movable_pages(start_pfn, end_pfn);
-> -	if (pfn) { /* We have movable pages */
-> -		ret = do_migrate_range(pfn, end_pfn);
-> -		goto repeat;
-> -	}
-> +			pfn = scan_movable_pages(pfn, end_pfn);
-> +			if (pfn) {
-> +				/* TODO fatal migration failures should bail out */
-> +				do_migrate_range(pfn, end_pfn);
-
-Right, that return value was always ignored.
-
-> +			}
-> +		}
-> +
-> +		/*
-> +		 * dissolve free hugepages in the memory block before doing offlining
-> +		 * actually in order to make hugetlbfs's object counting consistent.
-> +		 */
-> +		ret = dissolve_free_huge_pages(start_pfn, end_pfn);
-> +		if (ret) {
-> +			reason = "failure to dissolve huge pages";
-> +			goto failed_removal_isolated;
-> +		}
-> +		/* check again */
-> +		offlined_pages = check_pages_isolated(start_pfn, end_pfn);
-> +	} while (offlined_pages < 0);
->  
-> -	/*
-> -	 * dissolve free hugepages in the memory block before doing offlining
-> -	 * actually in order to make hugetlbfs's object counting consistent.
-> -	 */
-> -	ret = dissolve_free_huge_pages(start_pfn, end_pfn);
-> -	if (ret) {
-> -		reason = "failure to dissolve huge pages";
-> -		goto failed_removal_isolated;
-> -	}
-> -	/* check again */
-> -	offlined_pages = check_pages_isolated(start_pfn, end_pfn);
-> -	if (offlined_pages < 0)
-> -		goto repeat;
->  	pr_info("Offlined Pages %ld\n", offlined_pages);
->  	/* Ok, all of our target is isolated.
->  	   We cannot do rollback at this point. */
-> 
-
-Looks much better to me.
 
 
 -- 
