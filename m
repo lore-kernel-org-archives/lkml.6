@@ -2,118 +2,152 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D1C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17A2C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4BF206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B09E206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B1eg7ZdL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4BF206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jLNNeswc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B09E206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeKUCfI (ORCPT
+        id S1727002AbeKUCfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:35:08 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:40328 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeKUCfH (ORCPT
+        Tue, 20 Nov 2018 21:35:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34478 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeKUCfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:35:07 -0500
-Received: by mail-ua1-f66.google.com with SMTP id n7so825416uao.7
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:05:17 -0800 (PST)
+        Tue, 20 Nov 2018 21:35:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h3so1217232pfg.1;
+        Tue, 20 Nov 2018 08:05:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OwbsCL5JXdLbbUc53sNOY7ajzSp0r0XJT9ZRI24D9TY=;
-        b=B1eg7ZdLafGW4ZLJvTy7Exe8ELBibczbJ76JwAZOoA+PFsp1K0Ojd1yYOZAWB28geS
-         6QTeMuATxHEvsowCI8c4LadgG3GtM73IMzv78NcxLxUVrEzlhgLceuQQyP8KsqCd9yvn
-         4j1/PjXBgHhrReYmggIP5GF001wFOFqcDvUL0=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=v7hJLl0nspNEvb5LwkAvDpIYRT2ClkaKvvqCVQdKmBE=;
+        b=jLNNeswcf3FOJ5G9jP4ic5x1MQ49CRXg7PKspUXRRdKJUYjSMXRKktrVm0xfUPSWWt
+         Nn1dx1poJP7Y6x16+OscSuhwpLAMDbPWYH9pZoEdNSeOozcL79KAja4XbNfYpPRrH/Gu
+         KLoPN1Le6IXlfBIjXpuctvAqNUMnOFLzyczaAqSBb/ixxt3J+awRiA3fGbgyq1Nz+J/S
+         9Jb+UfiZ1SD4f3IXrWax/47fq8Qok6nZrVmbanf232Te9TVu5FHZHOrzbxXe6d/Gh1Qj
+         ZTnLh89jOpCL/nyBcQVStfXo2yt9yWInLVEfKSYQ4JcLQEi+R2NqsIWBIuqkIREXjMC0
+         TlpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OwbsCL5JXdLbbUc53sNOY7ajzSp0r0XJT9ZRI24D9TY=;
-        b=jMHaqy+lQE9Ilifii7HOQ99/eZxN1B8mEirirhqVDW0FD/csuldf3a9FrDZOPFINg9
-         WY6+I2Wivsa1EDWTIFh5OtYOzEjHT91ObxlVvEI7gbdEYA1Hzf0SDWa3CSCLzyKsCd/f
-         0gmUOCs1JP0veQvlIzy46w6VtfzIZs8WS5FF3MkU56f05Om4kuPwf1FA/SkItAFQ9xrN
-         t9kDe5utWsF8dW2KYHFfKI9LLum3y8xPN2Dc0iqvXWNPDVDqRlc/fvLbCYQmT31v6wz8
-         ZfflRZ46ZMs0b4iMw3B/aAb7ZhzMKZ6Naxk1aLn/LBXMr9lh/9RpiaYMkY9AMG2nqivJ
-         gbag==
-X-Gm-Message-State: AA+aEWapSgPhecgdNlKOaVV12FoW2yDPY7aCuI6o7aY05lyK58Bj1D5U
-        1IVmAhIXtyNiXlOj+xmQsd9mwFq3D+c=
-X-Google-Smtp-Source: AFSGD/XCipAEainJBimOoVxAVufwmLmF5O9AkSI419gbtHLNOsnLFUHnqOWI4oR09eIbQOdnCFFHjA==
-X-Received: by 2002:ab0:aa:: with SMTP id 39mr1131049uaj.120.1542729916338;
-        Tue, 20 Nov 2018 08:05:16 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id f88sm12079957vsa.7.2018.11.20.08.05.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:05:13 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id t8so834364uap.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:05:12 -0800 (PST)
-X-Received: by 2002:ab0:146b:: with SMTP id c40mr1120893uae.9.1542729911453;
- Tue, 20 Nov 2018 08:05:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20181120002654.1891-1-dianders@chromium.org> <20181120002654.1891-7-dianders@chromium.org>
- <20181120155458.GG3894@sirena.org.uk>
-In-Reply-To: <20181120155458.GG3894@sirena.org.uk>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 20 Nov 2018 08:04:57 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
-Message-ID: <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] regulator: core: Remove loop disabling supplies in regulator_force_disable()
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>, digetx@gmail.com,
-        ryandcase@chromium.org, David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=v7hJLl0nspNEvb5LwkAvDpIYRT2ClkaKvvqCVQdKmBE=;
+        b=mlWjt9k4BW1gSTp4e18Aq8B/OsxvyumU+RCZgFKeiqznT+DxqkcWepa1bcbnxNTOXn
+         xpc0TsrtnrC9eRmb8JySClD3ysBO2Hc0vdKrJOyz64I/Sh+j3yWCE1KWn05uvFtHGzN5
+         Qf80iOEhAeBgeRE+vPjxKTsdSEelOmNWt7u/mpprTrvwg0hyAyBN0M92ubgx6/dq8wyI
+         aJ5pibtI2k1fLjFgVksYGd43E/c9aKz3rjrN6++GS3z4zQhn7MQwHKBRNnateDBN+y3j
+         g6CD8ZhJGV4Yxd3LDgQQS6CP/Kz9Ng/3M6au1rNFVC95uT5GAojaZBsBvcTD6+D2oC05
+         Oaiw==
+X-Gm-Message-State: AA+aEWYoVfCu9RmvYadvAqGbf7OPdRTCk1YygrMsXUoDiGULQRaHTtBY
+        uk+SWCir3Zd0LYbQWntHAKc=
+X-Google-Smtp-Source: AJdET5f9hOLNARt5YmCnrd1st/tsZu05GUlkalcnzc0Pg4UW1WxNW0kADQMEVgT4jAPWiAVs3R2GGg==
+X-Received: by 2002:a63:2d82:: with SMTP id t124mr2422551pgt.260.1542729932942;
+        Tue, 20 Nov 2018 08:05:32 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id i63-v6sm10019749pfi.66.2018.11.20.08.05.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 08:05:32 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
+Cc:     linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v2] cpufreq: powernv: add of_node_put()
+Date:   Tue, 20 Nov 2018 11:05:30 -0500
+Message-Id: <20181120160530.21015-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The of_find_node_by_path() returns a node pointer with refcount
+incremented,but there is the lack of use of the of_node_put() when
+done.Add the missing of_node_put() to release the refcount.
 
-On Tue, Nov 20, 2018 at 7:55 AM Mark Brown <broonie@kernel.org> wrote:
->
-> On Mon, Nov 19, 2018 at 04:26:54PM -0800, Douglas Anderson wrote:
-> > In regulator_force_disable() there was a strange loop that looked like:
-> >
-> >   while (rdev->open_count--)
-> >     regulator_disable(rdev->supply);
-> >
-> > I'm not totally sure what the goal was for this loop, but it seems
-> > wrong to me.  If anything I think maybe we should have been looping
-> > over our use_count, but even that might be a little strange.  For now
-> > let's just remove the code and we can add something back in if someone
-> > can explain what's expected.
->
-> This should be using use_count, what that loop is doing is dropping all
-> the enables that the regulator being force disabled had propagated up
-> all the enables it passed up the chain of supplies.
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+Changes in v2
+-update changelog
+---
+ drivers/cpufreq/powernv-cpufreq.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-OK, that makes much more sense then.  I can adjust it to do that.
-I'll wait to see what happens with the rest of the patches in this
-series and then post up a v2 of this one.  The number of disables
-needed depends on how many of the patches in my series you like.  ;-)
+diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+index bf6519cf64bc..7e7ad3879c4e 100644
+--- a/drivers/cpufreq/powernv-cpufreq.c
++++ b/drivers/cpufreq/powernv-cpufreq.c
+@@ -253,18 +253,18 @@ static int init_powernv_pstates(void)
+ 
+ 	if (of_property_read_u32(power_mgt, "ibm,pstate-min", &pstate_min)) {
+ 		pr_warn("ibm,pstate-min node not found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	if (of_property_read_u32(power_mgt, "ibm,pstate-max", &pstate_max)) {
+ 		pr_warn("ibm,pstate-max node not found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	if (of_property_read_u32(power_mgt, "ibm,pstate-nominal",
+ 				 &pstate_nominal)) {
+ 		pr_warn("ibm,pstate-nominal not found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	if (of_property_read_u32(power_mgt, "ibm,pstate-ultra-turbo",
+@@ -293,14 +293,14 @@ static int init_powernv_pstates(void)
+ 	pstate_ids = of_get_property(power_mgt, "ibm,pstate-ids", &len_ids);
+ 	if (!pstate_ids) {
+ 		pr_warn("ibm,pstate-ids not found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	pstate_freqs = of_get_property(power_mgt, "ibm,pstate-frequencies-mhz",
+ 				      &len_freqs);
+ 	if (!pstate_freqs) {
+ 		pr_warn("ibm,pstate-frequencies-mhz not found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	if (len_ids != len_freqs) {
+@@ -311,7 +311,7 @@ static int init_powernv_pstates(void)
+ 	nr_pstates = min(len_ids, len_freqs) / sizeof(u32);
+ 	if (!nr_pstates) {
+ 		pr_warn("No PStates found\n");
+-		return -ENODEV;
++		goto out;
+ 	}
+ 
+ 	powernv_pstate_info.nr_pstates = nr_pstates;
+@@ -352,7 +352,12 @@ static int init_powernv_pstates(void)
+ 
+ 	/* End of list marker entry */
+ 	powernv_freqs[i].frequency = CPUFREQ_TABLE_END;
++
++	of_node_put(power_mgt);
+ 	return 0;
++out:
++	of_node_put(power_mgt);
++	return -ENODEV;
+ }
+ 
+ /* Returns the CPU frequency corresponding to the pstate_id. */
+-- 
+2.17.0
 
-In general it's hard for me to reason about how the system in general
-should behave after regulator_force_disable() is called.  Is it
-basically expected that the system will panic soon after?
-Specifically other consumers of the same regulator will think it's on
-but it won't actually be on.  What should happen if one of those other
-consumers calls disable/enable?  Should the regulator turn back on?
-...or is the regulator permanently off until the system reboots?
-
--Doug
