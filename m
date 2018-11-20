@@ -2,110 +2,130 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67BDDC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8249BC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFFE620989
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3842A214DE
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:36:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBkD0tjR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFE620989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RF/IHwW1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3842A214DE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeKUGDl (ORCPT
+        id S1726980AbeKUGHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:03:41 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36578 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbeKUGDl (ORCPT
+        Wed, 21 Nov 2018 01:07:12 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:39074 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbeKUGHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:03:41 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y6-v6so1772306plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:32:56 -0800 (PST)
+        Wed, 21 Nov 2018 01:07:12 -0500
+Received: by mail-ua1-f66.google.com with SMTP id k10so1071786ual.6
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:36:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MfJuV/kPywVsq2lO72pmZlqYwz9D4tmMU5AAwbuO3qM=;
-        b=VBkD0tjRvkTHWccoytap9FlKB5rxqnY7khjTYfFwOheswGPxcxBDbBFcPVhylwL02H
-         L8L9en6EXdEpTE9H8rGhLwdYyd3oFQVREFvNqJzjMvo/fK+RCT6tjONZZFLPfLkZODgo
-         ozHclt6GTvp1IAqZI8RQs8AmVJkg/MNJmsijQ=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jxASxAi720NLxxTHSY6dTLH5LCfoJ0gZ12XZK2NLFLc=;
+        b=RF/IHwW1ncnZ9MIi45M7DkOwUAWKxQHPcVxIf19Gzishm93pNN9Q/hAOA+USdcJki4
+         md/aniknIPI6lwu3fxF5IoXaXpq+XU7Y1hn8cE/CIJF54eLOy3QNXEC4GAgJNhoQz/PC
+         FJknugZCPLFDPb2tUkEs4ft2IFIUdnpdYYrzs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MfJuV/kPywVsq2lO72pmZlqYwz9D4tmMU5AAwbuO3qM=;
-        b=buH2w28wfsFW8oILqx280QU6QGc2W7AVdjtGNg3aiw1AEVDP7igFPjSzUQKZ1tm6bZ
-         4tfuawcwh19iOUEKmbf4foaLcUAlCQroTmxKaVfWnXb5jAcP1pslln8NL+VAAqcfEYY2
-         Wk0tmgrCHbH1eb1EFA99OVWuXI0r3CFFL8UR/BA4G5hLpo/KsuR0+4ola2MQCLs0vT8l
-         hyxZQ5ir9STqPw//hQrO31ryNXK4yROjEUvy2iS63Cfcezeqxf9pjHYEr2F/KtLzAW4E
-         iEPwgSNqyvGgjgHFmjd69O8acFla7GLPMQ09l9p72l6St00fkNdiYXw/Cl0E5YBrmVep
-         dffQ==
-X-Gm-Message-State: AA+aEWZRaIyzENQqIQywcMRNCU8Nk3FkrFyV3E2LRaKAhHqbSHUSr330
-        XCb37PRn10kW9gzywiB74HiO
-X-Google-Smtp-Source: AFSGD/VoKrLPmTkATBeVlFOMW58bKsxBxKTyqFftjfwtqO6p3zy+TSew3srD2k2S5XodeHqf4QhNFQ==
-X-Received: by 2002:a63:9e58:: with SMTP id r24mr3173726pgo.264.1542742375595;
-        Tue, 20 Nov 2018 11:32:55 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:6008:86c4:249a:6443:23f2:61f3])
-        by smtp.gmail.com with ESMTPSA id j197sm62407233pgc.76.2018.11.20.11.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 11:32:55 -0800 (PST)
-Date:   Wed, 21 Nov 2018 01:02:45 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>, zhao_steven@263.net,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 04/16] arm: dts: Add devicetree for RDA8810PL SoC
-Message-ID: <20181120193245.GC16122@Mani-XPS-13-9360>
-References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
- <20181119170939.19153-5-manivannan.sadhasivam@linaro.org>
- <CAK8P3a1ZOTrUFKvBCdMX-1Fj5Pnk__+GJdee7pOieb2oiWkpuQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jxASxAi720NLxxTHSY6dTLH5LCfoJ0gZ12XZK2NLFLc=;
+        b=uHEeZkxJNwfpTz5Jtdfq1E4EofK/bHgbcyzEDl1y+FTSNaFFZYyHZ9Xxnax54CRWcc
+         nfERXE0V1NWoiAqXCf4hUdE6+2Kc4PTJDYglyiuPb9Mkp8D/ZCQ1AUK0KAv+/BMi4ngX
+         fONgqerSd3SMAZD4yOnNbofIUNhTAQoP46Q1M2RtWZv2sZPaPGWgPfGFE0yy5yDuIoE3
+         qdfwns6nde0IvWOHdI32BlRJ69AM2VOVNlVQueveoKtGR03zEEPhDQCjK2eIXArvslfy
+         JdTimXkfHHWa3FznQcezoW6A3lpFJlrMbzz6ya7uWI7lb+WaNYcn1xMXRhO4jk+p+Czh
+         JdoQ==
+X-Gm-Message-State: AA+aEWZGp5h9yCgiycGthb2b10xlYAhNUqAGKu8J00qjPuoXm5xfxQEp
+        kVJktlbVWF9EOQn+iMt3IC+tJ+bd9O4=
+X-Google-Smtp-Source: AFSGD/W5vC+gfyf9U1VZnemIlwHVg6663BT0SXZgRDUwgeClBp+VBzU+1swa9bg3z2uy5/1hMBfdOQ==
+X-Received: by 2002:ab0:7196:: with SMTP id l22mr1545673uao.3.1542742584902;
+        Tue, 20 Nov 2018 11:36:24 -0800 (PST)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 7sm1426296vky.37.2018.11.20.11.36.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 11:36:23 -0800 (PST)
+Received: by mail-vs1-f52.google.com with SMTP id b74so1791680vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 11:36:21 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr1306132vsv.20.1542742580685;
+ Tue, 20 Nov 2018 11:36:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1ZOTrUFKvBCdMX-1Fj5Pnk__+GJdee7pOieb2oiWkpuQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180927212253.177200-1-mka@chromium.org> <20181120182133.GR22824@google.com>
+In-Reply-To: <20181120182133.GR22824@google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 20 Nov 2018 11:36:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XgnzYBgFb7PJCn4Exr2Y9zkfWJHSAVqskgPAtQtCfgLg@mail.gmail.com>
+Message-ID: <CAD=FV=XgnzYBgFb7PJCn4Exr2Y9zkfWJHSAVqskgPAtQtCfgLg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: pm8998: Use ADC temperature to
+ temp-alarm node
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi,
 
-On Mon, Nov 19, 2018 at 08:37:14PM +0100, Arnd Bergmann wrote:
-> On Mon, Nov 19, 2018 at 6:11 PM Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
+On Tue, Nov 20, 2018 at 10:21 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> On Thu, Sep 27, 2018 at 02:22:53PM -0700, Matthias Kaehlcke wrote:
+> > The temperature information from the temp-alarm block itself is very
+> > coarse ("temperature is above/below trip points"). Provide the driver
+> > with the die temperature channel of the ADC on the PMIC for more precise
+> > readings.
 > >
-> > Add initial device tree for RDA8810PL SoC from RDA Microelectronics.
-> 
-> > +       aliases {
-> > +               serial0 = &uart0;
-> > +               serial1 = &uart1;
-> > +               serial2 = &uart2;
-> > +       };
-> 
-> Better move the aliases into the board file, there might be boards
-> that only expose one or two of them on physical connectors,
-> or that count them in a different order from the SoC.
-> 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > - based on agross/for-next (7a002fe0179c "Merge branch
+> >   'defconfig-for-4.20' into all-for-4.20-redo"))
+> > - depends on e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
+> >   from IIO pull request:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git tags/iio-for-4.20a
+> > - to work properly https://patchwork.kernel.org/patch/10594491/ is
+> >   needed
+> > ---
+> >  arch/arm64/boot/dts/qcom/pm8998.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > index 048f19fa0150..fab5a826fb01 100644
+> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> > @@ -58,6 +58,8 @@
+> >                       compatible = "qcom,spmi-temp-alarm";
+> >                       reg = <0x2400>;
+> >                       interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
+> > +                     io-channels = <&pm8998_adc ADC5_DIE_TEMP>;
+> > +                     io-channel-names = "thermal";
+> >                       #thermal-sensor-cells = <0>;
+> >               };
+> >
+>
+> I think this should be ready to land in for-next now that "arm64: dts:
+> qcom: pm8998: Add die temperature channel node to the ADC"
+> (a789fd0bab57) has been added.
 
-Sure, will move the aliases node to board DTS files.
+Agreed and this matches my understanding of how things are supposed to
+work.  FWIW:
 
-Thanks,
-Mani
-
->       Arnd
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
