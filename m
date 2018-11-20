@@ -2,97 +2,111 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D12C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BDFC5ACBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E19820C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:43:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="A5tJwOzu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E19820C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EB722080F
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:43:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB722080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726001AbeKUIOV (ORCPT
+        id S1726081AbeKUIOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:14:21 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41695 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbeKUIOU (ORCPT
+        Wed, 21 Nov 2018 03:14:50 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56464 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbeKUIOt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:14:20 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u6so2198998plm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 13:43:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7N3lnIJSJE8Ns6WkS2XHSWiiA2n/k1iHekFH+BYK0xI=;
-        b=A5tJwOzuovROBbKL1aW3PKVgMNtc6hy/S4MuIhSevWtS7igk7EX37Xs73lU3yZG3c8
-         QhMviHTXlkV95G3JnLJoHHH+AfcNoe9Im654xRVHXGPUVD58MgmtlD8lEzVO7okkF4S3
-         Ic6u5Roxm5qs0al/0C+Q5LenDPnk40cWsvLpQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7N3lnIJSJE8Ns6WkS2XHSWiiA2n/k1iHekFH+BYK0xI=;
-        b=OUdRpFHbwIDFtSu5039YzPeQ/TLhjcjQf9PXbW0yN7Jgy3uxnDP5WWP0pMUWN7/2sS
-         Be2kABmvoxvlSFrkACht9XUrS5CMZCmzruuOy7Bs3XOIq04IYoEaCvtfFVRn23c9bCvf
-         5Dx5AcBL50jbQYc6b6isGoZlkzmEXHUCwRQ6L7gQCyMBShBmQo/eYm1y4lhJqky8LHAB
-         AIEB53LryFsoQLOQmafYfNcL0C6jbosi0qpfj9y/6JTEMY3MnpsJcVJReJx9L9JbFlhm
-         cI/r0fhvgtZWGQupwm/xa3lGpd9BSMpX7R9CGyizpiirMS19MnE6aQ6tJ8kllTKYSAUA
-         rTgA==
-X-Gm-Message-State: AA+aEWaDu0j2bw1fCib0z+CjjlgvfGe6M26X+cHqkFEvscTYs+iP4N3Z
-        tmzNVBUu1DC0NeT9os9cbJA0baMa0Z8=
-X-Google-Smtp-Source: AFSGD/WdNqYcnJSwnfS3bweyvPgYhg/BcJtsI7csapiMKWa1kk1MfO6EtPAM9v5kay5drh1HYyrMJg==
-X-Received: by 2002:a63:ac46:: with SMTP id z6mr3493551pgn.162.1542750185472;
-        Tue, 20 Nov 2018 13:43:05 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id j64-v6sm19349250pfc.43.2018.11.20.13.43.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 13:43:04 -0800 (PST)
-Date:   Tue, 20 Nov 2018 13:43:03 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH 2/8] pstore: Do not use crash buffer for decompression
-Message-ID: <20181120214303.GA183827@google.com>
-References: <20181101235200.28584-1-keescook@chromium.org>
- <20181101235200.28584-3-keescook@chromium.org>
- <20181102182454.GB14942@google.com>
- <CAGXu5jKdO8icx63YDkqDsYP4_pNxRe5zUiVUg2+0mhbHj10zTg@mail.gmail.com>
+        Wed, 21 Nov 2018 03:14:49 -0500
+Received: from 79.184.254.110.ipv4.supernova.orange.pl (79.184.254.110) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.157)
+ id 9c5788b6f960a75e; Tue, 20 Nov 2018 22:43:31 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Mario.Limonciello@dell.com, mika.westerberg@linux.intel.com,
+        lukas@wunner.de, iommu@lists.linux-foundation.org, joro@8bytes.org,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        bhelgaas@google.com, jacob.jun.pan@intel.com,
+        andreas.noever@gmail.com, michael.jamet@intel.com,
+        YehezkelShB@gmail.com, ckellner@redhat.com,
+        anthony.wong@canonical.com, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Date:   Tue, 20 Nov 2018 22:43:35 +0100
+Message-ID: <35089177.HEBOdrcs2c@aspire.rjw.lan>
+In-Reply-To: <20181116105738.GA21277@red-moon>
+References: <20181113112700.GT2500@lahna.fi.intel.com> <372db397d5384efd8e7264ba8e1b9cbd@ausx13mpc120.AMER.DELL.COM> <20181116105738.GA21277@red-moon>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKdO8icx63YDkqDsYP4_pNxRe5zUiVUg2+0mhbHj10zTg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 01:56:09AM -0600, Kees Cook wrote:
-> On Fri, Nov 2, 2018 at 1:24 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > On Thu, Nov 01, 2018 at 04:51:54PM -0700, Kees Cook wrote:
-> >>  static void decompress_record(struct pstore_record *record)
-> >>  {
-> >> +     int ret;
-> >>       int unzipped_len;
-> >
-> > nit: We could get rid of the unzipped_len variable now I think.
+On Friday, November 16, 2018 11:57:38 AM CET Lorenzo Pieralisi wrote:
+> On Thu, Nov 15, 2018 at 07:33:54PM +0000, Mario.Limonciello@dell.com wrote:
+> > 
+> > 
+> > > -----Original Message-----
+> > > From: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > > Sent: Thursday, November 15, 2018 1:01 PM
+> > > To: Lorenzo Pieralisi
+> > > Cc: Lukas Wunner; iommu@lists.linux-foundation.org; Joerg Roedel; David
+> > > Woodhouse; Lu Baolu; Ashok Raj; Bjorn Helgaas; Rafael J. Wysocki; Jacob jun Pan;
+> > > Andreas Noever; Michael Jamet; Yehezkel Bernat; Christian Kellner; Limonciello,
+> > > Mario; Anthony Wong; linux-acpi@vger.kernel.org; linux-pci@vger.kernel.org; linux-
+> > > kernel@vger.kernel.org
+> > > Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+> > > 
+> > > 
+> > > [EXTERNAL EMAIL]
+> > > 
+> > > On Thu, Nov 15, 2018 at 05:46:08PM +0000, Lorenzo Pieralisi wrote:
+> > > > Do you really need to parse it if the dev->is_thunderbolt check is enough ?
+> > > 
+> > > Yes, we need to parse it one way or another. dev->is_thunderbolt is
+> > > based on heuristics which do not apply anymore when the thing gets
+> > > integrated in the SoC.
+> > > 
+> > > The _DSD is there already (on existing systems) and is being used by
+> > > Windows so I don't understand why we cannot take advantage of it? Every
+> > > new system with Thunderbolt ports will have it.
 > 
-> I didn't follow this -- it gets used quite a bit. I don't see a clean
-> way to remove it?
+> We have different opinions on this, there is no point in me reiterating
+> it over and over, I am against the approach taken to solve this problem
+> first in defining the bindings outside the ACPI specifications and
+> second by acquiescing to what has been done so that it will be done
+> over and over again.
 
-You are right. Sorry I missed that crpyto_comp_decompress actually uses it.
+Arguably, however, we are on the receiving end of things here and even if
+we don't use this binding, that won't buy us anything (but it will introduce
+a fair amount of disappointment among both users and OEMs).
 
-thanks,
+If Windows uses it, then systems will ship with it regardless of what Linux
+does with it, so your "acquiescing to what has been done" argument leads to
+nowhere in this particular case.  It's just a matter of whether or not
+Linux will provide the same level of functionality as Windows with respect
+to this and IMO it would be impractical to refuse to do that for purely
+formal reasons.
 
- - Joel
+> I will raise the point in the appropriate forum, it is up to Bjorn
+> and Rafael to decide on this patch.
+
+For the record, my opinion is that there's a little choice on whether or not
+to use this extra information that firmware is willing to give us.  It could
+be defined in a better way and so on, but since it is in use anyway, we really
+have nothing to gain by refusing to use it.
+
+Now, where the handling of it belongs to is a separate matter that should be
+decided on its own.
+
+Thanks,
+Rafael
+
+
