@@ -2,821 +2,346 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF63C4161B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:54:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC83C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAA920831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:54:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EAA920831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 1522020831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:55:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="mt8bZy2W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1522020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbeKTWXT (ORCPT
+        id S1729476AbeKTWYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:23:19 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:34905 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728035AbeKTWXT (ORCPT
+        Tue, 20 Nov 2018 17:24:20 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:46487 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbeKTWYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:23:19 -0500
-Received: from [IPv6:2001:983:e9a7:1:1da9:d909:50bf:c42e] ([IPv6:2001:983:e9a7:1:1da9:d909:50bf:c42e])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id P4brghh0RcvkSP4bsgh8LV; Tue, 20 Nov 2018 12:54:28 +0100
-Subject: Re: [RFC PATCH v8 4/4] sound/usb: Use Media Controller API to share
- media resources
-To:     shuah@kernel.org, mchehab@kernel.org, perex@perex.cz,
-        tiwai@suse.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <cover.1541118238.git.shuah@kernel.org>
- <ba3bb65b4250fa470c7319d50ebdf1047793efad.1541109584.git.shuah@kernel.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <0b919080-669a-a266-c85c-66dc724a536b@xs4all.nl>
-Date:   Tue, 20 Nov 2018 12:54:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <ba3bb65b4250fa470c7319d50ebdf1047793efad.1541109584.git.shuah@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        Tue, 20 Nov 2018 17:24:20 -0500
+X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
+   d="scan'208";a="23492616"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Nov 2018 04:55:25 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 20 Nov 2018 04:55:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p8uBLor+RPu4f9r5iacsUJFcGTzRsv8kqTqS0KNSR1Q=;
+ b=mt8bZy2Wj1/vkWDLQYeGYVnUEDOdzHIUq1zb6KAYrXFr7ICVTlOqLuIwx4/fQ3gRaQRCPV5xK5jaEdbK84t+pt2fJeuJqUKsQShefW7UXkVEbZqD4Me8ronKY25KKuCE1kDjvQawtwnwdXtLtR1xvdmaIk+O99uAd4sZud+Nq7U=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1716.namprd11.prod.outlook.com (10.173.33.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.21; Tue, 20 Nov 2018 11:55:21 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1339.026; Tue, 20 Nov 2018
+ 11:55:21 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
+        <richard@nod.at>, <Cyrille.Pitchen@microchip.com>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <Tudor.Ambarus@microchip.com>
+Subject: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction Table
+Thread-Topic: [PATCH] mtd: spi-nor: parse SFDP 4-byte Address Instruction
+ Table
+Thread-Index: AQHUgMfp7padVqHddU2ujFJxxustTw==
+Date:   Tue, 20 Nov 2018 11:55:21 +0000
+Message-ID: <20181120115512.15958-1-tudor.ambarus@microchip.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHAGFtVdyvuEpBkytR5+DtoKhTWc6Zm/XfiOMwJ+gSvorjYLgEDkT/FLGuPKoaWWhZnEbeTdvmfgvWLujNesKWxGlu3xkwafQBQG6MpaZVWob9/pYz/0
- 9Rei770AAbuFdXr9dZt5QX/a6wPwBK9X+NSGngmKCZK3qiMMCqp3ML/vc02N/xcirQQLUuz+IGzEIiY33r1D4i9OTYpNGNmUoibYxalezN4MGnL24lkEvj7v
- fpNYl9vWgG8qj4Xy7XGME+G8Oy2eNzKVEIMBQrI0N/l+XfpQkHoJss1FX/3VBbttOINTjbM/vIK+6meyV9EeW8t86rpQfV5CF+a5oW5LThVvnDm4V1TPw9gC
- o+jqpUZ9llaFgexlb7tPjW/2RG71lTbe02p9+a/Wrc1S4SoA5jhX6RVMG1Qco0ERPyL46Hf5X9H5xXrApVvd1K8PfspcL1xHqQWCcUXdcMk0WLLZiRo=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P193CA0017.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:800:bd::27) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1716;6:s1qRPSe4p8GR9eqE+z7CeuQfXEhz47MqwIrk5biw4rmKHAvLZ3V6lQT0j4Uath9HxzUj1vVEf2iDm1xMgOhyB5z3Y/p01JvaKiof6xD6YxHNSGR5vYNicj8nuqNDkcDKCPtJkhTZGV5ZajgZ9CJYsjS0/KXJlkgqm35JF0ltoNuFymYGHLTHfoQfvRqU3uPpG5YYoIRJWNgsHe3Z0KDgDAL6PwVFXbLSFyCG6qqhXq7TY0mv9L+LThT9W7xTtPgk1bWTWE8xmrgFN1XCKz8dGkj2CN3BbpjTAPFcDSwY87t9MYLHOmXphDiIS/K9MoeKKuE6CY0eogjYqtXZKA6EEuZDLZ2cdMW90N03OsshyAFF5s9P6kJJrAvAWQxtOVao8ARquHB2hHsdct/WHzmXjxkNKFrb8bZj4DbF6pSJosahkV4DwHKbihCQeRuWcVM6bcjjNR5hMw4zQGBvt+VPlA==;5:XLwn6tsfZsVLd1BkLItquy6mqLldPyXWkRNzPzCzJAVjtcwwZPDMa40qLuD8ejwdcML166mvt5WPWHk9ZybzGYW1D/S1J9I6rnjLZVnetAtAqPUjsfN3MU5D9CKuVMjlYX2+/iHBpZa82la6xwApSIjs3uKVwlpeLJafPW3kMJE=;7:o+bLw0VqH1JCAOfrt7eHwIaR2p6vcQAOoByhIe+S4mw9N1atqJgGfvkjf60DU7pZqEftlzt6NCpx4sBFKm8Jw7TWOHHrSClQRJHVze/7BQObstN+SpxeSoEWz+19WKLFcxGDTqXSdO8ICV+pclEKjg==
+x-ms-office365-filtering-correlation-id: 9bcc6b5d-9827-4250-8c23-08d64edf0c10
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1716;
+x-ms-traffictypediagnostic: BN6PR11MB1716:
+x-microsoft-antispam-prvs: <BN6PR11MB1716C2AF7A2517C31B4EA300F0D90@BN6PR11MB1716.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231442)(944501410)(52105112)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1716;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1716;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(6116002)(3846002)(6506007)(386003)(66066001)(6486002)(6436002)(81156014)(8676002)(81166006)(1857600001)(6636002)(1076002)(2501003)(105586002)(71190400001)(71200400001)(7736002)(72206003)(478600001)(14454004)(305945005)(106356001)(25786009)(5660300001)(256004)(2900100001)(476003)(110136005)(316002)(2616005)(486006)(52116002)(36756003)(8936002)(54906003)(99286004)(2906002)(2201001)(186003)(102836004)(68736007)(97736004)(575784001)(86362001)(6512007)(53936002)(4326008)(39060400002)(107886003)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1716;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: x3jRr2C+PQYEr4pKjxg8JUQvtJ7LabKhSum+8Ry8FCFO00hYTGGHZVmn5KvA42TcgxcsUgr1eQRZJ/P8E8nJcCSWUUH2DhHP42VD/wlsmbr/LT6bXcRMk0skzg+EzE2/ZETaayaMfuGZwv6bVnP3vrcT8G1dfGnoGu9hymDW6pMBVs0SZHxwe/KQcL+4rxLMQV+xuDMfphjdK0IPqMwBpq5JWB4BxStyhgGCLSovhkKtnQSzGs8gyLmOs1oj6dMWbYWIMECwNjLw+OXONGuAm8IPBzGU9+gW+AzbjMnpSY/sgTYnuicgmRGhbDiOou9md/nhMHbSGcYUcNnWWNTOgmxh2WBft5dRnupf59aT2vg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9bcc6b5d-9827-4250-8c23-08d64edf0c10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 11:55:21.0182
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1716
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/2018 01:31 AM, shuah@kernel.org wrote:
-> From: Shuah Khan <shuah@kernel.org>
-> 
-> Change ALSA driver to use Media Controller API to share media resources
-> with DVB, and V4L2 drivers on a AU0828 media device.
-> 
-> Media Controller specific initialization is done after sound card is
-> registered. ALSA creates Media interface and entity function graph
-> nodes for Control, Mixer, PCM Playback, and PCM Capture devices.
-> 
-> snd_usb_hw_params() will call Media Controller enable source handler
-> interface to request the media resource. If resource request is granted,
-> it will release it from snd_usb_hw_free(). If resource is busy, -EBUSY is
-> returned.
-> 
-> Media specific cleanup is done in usb_audio_disconnect().
-> 
-> Signed-off-by: Shuah Khan <shuah@kernel.org>
-> ---
->  sound/usb/Kconfig        |   4 +
->  sound/usb/Makefile       |   2 +
->  sound/usb/card.c         |  14 ++
->  sound/usb/card.h         |   3 +
->  sound/usb/media.c        | 320 +++++++++++++++++++++++++++++++++++++++
->  sound/usb/media.h        |  73 +++++++++
->  sound/usb/mixer.h        |   3 +
->  sound/usb/pcm.c          |  29 +++-
->  sound/usb/quirks-table.h |   1 +
->  sound/usb/stream.c       |   2 +
->  sound/usb/usbaudio.h     |   6 +
->  11 files changed, 453 insertions(+), 4 deletions(-)
->  create mode 100644 sound/usb/media.c
->  create mode 100644 sound/usb/media.h
-> 
-> diff --git a/sound/usb/Kconfig b/sound/usb/Kconfig
-> index f61b5662bb89..6319b544ba3a 100644
-> --- a/sound/usb/Kconfig
-> +++ b/sound/usb/Kconfig
-> @@ -15,6 +15,7 @@ config SND_USB_AUDIO
->  	select SND_RAWMIDI
->  	select SND_PCM
->  	select BITREVERSE
-> +	select SND_USB_AUDIO_USE_MEDIA_CONTROLLER if MEDIA_CONTROLLER && (MEDIA_SUPPORT=y || MEDIA_SUPPORT=SND_USB_AUDIO)
->  	help
->  	  Say Y here to include support for USB audio and USB MIDI
->  	  devices.
-> @@ -22,6 +23,9 @@ config SND_USB_AUDIO
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called snd-usb-audio.
->  
-> +config SND_USB_AUDIO_USE_MEDIA_CONTROLLER
-> +	bool
-> +
->  config SND_USB_UA101
->  	tristate "Edirol UA-101/UA-1000 driver"
->  	select SND_PCM
-> diff --git a/sound/usb/Makefile b/sound/usb/Makefile
-> index d330f74c90e6..e1ce257ab705 100644
-> --- a/sound/usb/Makefile
-> +++ b/sound/usb/Makefile
-> @@ -18,6 +18,8 @@ snd-usb-audio-objs := 	card.o \
->  			quirks.o \
->  			stream.o
->  
-> +snd-usb-audio-$(CONFIG_SND_USB_AUDIO_USE_MEDIA_CONTROLLER) += media.o
-> +
->  snd-usbmidi-lib-objs := midi.o
->  
->  # Toplevel Module Dependency
-> diff --git a/sound/usb/card.c b/sound/usb/card.c
-> index 2bfe4e80a6b9..d9ae331280a2 100644
-> --- a/sound/usb/card.c
-> +++ b/sound/usb/card.c
-> @@ -68,6 +68,7 @@
->  #include "format.h"
->  #include "power.h"
->  #include "stream.h"
-> +#include "media.h"
->  
->  MODULE_AUTHOR("Takashi Iwai <tiwai@suse.de>");
->  MODULE_DESCRIPTION("USB Audio");
-> @@ -673,6 +674,11 @@ static int usb_audio_probe(struct usb_interface *intf,
->  	if (err < 0)
->  		goto __error;
->  
-> +	if (quirk && quirk->media_device) {
-> +		/* don't want to fail when media_snd_device_create() fails */
-> +		media_snd_device_create(chip, intf);
+From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
 
-I'd change the prefix to snd_media_device_create. After all, you are creating
-a media_device for a sound device.
+Add support for SFDP (JESD216B) 4-byte Address Instruction Table. This
+table is optional but when available, we parse it to get the 4-byte
+address op codes supported by the memory.
+Using these op codes is stateless as opposed to entering the 4-byte
+address mode or setting the Base Address Register (BAR).
 
-> +	}
-> +
->  	usb_chip[chip->index] = chip;
->  	chip->num_interfaces++;
->  	usb_set_intfdata(intf, chip);
-> @@ -729,6 +735,14 @@ static void usb_audio_disconnect(struct usb_interface *intf)
->  		list_for_each(p, &chip->midi_list) {
->  			snd_usbmidi_disconnect(p);
->  		}
-> +		/*
-> +		 * Nice to check quirk && quirk->media_device and
-> +		 * then call media_snd_device_delete(). Don't have
-> +		 * access to quirk here. media_snd_device_delete()
-> +		 * acceses mixer_list
+Flashes that have the 4BAIT table declared can now support
+SPINOR_OP_PP_1_1_4_4B and SPINOR_OP_PP_1_4_4_4B opcodes.
 
-acceses -> accesses
+Tested on MX25L25673G.
 
-> +		 */
-> +		media_snd_device_delete(chip);
-> +
->  		/* release mixer resources */
->  		list_for_each_entry(mixer, &chip->mixer_list, list) {
->  			snd_usb_mixer_disconnect(mixer);
-> diff --git a/sound/usb/card.h b/sound/usb/card.h
-> index ac785d15ced4..5dd3538ed6b5 100644
-> --- a/sound/usb/card.h
-> +++ b/sound/usb/card.h
-> @@ -108,6 +108,8 @@ struct snd_usb_endpoint {
->  	struct list_head list;
->  };
->  
-> +struct media_ctl;
-> +
->  struct snd_usb_substream {
->  	struct snd_usb_stream *stream;
->  	struct usb_device *dev;
-> @@ -160,6 +162,7 @@ struct snd_usb_substream {
->  	} dsd_dop;
->  
->  	bool trigger_tstamp_pending_update; /* trigger timestamp being updated from initial estimate */
-> +	struct media_ctl *media_ctl;
->  };
->  
->  struct snd_usb_stream {
-> diff --git a/sound/usb/media.c b/sound/usb/media.c
-> new file mode 100644
-> index 000000000000..140a98eed294
-> --- /dev/null
-> +++ b/sound/usb/media.c
-> @@ -0,0 +1,320 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * media.c - Media Controller specific ALSA driver code
-> + *
-> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
-> + *
-> + */
-> +
-> +/*
-> + * This file adds Media Controller support to ALSA driver
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+[tudor.ambarus@microchip.com:
+- rework erase and page program logic,
+- pass DMA-able buffer to spi_nor_read_sfdp(),
+- various minor updates.]
+Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+---
+Depends on spi_nor_sort_erase_mask() defined in
+"[PATCH v2] mtd: spi-nor: fix selection of uniform erase type in flexible c=
+onf".
 
-to -> to the
+ drivers/mtd/spi-nor/spi-nor.c | 189 ++++++++++++++++++++++++++++++++++++++=
+++++
+ 1 file changed, 189 insertions(+)
 
-> + * to use the Media Controller API to share tuner with DVB
+diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
+index 4c7e4dc25006..3495557b4948 100644
+--- a/drivers/mtd/spi-nor/spi-nor.c
++++ b/drivers/mtd/spi-nor/spi-nor.c
+@@ -2268,6 +2268,7 @@ struct sfdp_parameter_header {
+=20
+ #define SFDP_BFPT_ID		0xff00	/* Basic Flash Parameter Table */
+ #define SFDP_SECTOR_MAP_ID	0xff81	/* Sector Map Table */
++#define SFDP_4BAIT_ID		0xff84	/* 4-byte Address Instruction Table */
+=20
+ #define SFDP_SIGNATURE		0x50444653U
+ #define SFDP_JESD216_MAJOR	1
+@@ -3101,6 +3102,190 @@ static int spi_nor_parse_smpt(struct spi_nor *nor,
+ 	return ret;
+ }
+=20
++#define SFDP_4BAIT_DWORD_MAX	2
++
++struct sfdp_4bait {
++	/* The hardware capability. */
++	u32		hwcaps;
++
++	/*
++	 * The <supported_bit> bit in DWORD1 of the 4BAIT tells us whether
++	 * the associated 4-byte address op code is supported.
++	 */
++	u32		supported_bit;
++};
++
++/**
++ * spi_nor_parse_4bait() - parse the 4-Byte Address Instruction Table
++ * @nor:		pointer to a 'struct spi_nor'.
++ * @param_header:	pointer to the 'struct sfdp_parameter_header' describing
++ *			the 4-Byte Address Instruction Table length and version.
++ * @params:		pointer to the 'struct spi_nor_flash_parameter' to be.
++ *
++ * Return: 0 on success, -errno otherwise.
++ */
++static int spi_nor_parse_4bait(struct spi_nor *nor,
++			       const struct sfdp_parameter_header *param_header,
++			       struct spi_nor_flash_parameter *params)
++{
++	static const struct sfdp_4bait reads[] =3D {
++		{ SNOR_HWCAPS_READ,		BIT(0) },
++		{ SNOR_HWCAPS_READ_FAST,	BIT(1) },
++		{ SNOR_HWCAPS_READ_1_1_2,	BIT(2) },
++		{ SNOR_HWCAPS_READ_1_2_2,	BIT(3) },
++		{ SNOR_HWCAPS_READ_1_1_4,	BIT(4) },
++		{ SNOR_HWCAPS_READ_1_4_4,	BIT(5) },
++		{ SNOR_HWCAPS_READ_1_1_1_DTR,	BIT(13) },
++		{ SNOR_HWCAPS_READ_1_2_2_DTR,	BIT(14) },
++		{ SNOR_HWCAPS_READ_1_4_4_DTR,	BIT(15) },
++	};
++	static const struct sfdp_4bait programs[] =3D {
++		{ SNOR_HWCAPS_PP,		BIT(6) },
++		{ SNOR_HWCAPS_PP_1_1_4,		BIT(7) },
++		{ SNOR_HWCAPS_PP_1_4_4,		BIT(8) },
++	};
++	static const struct sfdp_4bait erases[SNOR_ERASE_TYPE_MAX] =3D {
++		{ 0u /* not used */,		BIT(9) },
++		{ 0u /* not used */,		BIT(10) },
++		{ 0u /* not used */,		BIT(11) },
++		{ 0u /* not used */,		BIT(12) },
++	};
++	struct spi_nor_pp_command *params_pp =3D params->page_programs;
++	struct spi_nor_erase_map *map =3D &nor->erase_map;
++	struct spi_nor_erase_type *erase_type =3D map->erase_type;
++	u32 *dwords;
++	size_t len;
++	u32 addr, discard_hwcaps, read_hwcaps, pp_hwcaps, erase_mask;
++	int i, ret;
++
++	if (param_header->major !=3D SFDP_JESD216_MAJOR ||
++	    param_header->length < SFDP_4BAIT_DWORD_MAX)
++		return -EINVAL;
++
++	/* Read the 4-byte Address Instruction Table. */
++	len =3D sizeof(*dwords) * SFDP_4BAIT_DWORD_MAX;
++
++	/* Use a kmalloc'ed bounce buffer to guarantee it is DMA-able. */
++	dwords =3D kmalloc(len, GFP_KERNEL);
++	if (!dwords)
++		return -ENOMEM;
++
++	addr =3D SFDP_PARAM_HEADER_PTP(param_header);
++	ret =3D spi_nor_read_sfdp(nor, addr, len, dwords);
++	if (ret)
++		return ret;
++
++	/* Fix endianness of the 4BAIT DWORDs. */
++	for (i =3D 0; i < SFDP_4BAIT_DWORD_MAX; i++)
++		dwords[i] =3D le32_to_cpu(dwords[i]);
++
++	/*
++	 * Compute the subset of (Fast) Read commands for which the 4-byte
++	 * version is supported.
++	 */
++	discard_hwcaps =3D 0;
++	read_hwcaps =3D 0;
++	for (i =3D 0; i < ARRAY_SIZE(reads); i++) {
++		const struct sfdp_4bait *read =3D &reads[i];
++
++		discard_hwcaps |=3D read->hwcaps;
++		if ((params->hwcaps.mask & read->hwcaps) &&
++		    (dwords[0] & read->supported_bit))
++			read_hwcaps |=3D read->hwcaps;
++	}
++
++	/*
++	 * Compute the subset of Page Program commands for which the 4-byte
++	 * version is supported.
++	 */
++	pp_hwcaps =3D 0;
++	for (i =3D 0; i < ARRAY_SIZE(programs); i++) {
++		const struct sfdp_4bait *program =3D &programs[i];
++
++		/*
++		 * The 4 Byte Address Instruction (Optional) Table is the only
++		 * SFDP table that indicates support for Page Program Commands.
++		 * Bypass the params->hwcaps.mask and consider 4BAIT the biggest
++		 * authority for specifying Page Program support.
++		 */
++		discard_hwcaps |=3D program->hwcaps;
++		if (dwords[0] & program->supported_bit)
++			pp_hwcaps |=3D program->hwcaps;
++	}
++
++	/*
++	 * Compute the subset of Sector Erase commands for which the 4-byte
++	 * version is supported.
++	 */
++	erase_mask =3D 0;
++	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++) {
++		const struct sfdp_4bait *erase =3D &erases[i];
++
++		if (dwords[0] & erase->supported_bit)
++			erase_mask |=3D BIT(i);
++	}
++
++	/* Replicate the sort done for the map's erase types in BFPT. */
++	erase_mask =3D spi_nor_sort_erase_mask(map, erase_mask);
++
++	/*
++	 * We need at least one 4-byte op code per read, program and erase
++	 * operation; the .read(), .write() and .erase() hooks share the
++	 * nor->addr_width value.
++	 */
++	if (!read_hwcaps || !pp_hwcaps || !erase_mask)
++		goto out;
++
++	/*
++	 * Discard all operations from the 4-byte instruction set which are
++	 * not supported by this memory.
++	 */
++	params->hwcaps.mask &=3D ~discard_hwcaps;
++	params->hwcaps.mask |=3D (read_hwcaps | pp_hwcaps);
++
++	/* Use the 4-byte address instruction set. */
++	for (i =3D 0; i < SNOR_CMD_READ_MAX; i++) {
++		struct spi_nor_read_command *read_cmd =3D &params->reads[i];
++
++		read_cmd->opcode =3D spi_nor_convert_3to4_read(read_cmd->opcode);
++	}
++
++	/* 4BAIT is the only SFDP table that indicates page program support. */
++	if (pp_hwcaps & SNOR_HWCAPS_PP)
++		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP],
++					SPINOR_OP_PP_4B, SNOR_PROTO_1_1_1);
++	if (pp_hwcaps & SNOR_HWCAPS_PP_1_1_4)
++		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP_1_1_4],
++					SPINOR_OP_PP_1_1_4_4B,
++					SNOR_PROTO_1_1_4);
++	if (pp_hwcaps & SNOR_HWCAPS_PP_1_4_4)
++		spi_nor_set_pp_settings(&params_pp[SNOR_CMD_PP_1_4_4],
++					SPINOR_OP_PP_1_4_4_4B,
++					SNOR_PROTO_1_4_4);
++
++	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++) {
++		if (erase_mask & BIT(i))
++			erase_type[i].opcode =3D (dwords[1] >>
++						erase_type[i].idx * 8) & 0xFF;
++		else
++			spi_nor_set_erase_type(&erase_type[i], 0u, 0xFF);
++	}
++
++	/*
++	 * We set nor->addr_width here to skip spi_nor_set_4byte_opcodes()
++	 * later because this latest function implements a legacy quirk for
++	 * the erase size of Spansion memory. However this quirk is no longer
++	 * needed with new SFDP compliant memories.
++	 */
++	nor->addr_width =3D 4;
++	nor->flags |=3D SPI_NOR_4B_OPCODES;
++
++	/* fall through */
++out:
++	kfree(dwords);
++	return ret;
++}
++
+ /**
+  * spi_nor_parse_sfdp() - parse the Serial Flash Discoverable Parameters.
+  * @nor:		pointer to a 'struct spi_nor'
+@@ -3198,6 +3383,10 @@ static int spi_nor_parse_sfdp(struct spi_nor *nor,
+ 			err =3D spi_nor_parse_smpt(nor, param_header);
+ 			break;
+=20
++		case SFDP_4BAIT_ID:
++			err =3D spi_nor_parse_4bait(nor, param_header, params);
++			break;
++
+ 		default:
+ 			break;
+ 		}
+--=20
+2.9.4
 
-tuner -> the tuner
-
-> + * and V4L2 drivers that control media device. Media device
-
-that -> that the
-Media -> The media
-
-> + * is created based on existing quirks framework. Using this
-
-on -> on the
-
-> + * approach, the media controller API usage can be added for
-> + * a specific device.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/mutex.h>
-> +#include <linux/slab.h>
-> +#include <linux/usb.h>
-> +
-> +#include <sound/pcm.h>
-> +#include <sound/core.h>
-> +
-> +#include "usbaudio.h"
-> +#include "card.h"
-> +#include "mixer.h"
-> +#include "media.h"
-> +
-> +int media_snd_stream_init(struct snd_usb_substream *subs, struct snd_pcm *pcm,
-
-snd_media_stream_init makes more sense to me. Just my opinion though.
-
-> +			int stream)
-> +{
-> +	struct media_device *mdev;
-> +	struct media_ctl *mctl;
-> +	struct device *pcm_dev = &pcm->streams[stream].dev;
-> +	u32 intf_type;
-> +	int ret = 0;
-> +	u16 mixer_pad;
-> +	struct media_entity *entity;
-> +
-> +	mdev = subs->stream->chip->media_dev;
-> +	if (!mdev)
-> +		return 0;
-> +
-> +	if (subs->media_ctl)
-> +		return 0;
-> +
-> +	/* allocate media_ctl */
-> +	mctl = kzalloc(sizeof(*mctl), GFP_KERNEL);
-> +	if (!mctl)
-> +		return -ENOMEM;
-> +
-> +	mctl->media_dev = mdev;
-> +	if (stream == SNDRV_PCM_STREAM_PLAYBACK) {
-> +		intf_type = MEDIA_INTF_T_ALSA_PCM_PLAYBACK;
-> +		mctl->media_entity.function = MEDIA_ENT_F_AUDIO_PLAYBACK;
-> +		mctl->media_pad.flags = MEDIA_PAD_FL_SOURCE;
-> +		mixer_pad = 1;
-> +	} else {
-> +		intf_type = MEDIA_INTF_T_ALSA_PCM_CAPTURE;
-> +		mctl->media_entity.function = MEDIA_ENT_F_AUDIO_CAPTURE;
-> +		mctl->media_pad.flags = MEDIA_PAD_FL_SINK;
-> +		mixer_pad = 2;
-> +	}
-> +	mctl->media_entity.name = pcm->name;
-> +	media_entity_pads_init(&mctl->media_entity, 1, &mctl->media_pad);
-> +	ret =  media_device_register_entity(mctl->media_dev,
-> +					    &mctl->media_entity);
-> +	if (ret)
-> +		goto free_mctl;
-> +
-> +	mctl->intf_devnode = media_devnode_create(mdev, intf_type, 0,
-> +						  MAJOR(pcm_dev->devt),
-> +						  MINOR(pcm_dev->devt));
-> +	if (!mctl->intf_devnode) {
-> +		ret = -ENOMEM;
-> +		goto unregister_entity;
-> +	}
-> +	mctl->intf_link = media_create_intf_link(&mctl->media_entity,
-> +						 &mctl->intf_devnode->intf,
-> +						 MEDIA_LNK_FL_ENABLED);
-> +	if (!mctl->intf_link) {
-> +		ret = -ENOMEM;
-> +		goto devnode_remove;
-> +	}
-> +
-> +	/* create link between mixer and audio */
-> +	media_device_for_each_entity(entity, mdev) {
-> +		switch (entity->function) {
-> +		case MEDIA_ENT_F_AUDIO_MIXER:
-> +			ret = media_create_pad_link(entity, mixer_pad,
-> +						    &mctl->media_entity, 0,
-> +						    MEDIA_LNK_FL_ENABLED);
-> +			if (ret)
-> +				goto remove_intf_link;
-> +			break;
-> +		}
-> +	}
-> +
-> +	subs->media_ctl = mctl;
-> +	return 0;
-> +
-> +remove_intf_link:
-> +	media_remove_intf_link(mctl->intf_link);
-> +devnode_remove:
-> +	media_devnode_remove(mctl->intf_devnode);
-> +unregister_entity:
-> +	media_device_unregister_entity(&mctl->media_entity);
-> +free_mctl:
-> +	kfree(mctl);
-> +	return ret;
-> +}
-> +
-> +void media_snd_stream_delete(struct snd_usb_substream *subs)
-> +{
-> +	struct media_ctl *mctl = subs->media_ctl;
-> +
-> +	if (mctl) {
-> +		struct media_device *mdev;
-> +
-> +		mdev = mctl->media_dev;
-> +		if (mdev && media_devnode_is_registered(mdev->devnode)) {
-> +			media_devnode_remove(mctl->intf_devnode);
-> +			media_device_unregister_entity(&mctl->media_entity);
-> +			media_entity_cleanup(&mctl->media_entity);
-> +		}
-> +		kfree(mctl);
-> +		subs->media_ctl = NULL;
-> +	}
-> +}
-> +
-> +int media_snd_start_pipeline(struct snd_usb_substream *subs)
-> +{
-> +	struct media_ctl *mctl = subs->media_ctl;
-> +	int ret = 0;
-> +
-> +	if (!mctl)
-> +		return 0;
-> +
-> +	mutex_lock(&mctl->media_dev->graph_mutex);
-> +	if (mctl->media_dev->enable_source)
-> +		ret = mctl->media_dev->enable_source(&mctl->media_entity,
-> +						     &mctl->media_pipe);
-> +	mutex_unlock(&mctl->media_dev->graph_mutex);
-> +	return ret;
-> +}
-> +
-> +void media_snd_stop_pipeline(struct snd_usb_substream *subs)
-> +{
-> +	struct media_ctl *mctl = subs->media_ctl;
-> +
-> +	if (!mctl)
-> +		return;
-> +
-> +	mutex_lock(&mctl->media_dev->graph_mutex);
-> +	if (mctl->media_dev->disable_source)
-> +		mctl->media_dev->disable_source(&mctl->media_entity);
-> +	mutex_unlock(&mctl->media_dev->graph_mutex);
-> +}
-> +
-> +static int media_snd_mixer_init(struct snd_usb_audio *chip)
-> +{
-> +	struct device *ctl_dev = &chip->card->ctl_dev;
-> +	struct media_intf_devnode *ctl_intf;
-> +	struct usb_mixer_interface *mixer;
-> +	struct media_device *mdev = chip->media_dev;
-> +	struct media_mixer_ctl *mctl;
-> +	u32 intf_type = MEDIA_INTF_T_ALSA_CONTROL;
-> +	int ret;
-> +
-> +	if (!mdev)
-> +		return -ENODEV;
-> +
-> +	ctl_intf = chip->ctl_intf_media_devnode;
-> +	if (!ctl_intf) {
-> +		ctl_intf = media_devnode_create(mdev, intf_type, 0,
-> +						MAJOR(ctl_dev->devt),
-> +						MINOR(ctl_dev->devt));
-> +		if (!ctl_intf)
-> +			return -ENOMEM;
-> +		chip->ctl_intf_media_devnode = ctl_intf;
-> +	}
-> +
-> +	list_for_each_entry(mixer, &chip->mixer_list, list) {
-> +
-> +		if (mixer->media_mixer_ctl)
-> +			continue;
-> +
-> +		/* allocate media_mixer_ctl */
-> +		mctl = kzalloc(sizeof(*mctl), GFP_KERNEL);
-> +		if (!mctl)
-> +			return -ENOMEM;
-> +
-> +		mctl->media_dev = mdev;
-> +		mctl->media_entity.function = MEDIA_ENT_F_AUDIO_MIXER;
-> +		mctl->media_entity.name = chip->card->mixername;
-> +		mctl->media_pad[0].flags = MEDIA_PAD_FL_SINK;
-> +		mctl->media_pad[1].flags = MEDIA_PAD_FL_SOURCE;
-> +		mctl->media_pad[2].flags = MEDIA_PAD_FL_SOURCE;
-> +		media_entity_pads_init(&mctl->media_entity, MEDIA_MIXER_PAD_MAX,
-> +				  mctl->media_pad);
-> +		ret =  media_device_register_entity(mctl->media_dev,
-> +						    &mctl->media_entity);
-> +		if (ret) {
-> +			kfree(mctl);
-> +			return ret;
-> +		}
-> +
-> +		mctl->intf_link = media_create_intf_link(&mctl->media_entity,
-> +							 &ctl_intf->intf,
-> +							 MEDIA_LNK_FL_ENABLED);
-> +		if (!mctl->intf_link) {
-> +			media_device_unregister_entity(&mctl->media_entity);
-> +			media_entity_cleanup(&mctl->media_entity);
-> +			kfree(mctl);
-> +			return -ENOMEM;
-> +		}
-> +		mctl->intf_devnode = ctl_intf;
-> +		mixer->media_mixer_ctl = mctl;
-> +	}
-> +	return 0;
-> +}
-> +
-> +static void media_snd_mixer_delete(struct snd_usb_audio *chip)
-> +{
-> +	struct usb_mixer_interface *mixer;
-> +	struct media_device *mdev = chip->media_dev;
-> +
-> +	if (!mdev)
-> +		return;
-> +
-> +	list_for_each_entry(mixer, &chip->mixer_list, list) {
-> +		struct media_mixer_ctl *mctl;
-> +
-> +		mctl = mixer->media_mixer_ctl;
-> +		if (!mixer->media_mixer_ctl)
-> +			continue;
-> +
-> +		if (media_devnode_is_registered(mdev->devnode)) {
-> +			media_device_unregister_entity(&mctl->media_entity);
-> +			media_entity_cleanup(&mctl->media_entity);
-> +		}
-> +		kfree(mctl);
-> +		mixer->media_mixer_ctl = NULL;
-> +	}
-> +	if (media_devnode_is_registered(mdev->devnode))
-> +		media_devnode_remove(chip->ctl_intf_media_devnode);
-> +	chip->ctl_intf_media_devnode = NULL;
-> +}
-> +
-> +int media_snd_device_create(struct snd_usb_audio *chip,
-> +			struct usb_interface *iface)
-> +{
-> +	struct media_device *mdev;
-> +	struct usb_device *usbdev = interface_to_usbdev(iface);
-> +	int ret;
-> +
-> +	/* usb-audio driver is probed for each usb interface, and
-> +	 * there are multiple interfaces per device. Avoid calling
-> +	 * media_device_usb_allocate() each time usb_audio_probe()
-> +	 * is called. Do it only once.
-> +	 */
-> +	if (chip->media_dev)
-> +		goto snd_mixer_init;
-> +
-> +	mdev = media_device_usb_allocate(usbdev, KBUILD_MODNAME);
-> +	if (!mdev)
-> +		return -ENOMEM;
-> +
-> +	if (!media_devnode_is_registered(mdev->devnode)) {
-> +		/* register media_device */
-> +		ret = media_device_register(mdev);
-
-You should first configure the media device before registering it.
-
-General note: since there are two drivers modifying the same media device
-the topology will change as these drivers configure the media device.
-
-This means that there is a short window where the media device is registered
-but the topology is only partially up.
-
-Work is in progress to signal topology changes to userspace, but that is not
-in (or even posted) yet. I do not believe that is an issue in this particular
-case.
-
-> +		if (ret) {
-> +			media_device_delete(mdev, KBUILD_MODNAME);
-> +			dev_err(&usbdev->dev,
-> +				"Couldn't register media device. Error: %d\n",
-> +				ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	/* save media device - avoid lookups */
-> +	chip->media_dev = mdev;
-> +
-> +snd_mixer_init:
-> +	/* Create media entities for mixer and control dev */
-> +	ret = media_snd_mixer_init(chip);
-> +	if (ret) {
-> +		dev_err(&usbdev->dev,
-> +			"Couldn't create media mixer entities. Error: %d\n",
-> +			ret);
-> +
-> +		/* clear saved media_dev */
-> +		chip->media_dev = NULL;
-> +
-> +		return ret;
-> +	}
-> +	return 0;
-> +}
-> +
-> +void media_snd_device_delete(struct snd_usb_audio *chip)
-> +{
-> +	struct media_device *mdev = chip->media_dev;
-> +	struct snd_usb_stream *stream;
-> +
-> +	/* release resources */
-> +	list_for_each_entry(stream, &chip->pcm_list, list) {
-> +		media_snd_stream_delete(&stream->substream[0]);
-> +		media_snd_stream_delete(&stream->substream[1]);
-> +	}
-> +
-> +	media_snd_mixer_delete(chip);
-> +
-> +	if (mdev) {
-> +		media_device_delete(mdev, KBUILD_MODNAME);
-> +		chip->media_dev = NULL;
-> +	}
-> +}
-> diff --git a/sound/usb/media.h b/sound/usb/media.h
-> new file mode 100644
-> index 000000000000..fbefa9cad215
-> --- /dev/null
-> +++ b/sound/usb/media.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * media.h - Media Controller specific ALSA driver code
-> + *
-> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
-> + *
-> + */
-> +
-> +/*
-> + * This file adds Media Controller support to ALSA driver
-> + * to use the Media Controller API to share tuner with DVB
-> + * and V4L2 drivers that control media device. Media device
-> + * is created based on existing quirks framework. Using this
-> + * approach, the media controller API usage can be added for
-> + * a specific device.
-> + */
-> +#ifndef __MEDIA_H
-> +
-> +#ifdef CONFIG_SND_USB_AUDIO_USE_MEDIA_CONTROLLER
-> +
-> +#include <linux/media.h>
-> +#include <media/media-device.h>
-> +#include <media/media-entity.h>
-> +#include <media/media-dev-allocator.h>
-> +#include <sound/asound.h>
-> +
-> +struct media_ctl {
-> +	struct media_device *media_dev;
-> +	struct media_entity media_entity;
-> +	struct media_intf_devnode *intf_devnode;
-> +	struct media_link *intf_link;
-> +	struct media_pad media_pad;
-> +	struct media_pipeline media_pipe;
-> +};
-> +
-> +/*
-> + * One source pad each for SNDRV_PCM_STREAM_CAPTURE and
-> + * SNDRV_PCM_STREAM_PLAYBACK. One for sink pad to link
-> + * to AUDIO Source
-> + */
-> +#define MEDIA_MIXER_PAD_MAX    (SNDRV_PCM_STREAM_LAST + 2)
-> +
-> +struct media_mixer_ctl {
-> +	struct media_device *media_dev;
-> +	struct media_entity media_entity;
-> +	struct media_intf_devnode *intf_devnode;
-> +	struct media_link *intf_link;
-> +	struct media_pad media_pad[MEDIA_MIXER_PAD_MAX];
-> +	struct media_pipeline media_pipe;
-> +};
-> +
-> +int media_snd_device_create(struct snd_usb_audio *chip,
-> +			    struct usb_interface *iface);
-> +void media_snd_device_delete(struct snd_usb_audio *chip);
-> +int media_snd_stream_init(struct snd_usb_substream *subs, struct snd_pcm *pcm,
-> +			  int stream);
-> +void media_snd_stream_delete(struct snd_usb_substream *subs);
-> +int media_snd_start_pipeline(struct snd_usb_substream *subs);
-> +void media_snd_stop_pipeline(struct snd_usb_substream *subs);
-> +#else
-> +static inline int media_snd_device_create(struct snd_usb_audio *chip,
-> +					  struct usb_interface *iface)
-> +						{ return 0; }
-> +static inline void media_snd_device_delete(struct snd_usb_audio *chip) { }
-> +static inline int media_snd_stream_init(struct snd_usb_substream *subs,
-> +					struct snd_pcm *pcm, int stream)
-> +						{ return 0; }
-> +static inline void media_snd_stream_delete(struct snd_usb_substream *subs) { }
-> +static inline int media_snd_start_pipeline(struct snd_usb_substream *subs)
-> +					{ return 0; }
-> +static inline void media_snd_stop_pipeline(struct snd_usb_substream *subs) { }
-> +#endif
-> +#endif /* __MEDIA_H */
-> diff --git a/sound/usb/mixer.h b/sound/usb/mixer.h
-> index 3d12af8bf191..394cd9107507 100644
-> --- a/sound/usb/mixer.h
-> +++ b/sound/usb/mixer.h
-> @@ -4,6 +4,8 @@
->  
->  #include <sound/info.h>
->  
-> +struct media_mixer_ctl;
-> +
->  struct usb_mixer_interface {
->  	struct snd_usb_audio *chip;
->  	struct usb_host_interface *hostif;
-> @@ -23,6 +25,7 @@ struct usb_mixer_interface {
->  	struct urb *rc_urb;
->  	struct usb_ctrlrequest *rc_setup_packet;
->  	u8 rc_buffer[6];
-> +	struct media_mixer_ctl *media_mixer_ctl;
->  
->  	bool disconnected;
->  };
-> diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
-> index 382847154227..a1971a87c613 100644
-> --- a/sound/usb/pcm.c
-> +++ b/sound/usb/pcm.c
-> @@ -35,6 +35,7 @@
->  #include "pcm.h"
->  #include "clock.h"
->  #include "power.h"
-> +#include "media.h"
->  
->  #define SUBSTREAM_FLAG_DATA_EP_STARTED	0
->  #define SUBSTREAM_FLAG_SYNC_EP_STARTED	1
-> @@ -776,6 +777,10 @@ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
->  	struct audioformat *fmt;
->  	int ret;
->  
-> +	ret = media_snd_start_pipeline(subs);
-> +	if (ret)
-> +		return ret;
-> +
->  	if (snd_usb_use_vmalloc)
->  		ret = snd_pcm_lib_alloc_vmalloc_buffer(substream,
->  						       params_buffer_bytes(hw_params));
-> @@ -783,7 +788,7 @@ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
->  		ret = snd_pcm_lib_malloc_pages(substream,
->  					       params_buffer_bytes(hw_params));
->  	if (ret < 0)
-> -		return ret;
-> +		goto stop_pipeline;
->  
->  	subs->pcm_format = params_format(hw_params);
->  	subs->period_bytes = params_period_bytes(hw_params);
-> @@ -797,12 +802,13 @@ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
->  		dev_dbg(&subs->dev->dev,
->  			"cannot set format: format = %#x, rate = %d, channels = %d\n",
->  			   subs->pcm_format, subs->cur_rate, subs->channels);
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto stop_pipeline;
->  	}
->  
->  	ret = snd_usb_lock_shutdown(subs->stream->chip);
->  	if (ret < 0)
-> -		return ret;
-> +		goto stop_pipeline;
->  
->  	ret = snd_usb_pcm_change_state(subs, UAC3_PD_STATE_D0);
->  	if (ret < 0)
-> @@ -818,6 +824,12 @@ static int snd_usb_hw_params(struct snd_pcm_substream *substream,
->  
->   unlock:
->  	snd_usb_unlock_shutdown(subs->stream->chip);
-> +	if (ret < 0)
-> +		goto stop_pipeline;
-> +	return ret;
-> +
-> + stop_pipeline:
-> +	media_snd_stop_pipeline(subs);
->  	return ret;
->  }
->  
-> @@ -830,6 +842,7 @@ static int snd_usb_hw_free(struct snd_pcm_substream *substream)
->  {
->  	struct snd_usb_substream *subs = substream->runtime->private_data;
->  
-> +	media_snd_stop_pipeline(subs);
->  	subs->cur_audiofmt = NULL;
->  	subs->cur_rate = 0;
->  	subs->period_bytes = 0;
-> @@ -1302,6 +1315,7 @@ static int snd_usb_pcm_open(struct snd_pcm_substream *substream)
->  	struct snd_usb_stream *as = snd_pcm_substream_chip(substream);
->  	struct snd_pcm_runtime *runtime = substream->runtime;
->  	struct snd_usb_substream *subs = &as->substream[direction];
-> +	int ret;
->  
->  	subs->interface = -1;
->  	subs->altset_idx = 0;
-> @@ -1315,7 +1329,13 @@ static int snd_usb_pcm_open(struct snd_pcm_substream *substream)
->  	subs->dsd_dop.channel = 0;
->  	subs->dsd_dop.marker = 1;
->  
-> -	return setup_hw_info(runtime, subs);
-> +	ret = setup_hw_info(runtime, subs);
-> +	if (ret == 0) {
-> +		ret = media_snd_stream_init(subs, as->pcm, direction);
-> +		if (ret)
-> +			snd_usb_autosuspend(subs->stream->chip);
-> +	}
-> +	return ret;
->  }
->  
->  static int snd_usb_pcm_close(struct snd_pcm_substream *substream)
-> @@ -1326,6 +1346,7 @@ static int snd_usb_pcm_close(struct snd_pcm_substream *substream)
->  	int ret;
->  
->  	stop_endpoints(subs, true);
-> +	media_snd_stop_pipeline(subs);
->  
->  	if (!as->chip->keep_iface &&
->  	    subs->interface >= 0 &&
-> diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-> index 08aa78007020..02789d1b2fec 100644
-> --- a/sound/usb/quirks-table.h
-> +++ b/sound/usb/quirks-table.h
-> @@ -2887,6 +2887,7 @@ YAMAHA_DEVICE(0x7010, "UB99"),
->  		.product_name = pname, \
->  		.ifnum = QUIRK_ANY_INTERFACE, \
->  		.type = QUIRK_AUDIO_ALIGN_TRANSFER, \
-> +		.media_device = 1, \
->  	} \
->  }
->  
-> diff --git a/sound/usb/stream.c b/sound/usb/stream.c
-> index 67cf849aa16b..5439dd2e6980 100644
-> --- a/sound/usb/stream.c
-> +++ b/sound/usb/stream.c
-> @@ -38,6 +38,7 @@
->  #include "clock.h"
->  #include "stream.h"
->  #include "power.h"
-> +#include "media.h"
->  
->  /*
->   * free a substream
-> @@ -55,6 +56,7 @@ static void free_substream(struct snd_usb_substream *subs)
->  	}
->  	kfree(subs->rate_list.list);
->  	kfree(subs->str_pd);
-> +	media_snd_stream_delete(subs);
->  }
->  
->  
-> diff --git a/sound/usb/usbaudio.h b/sound/usb/usbaudio.h
-> index b9faeca645fd..72bdae5ca54a 100644
-> --- a/sound/usb/usbaudio.h
-> +++ b/sound/usb/usbaudio.h
-> @@ -30,6 +30,9 @@
->   *
->   */
->  
-> +struct media_device;
-> +struct media_intf_devnode;
-> +
->  struct snd_usb_audio {
->  	int index;
->  	struct usb_device *dev;
-> @@ -66,6 +69,8 @@ struct snd_usb_audio {
->  					 */
->  
->  	struct usb_host_interface *ctrl_intf;	/* the audio control interface */
-> +	struct media_device *media_dev;
-> +	struct media_intf_devnode *ctl_intf_media_devnode;
->  };
->  
->  #define usb_audio_err(chip, fmt, args...) \
-> @@ -117,6 +122,7 @@ struct snd_usb_audio_quirk {
->  	const char *profile_name;	/* override the card->longname */
->  	int16_t ifnum;
->  	uint16_t type;
-> +	bool media_device;
-
-I'm not sure this is the right name for the quirk.
-
-The quirk isn't that this audio device needs a media_device, the
-quirk is that it *shares* a media device with another subsystem.
-
-So 'shares_media_device' is a better name IMHO.
-
->  	const void *data;
->  };
->  
-> 
-
-Regards,
-
-	Hans
