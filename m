@@ -2,150 +2,169 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6F4C46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AE5C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B94252075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:35:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PY6BpNxJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94252075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 091A020831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 091A020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbeKTWDp (ORCPT
+        id S1729282AbeKTWFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:03:45 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44400 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729084AbeKTWDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:03:44 -0500
-Received: by mail-io1-f65.google.com with SMTP id r200so1098506iod.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 03:35:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Qzlm0r3fOaoOkHxMd9XLDt+3KwDmba+ZbzIm6I1xgX4=;
-        b=PY6BpNxJLNiGrF0vOzZqs40sxE/kRd2v9VJYlgm5wVMroGhD7XFnzaC3nih1ALI1dc
-         Jp6hqX0CkYhb3qxCB7wafn00Tw5Vz4JDedVQv/sTXIjAhyxxVxGjX6f/zqAhIvSK98/H
-         r1rJMTPBz2dyUm6/5G/Df3NmdpaxZVApWu11qIBatnaLIu+r8cKzx32y5zan1ipXf5b8
-         QL8Xug6flFuPmvAggs7RZ13lol1njUZclKXlDSTdi2/agux5QGoZSFfxr1D3uvemNs/q
-         n9lZr5JM/o5+B8K2zP6amewQBMbfOeee8k85MDAeeChLiGzPeddLmaEDhji6c+L2kPvu
-         1Pvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Qzlm0r3fOaoOkHxMd9XLDt+3KwDmba+ZbzIm6I1xgX4=;
-        b=JjOOII/+lYf8+1hPouUnlEchImPz/Sj9sxsVmWrmQ5Q8Gnl5jDiGuakJXimCSBV05m
-         9TW3xmZD2CqHJgeNwDSfqX6yeNAf+SQrrbe07Je8nsQiVlzwla6Ip7lWbpJw/1aH2tRR
-         BSNK3tDTz4DQaJ/dy2QrQGaNi8ZhhAbtmXVuOR0uWtUYz0gwH/3tr7WBH7zqoUhioRUz
-         M4b9i2L/vBt7dpfja7/TTMSi2rB6YSaR8MGHJIVZb9Z5fqx1ysM3I8MRpLYYuw8q2qMC
-         Hl0Nj/vmg/IC5uxlqRb2WuzlO/QndbPY0JbM9TLuERGxpDfy55zOUIqdVhJpCmsFktBE
-         HR9g==
-X-Gm-Message-State: AA+aEWYfv9VnVoQ1tn1FeM/8S+r6im+tR+1XTGdhw2jo+g0mlYU93Rv3
-        X1Xxe36P17BbDUwqbyA1dQY1NoYLVQNX/XMvn4n/sg==
-X-Google-Smtp-Source: AFSGD/XztFqXP0ZjssBtIE1X7e/062Mck1vUoS0/Sv2aBnPpy3bRubRwHURJd5NL53iX40ybeCciHVwM6ulAlQSw7PU=
-X-Received: by 2002:a6b:9383:: with SMTP id v125-v6mr1064825iod.282.1542713701827;
- Tue, 20 Nov 2018 03:35:01 -0800 (PST)
+        Tue, 20 Nov 2018 17:05:17 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:6059 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729081AbeKTWFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:05:17 -0500
+Received: from DGGEMA406-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id C5CFBB33F6438;
+        Tue, 20 Nov 2018 19:36:22 +0800 (CST)
+Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.15]) by
+ DGGEMA406-HUB.china.huawei.com ([10.3.20.47]) with mapi id 14.03.0415.000;
+ Tue, 20 Nov 2018 19:36:17 +0800
+From:   "Zhangfei (Tyler)" <tyler.zhang@huawei.com>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+CC:     Xiexiuqi <xiexiuqi@huawei.com>, linux-mm <linux-mm@kvack.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Lvzhipeng (pang, Intelligent Computing R&D)" <lvzhipeng@huawei.com>,
+        meinanjing <meinanjing@huawei.com>,
+        Dukaitian <dukaitian@huawei.com>,
+        "Chenglongfei (Longfei Cheng, Intelligent Computing R&D)" 
+        <chenglongfei@huawei.com>,
+        "Liugang (Robert, Intelligent Computing R&D)" <robert.liu@huawei.com>,
+        "Chenzhuowei (Intelligent Computing R&D)" <chenzhuowei@huawei.com>
+Subject: =?utf-8?B?562U5aSNOiBbUkZDXSBhIHF1ZXN0aW9uIGFib3V0IHJldXNlIGh3cG9pc29u?=
+ =?utf-8?B?IHBhZ2UgaW4gc29mdF9vZmZsaW5lX3BhZ2UoKQ==?=
+Thread-Topic: [RFC] a question about reuse hwpoison page in
+ soft_offline_page()
+Thread-Index: AQHUH/5XW0YhNomut06MiYrg0IqjkqSXxwRQgAQKzgCAvXXW0A==
+Date:   Tue, 20 Nov 2018 11:36:16 +0000
+Message-ID: <E690DE8F4F207D4EB356CAC7B78E15467E478160@DGGEMA503-MBX.china.huawei.com>
+References: <99235479-716d-4c40-8f61-8e44c242abf8.xishi.qiuxishi@alibaba-inc.com>
+ <20180706081847.GA5144@hori1.linux.bs1.fc.nec.co.jp>
+ <7f0ff90d-578b-2096-92c0-542a490b06a1@huawei.com>
+ <E690DE8F4F207D4EB356CAC7B78E15467E402966@DGGEMA503-MBX.china.huawei.com>
+ <20180723061114.GB26102@hori1.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20180723061114.GB26102@hori1.linux.bs1.fc.nec.co.jp>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.32.109]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 20 Nov 2018 03:34:40
- -0800 (PST)
-In-Reply-To: <20181115005658.GA24847@kroah.com>
-References: <20181109203518.GA7130@roeck-us.net> <20181112092051.GA391@ming.t460p>
- <20181112094406.GB391@ming.t460p> <20181112164848.GA1790@roeck-us.net>
- <20181112200236.GA4415@kroah.com> <20181113002226.GA4455@ming.t460p>
- <20181113004124.GC4455@ming.t460p> <20181114110827.GA31430@ming.t460p>
- <20181114151410.GB26378@kroah.com> <20181115003616.GA32603@ming.t460p> <20181115005658.GA24847@kroah.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 20 Nov 2018 12:34:40 +0100
-Message-ID: <CACT4Y+bSzPM022bGMmj4GQ_YHVsVqd6r+NTC4+fRrRT+yjAjEw@mail.gmail.com>
-Subject: Re: kobject lifetime issues in blk-mq
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
-        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 1:56 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Thu, Nov 15, 2018 at 08:36:17AM +0800, Ming Lei wrote:
->> > So even if you think the kernel is not going to do this, remember, you
->> > have no control over it.  Reference counted objects are done this way
->> > for a reason, you really do not know who has a reference and you really
->> > do not care.
->> >
->> > You are just papering over the real issue here, see my previous email
->> > for how to start working on resolving it.
->>
->> IMO, there isn't real issue, and the issue is actually in 'delay release'.
->
-> Nope, sorry, that is not true.
->
->> Please look at the code in block/blk-mq-sysfs.c, both q->mq_kobj and all
->> ctx->kobj share same lifetime with q->kobj, we even don't call get/put
->> on q->mq_kobj & all ctx->kobj, and all are simply released in q->kobj's
->> release handler.
->
-> How do you "know" you are keeping those lifetimes in sync?  The joy of a
-> kobject is that _ANYTHING_ can grab a reference to your object without
-> you knowing about it.  That includes userspace programs.  Yes, sysfs is
-> now much better and it trys to release that reference "quickly" when it
-> determines you are trying to delete a kobject, but it's not perfict,
-> there are still races there.
->
-> And that is what the delay release code is showing you.  It is showing
-> you that you "think" your reference counting is wrong, but it is not.
-> It is showing you that if someone else grabs a reference, you are not
-> correctly cleaning up for yourself.
->
-> Never think that you really know the lifetime of a kobject, once you
-> realize that your code gets simpler and you can then just "trust" that
-> the kernel will do the right thing no matter what.
->
-> Because really, you are using a kobject because you want that correct
-> reference counting logic.  By ignoring that logic, you are ignoring the
-> reason to be using that object at all.  If you don't need reference
-> counting, then don't use it at all.
->
-> And if you need sysfs files, then you need to use the kobject and then
-> you need to handle it properly, because again, you do NOT have full
-> control over the lifetime of your object.  That's the basis for
-> reference counting in the firstplace.
->
-> So this code is broken without me evening having to look at it, please
-> fix it to handle release properly.  Again, the kernel tried to tell you
-> this, but you hacked around the kernel core to remove that warning
-> incorrectly.  Please go read the kobject documentation again for even
-> more details about this than what I said here.
->
-> thanks,
->
-> greg k-h
-
-Whoever is the right person to fix this, please prioritize this to the
-degree possible.
-This issue does not allow to use DEBUG_KOBJECT_RELEASE in any
-automated testing (in particular syzbot) on both upstream and stable
-trees. We have to disable it for now, so other bugs won't be noticed
-and will pile up.
-
-Thanks
+SGkgTmFveWENCglBbnkgVXBkYXRlIG9uIHRoaXMgaXNzdWXvvJ9JcyB0aGVyZSBhIGZpbmFsIGNv
+bmNsdXNpb24gb24gaG93IHRvIGZpeCB0aGlzIGlzc3VlPw0KDQpUaGlua3MNCgkNCi0tLS0t6YKu
+5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogTmFveWEgSG9yaWd1Y2hpIFttYWlsdG86bi1ob3Jp
+Z3VjaGlAYWguanAubmVjLmNvbV0gDQrlj5HpgIHml7bpl7Q6IDIwMTjlubQ35pyIMjPml6UgMTQ6
+MTENCuaUtuS7tuS6ujogWmhhbmdmZWkgKFR5bGVyKSA8dHlsZXIuemhhbmdAaHVhd2VpLmNvbT4N
+CuaKhOmAgTogWGlleGl1cWkgPHhpZXhpdXFpQGh1YXdlaS5jb20+OyDoo5jnqIDnn7Mo56iA55+z
+KSA8eGlzaGkucWl1eGlzaGlAYWxpYmFiYS1pbmMuY29tPjsgbGludXgtbW0gPGxpbnV4LW1tQGt2
+YWNrLm9yZz47IGxpbnV4LWtlcm5lbCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IHp5
+LnpoZW5neWkgPHp5LnpoZW5neWlAYWxpYmFiYS1pbmMuY29tPjsgbHZ6aGlwZW5nIDxsdnpoaXBl
+bmdAaHVhd2VpLmNvbT47IG1laW5hbmppbmcgPG1laW5hbmppbmdAaHVhd2VpLmNvbT47IHpob25n
+amlhbmcgPHpob25namlhbmdAaHVhd2VpLmNvbT47IER1a2FpdGlhbiA8ZHVrYWl0aWFuQGh1YXdl
+aS5jb20+OyBDaGVuZ2xvbmdmZWkgPGNoZW5nbG9uZ2ZlaUBodWF3ZWkuY29tPg0K5Li76aKYOiBS
+ZTogW1JGQ10gYSBxdWVzdGlvbiBhYm91dCByZXVzZSBod3BvaXNvbiBwYWdlIGluIHNvZnRfb2Zm
+bGluZV9wYWdlKCkNCg0KT24gRnJpLCBKdWwgMjAsIDIwMTggYXQgMDg6NTA6MjJBTSArMDAwMCwg
+WmhhbmdmZWkgKFR5bGVyKSB3cm90ZToNCj4gSGkgTmFveWEmeGlzaGnvvJoNCj4gCVdlIGhhdmUg
+YSBzaW1pbGFyIHByb2JsZW0sIHRoZSBkaWZmZXJlbmNlIGlzIHRoYXQgd2UgZGlkIG5vdCBFbmFi
+bGUgaHVnZXBhZ2UsIHRoZSBzb2Z0LW9mZmxpbmUgd2FzIGV4ZWN1dGVkIGluIHRoZSBjYXNlIG9m
+IG5vcm1hbCA0SyBwYWdlcywgYW5kIGZpbmFsbHkgdGhlIE1DRSBraWxsIHdhcyB0cmlnZ2VyZWTv
+vIhmaW5kIGh3cG9pc29uIGZsYWcgaXMgYWxyZWFkeSBzZXQtLT5yZXQgPSBWTV9GQVVMVF9IV1BP
+SVNPTi0tPm1tX2ZhdWx0X2Vycm9yIC0tPmRvX3NpZ2J1cyAtLT4gbWNlIGtpbGzvvIkuIFdlIG5v
+dGljZWQgdGhhdCB0aGUgbmV3IHBhdGNoIG1hZGUgc29tZSBtb2RpZmljYXRpb25zIHRvIHRoZSBj
+YXNlIG9mIGh1Z2UgcGFnZSBvZmZsaW5lLCBCdXQgaG93IGNhbiB3ZSBhdm9pZCB0aGlzIHJhY2Ug
+Y29uZGl0aW9uIGZvciB0aGUgY2FzZSBvZiBub3JtYWwgcGFnZT8NCg0KSGkgVHlsZXIsDQoNCkxh
+dGVzdCB2ZXJzaW9uIG9mIHRoZSBmaXggaXMgYXZhaWxhYmxlIG9uIGh0dHBzOi8vbGttbC5vcmcv
+bGttbC8yMDE4LzcvMTcvNjAuDQpJJ20gc3RpbGwgZGlzY3Vzc2luZyB3aXRoIE1pY2hhbCBhYm91
+dCBiZXR0ZXIgZGVzaWduIG9mIHRoaXMgYXJlYSwgYnV0IEkgdGhpbmsgd2UnbGwgZ28gd2l0aCB0
+aGlzIGZvciBzaG9ydCB0ZXJtIGZpeC4NCg0KVGhhbmtzLA0KTmFveWEgSG9yaWd1Y2hpDQoNCj4g
+DQo+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4g5Y+R5Lu25Lq6OiBYaWV4aXVxaQ0KPiDlj5Hp
+gIHml7bpl7Q6IDIwMTjlubQ35pyIMjDml6UgMTU6NTANCj4g5pS25Lu25Lq6OiBOYW95YSBIb3Jp
+Z3VjaGkgPG4taG9yaWd1Y2hpQGFoLmpwLm5lYy5jb20+OyDoo5jnqIDnn7Mo56iA55+zKSANCj4g
+PHhpc2hpLnFpdXhpc2hpQGFsaWJhYmEtaW5jLmNvbT4NCj4g5oqE6YCBOiBsaW51eC1tbSA8bGlu
+dXgtbW1Aa3ZhY2sub3JnPjsgbGludXgta2VybmVsIA0KPiA8bGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZz47IHp5LnpoZW5neWkgDQo+IDx6eS56aGVuZ3lpQGFsaWJhYmEtaW5jLmNvbT47IFpo
+YW5nZmVpIChUeWxlcikgDQo+IDx0eWxlci56aGFuZ0BodWF3ZWkuY29tPjsgbHZ6aGlwZW5nIDxs
+dnpoaXBlbmdAaHVhd2VpLmNvbT47IG1laW5hbmppbmcgDQo+IDxtZWluYW5qaW5nQGh1YXdlaS5j
+b20+OyB6aG9uZ2ppYW5nIDx6aG9uZ2ppYW5nQGh1YXdlaS5jb20+DQo+IOS4u+mimDogUmU6IFtS
+RkNdIGEgcXVlc3Rpb24gYWJvdXQgcmV1c2UgaHdwb2lzb24gcGFnZSBpbiANCj4gc29mdF9vZmZs
+aW5lX3BhZ2UoKQ0KPiANCj4gSGkgTmFveWEsIFhpc2hpLA0KPiANCj4gV2UgaGF2ZSBhIHNpbWls
+YXIgcHJvYmxlbS4NCj4gQHpoYW5nZmVpLCBjb3VsZCB5b3UgcGxlYXNlIGRlc2NyaWJlIHlvdXIg
+cHJvYmxlbSBoZXJlLg0KPiANCj4gT24gMjAxOC83LzYgMTY6MTgsIE5hb3lhIEhvcmlndWNoaSB3
+cm90ZToNCj4gPiBPbiBGcmksIEp1bCAwNiwgMjAxOCBhdCAxMTozNzo0MUFNICswODAwLCDoo5jn
+qIDnn7Mo56iA55+zKSB3cm90ZToNCj4gPj4gVGhpcyBwYXRjaCBhZGQwNWNlYw0KPiA+PiAobW06
+IHNvZnQtb2ZmbGluZTogZG9uJ3QgZnJlZSB0YXJnZXQgcGFnZSBpbiBzdWNjZXNzZnVsIHBhZ2UN
+Cj4gPj4gbWlncmF0aW9uKSByZW1vdmVzDQo+ID4+IHNldF9taWdyYXRldHlwZV9pc29sYXRlKCkg
+YW5kIHVuc2V0X21pZ3JhdGV0eXBlX2lzb2xhdGUoKSBpbiANCj4gPj4gc29mdF9vZmZsaW5lX3Bh
+Z2UgKCkuDQo+ID4+DQo+ID4+IEFuZCB0aGlzIHBhdGNoIDI0M2FiZDViDQo+ID4+IChtbTogaHVn
+ZXRsYjogcHJldmVudCByZXVzZSBvZiBod3BvaXNvbmVkIGZyZWUgaHVnZXBhZ2VzKSBjaGFuZ2Vz
+IA0KPiA+PiBpZg0KPiA+PiAoIWlzX21pZ3JhdGVfaXNvbGF0ZV9wYWdlKHBhZ2UpKSB0byBpZiAo
+IVBhZ2VIV1BvaXNvbihwYWdlKSksIHNvIGl0IA0KPiA+PiBjb3VsZCBwcmV2ZW50IHNvbWVvbmUg
+cmV1c2UgdGhlIGZyZWUgaHVnZXRsYiBhZ2FpbiBhZnRlciBzZXQgdGhlIA0KPiA+PiBod3BvaXNv
+biBmbGFnIGluIHNvZnRfb2ZmbGluZV9mcmVlX3BhZ2UoKQ0KPiA+Pg0KPiA+PiBNeSBxdWVzdGlv
+biBpcyB0aGF0IGlmIHNvbWVvbmUgcmV1c2UgdGhlIGZyZWUgaHVnZXRsYiBhZ2FpbiBiZWZvcmUN
+Cj4gPj4gc29mdF9vZmZsaW5lX2ZyZWVfcGFnZSgpIGFuZA0KPiA+PiBhZnRlciBnZXRfYW55X3Bh
+Z2UoKSwgdGhlbiBpdCB1c2VzIHRoZSBob3BvaXNvbiBwYWdlLCBhbmQgdGhpcyBtYXkgDQo+ID4+
+IHRyaWdnZXIgbWNlIGtpbGwgbGF0ZXIsIHJpZ2h0Pw0KPiA+IA0KPiA+IEhpIFhpc2hpLA0KPiA+
+IA0KPiA+IFRoYW5rIHlvdSBmb3IgcG9pbnRpbmcgb3V0IHRoZSBpc3N1ZS4gVGhhdCdzIG5pY2Ug
+Y2F0Y2guDQo+ID4gDQo+ID4gSSB0aGluayB0aGF0IHRoZSByYWNlIGNvbmRpdGlvbiBpdHNlbGYg
+Y291bGQgaGFwcGVuLCBidXQgaXQgZG9lc24ndCANCj4gPiBsZWFkIHRvIE1DRSBraWxsIGJlY2F1
+c2UgUGFnZUhXUG9pc29uIGlzIG5vdCB2aXNpYmxlIHRvIEhXIHdoaWNoIHRyaWdnZXJzIE1DRS4N
+Cj4gPiBQYWdlSFdQb2lzb24gZmxhZyBpcyBqdXN0IGEgZmxhZyBpbiBzdHJ1Y3QgcGFnZSB0byBy
+ZXBvcnQgdGhlIG1lbW9yeSANCj4gPiBlcnJvciBmcm9tIGtlcm5lbCB0byB1c2Vyc3BhY2UuIFNv
+IGV2ZW4gaWYgYSBDUFUgaXMgYWNjZXNzaW5nIHRvIHRoZSANCj4gPiBwYWdlIHdob3NlIHN0cnVj
+dCBwYWdlIGhhcyBQYWdlSFdQb2lzb24gc2V0LCB0aGF0IGRvZXNuJ3QgY2F1c2UgYSANCj4gPiBN
+Q0UgdW5sZXNzIHRoZSBwYWdlIGlzIHBoeXNpY2FsbHkgYnJva2VuLg0KPiA+IFRoZSB0eXBlIG9m
+IG1lbW9yeSBlcnJvciB0aGF0IHNvZnQgb2ZmbGluZSB0cmllcyB0byBoYW5kbGUgaXMgDQo+ID4g
+Y29ycmVjdGVkIG9uZSB3aGljaCBpcyBub3QgYSBmYWlsdXJlIHlldCBhbHRob3VnaCBpdCdzIHN0
+YXJ0aW5nIHRvIHdlYXIuDQo+ID4gU28gc3VjaCBQYWdlSFdQb2lzb24gcGFnZSBjYW4gYmUgcmV1
+c2VkLCBidXQgdGhhdCdzIG5vdCBjcml0aWNhbCANCj4gPiBiZWNhdXNlIHRoZSBwYWdlIGlzIGZy
+ZWVkIGF0IHNvbWUgcG9pbnQgYWZ0ZXJ3b3JkIGFuZCBlcnJvciBjb250YWlubWVudCBjb21wbGV0
+ZXMuDQo+ID4gDQo+ID4gSG93ZXZlciwgSSBub3RpY2VkIHRoYXQgdGhlcmUncyBhIHNtYWxsIHBh
+aW4gaW4gZnJlZSBodWdldGxiIGNhc2UuDQo+ID4gV2UgY2FsbCBkaXNzb2x2ZV9mcmVlX2h1Z2Vf
+cGFnZSgpIGluIHNvZnRfb2ZmbGluZV9mcmVlX3BhZ2UoKSB3aGljaCANCj4gPiBtb3ZlcyB0aGUg
+UGFnZUhXUG9pc29uIGZsYWcgZnJvbSB0aGUgaGVhZCBwYWdlIHRvIHRoZSByYXcgZXJyb3IgcGFn
+ZS4NCj4gPiBJZiB0aGUgcmVwb3J0ZWQgcmFjZSBoYXBwZW5zLCBkaXNzb2x2ZV9mcmVlX2h1Z2Vf
+cGFnZSgpIGp1c3QgcmV0dXJuIA0KPiA+IHdpdGhvdXQgZG9pbmcgYW55IGRpc3NvbHZlIHdvcmsg
+YmVjYXVzZSAiaWYgKFBhZ2VIdWdlKHBhZ2UpICYmICFwYWdlX2NvdW50KHBhZ2UpKSINCj4gPiBi
+bG9jayBpcyBza2lwcGVkLg0KPiA+IFRoZSBodWdlcGFnZSBpcyBhbGxvY2F0ZWQgYW5kIHVzZWQg
+YXMgdXN1YWwsIGJ1dCB0aGUgY29udGFpbWVudCANCj4gPiBkb2Vzbid0IGNvbXBsZXRlIGFzIGV4
+cGVjdGVkIGluIHRoZSBub3JtYWwgcGFnZSwgYmVjYXVzZQ0KPiA+IGZyZWVfaHVnZV9wYWdlcygp
+IGRvZXNuJ3QgY2FsbCBkaXNzb2x2ZV9mcmVlX2h1Z2VfcGFnZSgpIGZvciANCj4gPiBod3BvaXNv
+biBodWdlcGFnZS4gVGhpcyBpcyBub3QgY3JpdGljYWwgYmVjYXVzZSBzdWNoIGVycm9yIGh1Z2Vw
+YWdlIA0KPiA+IGp1c3QgcmVzaWRlIGluIGZyZWUgaHVnZXBhZ2UgbGlzdC4gQnV0IHRoaXMgbWln
+aHQgbG9va3MgbGlrZSBhIGtpbmQgDQo+ID4gb2YgbWVtb3J5IGxlYWsuIEFuZCBldmVuIHdvcnNl
+IHdoZW4gaHVnZXBhZ2UgcG9vbCBpcyBzaHJpbmtlZCBhbmQgDQo+ID4gdGhlIGh3cG9pc29uIGh1
+Z2VwYWdlIGlzIGZyZWVkLCB0aGUgUGFnZUhXUG9pc29uIGZsYWcgaXMgc3RpbGwgb24gdGhlIGhl
+YWQgcGFnZSB3aGljaCBpcyB1bmxpa2VseSB0byBiZSBhbiBhY3R1YWwgZXJyb3IgcGFnZS4NCj4g
+PiANCj4gPiBTbyBJIHRoaW5rIHdlIG5lZWQgaW1wcm92ZW1lbnQgaGVyZSwgaG93IGFib3V0IHRo
+ZSBmaXggbGlrZSBiZWxvdz8NCj4gPiANCj4gPiAgIChub3QgdGVzdGVkIHlldCwgc29ycnkpDQo+
+ID4gDQo+ID4gICBkaWZmIC0tZ2l0IGEvbW0vbWVtb3J5LWZhaWx1cmUuYyBiL21tL21lbW9yeS1m
+YWlsdXJlLmMNCj4gPiAgIC0tLSBhL21tL21lbW9yeS1mYWlsdXJlLmMNCj4gPiAgICsrKyBiL21t
+L21lbW9yeS1mYWlsdXJlLmMNCj4gPiAgIEBAIC0xODgzLDYgKzE4ODMsMTEgQEAgc3RhdGljIHZv
+aWQgc29mdF9vZmZsaW5lX2ZyZWVfcGFnZShzdHJ1Y3QgcGFnZSAqcGFnZSkNCj4gPiAgICAgICAg
+ICAgc3RydWN0IHBhZ2UgKmhlYWQgPSBjb21wb3VuZF9oZWFkKHBhZ2UpOw0KPiA+ICAgDQo+ID4g
+ICAgICAgICAgIGlmICghVGVzdFNldFBhZ2VIV1BvaXNvbihoZWFkKSkgew0KPiA+ICAgKyAgICAg
+ICAgICAgICAgIGlmIChwYWdlX2NvdW50KGhlYWQpKSB7DQo+ID4gICArICAgICAgICAgICAgICAg
+ICAgICAgICBDbGVhclBhZ2VIV1BvaXNvbihoZWFkKTsNCj4gPiAgICsgICAgICAgICAgICAgICAg
+ICAgICAgIHJldHVybjsNCj4gPiAgICsgICAgICAgICAgICAgICB9DQo+ID4gICArDQo+ID4gICAg
+ICAgICAgICAgICAgICAgbnVtX3BvaXNvbmVkX3BhZ2VzX2luYygpOw0KPiA+ICAgICAgICAgICAg
+ICAgICAgIGlmIChQYWdlSHVnZShoZWFkKSkNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGRpc3NvbHZlX2ZyZWVfaHVnZV9wYWdlKHBhZ2UpOw0KPiA+IA0KPiA+IFRoYW5rcywNCj4gPiBO
+YW95YSBIb3JpZ3VjaGkNCj4gPiANCj4gPiAuDQo+ID4gDQo+IA0KPiAtLQ0KPiBUaGFua3MsDQo+
+IFhpZSBYaXVRaQ0KPiANCg==
