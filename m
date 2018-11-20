@@ -2,107 +2,162 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E515CC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CFBC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850D12075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:05:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZOaEKqZj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850D12075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E4A71206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4A71206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbeKUAej (ORCPT
+        id S1729161AbeKUAep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:34:39 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:58124 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeKUAei (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:34:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lcXJPPCGXDKW1H11/v9aEe9iz4zninRANp7o5D2qo5E=; b=ZOaEKqZjPnY5lSRmox26mS8Ud
-        t3IODCi61oJtlE6uqLWtRtPkHJKcSA4OH0rP/BKUJvTWUyFeMS0lBWdNVBZHNlCPBzfhV8WbGsWb9
-        ch/je87d11G4SaLS9aWAcZyvC5LVWxWXMXw6eeTAf22M6q3DYmUJGWRSXvYz5LgudVChvrShrg5Bj
-        3ys3tjGgU8GMldDO3gjSze1pMbytbQcwp5wNj4y+GU44d80pLqkyUTHSdo3IYQsgRYHgGLKeDj3i3
-        4xv6cn/saMrBjdmMfc9VolFRHss35kVBhZmu1Hg3bD5tZhe19660RQUmkRfI92/0YFVD/8Nqg74lK
-        5BrPkJ8wQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gP6eB-0008O6-KY; Tue, 20 Nov 2018 14:04:59 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 56C762029F87F; Tue, 20 Nov 2018 15:04:58 +0100 (CET)
-Date:   Tue, 20 Nov 2018 15:04:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@redhat.com>
-Subject: Re: [PATCH 15/25] sched/vtime: Introduce
- vtime_accounting_enabled_cpu()
-Message-ID: <20181120140458.GU2131@hirez.programming.kicks-ass.net>
-References: <1542163569-20047-1-git-send-email-frederic@kernel.org>
- <1542163569-20047-16-git-send-email-frederic@kernel.org>
+        Tue, 20 Nov 2018 19:34:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57434 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725846AbeKUAep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:34:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 12C22ABE7;
+        Tue, 20 Nov 2018 14:05:25 +0000 (UTC)
+Date:   Tue, 20 Nov 2018 15:05:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Hugh Dickins <hughd@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+        pifang@redhat.com, David Hildenbrand <david@redhat.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, aarcange@redhat.com,
+        Mel Gorman <mgorman@suse.de>
+Subject: Re: Memory hotplug softlock issue
+Message-ID: <20181120140524.GI22247@dhcp22.suse.cz>
+References: <20181119124033.GJ22247@dhcp22.suse.cz>
+ <20181119125121.GK22247@dhcp22.suse.cz>
+ <20181119141016.GO22247@dhcp22.suse.cz>
+ <20181119173312.GV22247@dhcp22.suse.cz>
+ <alpine.LSU.2.11.1811191215290.15640@eggly.anvils>
+ <20181119205907.GW22247@dhcp22.suse.cz>
+ <20181120015644.GA5727@MiWiFi-R3L-srv>
+ <alpine.LSU.2.11.1811192127130.2848@eggly.anvils>
+ <3f1a82a8-f2aa-ac5e-e6a8-057256162321@suse.cz>
+ <20181120135803.GA3369@MiWiFi-R3L-srv>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542163569-20047-16-git-send-email-frederic@kernel.org>
+In-Reply-To: <20181120135803.GA3369@MiWiFi-R3L-srv>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 03:45:59AM +0100, Frederic Weisbecker wrote:
-> This allows us to check if a remote CPU runs vtime accounting
-> (ie: is nohz_full). We'll need that to reliably support "nice"
-> accounting on kcpustat.
+On Tue 20-11-18 21:58:03, Baoquan He wrote:
+> Hi,
 > 
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Rik van Riel <riel@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Wanpeng Li <wanpengli@tencent.com>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> ---
->  include/linux/vtime.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> On 11/20/18 at 02:38pm, Vlastimil Babka wrote:
+> > On 11/20/18 6:44 AM, Hugh Dickins wrote:
+> > > [PATCH] mm: put_and_wait_on_page_locked() while page is migrated
+> > > 
+> > > We have all assumed that it is essential to hold a page reference while
+> > > waiting on a page lock: partly to guarantee that there is still a struct
+> > > page when MEMORY_HOTREMOVE is configured, but also to protect against
+> > > reuse of the struct page going to someone who then holds the page locked
+> > > indefinitely, when the waiter can reasonably expect timely unlocking.
+> > > 
+> > > But in fact, so long as wait_on_page_bit_common() does the put_page(),
+> > > and is careful not to rely on struct page contents thereafter, there is
+> > > no need to hold a reference to the page while waiting on it.  That does
+> > 
+> > So there's still a moment where refcount is elevated, but hopefully
+> > short enough, right? Let's see if it survives Baoquan's stress testing.
 > 
-> diff --git a/include/linux/vtime.h b/include/linux/vtime.h
-> index 82fed7a..a53f6ea 100644
-> --- a/include/linux/vtime.h
-> +++ b/include/linux/vtime.h
-> @@ -31,6 +31,16 @@ static inline bool vtime_accounting_enabled(void)
->  	return context_tracking_enabled();
->  }
->  
-> +static inline bool vtime_accounting_enabled_cpu(int cpu)
-> +{
-> +	if (vtime_accounting_enabled()) {
-> +		if (context_tracking_enabled_cpu(cpu))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
+> Yes, I applied Hugh's patch 8 hours ago, then our QE Ping operated on
+> that machine, after many times of hot removing/adding, the endless
+> looping during mirgrating is not seen any more. The test result for
+> Hugh's patch is positive. I even suggested Ping increasing the memory
+> pressure to "stress -m 250", it still succeeded to offline and remove.
+> 
+> So I think this patch works to solve the issue. Thanks a lot for your
+> help, all of you. 
 
-static inline bool vtime_account_enabled_cpu(int cpu)
-{
-	return vtime_account_enabled() && context_tracking_enabled_cpu(cpu);
-}
+This is a great news! Thanks for your swift feedback. I will go and try
+to review Hugh's patch soon.
 
-Hmm?
+> High, will you post a formal patch in a separate thread?
+> 
+> Meanwhile we found sometime onlining page may not add back all memory
+> blocks on one memory board, then hot removing/adding them will cause
+> kernel panic. I will investigate further and collect information, see if
+> it's a kernel issue or udev issue.
+
+It would be great to get a report in a new email thread.
+> 
+> Thanks
+> Baoquan
+> 
+> > 
+> > > mean that this case cannot go back through the loop: but that's fine for
+> > > the page migration case, and even if used more widely, is limited by the
+> > > "Stop walking if it's locked" optimization in wake_page_function().
+> > > 
+> > > Add interface put_and_wait_on_page_locked() to do this, using negative
+> > > value of the lock arg to wait_on_page_bit_common() to implement it.
+> > > No interruptible or killable variant needed yet, but they might follow:
+> > > I have a vague notion that reporting -EINTR should take precedence over
+> > > return from wait_on_page_bit_common() without knowing the page state,
+> > > so arrange it accordingly - but that may be nothing but pedantic.
+> > > 
+> > > shrink_page_list()'s __ClearPageLocked(): that was a surprise! this
+> > > survived a lot of testing before that showed up.  It does raise the
+> > > question: should is_page_cache_freeable() and __remove_mapping() now
+> > > treat a PG_waiters page as if an extra reference were held?  Perhaps,
+> > > but I don't think it matters much, since shrink_page_list() already
+> > > had to win its trylock_page(), so waiters are not very common there: I
+> > > noticed no difference when trying the bigger change, and it's surely not
+> > > needed while put_and_wait_on_page_locked() is only for page migration.
+> > > 
+> > > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > > ---
+> > 
+> > ...
+> > 
+> > > @@ -1100,6 +1111,17 @@ static inline int wait_on_page_bit_common(wait_queue_head_t *q,
+> > >  			ret = -EINTR;
+> > >  			break;
+> > >  		}
+> > > +
+> > > +		if (lock < 0) {
+> > > +			/*
+> > > +			 * We can no longer safely access page->flags:
+> > 
+> > Hmm...
+> > 
+> > > +			 * even if CONFIG_MEMORY_HOTREMOVE is not enabled,
+> > > +			 * there is a risk of waiting forever on a page reused
+> > > +			 * for something that keeps it locked indefinitely.
+> > > +			 * But best check for -EINTR above before breaking.
+> > > +			 */
+> > > +			break;
+> > > +		}
+> > >  	}
+> > >  
+> > >  	finish_wait(q, wait);
+> > 
+> > ... the code continues by:
+> > 
+> >         if (thrashing) {
+> >                 if (!PageSwapBacked(page))
+> > 
+> > So maybe we should not set 'thrashing' true when lock < 0?
+> > 
+> > Thanks!
+> > Vlastimil
+
+-- 
+Michal Hocko
+SUSE Labs
