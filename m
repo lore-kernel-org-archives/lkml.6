@@ -2,127 +2,175 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01753C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E6CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2BD620851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:42:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="rAX2uTyN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2BD620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id B43A320851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:42:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43A320851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbeKTUKU (ORCPT
+        id S1727756AbeKTUKY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:10:20 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38708 "EHLO mail.skyhub.de"
+        Tue, 20 Nov 2018 15:10:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46554 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbeKTUKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:10:20 -0500
-Received: from zn.tnic (p200300EC2BCDE000F95221CD056129B8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e000:f952:21cd:561:29b8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725846AbeKTUKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:10:24 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B2AEB1EC084D;
-        Tue, 20 Nov 2018 10:42:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542706926;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JyDJOTN9RvCe5O7V2T/jnWOi433l/ew4HijVKdIUXv4=;
-        b=rAX2uTyNZTju5/+Cp/Ds0TcE4f2oOKKzfcZ3WIAR5KdWUVsSo8eJ0AP+k76yQtikHrDkfg
-        3L/Xnh13IvMDRIrV+PbZrDt+/wOmTsWEXVg4GPz7zQrrd6nLzTD2OiAPVAxSnzTBOlCMdL
-        3QpdbGA6AL8QFSUXOEQt+Ui34AisZBM=
-Date:   Tue, 20 Nov 2018 10:42:05 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v8 05/13] arch/resctrl: Rename config parameter INTEL_RDT
- to RESCTRL
-Message-ID: <20181120094205.GC2527@zn.tnic>
-References: <20181116205407.10457-1-babu.moger@amd.com>
- <20181116205407.10457-6-babu.moger@amd.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 2B80C307DAC0;
+        Tue, 20 Nov 2018 09:42:11 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8AECC18E56;
+        Tue, 20 Nov 2018 09:42:10 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 96830181AAB1;
+        Tue, 20 Nov 2018 09:42:09 +0000 (UTC)
+Date:   Tue, 20 Nov 2018 04:42:09 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Aaron Lu <aaron.lu@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+        =?utf-8?Q?Pawe=C5=82?= Staszewski <pstaszewski@itcare.pl>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Yoel Caspersen <yoel@kviknet.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Ian Kumlien <ian.kumlien@gmail.com>
+Message-ID: <683236105.35259866.1542706929529.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20181120014544.GB10657@intel.com>
+References: <20181119134834.17765-1-aaron.lu@intel.com> <20181119134834.17765-2-aaron.lu@intel.com> <20181120014544.GB10657@intel.com>
+Subject: Re: [PATCH v2 RESEND update 1/2] mm/page_alloc: free order-0 pages
+ through PCP in page_frag_free()
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181116205407.10457-6-babu.moger@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.67.116.119, 10.4.195.6]
+Thread-Topic: mm/page_alloc: free order-0 pages through PCP in page_frag_free()
+Thread-Index: vlSeekjqFLNNlIX5GbvvfvYHef1EEA==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 20 Nov 2018 09:42:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 08:54:30PM +0000, Moger, Babu wrote:
-> Now Resource control feature is supported by both Intel and AMD.
-> Rename the INTEL_RDT to vendor neutral RESCTRL.
+
 > 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> page_frag_free() calls __free_pages_ok() to free the page back to
+> Buddy. This is OK for high order page, but for order-0 pages, it
+> misses the optimization opportunity of using Per-Cpu-Pages and can
+> cause zone lock contention when called frequently.
+> 
+> Paweł Staszewski recently shared his result of 'how Linux kernel
+> handles normal traffic'[1] and from perf data, Jesper Dangaard Brouer
+> found the lock contention comes from page allocator:
+> 
+>   mlx5e_poll_tx_cq
+>   |
+>    --16.34%--napi_consume_skb
+>              |
+>              |--12.65%--__free_pages_ok
+>              |          |
+>              |           --11.86%--free_one_page
+>              |                     |
+>              |                     |--10.10%--queued_spin_lock_slowpath
+>              |                     |
+>              |                      --0.65%--_raw_spin_lock
+>              |
+>              |--1.55%--page_frag_free
+>              |
+>               --1.44%--skb_release_data
+> 
+> Jesper explained how it happened: mlx5 driver RX-page recycle
+> mechanism is not effective in this workload and pages have to go
+> through the page allocator. The lock contention happens during
+> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+> up at these speeds.[2]
+> 
+> I thought that __free_pages_ok() are mostly freeing high order
+> pages and thought this is an lock contention for high order pages
+> but Jesper explained in detail that __free_pages_ok() here are
+> actually freeing order-0 pages because mlx5 is using order-0 pages
+> to satisfy its page pool allocation request.[3]
+> 
+> The free path as pointed out by Jesper is:
+> skb_free_head()
+>   -> skb_free_frag()
+>     -> page_frag_free()
+> And the pages being freed on this path are order-0 pages.
+> 
+> Fix this by doing similar things as in __page_frag_cache_drain() -
+> send the being freed page to PCP if it's an order-0 page, or
+> directly to Buddy if it is a high order page.
+> 
+> With this change, Paweł hasn't noticed lock contention yet in
+> his workload and Jesper has noticed a 7% performance improvement
+> using a micro benchmark and lock contention is gone. Ilias' test
+> on a 'low' speed 1Gbit interface on an cortex-a53 shows ~11%
+> performance boost testing with 64byte packets and __free_pages_ok()
+> disappeared from perf top.
+> 
+> [1]: https://www.spinics.net/lists/netdev/msg531362.html
+> [2]: https://www.spinics.net/lists/netdev/msg531421.html
+> [3]: https://www.spinics.net/lists/netdev/msg531556.html
+> 
+> Reported-by: Paweł Staszewski <pstaszewski@itcare.pl>
+> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> Acked-by: Mel Gorman <mgorman@techsingularity.net>
+> Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> Tested-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+> Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> Acked-by: Tariq Toukan <tariqt@mellanox.com>
+> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
 > ---
->  arch/x86/Kconfig                     | 4 ++--
->  arch/x86/include/asm/resctrl_sched.h | 4 ++--
->  arch/x86/kernel/cpu/Makefile         | 4 ++--
->  include/linux/sched.h                | 2 +-
->  4 files changed, 7 insertions(+), 7 deletions(-)
+> update: fix Tariq's email tag.
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1a0be022f91d..4aae7aba4d61 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -445,8 +445,8 @@ config RETPOLINE
->  	  code are eliminated. Since this includes the syscall entry path,
->  	  it is not entirely pointless.
+>  mm/page_alloc.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 421c5b652708..8f8c6b33b637 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4677,8 +4677,14 @@ void page_frag_free(void *addr)
+>  {
+>  	struct page *page = virt_to_head_page(addr);
 >  
-> -config INTEL_RDT
-> -	bool "Intel Resource Director Technology support"
-> +config RESCTRL
-> +	bool "Resource Control feature support"
+> -	if (unlikely(put_page_testzero(page)))
+> -		__free_pages_ok(page, compound_order(page));
+> +	if (unlikely(put_page_testzero(page))) {
+> +		unsigned int order = compound_order(page);
+> +
+> +		if (order == 0)
+> +			free_unref_page(page);
+> +		else
+> +			__free_pages_ok(page, order);
+> +	}
+>  }
+>  EXPORT_SYMBOL(page_frag_free);
+>  
+> --
+> 2.17.2
 
-s/feature // - they're all features. :)
-
->  	default n
->  	depends on X86 && CPU_SUP_INTEL
-
-Patch 9/13 is begging to be merged with this one.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+A good optimization for zero order allocations.  
+Acked-by: Pankaj gupta <pagupta@redhat.com>
+ 
+Thanks,
+Pankaj
