@@ -6,91 +6,102 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1F0C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29474C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F1FA208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:53:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F1FA208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 4EA87208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA87208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732646AbeKTRUy (ORCPT
+        id S1732279AbeKTRUm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 12:20:54 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:47674 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732296AbeKTRUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 12:20:53 -0500
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id 7F5C75F9C2; Tue, 20 Nov 2018 14:53:16 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: [PATCH 1/3] arm64: dts: allwinner: h6: orangepi: Add board-wide 5V regulator
-Date:   Tue, 20 Nov 2018 14:53:09 +0800
-Message-Id: <20181120065311.30009-2-wens@csie.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120065311.30009-1-wens@csie.org>
-References: <20181120065311.30009-1-wens@csie.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 20 Nov 2018 12:20:42 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:17339 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726883AbeKTRUm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 12:20:42 -0500
+X-IronPort-AV: E=Sophos;i="5.56,255,1539628200"; 
+   d="scan'208";a="247048"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 20 Nov 2018 12:23:07 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9082"; a="2109510"
+Received: from mgottam-linux.qualcomm.com ([10.204.65.20])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 20 Nov 2018 12:23:07 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id 6051E3193; Tue, 20 Nov 2018 12:23:06 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org, mgottam@codeaurora.org
+Subject: [PATCH v2] media: venus: amend buffer size for bitstream plane
+Date:   Tue, 20 Nov 2018 12:23:03 +0530
+Message-Id: <1542696783-23016-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Orange Pi Lite 2 and Orange Pi One Plus share the same design for
-their USB 2.0 ports. VBUS is directly tied to the board wide 5V rail,
-which is also directly tied to the DC jack. There is no current limiting
-in this design. This 5V rail also supplies the various inputs to the
-PMIC.
+Accept the buffer size requested by client and compare it
+against driver calculated size and set the maximum to
+bitstream plane.
 
-This patch adds a board wide 5V regulator and sets it as the input to
-the PMIC inputs.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
 ---
- .../boot/dts/allwinner/sun50i-h6-orangepi.dtsi  | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/media/platform/qcom/venus/venc.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-index 0612c19cd994..f910d5eb9267 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-orangepi.dtsi
-@@ -21,6 +21,15 @@
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	reg_vcc5v: vcc5v {
-+		/* board wide 5V supply directly from the DC jack */
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-5v";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
- };
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index ce85962..ecfdbd6 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -303,6 +303,7 @@ static int venc_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+ 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+ 	const struct venus_format *fmt;
++	__u32 sizeimage;
  
- &mmc0 {
-@@ -43,6 +52,14 @@
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
- 		x-powers,self-working-mode;
-+		vina-supply = <&reg_vcc5v>;
-+		vinb-supply = <&reg_vcc5v>;
-+		vinc-supply = <&reg_vcc5v>;
-+		vind-supply = <&reg_vcc5v>;
-+		vine-supply = <&reg_vcc5v>;
-+		aldoin-supply = <&reg_vcc5v>;
-+		bldoin-supply = <&reg_vcc5v>;
-+		cldoin-supply = <&reg_vcc5v>;
+ 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+ 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+@@ -334,9 +335,10 @@ static int venc_enum_fmt(struct file *file, void *fh, struct v4l2_fmtdesc *f)
+ 	pixmp->num_planes = fmt->num_planes;
+ 	pixmp->flags = 0;
  
- 		regulators {
- 			reg_aldo1: aldo1 {
+-	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
+-						     pixmp->width,
+-						     pixmp->height);
++	sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
++					     pixmp->width,
++					     pixmp->height);
++	pfmt[0].sizeimage = max(ALIGN(pfmt[0].sizeimage, SZ_4K), sizeimage);
+ 
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+ 		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
+@@ -408,8 +410,10 @@ static int venc_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
+ 
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+ 		inst->fmt_out = fmt;
+-	else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++	else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+ 		inst->fmt_cap = fmt;
++		inst->output_buf_size = pixmp->plane_fmt[0].sizeimage;
++	}
+ 
+ 	return 0;
+ }
+@@ -908,6 +912,7 @@ static int venc_queue_setup(struct vb2_queue *q,
+ 		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
+ 						    inst->width,
+ 						    inst->height);
++		sizes[0] = max(sizes[0], inst->output_buf_size);
+ 		inst->output_buf_size = sizes[0];
+ 		break;
+ 	default:
 -- 
-2.19.1
+1.9.1
 
