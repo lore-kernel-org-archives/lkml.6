@@ -2,148 +2,168 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F15C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC09CC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0657E20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:22:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0657E20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1286920685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:23:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iqD/SGAn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1286920685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbeKUDw5 (ORCPT
+        id S1730483AbeKUDxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:52:57 -0500
-Received: from foss.arm.com ([217.140.101.70]:57798 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbeKUDw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:52:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3584E1DC8;
-        Tue, 20 Nov 2018 09:22:43 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 882593F5AF;
-        Tue, 20 Nov 2018 09:22:41 -0800 (PST)
-Subject: Re: [PATCH 1/4] KVM: arm/arm64: vgic: Do not cond_resched_lock() with
- IRQs disabled
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, bigeasy@linutronix.de, stable@vger.kernel.org
-References: <1542647279-46609-1-git-send-email-julien.thierry@arm.com>
- <1542647279-46609-2-git-send-email-julien.thierry@arm.com>
- <20181120141832.GA11162@e113682-lin.lund.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <76a488a9-893c-ffbe-16f2-23735af8126a@arm.com>
-Date:   Tue, 20 Nov 2018 17:22:39 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 20 Nov 2018 22:53:23 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56974 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbeKUDxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:53:23 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181120172308euoutp01c0af0bbb3fcb9ac8187e648b8c532841~o5O8fHmvb1424414244euoutp01R
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:23:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181120172308euoutp01c0af0bbb3fcb9ac8187e648b8c532841~o5O8fHmvb1424414244euoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542734588;
+        bh=LQ5GRkWWdcucMNEus98hND8MvakN7rBZmY7NyFw4kqc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=iqD/SGAnxCdGLL9RJ4KoFna80G8Xa9FnUvk7WHCqgaxSmLmJlvfb3G0y5qGm8VZQB
+         QDNhBO9Mtoz6IpNKbCMjdW5ZuqXYqmH+/LMgApWWpHifn1vEeO79dYTZCd+L+R5iwJ
+         V+64UN0bVMVJXlXkydTB7fySyKgniJU5HcVAu0jo=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181120172307eucas1p141b9d8b0bfa220de5582ce5d2d0e4cae~o5O7w0Tpi1548915489eucas1p1g;
+        Tue, 20 Nov 2018 17:23:07 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 31.3A.04441.AF244FB5; Tue, 20
+        Nov 2018 17:23:06 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181120172305eucas1p2f0dc9364e02e1878c853dda886a86f9a~o5O6IYYIi2486624866eucas1p2B;
+        Tue, 20 Nov 2018 17:23:05 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181120172305eusmtrp23b18c5e3371eb0f757efe7794471be76~o5O55OOvA3153831538eusmtrp2B;
+        Tue, 20 Nov 2018 17:23:05 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-99-5bf442fa79d1
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id B2.B7.04128.9F244FB5; Tue, 20
+        Nov 2018 17:23:05 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181120172304eusmtip142d96d1ad528c5a8d28b2cefb9da2f56~o5O5YJ92j0739907399eusmtip1N;
+        Tue, 20 Nov 2018 17:23:04 +0000 (GMT)
+Subject: Re: Applied
+ "regulator: wm8994: Pass descriptor instead of GPIO number" to the regulator
+ tree
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <a67567d7-9081-a6e2-b1f5-a3bc07970d35@samsung.com>
+Date:   Tue, 20 Nov 2018 18:23:04 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181120141832.GA11162@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20181120170332.GE16508@imbe.wolfsonmicro.main>
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEKsWRmVeSWpSXmKPExsWy7djP87q/nL5EG/Q1WllMffiEzeJK6yZG
+        i/tfjzJafLvSwWQx5c9yJovLu+awWXx+v5/V4uKM88wOHB47Z91l99i0qpPN4861PWwe0+f8
+        Z/T4vEkugDWKyyYlNSezLLVI3y6BK+P3+yNsBfd5KlZtmMTYwLiCq4uRk0NCwETi5f1Wli5G
+        Lg4hgRWMEs+vHGSGcL4wSjzu/8wE4XxmlDj79gkjTMvPyaugWpYzSmxsa2WHcN4zSnyY+oMN
+        pEpYIEvi6t9rYLaIQLLE9hXzwYqYBa4zSlyccgRsFJuAoUTX2y6wIl4BO4kd3w+xgtgsAqoS
+        u4+D7ObkEBWIkTi28gYjRI2gxMmZT1hAbE4BG4kF1/+B2cwC8hLb385hhrDFJW49mQ92t4TA
+        LnaJRbfOsUPc7SJxvOU1G4QtLPHq+BaouIzE/50wDc2MEu0zZrFDOD2MElvn7IDqsJY4fPwi
+        0HkcQCs0Jdbv0ocIO0ocu3kHLCwhwCdx460gxBF8EpO2TWeGCPNKdLQJQVSrScw6vg5u7cEL
+        l5gnMCrNQvLaLCTvzELyziyEvQsYWVYxiqeWFuempxYb5qWW6xUn5haX5qXrJefnbmIEpqTT
+        /45/2sH49VLSIUYBDkYlHt4E4S/RQqyJZcWVuYcYJTiYlUR4z2kBhXhTEiurUovy44tKc1KL
+        DzFKc7AoifNWMzyIFhJITyxJzU5NLUgtgskycXBKNTA2Orc84btvyWbgsKXd4Hbn2sKsUwvr
+        pFevuP4ofofo+2siLVwfXj22Ubn3lK/k01OX3Q/WF0ksXrM4rzh/hQqv6PMPMsubiiP/nChS
+        37vqc0+IAJPRp/RgRm3hn+4Z5uytpkyxbgaKE/SVw+1NP5utPplfXdg/pSguVWatxF+l3R/D
+        EmVb5JVYijMSDbWYi4oTASFAUMpFAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMIsWRmVeSWpSXmKPExsVy+t/xu7o/nb5EG8zsYbWY+vAJm8WV1k2M
+        Fve/HmW0+Halg8liyp/lTBaXd81hs/j8fj+rxcUZ55kdODx2zrrL7rFpVSebx51re9g8ps/5
+        z+jxeZNcAGuUnk1RfmlJqkJGfnGJrVK0oYWRnqGlhZ6RiaWeobF5rJWRqZK+nU1Kak5mWWqR
+        vl2CXsbv90fYCu7zVKzaMImxgXEFVxcjJ4eEgInEz8mrWLoYuTiEBJYySuzZdpQJIiEjcXJa
+        AyuELSzx51oXG0TRW0aJtgnngYo4OIQFMiTWba8FqRERSJZY3P6CFaSGWeA6o8SlKSfZIRq+
+        s0jM+rIDbBKbgKFE11uQSZwcvAJ2Eju+HwKLswioSuw+/hlss6hAjETn9XlQNYISJ2c+YQGx
+        OQVsJBZc/wdmMwuoS/yZd4kZwpaX2P52DpQtLnHryXymCYxCs5C0z0LSMgtJyywkLQsYWVYx
+        iqSWFuem5xYb6RUn5haX5qXrJefnbmIERuC2Yz+37GDsehd8iFGAg1GJhzdB+Eu0EGtiWXFl
+        7iFGCQ5mJRHec1pAId6UxMqq1KL8+KLSnNTiQ4ymQM9NZJYSTc4HJoe8knhDU0NzC0tDc2Nz
+        YzMLJXHe8waVUUIC6YklqdmpqQWpRTB9TBycUg2MlxXuLU+qeCvP476rPe6o3JSoSmmdsL85
+        +jaTrk8s15A5P/WuqrZ4bUyT2UG9rO2s9ud+ixpqCezd52ElPbWyN3zRZ2fl6v0Hvk3d23t/
+        6kbxnLTwaNuW4J3HK+ZF/nsY/eeXaIfRo6ePFin+bbrwNsHwpUGY5obvSZyxbr28B+Wb38c2
+        hocosRRnJBpqMRcVJwIA1OnjwdYCAAA=
+X-CMS-MailID: 20181120172305eucas1p2f0dc9364e02e1878c853dda886a86f9a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137
+References: <CGME20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137@eucas1p2.samsung.com>
+        <66d3b74c-0152-b17b-89d4-a21d33445b25@samsung.com>
+        <20181120144700.GB16508@imbe.wolfsonmicro.main>
+        <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
+        <20181120153215.GC16508@imbe.wolfsonmicro.main>
+        <20181120153610.GD16508@imbe.wolfsonmicro.main>
+        <9314db6c-9498-579d-430c-5a2992fe513e@samsung.com>
+        <59879030-93a4-f562-b03b-c5e579d44e89@opensource.cirrus.com>
+        <772b6fdc-57af-fef2-0c85-78446bec2c2a@samsung.com>
+        <ea2b959c-0d04-6a50-4d69-3f03576fdac9@opensource.cirrus.com>
+        <20181120170332.GE16508@imbe.wolfsonmicro.main>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Charles,
 
-
-On 20/11/18 14:18, Christoffer Dall wrote:
-> On Mon, Nov 19, 2018 at 05:07:56PM +0000, Julien Thierry wrote:
->> To change the active state of an MMIO, halt is requested for all vcpus of
->> the affected guest before modifying the IRQ state. This is done by calling
->> cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
->> disabled at this point and running a vcpu cannot get rescheduled.
-> 
-> "running a vcpu cannot get rescheduled" ?
-
-Yes, that doesn't make much sense :\ . I guess I just meant "a vcpu 
-cannot get rescheduled on this cpu".
-
-I'll rewrite this.
-
-> 
+On 2018-11-20 18:03, Charles Keepax wrote:
+> On Tue, Nov 20, 2018 at 04:57:16PM +0000, Richard Fitzgerald wrote:
+>> On 20/11/18 16:34, Marek Szyprowski wrote:
+>>> On 2018-11-20 17:16, Richard Fitzgerald wrote:
+>>>> On 20/11/18 15:56, Marek Szyprowski wrote:
+>>>>> On 2018-11-20 16:36, Charles Keepax wrote:
+>>>>>> On Tue, Nov 20, 2018 at 03:32:15PM +0000, Charles Keepax wrote:
+>>>>>>> On Tue, Nov 20, 2018 at 03:58:59PM +0100, Marek Szyprowski wrote:
+>>>>>>>> On 2018-11-20 15:47, Charles Keepax wrote:
+>>>>>>>>> On Tue, Nov 20, 2018 at 02:43:32PM +0100, Marek Szyprowski wrote:
+>>>>>>>>>> On 2018-05-17 18:41, Mark Brown wrote:
+>>>>>>>>>>> Subject: [PATCH] regulator: wm8994: Pass descriptor instead of
+>>>>>>>>>>> GPIO number
+>>>>>>>>>> This patch causes following kernel warning on Samsung Exynos4412
+>>>>>>>>>> based
+>> Sounds like all is ok and working as expected.
+>> If this is causing you a problem you'll need to provide more explanation of
+>> what problem you have so we can understand.
 >>
->> Solve this by waiting for all vcpus to be halted after emmiting the halt
->> request.
->>
->> Fixes commit 6c1b7521f4a07cc63bbe2dfe290efed47cdb780a ("KVM: arm/arm64:
->> Factor out functionality to get vgic mmio requester_vcpu")
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: stable@vger.kernel.org
->> ---
->>   virt/kvm/arm/vgic/vgic-mmio.c | 33 +++++++++++----------------------
->>   1 file changed, 11 insertions(+), 22 deletions(-)
->>
->> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
->> index f56ff1c..eefd877 100644
->> --- a/virt/kvm/arm/vgic/vgic-mmio.c
->> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
->> @@ -313,27 +313,6 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
->>
->>   	spin_lock_irqsave(&irq->irq_lock, flags);
->>
->> -	/*
->> -	 * If this virtual IRQ was written into a list register, we
->> -	 * have to make sure the CPU that runs the VCPU thread has
->> -	 * synced back the LR state to the struct vgic_irq.
->> -	 *
->> -	 * As long as the conditions below are true, we know the VCPU thread
->> -	 * may be on its way back from the guest (we kicked the VCPU thread in
->> -	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
->> -	 * so we release and re-acquire the spin_lock to let the other thread
->> -	 * sync back the IRQ.
->> -	 *
->> -	 * When accessing VGIC state from user space, requester_vcpu is
->> -	 * NULL, which is fine, because we guarantee that no VCPUs are running
->> -	 * when accessing VGIC state from user space so irq->vcpu->cpu is
->> -	 * always -1.
->> -	 */
->> -	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
->> -	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
->> -	       irq->vcpu->cpu != -1) /* VCPU thread is running */
->> -		cond_resched_lock(&irq->irq_lock);
->> -
->>   	if (irq->hw) {
->>   		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
->>   	} else {
->> @@ -368,8 +347,18 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
->>    */
->>   static void vgic_change_active_prepare(struct kvm_vcpu *vcpu, u32 intid)
->>   {
->> -	if (intid > VGIC_NR_PRIVATE_IRQS)
->> +	if (intid > VGIC_NR_PRIVATE_IRQS) {
->> +		struct kvm_vcpu *tmp;
->> +		int i;
->> +
->>   		kvm_arm_halt_guest(vcpu->kvm);
->> +
->> +		/* Wait for each vcpu to be halted */
->> +		kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
->> +			while (tmp->cpu != -1)
->> +				cond_resched();
-> 
-> We used to have something like this which Andre then found out it could
-> deadlock the system, because the VCPU making this request wouldn't have
-> called kvm_arch_vcpu_put, and its cpu value would still have a value.
-> 
-> That's why we have the vcpu && vcpu != requester check.
-> 
+> The problem looks to be that we shouldn't be using devm for the
+> GPIO allocation because the device we want to allocate the memory
+> against differs from the one that holds the OF node. Apologies
+> for missing that in review of the patch.
 
-I see, thanks for pointing that out. I'll fix this in the next iteration.
+No problem. That's why we have linux-next. This way such issues can be
+noticed before they cause any real problems.
 
-Thanks,
+> I have sent a fix that hopefully should resolve the issue, if you
+> could test it on you system that would be awesome.
 
+I will check in a minute.
+
+Best regards
 -- 
-Julien Thierry
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
