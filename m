@@ -2,112 +2,213 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53AF8C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F66DC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C909720851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:52:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C909720851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 09908208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09908208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbeKTTUm (ORCPT
+        id S1726944AbeKTTW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:20:42 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50323 "EHLO mail.bootlin.com"
+        Tue, 20 Nov 2018 14:22:56 -0500
+Received: from mga07.intel.com ([134.134.136.100]:57263 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbeKTTUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:20:41 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9D26A2074F; Tue, 20 Nov 2018 09:52:39 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6F5A6206D8;
-        Tue, 20 Nov 2018 09:52:29 +0100 (CET)
-Date:   Tue, 20 Nov 2018 09:52:29 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v2 11/14] dt-bindings: clock: Add Allwinner suniv
- F1C100s CCU
-Message-ID: <20181120085229.suf3affnix3d7bi2@flea>
-References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <5f0322d5e37726f0c597b919f59e121f0b2855c3.1542546735.git.mesihkilinc@gmail.com>
+        id S1725913AbeKTTWz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:22:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:54:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
+   d="scan'208";a="106105726"
+Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:54:52 -0800
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V7 00/21] swap: Swapout/swapin THP in one piece
+Date:   Tue, 20 Nov 2018 16:54:28 +0800
+Message-Id: <20181120085449.5542-1-ying.huang@intel.com>
+X-Mailer: git-send-email 2.18.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x6dkfyopoy5uzc7a"
-Content-Disposition: inline
-In-Reply-To: <5f0322d5e37726f0c597b919f59e121f0b2855c3.1542546735.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Andrew, could you help me to check whether the overall design is
+reasonable?
 
---x6dkfyopoy5uzc7a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi, Hugh, Shaohua, Minchan and Rik, could you help me to review the
+swap part of the patchset?  Especially [02/21], [03/21], [04/21],
+[05/21], [06/21], [07/21], [08/21], [09/21], [10/21], [11/21],
+[12/21], [20/21], [21/21].
 
-On Sun, Nov 18, 2018 at 05:17:10PM +0300, Mesih Kilinc wrote:
-> Add compatiple string for Allwinner suniv F1C100s CCU.
-> Add clock and reset definitions.
->=20
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> ---
->  .../devicetree/bindings/clock/sunxi-ccu.txt        |  1 +
->  include/dt-bindings/clock/suniv-ccu-f1c100s.h      | 69 ++++++++++++++++=
-++++++
->  include/dt-bindings/reset/suniv-ccu-f1c100s.h      | 37 ++++++++++++
->  3 files changed, 107 insertions(+)
->  create mode 100644 include/dt-bindings/clock/suniv-ccu-f1c100s.h
->  create mode 100644 include/dt-bindings/reset/suniv-ccu-f1c100s.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt b/Docu=
-mentation/devicetree/bindings/clock/sunxi-ccu.txt
-> index 47d2e90..92c16eb 100644
-> --- a/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-> +++ b/Documentation/devicetree/bindings/clock/sunxi-ccu.txt
-> @@ -3,6 +3,7 @@ Allwinner Clock Control Unit Binding
-> =20
->  Required properties :
->  - compatible: must contain one of the following compatibles:
-> +		- "allwinner,suniv-f1c100s-ccu"
+Hi, Andrea and Kirill, could you help me to review the THP part of the
+patchset?  Especially [01/21], [07/21], [09/21], [11/21], [13/21],
+[15/21], [16/21], [17/21], [18/21], [19/21], [20/21].
 
-Letters come after the numbers in alphabetical order, so that should
-be moved at the end of that list (and you have that issue in a couple
-of other patches).
+Hi, Johannes and Michal, could you help me to review the cgroup part
+of the patchset?  Especially [14/21].
 
-Maxime
+And for all, Any comment is welcome!
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+This patchset is based on the 2018-11-16 head of mmotm/master.
 
---x6dkfyopoy5uzc7a
-Content-Type: application/pgp-signature; name="signature.asc"
+This is the final step of THP (Transparent Huge Page) swap
+optimization.  After the first and second step, the splitting huge
+page is delayed from almost the first step of swapout to after swapout
+has been finished.  In this step, we avoid splitting THP for swapout
+and swapout/swapin the THP in one piece.
 
------BEGIN PGP SIGNATURE-----
+We tested the patchset with vm-scalability benchmark swap-w-seq test
+case, with 16 processes.  The test case forks 16 processes.  Each
+process allocates large anonymous memory range, and writes it from
+begin to end for 8 rounds.  The first round will swapout, while the
+remaining rounds will swapin and swapout.  The test is done on a Xeon
+E5 v3 system, the swap device used is a RAM simulated PMEM (persistent
+memory) device.  The test result is as follow,
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PLTQAKCRDj7w1vZxhR
-xRW9AP4wogVwb2BGDjY1CIHtmXYM9Ryx+9n5D1NMV5/1Hriu9gD9H9JA5u6+33n+
-rauUIyuNPoLKtlWELTd62XM03RwYwA0=
-=qNcn
------END PGP SIGNATURE-----
+            base                  optimized
+---------------- -------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+   1417897 ±  2%    +992.8%   15494673        vm-scalability.throughput
+   1020489 ±  4%   +1091.2%   12156349        vmstat.swap.si
+   1255093 ±  3%    +940.3%   13056114        vmstat.swap.so
+   1259769 ±  7%   +1818.3%   24166779        meminfo.AnonHugePages
+  28021761           -10.7%   25018848 ±  2%  meminfo.AnonPages
+  64080064 ±  4%     -95.6%    2787565 ± 33%  interrupts.CAL:Function_call_interrupts
+     13.91 ±  5%     -13.8        0.10 ± 27%  perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
 
---x6dkfyopoy5uzc7a--
+Where, the score of benchmark (bytes written per second) improved
+992.8%.  The swapout/swapin throughput improved 1008% (from about
+2.17GB/s to 24.04GB/s).  The performance difference is huge.  In base
+kernel, for the first round of writing, the THP is swapout and split,
+so in the remaining rounds, there is only normal page swapin and
+swapout.  While in optimized kernel, the THP is kept after first
+swapout, so THP swapin and swapout is used in the remaining rounds.
+This shows the key benefit to swapout/swapin THP in one piece, the THP
+will be kept instead of being split.  meminfo information verified
+this, in base kernel only 4.5% of anonymous page are THP during the
+test, while in optimized kernel, that is 96.6%.  The TLB flushing IPI
+(represented as interrupts.CAL:Function_call_interrupts) reduced
+95.6%, while cycles for spinlock reduced from 13.9% to 0.1%.  These
+are performance benefit of THP swapout/swapin too.
+
+Below is the description for all steps of THP swap optimization.
+
+Recently, the performance of the storage devices improved so fast that
+we cannot saturate the disk bandwidth with single logical CPU when do
+page swapping even on a high-end server machine.  Because the
+performance of the storage device improved faster than that of single
+logical CPU.  And it seems that the trend will not change in the near
+future.  On the other hand, the THP becomes more and more popular
+because of increased memory size.  So it becomes necessary to optimize
+THP swap performance.
+
+The advantages to swapout/swapin a THP in one piece include:
+
+- Batch various swap operations for the THP.  Many operations need to
+  be done once per THP instead of per normal page, for example,
+  allocating/freeing the swap space, writing/reading the swap space,
+  flushing TLB, page fault, etc.  This will improve the performance of
+  the THP swap greatly.
+
+- The THP swap space read/write will be large sequential IO (2M on
+  x86_64).  It is particularly helpful for the swapin, which are
+  usually 4k random IO.  This will improve the performance of the THP
+  swap too.
+
+- It will help the memory fragmentation, especially when the THP is
+  heavily used by the applications.  The THP order pages will be free
+  up after THP swapout.
+
+- It will improve the THP utilization on the system with the swap
+  turned on.  Because the speed for khugepaged to collapse the normal
+  pages into the THP is quite slow.  After the THP is split during the
+  swapout, it will take quite long time for the normal pages to
+  collapse back into the THP after being swapin.  The high THP
+  utilization helps the efficiency of the page based memory management
+  too.
+
+There are some concerns regarding THP swapin, mainly because possible
+enlarged read/write IO size (for swapout/swapin) may put more overhead
+on the storage device.  To deal with that, the THP swapin is turned on
+only when necessary.  A new sysfs interface:
+/sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
+configure it.  It uses "always/never/madvise" logic, to be turned on
+globally, turned off globally, or turned on only for VMA with
+MADV_HUGEPAGE, etc.
+GE, etc.
+
+Changelog
+---------
+
+V7:
+
+- Rebased on 11/16 HEAD of mmotm/master
+
+- Fix some address alignment bugs reported by Daniel, Thanks!
+
+V6:
+
+- Rebased on 10/3 HEAD of mmotm/master
+
+- Added return value checking in swap_duplicate() per Daniel's comments
+
+v5:
+
+- Rebased on 9/20 HEAD of mmotm/master
+
+- Merged the swap operations implementation for the huge and the
+  normal swap entries when possible
+
+- Added more code comments to improve code readability
+
+- Changed function parameter style to avoid to use Boolean parameter
+  as much as possible
+
+- Fixed a deadlock issue in do_huge_pmd_swap_page(), thanks 0-Day and sparse
+
+v4:
+
+- Rebased on 6/14 HEAD of mmotm/master
+
+- Fixed one build bug and several coding style issues, Thanks Daniel Jordon
+
+v3:
+
+- Rebased on 5/18 HEAD of mmotm/master
+
+- Fixed a build bug, Thanks 0-Day!
+
+v2:
+
+- Fixed several build bugs, Thanks 0-Day!
+
+- Improved documentation as suggested by Randy Dunlap.
+
+- Fixed several bugs in reading huge swap cluster
