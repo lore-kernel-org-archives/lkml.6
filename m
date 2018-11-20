@@ -2,108 +2,133 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D77ACC04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D01BFC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAAA320851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAAA320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 257F2208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 257F2208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbeKTSpb (ORCPT
+        id S1726702AbeKTSop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:45:31 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:35724 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeKTSpb (ORCPT
+        Tue, 20 Nov 2018 13:44:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:56509 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbeKTSop (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:45:31 -0500
-Received: by mail-ua1-f65.google.com with SMTP id d2so350740ual.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:17:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rcK6eBcd+OHabn/M+TbT7b9qeMTPFsAKfVdSDCMY5RE=;
-        b=imBMsBKuTRObDgGzhr8RUwvVJxY0h740nJgKZg15rnUpC0caJKkuH+nzb22Luj6Jkn
-         wJgoxiF9QLOrZf9sR7bFESpeO7MHHW6qnai9rzTlwWnbfztCNq9aS/bSte3bh1jHlc+X
-         jHjWSNk6o8R1CBGAf9YFSanM7AjD7GhBdBu6acl5r1vQ5woUgu3i8gaCyK6OehMc+/bP
-         113JCly4XIKr5bDLyZyv0MlOwginVi5jEC61igi3uG0KZdAtXdKyAMchQTBma+G1Zy6s
-         m6Mi8z+f+hGeLZt96wwF8NkmnL5i7L8gtg65eMICVZNIvWPmIlQgmKpTBKy4AX493BTe
-         Ie1w==
-X-Gm-Message-State: AA+aEWbvDySCA0O5zinTvn08QY/CRJM6qdHzIzwniplE9buUCYeAu3ks
-        rYTN8q7A4cA3IU0+wCA0e8ugk2gahbJI1YPulFjKuQ==
-X-Google-Smtp-Source: AFSGD/W+xNl6RnmQbdlRTyWrb2PaED19jqSZkn7nebLmlPXVU69+vU0RB5lQ5AO38z5falY6dDNoOEuNYQMcbIMMPHc=
-X-Received: by 2002:ab0:7251:: with SMTP id d17mr484260uap.0.1542701858839;
- Tue, 20 Nov 2018 00:17:38 -0800 (PST)
+        Tue, 20 Nov 2018 13:44:45 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK8GHGV2908894
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 20 Nov 2018 00:16:17 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK8GH7t2908891;
+        Tue, 20 Nov 2018 00:16:17 -0800
+Date:   Tue, 20 Nov 2018 00:16:17 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
+Message-ID: <tip-e50928d7213e72ee95507221a89ed07d2bb6517b@git.kernel.org>
+Cc:     riel@surriel.com, brgerst@gmail.com, peterz@infradead.org,
+        hpa@zytor.com, bp@alien8.de, yu-cheng.yu@intel.com,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        dave.hansen@linux.intel.com, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, luto@kernel.org, tglx@linutronix.de,
+        mingo@kernel.org
+Reply-To: riel@surriel.com, hpa@zytor.com, peterz@infradead.org,
+          brgerst@gmail.com, bp@alien8.de, yu-cheng.yu@intel.com,
+          dvlasenk@redhat.com, dave.hansen@linux.intel.com,
+          linux-kernel@vger.kernel.org, luto@amacapital.net,
+          tglx@linutronix.de, mingo@kernel.org, luto@kernel.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <d1d1b2e66ef31f884dba172084486ea9423ddcdb.1542667307.git.luto@kernel.org>
+References: <d1d1b2e66ef31f884dba172084486ea9423ddcdb.1542667307.git.luto@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/mm] x86/fault: Fix SMAP #PF handling buglet for implicit
+ supervisor accesses
+Git-Commit-ID: e50928d7213e72ee95507221a89ed07d2bb6517b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <CGME20181115050737eucas1p104ccec527d0713f9414bc75e0959feb6@eucas1p1.samsung.com>
- <1542258449-19930-1-git-send-email-huijin.park@samsung.com>
-In-Reply-To: <1542258449-19930-1-git-send-email-huijin.park@samsung.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 20 Nov 2018 09:17:26 +0100
-Message-ID: <CAMuHMdWwj6t6Pw==HG+jHC8y6rooWROuQjxJZNUwcXjimai8Pg@mail.gmail.com>
-Subject: Re: [PATCH v2] mtd: spi-nor: cast to u64 to avoid uint overflows
-To:     huijin.park@samsung.com
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        bbanghj.park@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Huijin,
+Commit-ID:  e50928d7213e72ee95507221a89ed07d2bb6517b
+Gitweb:     https://git.kernel.org/tip/e50928d7213e72ee95507221a89ed07d2bb6517b
+Author:     Andy Lutomirski <luto@kernel.org>
+AuthorDate: Mon, 19 Nov 2018 14:45:29 -0800
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 20 Nov 2018 08:44:29 +0100
 
-On Thu, Nov 15, 2018 at 6:08 AM Huijin Park <huijin.park@samsung.com> wrote:
-> From: "huijin.park" <huijin.park@samsung.com>
->
-> The "params->size" is defined as "u64".
-> And "info->sector_size" and "info->n_sectors" are defined as
-> unsigned int and u16.
-> Thus, u64 data might have strange data(loss data) if the result
-> overflows an unsigned int.
-> This patch casts "info->sector_size" and "info->n_sectors" to an u64.
->
-> Signed-off-by: huijin.park <huijin.park@samsung.com>
-> ---
->  drivers/mtd/spi-nor/spi-nor.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index d9c368c..527f281 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -2459,7 +2459,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
->         memset(params, 0, sizeof(*params));
->
->         /* Set SPI NOR sizes. */
-> -       params->size = info->sector_size * info->n_sectors;
-> +       params->size = (u64)info->sector_size * (u64)info->n_sectors;
+x86/fault: Fix SMAP #PF handling buglet for implicit supervisor accesses
 
-Adding the cast to only the first operand should be sufficient, and may lead
-to faster code, as only a 64x16 multiplication needs to be done, instead of
-a 64x64.
+Currently, if a user program somehow triggers an implicit supervisor
+access to a user address (e.g. if the kernel somehow sets LDTR to a
+user address), it will be incorrectly detected as a SMAP violation
+if AC is clear and SMAP is enabled.  This is incorrect -- the error
+has nothing to do with SMAP.  Fix the condition so that only
+accesses with the hardware USER bit set are diagnosed as SMAP
+violations.
 
->         params->page_size = info->page_size;
->
->         /* (Fast) Read settings. */
+With the logic fixed, an implicit supervisor access to a user address
+will hit the code lower in the function that is intended to handle it
+even if SMAP is enabled.  That logic is still a bit buggy, and later
+patches will clean it up.
 
-Gr{oetje,eeting}s,
+I *think* this code is still correct for WRUSS, and I've added a
+comment to that effect.
 
-                        Geert
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Link: http://lkml.kernel.org/r/d1d1b2e66ef31f884dba172084486ea9423ddcdb.1542667307.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/mm/fault.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 9d092ab74f18..7a69b66cf071 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -1235,12 +1235,15 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 		pgtable_bad(regs, hw_error_code, address);
+ 
+ 	/*
+-	 * If SMAP is on, check for invalid kernel (supervisor)
+-	 * access to user pages in the user address space.
++	 * If SMAP is on, check for invalid kernel (supervisor) access to user
++	 * pages in the user address space.  The odd case here is WRUSS,
++	 * which, according to the preliminary documentation, does not respect
++	 * SMAP and will have the USER bit set so, in all cases, SMAP
++	 * enforcement appears to be consistent with the USER bit.
+ 	 */
+ 	if (unlikely(cpu_feature_enabled(X86_FEATURE_SMAP) &&
+ 		     !(hw_error_code & X86_PF_USER) &&
+-		     (user_mode(regs) || !(regs->flags & X86_EFLAGS_AC))))
++		     !(regs->flags & X86_EFLAGS_AC)))
+ 	{
+ 		bad_area_nosemaphore(regs, hw_error_code, address);
+ 		return;
