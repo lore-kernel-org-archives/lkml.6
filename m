@@ -2,124 +2,127 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E3B6C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F190C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD96420831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD96420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id D7FD020851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:08:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7FD020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eclipso.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbeKTSfs (ORCPT
+        id S1726302AbeKTSfu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:35:48 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:36863 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeKTSfr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:35:47 -0500
-Received: by mail-vk1-f194.google.com with SMTP id u62so211608vkb.3;
-        Tue, 20 Nov 2018 00:07:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f/NzGAtWOo6r/kd1EgAzjZ9E9JLoC9aZ9LqLBnKlFzg=;
-        b=OtwHoSS+QCFqTKYc+rwjtkagw08bD3wJdtKo4ofXbXSVjpwesaKxYnjlcbNAYQY1Xq
-         i/7hJ+6380wT4YIn0W7UnvkpPifbXOJznecWnGBAb9xQmwEE8jVumnvrRPLnRy0GXbmz
-         nEhSRO6UVM4C4TpIheVsjl4mA4tVWI0ceLUP8Gptwjgep3GRpouPOGrrYC//lstOsYL2
-         KdOb1hudY3ngBb/KkUFltwa88kIT3R8h9D0Q5JcHORymwgpCRSLbtiObWqIOpK+4S2df
-         vgobXSzSB1UfcyWJqg4u5J/J9eNr+UKC1qw7vAYUhvigeWcknkCgl+1w6sxZFxcIgRwF
-         7SOA==
-X-Gm-Message-State: AA+aEWYWVrolLwvbu5ZXIPp0yAjFNvZ9F2wwbWMiDIQ+gcZkOOt2ODMq
-        yCxiEKUCRH03HXmjjA/i/fxJMbo/RZR7Dvq4yD4=
-X-Google-Smtp-Source: AFSGD/U8VN9UdaZSHhL5BxzLUzpooSMVvpYt2G0Fj6oI/537vpc5yNbgXwodxx9a7LGTKgo/YooHYoHzU37sEVOeAHM=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr411358vkd.74.1542701278174;
- Tue, 20 Nov 2018 00:07:58 -0800 (PST)
+        Tue, 20 Nov 2018 13:35:50 -0500
+Received: from mail.eclipso.de ([217.69.254.104]:45405 "EHLO mail.eclipso.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726254AbeKTSfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 13:35:50 -0500
+Received: from roadrunner.suse (p5B318D4A.dip0.t-ipconnect.de [91.49.141.74])
+        by mail.eclipso.de with ESMTPS id 04EAA638
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:07:59 +0100 (CET)
+X-ESMTP-Authenticated-User: 0001F234
+From:   stakanov <stakanov@eclipso.eu>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Date:   Tue, 20 Nov 2018 09:07:57 +0100
+Message-ID: <3267610.1jAA2Txdp3@roadrunner.suse>
+In-Reply-To: <20181119215841.0a3abd37@coco.lan>
+References: <s5hbm6l5cdi.wl-tiwai@suse.de> <1837109.xExTbI5ikD@roadrunner.suse> <20181119215841.0a3abd37@coco.lan>
 MIME-Version: 1.0
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw> <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 20 Nov 2018 09:07:44 +0100
-Message-ID: <CAMuHMdXhx2iudXaPQto-c1kYAYdKc1T9vMr5yYNqONJwoNmRCw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
- controller bindings
-To:     masonccyang@mxic.com.tw
-Cc:     Mark Brown <broonie@kernel.org>, Trent Piepho <tpiepho@impinj.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+In data martedì 20 novembre 2018 00:58:41 CET, Mauro Carvalho Chehab ha 
+scritto:
+> Em Tue, 20 Nov 2018 00:19:54 +0100
+> 
+> stakanov <stakanov@eclipso.eu> escreveu:
+> > In data martedì 20 novembre 2018 00:08:45 CET, Mauro Carvalho Chehab ha
+> > 
+> > scritto:
+> > >  uname -a
+> > >  
+> > > > Linux silversurfer 4.20.0-rc3-1.g7e16618-default #1 SMP PREEMPT Mon
+> > > > Nov 19
+> > > > 18:54:15 UTC 2018 (7e16618) x86_64 x86_64 x86_64 GNU/Linux
+> >  
+> >  uname -a
+> >  
+> > > Linux silversurfer 4.20.0-rc3-1.g7e16618-default #1 SMP PREEMPT Mon Nov
+> > > 19
+> > > 18:54:15 UTC 2018 (7e16618) x86_64 x86_64 x86_64 GNU/Linux
+> > 
+> > from https://download.opensuse.org/repositories/home:/tiwai:/bsc1116374/
+> > standard/x86_64/
+> > 
+> > So I booted this one, should be the right one.
+> > sudo dmesg | grep -i b2c2   should give these additional messages?
+> > 
+> > If Takashi is still around, he could confirm.
+> 
+> Well, if the patch got applied, you should  now be getting messages similar
+> (but not identical) to:
+> 
+> 	dvb_frontend_get_frequency_limits: frequencies: tuner: 9150000...2150000,
+> frontend: 9150000...2150000 dvb_pll_attach: delsys: 5, frequency range:
+> 9150000..2150000
+> 
+> > _________________________________________________________________
+> > ________________________________________________________
+> > Ihre E-Mail-Postfächer sicher & zentral an einem Ort. Jetzt wechseln und
+> > alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
+> Thanks,
+> Mauro
 
-On Mon, Nov 19, 2018 at 11:02 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
-> Document the bindings used by the Renesas R-Car D3 RPC controller.
->
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
 
-Thanks for your patch
+My bad. 
+With just dmesg:
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> @@ -0,0 +1,33 @@
-> +Renesas R-Car D3 RPC controller Device Tree Bindings
+[   89.399887] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[   95.020149] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[   95.152049] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[   95.152058] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 
+frequency 1880000 out of range (950000..2150)
+[   98.356539] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[   98.480372] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[   98.480381] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 
+frequency 1587500 out of range (950000..2150)
+[  100.016823] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[  100.140619] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[  100.140629] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 
+frequency 1353500 out of range (950000..2150)
+[  105.361166] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[  105.492972] dvb_frontend_get_frequency_limits: frequencies: tuner: 
+950000...2150000, frontend: 950000000...2150000000
+[  105.492977] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0 
+frequency 1944750 out of range (950000..2150)
 
-R-Car Gen3
 
-> +----------------------------------------------------
-> +
-> +Required properties:
-> +- compatible: should be "renesas,rpc-r8a77995"
+Which is, I guess the info you need?
 
-Please use "renesas,r8a77995-rpc".
 
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +- reg: should contain 2 entries, one for the registers and one for the direct
-> +       mapping area
-> +- reg-names: should contain "rpc_regs" and "dirmap"
-> +- interrupts: interrupt line connected to the RPC SPI controller
-> +- clock-names: should contain "clk_rpc"
-> +- clocks: should contain 1 entries for the CPG Module 917 clocks
 
-... for the module's clock
+_________________________________________________________________
+________________________________________________________
+Ihre E-Mail-Postfächer sicher & zentral an einem Ort. Jetzt wechseln und alte E-Mail-Adresse mitnehmen! https://www.eclipso.de
 
-> +
-> +Example:
-> +
-> +       rpc: spi@ee200000 {
-> +               compatible = "renesas,rpc-r8a77995";
-> +               reg = <0 0xee200000 0 0x8100>, <0 0x08000000 0 0x4000000>;
-> +               reg-names = "rpc_regs", "dirmap";
-> +               clocks = <&cpg CPG_MOD 917>;
-> +               clock-names = "clk_rpc";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
 
-power-domains?
-resets?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
