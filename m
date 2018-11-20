@@ -2,248 +2,112 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6B1C04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5353FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B9A20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B9A20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 72D4C20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:54:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="PMbBciyM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v9kYnMbn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72D4C20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kroah.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeKTTYE (ORCPT
+        id S1726889AbeKTTWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:24:04 -0500
-Received: from mga09.intel.com ([134.134.136.24]:17618 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725887AbeKTTYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:24:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:56:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="106105994"
-Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:58 -0800
-From:   Huang Ying <ying.huang@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V7 RESEND 20/21] swap: create PMD swap mapping when unmap the THP
-Date:   Tue, 20 Nov 2018 16:54:48 +0800
-Message-Id: <20181120085449.5542-21-ying.huang@intel.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
-References: <20181120085449.5542-1-ying.huang@intel.com>
+        Tue, 20 Nov 2018 14:22:51 -0500
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:35677 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725902AbeKTTWu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:22:50 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id A98ECF9F6;
+        Tue, 20 Nov 2018 03:54:49 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Tue, 20 Nov 2018 03:54:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=oacQMMZwmaMU/dcl+A/XMGfESM5
+        IeJYvn2lRjcxsDY0=; b=PMbBciyMefUWi3RY3UnLxJGhkvH4ZEtY88kAQKr2xSv
+        w23PDtAZgiE4g3BOFhBylWzcIDZeVpcwgCb5sZBRMcrCECVMm2cuvxief83Bev+c
+        7Wd2z1YCeyB3tMCdlf2j3jpHo1v0fPs2K83N9k6t36v/PiKJYW4yNrGIXuXbi3R9
+        1UzUlhfJclbOgy0vmFMDXi5BwdsY9tMhd6Wc98/n7L/YuWNPFNH79Br8oSPB26Ve
+        aWV8/wlXdOoxUTt0vAMRz6m1eUgzZSUDAvMNT1tdVwYOy7rX7Dhvju68NPKu8irM
+        qNkmVKQynSdxGJvQECLdJEIUemCk6oiThJsDTxuxiTA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=oacQMM
+        ZwmaMU/dcl+A/XMGfESM5IeJYvn2lRjcxsDY0=; b=v9kYnMbn3iIKIWDPHO7VNK
+        lkhi48KM6f/GDn/kKf1sVtxobWua0ICxujhshQ+ljSvQSO8EN8+nHkniYuA88ATT
+        Vb7oRVbP+6yWWnLbxijlxkpXrZlgg5woHmdJGzJC1+zC0Pp5LRwXToQspupKBq84
+        Fb/9004nX/MkoeCzAH+nj52Zo4Hxz1ac6PjBiQ8e31KG2sTD3+7Id39xg9epKkYh
+        h2sqRDzWkYLfTX0yP9OWP0JMaOtt43Tbqvh1f+QS/mtbjN3GYFoBbM1HVKR3cKHm
+        QIJ1twf5sd9G/R7mkbrGWzYkudcgkH8Fqdy6ThaHOltE73hj2f696hqFs+YESOTg
+        ==
+X-ME-Sender: <xms:2MvzW_irpHp4cNZGFuIkuOvYpMDjuWvGAcmfbV3ebpznqFfs6COnqA>
+X-ME-Proxy: <xmx:2MvzW94Mb0s_9aqu_NX6S5amX6tMOA3sCOIiLQu-BUTcXDSEG5AeHw>
+    <xmx:2MvzW_WSdYwh2uS8iELUVBiUjOESSw0OPlj51nsQCIbTbn8Q6erbMQ>
+    <xmx:2MvzWxPo1SUiNh3rcNpnxL6NrjU0rOHiTOFjAivoJ_q2dCgvfHuwGw>
+    <xmx:2MvzW4G13EVXnYNBlh2rl3CCTyx57ilmro8lIPobx5yAoXykm38SFg>
+    <xmx:2MvzW73tJ37kGBfUJEmGYzqzOiNFcGvCq2iG0b8BQ3gQIK0Vgpw42Q>
+    <xmx:2cvzW-1R0c7ntwnCMPGqHbFGQ4TFgKCT8h3SSuNQvO24Evsv1Qy3AQ>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4F487102E8;
+        Tue, 20 Nov 2018 03:54:48 -0500 (EST)
+Date:   Tue, 20 Nov 2018 09:54:47 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Dave Airlie <airlied@linux.ie>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: manual merge of the staging tree with the drm tree
+Message-ID: <20181120085447.GB19171@kroah.com>
+References: <20181120131616.139a4c8f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120131616.139a4c8f@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the final step of the THP swapin support.  When reclaiming a
-anonymous THP, after allocating the huge swap cluster and add the THP
-into swap cache, the PMD page mapping will be changed to the mapping
-to the swap space.  Previously, the PMD page mapping will be split
-before being changed.  In this patch, the unmap code is enhanced not
-to split the PMD mapping, but create a PMD swap mapping to replace it
-instead.  So later when clear the SWAP_HAS_CACHE flag in the last step
-of swapout, the huge swap cluster will be kept instead of being split,
-and when swapin, the huge swap cluster will be read in one piece into a
-THP.  That is, the THP will not be split during swapout/swapin.  This
-can eliminate the overhead of splitting/collapsing, and reduce the
-page fault count, etc.  But more important, the utilization of THP is
-improved greatly, that is, much more THP will be kept when swapping is
-used, so that we can take full advantage of THP including its high
-performance for swapout/swapin.
+On Tue, Nov 20, 2018 at 01:16:16PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   drivers/staging/vboxvideo/vbox_ttm.c
+> 
+> between commits:
+> 
+>   a64f784bb14a ("drm/ttm: initialize globals during device init (v2)")
+> 
+> from the drm tree and commit:
+> 
+>   cd76c287a52f ("staging: vboxvideo: Cleanup the comments")
+> 
+> from the staging tree.
+> 
+> I fixed it up (the former removed the comments updated by the latter) and
+> can carry the fix as necessary. This is now fixed as far as linux-next
+> is concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
----
- include/linux/huge_mm.h | 11 +++++++++++
- mm/huge_memory.c        | 30 ++++++++++++++++++++++++++++
- mm/rmap.c               | 43 ++++++++++++++++++++++++++++++++++++++++-
- mm/vmscan.c             |  6 +-----
- 4 files changed, 84 insertions(+), 6 deletions(-)
+Fix seems sane to me, thanks.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 260357fc9d76..06e4fde57a0f 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -375,12 +375,16 @@ static inline gfp_t alloc_hugepage_direct_gfpmask(struct vm_area_struct *vma,
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
-+struct page_vma_mapped_walk;
-+
- #ifdef CONFIG_THP_SWAP
- extern void __split_huge_swap_pmd(struct vm_area_struct *vma,
- 				  unsigned long addr, pmd_t *pmd);
- extern int split_huge_swap_pmd(struct vm_area_struct *vma, pmd_t *pmd,
- 			       unsigned long address, pmd_t orig_pmd);
- extern int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd);
-+extern bool set_pmd_swap_entry(struct page_vma_mapped_walk *pvmw,
-+	struct page *page, unsigned long address, pmd_t pmdval);
- 
- static inline bool transparent_hugepage_swapin_enabled(
- 	struct vm_area_struct *vma)
-@@ -421,6 +425,13 @@ static inline int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	return 0;
- }
- 
-+static inline bool set_pmd_swap_entry(struct page_vma_mapped_walk *pvmw,
-+				      struct page *page, unsigned long address,
-+				      pmd_t pmdval)
-+{
-+	return false;
-+}
-+
- static inline bool transparent_hugepage_swapin_enabled(
- 	struct vm_area_struct *vma)
- {
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e7b0840fcb8c..dcc907f6bf4a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1939,6 +1939,36 @@ int do_huge_pmd_swap_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	count_vm_event(THP_SWPIN_FALLBACK);
- 	goto fallback;
- }
-+
-+bool set_pmd_swap_entry(struct page_vma_mapped_walk *pvmw, struct page *page,
-+			unsigned long address, pmd_t pmdval)
-+{
-+	struct vm_area_struct *vma = pvmw->vma;
-+	struct mm_struct *mm = vma->vm_mm;
-+	pmd_t swp_pmd;
-+	swp_entry_t entry = { .val = page_private(page) };
-+
-+	if (swap_duplicate(&entry, HPAGE_PMD_NR) < 0) {
-+		set_pmd_at(mm, address, pvmw->pmd, pmdval);
-+		return false;
-+	}
-+	if (list_empty(&mm->mmlist)) {
-+		spin_lock(&mmlist_lock);
-+		if (list_empty(&mm->mmlist))
-+			list_add(&mm->mmlist, &init_mm.mmlist);
-+		spin_unlock(&mmlist_lock);
-+	}
-+	add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-+	add_mm_counter(mm, MM_SWAPENTS, HPAGE_PMD_NR);
-+	swp_pmd = swp_entry_to_pmd(entry);
-+	if (pmd_soft_dirty(pmdval))
-+		swp_pmd = pmd_swp_mksoft_dirty(swp_pmd);
-+	set_pmd_at(mm, address, pvmw->pmd, swp_pmd);
-+
-+	page_remove_rmap(page, true);
-+	put_page(page);
-+	return true;
-+}
- #endif
- 
- static inline void zap_deposited_table(struct mm_struct *mm, pmd_t *pmd)
-diff --git a/mm/rmap.c b/mm/rmap.c
-index 3bb4be720bc0..a180cb1fe2db 100644
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1413,11 +1413,52 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
- 				continue;
- 		}
- 
-+		address = pvmw.address;
-+
-+#ifdef CONFIG_THP_SWAP
-+		/* PMD-mapped THP swap entry */
-+		if (IS_ENABLED(CONFIG_THP_SWAP) &&
-+		    !pvmw.pte && PageAnon(page)) {
-+			pmd_t pmdval;
-+
-+			VM_BUG_ON_PAGE(PageHuge(page) ||
-+				       !PageTransCompound(page), page);
-+
-+			flush_cache_range(vma, address,
-+					  address + HPAGE_PMD_SIZE);
-+			mmu_notifier_invalidate_range_start(mm, address,
-+					address + HPAGE_PMD_SIZE);
-+			if (should_defer_flush(mm, flags)) {
-+				/* check comments for PTE below */
-+				pmdval = pmdp_huge_get_and_clear(mm, address,
-+								 pvmw.pmd);
-+				set_tlb_ubc_flush_pending(mm,
-+							  pmd_dirty(pmdval));
-+			} else
-+				pmdval = pmdp_huge_clear_flush(vma, address,
-+							       pvmw.pmd);
-+
-+			/*
-+			 * Move the dirty bit to the page. Now the pmd
-+			 * is gone.
-+			 */
-+			if (pmd_dirty(pmdval))
-+				set_page_dirty(page);
-+
-+			/* Update high watermark before we lower rss */
-+			update_hiwater_rss(mm);
-+
-+			ret = set_pmd_swap_entry(&pvmw, page, address, pmdval);
-+			mmu_notifier_invalidate_range_end(mm, address,
-+					address + HPAGE_PMD_SIZE);
-+			continue;
-+		}
-+#endif
-+
- 		/* Unexpected PMD-mapped THP? */
- 		VM_BUG_ON_PAGE(!pvmw.pte, page);
- 
- 		subpage = page - page_to_pfn(page) + pte_pfn(*pvmw.pte);
--		address = pvmw.address;
- 
- 		if (PageHuge(page)) {
- 			if (huge_pmd_unshare(mm, &address, pvmw.pte)) {
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index edc024e3aea7..2480dd4249aa 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1337,11 +1337,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
- 		 * processes. Try to unmap it here.
- 		 */
- 		if (page_mapped(page)) {
--			enum ttu_flags flags = ttu_flags | TTU_BATCH_FLUSH;
--
--			if (unlikely(PageTransHuge(page)))
--				flags |= TTU_SPLIT_HUGE_PMD;
--			if (!try_to_unmap(page, flags)) {
-+			if (!try_to_unmap(page, ttu_flags | TTU_BATCH_FLUSH)) {
- 				nr_unmap_fail++;
- 				goto activate_locked;
- 			}
--- 
-2.18.1
-
+greg k-h
