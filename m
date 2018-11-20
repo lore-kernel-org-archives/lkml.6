@@ -2,104 +2,131 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82125C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24C6CC18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1E720851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1E720851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BB0CB206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:56:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t83HAtYU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB0CB206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbeKUAYh (ORCPT
+        id S1729064AbeKUAZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:24:37 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56890 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKUAYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:24:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id EE28920D31; Tue, 20 Nov 2018 14:55:19 +0100 (CET)
-Received: from qschulz (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A7D0220745;
-        Tue, 20 Nov 2018 14:55:09 +0100 (CET)
-Date:   Tue, 20 Nov 2018 14:55:08 +0100
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
-Message-ID: <20181120135508.paxzs63cqy2llc7d@qschulz>
-References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
- <20181008100728.24959-2-quentin.schulz@bootlin.com>
- <mvm8t1pazea.fsf@suse.de>
- <mvma7m3n9l6.fsf_-_@suse.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ntnyqwowhkgpjtiz"
-Content-Disposition: inline
-In-Reply-To: <mvma7m3n9l6.fsf_-_@suse.de>
-User-Agent: NeoMutt/20171215
+        Tue, 20 Nov 2018 19:25:34 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42888 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKUAZd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:25:33 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so935042pga.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 05:56:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
+        b=t83HAtYUh91BViAkEApdq7rcZRf9JtcAbAe+Dj5y7eXmG8gX0nZjPmILkTXYlwneVp
+         jkGWYFgV5dgbsXhe9TzxEZe9Ag/YsMhUpYNM4oSuSd/EdRktXHSvclBAUFyB6e5kohJ8
+         NIgtNily3kx0bfPJyZQ3japSWLNZIf8cBE4kyO3rbMXZ2lymgR08n1RTehHeZMEJsVTa
+         2Q7IlpIvhTnN6aB7RmGfDLfnTC+a8Tsk6ta2SMzn8QHdMyZ9j52Jws8fMLN1skZ2zoGl
+         ZOkKm8Wad/tDZQnLGHtn5rKZ0+5uu8l/Xf0+/SLZAv5MEJhKTSnkWZ3FPygcMYUL08Ra
+         E+hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
+        b=mssPz0GgK0A+IAQXzShZPtxEVzCgyECQl6wy94mQJF/GxRq7rYOa53cwlQJ0p5M2xx
+         eH5HTgwynvdv/ZL+5+XGui/KrfHKLzXHAPgLvVZZEA42SYdpq/zbPJw8A1goN8qabv/B
+         Q6RWpyrVmALGd7HmA2LJ3ijA4NxVwktRFQd+tGFDBmsGlDcbFyRugL9UJ1qUM2yAhMYk
+         Pro0DcwnXKZT+goih7NQswS8yMZFgjGuXCglBa7zl4Zah1svZojpFv1ziy7xRve3ifpb
+         k5zmU5lEvf7UJfnt83Qdu5xO0rsc3BUK/qc6YJSaDZxscKXKpLD+RkFUNc9JoysBASuo
+         Uc0g==
+X-Gm-Message-State: AGRZ1gLkwwn6OowhXL3aUZisjnkvwOuN4m/W5Ur87SUC/Byyc6k8Us7+
+        /rV3tYQFgtIwVI3q+445WKvCMDuu7mo=
+X-Google-Smtp-Source: AJdET5dBOMfbIDqeIx3eW0bfrdCurno1vpsxWSZnkEORK0HbwIPU9AIgtoLNTHWbqsF7RVWTnTIUIA==
+X-Received: by 2002:a62:d2c1:: with SMTP id c184mr2283706pfg.248.1542722177304;
+        Tue, 20 Nov 2018 05:56:17 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id o189sm20501945pfg.117.2018.11.20.05.56.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 05:56:16 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     linux@armlinux.org.uk, akpm@linux-foundation.org, mhocko@suse.com,
+        rppt@linux.vnet.ibm.com, robh@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] arm: add missing of_node_put()
+Date:   Tue, 20 Nov 2018 08:56:13 -0500
+Message-Id: <20181120135613.20249-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+use of_node_put() to release the refcount.
 
---ntnyqwowhkgpjtiz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ arch/arm/kernel/devtree.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Hi Andreas,
+diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+index e3057c1b55b9..9576adf0d15b 100644
+--- a/arch/arm/kernel/devtree.c
++++ b/arch/arm/kernel/devtree.c
+@@ -101,7 +101,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 		if (!cell || prop_bytes < sizeof(*cell)) {
+ 			pr_debug(" * %pOF missing reg property\n", cpu);
+ 			of_node_put(cpu);
+-			return;
++			goto out;
+ 		}
+ 
+ 		/*
+@@ -115,7 +115,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 
+ 		if (prop_bytes || (hwid & ~MPIDR_HWID_BITMASK)) {
+ 			of_node_put(cpu);
+-			return;
++			goto out;
+ 		}
+ 
+ 		/*
+@@ -129,7 +129,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 			if (WARN(tmp_map[j] == hwid,
+ 				 "Duplicate /cpu reg properties in the DT\n")) {
+ 				of_node_put(cpu);
+-				return;
++				goto out;
+ 			}
+ 
+ 		/*
+@@ -171,7 +171,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 
+ 	if (!bootcpu_valid) {
+ 		pr_warn("DT missing boot CPU MPIDR[23:0], fall back to default cpu_logical_map\n");
+-		return;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -184,6 +184,8 @@ void __init arm_dt_init_cpu_maps(void)
+ 		cpu_logical_map(i) = tmp_map[i];
+ 		pr_debug("cpu logical map 0x%x\n", cpu_logical_map(i));
+ 	}
++out:
++	of_node_put(cpus);
+ }
+ 
+ bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
+-- 
+2.17.0
 
-On Tue, Nov 20, 2018 at 02:48:37PM +0100, Andreas Schwab wrote:
-> Don't use locking phy_read/phy_write functions while inside
-> phy_select_patch/phy_restore_page region.
->=20
-> Fixes: 6a0bfbbe20 ("net: phy: mscc: migrate to phy_select/restore_page fu=
-nctions")
-> Signed-off-by: Andreas Schwab <schwab@suse.de>
-
-Have you tested this patch? Does it solve your issue?
-
-Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
-anyway since it's to be done.
-
-You need to send your patch as a mail separate to this patch series.
-You also need to prefix your patch with [PATCH net-next] instead of only
-[PATCH]. This is specific to the net subsystem.
-
-Use scripts/get_maintainer.pl on your patch to get the people to put in
-Cc and in To.
-
-Thanks,
-Quentin
-
---ntnyqwowhkgpjtiz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlv0EjwACgkQhLiadT7g
-8aMwkBAAlxyAg33/B6pRIqeuRGnreLcxBPkH2jhQsxDU/vaKz8rt51V2AVQI6DfA
-A2cLtqV8S0yec8Z3ZoD4bQGCqTwRm2pm/28jILlfZIHrX6hkDdi1Iqtb1cDh2oc1
-7DLnPtg+t9XHQYeYbouDw1bsNmDToN/ZQHU11r8NPUdKFhgs2On0rQxygOqKX6DE
-ZJhfdnFuKGeqKnrbUZYy4CU8o7n3cCu0DoMQP48Etn/K+mlHnvSyj4r/RFDw21pD
-INhNvFCjcfsKRbHNx5i48KX23wb74tec11J7Y95MLxoRRxU5F3hWUhGrrV1br7M4
-JCz76BsLnIr+wmZsoEEfri6yWbeoZIq+WJPW0S1N8BQhez+DWZCLyLjpWawxuWFQ
-ohveKoEuR4NXjhuqLEPvKHTISAG4tHkUiLV9M8I7zgLUOvdd17E5vA/G6SAbuTc7
-12IWm37LdUp+9e8Y9rTWdubBg51bfIUb43KriB9hWek3XVswi7QkVKEuFzLxz6Ws
-KWXKOP0IaxbtS/i6Rdn1SIJ8GTfoikAzDEMFgNths7R8Fx1fvONMEKTeYb7JF5AF
-FWad5HJm3Br6fZyUqbvpFFJ+poebiqavH1LNE8HjTxbfnuetu/RPZaFQ+JO98MBN
-ewcszCCIwphpF0i8juSBwr9nRRBZhNZFgpEvKDbzl88VfyU37yc=
-=FCjc
------END PGP SIGNATURE-----
-
---ntnyqwowhkgpjtiz--
