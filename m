@@ -2,129 +2,136 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FE1C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98367C41537
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03AA1208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C10220671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="YT5/H7dJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03AA1208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUExi1JK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C10220671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbeKTWgN (ORCPT
+        id S1729485AbeKTWiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:36:13 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:39503 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728908AbeKTWgN (ORCPT
+        Tue, 20 Nov 2018 17:38:11 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38704 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728785AbeKTWiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:36:13 -0500
-Received: by mail-it1-f194.google.com with SMTP id m15so3085776itl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:07:24 -0800 (PST)
+        Tue, 20 Nov 2018 17:38:10 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so825949pgc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:09:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X+oqhYJ+WjLifnUyJ3ft2kTzX1u4UUihC6oUhdtKyRY=;
-        b=YT5/H7dJuhiULLUl1CQBXfWufpW9KT4Q4qWp0Bcqeu47cHuHiUP/yOWHGEHr1HIdI8
-         maG2SiNROzzz/8OHGtrg48aHqexMseCYNgr1CuQD5Q0fM7Vw92UBP9FyBUOLgoU40mst
-         l3k4WdAtGJidbnKPu4QZ7n7vqhL6pp+rXIZdg=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lYB4xqSJtkzhhD7ckpSBmuTLtmqzQ+/DBGZbGVQg8ro=;
+        b=hUExi1JK5WhH41XsKdVxt9hNA2nMaPU1u7lopJNUtboAe8znTyudRBbnT1RFo+GeoM
+         CvjztmVsrHkR1bJCRxiw9gxb7qPqL36WPIlJP9z3fvyOE2f1mF/jC/GEwsqHgkVYsxye
+         gbzLsXZ7VT8QXTCqxp2SEEhdRqe+C7Tr4ga38=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X+oqhYJ+WjLifnUyJ3ft2kTzX1u4UUihC6oUhdtKyRY=;
-        b=PpBoM+Pt4wZAh9FjW3d/pMnag6lEn+Z8Wug6iXennaEth2BW0Li8GlLbW/KzvoqT2V
-         k3uzFioYKaEM7iN7qsRIPo2PnSgxvkngFcwg+bKlQoHVT+k4u1N/jtE0ynJ/w8+3cGw3
-         CkcJzjJ2r8McrAcFpt7zzkQyXJCBMSsnxmFbEs/xvaTbI0oBUy3Z3Z2+CQfnzeY3+1Tn
-         VuoOvClK2kwhNZ1TiM7sgFBpxSeKyGvWE7w+f4dRX69O8S8VOLTC185H4N+23+R9I6lV
-         5oxUMjO14cP9Di5Cs8Alh/9pf55Cmgh1aEtRkRiymZbq/wdfOIQrnEieWv9Vcz/M+EQU
-         ipsg==
-X-Gm-Message-State: AGRZ1gKqi8iGES5koKmReDAlmWh+54jwO755iQtYhW3EDOK1KnL273fg
-        mX1QrZ1KTIglc/0GBuwMNtVR7e+n4qLkrgxS02bdQQ==
-X-Google-Smtp-Source: AJdET5cLqA6MlwAqkitC7ii3wAfw4YoaB8PO6E10qjr4OXZoLKzvcSDfsQ98CYU152g/zwt76hp/Z+seO+LYcGsydmE=
-X-Received: by 2002:a02:94d:: with SMTP id f74-v6mr1538521jad.85.1542715643416;
- Tue, 20 Nov 2018 04:07:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-4-jagan@amarulasolutions.com> <20181113132658.niwy6bqdqzaeqpv2@flea>
- <CAMty3ZBTaeMBFYwyJ+8HqHBDAfEOPEYBt01jho1H4c3SBKbvEw@mail.gmail.com> <20181120105557.3mysirc3ga2h2334@flea>
-In-Reply-To: <20181120105557.3mysirc3ga2h2334@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 20 Nov 2018 17:37:11 +0530
-Message-ID: <CAMty3ZAbF8rPsmvXdLPQJfHL7bzeQyL0Psii9gyDiHaZW-UaMg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/26] clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lYB4xqSJtkzhhD7ckpSBmuTLtmqzQ+/DBGZbGVQg8ro=;
+        b=GPllnctpasgMUscqEtjL7chm4KsMBz+ZW9yPJvAQbiWGMvf+IRPz4rvJ1VazrrKbdt
+         4ZkC+rkFh2JanUR2Sa9bUiO75EVtMGltK8feTKI9fT9lMZ4Hj9RQ4oinrux8upCfs9hd
+         60bOHSSw/i9Gf2Yeso1emcfzhk1B0E1ShQrjCztq04NprfWwXlHPl4ET1hG63ad8X0qC
+         ZWlT05WcAxhHYG51Y2WHfq778yoFir3H/T6+DRrMC6/68e7ixvOdc5gX25Qa7jt1GH1G
+         PnQl4Bpc5y/rl39lSGu42Xh26hK/qNWACbImBBKwOTzoYod+NoHGz1PCEDQcbzj257bY
+         qctQ==
+X-Gm-Message-State: AGRZ1gLWeoIL7Wxzh/oVXCa5V46JejbAbQn5Ki1OuDmIOnUhP1ME9j8T
+        OdSLdXCxkGbtljdrK4/IVrrp
+X-Google-Smtp-Source: AJdET5e80tM12Hq/mf3N/w3vMJY2SAUNQV8kQ+SpLg+WGJEKs8y2uthcHRCsyAQlitlY7vuPs/EyPA==
+X-Received: by 2002:a62:6981:: with SMTP id e123-v6mr1911576pfc.104.1542715760805;
+        Tue, 20 Nov 2018 04:09:20 -0800 (PST)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id m3sm68668940pgl.69.2018.11.20.04.09.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 04:09:19 -0800 (PST)
+Date:   Tue, 20 Nov 2018 17:39:10 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>, zhao_steven@263.net,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH 12/16] clocksource: Add clock driver for RDA8810PL SoC
+Message-ID: <20181120120910.GA13485@mani>
+References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
+ <20181119170939.19153-13-manivannan.sadhasivam@linaro.org>
+ <e9b208ff-327e-860a-6ef0-15bf797dc6b2@arm.com>
+ <20181120050650.GC5885@Mani-XPS-13-9360>
+ <86pnv0rwna.wl-marc.zyngier@arm.com>
+ <CACRpkdan96Vj58s=g9jiAoyLBpZqPCKcjqD82mgDj5WqRP7vDQ@mail.gmail.com>
+ <e732ad15-b778-1c84-ad47-5770ee66688b@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e732ad15-b778-1c84-ad47-5770ee66688b@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 4:26 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Tue, Nov 20, 2018 at 11:05:41AM +0000, Marc Zyngier wrote:
+> On 20/11/2018 08:56, Linus Walleij wrote:
+> > On Tue, Nov 20, 2018 at 9:17 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
+> > 
+> >> How does this change anything with the fact that the above code is
+> >> broken? 56 or 64 bit, you cannot read this counter with a single
+> >> access, or two. The canonical way of reading such a counter is
+> >> something like this:
+> >>
+> >>         do {
+> >>                 lo = readl_relaxed(LO);
+> >>                 hi = readl_relaxed(HI);
+> >>         } while (hi != read_relaxed(HI));
+> > 
+> > To be fair, I have seen hardware that employ a logic latch
+> > such that when a read access is done to the LO register,
+> > the value of the whole counter is latched, also for the HI
+> > register, so when you read the HI register in the second
+> > step, it is never subject to wrapping. (Conversely reading
+> > the HI before the LO will always give you insane values
+> > :D)
+> 
+> I've seen such HW indeed, and I've also seen it being broken... ;-)
+> 
+> It this timer is built around such a (non-broken) logic, I'd really like
+> to see it spelled out. It will otherwise be a real pain to debug...
 >
-> On Thu, Nov 15, 2018 at 08:51:04PM +0530, Jagan Teki wrote:
-> > > >  drivers/clk/sunxi-ng/ccu_nkm.c | 3 +++
-> > > >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
-> > > >  2 files changed, 4 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > > > index 6b5ad990f802..b8b66cdd30bf 100644
-> > > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> > > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > > > @@ -128,6 +128,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
-> > > >       if (rate < nkm->min_rate)
-> > > >               return nkm->min_rate;
-> > > >
-> > > > +     if (nkm->max_rate && rate > nkm->max_rate)
-> > > > +             return nkm->max_rate;
-> > > > +
-> > >
-> > > I would expect the test to be the same for the minimum and maximum cases.
-> >
-> > I don't have proper use-case for max rate test, I do verify by using
-> > higher the rate on dclock, but nor sure.  May be I can skip the
-> > max_rate patch?
->
-> So you're sending more patches that you haven't really tested?
 
-I didn't understand this question.
+There is no information about HW latch in datasheet and vendor code. But the
+vendor driver doesn't use any logic to prevent wrapping. However, this doesn't
+mean that we can assume that the hardware is capable of preventing overrun.
+So I guess it is best to go with Marc's suggestion here.
 
-> Why are you sending them then?
+Thanks,
+Mani
 
-I think I've mentioned in the first version patch itself, since it's
-common code and many other callers might have used for rate
-alternative I did it how other ccu dividers does. I have not added
-just as simple.
->
-> > Apart from this, any idea about this issue where SUN4I_TCON0_DCLK_REG
-> > will only work with div upto 6 on A64 DSI panels[1], did you find the
-> > same issue on A33?
->
-> IIRC my panel was falling into the case where the divider was 4, so
-> I've not fallen into that case.
-
-OK, thanks.
+> > However the above code should be fine unless you know
+> > for sure the hardware was constructed with a clever latch.
+> 
+> Let's find out!
+> 
+> Thanks,
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny...
