@@ -2,110 +2,81 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB85C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE37C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E412A2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E412A2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 3EC4220870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 19:41:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC4220870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727160AbeKUGMk (ORCPT
+        id S1727094AbeKUGMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:12:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53138 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726289AbeKUGMj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:12:39 -0500
-Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gPBtx-0004cu-5a; Tue, 20 Nov 2018 19:41:38 +0000
-Date:   Tue, 20 Nov 2018 19:41:37 +0000
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     linux-kernel@vger.kernel.org
-Message-ID: <20181111174751.kaw2d7gsatiezagu@decadent.org.uk>
+        Wed, 21 Nov 2018 01:12:17 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30066 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbeKUGMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 01:12:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 11:41:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
+   d="scan'208";a="92680417"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by orsmga006.jf.intel.com with ESMTP; 20 Nov 2018 11:41:30 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id EBAF93018C4; Tue, 20 Nov 2018 11:41:29 -0800 (PST)
+Date:   Tue, 20 Nov 2018 11:41:29 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Kyle Huey <me@kylehuey.com>
+Cc:     Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Robert O'Callahan <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+Message-ID: <20181120194129.GC13936@tassilo.jf.intel.com>
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4fay4fnrht5xxtum"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-Subject: [PATCH] perf tools: Check for over-long path in is_directory()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
+In-Reply-To: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> rr, a userspace record and replay debugger[0], uses the PMU interrupt
+> (PMI) to stop a program during replay to inject asynchronous events
+> such as signals. With perf counter freezing enabled we are reliably
+> seeing perf event overcounts during replay. This behavior is easily
 
---4fay4fnrht5xxtum
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It's hard to see how it could over count since the PMU freezes
+earlier than the PMI with freezing. So it should count less.
+Did you mean under count?
 
-is_directory() uses sprintf() which could potentially result in a
-stack buffer overrun.  Change to use snprintf() and assert that
-the output fits in the buffer.
+> Given that we're already at rc3, and that this renders rr unusable,
+> we'd ask that counter freezing be disabled for the 4.20 release.
 
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
-A better fix would be to pass the directory fd in and use fstatat()
-but I don't know whether you want to support older kernel versions
-or C libraries that don't support this.
+The boot option should be good enough for the release?
 
-Ben.
+A reasonable future option would be to expose an option to disable it in
+the perf_event. Then rr could set it.
 
- tools/perf/util/path.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/path.c b/tools/perf/util/path.c
-index ca56ba2dd3da..333e20f78ced 100644
---- a/tools/perf/util/path.c
-+++ b/tools/perf/util/path.c
-@@ -84,8 +84,11 @@ bool is_directory(const char *base_path, const struct di=
-rent *dent)
- {
- 	char path[PATH_MAX];
- 	struct stat st;
-+	int len;
-+
-+	len =3D snprintf(path, sizeof(path), "%s/%s", base_path, dent->d_name);
-+	assert((size_t)len < sizeof(path));
-=20
--	sprintf(path, "%s/%s", base_path, dent->d_name);
- 	if (stat(path, &st))
- 		return false;
-=20
-
---4fay4fnrht5xxtum
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEErCspvTSmr92z9o8157/I7JWGEQkFAlv0Y2cACgkQ57/I7JWG
-EQlsPhAAnmUlvQh7FpY32bdKSu6ZPML9uf3FQBd0MT9ZZvlo9LwsTH2JkoEv9KLu
-wWjfjmu7UJ+M9kgFvrKz8FB1OeLhDPKRCju8DdC/uWkoPY/eSH44abBz6ZTu2BKD
-dXio6ePo3EhdUPaCH898OcYH/6cJSwMN6e2OVep7CORXcay3yMk14B3MbT15e0tc
-8uWIeYr2YaHrPRIwuz5NNPDMCYIF9rpMGmcFCLCcV1fs9Po8Kxvg5nZaofcxggcV
-YPPxKH0CAbkp8VbqCKh6IS2gBmDimnB67+DDYxGCMiYWPaFsKVbiPGdjh++cvVZS
-WLdxA3EAFrIPBt6bF3rFegvIwGB7Sb7b1IqQ9Qq05MHQ4JA1C2WH2kXHNxs0BURJ
-AQhr7Xb+9VhuK5gO1NcmJDXvJjY3ApxGC9NWXoWbH3V7SK7/AL1MCEhoAOo7+0wO
-6dRp3BOUAfXK/mvo3Ibmb4VbMVJPLi4nuBsidymNw8+BX8/nrJwas8wYp8WUfbDW
-a2fDhO+T9cE6P3hGbnRVF8tD4oXw/o/Lxkr4iLap+Y9C3iXVQwIudgd07w4r2LlC
-o+zwDGWfzv8ZxsDtdQYGemdjjeeduH2vpYMyZMHSBCAqMS4Bs9/cS58rnUO4yOFo
-EB6gRWRT26EQga018HPfu8Oopdw4re6hoqllmfAx+mFugTBkm08=
-=NumP
------END PGP SIGNATURE-----
-
---4fay4fnrht5xxtum--
+-Andi
