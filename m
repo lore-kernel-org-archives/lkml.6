@@ -2,120 +2,169 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1FAC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C09C18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3852A206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3852A206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8657C2075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:55:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n5Lzqv/K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8657C2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeKUAYa (ORCPT
+        id S1728457AbeKUAYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:24:30 -0500
-Received: from mga09.intel.com ([134.134.136.24]:41181 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKUAYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:24:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 05:55:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,257,1539673200"; 
-   d="scan'208";a="251195584"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 20 Nov 2018 05:55:13 -0800
-Received: from [10.254.81.131] (kliang2-mobl1.ccr.corp.intel.com [10.254.81.131])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 0A9F1580432;
-        Tue, 20 Nov 2018 05:55:12 -0800 (PST)
-Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
- x86
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, ak@linux.intel.com
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181115204411.GO9600@krava>
- <cc982c1b-0774-6f3e-a24a-3c3fba5c900b@linux.intel.com>
- <20181116021418.GB18319@kernel.org>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <8db70e31-30d7-c937-f35b-bd6e7bd12ae4@linux.intel.com>
-Date:   Tue, 20 Nov 2018 08:55:11 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 20 Nov 2018 19:24:34 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57976 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKUAYd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:24:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=f4caVRl1YSFu92WRfBk2pZCc3fhCI/oytYx9ZPmT6d0=; b=n5Lzqv/KKtzAvjQTqyazlr3Dl
+        beXEgrkW1IXcMpW76Zn4riDYe8V33wLN6rPAX0e9LR9vibJqeyt1t9wLSmI/f7W/9vjaxhZWw6Uyr
+        UxDFbj4hZWHYFs9Zxj5ss9+7ap24TxZ7DuRjpECYJkaytfGqgH2LW6YqNp2YSaNwJpbEevMdQgoqc
+        vCrAGefWtOAO9H9mmEe0WYuFMCk5Z97VzFN071a5dpZxmDj0jx9KHgcHRs7vuqBOyEKg+abFy2BfD
+        psAqvoglJ/JeIn6oGWpiHH2uaDa1W05RPdK2WSiv1W/s0ANPKvnPNLFZB05b4Zdbfs9iVw7zmPST2
+        iwDKAOk3A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP6UW-0008FI-Sx; Tue, 20 Nov 2018 13:55:01 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 709D42029F87F; Tue, 20 Nov 2018 14:54:59 +0100 (CET)
+Date:   Tue, 20 Nov 2018 14:54:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Frederic Weisbecker <frederic@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@redhat.com>
+Subject: Re: [PATCH 08/25] vtime: Exit vtime before exit_notify()
+Message-ID: <20181120135459.GR2131@hirez.programming.kicks-ass.net>
+References: <1542163569-20047-1-git-send-email-frederic@kernel.org>
+ <1542163569-20047-9-git-send-email-frederic@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181116021418.GB18319@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542163569-20047-9-git-send-email-frederic@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 14, 2018 at 03:45:52AM +0100, Frederic Weisbecker wrote:
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index d458d65..27e0544 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -265,6 +265,8 @@ struct task_cputime {
+>  enum vtime_state {
+>  	/* Task is sleeping or running in a CPU with VTIME inactive: */
+>  	VTIME_INACTIVE = 0,
+> +	/* Task has passed exit_notify() */
+> +	VTIME_DEAD,
+
+How does it make sense for VTIME_DEAD > VTIME_INACTIVE ?
+
+>  	/* Task is idle */
+>  	VTIME_IDLE,
+>  	/* Task runs in kernelspace in a CPU with VTIME active: */
 
 
-On 11/15/2018 9:14 PM, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Nov 15, 2018 at 04:01:46PM -0500, Liang, Kan escreveu:
->>
->>
->> On 11/15/2018 3:44 PM, Jiri Olsa wrote:
->>> On Wed, Nov 14, 2018 at 01:24:15PM -0800, kan.liang@linux.intel.com wrote:
->>>> From: Kan Liang <kan.liang@linux.intel.com>
->>>>
->>>> Perf tools cannot find the proper event list for Cascadelake server.
->>>> Because Cascadelake server and Skylake server have the same CPU model
->>>> number, which are used by perf tools to find the event list.
->>>>
->>>> The stepping for Skylake server is up to 4.
->>>> The stepping for Cascadelake server starts from 5.
->>>> The stepping can be used to distinguish between them.
->>>>
->>>> The stepping is added in get_cpuid_str().
->>>> The stepping information for Skylake server is updated in mapfile.csv.
->>>> A x86 specific strcmp_cpuid_cmp() function is added to handle two CPUID
->>>> formats in mapfile.csv, "vendor-family-model-stepping" and
->>>> "vendor-family-model".
->>>> - If a cpuid-regular-expression from the mapfile.csv using the new
->>>>     stepping format, a cpuid-string generated on the machine must include
->>>>     stepping. Otherwise, it is a mismatch.
->>>> - If the cpuid-regular-expression using the old non-stepping format,
->>>>     the stepping in the cpuid-string will be ignored.
->>>>
->>>> The script, which using environment string "PERF_CPUID" without stepping
->>>> on Skylake server, will be broken. If so, users must fix their scripts.
->>>>
->>>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
->>>
->>> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
->>>
->>
->> Thanks Jirka,
->>
->> Hi Arnaldo,
->>
->> Are you OK with the patch?
->> If yes, I will go ahead to cleanup the *_cpuid_str() by moving them to
->> header.c as promised. https://lkml.org/lkml/2018/11/15/929
->> The new patch will be on top of this patch.
+> diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> index f64afd7..a0c3a82 100644
+> --- a/kernel/sched/cputime.c
+> +++ b/kernel/sched/cputime.c
+> @@ -813,17 +813,31 @@ void vtime_task_switch_generic(struct task_struct *prev)
+>  {
+>  	struct vtime *vtime = &prev->vtime;
+>  
+> -	write_seqcount_begin(&vtime->seqcount);
+> -	if (vtime->state == VTIME_IDLE)
+> -		vtime_account_idle(prev);
+> -	else
+> -		__vtime_account_kernel(prev, vtime);
+> -	vtime->state = VTIME_INACTIVE;
+> -	vtime->cpu = -1;
+> -	write_seqcount_end(&vtime->seqcount);
+> +	/*
+> +	 * Flush the prev task vtime, unless it has passed
+> +	 * vtime_exit_task(), in which case there is nothing
+> +	 * left to account.
+> +	 */
+> +	if (vtime->state != VTIME_DEAD) {
+> +		write_seqcount_begin(&vtime->seqcount);
+> +		if (vtime->state == VTIME_IDLE)
+> +			vtime_account_idle(prev);
+> +		else
+> +			__vtime_account_kernel(prev, vtime);
+> +		vtime->state = VTIME_INACTIVE;
+> +		vtime->cpu = -1;
+> +		write_seqcount_end(&vtime->seqcount);
+> +	}
+>  
+>  	vtime = &current->vtime;
+>  
+> +	/*
+> +	 * Ignore the next task if it has been preempted after
+> +	 * vtime_exit_task().
+> +	 */
+> +	if (vtime->state == VTIME_DEAD)
+> +		return;
+> +
+>  	write_seqcount_begin(&vtime->seqcount);
+>  	if (is_idle_task(current))
+>  		vtime->state = VTIME_IDLE;
+
+Bit inconsistent; having the one as a indent and the other as an early
+return.
+
+> @@ -850,6 +864,30 @@ void vtime_init_idle(struct task_struct *t, int cpu)
+>  	local_irq_restore(flags);
+>  }
+>  
+> +/*
+> + * This is the final settlement point after which we don't account
+> + * anymore vtime for this task.
+> + */
+> +void vtime_exit_task(struct task_struct *t)
+> +{
+> +	struct vtime *vtime = &t->vtime;
+> +	unsigned long flags;
+
+Note that the code in vtime_task_switch_generic() (above) relies on @t
+== current (which is true, but not explicit).
+
+> +	local_irq_save(flags);
+> +	write_seqcount_begin(&vtime->seqcount);
+> +	/*
+> +	 * A task that has never run on a nohz_full CPU hasn't
+> +	 * been tracked by vtime. Thus it's in VTIME_INACTIVE
+> +	 * state. Nothing to account for it.
+> +	 */
+> +	if (vtime->state != VTIME_INACTIVE)
+> +		vtime_account_system(t, vtime);
+> +	vtime->state = VTIME_DEAD;
+> +	vtime->cpu = -1;
+> +	write_seqcount_end(&vtime->seqcount);
+> +	local_irq_restore(flags);
+> +}
+> +
+>  u64 task_gtime(struct task_struct *t)
+>  {
+>  	struct vtime *vtime = &t->vtime;
+> -- 
+> 2.7.4
 > 
-> I'm travelling, will look at it soon, can't now, battery almost deead
-> :-\
-
-Hi Arnaldo,
-
-Have you got a chance to look at the code?
-
-Thanks,
-Kan
-
-
-
