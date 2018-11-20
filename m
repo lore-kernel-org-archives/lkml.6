@@ -2,118 +2,93 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE61C04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:24:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9849C18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F8CE206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:24:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8CE206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ED5220851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:24:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s2SHGjAh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED5220851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeKTXxG (ORCPT
+        id S1727678AbeKTXxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:53:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:56229 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKTXxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:53:06 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D7B0C206A1; Tue, 20 Nov 2018 14:23:57 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A534F2037D;
-        Tue, 20 Nov 2018 14:23:57 +0100 (CET)
-Date:   Tue, 20 Nov 2018 14:23:57 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 01/12] drm/sun4i: sun6i_mipi_dsi: Compute burst mode
- loop N1 instruction delay
-Message-ID: <20181120132357.xge6gkurjjjvwi2i@flea>
-References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-2-jagan@amarulasolutions.com>
- <20181119082707.kbsw2gyntxxbh6no@flea>
- <CAMty3ZBDa2wjjCh8NtrbKNYz=mr1xhZKv9JfnmDPDBQRO+CkYw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xeqpoomfu3vqgjcj"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBDa2wjjCh8NtrbKNYz=mr1xhZKv9JfnmDPDBQRO+CkYw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Tue, 20 Nov 2018 18:53:11 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34197 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727111AbeKTXxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 18:53:10 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 17so916392pgg.1;
+        Tue, 20 Nov 2018 05:24:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=aFxALuu/7D7no7EGEKAYaaNDS9V0B+ItYtApoEp/PZc=;
+        b=s2SHGjAhp2gQbwiAC3ZRhWeyqFACDyZC1yks3gM/LH7y/cUzR7WBxYl/1VVLzPFWPw
+         aRbksCBSqxwP2qHfsqCfb8JPrGn5hDyiRJVcXp6CI5w2i+F49GRaJOxeJ5MUmrZxGKLK
+         rmZQp8ks0QAcoJTXCBQAXNIrrHVuWPiE1kmfT3uKnaTpTH4KiLFtAM55SCZyFOLYtBsF
+         Vc0fTUv3wMIMFVWzHJG4pIr7Obr4+nxlpEIxb3849mOtyV3mdVKz42ZLlILmVjPvqvpY
+         jStPF6IiLi3O6jPI1ZOC4cDnA/cwe+1zfWV4CNwmf4kfWLRWg1ZvI4kwctq+KCo4GAha
+         HbUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aFxALuu/7D7no7EGEKAYaaNDS9V0B+ItYtApoEp/PZc=;
+        b=IiLRDQANOil2qlF3rSm5GYV+WuqMzUXbq0RKBnQHPvIIPUkFp/ZVf58rT0YNS4VGHV
+         qRXkhXBPRUTLPxx+ohO05uzPEgk0kriQ/1+mp8yti/KYRTm2vbnaCQKV9184rtL4Twh2
+         DwPeIDAXIDe8mgYcJ2ygLoRcPiGh/P+ZH7ssOgAw98ewIZ7juDMtRfDaoamNFVA01WWU
+         GjdyJnGNT5bPGBPHY/rjrYIj7hCk+KJnDqAiuOqT10lctJB+CS0SLx/FbehJjD1TT+SD
+         6DKv2ZAvjG4V/R1o42wJwVAnVDnak54n5K5vT8ehA1tK1FiQ2iqwvMygcFNn4/jTILei
+         EQhQ==
+X-Gm-Message-State: AA+aEWZ//h7wqIWJ2J8rnomsrvSkq1VmcENTHlu17Ygqnizu+rqFM+Xb
+        CLDzro+W2XIqekJFeoxwezZ5EeKWK5U=
+X-Google-Smtp-Source: AFSGD/X9WIEHzQI3PcPbKZ7vFCL9Qeo4duYafBE3wt+kPagm0YbNI62gidllQcqaURfEh5gcqDSjnQ==
+X-Received: by 2002:a63:9809:: with SMTP id q9mr1874820pgd.109.1542720243216;
+        Tue, 20 Nov 2018 05:24:03 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id h10sm43934359pgn.11.2018.11.20.05.24.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 05:24:02 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] watchdog: cpwd: add of_node_put()
+Date:   Tue, 20 Nov 2018 08:23:59 -0500
+Message-Id: <20181120132359.19799-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+use of_node_put() to release the refcount.
 
---xeqpoomfu3vqgjcj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ drivers/watchdog/cpwd.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Mon, Nov 19, 2018 at 04:28:29PM +0530, Jagan Teki wrote:
-> On Mon, Nov 19, 2018 at 1:57 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > On Fri, Nov 16, 2018 at 10:09:05PM +0530, Jagan Teki wrote:
-> > > Loop N1 instruction delay for burst mode lcd panel are
-> > > computed as per BSP code.
-> > >
-> > > Reference code is available in BSP (from linux-sunxi
-> > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > >
-> > > dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=3D
-> > > (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
-> > > =3D> (((mode->htotal - mode->hdisplay) * 150) /
-> > >      ((mode->clock / 1000) * 8)) - 50;
-> > >
-> > > So use the similar computation for loop N1 delay.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > *why* are you doing this? What is it fixing? on which devices?
->=20
-> You mentioned the separate function to compute the delay for all modes
-> [1], ie what I did. did I missing anything?
+diff --git a/drivers/watchdog/cpwd.c b/drivers/watchdog/cpwd.c
+index aee0b25cf10d..d3a81642ada5 100644
+--- a/drivers/watchdog/cpwd.c
++++ b/drivers/watchdog/cpwd.c
+@@ -617,6 +617,7 @@ static int cpwd_probe(struct platform_device *op)
+ 
+ 	platform_set_drvdata(op, p);
+ 	cpwd_device = p;
++	of_node_put(options);
+ 	return 0;
+ 
+ out_unregister:
+-- 
+2.17.0
 
-You're missing that you are never explaining why that patch is needed
-in the first place. Or answering the question I asked a couple of
-lines above.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---xeqpoomfu3vqgjcj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/QK7QAKCRDj7w1vZxhR
-xdm1AQC1Lzg72RV3LZzLZwYcohq7q/Jd8BR7xbejfuCL1/fi1QD/bYPvFfmtHaZw
-GW/rdskjjOHFzxqrKa68Y83eQGBuZQ8=
-=f7XQ
------END PGP SIGNATURE-----
-
---xeqpoomfu3vqgjcj--
