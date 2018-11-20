@@ -2,119 +2,178 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA61FC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F2C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DD5E2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DD5E2087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C11D20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:17:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C11D20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729640AbeKUAqk (ORCPT
+        id S1729684AbeKUArB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:46:40 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57279 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726941AbeKUAqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:46:39 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id F3CAA20D73; Tue, 20 Nov 2018 15:17:16 +0100 (CET)
-Received: from qschulz (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B0C5220D2E;
-        Tue, 20 Nov 2018 15:17:06 +0100 (CET)
-Date:   Tue, 20 Nov 2018 15:17:05 +0100
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     davem@davemloft.net, andrew@lunn.ch, f.fainelli@gmail.com,
-        allan.nielsen@microchip.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] net: phy: mscc: fix locking in vsc85xx_default_config
-Message-ID: <20181120141705.44odry44hhdy3cge@qschulz>
-References: <20181008100728.24959-1-quentin.schulz@bootlin.com>
- <20181008100728.24959-2-quentin.schulz@bootlin.com>
- <mvm8t1pazea.fsf@suse.de>
- <mvma7m3n9l6.fsf_-_@suse.de>
- <20181120135508.paxzs63cqy2llc7d@qschulz>
- <mvm5zwrn8zu.fsf@suse.de>
+        Tue, 20 Nov 2018 19:47:01 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37864 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726485AbeKUAqF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:46:05 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKEEnTL030925;
+        Tue, 20 Nov 2018 08:16:34 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth984dqj-1;
+        Tue, 20 Nov 2018 08:16:34 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id 75527611E124;
+        Tue, 20 Nov 2018 08:16:33 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
+ 14:16:32 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wAKEGVqw000703; Tue,
+ 20 Nov 2018 14:16:32 GMT
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <broonie@kernel.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <lgirdwood@gmail.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>
+Subject: [PATCH v5 3/8] clk: lochnagar: Add initial binding documentation
+Date:   Tue, 20 Nov 2018 14:16:26 +0000
+Message-ID: <20181120141631.18949-3-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
+References: <20181120141631.18949-1-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n5xcw7r3bck7sftm"
-Content-Disposition: inline
-In-Reply-To: <mvm5zwrn8zu.fsf@suse.de>
-User-Agent: NeoMutt/20171215
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811200128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Lochnagar is an evaluation and development board for Cirrus
+Logic Smart CODEC and Amp devices. It allows the connection of
+most Cirrus Logic devices on mini-cards, as well as allowing
+connection of various application processor systems to provide a
+full evaluation platform. This driver supports the board
+controller chip on the Lochnagar board.
 
---n5xcw7r3bck7sftm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
+ .../devicetree/bindings/clock/cirrus,lochnagar.txt | 89 ++++++++++++++++++++++
+ 1 file changed, 89 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
 
-Hi Andreas,
+diff --git a/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+new file mode 100644
+index 000000000000..c1b5478d5432
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/cirrus,lochnagar.txt
+@@ -0,0 +1,89 @@
++Cirrus Logic Lochnagar Audio Development Board
++
++Lochnagar is an evaluation and development board for Cirrus Logic
++Smart CODEC and Amp devices. It allows the connection of most Cirrus
++Logic devices on mini-cards, as well as allowing connection of
++various application processor systems to provide a full evaluation
++platform.  Audio system topology, clocking and power can all be
++controlled through the Lochnagar, allowing the device under test
++to be used in a variety of possible use cases.
++
++This binding document describes the binding for the clock portion of
++the driver.
++
++Also see these documents for generic binding information:
++  [1] Clock : ../clock/clock-bindings.txt
++
++And these for relevant defines:
++  [2] include/dt-bindings/clock/lochnagar.h
++
++This binding must be part of the Lochnagar MFD binding:
++  [3] ../mfd/cirrus,lochnagar.txt
++
++Required properties:
++
++  - compatible : One of the following strings:
++                 "cirrus,lochnagar1-clk"
++                 "cirrus,lochnagar2-clk"
++
++  - #clock-cells : Must be 1. The first cell indicates the clock
++    number, see [2] for available clocks and [1].
++
++Optional properties:
++
++  - clocks : Must contain an entry for each clock in clock-names.
++  - clock-names : May contain entries for each of the following
++    clocks:
++     - ln-cdc-clkout : Output clock from CODEC card.
++     - ln-dsp-clkout : Output clock from DSP card.
++     - ln-gf-mclk1,ln-gf-mclk2,ln-gf-mclk3,ln-gf-mclk4 : Optional
++       input audio clocks from host system.
++     - ln-psia1-mclk, ln-psia2-mclk : Optional input audio clocks from
++       external connector.
++     - ln-spdif-clkout : Optional input audio clock from SPDIF.
++     - ln-adat-clkout : Optional input audio clock from ADAT.
++     - ln-pmic-32k : On board fixed regulator.
++     - ln-clk-12m : On board fixed regulator.
++     - ln-clk-11m : On board fixed regulator.
++     - ln-clk-24m : On board fixed regulator.
++     - ln-clk-22m : On board fixed regulator.
++     - ln-usb-clk-24m : On board fixed regulator.
++     - ln-usb-clk-12m : On board fixed regulator.
++
++  - assigned-clocks : A list of Lochnagar clocks to be reparented, see
++    [2] for available clocks.
++  - assigned-clock-parents : Parents to be assigned to the clocks
++    listed in "assigned-clocks".
++
++Optional sub-nodes:
++
++  - fixed-clock nodes may be registered for the following on board clocks:
++     - ln-pmic-32k : 32768 kHz
++     - ln-clk-12m : 12288000 kHz
++     - ln-clk-11m : 11298600 kHz
++     - ln-clk-24m : 24576000 kHz
++     - ln-clk-22m : 22579200 kHz
++     - ln-usb-clk-24m : 24576000 kHz
++     - ln-usb-clk-12m : 12288000 kHz
++
++Example:
++
++lochnagar-clk {
++	compatible = "cirrus,lochnagar2-clk";
++
++	#clock-cells = <1>;
++
++	clocks = <&clk-audio>, <&clk_pmic>;
++	clock-names = "ln-gf-mclk2", "ln-pmic-32k";
++
++	assigned-clocks = <&lochnagar-clk LOCHNAGAR_CDC_MCLK1>,
++			  <&lochnagar-clk LOCHNAGAR_CDC_MCLK2>;
++	assigned-clock-parents = <&clk-audio>,
++				 <&clk-pmic>;
++
++	clk-pmic: clk-pmic {
++		compatible = "fixed-clock";
++		clock-cells = <0>;
++		clock-frequency = <32768>;
++	};
++};
+-- 
+2.11.0
 
-On Tue, Nov 20, 2018 at 03:01:25PM +0100, Andreas Schwab wrote:
-> On Nov 20 2018, Quentin Schulz <quentin.schulz@bootlin.com> wrote:
->=20
-> > You also need to prefix your patch with [PATCH net-next] instead of only
-> > [PATCH]. This is specific to the net subsystem.
->=20
-> Why next?  This is a bug fix that needs to go in now, not next.
->=20
-
-Indeed. Use [PATCH net] then.
-Please refer to https://www.kernel.org/doc/Documentation/networking/netdev-=
-FAQ.txt
-
-> > Use scripts/get_maintainer.pl on your patch to get the people to put in
-> > Cc and in To.
->=20
-> The same people as the original patch the added the bug.  Why would it
-> be different now?
->=20
-
-First, people may have changed mail addresses (especially maintainers)
-and that is picked by get_maintainer.
-
-Second, other people may have worked on this driver since the patch was
-introduced and they might want to know about this change too and have
-their word on it. This is what happened with this driver. Gustavo and
-Heiner sent patches since then and they have already been merged.
-
-This is also part of the contribution process which is defined here:
-https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
-
-You have not answered my question yet. Does this fix your issue, yes or
-no?
-
-Quentin
-
---n5xcw7r3bck7sftm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlv0F2EACgkQhLiadT7g
-8aOEgg//SEW1tvlbP8HIMI9Azhv0DP9ED+wigV9oT0h0ZxbRMpVqwKOSlT2sJX8m
-Q1qYCfyePxN5+F7ALFT4iYHmneUqPTkX8fbDf+Ij91O+O77lk+kgf69TdJhIugaM
-oH68FXs9mdkZZElqxMG7iuavsloLOaz8nPlbPpLujWkD+ggVUlz3m4+d32T5jY8P
-nTxVF/cij8U2gjVBHyHrTde7OpnD1tQmGoL3C+yLSUpJsuWBfxp8twq3g/YXNHmb
-5k8YPl23lNSvscbh4j41Vo/yN326Ooager5AViiknhAYfPLbukotSyzH/hAx9KcK
-SRnuqMnBNlgKZkaRGuWYGqbIf+Rq14f8DLntOCyBUP/pdEHApHAlPLzwF/qHS6k9
-QsW1Rxck6fDmmUGdYxlRsJLpjkQjeZmGgn1Q24ZbhxFC6s8Z7f5cmgeL1WBVdkhH
-AKhWSwmYB3Bsp8OtFcsKvNC/6jMGBU4BAihVO6DUhD8t/OyozJdaAy/pu614uIYN
-IcnZ5dBXZ+7Jh2sLC1M/Gn82g0XPr7ugf/OQMgzsh3n22Ybpo9ziguz5TeiYFaXK
-qaB4BoNo003SUR53w9Iwy5KVGYiCs5W7ZdgcCqrkK4Ht9b7uPzBaqYwG0evHHhgw
-xL/6FgQYLxCPn9Ccg/P6ytLiC+MRN7FXzuoldiNtlmNQeHvzUmI=
-=85Mb
------END PGP SIGNATURE-----
-
---n5xcw7r3bck7sftm--
