@@ -2,137 +2,169 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774F6C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8EBC5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4137B2148E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4137B2148E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id D1D6C21479
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:35:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="NsNngr9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1D6C21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeKUIFS (ORCPT
+        id S1726611AbeKUIGY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:05:18 -0500
-Received: from anholt.net ([50.246.234.109]:52614 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725889AbeKUIFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:05:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id DB72610A15B1;
-        Tue, 20 Nov 2018 13:34:05 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id ZRdAyeA9lA9h; Tue, 20 Nov 2018 13:34:04 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 9781910A0396;
-        Tue, 20 Nov 2018 13:34:04 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 145342FE1FE6; Tue, 20 Nov 2018 13:34:04 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-Subject: Re: [PATCH 0/8] BCM2835 PM driver
-In-Reply-To: <1299453058.112996.1542736171394@email.ionos.de>
-References: <20181120172000.15102-1-eric@anholt.net> <1299453058.112996.1542736171394@email.ionos.de>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Tue, 20 Nov 2018 13:34:03 -0800
-Message-ID: <87o9aj77sk.fsf@anholt.net>
+        Wed, 21 Nov 2018 03:06:24 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:44294 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbeKUIGY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:06:24 -0500
+Received: by mail-ua1-f68.google.com with SMTP id d19so1189521uaq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 13:35:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kylehuey.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1KRsRLm2++41GdQ5sZ2GzvmAHid+tTRCcHl3iqSl1Lc=;
+        b=NsNngr9bPcsGPY2bsLhFtK6vTzwxj0KFCaFXY18IzMerdOALGJEFpHkagnKKWcCArC
+         bzPvqOvrIW7L8mTYUs0D7bGxLNhQ+9jsRDzec2BuXpMaI0/K81HF7b9zTTZpWpkfEQvy
+         mbT1Py61xcsXYhH+O3kX38UAl7Q4vszlUSGTSy1A8NhV0y2jONndaWAY9LHzHwIF6VXj
+         TQy42gylgs6jSbeJHzSPimTZyzVyDsMwGuz6+AER2pFA/4OzFrt3ERUecinicIkPEPFX
+         zgQ+A/KST6l/3WMgFoS3VFD/ekS94yqw0dxkwG2uR3X+U+Mj2HHczaQlYkCsojBVCBFk
+         BAVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1KRsRLm2++41GdQ5sZ2GzvmAHid+tTRCcHl3iqSl1Lc=;
+        b=M0aObvZMgasy5iJ6KZTPVqVpvjtIoIYli5aPDi18TdU6xf3MFsZdZmkaQ1u2XbGFhb
+         TMs7eKx+3V5ju8UnzGMJgebEKkhu1EUYPE8gpnCtYh66/UoT1U2U1dlSGJNQlT9DaGHD
+         0yloxzvk7720Hs3VD4Q3+YQ11YWQQQZ3rjiDV7927FA+WaMnRk+GQpBZZvfjKJN9kFUw
+         Zgd+opt1ZNbxzvEXOF8Bpvh6U919nVGfp9c5v5+bx9YLucLg0YkhW/pVlE9BkPzEusGe
+         /rwJXg4lj31lqKHB7orDg0yaEuAxvheZWUrQgk0q1itijKaTn7Ik8nWlEoOGIt48VEeW
+         8Img==
+X-Gm-Message-State: AA+aEWYBT/LTxF5knZF9CQLVhaNNMyZ8OynMAxGv+BWAhdr0E8ln4gpc
+        s4I8i+8HgcsNnMlW0HQuqmAOjeuIwX0MBYfYGafqPQ==
+X-Google-Smtp-Source: AFSGD/UGm9icJTGOFetW1uTLJ8H3ylUdsYISYTyQ/rjOgAtCFsvX1k48kPkYt8Y93pMaZFyNBDwJk/zf7S06W8MYYOs=
+X-Received: by 2002:ab0:3392:: with SMTP id y18mr1718755uap.117.1542749710442;
+ Tue, 20 Nov 2018 13:35:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120194129.GC13936@tassilo.jf.intel.com> <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
+ <20181120201144.GD13936@tassilo.jf.intel.com> <CAP045AoF7-3VBjhaij8JrVLuw+1dUxmLAGthPJm7CsTyY7T9nA@mail.gmail.com>
+ <CABPqkBR-rNO=y9HU+-5m0yhejYp=6xQ2impOZy9bBrY=gjFSyg@mail.gmail.com>
+In-Reply-To: <CABPqkBR-rNO=y9HU+-5m0yhejYp=6xQ2impOZy9bBrY=gjFSyg@mail.gmail.com>
+From:   Kyle Huey <me@kylehuey.com>
+Date:   Tue, 20 Nov 2018 13:34:38 -0800
+Message-ID: <CAP045ArtZkXHbjxjPJqS76zpthuCN5odwPxpzpVjgjSzMS1f5w@mail.gmail.com>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Robert O'Callahan" <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-Stefan Wahren <stefan.wahren@i2se.com> writes:
-
-> Hi Eric,
+On Tue, Nov 20, 2018 at 1:19 PM Stephane Eranian <eranian@google.com> wrote:
 >
->> Eric Anholt <eric@anholt.net> hat am 20. November 2018 um 18:19 geschrie=
-ben:
->>=20
->>=20
->> This series moves the BCM2835 WDT driver that controls a fraction of
->> the PM block out to soc/ and adds most of the rest of its
->> functionality.  My motivation has been to have V3D be functional
->> without firmware calls, probably improve its interactivity (since
->> we'll be able to power on/off without RPC to the firmware that may be
->> busy with other tasks), and (in a patch not submitted in this series)
->> extend its binding to use the reset controller instead of trying to
->> reset by toggling its power domain.
->>=20
->> I've tested V3D with a few hours of running a V3D test, sleep(1) (to
->> trigger PM domain off); running a GPU hang job (to trigger reset);
->> sleep(1).  The non-hanging success-case job always passed, and dmesg
->> had no complaints from bcm2835-pm.  The other power domains are not
->> tested, but I've done my best.
->>=20
->> This series will probably also be of interest to the
->> https://github.com/christinaa/rpi-open-firmware project for enabling USB.
->>=20
->
-> apologize to give you my feedback after you send out the series.
->
-> I know you won't be happy about it, but i think we need a little more
-> complex but future proof solution for this power driver. According to
-> the register definition of the PM block, we have multiple functions
-> here (power domains, watchdog, pads/pinctrl, ...). Since this is
-> common for ARM SoCs there is a subsystem called mfd (multi function
-> device) [1] to abstract all resources of the IP block.
->
-> This has the advantage that we don't need a monolithic driver which
-> takes care of all functions.
+> On Tue, Nov 20, 2018 at 12:53 PM Kyle Huey <me@kylehuey.com> wrote:
+> >
+> > On Tue, Nov 20, 2018 at 12:11 PM Andi Kleen <ak@linux.intel.com> wrote:
+> > >
+> > > > > > Given that we're already at rc3, and that this renders rr unusable,
+> > > > > > we'd ask that counter freezing be disabled for the 4.20 release.
+> > > > >
+> > > > > The boot option should be good enough for the release?
+> > > >
+> > > > I'm not entirely sure what you mean here. We want you to flip the
+> > > > default boot option so this feature is off for this release. i.e. rr
+> > > > should work by default on 4.20 and people should have to opt into the
+> > > > inaccurate behavior if they want faster PMI servicing.
+> > >
+> > > I don't think it's inaccurate, it's just different
+> > > than what you are used to.
+> > >
+> > > For profiling including the kernel it's actually far more accurate
+> > > because the count is stopped much earlier near the sampling
+> > > point. Otherwise there is a considerable over count into
+> > > the PMI handler.
+> > >
+> > > In your case you limit the count to ring 3 so it's always cut off
+> > > at the transition point into the kernel, while with freezing
+> > > it's at the overflow point.
+> >
+> > I suppose that's fair that it's better for some use cases. The flip
+> > side is that it's no longer possible to get exactly accurate counts
+> > from user space if you're using the PMI (because any events between
+> > the overflow itself and the transition to the PMI handler are
+> > permanently lost) which is catastrophically bad for us :)
+> >
+> Let me make sure I got this right. During recording, you count on
+> retired-cond-branch
+> and you record the value of the PMU counter at specific locations,
+> e.g., syscalls.
+> During replay, you program the branch-conditional-retired to overflow
+> on interrupt at
+> each recorded values. So if you sampled the event at 1,000,000 and
+> then at 1,500,000.
+> Then you program the event with a period of 1,000,000 first, on
+> overflow the counter interrupts
+> and you get a signal. Then, you reprogram the event for a new period
+> of 500,000.  During recording
+> and replay the event is limited to ring 3 (user level). Am I
+> understanding this right?
 
-I consider your "advantage" to be a disadvantage.  By forcing the split,
-you end up having more driver files to manage, more platform devices,
-and more error-prone code to get the resources from the parent down into
-the client.  It feels like writing software for the sake of writing
-software, rather than solving a concrete problem.
+This is largely correct, except that we only program the interrupt for
+events that we would not naturally stop at during the course of
+execution such as asynchronous signals or context switch points. At
+events that we would naturally stop at (i.e. we can stop at syscalls
+via ptrace) we simply check that the counters match to find any
+discrepancies faster, before they affect an async signal delivery.
+Let's say I have the following event sequence:
 
-My original series:
+1. alarm syscall at rbc=1000
+2. SIGALARM delivery at rbc=8000
+3. exit syscall at rbc=9000
 
- 10 files changed, 951 insertions(+), 273 deletions(-)
+During replay, we begin the program and run to the syscall via a
+PTRACE_SYSCALL ptrace. When the replayed process stops, we check that
+the value of the rbc counter is 1000 (we also check that all registers
+match what we recorded) and then we emulate the effects of the syscall
+on the replayed process's registers and memory.
 
-The MFD series:
+Then we see that the next event is an asynchronous signal, and we
+program the rbc counter to interrupt after an additional (8000 - 1000
+- SKID_SIZE) events (where SKID_SIZE has been chosen by
+experimentation to ensure that the PMU interrupt is not delivered
+*after* the point in the program we care about. For Skylake this value
+is 100). We then resume the program with a PTRACE_CONT ptrace and wait
+for the PMI to stop the replayed tracee. We advance the program to the
+exact point that we care about through a combination of breakpoints
+and singlestepping, and then deliver the SIGALARM.
 
- 12 files changed, 882 insertions(+), 25 deletions(-)
+Once that is done, we see that the next event is the exit syscall, and
+we again do a PTRACE_SYSCALL ptrace to get to it. Once there we check
+the rbc counter value and registers match what were recorded, and
+perform the syscall.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Our counters are always restricted to ring 3 in both recording and replay.
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlv0fcsACgkQtdYpNtH8
-nuhtnA/9Gb7dE1/tAPnRIwQSyv9Tmo2ZshqHyZLW6c6vfC0BFKOUT84RzXbFYJZG
-QlNJHW3e1I3OjqRvDkt8MqilpmG8n7vJxQFpPvWzeXYynNRR6WGwlzClNwtkX70c
-BFmEqfuKZ7WzorUkcLvmBSShH/EbRyz+BPzhpLl6N/3/iv5lJBLSRc0Djg9+FUSN
-TEiYLA/RgzfQozowv69Q46F40RmEpcoR4FH7TJQqmodaMn79A7Ti/4nhJdrayTir
-hHF0476vZTkSktRaL6Tv6RKOCCQNUSlDpfu2zG6dMhtTuPJjSdHLgjRtSnEE1cLP
-y1Fqp13spoZdzQgUc9u1Ka5Unm9LmKjdPNM+oBlsXstGhziZSklNL65nKvd9TESk
-BPtRmPtdN05gLcEJ9wpLc0KsoCHKdZKGuXZHoyalGZBDJ9HeHK/iP6zaXXTg2fqh
-ulpMeht+aTMUAjs8wUisykDkjbw8J4FThyBMf4nlQF9TpD4HYw75+fP74HnS2X7e
-OokRG80Ecap8cRVnsl+o69pZJwAhn1LSAsCGR9X8m2FC8YMF8pyDtCAvjQDAGYCZ
-kPzrPv3uNi954baPkQcFYJiv2AtzWVbWT3vXwFSMDh8tuKQBgwkdmdxnKZ/qbJJQ
-awlFooEpyKf9fp9J8TzjbprEyT+anEama+triXKopjae0jIjX2U=
-=Rn7A
------END PGP SIGNATURE-----
---=-=-=--
+- Kyle
