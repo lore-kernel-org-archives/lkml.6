@@ -2,257 +2,198 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F96C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B27C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5446B20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1081420671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z4eL2l+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5446B20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="oAW/EUTL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1081420671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbeKTTz6 (ORCPT
+        id S1728127AbeKTT4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:55:58 -0500
-Received: from mail-eopbgr30082.outbound.protection.outlook.com ([40.107.3.82]:29684
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727453AbeKTTz5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:55:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6GGE+D1K97Uim7BzdeFvPAUZXAd8GUxbz3cRM28RI7M=;
- b=Z4eL2l+7wKihGp26NodvVE3TpeD0VOkVyKeAGX8fH+014Rqy4oG6H66OPyQAfh1E5zFuhEJqWMz7GFAkDi+ybfr+/eS0fU8u8HGB8kcx+vopkaCy0b0H2HTsY6nsFYJ0pVleWjzTke1f7ppK30i/aIX5/ss+RtCp1WEQTP/6cCQ=
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
- AM6PR04MB4775.eurprd04.prod.outlook.com (20.177.32.216) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.21; Tue, 20 Nov 2018 09:27:45 +0000
-Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::29b5:b3ed:3854:cf1c]) by AM6PR04MB5781.eurprd04.prod.outlook.com
- ([fe80::29b5:b3ed:3854:cf1c%4]) with mapi id 15.20.1339.026; Tue, 20 Nov 2018
- 09:27:45 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tue, 20 Nov 2018 14:56:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36566 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727453AbeKTTz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:55:59 -0500
+Received: from zn.tnic (p200300EC2BCDE000F95221CD056129B8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e000:f952:21cd:561:29b8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 419691EC06A7;
+        Tue, 20 Nov 2018 10:27:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542706069;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bqG5rKU8OP/7UNSw79MXWSB+keieO1Y3ECah6bo5zM8=;
+        b=oAW/EUTLel/81CeqZ5CSIhaSSnDGvPNAXHRo0St+Y1vBdxeBANgg8+YUpi0apETKpys8F3
+        H7eub+nEJ1ufHxWa/3E/DzAFhYFmtfWnAWO0XORst7aPsb3FAxlxf8Y/ym1IFR097o3aa4
+        UNwCGg/zpJDN/oxZkbOxWk1IzoC2Qu4=
+Date:   Tue, 20 Nov 2018 10:27:40 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>,
-        "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCHv2 21/25] PCI: mobiveil: make mobiveil_host_init can be used to
- re-init host
-Thread-Topic: [PATCHv2 21/25] PCI: mobiveil: make mobiveil_host_init can be
- used to re-init host
-Thread-Index: AQHUgLNL3BLuWxLGBEm5/AH+TXpIjA==
-Date:   Tue, 20 Nov 2018 09:27:45 +0000
-Message-ID: <20181120092615.11680-22-Zhiqiang.Hou@nxp.com>
-References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK2PR03CA0050.apcprd03.prod.outlook.com
- (2603:1096:202:17::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
- (2603:10a6:20b:aa::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4775;6:KRj/yIcmp2taLLk1UAI1CyyPcziuZoBQ3bhnyRBIWwKx56dhoY6rbA2iU0Qje8tAz32QPBwpG26PUZqJtHXNUAkbVHw00A+mXC4fhEiGJCyM3YTJrTFrATUFjo6InrkegNanpcUEErVTRCq3KPxJAFRSakjo0OIUic4NcAxb0ymbiXTqlW4+7l7pJzPAvASuSX6bcfcuy8od5i5IsJHH6xzhaWsRXkn7aXgE7pRsVnnN05aN1/67WdMbgN4eRgM8bSyMZEYVesWVZpL5piwPu3zjoObpRoUbsqR5VOnlxfyll63Gxzg6fS27Bwjnrg/ykrpjsAalJ31OYUmANCDyVaJJZsNcR7rsyX5tCcBkp+578Yzz//6YYRNcegx1Ddixzblggwg5yUVKpjxNMbbfLDUUr/ELcdqwRBJtWFcLHSIN6gRCqdwEZ54gsDPwrrRtNItSAsy3nYm09DqxQgJXcQ==;5:VsoKnTB/phS4OLtdGj+fqiA7eie6b+qChMYso7g21uC9Bop3YH30Nx50Lxhd24eEk/PEMZKgj6jasjbmBCQ8tLQT8BF0g+++Qf+Py+gcwN4xTb3VXT613QRrRj8e43sT76GBwrq0K1Xia3bMqNI8yTn1V7kSt4hy3KHpwUtOivg=;7:v0Z+87SzIBCmHWu6uqN7vG5URm1d2Dx7UjgJc5TM2Zqfov0/FHG1W7fGRhRwXM6T3FoDIZZ3a9JovSaxl9aIYmDndS1jF86VPm//tT9RN7h1uT0M/zlFe/jUR+e3hHG4i644TGhV8GG9x/oxlBe6aQ==
-x-ms-office365-filtering-correlation-id: 7e2c51ec-4b23-4e51-f3c0-08d64eca6de0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4775;
-x-ms-traffictypediagnostic: AM6PR04MB4775:
-x-microsoft-antispam-prvs: <AM6PR04MB477515471E2EA61B1D4F993084D90@AM6PR04MB4775.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231442)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4775;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4775;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(376002)(396003)(346002)(189003)(199004)(66066001)(1076002)(2900100001)(68736007)(8676002)(6486002)(5660300001)(8936002)(6116002)(3846002)(2501003)(97736004)(81166006)(26005)(186003)(81156014)(105586002)(7416002)(102836004)(2906002)(386003)(6506007)(7736002)(305945005)(106356001)(6512007)(76176011)(36756003)(4326008)(99286004)(52116002)(14444005)(25786009)(575784001)(110136005)(54906003)(2616005)(86362001)(53936002)(446003)(11346002)(256004)(2201001)(6436002)(486006)(71190400001)(71200400001)(478600001)(316002)(476003)(14454004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4775;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: o1p0SjrnmzMaStZfYMg58NrSXimv02zn6aIO5AnLOoRuE/4HVUM3a/tv2lmqwzw9Z3fRxTNGiaDhVN8Bn0/HofCd/o84ODcaLZ5Y1kEQl4PwaZfBThj3JUwlxU5O2n6GWUWkPxr6zcJwMulRNzHgN+OH0qiBFAgyG8p2vC0tZDapEA2B5P8IlUQuXNR39DuPFVThBbhw9pJ1W/OWJpXhw0agqkQJnfJmnfx+llAkJvc31HarNLyQ3qKSJWXkAW2xGQAp/qjfDAGIITcvu61QSTkkTi1prjEPRfO5qJAKdXk1gcBLLJfo3o23o8Itx9+26g8IXEmF1flIT0T3/D9al+g8SPkM5bq05tBB89hbTSA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v8 03/13] arch/resctrl: Re-arrange RDT init code
+Message-ID: <20181120092740.GA2527@zn.tnic>
+References: <20181116205407.10457-1-babu.moger@amd.com>
+ <20181116205407.10457-4-babu.moger@amd.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e2c51ec-4b23-4e51-f3c0-08d64eca6de0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 09:27:45.6135
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4775
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181116205407.10457-4-babu.moger@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Fri, Nov 16, 2018 at 08:54:26PM +0000, Moger, Babu wrote:
+> Separate the call sequence for rdt_quirks and MBA feature.
+> This is in preparation to handle vendor differences in these
+> call sequences.
+> 
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
+>  arch/x86/kernel/cpu/resctrl.c | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl.c b/arch/x86/kernel/cpu/resctrl.c
+> index 5d526dc45751..4cea275c7c57 100644
+> --- a/arch/x86/kernel/cpu/resctrl.c
+> +++ b/arch/x86/kernel/cpu/resctrl.c
+> @@ -794,6 +794,14 @@ static bool __init rdt_cpu_has(int flag)
+>  	return ret;
+>  }
 
-Make the mobiveil_host_init function can be used to re-init
-host controller's PAB and GPEX CSR register block, as NXP
-integrated Mobiveil IP has to reset and then re-init the PAB
-and GPEX CSR registers upon Hot-reset.
+Just nitpicks:
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
----
-V2:
- - Reset the statistic of IB/OB windows configured.
- - Change the type of member 'resources' to pointer to record the parsed
-   resources for re-init the outbound windows.
+> +static __init bool rdt_mba_config(void)
 
- .../controller/mobiveil/pcie-mobiveil-host.c  | 32 +++++++++++--------
- .../pci/controller/mobiveil/pcie-mobiveil.h   |  3 +-
- 2 files changed, 20 insertions(+), 15 deletions(-)
+That function doesn't have a verb in its name but it needs to have one
+stating what it does. You could do
 
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c b/drivers=
-/pci/controller/mobiveil/pcie-mobiveil-host.c
-index d028cdf31d0e..c85f00d3cfcf 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
-@@ -217,7 +217,7 @@ static void mobiveil_pcie_enable_msi(struct mobiveil_pc=
-ie *pcie)
- 	writel_relaxed(1, pcie->apb_csr_base + MSI_ENABLE_OFFSET);
- }
-=20
--static int mobiveil_host_init(struct mobiveil_pcie *pcie)
-+int mobiveil_host_init(struct mobiveil_pcie *pcie, bool reinit)
- {
- 	u32 value, pab_ctrl, type;
- 	struct resource_entry *win;
-@@ -229,11 +229,16 @@ static int mobiveil_host_init(struct mobiveil_pcie *p=
-cie)
- 	for (i =3D 0; i < pcie->ppio_wins; i++)
- 		mobiveil_pcie_disable_ib_win(pcie, i);
-=20
--	/* setup bus numbers */
--	value =3D csr_readl(pcie, PCI_PRIMARY_BUS);
--	value &=3D 0xff000000;
--	value |=3D 0x00ff0100;
--	csr_writel(pcie, value, PCI_PRIMARY_BUS);
-+	pcie->ib_wins_configured =3D 0;
-+	pcie->ob_wins_configured =3D 0;
-+
-+	if (!reinit) {
-+		/* setup bus numbers */
-+		value =3D csr_readl(pcie, PCI_PRIMARY_BUS);
-+		value &=3D 0xff000000;
-+		value |=3D 0x00ff0100;
-+		csr_writel(pcie, value, PCI_PRIMARY_BUS);
-+	}
-=20
- 	/*
- 	 * program Bus Master Enable Bit in Command Register in PAB Config
-@@ -279,7 +284,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pci=
-e)
- 	program_ib_windows(pcie, WIN_NUM_0, 0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
-=20
- 	/* Get the I/O and memory ranges from DT */
--	resource_list_for_each_entry(win, &pcie->resources) {
-+	resource_list_for_each_entry(win, pcie->resources) {
- 		if (resource_type(win->res) =3D=3D IORESOURCE_MEM) {
- 			type =3D MEM_WINDOW_TYPE;
- 		} else if (resource_type(win->res) =3D=3D IORESOURCE_IO) {
-@@ -550,8 +555,6 @@ int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie=
-)
- 	resource_size_t iobase;
- 	int ret;
-=20
--	INIT_LIST_HEAD(&pcie->resources);
--
- 	ret =3D mobiveil_pcie_parse_dt(pcie);
- 	if (ret) {
- 		dev_err(dev, "Parsing DT failed, ret: %x\n", ret);
-@@ -565,17 +568,19 @@ int mobiveil_pcie_host_probe(struct mobiveil_pcie *pc=
-ie)
-=20
- 	/* parse the host bridge base addresses from the device tree file */
- 	ret =3D devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
--						    &pcie->resources, &iobase);
-+						    &bridge->windows, &iobase);
- 	if (ret) {
- 		dev_err(dev, "Getting bridge resources failed\n");
- 		return ret;
- 	}
-=20
-+	pcie->resources =3D &bridge->windows;
-+
- 	/*
- 	 * configure all inbound and outbound windows and prepare the RC for
- 	 * config access
- 	 */
--	ret =3D mobiveil_host_init(pcie);
-+	ret =3D mobiveil_host_init(pcie, false);
- 	if (ret) {
- 		dev_err(dev, "Failed to initialize host\n");
- 		goto error;
-@@ -587,12 +592,11 @@ int mobiveil_pcie_host_probe(struct mobiveil_pcie *pc=
-ie)
- 		goto error;
- 	}
-=20
--	ret =3D devm_request_pci_bus_resources(dev, &pcie->resources);
-+	ret =3D devm_request_pci_bus_resources(dev, pcie->resources);
- 	if (ret)
- 		goto error;
-=20
- 	/* Initialize bridge */
--	list_splice_init(&pcie->resources, &bridge->windows);
- 	bridge->dev.parent =3D dev;
- 	bridge->sysdata =3D pcie;
- 	bridge->busnr =3D pcie->rp.root_bus_nr;
-@@ -619,6 +623,6 @@ int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie=
-)
-=20
- 	return 0;
- error:
--	pci_free_resource_list(&pcie->resources);
-+	pci_free_resource_list(pcie->resources);
- 	return ret;
- }
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/=
-controller/mobiveil/pcie-mobiveil.h
-index 933c2f34bc52..0f5303962e88 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-@@ -152,7 +152,7 @@ struct mobiveil_pab_ops {
-=20
- struct mobiveil_pcie {
- 	struct platform_device *pdev;
--	struct list_head resources;
-+	struct list_head *resources;
- 	void __iomem *csr_axi_slave_base;	/* PAB registers base */
- 	phys_addr_t pcie_reg_base;	/* Physical PCIe Controller Base */
- 	void __iomem *apb_csr_base;	/* MSI register base */
-@@ -165,6 +165,7 @@ struct mobiveil_pcie {
- };
-=20
- int mobiveil_pcie_host_probe(struct mobiveil_pcie *pcie);
-+int mobiveil_host_init(struct mobiveil_pcie *pcie, bool reinit);
- bool mobiveil_pcie_link_up(struct mobiveil_pcie *pcie);
- int mobiveil_bringup_link(struct mobiveil_pcie *pcie);
- void program_ob_windows(struct mobiveil_pcie *pcie, int win_num, u64 cpu_a=
-ddr,
---=20
-2.17.1
+mv rdt_get_mem_config() -> __rdt_get_mem_config()
+mv rdt_mba_config() -> rdt_get_mem_config()
 
+to have the hierarchy of what calls what. And then the AMD variant will
+be called __rdt_get_mem_config_amd().
+
+Also, those are all static functions so you can just as well drop the
+"rdt" prefix, I'd say.
+
+> +{
+> +	if (rdt_cpu_has(X86_FEATURE_MBA))
+> +		return rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
+> +
+> +	return false;
+> +}
+> +
+>  static __init bool get_rdt_alloc_resources(void)
+>  {
+>  	bool ret = false;
+> @@ -818,10 +826,9 @@ static __init bool get_rdt_alloc_resources(void)
+>  		ret = true;
+>  	}
+>  
+> -	if (rdt_cpu_has(X86_FEATURE_MBA)) {
+> -		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
+> -			ret = true;
+> -	}
+> +	if (rdt_mba_config())
+> +		ret = true;
+> +
+>  	return ret;
+>  }
+>  
+> @@ -840,7 +847,7 @@ static __init bool get_rdt_mon_resources(void)
+>  	return !rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
+>  }
+>  
+> -static __init void rdt_quirks(void)
+> +static __init void rdt_quirks_intel(void)
+>  {
+>  	switch (boot_cpu_data.x86_model) {
+>  	case INTEL_FAM6_HASWELL_X:
+> @@ -855,9 +862,14 @@ static __init void rdt_quirks(void)
+>  	}
+>  }
+>  
+> +static __init void rdt_quirks(void)
+
+Those functions also need to have a verb in the name stating what they
+do.
+
+> +{
+> +	if (boot_cpu_data.x86_vendor == X86_VENDOR_INTEL)
+> +		rdt_quirks_intel();
+> +}
+> +
+>  static __init bool get_rdt_resources(void)
+>  {
+> -	rdt_quirks();
+>  	rdt_alloc_capable = get_rdt_alloc_resources();
+>  	rdt_mon_capable = get_rdt_mon_resources();
+>  
+> @@ -871,6 +883,9 @@ static int __init resctrl_late_init(void)
+>  	struct rdt_resource *r;
+>  	int state, ret;
+>  
+> +	/* Run quirks first */
+> +	rdt_quirks();
+
+If the comment wasn't there, seeing "rdt_quirks();" doesn't say much and
+makes me go look at what that function does.
+
+> +
+>  	if (!get_rdt_resources())
+
+Unlike here, where it is clear that this gets the rdt resources.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
