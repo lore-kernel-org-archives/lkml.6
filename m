@@ -2,246 +2,131 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAF3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480D2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A47620851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A47620851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id DE0D520671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0D520671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728793AbeKTVU0 (ORCPT
+        id S1728755AbeKTVUJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:20:26 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:60722 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728190AbeKTVU0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:20:26 -0500
-Received: from [109.168.11.45] (port=57818 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gP3d3-006A8B-AS; Tue, 20 Nov 2018 11:51:37 +0100
-Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
-To:     kieran.bingham@ideasonboard.com, linux-renesas-soc@vger.kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sakari.ailus@iki.fi
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
- <5238fa80-7678-97a8-47ee-6a26970d862d@lucaceresoli.net>
- <07ee8a2c-81a8-ca32-96cf-67d6a883e3f5@ideasonboard.com>
- <e6143de9-f253-1a89-21e0-d1e2c0444e7b@lucaceresoli.net>
- <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <6729cf7d-bd5d-d762-3f4a-f53a8791a397@lucaceresoli.net>
-Date:   Tue, 20 Nov 2018 11:51:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 16:20:09 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50490 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728190AbeKTVUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:20:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 82960AE38;
+        Tue, 20 Nov 2018 10:51:35 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 1CECD1E0A16; Tue, 20 Nov 2018 11:51:35 +0100 (CET)
+Date:   Tue, 20 Nov 2018 11:51:35 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-api@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
+ flags in /proc/<pid>/smaps
+Message-ID: <20181120105135.GF8842@quack2.suse.cz>
+References: <20181120103515.25280-1-mhocko@kernel.org>
+ <20181120103515.25280-2-mhocko@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <417f5bc8-533d-2c2f-2325-3e728d53329b@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120103515.25280-2-mhocko@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran,
+On Tue 20-11-18 11:35:13, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Even though vma flags exported via /proc/<pid>/smaps are explicitly
+> documented to be not guaranteed for future compatibility the warning
+> doesn't go far enough because it doesn't mention semantic changes to
+> those flags. And they are important as well because these flags are
+> a deep implementation internal to the MM code and the semantic might
+> change at any time.
+> 
+> Let's consider two recent examples:
+> http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+> : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+> : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+> : mean time certain customer of ours started poking into /proc/<pid>/smaps
+> : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+> : flags, the application just fails to start complaining that DAX support is
+> : missing in the kernel.
+> 
+> http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+> : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+> : introduced a regression in that userspace cannot always determine the set
+> : of vmas where thp is ineligible.
+> : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+> : to determine if a vma is eligible to be backed by hugepages.
+> : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+> : be disabled and emit "nh" as a flag for the corresponding vmas as part of
+> : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+> : flag and "nh" is not emitted.
+> : This causes smaps parsing libraries to assume a vma is eligible for thp
+> : and ends up puzzling the user on why its memory is not backed by thp.
+> 
+> In both cases userspace was relying on a semantic of a specific VMA
+> flag. The primary reason why that happened is a lack of a proper
+> internface. While this has been worked on and it will be fixed properly,
+> it seems that our wording could see some refinement and be more vocal
+> about semantic aspect of these flags as well.
+> 
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-On 20/11/18 01:32, Kieran Bingham wrote:
-> Hi Luca,
-> 
-> My apologies for my travel induced delay in responding here,
+Honestly, it just shows that no amount of documentation is going to stop
+userspace from abusing API that's exposing too much if there's no better
+alternative. But this is a good clarification regardless. So feel free to
+add:
 
-No problem.
+Acked-by: Jan Kara <jack@suse.cz>
 
-> On 14/11/2018 02:04, Luca Ceresoli wrote:
-[...]
->>>>> +static int max9286_probe(struct i2c_client *client,
->>>>> +			 const struct i2c_device_id *did)
->>>>> +{
->>>>> +	struct max9286_device *dev;
->>>>> +	unsigned int i;
->>>>> +	int ret;
->>>>> +
->>>>> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
->>>>> +	if (!dev)
->>>>> +		return -ENOMEM;
->>>>> +
->>>>> +	dev->client = client;
->>>>> +	i2c_set_clientdata(client, dev);
->>>>> +
->>>>> +	for (i = 0; i < MAX9286_N_SINKS; i++)
->>>>> +		max9286_init_format(&dev->fmt[i]);
->>>>> +
->>>>> +	ret = max9286_parse_dt(dev);
->>>>> +	if (ret)
->>>>> +		return ret;
->>>>> +
->>>>> +	dev->regulator = regulator_get(&client->dev, "poc");
->>>>> +	if (IS_ERR(dev->regulator)) {
->>>>> +		if (PTR_ERR(dev->regulator) != -EPROBE_DEFER)
->>>>> +			dev_err(&client->dev,
->>>>> +				"Unable to get PoC regulator (%ld)\n",
->>>>> +				PTR_ERR(dev->regulator));
->>>>> +		ret = PTR_ERR(dev->regulator);
->>>>> +		goto err_free;
->>>>> +	}
->>>>> +
->>>>> +	/*
->>>>> +	 * We can have multiple MAX9286 instances on the same physical I2C
->>>>> +	 * bus, and I2C children behind ports of separate MAX9286 instances
->>>>> +	 * having the same I2C address. As the MAX9286 starts by default with
->>>>> +	 * all ports enabled, we need to disable all ports on all MAX9286
->>>>> +	 * instances before proceeding to further initialize the devices and
->>>>> +	 * instantiate children.
->>>>> +	 *
->>>>> +	 * Start by just disabling all channels on the current device. Then,
->>>>> +	 * if all other MAX9286 on the parent bus have been probed, proceed
->>>>> +	 * to initialize them all, including the current one.
->>>>> +	 */
->>>>> +	max9286_i2c_mux_close(dev);
->>>>> +
->>>>> +	/*
->>>>> +	 * The MAX9286 initialises with auto-acknowledge enabled by default.
->>>>> +	 * This means that if multiple MAX9286 devices are connected to an I2C
->>>>> +	 * bus, another MAX9286 could ack I2C transfers meant for a device on
->>>>> +	 * the other side of the GMSL links for this MAX9286 (such as a
->>>>> +	 * MAX9271). To prevent that disable auto-acknowledge early on; it
->>>>> +	 * will be enabled later as needed.
->>>>> +	 */
->>>>> +	max9286_configure_i2c(dev, false);
->>>>> +
->>>>> +	ret = device_for_each_child(client->dev.parent, &client->dev,
->>>>> +				    max9286_is_bound);
->>>>> +	if (ret)
->>>>> +		return 0;
->>>>> +
->>>>> +	dev_dbg(&client->dev,
->>>>> +		"All max9286 probed: start initialization sequence\n");
->>>>> +	ret = device_for_each_child(client->dev.parent, NULL,
->>>>> +				    max9286_init);
->>>>
->>>> I can't manage to like this initialization sequence, sorry. If at all
->>>> possible, each max9286 should initialize itself independently from each
->>>> other, like any normal driver.
->>>
->>> Yes, I think we're in agreement here, but unfortunately this section is
->>> a workaround for the fact that our devices share a common address space.
->>>
->>> We (currently) *must* disable both devices before we start the
->>> initialisation process for either on our platform currently...
->>
->> The model I proposed in my review to patch 1/4 (split remote physical
->> address from local address pool) allows to avoid this workaround.
-> 
-> 
-> Having just talked this through with Jacopo I think I see that we have
-> two topics getting intertwined here too.
-> 
->  - Address translation so that we can separate the camera addressing
-> 
->  - our 'device_is_bound/device_for_each_child()' workaround which lets
->    us make sure the buses are closed before we power on any camera
->    device.
-> 
-> 
-> For the upstream process of this driver - I will remove the
-> 'device_is_bound()/device_for_each_child()' workarounds.
-> 
-> 
-> It is /ugly/ and needs more consideration, but I believe we do still
-> need it (or something similar) for our platform currently.
-> 
-> 
-> 
-> The other side of that is the address translation. I think I was wrong
-> earlier and may have said we have address translation on both sides.
-> 
-> 
-> I think I now see that we only have some minimal translation for two
-> addresses on the remote (max9271) side, not the local (max9286) side.
+								Honza
 
-Can the remote (max9271) translate addresses for transactions
-originating from the local side? This would make it possible to do a
-proper address translation, although 2 addresses is a quite small amount.
-
-BTW all the TI chips I'm looking at can do address translation but, as
-far as I understand, only when acting as "slave proxy", i.e. when
-attached to the bus master. If the Maxim chips do the same, the "remote
-translation" would be unusable.
-
-> We have the ability to reprogram addresses through, and that's what we
-> are using.
-
-Sadly, it looks pretty much unavoidable...
-
-> There's a lot more local discussion going on here that I may have missed
-> so I hope Jacopo, Niklas, or Laurent may add more here if relevant :)
+> ---
+>  Documentation/filesystems/proc.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 12a5e6e693b6..b1fda309f067 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
+>  
+>  Note that there is no guarantee that every flag and associated mnemonic will
+>  be present in all further kernel releases. Things get changed, the flags may
+> -be vanished or the reverse -- new added.
+> +be vanished or the reverse -- new added. Interpretatation of their meaning
+> +might change in future as well. So each consumnent of these flags have to
+> +follow each specific kernel version for the exact semantic.
+>  
+>  This file is only present if the CONFIG_MMU kernel configuration option is
+>  enabled.
+> -- 
+> 2.19.1
 > 
-> 
-> 
->>> That said - I think this section needs to be removed from the upstream
->>> part at least for now. I think we should probably carry this
->>> 'workaround' separately.
->>>
->>> This part is the core issue that I talked about in my presentation at
->>> ALS-Japan [0]
->>>
->>>  [0] https://sched.co/EaXa
->>
->> Oh, interesting, I hadn't noticed that you gave this talk -- at the same
->> conference as Vladimir's talk! No video recording apparently, but are
->> slides available at least?
-> 
-> Hrm ... I was sure I uploaded to the conference so that they should have
-> been available on that URL - but they are not showing.
-> 
-> They are available here:
-> 
-> 	https://www.slideshare.net/KieranBingham/gmsl-in-linux
-
-Thanks.
-
-> (Please excuse the incorrect date on the first slide :D)
-> 
-> I had put a proposal in to give this talk again at ELCE but
-> unfortunately it didn't get accepted.
->
-> Seems it really would have been useful to have a slot. Lets hope next
-> ELCE is too late and we work out a good system by then :)
-
-Indeed it would have been!
-
-But hey, The FOSDEM CFPs are still open!
-
-Bye,
 -- 
-Luca
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
