@@ -2,187 +2,100 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F5CC5ACBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45FE6C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5A7214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5A7214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1BC2F214DB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC2F214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726993AbeKUIIP (ORCPT
+        id S1727218AbeKUIIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:08:15 -0500
-Received: from mga17.intel.com ([192.55.52.151]:35029 "EHLO mga17.intel.com"
+        Wed, 21 Nov 2018 03:08:22 -0500
+Received: from anholt.net ([50.246.234.109]:52714 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeKUIIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:08:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 13:37:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
-   d="scan'208";a="281632641"
-Received: from pmvancle-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.10.84])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 13:37:00 -0800
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
-        liam.r.girdwood@linux.intel.com, andriy.shevchenko@linux.intel.com,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [RFC PATCH 6/6] ALSA: hda: add fallback capabilities for SKL+ platforms
-Date:   Tue, 20 Nov 2018 15:36:44 -0600
-Message-Id: <20181120213644.19103-7-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
-References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+        id S1726098AbeKUIIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:08:21 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 4953110A0B73;
+        Tue, 20 Nov 2018 13:37:08 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id fpI6ZOVGaTya; Tue, 20 Nov 2018 13:37:06 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id CE58810A162F;
+        Tue, 20 Nov 2018 13:37:03 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 8F7E02FE1FEA; Tue, 20 Nov 2018 13:37:02 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Subject: [PATCH v2 4/5] ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block.
+Date:   Tue, 20 Nov 2018 13:37:01 -0800
+Message-Id: <20181120213702.27958-5-eric@anholt.net>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181120213702.27958-1-eric@anholt.net>
+References: <20181120213702.27958-1-eric@anholt.net>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable fallback for select PCI IDs
+It was covering part of the PM block's range, up to the WDT regs.  To
+support the rest of the PM block's functionality, we need the full
+register range plus the AXI Async Bridge regs for PM sequencing.
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+This doesn't convert any of the consumers over to the new binding yet,
+since we will need to be careful in coordinating our usage of firmware
+services that might power domains on and off versus the bcm2835-pm
+driver's access of those same domains.
+
+Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- sound/pci/hda/Kconfig     | 40 +++++++++++++++++++++++++++++++++++++++
- sound/pci/hda/hda_intel.c | 19 +++++++++++++------
- sound/soc/intel/Kconfig   |  6 ++++++
- 3 files changed, 59 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/bcm283x.dtsi | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
-index 4235907b7858..9bb317fb3507 100644
---- a/sound/pci/hda/Kconfig
-+++ b/sound/pci/hda/Kconfig
-@@ -228,4 +228,44 @@ config SND_HDA_POWER_SAVE_DEFAULT
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index 31b29646b14c..bd5be68b4561 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -121,8 +121,16 @@
+ 		};
  
- endif
+ 		watchdog@7e100000 {
+-			compatible = "brcm,bcm2835-pm-wdt";
+-			reg = <0x7e100000 0x28>;
++			compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
++			#power-domain-cells = <1>;
++			#reset-cells = <1>;
++			reg = <0x7e100000 0x114>,
++			      <0x7e00a000 0x24>;
++			clocks = <&clocks BCM2835_CLOCK_V3D>,
++				 <&clocks BCM2835_CLOCK_PERI_IMAGE>,
++				 <&clocks BCM2835_CLOCK_H264>,
++				 <&clocks BCM2835_CLOCK_ISP>;
++			clock-names = "v3d", "peri_image", "h264", "isp";
+ 		};
  
-+if SND_HDA_INTEL
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_SKL
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  Skylake machines
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_APL
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  Broxton/ApolloLake machines
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_KBL
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  KabyLake machines
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_GLK
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  GeminiLake machines
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_CNL
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  CannonLake machines
-+
-+config SND_HDA_INTEL_LEGACY_FALLBACK_CFL
-+	bool
-+	help
-+	  This option enables HD-audio legacy fallback for
-+	  CoffeeLake machines
-+
-+endif ## SND_HDA_INTEL
-+
- endmenu
-diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-index eb00e37c1c27..569419242da3 100644
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -360,6 +360,7 @@ enum {
- 	 AZX_DCAPS_NO_64BIT |\
- 	 AZX_DCAPS_4K_BDLE_BOUNDARY | AZX_DCAPS_SNOOP_OFF)
- 
-+#define AZX_DCAPS_INTEL_LEGACY_FALLBACK(conf) (IS_ENABLED(conf) ? AZX_DCAPS_INTEL_SHARED : 0)
- /*
-  * vga_switcheroo support
-  */
-@@ -2416,34 +2417,40 @@ static const struct pci_device_id azx_ids[] = {
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
- 	/* Sunrise Point-LP */
- 	{ PCI_DEVICE(0x8086, 0x9d70),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_SKL) },
- 	/* Kabylake */
- 	{ PCI_DEVICE(0x8086, 0xa171),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
- 	/* Kabylake-LP */
- 	{ PCI_DEVICE(0x8086, 0x9d71),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_KBL) },
- 	/* Kabylake-H */
- 	{ PCI_DEVICE(0x8086, 0xa2f0),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
- 	/* Coffelake */
- 	{ PCI_DEVICE(0x8086, 0xa348),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_CFL) },
- 	/* Cannonlake */
- 	{ PCI_DEVICE(0x8086, 0x9dc8),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_CNL) },
- 	/* Icelake */
- 	{ PCI_DEVICE(0x8086, 0x34c8),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
- 	/* Broxton-P(Apollolake) */
- 	{ PCI_DEVICE(0x8086, 0x5a98),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_APL) },
- 	/* Broxton-T */
- 	{ PCI_DEVICE(0x8086, 0x1a98),
- 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
- 	/* Gemini-Lake */
- 	{ PCI_DEVICE(0x8086, 0x3198),
--	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
-+	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON |
-+	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_GLK) },
- 	/* Haswell */
- 	{ PCI_DEVICE(0x8086, 0x0a0c),
- 	  .driver_data = AZX_DRIVER_HDMI | AZX_DCAPS_INTEL_HASWELL },
-diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
-index c02d08d31d0d..4c6abdbb0b90 100644
---- a/sound/soc/intel/Kconfig
-+++ b/sound/soc/intel/Kconfig
-@@ -197,6 +197,12 @@ config SND_SOC_INTEL_SKYLAKE_COMMON
- config SND_SOC_INTEL_SKL_LEGACY_SUPPORT
- 	bool "Fallback legacy HD-audio binding"
- 	depends on SND_HDA_INTEL=y || SND_SOC_INTEL_SKYLAKE_FAMILY=SND_HDA_INTEL
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_SKL if SND_SOC_INTEL_SKL
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_APL if SND_SOC_INTEL_APL
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_KBL if SND_SOC_INTEL_KBL
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_GLK if SND_SOC_INTEL_GLK
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_CNL if SND_SOC_INTEL_CNL
-+	select SND_HDA_INTEL_LEGACY_FALLBACK_CFL if SND_SOC_INTEL_CFL
- 	help
- 	  Fallback binding with the legacy HD-audio driver when no DSP is
- 	  found
+ 		clocks: cprman@7e101000 {
 -- 
-2.17.1
+2.19.1
 
