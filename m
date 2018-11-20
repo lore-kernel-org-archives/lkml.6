@@ -2,103 +2,393 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B96EFC46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 533FFC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB71120685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB71120685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D921208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D921208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbeKUElf (ORCPT
+        id S1728751AbeKUEqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:41:35 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45375 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726047AbeKUElf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:41:35 -0500
-Received: from hanvin-mobl2.amr.corp.intel.com (fmdmzpr04-ext.fm.intel.com [192.55.54.39])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id wAKIAJZC3063572
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 20 Nov 2018 10:10:20 -0800
-Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
- early init
-To:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20181113130730.44844-1-namit@vmware.com>
- <20181113130730.44844-3-namit@vmware.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
-Date:   Tue, 20 Nov 2018 10:10:14 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181113130730.44844-3-namit@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 20 Nov 2018 23:46:07 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:37460 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728520AbeKUEqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:46:07 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B1561A0079;
+        Tue, 20 Nov 2018 19:15:36 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 537DC1A0006;
+        Tue, 20 Nov 2018 19:15:36 +0100 (CET)
+Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 138EF20621;
+        Tue, 20 Nov 2018 19:15:36 +0100 (CET)
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, alexandru.marginean@nxp.com,
+        catalin.horghidan@nxp.com
+Subject: [PATCH net-next v2 2/4] enetc: Add ethtool statistics
+Date:   Tue, 20 Nov 2018 20:15:32 +0200
+Message-Id: <1542737734-21756-3-git-send-email-claudiu.manoil@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
+References: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/18 5:07 AM, Nadav Amit wrote:
-> There is no apparent reason not to use text_poke_early() while we are
-> during early-init and we do not patch code that might be on the stack
-> (i.e., we'll return to the middle of the patched code). This appears to
-> be the case of jump-labels, so do so.
-> 
-> This is required for the next patches that would set a temporary mm for
-> patching, which is initialized after some static-keys are
-> enabled/disabled.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> ---
->  arch/x86/kernel/jump_label.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index aac0c1f7e354..ed5fe274a7d8 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
->  	jmp.offset = jump_entry_target(entry) -
->  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
->  
-> -	if (early_boot_irqs_disabled)
-> +	/*
-> +	 * As long as we're UP and not yet marked RO, we can use
-> +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-> +	 * SYSTEM_SCHEDULING before going either.
-> +	 */
-> +	if (system_state == SYSTEM_BOOTING)
->  		poker = text_poke_early;
->  
->  	if (type == JUMP_LABEL_JMP) {
-> 
+This adds most h/w statistics counters: non-privileged SI conters, as
+well as privileged Port and MAC counters available only to the PF.
+Per ring software stats are also included.
 
-Can't we make this test in text_poke() directly, please?
+Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+---
+v2:	- replaced sprintf by snprintf
 
-	-hpa
+
+ .../net/ethernet/freescale/enetc/enetc_ethtool.c   | 187 +++++++++++++++++++++
+ drivers/net/ethernet/freescale/enetc/enetc_hw.h    |  88 ++++++++++
+ 2 files changed, 275 insertions(+)
+
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+index 365ac9c..9032b0e 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+@@ -89,6 +89,187 @@ static void enetc_get_regs(struct net_device *ndev, struct ethtool_regs *regs,
+ 	}
+ }
+ 
++static const struct {
++	int reg;
++	char name[ETH_GSTRING_LEN];
++} enetc_si_counters[] =  {
++	{ ENETC_SIROCT, "SI rx octets" },
++	{ ENETC_SIRFRM, "SI rx frames" },
++	{ ENETC_SIRUCA, "SI rx u-cast frames" },
++	{ ENETC_SIRMCA, "SI rx m-cast frames" },
++	{ ENETC_SITOCT, "SI tx octets" },
++	{ ENETC_SITFRM, "SI tx frames" },
++	{ ENETC_SITUCA, "SI tx u-cast frames" },
++	{ ENETC_SITMCA, "SI tx m-cast frames" },
++	{ ENETC_RBDCR(0), "Rx ring  0 discarded frames" },
++	{ ENETC_RBDCR(1), "Rx ring  1 discarded frames" },
++	{ ENETC_RBDCR(2), "Rx ring  2 discarded frames" },
++	{ ENETC_RBDCR(3), "Rx ring  3 discarded frames" },
++	{ ENETC_RBDCR(4), "Rx ring  4 discarded frames" },
++	{ ENETC_RBDCR(5), "Rx ring  5 discarded frames" },
++	{ ENETC_RBDCR(6), "Rx ring  6 discarded frames" },
++	{ ENETC_RBDCR(7), "Rx ring  7 discarded frames" },
++	{ ENETC_RBDCR(8), "Rx ring  8 discarded frames" },
++	{ ENETC_RBDCR(9), "Rx ring  9 discarded frames" },
++	{ ENETC_RBDCR(10), "Rx ring 10 discarded frames" },
++	{ ENETC_RBDCR(11), "Rx ring 11 discarded frames" },
++	{ ENETC_RBDCR(12), "Rx ring 12 discarded frames" },
++	{ ENETC_RBDCR(13), "Rx ring 13 discarded frames" },
++	{ ENETC_RBDCR(14), "Rx ring 14 discarded frames" },
++	{ ENETC_RBDCR(15), "Rx ring 15 discarded frames" },
++};
++
++static const struct {
++	int reg;
++	char name[ETH_GSTRING_LEN];
++} enetc_port_counters[] = {
++	{ ENETC_PM0_REOCT,  "MAC rx ethernet octets" },
++	{ ENETC_PM0_RALN,   "MAC rx alignment errors" },
++	{ ENETC_PM0_RXPF,   "MAC rx valid pause frames" },
++	{ ENETC_PM0_RFRM,   "MAC rx valid frames" },
++	{ ENETC_PM0_RFCS,   "MAC rx fcs errors" },
++	{ ENETC_PM0_RVLAN,  "MAC rx VLAN frames" },
++	{ ENETC_PM0_RERR,   "MAC rx frame errors" },
++	{ ENETC_PM0_RUCA,   "MAC rx unicast frames" },
++	{ ENETC_PM0_RMCA,   "MAC rx multicast frames" },
++	{ ENETC_PM0_RBCA,   "MAC rx broadcast frames" },
++	{ ENETC_PM0_RDRP,   "MAC rx dropped packets" },
++	{ ENETC_PM0_RPKT,   "MAC rx packets" },
++	{ ENETC_PM0_RUND,   "MAC rx undersized packets" },
++	{ ENETC_PM0_R64,    "MAC rx 64 byte packets" },
++	{ ENETC_PM0_R127,   "MAC rx 65-127 byte packets" },
++	{ ENETC_PM0_R255,   "MAC rx 128-255 byte packets" },
++	{ ENETC_PM0_R511,   "MAC rx 256-511 byte packets" },
++	{ ENETC_PM0_R1023,  "MAC rx 512-1023 byte packets" },
++	{ ENETC_PM0_R1518,  "MAC rx 1024-1518 byte packets" },
++	{ ENETC_PM0_R1519X, "MAC rx 1519 to max-octet packets" },
++	{ ENETC_PM0_ROVR,   "MAC rx oversized packets" },
++	{ ENETC_PM0_RJBR,   "MAC rx jabber packets" },
++	{ ENETC_PM0_RFRG,   "MAC rx fragment packets" },
++	{ ENETC_PM0_RCNP,   "MAC rx control packets" },
++	{ ENETC_PM0_RDRNTP, "MAC rx fifo drop" },
++	{ ENETC_PM0_TEOCT,  "MAC tx ethernet octets" },
++	{ ENETC_PM0_TOCT,   "MAC tx octets" },
++	{ ENETC_PM0_TCRSE,  "MAC tx carrier sense errors" },
++	{ ENETC_PM0_TXPF,   "MAC tx valid pause frames" },
++	{ ENETC_PM0_TFRM,   "MAC tx frames" },
++	{ ENETC_PM0_TFCS,   "MAC tx fcs errors" },
++	{ ENETC_PM0_TVLAN,  "MAC tx VLAN frames" },
++	{ ENETC_PM0_TERR,   "MAC tx frames" },
++	{ ENETC_PM0_TUCA,   "MAC tx unicast frames" },
++	{ ENETC_PM0_TMCA,   "MAC tx multicast frames" },
++	{ ENETC_PM0_TBCA,   "MAC tx broadcast frames" },
++	{ ENETC_PM0_TPKT,   "MAC tx packets" },
++	{ ENETC_PM0_TUND,   "MAC tx undersized packets" },
++	{ ENETC_PM0_T127,   "MAC tx 65-127 byte packets" },
++	{ ENETC_PM0_T1023,  "MAC tx 512-1023 byte packets" },
++	{ ENETC_PM0_T1518,  "MAC tx 1024-1518 byte packets" },
++	{ ENETC_PM0_TCNP,   "MAC tx control packets" },
++	{ ENETC_PM0_TDFR,   "MAC tx deferred packets" },
++	{ ENETC_PM0_TMCOL,  "MAC tx multiple collisions" },
++	{ ENETC_PM0_TSCOL,  "MAC tx single collisions" },
++	{ ENETC_PM0_TLCOL,  "MAC tx late collisions" },
++	{ ENETC_PM0_TECOL,  "MAC tx excessive collisions" },
++	{ ENETC_UFDMF,      "SI MAC nomatch u-cast discards" },
++	{ ENETC_MFDMF,      "SI MAC nomatch m-cast discards" },
++	{ ENETC_PBFDSIR,    "SI MAC nomatch b-cast discards" },
++	{ ENETC_PUFDVFR,    "SI VLAN nomatch u-cast discards" },
++	{ ENETC_PMFDVFR,    "SI VLAN nomatch m-cast discards" },
++	{ ENETC_PBFDVFR,    "SI VLAN nomatch b-cast discards" },
++	{ ENETC_PFDMSAPR,   "SI pruning discarded frames" },
++	{ ENETC_PICDR(0),   "ICM DR0 discarded frames" },
++	{ ENETC_PICDR(1),   "ICM DR1 discarded frames" },
++	{ ENETC_PICDR(2),   "ICM DR2 discarded frames" },
++	{ ENETC_PICDR(3),   "ICM DR3 discarded frames" },
++};
++
++static const char rx_ring_stats[][ETH_GSTRING_LEN] = {
++	"Rx ring %2d frames",
++	"Rx ring %2d alloc errors",
++};
++
++static const char tx_ring_stats[][ETH_GSTRING_LEN] = {
++	"Tx ring %2d frames",
++};
++
++static int enetc_get_sset_count(struct net_device *ndev, int sset)
++{
++	struct enetc_ndev_priv *priv = netdev_priv(ndev);
++
++	if (sset == ETH_SS_STATS)
++		return ARRAY_SIZE(enetc_si_counters) +
++			ARRAY_SIZE(tx_ring_stats) * priv->num_tx_rings +
++			ARRAY_SIZE(rx_ring_stats) * priv->num_rx_rings +
++			(enetc_si_is_pf(priv->si) ?
++			ARRAY_SIZE(enetc_port_counters) : 0);
++
++	return -EOPNOTSUPP;
++}
++
++static void enetc_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
++{
++	struct enetc_ndev_priv *priv = netdev_priv(ndev);
++	u8 *p = data;
++	int i, j;
++
++	switch (stringset) {
++	case ETH_SS_STATS:
++		for (i = 0; i < ARRAY_SIZE(enetc_si_counters); i++) {
++			strlcpy(p, enetc_si_counters[i].name, ETH_GSTRING_LEN);
++			p += ETH_GSTRING_LEN;
++		}
++		for (i = 0; i < priv->num_tx_rings; i++) {
++			for (j = 0; j < ARRAY_SIZE(tx_ring_stats); j++) {
++				snprintf(p, ETH_GSTRING_LEN, tx_ring_stats[j],
++					 i);
++				p += ETH_GSTRING_LEN;
++			}
++		}
++		for (i = 0; i < priv->num_rx_rings; i++) {
++			for (j = 0; j < ARRAY_SIZE(rx_ring_stats); j++) {
++				snprintf(p, ETH_GSTRING_LEN, rx_ring_stats[j],
++					 i);
++				p += ETH_GSTRING_LEN;
++			}
++		}
++
++		if (!enetc_si_is_pf(priv->si))
++			break;
++
++		for (i = 0; i < ARRAY_SIZE(enetc_port_counters); i++) {
++			strlcpy(p, enetc_port_counters[i].name,
++				ETH_GSTRING_LEN);
++			p += ETH_GSTRING_LEN;
++		}
++		break;
++	}
++}
++
++static void enetc_get_ethtool_stats(struct net_device *ndev,
++				    struct ethtool_stats *stats, u64 *data)
++{
++	struct enetc_ndev_priv *priv = netdev_priv(ndev);
++	struct enetc_hw *hw = &priv->si->hw;
++	int i, o = 0;
++
++	for (i = 0; i < ARRAY_SIZE(enetc_si_counters); i++)
++		data[o++] = enetc_rd64(hw, enetc_si_counters[i].reg);
++
++	for (i = 0; i < priv->num_tx_rings; i++)
++		data[o++] = priv->tx_ring[i]->stats.packets;
++
++	for (i = 0; i < priv->num_rx_rings; i++) {
++		data[o++] = priv->rx_ring[i]->stats.packets;
++		data[o++] = priv->rx_ring[i]->stats.rx_alloc_errs;
++	}
++
++	if (!enetc_si_is_pf(priv->si))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(enetc_port_counters); i++)
++		data[o++] = enetc_port_rd(hw, enetc_port_counters[i].reg);
++}
++
+ static void enetc_get_ringparam(struct net_device *ndev,
+ 				struct ethtool_ringparam *ring)
+ {
+@@ -115,6 +296,9 @@ static void enetc_get_ringparam(struct net_device *ndev,
+ static const struct ethtool_ops enetc_pf_ethtool_ops = {
+ 	.get_regs_len = enetc_get_reglen,
+ 	.get_regs = enetc_get_regs,
++	.get_sset_count = enetc_get_sset_count,
++	.get_strings = enetc_get_strings,
++	.get_ethtool_stats = enetc_get_ethtool_stats,
+ 	.get_ringparam = enetc_get_ringparam,
+ 	.get_link_ksettings = phy_ethtool_get_link_ksettings,
+ 	.set_link_ksettings = phy_ethtool_set_link_ksettings,
+@@ -123,6 +307,9 @@ static const struct ethtool_ops enetc_pf_ethtool_ops = {
+ static const struct ethtool_ops enetc_vf_ethtool_ops = {
+ 	.get_regs_len = enetc_get_reglen,
+ 	.get_regs = enetc_get_regs,
++	.get_sset_count = enetc_get_sset_count,
++	.get_strings = enetc_get_strings,
++	.get_ethtool_stats = enetc_get_ethtool_stats,
+ 	.get_ringparam = enetc_get_ringparam,
+ };
+ 
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+index 78c0902..511bf5c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
+@@ -34,6 +34,17 @@
+ #define ENETC_SIPMAR0	0x80
+ #define ENETC_SIPMAR1	0x84
+ 
++/* SI statistics */
++#define ENETC_SIROCT	0x300
++#define ENETC_SIRFRM	0x308
++#define ENETC_SIRUCA	0x310
++#define ENETC_SIRMCA	0x318
++#define ENETC_SITOCT	0x320
++#define ENETC_SITFRM	0x328
++#define ENETC_SITUCA	0x330
++#define ENETC_SITMCA	0x338
++#define ENETC_RBDCR(n)	(0x8180 + (n) * 0x200)
++
+ /* Control BDR regs */
+ #define ENETC_SICBDRMR		0x800
+ #define ENETC_SICBDRSR		0x804	/* RO */
+@@ -168,6 +179,65 @@ enum enetc_bdr_type {TX, RX};
+ #define ENETC_PMO_IFM_RG	BIT(2)
+ #define ENETC_PM0_IFM_RLP	(BIT(5) | BIT(11))
+ 
++/* MAC counters */
++#define ENETC_PM0_REOCT		0x8100
++#define ENETC_PM0_RALN		0x8110
++#define ENETC_PM0_RXPF		0x8118
++#define ENETC_PM0_RFRM		0x8120
++#define ENETC_PM0_RFCS		0x8128
++#define ENETC_PM0_RVLAN		0x8130
++#define ENETC_PM0_RERR		0x8138
++#define ENETC_PM0_RUCA		0x8140
++#define ENETC_PM0_RMCA		0x8148
++#define ENETC_PM0_RBCA		0x8150
++#define ENETC_PM0_RDRP		0x8158
++#define ENETC_PM0_RPKT		0x8160
++#define ENETC_PM0_RUND		0x8168
++#define ENETC_PM0_R64		0x8170
++#define ENETC_PM0_R127		0x8178
++#define ENETC_PM0_R255		0x8180
++#define ENETC_PM0_R511		0x8188
++#define ENETC_PM0_R1023		0x8190
++#define ENETC_PM0_R1518		0x8198
++#define ENETC_PM0_R1519X	0x81A0
++#define ENETC_PM0_ROVR		0x81A8
++#define ENETC_PM0_RJBR		0x81B0
++#define ENETC_PM0_RFRG		0x81B8
++#define ENETC_PM0_RCNP		0x81C0
++#define ENETC_PM0_RDRNTP	0x81C8
++#define ENETC_PM0_TEOCT		0x8200
++#define ENETC_PM0_TOCT		0x8208
++#define ENETC_PM0_TCRSE		0x8210
++#define ENETC_PM0_TXPF		0x8218
++#define ENETC_PM0_TFRM		0x8220
++#define ENETC_PM0_TFCS		0x8228
++#define ENETC_PM0_TVLAN		0x8230
++#define ENETC_PM0_TERR		0x8238
++#define ENETC_PM0_TUCA		0x8240
++#define ENETC_PM0_TMCA		0x8248
++#define ENETC_PM0_TBCA		0x8250
++#define ENETC_PM0_TPKT		0x8260
++#define ENETC_PM0_TUND		0x8268
++#define ENETC_PM0_T127		0x8278
++#define ENETC_PM0_T1023		0x8290
++#define ENETC_PM0_T1518		0x8298
++#define ENETC_PM0_TCNP		0x82C0
++#define ENETC_PM0_TDFR		0x82D0
++#define ENETC_PM0_TMCOL		0x82D8
++#define ENETC_PM0_TSCOL		0x82E0
++#define ENETC_PM0_TLCOL		0x82E8
++#define ENETC_PM0_TECOL		0x82F0
++
++/* Port counters */
++#define ENETC_PICDR(n)		(0x0700 + (n) * 8) /* n = [0..3] */
++#define ENETC_PBFDSIR		0x0810
++#define ENETC_PFDMSAPR		0x0814
++#define ENETC_UFDMF		0x1680
++#define ENETC_MFDMF		0x1684
++#define ENETC_PUFDVFR		0x1780
++#define ENETC_PMFDVFR		0x1784
++#define ENETC_PBFDVFR		0x1788
++
+ /** Global regs, offset: 2_0000h */
+ #define ENETC_GLOBAL_BASE	0x20000
+ #define ENETC_G_EIPBRR0		0x0bf8
+@@ -186,9 +256,27 @@ struct enetc_hw {
+ /* general register accessors */
+ #define enetc_rd_reg(reg)	ioread32((reg))
+ #define enetc_wr_reg(reg, val)	iowrite32((val), (reg))
++#ifdef ioread64
++#define enetc_rd_reg64(reg)	ioread64((reg))
++#else
++/* using this to read out stats on 32b systems */
++static inline u64 enetc_rd_reg64(void __iomem *reg)
++{
++	u32 low, high, tmp;
++
++	do {
++		high = ioread32(reg + 4);
++		low = ioread32(reg);
++		tmp = ioread32(reg + 4);
++	} while (high != tmp);
++
++	return le64_to_cpu((u64)high << 32 | low);
++}
++#endif
+ 
+ #define enetc_rd(hw, off)		enetc_rd_reg((hw)->reg + (off))
+ #define enetc_wr(hw, off, val)		enetc_wr_reg((hw)->reg + (off), val)
++#define enetc_rd64(hw, off)		enetc_rd_reg64((hw)->reg + (off))
+ /* port register accessors - PF only */
+ #define enetc_port_rd(hw, off)		enetc_rd_reg((hw)->port + (off))
+ #define enetc_port_wr(hw, off, val)	enetc_wr_reg((hw)->port + (off), val)
+-- 
+2.7.4
 
