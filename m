@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11F1C41538
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B228BC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36FD2147D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36FD2147D
+	by mail.kernel.org (Postfix) with ESMTP id F0BB620831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BB620831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeKTTXz (ORCPT
+        id S1727566AbeKTTYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:23:55 -0500
-Received: from mga07.intel.com ([134.134.136.100]:57339 "EHLO mga07.intel.com"
+        Tue, 20 Nov 2018 14:24:10 -0500
+Received: from mga03.intel.com ([134.134.136.65]:57138 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbeKTTXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:23:54 -0500
+        id S1725887AbeKTTYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:24:10 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:46 -0800
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:56:09 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="106105916"
+   d="scan'208";a="106106014"
 Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
-  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:41 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:56:03 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -45,10 +45,11 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
         Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V7 RESEND 17/21] swap: Support PMD swap mapping for MADV_WILLNEED
-Date:   Tue, 20 Nov 2018 16:54:45 +0800
-Message-Id: <20181120085449.5542-18-ying.huang@intel.com>
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH -V7 RESEND 21/21] swap: Update help of CONFIG_THP_SWAP
+Date:   Tue, 20 Nov 2018 16:54:49 +0800
+Message-Id: <20181120085449.5542-22-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
 References: <20181120085449.5542-1-ying.huang@intel.com>
@@ -57,12 +58,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During MADV_WILLNEED, for a PMD swap mapping, if THP swapin is enabled
-for the VMA, the whole swap cluster will be swapin.  Otherwise, the
-huge swap cluster and the PMD swap mapping will be split and fallback
-to PTE swap mapping.
+The help of CONFIG_THP_SWAP is updated to reflect the latest progress
+of THP (Tranparent Huge Page) swap optimization.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Michal Hocko <mhocko@kernel.org>
@@ -76,52 +76,22 @@ Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc: Zi Yan <zi.yan@cs.rutgers.edu>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/madvise.c | 26 ++++++++++++++++++++++++--
- 1 file changed, 24 insertions(+), 2 deletions(-)
+ mm/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 0c1f96c605f8..52d27e04a204 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -196,14 +196,36 @@ static int swapin_walk_pmd_entry(pmd_t *pmd, unsigned long start,
- 	pte_t *orig_pte;
- 	struct vm_area_struct *vma = walk->private;
- 	unsigned long index;
-+	swp_entry_t entry;
-+	struct page *page;
-+	pmd_t pmdval;
-+
-+	pmdval = *pmd;
-+	if (IS_ENABLED(CONFIG_THP_SWAP) && is_swap_pmd(pmdval) &&
-+	    !is_pmd_migration_entry(pmdval)) {
-+		entry = pmd_to_swp_entry(pmdval);
-+		if (!transparent_hugepage_swapin_enabled(vma)) {
-+			if (!split_swap_cluster(entry, 0))
-+				split_huge_swap_pmd(vma, pmd, start, pmdval);
-+		} else {
-+			page = read_swap_cache_async(entry,
-+						     GFP_HIGHUSER_MOVABLE,
-+						     vma, start, false);
-+			if (page) {
-+				/* The swap cluster has been split under us */
-+				if (!PageTransHuge(page))
-+					split_huge_swap_pmd(vma, pmd, start,
-+							    pmdval);
-+				put_page(page);
-+			}
-+		}
-+	}
+diff --git a/mm/Kconfig b/mm/Kconfig
+index d7c5299c5b7d..d397baa92a9b 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -417,8 +417,6 @@ config THP_SWAP
+ 	depends on TRANSPARENT_HUGEPAGE && ARCH_WANTS_THP_SWAP && SWAP
+ 	help
+ 	  Swap transparent huge pages in one piece, without splitting.
+-	  XXX: For now, swap cluster backing transparent huge page
+-	  will be split after swapout.
  
- 	if (pmd_none_or_trans_huge_or_clear_bad(pmd))
- 		return 0;
+ 	  For selection by architectures with reasonable THP sizes.
  
- 	for (index = start; index != end; index += PAGE_SIZE) {
- 		pte_t pte;
--		swp_entry_t entry;
--		struct page *page;
- 		spinlock_t *ptl;
- 
- 		orig_pte = pte_offset_map_lock(vma->vm_mm, pmd, start, &ptl);
 -- 
 2.18.1
 
