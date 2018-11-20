@@ -2,146 +2,131 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607E2C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8C7C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4A9206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:00:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B4A9206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 6A5092075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:01:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJh3/FBv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A5092075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbeKUA3f convert rfc822-to-8bit (ORCPT
+        id S1728489AbeKUAab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:29:35 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44004 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725846AbeKUA3f (ORCPT
+        Tue, 20 Nov 2018 19:30:31 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36968 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbeKUAaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:29:35 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sjoerd)
-        with ESMTPSA id 1EEF427284D
-Received: by beast.luon.net (Postfix, from userid 1000)
-        id 413EE3E238F; Tue, 20 Nov 2018 15:00:13 +0100 (CET)
-Message-ID: <515b72f2bd526d144fdc662126aa6e1e8484a25c.camel@collabora.co.uk>
-Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
-From:   Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        kernel@collabora.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Bastian Stender <bst@pengutronix.de>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Hal Emmerich <hal@halemmerich.com>
-Date:   Tue, 20 Nov 2018 15:00:13 +0100
-In-Reply-To: <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
-References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
-         <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
-         <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
-         <20181107084741.GA31092@kunai>
-         <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
-         <20181120102300.GA1056@kunai>
-         <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
-         <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
+        Tue, 20 Nov 2018 19:30:30 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 80so952554pge.4
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 06:01:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
+        b=GJh3/FBvAImQxMJCmTqAUB+F4ewRctJxtZTladXv5ZCfji4jkAQwT9VXE0Vk+J1H8C
+         XWPTEvztUZ/272eQNE1WEEueMz/aFV1SIA+7Uy2wSVOHH2Rcx6YNrwM6rRuR0at6wJov
+         HvVorEo6o3ArmxryHePMvKq7z/KnCnCBcrQEeUgF7Uxed3AgEZzMmPYmUeDQg8iyoznE
+         5n2ILqpYY2KzqSfp+NDmvt91IKIsVvheV6tvlS6pLCkqoUkUQRPFhQSGpWEfcj93YkqJ
+         1iliHRSSi4G545CxJvQSqFL9VMTL0gOOMSA/mZQgInuCRWTL63MHG57HZW5kpRNVYlF/
+         6D4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6pmlTDFihEBurm1dLJqxoC6KqTTJxAXpBV9ussy6bQU=;
+        b=TrHtyuDX7aayib1Vs5/EB5i8XYkT7kQKMC2NaGUjLZxA0748eNXB6wXqKqeryfaKI7
+         As2LAHbU46kPPpd5uUj5XIW3Sy6d2kl9WTrCf7viA+nfizHPk7iNtrFzJRqBEsOCN6U6
+         nKBA2VEt4QNWNrh4cbMqY/kcaJnBvhvLThSLeR2H/1cjF8UylkW0rwK0TEqXaogiG+/b
+         +Qcvzizr86YIlW4eXZ0hl05lvA9WXT3iRnL9g0s9yKiuDrMRdj4R0v8SWPS7U0EICywh
+         UOMvCIxCY8MdyhaYysqkx4Dz+R+rgvej/vwUaqC/iai5NsXaDHgksT7QdGxkAbRazbym
+         evKg==
+X-Gm-Message-State: AGRZ1gLBOAEvx5su9jy85Bd0HsVtvpX9ly1yqceSNFbXm2ihhoB0nK+d
+        KI7Rk21QYFdX1VCNHJufKW8=
+X-Google-Smtp-Source: AJdET5eJMztj/Bls5sZ/jGrj0OwtfBCdjpRKYRIOm8+SU0OKdhgnFIhU6dq2rqiv4ptr/YI/ivQA0A==
+X-Received: by 2002:a62:1a44:: with SMTP id a65mr2366212pfa.30.1542722473030;
+        Tue, 20 Nov 2018 06:01:13 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id i63-v6sm9551776pfi.66.2018.11.20.06.01.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 06:01:12 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     linux@armlinux.org.uk, akpm@linux-foundation.org,
+        rppt@linux.vnet.ibm.com, robh@kernel.org, mhocko@suse.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] arm: add missing of_node_put()
+Date:   Tue, 20 Nov 2018 09:01:09 -0500
+Message-Id: <20181120140109.20334-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-20 at 14:08 +0100, Ulf Hansson wrote:
-> + Hal Emmerich
-> 
-> On 20 November 2018 at 12:38, Sjoerd Simons
-> <sjoerd.simons@collabora.co.uk> wrote:
-> > On Tue, 2018-11-20 at 11:23 +0100, Wolfram Sang wrote:
-> > > > > > 
-> > So if you know the pattern, or just happen to hit it often in e.g.
-> > automated testing, it does show up during development. Otherwise it
-> > can
-> > appear to "happen once in a while randomly".
-> 
-> I don't quite follow. As far as I understand, the extended timeout is
-> needed when turning the cache on.
-> 
-> The above seems more related to flushing the cache, no? Flushing have
-> no timeout (also reported to be an issue [1]), which happens either
-> at
-> _mmc_hw_reset() or at _mmc_suspend().
-> 
-> What is the relation here?
+use of_node_put() to release the refcount.
 
-Yes it's the kinda of behaviour you would expect on a flush indeed! I
-don't know what the card actaully does when turning the cache on,
-whether it's actually flush of something persistent when turning the
-cache on after a hard poweroff or doing some other validation. 
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+---
+ arch/arm/kernel/devtree.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-All i can share is what our testing seems to indicate, which is that
-there is a wide spread in the time the card needs *and* there seems to
-be strong correlation to the I/O activity before the hard power off and
-the time taken by "cache on". 
-
-> > Unfortunately for me, it was really a case of getting reports of
-> > some
-> > boards started failing at some point which took a while to track
-> > back.
-> > Especially since it's a battery powered device (thus hard poweroffs
-> > are
-> > rather rare) and we allow the board manufactorer to select from
-> > various
-> > different eMMCs depending on price/available at build time...
-> > 
-> > > Yet, if we add a quirk for that, then we should probably mention
-> > > it
-> > > in
-> > > an error message when we hit -ETIMEDOUT for cache on ("does your
-> > > card
-> > > need this quirk?")? It can be pretty time consuming to track this
-> > > down
-> > > otherwise, I'd think.
-> > 
-> > Yes please. It would be nice if someone happens to have the right
-> > contacts with Micron to see if it's a known issue for their cards
-> > in
-> > general or just this one.
-> > 
-> > Also would be good to have a timeout higher then 1 seconds (or for
-> > these cards not have one?); On our testing thusfar we've seen
-> > timeouts
-> > up to 850ms, but it's impossible to ensure that that's the true
-> > upper
-> > bound.
-> 
-> Using no limit of the timeout, would mean we may hang for ~10 minutes
-> (MMC_OPS_TIMEOUT_MS) instead, no thanks.
-
-Probably a silly question, but would this actually cause e.g. boot to
-hang while waiting for the card (assuming rootfs is somewhere else)?
-
-> I am fine with let's say double of 850ms (1700ms), to have some room.
-> 
-
-> Anyway, the point is, the timeouts in the spec is there for reason.
-> Unfortunate I think the spec is "lazy" in some other regards and
-> don't
-> specify timeouts, which complicates things.
-
-
+diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+index e3057c1b55b9..9576adf0d15b 100644
+--- a/arch/arm/kernel/devtree.c
++++ b/arch/arm/kernel/devtree.c
+@@ -101,7 +101,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 		if (!cell || prop_bytes < sizeof(*cell)) {
+ 			pr_debug(" * %pOF missing reg property\n", cpu);
+ 			of_node_put(cpu);
+-			return;
++			goto out;
+ 		}
+ 
+ 		/*
+@@ -115,7 +115,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 
+ 		if (prop_bytes || (hwid & ~MPIDR_HWID_BITMASK)) {
+ 			of_node_put(cpu);
+-			return;
++			goto out;
+ 		}
+ 
+ 		/*
+@@ -129,7 +129,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 			if (WARN(tmp_map[j] == hwid,
+ 				 "Duplicate /cpu reg properties in the DT\n")) {
+ 				of_node_put(cpu);
+-				return;
++				goto out;
+ 			}
+ 
+ 		/*
+@@ -171,7 +171,7 @@ void __init arm_dt_init_cpu_maps(void)
+ 
+ 	if (!bootcpu_valid) {
+ 		pr_warn("DT missing boot CPU MPIDR[23:0], fall back to default cpu_logical_map\n");
+-		return;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -184,6 +184,8 @@ void __init arm_dt_init_cpu_maps(void)
+ 		cpu_logical_map(i) = tmp_map[i];
+ 		pr_debug("cpu logical map 0x%x\n", cpu_logical_map(i));
+ 	}
++out:
++	of_node_put(cpus);
+ }
+ 
+ bool arch_match_cpu_phys_id(int cpu, u64 phys_id)
 -- 
-Sjoerd Simons
-Collabora Ltd.
+2.17.0
+
