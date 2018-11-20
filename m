@@ -2,137 +2,115 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B429C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81850C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7375820685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7375820685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 145462087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:52:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145462087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbeKTWUJ (ORCPT
+        id S1729461AbeKTWUr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:20:09 -0500
-Received: from lgeamrelo13.lge.com ([156.147.23.53]:37076 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729240AbeKTWUJ (ORCPT
+        Tue, 20 Nov 2018 17:20:47 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:52994 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728035AbeKTWUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:20:09 -0500
-Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
-        by 156.147.23.53 with ESMTP; 20 Nov 2018 20:51:21 +0900
-X-Original-SENDERIP: 156.147.1.126
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO localhost.localdomain) (10.177.227.17)
-        by 156.147.1.126 with ESMTP; 20 Nov 2018 20:51:21 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        LKML <linux-kernel@vger.kernel.org>, kernel-team@lge.com,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        David Miller <davem@davemloft.net>
-Subject: [PATCH v2] perf ui/tui: Fix possible UI rendering breakage
-Date:   Tue, 20 Nov 2018 20:51:20 +0900
-Message-Id: <20181120115120.21300-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181120113300.GG20153@sejong>
-References: <20181120113300.GG20153@sejong>
+        Tue, 20 Nov 2018 17:20:47 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 0E6FD80843; Tue, 20 Nov 2018 12:51:56 +0100 (CET)
+Date:   Tue, 20 Nov 2018 12:51:59 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Ayman Bagabas <ayman.bagabas@gmail.com>,
+        alsa-devel@alsa-project.org, Hui Wang <hui.wang@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Kailang Yang <kailang@realtek.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] ALSA: hda: add support for Huawei WMI micmute LED
+Message-ID: <20181120115159.GG16916@amd>
+References: <20181108171701.4444-1-ayman.bagabas@gmail.com>
+ <20181108171701.4444-4-ayman.bagabas@gmail.com>
+ <20181119235713.GB7367@amd>
+ <s5hr2fgfcrm.wl-tiwai@suse.de>
+ <20181120091039.GA16916@amd>
+ <s5hbm6kf6gi.wl-tiwai@suse.de>
+ <20181120093610.GF16916@amd>
+ <s5h4lccf58f.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2E/hm+v6kSLEYT3h"
+Content-Disposition: inline
+In-Reply-To: <s5h4lccf58f.wl-tiwai@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tui_helpline__push() should acquire/release the ui__lock when it
-deals with screen setting.  Otherwise it could race with display thread
-and screen rendering would not be handled properly.
 
-Also move helpline__push/pop out of ui__lock to prevent deadlock.
+--2E/hm+v6kSLEYT3h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e6e904687949 ("perf ui: Introduce struct ui_helpline")
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/ui/browser.c      |  7 ++++---
- tools/perf/ui/tui/helpline.c | 17 ++++++++++++-----
- 2 files changed, 16 insertions(+), 8 deletions(-)
+Hi!
 
-diff --git a/tools/perf/ui/browser.c b/tools/perf/ui/browser.c
-index 4f75561424ed..2a99a0fbbcf6 100644
---- a/tools/perf/ui/browser.c
-+++ b/tools/perf/ui/browser.c
-@@ -294,16 +294,17 @@ int ui_browser__show(struct ui_browser *browser, const char *title,
- 	va_start(ap, helpline);
- 	err = vasprintf(&browser->helpline, helpline, ap);
- 	va_end(ap);
--	if (err > 0)
--		ui_helpline__push(browser->helpline);
- 	pthread_mutex_unlock(&ui__lock);
-+
-+	if (err > 0)
-+		ui_helpline__push(helpline);
- 	return err ? 0 : -1;
- }
- 
- void ui_browser__hide(struct ui_browser *browser)
- {
--	pthread_mutex_lock(&ui__lock);
- 	ui_helpline__pop();
-+	pthread_mutex_lock(&ui__lock);
- 	zfree(&browser->helpline);
- 	pthread_mutex_unlock(&ui__lock);
- }
-diff --git a/tools/perf/ui/tui/helpline.c b/tools/perf/ui/tui/helpline.c
-index 4ca799aadb4e..83b6eebb451a 100644
---- a/tools/perf/ui/tui/helpline.c
-+++ b/tools/perf/ui/tui/helpline.c
-@@ -12,6 +12,14 @@
- char ui_helpline__last_msg[1024];
- bool tui_helpline__set;
- 
-+static void tui_helpline__puts(const char *msg)
-+{
-+	SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
-+	SLsmg_set_color(0);
-+	SLsmg_write_nstring((char *)msg, SLtt_Screen_Cols);
-+	SLsmg_refresh();
-+}
-+
- static void tui_helpline__pop(void)
- {
- }
-@@ -20,11 +28,10 @@ static void tui_helpline__push(const char *msg)
- {
- 	const size_t sz = sizeof(ui_helpline__current);
- 
--	SLsmg_gotorc(SLtt_Screen_Rows - 1, 0);
--	SLsmg_set_color(0);
--	SLsmg_write_nstring((char *)msg, SLtt_Screen_Cols);
--	SLsmg_refresh();
-+	pthread_mutex_lock(&ui__lock);
- 	strncpy(ui_helpline__current, msg, sz)[sz - 1] = '\0';
-+	tui_helpline__puts(msg);
-+	pthread_mutex_unlock(&ui__lock);
- }
- 
- static int tui_helpline__show(const char *format, va_list ap)
-@@ -40,7 +47,7 @@ static int tui_helpline__show(const char *format, va_list ap)
- 	tui_helpline__set = true;
- 
- 	if (ui_helpline__last_msg[backlog - 1] == '\n') {
--		ui_helpline__puts(ui_helpline__last_msg);
-+		tui_helpline__puts(ui_helpline__last_msg);
- 		SLsmg_refresh();
- 		backlog = 0;
- 	}
--- 
-2.19.0
+> > You have general-purpose LED, yet you are treating it as "something
+> > special". That means ugly code (quoted above) and lack of flexibility.
+> >=20
+> > For example, if my notebook lacks HDD LED, I can use scrollock LED for
+> > that instead. Or, in reverse way, maybe "mic mute" LED is not useful
+> > for me, and I'd like to use it for notifications instead.
+>=20
+> I'm not against adding the LEDs device implementation for any exotic
+> usage.
+>=20
+> But for the audio mute LED features, you'll need really lots of other
+> works if it were implemented via leds device.  That's the hardest
+> part, and a few lines of hooks solves it easily in the kernel side.
+> That's all about it.
+>=20
+> If you are ready for submitting the real solutions in user-space side
+> (patching PulseAudio and whatever all existing sound daemons, and
+> creating yet another daemon for non-PA systems (another footprint,
+> lovely), and so on), we can happily delete such in-kernel hooks :)
 
+I'm not saying we should move it to the userspace.
+
+I'm saying this should be "normal" led. drivers/leds/led-huawei-acpi.c,
+or something. Perhaps this acpi stuff is so similar you don't really
+need .c code.
+
+And then there should be a "mic muted" trigger. Similar to
+drivers/leds/trigger/ledtrig-disk.c.
+
+That should give us the flexibility, and should not be really much
+different from current implementation...
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2E/hm+v6kSLEYT3h
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvz9V8ACgkQMOfwapXb+vKyHACglkVaz0F7V5/vwEW8M2vG5q9G
+FKYAmwS3NlL+jtvD0eBkxD3Onq79P7q0
+=B6u7
+-----END PGP SIGNATURE-----
+
+--2E/hm+v6kSLEYT3h--
