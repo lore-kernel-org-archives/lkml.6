@@ -2,117 +2,147 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DDFC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A16CC46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC6620831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:05:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eJnqoDxZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC6620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 744262087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:05:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 744262087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbeKTWeT (ORCPT
+        id S1729027AbeKTWeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:34:19 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33966 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727950AbeKTWeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:34:18 -0500
-Received: from zn.tnic (p200300EC2BCDE000F95221CD056129B8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e000:f952:21cd:561:29b8])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B43141EC0319;
-        Tue, 20 Nov 2018 13:05:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542715528;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=fmc8fmk0DAUUUCgwGXKxLH70Qcn+pzFzqewsbPZK5dc=;
-        b=eJnqoDxZazHipYa6SRKWn7qH1f9OYWZUFvJEN+nQo3rR7FVuuAnirDyXs0HVi1T41ERwux
-        9U5joho020JsfFIxc8gQToVwotqiU/caCG28i0JhpKG9bJzCg3x34RtUjR8DY/3Uv9Sttb
-        VCeho3COUSrgON+Na4scbC3Nb1voeTk=
-Date:   Tue, 20 Nov 2018 13:05:20 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v8 06/13] arch/resctrl: Initialize the resource functions
- that are different
-Message-ID: <20181120120519.GE2527@zn.tnic>
-References: <20181116205407.10457-1-babu.moger@amd.com>
- <20181116205407.10457-7-babu.moger@amd.com>
- <20181120095918.GD2527@zn.tnic>
+        Tue, 20 Nov 2018 17:34:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40887 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727950AbeKTWeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:34:22 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAKC5F0g2974875
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 20 Nov 2018 04:05:15 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAKC5ENg2974872;
+        Tue, 20 Nov 2018 04:05:14 -0800
+Date:   Tue, 20 Nov 2018 04:05:14 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sebastian Andrzej Siewior <tipbot@zytor.com>
+Message-ID: <tip-265fb8fe4c69a94431a17e8b87a9613d30fefe79@git.kernel.org>
+Cc:     x86@kernel.org, luto@kernel.org, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, bp@suse.de, Jason@zx2c4.com,
+        dave.hansen@linux.intel.com, riel@surriel.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, rkrcmar@redhat.com, bigeasy@linutronix.de
+Reply-To: bp@suse.de, Jason@zx2c4.com, mingo@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, x86@kernel.org,
+          luto@kernel.org, rkrcmar@redhat.com, bigeasy@linutronix.de,
+          kvm@vger.kernel.org, pbonzini@redhat.com, riel@surriel.com,
+          dave.hansen@linux.intel.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20160226074940.GA28911@pd.tnic>
+References: <20181120102635.ddv3fvavxajjlfqk@linutronix.de>
+        <20160226074940.GA28911@pd.tnic>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/fpu: Disable bottom halves while loading FPU
+ registers
+Git-Commit-ID: 265fb8fe4c69a94431a17e8b87a9613d30fefe79
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181120095918.GD2527@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:59:18AM +0100, Borislav Petkov wrote:
-> So I'm wondering: instead of having mba_wrmsr_intel() and
-> mba_wrmsr_amd() and adding those per-vendor initialization functions,
-> why don't you push down the vendor differentiation into mba_wrmsr()?
-> 
-> Then in that function you do
-> 
-> 	if (vendor == X86_VENDOR_INTEL)
-> 		__mba_wrmsr_intel();
-> 	else if (vendor == X86_VENDOR_AMD)
-> 		__mba_wrmsr_amd();
-> 
-> and so on and then you don't have to do any of that initialization dance
-> here and the struct rdt_resource assignment for the MBA will remain
-> nicely similar to the other ones...
-> 
-> Hmmm?
+Commit-ID:  265fb8fe4c69a94431a17e8b87a9613d30fefe79
+Gitweb:     https://git.kernel.org/tip/265fb8fe4c69a94431a17e8b87a9613d30fefe79
+Author:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate: Tue, 20 Nov 2018 11:26:35 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 20 Nov 2018 13:01:32 +0100
 
-Yeah, after having look at the patchset further, that might not be a
-good idea as you need to assign more per-vendor stuff than just an MSR
-accessor function...
+x86/fpu: Disable bottom halves while loading FPU registers
 
--- 
-Regards/Gruss,
-    Boris.
+The sequence
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+  fpu->initialized = 1;		/* step A */
+  preempt_disable();		/* step B */
+  fpu__restore(fpu);
+  preempt_enable();
+
+in __fpu__restore_sig() is racy in regard to a context switch.
+
+For 32bit frames, __fpu__restore_sig() prepares the FPU state within
+fpu->state. To ensure that a context switch (switch_fpu_prepare() in
+particular) does not modify fpu->state it uses fpu__drop() which sets
+fpu->initialized to 0.
+
+After fpu->initialized is cleared, the CPU's FPU state is not saved
+to fpu->state during a context switch. The new state is loaded via
+fpu__restore(). It gets loaded into fpu->state from userland and
+ensured it is sane. fpu->initialized is then set to 1 in order to avoid
+fpu__initialize() doing anything (overwrite the new state) which is part
+of fpu__restore().
+
+A context switch between step A and B above would save CPU's current FPU
+registers to fpu->state and overwrite the newly prepared state. This
+looks like a tiny race window but the Kernel Test Robot reported this
+back in 2016 while we had lazy FPU support. Borislav Petkov made the
+link between that report and another patch that has been posted. Since
+the removal of the lazy FPU support, this race goes unnoticed because
+the warning has been removed.
+
+Disable bottom halves around the restore sequence to avoid the race. BH
+need to be disabled because BH is allowed to run (even with preemption
+disabled) and might invoke kernel_fpu_begin() by doing IPsec.
+
+ [ bp: massage commit message a bit. ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
+CC: Andy Lutomirski <luto@kernel.org>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: "Jason A. Donenfeld" <Jason@zx2c4.com>
+CC: kvm ML <kvm@vger.kernel.org>
+CC: Paolo Bonzini <pbonzini@redhat.com>
+CC: Radim Krčmář <rkrcmar@redhat.com>
+CC: Rik van Riel <riel@surriel.com>
+Cc: stable@vger.kernel.org
+CC: x86-ml <x86@kernel.org>
+Link: http://lkml.kernel.org/r/20181120102635.ddv3fvavxajjlfqk@linutronix.de
+Link: https://lkml.kernel.org/r/20160226074940.GA28911@pd.tnic
+---
+ arch/x86/kernel/fpu/signal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 61a949d84dfa..d99a8ee9e185 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,10 +344,10 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
+ 		}
+ 
++		local_bh_disable();
+ 		fpu->initialized = 1;
+-		preempt_disable();
+ 		fpu__restore(fpu);
+-		preempt_enable();
++		local_bh_enable();
+ 
+ 		return err;
+ 	} else {
