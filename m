@@ -2,182 +2,122 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197C3C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D664C46465
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B770C2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B770C2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 6C878214C1
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C878214C1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeKUGpz (ORCPT
+        id S1727680AbeKUGuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:45:55 -0500
-Received: from mout.gmx.net ([212.227.15.19]:60301 "EHLO mout.gmx.net"
+        Wed, 21 Nov 2018 01:50:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59404 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725937AbeKUGpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:45:55 -0500
-Received: from ovpn-124-218.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
- (mrgmx003 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 0Lh7PL-1fceJW38i7-00oaEV; Tue, 20 Nov 2018 21:14:38 +0100
-From:   Qian Cai <cai@gmx.us>
-To:     akpm@linux-foundation.org, tglx@linutronix.de
-Cc:     longman@redhat.com, yang.shi@linux.alibaba.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
-Subject: [PATCH v2] debugobjects: scale the static pool size
-Date:   Tue, 20 Nov 2018 15:14:32 -0500
-Message-Id: <20181120201432.2163-1-cai@gmx.us>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-X-Provags-ID: V03:K1:WkL3VU7Oioe2DgshJPRc93y/cqD0hGNQc5Dj8iB4mL/utOdCGZ5
- d0WmHwRpXc+7C34KsTv1AbgOjs/iCQu6nQ5oLNFW+DrvvVrpopPiUK85OcNVyAp4rBKWfBC
- 5huLtIQw2qtXGkzUE6P+4uCuLC9oCv/YJtrVPtS05zoaDNWfAWl8LgHdgpDjxKaBAVikHvV
- 02WBDDYXrUXQPaBZ3MQHQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:l1wLNeHu4YU=:n6cFBt0ENRoIIZu0CqFf+E
- pzyPopdqxrCAYxZdZH3YkZPxzLxsyWiEBd3zOHKJe5TDztQsqC1iucrKg4nQL4ooDJv6SkK7Q
- Km+ZPJ54/b9F5M9KNTaztAuHS1R3Si/o309pMB869NJTfojHH6PajCFrRSczXHiiSeiKsGQne
- 70kThis/SzIbOOxssyHTRxFF6jNH6jSg0gyKFblhaBxg5PtZ1y9DTqeuUFPgmAyniiWVbU2OZ
- 68RcOY6OPilNBkphalbX3Gtu2fmz6HP+1xFbwEVQBIX6vxvEV8WUxOgG/R6YGcucm/05ROPAF
- UtajR02kjqxPGvrg4AejJ0ZrN3bXZyXFZZYGkvNWtwvZd71sKnnNrkoc4st6+OSAizpYccej4
- 2SmjVKk6O71fxQkPvBVw+KpOw/d2N4pNhHKZjK16U2Dwos2ADXzIl8qvnWpvL/6pf+MOz5I6T
- iDHYDKDgpxNVW4Yl75RvBgpnXmmyYPYfh/l9+UgiBkzQKdB4stkXYNGn2IQwVmujkOtN5Pwyk
- i/ypWEKx/cD1SO+/dmdeQslQQlNtbovyt1/R5TP4i3Apck01DXbxQAGrURwaJJzhp8NO21BVF
- ywQPCS9SvJwsu9Lfz67wmBoYjrn8YaFdXb3x4Bwz+iDaVon36ZYe/ksaNtBBuwGKjbeEXmaU2
- ORjqiX6vwojjHCyIFIzhJdIbe/KMft8b2vL8A0zmyVJ7eR1lDlYjUY6Y8sD5vKechrWNopja6
- 1ezu6YRHvR13E3esKOF3vg2bPwr77W+Tot7dw6bDpq+eyH+iXk5oIUVQVIPypDHe9LgvagFgM
- 7EYvaAluAbEfvADn07o1FxF/bBUCef6OKFCex6xFQPwMFZCoWhOl+ekLVUwUxP85fWF5pBu5c
- gXo4L+kvb7945I5mPJSeqPPdFygrP3ziraKZZ+Lgc=
+        id S1725865AbeKUGuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 01:50:25 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C3DBD3082DDB;
+        Tue, 20 Nov 2018 20:19:30 +0000 (UTC)
+Received: from jlaw-desktop.bos.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 43F5568D4A;
+        Tue, 20 Nov 2018 20:19:30 +0000 (UTC)
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [RFC PATCH 1/1] scripts/recordmcount.{c,pl}: support -ffunction-sections .text.* section names
+Date:   Tue, 20 Nov 2018 15:19:18 -0500
+Message-Id: <1542745158-25392-2-git-send-email-joe.lawrence@redhat.com>
+In-Reply-To: <1542745158-25392-1-git-send-email-joe.lawrence@redhat.com>
+References: <1542745158-25392-1-git-send-email-joe.lawrence@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 20 Nov 2018 20:19:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current value of the early boot static pool size is not big enough
-for systems with large number of CPUs with timer or/and workqueue
-objects selected. As the results, systems have 60+ CPUs with both timer
-and workqueue objects enabled could trigger "ODEBUG: Out of memory.
-ODEBUG disabled". Hence, fixed it by computing it according to
-CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
+When building with -ffunction-sections, the compiler will place each
+function into its own ELF section, prefixed with ".text".  For example,
+a simple test module with functions test_module_do_work() and
+test_module_wq_func():
 
-Signed-off-by: Qian Cai <cai@gmx.us>
+  % objdump --section-headers test_module.o | awk '/\.text/{print $2}'
+  .text
+  .text.test_module_do_work
+  .text.test_module_wq_func
+  .init.text
+  .exit.text
+
+Adjust the recordmcount scripts to look for ".text" as a section name
+prefix.  This will ensure that those functions will be included in the
+__mcount_loc relocations:
+
+  % objdump --reloc --section __mcount_loc test_module.o
+  OFFSET           TYPE              VALUE
+  0000000000000000 R_X86_64_64       .text.test_module_do_work
+  0000000000000008 R_X86_64_64       .text.test_module_wq_func
+  0000000000000010 R_X86_64_64       .init.text
+
+Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
 ---
+ scripts/recordmcount.c  |  2 +-
+ scripts/recordmcount.pl | 13 +++++++++++++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
 
-Changes since v1:
-* Removed the CONFIG_NR_CPUS check since it is always defined.
-* Introduced a minimal default pool size to start with. Otherwise, the pool
-  size would be too low for systems only with a small number of CPUs.
-* Adjusted the scale factors according to data.
-
- lib/debugobjects.c | 81 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 79 insertions(+), 2 deletions(-)
-
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 70935ed91125..a79f02c29617 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -23,9 +23,81 @@
- #define ODEBUG_HASH_BITS	14
- #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+diff --git a/scripts/recordmcount.c b/scripts/recordmcount.c
+index 895c40e8679f..a50a2aa963ad 100644
+--- a/scripts/recordmcount.c
++++ b/scripts/recordmcount.c
+@@ -397,7 +397,7 @@ static uint32_t w2nat(uint16_t const x)
+ static int
+ is_mcounted_section_name(char const *const txtname)
+ {
+-	return strcmp(".text",           txtname) == 0 ||
++	return strncmp(".text",          txtname, 5) == 0 ||
+ 		strcmp(".init.text",     txtname) == 0 ||
+ 		strcmp(".ref.text",      txtname) == 0 ||
+ 		strcmp(".sched.text",    txtname) == 0 ||
+diff --git a/scripts/recordmcount.pl b/scripts/recordmcount.pl
+index f599031260d5..68841d01162c 100755
+--- a/scripts/recordmcount.pl
++++ b/scripts/recordmcount.pl
+@@ -142,6 +142,11 @@ my %text_sections = (
+      ".text.unlikely" => 1,
+ );
  
--#define ODEBUG_POOL_SIZE	1024
-+#define ODEBUG_DEFAULT_POOL	512
- #define ODEBUG_POOL_MIN_LEVEL	256
++# Acceptable section-prefixes to record.
++my %text_section_prefixes = (
++     ".text." => 1,
++);
++
+ # Note: we are nice to C-programmers here, thus we skip the '||='-idiom.
+ $objdump = 'objdump' if (!$objdump);
+ $objcopy = 'objcopy' if (!$objcopy);
+@@ -519,6 +524,14 @@ while (<IN>) {
  
-+/*
-+ * Some debug objects are allocated during the early boot. Enabling some
-+ * options like timers or workqueue objects may increase the size required
-+ * significantly with large number of CPUs. For example (as today, 20 Nov.
-+ * 2018),
-+ *
-+ * No. CPUs x 2 (worker pool) objects:
-+ *
-+ * start_kernel
-+ *   workqueue_init_early
-+ *     init_worker_pool
-+ *       init_timer_key
-+ *         debug_object_init
-+ *
-+ * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
-+ *
-+ * sched_init
-+ *   hrtick_rq_init
-+ *     hrtimer_init
-+ *
-+ * CONFIG_DEBUG_OBJECTS_WORK:
-+ * No. CPUs x 6 (workqueue) objects:
-+ *
-+ * workqueue_init_early
-+ *   alloc_workqueue
-+ *     __alloc_workqueue_key
-+ *       alloc_and_link_pwqs
-+ *         init_pwq
-+ *
-+ * Also, plus No. CPUs objects:
-+ *
-+ * perf_event_init
-+ *    __init_srcu_struct
-+ *      init_srcu_struct_fields
-+ *        init_srcu_struct_nodes
-+ *          __init_work
-+ *
-+ * Increase the number a bit more in case the implmentatins are changed in
-+ * the future, as it is better to avoid OOM than spending a bit more kernel
-+ * memory that will/can be freed.
-+ */
-+#if defined(CONFIG_DEBUG_OBJECTS_TIMERS) && \
-+!defined(CONFIG_DEBUG_OBJECTS_WORK)
-+/*
-+ * With all debug objects config options selected except workqueue, kernel
-+ * reports,
-+ * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
-+ * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
-+ */
-+#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 10)
-+
-+#elif defined(CONFIG_DEBUG_OBJECTS_WORK) && \
-+!defined(CONFIG_DEBUG_OBJECTS_TIMERS)
-+/*
-+ * all the options except the timers:
-+ * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
-+ * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
-+ */
-+#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 10)
-+
-+#elif defined(CONFIG_DEBUG_OBJECTS_WORK) && \
-+defined(CONFIG_DEBUG_OBJECTS_TIMERS)
-+/*
-+ * all the options:
-+ * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
-+ * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
-+ */
-+#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 20)
-+#else
-+#define ODEBUG_POOL_SIZE	ODEBUG_DEFAULT_POOL
-+#endif
-+
- #define ODEBUG_CHUNK_SHIFT	PAGE_SHIFT
- #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
- #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
-@@ -58,8 +130,13 @@ static int			debug_objects_fixups __read_mostly;
- static int			debug_objects_warnings __read_mostly;
- static int			debug_objects_enabled __read_mostly
- 				= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
-+/*
-+ * This is only used after replaced static objects, so no need to scale it
-+ * to use the early boot static pool size and it has already been scaled
-+ * according to actual No. CPUs in the box within debug_objects_mem_init().
-+ */
- static int			debug_objects_pool_size __read_mostly
--				= ODEBUG_POOL_SIZE;
-+				= ODEBUG_DEFAULT_POOL;
- static int			debug_objects_pool_min_level __read_mostly
- 				= ODEBUG_POOL_MIN_LEVEL;
- static struct debug_obj_descr	*descr_test  __read_mostly;
+ 	# Only record text sections that we know are safe
+ 	$read_function = defined($text_sections{$1});
++	if (!$read_function) {
++	    foreach my $prefix (keys %text_section_prefixes) {
++	        if (substr($1, 0, length $prefix) eq $prefix) {
++	            $read_function = 1;
++	            last;
++	        }
++	    }
++	}
+ 	# print out any recorded offsets
+ 	update_funcs();
+ 
 -- 
-2.17.2 (Apple Git-113)
+1.8.3.1
 
