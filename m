@@ -2,234 +2,182 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F149C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197C3C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51639214DE
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:14:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUKscM/p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51639214DE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B770C2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B770C2147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbeKUGpc (ORCPT
+        id S1727672AbeKUGpz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 01:45:32 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35113 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbeKUGpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 01:45:32 -0500
-Received: by mail-pl1-f195.google.com with SMTP id v1-v6so1916058plo.2;
-        Tue, 20 Nov 2018 12:14:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Vgn6sjzZNpecvK3xRZ/5/tN53RXLTpVgwHm95szSS8=;
-        b=MUKscM/pKVEGiy4FaofLTXO5k/os/3zdafX+aHwbMwYYOk/5QogHRuQBTxi66ld871
-         IMhp4Aw3BWr3aRQoIegKJnVYwhGRbcihSr07UUePCAlP1IcT+YT6VBdi5DIQHm9VcYE7
-         FBHc+lXTcTH9FceP2vr8fsI4UDH8XkfKVVH8ZIkx4k3e0SBUZPmCCgG5A0V7yIJgMO+j
-         m47JgkisPVQXl75mOm5TYwHaC3vy/eJJSD1jWVoWbayp9Kl+YGXNBL51Oke6ZQ3wmdri
-         jyhgfJpa5tD0Y/fEvhFOmrG85hsh/JMWlC1ekR0Y4I5wK9pTijg6j9pkD8T+gARxTg6z
-         fs+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Vgn6sjzZNpecvK3xRZ/5/tN53RXLTpVgwHm95szSS8=;
-        b=hltdzRwGi4ggOG6UqNoWA0YjzIiQbl2y9Jq2SZBhLBgED+6Z90jG94BlkrjRejB1Vt
-         K1GMH5pFIFdqtCAFNB3dL5ozra+LJ7Ex1wrrImMEQtE1DsZ3ovHBp6oKVE/DFlbBs+ea
-         DsN5zUMzr0ewD8zZ7PmHBnuSS2XVVZ72+ZFgdIJ8EWH5yGnIh8gk0aqnPk/KNLePH3VV
-         tgOIHZI6GJ5pjiQrevqGt9rBXp4twmzp1f1nfj89N9EF+2mLr0gcdj6UYsp9+Mglksqh
-         C3pXlXu3rXnHU4uElepWcr0nTbgqTKksku1+oj903T7+G+TJ+d6dolgMNpuBH8RuA24I
-         V9rw==
-X-Gm-Message-State: AA+aEWayi+/eJchsKtHFtT99jiTYlRVIX576WVZV9u7jGy/Zwj9W9UjJ
-        slBdt0MRRsPbV42+sNFVm+PgYkd45qLj3Vw3z3c=
-X-Google-Smtp-Source: AFSGD/X50aRchd+3r8Q0ADaBtnQPl0V53GEeAl+7gpN1bja6i9xHe7M/WgxIp1B41WnUZrygPlldB4F/IQ8OcPYxu1U=
-X-Received: by 2002:a17:902:42e4:: with SMTP id h91mr3779545pld.18.1542744877345;
- Tue, 20 Nov 2018 12:14:37 -0800 (PST)
-MIME-Version: 1.0
-References: <9cdc7319-32f9-8349-a787-99d6ea973669@linux-ipv6.be>
-In-Reply-To: <9cdc7319-32f9-8349-a787-99d6ea973669@linux-ipv6.be>
-From:   Steve French <smfrench@gmail.com>
-Date:   Tue, 20 Nov 2018 14:14:25 -0600
-Message-ID: <CAH2r5msw-4a1_zNVvvggCpXFjA+PLBt+Di8ygttS8OdC1iioEg@mail.gmail.com>
-Subject: Re: NULL pointer dereference in smb2_queryfs with v4.19.2
-To:     stijn@linux-ipv6.be
-Cc:     CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 21 Nov 2018 01:45:55 -0500
+Received: from mout.gmx.net ([212.227.15.19]:60301 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725937AbeKUGpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 01:45:55 -0500
+Received: from ovpn-124-218.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
+ (mrgmx003 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0Lh7PL-1fceJW38i7-00oaEV; Tue, 20 Nov 2018 21:14:38 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     akpm@linux-foundation.org, tglx@linutronix.de
+Cc:     longman@redhat.com, yang.shi@linux.alibaba.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
+Subject: [PATCH v2] debugobjects: scale the static pool size
+Date:   Tue, 20 Nov 2018 15:14:32 -0500
+Message-Id: <20181120201432.2163-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+X-Provags-ID: V03:K1:WkL3VU7Oioe2DgshJPRc93y/cqD0hGNQc5Dj8iB4mL/utOdCGZ5
+ d0WmHwRpXc+7C34KsTv1AbgOjs/iCQu6nQ5oLNFW+DrvvVrpopPiUK85OcNVyAp4rBKWfBC
+ 5huLtIQw2qtXGkzUE6P+4uCuLC9oCv/YJtrVPtS05zoaDNWfAWl8LgHdgpDjxKaBAVikHvV
+ 02WBDDYXrUXQPaBZ3MQHQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:l1wLNeHu4YU=:n6cFBt0ENRoIIZu0CqFf+E
+ pzyPopdqxrCAYxZdZH3YkZPxzLxsyWiEBd3zOHKJe5TDztQsqC1iucrKg4nQL4ooDJv6SkK7Q
+ Km+ZPJ54/b9F5M9KNTaztAuHS1R3Si/o309pMB869NJTfojHH6PajCFrRSczXHiiSeiKsGQne
+ 70kThis/SzIbOOxssyHTRxFF6jNH6jSg0gyKFblhaBxg5PtZ1y9DTqeuUFPgmAyniiWVbU2OZ
+ 68RcOY6OPilNBkphalbX3Gtu2fmz6HP+1xFbwEVQBIX6vxvEV8WUxOgG/R6YGcucm/05ROPAF
+ UtajR02kjqxPGvrg4AejJ0ZrN3bXZyXFZZYGkvNWtwvZd71sKnnNrkoc4st6+OSAizpYccej4
+ 2SmjVKk6O71fxQkPvBVw+KpOw/d2N4pNhHKZjK16U2Dwos2ADXzIl8qvnWpvL/6pf+MOz5I6T
+ iDHYDKDgpxNVW4Yl75RvBgpnXmmyYPYfh/l9+UgiBkzQKdB4stkXYNGn2IQwVmujkOtN5Pwyk
+ i/ypWEKx/cD1SO+/dmdeQslQQlNtbovyt1/R5TP4i3Apck01DXbxQAGrURwaJJzhp8NO21BVF
+ ywQPCS9SvJwsu9Lfz67wmBoYjrn8YaFdXb3x4Bwz+iDaVon36ZYe/ksaNtBBuwGKjbeEXmaU2
+ ORjqiX6vwojjHCyIFIzhJdIbe/KMft8b2vL8A0zmyVJ7eR1lDlYjUY6Y8sD5vKechrWNopja6
+ 1ezu6YRHvR13E3esKOF3vg2bPwr77W+Tot7dw6bDpq+eyH+iXk5oIUVQVIPypDHe9LgvagFgM
+ 7EYvaAluAbEfvADn07o1FxF/bBUCef6OKFCex6xFQPwMFZCoWhOl+ekLVUwUxP85fWF5pBu5c
+ gXo4L+kvb7945I5mPJSeqPPdFygrP3ziraKZZ+Lgc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you know if you are running with this patch (which was marked for stable)
+The current value of the early boot static pool size is not big enough
+for systems with large number of CPUs with timer or/and workqueue
+objects selected. As the results, systems have 60+ CPUs with both timer
+and workqueue objects enabled could trigger "ODEBUG: Out of memory.
+ODEBUG disabled". Hence, fixed it by computing it according to
+CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
 
-commit 32a1fb36f6e50183871c2c1fcf5493c633e84732
-Author: Ronnie Sahlberg <lsahlber@redhat.com>
-Date:   Wed Oct 24 11:50:33 2018 +1000
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
 
-    cifs: allow calling SMB2_xxx_free(NULL)
+Changes since v1:
+* Removed the CONFIG_NR_CPUS check since it is always defined.
+* Introduced a minimal default pool size to start with. Otherwise, the pool
+  size would be too low for systems only with a small number of CPUs.
+* Adjusted the scale factors according to data.
 
-    Change these free functions to allow passing NULL as the argument and
-    treat it as a no-op just like free(NULL) would.
-    Or, if rqst->rq_iov is NULL.
+ lib/debugobjects.c | 81 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 79 insertions(+), 2 deletions(-)
 
-    The second scenario could happen for smb2_queryfs() if the call
-    to SMB2_query_info_init() fails and we go to qfs_exit to clean up
-    and free all resources.
-    In that case we have not yet assigned rqst[2].rq_iov and thus
-    the rq_iov dereference in SMB2_close_free() will cause a NULL pointer
-    dereference.
-
-    Fixes:  1eb9fb52040f ("cifs: create SMB2_open_init()/SMB2_open_free() helper
-s")
-
-    Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-    Signed-off-by: Steve French <stfrench@microsoft.com>
-    Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-    CC: Stable <stable@vger.kernel.org>
-On Tue, Nov 20, 2018 at 9:38 AM Stijn Tintel <stijn@linux-ipv6.be> wrote:
->
-> Hi,
->
-> My machine just rebooted after the connection to the Samba server
-> hosting a CIFS mount was lost. Kernel version 4.19.2. The oops was
-> recorded in pstore:
->
-> <3>[533816.847894] CIFS VFS: Server store has not responded in 120
-> seconds. Reconnecting...
-> <1>[533925.390079] BUG: unable to handle kernel NULL pointer dereference
-> at 0000000000000000
-> <6>[533925.390082] PGD 0 P4D 0
-> <4>[533925.390085] Oops: 0000 [#1] PREEMPT SMP PTI
-> <4>[533925.390087] CPU: 1 PID: 30794 Comm: sadc Tainted: P
-> O      4.19.2-gentoo #1
-> <4>[533925.390088] Hardware name: System manufacturer System Product
-> Name/P9X79 WS, BIOS 4802 06/02/2015
-> <4>[533925.390099] RIP: 0010:SMB2_close_free+0x8/0x10 [cifs]
-> <4>[533925.390100] Code: 65 48 33 1c 25 28 00 00 00 75 09 48 83 c4 18 5b
-> 5d 41 5c c3 e8 89 ac 29 e0 66 0f 1f 84 00 00 00 00 00 66 66 66 66 90 48
-> 8b 07 <48> 8b 38 e9 50 8d fe ff 66 66 66 66 90 4c 8d 54 24 08 48 83 e4 f0
-> <4>[533925.390101] RSP: 0018:ffffc9002c2dfbb8 EFLAGS: 00010246
-> <4>[533925.390102] RAX: 0000000000000000 RBX: ffff880fae7e5800 RCX:
-> 0000000000000000
-> <4>[533925.390104] RDX: ffff880fdf521180 RSI: 0000000000000206 RDI:
-> ffffc9002c2dfd68
-> <4>[533925.390105] RBP: ffffc9002c2dfdf0 R08: 0000000000000000 R09:
-> 00000000002503ee
-> <4>[533925.390106] R10: ffffc9002c2dfbc0 R11: 00000000000f4240 R12:
-> ffffc9002c2dfc50
-> <4>[533925.390107] R13: ffff880fad03a200 R14: ffff880fdf521000 R15:
-> 0000000000000000
-> <4>[533925.390108] FS:  00007fb5cff85740(0000) GS:ffff88100f840000(0000)
-> knlGS:0000000000000000
-> <4>[533925.390109] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> <4>[533925.390110] CR2: 0000000000000000 CR3: 0000000118d32001 CR4:
-> 00000000000626e0
-> <4>[533925.390111] Call Trace:
-> <4>[533925.390119]  smb2_queryfs+0x162/0x360 [cifs]
-> <4>[533925.390124]  ? lookup_fast+0xc8/0x2d0
-> <4>[533925.390126]  ? legitimize_path.isra.8+0x28/0x50
-> <4>[533925.390127]  ? __vfs_getxattr+0x2a/0x70
-> <4>[533925.390130]  ? get_vfs_caps_from_disk+0x65/0x170
-> <4>[533925.390135]  ? cifs_statfs+0x97/0x1f0 [cifs]
-> <4>[533925.390140]  ? smb2_set_next_command+0x60/0x60 [cifs]
-> <4>[533925.390144]  cifs_statfs+0x97/0x1f0 [cifs]
-> <4>[533925.390147]  statfs_by_dentry+0x42/0x60
-> <4>[533925.390148]  vfs_statfs+0x16/0xc0
-> <4>[533925.390150]  user_statfs+0x54/0xa0
-> <4>[533925.390151]  __se_sys_statfs+0x25/0x60
-> <4>[533925.390153]  do_syscall_64+0x5c/0x160
-> <4>[533925.390156]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> <4>[533925.390158] RIP: 0033:0x7fb5cf8ca467
-> <4>[533925.390159] Code: 2c 00 64 c7 00 16 00 00 00 b8 ff ff ff ff eb b8
-> e8 6e 4f 02 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 b8 89 00 00 00
-> 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f1 e9 2c 00 f7 d8 64 89 01 48
-> <4>[533925.390160] RSP: 002b:00007ffc47a0c7f8 EFLAGS: 00000246 ORIG_RAX:
-> 0000000000000089
-> <4>[533925.390162] RAX: ffffffffffffffda RBX: 00007ffc47a0c9a0 RCX:
-> 00007fb5cf8ca467
-> <4>[533925.390163] RDX: 00007ffc47a0c9a9 RSI: 00007ffc47a0c800 RDI:
-> 00007ffc47a0c9a0
-> <4>[533925.390164] RBP: 00007ffc47a0c800 R08: 0000000000000000 R09:
-> 000000000000000d
-> <4>[533925.390165] R10: 00007fb5cfb9a560 R11: 0000000000000246 R12:
-> 00007ffc47a0c8b0
-> <4>[533925.390166] R13: 000000000000000b R14: 0000561829c584d4 R15:
-> 00007ffc47a0c920
-> <4>[533925.390167] Modules linked in: xt_nat hfsplus hfs msdos
-> nfnetlink_queue nfnetlink_log cp210x usbserial squashfs cfg80211 drbg
-> seqiv xfrm6_mode_tunnel xfrm4_mode_tunnel nvidia_uvm(PO) rfcomm
-> xt_CHECKSUM iptable_mangle ipt_REJECT nf_reject_ipv4 xt_tcpudp devlink
-> ebtable_filter ebtables ip6table_filter ip6_tables ipt_MASQUERADE
-> nf_conntrack_netlink nfnetlink iptable_nat xt_addrtype iptable_filter
-> ip_tables bpfilter xt_conntrack x_tables br_netfilter bridge stp llc
-> arc4 md4 md5 xfrm_user xfrm4_tunnel tunnel4 ipcomp xfrm_ipcomp esp4 ah4
-> af_key cmac xfrm_algo nls_utf8 cifs ccm sctp bnep nvidia_drm(PO)
-> algif_skcipher nvidia_modeset(PO) nls_iso8859_1 nls_cp437 vfat fat
-> joydev amdkfd iTCO_wdt nvidia(PO) evdev iTCO_vendor_support uinput
-> intel_rapl amdgpu snd_hda_codec_realtek x86_pkg_temp_thermal
-> intel_powerclamp
-> <4>[533925.390197]  snd_hda_codec_hdmi snd_hda_codec_generic
-> crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel
-> snd_usb_audio pcbc snd_hda_intel chash snd_usbmidi_lib aesni_intel
-> snd_hda_codec snd_rawmidi gpu_sched snd_seq_device crypto_simd ttm
-> snd_hda_core bcache btusb snd_hwdep drm_kms_helper btrtl cryptd snd_pcm
-> btbcm uas glue_helper btintel crc64 drm snd_timer intel_cstate bluetooth
-> drm_panel_orientation_quirks snd intel_uncore syscopyarea soundcore
-> i2c_i801 efi_pstore wmi_bmof intel_rapl_perf efivars sysfillrect e1000e
-> ecdh_generic sysimgblt lpc_ich mei_me fb_sys_fops button firewire_ohci
-> sch_fq_codel nct6775 hwmon_vid coretemp openvswitch nsh nf_nat_ipv6
-> nf_nat_ipv4 nf_conncount nf_nat nf_conntrack nf_defrag_ipv6
-> nf_defrag_ipv4 vhost_net tun vhost tap kvm_intel kvm irqbypass msr cpuid
-> <4>[533925.390226]  efivarfs virtio_ring virtio xts aes_x86_64 ecb cbc
-> sha1_generic iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi
-> bonding vxlan ip6_udp_tunnel udp_tunnel macvlan igb i2c_algo_bit dca
-> e1000 fuse overlay nfs lockd grace sunrpc ext4 mbcache jbd2 fscrypto
-> multipath linear raid10 raid1 raid0 dm_raid raid456 async_raid6_recov
-> async_memcpy async_pq async_xor async_tx md_mod dm_snapshot dm_bufio
-> dm_crypt dm_mirror dm_region_hash dm_log dm_mod hid_sony hid_samsung
-> hid_petalynx hid_monterey hid_microsoft hid_logitech ff_memless
-> hid_gyration hid_ezkey hid_cypress hid_chicony hid_cherry hid_belkin
-> hid_apple hid_a4tech hid_generic usbhid ohci_pci ohci_hcd uhci_hcd hid
-> arcmsr sr_mod cdrom sg usb_storage xhci_pci ehci_pci xhci_hcd ehci_hcd
-> ptp usbcore firewire_core pps_core crc_itu_t usb_common
-> <4>[533925.390259] CR2: 0000000000000000
-> <4>[533925.390260] ---[ end trace 66b5055ad278750a ]---
->
-> CIFS kernel options:
->
-> CONFIG_CIFS=m
-> # CONFIG_CIFS_STATS2 is not set
-> # CONFIG_CIFS_ALLOW_INSECURE_LEGACY is not set
-> # CONFIG_CIFS_UPCALL is not set
-> CONFIG_CIFS_XATTR=y
-> CONFIG_CIFS_POSIX=y
-> CONFIG_CIFS_ACL=y
-> CONFIG_CIFS_DEBUG=y
-> # CONFIG_CIFS_DEBUG2 is not set
-> # CONFIG_CIFS_DEBUG_DUMP_KEYS is not set
-> CONFIG_CIFS_DFS_UPCALL=y
-> # CONFIG_CIFS_FSCACHE is not set
->
-> Please include me when replying.
->
-> Thanks,
-> Stijn
->
-
-
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 70935ed91125..a79f02c29617 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -23,9 +23,81 @@
+ #define ODEBUG_HASH_BITS	14
+ #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+ 
+-#define ODEBUG_POOL_SIZE	1024
++#define ODEBUG_DEFAULT_POOL	512
+ #define ODEBUG_POOL_MIN_LEVEL	256
+ 
++/*
++ * Some debug objects are allocated during the early boot. Enabling some
++ * options like timers or workqueue objects may increase the size required
++ * significantly with large number of CPUs. For example (as today, 20 Nov.
++ * 2018),
++ *
++ * No. CPUs x 2 (worker pool) objects:
++ *
++ * start_kernel
++ *   workqueue_init_early
++ *     init_worker_pool
++ *       init_timer_key
++ *         debug_object_init
++ *
++ * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
++ *
++ * sched_init
++ *   hrtick_rq_init
++ *     hrtimer_init
++ *
++ * CONFIG_DEBUG_OBJECTS_WORK:
++ * No. CPUs x 6 (workqueue) objects:
++ *
++ * workqueue_init_early
++ *   alloc_workqueue
++ *     __alloc_workqueue_key
++ *       alloc_and_link_pwqs
++ *         init_pwq
++ *
++ * Also, plus No. CPUs objects:
++ *
++ * perf_event_init
++ *    __init_srcu_struct
++ *      init_srcu_struct_fields
++ *        init_srcu_struct_nodes
++ *          __init_work
++ *
++ * Increase the number a bit more in case the implmentatins are changed in
++ * the future, as it is better to avoid OOM than spending a bit more kernel
++ * memory that will/can be freed.
++ */
++#if defined(CONFIG_DEBUG_OBJECTS_TIMERS) && \
++!defined(CONFIG_DEBUG_OBJECTS_WORK)
++/*
++ * With all debug objects config options selected except workqueue, kernel
++ * reports,
++ * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
++ * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
++ */
++#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 10)
++
++#elif defined(CONFIG_DEBUG_OBJECTS_WORK) && \
++!defined(CONFIG_DEBUG_OBJECTS_TIMERS)
++/*
++ * all the options except the timers:
++ * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
++ * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
++ */
++#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 10)
++
++#elif defined(CONFIG_DEBUG_OBJECTS_WORK) && \
++defined(CONFIG_DEBUG_OBJECTS_TIMERS)
++/*
++ * all the options:
++ * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
++ * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
++ */
++#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * 20)
++#else
++#define ODEBUG_POOL_SIZE	ODEBUG_DEFAULT_POOL
++#endif
++
+ #define ODEBUG_CHUNK_SHIFT	PAGE_SHIFT
+ #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
+ #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
+@@ -58,8 +130,13 @@ static int			debug_objects_fixups __read_mostly;
+ static int			debug_objects_warnings __read_mostly;
+ static int			debug_objects_enabled __read_mostly
+ 				= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
++/*
++ * This is only used after replaced static objects, so no need to scale it
++ * to use the early boot static pool size and it has already been scaled
++ * according to actual No. CPUs in the box within debug_objects_mem_init().
++ */
+ static int			debug_objects_pool_size __read_mostly
+-				= ODEBUG_POOL_SIZE;
++				= ODEBUG_DEFAULT_POOL;
+ static int			debug_objects_pool_min_level __read_mostly
+ 				= ODEBUG_POOL_MIN_LEVEL;
+ static struct debug_obj_descr	*descr_test  __read_mostly;
 -- 
-Thanks,
+2.17.2 (Apple Git-113)
 
-Steve
