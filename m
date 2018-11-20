@@ -2,197 +2,389 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04A0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E05C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E69D2075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:06:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FbV91fBW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E69D2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C924C208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 06:18:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C924C208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731460AbeKTQdp (ORCPT
+        id S1731701AbeKTQpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 11:33:45 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36954 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726883AbeKTQdp (ORCPT
+        Tue, 20 Nov 2018 11:45:38 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:19174 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730652AbeKTQph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 11:33:45 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 80so422754pge.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 22:06:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=aGiaCMTlIf1ChSKXNPut5X3cyUNnLU37C2uDQXkCI/E=;
-        b=FbV91fBWHIobGIuGl3rKvP1IenOWUrUpXMw6xhdKaNBncJ46KFMMld3hM97DvcIFsu
-         r7/KaFl9fUmTFfx2ltSw0fTUOEtJJETQfiC7TMJTCVg9wFXaoLllV1460lgjbdgj1Srf
-         59Pi4wMsqptesRELdEjhjeUAKbn2ZUgwkyPPkvgRCUEbuDK/Ti8AKLt16rsye6CGp6ML
-         7cjPJeIjoODlRpHzxYtgizYSDWcA6n6jEqiN+VuFIAXRmL8iJ6jm2/8xTdWPl3M6xIjL
-         NVwxBsQFEmo1WSRAXXQbRHen7EB16u/SYkL1gKiU7lxfv/CYbd0AE3Mee1ceobabXXp7
-         FygA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aGiaCMTlIf1ChSKXNPut5X3cyUNnLU37C2uDQXkCI/E=;
-        b=lqCUQrevpJ5xInmHh9dvCOoPFJBOaZoScc22cGMLHnK4A6WrsYoiuAHG7WjiGI7sgj
-         nb5IgTvzn0nDHuBZbmdTvfIGPiceG7fPhP2kB2+I/RFBCv6wjN7Y3uHA7rWKgJWWaqf2
-         h12Y5sullI4gdB3zXbffVlCByiliTR+SPiAA5B0NUAKZXk09AuDr1thKDrWROrWCjY+z
-         tyRrGKX6jIanK00cXXiy+71IMUy7RJf/P+Kv+r1etR2ZpGsFplpMtKv9lRr8FDIBCGiB
-         Dw2PeYhvD/pcsQ7CVvKQtLcFhgdEOga/hc4vRFpjqndR4xlqCjivmaH8iDZTxLeoFV5s
-         9rvQ==
-X-Gm-Message-State: AA+aEWa7y43Dxb64nswi3sO7ykiZ1vCXHTlOyZdHcNFGDT1KO1KVsBcb
-        c8+5eNE8Jl7xfpJ/T/umwdQ=
-X-Google-Smtp-Source: AFSGD/UtIfn+8OzzXo+/yN0NgG82s/NT31De6rqJ/6Hf7rGcT8tfa5HEH7oxkDiJ/JCOSfzMIK/K5w==
-X-Received: by 2002:a63:d157:: with SMTP id c23mr749804pgj.170.1542693982267;
-        Mon, 19 Nov 2018 22:06:22 -0800 (PST)
-Received: from localhost.localdomain (c-73-140-212-29.hsd1.wa.comcast.net. [73.140.212.29])
-        by smtp.gmail.com with ESMTPSA id u186sm16141245pgd.62.2018.11.19.22.06.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Nov 2018 22:06:21 -0800 (PST)
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] ptrace: take into account saved_sigmask in PTRACE_{GET,SET}SIGMASK
-Date:   Mon, 19 Nov 2018 22:06:16 -0800
-Message-Id: <20181120060616.6043-1-avagin@gmail.com>
-X-Mailer: git-send-email 2.17.2
+        Tue, 20 Nov 2018 11:45:37 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="48446918"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 20 Nov 2018 14:18:10 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 73AB14B714D6;
+        Tue, 20 Nov 2018 14:18:10 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 20 Nov 2018 14:18:14 +0800
+Date:   Tue, 20 Nov 2018 14:18:04 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v11 4/5] x86/boot: Dig out SRAT table from RSDP and find
+ immovable memory
+Message-ID: <20181120061804.GA32284@localhost.localdomain>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-5-fanc.fnst@cn.fujitsu.com>
+ <20181116111654.GC20313@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181116111654.GC20313@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 73AB14B714D6.AD6AD
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few system calls (pselect, ppoll, etc) which replace a task
-sigmask while they are running in a kernel-space
+Hi Boris,
 
-When a task calls one of these syscalls, the kernel saves a current
-sigmask in task->saved_sigmask and sets a syscall sigmask.
+On Fri, Nov 16, 2018 at 12:16:54PM +0100, Borislav Petkov wrote:
+>On Mon, Nov 12, 2018 at 05:46:44PM +0800, Chao Fan wrote:
+>> To avoid KASLR extracting kernel on movable memory, slove the
+>						      ^^^^^
+>
+>Please introduce a spellchecker into your patch creation workflow.
+>
+>> conflict between KASLR and movable_node feature, dig the SRAT tables
+>
+>s/dig/determine/ or "compute SRAT table's address" or so.
+>
+>Also, replace "dig" with a more suitable verb in all your patches.
+>
+>> from RSDP pointer. Walk the SRAT tables and store the immovable
+>> memory regions in immovable_mem[].
+>
+>		"... in an array called immovable_mem[]."
+>
+>> There are three methods to get RSDP pointer: KEXEC condition,
+>> EFI confition, BIOS condition.
+>
+>"condition" is not the right word here.
+>
+>> If KEXEC add 'acpi_rsdp' to cmdline, use it.
+>> Otherwise, parse EFI table for RSDP.
+>> Then, search memory for RSDP.
+>> 
+>> Imitate from ACPI code, based on acpi_os_get_root_pointer().
+>> Process: RSDP->RSDT/XSDT->ACPI root table->SRAT.
+>
+>What?!
+>
+>This looks like a comment you've added as a note for yourself but not
+>part of the final commit message. If you wanna explain the process, then
+>write it out in plain english as if you're explaining it to someone who
+>doesn't know what you're doing.
+>
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/Makefile |   4 +
+>>  arch/x86/boot/compressed/acpitb.c | 139 ++++++++++++++++++++++++++++++
+>>  arch/x86/boot/compressed/kaslr.c  |   4 -
+>>  arch/x86/boot/compressed/misc.h   |  15 ++++
+>>  4 files changed, 158 insertions(+), 4 deletions(-)
+>> 
+>> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+>> index 466f66c8a7f8..b51f7629b8ef 100644
+>> --- a/arch/x86/boot/compressed/Makefile
+>> +++ b/arch/x86/boot/compressed/Makefile
+>> @@ -84,6 +84,10 @@ ifdef CONFIG_X86_64
+>>  	vmlinux-objs-y += $(obj)/pgtable_64.o
+>>  endif
+>>  
+>> +#if (defined CONFIG_MEMORY_HOTREMOVE) && (defined CONFIG_RANDOMIZE_BASE)
+>> +vmlinux-objs-$(CONFIG_RANDOMIZE_BASE) += $(obj)/acpitb.o
+>> +#endif
+>
+>Right, as previously pointed out, this needs that CONFIG_ symbol and
+>then you can save yourself most (if not all) of the ifdeffery in the
+>rest of the patchset.
+>
+>> +
+>>  $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
+>>  
+>>  vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
+>> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+>> index 5cfb4efa5a19..161f21a7fb3b 100644
+>> --- a/arch/x86/boot/compressed/acpitb.c
+>> +++ b/arch/x86/boot/compressed/acpitb.c
+>> @@ -14,6 +14,11 @@
+>>  #define BOOT_STRING
+>>  #include "../string.h"
+>>  
+>> +#ifdef CONFIG_MEMORY_HOTREMOVE
+>> +/* Store the immovable memory regions */
+>> +struct mem_vector immovable_mem[MAX_NUMNODES*2];
+>> +#endif
+>> +
+>>  /* Search EFI table for RSDP table. */
+>>  static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>>  {
+>> @@ -226,3 +231,137 @@ static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+>>  	}
+>>  #endif
+>>  }
+>> +
+>> +/*
+>> + * Used to dig RSDP table from EFI table or BIOS.
+>> + * If RSDP table found in EFI table, use it. Or search BIOS.
+>> + * Based on acpi_os_get_root_pointer().
+>> + */
+>> +static acpi_physical_address get_rsdp_addr(void)
+>> +{
+>> +	acpi_physical_address pa = 0;
+>> +
+>> +	get_acpi_rsdp(&pa);
+>> +
+>> +	if (!pa)
+>> +		efi_get_rsdp_addr(&pa);
+>> +
+>> +	if (!pa)
+>> +		bios_get_rsdp_addr(&pa);
+>> +
+>> +	return pa;
+>> +}
+>> +
+>> +static struct acpi_table_header *get_acpi_srat_table(void)
+>> +{
+>> +	acpi_physical_address acpi_table;
+>> +	acpi_physical_address root_table;
+>> +	struct acpi_table_header *header;
+>> +	struct acpi_table_rsdp *rsdp;
+>> +	bool acpi_use_rsdt = false;
+>> +	char *signature;
+>> +	char arg[10];
+>> +	u8 *entry;
+>> +	u32 count;
+>> +	u32 size;
+>> +	int i, j;
+>> +	int ret;
+>> +	u32 len;
+>> +
+>> +	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
+>> +	if (!rsdp)
+>> +		return NULL;
+>> +
+>> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
+>> +	if (ret == 4 && !strncmp(arg, "rsdt", 4))
+>> +		acpi_use_rsdt = true;
+>> +
+>> +	/* Get RSDT or XSDT from RSDP. */
+>> +	if (!acpi_use_rsdt &&
+>> +	    rsdp->xsdt_physical_address && rsdp->revision > 1) {
+>> +		root_table = rsdp->xsdt_physical_address;
+>> +		size = ACPI_XSDT_ENTRY_SIZE;
+>> +	} else {
+>> +		root_table = rsdp->rsdt_physical_address;
+>> +		size = ACPI_RSDT_ENTRY_SIZE;
+>> +	}
+>
+>Reorganize that code here to get rid of acpi_use_rsdt.
+>
+>> +
+>> +	/* Get ACPI root table from RSDT or XSDT.*/
+>> +	header = (struct acpi_table_header *)root_table;
+>> +	len = header->length;
+>
+>No checking of that header pointer before dereffing it?
+>
+>If it is NUL, that gives you a very nasty bug to try to debug in the
+>early code.
+>
+>> +	count = (u32)((len - sizeof(struct acpi_table_header)) / size);
+>
+>Uuh, no checking for count wrapping around here due to wrong len? That
+>would give you a *lot* of looping below if it wraps.
+>
+>IOW, you need to verify all those values before doing arithmetic with
+>them - it is early code and it is BIOS - there's no trusting it.
+>
+>Also, it is not "count" but "num_entries" or so.
+>
+>> +	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
+>> +
+>> +	for (i = 0; i < count; i++) {
+>
+>That variable i is not needed, right?
+>
+>	while (num_entries--)
+>
+>?
+>
+>> +		u64 address64;
+>> +
+>> +		if (size == ACPI_RSDT_ENTRY_SIZE)
+>> +			acpi_table = ((acpi_physical_address)
+>> +				      (*ACPI_CAST_PTR(u32, entry)));
+>> +		else {
+>> +			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
+>> +			acpi_table = (acpi_physical_address) address64;
+>> +		}
+>> +
+>> +		if (acpi_table) {
+>
+>Now can acpi_table be NUL here?
 
-On syscall-exit-stop, ptrace traps a task before restoring the
-saved_sigmask, so PTRACE_GETSIGMASK returns the syscall sigmask and
-PTRACE_SETSIGMASK does nothing, because its sigmask is replaced by
-saved_sigmask, when the task returns to user-space.
+In iacpi_tb_parse_root_table() of drivers/acpi/acpica/tbutils.c:
+                /* Skip NULL entries in RSDT/XSDT */
 
-This patch fixes this problem. PTRACE_GET_SIGMASK returns saved_sigmask
-is it's set. PTRACE_SETSIGMASK drops the TIF_RESTORE_SIGMASK flag.
+                if (!address) {
+                        goto next_table;
+                }
+So I think the table might be NULL and did the similar operation.
 
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Fixes: 29000caecbe8 ("ptrace: add ability to get/set signal-blocked mask")
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
----
- include/linux/sched/signal.h | 18 ++++++++++++++++++
- kernel/ptrace.c              | 15 +++++++++++++--
- 2 files changed, 31 insertions(+), 2 deletions(-)
+Thanks,
+Chao Fan
 
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 1be35729c2c5..660d78c9af6c 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -417,10 +417,20 @@ static inline void set_restore_sigmask(void)
- 	set_thread_flag(TIF_RESTORE_SIGMASK);
- 	WARN_ON(!test_thread_flag(TIF_SIGPENDING));
- }
-+
-+static inline void clear_tsk_restore_sigmask(struct task_struct *tsk)
-+{
-+	clear_tsk_thread_flag(tsk, TIF_RESTORE_SIGMASK);
-+}
-+
- static inline void clear_restore_sigmask(void)
- {
- 	clear_thread_flag(TIF_RESTORE_SIGMASK);
- }
-+static inline bool test_tsk_restore_sigmask(struct task_struct *tsk)
-+{
-+	return test_tsk_thread_flag(tsk, TIF_RESTORE_SIGMASK);
-+}
- static inline bool test_restore_sigmask(void)
- {
- 	return test_thread_flag(TIF_RESTORE_SIGMASK);
-@@ -438,6 +448,10 @@ static inline void set_restore_sigmask(void)
- 	current->restore_sigmask = true;
- 	WARN_ON(!test_thread_flag(TIF_SIGPENDING));
- }
-+static inline void clear_tsk_restore_sigmask(struct task_struct *tsk)
-+{
-+	tsk->restore_sigmask = false;
-+}
- static inline void clear_restore_sigmask(void)
- {
- 	current->restore_sigmask = false;
-@@ -446,6 +460,10 @@ static inline bool test_restore_sigmask(void)
- {
- 	return current->restore_sigmask;
- }
-+static inline bool test_tsk_restore_sigmask(struct task_struct *tsk)
-+{
-+	return tsk->restore_sigmask;
-+}
- static inline bool test_and_clear_restore_sigmask(void)
- {
- 	if (!current->restore_sigmask)
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 21fec73d45d4..fc0d667f5792 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -29,6 +29,7 @@
- #include <linux/hw_breakpoint.h>
- #include <linux/cn_proc.h>
- #include <linux/compat.h>
-+#include <linux/sched/signal.h>
- 
- /*
-  * Access another process' address space via ptrace.
-@@ -925,18 +926,26 @@ int ptrace_request(struct task_struct *child, long request,
- 			ret = ptrace_setsiginfo(child, &siginfo);
- 		break;
- 
--	case PTRACE_GETSIGMASK:
-+	case PTRACE_GETSIGMASK: {
-+		sigset_t *mask;
-+
- 		if (addr != sizeof(sigset_t)) {
- 			ret = -EINVAL;
- 			break;
- 		}
- 
--		if (copy_to_user(datavp, &child->blocked, sizeof(sigset_t)))
-+		if (test_tsk_restore_sigmask(child))
-+			mask = &child->saved_sigmask;
-+		else
-+			mask = &child->blocked;
-+
-+		if (copy_to_user(datavp, mask, sizeof(sigset_t)))
- 			ret = -EFAULT;
- 		else
- 			ret = 0;
- 
- 		break;
-+	}
- 
- 	case PTRACE_SETSIGMASK: {
- 		sigset_t new_set;
-@@ -962,6 +971,8 @@ int ptrace_request(struct task_struct *child, long request,
- 		child->blocked = new_set;
- 		spin_unlock_irq(&child->sighand->siglock);
- 
-+		clear_tsk_restore_sigmask(child);
-+
- 		ret = 0;
- 		break;
- 	}
--- 
-2.17.2
+>
+>> +			header = (struct acpi_table_header *)acpi_table;
+>> +			signature = header->signature;
+>> +
+>> +			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
+>> +				return header;
+>> +		}
+>> +		entry += size;
+>> +	}
+>> +	return NULL;
+>> +}
+>> +
+>> +/*
+>> + * According to ACPI table, filter the immvoable memory regions
+>					  ^^^^^^^^^
+>Typo.
+>
+>> + * and store them in immovable_mem[].
+>> + */
+>> +void get_immovable_mem(void)
+>> +{
+>> +	struct acpi_table_header *table_header;
+>> +	struct acpi_subtable_header *table;
+>> +	struct acpi_srat_mem_affinity *ma;
+>> +	unsigned long table_end;
+>> +	char arg[10];
+>> +	int i = 0;
+>> +	int ret;
+>> +
+>> +	ret = cmdline_find_option("acpi", arg, sizeof(arg));
+>> +	if (ret == 3 && !strncmp(arg, "off", 3))
+>> +		return;
+>> +
+>> +	if (!cmdline_find_option_bool("movable_node"))
+>> +		return;
+>> +
+>> +	table_header = get_acpi_srat_table();
+>> +	if (!table_header)
+>> +		return;
+>> +
+>> +	table_end = (unsigned long)table_header + table_header->length;
+>> +
+>> +	table = (struct acpi_subtable_header *)
+>> +		((unsigned long)table_header + sizeof(struct acpi_table_srat));
+>> +
+>> +	while (((unsigned long)table) +
+>> +		       sizeof(struct acpi_subtable_header) < table_end) {
+>> +		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
+>> +			ma = (struct acpi_srat_mem_affinity *)table;
+>> +			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
+>> +				immovable_mem[i].start = ma->base_address;
+>> +				immovable_mem[i].size = ma->length;
+>> +				i++;
+>> +			}
+>> +
+>> +			if (i >= MAX_NUMNODES*2) {
+>> +				debug_putstr("Too many immovable memory regions, aborted.\n");
+>
+>"..., aborting."
+>
+>> +				break;
+>> +			}
+>> +		}
+>> +		table = (struct acpi_subtable_header *)
+>> +			((unsigned long)table + table->length);
+>> +	}
+>> +	num_immovable_mem = i;
+>> +}
+>> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+>> index 9ed9709d9947..b251572e77af 100644
+>> --- a/arch/x86/boot/compressed/kaslr.c
+>> +++ b/arch/x86/boot/compressed/kaslr.c
+>> @@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+>>  #define KASLR_COMPRESSED_BOOT
+>>  #include "../../lib/kaslr.c"
+>>  
+>> -struct mem_vector {
+>> -	unsigned long long start;
+>> -	unsigned long long size;
+>> -};
+>>  
+>>  /* Only supporting at most 4 unusable memmap regions with kaslr */
+>>  #define MAX_MEMMAP_REGIONS	4
+>> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+>> index a1d5918765f3..4a3645fda0ed 100644
+>> --- a/arch/x86/boot/compressed/misc.h
+>> +++ b/arch/x86/boot/compressed/misc.h
+>> @@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
+>>  			    unsigned long *output,
+>>  			    unsigned long output_size,
+>>  			    unsigned long *virt_addr);
+>> +struct mem_vector {
+>> +	unsigned long long start;
+>> +	unsigned long long size;
+>> +};
+>> +
+>>  /* cpuflags.c */
+>>  bool has_cpuflag(int flag);
+>>  #else
+>> @@ -116,3 +121,13 @@ static inline void console_init(void)
+>>  void set_sev_encryption_mask(void);
+>>  
+>>  #endif
+>> +
+>> +/* acpitb.c */
+>> +#ifdef CONFIG_RANDOMIZE_BASE
+>> +int num_immovable_mem;
+>> +#ifdef CONFIG_MEMORY_HOTREMOVE
+>> +/* Store the amount of immovable memory regions */
+>
+>Above says "regions" but define below is "TABLES". Hmmm?
+>
+>> +#define ACPI_MAX_TABLES                128
+>> +void get_immovable_mem(void);
+>> +#endif
+>> +#endif
+>> -- 
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
 
