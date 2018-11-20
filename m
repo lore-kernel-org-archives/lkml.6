@@ -2,186 +2,194 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7945EC18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77E1C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC2C206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:50:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC2C206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AA4DF208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:52:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA4DF208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbeKUAUK convert rfc822-to-8bit (ORCPT
+        id S1728638AbeKUAVS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:20:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46252 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725950AbeKUAUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:20:10 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E822C028358;
-        Tue, 20 Nov 2018 13:50:55 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-120-174.rdu2.redhat.com [10.10.120.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 110DD60154;
-        Tue, 20 Nov 2018 13:50:53 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: scale the static pool size
-To:     Qian Cai <cai@gmx.us>, akpm@linux-foundation.org,
-        tglx@linutronix.de
-Cc:     yang.shi@linux.alibaba.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-References: <20181120064254.1594-1-cai@gmx.us>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <f4c9756e-08c9-ce18-19a8-771977e95ac9@redhat.com>
-Date:   Tue, 20 Nov 2018 08:50:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 20 Nov 2018 19:21:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40788 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725903AbeKUAVR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:21:17 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKDnFJk140625
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:52:01 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nvj5c41rs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:52:00 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 20 Nov 2018 13:51:58 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 20 Nov 2018 13:51:56 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAKDpta864094380
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Nov 2018 13:51:55 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0DF54A405D;
+        Tue, 20 Nov 2018 13:51:55 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBEE5A4051;
+        Tue, 20 Nov 2018 13:51:52 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.151])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue, 20 Nov 2018 13:51:52 +0000 (GMT)
+Date:   Tue, 20 Nov 2018 14:51:50 +0100
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH 3/7] doc/vm: New documentation for memory performance
+References: <20181114224921.12123-2-keith.busch@intel.com>
+ <20181114224921.12123-4-keith.busch@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120064254.1594-1-cai@gmx.us>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 20 Nov 2018 13:50:55 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114224921.12123-4-keith.busch@intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18112013-0016-0000-0000-00000229DF96
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112013-0017-0000-0000-00003282198E
+Message-Id: <20181120135149.GA24627@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811200125
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 01:42 AM, Qian Cai wrote:
-> The current value of the early boot static pool size is not big enough
-> for systems with large number of CPUs with timer or/and workqueue
-> objects selected. As the results, systems have 60+ CPUs with both timer
-> and workqueue objects enabled could trigger "ODEBUG: Out of memory.
-> ODEBUG disabled". Hence, fixed it by computing it according to
-> CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
->
-> Signed-off-by: Qian Cai <cai@gmx.us>
+Hi,
+
+Sorry if I'm jumping too late.
+
+On Wed, Nov 14, 2018 at 03:49:16PM -0700, Keith Busch wrote:
+> Platforms may provide system memory where some physical address ranges
+> perform differently than others. These heterogeneous memory attributes are
+> common to the node that provides the memory and exported by the kernel.
+> 
+> Add new documentation providing a brief overview of such systems and
+> the attributes the kernel makes available to aid applications wishing
+> to query this information.
+> 
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
 > ---
->  lib/debugobjects.c | 53 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 52 insertions(+), 1 deletion(-)
->
-> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-> index 70935ed91125..372dc34206d5 100644
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -23,7 +23,53 @@
->  #define ODEBUG_HASH_BITS	14
->  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
->  
-> +/*
-> + * Some debug objects are allocated during the early boot. Enabling some
-> + * options like timers or workqueue objects may increase the size required
-> + * significantly with large number of CPUs. For example,
-> + *
-> + * No. CPUs x 2 (worker pool) objects:
-> + *
-> + * start_kernel
-> + *   workqueue_init_early
-> + *     init_worker_pool
-> + *       init_timer_key
-> + *         debug_object_init
-> + *
-> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
-> + *
-> + * sched_init
-> + *   hrtick_rq_init
-> + *     hrtimer_init
-> + *
-> + * CONFIG_DEBUG_OBJECTS_WORK:
-> + * No. CPUs x 6 (workqueue) objects:
-> + *
-> + * workqueue_init_early
-> + *   alloc_workqueue
-> + *     __alloc_workqueue_key
-> + *       alloc_and_link_pwqs
-> + *         init_pwq
-> + *
-> + * Also, plus No. CPUs objects:
-> + *
-> + * perf_event_init
-> + *    __init_srcu_struct
-> + *      init_srcu_struct_fields
-> + *        init_srcu_struct_nodes
-> + *          __init_work
-> + *
-> + * Increase the number a bit more in case the implmentatins are changed in
-> + * the future.
-> + */
-> +#if defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_TIMERS) && \
-> +!defined(CONFIG_DEBUG_OBJECTS_WORK)
-> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 10)
-> +#elif defined(CONFIG_NR_CPUS) && defined(CONFIG_DEBUG_OBJECTS_WORK)
-> +#define ODEBUG_POOL_SIZE	(CONFIG_NR_CPUS * 30)
-> +#else
->  #define ODEBUG_POOL_SIZE	1024
-> +#endif /* CONFIG_NR_CPUS */
->  #define ODEBUG_POOL_MIN_LEVEL	256
->  
+>  Documentation/vm/numaperf.rst | 71 +++++++++++++++++++++++++++++++++++++++++++
 
-CONFIG_NR_CPUS is always defined. You don't need to put that as a #if
-condition. Where does the scaling factor 30 come from? It looks high to me.
+As this document describes user-space interfaces it belongs to
+Documentation/admin-guide/mm.
 
-For UP system, CONFIG_NR_CPUS will be 1. I think it is better to have a
-guarantee minimum plus a multiplier of the # of configured CPUs.
-Something like
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/vm/numaperf.rst
+> 
+> diff --git a/Documentation/vm/numaperf.rst b/Documentation/vm/numaperf.rst
+> new file mode 100644
+> index 000000000000..5a3ecaff5474
+> --- /dev/null
+> +++ b/Documentation/vm/numaperf.rst
+> @@ -0,0 +1,71 @@
+> +.. _numaperf:
+> +
+> +================
+> +NUMA Performance
+> +================
+> +
+> +Some platforms may have multiple types of memory attached to a single
+> +CPU. These disparate memory ranges share some characteristics, such as
+> +CPU cache coherence, but may have different performance. For example,
+> +different media types and buses affect bandwidth and latency.
+> +
+> +A system supporting such heterogeneous memory groups each memory type
+> +under different "nodes" based on similar CPU locality and performance
+> +characteristics.  Some memory may share the same node as a CPU, and
+> +others are provided as memory-only nodes. While memory only nodes do not
+> +provide CPUs, they may still be local to one or more compute nodes. The
+> +following diagram shows one such example of two compute noes with local
+> +memory and a memory only node for each of compute node:
+> +
+> + +------------------+     +------------------+
+> + | Compute Node 0   +-----+ Compute Node 1   |
+> + | Local Node0 Mem  |     | Local Node1 Mem  |
+> + +--------+---------+     +--------+---------+
+> +          |                        |
+> + +--------+---------+     +--------+---------+
+> + | Slower Node2 Mem |     | Slower Node3 Mem |
+> + +------------------+     +--------+---------+
+> +
+> +A "memory initiator" is a node containing one or more devices such as
+> +CPUs or separate memory I/O devices that can initiate memory requests. A
+> +"memory target" is a node containing one or more CPU-accessible physical
+> +address ranges.
+> +
+> +When multiple memory initiators exist, accessing the same memory
+> +target may not perform the same as each other. The highest performing
+> +initiator to a given target is considered to be one of that target's
+> +local initiators.
+> +
+> +To aid applications matching memory targets with their initiators,
+> +the kernel provide symlinks to each other like the following example::
+> +
+> +	# ls -l /sys/devices/system/node/nodeX/initiator*
+> +	/sys/devices/system/node/nodeX/targetY -> ../nodeY
+> +
+> +	# ls -l /sys/devices/system/node/nodeY/target*
+> +	/sys/devices/system/node/nodeY/initiatorX -> ../nodeX
+> +
+> +Applications may wish to consider which node they want their memory to
+> +be allocated from based on the nodes performance characteristics. If
+> +the system provides these attributes, the kernel exports them under the
+> +node sysfs hierarchy by appending the initiator_access directory under
+> +the node as follows::
+> +
+> +	/sys/devices/system/node/nodeY/initiator_access/
+> +
+> +The kernel does not provide performance attributes for non-local memory
+> +initiators. The performance characteristics the kernel provides for
+> +the local initiators are exported are as follows::
+> +
+> +	# tree /sys/devices/system/node/nodeY/initiator_access
+> +	/sys/devices/system/node/nodeY/initiator_access
+> +	|-- read_bandwidth
+> +	|-- read_latency
+> +	|-- write_bandwidth
+> +	`-- write_latency
+> +
+> +The bandwidth attributes are provided in MiB/second.
+> +
+> +The latency attributes are provided in nanoseconds.
+> +
+> +See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
+> -- 
+> 2.14.4
+> 
 
-512 + CONFIG_NR_CPUS * <multiplier>
-
-where <multiplier> should be the sum of all early allocation objects
-that scale with the number of cpus. The guarantee minimum will cover
-other miscellaneous objects.
-
-Cheers,
-Longman
+-- 
+Sincerely yours,
+Mike.
 
