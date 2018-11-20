@@ -2,106 +2,101 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D4DEC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 492EFC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E037206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7CBD20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:47:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HfLsV01S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E037206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AtzLUCf0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7CBD20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeKUDSB (ORCPT
+        id S1729828AbeKUDRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:18:01 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36020 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbeKUDSA (ORCPT
+        Tue, 20 Nov 2018 22:17:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:44394 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeKUDRb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:18:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AJu4NwmXEQnlGYXmdz5l0Qxidh9A0KBT6TBkBFc3oc4=; b=HfLsV01SxWWRAIlhV542RuTwt
-        5ogAaSQO9pDKL1AOTJPtV4CECRnb0S4jzAlj0ca8tQPaeMjJrsXYrDUWGRsohDBo164hHD+Bqd0F7
-        lNh7FFpo/GfAjbx6fXk+8ntfBOlfyaKPaipeYWcsyaTCuvYI1YulbzeaSjP98N6CEJyZ8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP9Br-0001oE-KI; Tue, 20 Nov 2018 16:47:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 158721124DC2; Tue, 20 Nov 2018 16:47:55 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 16:47:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Applied "regulator: core: add enable_count for consumers to
- debug fs" to the regulator tree
-Message-ID: <20181120164755.GL3894@sirena.org.uk>
-References: <20181120162808.B73391124DC2@debutante.sirena.org.uk>
- <CAD=FV=W==50GsF+R3_qGbqDH2VF8VKXv3Y6Co90d2GdUbhn69g@mail.gmail.com>
- <20181120164125.GK3894@sirena.org.uk>
+        Tue, 20 Nov 2018 22:17:31 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s5-v6so1251318plq.11;
+        Tue, 20 Nov 2018 08:47:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PumaF0WGuF2uCTYcjGBjM+EP2thEMaxMMKNwJDwfhqk=;
+        b=AtzLUCf0AQSDwC+asNWgypn4fpPRzWBYMC7MNnPeYjakCcoWsI2KxDYBhLOyoFZXB2
+         0jNi0DUI/KBwoVQRDB70+7rmrzaYXxdSFhTUGxFxkGI+4K+BcCtE4UENB8lxklf/ydxl
+         ZzR9ztD8EZ/gaE0s0avSl0V/2ECukTbEONXvHWYm7Wn1mJAc8TKOcNJA0Ww5QAmVFBX8
+         UEEMcE4pAkscmk5hLTqohacvzJ6jUiQwU5ZPo2oBxS8dHuq1YC3Jdh3QrzI/eiKZZhj7
+         ewDBoUj57iBFpypF80IDw/PI0g2ZN4ygQhqj5D0Qm/rlqqri/lj9vurzf9nd8cADphr5
+         sdQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PumaF0WGuF2uCTYcjGBjM+EP2thEMaxMMKNwJDwfhqk=;
+        b=fhDca+l06XuwSsJ+cF0jEndZxHjeI1sh5S7ZAowgBK4UBb97g8LX9zdsxhA26EUE8Y
+         5+bOxtjHhafLd1GVUzPGVFoPi2t0OUTGtmbi65dgBjxAMwYm4WZrALiEX0eUKOi409Ry
+         DXZ3FMp/akixTjNtLLKPOWf6X/Te1HlEUscGfcSGUtz+dBGLsncsFxxFJeioRH8TecW5
+         sQvfyWA3qj1GBTwiQHx3CimBd33BqIAwTNkyk9CYGXmmeQgnmICNXKs+LL/FMrZXekU1
+         Tn86ijwSE6LUgo4U9bRZC3pm7WyaqLiz9RF7ytCSLj+NFJHXn5BDOjFCpmnw3gZNlE6u
+         np9g==
+X-Gm-Message-State: AA+aEWbI4ZZv352mRrampqRVZ9SC4P+pVPe0YGGynFVbvdhRC36WrqcK
+        UrJaIIP5JeX8tAh+00TDJPqnKQ0p
+X-Google-Smtp-Source: AFSGD/XIcIBeP5rDKjPo6hYBFybc1NPiEi0QaYmtpWEg3H8woWkRvnV7LQT7h/y6H1xSkCzsb9WqKw==
+X-Received: by 2002:a17:902:4324:: with SMTP id i33-v6mr3004194pld.253.1542732447154;
+        Tue, 20 Nov 2018 08:47:27 -0800 (PST)
+Received: from localhost.localdomain ([103.212.140.152])
+        by smtp.gmail.com with ESMTPSA id 7sm31762790pfm.8.2018.11.20.08.47.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 08:47:26 -0800 (PST)
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] Remove platform data and introduce DT bindings
+Date:   Tue, 20 Nov 2018 22:17:18 +0530
+Message-Id: <20181120164718.6999-1-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="WuT04sMzYDXq8et0"
-Content-Disposition: inline
-In-Reply-To: <20181120164125.GK3894@sirena.org.uk>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset introduces device tree bindings for adt7316
+driver and removes the usage of platform data from it.
+Also, it sets the data field to it's appropriate value in
+the i2c read function which was nowhere being set before.
 
---WuT04sMzYDXq8et0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes in v2:
+  - Make the commit message of patch *[1/5] appropriate.
 
-On Tue, Nov 20, 2018 at 04:41:25PM +0000, Mark Brown wrote:
-> On Tue, Nov 20, 2018 at 08:37:04AM -0800, Doug Anderson wrote:
->=20
-> > Hold up!  How does this compile for you?  It looks as if you landed it
-> > before ("regulator: core: Only count load for enabled consumers")
-> > which is the patch that adds "enable_count" to the consumer structure.
->=20
-> > I'm just working on my replies to you about the dependencies on these
-> > patches but they're definitely not separate...
->=20
-> Dunno, but my script for applying things does a build after each patch
-> and didn't complain so...  are you sure it's not e-mails getting
-> reordered?
+Shreeya Patel (5):
+  Staging: iio: adt7316: Add of_device_id table
+  Staging: iio: adt7316: Use device tree data to set ldac_pin
+  Staging: iio: adt7316: Switch irq_flags to a local variable
+  Staging: iio: adt7316: Change the name from irq_flags to irq_type
+  Staging: iio: adt7316: Use device tree data to assign irq_type
 
-Wait, no - I didn't apply that but my tree does compile at the minute
-because my test config doesn't have debugfs enabled.  If I turn that on
-then the relevant code gets built and I see an error.  I'll drop this.
+ drivers/staging/iio/addac/adt7316-i2c.c | 14 ++++++++-
+ drivers/staging/iio/addac/adt7316-spi.c |  1 -
+ drivers/staging/iio/addac/adt7316.c     | 39 ++++++++++++++++++-------
+ drivers/staging/iio/addac/adt7316.h     |  1 -
+ 4 files changed, 42 insertions(+), 13 deletions(-)
 
-This does, however, beg the question why this is a separate patch in the
-first place?
+-- 
+2.17.1
 
---WuT04sMzYDXq8et0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0OroACgkQJNaLcl1U
-h9AMSwf/VXULShmTWXvm6feWe07WVyB5DsMzXzlauxQf9vmv82XPVCzzsES3uDhD
-Hfjcuj0CdndhGOZjEQ8gSl5GFfelhVEsbFsOdLgpU1EfZK1PkU3OHvBN3rbxf1Z+
-tsUOr5+cuDGEndJgZU+lE6BJVhSdE5jyOWPAtd0bz0vMCJZpbY7GHto+dy0SXjpN
-imhxHJmsjBQiUWb2k3OHTSHeSf/rm4yqpaxbdIGVdIj93Ao+wRwYkp/96Vkfvsa5
-y9P06bMCq3kO+2pISyG3RMz85Mb52jHXd9xIvZS7Zj7z0JADvXnXV3P9/hn4JJVH
-7arCu1+dCSPofv0rmSHtvK38A+TF0g==
-=cujW
------END PGP SIGNATURE-----
-
---WuT04sMzYDXq8et0--
