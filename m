@@ -2,140 +2,118 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5711C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:02:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39D1C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0F25206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B4BF206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:05:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruSpzSdD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0F25206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B1eg7ZdL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4BF206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbeKUCbx (ORCPT
+        id S1726611AbeKUCfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:31:53 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36692 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbeKUCbw (ORCPT
+        Tue, 20 Nov 2018 21:35:08 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40328 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725913AbeKUCfH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:31:52 -0500
-Received: by mail-oi1-f195.google.com with SMTP id x23so1909401oix.3;
-        Tue, 20 Nov 2018 08:02:02 -0800 (PST)
+        Tue, 20 Nov 2018 21:35:07 -0500
+Received: by mail-ua1-f66.google.com with SMTP id n7so825416uao.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:05:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=iI6RXIMRQ3dFyUUWGMSzmCu2tl+r+Is4dIP9GbMdwN8=;
-        b=ruSpzSdDqSksVVzdDPZMhBHIyOV1goZnGX4j2+HF500QA/XI+AhkR/fJypWKJZqqYb
-         XEI3x95QK+ZVcqiNEgWhtZuT3vqJxqzlscEPXW0nzgB8kRnLQkX9BCM3xmx237/QCvt4
-         zgSEx04D/PINIlnHqSC0oSi6HJDjDZ5DsZzSMn77w5jrWqJxR/g2D6XdNj7xljc4ODj0
-         AQD99mkr7zDMOsJupdqUSjdmUGuF76me7h35qO4e/1c1hUrC6YTRp7zt8XTC6+C+zMGB
-         w93QGmdY1NGkIYyDkFTygrPMQ1YtmKZPxGp76NmcES06xXnMBJgBO3iq4CRJ50gSgyOb
-         V7vw==
+        bh=OwbsCL5JXdLbbUc53sNOY7ajzSp0r0XJT9ZRI24D9TY=;
+        b=B1eg7ZdLafGW4ZLJvTy7Exe8ELBibczbJ76JwAZOoA+PFsp1K0Ojd1yYOZAWB28geS
+         6QTeMuATxHEvsowCI8c4LadgG3GtM73IMzv78NcxLxUVrEzlhgLceuQQyP8KsqCd9yvn
+         4j1/PjXBgHhrReYmggIP5GF001wFOFqcDvUL0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iI6RXIMRQ3dFyUUWGMSzmCu2tl+r+Is4dIP9GbMdwN8=;
-        b=jPxV54NADAAj77Ig1O898bJ+Tt1nVEmXmb7slL44C4oyaV+KmJ4qgdQRLt5tIbwfnF
-         prtGl3zJuD/GDT0/2Ihc7KSPDFPiUEXFPnowXylBdN2hJiL9/Kr3eMNxHTPrhF+Ht1jq
-         J1SwqARLrK0LPJvufZvClpH1yNZVxw6y2H8EhkcSPwMr2TUkC6/ODZ03JOg8DfBjhhC5
-         PYICVjapSLlxFXhhrUcSsFMGPzHhFhq7bEz/NlEOmA+ozEn4zpq4yhnWcKF6kauQMc3V
-         8MA4/+9wizDbCLizTk7tua25zIeQZnZ/D2e5FlP5/hD8uxHScJ55VRWGApMo4bhKrcKQ
-         ydMA==
-X-Gm-Message-State: AGRZ1gJGK8oqbJOC+rwkSSB1wyvrd/SViISjitZB1kiczmDgK+VKXDRg
-        QnFRUFcSuForDgJTBSFUZib76yqPhmrazFn1wZI=
-X-Google-Smtp-Source: AJdET5er6qZnfWWHToyMY9Qvx5hJfD+suz8dr18xOeXVt7ZaAXUPTT55ysigU8uFSuM760uy8BluW7W5W6s0jxBm7HE=
-X-Received: by 2002:aca:c142:: with SMTP id r63mr1446243oif.98.1542729722126;
- Tue, 20 Nov 2018 08:02:02 -0800 (PST)
+        bh=OwbsCL5JXdLbbUc53sNOY7ajzSp0r0XJT9ZRI24D9TY=;
+        b=jMHaqy+lQE9Ilifii7HOQ99/eZxN1B8mEirirhqVDW0FD/csuldf3a9FrDZOPFINg9
+         WY6+I2Wivsa1EDWTIFh5OtYOzEjHT91ObxlVvEI7gbdEYA1Hzf0SDWa3CSCLzyKsCd/f
+         0gmUOCs1JP0veQvlIzy46w6VtfzIZs8WS5FF3MkU56f05Om4kuPwf1FA/SkItAFQ9xrN
+         t9kDe5utWsF8dW2KYHFfKI9LLum3y8xPN2Dc0iqvXWNPDVDqRlc/fvLbCYQmT31v6wz8
+         ZfflRZ46ZMs0b4iMw3B/aAb7ZhzMKZ6Naxk1aLn/LBXMr9lh/9RpiaYMkY9AMG2nqivJ
+         gbag==
+X-Gm-Message-State: AA+aEWapSgPhecgdNlKOaVV12FoW2yDPY7aCuI6o7aY05lyK58Bj1D5U
+        1IVmAhIXtyNiXlOj+xmQsd9mwFq3D+c=
+X-Google-Smtp-Source: AFSGD/XCipAEainJBimOoVxAVufwmLmF5O9AkSI419gbtHLNOsnLFUHnqOWI4oR09eIbQOdnCFFHjA==
+X-Received: by 2002:ab0:aa:: with SMTP id 39mr1131049uaj.120.1542729916338;
+        Tue, 20 Nov 2018 08:05:16 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id f88sm12079957vsa.7.2018.11.20.08.05.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 08:05:13 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id t8so834364uap.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:05:12 -0800 (PST)
+X-Received: by 2002:ab0:146b:: with SMTP id c40mr1120893uae.9.1542729911453;
+ Tue, 20 Nov 2018 08:05:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-2-jagan@amarulasolutions.com> <20181119082707.kbsw2gyntxxbh6no@flea>
- <CAMty3ZBDa2wjjCh8NtrbKNYz=mr1xhZKv9JfnmDPDBQRO+CkYw@mail.gmail.com>
- <20181120132357.xge6gkurjjjvwi2i@flea> <CAMty3ZDex+UQcZdp2nr3Bd=_PVZH-pAU=GBmLL6sdrfA-dZoVQ@mail.gmail.com>
- <20181120155826.j5rja22jnxpkmjrs@flea>
-In-Reply-To: <20181120155826.j5rja22jnxpkmjrs@flea>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Tue, 20 Nov 2018 08:01:36 -0800
-Message-ID: <CA+E=qVc8c4u6yMw0Gtq41_vbV-zy7B8CLV0WadFCqRfSR2LPgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] drm/sun4i: sun6i_mipi_dsi: Compute burst mode
- loop N1 instruction delay
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        maarten.lankhorst@linux.intel.com, sean@poorly.run,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        thierry.reding@gmail.com, Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>,
-        Michael Nazzareno Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
+References: <20181120002654.1891-1-dianders@chromium.org> <20181120002654.1891-7-dianders@chromium.org>
+ <20181120155458.GG3894@sirena.org.uk>
+In-Reply-To: <20181120155458.GG3894@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 20 Nov 2018 08:04:57 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
+Message-ID: <CAD=FV=UHiwjt2a8GFZKG3ZrRfjTgQDWD_mZu_qZP7Ve-HNTMYg@mail.gmail.com>
+Subject: Re: [PATCH 7/7] regulator: core: Remove loop disabling supplies in regulator_force_disable()
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, digetx@gmail.com,
+        ryandcase@chromium.org, David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 7:59 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Nov 20, 2018 at 07:06:30PM +0530, Jagan Teki wrote:
-> > On Tue, Nov 20, 2018 at 6:53 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Mon, Nov 19, 2018 at 04:28:29PM +0530, Jagan Teki wrote:
-> > > > On Mon, Nov 19, 2018 at 1:57 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Fri, Nov 16, 2018 at 10:09:05PM +0530, Jagan Teki wrote:
-> > > > > > Loop N1 instruction delay for burst mode lcd panel are
-> > > > > > computed as per BSP code.
-> > > > > >
-> > > > > > Reference code is available in BSP (from linux-sunxi
-> > > > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > > > > >
-> > > > > > dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=
-> > > > > > (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
-> > > > > > => (((mode->htotal - mode->hdisplay) * 150) /
-> > > > > >      ((mode->clock / 1000) * 8)) - 50;
-> > > > > >
-> > > > > > So use the similar computation for loop N1 delay.
-> > > > > >
-> > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > >
-> > > > > *why* are you doing this? What is it fixing? on which devices?
-> > > >
-> > > > You mentioned the separate function to compute the delay for all modes
-> > > > [1], ie what I did. did I missing anything?
-> > >
-> > > You're missing that you are never explaining why that patch is needed
-> > > in the first place. Or answering the question I asked a couple of
-> > > lines above.
-> >
-> > OK.
-> >
-> > The instruction delay varies between video and burst mode. for burst
-> > mode panels it is computed based on the panel clock along with
-> > horizontal sync+porch timings.
->
-> You're still stating a fact. What issue, that you experienced, are you
-> trying to solve here?
+Hi,
 
-IIRC that's what BSP driver does. Otherwise panels that use burst mode
-just don't work.
-
-> Maxime
+On Tue, Nov 20, 2018 at 7:55 AM Mark Brown <broonie@kernel.org> wrote:
 >
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+> On Mon, Nov 19, 2018 at 04:26:54PM -0800, Douglas Anderson wrote:
+> > In regulator_force_disable() there was a strange loop that looked like:
+> >
+> >   while (rdev->open_count--)
+> >     regulator_disable(rdev->supply);
+> >
+> > I'm not totally sure what the goal was for this loop, but it seems
+> > wrong to me.  If anything I think maybe we should have been looping
+> > over our use_count, but even that might be a little strange.  For now
+> > let's just remove the code and we can add something back in if someone
+> > can explain what's expected.
+>
+> This should be using use_count, what that loop is doing is dropping all
+> the enables that the regulator being force disabled had propagated up
+> all the enables it passed up the chain of supplies.
+
+OK, that makes much more sense then.  I can adjust it to do that.
+I'll wait to see what happens with the rest of the patches in this
+series and then post up a v2 of this one.  The number of disables
+needed depends on how many of the patches in my series you like.  ;-)
+
+In general it's hard for me to reason about how the system in general
+should behave after regulator_force_disable() is called.  Is it
+basically expected that the system will panic soon after?
+Specifically other consumers of the same regulator will think it's on
+but it won't actually be on.  What should happen if one of those other
+consumers calls disable/enable?  Should the regulator turn back on?
+...or is the regulator permanently off until the system reboots?
+
+-Doug
