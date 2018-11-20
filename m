@@ -2,153 +2,268 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4840DC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCFDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1848A20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:12:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1848A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 654482087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:13:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654482087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbeKTUlD (ORCPT
+        id S1728108AbeKTUmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:41:03 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:43827 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbeKTUlC (ORCPT
+        Tue, 20 Nov 2018 15:42:11 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:47326 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725983AbeKTUmK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:41:02 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gP31K-00031Z-2Q; Tue, 20 Nov 2018 11:12:38 +0100
-Message-ID: <1542708756.2508.11.camel@pengutronix.de>
-Subject: Re: [PATCH] thermal: imx: fix for dependency on cpu-freq
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "edubezval@gmail.com" <edubezval@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-Date:   Tue, 20 Nov 2018 11:12:36 +0100
-In-Reply-To: <93eff9f1-922f-f5c1-9a88-debacdd68168@linaro.org>
-References: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
-         <28d501b1-8016-cc1a-3f7c-ac485ab81aa2@linaro.org>
-         <DB3PR0402MB391662A8DA6A1F43F26F095BF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-         <e4cf8bad-9a4f-32e5-2f0e-be44257b5fe2@linaro.org>
-         <DB3PR0402MB391604AB207C160F09D3595EF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-         <93eff9f1-922f-f5c1-9a88-debacdd68168@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 20 Nov 2018 15:42:10 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAKA8vtr025041;
+        Tue, 20 Nov 2018 11:13:04 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nvg4w0291-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 20 Nov 2018 11:13:04 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 962633A;
+        Tue, 20 Nov 2018 10:13:03 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 69AD42671;
+        Tue, 20 Nov 2018 10:13:03 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE3.st.com (10.75.127.15)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 20 Nov 2018 11:13:02
+ +0100
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+To:     <jic23@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <alexandre.torgue@st.com>, <fabrice.gasnier@st.com>,
+        <linux-iio@vger.kernel.org>, <lars@metafoo.de>, <knaack.h@gmx.de>,
+        <pmeerw@pmeerw.net>, <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH 1/3] iio: adc: stm32-adc: move self-calibration to prepare routine
+Date:   Tue, 20 Nov 2018 11:12:30 +0100
+Message-ID: <1542708752-26163-2-git-send-email-fabrice.gasnier@st.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1542708752-26163-1-git-send-email-fabrice.gasnier@st.com>
+References: <1542708752-26163-1-git-send-email-fabrice.gasnier@st.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.44]
+X-ClientProxiedBy: SFHDAG1NODE3.st.com (10.75.127.3) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_04:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, den 20.11.2018, 10:29 +0100 schrieb Daniel Lezcano:
-> On 20/11/2018 09:58, Anson Huang wrote:
-> > Hi, Daniel
-> > 
-> > Best Regards!
-> > Anson Huang
-> > 
-> > > -----Original Message-----
-> > > From: Daniel Lezcano [mailto:daniel.lezcano@linaro.org]
-> > > Sent: 2018年11月20日 16:54
-> > > To: Anson Huang <anson.huang@nxp.com>; rui.zhang@intel.com;
-> > > edubezval@gmail.com; linux-pm@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org
-> > > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > > Subject: Re: [PATCH] thermal: imx: fix for dependency on cpu-freq
-> > > 
-> > > On 20/11/2018 09:47, Anson Huang wrote:
-> > > > Hi, Daniel
-> > > > 
-> > > > Best Regards!
-> > > > Anson Huang
-> > > > 
-> > > > > -----Original Message-----
-> > > > > From: Daniel Lezcano [mailto:daniel.lezcano@linaro.org]
-> > > > > Sent: 2018年11月20日 16:45
-> > > > > To: Anson Huang <anson.huang@nxp.com>; rui.zhang@intel.com;
-> > > > > edubezval@gmail.com; linux-pm@vger.kernel.org;
-> > > > > linux-kernel@vger.kernel.org
-> > > > > Cc: dl-linux-imx <linux-imx@nxp.com>
-> > > > > Subject: Re: [PATCH] thermal: imx: fix for dependency on cpu-
-> > > > > freq
-> > > > > 
-> > > > > On 24/10/2018 08:39, Anson Huang wrote:
-> > > > > > The thermal driver is a standalone driver for monitoring
-> > > > > > SoC
-> > > > > > temperature by enabling thermal sensor, so it can be
-> > > > > > enabled even
-> > > > > > when CONFIG_CPU_FREQ is NOT set. So remove the dependency
-> > > > > > with
-> > > > > 
-> > > > > CPU_THERMAL.
-> > > > > > 
-> > > > > > Add CONFIG_CPU_FREQ check for cpu-freq related operation in
-> > > > > > thermal
-> > > > > > driver to make thermal driver probe successfully when
-> > > > > > CONFIG_CPU_FREQ is NOT set.
-> > > > > > 
-> > > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > > > ---
-> > > > > 
-> > > > > Why not simply kill this legacy code ?
-> > > > 
-> > > > Because killing legacy code will have old dtb compatible issue,
-> > > > old
-> > > > dtb will NOT have cpufreq cooling function.
-> > > 
-> > > Yeah, I imagine that is the reason why you want to keep the
-> > > legacy code but do
-> > > you really care about old DTB based boards? Are they still
-> > > updated with newer
-> > > *upstream vanilla* kernels?
-> > 
-> > I am NOT sure if there is someone care about it, but I did receive
-> > many comments
-> > about old dtb compatible when I sent out other patches, so is it a
-> > solid requirement
-> > of old dtb compatible when doing upstream, or each sub-system or
-> > maintainer has
-> > different requirement about it? Actually I am happy to just remove
-> > the legacy
-> > code, because it makes the code more clean and easy reading. Who
-> > can make the
-> > decision?
-> 
-> Yes, making sure to not break the compatibility makes the patch
-> submission easier. However, sometime it makes sense to put in
-> question
-> if keeping old (and hackish) code really matters.
-> 
-> Old boards are rarely updated with newer kernels and when that
-> happens,
-> usually the DT is updated also.
-> 
-> IMO, this decision is in the hands of the platform maintainers. I
-> suggest to send a patch removing the legacy code Cc'ing all of them.
+Move self-calibration routine to prepare routine.
+- This is precursor patch to ease power management handling.
+- This also allow to factorize few error cases (error handling).
 
-On i.MX we usually try to keep DT compatibility as much as possible.
-There are cases where keeping the compatibility is just too much of a
-burden on maintenance, but IMHO this is not the case for the piece of
-code in question here.
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+---
+ drivers/iio/adc/stm32-adc.c | 59 ++++++++++++++++++---------------------------
+ 1 file changed, 24 insertions(+), 35 deletions(-)
 
-Regards,
-Lucas
+diff --git a/drivers/iio/adc/stm32-adc.c b/drivers/iio/adc/stm32-adc.c
+index 3784118..dca8733 100644
+--- a/drivers/iio/adc/stm32-adc.c
++++ b/drivers/iio/adc/stm32-adc.c
+@@ -199,11 +199,13 @@ struct stm32_adc_trig_info {
+  * @calfact_s: Calibration offset for single ended channels
+  * @calfact_d: Calibration offset in differential
+  * @lincalfact: Linearity calibration factor
++ * @calibrated: Indicates calibration status
+  */
+ struct stm32_adc_calib {
+ 	u32			calfact_s;
+ 	u32			calfact_d;
+ 	u32			lincalfact[STM32H7_LINCALFACT_NUM];
++	bool			calibrated;
+ };
+ 
+ /**
+@@ -251,7 +253,6 @@ struct stm32_adc_regspec {
+  * @trigs:		external trigger sources
+  * @clk_required:	clock is required
+  * @has_vregready:	vregready status flag presence
+- * @selfcalib:		optional routine for self-calibration
+  * @prepare:		optional prepare routine (power-up, enable)
+  * @start_conv:		routine to start conversions
+  * @stop_conv:		routine to stop conversions
+@@ -264,7 +265,6 @@ struct stm32_adc_cfg {
+ 	struct stm32_adc_trig_info	*trigs;
+ 	bool clk_required;
+ 	bool has_vregready;
+-	int (*selfcalib)(struct stm32_adc *);
+ 	int (*prepare)(struct stm32_adc *);
+ 	void (*start_conv)(struct stm32_adc *, bool dma);
+ 	void (*stop_conv)(struct stm32_adc *);
+@@ -777,6 +777,7 @@ static void stm32h7_adc_disable(struct stm32_adc *adc)
+ /**
+  * stm32h7_adc_read_selfcalib() - read calibration shadow regs, save result
+  * @adc: stm32 adc instance
++ * Note: Must be called once ADC is enabled, so LINCALRDYW[1..6] are writable
+  */
+ static int stm32h7_adc_read_selfcalib(struct stm32_adc *adc)
+ {
+@@ -784,11 +785,6 @@ static int stm32h7_adc_read_selfcalib(struct stm32_adc *adc)
+ 	int i, ret;
+ 	u32 lincalrdyw_mask, val;
+ 
+-	/* Enable adc so LINCALRDYW1..6 bits are writable */
+-	ret = stm32h7_adc_enable(adc);
+-	if (ret)
+-		return ret;
+-
+ 	/* Read linearity calibration */
+ 	lincalrdyw_mask = STM32H7_LINCALRDYW6;
+ 	for (i = STM32H7_LINCALFACT_NUM - 1; i >= 0; i--) {
+@@ -801,7 +797,7 @@ static int stm32h7_adc_read_selfcalib(struct stm32_adc *adc)
+ 						   100, STM32_ADC_TIMEOUT_US);
+ 		if (ret) {
+ 			dev_err(&indio_dev->dev, "Failed to read calfact\n");
+-			goto disable;
++			return ret;
+ 		}
+ 
+ 		val = stm32_adc_readl(adc, STM32H7_ADC_CALFACT2);
+@@ -817,11 +813,9 @@ static int stm32h7_adc_read_selfcalib(struct stm32_adc *adc)
+ 	adc->cal.calfact_s >>= STM32H7_CALFACT_S_SHIFT;
+ 	adc->cal.calfact_d = (val & STM32H7_CALFACT_D_MASK);
+ 	adc->cal.calfact_d >>= STM32H7_CALFACT_D_SHIFT;
++	adc->cal.calibrated = true;
+ 
+-disable:
+-	stm32h7_adc_disable(adc);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ /**
+@@ -898,9 +892,9 @@ static int stm32h7_adc_restore_selfcalib(struct stm32_adc *adc)
+ #define STM32H7_ADC_CALIB_TIMEOUT_US		100000
+ 
+ /**
+- * stm32h7_adc_selfcalib() - Procedure to calibrate ADC (from power down)
++ * stm32h7_adc_selfcalib() - Procedure to calibrate ADC
+  * @adc: stm32 adc instance
+- * Exit from power down, calibrate ADC, then return to power down.
++ * Note: Must be called once ADC is out of power down.
+  */
+ static int stm32h7_adc_selfcalib(struct stm32_adc *adc)
+ {
+@@ -908,9 +902,8 @@ static int stm32h7_adc_selfcalib(struct stm32_adc *adc)
+ 	int ret;
+ 	u32 val;
+ 
+-	ret = stm32h7_adc_exit_pwr_down(adc);
+-	if (ret)
+-		return ret;
++	if (adc->cal.calibrated)
++		return adc->cal.calibrated;
+ 
+ 	/*
+ 	 * Select calibration mode:
+@@ -927,7 +920,7 @@ static int stm32h7_adc_selfcalib(struct stm32_adc *adc)
+ 					   STM32H7_ADC_CALIB_TIMEOUT_US);
+ 	if (ret) {
+ 		dev_err(&indio_dev->dev, "calibration failed\n");
+-		goto pwr_dwn;
++		goto out;
+ 	}
+ 
+ 	/*
+@@ -944,18 +937,13 @@ static int stm32h7_adc_selfcalib(struct stm32_adc *adc)
+ 					   STM32H7_ADC_CALIB_TIMEOUT_US);
+ 	if (ret) {
+ 		dev_err(&indio_dev->dev, "calibration failed\n");
+-		goto pwr_dwn;
++		goto out;
+ 	}
+ 
++out:
+ 	stm32_adc_clr_bits(adc, STM32H7_ADC_CR,
+ 			   STM32H7_ADCALDIF | STM32H7_ADCALLIN);
+ 
+-	/* Read calibration result for future reference */
+-	ret = stm32h7_adc_read_selfcalib(adc);
+-
+-pwr_dwn:
+-	stm32h7_adc_enter_pwr_down(adc);
+-
+ 	return ret;
+ }
+ 
+@@ -972,19 +960,28 @@ static int stm32h7_adc_selfcalib(struct stm32_adc *adc)
+  */
+ static int stm32h7_adc_prepare(struct stm32_adc *adc)
+ {
+-	int ret;
++	int calib, ret;
+ 
+ 	ret = stm32h7_adc_exit_pwr_down(adc);
+ 	if (ret)
+ 		return ret;
+ 
++	ret = stm32h7_adc_selfcalib(adc);
++	if (ret < 0)
++		goto pwr_dwn;
++	calib = ret;
++
+ 	stm32_adc_writel(adc, STM32H7_ADC_DIFSEL, adc->difsel);
+ 
+ 	ret = stm32h7_adc_enable(adc);
+ 	if (ret)
+ 		goto pwr_dwn;
+ 
+-	ret = stm32h7_adc_restore_selfcalib(adc);
++	/* Either restore or read calibration result for future reference */
++	if (calib)
++		ret = stm32h7_adc_restore_selfcalib(adc);
++	else
++		ret = stm32h7_adc_read_selfcalib(adc);
+ 	if (ret)
+ 		goto disable;
+ 
+@@ -1880,12 +1877,6 @@ static int stm32_adc_probe(struct platform_device *pdev)
+ 		goto err_clk_disable;
+ 	stm32_adc_set_res(adc);
+ 
+-	if (adc->cfg->selfcalib) {
+-		ret = adc->cfg->selfcalib(adc);
+-		if (ret)
+-			goto err_clk_disable;
+-	}
+-
+ 	ret = stm32_adc_chan_of_init(indio_dev);
+ 	if (ret < 0)
+ 		goto err_clk_disable;
+@@ -1961,7 +1952,6 @@ static int stm32_adc_remove(struct platform_device *pdev)
+ 	.regs = &stm32h7_adc_regspec,
+ 	.adc_info = &stm32h7_adc_info,
+ 	.trigs = stm32h7_adc_trigs,
+-	.selfcalib = stm32h7_adc_selfcalib,
+ 	.start_conv = stm32h7_adc_start_conv,
+ 	.stop_conv = stm32h7_adc_stop_conv,
+ 	.prepare = stm32h7_adc_prepare,
+@@ -1974,7 +1964,6 @@ static int stm32_adc_remove(struct platform_device *pdev)
+ 	.adc_info = &stm32h7_adc_info,
+ 	.trigs = stm32h7_adc_trigs,
+ 	.has_vregready = true,
+-	.selfcalib = stm32h7_adc_selfcalib,
+ 	.start_conv = stm32h7_adc_start_conv,
+ 	.stop_conv = stm32h7_adc_stop_conv,
+ 	.prepare = stm32h7_adc_prepare,
+-- 
+1.9.1
 
