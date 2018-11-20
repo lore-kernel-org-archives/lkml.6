@@ -2,158 +2,138 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE46C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F93C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B68C920671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tPeGMswc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B68C920671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BE79214C4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE79214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=public-files.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbeKTVEk (ORCPT
+        id S1728654AbeKTVEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:04:40 -0500
-Received: from mail-eopbgr60060.outbound.protection.outlook.com ([40.107.6.60]:51693
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728119AbeKTVEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:04:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7bOvrTgZcxR1pGK0UVBSa7wpeUa1MpQm9DcGBmINqPc=;
- b=tPeGMswcfmqIjQ90bEGrqt1Ok2sVOsRIGCdg71+YwXO2eFS1IL1I0nz5vrSakmcu2MKCy/zLW5yU8SWOc0+sM6Wnm7hVrHD+lBYq9035NjM9TvPhVpxDSKBBs1ot0MM89XOWn56CmWjolovdejj87zLj0+G9Vh9VkoMlgbjywPQ=
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
- HE1PR0401MB1884.eurprd04.prod.outlook.com (10.166.122.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Tue, 20 Nov 2018 10:35:28 +0000
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 10:35:28 +0000
-From:   "M.h. Lian" <minghuan.lian@nxp.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: RE: [PATCHv2 07/25] PCI: mobiveil: use WIN_NUM_0 explicitly for CFG
- outbound window
-Thread-Topic: [PATCHv2 07/25] PCI: mobiveil: use WIN_NUM_0 explicitly for CFG
- outbound window
-Thread-Index: AQHUgLMYVvtpvt2HK0G434t0xXdQBKVYeBJQ
-Date:   Tue, 20 Nov 2018 10:35:27 +0000
-Message-ID: <HE1PR0401MB223579F27C305AD96ABC4202E8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
-References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
- <20181120092615.11680-8-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181120092615.11680-8-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=minghuan.lian@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB1884;6:Y59aPeX3pqATfG+MKQVk9EpNqinndwJSdkBTb4n3+RGPHKVwh08T65N8F3vtAlymzsZW81BrEKIV3gfmP/ME04F7FtU4LZKBx+6eaAE7uE/oFplDbRIIbbRSncUwRbOaMCh+Sx5bYAYfYCToHaVG3t3UsAXDbxijaWunqkNiQlXYYluznuIJFfQwe9WKDLxj0xMv3DH9452dBTof3Z/803gUgtLHkdwKYvqi9UHRRw/kkag5/1aCbVJn37ZbfHYBJfusVr/26O3Qi36cLfgyrwCs5c19mc91K0NWSTl3RSuzeTYH0MD2QZRXvV6jI9ZL9C6vjbfyOj/iUpaObt84BwidaXRSRCVcuXx3joHoyM+HXMKWpl9qyNCL5IjYJO0CDWAgiAPba1OFnL2UNYyIh+FcDULEkI7lBM7JG3UdWqBtut6EorqL+OjvwUGXR29l76RGy2ODuTE2lk0Is+ANcfIttGQ/lbrAkVM1EMg7V2Q=;5:5i0T2j5mP39mPciZ8tyQ502RFQRj4pDQiCSY8GvFkVvy7hHNwH7+QduQLbcbTBh1WOYhiZHEYoiPKhGZgXMkQctfqMQr36Y2ouOZLTSG929Hp+5z2Hrx7HlYdJFQHOiiyYWR9bvPJmTMZqEu5bSBlqmGu4vg0NktAcjXiF79R+g=;7:fL9Lnf0LZR4IWVeHjUmDIQTNGY3ix7YiqC9lBtK8grXU9gi+xC9lFkSI7OhcmSCo5CM9xdIGN1fXwRBX8N47iL/BwakFM104PuY4RLvdKrDqG6jshRMM8wpfDjJxYSX+uuM7sKxX4EWcUjwaXMpH/w==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a8ae165c-a4e5-4162-abba-08d64ed3e382
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB1884;
-x-ms-traffictypediagnostic: HE1PR0401MB1884:
-x-microsoft-antispam-prvs: <HE1PR0401MB1884DA40C4D7089B5E97B0F8E8D90@HE1PR0401MB1884.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB1884;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB1884;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(136003)(366004)(396003)(189003)(199004)(13464003)(26005)(6116002)(3846002)(102836004)(14454004)(66066001)(53936002)(186003)(6246003)(106356001)(8936002)(81156014)(81166006)(316002)(54906003)(478600001)(6506007)(4326008)(76176011)(8676002)(53546011)(33656002)(99286004)(68736007)(7696005)(25786009)(229853002)(2900100001)(7416002)(97736004)(110136005)(74316002)(256004)(7736002)(2201001)(71200400001)(305945005)(105586002)(71190400001)(5660300001)(11346002)(476003)(446003)(486006)(86362001)(2501003)(2906002)(55016002)(6436002)(9686003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB1884;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: zTlvzralXgtxDHKFisg3Qm0GHkMEpfe4EEP5KDCBe4J698+AMyXhNNkTFd6YHcUxOKbnOCY6FGg0+9zCcAjoudH3NGjImJpRwqQhEkoXKPNBKS8qfivOix8ph2BnPNoH4KNI1TT+dXT1cdQJFFyuGOxM/ph8Oh1RvnHw783iNeUjrcRIU1eE9HP5/G1+IoJT/iiKwzt+Ba2GCLHc9XFgbcO6wHLZWFmfWMJZC2rugB2nn4vSc/YZC4P94RY1pDsWWiaCvp4rVGz93RCqfjgoHTgIX5vjWQzAbm+LrKDc346Y43RjxaWdenlL31WPe51fsQfXT0l+i4CrWuUrN8ArX9nxF0pBNDh3bTHTQ2M4xIU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 16:04:50 -0500
+Received: from mout.gmx.net ([212.227.15.15]:57629 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728119AbeKTVEt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:04:49 -0500
+Received: from [91.14.85.22] ([91.14.85.22]) by web-mail.gmx.net
+ (3c-app-gmx-bs39.server.lan [172.19.170.91]) (via HTTP); Tue, 20 Nov 2018
+ 11:34:14 +0100
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8ae165c-a4e5-4162-abba-08d64ed3e382
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:35:27.9686
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB1884
+Message-ID: <trinity-cbebb6c8-0084-49a7-b07a-8ea3dbd13e6e-1542710054258@3c-app-gmx-bs39>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Matthias Brugger" <matthias.bgg@gmail.com>
+Cc:     "CK Hu" <ck.hu@mediatek.com>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, sean.wang@kernel.org,
+        "Matthias Brugger" <mbrugger@suse.com>, airlied@linux.ie,
+        mturquette@baylibre.com, sean.wang@mediatek.com,
+        sboyd@codeaurora.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, wens@csie.org, robh+dt@kernel.org,
+        rdunlap@infradead.org, laurent.pinchart@ideasonboard.com,
+        p.zabel@pengutronix.de, matthias.bgg@kernel.org,
+        ulrich.hecht+renesas@gmail.com, linux-mediatek@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Aw: Re:  Re: [PATCH v5 05/12] drm: mediatek
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 20 Nov 2018 11:34:14 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <1192d203-fcd1-47b0-00bc-9d513e5ffc3e@gmail.com>
+References: <20181116125449.23581-1-matthias.bgg@kernel.org>
+ <20181116125449.23581-6-matthias.bgg@kernel.org>
+ <1542605939.32082.12.camel@mtksdaap41>
+ <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
+ <1542686700.9073.15.camel@mtksdaap41> <1542686982.26483.1.camel@mtksdaap41>
+ <trinity-8f0fde8e-5ef3-4272-b009-49e180c934eb-1542702383860@3c-app-gmx-bs39>
+ <1192d203-fcd1-47b0-00bc-9d513e5ffc3e@gmail.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:Cg3WJSTFzZ8O319bq3fGOQrXK3/sEoILitbD6OZfkSSBFOP9aa4jubHZTYlbzujgEHJ1D
+ nRp8KWp07akmJ1NgMu03bZQoQ43IJeXkgRVJrRDgyW7PqhD0Vr5vywDmh82sToRYZD3w/hUXsyfo
+ FYEtZQ9EPFV3QbzWEoQ2tht5eHhRNrIR1/UK7oYqyk/fryfAI6f+QLuxT2/YCUL+P8zhEnhcf7MP
+ hpi4sW7jNTE/IMh92gjumfuyo9jgJJbeWjWSaFgSmrdHKa15qC7DRs/Y63nNi4PorDbl34YZB4lo
+ MY=
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2omWjh1OKRM=:4fKr1EztsEI/2ZyncKnTb9
+ pEOeGlXMhoGzGv3iiJtM6kaWxINeCRq3R3jCDaN4Z+81qtDNBjZo5wfwFHmRblRtorh8ld2Z8
+ hKbXxNAs1O1L3gpHQCeRdT0DafO9TMPUm7vfNP1UZRo2uATlz2nNNZHVZfAvUYDyhJ6U4bBwT
+ kk+cqgjVJYcyzqAK1fV+JScnVlY4+sQJU7CoR7wK+47N613pJeB49/9gDOfwaetUF8CSLBJoa
+ pxdmz0Gr54uczhgoTlgczCMsk9VlnMd769iokvbyF4taFLDvm4HHYk/RWiICNBJFbqRwRWU0q
+ AXh6S1P+1ewDngf56gMOUdsWFV4Tm0fiMHSGyNOQ1uE+QWUd6B7w6RrgByRn8yskgr7do67NP
+ LCwOgkH2HqmFlxLPjhettgKF62MU8MwQp7kJmP0RldccgaE3kw+I9+Si1/H5eZdCUL/MXS1rP
+ 1ekUoAiI6BmaxqUWVqG/0B8TP+VjAiVNnA+96sS02y+fhbAz/qCghjEjcLUKx9zWb0Ae1eYNF
+ KRox/SIHdagtSejZIgYvQQxjvoDTakbKwLjmXiz810V2m2wF1IIRA/3PGQqbKHUMdmdpy1VDT
+ aXJs5it02J1lY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+right this branch based on rc1 with some other commits, but v5-patches are applied on Oct 3rd (listed in Oct 5th)
 
-> -----Original Message-----
-> From: Z.q. Hou
-> Sent: Tuesday, November 20, 2018 5:26 PM
-> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
-> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
-> catalin.marinas@arm.com; will.deacon@arm.com
-> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
-> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
-> <zhiqiang.hou@nxp.com>
-> Subject: [PATCHv2 07/25] PCI: mobiveil: use WIN_NUM_0 explicitly for CFG
-> outbound window
->=20
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->=20
-> As the .map_bus() use the WIN_NUM_0 for CFG transactions, it's better
-> passing WIN_NUM_0 explicitly when initialize the CFG outbound window.
->=20
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V2:
->  - no change
->=20
->  drivers/pci/controller/pcie-mobiveil.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c
-> b/drivers/pci/controller/pcie-mobiveil.c
-> index b2cc9c097fc9..df71c11b4810 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -612,9 +612,8 @@ static int mobiveil_host_init(struct mobiveil_pcie
-> *pcie)
->  	 */
->=20
->  	/* config outbound translation window */
-> -	program_ob_windows(pcie, pcie->ob_wins_configured,
-> -			   pcie->ob_io_res->start, 0, CFG_WINDOW_TYPE,
-> -			   resource_size(pcie->ob_io_res));
-> +	program_ob_windows(pcie, WIN_NUM_0, pcie->ob_io_res->start, 0,
-> +			   CFG_WINDOW_TYPE, resource_size(pcie-
-> >ob_io_res));
->=20
->  	/* memory inbound translation window */
->  	program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE,
-> IB_WIN_SIZE);
-> --
-> 2.17.1
+frank@frank-N56VZ:/media/data_ext/bpi-r2-kernel/github
+[11:29:10]$ git checkout 4.19-hdmiv5
+Already on '4.19-hdmiv5'
+Your branch is up to date with 'origin/4.19-hdmiv5'.
+frank@frank-N56VZ:/media/data_ext/bpi-r2-kernel/github
+[11:29:13]$ make kernelversion
+4.19.0-rc1
+frank@frank-N56VZ:/media/data_ext/bpi-r2-kernel/github
+[11:29:19]$ git log --oneline
+...
+fc14b8c515de drm/mediatek: add a error return value when clock driver has been prepared
+0dc856306aaf drm/mediatek: implement connection from BLS to DPI0
+3d0a6749bfe3 drm/mediatek: add hdmi driver for MT2701 and MT7623
+b03e1b353b28 drm/mediatek: add support for SPDIF audio in HDMI
+c5564966272e drm/mediatek: separate hdmi phy to different file
+dee3954828db drm/mediatek: add dpi driver for mt2701 and mt7623
+a838ae8b415c drm/mediatek: convert dpi driver to use drm_of_find_panel_or_bridge
+f7f9f7c080ae drm/mediatek: add clock factor for different IC
+be1a5447330f drm/mediatek: adjust EDGE to match clock and data
+fec4504ea318 drm/mediatek: move hardware register to node data
+db992e429b9c drm/mediatek: add refcount for DPI power on/off
+...
 
+compared with 4.19.0-release there is merge https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/gpu/drm/mediatek?id=53b3b6bbfde6aae8d1ededc86ad4e0e1e00eb5f8 which seems to break v5-patches
+
+> Gesendet: Dienstag, 20. November 2018 um 11:14 Uhr
+> Von: "Matthias Brugger" <matthias.bgg@gmail.com>
+> An: "Frank Wunderlich" <frank-w@public-files.de>, "CK Hu" <ck.hu@mediatek.com>
+> Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, sean.wang@kernel.org, "Matthias Brugger" <mbrugger@suse.com>, airlied@linux.ie, mturquette@baylibre.com, sean.wang@mediatek.com, sboyd@codeaurora.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, wens@csie.org, robh+dt@kernel.org, rdunlap@infradead.org, laurent.pinchart@ideasonboard.com, p.zabel@pengutronix.de, matthias.bgg@kernel.org, ulrich.hecht+renesas@gmail.com, linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+> Betreff: Re: Aw: Re: [PATCH v5 05/12] drm: mediatek
+>
+> 
+> 
+> On 20/11/2018 09:26, Frank Wunderlich wrote:
+> > Hi,
+> > 
+> > i got v5-patches working on bpi-r2 (mt7623) with a Patch from Ryder.lee and 2 from Bibby Hsieh on 4.19-rc1
+> > 
+> > https://github.com/frank-w/BPI-R2-4.14/commits/4.19-hdmiv5
+> > 
+> 
+> I don't see the patches applied to this tree. Apart from that this tree has a
+> lot of other patches applied. It differs greatly from mainline, so nothing we
+> should discuss on this mailinglist.
+> 
+> Regards,
+> Matthias
+> 
+> > but after i tried to include them on 4.19.2, i got a strange behaviour (stretched and pink font instead of white/grey)
+> > 
+> > see here for detailed info:
+> > 
+> > http://forum.banana-pi.org/t/kernel-4-19-rc1-for-testers/6618/75
+> > 
+> > there are some patches between rc1 and final which i tried to revert, but no luck till now (cannot revert, no effect on the issue or no output). Had informed Bibby Hsieh...
+> > 
+> > is there any idea, why this happen?
+> > 
+> > regards Frank
+> > 
+> 
