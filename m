@@ -2,140 +2,99 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E4FEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF51C04EBB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2186120851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2186120851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 288BE20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBAcMslt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288BE20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbeKTU0J (ORCPT
+        id S1728146AbeKTU0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:26:09 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46001 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbeKTU0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:26:09 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7C4D22808A7E0;
-        Tue, 20 Nov 2018 17:57:49 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
- 17:57:42 +0800
-Subject: Re: [PATCH] iommu/dma: Use NUMA aware memory allocations in
- __iommu_dma_alloc_pages()
-To:     <joro@8bytes.org>
-References: <1541699709-25474-1-git-send-email-john.garry@huawei.com>
-CC:     <hch@lst.de>, <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
-        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linuxarm@huawei.com>, <will.deacon@arm.com>,
-        <ganapatrao.kulkarni@cavium.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <1e2b8689-dc1f-3ede-4eeb-4a91d3a3f63f@huawei.com>
-Date:   Tue, 20 Nov 2018 09:57:36 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 20 Nov 2018 15:26:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbeKTU0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:26:10 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E565206BB;
+        Tue, 20 Nov 2018 09:57:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542707873;
+        bh=BIbBG4YYTTgzDEuYGUlCPq+arJLPQqjQ8FJkj+0eh8U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NBAcMsltBMmIK2D4sHBUMErTrP6Wnd9805Gd8SXvZxNYMUTZQDR7pRqhkly+sz1JG
+         zYHMalSHfDvbSK5Q9BnoLBLKfensGPZjHckk1KZeaUftcMPQp770iEMP3ISY2u+fqD
+         S4ScuJis9hh5jFm95+mPT5PffCsNiKaYj7oOL8bM=
+Date:   Tue, 20 Nov 2018 10:57:51 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        dave.stevenson@raspberrypi.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 00/16] staging: vchiq: dead code removal & misc fixes
+Message-ID: <20181120095751.GB17738@kroah.com>
+References: <20181114125942.25163-1-nsaenzjulienne@suse.de>
+ <1128999886.40745.1542556549581@email.ionos.de>
 MIME-Version: 1.0
-In-Reply-To: <1541699709-25474-1-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1128999886.40745.1542556549581@email.ionos.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/11/2018 17:55, John Garry wrote:
-> Change function __iommu_dma_alloc_pages() to allocate memory/pages
-> for DMA from respective device NUMA node.
->
+On Sun, Nov 18, 2018 at 04:55:49PM +0100, Stefan Wahren wrote:
+> Hi Nicolas,
+> 
+> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 14. November 2018 um 13:59 geschrieben:
+> > 
+> > 
+> > Hi All,
+> > 
+> > This series was written in parallel with reading and understanding the
+> > vchiq code. So excuse me for the lack of logic in the sequence of
+> > patches.
+> > 
+> > The main focus was to delete as much code as possible, I've counted
+> > around 550 lines, which is not bad. Apart from that there are some
+> > patches enforcing proper kernel APIs usage.
+> > 
+> > The only patch that really changes code is the
+> > vchiq_ioc_copy_element_data() rewrite.
+> > 
+> > The last commit updates the TODO list with some of my observations, I
+> > realise some of the might be a little opinionated. If anything it's
+> > going to force a discussion on the topic, which is nice.
+> > 
+> > It was developed on top of the latest linux-next, and was tested on a
+> > RPIv3B+ with audio, video and running vchiq_test.
+> > 
+> > Regards,
+> > Nicolas
+> > 
+> 
+> without a changelog i won't start a review.
 
-Ping.... a friendly reminder on this patch.
+What do you mean by this?  The individual patches have a "changelog" in
+them, this is just a summary of the overall changes.
 
-Thanks
+What do you feel is missing here?
 
-> Originally-from: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->
-> This patch was originally posted by Ganapatrao in [1] *.
->
-> However, after initial review, it was never reposted (due to lack of
-> cycles, I think). In addition, the functionality in its sibling patches
-> were merged through patches, as mentioned in [2]; this also refers to a
-> discussion on device local allocations vs CPU local allocations for DMA
-> pool, and which is better [3].
->
-> However, as mentioned in [3], dma_alloc_coherent() uses the locality
-> information from the device - as in direct DMA - so this patch is just
-> applying this same policy.
->
-> [1] https://lore.kernel.org/patchwork/patch/833004/
-> [2] https://lkml.org/lkml/2018/8/22/391
-> [3] https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1692998.html
->
-> * Authorship on this updated patch may need to be fixed - I add not want to
->   add Ganapatrao's SOB without permission.
->
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index d1b0475..ada00bc 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -449,20 +449,17 @@ static void __iommu_dma_free_pages(struct page **pages, int count)
->  	kvfree(pages);
->  }
->
-> -static struct page **__iommu_dma_alloc_pages(unsigned int count,
-> -		unsigned long order_mask, gfp_t gfp)
-> +static struct page **__iommu_dma_alloc_pages(struct device *dev,
-> +		unsigned int count, unsigned long order_mask, gfp_t gfp)
->  {
->  	struct page **pages;
-> -	unsigned int i = 0, array_size = count * sizeof(*pages);
-> +	unsigned int i = 0, nid = dev_to_node(dev);
->
->  	order_mask &= (2U << MAX_ORDER) - 1;
->  	if (!order_mask)
->  		return NULL;
->
-> -	if (array_size <= PAGE_SIZE)
-> -		pages = kzalloc(array_size, GFP_KERNEL);
-> -	else
-> -		pages = vzalloc(array_size);
-> +	pages = kvzalloc_node(count * sizeof(*pages), GFP_KERNEL, nid);
->  	if (!pages)
->  		return NULL;
->
-> @@ -483,8 +480,10 @@ static struct page **__iommu_dma_alloc_pages(unsigned int count,
->  			unsigned int order = __fls(order_mask);
->
->  			order_size = 1U << order;
-> -			page = alloc_pages((order_mask - order_size) ?
-> -					   gfp | __GFP_NORETRY : gfp, order);
-> +			page = alloc_pages_node(nid,
-> +						(order_mask - order_size) ?
-> +						gfp | __GFP_NORETRY : gfp,
-> +						order);
->  			if (!page)
->  				continue;
->  			if (!order)
-> @@ -569,7 +568,8 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
->  		alloc_sizes = min_size;
->
->  	count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	pages = __iommu_dma_alloc_pages(count, alloc_sizes >> PAGE_SHIFT, gfp);
-> +	pages = __iommu_dma_alloc_pages(dev, count, alloc_sizes >> PAGE_SHIFT,
-> +					gfp);
->  	if (!pages)
->  		return NULL;
->
->
+thanks,
 
-
+greg k-h
