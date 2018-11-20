@@ -2,140 +2,160 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C534C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:59:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71806C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:59:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CCF20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDA1C20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:58:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="FCRGR28B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89CCF20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QmAWin4t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDA1C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbeKTTZ5 (ORCPT
+        id S1727217AbeKTT0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:25:57 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43292 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKTTZ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:25:56 -0500
-Received: by mail-pl1-f195.google.com with SMTP id gn14so667683plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:57:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F7Cn+yUvzsMmUvVW2tGPJbwi30GarRxxp9NTez4ElnE=;
-        b=FCRGR28BVgmQMqrhQmTmco3qkHx0HLOkLMeY4jJ7GNhRBqIr1bUhqx6WwOcM+c4G7L
-         wUGWu9hnYscNtD3jvLPW362OOpUgRws470O+3AD+17eRJgcctPnxkoXkY1qoALiH8t34
-         uqeTf7lMrRPfXjBuxsshlFrabXEowbeasdsdP3v0Lcsd5X1AaoBKAOSHKnoNmA9bHX/P
-         C676AjWaNdKhYhU7b7e5Mk0R8n15ilOAdbDuVvtEPprbu1YPPqbuV2V4njR0AP3N1jCn
-         lyaTyu1qbT0CfBYaFmUqwnFmpW+WP9cUCLbfOh/9bY7GVdr6c2zKuO4M4tu2w4Sk1w6Z
-         TIkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F7Cn+yUvzsMmUvVW2tGPJbwi30GarRxxp9NTez4ElnE=;
-        b=gIca4hMetOpDfDoo9BYZ2IvofVT5xee7bmrDgTLnu3FDC0ZXhTuaXKYDDFdOr1Bxe7
-         dPZubMUnq5dXwfBDzQqk2/3T88H6oOwSr4Z2tNtbGkCL1GO80Hxfq66UByj5+9hGi+jO
-         KUlMIXY5iRKYJqsWe3CiYQJIJ79kF1p0iBL5rcia0IupWexhr05G00gXc+ps437KVaZy
-         wlKh1rgC/lLJL2Yy07Eeqpo+AdcG826u9V8IWOCjODjLIQ4pSqdWLERRMc1XDyZJlOQy
-         sEXkP37euj1fitGkpH4xHqn1cNHxhcBrnOBCl3k2lr4Vr57LYt1c2UcYQ34RzkXS6uVz
-         PJ1w==
-X-Gm-Message-State: AA+aEWalRG3pne47RVrThwNE7zMMw9y7saKijErB5vkfMp0duEHOs1D1
-        6ZDzpZoQLok2XTpE3cuxHH0NTQ==
-X-Google-Smtp-Source: AFSGD/VBwZUZtrr1hWd8NEfSMCin8gpjiFRhGd4A4yC10Q7u14muiVtuOYOsgKUrNtRX/SW4clcIEw==
-X-Received: by 2002:a17:902:780a:: with SMTP id p10mr1401841pll.54.1542704274412;
-        Tue, 20 Nov 2018 00:57:54 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
-        by smtp.gmail.com with ESMTPSA id g2sm1344822pfi.95.2018.11.20.00.57.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 00:57:53 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 73D46302653; Tue, 20 Nov 2018 11:57:49 +0300 (+03)
-Date:   Tue, 20 Nov 2018 11:57:49 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org, LKP <lkp@01.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [LKP] dd2283f260 [ 97.263072]
- WARNING:at_kernel/locking/lockdep.c:#lock_downgrade
-Message-ID: <20181120085749.lj7dzk52633oq42s@kshutemo-mobl1>
-References: <20181115055443.GF18977@shao2-debian>
- <d9371abc-60f6-ce37-529f-d097464a1412@linux.alibaba.com>
+        Tue, 20 Nov 2018 14:26:46 -0500
+Received: from mail-eopbgr130048.outbound.protection.outlook.com ([40.107.13.48]:25010
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725887AbeKTT0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:26:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AdGA9XOO0xNqyO+ScxKn/jIbTgqEgUSSLK2l32wklOg=;
+ b=QmAWin4tE4/41geHZht7l8A/mk1BNTNHr1Lv6zF+CYLCc+jsR+I0nWYeDzAIGRSecHY9sYNDVpsKPWWqdseyOkTo8Pu4cBgD7wX8XXf9W9Gp7vdM4EmwJZ98cRqTfdJpmdFlsqznQvxzDCw87qBjIQi5/3P4Jg6FpEj77Z2Gp4E=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3932.eurprd04.prod.outlook.com (52.134.72.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.28; Tue, 20 Nov 2018 08:58:39 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b%2]) with mapi id 15.20.1294.048; Tue, 20 Nov 2018
+ 08:58:39 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Topic: [PATCH] thermal: imx: fix for dependency on cpu-freq
+Thread-Index: AQHUa2Ref+fMFTxEzkOrPUZd06/1XqVYg7oAgAAAdNCAAAJUgIAAAGJw
+Date:   Tue, 20 Nov 2018 08:58:39 +0000
+Message-ID: <DB3PR0402MB391604AB207C160F09D3595EF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1540362909-32481-1-git-send-email-Anson.Huang@nxp.com>
+ <28d501b1-8016-cc1a-3f7c-ac485ab81aa2@linaro.org>
+ <DB3PR0402MB391662A8DA6A1F43F26F095BF5D90@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <e4cf8bad-9a4f-32e5-2f0e-be44257b5fe2@linaro.org>
+In-Reply-To: <e4cf8bad-9a4f-32e5-2f0e-be44257b5fe2@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3932;6:wLJgbRn6wt0AhqfxyEE2ei3ioASk7OCJdwG081py/Wk91CtGh4jMKHRHFpOMnJFaQIfEwJhCtCzPFD8iIbN2NTCpQ1pIX066dQiBWzVjoYzpxsSeiA0jXYJ/f+3Gae9pcuOWXQQdk/n47PBUNWAnkVHZfVaS7rxQERImxbI3FHJGa6Ui5fARxtlFjvZSS9uxAwYEtVZJyaS0F/lTFfJnIqkuAclGPLl8k8vFlEyMz1Mur+F05pH9tvvKGOgO/ZsZLz6HuE6qBkG3bqPL8c7Q1fFFHhlHyhQJbJzuoCHrDteDHduokSe6WXgdTSlKTlxSWZ3c50kQ9a9flSWTaBFTunsA9XxKVjxZAf4fi63DFeI2qNUUREAQdNYmmFuW/zuLcAliKrbg0Wud3D7BSk3wQebutHByb9Cnphd04U4xACqEwplCFs/Cu6OOKNYQAOd/c2Xb+DRwGlEj33vnzk6GVg==;5:eKF1s2uXeXkM+bRpHiXZbb5rzBXFGXbX5DRyPgbTtuFerUkx2z7l1ElCTHWdQRjob4LgkGHcihZyhbVkNgr9m5FmB7qbZ/AaJ4VFupYMTHAHaWiIl+rOvt9oMsbZOtqIvrf+dd/iLIwR57qecqSUiU6TWtaO/MiV9DjUc2peaH0=;7:qhp5Y1vE8An2kzOkUXghINFQEmYt4Vuux9zF36810EwH8PD29eLYDsc3dNUaPPeof6R8DIj7gLIZ1OiwFuRw1vKpX8RdnqzhDtgrtUchinWLhb2pBNBY2crbGWAsUldkABJqjHyzpTDGXi94azx7NQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 9e504140-9b85-49e0-df87-08d64ec65d74
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3932;
+x-ms-traffictypediagnostic: DB3PR0402MB3932:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-microsoft-antispam-prvs: <DB3PR0402MB3932B6C99AA27E97BBB262CDF5D90@DB3PR0402MB3932.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3932;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3932;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(346002)(136003)(366004)(396003)(189003)(199004)(13464003)(7736002)(5660300001)(74316002)(305945005)(2900100001)(106356001)(105586002)(81166006)(110136005)(55016002)(33656002)(2201001)(86362001)(9686003)(81156014)(53936002)(6306002)(39060400002)(575784001)(229853002)(8676002)(68736007)(8936002)(6436002)(6246003)(4326008)(2501003)(97736004)(2906002)(71200400001)(71190400001)(93886005)(14454004)(76176011)(6506007)(53546011)(478600001)(26005)(3846002)(102836004)(186003)(316002)(99286004)(44832011)(11346002)(256004)(446003)(476003)(486006)(25786009)(7696005)(6116002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3932;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: DDXi5EROt23IyGTnJxFn0XfAfP4pY/MTNFxV+t7wRcff9vZcjirAs0yNZURIR75xJvF+Dl8gbwhatXK7oi7vfu4DFtGi7/KWeb4Su5Qakmsg2j+e3g/XlM/XJ14W8oyMihD3th5gxecoK3TAqsWtYsuxft+yeni3vdzGL+VcjwnCDDj+1NGS59hFVG4AVCZKp6txxGJqHc5XyZv5A+HCy38dQ25cTVKiniy9jsq/0xlpA21CyR5TR7mgg8QwYP+2arhAAwo2kfAO25CDlir5NwAYWUFmhh1yQncIOs4jBBw7gMP2M08Yy8mdChF1v1NW8a0r0VyU77cC0zVby0rauZ7igeMxTspeKtHvbix1gdw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d9371abc-60f6-ce37-529f-d097464a1412@linux.alibaba.com>
-User-Agent: NeoMutt/20180716
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e504140-9b85-49e0-df87-08d64ec65d74
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 08:58:39.6834
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3932
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 08:56:04AM -0800, Yang Shi wrote:
-> 
-> > a8dda165ec  vfree: add debug might_sleep()
-> > dd2283f260  mm: mmap: zap pages with read mmap_sem in munmap
-> > 5929a1f0ff  Merge tag 'riscv-for-linus-4.20-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux
-> > 0bc80e3cb0  Add linux-next specific files for 20181114
-> > +-----------------------------------------------------+------------+------------+------------+---------------+
-> > |                                                     | a8dda165ec | dd2283f260 | 5929a1f0ff | next-20181114 |
-> > +-----------------------------------------------------+------------+------------+------------+---------------+
-> > | boot_successes                                      | 314        | 178        | 190        | 168           |
-> > | boot_failures                                       | 393        | 27         | 21         | 40            |
-> > | WARNING:held_lock_freed                             | 383        | 23         | 17         | 39            |
-> > | is_freeing_memory#-#,with_a_lock_still_held_there   | 383        | 23         | 17         | 39            |
-> > | BUG:unable_to_handle_kernel                         | 5          | 2          | 4          | 1             |
-> > | Oops:#[##]                                          | 9          | 3          | 4          | 1             |
-> > | EIP:debug_check_no_locks_freed                      | 9          | 3          | 4          | 1             |
-> > | Kernel_panic-not_syncing:Fatal_exception            | 9          | 3          | 4          | 1             |
-> > | Mem-Info                                            | 4          | 1          |            |               |
-> > | invoked_oom-killer:gfp_mask=0x                      | 1          | 1          |            |               |
-> > | WARNING:at_kernel/locking/lockdep.c:#lock_downgrade | 0          | 6          | 4          | 7             |
-> > | EIP:lock_downgrade                                  | 0          | 6          | 4          | 7             |
-> > +-----------------------------------------------------+------------+------------+------------+---------------+
-> > 
-> > [   96.288009] random: get_random_u32 called from arch_rnd+0x3c/0x70 with crng_init=0
-> > [   96.359626] input_id (331) used greatest stack depth: 6360 bytes left
-> > [   96.749228] grep (358) used greatest stack depth: 6336 bytes left
-> > [   96.921470] network.sh (341) used greatest stack depth: 6212 bytes left
-> > [   97.262340]
-> > [   97.262587] =========================
-> > [   97.263072] WARNING: held lock freed!
-> > [   97.263536] 4.19.0-06969-gdd2283f #1 Not tainted
-> > [   97.264110] -------------------------
-> > [   97.264575] udevd/198 is freeing memory 9c16c930-9c16c99b, with a lock still held there!
-> > [   97.265542] (ptrval) (&anon_vma->rwsem){....}, at: unlink_anon_vmas+0x14e/0x420
-> > [   97.266450] 1 lock held by udevd/198:
-> > [   97.266924]  #0: (ptrval) (&mm->mmap_sem){....}, at: __do_munmap+0x531/0x730
-> 
-> I have not figured out what this is caused by. But, the below warning looks
-> more confusing. This might be caused by the below one.
-
-I *think* we need to understand more about what detached VMAs mean for
-rmap. The anon_vma for these VMAs still reachable for the rmap and
-therefore VMA too. I don't quite grasp what is implications of this, but
-it doesn't look good.
-
-I'll look into this more when I get some free cycles.
-
-It's better to disable the optimization for now (by ignoring 'downgrade'
-in __do_munmap()). Before it hits release.
-
--- 
- Kirill A. Shutemov
+SGksIERhbmllbA0KDQpCZXN0IFJlZ2FyZHMhDQpBbnNvbiBIdWFuZw0KDQo+IC0tLS0tT3JpZ2lu
+YWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IERhbmllbCBMZXpjYW5vIFttYWlsdG86ZGFuaWVsLmxl
+emNhbm9AbGluYXJvLm9yZ10NCj4gU2VudDogMjAxOOW5tDEx5pyIMjDml6UgMTY6NTQNCj4gVG86
+IEFuc29uIEh1YW5nIDxhbnNvbi5odWFuZ0BueHAuY29tPjsgcnVpLnpoYW5nQGludGVsLmNvbTsN
+Cj4gZWR1YmV6dmFsQGdtYWlsLmNvbTsgbGludXgtcG1Admdlci5rZXJuZWwub3JnOw0KPiBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IENjOiBkbC1saW51eC1pbXggPGxpbnV4LWlteEBu
+eHAuY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSB0aGVybWFsOiBpbXg6IGZpeCBmb3IgZGVw
+ZW5kZW5jeSBvbiBjcHUtZnJlcQ0KPiANCj4gT24gMjAvMTEvMjAxOCAwOTo0NywgQW5zb24gSHVh
+bmcgd3JvdGU6DQo+ID4gSGksIERhbmllbA0KPiA+DQo+ID4gQmVzdCBSZWdhcmRzIQ0KPiA+IEFu
+c29uIEh1YW5nDQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJv
+bTogRGFuaWVsIExlemNhbm8gW21haWx0bzpkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnXQ0KPiA+
+PiBTZW50OiAyMDE45bm0MTHmnIgyMOaXpSAxNjo0NQ0KPiA+PiBUbzogQW5zb24gSHVhbmcgPGFu
+c29uLmh1YW5nQG54cC5jb20+OyBydWkuemhhbmdAaW50ZWwuY29tOw0KPiA+PiBlZHViZXp2YWxA
+Z21haWwuY29tOyBsaW51eC1wbUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4+IGxpbnV4LWtlcm5lbEB2
+Z2VyLmtlcm5lbC5vcmcNCj4gPj4gQ2M6IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+
+DQo+ID4+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHRoZXJtYWw6IGlteDogZml4IGZvciBkZXBlbmRl
+bmN5IG9uIGNwdS1mcmVxDQo+ID4+DQo+ID4+IE9uIDI0LzEwLzIwMTggMDg6MzksIEFuc29uIEh1
+YW5nIHdyb3RlOg0KPiA+Pj4gVGhlIHRoZXJtYWwgZHJpdmVyIGlzIGEgc3RhbmRhbG9uZSBkcml2
+ZXIgZm9yIG1vbml0b3JpbmcgU29DDQo+ID4+PiB0ZW1wZXJhdHVyZSBieSBlbmFibGluZyB0aGVy
+bWFsIHNlbnNvciwgc28gaXQgY2FuIGJlIGVuYWJsZWQgZXZlbg0KPiA+Pj4gd2hlbiBDT05GSUdf
+Q1BVX0ZSRVEgaXMgTk9UIHNldC4gU28gcmVtb3ZlIHRoZSBkZXBlbmRlbmN5IHdpdGgNCj4gPj4g
+Q1BVX1RIRVJNQUwuDQo+ID4+Pg0KPiA+Pj4gQWRkIENPTkZJR19DUFVfRlJFUSBjaGVjayBmb3Ig
+Y3B1LWZyZXEgcmVsYXRlZCBvcGVyYXRpb24gaW4gdGhlcm1hbA0KPiA+Pj4gZHJpdmVyIHRvIG1h
+a2UgdGhlcm1hbCBkcml2ZXIgcHJvYmUgc3VjY2Vzc2Z1bGx5IHdoZW4NCj4gPj4+IENPTkZJR19D
+UFVfRlJFUSBpcyBOT1Qgc2V0Lg0KPiA+Pj4NCj4gPj4+IFNpZ25lZC1vZmYtYnk6IEFuc29uIEh1
+YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+Pj4gLS0tDQo+ID4+DQo+ID4+IFdoeSBub3Qg
+c2ltcGx5IGtpbGwgdGhpcyBsZWdhY3kgY29kZSA/DQo+ID4NCj4gPiBCZWNhdXNlIGtpbGxpbmcg
+bGVnYWN5IGNvZGUgd2lsbCBoYXZlIG9sZCBkdGIgY29tcGF0aWJsZSBpc3N1ZSwgb2xkDQo+ID4g
+ZHRiIHdpbGwgTk9UIGhhdmUgY3B1ZnJlcSBjb29saW5nIGZ1bmN0aW9uLg0KPiANCj4gWWVhaCwg
+SSBpbWFnaW5lIHRoYXQgaXMgdGhlIHJlYXNvbiB3aHkgeW91IHdhbnQgdG8ga2VlcCB0aGUgbGVn
+YWN5IGNvZGUgYnV0IGRvDQo+IHlvdSByZWFsbHkgY2FyZSBhYm91dCBvbGQgRFRCIGJhc2VkIGJv
+YXJkcz8gQXJlIHRoZXkgc3RpbGwgdXBkYXRlZCB3aXRoIG5ld2VyDQo+ICp1cHN0cmVhbSB2YW5p
+bGxhKiBrZXJuZWxzPw0KDQpJIGFtIE5PVCBzdXJlIGlmIHRoZXJlIGlzIHNvbWVvbmUgY2FyZSBh
+Ym91dCBpdCwgYnV0IEkgZGlkIHJlY2VpdmUgbWFueSBjb21tZW50cw0KYWJvdXQgb2xkIGR0YiBj
+b21wYXRpYmxlIHdoZW4gSSBzZW50IG91dCBvdGhlciBwYXRjaGVzLCBzbyBpcyBpdCBhIHNvbGlk
+IHJlcXVpcmVtZW50DQpvZiBvbGQgZHRiIGNvbXBhdGlibGUgd2hlbiBkb2luZyB1cHN0cmVhbSwg
+b3IgZWFjaCBzdWItc3lzdGVtIG9yIG1haW50YWluZXIgaGFzDQpkaWZmZXJlbnQgcmVxdWlyZW1l
+bnQgYWJvdXQgaXQ/IEFjdHVhbGx5IEkgYW0gaGFwcHkgdG8ganVzdCByZW1vdmUgdGhlIGxlZ2Fj
+eQ0KY29kZSwgYmVjYXVzZSBpdCBtYWtlcyB0aGUgY29kZSBtb3JlIGNsZWFuIGFuZCBlYXN5IHJl
+YWRpbmcuIFdobyBjYW4gbWFrZSB0aGUNCmRlY2lzaW9uPw0KDQpBbnNvbi4NCg0KPiANCj4gDQo+
+IC0tDQo+IA0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5j
+b20vP3VybD1odHRwJTNBJTJGJTJGd3d3DQo+IC5saW5hcm8ub3JnJTJGJmFtcDtkYXRhPTAyJTdD
+MDElN0NhbnNvbi5odWFuZyU0MG54cC5jb20lN0NiYjhjZGQNCj4gNDE1NWZiNGMwMmRhYjMwOGQ2
+NGVjNWM5Y2QlN0M2ODZlYTFkM2JjMmI0YzZmYTkyY2Q5OWM1YzMwMTYzNSU3DQo+IEMwJTdDMCU3
+QzYzNjc4MzAwODczOTM3MzUzNyZhbXA7c2RhdGE9eDZxSERURlliM1NOQVJJQ3MxNUtrTEw3DQo+
+ICUyRnBwN2VuWVprWkpIUm9Ka3NYcyUzRCZhbXA7cmVzZXJ2ZWQ9MD4gTGluYXJvLm9yZyDilIIg
+T3BlbiBzb3VyY2UNCj4gc29mdHdhcmUgZm9yIEFSTSBTb0NzDQo+IA0KPiBGb2xsb3cgTGluYXJv
+Og0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3Vy
+bD1odHRwJTNBJTJGJTJGd3d3DQo+IC5mYWNlYm9vay5jb20lMkZwYWdlcyUyRkxpbmFybyZhbXA7
+ZGF0YT0wMiU3QzAxJTdDYW5zb24uaHVhbmclNDANCj4gbnhwLmNvbSU3Q2JiOGNkZDQxNTVmYjRj
+MDJkYWIzMDhkNjRlYzVjOWNkJTdDNjg2ZWExZDNiYzJiNGM2ZmE5DQo+IDJjZDk5YzVjMzAxNjM1
+JTdDMCU3QzAlN0M2MzY3ODMwMDg3MzkzNzM1MzcmYW1wO3NkYXRhPUpKNEg5WjANCj4gUkFZJTJG
+MXVMbGNLWE5RTjM2TDBBcEZJd005JTJGdVBPVTlVQlVjSSUzRCZhbXA7cmVzZXJ2ZWQ9MD4NCj4g
+RmFjZWJvb2sgfA0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
+ay5jb20vP3VybD1odHRwJTNBJTJGJTJGdHdpdHQNCj4gZXIuY29tJTJGJTIzISUyRmxpbmFyb29y
+ZyZhbXA7ZGF0YT0wMiU3QzAxJTdDYW5zb24uaHVhbmclNDBueHAuYw0KPiBvbSU3Q2JiOGNkZDQx
+NTVmYjRjMDJkYWIzMDhkNjRlYzVjOWNkJTdDNjg2ZWExZDNiYzJiNGM2ZmE5MmNkOQ0KPiA5YzVj
+MzAxNjM1JTdDMCU3QzAlN0M2MzY3ODMwMDg3MzkzNzM1MzcmYW1wO3NkYXRhPW8wbzdoOEdZQUx0
+DQo+IG82TnV1SSUyQkF4Rnp4NnJjcjNWRmc2Q1d3aDNmZUdnZ0klM0QmYW1wO3Jlc2VydmVkPTA+
+IFR3aXR0ZXIgfA0KPiA8aHR0cHM6Ly9lbWVhMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9v
+ay5jb20vP3VybD1odHRwJTNBJTJGJTJGd3d3DQo+IC5saW5hcm8ub3JnJTJGbGluYXJvLWJsb2cl
+MkYmYW1wO2RhdGE9MDIlN0MwMSU3Q2Fuc29uLmh1YW5nJTQwbnhwLmMNCj4gb20lN0NiYjhjZGQ0
+MTU1ZmI0YzAyZGFiMzA4ZDY0ZWM1YzljZCU3QzY4NmVhMWQzYmMyYjRjNmZhOTJjZDkNCj4gOWM1
+YzMwMTYzNSU3QzAlN0MwJTdDNjM2NzgzMDA4NzM5MzczNTM3JmFtcDtzZGF0YT02cjJiYUI1Wmlt
+Qw0KPiB6SkVrcktUdkNCSDk4JTJCQmxudzBaSGlZT2RHNUpsaW1BJTNEJmFtcDtyZXNlcnZlZD0w
+PiBCbG9nDQoNCg==
