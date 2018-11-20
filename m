@@ -6,127 +6,88 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 480D2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3333FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE0D520671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:51:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE0D520671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 01693208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01693208E4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbeKTVUJ (ORCPT
+        id S1728804AbeKTVVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:20:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728190AbeKTVUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:20:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 82960AE38;
-        Tue, 20 Nov 2018 10:51:35 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 1CECD1E0A16; Tue, 20 Nov 2018 11:51:35 +0100 (CET)
-Date:   Tue, 20 Nov 2018 11:51:35 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-api@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [RFC PATCH 1/3] mm, proc: be more verbose about unstable VMA
- flags in /proc/<pid>/smaps
-Message-ID: <20181120105135.GF8842@quack2.suse.cz>
-References: <20181120103515.25280-1-mhocko@kernel.org>
- <20181120103515.25280-2-mhocko@kernel.org>
+        Tue, 20 Nov 2018 16:21:55 -0500
+Received: from foss.arm.com ([217.140.101.70]:46796 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726398AbeKTVVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:21:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E1AF80D;
+        Tue, 20 Nov 2018 02:53:24 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC56A3F575;
+        Tue, 20 Nov 2018 02:53:22 -0800 (PST)
+Date:   Tue, 20 Nov 2018 10:53:17 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        Roy Zang <roy.zang@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCHv2] PCI/Layerscape: fix wrongly invoking of outbound
+ window disable accessor
+Message-ID: <20181120105317.GA19867@e107981-ln.cambridge.arm.com>
+References: <20181107051647.12242-1-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120103515.25280-2-mhocko@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181107051647.12242-1-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-11-18 11:35:13, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On Wed, Nov 07, 2018 at 05:16:49AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 > 
-> Even though vma flags exported via /proc/<pid>/smaps are explicitly
-> documented to be not guaranteed for future compatibility the warning
-> doesn't go far enough because it doesn't mention semantic changes to
-> those flags. And they are important as well because these flags are
-> a deep implementation internal to the MM code and the semantic might
-> change at any time.
+> The order of parameters is not correct when invoking the outbound
+> window disable routine.
 > 
-> Let's consider two recent examples:
-> http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-> : commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-> : removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-> : mean time certain customer of ours started poking into /proc/<pid>/smaps
-> : and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-> : flags, the application just fails to start complaining that DAX support is
-> : missing in the kernel.
+> Fixes: commit 4a2745d760fac ("PCI: layerscape: Disable outbound
+> windows configured by bootloader").
 > 
-> http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-> : Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-> : introduced a regression in that userspace cannot always determine the set
-> : of vmas where thp is ineligible.
-> : Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-> : to determine if a vma is eligible to be backed by hugepages.
-> : Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-> : be disabled and emit "nh" as a flag for the corresponding vmas as part of
-> : /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-> : flag and "nh" is not emitted.
-> : This causes smaps parsing libraries to assume a vma is eligible for thp
-> : and ends up puzzling the user on why its memory is not backed by thp.
-> 
-> In both cases userspace was relying on a semantic of a specific VMA
-> flag. The primary reason why that happened is a lack of a proper
-> internface. While this has been worked on and it will be fixed properly,
-> it seems that our wording could see some refinement and be more vocal
-> about semantic aspect of these flags as well.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-Honestly, it just shows that no amount of documentation is going to stop
-userspace from abusing API that's exposing too much if there's no better
-alternative. But this is a good clarification regardless. So feel free to
-add:
-
-Acked-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 > ---
->  Documentation/filesystems/proc.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> V2:
+>  - Tagged this patch for stable.
+>  - Reworded the commit description.
 > 
-> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-> index 12a5e6e693b6..b1fda309f067 100644
-> --- a/Documentation/filesystems/proc.txt
-> +++ b/Documentation/filesystems/proc.txt
-> @@ -496,7 +496,9 @@ flags associated with the particular virtual memory area in two letter encoded
+>  drivers/pci/controller/dwc/pci-layerscape.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Applied to pci/controller-fixes for one of the upcoming -rc*.
+
+Thanks,
+Lorenzo
+
+> diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
+> index 3724d3ef7008..7aa9a82b7ebd 100644
+> --- a/drivers/pci/controller/dwc/pci-layerscape.c
+> +++ b/drivers/pci/controller/dwc/pci-layerscape.c
+> @@ -88,7 +88,7 @@ static void ls_pcie_disable_outbound_atus(struct ls_pcie *pcie)
+>  	int i;
 >  
->  Note that there is no guarantee that every flag and associated mnemonic will
->  be present in all further kernel releases. Things get changed, the flags may
-> -be vanished or the reverse -- new added.
-> +be vanished or the reverse -- new added. Interpretatation of their meaning
-> +might change in future as well. So each consumnent of these flags have to
-> +follow each specific kernel version for the exact semantic.
+>  	for (i = 0; i < PCIE_IATU_NUM; i++)
+> -		dw_pcie_disable_atu(pcie->pci, DW_PCIE_REGION_OUTBOUND, i);
+> +		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
+>  }
 >  
->  This file is only present if the CONFIG_MMU kernel configuration option is
->  enabled.
+>  static int ls1021_pcie_link_up(struct dw_pcie *pci)
 > -- 
-> 2.19.1
+> 2.17.1
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
