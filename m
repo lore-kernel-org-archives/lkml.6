@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED95C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E0FC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:00:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6C120685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 624E020684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:59:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IhGfiRRz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6C120685
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="M1NrgFCC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 624E020684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730265AbeKUDaR (ORCPT
+        id S1730150AbeKUD3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:30:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56520 "EHLO
+        Tue, 20 Nov 2018 22:29:44 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55586 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbeKUDaR (ORCPT
+        with ESMTP id S1726314AbeKUD3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:30:17 -0500
+        Tue, 20 Nov 2018 22:29:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BsMc9i1U4MzFpeEpg8dION7DbxdbT9JOzYTgsGqmsbI=; b=IhGfiRRzbdUvLcXBMESROewpy
-        pCOBa+VlLJGUa4vnMptCE6QILSsDUkZZeiJD95NyB9RdV+qdBVhGwfHT6qhwqmdoNiwrrDf2AA4Em
-        idOYI3nynr9Eale/OahfzzItr7eGtWIe79JVVKwCpm3Z9d1PSwaznn4ds83EJwcx4IIQY=;
+         bh=Zs1mImhqZI3duLB3B6GrulsBx8PID3j/SPo0HW9tjHw=; b=M1NrgFCCD/MKefUSlV0oCk5gq
+        IAA4RJWVC39nu3FH0EUuMSkOWgcHKGFvGzhsND7S7GhTQilwm5qClo8nO1P2VrpfrD9/V35YQKAIi
+        U3+XSXTlvzbKcuiTXFrn05kjxmkZ3JKbmTipYXek65JHeZW8Yviqzvz85b/IuCp5XHsGM=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gP9Nd-0001pB-Qv; Tue, 20 Nov 2018 17:00:05 +0000
+        id 1gP9N7-0001p3-8F; Tue, 20 Nov 2018 16:59:33 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 7D1C41124DC2; Tue, 20 Nov 2018 17:00:05 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 17:00:05 +0000
+        id E78EF1124DC2; Tue, 20 Nov 2018 16:59:32 +0000 (GMT)
+Date:   Tue, 20 Nov 2018 16:59:32 +0000
 From:   Mark Brown <broonie@kernel.org>
 To:     Doug Anderson <dianders@chromium.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -53,7 +53,7 @@ Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH 7/7] regulator: core: Remove loop disabling supplies in
  regulator_force_disable()
-Message-ID: <20181120170005.GO3894@sirena.org.uk>
+Message-ID: <20181120165932.GN3894@sirena.org.uk>
 References: <20181120002654.1891-1-dianders@chromium.org>
  <20181120002654.1891-7-dianders@chromium.org>
  <20181120155458.GG3894@sirena.org.uk>
@@ -62,7 +62,7 @@ References: <20181120002654.1891-1-dianders@chromium.org>
  <CAD=FV=VncEViv-mUJzUdjA8qvEouHHtiVfV2EpYi6bLAMW7S7Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lLR1BQqf7txDtYcF"
+        protocol="application/pgp-signature"; boundary="95CBLwa+io9O2zXc"
 Content-Disposition: inline
 In-Reply-To: <CAD=FV=VncEViv-mUJzUdjA8qvEouHHtiVfV2EpYi6bLAMW7S7Q@mail.gmail.com>
 X-Cookie: fortune: No such file or directory
@@ -73,32 +73,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---lLR1BQqf7txDtYcF
+--95CBLwa+io9O2zXc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Tue, Nov 20, 2018 at 08:57:32AM -0800, Doug Anderson wrote:
+> On Tue, Nov 20, 2018 at 8:25 AM Mark Brown <broonie@kernel.org> wrote:
 
-> OK.  I guess for now I'll just change this to disable the parent
-> supply as many times as this individual consumer enabled it and call
-> it good enough?  It can be for someone else to figure out how to make
-> it really usable for system recovery.
+> > I do wish there
+> > were a way to flag API calls as needing review :(
 
-Sorry, missed the question mark here - yes.
+> Would it be worth adding a WARN_ON(1) splat here or at least a
+> "dev_warn" so people knew it wasn't really an API for general use?
+> ...or is that going overboard?
 
---lLR1BQqf7txDtYcF
+That might work ehre but it's not just this call, and the trouble is
+that there are legitimate use cases and we can't exactly have a magic
+"no, I know what I'm doing" flag that things need to pass or anything.
+
+--95CBLwa+io9O2zXc
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0PZQACgkQJNaLcl1U
-h9C9pgf/UcfnnBt85DuLwmlN7iJdd5pZjSJpLnkoLaPJB8BUBnbG0nEu900Wz6oI
-1bRCGcWejHAY9+FJJEty8DXz2MuH7qXpBexsPH/u+U4tLgH5oAF6IUwvZgDeRR4v
-vI8Rw1O75+AYVBhm/VghTk4MtZ43C0rimHr0g5SaHTGY6kMXzneNKBoy4VyRovCu
-5K+I+eCc90uXbOCFqu3Fy4bwdpfBKubbueTKTW2kRWAbCzYJZAfWubrdyuMNaYL7
-p+c2C9JvWJkWPhNTySPxRM8Tm0DAGIZy5e/hkfPswRm8h4irzUGWBm1eJG7sy9U/
-l7kcUCcl22P/D9ZsWikeuPxQNio7lA==
-=YIOP
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0PXMACgkQJNaLcl1U
+h9BEWQf/YALGgDhe7vExtg+3DBwOz8l2OGOw+KcdvIvAntF5cgNJDoPRj3VWfnc7
+ZduD9EOGmWTHsxi0a+1f2ugr9YP0erOTLbwxg9ZWcEjMxtVejqepyycC+W13Vt/2
+UnbbMyMHek9zDN2QiUMMJdPYbYsR1wO6C19ELAnYvog+wJ3CZ7AnOLAHdvh9pNkY
+t9ymfuBGbCpbOACp1bZgZCm9GVjcMw3G4Q5F9mZ3QGjQsC/R1gMaux1WdCocmB5m
+REexWFwEHjB7R2tJu9LMcDIqonBjDsjC5rYCuwvHN+EYdXmvpLREr0FRKHNqL0XU
+T6qJI3Kd20P+945AOLzO0oppJz71xA==
+=wlye
 -----END PGP SIGNATURE-----
 
---lLR1BQqf7txDtYcF--
+--95CBLwa+io9O2zXc--
