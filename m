@@ -2,234 +2,159 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43647C4161B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44ED2C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE6952075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:23:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE6952075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EEDFB20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:25:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="h0gUPNxT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDFB20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeKTVwh (ORCPT
+        id S1729101AbeKTVxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:52:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726792AbeKTVwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:52:36 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CEB6830B9334;
-        Tue, 20 Nov 2018 11:23:57 +0000 (UTC)
-Received: from krava (unknown [10.43.17.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 15B635D9CB;
-        Tue, 20 Nov 2018 11:23:55 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 12:23:52 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: [PATCHv2] perf tools: Restore proper cwd on return from mnt ns
-Message-ID: <20181120112352.GE8967@krava>
-References: <20181101170001.30019-1-jolsa@kernel.org>
- <20181119161006.GA13850@kernel.org>
- <20181120105618.GD8967@krava>
+        Tue, 20 Nov 2018 16:53:38 -0500
+Received: from mail-eopbgr00088.outbound.protection.outlook.com ([40.107.0.88]:5422
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726792AbeKTVxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:53:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dg5YUHqdieceX+qPlYbex5tKwy+MIBpSBvhHOBTdR1k=;
+ b=h0gUPNxTFvtM5pb+pq6LVFL+x19h0ZRHvSkj/NtxBkRDO461sGj3s99e8AvhnMpQ/sE7d8albAeAWU3MLmAYjscWnvrZETV5W0wxsNSJT/3+K0lTpZ8jySfb51v4AwgAxvLUZoP33H/PbNABmmi37CIyvnNC8w8ABqj7wZuZbv0=
+Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
+ HE1PR0401MB1996.eurprd04.prod.outlook.com (10.166.122.146) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Tue, 20 Nov 2018 11:24:53 +0000
+Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
+ ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
+ ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
+ 11:24:53 +0000
+From:   "M.h. Lian" <minghuan.lian@nxp.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: RE: [PATCHv2 14/25] PCI: mobiveil: initialize
+ Primary/Secondary/Subordinate bus number
+Thread-Topic: [PATCHv2 14/25] PCI: mobiveil: initialize
+ Primary/Secondary/Subordinate bus number
+Thread-Index: AQHUgLMyZ11mQet0XEKQKM3OcVjbMqVYhd7Q
+Date:   Tue, 20 Nov 2018 11:24:53 +0000
+Message-ID: <HE1PR0401MB22353443B478CFD95466B664E8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
+References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
+ <20181120092615.11680-15-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20181120092615.11680-15-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=minghuan.lian@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0401MB1996;6:IkXsFy4Vbf4fz+8Dwco9yvdxyr0tsOQQfC7q28HVj1KhVoeFtjwbBYMFUZrvDgAekfz1kUwikPpLxdkB4OdU405zBT8Tt43980ilYjgsvrE5WHdg4RI2z5w0OYXHaYp6R65yCxsvfAgWOtlCyV1kMcq1FXsLhNVap2KcPMUhsJHHgYhzhimyyl9R7rWlFv41e4tAV1ZsX4c77sUaOFcZ7q3tB5oQlMkE5c9w4u6xSmSQADVQ8iad0Z5Zmofi7rl7G9Od4iYHUY0kADyBFDTOBohmtlK5O6TbRk0fQuOTTlmRHpAyaaHJ0T4fI7iwycemTKhCTNtNDrO5j1wu5ackQQH6l67BQb8gJ1J47RaUc0VG84+46kuX4n7CfYu5SHpBKdgoXuWX3Cb/13CjUBCrPKCiuj2wMQhp6/QAcQHyyCnyf9wbiwtBFUtS4aT79+U2RFkuZA+cNuCA2xkkenFOE1FpcLvPVJaltmlDsQTKYTE=;5:OtHSb4PhnzqD5XtdBIqk2KjnAqidqUyzM0fb1RGYdZ5ki/NiFfO0h1UDGhl6YgwIx2afK6gz0H4aaoJ51IEaukY2UlEhnE/YYK2IJ5P6BTV5W5A/D4JY5ZTwaJ7PQXbsqM8YxATOjhwZ2hCJnFe57x6+UhSGP+5J3kCrW/ifcak=;7:m2CtkjW/QlRdDhCoJ6XMRBnkwN1/y5Mkyu8vO6T69vxgU3eTLJru04LjIrruHB8PE62DvarxPFUxPYYlikWLlSWoO1LOnPA4Bg5o9d28VJost7EgkvWEYNVwwRPFf0uh6QYY/6kxxzHoblEzLsDQVA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 02531f20-17cf-4cef-9195-08d64edacb3c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB1996;
+x-ms-traffictypediagnostic: HE1PR0401MB1996:
+x-microsoft-antispam-prvs: <HE1PR0401MB19966F588932F7B48CC1CF68E8D90@HE1PR0401MB1996.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231442)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB1996;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB1996;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(376002)(346002)(366004)(199004)(189003)(13464003)(53546011)(6506007)(105586002)(14454004)(102836004)(3846002)(26005)(106356001)(478600001)(6116002)(4326008)(33656002)(476003)(256004)(5660300001)(11346002)(7416002)(446003)(2900100001)(81156014)(486006)(7736002)(186003)(8676002)(81166006)(2906002)(6246003)(8936002)(305945005)(6436002)(316002)(110136005)(97736004)(71190400001)(71200400001)(2501003)(55016002)(54906003)(53936002)(25786009)(68736007)(2201001)(76176011)(99286004)(86362001)(74316002)(229853002)(7696005)(66066001)(9686003)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB1996;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: LVO5mK4vv8XW9nXoIJSvzIxet+FtaSECi5VTKAICml6URRKnv2VM/I6jGtVjVfZ9m/CnwE1mOMhr9n+pJ1Ue30y0uJFtSJ+U8xK4APZJiJH64nA/1M6taYvLZmuJJEqQl2nw5/wYQ3AIZv4MTHLQMZeggMnPOAQButZ/3+rdPA0QLOeDCpGGNGPpBXe9f7ZMouQ5qnl6A1GP5SYK6byUlqcsxN4A1mt4RaaiSXh4bcSkDrUrYpXTW/mharhlTYrqbcebhwCUuMBFSB1ODBf5u8XEZavTzDsJVKTMoYU5WwnSQrMyt8Ptx8Gs57GqcVedEq/V5fPPdW6UeOmIwVxWdk4fAxVWjh6Rgz1u1Gkz1EY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120105618.GD8967@krava>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Tue, 20 Nov 2018 11:23:57 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02531f20-17cf-4cef-9195-08d64edacb3c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 11:24:53.7366
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB1996
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:56:18AM +0100, Jiri Olsa wrote:
-> On Mon, Nov 19, 2018 at 08:10:06AM -0800, Arnaldo Carvalho de Melo wrote:
-> > Em Thu, Nov 01, 2018 at 06:00:01PM +0100, Jiri Olsa escreveu:
-> > > Adding the current working directory to be part of the cookie
-> > > and restoring it in the nsinfo__mountns_exit call.
-> >  
-> > > diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-> > > index cf8bd123cf73..fb0458b7e6aa 100644
-> > > --- a/tools/perf/util/namespaces.c
-> > > +++ b/tools/perf/util/namespaces.c
-> > 
-> > > @@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
-> > >  	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
-> > >  		return;
-> >   
-> > > +	oldcwd = get_current_dir_name();
-> > 
-> > Breaks the build with bionic (Android), where get_current_dir_name() is
-> > not available:
-> > 
-> > /tmp/build/perf/libperf.a(libperf-in.o):hist.c:function nsinfo__mountns_enter: error: undefined reference to 'get_current_dir_name'
-> > collect2: error: ld returned 1 exit status
-> > Makefile.perf:534: recipe for target '/tmp/build/perf/perf' failed
-> > make[2]: *** [/tmp/build/perf/perf] Error 1
-> > Makefile.perf:206: recipe for target 'sub-make' failed
-> > make[1]: *** [sub-make] Error 2
-> > Makefile:69: recipe for target 'all' failed
-> > make: *** [all] Error 2
-> > make: Leaving directory '/git/linux/tools/perf'
-> > [root@seventh ~]# 
-> > 
-> > The container builds are ongoing, its possoble that this becomes an
-> > issue in uCLibc, wasn't on musl libc (Alpine Linux).
-> 
-> will check, thanks
 
-how about this one?
+reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
 
-thanks,
-jirka
-
-
----
-When reporting on 'record' server we try to retrieve/use
-the mnt namespace of the profiled tasks. We use following
-API with cookie to hold the return namespace, roughly:
-
-  nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
-    setns(newns, 0);
-  ...
-  new ns related open..
-  ...
-  nsinfo__mountns_exit(struct nscookie *nc)
-    setns(nc->oldns)
-
-Once finished we setns to old namespace, which also sets the
-current working directory (cwd) to "/", trashing the cwd we had.
-
-This is mostly fine, because we use absolute paths almost everywhere,
-but it screws up perf diff:
-
-  # perf diff
-  failed to open perf.data: No such file or directory  (try 'perf record' first)
-  ...
-
-Adding the current working directory to be part of the cookie
-and restoring it in the nsinfo__mountns_exit call.
-
-v2: get rid of _GNU_SOURCE get_current_dir_name call [acme]
-
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
-Link: http://lkml.kernel.org/n/tip-zg3vz7kjr86cco7lo91v8yhj@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/namespaces.c | 25 +++++++++++++++++++++++--
- tools/perf/util/namespaces.h |  1 +
- 2 files changed, 24 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-index cf8bd123cf73..b759a7ad87e7 100644
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -18,6 +18,7 @@
- #include <stdio.h>
- #include <string.h>
- #include <unistd.h>
-+#include <asm/bug.h>
- 
- struct namespaces *namespaces__new(struct namespaces_event *event)
- {
-@@ -180,12 +181,20 @@ void nsinfo__put(struct nsinfo *nsi)
- 		nsinfo__delete(nsi);
- }
- 
-+static char *get_current_dir(void)
-+{
-+	char path[PATH_MAX];
-+
-+	return getcwd(path, PATH_MAX) ? strdup(path) : NULL;
-+}
-+
- void nsinfo__mountns_enter(struct nsinfo *nsi,
- 				  struct nscookie *nc)
- {
- 	char curpath[PATH_MAX];
- 	int oldns = -1;
- 	int newns = -1;
-+	char *oldcwd = NULL;
- 
- 	if (nc == NULL)
- 		return;
-@@ -199,9 +208,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
- 		return;
- 
-+	oldcwd = get_current_dir();
-+	if (!oldcwd)
-+		return;
-+
- 	oldns = open(curpath, O_RDONLY);
- 	if (oldns < 0)
--		return;
-+		goto errout;
- 
- 	newns = open(nsi->mntns_path, O_RDONLY);
- 	if (newns < 0)
-@@ -210,11 +223,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (setns(newns, CLONE_NEWNS) < 0)
- 		goto errout;
- 
-+	nc->oldcwd = oldcwd;
- 	nc->oldns = oldns;
- 	nc->newns = newns;
- 	return;
- 
- errout:
-+	if (oldcwd)
-+		free(oldcwd);
- 	if (oldns > -1)
- 		close(oldns);
- 	if (newns > -1)
-@@ -223,11 +239,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 
- void nsinfo__mountns_exit(struct nscookie *nc)
- {
--	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
-+	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
- 		return;
- 
- 	setns(nc->oldns, CLONE_NEWNS);
- 
-+	if (nc->oldcwd) {
-+		WARN_ON_ONCE(chdir(nc->oldcwd));
-+		free(nc->oldcwd);
-+	}
-+
- 	if (nc->oldns > -1) {
- 		close(nc->oldns);
- 		nc->oldns = -1;
-diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-index cae1a9a39722..d5f46c09ea31 100644
---- a/tools/perf/util/namespaces.h
-+++ b/tools/perf/util/namespaces.h
-@@ -38,6 +38,7 @@ struct nsinfo {
- struct nscookie {
- 	int			oldns;
- 	int			newns;
-+	char			*oldcwd;
- };
- 
- int nsinfo__init(struct nsinfo *nsi);
--- 
-2.17.2
+> -----Original Message-----
+> From: Z.q. Hou
+> Sent: Tuesday, November 20, 2018 5:27 PM
+> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
+> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
+> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
+> catalin.marinas@arm.com; will.deacon@arm.com
+> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
+> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
+> <zhiqiang.hou@nxp.com>
+> Subject: [PATCHv2 14/25] PCI: mobiveil: initialize
+> Primary/Secondary/Subordinate bus number
+>=20
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>=20
+> The reset value is all zero, so set a workable value for Primary, Seconda=
+ry
+> and Subordinate bus numbers.
+>=20
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> ---
+> V2:
+>  - no change
+>=20
+>  drivers/pci/controller/pcie-mobiveil.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c
+> b/drivers/pci/controller/pcie-mobiveil.c
+> index db7ecb021c63..9210165fe8c0 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -582,6 +582,12 @@ static int mobiveil_host_init(struct mobiveil_pcie
+> *pcie)
+>  	u32 value, pab_ctrl, type;
+>  	struct resource_entry *win;
+>=20
+> +	/* setup bus numbers */
+> +	value =3D csr_readl(pcie, PCI_PRIMARY_BUS);
+> +	value &=3D 0xff000000;
+> +	value |=3D 0x00ff0100;
+> +	csr_writel(pcie, value, PCI_PRIMARY_BUS);
+> +
+>  	/*
+>  	 * program Bus Master Enable Bit in Command Register in PAB Config
+>  	 * Space
+> --
+> 2.17.1
 
