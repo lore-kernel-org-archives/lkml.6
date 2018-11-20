@@ -2,102 +2,113 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE715C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8CFC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C093C2075B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:25:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C093C2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 85C3E20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:25:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fH99T33i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C3E20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeKTTxd (ORCPT
+        id S1727618AbeKTTxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:53:33 -0500
-Received: from smtpq3.tb.mail.iss.as9143.net ([212.54.42.166]:51204 "EHLO
-        smtpq3.tb.mail.iss.as9143.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726549AbeKTTxc (ORCPT
+        Tue, 20 Nov 2018 14:53:43 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50745 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbeKTTxn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:53:32 -0500
-X-Greylist: delayed 961 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Nov 2018 14:53:31 EST
-Received: from [212.54.42.132] (helo=smtp8.tb.mail.iss.as9143.net)
-        by smtpq3.tb.mail.iss.as9143.net with esmtp (Exim 4.86_2)
-        (envelope-from <jongk@linux-m68k.org>)
-        id 1gP229-0002Gi-Ki
-        for linux-kernel@vger.kernel.org; Tue, 20 Nov 2018 10:09:25 +0100
-Received: from mail-lj1-f175.google.com ([209.85.208.175])
-        by smtp8.tb.mail.iss.as9143.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <jongk@linux-m68k.org>)
-        id 1gP229-000216-IS
-        for linux-kernel@vger.kernel.org; Tue, 20 Nov 2018 10:09:25 +0100
-Received: by mail-lj1-f175.google.com with SMTP id z80-v6so961074ljb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 01:09:25 -0800 (PST)
-X-Gm-Message-State: AA+aEWYBhNnwrCD1HbEkfhpmGetyGWnmvHJKK72yhz7AwP5vQ4g0gnAU
-        G9nfgeFHXwy6hMXM1NosXdjw5amRXfFw9zUUuUU=
-X-Google-Smtp-Source: AFSGD/V7a4zHAaF7WTNRjMyznBUevPJIs8vqGrQY7ES6A5K31U8ycoRZpnx4XnJul664GhJcsqggSq4AHPjBrUyisvY=
-X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr665076lje.117.1542704964978;
- Tue, 20 Nov 2018 01:09:24 -0800 (PST)
+        Tue, 20 Nov 2018 14:53:43 -0500
+Received: by mail-it1-f196.google.com with SMTP id a185so2375225itc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 01:25:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=npEkZFzgj8KvYAKvqAa29jWAAVO/xwwjupaVMmPsmz4=;
+        b=fH99T33i5OkZAqj8Gw+P1b5vLolB5v8N6eshavdEUCpYkAhgcK2Qb0IwORr5YUxDwY
+         nts6+4bV0nVuzLlLF4bAJWPqmyaE+q4dFLLLPtXD+0bfua69Q9Ns3g8hxAxufAE/fy3W
+         85q8Tk3c2SdJv7//Tvw1Z8HNuxiTEOwH/N8rg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=npEkZFzgj8KvYAKvqAa29jWAAVO/xwwjupaVMmPsmz4=;
+        b=hpgurukE3jRCGR+oQ59Tfxj8wIKS9l8R0QCRaJcz1eAtWP/H8JbeiEm9J8ILhrqIeF
+         YczV2ogpMCwS9PtgTZXF+/aMOGsxxzHLaURPeuMkfh7xiLnt/zZB/LdsFq79YDsI6uxa
+         hJVnHCE9CbtuwijiFFxENHEdSJbdPJhLyjYRVlCXOyknJ6TNcuUFSWOM2CtycwggA+Qt
+         gwdvVb4zFJZo1+Mm8Ycn+0wGw02I4Ih5POWofvPzVOGnExwnTA8LbAeT/+iY8RoQrmNN
+         E5NM9pQq1Q+GAdsKiKXPZlevL/rd7YyMJx/y3cIuZJNW6mc8aep775EqYAtDXhpC66Uk
+         FhiQ==
+X-Gm-Message-State: AA+aEWZGUqi5oxXvF96FpxwuPlMUTgR8oHqqbckWgRmE7eRt0U2kU/Wi
+        gVhojTmncUkqX1Kg4DPcQtIxt19oPZUQTls9l6BGcQ==
+X-Google-Smtp-Source: AJdET5cCI+KvWIIqnLYB1ZOVML/QIEOys6PbY6unnxdqqcVoA+JxctMYzTchlIj5rmMKdvcUQwxIJPXIzqblR0VU/+I=
+X-Received: by 2002:a02:c909:: with SMTP id t9-v6mr1094083jao.95.1542705934401;
+ Tue, 20 Nov 2018 01:25:34 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1542589838.git.fthain@telegraphics.com.au> <eb676d37a8e40b88f6c577b372b6512bc19a3394.1542589838.git.fthain@telegraphics.com.au>
-In-Reply-To: <eb676d37a8e40b88f6c577b372b6512bc19a3394.1542589838.git.fthain@telegraphics.com.au>
-From:   Kars de Jong <jongk@linux-m68k.org>
-Date:   Tue, 20 Nov 2018 10:09:13 +0100
-X-Gmail-Original-Message-ID: <CACz-3rh6Qw7YxeFK41KG_ju-bWHRoCaciWvv7JLeURn7wGVAOg@mail.gmail.com>
-Message-ID: <CACz-3rh6Qw7YxeFK41KG_ju-bWHRoCaciWvv7JLeURn7wGVAOg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 09/14] m68k: hp300: Remove hp300_gettimeoffset()
-To:     fthain@telegraphics.com.au
-Cc:     geert@linux-m68k.org, philb@gnu.org, schwab@linux-m68k.org,
-        arnd@arndb.de, schivers@csc.com.au, tglx@linutronix.de,
-        daniel.lezcano@linaro.org, schmitzmic@gmail.com,
-        john.stultz@linaro.org, linus.walleij@linaro.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Received: by 2002:a02:70c8:0:0:0:0:0 with HTTP; Tue, 20 Nov 2018 01:24:53
+ -0800 (PST)
+In-Reply-To: <20181107084741.GA31092@kunai>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+ <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com> <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+ <20181107084741.GA31092@kunai>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 20 Nov 2018 10:24:53 +0100
+Message-ID: <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+To:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        kernel@collabora.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>
 Content-Type: text/plain; charset="UTF-8"
-X-SourceIP: 209.85.208.175
-X-Authenticated-Sender: karsdejong@home.nl (via SMTP)
-X-Ziggo-spambar: /
-X-Ziggo-spamscore: 0.0
-X-Ziggo-spamreport: CMAE Analysis: v=2.3 cv=aNtEVo1m c=1 sm=1 tr=0 a=9+rZDBEiDlHhcck0kWbJtElFXBc=:19 a=IkcTkHD0fZMA:10 a=JHtHm7312UAA:10 a=8981fWPbAAAA:8 a=WtWjpamJeDu0b-qHKIQA:9 a=QEXdDO2ut3YA:10 a=o72u2rHnfW5qNJ_4I8LD:22
-X-Ziggo-Spam-Status: No
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op ma 19 nov. 2018 om 02:10 schreef Finn Thain <fthain@telegraphics.com.au>:
+On 7 November 2018 at 09:47, Wolfram Sang <wsa@the-dreams.de> wrote:
 >
-> hp300_gettimeoffset() never checks the timer interrupt flag and will
-> fail to notice when the timer counter gets reloaded. That means the
-> clock could jump backwards.
+>> That also happens to be one of the cards we deploy; However i did
+>> wonder about adding a quirk but decided against it as it was not clear
+>> to me from the specification that CACHE ON really is meant to complete
+>> within GENERIC_CMD6_TIMEOUT. That and i fret about ending up in hit-a-
+>> mole games as the failure is really quite tedious (boot failure).
 >
-> Remove this code and leave this platform on the 'jiffies' clocksource.
-> Note that this amounts to a regression in clock precision. However,
-> adopting the 'jiffies' clocksource does resolve the monotonicity issue.
->
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> ---
-> hp300_gettimeoffset() cannot be used in a clocksource conversion
-> unless it can be made monotonic. I can't fix this without knowing the
-> details of the timer implementation, such as the relationship between
-> the timer count and the interrupt flag.
+> I agree that we should use the more defensive variant as a default. I
+> mean there should be no performance regression since most cards will
+> respond just faster, or? The only downside I could see is that we might
+> miss a real timeout with no bounds set and might get stuck?
 
-I don't really like this regression...
+Well, you have a point, but still it's kind of nice to know which
+cards are behaving well and which ones that doesn't. Hence I think I
+prefer to stick using a quirk, unless you have a strong opinion.
 
-According to NetBSD sources, there are 3 timers in the chip
-(originally an MC6840 PTM). Timer 1 is used as the system timer, timer
-3 runs at the same rate and is unused on Linux (on NetBSD it is used
-as the statistics/profiling timer), and timer 3 is connected to timer
-2 so you can make a 32-bit timer out of the two timers together (also
-unused on Linux).
+Note that, in this case we can use CMD13 to poll for busy, which then
+means it also works for those hosts that doesn't support HW busy
+detection, without getting additional delays. If this hasn't been the
+case, we must be using a quirk, but now we are more free to choose.
 
-Timers 1 counts down at 25 MHz. The interrupt flag is set when the
-counter reaches 0 after which it is automatically reloaded and starts
-counting down again.
+> Maybe it is
+> worth contacting eMMC spec people to at least know what is the expected
+> behaviour?
 
-> ---
->  arch/m68k/hp300/time.c | 19 -------------------
->  1 file changed, 19 deletions(-)
+According to the spec, the GENERIC_CMD6_TIMEOUT should be sufficient.
+So this card is not conforming to the spec, I think it's as simple as
+that.
+
+Kind regards
+Uffe
