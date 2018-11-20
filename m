@@ -2,144 +2,138 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A30C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59251C18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 879CF2147D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 879CF2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 4E4BA20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4BA20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbeKUBZB convert rfc822-to-8bit (ORCPT
+        id S1729918AbeKUBXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:25:01 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44230 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730098AbeKUBZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:25:00 -0500
-Received: from beast.luon.net (unknown [IPv6:2001:470:78b1:0:40e2:7ff:fef4:3122])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sjoerd)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 2E9B02722C6;
-        Tue, 20 Nov 2018 14:55:27 +0000 (GMT)
-Received: by beast.luon.net (Postfix, from userid 1000)
-        id 79F813E238F; Tue, 20 Nov 2018 15:55:24 +0100 (CET)
-Message-ID: <9f63ea203ec54a86f1edc636e44acc9b5e51aea1.camel@collabora.co.uk>
-Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
-From:   Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        kernel@collabora.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Bastian Stender <bst@pengutronix.de>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Hal Emmerich <hal@halemmerich.com>
-Date:   Tue, 20 Nov 2018 15:55:24 +0100
-In-Reply-To: <CAPDyKFoCyXSQ9bVD9iYYcr4Y7e87Ltdt2+QNg0euvNijRGi83Q@mail.gmail.com>
-References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
-         <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
-         <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
-         <20181107084741.GA31092@kunai>
-         <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
-         <20181120102300.GA1056@kunai>
-         <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
-         <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
-         <515b72f2bd526d144fdc662126aa6e1e8484a25c.camel@collabora.co.uk>
-         <CAPDyKFoCyXSQ9bVD9iYYcr4Y7e87Ltdt2+QNg0euvNijRGi83Q@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.30.1-1 
-Mime-Version: 1.0
+        Tue, 20 Nov 2018 20:23:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39178 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727634AbeKUBXk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:23:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id ABE9EAC4B;
+        Tue, 20 Nov 2018 14:54:06 +0000 (UTC)
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     stefan.wahren@i2se.com, eric@anholt.net,
+        dave.stevenson@raspberrypi.org
+Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
+        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Subject: [PATCH 01/16] staging: vchiq_core: rework vchiq_get_config
+Date:   Tue, 20 Nov 2018 15:53:36 +0100
+Message-Id: <20181120145351.30390-2-nsaenzjulienne@suse.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181120145351.30390-1-nsaenzjulienne@suse.de>
+References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-20 at 15:24 +0100, Ulf Hansson wrote:
-> On 20 November 2018 at 15:00, Sjoerd Simons
-> <sjoerd.simons@collabora.co.uk> wrote:
-> > On Tue, 2018-11-20 at 14:08 +0100, Ulf Hansson wrote:
-> > > + Hal Emmerich
-> > > 
-> > > On 20 November 2018 at 12:38, Sjoerd Simons
-> > > <sjoerd.simons@collabora.co.uk> wrote:
-> > > > On Tue, 2018-11-20 at 11:23 +0100, Wolfram Sang wrote:
-> > > > So if you know the pattern, or just happen to hit it often in
-> > > > e.g.
-> > > > automated testing, it does show up during development.
-> > > > Otherwise it
-> > > > can
-> > > > appear to "happen once in a while randomly".
-> > > 
-> > > I don't quite follow. As far as I understand, the extended
-> > > timeout is
-> > > needed when turning the cache on.
-> > > 
-> > > The above seems more related to flushing the cache, no? Flushing
-> > > have
-> > > no timeout (also reported to be an issue [1]), which happens
-> > > either
-> > > at
-> > > _mmc_hw_reset() or at _mmc_suspend().
-> > > 
-> > > What is the relation here?
-> > 
-> > Yes it's the kinda of behaviour you would expect on a flush indeed!
-> > I
-> > don't know what the card actaully does when turning the cache on,
-> > whether it's actually flush of something persistent when turning
-> > the
-> > cache on after a hard poweroff or doing some other validation.
-> > 
-> > All i can share is what our testing seems to indicate, which is
-> > that
-> > there is a wide spread in the time the card needs *and* there seems
-> > to
-> > be strong correlation to the I/O activity before the hard power off
-> > and
-> > the time taken by "cache on".
-> 
-> So the hard power off, means that you are cutting the power to the
-> platform and not doing a graceful power off? Just so I understand
-> correctly.
+The function is overly complicated for what it's ultimately achieving.
+It's simply filling up a structure.
 
-Correct. With hard power off i mean cutting the power to the board in
-some way. When doing a gracefull power off, the issue does not occur on
-my boards (cache on is fast). Presumably as the eMMC got its cache
-flushed as part of the shutdown procedure..
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+---
+ .../interface/vchiq_arm/vchiq_arm.c           | 12 ++++----
+ .../interface/vchiq_arm/vchiq_core.c          | 30 +++++--------------
+ .../interface/vchiq_arm/vchiq_if.h            |  3 +-
+ 3 files changed, 14 insertions(+), 31 deletions(-)
 
-> > > Using no limit of the timeout, would mean we may hang for ~10
-> > > minutes
-> > > (MMC_OPS_TIMEOUT_MS) instead, no thanks.
-> > 
-> > Probably a silly question, but would this actually cause e.g. boot
-> > to
-> > hang while waiting for the card (assuming rootfs is somewhere
-> > else)?
-> 
-> Nope.
-> 
-> [...]
-
-Then i'm probably just being dense, but i'm unsure what the issue is
-with waiting for 10 minuts in this case. Apart from having to wait for
-10 minutes before the user gets an indication in the kernel that the
-card is not usable?
-
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 45de21c210c1..5af3f2651bd3 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -1480,13 +1480,11 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+-		status = vchiq_get_config(instance, args.config_size, &config);
+-		if (status == VCHIQ_SUCCESS) {
+-			if (copy_to_user((void __user *)args.pconfig,
+-				    &config, args.config_size) != 0) {
+-				ret = -EFAULT;
+-				break;
+-			}
++
++		vchiq_get_config(&config);
++		if (copy_to_user(args.pconfig, &config, args.config_size)) {
++			ret = -EFAULT;
++			break;
+ 		}
+ 	} break;
+ 
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 7642ced31436..89f1ccdc3b98 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -3583,28 +3583,14 @@ vchiq_get_peer_version(VCHIQ_SERVICE_HANDLE_T handle, short *peer_version)
+ 	return status;
+ }
+ 
+-VCHIQ_STATUS_T
+-vchiq_get_config(VCHIQ_INSTANCE_T instance,
+-	int config_size, VCHIQ_CONFIG_T *pconfig)
+-{
+-	VCHIQ_CONFIG_T config;
+-
+-	(void)instance;
+-
+-	config.max_msg_size           = VCHIQ_MAX_MSG_SIZE;
+-	config.bulk_threshold         = VCHIQ_MAX_MSG_SIZE;
+-	config.max_outstanding_bulks  = VCHIQ_NUM_SERVICE_BULKS;
+-	config.max_services           = VCHIQ_MAX_SERVICES;
+-	config.version                = VCHIQ_VERSION;
+-	config.version_min            = VCHIQ_VERSION_MIN;
+-
+-	if (config_size > sizeof(VCHIQ_CONFIG_T))
+-		return VCHIQ_ERROR;
+-
+-	memcpy(pconfig, &config,
+-		min(config_size, (int)(sizeof(VCHIQ_CONFIG_T))));
+-
+-	return VCHIQ_SUCCESS;
++void vchiq_get_config(VCHIQ_CONFIG_T *config)
++{
++	config->max_msg_size           = VCHIQ_MAX_MSG_SIZE;
++	config->bulk_threshold         = VCHIQ_MAX_MSG_SIZE;
++	config->max_outstanding_bulks  = VCHIQ_NUM_SERVICE_BULKS;
++	config->max_services           = VCHIQ_MAX_SERVICES;
++	config->version                = VCHIQ_VERSION;
++	config->version_min            = VCHIQ_VERSION_MIN;
+ }
+ 
+ VCHIQ_STATUS_T
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
+index e4109a83e628..87829a244465 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_if.h
+@@ -164,8 +164,7 @@ extern VCHIQ_STATUS_T vchiq_bulk_receive_handle(VCHIQ_SERVICE_HANDLE_T service,
+ extern int   vchiq_get_client_id(VCHIQ_SERVICE_HANDLE_T service);
+ extern void *vchiq_get_service_userdata(VCHIQ_SERVICE_HANDLE_T service);
+ extern int   vchiq_get_service_fourcc(VCHIQ_SERVICE_HANDLE_T service);
+-extern VCHIQ_STATUS_T vchiq_get_config(VCHIQ_INSTANCE_T instance,
+-	int config_size, VCHIQ_CONFIG_T *pconfig);
++extern void vchiq_get_config(VCHIQ_CONFIG_T *config);
+ extern VCHIQ_STATUS_T vchiq_set_service_option(VCHIQ_SERVICE_HANDLE_T service,
+ 	VCHIQ_SERVICE_OPTION_T option, int value);
+ 
 -- 
-Sjoerd Simons
-Collabora Ltd.
+2.19.1
+
