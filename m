@@ -2,106 +2,98 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AADC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70798C18E01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F10208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ORbIarsS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F10208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AFC2720C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:57:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFC2720C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeKTTZN (ORCPT
+        id S1727569AbeKTTZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:25:13 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35783 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbeKTTZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:25:12 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so783254lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:57:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P0sNcUwpQ+eh9RxR7GKW3XiY3wgjXk3twtwBLkSGRDc=;
-        b=ORbIarsSTy/cbaXfHYxFXHk4fpVb6H7iZjVhtdD0vWzThxwTSNK7fYvPLhlDqYwCas
-         I7BmHEsmrZPE2WCHrUll/bnuYcny+7Vq1ZJTTwcPouwLkbmcp3yHFGomdFDCyV8/IOGF
-         uW1Q12CW2FVUbtaxtHKOc1O9zIsPZ43WxHAmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P0sNcUwpQ+eh9RxR7GKW3XiY3wgjXk3twtwBLkSGRDc=;
-        b=LYtJahEoBvuExmhuXA7eNc/bPEACXQhngjc5bwz2ZfJ5RagU/O5SoTFR6adzVmynSt
-         SNDdCkWikFX+X6wu31pOFuu1ZcrA8MlieOoJcyWPtlSUtU1+PK9gsJi/v9IRRpoz4MeO
-         wXeO8AOx67BF4GrOBLK53XdSCeNNvsXbJBcMF+7u1Q+RajJ7VItfdCm3jNYcQf6uiRji
-         WUmeyarYez4KErgOksGRBR1P2ORUR0prgZa+g8lpjdzrdb/u7vgd3cKxhmjCN59ygpxi
-         SqTGb1/iSU/1T3Nf1UcNhim4e2o9yvDa/eAaRo61tapKRYupdmjlP7/6OrxV+mNCZd03
-         Rs8A==
-X-Gm-Message-State: AGRZ1gKEovmtP1itArBLwJpIbOSG0UQ477qkI9KQ0kwEvsYnC83V7gfG
-        SOp53u70sn3YngWWRZhvtwgK4iAVVu+9S3y+CaEmHw==
-X-Google-Smtp-Source: AJdET5dAlaIFurLHCjXTc/lDNq+eARttFzCszOoJoBYwdwasfTRLerrtFCMCw/qV1ntFE60m3jzDu/0zc27bowyLg3c=
-X-Received: by 2002:a19:c801:: with SMTP id y1mr615564lff.53.1542704230050;
- Tue, 20 Nov 2018 00:57:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20181119170939.19153-1-manivannan.sadhasivam@linaro.org>
- <20181119170939.19153-13-manivannan.sadhasivam@linaro.org>
- <e9b208ff-327e-860a-6ef0-15bf797dc6b2@arm.com> <20181120050650.GC5885@Mani-XPS-13-9360>
- <86pnv0rwna.wl-marc.zyngier@arm.com>
-In-Reply-To: <86pnv0rwna.wl-marc.zyngier@arm.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 20 Nov 2018 09:56:58 +0100
-Message-ID: <CACRpkdan96Vj58s=g9jiAoyLBpZqPCKcjqD82mgDj5WqRP7vDQ@mail.gmail.com>
-Subject: Re: [PATCH 12/16] clocksource: Add clock driver for RDA8810PL SoC
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
+        Tue, 20 Nov 2018 14:25:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50425 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725925AbeKTTZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:25:06 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F3B1420D31; Tue, 20 Nov 2018 09:57:02 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C73FD2074F;
+        Tue, 20 Nov 2018 09:56:52 +0100 (CET)
+Date:   Tue, 20 Nov 2018 09:56:52 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Mesih Kilinc <mesihkilinc@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Russell King <linux@armlinux.org.uk>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>, zhao_steven@263.net,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Julian Calaby <julian.calaby@gmail.com>
+Subject: Re: [RFC PATCH v2 00/14] initial support for "suniv" Allwinner new
+ ARM9 SoC
+Message-ID: <20181120085652.3hqmyofxaknoq7an@flea>
+References: <cover.1542546735.git.mesihkilinc@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ofcvkfm5ig7h33mb"
+Content-Disposition: inline
+In-Reply-To: <cover.1542546735.git.mesihkilinc@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 9:17 AM Marc Zyngier <marc.zyngier@arm.com> wrote:
 
-> How does this change anything with the fact that the above code is
-> broken? 56 or 64 bit, you cannot read this counter with a single
-> access, or two. The canonical way of reading such a counter is
-> something like this:
->
->         do {
->                 lo = readl_relaxed(LO);
->                 hi = readl_relaxed(HI);
->         } while (hi != read_relaxed(HI));
+--ofcvkfm5ig7h33mb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To be fair, I have seen hardware that employ a logic latch
-such that when a read access is done to the LO register,
-the value of the whole counter is latched, also for the HI
-register, so when you read the HI register in the second
-step, it is never subject to wrapping. (Conversely reading
-the HI before the LO will always give you insane values
-:D)
+Hi,
 
-However the above code should be fine unless you know
-for sure the hardware was constructed with a clever latch.
+On Sun, Nov 18, 2018 at 05:16:59PM +0300, Mesih Kilinc wrote:
+> This is the second version of RFC patchset for Allwinner ARMv5 F1C100s
+> SoC. Icenowy (author of the initial patchset) allowed me to continue.
+> For patch 1~3 which introduces first ARMv5 Allwinner SoC I looked=20
+> freescale,imx configs and tried to organize patches better.=20
+> Addressed comment from Maxime Ripard and added SoC name to
+> compatibles and filenames.=20
+> Addressed comment from Rob Herring and added dt-bindings.
+>=20
+> This is my first patch. Sorry for any inconvenience :-)
 
-Yours,
-Linus Walleij
+Apart from the minor comments you'll find with each patches, you did
+great :)
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ofcvkfm5ig7h33mb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PMVAAKCRDj7w1vZxhR
+xRx7AQCtoduqkwO04y3fuxH4Yt6MutflOJlPcEI7AKULiW03NAD/VXbhFZfCT0Yl
+RqIRQ+3HWAovFQQdiWhfN8+rBbnJkAs=
+=OruB
+-----END PGP SIGNATURE-----
+
+--ofcvkfm5ig7h33mb--
