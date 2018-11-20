@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A03B3C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DB7AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70008208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:34:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 267D42087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:34:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PEW0wq7I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70008208E3
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="FNR8YGsJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 267D42087E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729778AbeKTXD2 (ORCPT
+        id S1729785AbeKTXDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:03:28 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40147 "EHLO
+        Tue, 20 Nov 2018 18:03:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35226 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726088AbeKTXD1 (ORCPT
+        with ESMTP id S1729730AbeKTXD3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:03:27 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q26so2035301wmf.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:34:32 -0800 (PST)
+        Tue, 20 Nov 2018 18:03:29 -0500
+Received: by mail-wm1-f68.google.com with SMTP id c126so2057315wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:34:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uNJLkR6hn0GQxpQLiNymF31AMmlG+G6ZblnQq6cZGno=;
-        b=PEW0wq7IEbV8USiOPcrCgfbxaxHqFNTihq/igvaxfqykNJn4lYjz4KeWERsErQSccU
-         /dJdRerLHBZlZ0+XrtlCBRKARExHUoXXRNVk3tkOteaZYcK+K0sEwBZazJyUeMuZAG3q
-         +X0odsFjWreXLJQnVgTcTmxOAo/xYTRO5kJOqU08rVk7WSiLTVqu3g8SYoG3AflVmjGG
-         8jatTMFiw+s6UjqCgZdvbpdnzrZchWf6NaInpDTXH1l7cSM3C/ZqLuavkVE4xbxryXJb
-         QRjbQNEf1nck1pH5Ktuymka38r045MJy9BR2I8dYABRQQN0qgRzDRUMzSKjMPObjiFAS
-         vufQ==
+        bh=3kyk+wNbDD2b90ve4QeMI1tgKD9o0nY4RuZPk1Thmfg=;
+        b=FNR8YGsJL5cW1CDtRA9IJhEr95YZsvpxDI6DvLrR6PlGa7qqZHJ/tU9KDwiUVe5Scu
+         rRck7Fk9KdeUnsqZH4bdamcQybfXBbKUg0alGkfBZGMUntQW80lCD0DjsK/IeAqKT0Ag
+         1Uf3RTl/GFxJ31EVfm+7Cl5AaiL01SJfE5vfSqraO4dGMJErkiP4IZW7B6x2X5PLrIsU
+         jblVAz9ppvd8561+6twCZqXM/wBn0+lKa8LsFMND3r1luYKZ9jkLTKCvFWFKbDCM5KPe
+         EDGNYPQ/rEyq7WKqrk1pQxyt/iY41JnG60rTDVOmZ4zhEtaV/f+SETjse4UbnYmIwShr
+         IOGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uNJLkR6hn0GQxpQLiNymF31AMmlG+G6ZblnQq6cZGno=;
-        b=JFTTzGwr64/XLa2BznWQYTy9Mnr1jdajPXkPUVo02S2qR2OfgXaUbs+Tpl/cBjhf6f
-         bhTNTLVTfUKmlb4fHbIosKoTFJsy3BlW3KjirjO+xwkbpUVZvaQArB6ne2mE50Hbkomq
-         pEcCfYccl08xhSIoeMtt140YDpAQ3WmaWs+W/4eM4jrYlUmI5rU/cWyFXMnok/oFVDXI
-         APuT+8YSKAw9tcrAQTFrHtFVJEfkzBswjL4QjkSeBgqw0VuKUhMhR3dWo93elQ6U0FMV
-         XsasNIx9AhzkTxX117Cxr7WRNzOnzJlUZo5XkwLIVhMBe4qaPGRnPIIM8bAg0wklElMy
-         UpeA==
-X-Gm-Message-State: AA+aEWZMXVyEqyLSAsgIWopjksbEzRe5/ax2E3LELIHfil4oI3tf10KS
-        R9ZoxCwYivpaxptumm8dSy032A==
-X-Google-Smtp-Source: AFSGD/VmEeJIN/hQjJgAuoDQfeI/jdlBV8AckUHemQQf/DDybGy4S71fjtCMo2ngpHG3QDxI01fxUQ==
-X-Received: by 2002:a7b:c34b:: with SMTP id l11mr2159886wmj.30.1542717271520;
-        Tue, 20 Nov 2018 04:34:31 -0800 (PST)
+        bh=3kyk+wNbDD2b90ve4QeMI1tgKD9o0nY4RuZPk1Thmfg=;
+        b=IbrO3UsnqOkrvDnrdfESenKAbkYQXJ4p5Ak36snvUqlw4HUQ9h7ZB08SNrfxPYwYp8
+         4wVkxP1S2g6zHT4AIYskdKI6FWv2fNlVMZhedYI6RbNuEdaYT7TODFfrShuQ3744KYVb
+         veKKif89JsSCppTSEwW0XSz7PSyLgQpRh4HbwLyvJ3Vv4PW13l2sNEiGFbL1fnlxncxw
+         AXA7zItYW07of9aAe5If8V0aobOc7Yn0Y3p1L3CgHoHyNcVZcBAXEYAfW/ocEwS/mCHa
+         I36tmSVJ9xzRb6YYZHmz+p6mKmyMepjZ0x40OWo2Gvrx7fWzBICRPqTNEteGXMmJsv8m
+         SD/g==
+X-Gm-Message-State: AGRZ1gKfONBvJ0UTtfY7AJYg7YDdm3MQPV5iyetdjtw4mRZUhD0pad3G
+        PcL+12unkfSDX3KgM/IrczRrJw==
+X-Google-Smtp-Source: AJdET5e4j5cHMMq8Ui/uovhz7+mRM5riqnCRs+bUtVjxVD8GXsJfQ8XzFPtzwNlJ1hOQME4EGP/CkA==
+X-Received: by 2002:a7b:c003:: with SMTP id c3-v6mr1852575wmb.133.1542717272985;
+        Tue, 20 Nov 2018 04:34:32 -0800 (PST)
 Received: from debian-brgl.home (lfbn-mar-1-609-89.w90-118.abo.wanadoo.fr. [90.118.185.89])
-        by smtp.gmail.com with ESMTPSA id v189-v6sm33482685wmd.40.2018.11.20.04.34.30
+        by smtp.gmail.com with ESMTPSA id v189-v6sm33482685wmd.40.2018.11.20.04.34.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 04:34:31 -0800 (PST)
+        Tue, 20 Nov 2018 04:34:32 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         stable@vger.kernel.org
-Subject: [PATCH 4/5] ARM: davinci: da830: set the GPIO base to 0
-Date:   Tue, 20 Nov 2018 13:31:24 +0100
-Message-Id: <20181120123125.24938-5-brgl@bgdev.pl>
+Subject: [PATCH 5/5] ARM: davinci: dm644x: set the GPIO base to 0
+Date:   Tue, 20 Nov 2018 13:31:25 +0100
+Message-Id: <20181120123125.24938-6-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120123125.24938-1-brgl@bgdev.pl>
 References: <20181120123125.24938-1-brgl@bgdev.pl>
@@ -91,20 +91,20 @@ Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base s
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/da830.c | 2 ++
+ arch/arm/mach-davinci/dm644x.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 0bc5bd2665df..822d2590fbc9 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -759,6 +759,8 @@ static struct davinci_id da830_ids[] = {
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 0720da7809a6..f25b508a831b 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -498,6 +498,8 @@ static struct resource dm644_gpio_resources[] = {
  };
  
- static struct davinci_gpio_platform_data da830_gpio_platform_data = {
-+	.no_auto_base = true,
-+	.base = 0,
- 	.ngpio = 128,
+ static struct davinci_gpio_platform_data dm644_gpio_platform_data = {
++	.no_auto_base	= true,
++	.base		= 0,
+ 	.ngpio		= 71,
  };
  
 -- 
