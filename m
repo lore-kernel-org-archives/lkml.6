@@ -2,871 +2,172 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401D1C46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD381C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00BEC20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:15:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00BEC20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id BA33820831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="epNoWEfI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA33820831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729045AbeKUEqJ (ORCPT
+        id S1729325AbeKUErO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:46:09 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:37492 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728526AbeKUEqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:46:08 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0DDB41A008D;
-        Tue, 20 Nov 2018 19:15:37 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F3A721A0005;
-        Tue, 20 Nov 2018 19:15:36 +0100 (CET)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B371C20621;
-        Tue, 20 Nov 2018 19:15:36 +0100 (CET)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, alexandru.marginean@nxp.com,
-        catalin.horghidan@nxp.com
-Subject: [PATCH net-next v2 4/4] enetc: Add RFS and RSS support
-Date:   Tue, 20 Nov 2018 20:15:34 +0200
-Message-Id: <1542737734-21756-5-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Tue, 20 Nov 2018 23:47:14 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:41441 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725961AbeKUErO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:47:14 -0500
+Received: by mail-ua1-f65.google.com with SMTP id z24so986392ual.8
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 10:16:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vHomY8G6dFCnUkQv3bzhPnVeoDDrbSVv+Rav3w+pDRo=;
+        b=epNoWEfIG3N5FdXQ5FWEkTBFQAZubvZtc3FsPMbcWpLd/hO7ZgmgdYrnQAn8rcwZEw
+         Wpma/gNQ6rAWZXu/6Sjw1sVEZ8aVbb4LOZZSSGLNQtoYQas82RO4QJTl0tLBfRFRLNT4
+         q9TGF8mvC9ALjdyQ6TT8DbrQAofpa56P+F/Q/mIxOpPCPPqfjC7MISYtzabc4CKl0Fer
+         lLhlK5iWxUggu+iP774sin9KnjEGHwoe8VWYYs9F+IGCiVvboXScL4oJEy4TWNiUom0/
+         WbxywHA3x+abSvgqllXyN32rtE3Q0o7s7jtMOUyaK0P0zVCDqiNujzThzaXrJNhGB7kp
+         6Vaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vHomY8G6dFCnUkQv3bzhPnVeoDDrbSVv+Rav3w+pDRo=;
+        b=ewcOoubRZoh3NrVKDlKKSz2/WYHzm6OUsBd2rI+U0qs5BV4Gi7FNPDbiaBkbyX/vNS
+         NTaI+zHAefLtEidc8y5Meo0cAzuyOtPPNFjkDUisxZ1c2gI6FGNJ3TU4CEY/pk6eadIX
+         HovEjQSlcrGTsGj0ptMxqz9WJH0SO8sy+X58MBPZ8Om0tjg2ZKs8hqN/Z/bli0VwqYyM
+         +Dhb80mKDG1C4MjMCCNG6+8wr2IDinZNgU/PjvxeeNf3S3Vz7FWVkoJq1jFTrSo4a/gx
+         rwGI9LtenOVNxNy2kyXhvSGBdlNEYKov/C9huaGr6/Rrsaa0a+DznrwR9JCeoGbgzSD6
+         owGA==
+X-Gm-Message-State: AA+aEWZxcZVcNw80clxx62kKN4tCSEccFVN+wTcNXxskD9Sj10LaFGHf
+        /l2OhwLHGRlGGZDRrCQI2VFHJQy0z1tdtRESaOAohQ==
+X-Google-Smtp-Source: AFSGD/UbN/FrUIWBBUe4APjxBS4Kx/voZ3bM7pOf9K1f7w1U8ji+54ShtNs7cQb3Ju23ofuDC1VCF43BF4D1OytISgw=
+X-Received: by 2002:ab0:1058:: with SMTP id g24mr1366999uab.58.1542737806322;
+ Tue, 20 Nov 2018 10:16:46 -0800 (PST)
+MIME-Version: 1.0
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120170842.GZ2131@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181120170842.GZ2131@hirez.programming.kicks-ass.net>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Tue, 20 Nov 2018 10:20:44 -0800
+Message-ID: <CABPqkBQyvbM0AAJRRQQeBUZOuPHr2qjD+qWe53zJg84kzR3=Ng@mail.gmail.com>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+To:     Kyle Huey <me@kylehuey.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Liang, Kan" <kan.liang@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, robert@ocallahan.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A ternary match table is used for RFS. If multiple entries in the table
-match, the entry with the lowest numerical values index is chosen as the
-matching entry.  Entries in the table are identified using an index which
-takes a value from 0 to PRFSCAPR[NUM_RFS]-1 when accessed by the PSI (PF).
-Portions of the RFS table can be assigned to each SI by the PSI (PF)
-driver in PSIaRFSCFGR.  Assignments are cumulative, the entries assigned
-to SIn start after those assigned to SIn-1.  The total assignments to all
-SIs must be equal to or less than the number available to the port as found
-in PRFSCAPR.
+On Tue, Nov 20, 2018 at 9:08 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Nov 20, 2018 at 08:19:39AM -0800, Kyle Huey wrote:
+> > tl;dr: rr is currently broken on 4.20rc2, which I bisected to
+> > af3bdb991a5cb57c189d34aadbd3aa88995e0d9f. I further confirmed that
+> > booting the 4.20rc2 kernel with `disable_counter_freezing=true` allows
+> > rr to work.
+> >
+> > rr, a userspace record and replay debugger[0], uses the PMU interrupt
+> > (PMI) to stop a program during replay to inject asynchronous events
+> > such as signals. With perf counter freezing enabled we are reliably
+> > seeing perf event overcounts during replay. This behavior is easily
+> > demonstrated by attempting to record and replay the `alarm` test from
+> > rr's test suite. Through bisection I determined that [1] is the first
+> > bad commit, and further testing showed that booting the kernel with
+> > `disable_counter_freezing=true` fixes rr.
+> >
+I would like to understand better the PMU behavior you are relying upon and
+why the V4 freeze approach is breaking it. Could you elaborate?
 
-For RSS, the Toeplitz hash function used requires two inputs, a 40B random
-secret key that is supplied through the PRSSKR0-9 registers as well as the
-relevant pieces of the packet header (n-tuple). The 6 LSB bits of the hash
-function result will then be used as a pointer to obtain the tag referenced
-in the 64 entry indirection table. The result will provide a winning group
-which will be used to help route the received packet.
-
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
----
-v2:	none
-
- drivers/net/ethernet/freescale/enetc/enetc.c       |  77 ++++++
- drivers/net/ethernet/freescale/enetc/enetc.h       |  14 ++
- drivers/net/ethernet/freescale/enetc/enetc_cbdr.c  | 100 ++++++++
- .../net/ethernet/freescale/enetc/enetc_ethtool.c   | 277 ++++++++++++++++++++-
- drivers/net/ethernet/freescale/enetc/enetc_hw.h    |  43 ++++
- drivers/net/ethernet/freescale/enetc/enetc_pf.c    |  34 ++-
- drivers/net/ethernet/freescale/enetc/enetc_vf.c    |  10 +
- 7 files changed, 552 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-index f9f4c8b..a6a6b21 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-@@ -620,6 +620,7 @@ static int enetc_clean_rx_ring(struct enetc_bdr *rx_ring,
- }
- 
- /* Probing and Init */
-+#define ENETC_MAX_RFS_SIZE 64
- void enetc_get_si_caps(struct enetc_si *si)
- {
- 	struct enetc_hw *hw = &si->hw;
-@@ -629,6 +630,17 @@ void enetc_get_si_caps(struct enetc_si *si)
- 	val = enetc_rd(hw, ENETC_SICAPR0);
- 	si->num_rx_rings = (val >> 16) & 0xff;
- 	si->num_tx_rings = val & 0xff;
-+
-+	val = enetc_rd(hw, ENETC_SIRFSCAPR);
-+	si->num_fs_entries = ENETC_SIRFSCAPR_GET_NUM_RFS(val);
-+	si->num_fs_entries = min(si->num_fs_entries, ENETC_MAX_RFS_SIZE);
-+
-+	si->num_rss = 0;
-+	val = enetc_rd(hw, ENETC_SIPCAPR0);
-+	if (val & ENETC_SIPCAPR0_RSS) {
-+		val = enetc_rd(hw, ENETC_SIRSSCAPR);
-+		si->num_rss = ENETC_SIRSSCAPR_GET_NUM_RSS(val);
-+	}
- }
- 
- static int enetc_dma_alloc_bdr(struct enetc_bdr *r, size_t bd_size)
-@@ -880,10 +892,31 @@ static void enetc_clear_cbdr(struct enetc_hw *hw)
- 	enetc_wr(hw, ENETC_SICBDRMR, 0);
- }
- 
-+static int enetc_setup_default_rss_table(struct enetc_si *si, int num_groups)
-+{
-+	int *rss_table;
-+	int i;
-+
-+	rss_table = kmalloc_array(si->num_rss, sizeof(*rss_table), GFP_KERNEL);
-+	if (!rss_table)
-+		return -ENOMEM;
-+
-+	/* Set up RSS table defaults */
-+	for (i = 0; i < si->num_rss; i++)
-+		rss_table[i] = i % num_groups;
-+
-+	enetc_set_rss_table(si, rss_table, si->num_rss);
-+
-+	kfree(rss_table);
-+
-+	return 0;
-+}
-+
- static int enetc_configure_si(struct enetc_ndev_priv *priv)
- {
- 	struct enetc_si *si = priv->si;
- 	struct enetc_hw *hw = &si->hw;
-+	int err;
- 
- 	enetc_setup_cbdr(hw, &si->cbd_ring);
- 	/* set SI cache attributes */
-@@ -893,6 +926,12 @@ static int enetc_configure_si(struct enetc_ndev_priv *priv)
- 	/* enable SI */
- 	enetc_wr(hw, ENETC_SIMR, ENETC_SIMR_EN);
- 
-+	if (si->num_rss) {
-+		err = enetc_setup_default_rss_table(si, priv->num_rx_rings);
-+		if (err)
-+			return err;
-+	}
-+
- 	return 0;
- }
- 
-@@ -925,6 +964,13 @@ int enetc_alloc_si_resources(struct enetc_ndev_priv *priv)
- 	if (err)
- 		return err;
- 
-+	priv->cls_rules = kcalloc(si->num_fs_entries, sizeof(*priv->cls_rules),
-+				  GFP_KERNEL);
-+	if (!priv->cls_rules) {
-+		err = -ENOMEM;
-+		goto err_alloc_cls;
-+	}
-+
- 	err = enetc_configure_si(priv);
- 	if (err)
- 		goto err_config_si;
-@@ -932,6 +978,8 @@ int enetc_alloc_si_resources(struct enetc_ndev_priv *priv)
- 	return 0;
- 
- err_config_si:
-+	kfree(priv->cls_rules);
-+err_alloc_cls:
- 	enetc_clear_cbdr(&si->hw);
- 	enetc_free_cbdr(priv->dev, &si->cbd_ring);
- 
-@@ -944,6 +992,8 @@ void enetc_free_si_resources(struct enetc_ndev_priv *priv)
- 
- 	enetc_clear_cbdr(&si->hw);
- 	enetc_free_cbdr(priv->dev, &si->cbd_ring);
-+
-+	kfree(priv->cls_rules);
- }
- 
- static void enetc_setup_txbdr(struct enetc_hw *hw, struct enetc_bdr *tx_ring)
-@@ -1288,6 +1338,33 @@ struct net_device_stats *enetc_get_stats(struct net_device *ndev)
- 	return stats;
- }
- 
-+static int enetc_set_rss(struct net_device *ndev, int en)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct enetc_hw *hw = &priv->si->hw;
-+	u32 reg;
-+
-+	enetc_wr(hw, ENETC_SIRBGCR, priv->num_rx_rings);
-+
-+	reg = enetc_rd(hw, ENETC_SIMR);
-+	reg &= ~ENETC_SIMR_RSSE;
-+	reg |= (en) ? ENETC_SIMR_RSSE : 0;
-+	enetc_wr(hw, ENETC_SIMR, reg);
-+
-+	return 0;
-+}
-+
-+int enetc_set_features(struct net_device *ndev,
-+		       netdev_features_t features)
-+{
-+	netdev_features_t changed = ndev->features ^ features;
-+
-+	if (changed & NETIF_F_RXHASH)
-+		enetc_set_rss(ndev, !!(features & NETIF_F_RXHASH));
-+
-+	return 0;
-+}
-+
- int enetc_alloc_msix(struct enetc_ndev_priv *priv)
- {
- 	struct pci_dev *pdev = priv->si->pdev;
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
-index 988b1ea..ec3a5c0 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.h
-@@ -127,6 +127,8 @@ struct enetc_si {
- 
- 	int num_rx_rings; /* how many rings are available in the SI */
- 	int num_tx_rings;
-+	int num_fs_entries;
-+	int num_rss; /* number of RSS buckets */
- 	unsigned short pad;
- };
- 
-@@ -157,6 +159,11 @@ struct enetc_int_vector {
- 	struct enetc_bdr tx_ring[0];
- };
- 
-+struct enetc_cls_rule {
-+	struct ethtool_rx_flow_spec fs;
-+	int used;
-+};
-+
- #define ENETC_MAX_BDR_INT	2 /* fixed to max # of available cpus */
- 
- struct enetc_ndev_priv {
-@@ -174,6 +181,8 @@ struct enetc_ndev_priv {
- 	struct enetc_bdr *tx_ring[16];
- 	struct enetc_bdr *rx_ring[16];
- 
-+	struct enetc_cls_rule *cls_rules;
-+
- 	struct device_node *phy_node;
- 	phy_interface_t if_mode;
- };
-@@ -213,3 +222,8 @@ void enetc_set_ethtool_ops(struct net_device *ndev);
- int enetc_set_mac_flt_entry(struct enetc_si *si, int index,
- 			    char *mac_addr, int si_map);
- int enetc_clear_mac_flt_entry(struct enetc_si *si, int index);
-+int enetc_set_fs_entry(struct enetc_si *si, struct enetc_cmd_rfse *rfse,
-+		       int index);
-+void enetc_set_rss_key(struct enetc_hw *hw, const u8 *bytes);
-+int enetc_get_rss_table(struct enetc_si *si, u32 *table, int count);
-+int enetc_set_rss_table(struct enetc_si *si, const u32 *table, int count);
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c b/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c
-index 460481d..5acf96f 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_cbdr.c
-@@ -108,3 +108,103 @@ int enetc_set_mac_flt_entry(struct enetc_si *si, int index,
- 
- 	return enetc_send_cmd(si, &cbd);
- }
-+
-+#define RFSE_ALIGN	64
-+/* Set entry in RFS table */
-+int enetc_set_fs_entry(struct enetc_si *si, struct enetc_cmd_rfse *rfse,
-+		       int index)
-+{
-+	struct enetc_cbd cbd = {.cmd = 0};
-+	dma_addr_t dma, dma_align;
-+	void *tmp, *tmp_align;
-+	int err;
-+
-+	/* fill up the "set" descriptor */
-+	cbd.cmd = 0;
-+	cbd.cls = 4;
-+	cbd.index = cpu_to_le16(index);
-+	cbd.length = cpu_to_le16(sizeof(*rfse));
-+	cbd.opt[3] = cpu_to_le32(0); /* SI */
-+
-+	tmp = dma_alloc_coherent(&si->pdev->dev, sizeof(*rfse) + RFSE_ALIGN,
-+				 &dma, GFP_KERNEL);
-+	if (!tmp) {
-+		dev_err(&si->pdev->dev, "DMA mapping of RFS entry failed!\n");
-+		return -ENOMEM;
-+	}
-+
-+	dma_align = ALIGN(dma, RFSE_ALIGN);
-+	tmp_align = PTR_ALIGN(tmp, RFSE_ALIGN);
-+	memcpy(tmp_align, rfse, sizeof(*rfse));
-+
-+	cbd.addr[0] = cpu_to_le32(lower_32_bits(dma_align));
-+	cbd.addr[1] = cpu_to_le32(upper_32_bits(dma_align));
-+
-+	err = enetc_send_cmd(si, &cbd);
-+	if (err)
-+		dev_err(&si->pdev->dev, "FS entry add failed (%d)!", err);
-+
-+	dma_free_coherent(&si->pdev->dev, sizeof(*rfse) + RFSE_ALIGN,
-+			  tmp, dma);
-+
-+	return err;
-+}
-+
-+#define RSSE_ALIGN	64
-+static int enetc_cmd_rss_table(struct enetc_si *si, u32 *table, int count,
-+			       bool read)
-+{
-+	struct enetc_cbd cbd = {.cmd = 0};
-+	dma_addr_t dma, dma_align;
-+	u8 *tmp, *tmp_align;
-+	int err, i;
-+
-+	if (count < RSSE_ALIGN)
-+		/* HW only takes in a full 64 entry table */
-+		return -EINVAL;
-+
-+	tmp = dma_alloc_coherent(&si->pdev->dev, count + RSSE_ALIGN,
-+				 &dma, GFP_KERNEL);
-+	if (!tmp) {
-+		dev_err(&si->pdev->dev, "DMA mapping of RSS table failed!\n");
-+		return -ENOMEM;
-+	}
-+	dma_align = ALIGN(dma, RSSE_ALIGN);
-+	tmp_align = PTR_ALIGN(tmp, RSSE_ALIGN);
-+
-+	if (!read)
-+		for (i = 0; i < count; i++)
-+			tmp_align[i] = (u8)(table[i]);
-+
-+	/* fill up the descriptor */
-+	cbd.cmd = read ? 2 : 1;
-+	cbd.cls = 3;
-+	cbd.length = cpu_to_le16(count);
-+
-+	cbd.addr[0] = cpu_to_le32(lower_32_bits(dma_align));
-+	cbd.addr[1] = cpu_to_le32(upper_32_bits(dma_align));
-+
-+	err = enetc_send_cmd(si, &cbd);
-+	if (err)
-+		dev_err(&si->pdev->dev, "RSS cmd failed (%d)!", err);
-+
-+	if (read)
-+		for (i = 0; i < count; i++)
-+			table[i] = tmp_align[i];
-+
-+	dma_free_coherent(&si->pdev->dev, count + RSSE_ALIGN, tmp, dma);
-+
-+	return err;
-+}
-+
-+/* Get RSS table */
-+int enetc_get_rss_table(struct enetc_si *si, u32 *table, int count)
-+{
-+	return enetc_cmd_rss_table(si, table, count, true);
-+}
-+
-+/* Set RSS table */
-+int enetc_set_rss_table(struct enetc_si *si, const u32 *table, int count)
-+{
-+	return enetc_cmd_rss_table(si, (u32 *)table, count, false);
-+}
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-index 9032b0e..b0a3add 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-@@ -25,8 +25,8 @@ static const u32 enetc_rxbdr_regs[] = {
- static const u32 enetc_port_regs[] = {
- 	ENETC_PMR, ENETC_PSR, ENETC_PSIPMR, ENETC_PSIPMAR0(0),
- 	ENETC_PSIPMAR1(0), ENETC_PTXMBAR, ENETC_PCAPR0, ENETC_PCAPR1,
--	ENETC_PSICFGR0(0), ENETC_PTCMSDUR(0), ENETC_PM0_CMD_CFG,
--	ENETC_PM0_MAXFRM, ENETC_PM0_IF_MODE
-+	ENETC_PSICFGR0(0), ENETC_PRFSCAPR, ENETC_PTCMSDUR(0),
-+	ENETC_PM0_CMD_CFG, ENETC_PM0_MAXFRM, ENETC_PM0_IF_MODE
- };
- 
- static int enetc_get_reglen(struct net_device *ndev)
-@@ -270,6 +270,268 @@ static void enetc_get_ethtool_stats(struct net_device *ndev,
- 		data[o++] = enetc_port_rd(hw, enetc_port_counters[i].reg);
- }
- 
-+#define ENETC_RSSHASH_L3 (RXH_L2DA | RXH_VLAN | RXH_L3_PROTO | RXH_IP_SRC | \
-+			  RXH_IP_DST)
-+#define ENETC_RSSHASH_L4 (ENETC_RSSHASH_L3 | RXH_L4_B_0_1 | RXH_L4_B_2_3)
-+static int enetc_get_rsshash(struct ethtool_rxnfc *rxnfc)
-+{
-+	static const u32 rsshash[] = {
-+			[TCP_V4_FLOW]    = ENETC_RSSHASH_L4,
-+			[UDP_V4_FLOW]    = ENETC_RSSHASH_L4,
-+			[SCTP_V4_FLOW]   = ENETC_RSSHASH_L4,
-+			[AH_ESP_V4_FLOW] = ENETC_RSSHASH_L3,
-+			[IPV4_FLOW]      = ENETC_RSSHASH_L3,
-+			[TCP_V6_FLOW]    = ENETC_RSSHASH_L4,
-+			[UDP_V6_FLOW]    = ENETC_RSSHASH_L4,
-+			[SCTP_V6_FLOW]   = ENETC_RSSHASH_L4,
-+			[AH_ESP_V6_FLOW] = ENETC_RSSHASH_L3,
-+			[IPV6_FLOW]      = ENETC_RSSHASH_L3,
-+			[ETHER_FLOW]     = 0,
-+	};
-+
-+	if (rxnfc->flow_type >= ARRAY_SIZE(rsshash))
-+		return -EINVAL;
-+
-+	rxnfc->data = rsshash[rxnfc->flow_type];
-+
-+	return 0;
-+}
-+
-+/* current HW spec does byte reversal on everything including MAC addresses */
-+static void ether_addr_copy_swap(u8 *dst, const u8 *src)
-+{
-+	int i;
-+
-+	for (i = 0; i < ETH_ALEN; i++)
-+		dst[i] = src[ETH_ALEN - i - 1];
-+}
-+
-+static int enetc_set_cls_entry(struct enetc_si *si,
-+			       struct ethtool_rx_flow_spec *fs, bool en)
-+{
-+	struct ethtool_tcpip4_spec *l4ip4_h, *l4ip4_m;
-+	struct ethtool_usrip4_spec *l3ip4_h, *l3ip4_m;
-+	struct ethhdr *eth_h, *eth_m;
-+	struct enetc_cmd_rfse rfse = { {0} };
-+
-+	if (!en)
-+		goto done;
-+
-+	switch (fs->flow_type & 0xff) {
-+	case TCP_V4_FLOW:
-+		l4ip4_h = &fs->h_u.tcp_ip4_spec;
-+		l4ip4_m = &fs->m_u.tcp_ip4_spec;
-+		goto l4ip4;
-+	case UDP_V4_FLOW:
-+		l4ip4_h = &fs->h_u.udp_ip4_spec;
-+		l4ip4_m = &fs->m_u.udp_ip4_spec;
-+		goto l4ip4;
-+	case SCTP_V4_FLOW:
-+		l4ip4_h = &fs->h_u.sctp_ip4_spec;
-+		l4ip4_m = &fs->m_u.sctp_ip4_spec;
-+l4ip4:
-+		rfse.sip_h[0] = ntohl(l4ip4_h->ip4src);
-+		rfse.sip_m[0] = ntohl(l4ip4_m->ip4src);
-+		rfse.dip_h[0] = ntohl(l4ip4_h->ip4dst);
-+		rfse.dip_m[0] = ntohl(l4ip4_m->ip4dst);
-+		rfse.sport_h = ntohs(l4ip4_h->psrc);
-+		rfse.sport_m = ntohs(l4ip4_m->psrc);
-+		rfse.dport_h = ntohs(l4ip4_h->pdst);
-+		rfse.dport_m = ntohs(l4ip4_m->pdst);
-+		if (l4ip4_m->tos)
-+			netdev_warn(si->ndev, "ToS field is not supported and was ignored\n");
-+		rfse.ethtype_h = ETH_P_IP; /* IPv4 */
-+		rfse.ethtype_m = 0xffff;
-+		break;
-+	case IP_USER_FLOW:
-+		l3ip4_h = &fs->h_u.usr_ip4_spec;
-+		l3ip4_m = &fs->m_u.usr_ip4_spec;
-+
-+		rfse.sip_h[0] = ntohl(l3ip4_h->ip4src);
-+		rfse.sip_m[0] = ntohl(l3ip4_m->ip4src);
-+		rfse.dip_h[0] = ntohl(l3ip4_h->ip4dst);
-+		rfse.dip_m[0] = ntohl(l3ip4_m->ip4dst);
-+		if (l3ip4_m->tos)
-+			netdev_warn(si->ndev, "ToS field is not supported and was ignored\n");
-+		rfse.ethtype_h = ETH_P_IP; /* IPv4 */
-+		rfse.ethtype_m = 0xffff;
-+		break;
-+	case ETHER_FLOW:
-+		eth_h = &fs->h_u.ether_spec;
-+		eth_m = &fs->m_u.ether_spec;
-+
-+		ether_addr_copy_swap(rfse.smac_h, eth_h->h_source);
-+		ether_addr_copy_swap(rfse.smac_m, eth_m->h_source);
-+		ether_addr_copy_swap(rfse.dmac_h, eth_h->h_dest);
-+		ether_addr_copy_swap(rfse.dmac_m, eth_m->h_dest);
-+		rfse.ethtype_h = ntohs(eth_h->h_proto);
-+		rfse.ethtype_m = ntohs(eth_m->h_proto);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	rfse.mode |= ENETC_RFSE_EN;
-+	if (fs->ring_cookie != RX_CLS_FLOW_DISC) {
-+		rfse.mode |= ENETC_RFSE_MODE_BD;
-+		rfse.result = fs->ring_cookie;
-+	}
-+done:
-+	return enetc_set_fs_entry(si, &rfse, fs->location);
-+}
-+
-+static int enetc_get_rxnfc(struct net_device *ndev, struct ethtool_rxnfc *rxnfc,
-+			   u32 *rule_locs)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	int i, j;
-+
-+	switch (rxnfc->cmd) {
-+	case ETHTOOL_GRXRINGS:
-+		rxnfc->data = priv->num_rx_rings;
-+		break;
-+	case ETHTOOL_GRXFH:
-+		/* get RSS hash config */
-+		return enetc_get_rsshash(rxnfc);
-+	case ETHTOOL_GRXCLSRLCNT:
-+		/* total number of entries */
-+		rxnfc->data = priv->si->num_fs_entries;
-+		/* number of entries in use */
-+		rxnfc->rule_cnt = 0;
-+		for (i = 0; i < priv->si->num_fs_entries; i++)
-+			if (priv->cls_rules[i].used)
-+				rxnfc->rule_cnt++;
-+		break;
-+	case ETHTOOL_GRXCLSRULE:
-+		if (rxnfc->fs.location >= priv->si->num_fs_entries)
-+			return -EINVAL;
-+
-+		/* get entry x */
-+		rxnfc->fs = priv->cls_rules[rxnfc->fs.location].fs;
-+		break;
-+	case ETHTOOL_GRXCLSRLALL:
-+		/* total number of entries */
-+		rxnfc->data = priv->si->num_fs_entries;
-+		/* array of indexes of used entries */
-+		j = 0;
-+		for (i = 0; i < priv->si->num_fs_entries; i++) {
-+			if (!priv->cls_rules[i].used)
-+				continue;
-+			if (j == rxnfc->rule_cnt)
-+				return -EMSGSIZE;
-+			rule_locs[j++] = i;
-+		}
-+		/* number of entries in use */
-+		rxnfc->rule_cnt = j;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static int enetc_set_rxnfc(struct net_device *ndev, struct ethtool_rxnfc *rxnfc)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	int err;
-+
-+	switch (rxnfc->cmd) {
-+	case ETHTOOL_SRXCLSRLINS:
-+		if (rxnfc->fs.location >= priv->si->num_fs_entries)
-+			return -EINVAL;
-+
-+		if (rxnfc->fs.ring_cookie >= priv->num_rx_rings &&
-+		    rxnfc->fs.ring_cookie != RX_CLS_FLOW_DISC)
-+			return -EINVAL;
-+
-+		err = enetc_set_cls_entry(priv->si, &rxnfc->fs, true);
-+		if (err)
-+			return err;
-+		priv->cls_rules[rxnfc->fs.location].fs = rxnfc->fs;
-+		priv->cls_rules[rxnfc->fs.location].used = 1;
-+		break;
-+	case ETHTOOL_SRXCLSRLDEL:
-+		if (rxnfc->fs.location >= priv->si->num_fs_entries)
-+			return -EINVAL;
-+
-+		err = enetc_set_cls_entry(priv->si, &rxnfc->fs, false);
-+		if (err)
-+			return err;
-+		priv->cls_rules[rxnfc->fs.location].used = 0;
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	return 0;
-+}
-+
-+static u32 enetc_get_rxfh_key_size(struct net_device *ndev)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+
-+	/* return the size of the RX flow hash key.  PF only */
-+	return (priv->si->hw.port) ? ENETC_RSSHASH_KEY_SIZE : 0;
-+}
-+
-+static u32 enetc_get_rxfh_indir_size(struct net_device *ndev)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+
-+	/* return the size of the RX flow hash indirection table */
-+	return priv->si->num_rss;
-+}
-+
-+static int enetc_get_rxfh(struct net_device *ndev, u32 *indir, u8 *key,
-+			  u8 *hfunc)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct enetc_hw *hw = &priv->si->hw;
-+	int err = 0, i;
-+
-+	/* return hash function */
-+	if (hfunc)
-+		*hfunc = ETH_RSS_HASH_TOP;
-+
-+	/* return hash key */
-+	if (key && hw->port)
-+		for (i = 0; i < ENETC_RSSHASH_KEY_SIZE / 4; i++)
-+			((u32 *)key)[i] = enetc_port_rd(hw, ENETC_PRSSK(i));
-+
-+	/* return RSS table */
-+	if (indir)
-+		err = enetc_get_rss_table(priv->si, indir, priv->si->num_rss);
-+
-+	return err;
-+}
-+
-+void enetc_set_rss_key(struct enetc_hw *hw, const u8 *bytes)
-+{
-+	int i;
-+
-+	for (i = 0; i < ENETC_RSSHASH_KEY_SIZE / 4; i++)
-+		enetc_port_wr(hw, ENETC_PRSSK(i), ((u32 *)bytes)[i]);
-+}
-+
-+static int enetc_set_rxfh(struct net_device *ndev, const u32 *indir,
-+			  const u8 *key, const u8 hfunc)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct enetc_hw *hw = &priv->si->hw;
-+	int err = 0;
-+
-+	/* set hash key, if PF */
-+	if (key && hw->port)
-+		enetc_set_rss_key(hw, key);
-+
-+	/* set RSS table */
-+	if (indir)
-+		err = enetc_set_rss_table(priv->si, indir, priv->si->num_rss);
-+
-+	return err;
-+}
-+
- static void enetc_get_ringparam(struct net_device *ndev,
- 				struct ethtool_ringparam *ring)
- {
-@@ -299,6 +561,12 @@ static const struct ethtool_ops enetc_pf_ethtool_ops = {
- 	.get_sset_count = enetc_get_sset_count,
- 	.get_strings = enetc_get_strings,
- 	.get_ethtool_stats = enetc_get_ethtool_stats,
-+	.get_rxnfc = enetc_get_rxnfc,
-+	.set_rxnfc = enetc_set_rxnfc,
-+	.get_rxfh_key_size = enetc_get_rxfh_key_size,
-+	.get_rxfh_indir_size = enetc_get_rxfh_indir_size,
-+	.get_rxfh = enetc_get_rxfh,
-+	.set_rxfh = enetc_set_rxfh,
- 	.get_ringparam = enetc_get_ringparam,
- 	.get_link_ksettings = phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings = phy_ethtool_set_link_ksettings,
-@@ -310,6 +578,11 @@ static const struct ethtool_ops enetc_vf_ethtool_ops = {
- 	.get_sset_count = enetc_get_sset_count,
- 	.get_strings = enetc_get_strings,
- 	.get_ethtool_stats = enetc_get_ethtool_stats,
-+	.get_rxnfc = enetc_get_rxnfc,
-+	.set_rxnfc = enetc_set_rxnfc,
-+	.get_rxfh_indir_size = enetc_get_rxfh_indir_size,
-+	.get_rxfh = enetc_get_rxfh,
-+	.set_rxfh = enetc_set_rxfh,
- 	.get_ringparam = enetc_get_ringparam,
- };
- 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index b161eff..adbfff8 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -13,9 +13,11 @@
- /** SI regs, offset: 0h */
- #define ENETC_SIMR	0
- #define ENETC_SIMR_EN	BIT(31)
-+#define ENETC_SIMR_RSSE	BIT(0)
- #define ENETC_SICTR0	0x18
- #define ENETC_SICTR1	0x1c
- #define ENETC_SIPCAPR0	0x20
-+#define ENETC_SIPCAPR0_RSS	BIT(8)
- #define ENETC_SIPCAPR1	0x24
- #define ENETC_SITGTGR	0x30
- #define ENETC_SIRBGCR	0x38
-@@ -92,6 +94,11 @@ static inline u32 enetc_vsi_set_msize(u32 size)
- 
- #define ENETC_SIUEFDCR	0xe28
- 
-+#define ENETC_SIRFSCAPR	0x1200
-+#define ENETC_SIRFSCAPR_GET_NUM_RFS(val) ((val) & 0x7f)
-+#define ENETC_SIRSSCAPR	0x1600
-+#define ENETC_SIRSSCAPR_GET_NUM_RSS(val) (BIT((val) & 0xf) * 32)
-+
- /** SI BDR sub-blocks, n = 0..7 */
- enum enetc_bdr_type {TX, RX};
- #define ENETC_BDR_OFF(i)	((i) * 0x200)
-@@ -172,8 +179,15 @@ enum enetc_bdr_type {TX, RX};
- 
- #define ENETC_PTCCBSR0(n)	(0x1110 + (n) * 8) /* n = 0 to 7*/
- #define ENETC_PTCCBSR1(n)	(0x1114 + (n) * 8) /* n = 0 to 7*/
-+#define ENETC_RSSHASH_KEY_SIZE	40
-+#define ENETC_PRSSK(n)		(0x1410 + (n) * 4) /* n = [0..9] */
- #define ENETC_PSIVLANFMR	0x1700
- #define ENETC_PSIVLANFMR_VS	BIT(0)
-+#define ENETC_PRFSMR		0x1800
-+#define ENETC_PRFSMR_RFSE	BIT(31)
-+#define ENETC_PRFSCAPR		0x1804
-+#define ENETC_PRFSCAPR_GET_NUM_RFS(val)	((((val) & 0xf) + 1) * 16)
-+#define ENETC_PSIRFSCFGR(n)	(0x1814 + (n) * 4) /* n = SI index */
- #define ENETC_PFPMR		0x1900
- #define ENETC_PFPMR_PMACE	BIT(1)
- #define ENETC_PFPMR_MWLM	BIT(0)
-@@ -418,6 +432,35 @@ struct enetc_cbd {
- #define ENETC_CBD_FLAGS_SF	BIT(7) /* short format */
- #define ENETC_CBD_STATUS_MASK	0xf
- 
-+struct enetc_cmd_rfse {
-+	u8 smac_h[6];
-+	u8 smac_m[6];
-+	u8 dmac_h[6];
-+	u8 dmac_m[6];
-+	u32 sip_h[4];
-+	u32 sip_m[4];
-+	u32 dip_h[4];
-+	u32 dip_m[4];
-+	u16 ethtype_h;
-+	u16 ethtype_m;
-+	u16 ethtype4_h;
-+	u16 ethtype4_m;
-+	u16 sport_h;
-+	u16 sport_m;
-+	u16 dport_h;
-+	u16 dport_m;
-+	u16 vlan_h;
-+	u16 vlan_m;
-+	u8 proto_h;
-+	u8 proto_m;
-+	u16 flags;
-+	u16 result;
-+	u16 mode;
-+};
-+
-+#define ENETC_RFSE_EN	BIT(15)
-+#define ENETC_RFSE_MODE_BD	2
-+
- static inline void enetc_get_primary_mac_addr(struct enetc_hw *hw, u8 *addr)
- {
- 	*(u32 *)addr = __raw_readl(hw->reg + ENETC_SIPMAR0);
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.c b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-index 5a772fe..03632bd 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-@@ -435,6 +435,27 @@ static void enetc_port_setup_primary_mac_address(struct enetc_si *si)
- 	}
- }
- 
-+static void enetc_port_assign_rfs_entries(struct enetc_si *si)
-+{
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+	struct enetc_hw *hw = &si->hw;
-+	int num_entries, vf_entries, i;
-+	u32 val;
-+
-+	/* split RFS entries between functions */
-+	val = enetc_port_rd(hw, ENETC_PRFSCAPR);
-+	num_entries = ENETC_PRFSCAPR_GET_NUM_RFS(val);
-+	vf_entries = num_entries / (pf->total_vfs + 1);
-+
-+	for (i = 0; i < pf->total_vfs; i++)
-+		enetc_port_wr(hw, ENETC_PSIRFSCFGR(i + 1), vf_entries);
-+	enetc_port_wr(hw, ENETC_PSIRFSCFGR(0),
-+		      num_entries - vf_entries * pf->total_vfs);
-+
-+	/* enable RFS on port */
-+	enetc_port_wr(hw, ENETC_PRFSMR, ENETC_PRFSMR_RFSE);
-+}
-+
- static void enetc_port_si_configure(struct enetc_si *si)
- {
- 	struct enetc_pf *pf = enetc_si_priv(si);
-@@ -514,6 +535,7 @@ static void enetc_configure_port_pmac(struct enetc_hw *hw)
- 
- static void enetc_configure_port(struct enetc_pf *pf)
- {
-+	u8 hash_key[ENETC_RSSHASH_KEY_SIZE];
- 	struct enetc_hw *hw = &pf->si->hw;
- 
- 	enetc_configure_port_pmac(hw);
-@@ -522,6 +544,13 @@ static void enetc_configure_port(struct enetc_pf *pf)
- 
- 	enetc_port_si_configure(pf->si);
- 
-+	/* set up hash key */
-+	get_random_bytes(hash_key, ENETC_RSSHASH_KEY_SIZE);
-+	enetc_set_rss_key(hw, hash_key);
-+
-+	/* split up RFS entries */
-+	enetc_port_assign_rfs_entries(pf->si);
-+
- 	/* fix-up primary MAC addresses, if not set already */
- 	enetc_port_setup_primary_mac_address(pf->si);
- 
-@@ -648,7 +677,7 @@ static int enetc_pf_set_features(struct net_device *ndev,
- 	if (changed & NETIF_F_LOOPBACK)
- 		enetc_set_loopback(ndev, !!(features & NETIF_F_LOOPBACK));
- 
--	return 0;
-+	return enetc_set_features(ndev, features);
- }
- 
- static const struct net_device_ops enetc_ndev_ops = {
-@@ -692,6 +721,9 @@ static void enetc_pf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
- 			 NETIF_F_HW_VLAN_CTAG_RX |
- 			 NETIF_F_HW_VLAN_CTAG_FILTER;
- 
-+	if (si->num_rss)
-+		ndev->hw_features |= NETIF_F_RXHASH;
-+
- 	if (si->errata & ENETC_ERR_TXCSUM) {
- 		ndev->hw_features &= ~NETIF_F_HW_CSUM;
- 		ndev->features &= ~NETIF_F_HW_CSUM;
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-index e199b4d..eba5121 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-@@ -97,6 +97,12 @@ static int enetc_vf_set_mac_addr(struct net_device *ndev, void *addr)
- 	return 0;
- }
- 
-+static int enetc_vf_set_features(struct net_device *ndev,
-+				 netdev_features_t features)
-+{
-+	return enetc_set_features(ndev, features);
-+}
-+
- /* Probing/ Init */
- static const struct net_device_ops enetc_ndev_ops = {
- 	.ndo_open		= enetc_open,
-@@ -104,6 +110,7 @@ static const struct net_device_ops enetc_ndev_ops = {
- 	.ndo_start_xmit		= enetc_xmit,
- 	.ndo_get_stats		= enetc_get_stats,
- 	.ndo_set_mac_address	= enetc_vf_set_mac_addr,
-+	.ndo_set_features	= enetc_vf_set_features,
- };
- 
- static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
-@@ -131,6 +138,9 @@ static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
- 			 NETIF_F_HW_VLAN_CTAG_TX |
- 			 NETIF_F_HW_VLAN_CTAG_RX;
- 
-+	if (si->num_rss)
-+		ndev->hw_features |= NETIF_F_RXHASH;
-+
- 	if (si->errata & ENETC_ERR_TXCSUM) {
- 		ndev->hw_features &= ~NETIF_F_HW_CSUM;
- 		ndev->features &= ~NETIF_F_HW_CSUM;
--- 
-2.7.4
-
+> > This behavior has been observed on two different CPUs (a Core i7-6700K
+> > and a Xeon E3-1505M v5). We have no reason to believe it is limited to
+> > specific CPU models, this information is included only for
+> > completeness.
+> >
+> > Given that we're already at rc3, and that this renders rr unusable,
+> > we'd ask that counter freezing be disabled for the 4.20 release.
+>
+> Andi, can you have a look at this?
+>
+> Meanwhile, I suppose we should do something along these lines.
+>
+>
+> ---
+> Subject: perf/x86/intel: Default disable perfmon v4 interrupt handling
+>
+> Rework the 'disable_counter_freezing' __setup() parameter such that we
+> can explicitly enable/disable it and switch to default disabled.
+>
+> To this purpose, rename the parameter to "perf_v4_pmi=" which is a much
+> better description and allows requiring a bool argument.
+>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  3 ++-
+>  arch/x86/events/intel/core.c                    | 12 ++++++++----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 76c82c01bf5e..ff6d1d4229e0 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -856,7 +856,8 @@
+>                         causing system reset or hang due to sending
+>                         INIT from AP to BSP.
+>
+> -       disable_counter_freezing [HW]
+> +       perf_v4_pmi=    [X86,INTEL]
+> +                       Format: <bool>
+>                         Disable Intel PMU counter freezing feature.
+>                         The feature only exists starting from
+>                         Arch Perfmon v4 (Skylake and newer).
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 273c62e81546..af8bea9d4006 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -2306,14 +2306,18 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
+>         return handled;
+>  }
+>
+> -static bool disable_counter_freezing;
+> +static bool disable_counter_freezing = true;
+>  static int __init intel_perf_counter_freezing_setup(char *s)
+>  {
+> -       disable_counter_freezing = true;
+> -       pr_info("Intel PMU Counter freezing feature disabled\n");
+> +       bool res;
+> +
+> +       if (kstrtobool(s, &res))
+> +               return -EINVAL;
+> +
+> +       disable_counter_freezing = !res;
+>         return 1;
+>  }
+> -__setup("disable_counter_freezing", intel_perf_counter_freezing_setup);
+> +__setup("perf_v4_pmi=", intel_perf_counter_freezing_setup);
+>
+>  /*
+>   * Simplified handler for Arch Perfmon v4:
