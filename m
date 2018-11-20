@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96B6DC04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47781C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 675F02147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:16:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675F02147A
+	by mail.kernel.org (Postfix) with ESMTP id A09AE208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:15:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A09AE208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726665AbeKTSoP (ORCPT
+        id S1726537AbeKTSng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:44:15 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48661 "EHLO
+        Tue, 20 Nov 2018 13:43:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:44931 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeKTSoP (ORCPT
+        with ESMTP id S1725990AbeKTSnf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:44:15 -0500
+        Tue, 20 Nov 2018 13:43:35 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK8FhJ02908810
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK8EMO22908516
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 20 Nov 2018 00:15:43 -0800
+        Tue, 20 Nov 2018 00:14:22 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK8Fg6L2908807;
-        Tue, 20 Nov 2018 00:15:42 -0800
-Date:   Tue, 20 Nov 2018 00:15:42 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK8EId52908510;
+        Tue, 20 Nov 2018 00:14:18 -0800
+Date:   Tue, 20 Nov 2018 00:14:18 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-a15781b536293edc32bf374233f3b8ad77c3f72b@git.kernel.org>
-Cc:     tglx@linutronix.de, luto@amacapital.net, bp@alien8.de,
-        torvalds@linux-foundation.org, dvlasenk@redhat.com,
-        riel@surriel.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        brgerst@gmail.com, luto@kernel.org, peterz@infradead.org,
-        dave.hansen@linux.intel.com, hpa@zytor.com, yu-cheng.yu@intel.com
-Reply-To: yu-cheng.yu@intel.com, hpa@zytor.com, peterz@infradead.org,
-          dave.hansen@linux.intel.com, luto@kernel.org, mingo@kernel.org,
-          brgerst@gmail.com, linux-kernel@vger.kernel.org,
-          riel@surriel.com, dvlasenk@redhat.com,
-          torvalds@linux-foundation.org, bp@alien8.de, luto@amacapital.net,
-          tglx@linutronix.de
-In-Reply-To: <806c366f6ca861152398ce2c01744d59d9aceb6d.1542667307.git.luto@kernel.org>
-References: <806c366f6ca861152398ce2c01744d59d9aceb6d.1542667307.git.luto@kernel.org>
+Message-ID: <tip-6344be608c039f3a787f1144c46fcb04c0f76561@git.kernel.org>
+Cc:     luto@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, bp@alien8.de, luto@amacapital.net,
+        yu-cheng.yu@intel.com, dvlasenk@redhat.com,
+        torvalds@linux-foundation.org, dave.hansen@linux.intel.com,
+        riel@surriel.com, brgerst@gmail.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
+          tglx@linutronix.de, bp@alien8.de, luto@kernel.org,
+          peterz@infradead.org, torvalds@linux-foundation.org,
+          dave.hansen@linux.intel.com, dvlasenk@redhat.com,
+          yu-cheng.yu@intel.com, luto@amacapital.net, brgerst@gmail.com,
+          riel@surriel.com
+In-Reply-To: <4b89b542e8ceba9bd6abde2f386afed6d99244a9.1542667307.git.luto@kernel.org>
+References: <4b89b542e8ceba9bd6abde2f386afed6d99244a9.1542667307.git.luto@kernel.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/fault: Fold smap_violation() into
- do_user_addr_fault()
-Git-Commit-ID: a15781b536293edc32bf374233f3b8ad77c3f72b
+Subject: [tip:x86/mm] x86/fault: Check user_mode(regs) when avoiding an
+ mmap_sem deadlock
+Git-Commit-ID: 6344be608c039f3a787f1144c46fcb04c0f76561
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -65,22 +66,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a15781b536293edc32bf374233f3b8ad77c3f72b
-Gitweb:     https://git.kernel.org/tip/a15781b536293edc32bf374233f3b8ad77c3f72b
+Commit-ID:  6344be608c039f3a787f1144c46fcb04c0f76561
+Gitweb:     https://git.kernel.org/tip/6344be608c039f3a787f1144c46fcb04c0f76561
 Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Mon, 19 Nov 2018 14:45:28 -0800
+AuthorDate: Mon, 19 Nov 2018 14:45:25 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Nov 2018 08:44:28 +0100
+CommitDate: Tue, 20 Nov 2018 08:44:27 +0100
 
-x86/fault: Fold smap_violation() into do_user_addr_fault()
+x86/fault: Check user_mode(regs) when avoiding an mmap_sem deadlock
 
-smap_violation() has a single caller, and the contents are a bit
-nonsensical.  I'm going to fix it, but first let's fold it into its
-caller for ease of comprehension.
+The fault-handling code that takes mmap_sem needs to avoid a
+deadlock that could occur if the kernel took a bad (OOPS-worthy)
+page fault on a user address while holding mmap_sem.  This can only
+happen if the faulting instruction was in the kernel
+(i.e. user_mode(regs)).  Rather than checking the sw_error_code
+(which will have the USER bit set if the fault was a USER-permission
+access *or* if user_mode(regs)), just check user_mode(regs)
+directly.
 
-In this particular case, the user_mode(regs) check is incorrect --
-it will cause false positives in the case of a user-initiated
-kernel-privileged access.
+The old code would have malfunctioned if the kernel executed a bogus
+WRUSS instruction while holding mmap_sem.  Fortunately, that is
+extremely unlikely in current kernels, which don't use WRUSS.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Cc: Andy Lutomirski <luto@amacapital.net>
@@ -94,51 +100,29 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Rik van Riel <riel@surriel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/806c366f6ca861152398ce2c01744d59d9aceb6d.1542667307.git.luto@kernel.org
+Link: http://lkml.kernel.org/r/4b89b542e8ceba9bd6abde2f386afed6d99244a9.1542667307.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- arch/x86/mm/fault.c | 23 ++++++-----------------
- 1 file changed, 6 insertions(+), 17 deletions(-)
+ arch/x86/mm/fault.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index 39e39cd42097..9d092ab74f18 100644
+index 29525cf21100..8624cb7d8d65 100644
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
-@@ -1148,20 +1148,6 @@ static int fault_in_kernel_space(unsigned long address)
- 	return address >= TASK_SIZE_MAX;
- }
- 
--static inline bool smap_violation(int error_code, struct pt_regs *regs)
--{
--	if (!cpu_feature_enabled(X86_FEATURE_SMAP))
--		return false;
--
--	if (error_code & X86_PF_USER)
--		return false;
--
--	if (!user_mode(regs) && (regs->flags & X86_EFLAGS_AC))
--		return false;
--
--	return true;
--}
--
- /*
-  * Called for all faults where 'address' is part of the kernel address
-  * space.  Might get called for faults that originate from *code* that
-@@ -1249,10 +1235,13 @@ void do_user_addr_fault(struct pt_regs *regs,
- 		pgtable_bad(regs, hw_error_code, address);
- 
- 	/*
--	 * Check for invalid kernel (supervisor) access to user
--	 * pages in the user address space.
-+	 * If SMAP is on, check for invalid kernel (supervisor)
-+	 * access to user pages in the user address space.
+@@ -1344,13 +1344,10 @@ void do_user_addr_fault(struct pt_regs *regs,
+ 	 * Only do the expensive exception table search when we might be at
+ 	 * risk of a deadlock.  This happens if we
+ 	 * 1. Failed to acquire mmap_sem, and
+-	 * 2. The access did not originate in userspace.  Note: either the
+-	 *    hardware or earlier page fault code may set X86_PF_USER
+-	 *    in sw_error_code.
++	 * 2. The access did not originate in userspace.
  	 */
--	if (unlikely(smap_violation(hw_error_code, regs))) {
-+	if (unlikely(cpu_feature_enabled(X86_FEATURE_SMAP) &&
-+		     !(hw_error_code & X86_PF_USER) &&
-+		     (user_mode(regs) || !(regs->flags & X86_EFLAGS_AC))))
-+	{
- 		bad_area_nosemaphore(regs, hw_error_code, address);
- 		return;
- 	}
+ 	if (unlikely(!down_read_trylock(&mm->mmap_sem))) {
+-		if (!(sw_error_code & X86_PF_USER) &&
+-		    !search_exception_tables(regs->ip)) {
++		if (!user_mode(regs) && !search_exception_tables(regs->ip)) {
+ 			/*
+ 			 * Fault from code in kernel from
+ 			 * which we do not expect faults.
