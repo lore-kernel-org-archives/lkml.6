@@ -2,131 +2,114 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762F2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9994C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 312D220831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:46:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iNRhBfUG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312D220831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B381B206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 04:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B381B206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731240AbeKTPNP (ORCPT
+        id S1730948AbeKTPUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 10:13:15 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40276 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730276AbeKTPNO (ORCPT
+        Tue, 20 Nov 2018 10:20:20 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:46384 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730276AbeKTPUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 10:13:14 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b22-v6so357587pls.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 20:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Qz7Fh62Lnq2ewkYC0LIkfwYa7eJa73OEqYgpRrOkDcU=;
-        b=iNRhBfUGk7swVZ5U4LUt7QJvTTR9M5ZxzqkUUiqSWllcuLLnVBxjCyvqjRbjEjFxbd
-         H8I1C1Aic6d6PXwNmdbpyl66viwUDlhH/kMixFs/+mQ3Qr6ARrSNPjRYiBHMTKx5J9y9
-         /HDOGsRwNSd6QwrHnLZZ8zzw91dgPhk/zKPXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qz7Fh62Lnq2ewkYC0LIkfwYa7eJa73OEqYgpRrOkDcU=;
-        b=iWuuJZjXS7mxH14cYIn1AUin1ED+ZdSTx3z/nZVOEpqxqT+p1Li9TBRsrvH/C2I59l
-         hDP3Z7eTwZKVcrW/JmeqEdZ/NDBSN1ghM34ttGGvmwBpLmOL9BjDBUlWSiUjzSd9lwLT
-         RDt+nQD6JjVvbInMpkoRFG+RGX3sQdzMZFwU7rdsJEBR+EKKcmDjIFIvj0aBq0rUWc/5
-         9cnGzOslElkjsM75LQisaY+3dBR9+XkoNGn1Y4LaPttafvP1piHDz0aKemc2367UpDhl
-         G1A2El9rwBo+KerNqXI+OOSOQWbtgZa6dm6q5Tz8WPicF7WjILjiQER8EzC2kmi9/xqi
-         rJUw==
-X-Gm-Message-State: AA+aEWbcWY+E82vRkPU9yir1eIcbsPUuIcrePcdu6tmJAufPmIsPLVGS
-        SGBFis1alDrN0CqaUX0HyiTFVA==
-X-Google-Smtp-Source: AFSGD/UGViXohg+/+cldaGMYGbg4lgX0gadqxDRoC8YtIplQQfeEFLyr8z5rYH6Nhz3BXY8bBPC3Qg==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34mr641406pld.181.1542689165552;
-        Mon, 19 Nov 2018 20:46:05 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id f13sm22972274pfa.132.2018.11.19.20.46.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Nov 2018 20:46:04 -0800 (PST)
-Date:   Tue, 20 Nov 2018 10:16:02 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, tkjos@google.com,
-        joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v9 02/15] sched/cpufreq: Prepare schedutil for Energy
- Aware Scheduling
-Message-ID: <20181120044602.bsfsp4alswbwoweu@vireshk-i7>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-3-quentin.perret@arm.com>
+        Tue, 20 Nov 2018 10:20:20 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAK4r8XR113701;
+        Mon, 19 Nov 2018 22:53:08 -0600
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAK4r8Ec086979
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Nov 2018 22:53:08 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
+ Nov 2018 22:53:08 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 19 Nov 2018 22:53:08 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAK4r6pB015006;
+        Mon, 19 Nov 2018 22:53:07 -0600
+Subject: Re: [PATCH 1/4] mmc: sdhci-omap: Fix DCRC error handling during
+ tuning
+To:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>
+References: <20181119111618.2745-1-faiz_abbas@ti.com>
+ <20181119111618.2745-2-faiz_abbas@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <b4568cfc-55c6-9dfc-6d26-1efc999e95ec@ti.com>
+Date:   Tue, 20 Nov 2018 10:23:03 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119141857.8625-3-quentin.perret@arm.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181119111618.2745-2-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-11-18, 14:18, Quentin Perret wrote:
-> @@ -223,20 +222,33 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+Hi,
 
-> -	if ((util + cpu_util_dl(rq)) >= max)
-> -		return max;
-> +	if (type == FREQUENCY_UTIL) {
-> +		/*
-> +		 * For frequency selection we do not make cpu_util_dl() a
-> +		 * permanent part of this sum because we want to use
-> +		 * cpu_bw_dl() later on, but we need to check if the
-> +		 * CFS+RT+DL sum is saturated (ie. no idle time) such
-> +		 * that we select f_max when there is no idle time.
-> +		 *
-> +		 * NOTE: numerical errors or stop class might cause us
-> +		 * to not quite hit saturation when we should --
-> +		 * something for later.
-> +		 */
-> +
-> +		if ((util + cpu_util_dl(rq)) >= max)
-> +			return max;
-> +	} else {
-> +		/*
-> +		 * OTOH, for energy computation we need the estimated
-> +		 * running time, so include util_dl and ignore dl_bw.
-> +		 */
-> +		util += cpu_util_dl(rq);
-> +		if (util >= max)
-> +			return max;
-> +	}
+On 19/11/18 4:46 PM, Faiz Abbas wrote:
+> Commit 7d33c3581536 ("mmc: sdhci-omap: Workaround for Errata i802")
+> disabled DCRC interrupts during tuning. This write to the interrupt
+> enable register gets overwritten in sdhci_prepare_data() and the
+> interrupt is not in fact disabled. Fix this by disabling the interrupt
+> in the host->ier variable.
+> 
+> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> ---
+>   drivers/mmc/host/sdhci-omap.c | 7 +++----
+>   1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
+> index 88347ce78f23..87138067e334 100644
+> --- a/drivers/mmc/host/sdhci-omap.c
+> +++ b/drivers/mmc/host/sdhci-omap.c
+> @@ -290,7 +290,6 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>   	u32 start_window = 0, max_window = 0;
+>   	u8 cur_match, prev_match = 0;
+>   	u32 length = 0, max_len = 0;
+> -	u32 ier = host->ier;
+>   	u32 phase_delay = 0;
+>   	int ret = 0;
+>   	u32 reg;
+> @@ -317,9 +316,7 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>   	 * during the tuning procedure. So disable it during the
+>   	 * tuning procedure.
+>   	 */
+> -	ier &= ~SDHCI_INT_DATA_CRC;
+> -	sdhci_writel(host, ier, SDHCI_INT_ENABLE);
+> -	sdhci_writel(host, ier, SDHCI_SIGNAL_ENABLE);
+> +	host->ier &= ~SDHCI_INT_DATA_CRC;
+>   
+>   	while (phase_delay <= MAX_PHASE_DELAY) {
+>   		sdhci_omap_set_dll(omap_host, phase_delay);
+> @@ -366,6 +363,8 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>   
+>   ret:
+>   	sdhci_reset(host, SDHCI_RESET_CMD | SDHCI_RESET_DATA);
+> +	/* Reenable forbidden interrupt */
+> +	host->ier |= SDHCI_INT_DATA_CRC;
 
-Maybe write above as:
+It's better to have a backup of host->ier and restore the value here (in 
+case DATA_CRC is disabled for other cases).
 
-        dl_util = cpu_util_dl(rq);
-
-        if ((util + dl_util) >= max)
-                return max;
-
-	if (type != FREQUENCY_UTIL)
-		util += dl_util;
-
-
-as both the if/else parts were doing almost the same thing.
-
--- 
-viresh
+Thanks
+Kishon
