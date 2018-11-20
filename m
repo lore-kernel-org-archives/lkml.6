@@ -2,103 +2,106 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D97C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E943C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1B4208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:39:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848452075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:38:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XonVZplY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1B4208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLvSqx/A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848452075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726431AbeKTTHA (ORCPT
+        id S1726339AbeKTTGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:07:00 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:12774 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeKTTHA (ORCPT
+        Tue, 20 Nov 2018 14:06:38 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40097 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbeKTTGi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:07:00 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf3c82f0002>; Tue, 20 Nov 2018 00:39:11 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 20 Nov 2018 00:39:03 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 20 Nov 2018 00:39:03 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
- 2018 08:39:02 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 20 Nov 2018 08:39:02 +0000
-Received: from amhetre.nvidia.com (Not Verified[10.24.229.42]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5bf3c8240004>; Tue, 20 Nov 2018 00:39:02 -0800
-From:   Ashish Mhetre <amhetre@nvidia.com>
-To:     <tj@kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <linux-tegra@vger.kernel.org>, <vdumpa@nvidia.com>,
-        <Snikam@nvidia.com>, Bo Yan <byan@nvidia.com>,
-        Ashish Mhetre <amhetre@nvidia.com>
-Subject: [PATCH] kernfs: Add check for NULL pointer before writing to it.
-Date:   Tue, 20 Nov 2018 14:08:39 +0530
-Message-ID: <1542703119-20353-1-git-send-email-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 20 Nov 2018 14:06:38 -0500
+Received: by mail-oi1-f195.google.com with SMTP id t204so853150oie.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:38:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kqJYfxRnFQiop1CyETTyAIIILPqYb9mzoIqszr+2Z5Q=;
+        b=dLvSqx/Atg+ftvB41Y6e6IStG/Z2hiJWYrdi1+EXg0atsTuG53SwZudggMJRduLLsF
+         fItL9SFwftNltcZVO8nZ94EhF499enzW0flWkEdWZ1OfKSQLTa4JB05cW3YcEdw28x+m
+         fBbm1Arr955LY2Zuq67jbU3MI7q+uUeY/FyIY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kqJYfxRnFQiop1CyETTyAIIILPqYb9mzoIqszr+2Z5Q=;
+        b=GRjYdTGi1zfL+XbqBi8tdhgStK8DvS8cAr0hfYunpV+iIJOtRiUzysot317CCgit9l
+         fuFRa+hU9opAfnOw4qevyErBErNYbadfx4xlE4vRgbSePpalUmu/6lLu9Mi1ogKFrTa2
+         GFPHo6oZtry5Q81CYK5miwQiM6z6wOYSBlxVjdie/xAzKCxqIwg+nrsxZgJubwXlWg7I
+         75092dqkJijsoSUEr0/OvGI0mUCEencr7jx8kDOBdKxHsLM7ME8mAyDV9KOvy5fawXPq
+         blkOm2JpqvuJ3qlyoNX0nB6jcPphprwZC2izLS9ti7pg0+M1t0sJpu9enN7NAe3bs/E+
+         Lfiw==
+X-Gm-Message-State: AGRZ1gIp68NNoUDAOeX9Rb1nNZrXcIAPy0fPz5Ao0Aus3+ssH0vnW5gU
+        EhAtEcEKzP3EZB58zoWs3gK3+yzeSpGUnUZWX/pgYQ==
+X-Google-Smtp-Source: AJdET5dH3mFvHlcJepXyphU2K0uXXmnNxnH/HgzVA7Qw0i0FlRouZdfALwtD8LHyG/E1dQeD8y5teRRaLwoTkXV2Nrs=
+X-Received: by 2002:aca:dd08:: with SMTP id u8-v6mr580144oig.94.1542703121752;
+ Tue, 20 Nov 2018 00:38:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542703152; bh=+T7KucmlIW5PUrJxv2ZCUBeUgYTASCM/6lummfHH+gc=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=XonVZplYv2ptDJTejUkhZl6pZtykVE+IwVOPZq4mir5vPHNVw5px/vWk+zO2wTnEE
-         tnVQ4J2Q2F/wV51GJxRtyo+DngjUr0By5Tvlwy5+rfqfXJpv3rMD4hLwlVwqarLJVn
-         w0L7/nusfSldUc7z+SE8zGOGh+wYssOjS9EGRFI/4sRypcQ3aRkMoVcLtXGgmzHjhb
-         9lE+biIenJRaNB766Bad2EPBuld9IcW+xUyft6LoAATR+6AbdHD/jMAiayMhK5efu5
-         pQgLuMR/2+uivQULRnPesuSIUWD9OXerdCWf5HOvF/qhKWYiLq1TWj44COlmqP7KHb
-         ca0gb0DOrKCBg==
+References: <20181113095142.32015-1-benjamin.gaignard@st.com>
+ <20181113095142.32015-3-benjamin.gaignard@st.com> <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
+In-Reply-To: <CACRpkdZD5EurbTRyUg7AWRZqVQ-6rmUQDUmVVCFU3r0Y1bwnVg@mail.gmail.com>
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Date:   Tue, 20 Nov 2018 09:38:30 +0100
+Message-ID: <CA+M3ks6nnj69KJay=nGS=RP2jEkPa0wibfVkwYN9-CSq=fHowg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] pinctrl: stm32: protect configuration registers with
+ a hwspinlock
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bo Yan <byan@nvidia.com>
+Le lun. 19 nov. 2018 =C3=A0 13:20, Linus Walleij <linus.walleij@linaro.org>=
+ a =C3=A9crit :
+>
+> On Tue, Nov 13, 2018 at 10:51 AM Benjamin Gaignard
+> <benjamin.gaignard@linaro.org> wrote:
+>
+> > If a hwspinlock if defined in device tree use it to protect
+> > configuration registers.
+> >
+> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+>
+> Patch applied with Alex' ACK.
 
-The strlcpy function returns the length of source pointer when the
-requested size is 0. This behavior is relied upon for sched tracing.
-We can't simply return when buf is 0, but we have to protect against the
-scenario when buf is 0 and requested size is non-zero, in which case the
-strlcpy would lead to illegal memory access.
-This issue is reported by coverity as strlcpy might end up using a NULL
-buffer and non-zero buf_length value.
-To avoid this, add check and return -EINVAL in this case.
+Thanks
 
-Signed-off-by: Bo Yan <byan@nvidia.com>
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- fs/kernfs/dir.c | 3 +++
- 1 file changed, 3 insertions(+)
+>
+> Out of curiosity: what is it protecting against?
+> I would guess simultaneous access from another CPU
+> but the commit doesn't say.
+>
+> Simultaneous access from two CPUs makes it extra important
+> that all register access is read-modify-write, so I'd have a second
+> check over the code to make sure this is the case.
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 4ca0b5c..76c85a5 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -129,6 +129,9 @@ static int kernfs_path_from_node_locked(struct kernfs_node *kn_to,
- 	size_t depth_from, depth_to, len = 0;
- 	int i, j;
- 
-+	if (WARN_ON(!buf && buflen > 0))
-+		return -EINVAL;
-+
- 	if (!kn_to)
- 		return strlcpy(buf, "(null)", buflen);
- 
--- 
-2.7.4
+Yes it is to protect configuration registers from being used at the same by
+cortexA and cortexM.
 
+>
+> Yours,
+> Linus Walleij
