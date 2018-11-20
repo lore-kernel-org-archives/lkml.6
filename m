@@ -2,79 +2,164 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85A3C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 940AAC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B68208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B68208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 4F5242147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5242147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbeKUBXo (ORCPT
+        id S1730114AbeKUBZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:23:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39252 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729931AbeKUBXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:23:43 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 240B4AFC8;
-        Tue, 20 Nov 2018 14:54:11 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     stefan.wahren@i2se.com, eric@anholt.net,
-        dave.stevenson@raspberrypi.org
-Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
-        linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 10/16] staging: vchiq_core: don't add a wmb() before remote_event_signal()
-Date:   Tue, 20 Nov 2018 15:53:45 +0100
-Message-Id: <20181120145351.30390-11-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120145351.30390-1-nsaenzjulienne@suse.de>
-References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
+        Tue, 20 Nov 2018 20:25:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50346 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727466AbeKUBY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:24:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F790EBD;
+        Tue, 20 Nov 2018 06:55:27 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D76C13F5A0;
+        Tue, 20 Nov 2018 06:55:24 -0800 (PST)
+Subject: Re: [PATCH v1 1/1] arm64: Early boot time stamps
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        rppt@linux.vnet.ibm.com, Michal Hocko <mhocko@suse.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        andrew.murray@arm.com, james.morse@arm.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181119214443.25175-1-pasha.tatashin@soleen.com>
+ <20181119214443.25175-2-pasha.tatashin@soleen.com>
+ <d66a60d9-6772-a951-9da4-c07443b48aad@arm.com>
+ <CA+CK2bAKcdZRRMwhcQ0QnBJ3_6bg=zhaeM7v74f+QFwkw9h17A@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <01ae5979-9bcd-dd59-adda-efbf69f388ca@arm.com>
+Date:   Tue, 20 Nov 2018 14:55:23 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bAKcdZRRMwhcQ0QnBJ3_6bg=zhaeM7v74f+QFwkw9h17A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's the first thing remote_event_signal() does.
+On 20/11/2018 14:40, Pavel Tatashin wrote:
+>>> +static __init void sched_clock_early_init(void)
+>>> +{
+>>> +     u64 freq = arch_timer_get_cntfrq();
+>>> +     u64 (*read_time)(void) = arch_counter_get_cntvct;
+>>
+>> We already have arch_timer_read_counter which is exposed from
+>> arm_arch_timer.h.
+> 
+> OK
+> 
+>>
+>>> +
+>>> +     /* Early clock is available only on platforms with known freqs */
+>>
+>> This comment is misleading. It should read something like:
+>>
+>>         /*
+>>          * The arm64 boot protocol mandates that CNTFRQ_EL0 reflects
+>>          * the timer frequency. To avoid breakage on misconfigured
+>>          * systems, do not register the early sched_clock if the
+>>          * programmed value if zero. Other random values will just
+>>          * result in random output.
+>>          */
+>>
+> 
+> OK
+> 
+>>> +     if (!freq)
+>>> +             return;
+>>> +
+>>> +     sched_clock_register(read_time, BITS_PER_LONG, freq);
+>>
+>> This doesn't seem right. The counter has an architected minimum of 56
+>> bits, and you can't assume that it is going to be more than that.
+> 
+> Yeah, I saw 56 is used in arm_arch_timer.c, but I could not find where
+> this minimum is defined in aarch64 specs. I will change it to 56.
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c    | 4 ----
- 1 file changed, 4 deletions(-)
+See D10.1.2 (The system counter) in the ARM ARM[1], which says:
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 8b23ea5322e8..5791c2b670fa 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1137,9 +1137,6 @@ queue_message_sync(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
- 			size);
- 	}
- 
--	/* Make sure the new header is visible to the peer. */
--	wmb();
--
- 	remote_event_signal(&state->remote->sync_trigger);
- 
- 	if (VCHIQ_MSG_TYPE(msgid) != VCHIQ_MSG_PAUSE)
-@@ -3269,7 +3266,6 @@ static void
- release_message_sync(VCHIQ_STATE_T *state, VCHIQ_HEADER_T *header)
- {
- 	header->msgid = VCHIQ_MSGID_PADDING;
--	wmb();
- 	remote_event_signal(&state->remote->sync_release);
- }
- 
+<quote>
+The Generic Timer provides a system counter with the following
+specification:
+Width	At least 56 bits wide.
+	The value returned by any 64-bit read of the counter is
+	zero-extended to 64 bits.
+</quote>
+
+This is not AArch64-specific though, and 32bit systems implementing the
+generic timers have the exact same requirements.
+
+> I will send v2 soon.
+
+Please wait a bit and give others a chance to review this too.
+
+Thanks,
+
+	M.
+
+[1] https://static.docs.arm.com/ddi0487/da/DDI0487D_a_armv8_arm.pdf
 -- 
-2.19.1
-
+Jazz is not dead. It just smells funny...
