@@ -2,118 +2,120 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EA4C46462
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7662BC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7107208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:21:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EACD20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:21:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PBpq6Tmu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7107208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lWusSGLS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EACD20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbeKUEvb (ORCPT
+        id S1727306AbeKUEwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:51:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:43196 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeKUEvb (ORCPT
+        Tue, 20 Nov 2018 23:52:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38487 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeKUEwE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:51:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yYG2/dt+yey+HN1j3OMMn3FS9wio/UPftluKiMcmkbE=; b=PBpq6TmuNJc4PQ/ATCAFj5CcS
-        NHZ/sRhge+W/70n4H2YTH99T3Qlcm9pDkw32baZPmshbIs/en1xdf20fl5L2Yi6qLuuyQYko/sCxD
-        fOf0d0tx/d4AcnweInnYHIshtYYsDnMSErg5GqxYJFIiCbCKId/tkPC+n9Us6cXbSlUqFtOEbmPVr
-        JwlR01j1d4JhC5mL9dBR0CB+TtdmlorPP+WTZXjSz1QgMBK+7aSK6qyXyOXvJ0vQxekm94IcGqg3z
-        0u3g6FNGsW/3MfXhh8JLCWLQ5t5UnecTAV6u/Mzt4VfCRe6w3pe1TC+Z5HTLgIH0IzdDdHcBiEo0T
-        IRj6+ISsQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPAbg-0000KW-Pq; Tue, 20 Nov 2018 18:18:41 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 55DFD2029FD58; Tue, 20 Nov 2018 19:18:30 +0100 (CET)
-Date:   Tue, 20 Nov 2018 19:18:30 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v5 02/10] x86/jump_label: Use text_poke_early() during
- early init
-Message-ID: <20181120181830.GB2131@hirez.programming.kicks-ass.net>
-References: <20181113130730.44844-1-namit@vmware.com>
- <20181113130730.44844-3-namit@vmware.com>
- <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
+        Tue, 20 Nov 2018 23:52:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so1520490plb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 10:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LBXkKvqDiVm+5eOtHTgtUuj2t2WfXbEXznYzz0+SFec=;
+        b=lWusSGLSzzLEHxRJJ4W4ctM4AohGFEt3uMEhG7WMgqRLCyHvEH/xlvraVof5BbinDa
+         19Fi6sLEUBJj2oZ1qu1nWsX1RXjOm9UsJf6YrH0VvMhp69QcpackosP8cvcDfLElvpik
+         4rC8zOxEVfmE3fRCsMuRQrteMMXIlPtDEpaJE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LBXkKvqDiVm+5eOtHTgtUuj2t2WfXbEXznYzz0+SFec=;
+        b=Q03+MpzHu13zK2jh/Mc7nk1FoayDKuAYk12xPfSpDtOnnvVtO4R3xPSnktf4c1T8Xv
+         sSgnwlMQSnB2q9Jj5cB5KgUMJvEsutgKYr5OAMf+LnuLHGYl+nfGIyz7iIsyozu+VjEq
+         JXxv+wGNQmO0o90lF4yTsaRtwfR0wG05htho42mnPwjsqrjbSOO99Lv0OYsAS1rP7XJu
+         qyiehgxf4W2lvR1swAT6GN7egifhfpydhHUvrs+BM5LhMDE5tU/tKFUAuQpPCoiKtUtz
+         uMKuYKCF2QZaULy+o23/llX9AtAaJlDtANoxlKyY5SRt23RF6UDIqlMOaAleuTb1sWSH
+         KMpw==
+X-Gm-Message-State: AA+aEWak15PCmQuFBxIZnk0pE8wXHCvdgfo5h04g1/MlzdBysRTsCbCQ
+        HetD1QVe32RJuZkrYEEbtZfBkw==
+X-Google-Smtp-Source: AFSGD/W04va/XoGtSNKNc0T9gqecLGOJaB/9vc6fK9LCUdvRaQvbnMDDVITlfOE/ycBSvUP/7sDKDQ==
+X-Received: by 2002:a17:902:d03:: with SMTP id 3-v6mr3387711plu.66.1542738095269;
+        Tue, 20 Nov 2018 10:21:35 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id g69-v6sm23821756pfe.37.2018.11.20.10.21.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 10:21:34 -0800 (PST)
+Date:   Tue, 20 Nov 2018 10:21:33 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] arm64: dts: qcom: pm8998: Use ADC temperature to
+ temp-alarm node
+Message-ID: <20181120182133.GR22824@google.com>
+References: <20180927212253.177200-1-mka@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <76c41854-b12d-5c4e-cfa4-f448e102860b@zytor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180927212253.177200-1-mka@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:10:14AM -0800, H. Peter Anvin wrote:
-> On 11/13/18 5:07 AM, Nadav Amit wrote:
-> > There is no apparent reason not to use text_poke_early() while we are
-> > during early-init and we do not patch code that might be on the stack
-> > (i.e., we'll return to the middle of the patched code). This appears to
-> > be the case of jump-labels, so do so.
-> > 
-> > This is required for the next patches that would set a temporary mm for
-> > patching, which is initialized after some static-keys are
-> > enabled/disabled.
-> > 
-> > Cc: Andy Lutomirski <luto@kernel.org>
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: Dave Hansen <dave.hansen@intel.com>
-> > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > Co-Developed-by: Peter Zijlstra <peterz@infradead.org>
-> > Signed-off-by: Nadav Amit <namit@vmware.com>
-> > ---
-> >  arch/x86/kernel/jump_label.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> > index aac0c1f7e354..ed5fe274a7d8 100644
-> > --- a/arch/x86/kernel/jump_label.c
-> > +++ b/arch/x86/kernel/jump_label.c
-> > @@ -52,7 +52,12 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
-> >  	jmp.offset = jump_entry_target(entry) -
-> >  		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
-> >  
-> > -	if (early_boot_irqs_disabled)
-> > +	/*
-> > +	 * As long as we're UP and not yet marked RO, we can use
-> > +	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
-> > +	 * SYSTEM_SCHEDULING before going either.
-> > +	 */
-> > +	if (system_state == SYSTEM_BOOTING)
-> >  		poker = text_poke_early;
-> >  
-> >  	if (type == JUMP_LABEL_JMP) {
-> > 
+On Thu, Sep 27, 2018 at 02:22:53PM -0700, Matthias Kaehlcke wrote:
+> The temperature information from the temp-alarm block itself is very
+> coarse ("temperature is above/below trip points"). Provide the driver
+> with the die temperature channel of the ADC on the PMIC for more precise
+> readings.
 > 
-> Can't we make this test in text_poke() directly, please?
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> - based on agross/for-next (7a002fe0179c "Merge branch
+>   'defconfig-for-4.20' into all-for-4.20-redo"))
+> - depends on e13d757279bb ("iio: adc: Add QCOM SPMI PMIC5 ADC driver")
+>   from IIO pull request:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git tags/iio-for-4.20a
+> - to work properly https://patchwork.kernel.org/patch/10594491/ is
+>   needed
+> ---
+>  arch/arm64/boot/dts/qcom/pm8998.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> index 048f19fa0150..fab5a826fb01 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
+> @@ -58,6 +58,8 @@
+>  			compatible = "qcom,spmi-temp-alarm";
+>  			reg = <0x2400>;
+>  			interrupts = <0x0 0x24 0x0 IRQ_TYPE_EDGE_RISING>;
+> +			io-channels = <&pm8998_adc ADC5_DIE_TEMP>;
+> +			io-channel-names = "thermal";
+>  			#thermal-sensor-cells = <0>;
+>  		};
+>  
 
-He does that in 9/10 iirc.
+I think this should be ready to land in for-next now that "arm64: dts:
+qcom: pm8998: Add die temperature channel node to the ADC"
+(a789fd0bab57) has been added.
+
+Cheers
+
+Matthias
