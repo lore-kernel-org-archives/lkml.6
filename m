@@ -2,115 +2,116 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF7AFC46475
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 465F1C32788
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7512147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C08B2147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zEB/rkfD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7512147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fWmGQxgq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C08B2147A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbeKUIj5 (ORCPT
+        id S1726296AbeKUIsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:39:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbeKUIj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:39:57 -0500
-Received: from [10.80.45.159] (unknown [71.69.156.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3294B20C01;
-        Tue, 20 Nov 2018 22:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542751717;
-        bh=Nj6iELAkQQxYCZbhsXDSV8wHQH7XanhdNLzW76MFiZA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=zEB/rkfD7uhAxxwED87kSsx9KhTQrETujXmrg0Q/VtgiF29D7+AZkoBKUwMcKWNO2
-         fLlSb4fK3jyr8AH/SVpelihMXL7nR+gF2aMKy6x8QyHQtOkduj6mkeq/yx+Ff3ErnH
-         ZpThzDvYwZSlbEVoTd595KlXohV8PCqoaoNwE/7s=
-Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
- AER
-To:     Alex_Gagniuc@Dellteam.com, mr.nuke.me@gmail.com,
-        keith.busch@intel.com
-Cc:     baicar.tyler@gmail.com, Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
-        lukas@wunner.de, bhelgaas@google.com, rjw@rjwysocki.net,
-        lenb@kernel.org, ruscur@russell.cc, sbobroff@linux.ibm.com,
-        oohall@gmail.com, linux-pci@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
- <CABo9ajD5GJY7MrMjQc3hE=4tpPKpeceMtVEHwCwgjrvJUYjLvg@mail.gmail.com>
- <20181119165318.GB26595@localhost.localdomain>
- <74f2c527-0890-5e14-5e2d-48934a42dae6@kernel.org>
- <ab2427f1-c1f0-68fe-5335-1494caafdcbb@kernel.org>
- <20181119174127.GE26595@localhost.localdomain>
- <ef0a24e4-906e-f6df-c646-1fe47ea0dcc0@kernel.org>
- <20181119181051.GA26707@localhost.localdomain>
- <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
- <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
- <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
- <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
- <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
- <9c9531c7efb846438f03f744b9afc466@ausx13mps321.AMER.DELL.COM>
- <3b18a9fa-7bdd-0fb4-285d-4efb454be50a@kernel.org>
- <e86f04ef8c054d61969862a6e7b72d0d@ausx13mps321.AMER.DELL.COM>
- <314e59da-48e1-545b-3ee9-6e5056b90fd9@kernel.org>
- <4728316eb84446358e0a07bbf1e42b57@ausx13mps321.AMER.DELL.COM>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <bac2c78a-cd56-7287-e4fd-6042e9b3432c@kernel.org>
-Date:   Tue, 20 Nov 2018 17:08:33 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 21 Nov 2018 03:48:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35886 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbeKUIsX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:48:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SoppcZ4H3ZDInKleFzp7j+ay3HqLr+HiBj8M9YISW3w=; b=fWmGQxgqlHLPoSFsgr5uDfVUT
+        MOyUbOki+fcM90UGLbDH8XpSqZIyoEzNepjwNiHrsWzgbcy3Y+FCFfLJjmc+s+RgqF7rTK02UrDac
+        Rg0qlK0Sn9WZBnhzEOxfYgjCiJItsvF52erUNaa+YQy/8vEMqI3cqWL5TMvV7WZJHf1jWMg4OwwGV
+        4Fvt2CETfLChcZ19ySWCJm3usoOyQVxANFz7HCzNPkV4szp9/7TaLlnTTY4p58xu7gPlqNoRGsx9Q
+        ph/txAeUkePhKqhZV9W5pwnZl4y4xDLcigk6ptt3G3CSEHYcAIpgRnFLDFEb2s5s3AnA8IyH9+ZK0
+        dsXbLSuCw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPEK7-0000GA-Q5; Tue, 20 Nov 2018 22:16:48 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CFC6F2029FD58; Tue, 20 Nov 2018 23:16:42 +0100 (CET)
+Date:   Tue, 20 Nov 2018 23:16:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Kyle Huey <me@kylehuey.com>, Kan Liang <kan.liang@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Robert O'Callahan <robert@ocallahan.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
+Message-ID: <20181120221642.GE2131@hirez.programming.kicks-ass.net>
+References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
+ <20181120194129.GC13936@tassilo.jf.intel.com>
+ <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
+ <20181120201144.GD13936@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <4728316eb84446358e0a07bbf1e42b57@ausx13mps321.AMER.DELL.COM>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120201144.GD13936@tassilo.jf.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 4:46 PM, Alex_Gagniuc@Dellteam.com wrote:
-> Now, let's assume, for the sake of argument, that the firmware on those
-> system's is broken, and it didn't intend to give the OS control of AER.
-> OSPM checking HEST instead of _OSC is still wrong, according to the
-> spec. Two wrongs don't make a right, they just don't crash.
+On Tue, Nov 20, 2018 at 12:11:44PM -0800, Andi Kleen wrote:
+> > > > Given that we're already at rc3, and that this renders rr unusable,
+> > > > we'd ask that counter freezing be disabled for the 4.20 release.
+> > >
+> > > The boot option should be good enough for the release?
+> > 
+> > I'm not entirely sure what you mean here. We want you to flip the
+> > default boot option so this feature is off for this release. i.e. rr
+> > should work by default on 4.20 and people should have to opt into the
+> > inaccurate behavior if they want faster PMI servicing.
 > 
-> I think the correct way is to identify those broken systems, and add
-> quirks for them. Continuing to have inconsistent and over-complicated
-> logic that is not spec compliant is not any better.
+> I don't think it's inaccurate, it's just different 
+> than what you are used to.
+> 
+> For profiling including the kernel it's actually far more accurate
+> because the count is stopped much earlier near the sampling
+> point. Otherwise there is a considerable over count into
+> the PMI handler.
+> 
+> In your case you limit the count to ring 3 so it's always cut off
+> at the transition point into the kernel, while with freezing
+> it's at the overflow point.
 
-Remember that both _OSC and HEST are in the ACPI specification. I don't
-think there is a consensus on what is "wrong".
+Ooh, so the thing does FREEZE_ON_OVERFLOW _not_ FREEZE_ON_PMI. Yes, that
+can be a big difference.
 
-There is certainly a need for spec clarification.
+See, FREEZE_ON_PMI, as advertised by the name, should have no observable
+effect on counters limited to USR. But something like FREEZE_ON_OVERFLOW
+will loose everything between the overflow and the eventual PMI, and by
+freezing early we can't even compensate for it anymore either,
+introducing drift in the period.
 
-One version is:
+And I don't buy the over-count argument, the counter register shows how
+far over you are; it triggers the overflow when we cross 0, it then
+continues counting. So if you really care, you can throw away the
+'over-count' at PMI time. That doesn't make it more reliable. We don't
+magically get pt_regs from earlier on or any other state.
 
-"if HEST table is present, ignore _OSC"
+The only thing where it might make a difference is if you're running
+multiple counters (groups in perf speak) and want to correlate the count
+values. Then, and only then, does it matter.
 
-or
-
-Another version is:
-
-"if HEST table is present, make sure that FW sets _OSC bit for AER to
-false. Otherwise, warn like crazy that this BIOS is broken and needs
-an update and can cause all sorts of trouble"
-
-I can see both points of view. The second one can also be worked around
-by an SMBIOS quirk too as you suggested. Counting the number of quirks
-and random bug reports will be an interesting exercise / regression.
-
-I followed the ASWG thread yesterday. There will be a meeting next week to
-discuss this.
-
-My preference is not to introduce new behavior/regression to the kernel.
+Bah.
