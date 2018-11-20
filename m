@@ -2,145 +2,109 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1B3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6E5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DFB320671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:55:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9BFA20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hvuOU2yq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFB320671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lC7rNopo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9BFA20671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbeKTVXx (ORCPT
+        id S1728906AbeKTVYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:23:53 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39204 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728785AbeKTVXw (ORCPT
+        Tue, 20 Nov 2018 16:24:39 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:18629 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbeKTVYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:23:52 -0500
-Received: by mail-wm1-f67.google.com with SMTP id u13-v6so1711241wmc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 02:55:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/iWf/+HB2fUc3oesF9Db4tB9eQPZYersbB7xwtVyrfc=;
-        b=hvuOU2yqaSaMmmG7R6c+p0kQEl3WQZXePoVlOppAxtxMO5Ma2Tqp7qJh+pzVvnVax8
-         IND/SKFDgp7bHwf50q4ObPijaOEVkWOtw/apkYVnW8tEZ1Qg5gzzTMWp7MYW/crIiJsW
-         2Ws62WCecltU7/EwlTbxCZdhvRwkxULSBpTAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/iWf/+HB2fUc3oesF9Db4tB9eQPZYersbB7xwtVyrfc=;
-        b=F5FCTFzxtY5pfHF0GClz2t+t9lTEkLXoEcuHkpuyBnTTuLJ60w0z1B40w1koeiceg+
-         KhUW5h+nZdB7RQFbg4nI3J11TvjLpRsEnfboN8oUFynLVbwmnuOmKbe9lnKWKSNFHJdu
-         4Ov1zda2pQ1AWAe7dD1AwrwdQYwMSluYlw+vMMc992jZrQSjd+wavK/uziK+SajRVpTt
-         FG/R0sIGsBPujpLdOaXmzOo1bvmKvhnBnFR0JyQxvMTKW9pzX6voywnt9AbmD9FHjOG7
-         h9syKHN5rvLnj2xAcpcBceI/Cm0clHgegHUaTyKktPhF6jYnHoLouZhFk/Pb26d4Op6Z
-         SuLg==
-X-Gm-Message-State: AA+aEWbLp1MgGzSCGEaIDz4dxEPPY52KKjy22g4u+6gYP7fmpWThC+UU
-        yrgq6NNN8vSYZ/MoWcASYDN2AA==
-X-Google-Smtp-Source: AJdET5dtLLLBvbfp8KivpZ/dKjUqFaCQDGzjC3M5grJ9JkAKVcRNVQH4Uz2NzNvUKGiFA6gb/hNmFA==
-X-Received: by 2002:a1c:c919:: with SMTP id f25mr1793283wmb.75.1542711318889;
-        Tue, 20 Nov 2018 02:55:18 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:c511:7193:974b:48e6])
-        by smtp.gmail.com with ESMTPSA id f192sm12170831wmd.12.2018.11.20.02.55.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 20 Nov 2018 02:55:18 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     peterz@infradead.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     rjw@rjwysocki.net, dietmar.eggemann@arm.com,
-        Morten.Rasmussen@arm.com, patrick.bellasi@arm.com, pjt@google.com,
-        bsegall@google.com, thara.gopinath@linaro.org,
-        pkondeti@codeaurora.org, quentin.perret@arm.com,
-        srinivas.pandruvada@linux.intel.com,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v7 1/2] sched/fair: move rq_of helper function
-Date:   Tue, 20 Nov 2018 11:55:07 +0100
-Message-Id: <1542711308-25256-2-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
-References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+        Tue, 20 Nov 2018 16:24:39 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bf3e83b0000>; Tue, 20 Nov 2018 02:55:55 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 20 Nov 2018 02:56:06 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 20 Nov 2018 02:56:06 -0800
+Received: from [10.26.11.164] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Nov
+ 2018 10:56:04 +0000
+Subject: Re: [PATCH 4.14 000/124] 4.14.82-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181119162612.951907286@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <4041340b-1a1b-9381-e270-ab84f7a43f06@nvidia.com>
+Date:   Tue, 20 Nov 2018 10:56:01 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542711355; bh=m9WWHjU2X7pV7RiMMhzq0zo0t61I8KyMQ+3IjM+bJS4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=lC7rNopoQEUpDmWDtsrk6tlP+DKL/4lG+wUovKFpWeXhpLteD23Ug9rEjNzC9B/K4
+         0Hc3PoX/74Tw5GXlNB4CVNnozwSJCh1m0MlqScxV16VMCaqUl1c6Uc0JvpTADTJX3x
+         HYKwBPi16++vMIxh34ZIHV+5g9rzLsOVnJeR5RYXhqt7HvJ+Rt9RKoCOslwSNuWnHd
+         jCJ7oQGarNrBfA5kVnJRcCN0syopxRawhyYp89+SmSDL7qCvAWyVFGZYOrtsSxUqH3
+         eNn7SLMK27/vus9W3Fkgl7win7J04wx/B1XBtqnE7k+BlXZvsd8fLi8q2FQKahkKKp
+         55vzHSdvd7H1g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move rq_of() helper function so it can be used in pelt.c
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c  | 13 -------------
- kernel/sched/sched.h | 16 ++++++++++++++++
- 2 files changed, 16 insertions(+), 13 deletions(-)
+On 19/11/2018 16:27, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.82 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 21 16:25:07 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.82-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e30dea5..9cd1f32 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -248,13 +248,6 @@ const struct sched_class fair_sched_class;
-  */
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--
--/* cpu runqueue to which this cfs_rq is attached */
--static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
--{
--	return cfs_rq->rq;
--}
--
- static inline struct task_struct *task_of(struct sched_entity *se)
- {
- 	SCHED_WARN_ON(!entity_is_task(se));
-@@ -411,12 +404,6 @@ static inline struct task_struct *task_of(struct sched_entity *se)
- 	return container_of(se, struct task_struct, se);
- }
- 
--static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
--{
--	return container_of(cfs_rq, struct rq, cfs);
--}
--
--
- #define for_each_sched_entity(se) \
- 		for (; se; se = NULL)
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e0e052a..67e2d56 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -930,6 +930,22 @@ struct rq {
- #endif
- };
- 
-+#ifdef CONFIG_FAIR_GROUP_SCHED
-+
-+/* cpu runqueue to which this cfs_rq is attached */
-+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_rq->rq;
-+}
-+
-+#else	/* !CONFIG_FAIR_GROUP_SCHED */
-+
-+static inline struct rq *rq_of(struct cfs_rq *cfs_rq)
-+{
-+	return container_of(cfs_rq, struct rq, cfs);
-+}
-+#endif
-+
- static inline int cpu_of(struct rq *rq)
- {
- #ifdef CONFIG_SMP
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
+
+Linux version:	4.14.82-rc1-g43bb46e
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-2.7.4
-
+nvpublic
