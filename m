@@ -6,114 +6,117 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AC1C5ACC7
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F05C5ACC6
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9D4214C4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9D4214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 38C6D2148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C6D2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbeKUII0 (ORCPT
+        id S1727533AbeKUIJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:08:26 -0500
-Received: from anholt.net ([50.246.234.109]:52750 "EHLO anholt.net"
+        Wed, 21 Nov 2018 03:09:08 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35018 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727211AbeKUIIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:08:24 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id B99B610A15B1;
-        Tue, 20 Nov 2018 13:37:11 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id buoZMwhlG_Ai; Tue, 20 Nov 2018 13:37:10 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 678D810A165F;
-        Tue, 20 Nov 2018 13:37:04 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 93BD82FE1FEB; Tue, 20 Nov 2018 13:37:02 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 5/5] ARM: bcm283x: Switch V3D over to using the PM driver instead of firmware.
-Date:   Tue, 20 Nov 2018 13:37:02 -0800
-Message-Id: <20181120213702.27958-6-eric@anholt.net>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120213702.27958-1-eric@anholt.net>
-References: <20181120213702.27958-1-eric@anholt.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726771AbeKUIIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:08:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 13:36:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
+   d="scan'208";a="281632612"
+Received: from pmvancle-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.10.84])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 13:36:58 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        liam.r.girdwood@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 3/6] ASoC: Intel: Skylake: remove useless tests on DSP presence
+Date:   Tue, 20 Nov 2018 15:36:41 -0600
+Message-Id: <20181120213644.19103-4-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The GRAFX domain only contains V3D, and this driver should be the only
-accessor of V3D (firmware usage gets disabled when V3D is in the DT),
-so we can safely make Linux control the GRAFX and GRAFX_V3D power
-domains.
+bus->ppcap is now tested upfront, there is no need to re-check if the
+DSP is present. Remove tests and remove indentation.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- arch/arm/boot/dts/bcm2835-rpi.dtsi | 4 ----
- arch/arm/boot/dts/bcm283x.dtsi     | 4 +++-
- 2 files changed, 3 insertions(+), 5 deletions(-)
+ sound/soc/intel/skylake/skl.c | 40 ++++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/boot/dts/bcm2835-rpi.dtsi b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-index cb2d6d78a7fb..21a930148709 100644
---- a/arch/arm/boot/dts/bcm2835-rpi.dtsi
-+++ b/arch/arm/boot/dts/bcm2835-rpi.dtsi
-@@ -87,10 +87,6 @@
- 	power-domains = <&power RPI_POWER_DOMAIN_USB>;
- };
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index 1d7146773d19..0bdb1f7fdd4a 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -826,12 +826,10 @@ static void skl_probe_work(struct work_struct *work)
+ 		return;
+ 	}
  
--&v3d {
--	power-domains = <&power RPI_POWER_DOMAIN_V3D>;
--};
--
- &hdmi {
- 	power-domains = <&power RPI_POWER_DOMAIN_HDMI>;
- 	status = "okay";
-diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
-index bd5be68b4561..ce7bc9cc43ae 100644
---- a/arch/arm/boot/dts/bcm283x.dtsi
-+++ b/arch/arm/boot/dts/bcm283x.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/clock/bcm2835-aux.h>
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/soc/bcm2835-pm.h>
+-	if (bus->ppcap) {
+-		err = skl_machine_device_register(skl);
+-		if (err < 0) {
+-			dev_err(bus->dev, "machine register failed: %d\n", err);
+-			goto out_err;
+-		}
++	err = skl_machine_device_register(skl);
++	if (err < 0) {
++		dev_err(bus->dev, "machine register failed: %d\n", err);
++		goto out_err;
+ 	}
  
- /* firmware-provided startup stubs live here, where the secondary CPUs are
-  * spinning.
-@@ -120,7 +121,7 @@
- 			#interrupt-cells = <2>;
- 		};
+ 	/*
+@@ -1019,25 +1017,23 @@ static int skl_probe(struct pci_dev *pci,
  
--		watchdog@7e100000 {
-+		pm: watchdog@7e100000 {
- 			compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
- 			#power-domain-cells = <1>;
- 			#reset-cells = <1>;
-@@ -637,6 +638,7 @@
- 			compatible = "brcm,bcm2835-v3d";
- 			reg = <0x7ec00000 0x1000>;
- 			interrupts = <1 10>;
-+			power-domains = <&pm BCM2835_POWER_DOMAIN_GRAFX_V3D>;
- 		};
+ 	pci_set_drvdata(skl->pci, bus);
  
- 		vc4: gpu {
+-	/* check if dsp is there */
+-	if (bus->ppcap) {
+-		/* create device for dsp clk */
+-		err = skl_clock_device_register(skl);
+-		if (err < 0)
+-			goto out_clk_free;
++	/* create device for dsp clk */
++	err = skl_clock_device_register(skl);
++	if (err < 0)
++		goto out_clk_free;
+ 
+-		err = skl_find_machine(skl, (void *)pci_id->driver_data);
+-		if (err < 0)
+-			goto out_nhlt_free;
++	err = skl_find_machine(skl, (void *)pci_id->driver_data);
++	if (err < 0)
++		goto out_nhlt_free;
+ 
+-		err = skl_init_dsp(skl);
+-		if (err < 0) {
+-			dev_dbg(bus->dev, "error failed to register dsp\n");
+-			goto out_nhlt_free;
+-		}
+-		skl->skl_sst->enable_miscbdcge = skl_enable_miscbdcge;
+-		skl->skl_sst->clock_power_gating = skl_clock_power_gating;
++	err = skl_init_dsp(skl);
++	if (err < 0) {
++		dev_dbg(bus->dev, "error failed to register dsp\n");
++		goto out_nhlt_free;
+ 	}
++	skl->skl_sst->enable_miscbdcge = skl_enable_miscbdcge;
++	skl->skl_sst->clock_power_gating = skl_clock_power_gating;
++
+ 	if (bus->mlcap)
+ 		snd_hdac_ext_bus_get_ml_capabilities(bus);
+ 
 -- 
-2.19.1
+2.17.1
 
