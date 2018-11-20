@@ -2,173 +2,156 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D734C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D77EC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 131E020684
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:37:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 131E020684
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E0B0120684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:39:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="eeZNHoEa";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="MMI2nc56"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B0120684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbeKUEH6 (ORCPT
+        id S1729138AbeKUEJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:07:58 -0500
-Received: from foss.arm.com ([217.140.101.70]:58378 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbeKUEH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:07:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D708A1DC8;
-        Tue, 20 Nov 2018 09:37:39 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A1F523F5AF;
-        Tue, 20 Nov 2018 09:37:38 -0800 (PST)
-Subject: Re: WARN_ON after gic_reserve_range
-To:     John Garry <john.garry@huawei.com>,
-        Jan Glauber <Jan.Glauber@cavium.com>
-Cc:     "Richter, Robert" <Robert.Richter@cavium.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181120162305.GA2088@hc>
- <2665ddbd-5912-12b9-f5bd-6ccaec0e6e2d@huawei.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <61079d3d-6bb6-cd00-fbfa-d13c19706e0f@arm.com>
-Date:   Tue, 20 Nov 2018 17:37:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <2665ddbd-5912-12b9-f5bd-6ccaec0e6e2d@huawei.com>
-Content-Type: text/plain; charset=windows-1252
+        Tue, 20 Nov 2018 23:09:30 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40178 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728189AbeKUEJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 23:09:30 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKHbo4s005616;
+        Tue, 20 Nov 2018 09:39:07 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=pLJmpNR42xWZjxlbuIeDtN22i4yM9M666IQ0eJ+zUWE=;
+ b=eeZNHoEayLd+/OY/3OCsM130voVvzOjUGlyozABQBQRTamNvk+NPplKvc0ZI9FlcoD0U
+ E2hkx/DJ7DHTtjJX+lim+ViqW2s9fWooCv7pWyYFbQsY4PKiS6LXK57sBqtziZpyL9Sb
+ /RKnEsU7p7Y/4JxyaFuPLccQ42lfoqEl6Nc= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nvp2g883b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 20 Nov 2018 09:39:07 -0800
+Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
+ frc-hub06.TheFacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 20 Nov 2018 09:39:06 -0800
+Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
+ frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 20 Nov 2018 09:39:06 -0800
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 20 Nov 2018 09:39:06 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pLJmpNR42xWZjxlbuIeDtN22i4yM9M666IQ0eJ+zUWE=;
+ b=MMI2nc565gQ6iZaY393AK5mY2Ygac1Lv6kRflUhgZ/A+AXR7puxaEJzu4Ze4qqBUaSuhD+bZVnt18gmzQ4VWz0F3wBxoWo00V4PLIGmCN6lrUDsea0fCK0smZOfesIM7+SsHZPNH04y2wbPT6pzZgpk+N1Zd2eNJBzjjQH1KBjA=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0422.namprd15.prod.outlook.com (10.163.109.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Tue, 20 Nov 2018 17:39:03 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::1d40:c1ed:72a7:38a6]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::1d40:c1ed:72a7:38a6%3]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
+ 17:39:03 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Tejun Heo <tj@kernel.org>
+CC:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v3 4/7] cgroup: cgroup v2 freezer
+Thread-Topic: [PATCH v3 4/7] cgroup: cgroup v2 freezer
+Thread-Index: AQHUfg31+N8cXqD8i0C7qWHjcgNkRKVY3zGA//98A4CAAIbyAP//fA6AgACHjYCAAA35gA==
+Date:   Tue, 20 Nov 2018 17:39:03 +0000
+Message-ID: <20181120173858.GC21462@tower.DHCP.thefacebook.com>
+References: <20181117003830.15344-1-guro@fb.com>
+ <20181117003830.15344-5-guro@fb.com>
+ <20181120162529.GU2509588@devbig004.ftw2.facebook.com>
+ <20181120163304.GA21462@tower.DHCP.thefacebook.com>
+ <20181120163604.GX2509588@devbig004.ftw2.facebook.com>
+ <20181120164349.GB21462@tower.DHCP.thefacebook.com>
+ <20181120164859.GY2509588@devbig004.ftw2.facebook.com>
+In-Reply-To: <20181120164859.GY2509588@devbig004.ftw2.facebook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR04CA0047.namprd04.prod.outlook.com
+ (2603:10b6:300:ee::33) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::5:fc42]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0422;20:oSBl8MnEO8SL/6SjPYyaocSCiwKKki3X4xHH/TFIQsZM4SQuT6Qsj6mtdvTpVbVRKDyimn3y5c997XeoWEt5jZ5ubIpzpkp4HKTMEb3sb6H2Lx2KiUVnGc53C6Q9BAauB1grkm6Mle+incTb/gjOValXBwSaYhfjyfNRmiDigMA=
+x-ms-office365-filtering-correlation-id: a3910b0f-0d62-4db1-6bf4-08d64f0f0fbc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0422;
+x-ms-traffictypediagnostic: BY2PR15MB0422:
+x-microsoft-antispam-prvs: <BY2PR15MB042235330D01DDB4502E29DEBED90@BY2PR15MB0422.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3002001)(93006095)(93001095)(3231442)(11241501184)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0422;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0422;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(396003)(136003)(366004)(39860400002)(189003)(199004)(4326008)(53936002)(39060400002)(6246003)(6436002)(1076002)(9686003)(305945005)(33896004)(256004)(6512007)(6116002)(486006)(186003)(14444005)(6486002)(86362001)(476003)(7736002)(105586002)(6506007)(106356001)(11346002)(76176011)(8676002)(446003)(229853002)(5660300001)(81156014)(54906003)(316002)(81166006)(386003)(33656002)(478600001)(93886005)(6916009)(8936002)(46003)(14454004)(99286004)(71190400001)(102836004)(68736007)(52116002)(97736004)(2900100001)(25786009)(2906002)(71200400001)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0422;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: CF+cSAUWbVBJULVlXKbg+nk4qHI8UpYY7cbHrWQoUdfj0AjeLKpsomONQGlBkcTNrk35PVALzvY58X7oo34e6AGwHg15f8DkT/tGIue8RN6nz2YP6fjEDk0lhWLxCo0Zpvx0JcI/ekW//bxTAzIGt2d/EGR50y9umauNDfEddLHLkEy9a9w4gVcb8bMCYLyDHQrLMYWkuw6olv2Gg/ZDeKzN8ijSS5u9VvVvqiLHQQuqgx9idH+RuXnXdZkYFpKfq16nUWHv//glxOdsJnxBEyhb3Ix9h0/W97kv+6gal+bRDXUEz3IjnVNHT5r1XHj4UKNPLLPUqtx++waiD2o6jtSSpq4GunQnXdjc80Nhe4g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <ED3B4FA8405D0345AAFB57A5FA827BF5@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3910b0f-0d62-4db1-6bf4-08d64f0f0fbc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 17:39:03.0833
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0422
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 17:30, John Garry wrote:
-> On 20/11/2018 16:23, Jan Glauber wrote:
->> Hi Marc,
->>
->> with 4.20-rc3 I see two WARN_ON's firing on a ThunderX2 system that come from
->> commit 3fb68faee867 (irqchip/gic-v3-its: Register LPI tables with EFI config table).
->>
->> Global efi_memreserve_root is NULL as it will only be set when early initcalls are
->> running, but from the backtrace the WARN_ON's are running even earlier (init_IRQ).
->>
->> Am I the only one seeing this?
->>
-> 
-> I see it also:
-> 
-> [    0.000000] Booting Linux on physical CPU 0x0000010000 [0x410fd082]
-> [    0.000000] Linux version 4.20.0-rc3 
-> (johnpgarry@johnpgarry-ThinkCentre-M93p) (gcc version 7.3.1 20180425 
-> [linaro-7.3-2018.05-rc1 revision 
-> 38aec9a676236eaa42ca03ccb3a6c1dd0182c29f] (Linaro GCC 7.3-2018.05-rc1)) 
-> #971 SMP PREEMPT Tue Nov 20 17:15:03 GMT 2018
-> [    0.000000] efi: Getting EFI parameters from FDT:
-> [    0.000000] efi: EFI v2.60 by EDK II
-> [    0.000000] efi:  SMBIOS=0x3f050000  SMBIOS 3.0=0x39b00000 
-> ACPI=0x39bd0000  ACPI 2.0=
-> 
-> ...
-> 
-> 
-> [    0.000000] ITS@0x00000408c6000000: allocated 65536 Virtual CPUs 
-> @1fb9d80000 (flat, esz 8, psz 4K, shr 1)
-> [    0.000000] ITS@0x00000408c6000000: allocated 512 Interrupt 
-> Collections @1fbb977000 (flat, esz 8, psz 4K, shr 1)
-> [    0.000000] WARNING: CPU: 0 PID: 0 at 
-> drivers/irqchip/irq-gic-v3-its.c:1696 its_init+0x360/0x5f4
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc3 #971
-> [    0.000000] pstate: 00000085 (nzcv daIf -PAN -UAO)
-> [    0.000000] pc : its_init+0x360/0x5f4
-> [    0.000000] lr : its_init+0x35c/0x5f4
-> [    0.000000] sp : ffff000009183ca0
-> [    0.000000] x29: ffff000009183ca0 x28: ffff7dfffe67b3e4
-> [    0.000000] x27: 0000000000000001 x26: ffff801fbb928000
-> [    0.000000] x25: ffff000009325360 x24: ffff00000918c8c8
-> [    0.000000] x23: ffff801fbb802100 x22: ffff00000918c8c8
-> [    0.000000] x21: ffff000009189000 x20: ffff0000091b8000
-> [    0.000000] x19: ffff000009325000 x18: ffffffffffffffff
-> [    0.000000] x17: 0000000001f4d3b5 x16: 0000000000000000
-> [    0.000000] x15: ffff0000091896c8 x14: ffff801fbb97389b
-> [    0.000000] x13: ffff801fbb97389a x12: 2074707572726574
-> [    0.000000] x11: ffff000009183a00 x10: ffff000009183a00
-> [    0.000000] x9 : ffff7e007eeed400 x8 : ffff801fbbb60000
-> [    0.000000] x7 : a2a2a2a2a2a2a2a2 x6 : 0000801ff2d1c000
-> [    0.000000] x5 : ffff7e0000000000 x4 : ffff00000918c8c8
-> [    0.000000] x3 : ffff801fbbb50000 x2 : 0000000000000000
-> [    0.000000] x1 : 0000000000010000 x0 : 00000000ffffffed
-> [    0.000000] Call trace:
-> [    0.000000]  its_init+0x360/0x5f4
-> [    0.000000]  gic_init_bases+0x2d4/0x2f4
-> [    0.000000]  gic_acpi_init+0x154/0x278
-> [    0.000000]  acpi_match_madt+0x44/0x78
-> [    0.000000]  acpi_table_parse_entries_array+0x13c/0x214
-> [    0.000000]  acpi_table_parse_entries+0x40/0x60
-> [    0.000000]  acpi_table_parse_madt+0x24/0x2c
-> [    0.000000]  __acpi_probe_device_table+0x80/0xdc
-> [    0.000000]  irqchip_init+0x30/0x38
-> [    0.000000]  init_IRQ+0xfc/0x130
-> [    0.000000]  start_kernel+0x288/0x418
-> [    0.000000] ---[ end trace c841ef100bdd09a6 ]---
+On Tue, Nov 20, 2018 at 08:48:59AM -0800, Tejun Heo wrote:
+> Hello,
+>=20
+> On Tue, Nov 20, 2018 at 04:43:52PM +0000, Roman Gushchin wrote:
+> > > But that wouldn't udpate the cgroup's frozen state and generate
+> > > notifications, right?
+> >=20
+> > Why? The task will be eventually trapped into cgroup_enter_frozen(),
+> > and from there cgroup_update_frozen() will be called.
+>=20
+> Because the cgroup is no longer frozen?
+>=20
+> > You are right, that notification will not be issued, because the cgroup
+> > is not changing its state (frozen->frozen). I'm not sure that it makes
+> > sense to change the cgroup state back and forth in this case. Are there
+> > any reasons I'm missing?
+>=20
+> Imagine the task being trapped in nfs or wherever and not getting into
+> the freezer for an extended period of time.
 
-Yes, anyone with GICv3 and EFI will see this.
+Yeah, it's a good point. I've thought about it mostly in the fork() context=
+,
+where if freezing of a cgroup races with fork(), it makes no sense to
+switch the cgroup state back and forth. But that case is different, as
+the child will be trapped just on the return path from fork() call.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks!
