@@ -2,103 +2,110 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF48C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D80C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:10:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CADB20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CADB20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id ABE8B20671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:09:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABE8B20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728021AbeKTUiH (ORCPT
+        id S1727764AbeKTUh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:38:07 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39762 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeKTUiG (ORCPT
+        Tue, 20 Nov 2018 15:37:58 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:29065 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725949AbeKTUh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:38:06 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAKA97gS118236;
-        Tue, 20 Nov 2018 04:09:07 -0600
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAKA97i9048073
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 04:09:07 -0600
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 20
- Nov 2018 04:09:07 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 20 Nov 2018 04:09:07 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAKA93QF025913;
-        Tue, 20 Nov 2018 04:09:04 -0600
-Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: k3: Introduce pinmux
- definitions
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-References: <20181113060111.16374-1-vigneshr@ti.com>
- <20181113060111.16374-2-vigneshr@ti.com>
- <20181117160502.dhlqbx5qnmdp5iog@kahuna>
- <b8c1d975-2b4f-5530-2089-dc04c04f8d86@ti.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <12c1d6e2-aba4-be0d-bfc5-1fb5d3ab45f8@ti.com>
-Date:   Tue, 20 Nov 2018 15:39:59 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <b8c1d975-2b4f-5530-2089-dc04c04f8d86@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 20 Nov 2018 15:37:57 -0500
+X-IronPort-AV: E=Sophos;i="5.56,256,1539628200"; 
+   d="scan'208";a="295569"
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 20 Nov 2018 15:38:30 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9082"; a="5263087"
+Received: from mgottam-linux.qualcomm.com ([10.204.65.20])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 20 Nov 2018 15:38:29 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id 43A0531B2; Tue, 20 Nov 2018 15:38:28 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     stanimir.varbanov@linaro.org, hverkuil@xs4all.nl,
+        mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        vgarodia@codeaurora.org, mgottam@codeaurora.org
+Subject: [PATCH] arm64: dts: sdm845: add video nodes
+Date:   Tue, 20 Nov 2018 15:38:26 +0530
+Message-Id: <1542708506-12680-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This adds video nodes to sdm845 based on the examples
+in the bindings.
 
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-On 19/11/18 12:49 PM, Tero Kristo wrote:
-> On 17/11/2018 18:05, Nishanth Menon wrote:
->> On 11:31-20181113, Vignesh R wrote:
->>> The dt-bindings header for TI K3 AM6 SoCs define a set of macros for
->>
-[...]
->>
->> Thanks for reducing the combinations down to the minimum needed. We can
->> worry about the DS and isolation bits when we have a real user for them.
->>
->> Acked-by: Nishanth Menon <nm@ti.com>
->>
->> Tero: v4.21-rc1 perhaps ?
->>
-> 
-> Yeah, looks fine, queueing up for 4.21.
-> 
-
-Thank you all for the review!
-
-Tero,
-
-Is there a branch with these patches that I can use as base for my next
-set of DT patches?
-
-
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 0c9a2aa..d82487d 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -84,6 +84,10 @@
+ 			reg = <0 0x86200000 0 0x2d00000>;
+ 			no-map;
+ 		};
++		venus_region: venus@95800000 {
++			reg = <0x0 0x95800000 0x0 0x500000>;
++			no-map;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -1103,5 +1107,35 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		video-codec@aa00000 {
++			compatible = "qcom,sdm845-venus";
++			reg = <0x0aa00000 0xff000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&videocc VENUS_GDSC>;
++			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
++				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
++				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>;
++			clock-names = "core", "iface", "bus";
++			iommus = <&apps_smmu 0x10a0 0x8>,
++				 <&apps_smmu 0x10b0 0x0>;
++			memory-region = <&venus_region>;
++
++			video-core0 {
++				compatible = "venus-decoder";
++				clocks = <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC0_GDSC>;
++			};
++
++			video-core1 {
++				compatible = "venus-encoder";
++				clocks = <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC1_GDSC>;
++			};
++		};
+ 	};
+ };
 -- 
-Regards
-Vignesh
+1.9.1
+
