@@ -2,127 +2,119 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCEBC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEE5C46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68F5213A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2549720C01
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Zlr8rCn5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68F5213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="oF10Zuwn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2549720C01
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726099AbeKUFXH (ORCPT
+        id S1726164AbeKUFZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 00:23:07 -0500
-Received: from mail-eopbgr790089.outbound.protection.outlook.com ([40.107.79.89]:47021
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725885AbeKUFXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 00:23:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UsWRxGU91O8CYZ7zL9rGyKpiORdPpAPFbys5/pKXYBA=;
- b=Zlr8rCn5VVlApoMe/ZroTu92GU8KsX+jvEWdTaJMpHmlgI28w3FdJXXSOrAwOwaB70MphVEf6vSZXGZqbquG8s+V13CDXIUo6gKWaxqkeNRb04rgnRTgk9e0NgqvU+mLSIlMz2nP4ylKpykNsg3PN1DsgHSt1ORBGBPr14tH0VI=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4966.namprd05.prod.outlook.com (20.177.229.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Tue, 20 Nov 2018 18:52:26 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1361.013; Tue, 20 Nov 2018
- 18:52:26 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Ingo Molnar <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "linux_dti@icloud.com" <linux_dti@icloud.com>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v5 00/10] x86/alternative: text_poke() fixes
-Thread-Topic: [PATCH v5 00/10] x86/alternative: text_poke() fixes
-Thread-Index: AQHUe48LR19TRX3+q0WdrGHXr4DmHKVYpeQAgABnWIA=
-Date:   Tue, 20 Nov 2018 18:52:25 +0000
-Message-ID: <05F89744-E7B7-4670-82E8-161CB84821A7@vmware.com>
-References: <20181113130730.44844-1-namit@vmware.com>
- <20181120124232.GK2131@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181120124232.GK2131@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4966;20:faYVM143eadIDJ7QKdT1sj4iK/PBWk4UkxCwD/jUiYzGND+tEhV2GR1fyYMig0Tcdgl4il9p/7dhXWhOnjaU2BANAhFjPF+cOxTTtqF2bF5QztfuEAt6/d4XnHvAHKNISuJkXSQk6vTCsCYy9dbkl7urKihB/LnWZ+BMotkKnhE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: e73ece9a-40d6-4a62-0786-08d64f195067
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4966;
-x-ms-traffictypediagnostic: BYAPR05MB4966:
-x-microsoft-antispam-prvs: <BYAPR05MB496603393C529331CAF31AE5D0D90@BYAPR05MB4966.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4966;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4966;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(136003)(366004)(199004)(189003)(68736007)(476003)(6916009)(2616005)(305945005)(486006)(229853002)(33656002)(6436002)(6486002)(256004)(14444005)(97736004)(8936002)(8676002)(7416002)(82746002)(106356001)(81166006)(105586002)(25786009)(4326008)(2900100001)(5660300001)(478600001)(53546011)(66066001)(186003)(11346002)(446003)(7736002)(76176011)(6506007)(14454004)(2906002)(99286004)(102836004)(26005)(54906003)(86362001)(53936002)(81156014)(36756003)(39060400002)(3846002)(6512007)(6116002)(316002)(83716004)(6246003)(71200400001)(71190400001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4966;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 3NAwqN7G90R74vrpt1PgFN2OUqyWZItoryhiFh3VFIYVNK+pE4zclqIt5f4V7w0CpzB/QUC6A45kalczjdVpAkpqmJKCfZtmsw7o8rC28IDGxULrwaBdwNeoeCFAUL5UYziK1RobHLMPfkLwRnapJODmkgkKlOzK0f9yrHn24TAk43N0cqwZJvJQnqEkHopLhp6ZQWS3ASbunmZdeNFXP0i7lBSaenPvNjDMheCjRMMPWImptj1brLF/9kLpymmQPnS1KRa6aSzorHCgoSXBT0BdZse6VgfPpwErZeFAY+p/Q29BZwT0a5yh12tbwmjwd3I1I/8LPooBVI/lVhFNloAUeIEiMvvW4K9KyIDvJTE=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A1A2F4FAC8D5094A9AF9F7E6C9ADD548@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 21 Nov 2018 00:25:22 -0500
+Received: from imap.thunk.org ([74.207.234.97]:59366 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725885AbeKUFZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 00:25:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=smOOL5wUGG81VvEbup4WV9Fm1Q7kwbp5OAcLw1zwJu8=; b=oF10ZuwnKZSqBWKw5/897nZaes
+        Fa5Rg65lxcECqsz3G5uoOKeit4bFc4pZ1RIfOrhDtC5qgnt9ipbfSvVhvig+05+Tp2T5tThLvks0j
+        vx6sfywLxHJQB41ZXq6FdqypZE1WflIPu14D5PLT0u0RekKoxCiFyI+XadBqcoYGJ5ag=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gPB7r-0007BT-RE; Tue, 20 Nov 2018 18:51:55 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id E3ED97A04D1; Tue, 20 Nov 2018 13:51:54 -0500 (EST)
+Date:   Tue, 20 Nov 2018 13:51:54 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Martin Willi <martin@strongswan.org>
+Subject: Re: [RFC PATCH v2 0/4] Exporting existing crypto API code through
+ zinc
+Message-ID: <20181120185154.GB6401@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        linux-fscrypt@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Martin Willi <martin@strongswan.org>
+References: <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
+ <20181112185816.GA8663@gmail.com>
+ <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
+ <20181117001718.GA175522@gmail.com>
+ <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
+ <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
+ <20181120060217.t4nccaqpwnxkl4tx@gondor.apana.org.au>
+ <CAKv+Gu-SHS2tF665dfqSgmH5EF5vGVtef=3_4WgCE=+8+Jw7Rw@mail.gmail.com>
+ <20181120141850.zjmfwcari5kykk6y@gondor.apana.org.au>
+ <CAHmME9oPGkvEmqvfbav-AOf_P=Z4zWYxvqD3a3QhuOSh_OWd_A@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e73ece9a-40d6-4a62-0786-08d64f195067
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 18:52:25.9538
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4966
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHmME9oPGkvEmqvfbav-AOf_P=Z4zWYxvqD3a3QhuOSh_OWd_A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBOb3YgMjAsIDIwMTgsIGF0IDQ6NDIgQU0sIFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5m
-cmFkZWFkLm9yZz4gd3JvdGU6DQo+IA0KPiBPbiBUdWUsIE5vdiAxMywgMjAxOCBhdCAwNTowNzoy
-MEFNIC0wODAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4gdjQtPnY1Og0KPj4gLSBGaXggWGVuIGJy
-ZWFrYWdlIFtEYW1pYW4gVG9tZXR6a2ldDQo+PiAtIEJVR19PTigpIHdoZW4gcG9raW5nX21tIGlu
-aXRpYWxpemF0aW9uIGZhaWxzIFtQZXRlclpdDQo+PiAtIEJldHRlciBjb21tZW50cyBvbiAieDg2
-L21tOiB0ZW1wb3JhcnkgbW0gc3RydWN0Ig0KPj4gLSBDbGVhbmVyIHJlbW92YWwgb2YgdGhlIGN1
-c3RvbSBwb2tlcg0KPiANCj4gSSdsbCByZS1pdGVyYXRlIG15IHBvc2l0aW9uOiBpdCBpcyBpbXBv
-c3NpYmxlIGZvciB0aGUgdGV4dCBub3QgdG8gbWF0Y2gsDQo+IGFuZCBpZiBpdCBzb21laG93IGRv
-ZXMgbm90IG1hdGNoLCBzb21ldGhpbmcgd2VudCBzaWRld2F5cyBpbiBhbg0KPiB1bnJlY292ZXJh
-Ymx5IGZhc2hpb24uDQo+IA0KPiB0ZXh0X3Bva2UoKSBtdXN0IG5vdCBmYWlsLCBldmVyLiBJZiBp
-dCBkb2VzLCBvdXIgdGV4dCBpcyBpbmNvbnNpc3RlbnQNCj4gYW5kIHdlIG11c3QgYWJvcnQvcGFu
-aWMvYnVnLg0KPiANCj4gVGhlIG9ubHkgd2F5IEkgd2lsbCBhY2NlcHQgYW55dGhpbmcgZWxzZSBp
-cyBpZiBzb21lb25lIGNhbiBjb21lIHVwIHdpdGgNCj4gYSBzZW5zaWJsZSBzY2VuYXJpbyBvZiB0
-ZXh0X3Bva2UoKSBmYWlsaW5nIGFuZCByZWNvdmVyaW5nIGZyb20gaXQuDQo+IEFGQUlDVCB0aGVy
-ZSBpcyBubyBwb3NzaWJsZSB3YXkgdG8gZ3JhY2VmdWxseSByZWNvdmVyLg0KPiANCj4gQ29uc2lk
-ZXIgYSBqdW1wIGxhYmVsIHdpdGggbXVsdGlwbGUgcGF0Y2ggc2l0ZXM7IHdlIHBhdGNoIHRoZSBm
-aXJzdCwNCj4gdGhlbiBmYWlsLiBJbiBvcmRlciB0byByZXN0b3JlIHRvIGEgc2FuZSBzdGF0ZSwg
-d2UgbXVzdCB1bmRvIHRoZQ0KPiBwYXRjaGluZyBvZiB0aGUgZmlyc3QsIGJ1dCB1bmRvaW5nIHRl
-eHRfcG9rZSgpIGZhaWxzIGFnYWluLiBUaGVuDQo+IHdoYXQ/DQo+IA0KPiBBbGxvd2luZyB0ZXh0
-X3Bva2UoKSB0byBmYWlsIG9ubHkgY3JlYXRlcyBhbiB1bmZpeGFibGUgbWVzcy4gRXNwLiBzaW5j
-ZQ0KPiB0aGVyZSBpcyBubyBzYW5lIHNjZW5hcmlvIHVuZGVyIHdoaWNoIGlzIGNhbiBmYWlsLg0K
-DQpPaywgb2suLi4gSSB0cmllZCB0byBzdGFuZCBteSBncm91bmQsIGJ1dCBJIGd1ZXNzIEkgZmFp
-bGVkLiBJIGRvbuKAmXQgZmVlbA0KdGhhdCBzdHJvbmdseSBhYm91dCB0aGlzIGFzc2VydGlvbiB0
-byBhcmd1ZSB3aXRoIHlvdS4gSeKAmW0ganVzdCB0aGUg4oCcY2hpY2tlbuKAnQ0Ka2luZCBvZiBn
-dXkuDQoNCllldCwgdGFrZSBpbnRvIGNvbnNpZGVyYXRpb24gdGhhdCBJIHdpbGwgbmVlZCB0byB1
-c2UgeW91IGFzIG15IOKAnHZlc3TigJ0gb25jZSBJDQpnZXQgYmVpbmcg4oCcc2hvdOKAnSBmb3Ig
-YWRkaW5nIEJVR19PTigpLiA7LSkNCg0KSSB3aWxsIHNlbmQgYW5vdGhlciB2ZXJzaW9uIHRvbmln
-aHQsIGFzc3VtaW5nIG5vIG5ldyBpc3N1ZXMgYXJlIHJhaXNlZC4NCg0KUmVnYXJkcywNCk5BZGF2
+On Tue, Nov 20, 2018 at 05:24:41PM +0100, Jason A. Donenfeld wrote:
+> On Tue, Nov 20, 2018 at 3:19 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > Yes.  In fact it's used for FIPS certification testing.
+> > Sure, nobody sane should be doing it.  But when it comes to
+> > government certification... :)
+> 
+> The kernel does not aim toward any FIPS certification, and we're not
+> going to start bloating our designs to fulfill this. It's never been a
+> goal. Maybe ask Ted to add a FIPS mode to random.c and see what
+> happens... When you start arguing "because FIPS!" as your
+> justification, you really hit a head scratcher.
+
+There are crazy people who go for FIPS certification for the kernel.
+That's why crypto/drbg.c exists.  There is a crazy fips mode in
+drivers/char/random.c which causes the kernel to panic with a 1 in
+2**80 probability each time _extract_entropy is called.  It's not the
+default, and I have no idea if any one uses it, or if it's like the
+NIST OSI mandate, which forced everyone to buy an OSI networking stack
+--- and then put it on the shelf and use TCP/IP instead.
+
+Press release from March 2018:
+
+https://www.redhat.com/en/about/press-releases/red-hat-completes-fips-140-2-re-certification-red-hat-enterprise-linux-7
+
+    	     	       	   	     	 	- Ted
