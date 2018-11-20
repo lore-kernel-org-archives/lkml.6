@@ -2,127 +2,135 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F2EC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D942C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:53:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C233D208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0969B20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJguVhw7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C233D208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="caIbR1ro"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0969B20684
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730252AbeKUDWo (ORCPT
+        id S1730030AbeKUDWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:22:44 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43826 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726557AbeKUDWo (ORCPT
+        Tue, 20 Nov 2018 22:22:36 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:45418 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726975AbeKUDWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:22:44 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so1140739pgk.10;
-        Tue, 20 Nov 2018 08:52:38 -0800 (PST)
+        Tue, 20 Nov 2018 22:22:35 -0500
+Received: by mail-vk1-f193.google.com with SMTP id n126so553543vke.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NA1qthEFQ7/pB53uVIREyL6YfIxumKaRa1YNVVVRolk=;
-        b=gJguVhw7fpxjHUNb2bH9a5CrAb8by8pHBriW14mbz2Uoq02/hJ+mISI+KWBNlix4JZ
-         2IqRJbwd1cLTIga4pf2T3fv2hCZcMxA7lNElPiO6M9wSlUfmTqK/ymLnVXXMkA4yMfiO
-         5n3j/g4o/4qBMyA55iF2Mtsq6cqtLI3uEH4yaML7/eYWZtYPyNJn4hRI8xcxIR22RGzi
-         lzYTZ+WsZqkLntzaLn7FHkFvN9unReBD2mdiGExdbyO5EjiE1xGGhb4LYsDUhbbgTPAr
-         LrIsp4LQ1k5VYuh49AMBgwDSYM9+vvYQWJYOl60HYSTmmOoptp+bN8MIhHQkAhEiJsfM
-         gaxQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YpC0CcOv1I31aI53uDJUrdUOcDYKqfjWneEUVPLLDH4=;
+        b=caIbR1ro4uMYrhmznX90HEehQNOO4+bKCXlaS6VLssqo2PxuK9GOxv3e/5TD1bTEM+
+         SPmMM1yOFadooLqcU/nLJpEX6qWgNDbVuUq7PTLlcmBpszuUYkHn/K9Q7tQNyK6sZCWx
+         AaPma1YNWqxvgZSwXlFIQlLkgCZW8clC4S15I=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NA1qthEFQ7/pB53uVIREyL6YfIxumKaRa1YNVVVRolk=;
-        b=uTMo666lyTc+wyb1KW7sSd2+bEm5F1lMG374bLeHPjMHG6G2Lvi/HWBUUuBVslEh+8
-         CR1bwuXZU2BYXmK/0XkUR6CHIm37L8fPE8/qMPFTaNxprNjpx/yoq+vYjbpo+RU0/C8P
-         7t/a+16FyZf+FrytFE8LQiM1LLnNWo4h7ylrepad/8oyG43MH42YD0cxydcnoXsKNynW
-         lmXbcVlmY+L7FEH99QWHeMxyrFNTJSUzsSNG7DUBXp9eNR4I54z1Ol3fsc3GkysV4eRR
-         ELgDXulmP1icCN/2cK+xsVNqHBdA12xQkJy2PCdZL4FHtSVfg/mC9MntAaXntPAuSzzU
-         a+/A==
-X-Gm-Message-State: AGRZ1gKejFmlx5t8r/BULiHYzcQYAp9WmtSoc1D62l1vVyEmvSrnMR11
-        aoidRl5N2Cp2yII4t9x8A64=
-X-Google-Smtp-Source: AJdET5e8Fqdnng6yptrdzlx1ELgZ5XmzowRRYbBBTMw+BYNBS1fmy0JG5up4hmMn8UESKoxGAeb2Ng==
-X-Received: by 2002:a62:5e46:: with SMTP id s67-v6mr3060335pfb.122.1542732758124;
-        Tue, 20 Nov 2018 08:52:38 -0800 (PST)
-Received: from localhost.localdomain ([103.212.140.152])
-        by smtp.gmail.com with ESMTPSA id h8sm27048058pgv.27.2018.11.20.08.52.35
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YpC0CcOv1I31aI53uDJUrdUOcDYKqfjWneEUVPLLDH4=;
+        b=BmyFPlRJC+nRShc/Q1Annz895hf13wnbxqUa55E2bvwvLQq4zQ3RrFdmw6hJgIuFKI
+         scStVeAbqt01D5F48ioAiNGVBA+KWy5JyyMc8FaVYGx3BvazZeQA86CCRov7sKdc4TcY
+         VBCITp0puYbGzSdNgSr02husp1c5SNOhWUhID+w7YLzMq9NzYPTjjvlHLw/MMkQu68iJ
+         RXozOj5jc/N7kk103V5s4TYxK4Egcmn1jSG9vGD1VQfEaVKery07BABe7wFbZ+pKRpVu
+         JQUT+FdbnOnBjAaxMx+3dixGq1vdoyGaAXMWJet5Wai6dMvoGy1xV6dqivJzvV0IErEN
+         SMfA==
+X-Gm-Message-State: AA+aEWY7Oa4lJzTCJlXjcIb6ELt4lkQFI7fMDg2dS2SKqzKacMPgIJ6W
+        cFlfpCIPIYbV2nhNF8Lq5OIos3X14do=
+X-Google-Smtp-Source: AFSGD/UEm+Dxip8HTmsnfwYnphQ4owqsbSr4bpNN4m41+IcCWJnkfFHMvuYBMGeANB2eKlJpMrBEzw==
+X-Received: by 2002:a1f:c111:: with SMTP id r17mr1110620vkf.35.1542732749279;
+        Tue, 20 Nov 2018 08:52:29 -0800 (PST)
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
+        by smtp.gmail.com with ESMTPSA id l123sm10774125vsd.26.2018.11.20.08.52.26
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:52:37 -0800 (PST)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] Staging: iio: adt7316: Add of_device_id table
-Date:   Tue, 20 Nov 2018 22:22:30 +0530
-Message-Id: <20181120165230.7079-1-shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Nov 2018 08:52:27 -0800 (PST)
+Received: by mail-vs1-f42.google.com with SMTP id z3so1480859vsf.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:52:26 -0800 (PST)
+X-Received: by 2002:a67:1505:: with SMTP id 5mr1063013vsv.20.1542732746242;
+ Tue, 20 Nov 2018 08:52:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181120002654.1891-1-dianders@chromium.org> <20181120002654.1891-5-dianders@chromium.org>
+ <20181120161055.GI3894@sirena.org.uk>
+In-Reply-To: <20181120161055.GI3894@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 20 Nov 2018 08:52:14 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UO1Dt3SeDs22EgH-95dWX+jq0sU7zzRgew11_DVw43cg@mail.gmail.com>
+Message-ID: <CAD=FV=UO1Dt3SeDs22EgH-95dWX+jq0sU7zzRgew11_DVw43cg@mail.gmail.com>
+Subject: Re: [PATCH 5/7] regulator: core: add enable_count for consumers to
+ debug fs
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Osipenko <digetx@gmail.com>, ryandcase@chromium.org,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the kernel starts up, it kicks off compiled-in drivers
-that match “compatible” entries it finds in the device tree.
-At a later stage (when /lib/modules is available), all kernel modules
-that match “compatible” entries in the device tree are loaded.
+Hi,
 
-But if there is no dt table then there should be a fall back path
-with which desired kernel modules can be loaded. Hence, add
-of_device_id table in the i2c driver to be able to use when there
-is no dt table.
+On Tue, Nov 20, 2018 at 8:10 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Mon, Nov 19, 2018 at 04:26:52PM -0800, Douglas Anderson wrote:
+> > Now that consumers all keep track of their own enable count, let's add
+> > it into the regulator_summary.
+>
+> This patch series contains a bunch of random stuff that's not
+> particularly related to each other or even dependent on each other -
+> it's better to just send unrelated things in unrelated threads, it
+> makes it clear what actual dependencies exist, makes the serieses that
+> are sent easier to understand and stops things getting blocked on
+> unrelated changes earlier in the series.
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
----
+Sure.  You want me to repost things now or wait until you've had a
+chance to look things over?
 
-Changes in v2:
-  - Make the commit message appropriate and assign of_match_table
-in the driver structure.
+Certainly patch #1 is totally self-contained.
+  regulator: core: Properly expose requested_microamps in sysfs
 
- drivers/staging/iio/addac/adt7316-i2c.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+Patch #2 is self-contained but helps with confirming patches later in
+the series:
+  regulator: core: Don't assume always_on when is_enabled returns err
 
-diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-index 473e5e34ec00..41bc4ca008bc 100644
---- a/drivers/staging/iio/addac/adt7316-i2c.c
-+++ b/drivers/staging/iio/addac/adt7316-i2c.c
-@@ -126,9 +126,22 @@ static const struct i2c_device_id adt7316_i2c_id[] = {
- 
- MODULE_DEVICE_TABLE(i2c, adt7316_i2c_id);
- 
-+static const struct of_device_id adt7316_of_match[] = {
-+	{ .compatible = "adi,adt7316" },
-+	{ .compatible = "adi,adt7317" },
-+	{ .compatible = "adi,adt7318" },
-+	{ .compatible = "adi,adt7516" },
-+	{ .compatible = "adi,adt7517" },
-+	{ .compatible = "adi,adt7519" },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, adt7316_of_match);
-+
- static struct i2c_driver adt7316_driver = {
- 	.driver = {
- 		.name = "adt7316",
-+		.of_match_table = adt7316_of_match,
- 		.pm = ADT7316_PM_OPS,
- 	},
- 	.probe = adt7316_i2c_probe,
--- 
-2.17.1
+Patch #3: self-contained but helps with confirming patches later in the series:
+  regulator: core: Don't double-disable supplies in regulator_disable_deferred()
 
+Patches #4 and #5 are intimately tied.  As per discussion, I'll squash
+together for v2.
+  regulator: core: Only count load for enabled consumers
+  regulator: core: add enable_count for consumers to debug fs
+
+Patch #6: wasn't originally self-contained when I wrote it 2 days ago,
+but after commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for
+regulators locking") it is.
+  regulator: core: Avoid propagating to supplies when possible
+
+Patch #7: Now that I know you want to loop over use_count, depends on
+patch #6 which changes how many times supplies are enabled.
+   regulator: core: Remove loop disabling supplies in regulator_force_disable()
+
+
+I don't want to send v2 of things while you're still reviewing.  If
+you have a chance give me a ping when you're ready for me to send out
+v2 of things.  ...otherwise I'll plan to send it out later today or
+tomorrow morning.
+
+-Doug
