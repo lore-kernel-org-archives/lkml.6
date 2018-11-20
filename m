@@ -2,137 +2,87 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDDAC46466
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159B5C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16456208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:05:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yUQyf3P1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16456208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 75409206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:04:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75409206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729382AbeKTWec (ORCPT
+        id S1728619AbeKTWdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:34:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33174 "EHLO mail.kernel.org"
+        Tue, 20 Nov 2018 17:33:36 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32376 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729042AbeKTWec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:34:32 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31D75208E3;
-        Tue, 20 Nov 2018 12:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542715542;
-        bh=pr1CFEVfHeICcf3DmWZteOiFIJVO+rwLQTix+D55gzA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=yUQyf3P1zLT9UToBnrVHJs51v/k0xviRfI/j5guMI1rf7HH5x+vBWRXt1I74hJCAE
-         lyrv/7lNYIcbMPvxtmqF3lRL8N5xe+77bzF7BBvz3UxQSy3bGbTrFUVoZon35iegBt
-         /tFPWDuiYsxMKjfOhqaVPqlAE1ALTRfcSYbDQ/54=
-Date:   Tue, 20 Nov 2018 13:05:40 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
-        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>
-Subject: Re: kobject lifetime issues in blk-mq
-Message-ID: <20181120120540.GA14861@kroah.com>
-References: <20181112094406.GB391@ming.t460p>
- <20181112164848.GA1790@roeck-us.net>
- <20181112200236.GA4415@kroah.com>
- <20181113002226.GA4455@ming.t460p>
- <20181113004124.GC4455@ming.t460p>
- <20181114110827.GA31430@ming.t460p>
- <20181114151410.GB26378@kroah.com>
- <20181115003616.GA32603@ming.t460p>
- <20181115005658.GA24847@kroah.com>
- <CACT4Y+bSzPM022bGMmj4GQ_YHVsVqd6r+NTC4+fRrRT+yjAjEw@mail.gmail.com>
+        id S1727950AbeKTWdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:33:36 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 04:04:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
+   d="scan'208";a="282656873"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.177])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Nov 2018 04:04:42 -0800
+Date:   Tue, 20 Nov 2018 14:04:42 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>, andy@infradead.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181120120442.GA22172@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
+ <CALCETrXctxfED1Dr-MuZxFnh5gzTyRL06hRJ_fQnNA8p2S4xEQ@mail.gmail.com>
+ <20181119161917.GF13298@linux.intel.com>
+ <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+bSzPM022bGMmj4GQ_YHVsVqd6r+NTC4+fRrRT+yjAjEw@mail.gmail.com>
+In-Reply-To: <CALCETrX+A4XaEMq3fJqmHUeeDHr_BdWh-Wk3ikXfY=L77BbaGA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 12:34:40PM +0100, Dmitry Vyukov wrote:
-> On Thu, Nov 15, 2018 at 1:56 AM, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> > On Thu, Nov 15, 2018 at 08:36:17AM +0800, Ming Lei wrote:
-> >> > So even if you think the kernel is not going to do this, remember, you
-> >> > have no control over it.  Reference counted objects are done this way
-> >> > for a reason, you really do not know who has a reference and you really
-> >> > do not care.
-> >> >
-> >> > You are just papering over the real issue here, see my previous email
-> >> > for how to start working on resolving it.
-> >>
-> >> IMO, there isn't real issue, and the issue is actually in 'delay release'.
-> >
-> > Nope, sorry, that is not true.
-> >
-> >> Please look at the code in block/blk-mq-sysfs.c, both q->mq_kobj and all
-> >> ctx->kobj share same lifetime with q->kobj, we even don't call get/put
-> >> on q->mq_kobj & all ctx->kobj, and all are simply released in q->kobj's
-> >> release handler.
-> >
-> > How do you "know" you are keeping those lifetimes in sync?  The joy of a
-> > kobject is that _ANYTHING_ can grab a reference to your object without
-> > you knowing about it.  That includes userspace programs.  Yes, sysfs is
-> > now much better and it trys to release that reference "quickly" when it
-> > determines you are trying to delete a kobject, but it's not perfict,
-> > there are still races there.
-> >
-> > And that is what the delay release code is showing you.  It is showing
-> > you that you "think" your reference counting is wrong, but it is not.
-> > It is showing you that if someone else grabs a reference, you are not
-> > correctly cleaning up for yourself.
-> >
-> > Never think that you really know the lifetime of a kobject, once you
-> > realize that your code gets simpler and you can then just "trust" that
-> > the kernel will do the right thing no matter what.
-> >
-> > Because really, you are using a kobject because you want that correct
-> > reference counting logic.  By ignoring that logic, you are ignoring the
-> > reason to be using that object at all.  If you don't need reference
-> > counting, then don't use it at all.
-> >
-> > And if you need sysfs files, then you need to use the kobject and then
-> > you need to handle it properly, because again, you do NOT have full
-> > control over the lifetime of your object.  That's the basis for
-> > reference counting in the firstplace.
-> >
-> > So this code is broken without me evening having to look at it, please
-> > fix it to handle release properly.  Again, the kernel tried to tell you
-> > this, but you hacked around the kernel core to remove that warning
-> > incorrectly.  Please go read the kobject documentation again for even
-> > more details about this than what I said here.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Mon, Nov 19, 2018 at 08:59:24AM -0800, Andy Lutomirski wrote:
+> The idea here is that, under normal circumstances, provisioning only
+> runs once, or at least only runs rarely.  So, rather than the SDK
+> running provisioning whenever it feels like doing so (which is the
+> current behavior, I imagine, although I haven't looked), there would
+> be a privileged program, perhaps a systemd unit that runs when needed,
+> that produces the key material needed for remote attestation, and
+> non-root users that need attestation would get the keying material
+> from the provisioning service.  And the provisioning service could
+> implement its own policy.  Ideally, the service wouldn't give the
+> sealed keys to users at all but would, instead, just provide the
+> entire attestation service over a UNIX socket, which would make
+> provisioning capabilities revocable.
 > 
-> Whoever is the right person to fix this, please prioritize this to the
-> degree possible.
-> This issue does not allow to use DEBUG_KOBJECT_RELEASE in any
-> automated testing (in particular syzbot) on both upstream and stable
-> trees. We have to disable it for now, so other bugs won't be noticed
-> and will pile up.
+> Does this make sense?
 
-Patches for this have already been posted :)
+Yes, it does for me at least now that you brought some context.
+
+/Jarkko
