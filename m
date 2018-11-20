@@ -2,108 +2,169 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52C6C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3BBC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90C9A206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:29:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C88820685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:29:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fkklsq8T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90C9A206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rFI1/nig"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C88820685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730363AbeKUEAD (ORCPT
+        id S1730449AbeKUEAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:00:03 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36492 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727166AbeKUEAD (ORCPT
+        Tue, 20 Nov 2018 23:00:13 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35337 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727166AbeKUEAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 23:00:03 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a16so1931302lfg.3;
-        Tue, 20 Nov 2018 09:29:46 -0800 (PST)
+        Tue, 20 Nov 2018 23:00:13 -0500
+Received: by mail-pl1-f193.google.com with SMTP id v1-v6so1334937plo.2;
+        Tue, 20 Nov 2018 09:29:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7Qy+yv7yCvhWAuj3VlLr04ZmJwklJFZGR+jPGTDoQ04=;
-        b=Fkklsq8TsS4qmMlpfKgRE0Oeu7p34ur/AzffTu2BwfKRooB8hqlpLmHvC/z8wAAM8O
-         mW0OQWRvR7Uq5fouiRvLAVDYFd+nSM1PL1/2f0hR29ff4zsBlkV+A7aIHqUHNYUT/7cg
-         hm+HC51u8RKDou3JTwYdQpQzHV3pTAYIaBR7nry6Oj5jRRlBrFWpRwOv4L+b2Zyibokv
-         NHnvsYpi+7J5AMiM5ByW3dM9p1VcrwnLnmOF+SF00B1wqJ7ECJoGN8XDfNk5uWlK44WH
-         6zodHQhDMoyP8+c4Wx7LOK3/RrTI6w+6qs8CjhTebM7yLDvS+jTxedVtwdAcQjv8A+un
-         RM6g==
+        bh=xHPEnz2laoctEf3FPieGJu6IoQ0LSQbTgAFkh+PqW1Q=;
+        b=rFI1/nigi7cYIWY6E9nxvVrJ0paX7b0oZfL2dFF8SdE4KbpDw5FbTLy3yDb205EPb7
+         7zAY8UjnX4wpnEcuQyRrkCbcqd5umPgWsELYUkHNYsHPQ0/zEusvpzV4TeziM1A1QrXL
+         BDQc46aRF8RJ8Q1bGkUskAQGCmv8lKYgqwCynVJl7p8hjUs+D93F7ZGTBWe+gKUlp80b
+         YniCXB45KTHVquh+OYrqph6qwN21b98uS3VkeixpviUuKMax0Xyan51lmw1erdbFl9Vv
+         hdTFHUmRIPWsMJXQACULTTFhkOb8YTchuHdcxbr0YZ3fUUCqo35tddq2yyL4zirHe9Wf
+         dLNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7Qy+yv7yCvhWAuj3VlLr04ZmJwklJFZGR+jPGTDoQ04=;
-        b=Pl/a/ZAlYIZTZjTeJZsqbfWOMJd9T1iERlyvU8h4HVvN+WolOoffCwjRb5sHSPFUhO
-         W9qDVqH7MrfnrG/Tn+lXztirqbZejXx2cVNGfjfPe8c4NwhXXz9gNHuhhn3boJ3+pkGT
-         8tegAvwXeOXoPkDLZax9d0rfTQtglt9RX1POXTfd5zbOC//DLSD7KUCdQLv6ynZeN6zr
-         7N2PHlajVPYEvJatdUoRUkGfEG7yjCfbk5JtR8jA1tU8tw4TjRdMiWqUw7C7vHs33JDH
-         6C2VU59xwj2dEIqQsxlrcm66owLNXCOmF0qqCrz7fYpT7lvTxnZ6TboCi56h1M2PB5nB
-         ewTg==
-X-Gm-Message-State: AGRZ1gLBh9zng+HIFAdBHbyRoRbgyUgh5M1YUra3d22hT0E+ut6i0zN9
-        IXLa8nEXJfcSMz30mQQUVaI=
-X-Google-Smtp-Source: AJdET5em8FtO3DpW6xOpTdBH//6FHQzBBYCzJbmMZhZ5S/mdlQFjKF84FYLZnQqjDs7F3/R+G1YoGw==
-X-Received: by 2002:a19:f115:: with SMTP id p21mr1607949lfh.20.1542734985479;
-        Tue, 20 Nov 2018 09:29:45 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id m1sm6038497lfb.56.2018.11.20.09.29.44
+        bh=xHPEnz2laoctEf3FPieGJu6IoQ0LSQbTgAFkh+PqW1Q=;
+        b=BmcN7dlbhfHQHNOgT9YbLvhRDx3+WtKb6jPg0UdfpXjb9hjdBUoP4McCu9E4WQ48xv
+         wJECtdk2YNrakXlXvPoXFk8WXmf902XBb3G/EjHlKJSfafAI2Yzq5FVKb2L3q1bPmSsy
+         ratZUHfpZ5KiYY3xVGla3yZw2oU6O/3TmkzufKNzx9yXxjSxewaHxHkOJDpRhu5hVI3E
+         XaXLM/K9DOmFd5umhBHv+Gj/Ci+gMRPvCz38rFXw8HfuXzj+hnPujzIDHrtB0No39G5D
+         XB2rbiTBpJY9HsVdUG0CLDI8q3FNznpXoz6XNxsuiyS/YOl1d80Rh1ipDtB6xTSvyM1u
+         L/Hw==
+X-Gm-Message-State: AGRZ1gLgnjxIff6s+P/p57zWtFkeMaqiFV5CLCZt+yJTF4isfX9ylD8L
+        MI0+0o0jrN+o8+BDH0pRf0g=
+X-Google-Smtp-Source: AFSGD/WsZDywfMFEczpBlwYZeXhC7ub4KrSRhF+ky7Z3/aHIesTuDemfn7Q/v6zN6teG2wXex8ulZQ==
+X-Received: by 2002:a63:2d46:: with SMTP id t67mr2780557pgt.140.1542734996782;
+        Tue, 20 Nov 2018 09:29:56 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q187sm54365690pfq.128.2018.11.20.09.29.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 09:29:44 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gP9qJ-0005M3-Nk; Tue, 20 Nov 2018 18:29:44 +0100
-Date:   Tue, 20 Nov 2018 18:29:43 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     johan@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V1 1/1] USB: serial: f81534: fix reading old/new IC config
-Message-ID: <20181120172943.GJ19900@localhost>
-References: <1542250724-11667-1-git-send-email-hpeter+linux_kernel@gmail.com>
+        Tue, 20 Nov 2018 09:29:56 -0800 (PST)
+Date:   Tue, 20 Nov 2018 09:29:55 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-watchdog@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH 1/8] watchdog: bcm2835: Move the driver to the soc/
+ directory.
+Message-ID: <20181120172955.GD32433@roeck-us.net>
+References: <20181120172000.15102-1-eric@anholt.net>
+ <20181120172000.15102-2-eric@anholt.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542250724-11667-1-git-send-email-hpeter+linux_kernel@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181120172000.15102-2-eric@anholt.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 10:58:44AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> The F81532/534 had a internal configuration space to save & control
-> IC state with address F81534_CUSTOM_ADDRESS_START (0x2f00). Layout
-> as following:
-> 	+00h: to indicate the section is valid
-> 	+01h~04h: UART Mode & port availability
-> 	+05h~08h: Output pin control on IC power on
-> 	+09h~12h: Output pin control on working <-- New added
+On Tue, Nov 20, 2018 at 09:19:53AM -0800, Eric Anholt wrote:
+> The binding for the bcm2835 "wdt" actually covers a large range of the
+> PM block's register space.  The WDT is not a separate HW block from
+> the rest of power domain management, so move the driver to the soc/
+> directory in preparation for expanding its role to cover power
+> domains.
 > 
-> Old driver will use +05~08h as default on working, but newer IC will
-> configed with shutdown mode(7) in 05h~08h and working mode with RS232(1)
-> in 09h~12h. It'll make mainstream driver not working.
+> This move does result in the driver being made mandatory for the
+> BCM2835 platform, which is probably actually reasonable given that
+> it's necessary for reboot/halt support.
 > 
-> This patch will make mainstream driver compatible older and newer IC.
-> If using a old IC, the +05h~08h will be 00h~06h, we'll direct apply it.
-> If using a new IC, the +05h~08h will be 07h or larger, we'll read +09h~12h
-> to apply newer configuration.
-> 
-> Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Applied for -next. I guess you can ask Greg if he's willing to take this
-into stable once 4.21-rc1 is out (as it is enabling support for a new
-class of devices).
+Keeping drivers out of their domain tends to have the effect of maintainers
+not being aware of changes, which in turn tends to result in bad code.
+I have seen that happen a lot with hwmon drivers, and  I am not in favor
+of it. It would be better to keep the watchdog code where it is and have
+it instantiated from a soc parent, which could pass, for example, regmap
+information to the driver for register accesses.
 
-Thanks,
-Johan
+If the new SoC approach is to move everything into SoC, you'll be on 
+your own. I won't NACK this, but I won't ACK it either.
+
+Guenter
+
+> ---
+>  drivers/soc/bcm/Makefile                              |  1 +
+>  .../{watchdog/bcm2835_wdt.c => soc/bcm/bcm2835-pm.c}  |  0
+>  drivers/watchdog/Kconfig                              | 11 -----------
+>  drivers/watchdog/Makefile                             |  1 -
+>  4 files changed, 1 insertion(+), 12 deletions(-)
+>  rename drivers/{watchdog/bcm2835_wdt.c => soc/bcm/bcm2835-pm.c} (100%)
+> 
+> diff --git a/drivers/soc/bcm/Makefile b/drivers/soc/bcm/Makefile
+> index dc4fced72d21..16504eb694b1 100644
+> --- a/drivers/soc/bcm/Makefile
+> +++ b/drivers/soc/bcm/Makefile
+> @@ -1,2 +1,3 @@
+> +obj-$(CONFIG_ARCH_BCM2835)      += bcm2835-pm.o
+>  obj-$(CONFIG_RASPBERRYPI_POWER)	+= raspberrypi-power.o
+>  obj-$(CONFIG_SOC_BRCMSTB)	+= brcmstb/
+> diff --git a/drivers/watchdog/bcm2835_wdt.c b/drivers/soc/bcm/bcm2835-pm.c
+> similarity index 100%
+> rename from drivers/watchdog/bcm2835_wdt.c
+> rename to drivers/soc/bcm/bcm2835-pm.c
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 2d64333f4782..796e2a593056 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -1573,17 +1573,6 @@ config BCM63XX_WDT
+>  	  To compile this driver as a loadable module, choose M here.
+>  	  The module will be called bcm63xx_wdt.
+>  
+> -config BCM2835_WDT
+> -	tristate "Broadcom BCM2835 hardware watchdog"
+> -	depends on ARCH_BCM2835 || (OF && COMPILE_TEST)
+> -	select WATCHDOG_CORE
+> -	help
+> -	  Watchdog driver for the built in watchdog hardware in Broadcom
+> -	  BCM2835 SoC.
+> -
+> -	  To compile this driver as a loadable module, choose M here.
+> -	  The module will be called bcm2835_wdt.
+> -
+>  config BCM_KONA_WDT
+>  	tristate "BCM Kona Watchdog"
+>  	depends on ARCH_BCM_MOBILE || COMPILE_TEST
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index f69cdff5ad7f..1788537e85af 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -70,7 +70,6 @@ obj-$(CONFIG_TS72XX_WATCHDOG) += ts72xx_wdt.o
+>  obj-$(CONFIG_IMX2_WDT) += imx2_wdt.o
+>  obj-$(CONFIG_UX500_WATCHDOG) += ux500_wdt.o
+>  obj-$(CONFIG_RETU_WATCHDOG) += retu_wdt.o
+> -obj-$(CONFIG_BCM2835_WDT) += bcm2835_wdt.o
+>  obj-$(CONFIG_MOXART_WDT) += moxart_wdt.o
+>  obj-$(CONFIG_SIRFSOC_WATCHDOG) += sirfsoc_wdt.o
+>  obj-$(CONFIG_ST_LPC_WATCHDOG) += st_lpc_wdt.o
+> -- 
+> 2.19.1
+> 
