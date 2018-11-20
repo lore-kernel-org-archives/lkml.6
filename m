@@ -2,300 +2,572 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 008A4C41537
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF83BC4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE4272087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE4272087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F56921479
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:04:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F56921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeKTUc7 (ORCPT
+        id S1728560AbeKTUcv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:32:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55563 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727355AbeKTUc6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:32:58 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK9xDeK2935434
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 20 Nov 2018 01:59:13 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK9xDBl2935431;
-        Tue, 20 Nov 2018 01:59:13 -0800
-Date:   Tue, 20 Nov 2018 01:59:13 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Juergen Gross <tipbot@zytor.com>
-Message-ID: <tip-3841840449817ba6cf3e636008bc4e1061a03388@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, tglx@linutronix.de, jgross@suse.com,
-        peterz@infradead.org
-Reply-To: tglx@linutronix.de, torvalds@linux-foundation.org,
-          jgross@suse.com, hpa@zytor.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org
-In-Reply-To: <20181120072529.5489-2-jgross@suse.com>
-References: <20181120072529.5489-2-jgross@suse.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/boot: Mostly revert commit ae7e1238e68f2a
- ("Add ACPI RSDP address to setup_header")
-Git-Commit-ID: 3841840449817ba6cf3e636008bc4e1061a03388
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 20 Nov 2018 15:32:51 -0500
+Received: from shell.v3.sk ([90.176.6.54]:50184 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727355AbeKTUcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:32:50 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 61ED0C6FB2;
+        Tue, 20 Nov 2018 11:04:29 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id F3JcHCynHHfl; Tue, 20 Nov 2018 11:04:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id CC395C6FBA;
+        Tue, 20 Nov 2018 11:03:50 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id MtDPNqUy5ytS; Tue, 20 Nov 2018 11:03:47 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id F3D85C6FBE;
+        Tue, 20 Nov 2018 11:03:42 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
+        Libin Yang <lbyang@marvell.com>,
+        Albert Wang <twang13@marvell.com>
+Subject: [PATCH v3 13/14] [media] marvell-ccic: use async notifier to get the sensor
+Date:   Tue, 20 Nov 2018 11:03:18 +0100
+Message-Id: <20181120100318.367987-14-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181120100318.367987-1-lkundrak@v3.sk>
+References: <20181120100318.367987-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3841840449817ba6cf3e636008bc4e1061a03388
-Gitweb:     https://git.kernel.org/tip/3841840449817ba6cf3e636008bc4e1061a03388
-Author:     Juergen Gross <jgross@suse.com>
-AuthorDate: Tue, 20 Nov 2018 08:25:28 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Nov 2018 09:43:10 +0100
+An instance of a sensor on DT-based MMP2 platform is always going to be
+created asynchronously.
 
-x86/boot: Mostly revert commit ae7e1238e68f2a ("Add ACPI RSDP address to setup_header")
+Let's move the manual device creation away from the core to the Cafe
+driver (used on OLPC XO-1, not present in DT) and set up appropriate
+async matches: I2C on Cafe, FWNODE on MMP (OLPC XO-1.75).
 
-Peter Anvin pointed out that commit:
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-  ae7e1238e68f2a ("x86/boot: Add ACPI RSDP address to setup_header")
-
-should be reverted as setup_header should only contain items set by the
-legacy BIOS.
-
-So revert said commit. Instead of fully reverting the dependent commit
-of:
-
-  e7b66d16fe4172 ("x86/acpi, x86/boot: Take RSDP address for boot params if available")
-
-just remove the setup_header reference in order to replace it by
-a boot_params in a followup patch.
-
-Suggested-by: "H. Peter Anvin" <hpa@zytor.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: boris.ostrovsky@oracle.com
-Cc: bp@alien8.de
-Cc: daniel.kiper@oracle.com
-Cc: sstabellini@kernel.org
-Cc: xen-devel@lists.xenproject.org
-Link: http://lkml.kernel.org/r/20181120072529.5489-2-jgross@suse.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/x86/boot.txt            | 32 +-------------------------------
- arch/x86/boot/header.S                |  6 +-----
- arch/x86/include/asm/x86_init.h       |  2 --
- arch/x86/include/uapi/asm/bootparam.h |  4 ----
- arch/x86/kernel/acpi/boot.c           |  2 +-
- arch/x86/kernel/head32.c              |  1 -
- arch/x86/kernel/head64.c              |  2 --
- arch/x86/kernel/setup.c               | 17 -----------------
- 8 files changed, 3 insertions(+), 63 deletions(-)
+Changes since v2:
+- Moved a typo fix hunk that was accidentally in the following patch
+  here, to unbreak build.
 
-diff --git a/Documentation/x86/boot.txt b/Documentation/x86/boot.txt
-index 7727db8f94bc..5e9b826b5f62 100644
---- a/Documentation/x86/boot.txt
-+++ b/Documentation/x86/boot.txt
-@@ -61,18 +61,6 @@ Protocol 2.12:	(Kernel 3.8) Added the xloadflags field and extension fields
- 	 	to struct boot_params for loading bzImage and ramdisk
- 		above 4G in 64bit.
- 
--Protocol 2.13:	(Kernel 3.14) Support 32- and 64-bit flags being set in
--		xloadflags to support booting a 64-bit kernel from 32-bit
--		EFI
--
--Protocol 2.14:	(Kernel 4.20) Added acpi_rsdp_addr holding the physical
--		address of the ACPI RSDP table.
--		The bootloader updates version with:
--		0x8000 | min(kernel-version, bootloader-version)
--		kernel-version being the protocol version supported by
--		the kernel and bootloader-version the protocol version
--		supported by the bootloader.
--
- **** MEMORY LAYOUT
- 
- The traditional memory map for the kernel loader, used for Image or
-@@ -209,7 +197,6 @@ Offset	Proto	Name		Meaning
- 0258/8	2.10+	pref_address	Preferred loading address
- 0260/4	2.10+	init_size	Linear memory required during initialization
- 0264/4	2.11+	handover_offset	Offset of handover entry point
--0268/8	2.14+	acpi_rsdp_addr	Physical address of RSDP table
- 
- (1) For backwards compatibility, if the setup_sects field contains 0, the
-     real value is 4.
-@@ -322,7 +309,7 @@ Protocol:	2.00+
-   Contains the magic number "HdrS" (0x53726448).
- 
- Field name:	version
--Type:		modify
-+Type:		read
- Offset/size:	0x206/2
- Protocol:	2.00+
- 
-@@ -330,12 +317,6 @@ Protocol:	2.00+
-   e.g. 0x0204 for version 2.04, and 0x0a11 for a hypothetical version
-   10.17.
- 
--  Up to protocol version 2.13 this information is only read by the
--  bootloader. From protocol version 2.14 onwards the bootloader will
--  write the used protocol version or-ed with 0x8000 to the field. The
--  used protocol version will be the minimum of the supported protocol
--  versions of the bootloader and the kernel.
--
- Field name:	realmode_swtch
- Type:		modify (optional)
- Offset/size:	0x208/4
-@@ -763,17 +744,6 @@ Offset/size:	0x264/4
- 
-   See EFI HANDOVER PROTOCOL below for more details.
- 
--Field name:	acpi_rsdp_addr
--Type:		write
--Offset/size:	0x268/8
--Protocol:	2.14+
--
--  This field can be set by the boot loader to tell the kernel the
--  physical address of the ACPI RSDP table.
--
--  A value of 0 indicates the kernel should fall back to the standard
--  methods to locate the RSDP.
--
- 
- **** THE IMAGE CHECKSUM
- 
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 4c881c850125..850b8762e889 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -300,7 +300,7 @@ _start:
- 	# Part 2 of the header, from the old setup.S
- 
- 		.ascii	"HdrS"		# header signature
--		.word	0x020e		# header version number (>= 0x0105)
-+		.word	0x020d		# header version number (>= 0x0105)
- 					# or else old loadlin-1.5 will fail)
- 		.globl realmode_swtch
- realmode_swtch:	.word	0, 0		# default_switch, SETUPSEG
-@@ -558,10 +558,6 @@ pref_address:		.quad LOAD_PHYSICAL_ADDR	# preferred load addr
- init_size:		.long INIT_SIZE		# kernel initialization size
- handover_offset:	.long 0			# Filled in by build.c
- 
--acpi_rsdp_addr:		.quad 0			# 64-bit physical pointer to the
--						# ACPI RSDP table, added with
--						# version 2.14
--
- # End of setup header #####################################################
- 
- 	.section ".entrytext", "ax"
-diff --git a/arch/x86/include/asm/x86_init.h b/arch/x86/include/asm/x86_init.h
-index 0f842104862c..b85a7c54c6a1 100644
---- a/arch/x86/include/asm/x86_init.h
-+++ b/arch/x86/include/asm/x86_init.h
-@@ -303,6 +303,4 @@ extern void x86_init_noop(void);
- extern void x86_init_uint_noop(unsigned int unused);
- extern bool x86_pnpbios_disabled(void);
- 
--void x86_verify_bootdata_version(void);
--
- #endif
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 22f89d040ddd..a06cbf019744 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -16,9 +16,6 @@
- #define RAMDISK_PROMPT_FLAG		0x8000
- #define RAMDISK_LOAD_FLAG		0x4000
- 
--/* version flags */
--#define VERSION_WRITTEN	0x8000
--
- /* loadflags */
- #define LOADED_HIGH	(1<<0)
- #define KASLR_FLAG	(1<<1)
-@@ -89,7 +86,6 @@ struct setup_header {
- 	__u64	pref_address;
- 	__u32	init_size;
- 	__u32	handover_offset;
--	__u64	acpi_rsdp_addr;
- } __attribute__((packed));
- 
- struct sys_desc_table {
-diff --git a/arch/x86/kernel/acpi/boot.c b/arch/x86/kernel/acpi/boot.c
-index 92c76bf97ad8..fb3b1f3a5aba 100644
---- a/arch/x86/kernel/acpi/boot.c
-+++ b/arch/x86/kernel/acpi/boot.c
-@@ -1776,5 +1776,5 @@ void __init arch_reserve_mem_area(acpi_physical_address addr, size_t size)
- 
- u64 x86_default_get_root_pointer(void)
+ .../media/platform/marvell-ccic/cafe-driver.c |  49 ++++--
+ .../media/platform/marvell-ccic/mcam-core.c   | 157 ++++++++++++------
+ .../media/platform/marvell-ccic/mcam-core.h   |   5 +-
+ .../media/platform/marvell-ccic/mmp-driver.c  |  27 +--
+ .../linux/platform_data/media/mmp-camera.h    |   1 -
+ 5 files changed, 162 insertions(+), 77 deletions(-)
+
+diff --git a/drivers/media/platform/marvell-ccic/cafe-driver.c b/drivers/=
+media/platform/marvell-ccic/cafe-driver.c
+index 2986cb4b88d0..658294d319c0 100644
+--- a/drivers/media/platform/marvell-ccic/cafe-driver.c
++++ b/drivers/media/platform/marvell-ccic/cafe-driver.c
+@@ -8,6 +8,7 @@
+  *
+  * Copyright 2006-11 One Laptop Per Child Association, Inc.
+  * Copyright 2006-11 Jonathan Corbet <corbet@lwn.net>
++ * Copyright 2018 Lubomir Rintel <lkundrak@v3.sk>
+  *
+  * Written by Jonathan Corbet, corbet@lwn.net.
+  *
+@@ -27,6 +28,7 @@
+ #include <linux/slab.h>
+ #include <linux/videodev2.h>
+ #include <media/v4l2-device.h>
++#include <media/i2c/ov7670.h>
+ #include <linux/device.h>
+ #include <linux/wait.h>
+ #include <linux/delay.h>
+@@ -52,6 +54,7 @@ struct cafe_camera {
+ 	int registered;			/* Fully initialized? */
+ 	struct mcam_camera mcam;
+ 	struct pci_dev *pdev;
++	struct i2c_adapter *i2c_adapter;
+ 	wait_queue_head_t smbus_wait;	/* Waiting on i2c events */
+ };
+=20
+@@ -351,15 +354,15 @@ static int cafe_smbus_setup(struct cafe_camera *cam=
+)
+ 		return ret;
+ 	}
+=20
+-	cam->mcam.i2c_adapter =3D adap;
++	cam->i2c_adapter =3D adap;
+ 	cafe_smbus_enable_irq(cam);
+ 	return 0;
+ }
+=20
+ static void cafe_smbus_shutdown(struct cafe_camera *cam)
  {
--	return boot_params.hdr.acpi_rsdp_addr;
-+	return 0;
+-	i2c_del_adapter(cam->mcam.i2c_adapter);
+-	kfree(cam->mcam.i2c_adapter);
++	i2c_del_adapter(cam->i2c_adapter);
++	kfree(cam->i2c_adapter);
  }
-diff --git a/arch/x86/kernel/head32.c b/arch/x86/kernel/head32.c
-index 76fa3b836598..ec6fefbfd3c0 100644
---- a/arch/x86/kernel/head32.c
-+++ b/arch/x86/kernel/head32.c
-@@ -37,7 +37,6 @@ asmlinkage __visible void __init i386_start_kernel(void)
- 	cr4_init_shadow();
- 
- 	sanitize_boot_params(&boot_params);
--	x86_verify_bootdata_version();
- 
- 	x86_early_init_platform_quirks();
- 
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 7663a8eb602b..16b1cbd3a61e 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -457,8 +457,6 @@ void __init x86_64_start_reservations(char *real_mode_data)
- 	if (!boot_params.hdr.version)
- 		copy_bootdata(__va(real_mode_data));
- 
--	x86_verify_bootdata_version();
--
- 	x86_early_init_platform_quirks();
- 
- 	switch (boot_params.hdr.hardware_subarch) {
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index b74e7bfed6ab..d494b9bfe618 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1280,23 +1280,6 @@ void __init setup_arch(char **cmdline_p)
- 	unwind_init();
+=20
+=20
+@@ -452,6 +455,29 @@ static irqreturn_t cafe_irq(int irq, void *data)
+ 	return IRQ_RETVAL(handled);
  }
- 
--/*
-- * From boot protocol 2.14 onwards we expect the bootloader to set the
-- * version to "0x8000 | <used version>". In case we find a version >= 2.14
-- * without the 0x8000 we assume the boot loader supports 2.13 only and
-- * reset the version accordingly. The 0x8000 flag is removed in any case.
-- */
--void __init x86_verify_bootdata_version(void)
--{
--	if (boot_params.hdr.version & VERSION_WRITTEN)
--		boot_params.hdr.version &= ~VERSION_WRITTEN;
--	else if (boot_params.hdr.version >= 0x020e)
--		boot_params.hdr.version = 0x020d;
+=20
++/* ---------------------------------------------------------------------=
+----- */
++
++static struct ov7670_config sensor_cfg =3D {
++	/*
++	 * Exclude QCIF mode, because it only captures a tiny portion
++	 * of the sensor FOV
++	 */
++	.min_width =3D 320,
++	.min_height =3D 240,
++
++	/*
++	 * Set the clock speed for the XO 1; I don't believe this
++	 * driver has ever run anywhere else.
++	 */
++	.clock_speed =3D 45,
++	.use_smbus =3D 1,
++};
++
++struct i2c_board_info ov7670_info =3D {
++	.type =3D "ov7670",
++	.addr =3D 0x42 >> 1,
++	.platform_data =3D &sensor_cfg,
++};
+=20
+ /* ---------------------------------------------------------------------=
+----- */
+ /*
+@@ -481,12 +507,6 @@ static int cafe_pci_probe(struct pci_dev *pdev,
+ 	mcam->plat_power_down =3D cafe_ctlr_power_down;
+ 	mcam->dev =3D &pdev->dev;
+ 	snprintf(mcam->bus_info, sizeof(mcam->bus_info), "PCI:%s", pci_name(pde=
+v));
+-	/*
+-	 * Set the clock speed for the XO 1; I don't believe this
+-	 * driver has ever run anywhere else.
+-	 */
+-	mcam->clock_speed =3D 45;
+-	mcam->use_smbus =3D 1;
+ 	/*
+ 	 * Vmalloc mode for buffers is traditional with this driver.
+ 	 * We *might* be able to run DMA_contig, especially on a system
+@@ -527,12 +547,21 @@ static int cafe_pci_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto out_pdown;
+=20
++	mcam->asd.match_type =3D V4L2_ASYNC_MATCH_I2C;
++	mcam->asd.match.i2c.adapter_id =3D i2c_adapter_id(cam->i2c_adapter);
++	mcam->asd.match.i2c.address =3D ov7670_info.addr;
++
+ 	ret =3D mccic_register(mcam);
+-	if (ret =3D=3D 0) {
++	if (ret)
++		goto out_smbus_shutdown;
++
++	if (i2c_new_device(cam->i2c_adapter, &ov7670_info)) {
+ 		cam->registered =3D 1;
+ 		return 0;
+ 	}
+=20
++	mccic_shutdown(mcam);
++out_smbus_shutdown:
+ 	cafe_smbus_shutdown(cam);
+ out_pdown:
+ 	cafe_ctlr_power_down(mcam);
+diff --git a/drivers/media/platform/marvell-ccic/mcam-core.c b/drivers/me=
+dia/platform/marvell-ccic/mcam-core.c
+index 0113b8d37d03..87812b7287f0 100644
+--- a/drivers/media/platform/marvell-ccic/mcam-core.c
++++ b/drivers/media/platform/marvell-ccic/mcam-core.c
+@@ -4,6 +4,7 @@
+  * so it needs platform-specific support outside of the core.
+  *
+  * Copyright 2011 Jonathan Corbet corbet@lwn.net
++ * Copyright 2018 Lubomir Rintel <lkundrak@v3.sk>
+  */
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -26,7 +27,6 @@
+ #include <media/v4l2-ioctl.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-event.h>
+-#include <media/i2c/ov7670.h>
+ #include <media/videobuf2-vmalloc.h>
+ #include <media/videobuf2-dma-contig.h>
+ #include <media/videobuf2-dma-sg.h>
+@@ -93,6 +93,9 @@ MODULE_PARM_DESC(buffer_mode,
+ #define sensor_call(cam, o, f, args...) \
+ 	v4l2_subdev_call(cam->sensor, o, f, ##args)
+=20
++#define notifier_to_mcam(notifier) \
++	container_of(notifier, struct mcam_camera, notifier)
++
+ static struct mcam_format_struct {
+ 	__u8 *desc;
+ 	__u32 pixelformat;
+@@ -1715,23 +1718,94 @@ EXPORT_SYMBOL_GPL(mccic_irq);
+ /*
+  * Registration and such.
+  */
+-static struct ov7670_config sensor_cfg =3D {
++
++static int mccic_notify_bound(struct v4l2_async_notifier *notifier,
++	struct v4l2_subdev *subdev, struct v4l2_async_subdev *asd)
++{
++	struct mcam_camera *cam =3D notifier_to_mcam(notifier);
++	int ret;
++
++	mutex_lock(&cam->s_mutex);
++	if (cam->sensor) {
++		cam_err(cam, "sensor already bound\n");
++		ret =3D -EBUSY;
++		goto out;
++	}
++
++	v4l2_set_subdev_hostdata(subdev, cam);
++	cam->sensor =3D subdev;
++
++	ret =3D mcam_cam_init(cam);
++	if (ret) {
++		cam->sensor =3D NULL;
++		goto out;
++	}
++
++	ret =3D mcam_setup_vb2(cam);
++	if (ret) {
++		cam->sensor =3D NULL;
++		goto out;
++	}
++
++	cam->vdev =3D mcam_v4l_template;
++	cam->vdev.v4l2_dev =3D &cam->v4l2_dev;
++	cam->vdev.lock =3D &cam->s_mutex;
++	cam->vdev.queue =3D &cam->vb_queue;
++	video_set_drvdata(&cam->vdev, cam);
++	ret =3D video_register_device(&cam->vdev, VFL_TYPE_GRABBER, -1);
++	if (ret) {
++		cam->sensor =3D NULL;
++		goto out;
++	}
++
++	cam_dbg(cam, "sensor %s bound\n", subdev->name);
++out:
++	mutex_unlock(&cam->s_mutex);
++	return ret;
++}
++
++static void mccic_notify_unbind(struct v4l2_async_notifier *notifier,
++	struct v4l2_subdev *subdev, struct v4l2_async_subdev *asd)
++{
++	struct mcam_camera *cam =3D notifier_to_mcam(notifier);
++
++	mutex_lock(&cam->s_mutex);
++	if (cam->sensor !=3D subdev) {
++		cam_err(cam, "sensor %s not bound\n", subdev->name);
++		goto out;
++	}
++
++	video_unregister_device(&cam->vdev);
++	cam->sensor =3D NULL;
++	cam_dbg(cam, "sensor %s unbound\n", subdev->name);
++
++out:
++	mutex_unlock(&cam->s_mutex);
++}
++
++static int mccic_notify_complete(struct v4l2_async_notifier *notifier)
++{
++	struct mcam_camera *cam =3D notifier_to_mcam(notifier);
++	int ret;
++
+ 	/*
+-	 * Exclude QCIF mode, because it only captures a tiny portion
+-	 * of the sensor FOV
++	 * Get the v4l2 setup done.
+ 	 */
+-	.min_width =3D 320,
+-	.min_height =3D 240,
+-};
++	ret =3D v4l2_ctrl_handler_init(&cam->ctrl_handler, 10);
++	if (!ret)
++		cam->v4l2_dev.ctrl_handler =3D &cam->ctrl_handler;
++
++	return ret;
++}
+=20
++static const struct v4l2_async_notifier_operations mccic_notify_ops =3D =
+{
++	.bound =3D mccic_notify_bound,
++	.unbind =3D mccic_notify_unbind,
++	.complete =3D mccic_notify_complete,
++};
+=20
+ int mccic_register(struct mcam_camera *cam)
+ {
+-	struct i2c_board_info ov7670_info =3D {
+-		.type =3D "ov7670",
+-		.addr =3D 0x42 >> 1,
+-		.platform_data =3D &sensor_cfg,
+-	};
+ 	int ret;
+=20
+ 	/*
+@@ -1744,17 +1818,20 @@ int mccic_register(struct mcam_camera *cam)
+ 		printk(KERN_ERR "marvell-cam: Cafe can't do S/G I/O, attempting vmallo=
+c mode instead\n");
+ 		cam->buffer_mode =3D B_vmalloc;
+ 	}
++
+ 	if (!mcam_buffer_mode_supported(cam->buffer_mode)) {
+ 		printk(KERN_ERR "marvell-cam: buffer mode %d unsupported\n",
+ 				cam->buffer_mode);
+-		return -EINVAL;
++		ret =3D -EINVAL;
++		goto out;
+ 	}
++
+ 	/*
+ 	 * Register with V4L
+ 	 */
+ 	ret =3D v4l2_device_register(cam->dev, &cam->v4l2_dev);
+ 	if (ret)
+-		return ret;
++		goto out;
+=20
+ 	mutex_init(&cam->s_mutex);
+ 	cam->state =3D S_NOTREADY;
+@@ -1764,43 +1841,20 @@ int mccic_register(struct mcam_camera *cam)
+ 	mcam_ctlr_init(cam);
+=20
+ 	/*
+-	 * Get the v4l2 setup done.
++	 * Register sensor notifier.
+ 	 */
+-	ret =3D v4l2_ctrl_handler_init(&cam->ctrl_handler, 10);
+-	if (ret)
+-		goto out_unregister;
+-	cam->v4l2_dev.ctrl_handler =3D &cam->ctrl_handler;
 -
--	if (boot_params.hdr.version < 0x020e)
--		boot_params.hdr.acpi_rsdp_addr = 0;
--}
+-	/*
+-	 * Try to find the sensor.
+-	 */
+-	sensor_cfg.clock_speed =3D cam->clock_speed;
+-	sensor_cfg.use_smbus =3D cam->use_smbus;
+-	cam->sensor =3D v4l2_i2c_new_subdev_board(&cam->v4l2_dev,
+-			cam->i2c_adapter, &ov7670_info, NULL);
+-	if (cam->sensor =3D=3D NULL) {
+-		ret =3D -ENODEV;
+-		goto out_unregister;
++	v4l2_async_notifier_init(&cam->notifier);
++	ret =3D v4l2_async_notifier_add_subdev(&cam->notifier, &cam->asd);
++	if (ret) {
++		cam_warn(cam, "failed to add subdev to a notifier");
++		goto out;
+ 	}
+=20
+-	ret =3D mcam_cam_init(cam);
+-	if (ret)
+-		goto out_unregister;
 -
- #ifdef CONFIG_X86_32
- 
- static struct resource video_ram_resource = {
+-	ret =3D mcam_setup_vb2(cam);
+-	if (ret)
+-		goto out_unregister;
+-
+-	mutex_lock(&cam->s_mutex);
+-	cam->vdev =3D mcam_v4l_template;
+-	cam->vdev.v4l2_dev =3D &cam->v4l2_dev;
+-	cam->vdev.lock =3D &cam->s_mutex;
+-	cam->vdev.queue =3D &cam->vb_queue;
+-	video_set_drvdata(&cam->vdev, cam);
+-	ret =3D video_register_device(&cam->vdev, VFL_TYPE_GRABBER, -1);
+-	if (ret) {
+-		mutex_unlock(&cam->s_mutex);
+-		goto out_unregister;
++	cam->notifier.ops =3D &mccic_notify_ops;
++	ret =3D v4l2_async_notifier_register(&cam->v4l2_dev, &cam->notifier);
++	if (ret < 0) {
++		cam_warn(cam, "failed to register a sensor notifier");
++		goto out;
+ 	}
+=20
+ 	/*
+@@ -1811,11 +1865,10 @@ int mccic_register(struct mcam_camera *cam)
+ 			cam_warn(cam, "Unable to alloc DMA buffers at load will try again lat=
+er.");
+ 	}
+=20
+-	mutex_unlock(&cam->s_mutex);
+ 	return 0;
+=20
+-out_unregister:
+-	v4l2_ctrl_handler_free(&cam->ctrl_handler);
++out:
++	v4l2_async_notifier_unregister(&cam->notifier);
+ 	v4l2_device_unregister(&cam->v4l2_dev);
+ 	return ret;
+ }
+@@ -1835,8 +1888,8 @@ void mccic_shutdown(struct mcam_camera *cam)
+ 	}
+ 	if (cam->buffer_mode =3D=3D B_vmalloc)
+ 		mcam_free_dma_bufs(cam);
+-	video_unregister_device(&cam->vdev);
+ 	v4l2_ctrl_handler_free(&cam->ctrl_handler);
++	v4l2_async_notifier_unregister(&cam->notifier);
+ 	v4l2_device_unregister(&cam->v4l2_dev);
+ }
+ EXPORT_SYMBOL_GPL(mccic_shutdown);
+diff --git a/drivers/media/platform/marvell-ccic/mcam-core.h b/drivers/me=
+dia/platform/marvell-ccic/mcam-core.h
+index b828b1bb59d3..4a72213aca1a 100644
+--- a/drivers/media/platform/marvell-ccic/mcam-core.h
++++ b/drivers/media/platform/marvell-ccic/mcam-core.h
+@@ -102,14 +102,11 @@ struct mcam_camera {
+ 	 * These fields should be set by the platform code prior to
+ 	 * calling mcam_register().
+ 	 */
+-	struct i2c_adapter *i2c_adapter;
+ 	unsigned char __iomem *regs;
+ 	unsigned regs_size; /* size in bytes of the register space */
+ 	spinlock_t dev_lock;
+ 	struct device *dev; /* For messages, dma alloc */
+ 	enum mcam_chip_id chip_id;
+-	short int clock_speed;	/* Sensor clock speed, default 30 */
+-	short int use_smbus;	/* SMBUS or straight I2c? */
+ 	enum mcam_buffer_mode buffer_mode;
+=20
+ 	int mclk_src;	/* which clock source the mclk derives from */
+@@ -150,6 +147,8 @@ struct mcam_camera {
+ 	 * Subsystem structures.
+ 	 */
+ 	struct video_device vdev;
++	struct v4l2_async_notifier notifier;
++	struct v4l2_async_subdev asd;
+ 	struct v4l2_subdev *sensor;
+=20
+ 	/* Videobuf2 stuff */
+diff --git a/drivers/media/platform/marvell-ccic/mmp-driver.c b/drivers/m=
+edia/platform/marvell-ccic/mmp-driver.c
+index 05b9fa8c6a6f..efbffb06e25c 100644
+--- a/drivers/media/platform/marvell-ccic/mmp-driver.c
++++ b/drivers/media/platform/marvell-ccic/mmp-driver.c
+@@ -3,6 +3,7 @@
+  * to work with the Armada 610 as used in the OLPC 1.75 system.
+  *
+  * Copyright 2011 Jonathan Corbet <corbet@lwn.net>
++ * Copyright 2018 Lubomir Rintel <lkundrak@v3.sk>
+  *
+  * This file may be distributed under the terms of the GNU General
+  * Public License, version 2.
+@@ -11,7 +12,6 @@
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/spinlock.h>
+ #include <linux/slab.h>
+@@ -316,6 +316,7 @@ static int mmpcam_probe(struct platform_device *pdev)
+ 	struct mmp_camera *cam;
+ 	struct mcam_camera *mcam;
+ 	struct resource *res;
++	struct fwnode_handle *ep;
+ 	struct mmp_camera_platform_data *pdata;
+ 	int ret;
+=20
+@@ -330,7 +331,6 @@ static int mmpcam_probe(struct platform_device *pdev)
+ 	mcam->plat_power_down =3D mmpcam_power_down;
+ 	mcam->calc_dphy =3D mmpcam_calc_dphy;
+ 	mcam->dev =3D &pdev->dev;
+-	mcam->use_smbus =3D 0;
+ 	pdata =3D pdev->dev.platform_data;
+ 	if (pdata) {
+ 		mcam->mclk_src =3D pdata->mclk_src;
+@@ -374,15 +374,6 @@ static int mmpcam_probe(struct platform_device *pdev=
+)
+ 	cam->power_regs =3D devm_ioremap_resource(&pdev->dev, res);
+ 	if (IS_ERR(cam->power_regs))
+ 		return PTR_ERR(cam->power_regs);
+-	/*
+-	 * Find the i2c adapter.  This assumes, of course, that the
+-	 * i2c bus is already up and functioning.
+-	 */
+-	mcam->i2c_adapter =3D platform_get_drvdata(pdata->i2c_device);
+-	if (mcam->i2c_adapter =3D=3D NULL) {
+-		dev_err(&pdev->dev, "No i2c adapter\n");
+-		return -ENODEV;
+-	}
+ 	/*
+ 	 * Sensor GPIO pins.
+ 	 */
+@@ -405,6 +396,19 @@ static int mmpcam_probe(struct platform_device *pdev=
+)
+=20
+ 	mcam_init_clk(mcam);
+=20
++	/*
++	 * Create a match of the sensor against its OF node.
++	 */
++	ep =3D fwnode_graph_get_next_endpoint(of_fwnode_handle(pdev->dev.of_nod=
+e),
++					    NULL);
++	if (!ep)
++		return -ENODEV;
++
++	mcam->asd.match_type =3D V4L2_ASYNC_MATCH_FWNODE;
++	mcam->asd.match.fwnode =3D fwnode_graph_get_remote_port_parent(ep);
++
++	fwnode_handle_put(ep);
++
+ 	/*
+ 	 * Power the device up and hand it off to the core.
+ 	 */
+@@ -414,6 +418,7 @@ static int mmpcam_probe(struct platform_device *pdev)
+ 	ret =3D mccic_register(mcam);
+ 	if (ret)
+ 		goto out_power_down;
++
+ 	/*
+ 	 * Finally, set up our IRQ now that the core is ready to
+ 	 * deal with it.
+diff --git a/include/linux/platform_data/media/mmp-camera.h b/include/lin=
+ux/platform_data/media/mmp-camera.h
+index 4c3a80a45883..c573ebc40035 100644
+--- a/include/linux/platform_data/media/mmp-camera.h
++++ b/include/linux/platform_data/media/mmp-camera.h
+@@ -12,7 +12,6 @@ enum dphy3_algo {
+ };
+=20
+ struct mmp_camera_platform_data {
+-	struct platform_device *i2c_device;
+ 	int sensor_power_gpio;
+ 	int sensor_reset_gpio;
+ 	enum v4l2_mbus_type bus_type;
+--=20
+2.19.1
+
