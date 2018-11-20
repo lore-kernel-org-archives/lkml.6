@@ -2,130 +2,196 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816C0C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF59C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E86A20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:27:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E86A20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 81B8C206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B8C206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729619AbeKUA5H (ORCPT
+        id S1727969AbeKUBB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:57:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50333 "EHLO mx1.redhat.com"
+        Tue, 20 Nov 2018 20:01:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57612 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726005AbeKUA5H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:57:07 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4325E31819E1;
-        Tue, 20 Nov 2018 14:27:42 +0000 (UTC)
-Received: from [10.36.117.138] (ovpn-117-138.ams2.redhat.com [10.36.117.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA33B5D75E;
-        Tue, 20 Nov 2018 14:27:40 +0000 (UTC)
-Subject: Re: [RFC PATCH 1/3] mm, memory_hotplug: try to migrate full section
- worth of pages
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181120134323.13007-1-mhocko@kernel.org>
- <20181120134323.13007-2-mhocko@kernel.org>
- <65271adc-93b4-19fc-e54b-11db582359c5@redhat.com>
- <20181120142517.GL22247@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <e7935648-104d-a0b8-f5ad-4460f2815b9b@redhat.com>
-Date:   Tue, 20 Nov 2018 15:27:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1725968AbeKUBB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:01:57 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C3CE020745; Tue, 20 Nov 2018 15:32:29 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8DC32206A1;
+        Tue, 20 Nov 2018 15:32:29 +0100 (CET)
+Date:   Tue, 20 Nov 2018 15:32:29 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v2 04/12] drm/sun4i: sun6i_mipi_dsi: Simplify drq set to
+ support all modes
+Message-ID: <20181120143229.ncx3hk2manc7hnwl@flea>
+References: <20181116163916.29621-1-jagan@amarulasolutions.com>
+ <20181116163916.29621-5-jagan@amarulasolutions.com>
+ <20181119083243.4njj2p2sy2xf2zyf@flea>
+ <CAMty3ZAKL2fZqwLwd_WiQpzz+cOETMR7ES7HQsBo3PsAvjM+6A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120142517.GL22247@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 20 Nov 2018 14:27:42 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uo3r5ydwcsdb7jg4"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZAKL2fZqwLwd_WiQpzz+cOETMR7ES7HQsBo3PsAvjM+6A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.11.18 15:25, Michal Hocko wrote:
-> On Tue 20-11-18 15:18:41, David Hildenbrand wrote:
-> [...]
->> (we could also check for pending signals inside that function if really
->> required)
-> 
-> do_migrate_pages is not the proper layer to check signals. Because the
-> loop only isolates pages and that is not expensive. The most expensive
-> part is deeper down in the migration core. We wait for page lock or
-> writeback and that can take a long. None of that is killable wait which
-> is a larger surgery but something that we should consider should there
-> be any need to address this.
 
-Indeed, that makes sense.
+--uo3r5ydwcsdb7jg4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> Reviewed-by: David Hildenbrand <david@redhat.com>
-> 
-> Thanks!
-> 
+On Mon, Nov 19, 2018 at 04:52:17PM +0530, Jagan Teki wrote:
+> On Mon, Nov 19, 2018 at 2:02 PM Maxime Ripard <maxime.ripard@bootlin.com>=
+ wrote:
+> >
+> > On Fri, Nov 16, 2018 at 10:09:08PM +0530, Jagan Teki wrote:
+> > > Allwinner MIPI DSI DRQ set value can be varied with respective
+> > > video modes.
+> > > - burst mode the set value is always 0
+> > > - video modes whose front porch greater than 20, the set value
+> > >   can be computed based front porch and bpp.
+> > > - video modes whose front porch is not greater than 20, the set value
+> > >   is simply 0
+> > >
+> > > This patch simplifies existing drq set value code by grouping
+> > > into sun6i_dsi_get_drq and support all video modes.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 38 ++++++++++++++++--------=
+--
+> > >  1 file changed, 23 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm=
+/sun4i/sun6i_mipi_dsi.c
+> > > index efd08bfd0cb8..d60955880c43 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > > @@ -363,6 +363,26 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi=
+ *dsi,
+> > >                    SUN6I_DSI_INST_JUMP_CFG_NUM(1));
+> > >  };
+> > >
+> > > +static int sun6i_dsi_get_drq(struct sun6i_dsi *dsi,
+> > > +                           struct drm_display_mode *mode)
+> > > +{
+> > > +     struct mipi_dsi_device *device =3D dsi->device;
+> > > +     int drq =3D 0;
+> >
+> > So, here, you declaring a variable called drq, set to 0.
+> >
+> > > +     if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+> > > +             return drq;
+> >
+> > That you return here. You could just return 0, to be clearer.
+> >
+> > > +     if ((mode->hsync_start - mode->hdisplay) > 20) {
+> > > +             /* Maaaaaagic */
+> > > +             u16 drq =3D (mode->hsync_start - mode->hdisplay) - 20;
+> >
+> > You re-declare a variable with the same name here, but a different
+> > type....
+> >
+> > > +             drq *=3D mipi_dsi_pixel_format_to_bpp(device->format);
+> > > +             drq /=3D 32;
+> > > +     }
+> > > +
+> > > +     return drq;
+> >
+> > And then return the first one? How is that even working?
+>=20
+> Will fix this.
 
+I don't want you to only fix this, I also want you to contribute code
+that is A) useful, B) tested.
 
--- 
+> > >  static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
+> > >                                     struct drm_display_mode *mode, u1=
+6 hblk)
+> > >  {
+> > > @@ -478,21 +498,9 @@ static u16 sun6i_dsi_get_video_start_delay(struc=
+t sun6i_dsi *dsi,
+> > >  static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
+> > >                                 struct drm_display_mode *mode)
+> > >  {
+> > > -     struct mipi_dsi_device *device =3D dsi->device;
+> > > -     u32 val =3D 0;
+> > > -
+> > > -     if ((mode->hsync_start - mode->hdisplay) > 20) {
+> > > -             /* Maaaaaagic */
+> > > -             u16 drq =3D (mode->hsync_start - mode->hdisplay) - 20;
+> > > -
+> > > -             drq *=3D mipi_dsi_pixel_format_to_bpp(device->format);
+> > > -             drq /=3D 32;
+> > > -
+> > > -             val =3D (SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
+> > > -                    SUN6I_DSI_TCON_DRQ_SET(drq));
+> > > -     }
+> > > -
+> > > -     regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG, val);
+> > > +     regmap_write(dsi->regs, SUN6I_DSI_TCON_DRQ_REG,
+> > > +                  SUN6I_DSI_TCON_DRQ_ENABLE_MODE |
+> > > +                  SUN6I_DSI_TCON_DRQ_SET(sun6i_dsi_get_drq(dsi, mode=
+)));
+> >
+> > On top of that, you now enable the DRQ stuff all the time, while it
+>=20
+> Earlier the val value is ENABLE_MODE ORed with drq value. for the
+> condition drq is computed in if block otherwise the val is 0.
+> So as I explained in commit message the drq value is 0
+> - for video modes whose front porch is not greater than 20 and
+> - for burst mode the val
+>=20
+> ie reason I mode it common.
 
-Thanks,
+The previous code was enabling it if the front porch was larger than
+20 only. You enable it all the time now, and you never explain why.
 
-David / dhildenb
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--uo3r5ydwcsdb7jg4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/Qa/QAKCRDj7w1vZxhR
+xRQHAP99Y8IdkCiaEU4+8TOWjcpO/E5G+WXNZETMV1YNBmtmIwEA083kgo21oSeB
+ojTPe/qAB0tpz/OzSR19ppXdCKXbiwo=
+=QCnJ
+-----END PGP SIGNATURE-----
+
+--uo3r5ydwcsdb7jg4--
