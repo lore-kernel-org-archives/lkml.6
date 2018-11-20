@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686A4C04EBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B515C32789
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45F5213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45F5213A2
+	by mail.kernel.org (Postfix) with ESMTP id C787F214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C787F214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbeKULFR (ORCPT
+        id S1727170AbeKULFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:05:17 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30241 "EHLO mga14.intel.com"
+        Wed, 21 Nov 2018 06:05:20 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30245 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726877AbeKULFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:05:16 -0500
+        id S1727098AbeKULFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:05:19 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:20 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="93650181"
+   d="scan'208";a="93650200"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:20 -0800
+  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:23 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -53,9 +53,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         stable@vger.kernel.org
-Subject: [Patch v6 03/16] x86/speculation: Disable STIBP when enhanced IBRS is in use
-Date:   Tue, 20 Nov 2018 15:59:55 -0800
-Message-Id: <98459d97781796d8fa04aecb7ed473b7c4e48956.1542757030.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v6 06/16] smt: Create cpu_smt_enabled static key for SMT specific code
+Date:   Tue, 20 Nov 2018 15:59:58 -0800
+Message-Id: <b0af92ab7e4db9b3ad14a4f65cf98ee6df0f4914.1542757030.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542757030.git.tim.c.chen@linux.intel.com>
 References: <cover.1542757030.git.tim.c.chen@linux.intel.com>
@@ -66,47 +66,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If enhanced IBRS is engaged, STIBP is redundant in mitigating Spectre
-v2 user space exploits from hyperthread sibling.
+In later code, STIBP will be turned on/off in the context switch code
+path when SMT is enabled.  Checks for SMT is best
+avoided on such hot paths.
 
-Disable STIBP when enhanced IBRS is used.
+Create cpu_smt_enabled static key to turn on such SMT specific code
+statically.
+
+The key is enabled by default and its scope has nothing to do with CPU
+hotplug. It depends on CONFIG_HOTPLUG_SMT which is the extra SMT control
+code which is currently only enabled on x86.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/cpu.h |  4 ++++
+ kernel/cpu.c        | 12 ++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 3a6f13b..199f27e 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -323,11 +323,16 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- 	return cmd;
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 218df7f..ce8267e 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -189,4 +189,8 @@ static inline void cpu_smt_check_topology_early(void) { }
+ static inline void cpu_smt_check_topology(void) { }
+ #endif
+ 
++#ifdef CONFIG_HOTPLUG_SMT
++DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
++#endif
++
+ #endif /* _LINUX_CPU_H_ */
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 3c7f3b4..e216154 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -370,6 +370,8 @@ static void lockdep_release_cpus_lock(void)
+ #ifdef CONFIG_HOTPLUG_SMT
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ EXPORT_SYMBOL_GPL(cpu_smt_control);
++DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
++EXPORT_SYMBOL_GPL(cpu_smt_enabled);
+ 
+ static bool cpu_smt_available __read_mostly;
+ 
+@@ -386,6 +388,7 @@ void __init cpu_smt_disable(bool force)
+ 		pr_info("SMT: disabled\n");
+ 		cpu_smt_control = CPU_SMT_DISABLED;
+ 	}
++	static_branch_disable(&cpu_smt_enabled);
  }
  
-+/* Determine if STIBP should be always on. */
- static bool stibp_needed(void)
+ /*
+@@ -395,8 +398,10 @@ void __init cpu_smt_disable(bool force)
+  */
+ void __init cpu_smt_check_topology_early(void)
  {
- 	if (spectre_v2_enabled == SPECTRE_V2_NONE)
- 		return false;
+-	if (!topology_smt_supported())
++	if (!topology_smt_supported()) {
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
++		static_branch_disable(&cpu_smt_enabled);
++	}
+ }
  
-+	/* Using enhanced IBRS makes using STIBP unnecessary. */
-+	if (static_cpu_has(X86_FEATURE_USE_IBRS_ENHANCED))
-+		return false;
-+
- 	if (!boot_cpu_has(X86_FEATURE_STIBP))
- 		return false;
- 
-@@ -856,6 +861,9 @@ static ssize_t l1tf_show_state(char *buf)
- 
- static char *stibp_state(void)
+ /*
+@@ -408,8 +413,10 @@ void __init cpu_smt_check_topology_early(void)
+  */
+ void __init cpu_smt_check_topology(void)
  {
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+		return "";
-+
- 	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
- 		return ", STIBP";
- 	else
+-	if (!cpu_smt_available)
++	if (!cpu_smt_available) {
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
++		static_branch_disable(&cpu_smt_enabled);
++	}
+ }
+ 
+ static int __init smt_cmdline_disable(char *str)
+@@ -2101,6 +2108,7 @@ static int cpuhp_smt_enable(void)
+ 
+ 	cpu_maps_update_begin();
+ 	cpu_smt_control = CPU_SMT_ENABLED;
++	static_branch_enable(&cpu_smt_enabled);
+ 	arch_smt_update();
+ 	for_each_present_cpu(cpu) {
+ 		/* Skip online CPUs and CPUs on offline nodes */
 -- 
 2.9.4
 
