@@ -2,223 +2,164 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B400CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45378C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C15208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:53:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C15208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 1FEC820989
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:53:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClDBJbGS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FEC820989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbeKTUVz (ORCPT
+        id S1727654AbeKTUVO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:21:55 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52173 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727951AbeKTUVz (ORCPT
+        Tue, 20 Nov 2018 15:21:14 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35638 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeKTUVO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:21:55 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gP2iq-0000s9-Bn; Tue, 20 Nov 2018 10:53:32 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gP2io-0006yH-D5; Tue, 20 Nov 2018 10:53:30 +0100
-Date:   Tue, 20 Nov 2018 10:53:30 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     viresh kumar <viresh.kumar@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Michal.Vokac@ysoft.com, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-pwm@vger.kernel.org,
-        l.majewski@majess.pl,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181120095330.ccdaquzgsuiyznki@pengutronix.de>
-References: <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
- <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <CACRpkdZAew3bUea=iR4t-a7SVSMf=-CTeWfeU215uT_jQ-o81A@mail.gmail.com>
- <20181119083230.re3dtq4alnrojbnd@pengutronix.de>
- <CACRpkdYeSTZSvK9URE5ZvwnGTXVCZad=ptCmUBrbDyozoJnfSQ@mail.gmail.com>
+        Tue, 20 Nov 2018 15:21:14 -0500
+Received: by mail-wm1-f67.google.com with SMTP id c126so1508025wmh.0;
+        Tue, 20 Nov 2018 01:52:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r1Gaqae/pJv/yHYiqxnaEvj6zIGb7jvtUr4qFjNV/Ac=;
+        b=ClDBJbGSJpT6DbZyegpyU1qht4WD0TwwhjG6cb2NLS8gFQNoGR4qMCCCB1czNGMKWb
+         Ntxrls6vf79WlHlMJbges2NXlt3Sl1H5bHT1U1MXmDDyeeIuxGbgp9c3AToBNlNn4lNj
+         NaM3g2KiWalthOqIQflD9P50RZXZ1caIZE7PKq4pBEszNuveJOihU6OtTlHjGLwBnW6I
+         /PswOuZemuJJckM3RjTDq+P6KQNh6mdlgzoWQuWh5ZAgcMD0ik8uIKHscaLophalsOgG
+         jnswGJgXHNP1x7Q4M7gpEHilVQnjxoM+mW+EskI3Y7Fi+493YM5dUwP4Qu1DjV2wAI33
+         z1Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r1Gaqae/pJv/yHYiqxnaEvj6zIGb7jvtUr4qFjNV/Ac=;
+        b=Wk3DYZNo1Q/MTTWulZ8LxiB6FtTvpByI9DOD2QC0UhTJ0zZVmboWi5CeGxLk+LtUp1
+         6PyE1emS8QlsSqMVQpXgSsLLuovYZNSQw8GCbbKEinEB5MIe1vm3g0Aox3S4Ov10P9y2
+         Rd5SQ57qK/yFxfa5MhF7JoPyuOxx5chDXxzBOA8v7Nq6Go5cvAA8GcOG45xbrnmXj6g2
+         0WiCMBoD+dr8jJk9IVipmWKRN+TeSZnv7hIPaaltWVUJX0YHg0RNuK9ueAC+YCFTicK/
+         a3GrVmkI/gsxh5k163E5PTYE1WPyGzKPDm8gvvg2SMEXa8UIYE9RfsFHW4JetTOcXWhV
+         reXA==
+X-Gm-Message-State: AA+aEWYmeZ2xa0pvVPEYj+N947VKZPujNYwqexy4+tvDtCEo8QVmNCky
+        giyeUqv4j87+aW0jUA/XEbM=
+X-Google-Smtp-Source: AJdET5dSjSij58XZUpdJld5dyMB1FlhS3lj1eWNL7qgCa5AoG1owvTs51Ns7Xzb+wQXV+pWNfbrnHg==
+X-Received: by 2002:a1c:c44c:: with SMTP id u73mr1571159wmf.45.1542707577016;
+        Tue, 20 Nov 2018 01:52:57 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a11sm1877783wmh.26.2018.11.20.01.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 01:52:56 -0800 (PST)
+Date:   Tue, 20 Nov 2018 10:52:53 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v6 01/26] Documentation/x86: Add CET description
+Message-ID: <20181120095253.GA119911@gmail.com>
+References: <20181119214809.6086-1-yu-cheng.yu@intel.com>
+ <20181119214809.6086-2-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdYeSTZSvK9URE5ZvwnGTXVCZad=ptCmUBrbDyozoJnfSQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181119214809.6086-2-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Tue, Nov 20, 2018 at 09:35:47AM +0100, Linus Walleij wrote:
-> On Mon, Nov 19, 2018 at 9:32 AM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> 
-> > To sumarize: When the pwm driver probes it is not yet clear if the idle
-> > state of the output pin is high or low. Even when the pinctrl device has
-> > an "init" and a "default" pinctrl, it is not yet fixed when its
-> > "default" is configured.
-> >
-> > The way Thierry wants to fix that is by disabling the output driver
-> > until the pwm is in use und rely on a pull-up or pull-down in hardware.
-> >
-> > The way I want to fix this is to only configure the pwm pin as part of
-> > the consumer. This is late enough that the consumer already requested
-> > and configured the pwm such that the idle level is known.
-> > Thierry's and Lothar's claim was that putting the pin setup of the pwm
-> > pin into the pwm consumer's pinctrl was forbidden. That's why I asked
-> > you as pinctrl maintainer if there is a requirement that I don't know
-> > of.
-> 
-> I think we need to be pragmatic and listen most to whoever has
-> the hardware and need to get it to work. The system needs
-> to come up in some reasonable way, preferably so that vendors
-> doing products with it do not have to apply a fat patch stack
-> to get that backlight working in an acceptable way. Else the
-> end result is out-of-tree code to paper over the issue and that
-> IMO is worse than some minor ugliness in the kernel.
-> 
-> However the whole ordeal points to a problem that is with the
-> pin control system and Thierry's and Lothar's intuition about this
-> is right in a way: if the pin control system could read out the
-> state of the hardware at boot (as we nowadays do with GPIO,
-> which also has a consumer flag cleverly named GPIOD_ASIS)
-> the whole thing would be no problem.
+* Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
 
-Well, on the problematic machine the setup currently is:
+> +X86 Documentation
+> +=======================
+> +
+> +Control-flow Enforcement
+> +========================
+> +
+> +.. toctree::
+> +   :maxdepth: 1
+> +
+> +   intel_cet
+> diff --git a/Documentation/x86/intel_cet.rst b/Documentation/x86/intel_cet.rst
+> new file mode 100644
+> index 000000000000..dac83bbf8a24
+> --- /dev/null
+> +++ b/Documentation/x86/intel_cet.rst
+> @@ -0,0 +1,268 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=========================================
+> +Control-flow Enforcement Technology (CET)
+> +=========================================
+> +
+> +[1] Overview
+> +============
+> +
+> +Control-flow Enforcement Technology (CET) provides protection against
+> +return/jump-oriented programming (ROP) attacks.  It can be setup to
+> +protect both the kernel and applications.  In the first phase,
+> +only the user-mode protection is implemented in 64-bit mode; 32-bit
+> +applications are supported in compatibility mode.
+> +
+> +CET introduces shadow stack (SHSTK) and indirect branch tracking
+> +(IBT).  SHSTK is a secondary stack allocated from memory and cannot
+> +be directly modified by applications.  When executing a CALL, the
+> +processor pushes a copy of the return address to SHSTK.  Upon
+> +function return, the processor pops the SHSTK copy and compares it
+> +to the one from the program stack.  If the two copies differ, the
+> +processor raises a control-protection exception.  IBT verifies all
+> +indirect CALL/JMP targets are intended as marked by the compiler
+> +with 'ENDBR' opcodes (see CET instructions below).
+> +
+> +There are two kernel configuration options:
+> +
+> +    INTEL_X86_SHADOW_STACK_USER, and
+> +    INTEL_X86_BRANCH_TRACKING_USER.
+> +
+> +To build a CET-enabled kernel, Binutils v2.31 and GCC v8.1 or later
+> +are required.  To build a CET-enabled application, GLIBC v2.28 or
+> +later is also required.
+> +
+> +There are two command-line options for disabling CET features:
+> +
+> +    no_cet_shstk - disables SHSTK, and
+> +    no_cet_ibt - disables IBT.
+> +
+> +At run time, /proc/cpuinfo shows the availability of SHSTK and IBT.
 
-The bootloader configures the brightness pin as GPIO high output to
-disable the backlight, the PWM isn't touched and so is off and
-uninverted.
+What is the rough expected performance impact of CET on average function 
+call frequency user applications and the kernel itself?
 
-The next relevant event is that the PWM driver is probed.
-The PWM registers are not touched, so keeps being off and outputs
-a 0. If in this state the pin is muxed as PWM the output becomes 0 which
-should be prevented, so this must not be part of a "default" or "init"
-pinctrl for the PWM node.
+Thanks,
 
-The next event is that the backlight driver is probed. The probe
-function grabs the PWM, tells it to be inverted and off. So the output
-of the PWM is a 1 and only after that the PWM pin can be safely muxed as
-PWM.
-
-So the options are:
-
- a) In the bootloader setup the PWM as inverted and configure the pin as
-    PWM.
-
- b) Make the PWM aware that it is off and let it mux an "idle" setting
-    that depending on the SoC might involve muxing the pin as GPIO and
-    setting the GPIO as input.
-
- c) setup the PWM pin as PWM only when the backlight is probed.
-
-a) has the downside that configuring a PWM is a tad more complex then
-setting up a GPIO. Also it's a bit ugly to let Linux impose a limitation
-on the bootloader about how to disable the backlight there.
-
-b) has the downside that the dts author has to specify a GPIO and the
-idle level and two instead of only one pinctrl setting. Conceptually
-this is not so nice, because normally the PWM doesn't know if it is used
-inverted or not. With the GPIO specification this information is
-implicitly added. (Also there might be additional hurdles, for example
-on i.MX31 (IIRC) there are pins that cannot be muxed as GPIO but are in
-use as CS signal for spi. I didn't check if there is a similar
-limitation for PWM pins.)
-
-With c) the pwm is setup only when the backlight driver requests it. If
-the backlight driver fails to probe or is disabled nothing happens to
-the PWM pin. If the backlight driver was loaded successfully the PWM pin
-is muxed just after it was set up with the right polarity. Similar as
-with b) there is no limitation about how the bootloader disabled the
-backlight. The beauty I see in c) is this is a solution that doesn't
-have to care about GPIOs and muxing pins depending on the PWM state. And
-given that there is such a way, I don't see why we should impose on dts
-authors to specify these things that are not technically necessary.
-
-Both b) and c) is about delaying muxing the pin as PWM late enough.
-Suggestion b) is about doing this explicitly somewhere below driver/pwm,
-c) only uses pinctrl as available automatically for all devices.
-
-Probably its subjective if you consider b) or c) as the better/prettier
-solution.
-
-Note that the solution b) is independent of the imx uglyness[1] and
-applies to all PWMs that don't disable its output driver on disable.
-(And for PWMs that disable the output driver, the solution might be
-needed anyhow because there is "broken" hardware that doesn't have the
-right pullups assembled to ensure the right idle level when the pin
-doesn't drive.)
-
-So the sensible options are in my eyes:
-
- - Implement b) in the PWM core (and not the pwm-imx driver); or
- - just use c) accepting that the PWM is muxed not by itself but by its
-   consumer.
-
-In my eyes doing b) consequently would result in letting the PWM know
-the intended idle level even without a consumer. Not only implicitly by
-a GPIO specification, but explicitly using something like:
-
-	&pwm3 {
-		pwm-default-inverted;
-	};
-
-in the device tree. (And with that the GPIO solution would loose
-its importance because every PWM is able to drive a constant 1 and a
-constant 0. It might just be useful as an optimisation that draws less
-power.)
-
-> The same kind of goes for PWM itself in this case I guess.
-
-So as pinmuxing is involved it doesn't solve the problem as the driver
-would diagnose the PWM to be uninverted and off and so would enable the
-backlight. There is still a solution needed to delay the muxing.
-
-> The whole issue with splash screens and different hardware
-> turned over to Linux in running state is a bit imperfect I would
-> say, I think Viresh was working on boot constraints to get
-> handover of different systems components into some kind
-> of shape but maybe that stopped short because of the
-> complexities involved. Isn't that the real problem here?
-> https://lkml.org/lkml/2017/8/1/191
-
-The Boot Constraints core solves things like "Don't let the UART change
-the clk frequency of a common parent of the UART itself and the PWM that
-is needed to show the splash screen." This is orthogonal to the problem
-here I'd say.
-
-Best regards
-Uwe
-
-[1] If you disable the imx PWM while being inverted it outputs a 0
-    also a 1 would be more consistent.
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+	Ingo
