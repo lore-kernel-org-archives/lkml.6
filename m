@@ -6,41 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82488C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9A0C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 522FD2089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522FD2089F
+	by mail.kernel.org (Postfix) with ESMTP id 6EB9420851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB9420851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732397AbeKTKm7 (ORCPT
+        id S1732413AbeKTKnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:42:59 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55976 "EHLO
+        Tue, 20 Nov 2018 05:43:04 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:56076 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeKTKm6 (ORCPT
+        with ESMTP id S1728979AbeKTKnE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:42:58 -0500
+        Tue, 20 Nov 2018 05:43:04 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 6D2E172CA65;
-        Tue, 20 Nov 2018 03:16:41 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 0688872CC6C;
+        Tue, 20 Nov 2018 03:16:48 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 359517CD1FF; Tue, 20 Nov 2018 03:16:40 +0300 (MSK)
-Date:   Tue, 20 Nov 2018 03:16:40 +0300
+        id E15C57CD1FF; Tue, 20 Nov 2018 03:16:47 +0300 (MSK)
+Date:   Tue, 20 Nov 2018 03:16:47 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        linux-riscv@lists.infradead.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/15] riscv: define syscall_get_arch()
-Message-ID: <20181120001640.GM11387@altlinux.org>
+To:     Andy Lutomirski <luto@kernel.org>, Guan Xuetao <gxt@pku.edu.cn>
+Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 14/15] unicore32: define syscall_get_arch()
+Message-ID: <20181120001647.GN11387@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -54,54 +49,44 @@ syscall_get_arch() is required to be implemented on all architectures
 in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
 request.
 
-Based-on-patch-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
 ---
-v2: added Reviewed-by to [PATCH 12/13 v2]
+v2: unchanged since v1
 
- arch/riscv/include/asm/syscall.h | 10 ++++++++++
- include/uapi/linux/audit.h       |  2 ++
- 2 files changed, 12 insertions(+)
+ arch/unicore32/include/asm/syscall.h | 12 ++++++++++++
+ include/uapi/linux/audit.h           |  1 +
+ 2 files changed, 13 insertions(+)
+ create mode 100644 arch/unicore32/include/asm/syscall.h
 
-diff --git a/arch/riscv/include/asm/syscall.h b/arch/riscv/include/asm/syscall.h
-index 8d25f8904c00..bba3da6ef157 100644
---- a/arch/riscv/include/asm/syscall.h
-+++ b/arch/riscv/include/asm/syscall.h
-@@ -18,6 +18,7 @@
- #ifndef _ASM_RISCV_SYSCALL_H
- #define _ASM_RISCV_SYSCALL_H
- 
+diff --git a/arch/unicore32/include/asm/syscall.h b/arch/unicore32/include/asm/syscall.h
+new file mode 100644
+index 000000000000..3a6b885476b4
+--- /dev/null
++++ b/arch/unicore32/include/asm/syscall.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_UNICORE_SYSCALL_H
++#define _ASM_UNICORE_SYSCALL_H
++
 +#include <uapi/linux/audit.h>
- #include <linux/sched.h>
- #include <linux/err.h>
- 
-@@ -99,4 +100,13 @@ static inline void syscall_set_arguments(struct task_struct *task,
- 	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
- }
- 
++
 +static inline int syscall_get_arch(void)
 +{
-+#ifdef CONFIG_64BIT
-+	return AUDIT_ARCH_RISCV64;
-+#else
-+	return AUDIT_ARCH_RISCV32;
-+#endif
++	return AUDIT_ARCH_UNICORE;
 +}
 +
- #endif	/* _ASM_RISCV_SYSCALL_H */
++#endif	/* _ASM_UNICORE_SYSCALL_H */
 diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 205aa32d81ed..a97a29922de0 100644
+index a97a29922de0..b032748cb8ba 100644
 --- a/include/uapi/linux/audit.h
 +++ b/include/uapi/linux/audit.h
-@@ -410,6 +410,8 @@ enum {
- /* do not define AUDIT_ARCH_PPCLE since it is not supported by audit */
- #define AUDIT_ARCH_PPC64	(EM_PPC64|__AUDIT_ARCH_64BIT)
- #define AUDIT_ARCH_PPC64LE	(EM_PPC64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_RISCV32	(EM_RISCV|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_RISCV64	(EM_RISCV|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_S390		(EM_S390)
- #define AUDIT_ARCH_S390X	(EM_S390|__AUDIT_ARCH_64BIT)
- #define AUDIT_ARCH_SH		(EM_SH)
+@@ -423,6 +423,7 @@ enum {
+ #define AUDIT_ARCH_TILEGX	(EM_TILEGX|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_TILEGX32	(EM_TILEGX|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_TILEPRO	(EM_TILEPRO|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_UNICORE	(EM_UNICORE|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_X86_64	(EM_X86_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ 
+ #define AUDIT_PERM_EXEC		1
 -- 
 ldv
