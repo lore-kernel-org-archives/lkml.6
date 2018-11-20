@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2661C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B48C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1602080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00F9F2080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="cHA3IUKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1602080C
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="UEo/OL5T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F9F2080C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732524AbeKTLdV (ORCPT
+        id S1732455AbeKTLdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 20 Nov 2018 06:33:21 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:34063 "EHLO
+Received: from conuserg-11.nifty.com ([210.131.2.78]:34065 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732157AbeKTLdO (ORCPT
+        with ESMTP id S1732058AbeKTLdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 06:33:14 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wAK15ZEe029284;
+        by conuserg-11.nifty.com with ESMTP id wAK15ZEd029284;
         Tue, 20 Nov 2018 10:05:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wAK15ZEe029284
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wAK15ZEd029284
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542675942;
-        bh=5BzTqVAJb2FAdAx//unkzpW5FFm31SMMv6bkjPNROS0=;
+        s=dec2015msa; t=1542675941;
+        bh=NMzBvf7Uf/mcroQkxmHDTE9wi2Zk1t9cWFR9t5jzbfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cHA3IUKRfbj6FNW5cHvTQdHge2z3GjAJgzwVaeTtNXhLVoiXEEugtwTOy4DbCvZ1y
-         wwP4jaSzCMaqr75B2zSJYa/mthziDYqV+TF4/B5yhvBpJ/fHJzx6s4dkKgRLoFpCZD
-         SuXZNqy/fR5QtelvR8tq1U1WqrCIyBJ2Loofpuxa/VWmvL/BVbxfwHmlI+m8ejqBq+
-         h3fjRf7Pe9SAbkvAsR1Gb7Tchj/zHj+mLVtHC/E4r8fgUYT9A/MPKlEgXK20suXdp1
-         efLf+aEOyFFDtvYDWqyORO4kZmnzoG20Sml9oAyv6HnOrUb4HaCUNcFgboVYbf5zwb
-         TBNyUEUbNshsg==
+        b=UEo/OL5T0IkD8dM6AYpu2WlSsebYq5WBxvpsz74pZwcfpSxJAyOR+s8U5ueThtKbq
+         qbxfRCRqBXN/a38zfvxt1sA8qeEwQj5f76bk2HW0QEITeG43IcGmah9h7E/AMWpluP
+         Hcd9vVpItWq8cZtbeoi5ZT/ylClPSbpb5tizeIZJw6rzhGU8/3EVp/WqQGFiygry89
+         HJY3EfgTYfgLJUa4tdqpZukBCvBFjRPauVJyKoX3rE40BqArs9/nIJ65lXmznDF6hc
+         X9cbQOk1jOB4VLXcqciWuKkT3L6bZF3QvVFTKaVB0OROW2mFN0G0Y1CZiEEmUfx4qJ
+         GZ9VFRpkFmOCg==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -49,9 +49,9 @@ Cc:     Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 7/9] kbuild: remove trailing semicolon from cmd_* passed to if_changed_rule
-Date:   Tue, 20 Nov 2018 10:05:28 +0900
-Message-Id: <1542675930-21114-8-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH v2 6/9] kbuild: change if_changed_rule for multi-line recipe
+Date:   Tue, 20 Nov 2018 10:05:27 +0900
+Message-Id: <1542675930-21114-7-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542675930-21114-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1542675930-21114-1-git-send-email-yamada.masahiro@socionext.com>
@@ -60,99 +60,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the change of rule_cc_o_c / rule_as_o_S in the last commit, each
-command is executed in a separate subshell. Rip off unneeded semicolons.
+The 'define' ... 'endef' directive can describe a recipe that consists
+of multiple lines. For example,
+
+    all:
+            @echo hello
+            @echo world
+
+... can be written as:
+
+    define greeting
+            @echo hello
+            @echo world
+    endif
+
+    all:
+            $(greeting)
+
+This is useful to confine a series of shell commands into a single
+macro without losing readability.
+
+However, rule_cc_o_c and rule_as_o_S in scripts/Makefile.build are
+written like this (with a trailing semicolon in each cmd_*):
+
+  define rule_cc_o_c
+          [action1] ; \
+          [action2] ; \
+          [action3] ;
+  endef
+
+All shell commands are concatenated with '; \' so that it looks like
+a single command from the Makefile point of view. This does not
+exploit the benefits of 'define' ... 'endef' form because a single
+shell command can be simply written, like this:
+
+  rule_cc_o_c = \
+          [action1] ; \
+          [action2] ; \
+          [action3] ;
+
+I guess the intention for the command concatenation was to let the
+'@set -e' in if_changed_rule cover all the commands.
+
+We can improve the readability by moving '@set -e' to the 'cmd' macro.
+The combo of $(call echo-cmd,*) $(cmd_*) in rule_cc_o_c and rule_as_o_S
+have been replaced with $(call cmd,*). The trailing back-slashes have
+been removed.
+
+Here is a note about the performance: the commands in rule_cc_o_c and
+rule_as_o_S were previously executed all together in a single subshell,
+but now each line in a separate subshell. This means Make will spawn
+extra subshells [1]. I measured the build performance for
+  x86_64_defconfig + CONFIG_MODVERSIONS + CONFIG_TRIM_UNUSED_KSYMS
+and I saw slight performance regression, but I believe code readability
+and maintainability wins.
+
+[1] Precisely, GNU Make may optimize this by executing the command
+    directly instead of forking a subshell, if no shell special
+    characters are found in the command line and omitting the subshell
+    will not change the behavior.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
 Changes in v2:
- - Clean up cmd_and_fixdep as well
+  - Rewrite commit message more precisely, and mention about the
+    build performance
 
- scripts/Kbuild.include |  2 +-
- scripts/Makefile.build | 16 ++++++++--------
- 2 files changed, 9 insertions(+), 9 deletions(-)
+ scripts/Kbuild.include |  6 ++----
+ scripts/Makefile.build | 22 +++++++++++-----------
+ 2 files changed, 13 insertions(+), 15 deletions(-)
 
 diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 978d72b..79c4875 100644
+index 4b943f4..978d72b 100644
 --- a/scripts/Kbuild.include
 +++ b/scripts/Kbuild.include
-@@ -263,7 +263,7 @@ if_changed_dep = $(if $(strip $(any-prereq) $(arg-check) ),                  \
- cmd_and_fixdep =                                                             \
- 	$(echo-cmd) $(cmd_$(1));                                             \
- 	scripts/basic/fixdep $(depfile) $@ '$(make-cmd)' > $(dot-target).cmd;\
--	rm -f $(depfile);
-+	rm -f $(depfile)
+@@ -215,7 +215,7 @@ echo-cmd = $(if $($(quiet)cmd_$(1)),\
+ 	echo '  $(call escsq,$($(quiet)cmd_$(1)))$(echo-why)';)
  
+ # printing commands
+-cmd = @$(echo-cmd) $(cmd_$(1))
++cmd = @set -e; $(echo-cmd) $(cmd_$(1))
+ 
+ # Add $(obj)/ for paths that are not absolute
+ objectify = $(foreach o,$(1),$(if $(filter /%,$(o)),$(o),$(obj)/$(o)))
+@@ -268,9 +268,7 @@ cmd_and_fixdep =                                                             \
  # Usage: $(call if_changed_rule,foo)
  # Will check if $(cmd_foo) or any of the prerequisites changed,
+ # and if so will execute $(rule_foo).
+-if_changed_rule = $(if $(strip $(any-prereq) $(arg-check) ),                 \
+-	@set -e;                                                             \
+-	$(rule_$(1)), @:)
++if_changed_rule = $(if $(strip $(any-prereq) $(arg-check)), $(rule_$(1)), @:)
+ 
+ ###
+ # why - tell why a target got built
 diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index e445b3e..ffd2fe4 100644
+index c23ee45..e445b3e 100644
 --- a/scripts/Makefile.build
 +++ b/scripts/Makefile.build
-@@ -75,14 +75,14 @@ __build: $(if $(KBUILD_BUILTIN),$(builtin-target) $(lib-target) $(extra-y)) \
- # Linus' kernel sanity checking tool
- ifeq ($(KBUILD_CHECKSRC),1)
-   quiet_cmd_checksrc       = CHECK   $<
--        cmd_checksrc       = $(CHECK) $(CHECKFLAGS) $(c_flags) $< ;
-+        cmd_checksrc       = $(CHECK) $(CHECKFLAGS) $(c_flags) $<
- else ifeq ($(KBUILD_CHECKSRC),2)
-   quiet_cmd_force_checksrc = CHECK   $<
--        cmd_force_checksrc = $(CHECK) $(CHECKFLAGS) $(c_flags) $< ;
-+        cmd_force_checksrc = $(CHECK) $(CHECKFLAGS) $(c_flags) $<
- endif
- 
- ifneq ($(KBUILD_ENABLE_EXTRA_GCC_CHECKS),)
--  cmd_checkdoc = $(srctree)/scripts/kernel-doc -none $< ;
-+  cmd_checkdoc = $(srctree)/scripts/kernel-doc -none $<
- endif
- 
- # Do section mismatch analysis for each module/built-in.a
-@@ -178,7 +178,7 @@ cmd_modversions_c =								\
- 			-T $(@D)/.tmp_$(@F:.o=.ver);				\
- 		mv -f $(@D)/.tmp_$(@F) $@;					\
- 		rm -f $(@D)/.tmp_$(@F:.o=.ver);					\
--	fi;
-+	fi
- endif
- 
- ifdef CONFIG_FTRACE_MCOUNT_RECORD
-@@ -211,7 +211,7 @@ cmd_record_mcount =						\
- 	if [ "$(findstring $(CC_FLAGS_FTRACE),$(_c_flags))" =	\
- 	     "$(CC_FLAGS_FTRACE)" ]; then			\
- 		$(sub_cmd_record_mcount)			\
--	fi;
-+	fi
- endif # CC_USING_RECORD_MCOUNT
- endif # CONFIG_FTRACE_MCOUNT_RECORD
- 
-@@ -241,7 +241,7 @@ endif
- # 'OBJECT_FILES_NON_STANDARD_foo.o := 'n': override directory skip for a file
- cmd_objtool = $(if $(patsubst y%,, \
- 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
--	$(__objtool_obj) $(objtool_args) $@;)
-+	$(__objtool_obj) $(objtool_args) $@)
- objtool_obj = $(if $(patsubst y%,, \
- 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
- 	$(__objtool_obj))
-@@ -256,7 +256,7 @@ objtool_dep = $(objtool_obj)					\
- 
- ifdef CONFIG_TRIM_UNUSED_KSYMS
- cmd_gen_ksymdeps = \
--	$(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ >> $(dot-target).cmd;
-+	$(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ >> $(dot-target).cmd
+@@ -260,20 +260,20 @@ cmd_gen_ksymdeps = \
  endif
  
  define rule_cc_o_c
-@@ -372,7 +372,7 @@ cmd_modversions_S =								\
- 			-T $(@D)/.tmp_$(@F:.o=.ver);				\
- 		mv -f $(@D)/.tmp_$(@F) $@;					\
- 		rm -f $(@D)/.tmp_$(@F:.o=.ver);					\
--	fi;
-+	fi
- endif
- endif
+-	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
+-	$(call cmd_and_fixdep,cc_o_c)					  \
+-	$(cmd_gen_ksymdeps)						  \
+-	$(cmd_checkdoc)							  \
+-	$(call echo-cmd,objtool) $(cmd_objtool)				  \
+-	$(cmd_modversions_c)						  \
+-	$(call echo-cmd,record_mcount) $(cmd_record_mcount)
++	$(call cmd,checksrc)
++	@$(call cmd_and_fixdep,cc_o_c)
++	$(call cmd,gen_ksymdeps)
++	$(call cmd,checkdoc)
++	$(call cmd,objtool)
++	$(call cmd,modversions_c)
++	$(call cmd,record_mcount)
+ endef
  
+ define rule_as_o_S
+-	$(call cmd_and_fixdep,as_o_S)					  \
+-	$(cmd_gen_ksymdeps)						  \
+-	$(call echo-cmd,objtool) $(cmd_objtool)				  \
+-	$(cmd_modversions_S)
++	@$(call cmd_and_fixdep,as_o_S)
++	$(call cmd,gen_ksymdeps)
++	$(call cmd,objtool)
++	$(call cmd,modversions_S)
+ endef
+ 
+ # List module undefined symbols (or empty line if not enabled)
 -- 
 2.7.4
 
