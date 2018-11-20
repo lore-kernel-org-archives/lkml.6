@@ -2,45 +2,45 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07DC5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080EDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C216F206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:06:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C216F206BB
+	by mail.kernel.org (Postfix) with ESMTP id CA82E206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 05:06:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA82E206BB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=firstfloor.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731786AbeKTPdg (ORCPT
+        id S1731880AbeKTPdv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 10:33:36 -0500
-Received: from mga12.intel.com ([192.55.52.136]:52748 "EHLO mga12.intel.com"
+        Tue, 20 Nov 2018 10:33:51 -0500
+Received: from mga06.intel.com ([134.134.136.31]:33962 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730962AbeKTPdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 10:33:36 -0500
+        id S1730962AbeKTPdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 10:33:51 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 21:06:24 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 21:06:39 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,255,1539673200"; 
-   d="scan'208";a="87760804"
+   d="scan'208";a="281400892"
 Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by fmsmga008.fm.intel.com with ESMTP; 19 Nov 2018 21:06:24 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 19 Nov 2018 21:06:39 -0800
 Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 5833C3018C4; Mon, 19 Nov 2018 21:06:24 -0800 (PST)
+        id 81E6C3018C4; Mon, 19 Nov 2018 21:06:39 -0800 (PST)
 From:   Andi Kleen <andi@firstfloor.org>
 To:     acme@kernel.org
 Cc:     linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        Andi Kleen <ak@linux.intel.com>, milian.wolff@kdab.com,
-        adrian.hunter@intel.com
-Subject: [PATCH] perf script: Fix LBR skid dump problems in brstackinsn
-Date:   Mon, 19 Nov 2018 21:06:17 -0800
-Message-Id: <20181120050617.4119-1-andi@firstfloor.org>
+        Andi Kleen <ak@linux.intel.com>
+Subject: [PATCH] perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
+Date:   Mon, 19 Nov 2018 21:06:35 -0800
+Message-Id: <20181120050635.4215-1-andi@firstfloor.org>
 X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -49,137 +49,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-This is a fix for another instance of the skid problem Milian
-recently found [1]
+Fix incorrect event names for the Load_Miss_Real_Latency metric for
+Skylake and Skylake Server.
 
-The LBRs don't freeze at the exact same time as the PMI is triggered.
-The perf script brstackinsn code that dumps LBR assembler
-assumes that the last branch in the LBR leads to the sample point.
-But with skid it's possible that the CPU executes one or more branches
-before the sample, but which do not appear in the LBR.
+Fixes https://github.com/andikleen/pmu-tools/issues/158
 
-What happens then is either that the sample point is before
-the last LBR branch. In this case the dumper sees a negative
-length and ignores it. Or it the sample point is long after
-the last branch. Then the dumper sees a very long block and dumps
-it upto its block limit (16k bytes), which is noise in the output.
+Before:
 
-On typical sample session this can happen regularly.
+% perf stat -M Load_Miss_Real_Latency true
+event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
+                                  \___ parser error
 
-This patch tries to detect and handle the situation. On the last
-block that is dumped by the LBR dumper we always stop on the first
-branch. If the block length is negative just scan forward to the
-first branch. Otherwise scan until a branch is found.
+ Usage: perf stat [<options>] [<command>]
 
-The PT decoder already has a function that uses the instruction
-decoder to detect branches, so we can just reuse it here.
+    -M, --metrics <metric/metric group list>
+                          monitor specified metrics or metric groups (separated by ,)
 
-Then when a terminating branch is found print an indication
-and stop dumping. This might miss a few instructions, but at least
-shows no runaway blocks.
+After:
 
-Cc: milian.wolff@kdab.com
-Cc: adrian.hunter@intel.com
+% perf stat -M Load_Miss_Real_Latency true
+
+ Performance counter stats for 'true':
+
+           279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
+             4,784      mem_load_uops_retired.l1_miss
+            15,188      mem_load_uops_retired.hit_lfb
+
+       0.000899640 seconds time elapsed
+
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 ---
- tools/perf/builtin-script.c                    | 18 +++++++++++++++++-
- tools/perf/util/dump-insn.c                    |  8 ++++++++
- tools/perf/util/dump-insn.h                    |  2 ++
- .../intel-pt-decoder/intel-pt-insn-decoder.c   |  8 ++++++++
- 4 files changed, 35 insertions(+), 1 deletion(-)
+ tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
+ tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 4da5e32b9e03..11868bf39e66 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1049,9 +1049,18 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 
- 	/*
- 	 * Print final block upto sample
-+	 *
-+	 * Due to pipeline delays the LBRs might be missing a branch
-+	 * or two, which can result in very large or negative blocks
-+	 * between final branch and sample. When this happens just
-+	 * continue walking after the last TO until we hit a branch.
- 	 */
- 	start = br->entries[0].to;
- 	end = sample->ip;
-+	if (end < start) {
-+		/* Missing jump. Scan 128 bytes for the next branch */
-+		end = start + 128;
-+	}
- 	len = grab_bb(buffer, start, end, machine, thread, &x.is64bit, &x.cpumode, true);
- 	printed += ip__fprintf_sym(start, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
- 	if (len <= 0) {
-@@ -1060,7 +1069,6 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 			      machine, thread, &x.is64bit, &x.cpumode, false);
- 		if (len <= 0)
- 			goto out;
--
- 		printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", sample->ip,
- 			dump_insn(&x, sample->ip, buffer, len, NULL));
- 		goto out;
-@@ -1070,6 +1078,14 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 				   dump_insn(&x, start + off, buffer + off, len - off, &ilen));
- 		if (ilen == 0)
- 			break;
-+		if (arch_is_branch(buffer + off, len - off, x.is64bit) &&
-+			start + off != sample->ip) {
-+			/*
-+			 * Hit a missing branch. Just stop.
-+			 */
-+			printed += fprintf(fp, "\t... not reaching sample ...\n");
-+			break;
-+		}
- 	}
- out:
- 	return printed;
-diff --git a/tools/perf/util/dump-insn.c b/tools/perf/util/dump-insn.c
-index 10988d3de7ce..2bd8585db93c 100644
---- a/tools/perf/util/dump-insn.c
-+++ b/tools/perf/util/dump-insn.c
-@@ -13,3 +13,11 @@ const char *dump_insn(struct perf_insn *x __maybe_unused,
- 		*lenp = 0;
- 	return "?";
- }
-+
-+__weak
-+int arch_is_branch(const unsigned char *buf __maybe_unused,
-+		   size_t len __maybe_unused,
-+		   int x86_64 __maybe_unused)
-+{
-+	return 0;
-+}
-diff --git a/tools/perf/util/dump-insn.h b/tools/perf/util/dump-insn.h
-index 0e06280a8860..650125061530 100644
---- a/tools/perf/util/dump-insn.h
-+++ b/tools/perf/util/dump-insn.h
-@@ -20,4 +20,6 @@ struct perf_insn {
- 
- const char *dump_insn(struct perf_insn *x, u64 ip,
- 		      u8 *inbuf, int inlen, int *lenp);
-+int arch_is_branch(const unsigned char *buf, size_t len, int x86_64);
-+
- #endif
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-index 54818828023b..1c0e289f01e6 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-@@ -180,6 +180,14 @@ int intel_pt_get_insn(const unsigned char *buf, size_t len, int x86_64,
- 	return 0;
- }
- 
-+int arch_is_branch(const unsigned char *buf, size_t len, int x86_64)
-+{
-+	struct intel_pt_insn in;
-+	if (intel_pt_get_insn(buf, len, x86_64, &in) < 0)
-+		return -1;
-+	return in.branch != INTEL_PT_BR_NO_BRANCH;
-+}
-+
- const char *dump_insn(struct perf_insn *x, uint64_t ip __maybe_unused,
- 		      u8 *inbuf, int inlen, int *lenp)
- {
+diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
+diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
 -- 
 2.17.2
 
