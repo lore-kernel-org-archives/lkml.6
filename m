@@ -2,170 +2,116 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62784C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44375C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF7C2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05D0320671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=yehs2007@zoho.com header.b="mKwGN9wE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDF7C2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=zoho.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eOXrG9dZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D0320671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeKTUuc (ORCPT
+        id S1727993AbeKTUvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:50:32 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25466 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeKTUub (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:50:31 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1542709282; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=hTxHz5DGo19Ny9KMCReq6pElGw2VHGwsKbTeYoZXI9kGN6S8H8sDecAp8pVyLs6ninaT9miuDLW/P1sjNUFXmNVVOzAcz/Dzq2q0TUNJLS2e/kx7FsHOpcJh2qEQK4qQO0oEdbGHpIrS0J5NNoiA0nu/8kLLMNftUEOhfmOZvAA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1542709282; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=jTSA+Zs1+7240+81mturwydytJwomKEmU0d3STdG9hM=; 
-        b=lhNnEjVi2k4UpZtnIZz/EDS7ttApQ/sADEH91ZlSLW5cS+Oc3tmyuCE0qHlpp6T6cvCOj1olkjEkCxXSXhAAt0NW361kESDQVlAO6HHjFuVGiireWzgmg3KxbKzw6DnmpZpoDRs5U5EXBVM6ybDY4ps4hWbk0ZWEFqzMpTL8PU0=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=yehs2007@zoho.com;
-        dmarc=pass header.from=<yehs2007@zoho.com> header.from=<yehs2007@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=v+ol4wC+zrNtnk+7oNXY8mD2caQFtrhFLHi8DranfE7G2ydwK/v8awFDm4DJIUXtg1a3jBV2ZPoy
-    0N8oJCLZ77iYZGI1IBj/4EJlTTg9IyBqTVRHRhfMI5kMRzHSp0Qy  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1542709282;
-        s=default; d=zoho.com; i=yehs2007@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=3228; bh=jTSA+Zs1+7240+81mturwydytJwomKEmU0d3STdG9hM=;
-        b=mKwGN9wEH4U4+Hj3tm2/faI6lZ14eTWQJdCZobeae/vUakbmNjb+CTrCsak7245Z
-        Apa9FCzTzlTLQhL9M0ePhrGIsJuVqvzbRuAny07KUklZsUV7A+9bEAL1HfOYMPiLPi4
-        Xmq9ZdeOThiJhtQ1bCi3r75IYym1qYMdZlo78+g4=
-Received: from YEHS1XR956R00D1.lenovo.com (58.243.153.247 [58.243.153.247]) by mx.zohomail.com
-        with SMTPS id 1542709279011240.5816416360435; Tue, 20 Nov 2018 02:21:19 -0800 (PST)
-From:   Huaisheng Ye <yehs2007@zoho.com>
-To:     linux-nvdimm@lists.01.org, agk@redhat.com, snitzer@redhat.com,
-        dm-devel@redhat.com, dan.j.williams@intel.com, willy@infradead.org,
-        zwisler@kernel.org, jack@suse.cz, dave.jiang@intel.com,
-        vishal.l.verma@intel.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>
-Subject: [RFC PATCH 2/3] dm: expand hc_map in mapped_device for lack of map
-Date:   Tue, 20 Nov 2018 18:20:36 +0800
-Message-Id: <20181120102037.4536-3-yehs2007@zoho.com>
-X-Mailer: git-send-email 2.17.0.windows.1
-In-Reply-To: <20181120102037.4536-1-yehs2007@zoho.com>
-References: <20181120102037.4536-1-yehs2007@zoho.com>
-X-ZohoMailClient: External
+        Tue, 20 Nov 2018 15:51:24 -0500
+Received: from mail-eopbgr40054.outbound.protection.outlook.com ([40.107.4.54]:42325
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726546AbeKTUvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:51:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CDNHDzkIRk0QBT0WxHhkDoODNrEaugXS9L2ZFghqEk4=;
+ b=eOXrG9dZeMCrdrrBX6Fsvvx6RKxnCyOMSvAkYVrEaNDVC1PwZrU2xWZajQVnvycGrfO6ZPUTK2Ow2VUeR6HiaGHSq2AH4WkluKm9vMhKVY5ItLvmEX3abhna7fuvpwSVdkPU/s6Z+iMXy2wVlxKr0t3A9xQ9quR8+zfgET43EDs=
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
+ VI1PR04MB4495.eurprd04.prod.outlook.com (20.177.54.89) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.28; Tue, 20 Nov 2018 10:22:57 +0000
+Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547]) by VI1PR04MB5533.eurprd04.prod.outlook.com
+ ([fe80::8484:31d3:d034:a547%5]) with mapi id 15.20.1361.013; Tue, 20 Nov 2018
+ 10:22:57 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "stefan@agner.ch" <stefan@agner.ch>
+CC:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "tpiepho@impinj.com" <tpiepho@impinj.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
+Thread-Topic: [PATCH 2/2] PCI: imx6: limit DBI register length
+Thread-Index: AQHUf+wjuvgCFMswEka/8Nnu3zUaUKVYdieA
+Date:   Tue, 20 Nov 2018 10:22:56 +0000
+Message-ID: <ceb95fbdf0f6d0e0eeb1db3a22743f1453c8e060.camel@nxp.com>
+References: <20181119094144.4127-1-stefan@agner.ch>
+         <20181119094144.4127-2-stefan@agner.ch>
+In-Reply-To: <20181119094144.4127-2-stefan@agner.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB4495;6:aBiOMKrqCJhdYBPRIaIDipkC3VAQ/9xugiGhyxLXv/a90Kq0RFvOv76ebZCeD0l+CEOdBY4wI8DpNZ8a6IubjkzONrvf3HRer4teyIW2sLY/94iklMiHmHhg1I89tHBlrhBWtlhr1+3sek6CLpdIK/+CPnd7RunwFVWHpwGUhNSf8t31I57vDzw6DHi2QlZ4FQhiJIeVVfR19C3hn/W8/v0OY+LPwQloky2mim2Tp8OW8ks0pj+KRF67SeR/MF8PAis8HKAUcBkDRAPdylnPqaMe9NGUMQOyWdTY756yPQOFH9QQYmSxP23S/s0MoYrRLw+bVybN1RLfwHZX0h0ejahKm+tWjN8vSBy5jXDi/rgCcmbWzEj2Mwq0P4oXLE7JTJiCcUVeY7AO7SRWV4d3gBRcQatEGaBiYX4OijNyxNBUxRQdNeuimTr/kW6aYXLMEbiGZNHCPjf/JMTBjNwcsA==;5:q9PzmPq5zSzC8IZ/2DFPu+EqF9zj1PGY9aGOOi8zxtHsmLdU3z+I1VR40wSK7mGBGIXZweQWezDKJ0KE6slY9e9JXWxu11lZHVLKPZsSVFQQjo0lF3PH2knskjWQuqYujfqF2CV6NG4zeJ9jM+Chs78yzPV+FDkj86/o450VW6I=;7:16FHW3NHb5wByIPB93ruppiTtDev9ephF3SnGW6k+t/lDj+ZH6F461aeUE3rjZo5zFYDWBsP9Leq0etRxouEax5S3eZJl5uT/nzZl3b3mdMpPzdsB0RWSTAEkNI5Gcbm5dO/1A0LWsdCsIh/7v4CdQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 4b72a7c5-404a-489e-8e1f-08d64ed223db
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4495;
+x-ms-traffictypediagnostic: VI1PR04MB4495:
+x-microsoft-antispam-prvs: <VI1PR04MB4495B642E6F0F27130F7062AEED90@VI1PR04MB4495.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4495;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4495;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(396003)(136003)(199004)(189003)(1730700003)(5640700003)(68736007)(8676002)(81156014)(50226002)(81166006)(8936002)(3846002)(2906002)(6116002)(86362001)(5660300001)(14454004)(53936002)(66066001)(478600001)(6512007)(25786009)(6246003)(118296001)(2501003)(2351001)(305945005)(106356001)(36756003)(256004)(4326008)(4001150100001)(14444005)(6436002)(6486002)(2900100001)(102836004)(186003)(39060400002)(446003)(26005)(11346002)(105586002)(476003)(71190400001)(6916009)(2616005)(54906003)(316002)(44832011)(76176011)(486006)(99286004)(6506007)(97736004)(7736002)(71200400001)(229853002)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4495;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: fkQnyitUZl303bpV44aL2FgaAXuiu0ZKrwUMVAQnQVMu3K13x9lSix9OWvWN60NUmuBgCvfo51TFzbugBsKS7t27QhsJ1XtFhpHJ2bJ1pT8o8O19cX9c17ILsH1RE9iXDWpmGqy4RyPaqG+wMuPE+hc8efYY2QY1X1SWSa2BE8TAOoqQNItd+NnIPneYxbIBghF2UNicQivjcb72bk8aE/E4nf0vcoFywymnQIQ08vOEni65fQZ6Yff4k/LMyeOfkhxpAXpaOWpKIddhPhAHhAN4BFqWKbzuLIsc4IWPMAxQNp1/foS23lQ6i+s3i7nISbdZB2A/XNWynMNgcbwDxLMF3yz50qLYIXIfLxGOQlc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E98A78B1129A474A833826780843F5E0@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b72a7c5-404a-489e-8e1f-08d64ed223db
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:22:56.9963
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4495
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huaisheng Ye <yehs1@lenovo.com>
-
-Sometimes dm_swap_table couldn't be used in time.
-
-For example, during the origin construction of
-dm-snapshot, the sys_ioctl table_load will try to
-detect the lower device origin-real whether support
-direct access or not. But origin-real md's struct
-dm-table pointer has not yet been assigned real address
-in time by dev_suspend.
-
-So I expand hc_map for get the address from struct
-hash_cell directly in this case.
-
-Here is the call trace, dm_dax_direct_access will call
-dm_dax_get_live_target for get the struct dm_table pointer.
-
-[  213.975827] Call Trace:
-[  213.975832]  dump_stack+0x5a/0x73
-[  213.975840]  dm_dax_direct_access+0x12b/0x1b0 [dm_mod]
-[  213.975845]  dax_direct_access+0x2d/0x60
-[  213.975848]  __bdev_dax_supported+0x162/0x2a0
-[  213.975851]  ? dump_stack+0x5a/0x73
-[  213.975859]  device_supports_dax+0x15/0x20 [dm_mod]
-[  213.975867]  dm_table_supports_dax.isra.13+0x7d/0xa0 [dm_mod]
-[  213.975875]  dm_table_complete+0x3fb/0x750 [dm_mod]
-[  213.975883]  table_load+0x19a/0x390 [dm_mod]
-[  213.975891]  ? retrieve_status+0x1c0/0x1c0 [dm_mod]
-[  213.975898]  ctl_ioctl+0x1d8/0x450 [dm_mod]
-[  213.975909]  dm_ctl_ioctl+0xa/0x10 [dm_mod]
-[  213.975913]  do_vfs_ioctl+0xa9/0x620
-[  213.975918]  ? syscall_trace_enter+0x1c9/0x2b0
-[  213.975923]  ksys_ioctl+0x60/0x90
-[  213.975927]  __x64_sys_ioctl+0x16/0x20
-[  213.975931]  do_syscall_64+0x5b/0x180
-[  213.975936]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Signed-off-by: Huaisheng Ye <yehs1@lenovo.com>
----
- drivers/md/dm-core.h  |  1 +
- drivers/md/dm-ioctl.c |  1 +
- drivers/md/dm.c       | 15 +++++++++++++++
- 3 files changed, 17 insertions(+)
-
-diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-index 224d445..5577d90 100644
---- a/drivers/md/dm-core.h
-+++ b/drivers/md/dm-core.h
-@@ -40,6 +40,7 @@ struct mapped_device {
- 	 * dereference.
- 	 */
- 	void __rcu *map;
-+	struct dm_table *hc_map;
- 
- 	unsigned long flags;
- 
-diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
-index f666778..a27016e 100644
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1365,6 +1365,7 @@ static int table_load(struct file *filp, struct dm_ioctl *param, size_t param_si
- 	if (hc->new_map)
- 		old_map = hc->new_map;
- 	hc->new_map = t;
-+	hc->md->hc_map = hc->new_map;
- 	up_write(&_hash_lock);
- 
- 	param->flags |= DM_INACTIVE_PRESENT_FLAG;
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index c510179..19b48bb 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -1080,6 +1080,21 @@ static struct dm_target *dm_dax_get_live_target(struct mapped_device *md,
- 	struct dm_target *ti;
- 
- 	map = dm_get_live_table(md, srcu_idx);
-+	if (!map) {
-+		/* Sometimes dm_swap_table couldn't be used in time.
-+		 *
-+		 * For example, during the origin construction of
-+		 * dm-snapshot, the sys_ioctl table_load will try to
-+		 * detect the lower device origin-real whether support
-+		 * direct access or not. But origin-real device md's struct
-+		 * dm-table pointer has not yet been assigned real address.
-+		 * So hc_map has been used for get the address from
-+		 * struct hash_cell directly.
-+		 */
-+		DMINFO("failed to get map, use hc_map insteadly");
-+		map = md->hc_map;
-+	}
-+
- 	if (!map)
- 		return NULL;
- 
--- 
-1.8.3.1
-
-
+T24gTW9uLCAyMDE4LTExLTE5IGF0IDEwOjQxICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
+IERlZmluZSB0aGUgbGVuZ3RoIG9mIHRoZSBEQkkgcmVnaXN0ZXJzLiBUaGlzIG1ha2VzIHN1cmUg
+dGhhdA0KPiB0aGUga2VybmVsIGRvZXMgbm90IGFjY2VzcyByZWdpc3RlcnMgYmV5b25kIHRoYXQg
+cG9pbnQsIGF2b2lkaW5nDQo+IHRoZSBmb2xsb3dpbmcgYWJvcnQgb24gYSBpLk1YIDZRdWFkOg0K
+PiAgICMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NvYy8xZmZjMDAwLnBjaWUvcGNpMDAwMFw6MDAv
+MDAwMFw6MDBcOjAwLjAvY29uZmlnDQo+ICAgWyAgMTAwLjAyMTQzM10gVW5oYW5kbGVkIGZhdWx0
+OiBpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQgKDB4MTQwNikgYXQgMHhiNmVhNzAwMA0KPiAgIC4u
+Lg0KPiAgIFsgIDEwMC4wNTY0MjNdIFBDIGlzIGF0IGR3X3BjaWVfcmVhZCsweDUwLzB4ODQNCj4g
+ICBbICAxMDAuMDYwNzkwXSBMUiBpcyBhdCBkd19wY2llX3JkX293bl9jb25mKzB4NDQvMHg0OA0K
+PiAgIC4uLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU3RlZmFuIEFnbmVyIDxzdGVmYW5AYWduZXIu
+Y2g+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpLWlt
+eDYuYw0KDQo+ICtzdHJ1Y3QgaW14Nl9wY2llX2RydmRhdGEgew0KPiArCWVudW0gaW14Nl9wY2ll
+X3ZhcmlhbnRzIHZhcmlhbnQ7DQo+ICsJaW50CQkJZGJpX2xlbmd0aDsNCj4gK307DQoNClR1cm5p
+bmcgaW14Nl9wY2llIGRydmRhdGEgaW50byBhIHN0cnVjdCBpcyB2ZXJ5IG5pY2UsIG1heWJlIGlu
+IHRoZQ0KZnV0dXJlIHNvbWUgb2YgdGhlIGxvbmcgY2FzZSBzdGF0ZW1lbnRzIGluIHRoaXMgZHJp
+dmVyIGNvdWxkIGJlIHNwbGl0DQppbnRvIHBlci1zb2MgZnVuY3Rpb25zIGNhbGxlZCB2aWEgZHJ2
+ZGF0YS4NCg==
