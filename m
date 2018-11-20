@@ -2,104 +2,114 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6939C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F41C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1742080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:07:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="yXiT2JB7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1742080C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 0321C20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:13:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0321C20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732640AbeKTLeX (ORCPT
+        id S1730331AbeKTLjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 06:34:23 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:36340 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730331AbeKTLeW (ORCPT
+        Tue, 20 Nov 2018 06:39:52 -0500
+Received: from lgeamrelo13.lge.com ([156.147.23.53]:37764 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726119AbeKTLjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 06:34:22 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wAK15ZEX029284;
-        Tue, 20 Nov 2018 10:05:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wAK15ZEX029284
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542675936;
-        bh=2k9f55soMPd/Iws6FlSrWOYqKz514YwJQl2vshauAoE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yXiT2JB7LNlHMv9ppcREechBTbTG7qYwIr1yRDWRceeY1sWf6OnlTqR04blEhyqM0
-         jqmXK9WE79jvjMiF4D6HgP7EiHQ4b/xUAnZYzQjFEL0gNsGtoBKZkBdeOROTXIIqMN
-         kXD9rPuGvJi+NwTJPhvK49g7tbb1bB5bT71MZ/XHHD5uyHdk9juymkKnBBlhEHdHYB
-         zRlzv4lk+mKBy2sb7NyRX/AjN9SUs/kSKf/PAUrBVfYnftcEYX4VGzNuUveupC2mjo
-         7W7DRtWVn3opu6Z9Bte2MC71I4OuUhROzoFcqM6oMms57mtSpMzo+309YRjv09WU7+
-         l1fo5RjlQnhBA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Richard Weinberger <richard@nod.at>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Dike <jdike@addtoit.com>
-Subject: [PATCH v2 0/9] kbuild: clean-up modversion, TRIM_UNUSED_KSYMS, if_changed_rule, etc.
-Date:   Tue, 20 Nov 2018 10:05:21 +0900
-Message-Id: <1542675930-21114-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 20 Nov 2018 06:39:52 -0500
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.53 with ESMTP; 20 Nov 2018 10:13:21 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.127 with ESMTP; 20 Nov 2018 10:13:21 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Tue, 20 Nov 2018 10:13:21 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     David Miller <davem@davemloft.net>, acme@kernel.org,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, kernel-team@lge.com
+Subject: Re: [PATCH RFC] hist lookups
+Message-ID: <20181120011321.GD20153@sejong>
+References: <20181105203447.GA25674@krava>
+ <20181105.194542.476367332910923203.davem@davemloft.net>
+ <20181105.200321.1569039579935458312.davem@davemloft.net>
+ <20181105.205342.1568518551892125916.davem@davemloft.net>
+ <20181106115436.GE3164@krava>
+ <20181119052603.GA20153@sejong>
+ <20181119091257.GA8967@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181119091257.GA8967@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a Kbuild maintainer, I always struggle to keep the core makefiles
-clean because people tend to squeeze more and more clutter code into
-the kbuild core in order to do what they want to do.
+On Mon, Nov 19, 2018 at 10:12:57AM +0100, Jiri Olsa wrote:
+> On Mon, Nov 19, 2018 at 02:26:03PM +0900, Namhyung Kim wrote:
+> > Hi Jirka
+> > 
+> > Sorry for late!
+> > 
+> > On Tue, Nov 06, 2018 at 12:54:36PM +0100, Jiri Olsa wrote:
+> > > On Mon, Nov 05, 2018 at 08:53:42PM -0800, David Miller wrote:
+> > > > 
+> > > > Jiri,
+> > > > 
+> > > > Because you now run queued_events__queue() lockless with that condvar
+> > > > trick, it is possible for top->qe.in to be seen as one past the data[]
+> > > > array, this is because the rotate_queues() code goes:
+> > > > 
+> > > > 	if (++top->qe.in > &top->qe.data[1])
+> > > > 		top->qe.in = &top->qe.data[0];
+> > > > 
+> > > > So for a brief moment top->qe.in is out of range and thus
+> > > > perf_top__mmap_read_idx() can try to enqueue to top->qe.data[2]
+> > > > 
+> > > > We can just do:
+> > > > 
+> > > > 	if (top->qe.in == &top->qe.data[1])
+> > > > 		top->qe.in = &top->qe.data[0];
+> > > > 	else
+> > > > 		top->qe.in = &top->qe.data[1];
+> > > > 
+> > > > Or, make top->qe.in an index, and simply go:
+> > > > 
+> > > > 	top->qe.in ^= 1;
+> > > > 
+> > > > Either way will fix the bug.
+> > > 
+> > > ah right.. I had originaly full mutex around that,
+> > > then I switched it off in the last patch and did
+> > > not realize this implication.. nice ;-)
+> > 
+> > I like the rotate_queues() using cond-variable.  Have you tried to use
+> > the same for hists->lock in hists__get_rotate_entries_in() too?
+> > 
+> > Eventually it'd be nice to avoid locks when a single thread processes
+> > all the events.
+> 
+> yep, I thought we could use it there as well, but it could
+> be more tricky because we use hists->lock for that, which
+> is used on other places as well.. will check
 
-The biggest step forward in this series is to re-implement
-the build trick of CONFIG_TRIM_UNUSED_KSYMS in a cleaner way.
-scripts/Kbuild.include now looks nice again.
-Also, in my rough estimation, building with CONFIG_TRIM_UNUSED_KSYMS
-became 40-50 % faster.
+I found hists->lock used only 3 places - hists__get_rotate_entries_in()
+and perf_event__process_sample() to protect rotating.  The other place
+is perf_top__record_precise_ip() which is called during the sample
+processing before going to sleep.
 
-Besides those, nice cleanups are here and there.
+Hmm.. I think processing thread should not go to sleep anyway.  It's
+the responsibility of display thread show warning (and waiting for
+user input or timeout).  I'll try to do something..
 
-Masahiro Yamada (9):
-  kbuild: let fixdep directly write to .*.cmd files
-  kbuild: remove redundant 'set -e' from filechk_* defines
-  kbuild: remove redundant 'set -e' from sub_cmd_record_mcount
-  kbuild: refactor modversions build rules
-  kbuild: simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
-  kbuild: change if_changed_rule for multi-line recipe
-  kbuild: remove trailing semicolon from cmd_* passed to if_changed_rule
-  kbuild: refactor if_changed and if_changed_dep
-  kbuild: remove redundant 'set -e' from cmd_* defines
-
- Makefile                     |  13 +++---
- arch/um/Makefile             |   2 +-
- include/asm-generic/export.h |  13 +++---
- include/linux/export.h       |  18 ++++----
- scripts/Kbuild.include       |  49 +++-----------------
- scripts/Makefile.build       | 105 ++++++++++++++++++-------------------------
- scripts/Makefile.lib         |   2 +-
- scripts/basic/fixdep.c       |  31 ++-----------
- scripts/gen_ksymdeps.sh      |  25 +++++++++++
- scripts/package/Makefile     |   1 -
- 10 files changed, 106 insertions(+), 153 deletions(-)
- create mode 100755 scripts/gen_ksymdeps.sh
-
--- 
-2.7.4
-
+Thanks,
+Namhyung
