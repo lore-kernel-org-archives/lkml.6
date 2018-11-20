@@ -2,139 +2,202 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF6F4C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4891C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B21E4206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:42:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B21E4206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 69A9C206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:43:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r9nG6HiW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69A9C206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbeKTXLj (ORCPT
+        id S1727259AbeKTXMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:11:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:48294 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKTXLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:11:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EB7C80D;
-        Tue, 20 Nov 2018 04:42:41 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3F3D53F5B7;
-        Tue, 20 Nov 2018 04:42:39 -0800 (PST)
-Subject: Re: [PATCH v3 03/10] sched/topology: Provide cfs_overload_cpus bitmap
-To:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
-        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
-        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, quentin.perret@arm.com,
-        linux-kernel@vger.kernel.org
-References: <1541767840-93588-1-git-send-email-steven.sistare@oracle.com>
- <1541767840-93588-4-git-send-email-steven.sistare@oracle.com>
- <de2d2824-d66e-8852-d67a-d58b478b74c1@arm.com>
- <0857925d-a24e-90ea-e28c-90d69b2f66dd@oracle.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <7d9b6789-af17-bcab-e52d-7e05483e10ea@arm.com>
-Date:   Tue, 20 Nov 2018 12:42:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 18:12:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59614 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbeKTXMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 18:12:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bDC1jsxvFOd8I5xXFBDzemAk6occ6ogzcepkNcGkf7U=; b=r9nG6HiWuCsZQBRPL3NoAUKNO
+        nwNXdYVo9SsmR7+Gf7fqwvCtJUA1SXaPrYbZR6irKlSxajJPwW5Rh/ODmQ1ZJ6xBn9lNAt+OzDHPE
+        xYqf7fEzv9ssoqqx6JcHG8cAzImyekK7ubZ9bU26hukv2ZbScTCmqfqKR+R7Z84vgskp0fa/Z1Mod
+        BRT48rGfLvQun+zMkoVLRnO48LGyfSIHCrmBA6+z4yEjOx3qcqg7m5A5TjQI7s0DWWqjKzv38kvgo
+        sXXPZsWIPuSv+33ekrIdirTKVAxNHz+kVCrmt50nCUuvX3UaShkmKTl4i5eGVsVXHuyPlRfSS8jsV
+        W2hwkQA2g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP5MP-0003Qm-V4; Tue, 20 Nov 2018 12:42:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 51D6F2029F87F; Tue, 20 Nov 2018 13:42:32 +0100 (CET)
+Date:   Tue, 20 Nov 2018 13:42:32 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 00/10] x86/alternative: text_poke() fixes
+Message-ID: <20181120124232.GK2131@hirez.programming.kicks-ass.net>
+References: <20181113130730.44844-1-namit@vmware.com>
 MIME-Version: 1.0
-In-Reply-To: <0857925d-a24e-90ea-e28c-90d69b2f66dd@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/11/2018 17:33, Steven Sistare wrote:
-[...]
->>
->> Thinking about misfit stealing, we can't use the sd_llc_shared's because
->> on big.LITTLE misfit migrations happen across LLC domains.
->>
->> I was thinking of adding a misfit sparsemask to the root_domain, but
->> then I thought we could do the same thing for cfs_overload_cpus.
->>
->> By doing so we'd have a single source of information for overloaded CPUs,
->> and we could filter that down during idle balance - you mentioned earlier
->> wanting to try stealing at each SD level. This would also let you get
->> rid of [PATCH 02].
->>
->> The main part of try_steal() could then be written down as something like
->> this:
->>
->> ----->8-----
->>
->> for_each_domain(this_cpu, sd) {
->> 	span = sched_domain_span(sd)
->> 		
->> 	for_each_sparse_wrap(src_cpu, overload_cpus) {
->> 		if (cpumask_test_cpu(src_cpu, span) &&
->> 		    steal_from(dts_rq, dst_rf, &locked, src_cpu)) {
->> 			stolen = 1;
->> 			goto out;
->> 		}
->> 	}
->> }
->>
->> ------8<-----
->>
->> We could limit the stealing to stop at the highest SD_SHARE_PKG_RESOURCES
->> domain for now so there would be no behavioural change - but we'd
->> factorize the #ifdef SCHED_SMT bit. Furthermore, the door would be open
->> to further stealing.
->>
->> What do you think?
-> 
-> That is not efficient for a multi-level search because at each domain level we 
-> would (re) iterate over overloaded candidates that do not belong in that level.
+On Tue, Nov 13, 2018 at 05:07:20AM -0800, Nadav Amit wrote:
+> v4->v5:
+> - Fix Xen breakage [Damian Tometzki]
+> - BUG_ON() when poking_mm initialization fails [PeterZ]
+> - Better comments on "x86/mm: temporary mm struct"
+> - Cleaner removal of the custom poker
+
+I'll re-iterate my position: it is impossible for the text not to match,
+and if it somehow does not match, something went sideways in an
+unrecoverably fashion.
+
+text_poke() must not fail, ever. If it does, our text is inconsistent
+and we must abort/panic/bug.
+
+The only way I will accept anything else is if someone can come up with
+a sensible scenario of text_poke() failing and recovering from it.
+AFAICT there is no possible way to gracefully recover.
+
+Consider a jump label with multiple patch sites; we patch the first,
+then fail. In order to restore to a sane state, we must undo the
+patching of the first, but undoing text_poke() fails again. Then
+what?
+
+Allowing text_poke() to fail only creates an unfixable mess. Esp. since
+there is no sane scenario under which is can fail.
+
+---
 
 
-Mmm I was thinking we could abuse the wrap() and start at
-(fls(prev_span) + 1), but we're not guaranteed to have contiguous spans -
-the Arm Juno for instance has [0, 3, 4], [1, 2] as MC-level domains, so
-that goes down the drain.
-
-Another thing that has been trotting in my head would be some helper to
-create a cpumask from a sparsemask (some sort of sparsemask_span()),
-which would let us use the standard mask operators:
-
------>8-----
-struct cpumask *overload_span = sparsemask_span(overload_cpus)
-
-for_each_domain(this_cpu, sd)
-	for_each_cpu_and(src_cpu, overload_span, sched_domain_span(sd))
-		<steal_from here>
------8>-----
-
-The cpumask could be part of the sparsemask struct to save us the
-allocation, and only updated when calling sparsemask_span().
-
-> To extend stealing across LLC, I would like to keep the per-LLC sparsemask, 
-> but add to each SD a list of sparsemask pointers.  The list nodes would be
-> private, but the sparsemask structs would be shared.  Each list would include
-> the masks that overlap the SD's members.  The list would be a singleton at the
-> core and LLC levels (same as the socket level for most processors), and would 
-> have multiple elements at the NUMA level.
-> 
-
-I see. As for misfit, creating asym_cpucapacity siblings of the sd_llc_*()
-functions seems a bit much - there'd be a lot of redundancy for basically
-just a single shared sparsemask, which is why I was rambling about moving
-things to root_domain.
-
-Having different locations where sparsemasks are stored is a bit of a
-pain which I'd like to avoid, but if it can't be unified I suppose we'll
-have to live with it.
-
-> - Steve
-> 
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -695,7 +695,7 @@ void __init_or_module text_poke_early(vo
+ __ro_after_init struct mm_struct *poking_mm;
+ __ro_after_init unsigned long poking_addr;
+ 
+-static int __text_poke(void *addr, const void *opcode, size_t len)
++static void __text_poke(void *addr, const void *opcode, size_t len)
+ {
+ 	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
+ 	temporary_mm_state_t prev;
+@@ -731,13 +731,10 @@ static int __text_poke(void *addr, const
+ 	 * The lock is not really needed, but this allows to avoid open-coding.
+ 	 */
+ 	ptep = get_locked_pte(poking_mm, poking_addr, &ptl);
+-
+ 	/*
+-	 * If we failed to allocate a PTE, fail. This should *never* happen,
+-	 * since we preallocate the PTE.
++	 * This must not fail; preallocated in poking_init().
+ 	 */
+-	if (WARN_ON_ONCE(!ptep))
+-		goto out;
++	VM_BUG_ON(!ptep)
+ 
+ 	pte = mk_pte(pages[0], PAGE_KERNEL);
+ 	set_pte_at(poking_mm, poking_addr, ptep, pte);
+@@ -795,12 +792,14 @@ static int __text_poke(void *addr, const
+ 	unuse_temporary_mm(prev);
+ 
+ 	pte_unmap_unlock(ptep, ptl);
+-out:
+-	if (memcmp(addr, opcode, len))
+-		r = -EFAULT;
++
++	/*
++	 * If the text doesn't match what we just wrote; something is
++	 * fundamentally screwy, there's nothing we can really do about that.
++	 */
++	BUG_ON(memcmp(addr, opcode, len));
+ 
+ 	local_irq_restore(flags);
+-	return r;
+ }
+ 
+ /**
+@@ -814,21 +813,10 @@ static int __text_poke(void *addr, const
+  * in a way that permits an atomic write. It also makes sure we fit on a single
+  * page.
+  */
+-int text_poke(void *addr, const void *opcode, size_t len)
++void text_poke(void *addr, const void *opcode, size_t len)
+ {
+-	int r;
+-
+ 	lockdep_assert_held(&text_mutex);
+-
+-	r = __text_poke(addr, opcode, len);
+-
+-	/*
+-	 * TODO: change the callers to consider the return value and remove this
+-	 *       historical assertion.
+-	 */
+-	BUG_ON(r);
+-
+-	return r;
++	__text_poke(addr, opcode, len);
+ }
+ 
+ /**
+@@ -847,7 +835,7 @@ int text_poke(void *addr, const void *op
+  */
+ int text_poke_kgdb(void *addr, const void *opcode, size_t len)
+ {
+-	return __text_poke(addr, opcode, len);
++	__text_poke(addr, opcode, len);
+ }
+ 
+ static void do_sync_core(void *info)
+--- a/arch/x86/kernel/kgdb.c
++++ b/arch/x86/kernel/kgdb.c
+@@ -767,10 +767,8 @@ int kgdb_arch_set_breakpoint(struct kgdb
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		return -EBUSY;
+-	err = text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
++	text_poke_kgdb((void *)bpt->bpt_addr, arch_kgdb_ops.gdb_bpt_instr,
+ 			     BREAK_INSTR_SIZE);
+-	if (err)
+-		return err;
+ 	bpt->type = BP_POKE_BREAKPOINT;
+ 
+ 	return err;
+@@ -788,11 +786,8 @@ int kgdb_arch_remove_breakpoint(struct k
+ 	 */
+ 	if (mutex_is_locked(&text_mutex))
+ 		goto knl_write;
+-	err = text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr,
+-			     BREAK_INSTR_SIZE);
+-	if (err)
+-		goto knl_write;
+-	return err;
++	text_poke_kgdb((void *)bpt->bpt_addr, bpt->saved_instr, BREAK_INSTR_SIZE);
++	return 0;
+ 
+ knl_write:
+ 	return probe_kernel_write((char *)bpt->bpt_addr,
