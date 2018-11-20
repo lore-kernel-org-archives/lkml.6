@@ -2,224 +2,445 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4DEC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F454C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D75AC20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:17:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75AC20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B1C8720851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:18:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U/3ej0NQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1C8720851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbeKTTp2 convert rfc822-to-8bit (ORCPT
+        id S1727280AbeKTTqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:45:28 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58870 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726479AbeKTTp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:45:28 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6AC8BD0E67533;
-        Tue, 20 Nov 2018 17:17:18 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
- 17:17:09 +0800
-Date:   Tue, 20 Nov 2018 09:16:50 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Kenneth Lee <liguozhu@hisilicon.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Kenneth Lee <nek.in.cn@gmail.com>,
-        Tim Sell <timothy.sell@unisys.com>,
-        <linux-doc@vger.kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Zaibo Xu <xuzaibo@huawei.com>, <zhangfei.gao@foxmail.com>,
-        <linuxarm@huawei.com>, <haojian.zhuang@linaro.org>,
-        Christoph Lameter <cl@linux.com>,
-        Hao Fang <fanghao11@huawei.com>,
-        Gavin Schenk <g.schenk@eckelmann.de>,
-        "RDMA mailing list" <linux-rdma@vger.kernel.org>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        "Doug Ledford" <dledford@redhat.com>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        David Kershner <david.kershner@unisys.com>,
-        Johan Hovold <johan@kernel.org>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Jens Axboe <axboe@kernel.dk>, <guodong.xu@linaro.org>,
-        linux-netdev <netdev@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        <linux-crypto@vger.kernel.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-accelerators@lists.ozlabs.org>,
-        "Jean-Philippe Brucker" <jean-philippe.brucker@arm.com>,
-        <iommu@lists.linux-foundation.org>
-Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-Message-ID: <20181120091650.0000419a@huawei.com>
-In-Reply-To: <20181120032939.GR4890@ziepe.ca>
-References: <20181112075807.9291-1-nek.in.cn@gmail.com>
-        <20181112075807.9291-2-nek.in.cn@gmail.com>
-        <20181113002354.GO3695@mtr-leonro.mtl.com>
-        <95310df4-b32c-42f0-c750-3ad5eb89b3dd@gmail.com>
-        <20181114160017.GI3759@mtr-leonro.mtl.com>
-        <20181115085109.GD157308@Turing-Arch-b>
-        <20181115145455.GN3759@mtr-leonro.mtl.com>
-        <20181119091405.GE157308@Turing-Arch-b>
-        <20181119184954.GB4890@ziepe.ca>
-        <20181120030702.GH157308@Turing-Arch-b>
-        <20181120032939.GR4890@ziepe.ca>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Tue, 20 Nov 2018 14:46:25 -0500
+Received: from casper.infradead.org ([85.118.1.10]:42334 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726479AbeKTTqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:46:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5JmcfZJzcFKNb9WEKSwefzKvl+WJ+M2v8t6Da1zgxdI=; b=U/3ej0NQeP0OrsBLPipfTMCTq6
+        Z8EZKWQRBFUMt22ConMz0mbWXVSll7xyF3Gb+dJqtSIVqbMEbkkxJ71lyGVvtPxKVQoMnHKAt5njz
+        O/KFyqGfZzxAf9WQtNPBVwDGujHVRAt7X+T/qN+ic4etK1HzxIZQreJiJwQ5hcR4FIfzbbhSFVB+3
+        6G4yqbJAuKrYOYXiS893l8weR6+oUM0Q2BCYkrxgqw4e2LxWtRoJhS1YvKX6cLyXJ6iDB0j/SzuMj
+        J0a3gzmwR9Tj+Pjm5cU89WJNSTJVug0hZXOILw2A/FDpTucXqSLQRXiRJQhEkXcbUtFtZHXV+8E/U
+        uXqCXdLQ==;
+Received: from [177.157.76.226] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP2Ai-0006aE-6k; Tue, 20 Nov 2018 09:18:16 +0000
+Date:   Tue, 20 Nov 2018 07:18:10 -0200
+From:   Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     stakanov <stakanov@eclipso.eu>
+Cc:     linux-media@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: DVB-S PCI card regression on 4.19 / 4.20
+Message-ID: <20181120071810.7c8583b3@coco.lan>
+In-Reply-To: <3267610.1jAA2Txdp3@roadrunner.suse>
+References: <s5hbm6l5cdi.wl-tiwai@suse.de>
+        <1837109.xExTbI5ikD@roadrunner.suse>
+        <20181119215841.0a3abd37@coco.lan>
+        <3267610.1jAA2Txdp3@roadrunner.suse>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC Jean-Phillipe and iommu list.
+Em Tue, 20 Nov 2018 09:07:57 +0100
+stakanov <stakanov@eclipso.eu> escreveu:
+
+> In data marted=C3=AC 20 novembre 2018 00:58:41 CET, Mauro Carvalho Chehab=
+ ha=20
+> scritto:
+> > Em Tue, 20 Nov 2018 00:19:54 +0100
+> >=20
+> > stakanov <stakanov@eclipso.eu> escreveu: =20
+> > > In data marted=C3=AC 20 novembre 2018 00:08:45 CET, Mauro Carvalho Ch=
+ehab ha
+> > >=20
+> > > scritto: =20
+> > > >  uname -a
+> > > >   =20
+> > > > > Linux silversurfer 4.20.0-rc3-1.g7e16618-default #1 SMP PREEMPT M=
+on
+> > > > > Nov 19
+> > > > > 18:54:15 UTC 2018 (7e16618) x86_64 x86_64 x86_64 GNU/Linux =20
+> > > =20
+> > >  uname -a
+> > >   =20
+> > > > Linux silversurfer 4.20.0-rc3-1.g7e16618-default #1 SMP PREEMPT Mon=
+ Nov
+> > > > 19
+> > > > 18:54:15 UTC 2018 (7e16618) x86_64 x86_64 x86_64 GNU/Linux =20
+> > >=20
+> > > from https://download.opensuse.org/repositories/home:/tiwai:/bsc11163=
+74/
+> > > standard/x86_64/
+> > >=20
+> > > So I booted this one, should be the right one.
+> > > sudo dmesg | grep -i b2c2   should give these additional messages?
+> > >=20
+> > > If Takashi is still around, he could confirm. =20
+> >=20
+> > Well, if the patch got applied, you should  now be getting messages sim=
+ilar
+> > (but not identical) to:
+> >=20
+> > 	dvb_frontend_get_frequency_limits: frequencies: tuner: 9150000...21500=
+00,
+> > frontend: 9150000...2150000 dvb_pll_attach: delsys: 5, frequency range:
+> > 9150000..2150000
+> >  =20
+> > > _________________________________________________________________
+> > > ________________________________________________________
+> > > Ihre E-Mail-Postf=C3=A4cher sicher & zentral an einem Ort. Jetzt wech=
+seln und
+> > > alte E-Mail-Adresse mitnehmen! https://www.eclipso.de =20
+> > Thanks,
+> > Mauro =20
+>=20
+>=20
+> My bad.=20
+> With just dmesg:
+>=20
+> [   89.399887] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [   95.020149] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [   95.152049] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [   95.152058] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
+> frequency 1880000 out of range (950000..2150)
+> [   98.356539] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [   98.480372] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [   98.480381] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
+> frequency 1587500 out of range (950000..2150)
+> [  100.016823] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [  100.140619] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [  100.140629] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
+> frequency 1353500 out of range (950000..2150)
+> [  105.361166] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [  105.492972] dvb_frontend_get_frequency_limits: frequencies: tuner:=20
+> 950000...2150000, frontend: 950000000...2150000000
+> [  105.492977] b2c2_flexcop_pci 0000:06:06.0: DVB: adapter 0 frontend 0=20
+> frequency 1944750 out of range (950000..2150)
+>=20
+>=20
+> Which is, I guess the info you need?
+
+Yes, partially. Clearly, the problem is coming from the tuner, with is
+not reporting the frequency in Hz, but I was hoping to see another
+message from the tuner driver, in order for me to be sure about what's
+happening there.
+
+Didn't you get any message that starts with "dvb_pll_attach"?
+
+The thing with Flexcop is that there are several variations, each one
+with a different tuner driver.
+
+Anyway, I guess I found the trouble: it is trying to use the DVB
+cache to check the delivery system too early (at attach time).
+
+I suspect that the enclosed patch will fix the issue. Could you please
+test it?
+
+Thanks!
+Mauro
 
 
-On Mon, 19 Nov 2018 20:29:39 -0700
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
-
-> On Tue, Nov 20, 2018 at 11:07:02AM +0800, Kenneth Lee wrote:
-> > On Mon, Nov 19, 2018 at 11:49:54AM -0700, Jason Gunthorpe wrote:  
-> > > Date: Mon, 19 Nov 2018 11:49:54 -0700
-> > > From: Jason Gunthorpe <jgg@ziepe.ca>
-> > > To: Kenneth Lee <liguozhu@hisilicon.com>
-> > > CC: Leon Romanovsky <leon@kernel.org>, Kenneth Lee <nek.in.cn@gmail.com>,
-> > >  Tim Sell <timothy.sell@unisys.com>, linux-doc@vger.kernel.org, Alexander
-> > >  Shishkin <alexander.shishkin@linux.intel.com>, Zaibo Xu
-> > >  <xuzaibo@huawei.com>, zhangfei.gao@foxmail.com, linuxarm@huawei.com,
-> > >  haojian.zhuang@linaro.org, Christoph Lameter <cl@linux.com>, Hao Fang
-> > >  <fanghao11@huawei.com>, Gavin Schenk <g.schenk@eckelmann.de>, RDMA mailing
-> > >  list <linux-rdma@vger.kernel.org>, Zhou Wang <wangzhou1@hisilicon.com>,
-> > >  Doug Ledford <dledford@redhat.com>, Uwe Kleine-König
-> > >  <u.kleine-koenig@pengutronix.de>, David Kershner
-> > >  <david.kershner@unisys.com>, Johan Hovold <johan@kernel.org>, Cyrille
-> > >  Pitchen <cyrille.pitchen@free-electrons.com>, Sagar Dharia
-> > >  <sdharia@codeaurora.org>, Jens Axboe <axboe@kernel.dk>,
-> > >  guodong.xu@linaro.org, linux-netdev <netdev@vger.kernel.org>, Randy Dunlap
-> > >  <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, Vinod Koul
-> > >  <vkoul@kernel.org>, linux-crypto@vger.kernel.org, Philippe Ombredanne
-> > >  <pombredanne@nexb.com>, Sanyog Kale <sanyog.r.kale@intel.com>, "David S.
-> > >  Miller" <davem@davemloft.net>, linux-accelerators@lists.ozlabs.org
-> > > Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
-> > > User-Agent: Mutt/1.9.4 (2018-02-28)
-> > > Message-ID: <20181119184954.GB4890@ziepe.ca>
-> > > 
-> > > On Mon, Nov 19, 2018 at 05:14:05PM +0800, Kenneth Lee wrote:
-> > >    
-> > > > If the hardware cannot share page table with the CPU, we then need to have
-> > > > some way to change the device page table. This is what happen in ODP. It
-> > > > invalidates the page table in device upon mmu_notifier call back. But this cannot
-> > > > solve the COW problem: if the user process A share a page P with device, and A 
-> > > > forks a new process B, and it continue to write to the page. By COW, the
-> > > > process B will keep the page P, while A will get a new page P'. But you have
-> > > > no way to let the device know it should use P' rather than P.  
-> > > 
-> > > Is this true? I thought mmu_notifiers covered all these cases.
-> > > 
-> > > The mm_notifier for A should fire if B causes the physical address of
-> > > A's pages to change via COW. 
-> > > 
-> > > And this causes the device page tables to re-synchronize.  
-> > 
-> > I don't see such code. The current do_cow_fault() implemenation has nothing to
-> > do with mm_notifer.  
-> 
-> Well, that sure sounds like it would be a bug in mmu_notifiers..
-> 
-> But considering Jean's SVA stuff seems based on mmu notifiers, I have
-> a hard time believing that it has any different behavior from RDMA's
-> ODP, and if it does have different behavior, then it is probably just
-> a bug in the ODP implementation.
-> 
-> > > > In WarpDrive/uacce, we make this simple. If you support IOMMU and it support
-> > > > SVM/SVA. Everything will be fine just like ODP implicit mode. And you don't need
-> > > > to write any code for that. Because it has been done by IOMMU framework. If it  
-> > > 
-> > > Looks like the IOMMU code uses mmu_notifier, so it is identical to
-> > > IB's ODP. The only difference is that IB tends to have the IOMMU page
-> > > table in the device, not in the CPU.
-> > > 
-> > > The only case I know if that is different is the new-fangled CAPI
-> > > stuff where the IOMMU can directly use the CPU's page table and the
-> > > IOMMU page table (in device or CPU) is eliminated.  
-> >
-> > Yes. We are not focusing on the current implementation. As mentioned in the
-> > cover letter. We are expecting Jean Philips' SVA patch:
-> > git://linux-arm.org/linux-jpb.  
-> 
-> This SVA stuff does not look comparable to CAPI as it still requires
-> maintaining seperate IOMMU page tables.
-> 
-> Also, those patches from Jean have a lot of references to
-> mmu_notifiers (ie look at iommu_mmu_notifier).
-> 
-> Are you really sure it is actually any different at all?
-> 
-> > > Anyhow, I don't think a single instance of hardware should justify an
-> > > entire new subsystem. Subsystems are hard to make and without multiple
-> > > hardware examples there is no way to expect that it would cover any
-> > > future use cases.  
-> > 
-> > Yes. That's our first expectation. We can keep it with our driver. But because
-> > there is no user driver support for any accelerator in mainline kernel. Even the
-> > well known QuickAssit has to be maintained out of tree. So we try to see if
-> > people is interested in working together to solve the problem.  
-> 
-> Well, you should come with patches ack'ed by these other groups.
-> 
-> > > If all your driver needs is to mmap some PCI bar space, route
-> > > interrupts and do DMA mapping then mediated VFIO is probably a good
-> > > choice.   
-> > 
-> > Yes. That is what is done in our RFCv1/v2. But we accepted Jerome's opinion and
-> > try not to add complexity to the mm subsystem.  
-> 
-> Why would a mediated VFIO driver touch the mm subsystem? Sounds like
-> you don't have a VFIO driver if it needs to do stuff like that...
-> 
-> > > If it needs to do a bunch of other stuff, not related to PCI bar
-> > > space, interrupts and DMA mapping (ie special code for compression,
-> > > crypto, AI, whatever) then you should probably do what Jerome said and
-> > > make a drivers/char/hisillicon_foo_bar.c that exposes just what your
-> > > hardware does.  
-> > 
-> > Yes. If no other accelerator driver writer is interested. That is the
-> > expectation:)  
-> 
-> I don't think it matters what other drivers do. 
-> 
-> If your driver does not need any other kernel code then VFIO is
-> sensible. In this kind of world you will probably have a RDMA-like
-> userspace driver that can bring this to a common user space API, even
-> if one driver use VFIO and a different driver uses something else.
-> 
-> > You create some connections (queues) to NIC, RSA, and AI engine. Then you got
-> > data direct from the NIC and pass the pointer to RSA engine for decryption. The
-> > CPU then finish some data taking or operation and then pass through to the AI
-> > engine for CNN calculation....This will need a place to maintain the same
-> > address space by some means.  
-> 
-> How is this any different from what we have today? 
-> 
-> SVA is not something even remotely new, IB has been doing various
-> versions of it for 20 years.
-> 
-> Jason
+diff --git a/drivers/media/dvb-frontends/dvb-pll.c b/drivers/media/dvb-fron=
+tends/dvb-pll.c
+index 6d4b2eec67b4..390ecc915096 100644
+--- a/drivers/media/dvb-frontends/dvb-pll.c
++++ b/drivers/media/dvb-frontends/dvb-pll.c
+@@ -80,8 +80,8 @@ struct dvb_pll_desc {
+=20
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt7579 =3D {
+ 	.name  =3D "Thomson dtt7579",
+-	.min   =3D 177000000,
+-	.max   =3D 858000000,
++	.min   =3D 177 * MHz,
++	.max   =3D 858 * MHz,
+ 	.iffreq=3D 36166667,
+ 	.sleepdata =3D (u8[]){ 2, 0xb4, 0x03 },
+ 	.count =3D 4,
+@@ -102,8 +102,8 @@ static void thomson_dtt759x_bw(struct dvb_frontend *fe,=
+ u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt759x =3D {
+ 	.name  =3D "Thomson dtt759x",
+-	.min   =3D 177000000,
+-	.max   =3D 896000000,
++	.min   =3D 177 * MHz,
++	.max   =3D 896 * MHz,
+ 	.set   =3D thomson_dtt759x_bw,
+ 	.iffreq=3D 36166667,
+ 	.sleepdata =3D (u8[]){ 2, 0x84, 0x03 },
+@@ -126,8 +126,8 @@ static void thomson_dtt7520x_bw(struct dvb_frontend *fe=
+, u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_thomson_dtt7520x =3D {
+ 	.name  =3D "Thomson dtt7520x",
+-	.min   =3D 185000000,
+-	.max   =3D 900000000,
++	.min   =3D 185 * MHz,
++	.max   =3D 900 * MHz,
+ 	.set   =3D thomson_dtt7520x_bw,
+ 	.iffreq =3D 36166667,
+ 	.count =3D 7,
+@@ -144,8 +144,8 @@ static const struct dvb_pll_desc dvb_pll_thomson_dtt752=
+0x =3D {
+=20
+ static const struct dvb_pll_desc dvb_pll_lg_z201 =3D {
+ 	.name  =3D "LG z201",
+-	.min   =3D 174000000,
+-	.max   =3D 862000000,
++	.min   =3D 174 * MHz,
++	.max   =3D 862 * MHz,
+ 	.iffreq=3D 36166667,
+ 	.sleepdata =3D (u8[]){ 2, 0xbc, 0x03 },
+ 	.count =3D 5,
+@@ -160,8 +160,8 @@ static const struct dvb_pll_desc dvb_pll_lg_z201 =3D {
+=20
+ static const struct dvb_pll_desc dvb_pll_unknown_1 =3D {
+ 	.name  =3D "unknown 1", /* used by dntv live dvb-t */
+-	.min   =3D 174000000,
+-	.max   =3D 862000000,
++	.min   =3D 174 * MHz,
++	.max   =3D 862 * MHz,
+ 	.iffreq=3D 36166667,
+ 	.count =3D 9,
+ 	.entries =3D {
+@@ -182,8 +182,8 @@ static const struct dvb_pll_desc dvb_pll_unknown_1 =3D {
+  */
+ static const struct dvb_pll_desc dvb_pll_tua6010xs =3D {
+ 	.name  =3D "Infineon TUA6010XS",
+-	.min   =3D  44250000,
+-	.max   =3D 858000000,
++	.min   =3D 44250 * kHz,
++	.max   =3D 858 * MHz,
+ 	.iffreq=3D 36125000,
+ 	.count =3D 3,
+ 	.entries =3D {
+@@ -196,8 +196,8 @@ static const struct dvb_pll_desc dvb_pll_tua6010xs =3D {
+ /* Panasonic env57h1xd5 (some Philips PLL ?) */
+ static const struct dvb_pll_desc dvb_pll_env57h1xd5 =3D {
+ 	.name  =3D "Panasonic ENV57H1XD5",
+-	.min   =3D  44250000,
+-	.max   =3D 858000000,
++	.min   =3D 44250 * kHz,
++	.max   =3D 858 * MHz,
+ 	.iffreq=3D 36125000,
+ 	.count =3D 4,
+ 	.entries =3D {
+@@ -220,8 +220,8 @@ static void tda665x_bw(struct dvb_frontend *fe, u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_tda665x =3D {
+ 	.name  =3D "Philips TDA6650/TDA6651",
+-	.min   =3D  44250000,
+-	.max   =3D 858000000,
++	.min   =3D 44250 * kHz,
++	.max   =3D 858 * MHz,
+ 	.set   =3D tda665x_bw,
+ 	.iffreq=3D 36166667,
+ 	.initdata =3D (u8[]){ 4, 0x0b, 0xf5, 0x85, 0xab },
+@@ -254,8 +254,8 @@ static void tua6034_bw(struct dvb_frontend *fe, u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_tua6034 =3D {
+ 	.name  =3D "Infineon TUA6034",
+-	.min   =3D  44250000,
+-	.max   =3D 858000000,
++	.min   =3D 44250 * kHz,
++	.max   =3D 858 * MHz,
+ 	.iffreq=3D 36166667,
+ 	.count =3D 3,
+ 	.set   =3D tua6034_bw,
+@@ -278,8 +278,8 @@ static void tded4_bw(struct dvb_frontend *fe, u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_tded4 =3D {
+ 	.name =3D "ALPS TDED4",
+-	.min =3D 47000000,
+-	.max =3D 863000000,
++	.min =3D  47 * MHz,
++	.max =3D 863 * MHz,
+ 	.iffreq=3D 36166667,
+ 	.set   =3D tded4_bw,
+ 	.count =3D 4,
+@@ -296,8 +296,8 @@ static const struct dvb_pll_desc dvb_pll_tded4 =3D {
+  */
+ static const struct dvb_pll_desc dvb_pll_tdhu2 =3D {
+ 	.name =3D "ALPS TDHU2",
+-	.min =3D 54000000,
+-	.max =3D 864000000,
++	.min =3D  54 * MHz,
++	.max =3D 864 * MHz,
+ 	.iffreq=3D 44000000,
+ 	.count =3D 4,
+ 	.entries =3D {
+@@ -313,8 +313,8 @@ static const struct dvb_pll_desc dvb_pll_tdhu2 =3D {
+  */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbmv =3D {
+ 	.name =3D "Samsung TBMV30111IN / TBMV30712IN1",
+-	.min =3D 54000000,
+-	.max =3D 860000000,
++	.min =3D  54 * MHz,
++	.max =3D 860 * MHz,
+ 	.iffreq=3D 44000000,
+ 	.count =3D 6,
+ 	.entries =3D {
+@@ -332,8 +332,8 @@ static const struct dvb_pll_desc dvb_pll_samsung_tbmv =
+=3D {
+  */
+ static const struct dvb_pll_desc dvb_pll_philips_sd1878_tda8261 =3D {
+ 	.name  =3D "Philips SD1878",
+-	.min   =3D  950000,
+-	.max   =3D 2150000,
++	.min   =3D  950 * MHz,
++	.max   =3D 2150 * MHz,
+ 	.iffreq=3D 249, /* zero-IF, offset 249 is to round up */
+ 	.count =3D 4,
+ 	.entries =3D {
+@@ -398,8 +398,8 @@ static void opera1_bw(struct dvb_frontend *fe, u8 *buf)
+=20
+ static const struct dvb_pll_desc dvb_pll_opera1 =3D {
+ 	.name  =3D "Opera Tuner",
+-	.min   =3D  900000,
+-	.max   =3D 2250000,
++	.min   =3D  900 * MHz,
++	.max   =3D 2250 * MHz,
+ 	.initdata =3D (u8[]){ 4, 0x08, 0xe5, 0xe1, 0x00 },
+ 	.initdata2 =3D (u8[]){ 4, 0x08, 0xe5, 0xe5, 0x00 },
+ 	.iffreq=3D 0,
+@@ -445,8 +445,8 @@ static void samsung_dtos403ih102a_set(struct dvb_fronte=
+nd *fe, u8 *buf)
+ /* unknown pll used in Samsung DTOS403IH102A DVB-C tuner */
+ static const struct dvb_pll_desc dvb_pll_samsung_dtos403ih102a =3D {
+ 	.name   =3D "Samsung DTOS403IH102A",
+-	.min    =3D  44250000,
+-	.max    =3D 858000000,
++	.min    =3D 44250 * kHz,
++	.max    =3D 858 * MHz,
+ 	.iffreq =3D  36125000,
+ 	.count  =3D 8,
+ 	.set    =3D samsung_dtos403ih102a_set,
+@@ -465,8 +465,8 @@ static const struct dvb_pll_desc dvb_pll_samsung_dtos40=
+3ih102a =3D {
+ /* Samsung TDTC9251DH0 DVB-T NIM, as used on AirStar 2 */
+ static const struct dvb_pll_desc dvb_pll_samsung_tdtc9251dh0 =3D {
+ 	.name	=3D "Samsung TDTC9251DH0",
+-	.min	=3D  48000000,
+-	.max	=3D 863000000,
++	.min	=3D  48 * MHz,
++	.max	=3D 863 * MHz,
+ 	.iffreq	=3D  36166667,
+ 	.count	=3D 3,
+ 	.entries =3D {
+@@ -479,8 +479,8 @@ static const struct dvb_pll_desc dvb_pll_samsung_tdtc92=
+51dh0 =3D {
+ /* Samsung TBDU18132 DVB-S NIM with TSA5059 PLL, used in SkyStar2 DVB-S 2.=
+3 */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbdu18132 =3D {
+ 	.name =3D "Samsung TBDU18132",
+-	.min	=3D  950000,
+-	.max	=3D 2150000, /* guesses */
++	.min	=3D  950 * MHz,
++	.max	=3D 2150 * MHz, /* guesses */
+ 	.iffreq =3D 0,
+ 	.count =3D 2,
+ 	.entries =3D {
+@@ -500,8 +500,8 @@ static const struct dvb_pll_desc dvb_pll_samsung_tbdu18=
+132 =3D {
+ /* Samsung TBMU24112 DVB-S NIM with SL1935 zero-IF tuner */
+ static const struct dvb_pll_desc dvb_pll_samsung_tbmu24112 =3D {
+ 	.name =3D "Samsung TBMU24112",
+-	.min	=3D  950000,
+-	.max	=3D 2150000, /* guesses */
++	.min	=3D  950 * MHz,
++	.max	=3D 2150 * MHz, /* guesses */
+ 	.iffreq =3D 0,
+ 	.count =3D 2,
+ 	.entries =3D {
+@@ -521,8 +521,8 @@ static const struct dvb_pll_desc dvb_pll_samsung_tbmu24=
+112 =3D {
+  * 822 - 862   1  *  0   0   1   0   0   0   0x88 */
+ static const struct dvb_pll_desc dvb_pll_alps_tdee4 =3D {
+ 	.name =3D "ALPS TDEE4",
+-	.min	=3D  47000000,
+-	.max	=3D 862000000,
++	.min	=3D  47 * MHz,
++	.max	=3D 862 * MHz,
+ 	.iffreq	=3D  36125000,
+ 	.count =3D 4,
+ 	.entries =3D {
+@@ -537,8 +537,8 @@ static const struct dvb_pll_desc dvb_pll_alps_tdee4 =3D=
+ {
+ /* CP cur. 50uA, AGC takeover: 103dBuV, PORT3 on */
+ static const struct dvb_pll_desc dvb_pll_tua6034_friio =3D {
+ 	.name   =3D "Infineon TUA6034 ISDB-T (Friio)",
+-	.min    =3D  90000000,
+-	.max    =3D 770000000,
++	.min    =3D  90 * MHz,
++	.max    =3D 770 * MHz,
+ 	.iffreq =3D  57000000,
+ 	.initdata =3D (u8[]){ 4, 0x9a, 0x50, 0xb2, 0x08 },
+ 	.sleepdata =3D (u8[]){ 4, 0x9a, 0x70, 0xb3, 0x0b },
+@@ -553,8 +553,8 @@ static const struct dvb_pll_desc dvb_pll_tua6034_friio =
+=3D {
+ /* Philips TDA6651 ISDB-T, used in Earthsoft PT1 */
+ static const struct dvb_pll_desc dvb_pll_tda665x_earth_pt1 =3D {
+ 	.name   =3D "Philips TDA6651 ISDB-T (EarthSoft PT1)",
+-	.min    =3D  90000000,
+-	.max    =3D 770000000,
++	.min    =3D  90 * MHz,
++	.max    =3D 770 * MHz,
+ 	.iffreq =3D  57000000,
+ 	.initdata =3D (u8[]){ 5, 0x0e, 0x7f, 0xc1, 0x80, 0x80 },
+ 	.count =3D 10,
+@@ -845,18 +845,11 @@ struct dvb_frontend *dvb_pll_attach(struct dvb_fronte=
+nd *fe, int pll_addr,
+=20
+ 	strncpy(fe->ops.tuner_ops.info.name, desc->name,
+ 		sizeof(fe->ops.tuner_ops.info.name));
+-	switch (c->delivery_system) {
+-	case SYS_DVBS:
+-	case SYS_DVBS2:
+-	case SYS_TURBO:
+-	case SYS_ISDBS:
+-		fe->ops.tuner_ops.info.frequency_min_hz =3D desc->min * kHz;
+-		fe->ops.tuner_ops.info.frequency_max_hz =3D desc->max * kHz;
+-		break;
+-	default:
+-		fe->ops.tuner_ops.info.frequency_min_hz =3D desc->min;
+-		fe->ops.tuner_ops.info.frequency_max_hz =3D desc->max;
+-	}
++
++	fe->ops.tuner_ops.info.frequency_min_hz =3D desc->min;
++	fe->ops.tuner_ops.info.frequency_max_hz =3D desc->max;
++printk("%s: delsys: %d, frequency range: %u..%u\n",
++       __func__, c->delivery_system, fe->ops.tuner_ops.info.frequency_min_=
+hz, fe->ops.tuner_ops.info.frequency_max_hz);
+=20
+ 	if (!desc->initdata)
+ 		fe->ops.tuner_ops.init =3D NULL;
 
 
