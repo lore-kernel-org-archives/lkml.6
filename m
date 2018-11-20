@@ -3,117 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7704C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BC8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C179320989
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C179320989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F02520851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:11:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F02520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbeKTVlc (ORCPT
+        id S1729042AbeKTVkb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:41:32 -0500
-Received: from mga12.intel.com ([192.55.52.136]:15322 "EHLO mga12.intel.com"
+        Tue, 20 Nov 2018 16:40:31 -0500
+Received: from foss.arm.com ([217.140.101.70]:47168 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728222AbeKTVlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:41:32 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 03:12:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="275426798"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga005.jf.intel.com with ESMTP; 20 Nov 2018 03:12:50 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gP3xY-0001Gy-Nw; Tue, 20 Nov 2018 13:12:48 +0200
-Date:   Tue, 20 Nov 2018 13:12:48 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] clk: Add (devm_)clk_get_optional() functions
-Message-ID: <20181120111248.GW10650@smile.fi.intel.com>
-References: <20181119141259.11992-1-phil.edworthy@renesas.com>
- <20181120103832.GV10650@smile.fi.intel.com>
- <TY1PR01MB176982D5E11A665D0DCC9E31F5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+        id S1727728AbeKTVkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:40:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1906515BE;
+        Tue, 20 Nov 2018 03:11:55 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2BB73F575;
+        Tue, 20 Nov 2018 03:11:52 -0800 (PST)
+Date:   Tue, 20 Nov 2018 11:11:46 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org,
+        Damien.LeMoal@wdc.com, juri.lelli@arm.com, anup@brainfault.org,
+        palmer@sifive.com, jeremy.linton@arm.com, robh+dt@kernel.org,
+        mick@ics.forth.gr, linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 0/3] Unify CPU topology across ARM64 & RISC-V
+Message-ID: <20181120111146.GA6497@e107155-lin>
+References: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
+ <07d92dd4-f943-47ee-e168-46bfaf4ed755@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TY1PR01MB176982D5E11A665D0DCC9E31F5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <07d92dd4-f943-47ee-e168-46bfaf4ed755@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 10:53:33AM +0000, Phil Edworthy wrote:
-> On 20 November 2018 10:39 Andy Shevchenko wrote:
-> > On Mon, Nov 19, 2018 at 02:12:59PM +0000, Phil Edworthy wrote:
-> > > This adds clk_get_optional() and devm_clk_get_optional() functions to
-> > > get optional clocks.
-> > > They behave the same as (devm_)clk_get except where there is no clock
-> > > producer. In this case, instead of returning -ENOENT, the function
-> > > returns NULL. This makes error checking simpler and allows
-> > > clk_prepare_enable, etc to be called on the returned reference without
-> > > additional checks.
+On Thu, Nov 15, 2018 at 11:31:33AM -0700, Jeffrey Hugo wrote:
 
-> > >  - Instead of messing with the core functions, simply wrap them for the
-> > >    _optional() versions. By putting clk_get_optional() inline in the header
-> > >    file, we can get rid of the arch specific patches as well.
+[...]
 
-> > Fine if it would have no surprises with error handling.
-> There shouldn't be any surprises. My earlier attempts at implementing this
-> were hampered by the fact that of_clk_get_by_name() can return -EINVAL
-> in some circumstances. By directly wrapping the (devm_)clk_get() functions
-> that problem goes away.
+>
+> I was interested in testing these on QDF2400, an ARM64 platform, since this
+> series touches core ARM64 code and I'd hate to see a regression. However, I
+> can't figure out what baseline to use to apply these. Different patches
+> cause different conflicts of a variety of baselines I attempted.
+>
 
-Good!
+Good to know that we can test DT configuration on QDF2400. I always assumed
+it's ACPI only.
 
-After my comments being addressed,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> What are these intended to apply to?
+>
 
+The series alone may not get the package/socket ids correct on QDF2400.
+I have not yet added support for the same as I wanted to get the initial
+feedback on DT bindings. The movement of DT binding and corresponding
+code should not regress and you should be able to validate only that
+part.
 
-> > > +	if (ERR_PTR(-ENOENT))
-> Huh? That wasn't the code I sent...
-
-Yup, it's my wrong editing flow. Anyway, you got the idea.
-
-> > > +		return NULL;
-> > > +	else
-> > > +		return clk;
-
-> > return clk == ERR_PTR(-ENOENT) ? NULL : clk;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Regards,
+Sudeep
