@@ -4,238 +4,227 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6E6C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE952C04EBB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A804B2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A804B2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B3F122148E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:56:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3F122148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbeKTTXt (ORCPT
+        id S1727523AbeKTTX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:23:49 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50372 "EHLO mail.bootlin.com"
+        Tue, 20 Nov 2018 14:23:59 -0500
+Received: from mga09.intel.com ([134.134.136.24]:17618 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbeKTTXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:23:49 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AAF7C2074F; Tue, 20 Nov 2018 09:55:46 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 75776206D8;
-        Tue, 20 Nov 2018 09:55:36 +0100 (CET)
-Date:   Tue, 20 Nov 2018 09:55:36 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>,
-        Mesih Kilinc <mesihkilnc@gmail.com>
-Subject: Re: [RFC PATCH v2 13/14] ARM: dts: suniv: add initial DTSI file for
- F1C100s
-Message-ID: <20181120085536.gulglvm7dvlckzle@flea>
-References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <b1cc86d5330df59e75914ab3c3a773900b589455.1542546735.git.mesihkilinc@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kgkkthwqw2hzchay"
-Content-Disposition: inline
-In-Reply-To: <b1cc86d5330df59e75914ab3c3a773900b589455.1542546735.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20180716
+        id S1725887AbeKTTX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:23:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 00:55:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
+   d="scan'208";a="106105951"
+Received: from yhuang-mobile.sh.intel.com ([10.239.197.245])
+  by fmsmga002.fm.intel.com with ESMTP; 20 Nov 2018 00:55:52 -0800
+From:   Huang Ying <ying.huang@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Huang Ying <ying.huang@intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V7 RESEND 19/21] swap: Support PMD swap mapping in common path
+Date:   Tue, 20 Nov 2018 16:54:47 +0800
+Message-Id: <20181120085449.5542-20-ying.huang@intel.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20181120085449.5542-1-ying.huang@intel.com>
+References: <20181120085449.5542-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Original code is only for PMD migration entry, it is revised to
+support PMD swap mapping.
 
---kgkkthwqw2hzchay
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+---
+ fs/proc/task_mmu.c | 12 +++++-------
+ mm/gup.c           | 36 ++++++++++++++++++++++++------------
+ mm/huge_memory.c   |  7 ++++---
+ mm/mempolicy.c     |  2 +-
+ 4 files changed, 34 insertions(+), 23 deletions(-)
 
-On Sun, Nov 18, 2018 at 05:17:12PM +0300, Mesih Kilinc wrote:
-> F1C100s is one product with the suniv die, which has a 32MiB co-packaged
-> DDR1 DRAM chip. As we have the support for suniv pin controller and CCU n=
-ow, add a
-> initial DTSI for it.
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Signed-off-by: Mesih Kilinc <mesihkilnc@gmail.com>
-> ---
->  arch/arm/boot/dts/suniv-f1c100s.dtsi | 158 +++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 158 insertions(+)
->  create mode 100644 arch/arm/boot/dts/suniv-f1c100s.dtsi
->=20
-> diff --git a/arch/arm/boot/dts/suniv-f1c100s.dtsi b/arch/arm/boot/dts/sun=
-iv-f1c100s.dtsi
-> new file mode 100644
-> index 0000000..d98f658
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/suniv-f1c100s.dtsi
-> @@ -0,0 +1,158 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR X11)
-> +/*
-> + * Copyright 2018 Icenowy Zheng <icenowy@aosc.io>
-> + * Copyright 2018 Mesih Kilinc <mesihkilinc@gmail.com>
-> + */
-> +
-> +#include <dt-bindings/clock/suniv-ccu-f1c100s.h>
-> +#include <dt-bindings/reset/suniv-ccu-f1c100s.h>
-> +
-> +/ {
-> +	#address-cells =3D <1>;
-> +	#size-cells =3D <1>;
-> +	interrupt-parent =3D <&intc>;
-> +
-> +	clocks {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <1>;
-> +		ranges;
-> +
-> +		osc24M: clk-24M {
-> +			#clock-cells =3D <0>;
-> +			compatible =3D "fixed-clock";
-> +			clock-frequency =3D <24000000>;
-> +			clock-output-names =3D "osc24M";
-> +		};
-> +
-> +		osc32k: clk-32k {
-> +			#clock-cells =3D <0>;
-> +			compatible =3D "fixed-clock";
-> +			clock-frequency =3D <32768>;
-> +			clock-output-names =3D "osc32k";
-> +		};
-> +
-> +		fake100M: clk-100M {
-> +			#clock-cells =3D <0>;
-> +			compatible =3D "fixed-clock";
-> +			clock-frequency =3D <100000000>;
-> +			clock-output-names =3D "fake-100M";
-> +		};
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 39e96a21366e..0e65233f2cc2 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -986,7 +986,7 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+ 		pmd = pmd_clear_soft_dirty(pmd);
+ 
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
+-	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
++	} else if (is_swap_pmd(pmd)) {
+ 		pmd = pmd_swp_clear_soft_dirty(pmd);
+ 		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
+ 	}
+@@ -1316,9 +1316,8 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			if (pm->show_pfn)
+ 				frame = pmd_pfn(pmd) +
+ 					((addr & ~PMD_MASK) >> PAGE_SHIFT);
+-		}
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+-		else if (is_swap_pmd(pmd)) {
++		} else if (IS_ENABLED(CONFIG_HAVE_PMD_SWAP_ENTRY) &&
++			   is_swap_pmd(pmd)) {
+ 			swp_entry_t entry = pmd_to_swp_entry(pmd);
+ 			unsigned long offset;
+ 
+@@ -1331,10 +1330,9 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
+ 			flags |= PM_SWAP;
+ 			if (pmd_swp_soft_dirty(pmd))
+ 				flags |= PM_SOFT_DIRTY;
+-			VM_BUG_ON(!is_pmd_migration_entry(pmd));
+-			page = migration_entry_to_page(entry);
++			if (is_pmd_migration_entry(pmd))
++				page = migration_entry_to_page(entry);
+ 		}
+-#endif
+ 
+ 		if (page && page_mapcount(page) == 1)
+ 			flags |= PM_MMAP_EXCLUSIVE;
+diff --git a/mm/gup.c b/mm/gup.c
+index aa43620a3270..3ecaee6dd290 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -215,6 +215,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	spinlock_t *ptl;
+ 	struct page *page;
+ 	struct mm_struct *mm = vma->vm_mm;
++	swp_entry_t entry;
+ 
+ 	pmd = pmd_offset(pudp, address);
+ 	/*
+@@ -242,18 +243,22 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 	if (!pmd_present(pmdval)) {
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		VM_BUG_ON(thp_migration_supported() &&
+-				  !is_pmd_migration_entry(pmdval));
+-		if (is_pmd_migration_entry(pmdval))
++		entry = pmd_to_swp_entry(pmdval);
++		if (thp_migration_supported() && is_migration_entry(entry)) {
+ 			pmd_migration_entry_wait(mm, pmd);
+-		pmdval = READ_ONCE(*pmd);
+-		/*
+-		 * MADV_DONTNEED may convert the pmd to null because
+-		 * mmap_sem is held in read mode
+-		 */
+-		if (pmd_none(pmdval))
++			pmdval = READ_ONCE(*pmd);
++			/*
++			 * MADV_DONTNEED may convert the pmd to null because
++			 * mmap_sem is held in read mode
++			 */
++			if (pmd_none(pmdval))
++				return no_page_table(vma, flags);
++			goto retry;
++		}
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
+ 			return no_page_table(vma, flags);
+-		goto retry;
++		WARN_ON(1);
++		return no_page_table(vma, flags);
+ 	}
+ 	if (pmd_devmap(pmdval)) {
+ 		ptl = pmd_lock(mm, pmd);
+@@ -275,11 +280,18 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
+ 		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_present(*pmd))) {
++		entry = pmd_to_swp_entry(*pmd);
+ 		spin_unlock(ptl);
+ 		if (likely(!(flags & FOLL_MIGRATION)))
+ 			return no_page_table(vma, flags);
+-		pmd_migration_entry_wait(mm, pmd);
+-		goto retry_locked;
++		if (thp_migration_supported() && is_migration_entry(entry)) {
++			pmd_migration_entry_wait(mm, pmd);
++			goto retry_locked;
++		}
++		if (IS_ENABLED(CONFIG_THP_SWAP) && !non_swap_entry(entry))
++			return no_page_table(vma, flags);
++		WARN_ON(1);
++		return no_page_table(vma, flags);
+ 	}
+ 	if (unlikely(!pmd_trans_huge(*pmd))) {
+ 		spin_unlock(ptl);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index c2b23dfb0d55..e7b0840fcb8c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2139,7 +2139,7 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+ static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+ {
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-	if (unlikely(is_pmd_migration_entry(pmd)))
++	if (unlikely(is_swap_pmd(pmd)))
+ 		pmd = pmd_swp_mksoft_dirty(pmd);
+ 	else if (pmd_present(pmd))
+ 		pmd = pmd_mksoft_dirty(pmd);
+@@ -2223,11 +2223,12 @@ int change_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
+ 	preserve_write = prot_numa && pmd_write(*pmd);
+ 	ret = 1;
+ 
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++#if defined(CONFIG_ARCH_ENABLE_THP_MIGRATION) || defined(CONFIG_THP_SWAP)
+ 	if (is_swap_pmd(*pmd)) {
+ 		swp_entry_t entry = pmd_to_swp_entry(*pmd);
+ 
+-		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
++		VM_BUG_ON(!IS_ENABLED(CONFIG_THP_SWAP) &&
++			  !is_migration_entry(entry));
+ 		if (is_write_migration_entry(entry)) {
+ 			pmd_t newpmd;
+ 			/*
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 5837a067124d..7a5c1d2faea2 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -436,7 +436,7 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
+ 	struct queue_pages *qp = walk->private;
+ 	unsigned long flags;
+ 
+-	if (unlikely(is_pmd_migration_entry(*pmd))) {
++	if (unlikely(is_swap_pmd(*pmd))) {
+ 		ret = 1;
+ 		goto unlock;
+ 	}
+-- 
+2.18.1
 
-Why do you need that fake clock?
-
-> +	};
-> +
-> +	cpus {
-> +		#address-cells =3D <0>;
-> +		#size-cells =3D <0>;
-> +
-> +		cpu {
-> +			compatible =3D "arm,arm926ej-s";
-> +			device_type =3D "cpu";
-> +		};
-> +	};
-> +
-> +	soc {
-> +		compatible =3D "simple-bus";
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <1>;
-> +		ranges;
-> +
-> +		sram-controller@1c00000 {
-> +			compatible =3D "allwinner,sun4i-a10-sram-controller";
-
-You should have a compatible for that SoC there (possibly keeping the
-A10 compatible if that makes sense).
-
-> +			reg =3D <0x01c00000 0x30>;
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <1>;
-> +			ranges;
-> +
-> +			sram_d: sram@10000 {
-> +				compatible =3D "mmio-sram";
-> +				reg =3D <0x00010000 0x1000>;
-> +				#address-cells =3D <1>;
-> +				#size-cells =3D <1>;
-> +				ranges =3D <0 0x00010000 0x1000>;
-> +
-> +				otg_sram: sram-section@0 {
-> +					compatible =3D "allwinner,sun4i-a10-sram-d";
-
-Ditto
-
-> +					reg =3D <0x0000 0x1000>;
-> +					status =3D "disabled";
-> +				};
-> +			};
-> +		};
-> +
-> +		ccu: clock@1c20000 {
-> +			compatible =3D "allwinner,suniv-f1c100s-ccu";
-> +			reg =3D <0x01c20000 0x400>;
-> +			clocks =3D <&osc24M>, <&osc32k>;
-> +			clock-names =3D "hosc", "losc";
-> +			#clock-cells =3D <1>;
-> +			#reset-cells =3D <1>;
-> +		};
-> +
-> +		intc: interrupt-controller@1c20400 {
-> +			compatible =3D "allwinner,suniv-f1c100s-ic";
-> +			reg =3D <0x01c20400 0x400>;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <1>;
-> +		};
-> +
-> +		pio: pinctrl@1c20800 {
-> +			compatible =3D "allwinner,suniv-f1c100s-pinctrl";
-> +			reg =3D <0x01c20800 0x400>;
-> +			interrupts =3D <38>, <39>, <40>;
-> +			clocks =3D <&ccu CLK_BUS_PIO>, <&osc24M>, <&osc32k>;
-> +			clock-names =3D "apb", "hosc", "losc";
-> +			gpio-controller;
-> +			interrupt-controller;
-> +			#interrupt-cells =3D <3>;
-> +			#gpio-cells =3D <3>;
-> +
-> +			uart0_pins_a: uart-pins-pe {
-> +				pins =3D "PE0", "PE1";
-> +				function =3D "uart0";
-> +			};
-> +		};
-> +
-> +		timer@1c20c00 {
-> +			compatible =3D "allwinner,suniv-f1c100s-timer";
-> +			reg =3D <0x01c20c00 0x90>;
-> +			interrupts =3D <13>;
-> +			clocks =3D <&osc24M>;
-> +		};
-> +
-> +		wdt: watchdog@1c20ca0 {
-> +			compatible =3D "allwinner,sun6i-a31-wdt";
-
-Ditto.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kgkkthwqw2hzchay
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PMCAAKCRDj7w1vZxhR
-xWwpAQCQptadP6iauruCIwU1uOQuhAeSVj7TdZfk5Mz9ESm+6wEAoQjvBU6OmU4M
-JyEebfCr+UvKsKGClvz3XeT3qYak0ws=
-=kVOg
------END PGP SIGNATURE-----
-
---kgkkthwqw2hzchay--
