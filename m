@@ -3,52 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4203C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A51EC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963DD20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E34782087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="cO8NdiPb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 963DD20831
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oF2nzZc+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34782087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729944AbeKUC6T (ORCPT
+        id S1729980AbeKUC6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:58:19 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59490 "EHLO
+        Tue, 20 Nov 2018 21:58:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59554 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729306AbeKUC6R (ORCPT
+        with ESMTP id S1728633AbeKUC6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:58:17 -0500
+        Tue, 20 Nov 2018 21:58:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=H+HrNLwiiG0RMvO1YwywBXYhwnR5XnQBvoK0ERzLPc4=; b=cO8NdiPbwTLC
-        bEr/shCOVFX/t8s4ZaPsc9G7Id+/GmmkXDc+1MOZfO5K+/e/1CtPCbdSBKoc9WQm2mdE6y/dPM3zk
-        nb6/Ei+HLxbkV6tO7fjeTsgbGvO1L444AgfvcVWfS8DC9Zfnuh/b/3tSN3qxcRUTnm4QusAJXO0dp
-        z80ow=;
+        List-Archive; bh=96eH3oitSAD2IR5LVXbKviUW1DL/OBsFfJZWc9ivvTA=; b=oF2nzZc+qfIS
+        T989k4wyvw4yMkw1uNLpr8NArlYbvVeYgTMcSHJ4ufZZlx7c2UzatHs8+BmQ+BBKcOR2lilQ6YcfZ
+        nO7rB2D1udj3dpZvRhNWtA6cUV+9ecGhSy3oRtKqhbrWLznHO8WtgAm5KzpV2A6m7ugFQj1CgCHpG
+        D8SgY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gP8sq-0001mg-Vn; Tue, 20 Nov 2018 16:28:17 +0000
+        id 1gP8ss-0001mn-MC; Tue, 20 Nov 2018 16:28:18 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B470E1124DC2; Tue, 20 Nov 2018 16:28:16 +0000 (GMT)
+        id 563011124DC2; Tue, 20 Nov 2018 16:28:18 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: Fix return value of _set_load() stub" to the regulator tree
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: Export regulator_lock and regulator_unlock" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181120162816.B470E1124DC2@debutante.sirena.org.uk>
-Date:   Tue, 20 Nov 2018 16:28:16 +0000 (GMT)
+Message-Id: <20181120162818.563011124DC2@debutante.sirena.org.uk>
+Date:   Tue, 20 Nov 2018 16:28:18 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: Fix return value of _set_load() stub
+   regulator: core: Export regulator_lock and regulator_unlock
 
 has been applied to the regulator tree at
 
@@ -81,37 +80,41 @@ to this mail.
 Thanks,
 Mark
 
-From f1abf67217de91f5cd3c757ae857632ca565099a Mon Sep 17 00:00:00 2001
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 16 Nov 2018 19:19:30 -0800
-Subject: [PATCH] regulator: Fix return value of _set_load() stub
+From 14a742724fc0f089893c6f70a62d30ab418ed7ff Mon Sep 17 00:00:00 2001
+From: Dmitry Osipenko <digetx@gmail.com>
+Date: Tue, 20 Nov 2018 04:20:19 +0300
+Subject: [PATCH] regulator: core: Export regulator_lock and regulator_unlock
 
-The stub implementation of _set_load() returns a mode value which is
-within the bounds of valid return codes for success (the documentation
-just says that failures are negative error codes) but not sensible or
-what the actual implementation does.  Fix it to just return 0.
+This fixes compiling regulator drivers that use these function when
+these drivers are built as kernel modules.
 
-Reported-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Fixes: f8702f9e4aa7 ("regulator: core: Use ww_mutex for regulators locking")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/linux/regulator/consumer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 25602afd4844..f3f76051e8b0 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -508,7 +508,7 @@ static inline int regulator_get_error_flags(struct regulator *regulator,
- 
- static inline int regulator_set_load(struct regulator *regulator, int load_uA)
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index fd237bc0fa7c..f937a33e5f02 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -211,6 +211,7 @@ void regulator_lock(struct regulator_dev *rdev)
  {
--	return REGULATOR_MODE_NORMAL;
-+	return 0;
+ 	regulator_lock_nested(rdev, NULL);
  }
++EXPORT_SYMBOL_GPL(regulator_lock);
  
- static inline int regulator_allow_bypass(struct regulator *regulator,
+ /**
+  * regulator_unlock - unlock a single regulator
+@@ -232,6 +233,7 @@ void regulator_unlock(struct regulator_dev *rdev)
+ 
+ 	mutex_unlock(&regulator_nesting_mutex);
+ }
++EXPORT_SYMBOL_GPL(regulator_unlock);
+ 
+ static bool regulator_supply_is_couple(struct regulator_dev *rdev)
+ {
 -- 
 2.19.0.rc2
 
