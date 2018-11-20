@@ -2,370 +2,150 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3306BC46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6F4C46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:35:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835E0208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B94252075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:35:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="teeofgjY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835E0208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PY6BpNxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B94252075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729332AbeKTWBa (ORCPT
+        id S1729263AbeKTWDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:01:30 -0500
-Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:40000
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729088AbeKTWB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:01:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ef046tX0DATMSVRMHM+bIo80rmAELp4ear3rY98/1g4=;
- b=teeofgjY/eg4MeqVbH0LVS1d4WHo6pfFAay/IWEmD84kbHlFMlTMyYQLO/dnXCGBv5YjxawEINy0J9BUv9e+lnAXX2LP86t6eC9ipCHMWd+hc/OOefASMvDaT1IJJh6Mw98oH5Gp3iwoS5ErbDZ87hUTlRNnRB+vN8bmgyrAE60=
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
- HE1PR0401MB2203.eurprd04.prod.outlook.com (10.166.76.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Tue, 20 Nov 2018 11:32:37 +0000
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 11:32:37 +0000
-From:   "M.h. Lian" <minghuan.lian@nxp.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: RE: [PATCHv2 24/25] arm64: dts: freescale: lx2160a: add pcie DT nodes
-Thread-Topic: [PATCHv2 24/25] arm64: dts: freescale: lx2160a: add pcie DT
- nodes
-Thread-Index: AQHUgLNWnvf3rghPTE+EulL4aQKwXaVYiAzg
-Date:   Tue, 20 Nov 2018 11:32:36 +0000
-Message-ID: <HE1PR0401MB22354DD78E9ACB940DBB01A0E8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
-References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
- <20181120092615.11680-25-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181120092615.11680-25-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=minghuan.lian@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2203;6:WpHUWnkpU/RIW92+HIGwQZzsk9azebu4JOGwGaa2i3v5wRNtGLM/S1xWPjl3LYhSHGyE73EwSlxc9C+18YrcHw18IGsCTgwp0TNt4Y4KH3A7gK+kGIZK0dL3FZMXC3AVJ3TvGmsotdMuDMBEUvt1zuYbqWYJp3gJOMKnm6KYAKdfpjdUV4Q/o0m24Z+RdYnrWtmESeDNf3r0FbfiphBBDViEpU7xJ0O3b5GsJlbZYwxnFPBPZkIbBI/D4wYWfG7TCokPub8SFAn7FGj7h3gNgvMGopKKx3EkTSwPK8pu3RMYZf3i3v/bpogUJfsvxnKfmGNE2PBWNBLFRht40BB/bky0z/YGBmUnDzehaC5+NNTS5xso0sH1Xn1oQbiIcIe/KFlo8sPToj8yFfculT0Fc+TY+qE3Q/EylHbPZA0A6dZCn+mnSFN3WszofPNpn/twkFt/m0BlHEL2YZR9GO96Zy0QTo+LFxkYal2FHZQsexc=;5:3sWnDKqwEv3iR0WPdXzOPunfWne0O4ZpCp1295+scCyTZLRBEHGXUJyphgu2rG+HXaxiGIV+kCYN0Q0jhj8E3eHLXGDo20rzLgYGCUfLcQlhk3mHDjDImLnCocfFBOe8vijukfZ0sfckKWw6cHcVhCfNtBsqsyyJsjAhVpJh/7w=;7:OAklfId7+6NxVtTZ+68MoqYh06BCLvEHBtmxCcCXXwprg6l5RY5uwt51EenjRyHC3qsL/p+wfc3tQoHwb/zSdZOSE84vuX282v1soomwc7zfAXwotyyAkekUILIdM7q899imPdu9FktFbknxqb5auQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 31dcbe8c-a025-4179-e259-08d64edbdf4e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2203;
-x-ms-traffictypediagnostic: HE1PR0401MB2203:
-x-microsoft-antispam-prvs: <HE1PR0401MB22038127FF9EC7A8B06D1239E8D90@HE1PR0401MB2203.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB2203;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2203;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(189003)(199004)(13464003)(6116002)(54906003)(478600001)(97736004)(33656002)(8676002)(81156014)(81166006)(68736007)(8936002)(186003)(4326008)(110136005)(14454004)(3846002)(71190400001)(2906002)(316002)(71200400001)(25786009)(2501003)(6246003)(256004)(305945005)(76176011)(2201001)(7736002)(6436002)(6506007)(53546011)(74316002)(106356001)(105586002)(99286004)(14444005)(7696005)(102836004)(476003)(486006)(9686003)(53936002)(2900100001)(26005)(229853002)(446003)(66066001)(86362001)(11346002)(55016002)(5660300001)(7416002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2203;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 4LwQ73mr3CoYOly72fe7HPhDtUe29jwJB2qKDp903A3eJZS5WT6MhN5/QwJG2NqAIozZ5V69XZ6fsbGQ98uOL2+G8BEsRpLxxQwQGknKaKxnu2qkcwdsx97/sz3/y08GQ58FTSdR2ZLpflmrT/eT/Xqt6ARYaCtbS/giK1/CUzGeo0AzBY+VNVNCs9uX/l02hXCCyEfyXR7YnjWWB3Xpbv2G5zPlINXCnZ6t7vd9+aKk644Tzv6eSZ+K6Isrm23O2IfwKHW9vL9s+ohoahmfNr3UMW2bx1Y06vZC5uBSrHTBvYKLArkVS+fk6UXNN/RKIm4qS9TgU9MvSav3EIxZMMcRrhR6Fs2Z4bRgQfMGX2I=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 17:03:45 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:44400 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729084AbeKTWDo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:03:44 -0500
+Received: by mail-io1-f65.google.com with SMTP id r200so1098506iod.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 03:35:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Qzlm0r3fOaoOkHxMd9XLDt+3KwDmba+ZbzIm6I1xgX4=;
+        b=PY6BpNxJLNiGrF0vOzZqs40sxE/kRd2v9VJYlgm5wVMroGhD7XFnzaC3nih1ALI1dc
+         Jp6hqX0CkYhb3qxCB7wafn00Tw5Vz4JDedVQv/sTXIjAhyxxVxGjX6f/zqAhIvSK98/H
+         r1rJMTPBz2dyUm6/5G/Df3NmdpaxZVApWu11qIBatnaLIu+r8cKzx32y5zan1ipXf5b8
+         QL8Xug6flFuPmvAggs7RZ13lol1njUZclKXlDSTdi2/agux5QGoZSFfxr1D3uvemNs/q
+         n9lZr5JM/o5+B8K2zP6amewQBMbfOeee8k85MDAeeChLiGzPeddLmaEDhji6c+L2kPvu
+         1Pvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Qzlm0r3fOaoOkHxMd9XLDt+3KwDmba+ZbzIm6I1xgX4=;
+        b=JjOOII/+lYf8+1hPouUnlEchImPz/Sj9sxsVmWrmQ5Q8Gnl5jDiGuakJXimCSBV05m
+         9TW3xmZD2CqHJgeNwDSfqX6yeNAf+SQrrbe07Je8nsQiVlzwla6Ip7lWbpJw/1aH2tRR
+         BSNK3tDTz4DQaJ/dy2QrQGaNi8ZhhAbtmXVuOR0uWtUYz0gwH/3tr7WBH7zqoUhioRUz
+         M4b9i2L/vBt7dpfja7/TTMSi2rB6YSaR8MGHJIVZb9Z5fqx1ysM3I8MRpLYYuw8q2qMC
+         Hl0Nj/vmg/IC5uxlqRb2WuzlO/QndbPY0JbM9TLuERGxpDfy55zOUIqdVhJpCmsFktBE
+         HR9g==
+X-Gm-Message-State: AA+aEWYfv9VnVoQ1tn1FeM/8S+r6im+tR+1XTGdhw2jo+g0mlYU93Rv3
+        X1Xxe36P17BbDUwqbyA1dQY1NoYLVQNX/XMvn4n/sg==
+X-Google-Smtp-Source: AFSGD/XztFqXP0ZjssBtIE1X7e/062Mck1vUoS0/Sv2aBnPpy3bRubRwHURJd5NL53iX40ybeCciHVwM6ulAlQSw7PU=
+X-Received: by 2002:a6b:9383:: with SMTP id v125-v6mr1064825iod.282.1542713701827;
+ Tue, 20 Nov 2018 03:35:01 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31dcbe8c-a025-4179-e259-08d64edbdf4e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 11:32:36.9078
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2203
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Tue, 20 Nov 2018 03:34:40
+ -0800 (PST)
+In-Reply-To: <20181115005658.GA24847@kroah.com>
+References: <20181109203518.GA7130@roeck-us.net> <20181112092051.GA391@ming.t460p>
+ <20181112094406.GB391@ming.t460p> <20181112164848.GA1790@roeck-us.net>
+ <20181112200236.GA4415@kroah.com> <20181113002226.GA4455@ming.t460p>
+ <20181113004124.GC4455@ming.t460p> <20181114110827.GA31430@ming.t460p>
+ <20181114151410.GB26378@kroah.com> <20181115003616.GA32603@ming.t460p> <20181115005658.GA24847@kroah.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 20 Nov 2018 12:34:40 +0100
+Message-ID: <CACT4Y+bSzPM022bGMmj4GQ_YHVsVqd6r+NTC4+fRrRT+yjAjEw@mail.gmail.com>
+Subject: Re: kobject lifetime issues in blk-mq
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, Guenter Roeck <linux@roeck-us.net>,
+        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+On Thu, Nov 15, 2018 at 1:56 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Thu, Nov 15, 2018 at 08:36:17AM +0800, Ming Lei wrote:
+>> > So even if you think the kernel is not going to do this, remember, you
+>> > have no control over it.  Reference counted objects are done this way
+>> > for a reason, you really do not know who has a reference and you really
+>> > do not care.
+>> >
+>> > You are just papering over the real issue here, see my previous email
+>> > for how to start working on resolving it.
+>>
+>> IMO, there isn't real issue, and the issue is actually in 'delay release'.
+>
+> Nope, sorry, that is not true.
+>
+>> Please look at the code in block/blk-mq-sysfs.c, both q->mq_kobj and all
+>> ctx->kobj share same lifetime with q->kobj, we even don't call get/put
+>> on q->mq_kobj & all ctx->kobj, and all are simply released in q->kobj's
+>> release handler.
+>
+> How do you "know" you are keeping those lifetimes in sync?  The joy of a
+> kobject is that _ANYTHING_ can grab a reference to your object without
+> you knowing about it.  That includes userspace programs.  Yes, sysfs is
+> now much better and it trys to release that reference "quickly" when it
+> determines you are trying to delete a kobject, but it's not perfict,
+> there are still races there.
+>
+> And that is what the delay release code is showing you.  It is showing
+> you that you "think" your reference counting is wrong, but it is not.
+> It is showing you that if someone else grabs a reference, you are not
+> correctly cleaning up for yourself.
+>
+> Never think that you really know the lifetime of a kobject, once you
+> realize that your code gets simpler and you can then just "trust" that
+> the kernel will do the right thing no matter what.
+>
+> Because really, you are using a kobject because you want that correct
+> reference counting logic.  By ignoring that logic, you are ignoring the
+> reason to be using that object at all.  If you don't need reference
+> counting, then don't use it at all.
+>
+> And if you need sysfs files, then you need to use the kobject and then
+> you need to handle it properly, because again, you do NOT have full
+> control over the lifetime of your object.  That's the basis for
+> reference counting in the firstplace.
+>
+> So this code is broken without me evening having to look at it, please
+> fix it to handle release properly.  Again, the kernel tried to tell you
+> this, but you hacked around the kernel core to remove that warning
+> incorrectly.  Please go read the kobject documentation again for even
+> more details about this than what I said here.
+>
+> thanks,
+>
+> greg k-h
 
-> -----Original Message-----
-> From: Z.q. Hou
-> Sent: Tuesday, November 20, 2018 5:28 PM
-> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
-> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
-> catalin.marinas@arm.com; will.deacon@arm.com
-> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
-> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
-> <zhiqiang.hou@nxp.com>
-> Subject: [PATCHv2 24/25] arm64: dts: freescale: lx2160a: add pcie DT node=
-s
->=20
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->=20
-> The LX2160A integrated 6 PCIe Gen4 controllers.
->=20
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V2:
->  - Change the default status of PCIe DT nodes to disabled.
->=20
->  .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 163 ++++++++++++++++++
->  1 file changed, 163 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> index a79f5c1ea56d..3a098c462a25 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-> @@ -762,5 +762,168 @@
->  				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
->  			dma-coherent;
->  		};
-> +
-> +		pcie@3400000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03400000 0x0 0x00100000   /*
-> controller registers */
-> +			       0x80 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0x80
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 109
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 110
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 111
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 112
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pcie@3500000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03500000 0x0 0x00100000   /*
-> controller registers */
-> +			       0x88 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0x88
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 114
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 115
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 116
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 117
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pcie@3600000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03600000 0x0 0x00100000   /*
-> controller registers */
-> +			       0x90 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0x90
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 119
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 120
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 121
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 122
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pcie@3700000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03700000 0x0 0x00100000   /*
-> controller registers */
-> +			       0x98 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0x98
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 124
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 125
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 126
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 127
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pcie@3800000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03800000 0x0 0x00100000   /*
-> controller registers */
-> +			       0xa0 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0xa0
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 129
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 130
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 131
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 132
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
-> +		pcie@3900000 {
-> +			compatible =3D "fsl,lx2160a-pcie";
-> +			reg =3D <0x00 0x03900000 0x0 0x00100000   /*
-> controller registers */
-> +			       0xa8 0x00000000 0x0 0x00001000>; /*
-> configuration space */
-> +			reg-names =3D "csr_axi_slave", "config_axi_slave";
-> +			interrupts =3D <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /*
-> AER interrupt */
-> +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /*
-> PME interrupt */
-> +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>; /*
-> controller interrupt */
-> +			interrupt-names =3D "aer", "pme", "intr";
-> +			#address-cells =3D <3>;
-> +			#size-cells =3D <2>;
-> +			device_type =3D "pci";
-> +			dma-coherent;
-> +			apio-wins =3D <8>;
-> +			ppio-wins =3D <8>;
-> +			bus-range =3D <0x0 0xff>;
-> +			ranges =3D <0x82000000 0x0 0x40000000 0xa8
-> 0x40000000 0x0 0x40000000>; /* non-prefetchable memory */
-> +			msi-parent =3D <&its>;
-> +			#interrupt-cells =3D <1>;
-> +			interrupt-map-mask =3D <0 0 0 7>;
-> +			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 104
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 2 &gic 0 0 GIC_SPI 105
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 3 &gic 0 0 GIC_SPI 106
-> IRQ_TYPE_LEVEL_HIGH>,
-> +					<0000 0 0 4 &gic 0 0 GIC_SPI 107
-> IRQ_TYPE_LEVEL_HIGH>;
-> +			status =3D "disabled";
-> +		};
-> +
->  	};
->  };
-> --
-> 2.17.1
+Whoever is the right person to fix this, please prioritize this to the
+degree possible.
+This issue does not allow to use DEBUG_KOBJECT_RELEASE in any
+automated testing (in particular syzbot) on both upstream and stable
+trees. We have to disable it for now, so other bugs won't be noticed
+and will pile up.
 
+Thanks
