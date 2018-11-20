@@ -2,110 +2,164 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EE8C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AEBC04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E6D720685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="O+CMcYSV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E6D720685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 672D1208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:13:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 672D1208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeKTXlg (ORCPT
+        id S1727079AbeKTXmF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:41:36 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:47074 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbeKTXlg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:41:36 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id A18555C21FC;
-        Tue, 20 Nov 2018 14:12:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1542719550;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JAsMiJ/ognRSZmMxK1JKQolbBDGuLOku+iNadRy4yDE=;
-        b=O+CMcYSVvjrIfhKIEgDWlEMsHO06XRUMf5tQi+ZzLit+lP6lqcGPITXIGQ4hulXo/Tv70h
-        /cp3G6GsXx3yd4430GcTKE2mC3veQf2jsg0TBlUJy03LMsZEUBe+Ss+8eKkeWwFoeFVIph
-        SReQr6QKpanr2mU8HgNdQfxZPCnvt6A=
+        Tue, 20 Nov 2018 18:42:05 -0500
+Received: from mga09.intel.com ([134.134.136.24]:37741 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725902AbeKTXmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 18:42:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 05:13:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,257,1539673200"; 
+   d="scan'208";a="101738434"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga003.jf.intel.com with ESMTP; 20 Nov 2018 05:12:59 -0800
+Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 20 Nov 2018 05:12:58 -0800
+Received: from lcsmsx154.ger.corp.intel.com (10.186.165.229) by
+ fmsmsx124.amr.corp.intel.com (10.18.125.39) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 20 Nov 2018 05:12:58 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
+ LCSMSX154.ger.corp.intel.com ([169.254.7.79]) with mapi id 14.03.0415.000;
+ Tue, 20 Nov 2018 15:12:55 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        "Nayna Jain" <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
+ tpm2_commit_space()
+Thread-Topic: [PATCH v9 04/17] tpm: print tpm2_commit_space() error inside
+ tpm2_commit_space()
+Thread-Index: AQHUfz0HV9TuDcLLJkegLXS35AC8EqVXnOgQgADh94CAACdDQA==
+Date:   Tue, 20 Nov 2018 13:12:55 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA243C3@hasmsx108.ger.corp.intel.com>
+References: <20181118124753.18613-1-jarkko.sakkinen@linux.intel.com>
+ <20181118124753.18613-5-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA23561@hasmsx108.ger.corp.intel.com>
+ <20181120124913.GC8813@linux.intel.com>
+In-Reply-To: <20181120124913.GC8813@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDJiMWE2MzEtYzQ4ZS00NWYyLWI2ZGQtMTQyMDliY2UyMTVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMmF6cmJMc0lOaG8xbDI4UjU4ZEVuY05MQ2JXN2JnV2p3MTdLanVwS3JcL0VNWGw4aWpEcE5QVWpXcTVJbGcxQWsifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.116.168]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 20 Nov 2018 14:12:30 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Richard Zhu <hongxing.zhu@nxp.com>, linux-kernel@vger.kernel.org,
-        jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        tpiepho@impinj.com, andrew.smirnov@gmail.com,
-        linux-pci@vger.kernel.org, l.stach@pengutronix.de,
-        bhelgaas@google.com
-Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
-In-Reply-To: <VI1PR04MB553386A3F452E13BFCF79688EED90@VI1PR04MB5533.eurprd04.prod.outlook.com>
-References: <20181119094144.4127-1-stefan@agner.ch>
- <20181119094144.4127-2-stefan@agner.ch>
- <ceb95fbdf0f6d0e0eeb1db3a22743f1453c8e060.camel@nxp.com>
- <6dfdd46d76a380b900b68d13ce5bfa62@agner.ch>
- <VI1PR04MB553386A3F452E13BFCF79688EED90@VI1PR04MB5533.eurprd04.prod.outlook.com>
-Message-ID: <d0efcd4d71a4af9da6c2fb0b3f2183b0@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.11.2018 14:03, Leonard Crestez wrote:
-> From: Stefan Agner <stefan@agner.ch>
->> On 20.11.2018 11:22, Leonard Crestez wrote:
->> > On Mon, 2018-11-19 at 10:41 +0100, Stefan Agner wrote:
->> >> Define the length of the DBI registers. This makes sure that
->> >> the kernel does not access registers beyond that point, avoiding
->> >> the following abort on a i.MX 6Quad:
->> >>   # cat
->> /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
->> >>   [  100.021433] Unhandled fault: imprecise external abort (0x1406) at
->> 0xb6ea7000
->> >>   ...
->> >>   [  100.056423] PC is at dw_pcie_read+0x50/0x84
->> >>   [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
->> >>   ...
->> >>
->> >> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >>
->> >> diff --git a/drivers/pci/controller/dwc/pci-imx6.c
->> >
->> >> +struct imx6_pcie_drvdata {
->> >> +	enum imx6_pcie_variants variant;
->> >> +	int			dbi_length;
->> >> +};
->> >
->> > Turning imx6_pcie drvdata into a struct is very nice, maybe in the
->> > future some of the long case statements in this driver could be split
->> > into per-soc functions called via drvdata.
->>
->> Yeah I thought that too. At a quick glance I did not saw an obvious
->> contender. Should certainly help for similar cases in the future.
-> 
-> Yes, there are other cases in which it would be useful.
-> 
-> But I think it makes more sense to split introducing drvdata to a
-> separate patch.
-> It's nice to separate functional and code cleanup changes.
-> 
-> For example maybe dbi_length causes issues and has to be reverted?
 
-Ok, makes sense, will split drvdata introduction in its own patch.
 
---
-Stefan
+> 
+> On Mon, Nov 19, 2018 at 09:25:22PM +0000, Winkler, Tomas wrote:
+> >
+> >
+> > >
+> > > The error logging for tpm2_commit_space() is in a wrong place. This
+> > > commit moves it inside that function.
+> > >
+> > > Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > > ---
+> > >  drivers/char/tpm/tpm-interface.c | 2 --
+> > >  drivers/char/tpm/tpm2-space.c    | 9 ++++++---
+> > >  2 files changed, 6 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/char/tpm/tpm-interface.c
+> > > b/drivers/char/tpm/tpm- interface.c index 64510ed81b46..7ac6ada8428c
+> > > 100644
+> > > --- a/drivers/char/tpm/tpm-interface.c
+> > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > @@ -277,8 +277,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip
+> > > *chip,
+> > >  	}
+> > >
+> > >  	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+> > > -	if (rc)
+> > > -		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+> > >
+> > >  out:
+> > >  	/* may fail but do not override previous error value in rc */ diff
+> > > --git a/drivers/char/tpm/tpm2-space.c
+> > > b/drivers/char/tpm/tpm2-space.c index 1131a8e7b79b..5ecc73988f7c
+> > > 100644
+> > > --- a/drivers/char/tpm/tpm2-space.c
+> > > +++ b/drivers/char/tpm/tpm2-space.c
+> > > @@ -501,19 +501,19 @@ int tpm2_commit_space(struct tpm_chip *chip,
+> > > struct tpm_space *space,
+> > >  	rc = tpm2_map_response_header(chip, cc, buf, *bufsiz);
+> > >  	if (rc) {
+> > >  		tpm2_flush_space(chip);
+> > > -		return rc;
+> > > +		goto out;
+> > >  	}
+> > >
+> > >  	rc = tpm2_map_response_body(chip, cc, buf, *bufsiz);
+> > >  	if (rc) {
+> > >  		tpm2_flush_space(chip);
+> > > -		return rc;
+> > > +		goto out;
+> > >  	}
+> > >
+> > >  	rc = tpm2_save_space(chip);
+> > >  	if (rc) {
+> > >  		tpm2_flush_space(chip);
+> > > -		return rc;
+> > > +		goto out;
+> > >  	}
+> > >
+> > >  	*bufsiz = be32_to_cpu(header->length); @@ -526,4 +526,7 @@ int
+> > > tpm2_commit_space(struct tpm_chip *chip, struct tpm_space *space,
+> > >  	memcpy(space->session_buf, chip->work_space.session_buf,
+> > > PAGE_SIZE);
+> > >
+> > >  	return 0;
+> > > +out:
+> > Maybe 'out' is too positive name for an error-only exit point?
+> > or you can use if (rc) ... dev_err()
+> 
+> out_err?
+out_err is good, it is used in more places, so it has some of consistency.
+Thanks
+Tomas
+
+
+
+> 
+> /Jarkko
