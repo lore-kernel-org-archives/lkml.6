@@ -2,132 +2,143 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF35C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCC2C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2A3B20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:14:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD7E2080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ouafSHKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A3B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="a9V5OzC2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCD7E2080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernelci.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731243AbeKTLlC (ORCPT
+        id S1732232AbeKTLlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 06:41:02 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:50797 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbeKTLlC (ORCPT
+        Tue, 20 Nov 2018 06:41:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37026 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbeKTLlg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 06:41:02 -0500
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id wAK1ET1g016562;
-        Tue, 20 Nov 2018 10:14:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAK1ET1g016562
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542676470;
-        bh=gT6qqQJTo00TYzFc3I9+O0bQgibhkup2JsSvdWR8UTM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ouafSHKRg2giMeTOAWdViRDpwg8GBbW6oSPuYQueKmRtMywAkb8HS1yhNftwNaPon
-         DlWOjG7htJ9Sly5QE+ejd9FNO7iFyp/IPki+LLHFgolwqHVYJY4MYm5k8IuUp6bODX
-         oGpKE2H30LkeH5UDw13SmNRQVnrdSEH+Z/w1Vibywj1a4HeHRRCqiSiDIaPEyl6GZQ
-         J39U4egX7zU/gn7AAgN2HCZympB13+q6j5ees812xiG0CzK6dt/WofwQzYUetBjCT/
-         mU3NgUKjx7zNkYhYskrruWjlV/2YatQ8m/fQrm43b/zJbIKjH85i8BCqwL7esJg0U9
-         atCu4Y8KLAVIw==
-X-Nifty-SrcIP: [209.85.217.49]
-Received: by mail-vs1-f49.google.com with SMTP id h78so135184vsi.6;
-        Mon, 19 Nov 2018 17:14:30 -0800 (PST)
-X-Gm-Message-State: AGRZ1gIT+B12xjDB2B444DQ7IBlr0MVsl/MjgeJw7i2P5OPHL4LhSZwt
-        /0VPqtEG3WF7fiQ40va48M5S5Nsrn6GwOoSryz8=
-X-Google-Smtp-Source: AJdET5cZHPbHKQdH/j/wbKv0BgiBufe33Mw9du1fySdHtNhmitI/v1fKpOMnQWL0OG/vm6oGqFOHeGd/7FPMmNHIdCE=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr10436241vsb.155.1542676469386;
- Mon, 19 Nov 2018 17:14:29 -0800 (PST)
+        Tue, 20 Nov 2018 06:41:36 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p2-v6so536917wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 17:15:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:to:from:cc;
+        bh=6dLHQlJrz0ezkS4UvFjAaQkzEgUwa9UvG5DGvMZY4Jo=;
+        b=a9V5OzC28qcuSyLRDP6Ri7yPpWTap58ZE1Uz2BuCf4UWxSWQeqKloQbHH81nymmxfl
+         tVC7oYvM48U/L/faBudkkLxx1QsdHw8sI7/Qh8DHfETk9oMlvbg/ORKpHTLnToCOxtY+
+         y7Rk7OlAbNJCttkl1XDuUPAKbp/L2yHjwg7u1pUxLDvSKavYYcermKBmOI/nywnbaS37
+         OQovN4rYu5XkxBY3kDQbSmcdzOxEI9nhvkKnHu+GBOplWGxE8XaBQ1edlH1oSN9GdJIC
+         OYK465zHtu1DZ+/N5fJSWJofxyJeyaRWx4v8TbEkjefwOGALXrKHcHdV8wg846pusUn4
+         ZP4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
+        bh=6dLHQlJrz0ezkS4UvFjAaQkzEgUwa9UvG5DGvMZY4Jo=;
+        b=K60oqpn0Uew8CHNlEbN7lsnJd0WWq6QawCIqeIC76DFmAjL+esZHxW8nQ/GESM5/48
+         mjG3vTrp73y11AA81y6mAlrcmUn2dodFAn35/2tUAOgW11FESF2aqP4uEVa+dhz5WoTt
+         Yd8NLhZGcC5Ylx6Liz+v+HaHkIONqNbNEox2y4HPoQsq/drKfdi7lPYwX4MtNAkUZXuB
+         jiNITHCVdXyW2mGyTySUZJvLbM5J6wh7s8aSkK58glHpV80Rpt62fT0BbHHVyoSQ5js6
+         7h33xij4HKbhJtVvBbmhDrUf4dY2FgXfXSnDxMAW6O4rLi/NXHQcTqh4M1LcygSs0NTm
+         zdXg==
+X-Gm-Message-State: AGRZ1gKaj+bhUokol2PGAh2mbA7j9wbRD6BupWsPrYVYThKTkl9/vXZM
+        v7Rp01vH6gNIQS5EYIk8kPBzJg==
+X-Google-Smtp-Source: AJdET5d6SN49vFvC0+MawmpB9OE6UyCcRGqCy7xukcNW9vYyGVr/5RIRXOWbh5L/JXQ67M1SymAKZw==
+X-Received: by 2002:a1c:a183:: with SMTP id k125mr284452wme.25.1542676506386;
+        Mon, 19 Nov 2018 17:15:06 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id e7-v6sm31487127wra.10.2018.11.19.17.15.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Nov 2018 17:15:05 -0800 (PST)
+Message-ID: <5bf36019.1c69fb81.513e1.f777@mx.google.com>
+Date:   Mon, 19 Nov 2018 17:15:05 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
- <1542270435-11181-5-git-send-email-yamada.masahiro@socionext.com>
- <nycvar.YSQ.7.76.1811152346510.1993@knanqh.ubzr> <CAK7LNATT7PYvH-z572MGSjXbCybAW0TcNebz9CgGM4J07aMOvw@mail.gmail.com>
- <nycvar.YSQ.7.76.1811161234160.1993@knanqh.ubzr>
-In-Reply-To: <nycvar.YSQ.7.76.1811161234160.1993@knanqh.ubzr>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 20 Nov 2018 10:13:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARvZZa-RgLCs9hwwgwrH-frxL6H1a3=BQzHmVqX6sPhTw@mail.gmail.com>
-Message-ID: <CAK7LNARvZZa-RgLCs9hwwgwrH-frxL6H1a3=BQzHmVqX6sPhTw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] kbuild: simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: boot
+X-Kernelci-Kernel: v4.14.81-125-g43bb46eb6e2e
+X-Kernelci-Branch: linux-4.14.y
+X-Kernelci-Tree: stable-rc
+In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+References: <20181119162612.951907286@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 000/124] 4.14.82-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Nicolas,
+stable-rc/linux-4.14.y boot: 77 boots: 0 failed, 59 passed with 18 offline =
+(v4.14.81-125-g43bb46eb6e2e)
 
+Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
+-4.14.y/kernel/v4.14.81-125-g43bb46eb6e2e/
+Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.14.=
+y/kernel/v4.14.81-125-g43bb46eb6e2e/
 
-On Sat, Nov 17, 2018 at 2:50 AM Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+Tree: stable-rc
+Branch: linux-4.14.y
+Git Describe: v4.14.81-125-g43bb46eb6e2e
+Git Commit: 43bb46eb6e2eae660d29ec037de28fca0cd2e7e5
+Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Tested: 50 unique boards, 20 SoC families, 14 builds out of 185
 
-> > > > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > > > index 7f3ca6e..e5ba9b1 100644
-> > > > --- a/scripts/Makefile.build
-> > > > +++ b/scripts/Makefile.build
-> > > > @@ -254,9 +254,18 @@ objtool_dep = $(objtool_obj)                                     \
-> > > >             $(wildcard include/config/orc/unwinder.h          \
-> > > >                        include/config/stack/validation.h)
-> > > >
-> > > > +ifdef CONFIG_TRIM_UNUSED_KSYMS
-> > > > +cmd_gen_ksymdeps = \
-> > > > +     $(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ > $(dot-target).tmp; \
-> > > > +     cat $(dot-target).tmp >> $(dot-target).cmd; \
-> > > > +     rm -f $(dot-target).tmp;
-> > >
-> > > Why don't you append to $(dot-target).cmd directly?
-> >
-> >
-> > If scripts/gen_ksymdeps.sh fails for some reasons,
-> > it will error out immediately thanks to 'set -e' flag.
-> >
-> > Appending incomplete portion might end up with a corrupted .*.cmd file.
-> >
-> > Probably, that would not happen, but I just wanted to ensure it.
->
-> Well, strictly speaking, if scripts/gen_ksymdeps.sh fails and its output
-> isn't appended at all to the .*.cmd file, then that .*.cmd file is
-> already corrupted as it is missing necessary dependencies. Would be
-> better to delete the .*.cmd file entirely in that case.
+Offline Platforms:
 
+arm:
 
-More strictly speaking, missing necessary dependencies is not a big deal.
+    omap2plus_defconfig:
+        am335x-boneblack: 1 offline lab
 
-Now, scripts/Kbuild.include specifies .DELETE_ON_ERROR
+    sunxi_defconfig:
+        sun5i-r8-chip: 1 offline lab
 
-Any error in fixdep, gen_ksymdeps.sh, or whatever
-will delete *.o file anyway.
+    tegra_defconfig:
+        tegra124-jetson-tk1: 1 offline lab
 
-So, I change the course
-so that fixdep and gen_ksymdeps.sh directly write to .*.cmd files.
+    bcm2835_defconfig:
+        bcm2835-rpi-b: 1 offline lab
 
+    exynos_defconfig:
+        exynos5800-peach-pi: 1 offline lab
 
-I wrote detailed explanation here:
-https://patchwork.kernel.org/patch/10689697/
+    sama5_defconfig:
+        at91-sama5d4_xplained: 1 offline lab
 
+    multi_v7_defconfig:
+        alpine-db: 1 offline lab
+        am335x-boneblack: 1 offline lab
+        at91-sama5d4_xplained: 1 offline lab
+        exynos5800-peach-pi: 1 offline lab
+        socfpga_cyclone5_de0_sockit: 1 offline lab
+        sun5i-r8-chip: 1 offline lab
+        tegra124-jetson-tk1: 1 offline lab
 
+arm64:
 
+    defconfig:
+        apq8016-sbc: 1 offline lab
+        juno-r2: 1 offline lab
+        meson-gxl-s905d-p230: 1 offline lab
+        meson-gxl-s905x-p212: 1 offline lab
+        mt7622-rfb1: 1 offline lab
 
--- 
-Best Regards
-Masahiro Yamada
+---
+For more info write to <info@kernelci.org>
