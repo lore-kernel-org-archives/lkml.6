@@ -2,285 +2,95 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248E4C32788
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C83BC32788
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C58E42147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C58E42147A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id E5BD12147D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:28:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gc7gNaqj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BD12147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbeKUI7o (ORCPT
+        id S1726343AbeKUJAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:59:44 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41816 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725913AbeKUI7o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:59:44 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAKMIbZ6006748
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:28:19 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nvrwxcmqd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:28:19 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 20 Nov 2018 22:28:18 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 20 Nov 2018 22:28:14 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAKMSD2O36765752
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Nov 2018 22:28:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8AAC8B2076;
-        Tue, 20 Nov 2018 22:28:13 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63D36B2065;
-        Tue, 20 Nov 2018 22:28:13 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 20 Nov 2018 22:28:13 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 096E716C3640; Tue, 20 Nov 2018 14:28:14 -0800 (PST)
-Date:   Tue, 20 Nov 2018 14:28:14 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com
-Subject: Re: dyntick-idle CPU and node's qsmask
-Reply-To: paulmck@linux.ibm.com
-References: <20181110214659.GA96924@google.com>
- <20181110230436.GL4170@linux.ibm.com>
- <20181111030925.GA182908@google.com>
- <20181111042210.GN4170@linux.ibm.com>
- <20181111180916.GA25327@google.com>
- <20181111183618.GY4170@linux.ibm.com>
- <20181120204243.GA22801@google.com>
+        Wed, 21 Nov 2018 04:00:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbeKUJAQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 04:00:16 -0500
+Received: from [10.80.45.159] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9BF52147A;
+        Tue, 20 Nov 2018 22:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542752932;
+        bh=amiAQZivvLb+0E+qyHlyj7WCS/LfqxES6RuASc64Ck8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Gc7gNaqjdr1jq9VQyC9TxfnZ5sh9BF2XHE4/DyL1I5SWXvyuordTu+vC9kvHIsX0z
+         weO795ZUmkOqG7w3y8yHonZprPjrFc5Kk55HPZb7VeE5WWiekyZOUKVPAHl5WcpPEm
+         ghpkvrqWo+yKkSii6t02aSXmCqu/3XJuLvgbp/Xw=
+Subject: Re: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Alex_Gagniuc@Dellteam.com, mr.nuke.me@gmail.com,
+        baicar.tyler@gmail.com, Austin.Bolen@dell.com, Shyam.Iyer@dell.com,
+        lukas@wunner.de, bhelgaas@google.com, rjw@rjwysocki.net,
+        lenb@kernel.org, ruscur@russell.cc, sbobroff@linux.ibm.com,
+        oohall@gmail.com, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181119181051.GA26707@localhost.localdomain>
+ <c0d6535f-324b-557a-3d0e-ccec070459a7@kernel.org>
+ <3f923367-2cc1-c0d6-bca6-bf9a03d1b9ca@gmail.com>
+ <ef6b19de-dd18-850f-4db9-8ab71b975e94@kernel.org>
+ <bb575cfdcd0a4c50b489fb16eccfbff2@ausx13mps321.AMER.DELL.COM>
+ <84013a8a-287d-d700-6710-91cc35f507c8@kernel.org>
+ <9c9531c7efb846438f03f744b9afc466@ausx13mps321.AMER.DELL.COM>
+ <3b18a9fa-7bdd-0fb4-285d-4efb454be50a@kernel.org>
+ <e86f04ef8c054d61969862a6e7b72d0d@ausx13mps321.AMER.DELL.COM>
+ <314e59da-48e1-545b-3ee9-6e5056b90fd9@kernel.org>
+ <20181120214243.GG26707@localhost.localdomain>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <bace940c-70d9-6631-9818-43338d194327@kernel.org>
+Date:   Tue, 20 Nov 2018 17:28:49 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120204243.GA22801@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18112022-2213-0000-0000-0000031AD05B
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010089; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01120369; UDB=6.00581356; IPR=6.00900491;
- MB=3.00024254; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-20 22:28:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112022-2214-0000-0000-00005C518BEC
-Message-Id: <20181120222813.GE4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-20_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811200196
+In-Reply-To: <20181120214243.GG26707@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 12:42:43PM -0800, Joel Fernandes wrote:
-> On Sun, Nov 11, 2018 at 10:36:18AM -0800, Paul E. McKenney wrote:
-> > On Sun, Nov 11, 2018 at 10:09:16AM -0800, Joel Fernandes wrote:
-> > > On Sat, Nov 10, 2018 at 08:22:10PM -0800, Paul E. McKenney wrote:
-> > > > On Sat, Nov 10, 2018 at 07:09:25PM -0800, Joel Fernandes wrote:
-> > > > > On Sat, Nov 10, 2018 at 03:04:36PM -0800, Paul E. McKenney wrote:
-> > > > > > On Sat, Nov 10, 2018 at 01:46:59PM -0800, Joel Fernandes wrote:
-> > > > > > > Hi Paul and everyone,
-> > > > > > > 
-> > > > > > > I was tracing/studying the RCU code today in paul/dev branch and noticed that
-> > > > > > > for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
-> > > > > > > corresponding to the leaf node for the idle CPU, and reporting a QS on their
-> > > > > > > behalf.
-> > > > > > > 
-> > > > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
-> > > > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
-> > > > > > > rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
-> > > > > > > 
-> > > > > > > That's all good but I was wondering if we can do better for the idle CPUs if
-> > > > > > > we can some how not set the qsmask of the node in the first place. Then no
-> > > > > > > reporting would be needed of quiescent state is needed for idle CPUs right?
-> > > > > > > And we would also not need to acquire the rnp lock I think.
-> > > > > > > 
-> > > > > > > At least for a single node tree RCU system, it seems that would avoid needing
-> > > > > > > to acquire the lock without complications. Anyway let me know your thoughts
-> > > > > > > and happy to discuss this at the hallways of the LPC as well for folks
-> > > > > > > attending :)
-> > > > > > 
-> > > > > > We could, but that would require consulting the rcu_data structure for
-> > > > > > each CPU while initializing the grace period, thus increasing the number
-> > > > > > of cache misses during grace-period initialization and also shortly after
-> > > > > > for any non-idle CPUs.  This seems backwards on busy systems where each
-> > > > > 
-> > > > > When I traced, it appears to me that rcu_data structure of a remote CPU was
-> > > > > being consulted anyway by the rcu_sched thread. So it seems like such cache
-> > > > > miss would happen anyway whether it is during grace-period initialization or
-> > > > > during the fqs stage? I guess I'm trying to say, the consultation of remote
-> > > > > CPU's rcu_data happens anyway.
-> > > > 
-> > > > Hmmm...
-> > > > 
-> > > > The rcu_gp_init() function does access an rcu_data structure, but it is
-> > > > that of the current CPU, so shouldn't involve a communications cache miss,
-> > > > at least not in the common case.
-> > > > 
-> > > > Or are you seeing these cross-CPU rcu_data accesses in rcu_gp_fqs() or
-> > > > functions that it calls?  In that case, please see below.
-> > > 
-> > > Yes, it was rcu_implicit_dynticks_qs called from rcu_gp_fqs.
-> > > 
-> > > > > > CPU will with high probability report its own quiescent state before three
-> > > > > > jiffies pass, in which case the cache misses on the rcu_data structures
-> > > > > > would be wasted motion.
-> > > > > 
-> > > > > If all the CPUs are busy and reporting their QS themselves, then I think the
-> > > > > qsmask is likely 0 so then rcu_implicit_dynticks_qs (called from
-> > > > > force_qs_rnp) wouldn't be called and so there would no cache misses on
-> > > > > rcu_data right?
-> > > > 
-> > > > Yes, but assuming that all CPUs report their quiescent states before
-> > > > the first call to rcu_gp_fqs().  One exception is when some CPU is
-> > > > looping in the kernel for many milliseconds without passing through a
-> > > > quiescent state.  This is because for recent kernels, cond_resched()
-> > > > is not a quiescent state until the grace period is something like 100
-> > > > milliseconds old.  (For older kernels, cond_resched() was never an RCU
-> > > > quiescent state unless it actually scheduled.)
-> > > > 
-> > > > Why wait 100 milliseconds?  Because otherwise the increase in
-> > > > cond_resched() overhead shows up all too well, causing 0day test robot
-> > > > to complain bitterly.  Besides, I would expect that in the common case,
-> > > > CPUs would be executing usermode code.
-> > > 
-> > > Makes sense. I was also wondering about this other thing you mentioned about
-> > > waiting for 3 jiffies before reporting the idle CPU's quiescent state. Does
-> > > that mean that even if a single CPU is dyntick-idle for a long period of
-> > > time, then the minimum grace period duration would be atleast 3 jiffies? In
-> > > our mobile embedded devices, jiffies is set to 3.33ms (HZ=300) to keep power
-> > > consumption low. Not that I'm saying its an issue or anything (since IIUC if
-> > > someone wants shorter grace periods, they should just use expedited GPs), but
-> > > it sounds like it would be shorter GP if we just set the qsmask early on some
-> > > how and we can manage the overhead of doing so.
-> > 
-> > First, there is some autotuning of the delay based on HZ:
-> > 
-> > #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
-> > 
-> > So at HZ=300, you should be seeing a two-jiffy delay rather than the
-> > usual HZ=1000 three-jiffy delay.  Of course, this means that the delay
-> > is 6.67ms rather than the usual 3ms, but the theory is that lower HZ
-> > rates often mean slower instruction execution and thus a desire for
-> > lower RCU overhead.  There is further autotuning based on number of
-> > CPUs, but this does not kick in until you have 256 CPUs on your system,
-> > and I bet that smartphones aren't there yet.  Nevertheless, check out
-> > RCU_JIFFIES_FQS_DIV for more info on this.
-> > 
-> > But you can always override this autotuning using the following kernel
-> > boot paramters:
-> > 
-> > rcutree.jiffies_till_first_fqs
-> > rcutree.jiffies_till_next_fqs
-> 
-> Slightly related, I was just going through your patch in the dev branch "doc:
-> Now jiffies_till_sched_qs solicits from cond_resched()".
-> 
-> If I understand correctly, what you're trying to do is set
-> rcu_data.rcu_urgent_qs if you've not heard from the CPU long enough from
-> rcu_implicit_dynticks_qs.
-> 
-> Then in the other paths, you are reading this value and similuating a dyntick
-> idle transition even though you may not be really going into dyntick-idle.
-> Actually in the scheduler-tick, you are also using it to set NEED_RESCHED
-> appropriately.
-> 
-> Did I get it right so far?
+On 11/20/2018 4:42 PM, Keith Busch wrote:
+> How does that work? If the OS takes control, it sets up MSIs that FW don't
+> react to, and disables system errors through PCIe Root Control. Aren't
+> those sys errs the mechanism FW knows it has something to do, which
+> means the OS can effectively fence it off?
 
-Partially.
+I think this is all implementation detail and doesn't necessarily apply
+to all firmware-first implementation flavors.
 
-The simulated dyntick-idle transition happens if the grace period extends
-for even longer, so that ->rcu_need_heavy_qs gets set.  Up to that point,
-all that is asked for is a local-to-the-CPU report of a quiescent state.
+Assumptions are:
+1. both FW and OS are listening to MSI interrupts
+2. FW monitors the system errors
 
-> I was thinking if we could simplify rcu_note_context_switch (the parts that
-> call rcu_momentary_dyntick_idle), if we did the following in
-> rcu_implicit_dynticks_qs.
-> 
-> Since we already call rcu_qs in rcu_note_context_switch, that would clear the
-> rdp->cpu_no_qs flag. Then there should be no need to call
-> rcu_momentary_dyntick_idle from rcu_note_context switch.
+Some FF implementation could route the AER interrupt to a higher privilege
+level. Some other implementation could use INTx or a side-band channel interrupt
+for firmware-interrupt too.
 
-But does this also work for the rcu_all_qs() code path?
+I have seen all 3 except MSI :) and also firmware never monitored the system
+error bits. I was curious if anybody ever used those legacy bits. Now, I know
+someone is using it.
 
-> I think this would simplify cond_resched as well.  Could this avoid the need
-> for having an rcu_all_qs at all? Hopefully I didn't some Tasks-RCU corner cases..
-
-There is also the code path from cond_resched() in PREEMPT=n kernels.
-This needs rcu_all_qs().  Though it is quite possible that some additional
-code collapsing is possible.
-
-> Basically for some background, I was thinking can we simplify the code that
-> calls "rcu_momentary_dyntick_idle" since we already register a qs in other
-> ways (like by resetting cpu_no_qs).
-
-One complication is that rcu_all_qs() is invoked with interrupts
-and preemption enabled, while rcu_note_context_switch() is
-invoked with interrupts disabled.  Also, as you say, Tasks RCU.
-Plus rcu_all_qs() wants to exit immediately if there is nothing to
-do, while rcu_note_context_switch() must unconditionally do rcu_qs()
--- yes, it could check, but that would be redundant with the checks
-within rcu_qs().  The one function traces and the other one doesn't,
-but it would be OK if both traced.  (I hope, anyway:  The cond_resched()
-performance requirements are surprisingly severe.)  Aside from that,
-the two functions are quite similar.
-
-It would of course be possible to create a common helper function that
-rcu_all_qs() and rcu_note_context_switch() both became simple wrappers
-for, but it is not clear that this would actually be shorter or simpler.
-
-> I should probably start drawing some pictures to make sense of everything,
-> but do let me know if I have a point ;-) Thanks for your time.
-
-This stuff is admittedly a bit fiddly.  Again, it took some serious
-work to avoid cond_resched() performance regressions.
-
-> - Joel
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> index c818e0c91a81..5aa0259c014d 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -1063,7 +1063,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
->  	 * read-side critical section that started before the beginning
->  	 * of the current RCU grace period.
->  	 */
-> -	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap)) {
-> +	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap) || !rdp->cpu_no_qs.b.norm) {
-
-If I am not too confused, this change could cause trouble for
-nohz_full CPUs looping in the kernel.  Such CPUs don't necessarily take
-scheduler-clock interrupts, last I checked, and this could prevent the
-CPU from reporting its quiescent state to core RCU.
-
-Or am I missing something here?
-
-							Thanx, Paul
-
->  		trace_rcu_fqs(rcu_state.name, rdp->gp_seq, rdp->cpu, TPS("dti"));
->  		rcu_gpnum_ovf(rnp, rdp);
->  		return 1;
-> 
 
