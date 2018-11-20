@@ -2,95 +2,85 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1EBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BC7C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F16220851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F16220851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 9ECE02089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:21:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9quRlhw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECE02089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732423AbeKTKnS (ORCPT
+        id S1731976AbeKTKrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:43:18 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:56350 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728979AbeKTKnS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:43:18 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id DF26472CA5E;
-        Tue, 20 Nov 2018 03:17:01 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id D675B7CD1FF; Tue, 20 Nov 2018 03:17:01 +0300 (MSK)
-Date:   Tue, 20 Nov 2018 03:17:01 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Chris Zankel <chris@zankel.net>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-xtensa@linux-xtensa.org, linux-audit@redhat.com,
+        Tue, 20 Nov 2018 05:47:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725961AbeKTKrt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:47:49 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BE3F20851;
+        Tue, 20 Nov 2018 00:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542673293;
+        bh=tZ7eP3YjFUSFrTtYpKNSvGlFb/++sSLQtCxQ0OI8z2A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=m9quRlhwuKrEI//OKArtZz1FGGAg+goVlSsWmOxSaqDEXDYO7W4KK0uEERwYkyEv7
+         EE6G5awt4xS5zA3jtaVFmkaHLKkgHPG6xLDlIUQbnbXo9DYdtXJhljlgqd60Jg+s6N
+         A/qCpzP0dJ/0l8jEExtQstohTcnSNHi5qs6N75vw=
+Subject: Re: [PATCH 4.14 000/124] 4.14.82-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 15/15] xtensa: define syscall_get_arch()
-Message-ID: <20181120001701.GO11387@altlinux.org>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah@kernel.org
+References: <20181119162612.951907286@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <872b2e22-10c6-f8dc-398f-9273b33d0294@kernel.org>
+Date:   Mon, 19 Nov 2018 17:21:32 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120001128.GA11300@altlinux.org>
+In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
-request.
+On 11/19/18 9:27 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.82 release.
+> There are 124 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 21 16:25:07 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.82-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Max Filippov <jcmvbkbc@gmail.com>
----
-v2: added Acked-by to v1
+Compiled and booted on my test system. No dmesg regressions.
 
- arch/xtensa/include/asm/syscall.h | 7 +++++++
- include/uapi/linux/audit.h        | 1 +
- 2 files changed, 8 insertions(+)
+thanks,
+-- Shuah
 
-diff --git a/arch/xtensa/include/asm/syscall.h b/arch/xtensa/include/asm/syscall.h
-index 3673ff1f1bc5..84144567095a 100644
---- a/arch/xtensa/include/asm/syscall.h
-+++ b/arch/xtensa/include/asm/syscall.h
-@@ -8,6 +8,13 @@
-  * Copyright (C) 2001 - 2007 Tensilica Inc.
-  */
- 
-+#include <uapi/linux/audit.h>
-+
-+static inline int syscall_get_arch(void)
-+{
-+	return AUDIT_ARCH_XTENSA;
-+}
-+
- struct pt_regs;
- asmlinkage long xtensa_ptrace(long, long, long, long);
- asmlinkage long xtensa_sigreturn(struct pt_regs*);
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index b032748cb8ba..904d713f6cdd 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -425,6 +425,7 @@ enum {
- #define AUDIT_ARCH_TILEPRO	(EM_TILEPRO|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_UNICORE	(EM_UNICORE|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_X86_64	(EM_X86_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_XTENSA	(EM_XTENSA)
- 
- #define AUDIT_PERM_EXEC		1
- #define AUDIT_PERM_WRITE	2
--- 
-ldv
