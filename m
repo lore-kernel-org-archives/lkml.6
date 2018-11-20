@@ -2,153 +2,151 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EC4C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6420C04EBB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 230C320851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:42:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 230C320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A65D12075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A65D12075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeKTTKz (ORCPT
+        id S1726796AbeKTTNc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:10:55 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50013 "EHLO mail.bootlin.com"
+        Tue, 20 Nov 2018 14:13:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41556 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbeKTTKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:10:54 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A5EE72074F; Tue, 20 Nov 2018 09:42:55 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 735D62037D;
-        Tue, 20 Nov 2018 09:42:45 +0100 (CET)
-Date:   Tue, 20 Nov 2018 09:42:45 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Mesih Kilinc <mesihkilinc@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Rob Herring <robh+dt@kernel.org>,
-        Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [RFC PATCH v2 03/14] ARM: sunxi: add Allwinner ARMv5 SoCs
-Message-ID: <20181120084245.bnjdaf647e6tdlku@flea>
-References: <cover.1542546735.git.mesihkilinc@gmail.com>
- <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com>
+        id S1726101AbeKTTNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:13:32 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B915D811D3;
+        Tue, 20 Nov 2018 08:45:33 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 85CDF608C4;
+        Tue, 20 Nov 2018 08:45:33 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 439FE1800533;
+        Tue, 20 Nov 2018 08:45:33 +0000 (UTC)
+Date:   Tue, 20 Nov 2018 03:45:32 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
+        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+        xen-devel@lists.xenproject.org,
+        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Kairui Song <kasong@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Message-ID: <1747228.35250472.1542703532881.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20181119101616.8901-6-david@redhat.com>
+References: <20181119101616.8901-1-david@redhat.com> <20181119101616.8901-6-david@redhat.com>
+Subject: Re: [PATCH v1 5/8] hv_balloon: mark inflated pages PG_offline
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="f4q6buea7vbu6n7w"
-Content-Disposition: inline
-In-Reply-To: <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.119, 10.4.195.20]
+Thread-Topic: hv_balloon: mark inflated pages PG_offline
+Thread-Index: WULPe0NX2lje8pHd8lwBzyMbSeWoFw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 20 Nov 2018 08:45:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---f4q6buea7vbu6n7w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi David,
 
-On Sun, Nov 18, 2018 at 05:17:02PM +0300, Mesih Kilinc wrote:
-> Add option for Allwinner ARMv5 SoCs and SoC F1C100s (which has a die
-> used for many new F-series products, including F1C100A, F1C100s, F1C200s,
-> F1C500, F1C600).
->=20
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> 
+> Mark inflated and never onlined pages PG_offline, to tell the world that
+> the content is stale and should not be dumped.
+> 
+> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
+> Cc: Haiyang Zhang <haiyangz@microsoft.com>
+> Cc: Stephen Hemminger <sthemmin@microsoft.com>
+> Cc: Kairui Song <kasong@redhat.com>
+> Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->  arch/arm/mach-sunxi/Kconfig    | 14 +++++++++++++-
->  arch/arm/mach-sunxi/Makefile   |  1 +
->  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
->  3 files changed, 36 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
->=20
-> diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-> index 5db17ec..066644c 100644
-> --- a/arch/arm/mach-sunxi/Kconfig
-> +++ b/arch/arm/mach-sunxi/Kconfig
-> @@ -1,6 +1,6 @@
->  menuconfig ARCH_SUNXI
->  	bool "Allwinner SoCs"
-> -	depends on ARCH_MULTI_V7
-> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
->  	select ARCH_HAS_RESET_CONTROLLER
->  	select CLKSRC_MMIO
->  	select GENERIC_IRQ_CHIP
-> @@ -64,4 +64,16 @@ config ARCH_SUNXI_MC_SMP
-> =20
->  endif
-> =20
-> +if ARCH_MULTI_V5
+>  drivers/hv/hv_balloon.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index 211f3fe3a038..47719862e57f 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -681,8 +681,13 @@ static struct notifier_block hv_memory_nb = {
+>  /* Check if the particular page is backed and can be onlined and online it.
+>  */
+>  static void hv_page_online_one(struct hv_hotadd_state *has, struct page *pg)
+>  {
+> -	if (!has_pfn_is_backed(has, page_to_pfn(pg)))
+> +	if (!has_pfn_is_backed(has, page_to_pfn(pg))) {
+> +		if (!PageOffline(pg))
+> +			__SetPageOffline(pg);
+>  		return;
+> +	}
+> +	if (PageOffline(pg))
+> +		__ClearPageOffline(pg);
+>  
+>  	/* This frame is currently backed; online the page. */
+>  	__online_page_set_limits(pg);
+> @@ -1201,6 +1206,7 @@ static void free_balloon_pages(struct hv_dynmem_device
+> *dm,
+>  
+>  	for (i = 0; i < num_pages; i++) {
+>  		pg = pfn_to_page(i + start_frame);
+> +		__ClearPageOffline(pg);
+
+Just thinking, do we need to care for clearing PageOffline flag before freeing
+a balloon'd page?
+
+Thanks,
+Pankaj
+
+>  		__free_page(pg);
+>  		dm->num_pages_ballooned--;
+>  	}
+> @@ -1213,7 +1219,7 @@ static unsigned int alloc_balloon_pages(struct
+> hv_dynmem_device *dm,
+>  					struct dm_balloon_response *bl_resp,
+>  					int alloc_unit)
+>  {
+> -	unsigned int i = 0;
+> +	unsigned int i, j;
+>  	struct page *pg;
+>  
+>  	if (num_pages < alloc_unit)
+> @@ -1245,6 +1251,10 @@ static unsigned int alloc_balloon_pages(struct
+> hv_dynmem_device *dm,
+>  		if (alloc_unit != 1)
+>  			split_page(pg, get_order(alloc_unit << PAGE_SHIFT));
+>  
+> +		/* mark all pages offline */
+> +		for (j = 0; j < (1 << get_order(alloc_unit << PAGE_SHIFT)); j++)
+> +			__SetPageOffline(pg + j);
 > +
-> +config ARCH_SUNXI_V5
-> +	bool
-> +	select SUN4I_TIMER
-
-If SUN4I_TIMER is needed both by the armv5 and armv7 cores, why did we
-need to move it out of ARCH_SUNXI?
-
-> +config MACH_SUNIV
-> +	bool "Allwinner new F-series (suniv) SoCs support"
-
-I would drop the "new" here.
-
-> +++ b/arch/arm/mach-sunxi/sunxi_v5.c
-> @@ -0,0 +1,22 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Device Tree support for Allwinner F series SoCs
-> + *
-> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-> + * Copyright (C) 2018 Mesih Kilinc <mesihkilinc@gmail.com>
-> + *
-> + * This file is licensed under the terms of the GNU General Public
-> + * License version 2.  This program is licensed "as is" without any
-> + * warranty of any kind, whether express or implied.
-> + */
-> +
-> +#include <asm/mach/arch.h>
-> +
-> +static const char * const suniv_board_dt_compat[] =3D {
-> +	"allwinner,suniv-f1c100s",
-> +	NULL,
-> +};
-> +
-> +DT_MACHINE_START(SUNXI_DT, "Allwinner suniv Family")
-> +	.dt_compat	=3D suniv_board_dt_compat,
-> +MACHINE_END
-
-Do we really need a separate file for that?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---f4q6buea7vbu6n7w
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/PJBQAKCRDj7w1vZxhR
-xYLpAP9rCPbc1QsZM0YP5XXJlABPGK4Zg27MF0Ul2TZafIW9FwEArf/W5NzApR+d
-G/uBrwKajJEKBB5Jh2P4rZBA1CZ0gA0=
-=HggK
------END PGP SIGNATURE-----
-
---f4q6buea7vbu6n7w--
+>  		bl_resp->range_count++;
+>  		bl_resp->range_array[i].finfo.start_page =
+>  			page_to_pfn(pg);
+> --
+> 2.17.2
+> 
+> 
