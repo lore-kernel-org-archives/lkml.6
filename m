@@ -2,88 +2,187 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A12C5ACC6
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F5CC5ACBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE862145D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDE862145D
+	by mail.kernel.org (Postfix) with ESMTP id 8B5A7214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B5A7214DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726711AbeKUIIJ (ORCPT
+        id S1726993AbeKUIIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:08:09 -0500
-Received: from mga17.intel.com ([192.55.52.151]:35018 "EHLO mga17.intel.com"
+        Wed, 21 Nov 2018 03:08:15 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35029 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbeKUIIJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:08:09 -0500
+        id S1726098AbeKUIIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:08:14 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 13:36:56 -0800
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 13:37:01 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
-   d="scan'208";a="281632602"
+   d="scan'208";a="281632641"
 Received: from pmvancle-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.10.84])
-  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 13:36:55 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 13:37:00 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
         liam.r.girdwood@linux.intel.com, andriy.shevchenko@linux.intel.com,
         arnd@arndb.de, linux-kernel@vger.kernel.org,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [RFC PATCH 0/6] ASoC:Intel:Skylake: Enable HDaudio legacy fallback
-Date:   Tue, 20 Nov 2018 15:36:38 -0600
-Message-Id: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 6/6] ALSA: hda: add fallback capabilities for SKL+ platforms
+Date:   Tue, 20 Nov 2018 15:36:44 -0600
+Message-Id: <20181120213644.19103-7-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is provided as an RFC and should not be merged as is
-(Turkey break in the USA and more validation needed). This is however
-a good time to gather comments. This work is the result of multiple
-email discussions to finally provide more flexibility for
-distributions to chose whether to stick with the legacy HDaudio driver
-or to enable the SST/Skylake driver for newer platforms (required
-e.g. for digital microphone support)
+Enable fallback for select PCI IDs
 
-The patches add support for CoffeeLake, simplify the probe for the
-Skylake driver, introduce more compile-time granularity so that
-platforms can be selected individually and last provide a dynamic
-fallback mechanism when two drivers are registered for the same PCI
-ID.
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ sound/pci/hda/Kconfig     | 40 +++++++++++++++++++++++++++++++++++++++
+ sound/pci/hda/hda_intel.c | 19 +++++++++++++------
+ sound/soc/intel/Kconfig   |  6 ++++++
+ 3 files changed, 59 insertions(+), 6 deletions(-)
 
-When the SOF driver is released, the same mechanism will be used to
-enable the SOF-legacy fallback. There will be no plans to enable an
-SOF->SST falback.
-
-Pierre-Louis Bossart (4):
-  ASoC: Intel: Skylake: stop init/probe if DSP is not present
-  ASoC: Intel: Skylake: remove useless tests on DSP presence
-  ASoC: Intel: Skylake: Add more platform granularity
-  ALSA: hda: add fallback capabilities for SKL+ platforms
-
-Takashi Iwai (2):
-  ASoC: Intel: Skylake: Add CFL-S support
-  ALSA: hda: Allow fallback binding with legacy HD-audio for Intel SKL+
-
- include/sound/hdaudio.h                |   6 +
- sound/pci/hda/Kconfig                  |  40 +++++++
- sound/pci/hda/hda_controller.h         |   2 +-
- sound/pci/hda/hda_intel.c              |  51 ++++++--
- sound/soc/intel/Kconfig                |  86 ++++++++++++--
- sound/soc/intel/boards/Kconfig         |  16 ++-
- sound/soc/intel/skylake/skl-messages.c |   8 ++
- sound/soc/intel/skylake/skl.c          | 154 +++++++++++++++++++------
- 8 files changed, 311 insertions(+), 52 deletions(-)
-
+diff --git a/sound/pci/hda/Kconfig b/sound/pci/hda/Kconfig
+index 4235907b7858..9bb317fb3507 100644
+--- a/sound/pci/hda/Kconfig
++++ b/sound/pci/hda/Kconfig
+@@ -228,4 +228,44 @@ config SND_HDA_POWER_SAVE_DEFAULT
+ 
+ endif
+ 
++if SND_HDA_INTEL
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_SKL
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  Skylake machines
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_APL
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  Broxton/ApolloLake machines
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_KBL
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  KabyLake machines
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_GLK
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  GeminiLake machines
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_CNL
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  CannonLake machines
++
++config SND_HDA_INTEL_LEGACY_FALLBACK_CFL
++	bool
++	help
++	  This option enables HD-audio legacy fallback for
++	  CoffeeLake machines
++
++endif ## SND_HDA_INTEL
++
+ endmenu
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index eb00e37c1c27..569419242da3 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -360,6 +360,7 @@ enum {
+ 	 AZX_DCAPS_NO_64BIT |\
+ 	 AZX_DCAPS_4K_BDLE_BOUNDARY | AZX_DCAPS_SNOOP_OFF)
+ 
++#define AZX_DCAPS_INTEL_LEGACY_FALLBACK(conf) (IS_ENABLED(conf) ? AZX_DCAPS_INTEL_SHARED : 0)
+ /*
+  * vga_switcheroo support
+  */
+@@ -2416,34 +2417,40 @@ static const struct pci_device_id azx_ids[] = {
+ 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
+ 	/* Sunrise Point-LP */
+ 	{ PCI_DEVICE(0x8086, 0x9d70),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_SKL) },
+ 	/* Kabylake */
+ 	{ PCI_DEVICE(0x8086, 0xa171),
+ 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
+ 	/* Kabylake-LP */
+ 	{ PCI_DEVICE(0x8086, 0x9d71),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_KBL) },
+ 	/* Kabylake-H */
+ 	{ PCI_DEVICE(0x8086, 0xa2f0),
+ 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE },
+ 	/* Coffelake */
+ 	{ PCI_DEVICE(0x8086, 0xa348),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_CFL) },
+ 	/* Cannonlake */
+ 	{ PCI_DEVICE(0x8086, 0x9dc8),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_CNL) },
+ 	/* Icelake */
+ 	{ PCI_DEVICE(0x8086, 0x34c8),
+ 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_SKYLAKE},
+ 	/* Broxton-P(Apollolake) */
+ 	{ PCI_DEVICE(0x8086, 0x5a98),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_APL) },
+ 	/* Broxton-T */
+ 	{ PCI_DEVICE(0x8086, 0x1a98),
+ 	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
+ 	/* Gemini-Lake */
+ 	{ PCI_DEVICE(0x8086, 0x3198),
+-	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON },
++	  .driver_data = AZX_DRIVER_SKL | AZX_DCAPS_INTEL_BROXTON |
++	  AZX_DCAPS_INTEL_LEGACY_FALLBACK(CONFIG_SND_HDA_INTEL_LEGACY_FALLBACK_GLK) },
+ 	/* Haswell */
+ 	{ PCI_DEVICE(0x8086, 0x0a0c),
+ 	  .driver_data = AZX_DRIVER_HDMI | AZX_DCAPS_INTEL_HASWELL },
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index c02d08d31d0d..4c6abdbb0b90 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -197,6 +197,12 @@ config SND_SOC_INTEL_SKYLAKE_COMMON
+ config SND_SOC_INTEL_SKL_LEGACY_SUPPORT
+ 	bool "Fallback legacy HD-audio binding"
+ 	depends on SND_HDA_INTEL=y || SND_SOC_INTEL_SKYLAKE_FAMILY=SND_HDA_INTEL
++	select SND_HDA_INTEL_LEGACY_FALLBACK_SKL if SND_SOC_INTEL_SKL
++	select SND_HDA_INTEL_LEGACY_FALLBACK_APL if SND_SOC_INTEL_APL
++	select SND_HDA_INTEL_LEGACY_FALLBACK_KBL if SND_SOC_INTEL_KBL
++	select SND_HDA_INTEL_LEGACY_FALLBACK_GLK if SND_SOC_INTEL_GLK
++	select SND_HDA_INTEL_LEGACY_FALLBACK_CNL if SND_SOC_INTEL_CNL
++	select SND_HDA_INTEL_LEGACY_FALLBACK_CFL if SND_SOC_INTEL_CFL
+ 	help
+ 	  Fallback binding with the legacy HD-audio driver when no DSP is
+ 	  found
 -- 
 2.17.1
 
