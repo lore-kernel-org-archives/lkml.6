@@ -6,128 +6,231 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059C0C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D26FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B9F20C01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:37:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B9F20C01
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 6D0C02147A
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D0C02147A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726510AbeKUKIm convert rfc822-to-8bit (ORCPT
+        id S1726611AbeKUKKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 05:08:42 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:44848 "EHLO hermes.aosc.io"
+        Wed, 21 Nov 2018 05:10:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49328 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbeKUKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 05:08:42 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 0B298A3063;
-        Tue, 20 Nov 2018 23:36:51 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 07:36:38 +0800
-In-Reply-To: <20181120084245.bnjdaf647e6tdlku@flea>
-References: <cover.1542546735.git.mesihkilinc@gmail.com> <8f07fac854eaaea63e199fe0e80cf20004dffbdf.1542546735.git.mesihkilinc@gmail.com> <20181120084245.bnjdaf647e6tdlku@flea>
+        id S1725913AbeKUKKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 05:10:34 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 73555307DAA2;
+        Tue, 20 Nov 2018 23:38:49 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-174.rdu2.redhat.com [10.10.120.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCA905C70B;
+        Tue, 20 Nov 2018 23:38:47 +0000 (UTC)
+Subject: Re: [PATCH v3] debugobjects: scale the static pool size
+To:     Qian Cai <cai@gmx.us>, akpm@linux-foundation.org,
+        tglx@linutronix.de
+Cc:     yang.shi@linux.alibaba.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <20181120201432.2163-1-cai@gmx.us>
+ <20181120232810.2503-1-cai@gmx.us>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <e286be8a-7f0a-65ab-0275-15abcd33eb07@redhat.com>
+Date:   Tue, 20 Nov 2018 18:38:46 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC PATCH v2 03/14] ARM: sunxi: add Allwinner ARMv5 SoCs
-To:     linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mesih Kilinc <mesihkilinc@gmail.com>
-CC:     devicetree@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Julian Calaby <julian.calaby@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-clk@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <464C921F-1AA7-4475-9085-25D03D21AFE2@aosc.io>
+In-Reply-To: <20181120232810.2503-1-cai@gmx.us>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 20 Nov 2018 23:38:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/20/2018 06:28 PM, Qian Cai wrote:
+> The current value of the early boot static pool size is not big enough
+> for systems with large number of CPUs with timer or/and workqueue
+> objects selected. As the results, systems have 60+ CPUs with both timer
+> and workqueue objects enabled could trigger "ODEBUG: Out of memory.
+> ODEBUG disabled". Hence, fixed it by computing it according to
+> CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
+>
+> Signed-off-by: Qian Cai <cai@gmx.us>
+> ---
+> Changes since v2:
+> * Made the calculation easier to read suggested by longman@redhat.com.
+>
+> Changes since v1:
+> * Removed the CONFIG_NR_CPUS check since it is always defined.
+> * Introduced a minimal default pool size to start with. Otherwise, the pool
+>   size would be too low for systems only with a small number of CPUs.
+> * Adjusted the scale factors according to data.
+>
+>  lib/debugobjects.c | 82 ++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 80 insertions(+), 2 deletions(-)
+>
+> diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> index 70935ed91125..02456a1e57cb 100644
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -23,9 +23,82 @@
+>  #define ODEBUG_HASH_BITS	14
+>  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+>  
+> -#define ODEBUG_POOL_SIZE	1024
+> +#define ODEBUG_DEFAULT_POOL	512
+>  #define ODEBUG_POOL_MIN_LEVEL	256
+>  
+> +/*
+> + * Some debug objects are allocated during the early boot. Enabling some
+> + * options like timers or workqueue objects may increase the size required
+> + * significantly with large number of CPUs. For example (as today, 20 Nov.
+> + * 2018),
+> + *
+> + * No. CPUs x 2 (worker pool) objects:
+> + *
+> + * start_kernel
+> + *   workqueue_init_early
+> + *     init_worker_pool
+> + *       init_timer_key
+> + *         debug_object_init
+> + *
+> + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
+> + *
+> + * sched_init
+> + *   hrtick_rq_init
+> + *     hrtimer_init
+> + *
+> + * CONFIG_DEBUG_OBJECTS_WORK:
+> + * No. CPUs x 6 (workqueue) objects:
+> + *
+> + * workqueue_init_early
+> + *   alloc_workqueue
+> + *     __alloc_workqueue_key
+> + *       alloc_and_link_pwqs
+> + *         init_pwq
+> + *
+> + * Also, plus No. CPUs objects:
+> + *
+> + * perf_event_init
+> + *    __init_srcu_struct
+> + *      init_srcu_struct_fields
+> + *        init_srcu_struct_nodes
+> + *          __init_work
+> + *
+> + * Increase the number a bit more in case the implmentatins are changed in
+> + * the future, as it is better to avoid OOM than spending a bit more kernel
+> + * memory that will/can be freed.
+> + *
+> + * With all debug objects config options selected except the workqueue and
+> + * the timers, kernel reports,
+> + * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
+> + * 256-CPU: ODEBUG: 4 of 4 active objects replaced
+> + *
+> + * all the options except the workqueue:
+> + * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
+> + * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
+> + *
+> + * all the options except the timers:
+> + * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
+> + * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
+> + *
+> + * all the options:
+> + * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
+> + * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
+> + */
+> +#ifdef CONFIG_DEBUG_OBJECTS_WORK
+> +#define ODEBUG_WORK_PCPU_CNT	10
+> +#else
+> +#define ODEBUG_WORK_PCPU_CNT	0
+> +#endif /* CONFIG_DEBUG_OBJECTS_WORK */
+> +
+> +#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
+> +#define ODEBUG_TIMERS_PCPU_CNT	10
+> +#else
+> +#define ODEBUG_TIMERS_PCPU_CNT	0
+> +#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
+> +
+> +#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
+> +(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
 
+Just a nit about indentation. There should be some indentation in the
+continued line.
 
-于 2018年11月20日 GMT+08:00 下午4:42:45, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Sun, Nov 18, 2018 at 05:17:02PM +0300, Mesih Kilinc wrote:
->> Add option for Allwinner ARMv5 SoCs and SoC F1C100s (which has a die
->> used for many new F-series products, including F1C100A, F1C100s,
->F1C200s,
->> F1C500, F1C600).
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
->> ---
->>  arch/arm/mach-sunxi/Kconfig    | 14 +++++++++++++-
->>  arch/arm/mach-sunxi/Makefile   |  1 +
->>  arch/arm/mach-sunxi/sunxi_v5.c | 22 ++++++++++++++++++++++
->>  3 files changed, 36 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/arm/mach-sunxi/sunxi_v5.c
->> 
->> diff --git a/arch/arm/mach-sunxi/Kconfig
->b/arch/arm/mach-sunxi/Kconfig
->> index 5db17ec..066644c 100644
->> --- a/arch/arm/mach-sunxi/Kconfig
->> +++ b/arch/arm/mach-sunxi/Kconfig
->> @@ -1,6 +1,6 @@
->>  menuconfig ARCH_SUNXI
->>  	bool "Allwinner SoCs"
->> -	depends on ARCH_MULTI_V7
->> +	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
->>  	select ARCH_HAS_RESET_CONTROLLER
->>  	select CLKSRC_MMIO
->>  	select GENERIC_IRQ_CHIP
->> @@ -64,4 +64,16 @@ config ARCH_SUNXI_MC_SMP
->>  
->>  endif
->>  
->> +if ARCH_MULTI_V5
->> +
->> +config ARCH_SUNXI_V5
->> +	bool
->> +	select SUN4I_TIMER
->
->If SUN4I_TIMER is needed both by the armv5 and armv7 cores, why did we
->need to move it out of ARCH_SUNXI?
->
->> +config MACH_SUNIV
->> +	bool "Allwinner new F-series (suniv) SoCs support"
->
->I would drop the "new" here.
+> +
+>  #define ODEBUG_CHUNK_SHIFT	PAGE_SHIFT
+>  #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
+>  #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
+> @@ -58,8 +131,13 @@ static int			debug_objects_fixups __read_mostly;
+>  static int			debug_objects_warnings __read_mostly;
+>  static int			debug_objects_enabled __read_mostly
+>  				= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
+> +/*
+> + * This is only used after replaced static objects, so no need to scale it
+> + * to use the early boot static pool size and it has already been scaled
+> + * according to actual No. CPUs in the box within debug_objects_mem_init().
+> + */
+>  static int			debug_objects_pool_size __read_mostly
+> -				= ODEBUG_POOL_SIZE;
+> +				= ODEBUG_DEFAULT_POOL;
+>  static int			debug_objects_pool_min_level __read_mostly
+>  				= ODEBUG_POOL_MIN_LEVEL;
+>  static struct debug_obj_descr	*descr_test  __read_mostly;
 
-Sorry, but old F-series SoCs are not suniv. They are sunii or sun3i.
+Other than that, the patch looks OK to me.
 
->
->> +++ b/arch/arm/mach-sunxi/sunxi_v5.c
->> @@ -0,0 +1,22 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Device Tree support for Allwinner F series SoCs
->> + *
->> + * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
->> + * Copyright (C) 2018 Mesih Kilinc <mesihkilinc@gmail.com>
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2.  This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->> + */
->> +
->> +#include <asm/mach/arch.h>
->> +
->> +static const char * const suniv_board_dt_compat[] = {
->> +	"allwinner,suniv-f1c100s",
->> +	NULL,
->> +};
->> +
->> +DT_MACHINE_START(SUNXI_DT, "Allwinner suniv Family")
->> +	.dt_compat	= suniv_board_dt_compat,
->> +MACHINE_END
->
->Do we really need a separate file for that?
->
->Maxime
+Cheers,
+Longman
+
