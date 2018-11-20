@@ -2,168 +2,309 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7F4C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24DBAC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB0B20671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:28:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BB0B20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C52332075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:28:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DoYNentk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52332075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728178AbeKTT4M (ORCPT
+        id S1728198AbeKTT4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:56:12 -0500
-Received: from mga02.intel.com ([134.134.136.20]:57096 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbeKTT4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:56:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 01:28:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,256,1539673200"; 
-   d="scan'208";a="282624536"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 20 Nov 2018 01:28:01 -0800
-Received: from [10.125.252.159] (abudanko-mobl.ccr.corp.intel.com [10.125.252.159])
-        by linux.intel.com (Postfix) with ESMTP id 0DED4580145;
-        Tue, 20 Nov 2018 01:27:56 -0800 (PST)
-Subject: [PATCH v2 1/2] Documentation/admin-guide: introduce perf-security.rst
- file
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-References: <86cf8ad4-7728-8d07-5b03-effd32071f32@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <5070d3ee-1397-195e-f958-152d77f09566@linux.intel.com>
-Date:   Tue, 20 Nov 2018 12:27:55 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <86cf8ad4-7728-8d07-5b03-effd32071f32@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+        Tue, 20 Nov 2018 14:56:18 -0500
+Received: from mail-eopbgr70089.outbound.protection.outlook.com ([40.107.7.89]:12064
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727728AbeKTT4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:56:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zrsGMBADIsqeEU4duNCkqzr5ye0dCRBHJDsrbmznpI4=;
+ b=DoYNentknLCea+B03Mc2Y2lnydHXHpYKbaiuULDXggD42zaR7B2KDqbXtAgEu1pOx3/qOKa37YT2dJRMJl7Bpd/valK4kTCyx3KXwsJr4aZ7U+g5lzNrtGaKkNiXON4/SkA/dFyP+hEozOGTxG9fpW8L69HJdDYHvKpr8gTwW5E=
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com (20.179.2.80) by
+ AM6PR04MB4775.eurprd04.prod.outlook.com (20.177.32.216) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.21; Tue, 20 Nov 2018 09:28:03 +0000
+Received: from AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c]) by AM6PR04MB5781.eurprd04.prod.outlook.com
+ ([fe80::29b5:b3ed:3854:cf1c%4]) with mapi id 15.20.1339.026; Tue, 20 Nov 2018
+ 09:28:03 +0000
+From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
+To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>,
+        "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Subject: [PATCHv2 24/25] arm64: dts: freescale: lx2160a: add pcie DT nodes
+Thread-Topic: [PATCHv2 24/25] arm64: dts: freescale: lx2160a: add pcie DT
+ nodes
+Thread-Index: AQHUgLNW1TfB2GtMH0GXyxrHVyVRKg==
+Date:   Tue, 20 Nov 2018 09:28:03 +0000
+Message-ID: <20181120092615.11680-25-Zhiqiang.Hou@nxp.com>
+References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HK2PR03CA0050.apcprd03.prod.outlook.com
+ (2603:1096:202:17::20) To AM6PR04MB5781.eurprd04.prod.outlook.com
+ (2603:10a6:20b:aa::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=zhiqiang.hou@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4775;6:B+61WwH01BhOQvBjM9t2eSkCCF2UeWAvhzFzm4yGICRT7tM+kNE6+J466XX+bnjZevmkNS761ldCWJ5Wed6ne544ICDyzDzf/GtiVYnB82qWuupjY4G97ZustIpyQ7z3+hETfTXOprzUuoFcaFmLZcFMR4jhaUh57OA7rO6AJxbBfR0sWFRbqyHPhISti7h7cJ1je/THEryZmf4t66zcVSiMHk6fjSiNEMcnsLt0/D2gdutPIzj8dDXrFgDie0g2pVhxbSj7SFcHwHf6QXO2zjDGTIlFnISTYLS5Wn6GfkugC4yqqimMjWTmXcTAw74VyDFZVCeloM1pkjW9XgcTyLb5tpfTWAX04xxuwFjHG5M4t+18XJHbPH615cXKEEVNQhYIWxm7d5Eu/IERXDxKtQwLd3kztlfqMguJdvZcmCWVpVpArHKo2Uk5InYxXZhTp2eSJXXfir82kBvFUa7Jlg==;5:MvEgIVOfB/b8UQToi9wBiioCqZKgjQdwfLE0lqrABP7/dHV1Gp8TLhTz1T0IKRz6oNIxaHMaBx9mO1GN1rmJp5+JWmZDKut09qywVRPH9AaDDuGshkkkdlG5S6qWFd1HbCxVQmiSTPLAQu/yQgjSJOJgWOxKlrnWBWIyZOTADeA=;7:y8vRGBRLVEHWmmYlFy1dFiTjH+AjP4TzOwjuT5FLR3+DWADtwjNo2AnYLe0pWbG9fyHkk9t93u3AW/IsxGnzSdLUVByP1DGFUe8CXOxBbb+Tmi7RynUK1WTng2THoSBRIFZDkHuP+PdYWGnksBtaQw==
+x-ms-office365-filtering-correlation-id: c1a2c36f-95c8-4f41-8eb7-08d64eca78ba
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4775;
+x-ms-traffictypediagnostic: AM6PR04MB4775:
+x-microsoft-antispam-prvs: <AM6PR04MB4775B44F6D3493B8FEAFE6E084D90@AM6PR04MB4775.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231442)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4775;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4775;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(376002)(396003)(346002)(189003)(199004)(66066001)(1076002)(2900100001)(68736007)(8676002)(6486002)(5660300001)(8936002)(6116002)(3846002)(2501003)(97736004)(81166006)(26005)(186003)(81156014)(105586002)(7416002)(102836004)(2906002)(386003)(6506007)(7736002)(305945005)(106356001)(6512007)(76176011)(36756003)(4326008)(99286004)(52116002)(14444005)(25786009)(110136005)(54906003)(2616005)(86362001)(53936002)(446003)(11346002)(256004)(2201001)(6436002)(486006)(71190400001)(71200400001)(478600001)(316002)(476003)(14454004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4775;H:AM6PR04MB5781.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Ba/f1I8T2tupY/jhvcak62sp4VKj7JpZZzW3wsrc5Kc9L3eH6syRwcod35uuqU1UHPNHZ8ITMI3Q9UycCMrWd0+77FcdShIwnhz1sqj3LyWkr7UcSI408Xaidpw/fXYbHkBoPM7feHRz+sCwKgGMwuimW90bt3T3+8mv+WcnAuQv0Meais7YMsHYfGEodmLo4JBy9ijnuEgrEUwj4glhOXt9Yw2tPc06Euh2IMI5HR4u4WMG2T6t/q1SEtxj85bVRTb7Jb/BdW0MMBi0SNoE8vJB4B3M+dzJJoRHe5weupamfHspd+w/8uESJGtY8+pjNg1u3cF5nhfn0A1Gep3gsKB+VLIADeRFySgBsqAUddU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1a2c36f-95c8-4f41-8eb7-08d64eca78ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 09:28:03.7856
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4775
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 
-Implement initial version of perf-security.rst documentation file
-initially covering security concerns related to PE/Perf performance
-monitoring in multiuser environments.
+The LX2160A integrated 6 PCIe Gen4 controllers.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 ---
-Changes in v2:
-- replaced old PCL referencing by PE (Perf Events)
-- skipped >=3 setting documentation at the moment
----
- Documentation/admin-guide/perf-security.rst | 76 +++++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/admin-guide/perf-security.rst
+V2:
+ - Change the default status of PCIe DT nodes to disabled.
 
-diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
-new file mode 100644
-index 000000000000..d9dcea61ed87
---- /dev/null
-+++ b/Documentation/admin-guide/perf-security.rst
-@@ -0,0 +1,76 @@
-+.. _perf_security:
+ .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 163 ++++++++++++++++++
+ 1 file changed, 163 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/bo=
+ot/dts/freescale/fsl-lx2160a.dtsi
+index a79f5c1ea56d..3a098c462a25 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -762,5 +762,168 @@
+ 				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 			dma-coherent;
+ 		};
 +
-+Perf Events and tool security
-+=============================
++		pcie@3400000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
++			       0x80 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x80 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+Overview
-+--------
++		pcie@3500000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
++			       0x88 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x88 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+Usage of Perf Events (PE) [1]_ , [2]_ , [3]_ can impose a considerable risk of
-+leaking sensitive data accessed by monitored processes. The data leakage is
-+possible both in scenarios of direct usage of PE system call API [2]_ and over
-+data files generated by Perf tool user mode utility (Perf) [3]_ , [4]_ . The risk
-+depends on the nature of data that PE performance monitoring units (PMU) [2]_
-+collect and expose for performance analysis. Having that said PE/Perf performance
-+monitoring is the subject for security access control management [5]_ .
++		pcie@3600000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
++			       0x90 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x90 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+PE/Perf access control
-+----------------------
++		pcie@3700000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03700000 0x0 0x00100000   /* controller registers */
++			       0x98 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0x98 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+For the purpose of performing security checks Linux implementation splits
-+processes into two categories [6]_ : a) privileged processes (whose effective
-+user ID is 0, referred to as superuser or root), and b) unprivileged processes
-+(whose effective UID is nonzero). Privileged processes bypass all kernel
-+security permission checks so PE performance monitoring is fully available to
-+privileged processes without *access*, *scope* and *resource* restrictions.
-+Unprivileged processes are subject to full security permission check based
-+on the process's credentials [5]_ (usually: effective UID, effective GID,
-+and supplementary group list).
++		pcie@3800000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03800000 0x0 0x00100000   /* controller registers */
++			       0xa0 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0xa0 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+PE/Perf unprivileged users
-+--------------------------
++		pcie@3900000 {
++			compatible =3D "fsl,lx2160a-pcie";
++			reg =3D <0x00 0x03900000 0x0 0x00100000   /* controller registers */
++			       0xa8 0x00000000 0x0 0x00001000>; /* configuration space */
++			reg-names =3D "csr_axi_slave", "config_axi_slave";
++			interrupts =3D <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* AER interrupt */
++				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>, /* PME interrupt */
++				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>; /* controller interrupt */
++			interrupt-names =3D "aer", "pme", "intr";
++			#address-cells =3D <3>;
++			#size-cells =3D <2>;
++			device_type =3D "pci";
++			dma-coherent;
++			apio-wins =3D <8>;
++			ppio-wins =3D <8>;
++			bus-range =3D <0x0 0xff>;
++			ranges =3D <0x82000000 0x0 0x40000000 0xa8 0x40000000 0x0 0x40000000>; =
+/* non-prefetchable memory */
++			msi-parent =3D <&its>;
++			#interrupt-cells =3D <1>;
++			interrupt-map-mask =3D <0 0 0 7>;
++			interrupt-map =3D <0000 0 0 1 &gic 0 0 GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>=
+,
++					<0000 0 0 2 &gic 0 0 GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 3 &gic 0 0 GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
++					<0000 0 0 4 &gic 0 0 GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			status =3D "disabled";
++		};
 +
-+PE/Perf *scope* and *access* control for unprivileged processes is governed by
-+perf_event_paranoid [2]_ setting:
-+
-+-1:
-+     Impose no *scope* and *access* restrictions on using PE performance
-+     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
-+     ignored when allocating memory buffers for storing performance data.
-+     This is the least secure mode since allowed monitored *scope* is
-+     maximized and no PE specific limits are imposed on *resources*
-+     allocated for performance monitoring.
-+
-+>=0:
-+     *scope* includes per-process and system wide performance monitoring
-+     but excludes raw tracepoints and ftrace function tracepoints monitoring.
-+     CPU and system events happened when executing either in user or
-+     in kernel space can be monitored and captured for later analysis.
-+     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
-+     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
-+
-+>=1:
-+     *scope* includes per-process performance monitoring only and excludes
-+     system wide performance monitoring. CPU and system events happened when
-+     executing either in user or in kernel space can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+>=2:
-+     *scope* includes per-process performance monitoring only. CPU and system
-+     events happened when executing in user space only can be monitored and
-+     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
-+     locking limit is imposed but ignored for unprivileged processes with
-+     CAP_IPC_LOCK capability.
-+
-+Bibliography
-+------------
-+
-+.. [1] `<https://lwn.net/Articles/337493/>`_
-+.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
-+.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
-+.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
-+.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
-+.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
-+
+ 	};
+ };
+--=20
+2.17.1
+
