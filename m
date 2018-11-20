@@ -2,107 +2,136 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA77C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:11:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E2FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA2120851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:11:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="O6Ibvyg7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA2120851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 1731120851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1731120851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbeKTTjd (ORCPT
+        id S1727104AbeKTTjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:39:33 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42415 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbeKTTjc (ORCPT
+        Tue, 20 Nov 2018 14:39:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45633 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726991AbeKTTjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:39:32 -0500
-Received: by mail-pl1-f194.google.com with SMTP id x21-v6so684119pln.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 01:11:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xTqK6uabaMx+0Xv52VCA9sDUvXO27AaAVGz4Z/6W2Q0=;
-        b=O6Ibvyg7G8XjMwEI/Ge59VwsIW3XHEz9BZB2WDLt+aoDiUOh/Cul71RFOUU6iN9jZh
-         vfQeJKP+Li+3S318vCoSNJIJtNsGLNBXaTef3xIYX/W76WBb+WZcrdbg3OHxrPG1mneB
-         8rxyP3s8YkfYK+Ca1/JdxMAZVTqcW01zqgQGiS/MIjsV2p/QHdavwvkBFukVRjpQKtGp
-         SJLIAiR/QEY5qPRtjGe/kE0yed68ce8wsahoOziEzfDUEkLj2tG48Rqq6dYbbLcPN9/d
-         s75cRZWZe98vwM/PfH1cxN9frD6xyAOAI7BaEsMzWBjOuMVl+PlbKU6hIC/hKoi7Gw40
-         nGTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xTqK6uabaMx+0Xv52VCA9sDUvXO27AaAVGz4Z/6W2Q0=;
-        b=A/zISORxN7t6106fORTUQ6l2QY5Q4OIgTRk4xo9byzZcwf/BblrvF4G8Rwhd2Hw/dc
-         314dXzeND+vBCYHqTcueHt6bxG/JnLwtkpRfRnL8KeOuONKF9yseF2EmPBEQWlNQMl/q
-         15w3lUImxQFPzbx2z/v2uL4nLZy3LzltmmJU0yONTseHtpb6AnWCPWn+OQGZMNKaqBDe
-         A4392uncpIItpkvvKanxqd+Z0i0kBWuyT8AZq3VnxWrYUIqXaEjd8bz1+Jn4xBmf2bJ8
-         tjIq0QGcLpqCFwRg9ZacZE8TsdPGlZJHV8sfWOUBmSSOiZEwpMTW2jbg/XDdojO29Fta
-         mbCQ==
-X-Gm-Message-State: AA+aEWb2W0HfVrRhtNeha1AknFmXbncM66xIIKXU6m0Grx8gS29Q1Wtn
-        01dIlGRgLwXJf4+6tM4nNky/0A==
-X-Google-Smtp-Source: AFSGD/VAhJYfG7v46S/qoHjtqjZLp/7WmWiPMDjekLj5suJe+bMc2I0QOWL4xkfnbnqkf6PX4RWwDQ==
-X-Received: by 2002:a17:902:a60f:: with SMTP id u15mr1305591plq.275.1542705087402;
-        Tue, 20 Nov 2018 01:11:27 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
-        by smtp.gmail.com with ESMTPSA id g26sm11120747pfh.61.2018.11.20.01.11.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 01:11:26 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id E6A60302653; Tue, 20 Nov 2018 12:11:22 +0300 (+03)
-Date:   Tue, 20 Nov 2018 12:11:22 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Andrea Arcangeli <aarcange@redhat.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, aneesh.kumar@linux.ibm.com,
-        akpm@linux-foundation.org, jglisse@redhat.com,
-        khandual@linux.vnet.ibm.com, kirill.shutemov@linux.intel.com,
-        mhocko@kernel.org, minchan@kernel.org, peterz@infradead.org,
-        rientjes@google.com, vbabka@suse.cz, willy@infradead.org,
-        ying.huang@intel.com, nitingupta910@gmail.com
-Subject: Re: [RFC PATCH] mm: thp: implement THP reservations for anonymous
- memory
-Message-ID: <20181120091122.3dxlgff3vivwilrg@kshutemo-mobl1>
-References: <1541746138-6706-1-git-send-email-anthony.yznaga@oracle.com>
- <20181109121318.3f3ou56ceegrqhcp@kshutemo-mobl1>
- <20181109195150.GA24747@redhat.com>
- <20181110132249.GH23260@techsingularity.net>
- <20181110164412.GB22642@redhat.com>
+        Tue, 20 Nov 2018 14:39:35 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK9BIs92923527
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 20 Nov 2018 01:11:18 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK9BIJS2923524;
+        Tue, 20 Nov 2018 01:11:18 -0800
+Date:   Tue, 20 Nov 2018 01:11:18 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-2e94061096c5c3aa6c3fe3ec2bec176c1f9c1b07@git.kernel.org>
+Cc:     mingo@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        luto@kernel.org, bp@suse.de, john.stultz@linaro.org,
+        thomas.lendacky@amd.com, linux-kernel@vger.kernel.org
+Reply-To: bp@suse.de, luto@kernel.org, mingo@kernel.org, hpa@zytor.com,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          thomas.lendacky@amd.com, john.stultz@linaro.org
+In-Reply-To: <20181119184556.11479-1-bp@alien8.de>
+References: <20181119184556.11479-1-bp@alien8.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/timers] x86/TSC: Use RDTSCP
+Git-Commit-ID: 2e94061096c5c3aa6c3fe3ec2bec176c1f9c1b07
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181110164412.GB22642@redhat.com>
-User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 11:44:12AM -0500, Andrea Arcangeli wrote:
-> I would prefer to add intelligence to detect when COWs after fork
-> should be done at 2m or 4k granularity (in the latter case by
-> splitting the pmd before the actual COW while leaving the transhuge
-> pmd intact in the other mm), because that would save CPU (and it'd
-> automatically optimize redis). The snapshot process especially would
-> run faster as it will read with THP performance.
+Commit-ID:  2e94061096c5c3aa6c3fe3ec2bec176c1f9c1b07
+Gitweb:     https://git.kernel.org/tip/2e94061096c5c3aa6c3fe3ec2bec176c1f9c1b07
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Thu, 12 Apr 2018 13:11:36 +0200
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Mon, 19 Nov 2018 21:55:32 +0100
 
-I would argue we should switch to 4k COW everywhere. But it requires some
-work on khugepaged side to be able to recover THP back after multiple 4k
-COW in the range. Currently khugepaged is not able to collapse PTE entires
-backed by compound page back to PMD.
+x86/TSC: Use RDTSCP
 
-I have this on my todo list for long time, but...
+Currently, the kernel uses
 
--- 
- Kirill A. Shutemov
+  [LM]FENCE; RDTSC
+
+in the timekeeping code, to guarantee monotonicity of time where the
+*FENCE is selected based on vendor.
+
+Replace that sequence with RDTSCP which is faster or on-par and gives
+the same guarantees.
+
+A microbenchmark on Intel shows that the change is on-par.
+
+On AMD, the change is either on-par with the current LFENCE-prefixed
+RDTSC and some are slightly better with RDTSCP.
+
+The comparison is done with the LFENCE-prefixed RDTSC (and not with the
+MFENCE-prefixed one, as one would normally expect) because all modern
+AMD families make LFENCE serializing and thus avoid the heavy MFENCE by
+effectively enabling X86_FEATURE_LFENCE_RDTSC.
+
+Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20181119184556.11479-1-bp@alien8.de
+---
+ arch/x86/include/asm/msr.h | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 91e4cf189914..f00f2b61d326 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -217,6 +217,8 @@ static __always_inline unsigned long long rdtsc(void)
+  */
+ static __always_inline unsigned long long rdtsc_ordered(void)
+ {
++	DECLARE_ARGS(val, low, high);
++
+ 	/*
+ 	 * The RDTSC instruction is not ordered relative to memory
+ 	 * access.  The Intel SDM and the AMD APM are both vague on this
+@@ -227,9 +229,18 @@ static __always_inline unsigned long long rdtsc_ordered(void)
+ 	 * ordering guarantees as reading from a global memory location
+ 	 * that some other imaginary CPU is updating continuously with a
+ 	 * time stamp.
++	 *
++	 * Thus, use the preferred barrier on the respective CPU, aiming for
++	 * RDTSCP as the default.
+ 	 */
+-	barrier_nospec();
+-	return rdtsc();
++	asm volatile(ALTERNATIVE_2("mfence; rdtsc",
++				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
++				   "rdtscp", X86_FEATURE_RDTSCP)
++			: EAX_EDX_RET(val, low, high)
++			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
++			:: "ecx");
++
++	return EAX_EDX_VAL(val, low, high);
+ }
+ 
+ static inline unsigned long long native_read_pmc(int counter)
