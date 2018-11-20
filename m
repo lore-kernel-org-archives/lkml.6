@@ -2,222 +2,188 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFDBC04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E191C04EBC
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC75B2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B36A220685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUg4cUck"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC75B2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q/wPwdHS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36A220685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeKTXiN (ORCPT
+        id S1727046AbeKTXiQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:38:13 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42346 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbeKTXiN (ORCPT
+        Tue, 20 Nov 2018 18:38:16 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40860 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725902AbeKTXiO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:38:13 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so1896944wrx.9;
-        Tue, 20 Nov 2018 05:09:08 -0800 (PST)
+        Tue, 20 Nov 2018 18:38:14 -0500
+Received: by mail-it1-f194.google.com with SMTP id h193so3348363ita.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 05:09:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7NZ/xVlUfPpnqYC9BP/cMc65vHefuKvjMR7MCkPyfeg=;
-        b=QUg4cUckU0TJ9Rfn2S+mKU38UqCf5W5oSxfTsxRIVTUOGkQv6ldQptI/4mJ9SH1w/z
-         JFFxcGKBF0oY47gIwf0XukiWNiuKrCRF6qm2EMlqtrSLRbQ7V59lNHp0DC5fa8T+BS/1
-         0E5hsvU+iDlrZwCzsCySlLi5h52n8HlD7nKCXLlaox/vrj85dptJXhgygb9qrtyC5oek
-         E9G59cAU8/TPqkMyCwBDUNPw7oWpAx8odWtoEzMXcnZJO09ht1ueIclJqL4bEUa/zW/D
-         95/KbNhDm6Er5TrYJkShBmLoEnnA2vB2bQ7Qy9Wp/X9fE8Oc9Pkudf+NLN1gay+hNGV7
-         F5wQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=EJ/2rictGiotCUNyiDLqvZDGdfnb08uSJa4HOkr68UY=;
+        b=Q/wPwdHSIaPvEAV7pw8s0Xjlw8b/DTAK+ZJOV1LNj5jrd0qKY31vDwapcbP+zJM/r0
+         C6niCbG83p4nDw15oR7r9jBguwQB89gvUNJL3Wpm4iRueO65HOc767oOyUTZQXLPF27g
+         R8iMhLWmO56BPFMFrIGb9GcJZw52kQeGMHj+E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7NZ/xVlUfPpnqYC9BP/cMc65vHefuKvjMR7MCkPyfeg=;
-        b=dNuGPryGGNu7DYzPmkGFoMrAGf+Y2lAq9IVGs2mkFAtkkJBtfZLiuMmitPStIouiKT
-         NewKX/ADwMzvoCygf2k0ERlrtnnZRJJLZSrB+e3OaBhG1yOgHyIJLlk8I2DQjR0y0YlP
-         F/muiEtcCdSWPu/QTGjQ62SBogfwoGkr0eybRt4GHJHvf5JeY5h+lY7IKKsaLIqYbDSO
-         JQMs1D5ODffgmdretL0ULnHZ3uPXYOfBzoDW++oDeaNJN2hbpyHodDTklMEFFeN/GKYx
-         fpc+jOZQInWs3pkgiybwLigsy/gRf0+tZIlPBKWUrF4UP1dEFoLwWBD+LeP9WKlNGqtR
-         DH9Q==
-X-Gm-Message-State: AA+aEWZ1Hll+KDaH/25LjB5HMv9t+PTYgoiOP1ox5A2gPg3sLG5+xNv1
-        9q2FjFQHXp+y/KUnyWyFoGjp3BPDvRU=
-X-Google-Smtp-Source: AFSGD/VcF3kJaHeI8rUV56S5HZfi/kj8OjOtyVqXlWDy42Lmx+cPeLy95VfmXizNTbvdFUDDQrr64A==
-X-Received: by 2002:a5d:64c7:: with SMTP id y7mr1884663wrv.207.1542719347389;
-        Tue, 20 Nov 2018 05:09:07 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id v189-v6sm33598381wmd.40.2018.11.20.05.09.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 05:09:06 -0800 (PST)
-Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
-To:     masonccyang@mxic.com.tw
-Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, tpiepho@impinj.com,
-        zhengxunli@mxic.com.tw
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
- <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
- <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <6b024f18-d0bc-3e65-f07c-cef913f795ab@gmail.com>
-Date:   Tue, 20 Nov 2018 14:09:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=EJ/2rictGiotCUNyiDLqvZDGdfnb08uSJa4HOkr68UY=;
+        b=VIuPlN5UxKJfLo93k/riSdwtO6JpOoGRpjKySxtKY3L8aajgBf2OXANCb68tguvP6p
+         M11YC79Q6gho8PQZn5Ad9FP8B0/j7eY9qn318zvGcB2wRYix9VRc763ynTCM8DlpSDKN
+         A7F2R1No/lPRERfAUhCVWS/Bj2OR4xkFa2knyrGn3kPxpqZcMJwoTujCPB86r+c9yhdA
+         RTRH1MErRbcywsPN9yqRsduudsXB9IaKPYRrH27XJbeuWkoxbjF9ieTlkYbba3BLtKeG
+         LwFKdScbThCT68BT4WbEH7yFsQX3KEb4lX620O5ONWn6b2CCvvCURj12DqPqSk6vr2/2
+         6MGw==
+X-Gm-Message-State: AGRZ1gJKnydGrDrPpgtgJaxHzhGPkyJhSJumFPM1w3NmtCOD/yqn6ewj
+        d+2Bv7yim/nOL6Gy56ARUgNqHQRsB5NYgQGSNGd6Sw==
+X-Google-Smtp-Source: AJdET5fLojuhg9IwtmIHZA8uATqzbCKLSkdetdmJGEIlKgQIVWnbhQl/NK0TPV7NcNHYRmRzKWESgXgnEkChyLlheAk=
+X-Received: by 2002:a02:2b29:: with SMTP id h41-v6mr1611148jaa.12.1542719349816;
+ Tue, 20 Nov 2018 05:09:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <OF4FAD10C5.F4F6D29B-ON4825834B.001FAB40-4825834B.00289635@mxic.com.tw>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a02:70c8:0:0:0:0:0 with HTTP; Tue, 20 Nov 2018 05:08:28
+ -0800 (PST)
+In-Reply-To: <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+ <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com> <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+ <20181107084741.GA31092@kunai> <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
+ <20181120102300.GA1056@kunai> <aa26f5dc9e595feb3772495a6d0542c007948f48.camel@collabora.co.uk>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 20 Nov 2018 14:08:28 +0100
+Message-ID: <CAPDyKFrFz9bHa5EmiBmQvXnoRibbL4-Gq9E7E5vDBbd=uj_2kA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+To:     Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, Faiz Abbas <faiz_abbas@ti.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        kernel@collabora.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Hal Emmerich <hal@halemmerich.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 08:23 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
++ Hal Emmerich
 
-Hi,
+On 20 November 2018 at 12:38, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+> On Tue, 2018-11-20 at 11:23 +0100, Wolfram Sang wrote:
+>> > > > That also happens to be one of the cards we deploy; However i
+>> > > > did
+>> > > > wonder about adding a quirk but decided against it as it was
+>> > > > not clear
+>> > > > to me from the specification that CACHE ON really is meant to
+>> > > > complete
+>> > > > within GENERIC_CMD6_TIMEOUT. That and i fret about ending up in
+>> > > > hit-a-
+>> > > > mole games as the failure is really quite tedious (boot
+>> > > > failure).
+>> > >
+>> > > I agree that we should use the more defensive variant as a
+>> > > default. I
+>> > > mean there should be no performance regression since most cards
+>> > > will
+>> > > respond just faster, or? The only downside I could see is that we
+>> > > might
+>> > > miss a real timeout with no bounds set and might get stuck?
+>> >
+>> > Well, you have a point, but still it's kind of nice to know which
+>> > cards are behaving well and which ones that doesn't. Hence I think
+>> > I
+>> > prefer to stick using a quirk, unless you have a strong opinion.
+>
+> Not an incredibly strong opinion either; I just wonder if it's the
+> right trade-off.
+>
+> If the quirk/work-around is not there while it should be, the impact is
+> that you get an unusable card (which for eMMC is likely to mean a
+> failure to boot the system). Which is somewhat unfortunate.
+>
+> If the work-around is there while it's not needed then there doesn't
+> seem to be much of an impact at all; Apart from it not being reported
+> to the user/developer/kernel community?
+>
+> In which case it might make more to put in a warning iff the card takes
+> too long with a list of cards for which this is known?
+>
+>> No strong opinion. Especially not if you say it is in the spec
+>> (although
+>> "must be sufficient" would be better than "should be" ;)). Also, I
+>> assume this failure is reproducible and should turn up during
+>> development? Compared to "happens once in a while randomly"?
+>
+> For the card in question it happens only on hard power off; The time it
+> takes seems correlated to the state of the cache at hard power off (It
+> takes substantially longer if there was a lot of I/O activity at
+>  the time of hard power off). With light I/O activity the current
+> timeout is sometimes enough.
+>
+> So if you know the pattern, or just happen to hit it often in e.g.
+> automated testing, it does show up during development. Otherwise it can
+> appear to "happen once in a while randomly".
 
->> Marek Vasut <marek.vasut@gmail.com>
->> 2018/11/19 下午 10:12
->>
->> To
->>
->> > +
->> > +static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
->> > +{
->> > +   int ret;
->> > +
->> > +   if (rpc->cur_speed_hz == freq)
->> > +      return 0;
->> > +
->> > +   clk_disable_unprepare(rpc->clk_rpc);
->> > +   ret = clk_set_rate(rpc->clk_rpc, freq);
->> > +   if (ret)
->> > +      return ret;
->> > +
->> > +   ret = clk_prepare_enable(rpc->clk_rpc);
->> > +   if (ret)
->> > +      return ret;
->>
->> Is this clock disable/update/enable really needed ? I'd think that
->> clk_set_rate() would handle the rate update correctly.
-> 
-> This is for run time PM mechanism in spi-mem layer and __spi_sync(),
-> you may refer to another patch [1].
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git/commit/?h=for-4.21&id=b942d80b0a394e8ea18fce3b032b4700439e8ca3
+I don't quite follow. As far as I understand, the extended timeout is
+needed when turning the cache on.
 
-I think Geert commented on the clock topic, so let's move it there.
-Disabling and enabling clock to change their rate looks real odd to me.
+The above seems more related to flushing the cache, no? Flushing have
+no timeout (also reported to be an issue [1]), which happens either at
+_mmc_hw_reset() or at _mmc_suspend().
 
->> > +   rpc->cur_speed_hz = freq;
->> > +   return ret;
->> > +}
->> > +
->> > +static void rpc_spi_hw_init(struct rpc_spi *rpc)
->> > +{
->> > +   /*
->> > +    * NOTE: The 0x260 are undocumented bits, but they must be set.
->> > +    */
->>
->> FYI:
->>
-> http://git.denx.de/?p=u-boot.git;a=blob;f=drivers/spi/renesas_rpc_spi.c#l207
->>
->> I think the STRTIM should be 6 .
->>
-> 
-> In my D3 Draak board, the STRTIM is 0x3 for on board qspi flash and
-> mx25uw51245g.
-> And this is also refer to Renesas R-Car Gen3 bare-metal code,
-> mini-monitor v4.01.
+What is the relation here?
 
-The copy of minimon I have says 6 , but maybe this is flash specific ?
+>
+> Unfortunately for me, it was really a case of getting reports of some
+> boards started failing at some point which took a while to track back.
+> Especially since it's a battery powered device (thus hard poweroffs are
+> rather rare) and we allow the board manufactorer to select from various
+> different eMMCs depending on price/available at build time...
+>
+>> Yet, if we add a quirk for that, then we should probably mention it
+>> in
+>> an error message when we hit -ETIMEDOUT for cache on ("does your card
+>> need this quirk?")? It can be pretty time consuming to track this
+>> down
+>> otherwise, I'd think.
+>
+> Yes please. It would be nice if someone happens to have the right
+> contacts with Micron to see if it's a known issue for their cards in
+> general or just this one.
+>
+> Also would be good to have a timeout higher then 1 seconds (or for
+> these cards not have one?); On our testing thusfar we've seen timeouts
+> up to 850ms, but it's impossible to ensure that that's the true upper
+> bound.
 
-[...]
+Using no limit of the timeout, would mean we may hang for ~10 minutes
+(MMC_OPS_TIMEOUT_MS) instead, no thanks.
 
->> > +         writel(rpc->cmd, rpc->regs + RPC_SMCMR);
->> > +         writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
->> > +         writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
->> > +         writel(rpc->smenr, rpc->regs + RPC_SMENR);
->> > +         writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
->> > +         ret = wait_msg_xfer_end(rpc);
->> > +         if (ret)
->> > +            goto out;
->> > +
->> > +         data = readl(rpc->regs + RPC_SMRDR0);
->> > +         memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
->> > +         pos += nbytes;
->> > +      }
->> > +   } else {
->> > +      writel(rpc->cmd, rpc->regs + RPC_SMCMR);
->> > +      writel(rpc->dummy, rpc->regs + RPC_SMDMCR);
->> > +      writel(rpc->addr + pos, rpc->regs + RPC_SMADR);
->> > +      writel(rpc->smenr, rpc->regs + RPC_SMENR);
->> > +      writel(rpc->smcr | RPC_SMCR_SPIE, rpc->regs + RPC_SMCR);
->> > +      ret = wait_msg_xfer_end(rpc);
->> > +   }
->> > +out:
->>
->> Dont you need to stop the RPC somehow in case the transmission fails ?
-> 
-> It seems there is no any RPC registers bit to monitor xfer fail !
+I am fine with let's say double of 850ms (1700ms), to have some room.
 
-What happens if wait_msg_xfer_end() returns non-zero ? I guess that
-means the transfer timed out ?
+Anyway, the point is, the timeouts in the spec is there for reason.
+Unfortunate I think the spec is "lazy" in some other regards and don't
+specify timeouts, which complicates things.
 
-[...]
+Kind regards
+Uffe
 
->> > +static const struct of_device_id rpc_spi_of_ids[] = {
->> > +   { .compatible = "renesas,rpc-r8a77995", },
->> > +   { /* sentinel */ }
->> > +};
->> > +MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
->> > +
->> > +static struct platform_driver rpc_spi_driver = {
->> > +   .probe = rpc_spi_probe,
->> > +   .remove = rpc_spi_remove,
->> > +   .driver = {
->> > +      .name = "rpc-spi",
->> > +      .of_match_table = rpc_spi_of_ids,
->> > +      .pm = &rpc_spi_dev_pm_ops,
->> > +   },
->> > +};
->> > +module_platform_driver(rpc_spi_driver);
->> > +
->> > +MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
->> > +MODULE_DESCRIPTION("Renesas R-Car D3 RPC SPI controller driver");
->>
->> This is not D3 specific and not SPI-only controller btw.
-> 
-> In R-Car Gen3, there are some registers(i.e,. RPC_PHYCNT) in different
-> setting
-> for R-Car H3, M3-W, V3M, V3H, D3, M3-N and E3 model.
-> 
-> I test this patch is based on D3 Draak board, it works fine but I am not
-> sure
-> if these registers setting is ok for others R-Card model.
-> 
-> I think this could be a reference when patch others Gen3 model is needed.
-You can take a look into the U-Boot driver(s) I linked, that's used on
-the other SoCs you listed (except for V3H).
-
--- 
-Best regards,
-Marek Vasut
+[1]
+https://www.spinics.net/lists/linux-mmc/msg51815.html
