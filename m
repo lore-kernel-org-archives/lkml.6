@@ -2,194 +2,115 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F8EC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D105C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BE5A2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19C38206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:28:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qJlt9nvl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BE5A2087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DiBKOl+9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C38206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbeKUCzn (ORCPT
+        id S1728002AbeKUC6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:55:43 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44472 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbeKUCzn (ORCPT
+        Tue, 20 Nov 2018 21:58:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59238 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbeKUC6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:55:43 -0500
-Received: by mail-pl1-f196.google.com with SMTP id s5-v6so1223181plq.11;
-        Tue, 20 Nov 2018 08:25:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ci1XMUtf//2JuBIxRgj+8FuHiqnqlP3LX5Y4rT2kOQg=;
-        b=qJlt9nvlC7CzfhlacCI61002Cyh/+6X5UXHv96pFRd0n30ExopymB/GK0qHSh7mapJ
-         99zZ11W8klu4CadOHFq91twSmtjuMbilKR6e1LsetHZ3hb3WAsVIVW1cxjaBH8t+DS3f
-         2lftRzpVYg2jyQIMYp6l+VJ2WRA0gs1m1MQaNf3w+LItxM2bCSnmq36yW/p6vIwtpzxc
-         N/cHkayU5yjrIenlz7HTmhjQSVJVlsi/HxM/4wYWPkm6Gtr8AEU26T7/VIVuUlt5mVhK
-         rs8esjcMouPwHOSdlnrQj8Euh4mJNodp4q15/HP0uTVxXzwE3lyTm5jKUIkKpj2+ym8s
-         CsOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ci1XMUtf//2JuBIxRgj+8FuHiqnqlP3LX5Y4rT2kOQg=;
-        b=fP2mjoNQR+2FX/L5+27gfO+ZUodvvFbDZpe8YRXI5C2w1CZm6iZQPMxoONC/Z15R2S
-         rkfWLR2L5wGr26ZW+N7xoCViyOBkeduIbKLhIUhzKCokBXJ8ZwGTKzcEnZVPfvREWQgp
-         ByKxA9U+DnM/CIXL/ltXCm3zvwUQMSi5xnDHOO4DpaLC153mUZfawHK17kaRPRJsKtcV
-         gzaezv6+LWgCvqunSIfZ+AJ3JQchrknQtKxu6RIp/dFmm0ttwhTes3J+dDIsk6JN1GsG
-         744OH2Pqbcx7ih4Zh6fIvXvjITpfXlsBjrNmsIo5RgJIXobefWFXhatGu1lzaUDUOIHS
-         b+nQ==
-X-Gm-Message-State: AA+aEWYL2UEDehY7djiO67WSXbZQHkZUdS1oe4n5p2LulNTUZ4W60Nd8
-        YXyRq18qd8vA44Qku6pPbQI=
-X-Google-Smtp-Source: AFSGD/XpPLURnbxQaRuMYr9weTRImAMZp23btin3Tw/tmBISE745v7rJfo3eO/52pVIOwGWdi4S1og==
-X-Received: by 2002:a17:902:be0e:: with SMTP id r14-v6mr2907910pls.23.1542731145085;
-        Tue, 20 Nov 2018 08:25:45 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e23sm57892643pfh.68.2018.11.20.08.25.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:25:44 -0800 (PST)
-Date:   Tue, 20 Nov 2018 08:25:43 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-watchdog@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-doc@vger.kernel.org, Jim Cromie <jim.cromie@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH] kbuild: announce removal of SUBDIRS if used
-Message-ID: <20181120162543.GB4765@roeck-us.net>
-References: <1542726258-8418-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542726258-8418-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 20 Nov 2018 21:58:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=0vHJGSWr4NRvaJSkaKyTfDKuq/42m9ajLZqbdFZiy2Q=; b=DiBKOl+97Qbz
+        o1UZ4eEkVX3THJk/d//gh1/uBN+SlCS6KTMFoawKSabRDAmk34b1Zf+WFd67oMnkAOwUuo0Tma47Z
+        pdzmDq7PcC1NlPdUF4dHDoEKKrrXCGyqOHWCy667BzV/nupuxNfIMeRUsZrlx/Y4A2Te2l+ItCTBH
+        3U7Oc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gP8sj-0001mD-1B; Tue, 20 Nov 2018 16:28:09 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B73391124DC2; Tue, 20 Nov 2018 16:28:08 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: add enable_count for consumers to debug fs" to the regulator tree
+In-Reply-To: 
+Message-Id: <20181120162808.B73391124DC2@debutante.sirena.org.uk>
+Date:   Tue, 20 Nov 2018 16:28:08 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 12:04:18AM +0900, Masahiro Yamada wrote:
-> SUBDIRS has been kept as a backward compatibility since
-> commit ("[PATCH] kbuild: external module support") in 2002.
-> 
-> We do not need multiple ways to do the same thing, so I will remove
-> SUBDIRS after the Linux 5.3 release. I cleaned up in-tree code, and
-> updated the document so that nobody would try to use it.
-> 
-> Meanwhile, display the following warning if SUBDIRS is used.
-> 
-> Makefile:189: ================= WARNING ================
-> Makefile:190: 'SUBDIRS' will be removed after Linux 5.3
-> Makefile:191: Please use 'M=' or 'KBUILD_EXTMOD' instead
-> Makefile:192: ==========================================
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  Documentation/kbuild/kbuild.txt    | 7 +------
->  Makefile                           | 4 ++++
->  drivers/mtd/maps/scx200_docflash.c | 7 -------
->  drivers/watchdog/scx200_wdt.c      | 7 -------
+The patch
 
-For watchdog:
+   regulator: core: add enable_count for consumers to debug fs
 
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+has been applied to the regulator tree at
 
->  samples/connector/Makefile         | 2 +-
->  5 files changed, 6 insertions(+), 21 deletions(-)
-> 
-> diff --git a/Documentation/kbuild/kbuild.txt b/Documentation/kbuild/kbuild.txt
-> index 8390c36..c9e3d93 100644
-> --- a/Documentation/kbuild/kbuild.txt
-> +++ b/Documentation/kbuild/kbuild.txt
-> @@ -81,12 +81,7 @@ KBUILD_EXTMOD
->  --------------------------------------------------
->  Set the directory to look for the kernel source when building external
->  modules.
-> -The directory can be specified in several ways:
-> -1) Use "M=..." on the command line
-> -2) Environment variable KBUILD_EXTMOD
-> -3) Environment variable SUBDIRS
-> -The possibilities are listed in the order they take precedence.
-> -Using "M=..." will always override the others.
-> +Setting "M=..." takes precedence over KBUILD_EXTMOD.
->  
->  KBUILD_OUTPUT
->  --------------------------------------------------
-> diff --git a/Makefile b/Makefile
-> index 370d13b..57be5fb 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -186,6 +186,10 @@ endif
->  # Old syntax make ... SUBDIRS=$PWD is still supported
->  # Setting the environment variable KBUILD_EXTMOD take precedence
->  ifdef SUBDIRS
-> +  $(warning ================= WARNING ================)
-> +  $(warning 'SUBDIRS' will be removed after Linux 5.3)
-> +  $(warning Please use 'M=' or 'KBUILD_EXTMOD' instead)
-> +  $(warning ==========================================)
->    KBUILD_EXTMOD ?= $(SUBDIRS)
->  endif
->  
-> diff --git a/drivers/mtd/maps/scx200_docflash.c b/drivers/mtd/maps/scx200_docflash.c
-> index f1c1f73..7f1a0e6 100644
-> --- a/drivers/mtd/maps/scx200_docflash.c
-> +++ b/drivers/mtd/maps/scx200_docflash.c
-> @@ -216,10 +216,3 @@ static void __exit cleanup_scx200_docflash(void)
->  
->  module_init(init_scx200_docflash);
->  module_exit(cleanup_scx200_docflash);
-> -
-> -/*
-> -    Local variables:
-> -        compile-command: "make -k -C ../../.. SUBDIRS=drivers/mtd/maps modules"
-> -        c-basic-offset: 8
-> -    End:
-> -*/
-> diff --git a/drivers/watchdog/scx200_wdt.c b/drivers/watchdog/scx200_wdt.c
-> index 836377c..ec4063e 100644
-> --- a/drivers/watchdog/scx200_wdt.c
-> +++ b/drivers/watchdog/scx200_wdt.c
-> @@ -262,10 +262,3 @@ static void __exit scx200_wdt_cleanup(void)
->  
->  module_init(scx200_wdt_init);
->  module_exit(scx200_wdt_cleanup);
-> -
-> -/*
-> -    Local variables:
-> -	compile-command: "make -k -C ../.. SUBDIRS=drivers/char modules"
-> -	c-basic-offset: 8
-> -    End:
-> -*/
-> diff --git a/samples/connector/Makefile b/samples/connector/Makefile
-> index fe3c854..6ad7162 100644
-> --- a/samples/connector/Makefile
-> +++ b/samples/connector/Makefile
-> @@ -14,4 +14,4 @@ HOSTCFLAGS_ucon.o += -I$(objtree)/usr/include
->  all: modules
->  
->  modules clean:
-> -	$(MAKE) -C ../.. SUBDIRS=$(CURDIR) $@
-> +	$(MAKE) -C ../.. M=$(CURDIR) $@
-> -- 
-> 2.7.4
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f556213bad39e3e28fe62a8126eb04c0d64e0b5b Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Mon, 19 Nov 2018 16:26:52 -0800
+Subject: [PATCH] regulator: core: add enable_count for consumers to debug fs
+
+Now that consumers all keep track of their own enable count, let's add
+it into the regulator_summary.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index ff5ca185bb8f..76ae6c0d734d 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5225,8 +5225,11 @@ static void regulator_summary_show_subtree(struct seq_file *s,
+ 
+ 		switch (rdev->desc->type) {
+ 		case REGULATOR_VOLTAGE:
+-			seq_printf(s, "%37dmA %5dmV %5dmV",
++			seq_printf(s, "%3d %33dmA%c%5dmV %5dmV",
++				   consumer->enable_count,
+ 				   consumer->uA_load / 1000,
++				   consumer->uA_load && !consumer->enable_count ?
++				   '*' : ' ',
+ 				   consumer->voltage[PM_SUSPEND_ON].min_uV / 1000,
+ 				   consumer->voltage[PM_SUSPEND_ON].max_uV / 1000);
+ 			break;
+-- 
+2.19.0.rc2
+
