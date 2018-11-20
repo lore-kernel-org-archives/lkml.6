@@ -2,122 +2,186 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6229C18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A5CC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D9B20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7D9B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7E836206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E836206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729252AbeKUAsn (ORCPT
+        id S1729749AbeKUAsH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:48:43 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:47178 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeKUAsm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:48:42 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gP6rm-0002Mw-Ub; Tue, 20 Nov 2018 22:19:02 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gP6ra-0002S0-8g; Tue, 20 Nov 2018 22:18:50 +0800
-Date:   Tue, 20 Nov 2018 22:18:50 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
-        Martin Willi <martin@strongswan.org>
-Subject: Re: [RFC PATCH v2 0/4] Exporting existing crypto API code through
- zinc
-Message-ID: <20181120141850.zjmfwcari5kykk6y@gondor.apana.org.au>
-References: <20181105232526.173947-1-ebiggers@kernel.org>
- <20181105232526.173947-11-ebiggers@kernel.org>
- <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com>
- <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com>
- <CAHmME9rtsCk8ZLt05xRKMGr4CVRnaUvCaVOS_WX3N22HOat4-A@mail.gmail.com>
- <20181119052451.qttzfgcm4hvbdc4u@gondor.apana.org.au>
- <20181120060217.t4nccaqpwnxkl4tx@gondor.apana.org.au>
- <CAKv+Gu-SHS2tF665dfqSgmH5EF5vGVtef=3_4WgCE=+8+Jw7Rw@mail.gmail.com>
+        Tue, 20 Nov 2018 19:48:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43702 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726896AbeKUAsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:48:06 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 04D1DC058CA6;
+        Tue, 20 Nov 2018 14:18:44 +0000 (UTC)
+Received: from [10.36.117.138] (ovpn-117-138.ams2.redhat.com [10.36.117.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 667626A68F;
+        Tue, 20 Nov 2018 14:18:42 +0000 (UTC)
+Subject: Re: [RFC PATCH 1/3] mm, memory_hotplug: try to migrate full section
+ worth of pages
+To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+References: <20181120134323.13007-1-mhocko@kernel.org>
+ <20181120134323.13007-2-mhocko@kernel.org>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <65271adc-93b4-19fc-e54b-11db582359c5@redhat.com>
+Date:   Tue, 20 Nov 2018 15:18:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-SHS2tF665dfqSgmH5EF5vGVtef=3_4WgCE=+8+Jw7Rw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181120134323.13007-2-mhocko@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 20 Nov 2018 14:18:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard:
-
-On Tue, Nov 20, 2018 at 11:32:05AM +0100, Ard Biesheuvel wrote:
->
-> > 1. The crypto API algorithms remain individually accessible, this
-> > is crucial as these algorithm names are exported to user-space so
-> > changing the names to foo-zinc is not going to work.
+On 20.11.18 14:43, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
 > 
-> Are you saying user space may use names like "ctr-aes-neon" directly
-> rather than "ctr(aes)" for any implementation of the mode?
-
-Yes.  In fact it's used for FIPS certification testing.
-
-> If so, that is highly unfortunate, since it means we'd be breaking
-> user space by wrapping a crypto library function with its own arch
-> specific specializations into a generic crypto API wrapper.
-
-You can never break things by introducing new algorithms.  The
-problem is only when you remove existing ones.
-
-> Note that I think that using AF_ALG to access software crypto routines
-> (as opposed to accelerators) is rather pointless to begin with, but if
-> it permits that today than we're stuck with it.
-
-Sure, nobody sane should be doing it.  But when it comes to
-government certification... :)
-
-> > 2. The arch-specific algorithm code lives in their own module rather
-> > than in a monolithic module.
+> do_migrate_range has been limiting the number of pages to migrate to 256
+> for some reason which is not documented. Even if the limit made some
+> sense back then when it was introduced it doesn't really serve a good
+> purpose these days. If the range contains huge pages then
+> we break out of the loop too early and go through LRU and pcp
+> caches draining and scan_movable_pages is quite suboptimal.
 > 
-> This is one of the remaining issues I have with Zinc. However, modulo
-> the above concerns, I think it does make sense to have a separate
-> function API for synchronous software routines below the current
-> crypto API. What I don't want is a separate Zinc kingdom with a
-> different name, different maintainers and going through a different
-> tree, and with its own approach to test vectors, arch specific code,
-> etc etc
+> The only reason to limit the number of pages I can think of is to reduce
+> the potential time to react on the fatal signal. But even then the
+> number of pages is a questionable metric because even a single page
+> might migration block in a non-killable state (e.g. __unmap_and_move).
+> 
+> Remove the limit and offline the full requested range (this is one
+> membblock worth of pages with the current code). Should we ever get a
+> report that offlining takes too long to react on fatal signal then we
+> should rather fix the core migration to use killable waits and bailout
+> on a signal.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/memory_hotplug.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index c82193db4be6..6263c8cd4491 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1339,18 +1339,16 @@ static struct page *new_node_page(struct page *page, unsigned long private)
+>  	return new_page_nodemask(page, nid, &nmask);
+>  }
+>  
+> -#define NR_OFFLINE_AT_ONCE_PAGES	(256)
+>  static int
+>  do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  {
+>  	unsigned long pfn;
+>  	struct page *page;
+> -	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
+>  	int not_managed = 0;
+>  	int ret = 0;
+>  	LIST_HEAD(source);
+>  
+> -	for (pfn = start_pfn; pfn < end_pfn && move_pages > 0; pfn++) {
+> +	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
+>  		if (!pfn_valid(pfn))
+>  			continue;
+>  		page = pfn_to_page(pfn);
+> @@ -1362,8 +1360,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  				ret = -EBUSY;
+>  				break;
+>  			}
+> -			if (isolate_huge_page(page, &source))
+> -				move_pages -= 1 << compound_order(head);
+> +			isolate_huge_page(page, &source);
+>  			continue;
+>  		} else if (PageTransHuge(page))
+>  			pfn = page_to_pfn(compound_head(page))
+> @@ -1382,7 +1379,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
+>  		if (!ret) { /* Success */
+>  			put_page(page);
+>  			list_add_tail(&page->lru, &source);
+> -			move_pages--;
+>  			if (!__PageMovable(page))
+>  				inc_node_page_state(page, NR_ISOLATED_ANON +
+>  						    page_is_file_cache(page));
+> 
 
-Even without the issue of replacing chacha20-generic with
-chacha20-zinc which breaks point 1 above, we simply don't want
-or need to go through zinc's run-time implementation choice for
-the crypto API algorithms.  They've already paid for the indirect
-function call so why make them go through yet another run-time
-branch?
+Yes, there is basically no statement why it was done that way. If it is
+important, there should be one.
 
-If the optics of having the code in crypto is the issue, we could
-move the actual algorithm code into a third location, perhaps
-arch/x86/crypto/lib or arch/x86/lib/crypto.  Then both zinc and
-the crypto API can sit on top of that.
+(we could also check for pending signals inside that function if really
+required)
 
-Cheers,
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Thanks,
+
+David / dhildenb
