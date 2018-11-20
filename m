@@ -3,120 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73F6C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 720BBC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98AA121104
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98AA121104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 65E2420671
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E2420671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbeKTUvx (ORCPT
+        id S1727497AbeKTUxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:51:53 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:9752 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726250AbeKTUvx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:51:53 -0500
-X-UUID: f617e93033b3491781c07a1ff9cd1b68-20181120
-X-UUID: f617e93033b3491781c07a1ff9cd1b68-20181120
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1875717253; Tue, 20 Nov 2018 18:23:25 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 20 Nov 2018 18:23:23 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 20 Nov 2018 18:23:23 +0800
-Message-ID: <1542709403.13494.0.camel@mtksdaap41>
-Subject: Re: [PATCH v5 05/12] drm: mediatek: Omit warning on probe defers
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <matthias.bgg@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <p.zabel@pengutronix.de>,
-        <airlied@linux.ie>, <mturquette@baylibre.com>,
-        <sboyd@codeaurora.org>, <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>, <sean.wang@mediatek.com>,
-        <sean.wang@kernel.org>, <rdunlap@infradead.org>, <wens@csie.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Matthias Brugger <mbrugger@suse.com>
-Date:   Tue, 20 Nov 2018 18:23:23 +0800
-In-Reply-To: <9a445746-b07d-73e1-68c9-10eb9d5bf771@gmail.com>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
-         <20181116125449.23581-6-matthias.bgg@kernel.org>
-         <1542605939.32082.12.camel@mtksdaap41>
-         <0a02edf9-78da-dde9-4b69-38c4719b711b@gmail.com>
-         <1542686700.9073.15.camel@mtksdaap41>
-         <9a445746-b07d-73e1-68c9-10eb9d5bf771@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Tue, 20 Nov 2018 15:53:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46324 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726250AbeKTUxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:53:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E10EEBD;
+        Tue, 20 Nov 2018 02:24:54 -0800 (PST)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 008A23F575;
+        Tue, 20 Nov 2018 02:24:51 -0800 (PST)
+Subject: Re: [PATCH v3 05/10] sched/fair: Hoist idle_stamp up from
+ idle_balance
+To:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
+        peterz@infradead.org
+Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
+        daniel.m.jordan@oracle.com, pavel.tatashin@microsoft.com,
+        matt@codeblueprint.co.uk, umgwanakikbuti@gmail.com,
+        riel@redhat.com, jbacik@fb.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, quentin.perret@arm.com,
+        linux-kernel@vger.kernel.org
+References: <1541767840-93588-1-git-send-email-steven.sistare@oracle.com>
+ <1541767840-93588-6-git-send-email-steven.sistare@oracle.com>
+ <9ad62a6f-0269-a5d9-9757-ba5419f9cc1d@arm.com>
+ <0d8ceaff-6368-2dff-9e2c-e5928ab39bab@oracle.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <c177b7dc-b75a-8f0a-e266-b70f2bac780b@arm.com>
+Date:   Tue, 20 Nov 2018 10:24:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <0d8ceaff-6368-2dff-9e2c-e5928ab39bab@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Matthias:
-
-On Tue, 2018-11-20 at 11:19 +0100, Matthias Brugger wrote:
+On 19/11/2018 17:31, Steven Sistare wrote:
+[...]
+>>> +#define IF_SMP(statement)	statement
+>>> +
+>>
+>> I'm not too hot on those IF_SMP() macros. Since you're not introducing
+>> any other user for them, what about an inline function for rq->idle_stamp
+>> setting ? When it's mapped to an empty statement (!CONFIG_SMP) GCC is
+>> smart enough to remove the rq_clock() that would be passed to it on
+>> CONFIG_SMP:
 > 
-> On 20/11/2018 05:05, CK Hu wrote:
-> > Hi, Matthias:
-> > 
-> > On Mon, 2018-11-19 at 10:26 +0100, Matthias Brugger wrote:
-> >>
-> >> On 19/11/2018 06:38, CK Hu wrote:
-> >>> Hi, Matthias:
-> >>>
-> >>> On Fri, 2018-11-16 at 13:54 +0100, matthias.bgg@kernel.org wrote:
-> >>>> From: Matthias Brugger <mbrugger@suse.com>
-> >>>>
-> >>>> It can happen that the mmsys clock drivers aren't probed before the
-> >>>> platform driver gets invoked. The platform driver used to print a warning
-> >>>> that the driver failed to get the clocks. Omit this error on
-> >>>> the defered probe path.
-> >>>
-> >>> This patch looks good to me, but you have not modified the sub driver in
-> >>> HDMI path. We could let HDMI path print the warning and someone send
-> >>> another patch later, or you modify for HDMI path in this patch.
-> >>
-> >> Sure, I'll add this in v6. After inspecting the code, I think we will need to
-> >> also check for not initialized clocks in mtk_mdp_comp_init, as the driver for
-> >> now does not even check if the clocks are present. What do you think?
-> > 
-> > Yes, we do really need to consider mdp driver because mmsys clock
-> > include mdp clock. You remind me that mmsys control 4 major function:
-> > drm routing, drm clock, mdp routing, and mdp clock. Your design let the
-> > mmsys device as drm device (control drm routing) and create a sub device
-> > as clock device (control drm clock, mdp clock). If one day mdp device
-> > (may need control drm routing) need to control the register of mdp
-> > routing, would mdp device be a sub device? Or we need not to consider
-> > this because it need not to access mmsys register now?
-> > 
+> That may be true now, but I worry that rq_clock or its subroutines may gain
+> side effects in the future that prevent the compiler from removing it.  However,
+> I could push rq_clock into the inline function:
 > 
-> I think we should for now concentrate to fix the clock probing issue. If in the
-> future we will need to access drm routing from the mdp device, we can have a
-> look into this.
+>   static inline void rq_idle_stamp_set(rq)    { rq->idle_stamp = rq_clock(rq); }
+>   static inline void rq_idle_stamp_clear(rq)  { rq->idle_stamp = 0; }
 > 
-> Sounds good?
+> I like that better, do you?
+> 
 
-Sounds good to me.
+That works for me, though I can't resist nitpicking on
+s/rq_idle_stamp_set/rq_idle_stamp_update/
 
-Regards,
-CK
-
-> Regards,
-> Matthias
-
-
+> - Steve
