@@ -2,111 +2,96 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F84EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F641C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 429D62080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:34:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxUcol3n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 429D62080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D874A2080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D874A2080C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=katsuster.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732204AbeKTLAe (ORCPT
+        id S1732308AbeKTLDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 06:00:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732448AbeKTLAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 06:00:33 -0500
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B80E3214D9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:34:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542674054;
-        bh=kjPLWuLgkxHxl7KLxin+ondjsAXh8WYjFfawxa6AY5I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jxUcol3nbqLYQoVCowW25qYy3A2XhaAtq3iGhOWiYMuN3FEV202uBLeZHLJkOHEKE
-         3OJUEYAE/TIfiRYIEnUNaOTwTeUQlqgoJBoMZKby5ukRJYxRVoW9Gry8PXaUE1BZfR
-         PuYt2+JbFghO1qFvoog0QemQlU6rIbvaZ4VIjyR0=
-Received: by mail-wr1-f46.google.com with SMTP id v6so110687wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 16:34:13 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLjYbpni4dETgSHgpoaTgndVE56b5jlZMgYoFDfaaRCX+bVziTS
-        +OqjmqzMpkfa5pKSPwm7dcEUBFDaXExtzPHIthQ13g==
-X-Google-Smtp-Source: AJdET5c1rjFBv6gQmAbazx4aTLgAZaP0CcSKFJeUcyr9yuTOivZOdHjHpZYJg4OC2iUKEeomwPR9SKVD/bJ+8DXvYwk=
-X-Received: by 2002:adf:afdc:: with SMTP id y28-v6mr19350810wrd.176.1542674052084;
- Mon, 19 Nov 2018 16:34:12 -0800 (PST)
+        Tue, 20 Nov 2018 06:03:08 -0500
+Received: from www1102.sakura.ne.jp ([219.94.129.142]:34350 "EHLO
+        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731130AbeKTLDI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 06:03:08 -0500
+Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wAK0Zrwk046076;
+        Tue, 20 Nov 2018 09:35:53 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Received: from www1102.sakura.ne.jp (219.94.129.142)
+ by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
+ Tue, 20 Nov 2018 09:35:53 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
+Received: from [192.168.1.2] (199.247.151.153.ap.dti.ne.jp [153.151.247.199])
+        (authenticated bits=0)
+        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wAK0ZqC5046071
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 20 Nov 2018 09:35:52 +0900 (JST)
+        (envelope-from katsuhiro@katsuster.net)
+Subject: Re: [PATCH] clk: rockchip: fix ID of 8ch clock of I2S1 for rk3328
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181118041802.11660-1-katsuhiro@katsuster.net>
+ <12656761.yaB328pSP6@phil>
+From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
+Message-ID: <c0f4e568-3941-3fae-a259-88661c4715f1@katsuster.net>
+Date:   Tue, 20 Nov 2018 09:35:52 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181119103241.5229-1-christian@brauner.io> <20181119103241.5229-3-christian@brauner.io>
- <20181119223954.GA4992@cisco> <CAKOZuetQDziWeRLydHbDNv1abGM3LyF=WohLFvbzmtdT_+nBdg@mail.gmail.com>
- <20181119230709.GB4992@cisco> <CALCETrWyuQvTtksN1J1XbCFPka_rLOaFqa5W==EvGQvoaf9f3Q@mail.gmail.com>
- <20181120003247.a776bej54baxqoxv@brauner.io>
-In-Reply-To: <20181120003247.a776bej54baxqoxv@brauner.io>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 19 Nov 2018 16:34:00 -0800
-X-Gmail-Original-Message-ID: <CALCETrU+_MkDR4AYkbTB72vDRteOY3TDhQkARL0PyXzc3KUgfQ@mail.gmail.com>
-Message-ID: <CALCETrU+_MkDR4AYkbTB72vDRteOY3TDhQkARL0PyXzc3KUgfQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-To:     Christian Brauner <christian@brauner.io>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>,
-        Daniel Colascione <dancol@google.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <12656761.yaB328pSP6@phil>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 4:33 PM Christian Brauner <christian@brauner.io> wrote:
->
-> On Mon, Nov 19, 2018 at 04:27:49PM -0800, Andy Lutomirski wrote:
-> > On Mon, Nov 19, 2018 at 3:07 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > > These tools also care about ioctls. Adding a system call is a pain,
-> > > > but the solution is to make adding system calls less of a pain, not to
-> > > > permanently make the Linux ABI worse.
-> > >
-> > > For user-defined values of "worse" :)
-> > >
-> >
-> > I tend to agree with Tycho here.  But I'm wondering if it might be
-> > worth considering a better ioctl.
-> >
-> > /me dons flame-proof hat
-> >
-> > We could do:
-> >
-> > long better_ioctl(int fd, u32 nr, const void *inbuf, size_t inlen,
-> > const void *outbuf, size_t outlen);
->
-> I'm the writer of this patch so take this with a grain of salt.
-> I think it is a bad idea to stop this patch and force us to introduce a
-> new type of ioctl().
+Hello,
 
-I agree completely.
+Thank you for applying my patch and sorry for mistake...
 
-> An ioctl() is also not easy to use for this task because we want to add
-> a siginfo_t argument which I actually think provides value and makes
-> this interface more useful.
->
+On 2018年11月19日 22:43, Heiko Stuebner wrote:
+> Am Sonntag, 18. November 2018, 05:18:02 CET schrieb Katsuhiro Suzuki:
+>> This patch fixes mistakes in HCLK_I2S1_8CH for running I2S1
+>> successfully.
+>>
+>> Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
+>> ---
+>>   include/dt-bindings/clock/rk3328-cru.h | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/dt-bindings/clock/rk3328-cru.h b/include/dt-bindings/clock/rk3328-cru.h
+>> index a82a0109faff..bcaa4559ab1b 100644
+>> --- a/include/dt-bindings/clock/rk3328-cru.h
+>> +++ b/include/dt-bindings/clock/rk3328-cru.h
+>> @@ -172,13 +172,14 @@
+>>   #define PCLK_HDCP		232
+>>   #define PCLK_DCF		233
+>>   #define PCLK_SARADC		234
+>> +#define PCLK_ACODECPHY		235
+> 
+> I've dropped this unrelated change and applied the
+> real id fix from the rest of the patch for 4.21
+> 
+> 
+> Thanks
+> Heiko
+> 
+> 
+> 
 
-You could always have a struct procfd_kill and pass a pointer to
-*that*.  But sure, it's ugly.
+Best Regards,
+---
+Katsuhiro Suzuki
