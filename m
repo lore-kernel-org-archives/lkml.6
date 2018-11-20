@@ -2,230 +2,165 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 764E8C04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F39DC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1389208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1389208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7ADFA20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:35:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bf6q3E35"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADFA20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeKTVEC (ORCPT
+        id S1728619AbeKTVES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:04:02 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34519 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbeKTVEB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:04:01 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b3so1482271ede.1;
-        Tue, 20 Nov 2018 02:35:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=QWerdv5NokFZCG7auzm1OEN/qgY42YRYuNB88bkmlcY=;
-        b=XjbXUalyjSUoTwugu0wuZjCStUhaAgsiFo5giN3XxoB4VVe4fB1R9keMZjcAa/aRPK
-         49WE6/gt53dvosqp9uehs4lRTnXUvoHGtsj3kGifIjL4S5995YI4FGIzxUcUMmi54Ys6
-         bHlSzkwkN1sErjv6PmNHeQ2Vni0ncjkKdS7WS8o6AguIgeBeyvU2MgKTeQR++JUGT6Qh
-         ky8jzylGesGZRXRz5CyoFsRgGOJyd7seE5P5DV+mtBDyLac0BcQX7W9okeNEOMQ19F0c
-         1ABVxnA5AQDH24Xoz4TOejz0rQYrtXt7RN+Zxc1Cor1Cwl6Jvctk+4eaQHhxalXfNfTP
-         vnBA==
-X-Gm-Message-State: AA+aEWY9eHdks2eDgMqywcll4Hy/JJ6lrcGgP/fRbqXNDLru27gwslUh
-        d09FRg8rftUDnI0k+aCREs0gSktk
-X-Google-Smtp-Source: AFSGD/U8yv77zjPMMDkFdhuOBD/tAZDxskV5Ravx718ZFAdo8bVLSrpGjbCwriOcV5GVV4qvNOllvg==
-X-Received: by 2002:a50:e045:: with SMTP id g5mr1862061edl.152.1542710131793;
-        Tue, 20 Nov 2018 02:35:31 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm5967233ejj.5.2018.11.20.02.35.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 02:35:31 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     linux-api@vger.kernel.org
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH 2/3] mm, thp, proc: report THP eligibility for each vma
-Date:   Tue, 20 Nov 2018 11:35:14 +0100
-Message-Id: <20181120103515.25280-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120103515.25280-1-mhocko@kernel.org>
-References: <20181120103515.25280-1-mhocko@kernel.org>
+        Tue, 20 Nov 2018 16:04:18 -0500
+Received: from mail-eopbgr140077.outbound.protection.outlook.com ([40.107.14.77]:51778
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728336AbeKTVER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:04:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A8sc+A80r6el7lQhzIKrAQvm1wcBZSe2gjrYtRVH41c=;
+ b=Bf6q3E35ewEpm6FRWczidUp3EPZ8s0ihvu2zTMX9P+bj/VnFEA+Sr3Hta0rD/nQM7iPodL4RdLiQea39wcypwP/iuxz7w0ebt/STLYy4ZvIp2QiDpsHTcjVGnpR/iXaHA2zuwxFPl0xE6dmn2/NV994F68fz47Z9hbHadsWDAAs=
+Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
+ HE1PR0401MB1851.eurprd04.prod.outlook.com (10.169.119.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.23; Tue, 20 Nov 2018 10:35:02 +0000
+Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
+ ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
+ ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
+ 10:35:01 +0000
+From:   "M.h. Lian" <minghuan.lian@nxp.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>
+CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: RE: [PATCHv2 06/25] PCI: mobiveil: replace the resource list
+ iteration function
+Thread-Topic: [PATCHv2 06/25] PCI: mobiveil: replace the resource list
+ iteration function
+Thread-Index: AQHUgLMUuse19e43yUq2Mjt2cp9Q4aVYd/Lg
+Date:   Tue, 20 Nov 2018 10:35:01 +0000
+Message-ID: <HE1PR0401MB2235225683B36894815AA75DE8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
+References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
+ <20181120092615.11680-7-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20181120092615.11680-7-Zhiqiang.Hou@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=minghuan.lian@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0401MB1851;6:oaBrV2PMhV4pWbIrnk4e2NH+Y/uJjuIFcWvHRRZIB+68CcUb1zfKuQnkbp/R/qrEL/WhNWsZVYWiAvNdash3rOhFv0JKXOqbcBwZ9renO78pXC0M7nJnXUo3mRFPq/c/dojazDcvWTvfRV+sjwtlxXZIDlcRhPhmeDUPN5FcA9ljjrvrzRBDuVvJqFQkaqj4LrEqk3jpum8rHrMSbYwvsdDJh4akUPE0wgyin/dTCoowsksLOUX026iJlIMI+4pq7RPxhvvH8OZvfEjdLgJZfoR2SykDlDckn0D1Vyy6A9o6VGk57XjrsZ5AxCdPSABIMLx0cNGWN4tdfKXlodLLgb1NqC/bhQ5diYK1//3/27wKviU0ZmaGiUGl0SThxGgRLT0pklpJ1/nUuH4VEAquwkv0SuQ0x5TQJ4TN4fO1L8vm4gvkKps1lm/qU1L13TAnCfYd9xDJOfZMOKgjFUHJVA==;5:dyJ7g1MJeVZFyfKqgM9+Tx9Io8A2KG1V6iBelFSy5je5DP5fGIq3yJV9iSpWNlKoEjEfxLf15lAyPewVZbLTn2P1ZKQk09SU8CjVGGcwxMdcl7trDXrSPpS+Xq00zn23wsC4+Sg1Ojoo7+EnEb4CWWkuBHyay/3vOPQJnTGSY+g=;7:hvik5QaGyi1wGCamlwk4K+mMmx0epyK2RJtNIW+T7nEdlp+5PEwJOwplJH9OKtPMApz/r18dEyOgpeBgn57iK1BCubOJJEZEbNLEuySuCHo8nuHZJXUdA0uOR2E8u2dI3h47S5W9CjZWEsWkUGrddg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 60a8c23d-4f73-4094-9ae1-08d64ed3d3c0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB1851;
+x-ms-traffictypediagnostic: HE1PR0401MB1851:
+x-microsoft-antispam-prvs: <HE1PR0401MB18514727D3C9FCF20479901EE8D90@HE1PR0401MB1851.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB1851;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB1851;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(366004)(396003)(136003)(376002)(346002)(13464003)(189003)(199004)(53546011)(105586002)(6506007)(7416002)(229853002)(2900100001)(66066001)(106356001)(76176011)(26005)(6436002)(5660300001)(305945005)(7696005)(2201001)(86362001)(74316002)(102836004)(97736004)(99286004)(316002)(186003)(478600001)(68736007)(2501003)(3846002)(256004)(14444005)(8936002)(81156014)(81166006)(8676002)(11346002)(33656002)(55016002)(446003)(6116002)(2906002)(110136005)(71200400001)(71190400001)(7736002)(9686003)(476003)(14454004)(4326008)(54906003)(6246003)(53936002)(486006)(25786009)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB1851;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: UctycY70YfX35T6A//AticH+DRQjsV6ONti0jB+tMe2k1SBcyLpoXi5r3W3dypVs/S/ifnykFPwwci+DlldOASQIwoEIClqKkAj9r9tZpKMla14Dgg9Vi9KBvl+sYQzC3c3wzRDDZOyvdKOvPGSoH5HZLDHgI85txWG6fJtxVQuYQ4UVb5IikB+OECndaxSNfNVUYyZySfjsGSaXgFT+376F1pXMlmpEZvm0Rv3HtSEutmFtOkP17EPcSKQMuf/hXbQQIqTfsCL2eaINSjXIObTq4Zoi0At4YrnBvDTO4G9ZX0oQIKsd87ATaW77UWYce45joxWHYJQgwHxnIXNGs1tgHXJhTjFREcgefEaRF84=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60a8c23d-4f73-4094-9ae1-08d64ed3d3c0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:35:01.5309
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB1851
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
 
-Userspace falls short when trying to find out whether a specific memory
-range is eligible for THP. There are usecases that would like to know
-that
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809251248450.50347@chino.kir.corp.google.com
-: This is used to identify heap mappings that should be able to fault thp
-: but do not, and they normally point to a low-on-memory or fragmentation
-: issue.
-
-The only way to deduce this now is to query for hg resp. nh flags and
-confronting the state with the global setting. Except that there is
-also PR_SET_THP_DISABLE that might change the picture. So the final
-logic is not trivial. Moreover the eligibility of the vma depends on
-the type of VMA as well. In the past we have supported only anononymous
-memory VMAs but things have changed and shmem based vmas are supported
-as well these days and the query logic gets even more complicated
-because the eligibility depends on the mount option and another global
-configuration knob.
-
-Simplify the current state and report the THP eligibility in
-/proc/<pid>/smaps for each existing vma. Reuse transparent_hugepage_enabled
-for this purpose. The original implementation of this function assumes
-that the caller knows that the vma itself is supported for THP so make
-the core checks into __transparent_hugepage_enabled and use it for
-existing callers. __show_smap just use the new transparent_hugepage_enabled
-which also checks the vma support status (please note that this one has
-to be out of line due to include dependency issues).
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- Documentation/filesystems/proc.txt |  3 +++
- fs/proc/task_mmu.c                 |  2 ++
- include/linux/huge_mm.h            | 13 ++++++++++++-
- mm/huge_memory.c                   | 12 +++++++++++-
- mm/memory.c                        |  4 ++--
- 5 files changed, 30 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index b1fda309f067..06562bab509a 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -425,6 +425,7 @@ SwapPss:               0 kB
- KernelPageSize:        4 kB
- MMUPageSize:           4 kB
- Locked:                0 kB
-+THPeligible:           0
- VmFlags: rd ex mr mw me dw
- 
- the first of these lines shows the same information as is displayed for the
-@@ -462,6 +463,8 @@ replaced by copy-on-write) part of the underlying shmem object out on swap.
- "SwapPss" shows proportional swap share of this mapping. Unlike "Swap", this
- does not take into account swapped out page of underlying shmem objects.
- "Locked" indicates whether the mapping is locked in memory or not.
-+"THPeligible" indicates whether the mapping is eligible for THP pages - 1 if
-+true, 0 otherwise.
- 
- "VmFlags" field deserves a separate description. This member represents the kernel
- flags associated with the particular virtual memory area in two letter encoded
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 47c3764c469b..c9f160eb9fbc 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -790,6 +790,8 @@ static int show_smap(struct seq_file *m, void *v)
- 
- 	__show_smap(m, &mss);
- 
-+	seq_printf(m, "THPeligible:    %d\n", transparent_hugepage_enabled(vma));
-+
- 	if (arch_pkeys_enabled())
- 		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
- 	show_smap_vma_flags(m, vma);
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 4663ee96cf59..381e872bfde0 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -93,7 +93,11 @@ extern bool is_vma_temporary_stack(struct vm_area_struct *vma);
- 
- extern unsigned long transparent_hugepage_flags;
- 
--static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-+/*
-+ * to be used on vmas which are known to support THP.
-+ * Use transparent_hugepage_enabled otherwise
-+ */
-+static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
- {
- 	if (vma->vm_flags & VM_NOHUGEPAGE)
- 		return false;
-@@ -117,6 +121,8 @@ static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
- 	return false;
- }
- 
-+bool transparent_hugepage_enabled(struct vm_area_struct *vma);
-+
- #define transparent_hugepage_use_zero_page()				\
- 	(transparent_hugepage_flags &					\
- 	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
-@@ -257,6 +263,11 @@ static inline bool thp_migration_supported(void)
- 
- #define hpage_nr_pages(x) 1
- 
-+static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
-+{
-+	return false;
-+}
-+
- static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
- {
- 	return false;
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 55478ab3c83b..f64733c23067 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -62,6 +62,16 @@ static struct shrinker deferred_split_shrinker;
- static atomic_t huge_zero_refcount;
- struct page *huge_zero_page __read_mostly;
- 
-+bool transparent_hugepage_enabled(struct vm_area_struct *vma)
-+{
-+	if (vma_is_anonymous(vma))
-+		return __transparent_hugepage_enabled(vma);
-+	if (shmem_mapping(vma->vm_file->f_mapping) && shmem_huge_enabled(vma))
-+		return __transparent_hugepage_enabled(vma);
-+
-+	return false;
-+}
-+
- static struct page *get_huge_zero_page(void)
- {
- 	struct page *zero_page;
-@@ -1303,7 +1313,7 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd)
- 	get_page(page);
- 	spin_unlock(vmf->ptl);
- alloc:
--	if (transparent_hugepage_enabled(vma) &&
-+	if (__transparent_hugepage_enabled(vma) &&
- 	    !transparent_hugepage_debug_cow()) {
- 		huge_gfp = alloc_hugepage_direct_gfpmask(vma, haddr);
- 		new_page = alloc_pages_vma(huge_gfp, HPAGE_PMD_ORDER, vma,
-diff --git a/mm/memory.c b/mm/memory.c
-index 4ad2d293ddc2..3c2716ec7fbd 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3830,7 +3830,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	vmf.pud = pud_alloc(mm, p4d, address);
- 	if (!vmf.pud)
- 		return VM_FAULT_OOM;
--	if (pud_none(*vmf.pud) && transparent_hugepage_enabled(vma)) {
-+	if (pud_none(*vmf.pud) && __transparent_hugepage_enabled(vma)) {
- 		ret = create_huge_pud(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
-@@ -3856,7 +3856,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 	vmf.pmd = pmd_alloc(mm, vmf.pud, address);
- 	if (!vmf.pmd)
- 		return VM_FAULT_OOM;
--	if (pmd_none(*vmf.pmd) && transparent_hugepage_enabled(vma)) {
-+	if (pmd_none(*vmf.pmd) && __transparent_hugepage_enabled(vma)) {
- 		ret = create_huge_pmd(&vmf);
- 		if (!(ret & VM_FAULT_FALLBACK))
- 			return ret;
--- 
-2.19.1
+> -----Original Message-----
+> From: Z.q. Hou
+> Sent: Tuesday, November 20, 2018 5:26 PM
+> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
+> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
+> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
+> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
+> catalin.marinas@arm.com; will.deacon@arm.com
+> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
+> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
+> <zhiqiang.hou@nxp.com>
+> Subject: [PATCHv2 06/25] PCI: mobiveil: replace the resource list iterati=
+on
+> function
+>=20
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>=20
+> As it won't delete any node in this iteration, replaced the function
+> resource_list_for_each_entry_safe() with the resource_list_for_each_entry=
+().
+>=20
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> ---
+> V2:
+>  - no change
+>=20
+>  drivers/pci/controller/pcie-mobiveil.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c
+> b/drivers/pci/controller/pcie-mobiveil.c
+> index 8ff873023b5f..b2cc9c097fc9 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -569,7 +569,7 @@ static int mobiveil_host_init(struct mobiveil_pcie
+> *pcie)  {
+>  	u32 value, pab_ctrl, type;
+>  	int err;
+> -	struct resource_entry *win, *tmp;
+> +	struct resource_entry *win;
+>=20
+>  	err =3D mobiveil_bringup_link(pcie);
+>  	if (err) {
+> @@ -620,7 +620,7 @@ static int mobiveil_host_init(struct mobiveil_pcie
+> *pcie)
+>  	program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE,
+> IB_WIN_SIZE);
+>=20
+>  	/* Get the I/O and memory ranges from DT */
+> -	resource_list_for_each_entry_safe(win, tmp, &pcie->resources) {
+> +	resource_list_for_each_entry(win, &pcie->resources) {
+>  		if (resource_type(win->res) =3D=3D IORESOURCE_MEM)
+>  			type =3D MEM_WINDOW_TYPE;
+>  		else if (resource_type(win->res) =3D=3D IORESOURCE_IO)
+> --
+> 2.17.1
 
