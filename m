@@ -6,63 +6,60 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73511C32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FDBC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:22:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF7F208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E78B204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:22:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kj9ZttUi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF7F208E3
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="esKtd24p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E78B204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbeKUCtx (ORCPT
+        id S1726594AbeKUCwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:49:53 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38293 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725998AbeKUCtx (ORCPT
+        Tue, 20 Nov 2018 21:52:32 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35955 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbeKUCwb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:49:53 -0500
-Received: by mail-it1-f194.google.com with SMTP id h65so4385550ith.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:19:57 -0800 (PST)
+        Tue, 20 Nov 2018 21:52:31 -0500
+Received: by mail-io1-f65.google.com with SMTP id m19so1807087ioh.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:22:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CIcMlO7uz+W0h9L7KRQcroQP6P30CmSof6JAhzvLurk=;
-        b=kj9ZttUiL/qU9oDcv4Tn2RxDuGiPqrOI8/9ZrR/T2tilLctYxMorKdr2P1sWEo+oI/
-         4wc95GQWpRqd/0FaZUKT3xzbtri1fdt1KQNO0RlF3lYq4RzE3jECLUVPKv97CXRf6QAz
-         e1p7JtLYmr1JRUhH3Cs14Up5MMseS/3HkQjLU=
+        bh=goJdZYQ3RgdZt0XFLN5cT/iZ7j6oRCv+YWPzhLPhMnQ=;
+        b=esKtd24pR5zpYMaXFCIAFG+St9DsxDS8JWmqZTrRiioeLAge2XsapuzVzSaM/2GZ9w
+         +2ZCIhlvumGrGOu+DR38bQWogaaJQLrf6HC9V1L3hS+hxBehZmFmE2HunobFu8YHKCLq
+         zKCeBPXPrdk0Rnbv5BFAUKUglFUBL1V4/uFfE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CIcMlO7uz+W0h9L7KRQcroQP6P30CmSof6JAhzvLurk=;
-        b=Q3msD5c54LQfvwNfWi4YUN2FPIChumjLevgpPWbKvdHjFdpkbO6+iWzty9/rPqWuA7
-         q0rVZrc3eS68X4N19z9pF/pEq+uTz3CA++h4DcETeOuQ5Eut09MGp8juYt+Djiwgioa1
-         hIGgrHXgrIBUuZxVVuW3Nt/oj1RTenJFaBj2bGjv9YVqqkbMgTSHD7BU89tUOyRBGXCW
-         +bLwjEJ/59hH8HXjgznDMgspLOpp+S5zO+Ru834c/0bB+WOn6aH5qxKrJM4wdTje5pZ9
-         DZ3fzCWIF9K8WFcaM3BpWUAXQ7TVILWTiXi1LRq7zSGaACrWtstaFvLebVcVRp/Iws+D
-         Kg7A==
-X-Gm-Message-State: AGRZ1gIcs78YwRlDc/ZUSznVNBL5GNdF9coMUJG4KWtir/3ZHmY8oQSq
-        sORev97dStnlZy/rOIMX+KYd9WSY+2LxtwZg9lJB3A==
-X-Google-Smtp-Source: AJdET5dO8oJmNfDKNe5zSSdFUxLrRvmEo5CpSJcGnf6jpf6RV+ap/2zPfXplBqnxRmNeOypHGRm4ZtRbOuoYhlHl3RQ=
-X-Received: by 2002:a02:94d:: with SMTP id f74-v6mr2398608jad.85.1542730797107;
- Tue, 20 Nov 2018 08:19:57 -0800 (PST)
+        bh=goJdZYQ3RgdZt0XFLN5cT/iZ7j6oRCv+YWPzhLPhMnQ=;
+        b=PSjAKT2duUMuz/mCAEsabsGsao1MBOunAoYvpYCh3Y0q6YCRBGJWR5sd58Z2wZ1oM2
+         YpTmG01zJrhdtmq8YaDzijJhaSlkhuHc4+vJ7MGNdY4pCpvDnyH1kiiyvT2D6ckVKdem
+         7bFFu4G+pbmWTIdkCEMPO3h+Z/gWhgasGJWJgO8SXUhVOdagkv56mss7AXV7tt0JBNTF
+         gC+2XnBzx4Z/+5dio7vkvMyIOsdEmb/g1Z9MQy6ZGMi932KTCkSZUSIpbWk2YY9J9Nw3
+         br+LH6Uj4+IafvTGrcNTFhQxuwWrMI0uw68aox6uPbWsolvTO4+vGtX5WQZyoc+RiSVJ
+         iRuw==
+X-Gm-Message-State: AA+aEWb928ioY5271mtq9qba/X8zy7bYKAApPgwp6gEu1o7w6bIUbgyO
+        cktV3jElJFYHZjuGTdaAj1p7Is3R+VvNNtdLqSvdQA==
+X-Google-Smtp-Source: AFSGD/X0scBNc8DCEPs8hc5pVCrxlQyqkuZymWC1TRFZhNmmyZUvofIvVdbjjcxMM38cccA1vImwtS+8qVosL7nLd7s=
+X-Received: by 2002:a6b:e50d:: with SMTP id y13mr1920026ioc.114.1542730954857;
+ Tue, 20 Nov 2018 08:22:34 -0800 (PST)
 MIME-Version: 1.0
 References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-2-jagan@amarulasolutions.com> <20181119082707.kbsw2gyntxxbh6no@flea>
- <CAMty3ZBDa2wjjCh8NtrbKNYz=mr1xhZKv9JfnmDPDBQRO+CkYw@mail.gmail.com>
- <20181120132357.xge6gkurjjjvwi2i@flea> <CAMty3ZDex+UQcZdp2nr3Bd=_PVZH-pAU=GBmLL6sdrfA-dZoVQ@mail.gmail.com>
- <20181120155826.j5rja22jnxpkmjrs@flea>
-In-Reply-To: <20181120155826.j5rja22jnxpkmjrs@flea>
+ <20181116163916.29621-4-jagan@amarulasolutions.com> <20181119083036.riydru5xefao3xte@flea>
+ <CAMty3ZBDBDqtH5_m4g-kkKKx+JqcC-r9mc-H+_WWgkLubMWPew@mail.gmail.com> <20181120154532.mykbbrc3homwf2fi@flea>
+In-Reply-To: <20181120154532.mykbbrc3homwf2fi@flea>
 From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 20 Nov 2018 21:49:45 +0530
-Message-ID: <CAMty3ZDnMwtd1Q3ab518=PsCo2FGCjuvqV2t5SQE=F-6AejCcA@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] drm/sun4i: sun6i_mipi_dsi: Compute burst mode
- loop N1 instruction delay
+Date:   Tue, 20 Nov 2018 21:52:23 +0530
+Message-ID: <CAMty3ZCZtTa=YYxVnqvOHSGxA4vkXf6iinhoKfVN7B6CHFg_xQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/12] drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
@@ -85,49 +82,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 9:29 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Tue, Nov 20, 2018 at 9:15 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
-> On Tue, Nov 20, 2018 at 07:06:30PM +0530, Jagan Teki wrote:
-> > On Tue, Nov 20, 2018 at 6:53 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> On Mon, Nov 19, 2018 at 04:30:37PM +0530, Jagan Teki wrote:
+> > On Mon, Nov 19, 2018 at 2:00 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 > > >
-> > > On Mon, Nov 19, 2018 at 04:28:29PM +0530, Jagan Teki wrote:
-> > > > On Mon, Nov 19, 2018 at 1:57 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Fri, Nov 16, 2018 at 10:09:05PM +0530, Jagan Teki wrote:
-> > > > > > Loop N1 instruction delay for burst mode lcd panel are
-> > > > > > computed as per BSP code.
-> > > > > >
-> > > > > > Reference code is available in BSP (from linux-sunxi
-> > > > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> > > > > >
-> > > > > > dsi_dev[sel]->dsi_inst_loop_num.bits.loop_n1=
-> > > > > > (panel->lcd_ht-panel->lcd_x)*(150)/(panel->lcd_dclk_freq*8) - 50;
-> > > > > > => (((mode->htotal - mode->hdisplay) * 150) /
-> > > > > >      ((mode->clock / 1000) * 8)) - 50;
-> > > > > >
-> > > > > > So use the similar computation for loop N1 delay.
-> > > > > >
-> > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > >
-> > > > > *why* are you doing this? What is it fixing? on which devices?
+> > > On Fri, Nov 16, 2018 at 10:09:07PM +0530, Jagan Teki wrote:
+> > > > Burst mode display timings are different from convectional
+> > > > video mode so update the horizontal and vertical timings.
 > > > >
-> > > > You mentioned the separate function to compute the delay for all modes
-> > > > [1], ie what I did. did I missing anything?
+> > > > Reference code taken from BSP (from linux-sunxi/
+> > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > >
+> > > > dsi_hsa  = 0;
+> > > > dsi_hbp  = 0;
+> > > > dsi_hact = x*dsi_pixel_bits[format]/8;
+> > > > dsi_hblk = dsi_hact;
+> > > > dsi_hfp  = 0;
+> > > > dsi_vblk = 0;
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > > >
-> > > You're missing that you are never explaining why that patch is needed
-> > > in the first place. Or answering the question I asked a couple of
-> > > lines above.
+> > > How is that matching the code you have in the rest of your patch?
 > >
-> > OK.
+> > +       if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
+> > +               timings.hblk = (mode->hdisplay * Bpp);
+> > +       else
+> > +               sun6i_dsi_get_timings(dsi, mode, &timings);
 > >
-> > The instruction delay varies between video and burst mode. for burst
-> > mode panels it is computed based on the panel clock along with
-> > horizontal sync+porch timings.
+> > It's again your request to "keep the couple of function to make more
+> > readable"
 >
-> You're still stating a fact. What issue, that you experienced, are you
-> trying to solve here?
+> That function in particular doesn't make it much more readable, but
+> more importantly, your commit log doesn't match what you code does.
 
-This change is specific for burst mode instruction delay. for
-non-burst it is 50 - 1 and for burst mode it is computed as mentioned
-in commit message. Both things are available in BSP code. and without
-this burst mode panels not working with existing (50 - 1)
+May be I can update the commit message if the function is OK. for
+burst most of the timings are 0 so I used structure with memset to
+keep not assigning 0's explicitly. otherwise do you have any
+suggestions, please let me know.
