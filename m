@@ -5,72 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4598C32788
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8CAC28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D6220831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:27:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D6220831
+	by mail.kernel.org (Postfix) with ESMTP id 45BB12087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:26:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45BB12087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbeKUB4o (ORCPT
+        id S1729921AbeKUB4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:56:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44720 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725935AbeKUB4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:56:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 02A49AD93;
-        Tue, 20 Nov 2018 15:27:03 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 16:27:01 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Arjan van de Ven <arjan@linux.intel.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: Re: STIBP by default.. Revert?
-In-Reply-To: <51127fd4-5dcc-b2b9-4873-72098d2a77d9@linux.intel.com>
-Message-ID: <nycvar.YFH.7.76.1811201623300.21108@cbobk.fhfr.pm>
-References: <CAHk-=wg-9FUGU=grF4gKDq1sm1m39Jbs3A_iyLbSSntU47ncwg@mail.gmail.com> <nycvar.YFH.7.76.1811182222230.21108@cbobk.fhfr.pm> <CAHk-=whH2daKsZTqVPb-G9mJ1g15XMse7j-9YqN+yBYk7M9=Dw@mail.gmail.com> <51127fd4-5dcc-b2b9-4873-72098d2a77d9@linux.intel.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Tue, 20 Nov 2018 20:56:02 -0500
+Received: from mail-oi1-f176.google.com ([209.85.167.176]:40583 "EHLO
+        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbeKUB4C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:56:02 -0500
+Received: by mail-oi1-f176.google.com with SMTP id t204so1791144oie.7;
+        Tue, 20 Nov 2018 07:26:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7RV4jpejzcCqpczwJOehT7Z4PvwgjLeWGEDEIYNZuxs=;
+        b=mQBaPtQgB0idSnfohWN4NsMSGTYjio0mQFoI4/NtpBXmHx0C9eEAp0moYoxLLK1mAA
+         iJ18BiP9gGQ8Bdd47XyuH0CLtqYWqesagudRcUugu7bt3sR0PM8a6fw3/scQLXo2twII
+         P5ZDQ7x0v+7djWxf4x399kcEHHSyUDEq59BuZ4KFgKwUEyXzguXb4pY6UfAwuNDQxebp
+         0h4zsIzOim1+EnBjortfVsVjs7qfIKMxDy4SoZuQq7DuU/dasegLF+wgUUjm1hsLR7m3
+         U5pvbqSnqOffI3fj9zA6J6kjJ17k8x9P1DVqm4ueRCQaq+KM1CbnL0bw6xYqxMQDCOae
+         9Q+Q==
+X-Gm-Message-State: AGRZ1gIsPblYiqWdhjw4CU+NHWVPoU8q6s7IOi4y9ywpuTNqjRGYrsb+
+        Oi6n/P2iEuPWEmA2qfO4nwL/yaEWAG7cx5/Vox0=
+X-Google-Smtp-Source: AJdET5ejeza/oNT/McC597SElVwDwwxHaPJoDmw05WLgs6PCmjZd5FPWe3O4k3z4zX2SxAawmseejBAx/CPK8dQdUo0=
+X-Received: by 2002:aca:3d42:: with SMTP id k63mr1360967oia.95.1542727582020;
+ Tue, 20 Nov 2018 07:26:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20181120125731.19368-1-tiny.windzz@gmail.com>
+In-Reply-To: <20181120125731.19368-1-tiny.windzz@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 20 Nov 2018 16:26:09 +0100
+Message-ID: <CAJZ5v0gY7kO-iZBLFSYHi57hsRUbsetJa0evjfmh2KCgkHLSRA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: powernv: add of_node_put()
+To:     tiny.windzz@gmail.com
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018, Arjan van de Ven wrote:
+On Tue, Nov 20, 2018 at 1:57 PM Yangtao Li <tiny.windzz@gmail.com> wrote:
+>
+> use of_node_put() to release the refcount.
 
-> In the documentation, AMD officially recommends against this by default, 
-> and I can speak for Intel that our position is that as well: this really 
-> must not be on by default.
+Again, this changelog is as good as no changelog at all.
 
-Thanks for pointing to the AMD doc, it's indeed clearly stated there.
-
-Is there any chance this could perhaps be added to Intel documentation as 
-well, so that we avoid cases like this in the future?
-
-The revision 3.0 of Intel doc from may 2018 [1] I am always looking into 
-doesn't say anything discouraging about STIBP to me.
-
-[1] https://software.intel.com/security-software-guidance/api-app/sites/default/files/336996-Speculative-Execution-Side-Channel-Mitigations.pdf?_gclid=5b78f4d130faf8.22277271-5b78f4d130fb70.17467890&_utm_source=xakep&_utm_campaign=mention177777&_utm_medium=inline&_utm_content=lnk223716354570
+If you are adding a missing of_node_put(), please say that and explain
+why it is necessary.
 
 Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
-
+Rafael
