@@ -2,159 +2,276 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84BEC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8A1C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B9D20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1B1C20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:25:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="SO5zkZ06"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63B9D20685
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oHsJqEL/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1B1C20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730441AbeKUDyf (ORCPT
+        id S1729539AbeKUDz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:54:35 -0500
-Received: from mail-eopbgr680069.outbound.protection.outlook.com ([40.107.68.69]:5067
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726314AbeKUDyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:54:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TlMCiTdWyZNckLf09e3bJsM3WiDRaG7z2KoR+YMBB1k=;
- b=SO5zkZ06chrltfF8sakbGTyscM1POiyMRLBS/KHVl6bWG8Xycjs85zZ86dw2NF1UFvq9yMzD4sRbIHUgm4zOf9AIU07yn3IF9Yg+9grHtujqKOX6Y2UVeW66obBkPDXo8KYsPWoK3o/QavK7Ymw2FeJYhhXtMphvKfEXfkogdE8=
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com (10.167.162.139) by
- MWHPR0201MB3547.namprd02.prod.outlook.com (10.167.162.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.25; Tue, 20 Nov 2018 17:24:16 +0000
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::bdb1:a728:19ef:e8fb]) by MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::bdb1:a728:19ef:e8fb%2]) with mapi id 15.20.1294.048; Tue, 20 Nov 2018
- 17:24:16 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Andrea Merello <andrea.merello@gmail.com>,
-        "vkoul@kernel.org" <vkoul@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] dmaengine: fix dmaengine_desc_callback_valid() doesn't
- check for callback_result
-Thread-Topic: [PATCH] dmaengine: fix dmaengine_desc_callback_valid() doesn't
- check for callback_result
-Thread-Index: AQHUfbQ+OHCXhV6E90WqnewOaYTRNKVY65nw
-Date:   Tue, 20 Nov 2018 17:24:16 +0000
-Message-ID: <MWHPR0201MB3628DCBC951F5DF41F5A796CC7D90@MWHPR0201MB3628.namprd02.prod.outlook.com>
-References: <20181116135628.19388-1-andrea.merello@gmail.com>
-In-Reply-To: <20181116135628.19388-1-andrea.merello@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [183.83.158.204]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR0201MB3547;6:Rz3VspEX2Id5khVs0sdkQ/N8iZcaohKC2SA3BVBCMZLEO1S6uBZF4RRrbe9ccWPgz2zS+3YopwkFeZ//AOXS8Z3YtDnImBI8VQ50y+8cdKGeg4nHPmA/D1Ir+3II1lDKUFxq2Ztrw7QUK2oXm4t5rortwS5Bq5+nV03Q+clwqzYbz0LtgUsiPy/o16g6W42gRWXf5YuITNKmfI1r5ckqwKi/cP5S/a+ziSU9maLiATZZ6rTwbmvrqAZgkMftghrFDGiJEXKQ5G6ALASPzWNWQX7eQt6mdcQuUxNncwwl4Dtu1uY5d1Da4gHMHris5WSNb+03diHq0gnQ0an5mjhKUpe8eWiVjLoPVwLcAQ7USvQzpCrOFoH/d0DMtjjFaWqdcGgXTXFtctN+Hqat8TbfYVwBjyFp93C+CogyOSazEm2jrvWhFtt7PX4dcSAE+PKQcxmCIXcPt3ByPCp9xb3HVg==;5:o9DTHWHXuCrmLaR53wE/DqW8hh4E8mMKR81Ws/c6E9KdT9wjz6eEhWZHG9kK3BG+nF4oRZwzsq2l2QZW3UMfmqv78fgzVn930eOHyX9uxKGcivZl/LhpFe6pv0y02BzbLTsKtdDoOO85+X/UypIyLfupp0Jf0Vj2R0gttqLm3Qc=;7:mBvLHc1rS1my+o0GNxpNSLw2fetzYsatGnUfwFeyndH2V3iKUNITPSBSqUBiXhsEU3QVW4u+z+oPciLeA6/2MM3leAwNmaGnp/fiuEfX2dlxEl/rJVCMymy67z5jEXIR51414jp6GG7pf8r1JlvNqw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 40a31945-c975-4531-18d9-08d64f0cffa0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR0201MB3547;
-x-ms-traffictypediagnostic: MWHPR0201MB3547:
-x-microsoft-antispam-prvs: <MWHPR0201MB3547881499B1A21EAD67E6B0C7D90@MWHPR0201MB3547.namprd02.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0201MB3547;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3547;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(346002)(39860400002)(376002)(366004)(51914003)(13464003)(43544003)(199004)(189003)(14444005)(106356001)(14454004)(71190400001)(71200400001)(256004)(478600001)(229853002)(25786009)(2906002)(39060400002)(33656002)(105586002)(6246003)(186003)(476003)(446003)(11346002)(26005)(55016002)(102836004)(486006)(2900100001)(6436002)(53936002)(68736007)(76176011)(2501003)(8676002)(53546011)(7696005)(6506007)(97736004)(99286004)(9686003)(66066001)(6116002)(81166006)(2201001)(8936002)(575784001)(305945005)(7736002)(86362001)(4326008)(74316002)(3846002)(5660300001)(316002)(81156014)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3547;H:MWHPR0201MB3628.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: eDdCQ2Re7UD+pvvlGTXlQjM0wU1RSAG2LK1njkRSrpCMOEIiSXhyMgdaCIEVTTAlPOj2K8+8TOEbLKW+aJ7rY7eSWlBgVX21YlrOb/gq/Lk4CksqpDsapQuP625DfskEKf0T9wlaCpHeNOowqCNe5oie2uCk8PUauZRInyMSL7nmF+gxS65zwqmWHBpMFmx0M0qylcHv3gwpw3mcaJ5/Nve4gt0qsT+A09NRX0ot17Agi0sVPh4WUysmGP3qPpiTDXwDsMPgm7Vs23M/wIVH9Jq68b1ADXDwF8agqQ7YFAUjIIxyEqYsrrhqQ2pCLtOdfz0OaCCfXIBX2wvZ6z5sJmwD3hPMOVDHx/bpW9wgFoc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 20 Nov 2018 22:55:59 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57455 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbeKUDz7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:55:59 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181120172542euoutp0128d496b8b59deff437141afdc758fdec~o5RMWznPC1727417274euoutp01M
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:25:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181120172542euoutp0128d496b8b59deff437141afdc758fdec~o5RMWznPC1727417274euoutp01M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542734742;
+        bh=OK3+KtbLau+jKjMd/mxEwuw63ufehGU+XV+pENUVG1s=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=oHsJqEL/wDopymtYrRcqjbcFv1Ek2J8hEoB7pB/UIm+0oUaCwN2YtNReLEddn9rru
+         kozfyP8M86twRYM2mS+sbC0nsfrPRno0vnJ01TovJCchD7d5jWCXSGoLW+jNQzt+wy
+         VcgHckMtNWiIUP/KBVNs7J0wdu8fo59+oZtmhMCU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181120172541eucas1p2153bd44cb4735ced8bb3b7f289dbb152~o5RLKX_1B1183511835eucas1p2p;
+        Tue, 20 Nov 2018 17:25:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 95.08.04806.49344FB5; Tue, 20
+        Nov 2018 17:25:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181120172540eucas1p29bb48c51d2f0d10cd0ad3a1b889534cf~o5RKBQYR40512305123eucas1p2l;
+        Tue, 20 Nov 2018 17:25:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181120172539eusmtrp2c3d88cd2513b588535636b5241023ac5~o5RJyLOol3179831798eusmtrp2e;
+        Tue, 20 Nov 2018 17:25:39 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-dd-5bf44394c916
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id C9.D7.04128.39344FB5; Tue, 20
+        Nov 2018 17:25:39 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181120172539eusmtip20e2d1731b8d8c03492bba6717eefa9ce~o5RJbtD5F0300703007eusmtip2X;
+        Tue, 20 Nov 2018 17:25:39 +0000 (GMT)
+Subject: Re: [PATCH] regulator: wm8994: Don't use devres for enable GPIOs
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
+Cc:     linus.walleij@linaro.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <c426f174-dc45-3a25-4c7e-018972c2ceef@samsung.com>
+Date:   Tue, 20 Nov 2018 18:25:38 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40a31945-c975-4531-18d9-08d64f0cffa0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 17:24:16.4686
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3547
+In-Reply-To: <20181120170152.24652-1-ckeepax@opensource.cirrus.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djPc7pTnL9EG0ybZWYx9eETNosrrZsY
+        Lb5d6WCymPJnOZPF5V1z2Cw+v9/P6sDmsXPWXXaPTas62TzuXNvD5jF9zn9Gj8+b5AJYo7hs
+        UlJzMstSi/TtErgyTvR8ZCn4YVCx/O9E1gbGO5pdjBwcEgImEmvnxHYxcnIICaxglFi5M7mL
+        kQvI/sIosfrRE3YI5zOjxLIPP9lAqkAajjx9BpVYzihx5v8TZgjnPaPE0yXXGUGqhAU8JW5s
+        Owhmiwi4Sby+v4YZxGYWKJD41vsEzGYTMJToetvFBnIGr4CdxMRGMZAwi4CqxMa/u5hAbFGB
+        GIljK2+AjeEVEJQ4OfMJC4jNKeAssf3kVaiR8hLNW2dD2eISt57MZwK5R0JgFbvE4t+b2SGu
+        dpHo7fvBBGELS7w6vgUqLiPxfydMQzOjRPuMWewQTg+jxNY5O6B+tpY4fPwiK8ilzAKaEut3
+        6UOEHSVuzdvCCAlHPokbbwUhjuCTmLRtOjNEmFeio00IolpNYtbxdXBrD164xDyBUWkWktdm
+        IXlnFpJ3ZiHsXcDIsopRPLW0ODc9tdg4L7Vcrzgxt7g0L10vOT93EyMw7Zz+d/zrDsZ9f5IO
+        MQpwMCrx8CYIf4kWYk0sK67MPcQowcGsJMJ7TgsoxJuSWFmVWpQfX1Sak1p8iFGag0VJnLea
+        4UG0kEB6YklqdmpqQWoRTJaJg1OqgTHzguuVFpGHQjdneml+FuQ6av/mhJNbr0P0A5/lnr/v
+        3dW5PmfqalUzVY2zfDqd145xrmMW2lIceZdzSWbP9D0B8/cqPBZPk/km8nLmwpbtWSXPziuu
+        eGn0R6JPWHdlUOui4DzHjasnaE+eUJte0cAWIXySg/1PwJxTb8/8C17+5r9L1pnQf2uUWIoz
+        Eg21mIuKEwF1LN0/NwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xe7qTnb9EG8x5oWUx9eETNosrrZsY
+        Lb5d6WCymPJnOZPF5V1z2Cw+v9/P6sDmsXPWXXaPTas62TzuXNvD5jF9zn9Gj8+b5AJYo/Rs
+        ivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstSi/TtEvQyTvR8ZCn4
+        YVCx/O9E1gbGO5pdjJwcEgImEkeePmPvYuTiEBJYyihxpXMPK0RCRuLktAYoW1jiz7UuNoii
+        t4wSWx9OYwdJCAt4StzYdpARxBYRcJN4fX8NM4jNLFAgcbLlLtTUaYwSjR9+sYAk2AQMJbre
+        gkzi4OAVsJOY2CgGEmYRUJXY+HcXE4gtKhAj0Xl9HhuIzSsgKHFy5hOwVk4BZ4ntJ69CzVeX
+        +DPvEpQtL9G8dTaULS5x68l8pgmMQrOQtM9C0jILScssJC0LGFlWMYqklhbnpucWG+kVJ+YW
+        l+al6yXn525iBMbatmM/t+xg7HoXfIhRgINRiYc3QfhLtBBrYllxZe4hRgkOZiUR3nNaQCHe
+        lMTKqtSi/Pii0pzU4kOMpkDPTWSWEk3OB6aBvJJ4Q1NDcwtLQ3Njc2MzCyVx3vMGlVFCAumJ
+        JanZqakFqUUwfUwcnFINjKEh3zz/dBX8jwkyz7M+oH18cviajXF8s98w3Jx27VuG4dPdBZ+f
+        7DJP26xW0ZUbxb3Y/3l3q0Wl0YJ1H/jLP2/kL7Px+33vz/I5yypyp/tM3JEUf23fWX0Z48hn
+        SxukPcMe7F9xIrDh7uSpZvtPLNxXd7Rom8ihV7+Or05clTpDPv31KXfPZAMlluKMREMt5qLi
+        RADegF7pywIAAA==
+X-CMS-MailID: 20181120172540eucas1p29bb48c51d2f0d10cd0ad3a1b889534cf
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181120170248epcas1p2a93ec9ff7f74ad4908166590ed548386
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181120170248epcas1p2a93ec9ff7f74ad4908166590ed548386
+References: <CGME20181120170248epcas1p2a93ec9ff7f74ad4908166590ed548386@epcas1p2.samsung.com>
+        <20181120170152.24652-1-ckeepax@opensource.cirrus.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Andrea Merello <andrea.merello@gmail.com>
-> Sent: Friday, November 16, 2018 7:26 PM
-> To: vkoul@kernel.org; dan.j.williams@intel.com; dmaengine@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; Radhey Shyam Pandey
-> <radheys@xilinx.com>; Andrea Merello <andrea.merello@gmail.com>
-> Subject: [PATCH] dmaengine: fix dmaengine_desc_callback_valid() doesn't
-> check for callback_result
->=20
-> There are two flavors of DMA completion callbacks: callback() and
-> callback_result(); the latter takes an additional parameter that carries
-> result information.
->=20
-> Most dmaengine helper functions that work with callbacks take care of bot=
-h
-> flavors i.e. dmaengine_desc_get_callback_invoke() first checks for
-> callback_result() to be not NULL, and eventually it calls this one;
-> otherwise it goes on checking for callback().
->=20
-> It seems however that dmaengine_desc_callback_valid() does not care about
-> callback_result(), and it returns false in case callback() is NULL but
-> callback_result() is not; unless there is a (hidden to me) reason for doi=
-ng
-> so then I'd say this is wrong.
->=20
-> I've hit this by using a DMA controller driver (xilinx_dma) that doesn't
-> trigger any callback invocation unless dmaengine_desc_callback_valid()
-> returns true, while I had only callback_result() implemented in my client
-> driver (which AFAICT is always fine since dmaengine documentation says th=
-at
-> callback() will be deprecated).
+Hi Charles,
 
-Thanks for the patch. In xilinx_dma driver call to _desc_callback_valid
-can be safely removed as callback ptrs are anyway checked in invoke().
-There is no much benefit in having redundant checks.
-
-Related to dmaengine_desc_callback_valid extension will let Vinod comment.
-
->=20
-> This patch fixes this by making dmaengine_desc_callback_valid() to return
-> true in the said scenario.
->=20
-> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+On 2018-11-20 18:01, Charles Keepax wrote:
+> We need to manage the life time of the enable GPIO against the regulator
+> device but the OF node lives on the parent MFD device. As such we can't
+> use the devm functions which assume the same device will be used for
+> both.
+>
+> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
->  drivers/dma/dmaengine.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/dma/dmaengine.h b/drivers/dma/dmaengine.h
-> index 501c0b063f85..0ba2c1f3c55d 100644
-> --- a/drivers/dma/dmaengine.h
-> +++ b/drivers/dma/dmaengine.h
-> @@ -168,7 +168,7 @@ dmaengine_desc_get_callback_invoke(struct
-> dma_async_tx_descriptor *tx,
->  static inline bool
->  dmaengine_desc_callback_valid(struct dmaengine_desc_callback *cb)
->  {
-> -	return (cb->callback) ? true : false;
-> +	return (cb->callback || cb->callback_result);
+>
+> This patch is only build tested so it would be good to get a
+> tested by from Marek before applying.
+
+Sadly it looks that it is not enough. The issue is still there:
+
+wm8994 4-001a: Failed to get supply 'DBVDD1': -517
+wm8994 4-001a: Failed to get supplies: -517
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at drivers/gpio/gpiolib.c:2421
+regulator_ena_gpio_free+0x70/0xa0
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+4.20.0-rc3-next-20181120-00001-g330f37c7fb0c #5090
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[<c0111a54>] (unwind_backtrace) from [<c010d900>] (show_stack+0x10/0x14)
+[<c010d900>] (show_stack) from [<c09e5878>] (dump_stack+0x90/0xc8)
+[<c09e5878>] (dump_stack) from [<c0125998>] (__warn+0xf8/0x124)
+[<c0125998>] (__warn) from [<c0125a04>] (warn_slowpath_null+0x40/0x48)
+[<c0125a04>] (warn_slowpath_null) from [<c04a5b68>]
+(regulator_ena_gpio_free+0x70/0xa0)
+[<c04a5b68>] (regulator_ena_gpio_free) from [<c04aa03c>]
+(regulator_unregister+0x134/0x17c)
+[<c04aa03c>] (regulator_unregister) from [<c054b5f8>]
+(release_nodes+0x164/0x1dc)
+[<c054b5f8>] (release_nodes) from [<c054810c>]
+(device_release_driver_internal+0x18c/0x21c)
+[<c054810c>] (device_release_driver_internal) from [<c054698c>]
+(bus_remove_device+0xdc/0x12c)
+[<c054698c>] (bus_remove_device) from [<c05434bc>] (device_del+0x108/0x2e0)
+[<c05434bc>] (device_del) from [<c0549c38>] (platform_device_del+0x20/0x8c)
+[<c0549c38>] (platform_device_del) from [<c0549cb0>]
+(platform_device_unregister+0xc/0x18)
+[<c0549cb0>] (platform_device_unregister) from [<c0575120>]
+(mfd_remove_devices_fn+0x58/0x64)
+[<c0575120>] (mfd_remove_devices_fn) from [<c05425a8>]
+(device_for_each_child_reverse+0x34/0x74)
+[<c05425a8>] (device_for_each_child_reverse) from [<c0574f18>]
+(mfd_remove_devices+0x20/0x30)
+[<c0574f18>] (mfd_remove_devices) from [<c0573b1c>]
+(wm8994_i2c_probe+0x2dc/0x8d0)
+[<c0573b1c>] (wm8994_i2c_probe) from [<c068bce4>]
+(i2c_device_probe+0x234/0x2b0)
+[<c068bce4>] (i2c_device_probe) from [<c0547774>] (really_probe+0x224/0x3f4)
+[<c0547774>] (really_probe) from [<c0547b98>]
+(driver_probe_device+0x70/0x1c4)
+[<c0547b98>] (driver_probe_device) from [<c0547e0c>]
+(__driver_attach+0x120/0x144)
+[<c0547e0c>] (__driver_attach) from [<c05459f0>]
+(bus_for_each_dev+0x58/0x7c)
+[<c05459f0>] (bus_for_each_dev) from [<c0546b50>]
+(bus_add_driver+0x174/0x250)
+[<c0546b50>] (bus_add_driver) from [<c0548db8>] (driver_register+0x7c/0x110)
+[<c0548db8>] (driver_register) from [<c068ddcc>]
+(i2c_register_driver+0x38/0xa8)
+[<c068ddcc>] (i2c_register_driver) from [<c01030fc>]
+(do_one_initcall+0x80/0x408)
+[<c01030fc>] (do_one_initcall) from [<c0f011e4>]
+(kernel_init_freeable+0x3a0/0x4fc)
+[<c0f011e4>] (kernel_init_freeable) from [<c09fdd6c>]
+(kernel_init+0x8/0x118)
+[<c09fdd6c>] (kernel_init) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+Exception stack(0xef0e3fb0 to 0xef0e3ff8)
+3fa0:                                     00000000 00000000 00000000
+00000000
+3fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+00000000
+3fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+irq event stamp: 176913
+hardirqs last  enabled at (176921): [<c018b1c0>] console_unlock+0x460/0x6ec
+hardirqs last disabled at (176940): [<c018ae18>] console_unlock+0xb8/0x6ec
+softirqs last  enabled at (176956): [<c01024e4>] __do_softirq+0x3a4/0x66c
+softirqs last disabled at (176967): [<c012d618>] irq_exit+0x140/0x168
+
+I will check more tomorrow.
+
+
+> Thanks,
+> Charles
+>
+>  drivers/regulator/wm8994-regulator.c | 28 +++++++++++++++++++++++-----
+>  1 file changed, 23 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
+> index d7fec533c403..f2592c30d0ca 100644
+> --- a/drivers/regulator/wm8994-regulator.c
+> +++ b/drivers/regulator/wm8994-regulator.c
+> @@ -31,6 +31,7 @@ struct wm8994_ldo {
+>  	struct wm8994 *wm8994;
+>  	struct regulator_consumer_supply supply;
+>  	struct regulator_init_data init_data;
+> +	struct gpio_desc *ena_gpiod;
+>  };
+>  
+>  #define WM8994_LDO1_MAX_SELECTOR 0x7
+> @@ -147,14 +148,19 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+>  	config.regmap = wm8994->regmap;
+>  	config.init_data = &ldo->init_data;
+>  
+> -	/* Look up LDO enable GPIO from the parent device node */
+> -	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
+> -					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
+> -					GPIOD_OUT_LOW |
+> -					GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+> +	/*
+> +	 * Look up LDO enable GPIO from the parent device node, we can't
+> +	 * use devm because it assumes the device we want to allocate
+> +	 * against is the same one that holds the OF node
+> +	 */
+> +	gpiod = gpiod_get_optional(pdev->dev.parent,
+> +				   id ? "wlf,ldo2ena" : "wlf,ldo1ena",
+> +				   GPIOD_OUT_LOW |
+> +				   GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+>  	if (IS_ERR(gpiod))
+>  		return PTR_ERR(gpiod);
+>  	config.ena_gpiod = gpiod;
+> +	ldo->ena_gpiod = gpiod;
+>  
+>  	/* Use default constraints if none set up */
+>  	if (!pdata || !pdata->ldo[id].init_data || wm8994->dev->of_node) {
+> @@ -184,11 +190,23 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+>  	return 0;
+>  
+>  err:
+> +	gpiod_put(gpiod);
+>  	return ret;
 >  }
->=20
->  #endif
-> --
-> 2.17.1
+>  
+> +static int wm8994_ldo_remove(struct platform_device *pdev)
+> +{
+> +	struct wm8994_ldo *ldo = platform_get_drvdata(pdev);
+> +
+> +	if (ldo->ena_gpiod)
+> +		gpiod_put(ldo->ena_gpiod);
+> +
+> +	return 0;
+> +}
+> +
+>  static struct platform_driver wm8994_ldo_driver = {
+>  	.probe = wm8994_ldo_probe,
+> +	.remove = wm8994_ldo_remove,
+>  	.driver		= {
+>  		.name	= "wm8994-ldo",
+>  	},
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
