@@ -2,95 +2,108 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCBEC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5425DC41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2534420831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:19:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X/JhevL5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2534420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id CCAA22087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCAA22087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbeKUDtl (ORCPT
+        id S1730438AbeKUDuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:49:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:58780 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbeKUDtl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:49:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=I+8Ok8d3U7ODhT6w9ubsS4qTzg7vYuk5vhO0Db4ECIs=; b=X/JhevL5RIpdVTkxKR652x/Bv
-        JCu18806N+sEXYqj7D8zNEIM/ZD2VNlb2UQq57PoBEzCmKjYCarQI27OjG8a2kG1mBYoSteoi3QOT
-        JBFQDou1md9Ap9t6x7VjAmxUF1OF4jtEIZ2R/KRRrx0niyNOGZ8JQdE15cLnL+D/hz5/EJ4JmMOx7
-        Kx0suzHHwMxDUhgxT0K5vOc4G22VHMNW/XCzAxpbUCwqjhYupxbWbbub3NuXqudLyQaTo7tUVV/lX
-        j4EhMGnj5k4a0wi51xxMNFl3S6NRaQ1uLu+SnaMRw2e+9dYmqq8/urZbH8t/hzv+y6VWXi+WaWZKb
-        0XXg/OpwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gP9gI-0000by-DG; Tue, 20 Nov 2018 17:19:22 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E20C22029FD58; Tue, 20 Nov 2018 18:19:20 +0100 (CET)
-Date:   Tue, 20 Nov 2018 18:19:20 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Waiman Long <longman@redhat.com>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH cgroup/for-4.21 1/2] cpuset: Minor cgroup2 interface
- updates
-Message-ID: <20181120171920.GA2131@hirez.programming.kicks-ass.net>
-References: <20181113201339.GN2509588@devbig004.ftw2.facebook.com>
- <20181120124624.GL2131@hirez.programming.kicks-ass.net>
- <20181120154410.GQ2509588@devbig004.ftw2.facebook.com>
+        Tue, 20 Nov 2018 22:50:17 -0500
+Received: from anholt.net ([50.246.234.109]:50630 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730415AbeKUDuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:50:17 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id F03D310A1757;
+        Tue, 20 Nov 2018 09:20:03 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id g9VorqpWc3N6; Tue, 20 Nov 2018 09:20:01 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 310D010A0AE6;
+        Tue, 20 Nov 2018 09:20:01 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 0848E2FE1FE6; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-watchdog@vger.kernel.org
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Eric Anholt <eric@anholt.net>
+Subject: [PATCH 0/8] BCM2835 PM driver
+Date:   Tue, 20 Nov 2018 09:19:52 -0800
+Message-Id: <20181120172000.15102-1-eric@anholt.net>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120154410.GQ2509588@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 07:44:10AM -0800, Tejun Heo wrote:
-> Hello, Peter.
-> 
-> On Tue, Nov 20, 2018 at 01:46:24PM +0100, Peter Zijlstra wrote:
-> > Why though? The Changelog doesn't give rationale for the actual changes.
-> 
-> Ah yeah, sorry about that.
-> 
-> > And I'm not sure I agree with either one of them.
-> > 
-> > The partition is a scheduling feature;
-> 
-> So is everything with cpuset.cpus prefix.  They're all modifying how
-> scheduler handles the cpus.
+This series moves the BCM2835 WDT driver that controls a fraction of
+the PM block out to soc/ and adds most of the rest of its
+functionality.  My motivation has been to have V3D be functional
+without firmware calls, probably improve its interactivity (since
+we'll be able to power on/off without RPC to the firmware that may be
+busy with other tasks), and (in a patch not submitted in this series)
+extend its binding to use the reset controller instead of trying to
+reset by toggling its power domain.
 
-Fair enough I suppose.
+I've tested V3D with a few hours of running a V3D test, sleep(1) (to
+trigger PM domain off); running a GPU hang job (to trigger reset);
+sleep(1).  The non-hanging success-case job always passed, and dmesg
+had no complaints from bcm2835-pm.  The other power domains are not
+tested, but I've done my best.
 
-> > and I like 0/1 much better to type, so why not allow that?
-> 
-> Mostly for consistency and it's generally better to keep interfaces
-> minimal - e.g. what if we need to add support for more key words to
-> the file?  Would we assign incrementing integers to them?
+This series will probably also be of interest to the
+https://github.com/christinaa/rpi-open-firmware project for enabling USB.
 
-Or just not give them a numeric alias at all.
+Eric Anholt (8):
+  watchdog: bcm2835: Move the driver to the soc/ directory.
+  soc: bcm: bcm2835-pm: Rename the driver to its new "PM" name.
+  soc: bcm: bcm2835-pm: Stop using _relaxed mmio accessors.
+  soc: bcm: bcm2835-pm: Make some little accessor macros for the mmio
+    area.
+  dt-bindings: soc: Add a new binding for the BCM2835 PM node.
+  soc: bcm: bcm2835-pm: Add support for power domains under a new
+    binding.
+  ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block.
+  ARM: bcm283x: Switch V3D over to using the PM driver instead of
+    firmware.
 
-But numbers are more minimal than words, so lets just get rid of them
-pesky word things ;-)
+ .../bindings/soc/bcm/brcm,bcm2835-pm.txt      |  42 +
+ arch/arm/boot/dts/bcm2835-rpi.dtsi            |   4 -
+ arch/arm/boot/dts/bcm283x.dtsi                |  16 +-
+ arch/arm/mach-bcm/Kconfig                     |   1 +
+ drivers/soc/bcm/Makefile                      |   1 +
+ drivers/soc/bcm/bcm2835-pm.c                  | 866 ++++++++++++++++++
+ drivers/watchdog/Kconfig                      |  11 -
+ drivers/watchdog/Makefile                     |   1 -
+ drivers/watchdog/bcm2835_wdt.c                | 254 -----
+ include/dt-bindings/soc/bcm2835-pm.h          |  28 +
+ 10 files changed, 951 insertions(+), 273 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+ create mode 100644 drivers/soc/bcm/bcm2835-pm.c
+ delete mode 100644 drivers/watchdog/bcm2835_wdt.c
+ create mode 100644 include/dt-bindings/soc/bcm2835-pm.h
 
-Alternatively; we could use kstrtobool(). That accepts a metric ton of
-input ;-)
+-- 
+2.19.1
+
