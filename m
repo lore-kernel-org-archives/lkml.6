@@ -2,106 +2,103 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2D8C46466
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B3FC46466
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 558EE2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:40:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 558EE2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 021412075B
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 20:40:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I19ExJvP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021412075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbeKUHLw (ORCPT
+        id S1727355AbeKUHLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 02:11:52 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:54011 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725968AbeKUHLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 02:11:51 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2654D207B0; Tue, 20 Nov 2018 21:40:49 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F1C98206A1;
-        Tue, 20 Nov 2018 21:40:48 +0100 (CET)
-Date:   Tue, 20 Nov 2018 21:40:49 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Romain Izard <romain.izard.pro@gmail.com>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
-Message-ID: <20181120204049.GG8367@piout.net>
-References: <20181120165737.4998-1-romain.izard.pro@gmail.com>
- <20181120171612.GF8367@piout.net>
- <CAGkQfmPHRKqMvm6bNDf8S5qM7uE5T-izij=jm2nob0zrOgOM-w@mail.gmail.com>
+        Wed, 21 Nov 2018 02:11:21 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39062 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725968AbeKUHLV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 02:11:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5-v6so1992598pla.6;
+        Tue, 20 Nov 2018 12:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4emMDARWTQclKgmQSmLDT4G9BHddiJJ3ba6c1UCkcFQ=;
+        b=I19ExJvPpL6tXQat8hyTLlsLn5NdLxs7mDNQDHkWZ/nNygE9w0JCqkuOWuKPWMG70q
+         KPiTcFKuidnp4wGoWh1ti39BT9Jyzpn029NYD9GNEDZp17VsL2dRJubKLLkdPtc/JqH3
+         sHg9W2iqLG76YK4yuIar8nyMor9WWrbd8cfUcIjZme75wwC7Pld4UBdEyQ+PHdv4HLdB
+         7Yl0yVg+YCe+z+yPg4ktG5Rt3SM8DWCwrfrn0Vs0+1hDzcZ35i7b+3IIUBx9HTOXcB3h
+         H6qkojb8leBA9dwU9QKoAv0eNMcIEDdqL1Ql6tSTidoZ4EmJgrrFWHIFgezrCoagb6n3
+         OWsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4emMDARWTQclKgmQSmLDT4G9BHddiJJ3ba6c1UCkcFQ=;
+        b=nAkr5fo6xHqRdfburtqOGpgi7VyJNYbzTs9AHSzF+SEDBmZcSqHAIqcXdnB+FHEXnW
+         qibKCVsCzMiFg9Fkzsco+QU8l/RZwlvA/FYmK2OuyaTiUuYwjk2hkRUdOY8VGYaRnYA1
+         3nP7ENN4jOCcXMkMoGIp9/nOhuEXXecNfwZj6JIL7cni0PtrGR/jZWIDcdUoVmN1nnFE
+         d8IzVF/n/gOfYlBJtI7je+PxLoun/omZBvVQK5VL6murf95O2dqBaMpiid1jp8g38MxE
+         QGRz0oq0b3/dALtYqewLJ2bIEaj98jMrS/2wO550JujNAuOXvo9cNAVKVPUk4YIEep7o
+         WN+w==
+X-Gm-Message-State: AA+aEWbKCoGLbtWQoZrwI5RfI5c/GN7cTc2kqVKJgEfDhMF1he6QfpO3
+        Lp3PoUuh+yjdNqt+SgBmulw=
+X-Google-Smtp-Source: AFSGD/VMfEa7yS4OzBiutij+yDWOx4QZHUkUHmf/K/tJBsp1D9Gyt53aLugMl8CeVhdTHQQ2sHG3mQ==
+X-Received: by 2002:a17:902:108a:: with SMTP id c10-v6mr3675885pla.171.1542746420897;
+        Tue, 20 Nov 2018 12:40:20 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t21sm37397846pgg.24.2018.11.20.12.40.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 12:40:20 -0800 (PST)
+Date:   Tue, 20 Nov 2018 12:40:19 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.18 000/171] 4.18.20-stable review
+Message-ID: <20181120204019.GE19385@roeck-us.net>
+References: <20181119162618.909354448@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGkQfmPHRKqMvm6bNDf8S5qM7uE5T-izij=jm2nob0zrOgOM-w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181119162618.909354448@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/11/2018 19:01:32+0100, Romain Izard wrote:
-> Le mar. 20 nov. 2018 à 18:16, Alexandre Belloni
-> <alexandre.belloni@bootlin.com> a écrit :
-> >
-> > Hello Romain,
-> >
-> > On 20/11/2018 17:57:37+0100, Romain Izard wrote:
-> > > The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
-> > > different clocks for the peripherals in the SoC. The Static Memory
-> > > controller is connected to the divided master clock.
-> > >
-> > > Unfortunately, the device tree does not correctly show this and uses the
-> > > master clock directly. This clock is then used by the code for the NAND
-> > > controller to calculate the timings for the controller, and we end up with
-> > > slow NAND Flash access.
-> > >
-> > > Fix the device tree, and the performance of Flash access is improved.
-> > >
-> > > Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-> > > ---
-> > >  arch/arm/boot/dts/sama5d2.dtsi | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-> > > index 61f68e5c48e9..b405992eb601 100644
-> > > --- a/arch/arm/boot/dts/sama5d2.dtsi
-> > > +++ b/arch/arm/boot/dts/sama5d2.dtsi
-> > > @@ -308,7 +308,7 @@
-> > >                                 0x1 0x0 0x60000000 0x10000000
-> > >                                 0x2 0x0 0x70000000 0x10000000
-> > >                                 0x3 0x0 0x80000000 0x10000000>;
-> > > -                     clocks = <&mck>;
-> > > +                     clocks = <&h32ck>;
-> >
-> > You will have to rebase on top of at91-dt. And if I'm not mistaken, this
-> > line should be:
-> >
-> > +                       clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
-> >
-> > >                       status = "disabled";
-> > >
-> > >                       nand_controller: nand-controller {
+On Mon, Nov 19, 2018 at 05:26:36PM +0100, Greg Kroah-Hartman wrote:
+> ------------------
+> NOTE, this is going to be the last 4.18.y release.  After this one it is
+> end-of-life, please move to 4.19.y at this point in time.
+> ------------------
 > 
-> I guess you're right but this will only reach mainline in 4.21. I get slow
-> flash access with 4.19 as well...
->
+> This is the start of the stable review cycle for the 4.18.20 release.
+> There are 171 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Nov 21 16:25:02 UTC 2018.
+> Anything received after that time might be too late.
+> 
 
-Ok, this is super annoying, I'll try to get that as fixes on v4.20 and
-I'll rebase at91-dt on top of that...
+Build results:
+	total: 136 pass: 136 fail: 0
+Qemu test results:
+	total: 296 pass: 296 fail: 0
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
