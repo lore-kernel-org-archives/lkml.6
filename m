@@ -2,85 +2,91 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB82C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F0DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 698E72089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/W2lM6d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 698E72089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5884520851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5884520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732262AbeKTKjP (ORCPT
+        id S1732270AbeKTKke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:39:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731608AbeKTKjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:39:15 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2838920851;
-        Tue, 20 Nov 2018 00:13:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542672781;
-        bh=GphxohFF6/fatNzn2zSypJOykr1iz/oDL4v7bgvlfTY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W/W2lM6dmPX0BYVEA8Wi3YgyVrwgnMr4QwVqto83qxBoSAjEiDIiJlh8Lg/xO84TF
-         i5PAd4OVmkKgY6B/cMftcLKOg8Y4FaCvUC7tUo00KxKsieOgL4VLxzS1z9kKADC2/B
-         3NjVs0NSHDXjRB/EZz0Y+yZY91hFuvH8sLKaXcvQ=
-Subject: Re: [PATCH 4.4 000/160] 4.4.164-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah@kernel.org
-References: <20181119162630.031306128@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <ac9a5a06-b29f-48c9-d9bc-658389057387@kernel.org>
-Date:   Mon, 19 Nov 2018 17:13:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 20 Nov 2018 05:40:34 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:53500 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732000AbeKTKke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 05:40:34 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id B058672CA5E;
+        Tue, 20 Nov 2018 03:14:18 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id A2A937CD1FF; Tue, 20 Nov 2018 03:14:18 +0300 (MSK)
+Date:   Tue, 20 Nov 2018 03:14:18 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Andy Lutomirski <luto@kernel.org>,
+        Richard Kuo <rkuo@codeaurora.org>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 01/15] Move EM_HEXAGON to uapi/linux/elf-em.h
+Message-ID: <20181120001418.GA11387@altlinux.org>
 MIME-Version: 1.0
-In-Reply-To: <20181119162630.031306128@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120001128.GA11300@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/19/18 9:27 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.164 release.
-> There are 160 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed Nov 21 16:25:20 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.4.164-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+This should never have been defined in the arch tree to begin with,
+and now uapi/linux/audit.h header is going to use EM_HEXAGON
+in order to define AUDIT_ARCH_HEXAGON which is needed to implement
+syscall_get_arch() which in turn is required to extend
+the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-Compiled and booted on my test system. No dmesg regressions.
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+v2: unchanged since v1
 
-thanks,
--- Shuah
+ arch/hexagon/include/asm/elf.h | 6 +-----
+ include/uapi/linux/elf-em.h    | 1 +
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
+diff --git a/arch/hexagon/include/asm/elf.h b/arch/hexagon/include/asm/elf.h
+index 80311e7b8ca6..d10fbd54ae51 100644
+--- a/arch/hexagon/include/asm/elf.h
++++ b/arch/hexagon/include/asm/elf.h
+@@ -23,11 +23,7 @@
+ 
+ #include <asm/ptrace.h>
+ #include <asm/user.h>
+-
+-/*
+- * This should really be in linux/elf-em.h.
+- */
+-#define EM_HEXAGON	164   /* QUALCOMM Hexagon */
++#include <linux/elf-em.h>
+ 
+ struct elf32_hdr;
+ 
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index 93722e60204c..ba3696e3d694 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -37,6 +37,7 @@
+ #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+ #define EM_TI_C6000	140	/* TI C6X DSPs */
++#define EM_HEXAGON	164	/* QUALCOMM Hexagon */
+ #define EM_AARCH64	183	/* ARM 64 bit */
+ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+-- 
+ldv
