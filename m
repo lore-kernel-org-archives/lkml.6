@@ -1,108 +1,83 @@
 Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56FE8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4B1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 194DE20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 194DE20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D59E620870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:21:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59E620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731580AbeKTMre convert rfc822-to-8bit (ORCPT
+        id S1732019AbeKTMs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 07:47:34 -0500
-Received: from mga07.intel.com ([134.134.136.100]:31636 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726559AbeKTMrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 07:47:33 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 18:20:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,255,1539673200"; 
-   d="scan'208";a="101615967"
-Received: from orsmsx106.amr.corp.intel.com ([10.22.225.133])
-  by orsmga003.jf.intel.com with ESMTP; 19 Nov 2018 18:20:50 -0800
-Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
- ORSMSX106.amr.corp.intel.com (10.22.225.133) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Mon, 19 Nov 2018 18:20:50 -0800
-Received: from orsmsx105.amr.corp.intel.com ([169.254.2.237]) by
- ORSMSX115.amr.corp.intel.com ([169.254.4.106]) with mapi id 14.03.0415.000;
- Mon, 19 Nov 2018 18:20:50 -0800
-From:   "Yu, Fenghua" <fenghua.yu@intel.com>
-To:     Pavel Machek <pavel@ucw.cz>, "Moger, Babu" <Babu.Moger@amd.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: RE: [PATCH v7 00/13] arch/x86: AMD QoS support
-Thread-Topic: [PATCH v7 00/13] arch/x86: AMD QoS support
-Thread-Index: AQHUeG4dJz0szErVIk6LNqmmQKnpf6VYXLuA//+g3bA=
-Date:   Tue, 20 Nov 2018 02:20:49 +0000
-Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C71220985A75CE@ORSMSX105.amr.corp.intel.com>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181119235817.GA4763@amd>
-In-Reply-To: <20181119235817.GA4763@amd>
-Accept-Language: en-US
-Content-Language: en-US
+        Tue, 20 Nov 2018 07:48:27 -0500
+Received: from szxga01-in.huawei.com ([45.249.212.187]:6431 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725992AbeKTMs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 07:48:26 -0500
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 9062C73A399AD;
+        Tue, 20 Nov 2018 10:21:39 +0800 (CST)
+Received: from DGGEMM521-MBS.china.huawei.com ([169.254.3.218]) by
+ DGGEMM406-HUB.china.huawei.com ([10.3.20.214]) with mapi id 14.03.0415.000;
+ Tue, 20 Nov 2018 10:21:32 +0800
+From:   xuechaojing <xuechaojing@huawei.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "wulike (A)" <wulike1@huawei.com>, chiqijun <chiqijun@huawei.com>,
+        Wangfengying <fy.wang@huawei.com>,
+        "Quhuichun (Tony)" <tony.qu@huawei.com>,
+        "Luoshaokai (luoshaokai)" <luoshaokai@huawei.com>,
+        xuechaojing <xuechaojing@huawei.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIIDEvNF0gbmV0LW5leHQvaGluaWM6cmVwbGFjZSBtdWx0?=
+ =?gb2312?Q?iply_and_division_operators?=
+Thread-Topic: [PATCH 1/4] net-next/hinic:replace multiply and division
+ operators
+Thread-Index: AQHUgBEQjbteD0dBtEKHoQuGQ+FC+qVXMW0AgAC2L8A=
+Date:   Tue, 20 Nov 2018 02:21:31 +0000
+Message-ID: <DACA750462785649825D7529120E85A808A65AFC@dggemm521-mbs.china.huawei.com>
+References: <20181119061234.12839-1-xuechaojing@huawei.com>
+ <20181119.150142.777293649598457239.davem@davemloft.net>
+In-Reply-To: <20181119.150142.777293649598457239.davem@davemloft.net>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYWZjMDFlNGQtYTE0OS00YjkwLWFiNWYtNmZlNDdiODFiYzA3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibnhURlwvWjBkZitCaWlmYjY5TlZIVzlEVW83SExmUnF6Z0lNaGhwVmNabVZpeU9naVQ3a1RJVEhwXC93ZWlEV3Y1In0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-originating-ip: [10.177.30.175]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Pavel Machek [mailto:pavel@ucw.cz]
-> >  rename Documentation/x86/{intel_rdt_ui.txt => resctrl_ui.txt} (99%)
-> 
-> Rest of files in that directory use - as a separator; and maybe qos.txt would
-> be a better name then this?
-
-Actually a few other files in the directory use "_" as a separator (e.g. intel_mpx.txt etc). "qos.txt" is not a good name because we want to use a generic file name. So "resctrl_ui.txt" should a good name AFAIK.
-
-Thanks.
-
--Fenghua
+SGk6DQoNClRoaXMgd3FlYmIgc2l6ZSBpcyAzMiBpbiByeCBhbmQgaW4gdHggaXMgNjQsIHNvIHRo
+ZSB2YWx1ZSBpcyBhIHBvd2VyIG9mIHR3by4NCg0KVGhhbmsgeW91DQoNCi0tLS0t08q8/tStvP4t
+LS0tLQ0Kt6K8/sjLOiBEYXZpZCBNaWxsZXIgW21haWx0bzpkYXZlbUBkYXZlbWxvZnQubmV0XSAN
+Creiy83KsbzkOiAyMDE4xOoxMdTCMjDI1SA3OjAyDQrK1bz+yMs6IHh1ZWNoYW9qaW5nIDx4dWVj
+aGFvamluZ0BodWF3ZWkuY29tPg0Ks63LzTogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+bmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgd3VsaWtlIChBKSA8d3VsaWtlMUBodWF3ZWkuY29tPjsg
+Y2hpcWlqdW4gPGNoaXFpanVuQGh1YXdlaS5jb20+OyBXYW5nZmVuZ3lpbmcgPGZ5LndhbmdAaHVh
+d2VpLmNvbT47IFF1aHVpY2h1biAoVG9ueSkgPHRvbnkucXVAaHVhd2VpLmNvbT47IEx1b3NoYW9r
+YWkgKGx1b3NoYW9rYWkpIDxsdW9zaGFva2FpQGh1YXdlaS5jb20+DQrW98ziOiBSZTogW1BBVENI
+IDEvNF0gbmV0LW5leHQvaGluaWM6cmVwbGFjZSBtdWx0aXBseSBhbmQgZGl2aXNpb24gb3BlcmF0
+b3JzDQoNCkZyb206IFh1ZSBDaGFvamluZyA8eHVlY2hhb2ppbmdAaHVhd2VpLmNvbT4NCkRhdGU6
+IE1vbiwgMTkgTm92IDIwMTggMDY6MTI6MzEgKzAwMDANCg0KPiBAQCAtNTMwLDcgKzUzNiw5IEBA
+IGludCBoaW5pY193cV9hbGxvY2F0ZShzdHJ1Y3QgaGluaWNfd3FzICp3cXMsIHN0cnVjdCBoaW5p
+Y193cSAqd3EsDQo+ICAJCXJldHVybiAtRUlOVkFMOw0KPiAgCX0NCj4gIA0KPiAtCW51bV93cWVi
+YnNfcGVyX3BhZ2UgPSBBTElHTih3cV9wYWdlX3NpemUsIHdxZWJiX3NpemUpIC8gd3FlYmJfc2l6
+ZTsNCj4gKwl3cWViYl9zaXplX3NoaWZ0ID0gaWxvZzIod3FlYmJfc2l6ZSk7DQoNCllvdSBub3cg
+aGF2ZSBpbnRyb2R1Y2VkIHRoZSBhc3N1bXB0aW9uIHRoYXQgdGhlc2UgdmFyaW91cyBzaXplcyBh
+cmUgYSBwb3dlciBvZiB0d28uDQoNCllvdSBzaG91bGQgY2hlY2sgZm9yIHRoaXMsIGVpdGhlciBh
+dCBjb21waWxlIHRpbWUgb3IgYXQgcnVuIHRpbWUsIGluIG9yZGVyIHRvIGF2b2lkIHN1cnByaXNl
+cyBhbmQgaGFyZCB0byBkZWJ1ZyBpc3N1ZXMgaW4gdGhlIGZ1dHVyZS4NCg0KVGhhbmsgeW91Lg0K
