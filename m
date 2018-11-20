@@ -2,100 +2,101 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF29C04EBC
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ED4C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9AE820851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:26:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4187206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 13:27:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="RLwmvu12"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9AE820851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="AxLfjSqL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4187206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbeKTXzk (ORCPT
+        id S1728102AbeKTX4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 18:55:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36868 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbeKTXzk (ORCPT
+        Tue, 20 Nov 2018 18:56:18 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:47266 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeKTX4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 18:55:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uG7ZfvqKHS/gsAstyyoQlPerxmRcMGKTcvg5+SFbCPc=; b=RLwmvu12wC9U85Ri0WVa9Olw8
-        CBtJOV/bkj6qQDGqwzIGLeyERpJ5knxsqYlyQsJU6NVDOZsJZkxzVZftJjzZLZc9sLGl7zpClItPv
-        mzZCUOWwKSwU6WO2peAEgVzmLmuW6y31OIfzbpGnRpywHD9SCtKxQRrVrroBomh2B0NhQ=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP62r-0001e0-1X; Tue, 20 Nov 2018 13:26:25 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B8AC61124DC1; Tue, 20 Nov 2018 13:26:24 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 13:26:24 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>, tpiepho@impinj.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>, boris.brezillon@bootlin.com,
-        juliensu@mxic.com.tw, Geert Uytterhoeven <geert+renesas@glider.be>,
-        zhengxunli@mxic.com.tw
-Subject: Re: [PATCH 1/2] spi: Add Renesas R-Car RPC SPI controller driver
-Message-ID: <20181120132624.GD3894@sirena.org.uk>
-References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
- <1542621690-10229-2-git-send-email-masonccyang@mxic.com.tw>
- <0223f43b-c6a6-eade-49af-4e7b7ef7f022@gmail.com>
- <20181119152735.GB3535@sirena.org.uk>
- <cbbc3dba-7f85-c6a3-525f-01eb23e50592@gmail.com>
+        Tue, 20 Nov 2018 18:56:18 -0500
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 4055C5C0E11;
+        Tue, 20 Nov 2018 14:27:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1542720429;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=nUJeRKWHJzD/M3nYNIgkyel8Fi67ZBJcl/RxLVIaljs=;
+        b=AxLfjSqLl5tGC6lz8ABoHt6AGw94XE1mpRWjbeirVTCE5knm/dC0y5HhNr+eu4V5p6JoEX
+        5DpyPlSUWEtmBuG0pgWrdJTLH7u3Jx+n5VAUoq1bdnE5r5hERT3Og9tTed32rzGPwS/cFG
+        gLMScQjZK14//PVmhKU1wOoxGecAMRg=
+From:   Stefan Agner <stefan@agner.ch>
+To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        l.stach@pengutronix.de, tpiepho@impinj.com
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v2 1/3] PCI: dwc: allow to limit registers set length
+Date:   Tue, 20 Nov 2018 14:27:03 +0100
+Message-Id: <20181120132705.6917-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="g7w8+K/95kPelPD2"
-Content-Disposition: inline
-In-Reply-To: <cbbc3dba-7f85-c6a3-525f-01eb23e50592@gmail.com>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Add length to the struct dw_pcie and check that the accessors
+dw_pcie_(rd|wr)_own_conf() do not read/write beyond that point.
 
---g7w8+K/95kPelPD2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/pci/controller/dwc/pcie-designware-host.c | 4 ++++
+ drivers/pci/controller/dwc/pcie-designware.h      | 1 +
+ 2 files changed, 5 insertions(+)
 
-On Mon, Nov 19, 2018 at 11:10:04PM +0100, Marek Vasut wrote:
-> On 11/19/2018 04:27 PM, Mark Brown wrote:
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 29a05759a294..b422538ee0bb 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -29,6 +29,8 @@ static int dw_pcie_rd_own_conf(struct pcie_port *pp, int where, int size,
+ 		return pp->ops->rd_own_conf(pp, where, size, val);
+ 
+ 	pci = to_dw_pcie_from_pp(pp);
++	if (pci->dbi_length && where + size > pci->dbi_length)
++		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 	return dw_pcie_read(pci->dbi_base + where, size, val);
+ }
+ 
+@@ -41,6 +43,8 @@ static int dw_pcie_wr_own_conf(struct pcie_port *pp, int where, int size,
+ 		return pp->ops->wr_own_conf(pp, where, size, val);
+ 
+ 	pci = to_dw_pcie_from_pp(pp);
++	if (pci->dbi_length && where + size > pci->dbi_length)
++		return PCIBIOS_BAD_REGISTER_NUMBER;
+ 	return dw_pcie_write(pci->dbi_base + where, size, val);
+ }
+ 
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index 9f1a5e399b70..5be5f369abf2 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -215,6 +215,7 @@ struct dw_pcie {
+ 	struct device		*dev;
+ 	void __iomem		*dbi_base;
+ 	void __iomem		*dbi_base2;
++	int			dbi_length;
+ 	u32			num_viewport;
+ 	u8			iatu_unroll_enabled;
+ 	struct pcie_port	pp;
+-- 
+2.19.1
 
-> > The SPDX header needs to be C++ style so I push people to make the whole
-> > block C++ otherwise it looks messy.
-
-> OK, I'm not gonna wrestle you on this, but I think it looks horrible ;-)
-
-I don't really like the C++ comment in the first place :(
-
---g7w8+K/95kPelPD2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0C38ACgkQJNaLcl1U
-h9CYugf/TazL9aK3m3BZyQu2PUROTfRLBMASGfFwET3KArzqBENiLz/YCQptBzbE
-OKnkCdELmTUgyMWSMkwM5QdLhRK0eZeeVC4Roa5z3ZiotEcPW8uaslW4QYxZss+j
-a9EVALvMfhJBHPNFh6Joxr6ld4kBV/o9sa2zWBdoKFZ7dL39c8v8mpzQ12oh5WtR
-i4R2hUW+tHfuKxNb0jILPnXq+IU4wnrvVTaWKYgEMS/vxCtHdRuN6+TQBfZUqlvF
-a1IUEczKBeGFCT9ulvAdvUhDFaU+eKfEcsl2jaqo/gDnDoqRKCBV/l3xcL+Nu7w/
-CGpEAdlDS4uJw/ionK8ai1fSXq8Stw==
-=wvCr
------END PGP SIGNATURE-----
-
---g7w8+K/95kPelPD2--
