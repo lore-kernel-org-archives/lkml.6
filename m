@@ -2,116 +2,83 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 465F1C32788
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA0DC46463
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C08B2147A
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fWmGQxgq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C08B2147A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 532F12147D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 22:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532F12147D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726296AbeKUIsX (ORCPT
+        id S1726398AbeKUIsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:48:23 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35886 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbeKUIsX (ORCPT
+        Wed, 21 Nov 2018 03:48:25 -0500
+Received: from mail-qt1-f179.google.com ([209.85.160.179]:38095 "EHLO
+        mail-qt1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbeKUIsY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:48:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SoppcZ4H3ZDInKleFzp7j+ay3HqLr+HiBj8M9YISW3w=; b=fWmGQxgqlHLPoSFsgr5uDfVUT
-        MOyUbOki+fcM90UGLbDH8XpSqZIyoEzNepjwNiHrsWzgbcy3Y+FCFfLJjmc+s+RgqF7rTK02UrDac
-        Rg0qlK0Sn9WZBnhzEOxfYgjCiJItsvF52erUNaa+YQy/8vEMqI3cqWL5TMvV7WZJHf1jWMg4OwwGV
-        4Fvt2CETfLChcZ19ySWCJm3usoOyQVxANFz7HCzNPkV4szp9/7TaLlnTTY4p58xu7gPlqNoRGsx9Q
-        ph/txAeUkePhKqhZV9W5pwnZl4y4xDLcigk6ptt3G3CSEHYcAIpgRnFLDFEb2s5s3AnA8IyH9+ZK0
-        dsXbLSuCw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPEK7-0000GA-Q5; Tue, 20 Nov 2018 22:16:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CFC6F2029FD58; Tue, 20 Nov 2018 23:16:42 +0100 (CET)
-Date:   Tue, 20 Nov 2018 23:16:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andi Kleen <ak@linux.intel.com>
-Cc:     Kyle Huey <me@kylehuey.com>, Kan Liang <kan.liang@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Robert O'Callahan <robert@ocallahan.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>, acme@kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [REGRESSION] x86, perf: counter freezing breaks rr
-Message-ID: <20181120221642.GE2131@hirez.programming.kicks-ass.net>
-References: <CAP045Ap6Mm+r_44YmxNbz6HWtYArg3SAFgzk4Cm_K5HRJaRG7w@mail.gmail.com>
- <20181120194129.GC13936@tassilo.jf.intel.com>
- <CAP045ApoZamGdgVd=-MJE52rUU5hnOg=j95B1WV2x_bVtRQpWA@mail.gmail.com>
- <20181120201144.GD13936@tassilo.jf.intel.com>
+        Wed, 21 Nov 2018 03:48:24 -0500
+Received: by mail-qt1-f179.google.com with SMTP id p17so1828645qtl.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 14:17:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=f2be768KpYJmoX92KNv+AIY/+GetthIEWypj9odidEc=;
+        b=fSVmAbqPBsqM/hYqoiMZPFiw3Ut62H75jFa578GfUfl4RsFPxyAfnqX+okfZ6h7SPA
+         w4Bd9utOJbZcI6cMHi3Mx98emY5fIgSzraACIAGV1ipu/jk98XP0Ojs7qnA9UuXVoTJi
+         M/znHxxBJaYO7dGQ5pgvTq3w0cEENQifY/QNIRQfJ/9JZd9TdYUFBEsoJGfXY7kiMWYS
+         j5Sf6Bl2dp8zzV7RlEUoWlxkQMa+7KKWKGW8gUoPAZQf/Cqdjqk9jYMgiC9UKHnXPCaM
+         gs9XAfmSO/bra9nEs1AEl6M+VZS9cQWcFmm6OApjlA5JX72bW66zP0Li98xNJ16xznHZ
+         85nw==
+X-Gm-Message-State: AA+aEWYjX1N4QjQAz7ue4FD+mPQ6/7KNv0JPxrjyIX+lJoK0Mh/BOGGd
+        GPUjpjvEQBdoXf5aIV7lH+U=
+X-Google-Smtp-Source: AFSGD/WsA/1UzFC8xULvTqWAEilY6SarwusywNf5SsEcGAHhTQ8kmDo/jE5rv82r4H2FWPTKj+K0Pg==
+X-Received: by 2002:a0c:8936:: with SMTP id 51mr3735578qvp.220.1542752222890;
+        Tue, 20 Nov 2018 14:17:02 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::6:b015])
+        by smtp.gmail.com with ESMTPSA id j95sm18911288qtb.74.2018.11.20.14.17.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 14:17:02 -0800 (PST)
+Date:   Tue, 20 Nov 2018 17:16:59 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Eddie Hao <eddieh@google.com>, Vlad Dumitrescu <vladum@google.com>,
+        Willem de Bruijn <willemb@google.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: LPC Traffic Shaping w/ BPF Talk - percpu followup
+Message-ID: <20181120221659.GA61322@dennisz-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120201144.GD13936@tassilo.jf.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 12:11:44PM -0800, Andi Kleen wrote:
-> > > > Given that we're already at rc3, and that this renders rr unusable,
-> > > > we'd ask that counter freezing be disabled for the 4.20 release.
-> > >
-> > > The boot option should be good enough for the release?
-> > 
-> > I'm not entirely sure what you mean here. We want you to flip the
-> > default boot option so this feature is off for this release. i.e. rr
-> > should work by default on 4.20 and people should have to opt into the
-> > inaccurate behavior if they want faster PMI servicing.
-> 
-> I don't think it's inaccurate, it's just different 
-> than what you are used to.
-> 
-> For profiling including the kernel it's actually far more accurate
-> because the count is stopped much earlier near the sampling
-> point. Otherwise there is a considerable over count into
-> the PMI handler.
-> 
-> In your case you limit the count to ring 3 so it's always cut off
-> at the transition point into the kernel, while with freezing
-> it's at the overflow point.
+Hi Eddie, Vlad, and Willem,
 
-Ooh, so the thing does FREEZE_ON_OVERFLOW _not_ FREEZE_ON_PMI. Yes, that
-can be a big difference.
+A few people mentioned to me that you guys were experiencing issues with
+the percpu memory allocator. I saw the talk slides mention the
+following two bullets:
 
-See, FREEZE_ON_PMI, as advertised by the name, should have no observable
-effect on counters limited to USR. But something like FREEZE_ON_OVERFLOW
-will loose everything between the overflow and the eventual PMI, and by
-freezing early we can't even compensate for it anymore either,
-introducing drift in the period.
+1) allocation pattern makes the per cpu allocator reach a highly
+   fragmented state
+2) sometimes takes a long time (up to 12s) to create the PERCPU_HASH
+   maps at startup
 
-And I don't buy the over-count argument, the counter register shows how
-far over you are; it triggers the overflow when we cross 0, it then
-continues counting. So if you really care, you can throw away the
-'over-count' at PMI time. That doesn't make it more reliable. We don't
-magically get pt_regs from earlier on or any other state.
+Could you guys elaborate a little more about the above? Some things
+that would help: kernel version, cpu info, and a reproducer if possible?
 
-The only thing where it might make a difference is if you're running
-multiple counters (groups in perf speak) and want to correlate the count
-values. Then, and only then, does it matter.
+Also, I did some work last summer to make percpu allocation more
+efficient, which went into the 4.14 kernel. Just to be sure, is that a
+part of the kernel you guys are running?
 
-Bah.
+Thanks,
+Dennis
