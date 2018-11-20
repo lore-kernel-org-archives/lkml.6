@@ -2,146 +2,782 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BB3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A625C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143EB208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143EB208E4
+	by mail.kernel.org (Postfix) with ESMTP id E91432080C
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:28:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E91432080C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732532AbeKTKyn (ORCPT
+        id S1732555AbeKTKyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:54:43 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:40567 "EHLO
+        Tue, 20 Nov 2018 05:54:51 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:57324 "EHLO
         mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732053AbeKTKym (ORCPT
+        with ESMTP id S1732533AbeKTKyu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:54:42 -0500
+        Tue, 20 Nov 2018 05:54:50 -0500
 Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42zRPy6gnbz1qwdT;
-        Tue, 20 Nov 2018 01:28:22 +0100 (CET)
+        by mail-out.m-online.net (Postfix) with ESMTP id 42zRQ50FhLz1qwdT;
+        Tue, 20 Nov 2018 01:28:29 +0100 (CET)
 Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42zRPy5wDXz1qr2m;
-        Tue, 20 Nov 2018 01:28:22 +0100 (CET)
+        by mail.m-online.net (Postfix) with ESMTP id 42zRQ46YkTz1qr2m;
+        Tue, 20 Nov 2018 01:28:28 +0100 (CET)
 X-Virus-Scanned: amavisd-new at mnet-online.de
 Received: from mail.mnet-online.de ([192.168.8.182])
         by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id GAuhUnqY5MOP; Tue, 20 Nov 2018 01:28:21 +0100 (CET)
-X-Auth-Info: ivYFTmVuYSs/DG437wFLpHdnvj7j664PqAKdm9anpqo=
+        with ESMTP id sJmjrZG9A86d; Tue, 20 Nov 2018 01:28:26 +0100 (CET)
+X-Auth-Info: OrFV6u58Fdx4yGA2NNIszlzQ2BHzN71uylccs8cqVx8=
 Received: from crub.agik.hopto.org (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 20 Nov 2018 01:28:21 +0100 (CET)
+        Tue, 20 Nov 2018 01:28:26 +0100 (CET)
 From:   Anatolij Gustschin <agust@denx.de>
 To:     linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     gregkh@linuxfoundation.org, broonie@kernel.org, atull@kernel.org,
         mdf@kernel.org
-Subject: [PATCH v2 0/3] Add support for ARRI FPGA configuration
-Date:   Tue, 20 Nov 2018 01:28:18 +0100
-Message-Id: <20181120002821.12794-1-agust@denx.de>
+Subject: [PATCH v2 2/3] spi: add FTDI MPSSE SPI controller driver
+Date:   Tue, 20 Nov 2018 01:28:20 +0100
+Message-Id: <20181120002821.12794-3-agust@denx.de>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120002821.12794-1-agust@denx.de>
+References: <20181120002821.12794-1-agust@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds drivers and FPGA manager support required
-for FT232H based ARRI FPGA configuration adapters.
+Add SPI bus controller driver for FTDI MPSSE mode. This driver
+is supposed to be used together with the FT232H interface driver
+for FPGA configuration in drivers/usb/misc/ft232h-intf.c which
+adds an mpsse spi platform device describing USB SPI bus with
+attached SPI slave devices.
 
-Patch 1/3 adds FT232H interface driver (for ARRI USB PIDs)
-implementing commonly used FTDI USB transfer operations and
-ACBUS/MPSSE GPIO controllers. Depending on USB PIDs it creates
-platform devices for MPSSE SPI bus with attached SPI slaves
-or platform devices for ARRI FPP FPGA manager.
-
-Patch 2/3 adds MPSSE SPI controller driver which registers
-an FTDI USB-SPI bus with attached SPI slaves from description
-in platform data, so existing SPI protocol drivers can be
-used for these slave devices (in our case altera-ps-spi).
-Via interface driver in patch 1/3 it is easily possible to add
-support for other slave devices using custom USB PIDs (e.g.
-spi-nor flash W25Q32 with m25p80 driver has beed used for
-testing MPSSE SPI controller driver).
-
-Patch 3/3 adds FPGA manager driver for ARRI FPP adapters for
-FPGA configuration via Altera fast passive parallel interface.
-
-Changes since v1:
-  Patch 1/3
-  - add myself as a maintainer for these drivers
-  - update copyright line to include 2018
-  - include required linux headers
-  - fix gcc 7.3.0 build warnings -Wunused-const-variable=
-  - make ftdi functions and spi_board_info struct static
-  - use KBUILD_MODNAME in drivers struct
-  - use dev_err() for error messages instead of dev_info()
-  - drop not needed output about number of used MPSSE pins
-    since it is constant (not configurable)
-  - remove ftdi function prototypes from header ft232h-intf.h
-    as these are not exported anymore
-  - update comments (don't use kernel-doc format as we do not
-    export symbols anymore and functions are "static")
-
-  Patch 2/3
-  - fix build breakage when building with ARCH=i386 allmodconfig
-  - add checks for ops->lock/ops->unlock presence in pdata
-  - update copyright line to include 2018
-  - remove printing numbers in parentheses (%d)
-
-  Patch 3/3
-  - update copyright line to include 2018
-  - add sysfs ABI documentation
- 
-Changes since initial version (MFD based):
-  - don't use MFD framework
-  - don't use original FT232H USB PID (it is too generic and collides
-    with existing ftdi_sio driver)
-  - don't add separate CBUS GPIO driver based on FT232H MFD device
-  - redesign/rework the drivers as described under [4]
-  - add basic FT232H interface driver under drivers/usb/misc/
-  - use custom reserved USB PIDs in the USB driver for adapter devices
-  - add notes about borrowed protocol code from libftdi to commit log
-    and header file
-  - add MPSSE SPI controller driver supporting USB-SPI bus with
-    dynamically added SPI slaves from description in platform data
-    (the initial attempt didn't include USB SPI bus support for PS-
-     SPI FPGA configuration via USB)
-  - rework FPP fpga manager driver based on new FT232H interface
-    driver and extend it according to CPLD changes for additional
-    support of new hardware revision B.
-
-Anatolij Gustschin (3):
-  usb: misc: add driver for FT232H based FPGA configuration devices
-  spi: add FTDI MPSSE SPI controller driver
-  fpga: Add fpga manager driver for ARRI Altera FPP
-
- .../ABI/testing/sysfs-driver-ftdi-fifo-fpp    |    7 +
- MAINTAINERS                                   |    8 +
- drivers/fpga/Kconfig                          |    7 +
- drivers/fpga/Makefile                         |    1 +
- drivers/fpga/ftdi-fifo-fpp.c                  |  594 +++++++
- drivers/spi/Kconfig                           |    7 +
- drivers/spi/Makefile                          |    1 +
- drivers/spi/spi-ftdi-mpsse.c                  |  673 ++++++++
- drivers/usb/misc/Kconfig                      |    9 +
- drivers/usb/misc/Makefile                     |    1 +
- drivers/usb/misc/ft232h-intf.c                | 1464 +++++++++++++++++
- include/linux/usb/ft232h-intf.h               |  187 +++
- 12 files changed, 2959 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-ftdi-fifo-fpp
- create mode 100644 drivers/fpga/ftdi-fifo-fpp.c
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+---
+ drivers/spi/Kconfig          |   7 +
+ drivers/spi/Makefile         |   1 +
+ drivers/spi/spi-ftdi-mpsse.c | 673 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 681 insertions(+)
  create mode 100644 drivers/spi/spi-ftdi-mpsse.c
- create mode 100644 drivers/usb/misc/ft232h-intf.c
- create mode 100644 include/linux/usb/ft232h-intf.h
 
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 7d3a5c94727e..2cb24e28c485 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -259,6 +259,13 @@ config SPI_FSL_LPSPI
+ 	help
+ 	  This enables Freescale i.MX LPSPI controllers in master mode.
+ 
++config SPI_FTDI_MPSSE
++	tristate "FTDI MPSSE SPI controller"
++	depends on USB_FT232H_INTF || COMPILE_TEST
++	help
++	  FT232H supports SPI in MPSSE mode. This driver provides MPSSE
++	  SPI controller in master mode.
++
+ config SPI_GPIO
+ 	tristate "GPIO-based bitbanging SPI Master"
+ 	depends on GPIOLIB || COMPILE_TEST
+diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
+index 3575205c5c27..268c42c502e2 100644
+--- a/drivers/spi/Makefile
++++ b/drivers/spi/Makefile
+@@ -113,6 +113,7 @@ obj-$(CONFIG_SPI_XILINX)		+= spi-xilinx.o
+ obj-$(CONFIG_SPI_XLP)			+= spi-xlp.o
+ obj-$(CONFIG_SPI_XTENSA_XTFPGA)		+= spi-xtensa-xtfpga.o
+ obj-$(CONFIG_SPI_ZYNQMP_GQSPI)		+= spi-zynqmp-gqspi.o
++obj-$(CONFIG_SPI_FTDI_MPSSE)		+= spi-ftdi-mpsse.o
+ 
+ # SPI slave protocol handlers
+ obj-$(CONFIG_SPI_SLAVE_TIME)		+= spi-slave-time.o
+diff --git a/drivers/spi/spi-ftdi-mpsse.c b/drivers/spi/spi-ftdi-mpsse.c
+new file mode 100644
+index 000000000000..a7f4cc52fa74
+--- /dev/null
++++ b/drivers/spi/spi-ftdi-mpsse.c
+@@ -0,0 +1,673 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * FTDI FT232H MPSSE SPI controller driver
++ *
++ * Copyright (C) 2017 - 2018 DENX Software Engineering
++ * Anatolij Gustschin <agust@denx.de>
++ */
++
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/machine.h>
++#include <linux/platform_device.h>
++#include <linux/printk.h>
++#include <linux/slab.h>
++#include <linux/spi/spi.h>
++#include <linux/types.h>
++#include <linux/sizes.h>
++#include <linux/usb.h>
++#include <linux/usb/ft232h-intf.h>
++
++enum gpiol {
++	MPSSE_SK	= BIT(0),
++	MPSSE_DO	= BIT(1),
++	MPSSE_DI	= BIT(2),
++	MPSSE_CS	= BIT(3),
++};
++
++struct ftdi_spi {
++	struct platform_device *pdev;
++	struct usb_interface *intf;
++	struct spi_master *master;
++	const struct ft232h_intf_ops *iops;
++	struct gpiod_lookup_table *lookup[13];
++	struct gpio_desc **cs_gpios;
++
++	u8 txrx_cmd;
++	u8 rx_cmd;
++	u8 tx_cmd;
++	u8 xfer_buf[SZ_64K];
++	u16 last_mode;
++};
++
++static void ftdi_spi_chipselect(struct ftdi_spi *priv, struct spi_device *spi,
++				bool value)
++{
++	int cs = spi->chip_select;
++
++	dev_dbg(&priv->master->dev, "%s: CS %d, cs mode %d, val %d\n",
++		__func__, cs, (spi->mode & SPI_CS_HIGH), value);
++
++	gpiod_set_raw_value_cansleep(priv->cs_gpios[cs], value);
++}
++
++static inline u8 ftdi_spi_txrx_byte_cmd(struct spi_device *spi)
++{
++	u8 mode = spi->mode & (SPI_CPOL | SPI_CPHA);
++	u8 cmd;
++
++	if (spi->mode & SPI_LSB_FIRST) {
++		switch (mode) {
++		case SPI_MODE_0:
++		case SPI_MODE_1:
++			cmd = TXF_RXR_BYTES_LSB;
++			break;
++		case SPI_MODE_2:
++		case SPI_MODE_3:
++			cmd = TXR_RXF_BYTES_LSB;
++			break;
++		}
++	} else {
++		switch (mode) {
++		case SPI_MODE_0:
++		case SPI_MODE_1:
++			cmd = TXF_RXR_BYTES_MSB;
++			break;
++		case SPI_MODE_2:
++		case SPI_MODE_3:
++			cmd = TXR_RXF_BYTES_MSB;
++			break;
++		}
++	}
++	return cmd;
++}
++
++static inline int ftdi_spi_loopback_cfg(struct ftdi_spi *priv, int on)
++{
++	int ret;
++
++	priv->xfer_buf[0] = on ? LOOPBACK_ON : LOOPBACK_OFF;
++
++	ret = priv->iops->write_data(priv->intf, priv->xfer_buf, 1);
++	if (ret < 0)
++		dev_warn(&priv->master->dev, "loopback %d failed\n", on);
++	return ret;
++}
++
++static int ftdi_spi_tx_rx(struct ftdi_spi *priv, struct spi_device *spi,
++			  struct spi_transfer *t)
++{
++	const struct ft232h_intf_ops *ops = priv->iops;
++	struct spi_master *master = priv->master;
++	struct device *dev = &master->dev;
++	void *rx_offs;
++	const void *tx_offs;
++	size_t remaining, stride;
++	size_t rx_stride;
++	int ret, tout = 10;
++	const u8 *tx_data = t->tx_buf;
++	u8 *rx_data = t->rx_buf;
++
++	if (!t->len)
++		return 0;
++
++	ops->lock(priv->intf);
++
++	if (spi->mode & SPI_LOOP) {
++		ret = ftdi_spi_loopback_cfg(priv, 1);
++		if (ret < 0)
++			goto err;
++	}
++
++	remaining = t->len;
++	rx_offs = rx_data;
++	tx_offs = tx_data;
++
++	while (remaining) {
++		stride = min_t(size_t, remaining, SZ_512 - 3);
++
++		priv->xfer_buf[0] = priv->txrx_cmd;
++		priv->xfer_buf[1] = stride - 1;
++		priv->xfer_buf[2] = (stride - 1) >> 8;
++		memcpy(&priv->xfer_buf[3], tx_offs, stride);
++		print_hex_dump_debug("WR: ", DUMP_PREFIX_OFFSET, 16, 1,
++				     priv->xfer_buf, stride + 3, 1);
++
++		ret = ops->write_data(priv->intf, priv->xfer_buf, stride + 3);
++		if (ret < 0) {
++			dev_err(dev, "%s: xfer failed %d\n", __func__, ret);
++			goto fail;
++		}
++		dev_dbg(dev, "%s: WR %zu byte(s), TXRX CMD 0x%02x\n",
++			__func__, stride, priv->txrx_cmd);
++
++		rx_stride = min_t(size_t, stride, SZ_512);
++
++		ret = ops->read_data(priv->intf, priv->xfer_buf, rx_stride);
++		while (ret == 0) {
++			/* If no data yet, wait and repeat */
++			usleep_range(5000, 5100);
++			ret = ops->read_data(priv->intf, priv->xfer_buf,
++					     rx_stride);
++			dev_dbg(dev, "Waiting data ready, read: %d\n", ret);
++			if (!--tout) {
++				dev_err(dev, "Read timeout\n");
++				ret = -ETIMEDOUT;
++				goto fail;
++			}
++		}
++
++		if (ret < 0)
++			goto fail;
++
++		print_hex_dump_debug("RD: ", DUMP_PREFIX_OFFSET, 16, 1,
++				     priv->xfer_buf, rx_stride, 1);
++		memcpy(rx_offs, priv->xfer_buf, ret);
++		rx_offs += ret;
++
++		remaining -= stride;
++		tx_offs += stride;
++		dev_dbg(dev, "%s: WR remains %zu\n", __func__, remaining);
++	}
++
++	ret = 0;
++
++fail:
++	if (spi->mode & SPI_LOOP)
++		ftdi_spi_loopback_cfg(priv, 0);
++
++err:
++	ops->unlock(priv->intf);
++	return ret;
++}
++
++static int ftdi_spi_tx(struct ftdi_spi *priv, const u8 *tx_data, size_t len)
++{
++	struct spi_master *master = priv->master;
++	size_t remaining, stride;
++	int ret;
++
++	if (!len)
++		return 0;
++
++	priv->iops->lock(priv->intf);
++
++	remaining = len;
++	do {
++		stride = min_t(size_t, remaining, SZ_64K - 3);
++
++		priv->xfer_buf[0] = priv->tx_cmd;
++		priv->xfer_buf[1] = stride - 1;
++		priv->xfer_buf[2] = (stride - 1) >> 8;
++
++		memcpy(&priv->xfer_buf[3], tx_data, stride);
++
++		ret = priv->iops->write_data(priv->intf, priv->xfer_buf,
++					     stride + 3);
++		if (ret < 0) {
++			dev_dbg(&master->dev, "%s: tx failed %d\n",
++				__func__, ret);
++			goto err;
++		}
++		dev_dbg(&master->dev, "%s: %zu byte(s) done\n",
++			__func__, stride);
++		remaining -= stride;
++	} while (remaining);
++
++	ret = 0;
++err:
++	priv->iops->unlock(priv->intf);
++	return ret;
++}
++
++static int ftdi_spi_rx(struct ftdi_spi *priv, u8 *rx_data, size_t len)
++{
++	const struct ft232h_intf_ops *ops = priv->iops;
++	struct spi_master *master = priv->master;
++	size_t remaining, stride;
++	int ret, tout = 10;
++	void *rxbuf;
++
++	dev_dbg(&master->dev, "%s: CMD 0x%02x, len %zu\n",
++		__func__, priv->rx_cmd, len);
++
++	if (!len)
++		return 0;
++
++	priv->xfer_buf[0] = priv->rx_cmd;
++	priv->xfer_buf[1] = len - 1;
++	priv->xfer_buf[2] = (len - 1) >> 8;
++
++	ops->lock(priv->intf);
++
++	ret = ops->write_data(priv->intf, priv->xfer_buf, 3);
++	if (ret < 0)
++		goto err;
++
++	remaining = len;
++	rxbuf = rx_data;
++
++	do {
++		stride = min_t(size_t, remaining, SZ_512);
++
++		ret = ops->read_data(priv->intf, priv->xfer_buf, stride);
++		if (ret < 0)
++			goto err;
++
++		if (!ret) {
++			dev_dbg(&master->dev,
++				"Waiting for data (read : %02X), tout %d\n",
++				 ret, tout);
++			if (--tout)
++				continue;
++
++			dev_dbg(&master->dev, "read timeout...\n");
++			ret = -ETIMEDOUT;
++			goto err;
++		}
++
++		memcpy(rxbuf, priv->xfer_buf, ret);
++
++		dev_dbg(&master->dev, "%s: %d byte(s)\n", __func__, ret);
++		rxbuf += ret;
++		remaining -= ret;
++	} while (remaining);
++
++	ret = 0;
++err:
++	ops->unlock(priv->intf);
++	return ret;
++}
++
++static int ftdi_spi_transfer_one(struct spi_master *master,
++				 struct spi_message *msg)
++{
++	struct ftdi_spi *priv = spi_controller_get_devdata(master);
++	struct spi_device *spi = msg->spi;
++	struct spi_transfer *t;
++	bool keep_cs = false;
++	int ret = 0;
++
++	if (!priv)
++		return -ENODEV;
++
++	msg->actual_length = 0;
++	msg->state = NULL;
++	msg->status = 0;
++
++	if (priv->last_mode != spi->mode) {
++		u8 spi_mode = spi->mode & (SPI_CPOL | SPI_CPHA);
++		u8 pins = 0;
++
++		dev_dbg(&master->dev, "%s: MODE %d\n", __func__, spi->mode);
++		if (spi->mode & SPI_LSB_FIRST) {
++			switch (spi_mode) {
++			case SPI_MODE_0:
++			case SPI_MODE_3:
++				priv->tx_cmd = TX_BYTES_FE_LSB;
++				priv->rx_cmd = RX_BYTES_RE_LSB;
++				break;
++			case SPI_MODE_1:
++			case SPI_MODE_2:
++				priv->tx_cmd = TX_BYTES_RE_LSB;
++				priv->rx_cmd = RX_BYTES_FE_LSB;
++				break;
++			}
++		} else {
++			switch (spi_mode) {
++			case SPI_MODE_0:
++			case SPI_MODE_3:
++				priv->tx_cmd = TX_BYTES_FE_MSB;
++				priv->rx_cmd = RX_BYTES_RE_MSB;
++				break;
++			case SPI_MODE_1:
++			case SPI_MODE_2:
++				priv->tx_cmd = TX_BYTES_RE_MSB;
++				priv->rx_cmd = RX_BYTES_FE_MSB;
++				break;
++			}
++		}
++
++		priv->txrx_cmd = ftdi_spi_txrx_byte_cmd(spi);
++
++		switch (spi_mode) {
++		case SPI_MODE_2:
++		case SPI_MODE_3:
++			pins |= MPSSE_SK;
++			break;
++		}
++
++		ret = priv->iops->cfg_bus_pins(priv->intf,
++					       MPSSE_SK | MPSSE_DO, pins);
++		if (ret < 0) {
++			dev_err(&master->dev, "IO cfg failed: %d\n", ret);
++			return ret;
++		}
++		priv->last_mode = spi->mode;
++	}
++
++	dev_dbg(&master->dev, "%s: mode 0x%x, CMD RX/TX 0x%x/0x%x\n",
++		__func__, spi->mode, priv->rx_cmd, priv->tx_cmd);
++
++	ftdi_spi_chipselect(priv, spi, spi->mode & SPI_CS_HIGH);
++
++	ret = -EINVAL;
++
++	list_for_each_entry(t, &msg->transfers, transfer_list) {
++		dev_dbg(&master->dev, "%s: cs_change %d, cs %d, len %d\n",
++			__func__, t->cs_change, spi->chip_select, t->len);
++		dev_dbg(&master->dev, "%s: txb 0x%p, rxb 0x%p, bpw %d\n",
++			__func__, t->tx_buf, t->rx_buf, t->bits_per_word);
++
++		if (t->tx_buf && t->rx_buf)
++			ret = ftdi_spi_tx_rx(priv, spi, t);
++		else if (t->tx_buf)
++			ret = ftdi_spi_tx(priv, t->tx_buf, t->len);
++		else if (t->rx_buf)
++			ret = ftdi_spi_rx(priv, t->rx_buf, t->len);
++
++		dev_dbg(&master->dev, "%s: xfer ret %d\n", __func__, ret);
++		if (ret)
++			break;
++
++		msg->actual_length += t->len;
++
++		if (t->delay_usecs) {
++			u16 us = t->delay_usecs;
++
++			if (us <= 10)
++				udelay(us);
++			else
++				usleep_range(us, us + DIV_ROUND_UP(us, 10));
++		}
++
++		if (!t->cs_change)
++			continue;
++
++		/* Last transfer with cs_change set, stop keeping CS */
++		if (list_is_last(&t->transfer_list, &msg->transfers)) {
++			keep_cs = true;
++			break;
++		}
++		ftdi_spi_chipselect(priv, spi, !(spi->mode & SPI_CS_HIGH));
++		usleep_range(10, 15);
++		ftdi_spi_chipselect(priv, spi, spi->mode & SPI_CS_HIGH);
++	}
++
++	dev_dbg(&master->dev, "%s: status %d\n", __func__, ret);
++	msg->status = ret;
++	spi_finalize_current_message(master);
++
++	if (!keep_cs)
++		ftdi_spi_chipselect(priv, spi, !(spi->mode & SPI_CS_HIGH));
++
++	return ret;
++}
++
++static int ftdi_mpsse_init(struct ftdi_spi *priv)
++{
++	struct platform_device *pdev = priv->pdev;
++	int ret;
++
++	dev_dbg(&pdev->dev, "MPSSE init\n");
++
++	/* Setup and send off the Hi-Speed specific commands for the FTx232H */
++	priv->xfer_buf[0] = DIS_DIV_5;      /* Use 60MHz master clock */
++	priv->xfer_buf[1] = DIS_ADAPTIVE;   /* Turn off adaptive clocking */
++	priv->xfer_buf[2] = DIS_3_PHASE;    /* Disable three-phase clocking */
++
++	priv->iops->lock(priv->intf);
++
++	ret = priv->iops->write_data(priv->intf, priv->xfer_buf, 3);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clk cfg failed: %d\n", ret);
++		priv->iops->unlock(priv->intf);
++		return ret;
++	}
++
++	priv->xfer_buf[0] = TCK_DIVISOR;
++	priv->xfer_buf[1] = div_value(60000000);
++	priv->xfer_buf[2] = div_value(60000000) >> 8;
++	dev_dbg(&pdev->dev, "TCK_DIVISOR: 0x%04x 0x%04x\n",
++		priv->xfer_buf[1], priv->xfer_buf[2]);
++
++	ret = priv->iops->write_data(priv->intf, priv->xfer_buf, 3);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Clk cfg failed: %d\n", ret);
++		priv->iops->unlock(priv->intf);
++		return ret;
++	}
++
++	priv->iops->unlock(priv->intf);
++
++	ret = priv->iops->cfg_bus_pins(priv->intf, MPSSE_SK | MPSSE_DO, 0);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Can't init SPI bus pins: %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int ftdi_spi_init_io(struct spi_master *master, int cs)
++{
++	struct ftdi_spi *priv = spi_controller_get_devdata(master);
++	const struct mpsse_spi_platform_data *pd;
++	struct platform_device *pdev = priv->pdev;
++	struct gpiod_lookup_table *lookup;
++	size_t lookup_size;
++	char *label;
++	int i, size;
++
++	pd = pdev->dev.platform_data;
++	size = pd->io_data_len + 1;
++
++	lookup_size = sizeof(*lookup) + size * sizeof(struct gpiod_lookup);
++	lookup = devm_kzalloc(&pdev->dev, lookup_size, GFP_KERNEL);
++	if (!lookup)
++		return -ENOMEM;
++
++	lookup->dev_id = devm_kasprintf(&pdev->dev, GFP_KERNEL, "spi%d.%d",
++					master->bus_num, cs);
++	if (!lookup->dev_id) {
++		devm_kfree(&pdev->dev, lookup);
++		return -ENOMEM;
++	}
++	dev_dbg(&pdev->dev, "LOOKUP ID '%s'\n", lookup->dev_id);
++
++	label = devm_kasprintf(&pdev->dev, GFP_KERNEL, "ftdi-mpsse-gpio.%d",
++			       pdev->id);
++	if (!label) {
++		devm_kfree(&pdev->dev, (void *)lookup->dev_id);
++		devm_kfree(&pdev->dev, lookup);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < pd->io_data_len; i++) {
++		dev_dbg(&pdev->dev, "con_id: '%s' idx: %d, flags: 0x%x\n",
++			pd->io_data[i].con_id, pd->io_data[i].idx,
++			pd->io_data[i].flags);
++		lookup->table[i].chip_label = label;
++		lookup->table[i].chip_hwnum = pd->io_data[i].idx;
++		lookup->table[i].idx = 0;
++		lookup->table[i].con_id = pd->io_data[i].con_id;
++		lookup->table[i].flags = pd->io_data[i].flags;
++	}
++
++	priv->lookup[cs] = lookup;
++	gpiod_add_lookup_table(lookup);
++	return 0;
++}
++
++static int ftdi_spi_probe(struct platform_device *pdev)
++{
++	const struct mpsse_spi_platform_data *pd;
++	struct device *dev = &pdev->dev;
++	struct spi_master *master;
++	struct ftdi_spi *priv;
++	struct gpio_desc *desc;
++	int num_cs, max_cs = 0;
++	int i, ret;
++
++	pd = dev->platform_data;
++	if (!pd) {
++		dev_err(dev, "Missing platform data.\n");
++		return -EINVAL;
++	}
++
++	if (!pd->ops ||
++	    !pd->ops->read_data || !pd->ops->write_data ||
++	    !pd->ops->lock || !pd->ops->unlock ||
++	    !pd->ops->set_bitmode || !pd->ops->set_baudrate ||
++	    !pd->ops->disable_bitbang || !pd->ops->cfg_bus_pins)
++		return -EINVAL;
++
++	/* Find max. slave chipselect number */
++	num_cs = pd->spi_info_len;
++	for (i = 0; i < num_cs; i++) {
++		if (max_cs < pd->spi_info[i].chip_select)
++			max_cs = pd->spi_info[i].chip_select;
++	}
++
++	if (max_cs > 12) {
++		dev_err(dev, "Invalid max CS in platform data: %d\n", max_cs);
++		return -EINVAL;
++	}
++	dev_dbg(dev, "CS count %d, max CS %d\n", num_cs, max_cs);
++	max_cs += 1; /* including CS0 */
++
++	master = spi_alloc_master(&pdev->dev, sizeof(*priv));
++	if (!master)
++		return -ENOMEM;
++
++	platform_set_drvdata(pdev, master);
++
++	priv = spi_controller_get_devdata(master);
++	priv->master = master;
++	priv->pdev = pdev;
++	priv->intf = to_usb_interface(dev->parent);
++	priv->iops = pd->ops;
++
++	master->bus_num = -1;
++	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_LOOP |
++			    SPI_CS_HIGH | SPI_LSB_FIRST;
++	master->num_chipselect = max_cs;
++	master->min_speed_hz = 450;
++	master->max_speed_hz = 30000000;
++	master->bits_per_word_mask = SPI_BPW_MASK(8);
++	master->transfer_one_message = ftdi_spi_transfer_one;
++	master->auto_runtime_pm = false;
++
++	priv->cs_gpios = devm_kcalloc(&master->dev, max_cs, sizeof(desc),
++				      GFP_KERNEL);
++	if (!priv->cs_gpios) {
++		spi_controller_put(master);
++		return -ENOMEM;
++	}
++
++	for (i = 0; i < num_cs; i++) {
++		int idx = pd->spi_info[i].chip_select;
++
++		dev_dbg(&pdev->dev, "CS num: %d\n", idx);
++		desc = devm_gpiod_get_index(&priv->pdev->dev, "spi-cs",
++					    i, GPIOD_OUT_LOW);
++		if (IS_ERR(desc)) {
++			ret = PTR_ERR(desc);
++			dev_err(&pdev->dev, "CS %d gpiod err: %d\n", i, ret);
++			continue;
++		}
++		priv->cs_gpios[idx] = desc;
++	}
++
++	ret = spi_register_controller(master);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to register spi master\n");
++		spi_controller_put(master);
++		return ret;
++	}
++
++	ret = priv->iops->set_bitmode(priv->intf, 0x00, BITMODE_MPSSE);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Failed to set MPSSE mode\n");
++		goto err;
++	}
++
++	priv->last_mode = 0xffff;
++
++	ret = ftdi_mpsse_init(priv);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "MPSSE init failed\n");
++		goto err;
++	}
++
++	for (i = 0; i < pd->spi_info_len; i++) {
++		struct spi_device *sdev;
++		int cs;
++
++		dev_dbg(&pdev->dev, "slave: '%s', CS: %d\n",
++			pd->spi_info[i].modalias, pd->spi_info[i].chip_select);
++		ret = ftdi_spi_init_io(master, pd->spi_info[i].chip_select);
++		if (ret < 0) {
++			dev_warn(&pdev->dev, "Can't add slave IO: %d\n", ret);
++			continue;
++		}
++		sdev = spi_new_device(master, &pd->spi_info[i]);
++		if (!sdev) {
++			cs = pd->spi_info[i].chip_select;
++			dev_warn(&pdev->dev, "Can't add slave '%s', CS %d\n",
++				 pd->spi_info[i].modalias, cs);
++			if (priv->lookup[cs]) {
++				gpiod_remove_lookup_table(priv->lookup[cs]);
++				priv->lookup[cs] = NULL;
++			}
++		}
++	}
++
++	return 0;
++err:
++	platform_set_drvdata(pdev, NULL);
++	spi_unregister_controller(master);
++	return ret;
++}
++
++static int ftdi_spi_slave_release(struct device *dev, void *data)
++{
++	struct spi_device *spi = to_spi_device(dev);
++	struct ftdi_spi *priv = data;
++	int cs = spi->chip_select;
++
++	dev_dbg(dev, "%s: remove CS %d\n", __func__, cs);
++	spi_unregister_device(to_spi_device(dev));
++
++	if (priv->lookup[cs])
++		gpiod_remove_lookup_table(priv->lookup[cs]);
++	return 0;
++}
++
++static int ftdi_spi_remove(struct platform_device *pdev)
++{
++	struct spi_master *master;
++	struct ftdi_spi *priv;
++
++	master = platform_get_drvdata(pdev);
++	priv = spi_controller_get_devdata(master);
++
++	device_for_each_child(&master->dev, priv, ftdi_spi_slave_release);
++
++	spi_unregister_controller(master);
++	return 0;
++}
++
++static struct platform_driver ftdi_spi_driver = {
++	.driver.name	= "ftdi-mpsse-spi",
++	.probe		= ftdi_spi_probe,
++	.remove		= ftdi_spi_remove,
++};
++module_platform_driver(ftdi_spi_driver);
++
++MODULE_ALIAS("platform:ftdi-mpsse-spi");
++MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de");
++MODULE_DESCRIPTION("FTDI MPSSE SPI master driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
 
