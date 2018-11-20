@@ -2,129 +2,92 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C532FC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ACDC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AE720671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9012087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 12:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+XeVGTj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AE720671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KaYcldL5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E9012087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbeKTWoJ (ORCPT
+        id S1729552AbeKTWpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 17:44:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbeKTWoJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 17:44:09 -0500
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D63FA20671
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 12:15:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542716118;
-        bh=Cfj1fMhkmUYRRftMBOR/7DftYu/3bzdnk43yN0a5mi0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=D+XeVGTjBdwZwOU9w35NzcpV3oIWlNZeSkqwdqOcf6gOmfRDLg6nRsBZqGvlHGpGl
-         Z8vquZBy6OMhQ7yVXcSJgpQpYr4PewaTnWshS++KkGai3hfZSku6/gLuD4vi4Y6gIY
-         eFieTkArwvkcCPj/c7k8o97ugivwVN+zqPgkcd9M=
-Received: by mail-lj1-f175.google.com with SMTP id s5-v6so1406222ljd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 04:15:17 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKjqZ0pez9NYH89b9XRs5CK+n/v1bgWWUPWuKeknfXZBBVNlzYE
-        aUrHrEwgQLPYfu89wWQQ0g42WifQ2JSnQBK0XGE=
-X-Google-Smtp-Source: AFSGD/Wvot9iaOuRZLOtae0qDbgHgQnxXY3FXhecb23+/KO1X78iN2cr6Y1/T2IvqIOAjYbaTxUSGvHcV+lqpCI7y6w=
-X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr909161ljg.138.1542716115927;
- Tue, 20 Nov 2018 04:15:15 -0800 (PST)
+        Tue, 20 Nov 2018 17:45:12 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:56706 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728884AbeKTWpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 17:45:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dWQpHLZ5YnzpRmUGkheKCfgduVL+JSLGnwYGK1wo7lg=; b=KaYcldL5ufgM6fELZ12IMxd6LK
+        kI+AYfI2P4edfcD6G0HsB808RX5Ayz96Z59Z1Y/U9a/GpyvQ0jtmKd7ywJcSuhrqgqfVkc7FdLwrY
+        2Jf+ChaKsDDIqJHmNWBHSv7ZLeTtI9YFUe/w9lz3zG+OfYcHhKa7cNaI+Q2Lz7ye6X28l2Vo4RkIx
+        UBzvgdO/rYICFB7Rv9box9BETXONU4clCifE0kxjGMac1+zMP+o8Rtcv1qaxIraBrZLWjRUV8QDvN
+        rCbMzbEZoggl9hU56SwWSVyGbteOSiykUIw1yQJOdP3I5RKP9ajFZcuso2gXdZoB79yxo00fO/ppe
+        gWIWCiPA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gP4wy-0007Pb-FX; Tue, 20 Nov 2018 12:16:16 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 05C3A2029F87F; Tue, 20 Nov 2018 13:16:15 +0100 (CET)
+Date:   Tue, 20 Nov 2018 13:16:14 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yi Wang <wang.yi59@zte.com.cn>
+Cc:     mingo@redhat.com, bp@suse.de, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+Subject: Re: [PATCH] sched/rt: Fix -Wmissing-prototypes warnings
+Message-ID: <20181120121614.GJ2131@hirez.programming.kicks-ass.net>
+References: <1542070474-4025-1-git-send-email-wang.yi59@zte.com.cn>
 MIME-Version: 1.0
-References: <CAJKOXPdPnha1-1dCRFaPZ-CGzS1OzNcFrxuOJmWstHJcRAMZwg@mail.gmail.com>
- <20181120113326.0d4f061e@xps13> <CAJKOXPcrVXdCXqmxffJca7HfEV3G3agkzjWu1rfsNDDbMzc_XQ@mail.gmail.com>
- <20181120130859.78d53da3@bbrezillon>
-In-Reply-To: <20181120130859.78d53da3@bbrezillon>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Tue, 20 Nov 2018 13:15:04 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPfgyw9tFTC=eZFVHz8us1+6RxEcnmLUi-umO2+N9vRzDg@mail.gmail.com>
-Message-ID: <CAJKOXPfgyw9tFTC=eZFVHz8us1+6RxEcnmLUi-umO2+N9vRzDg@mail.gmail.com>
-Subject: Re: [BUG BISECT] Missing MTD NAND partitions - mtd: rawnand: Move the
- ->exec_op() method to nand_controller_ops
-To:     boris.brezillon@bootlin.com
-Cc:     miquel.raynal@bootlin.com, jmkrzyszt@gmail.com,
-        Stefan Agner <stefan@agner.ch>, richard@nod.at,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1542070474-4025-1-git-send-email-wang.yi59@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018 at 13:09, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Tue, 20 Nov 2018 12:48:46 +0100
-> Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> > On Tue, 20 Nov 2018 at 11:33, Miquel Raynal <miquel.raynal@bootlin.com>=
- wrote:
-> > >
-> > > Hi Krzysztof,
-> > >
-> > > Krzysztof Koz=C5=82owski <k.kozlowski.k@gmail.com> wrote on Tue, 20 N=
-ov 2018
-> > > 10:46:33 +0100:
-> > >
-> > > > Hi all,
-> > > >
-> > > > Since few days linux-next has problem on Freescale VF500 - MTD seem=
-s
-> > > > to be broken.
-> > > >
-> > > > Bisect pointed me to commit 7c27338c728e39ef47c83d101959aa332506969=
-d
-> > > > ("mtd: rawnand: Move the ->exec_op() method to nand_controller_ops"=
-)
-> > > > as reason of failure to find MTD partitions.
-> > > >
-> > > > Toradex Colibri VF50 on Iris board (ARMv7, UP, Cortext-A5, NXP VF50=
-0,
-> > > > 128 MB RAM, 128 MB NAND, Systemd: v232) booted from NFS root (NFSv4=
-)
-> > > > trying to mount UBIFS from NAND/MTD. Board uses VF610 NAND driver.
-> > > >
-> > > > The MTD partitions are missing entirely (nothing under /dev/mtd).
-> > > > In the logs you can also see:
-> > > > [    1.232161] UBI error: cannot open mtd ubi2, error -2
-> > > >
-> > > > Attached - dmesg.log
-> > > >
-> > > > Let me know if you need defconfig or any other information.
-> > >
-> > > Thank you very much for testing and reporting the bug!
-> > >
-> > > Could you please test with this diff applied [1] please? We discussed
-> > > with Boris and we think it should fix your setup (and all others also
-> > > impacted).
-> > >
-> > > [1] http://code.bulix.org/r1m99i-509201
-> >
-> > error: patch failed: drivers/mtd/nand/raw/nand_base.c:4399
-> > error: drivers/mtd/nand/raw/nand_base.c: patch does not apply
-> >
-> > Maybe you have a git tree with this somewhere?
->
-> Yep: https://github.com/bbrezillon/linux/tree/nand/next-fix
+On Tue, Nov 13, 2018 at 08:54:34AM +0800, Yi Wang wrote:
+> We get a warning when building kernel with W=1:
+> kernel/sched/rt.c:626:6: warning: no previous prototype for ‘sched_rt_bandwidth_account’ [-Wmissing-prototypes]
+>  bool sched_rt_bandwidth_account(struct rt_rq *rt_rq)
+> 
+> Add the missing declaration to fix this.
+> 
+> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> ---
+>  kernel/sched/sched.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 618577f..f5f29fc 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -442,6 +442,7 @@ extern void init_tg_cfs_entry(struct task_group *tg, struct cfs_rq *cfs_rq,
+>  
+>  extern void free_rt_sched_group(struct task_group *tg);
+>  extern int alloc_rt_sched_group(struct task_group *tg, struct task_group *parent);
+> +extern bool sched_rt_bandwidth_account(struct rt_rq *rt_rq);
+>  extern void init_tg_rt_entry(struct task_group *tg, struct rt_rq *rt_rq,
+>  		struct sched_rt_entity *rt_se, int cpu,
+>  		struct sched_rt_entity *parent);
 
-Works fine now, thanks!
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+This would then also render the declaration in sched/deadline.c
+redundant.
 
-Best regards,
-Krzysztof
+Or am I missing something?
