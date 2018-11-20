@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17820C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C86C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0911206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:22:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0911206B2
+	by mail.kernel.org (Postfix) with ESMTP id EA5DB20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:22:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA5DB20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbeKUAvg (ORCPT
+        id S1729816AbeKUAvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 19:51:36 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40603 "EHLO huawei.com"
+        Tue, 20 Nov 2018 19:51:47 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15129 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726916AbeKUAvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 19:51:35 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 454231C73BE48;
-        Tue, 20 Nov 2018 22:22:11 +0800 (CST)
+        id S1726916AbeKUAvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 19:51:47 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 93AE49DE5D6E6;
+        Tue, 20 Nov 2018 22:22:20 +0800 (CST)
 Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
  (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 20 Nov
- 2018 22:22:01 +0800
+ 2018 22:22:14 +0800
 From:   Gao Xiang <gaoxiang25@huawei.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <devel@driverdev.osuosl.org>
@@ -35,9 +35,9 @@ CC:     LKML <linux-kernel@vger.kernel.org>,
         <linux-erofs@lists.ozlabs.org>, "Chao Yu" <yuchao0@huawei.com>,
         Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 09/10] staging: erofs: decompress asynchronously if PG_readahead page at first
-Date:   Tue, 20 Nov 2018 22:34:24 +0800
-Message-ID: <20181120143425.43637-10-gaoxiang25@huawei.com>
+Subject: [PATCH 10/10] staging: erofs: rename strange variable names in z_erofs_vle_frontend
+Date:   Tue, 20 Nov 2018 22:34:25 +0800
+Message-ID: <20181120143425.43637-11-gaoxiang25@huawei.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181120143425.43637-1-gaoxiang25@huawei.com>
 References: <20181120143425.43637-1-gaoxiang25@huawei.com>
@@ -50,43 +50,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the case of nr_to_read == lookahead_size, it is better to
-decompress asynchronously as well since no page will be needed immediately.
+Previously, 2 members called `initial' and `cachedzone_la' are used
+for applying caching policy (whether the workgroup is at either end),
+which are hard to understand, rename them to `backmost' and `headoffset'.
 
 Reviewed-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 ---
- drivers/staging/erofs/unzip_vle.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/staging/erofs/unzip_vle.c | 25 +++++++++++--------------
+ 1 file changed, 11 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
-index a1376f3c6065..824d2c12c2f3 100644
+index 824d2c12c2f3..1ef178e7ac39 100644
 --- a/drivers/staging/erofs/unzip_vle.c
 +++ b/drivers/staging/erofs/unzip_vle.c
-@@ -1344,8 +1344,8 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
- {
- 	struct inode *const inode = mapping->host;
- 	struct erofs_sb_info *const sbi = EROFS_I_SB(inode);
--	const bool sync = __should_decompress_synchronously(sbi, nr_pages);
+@@ -586,10 +586,9 @@ struct z_erofs_vle_frontend {
  
-+	bool sync = __should_decompress_synchronously(sbi, nr_pages);
- 	struct z_erofs_vle_frontend f = VLE_FRONTEND_INIT(inode);
- 	gfp_t gfp = mapping_gfp_constraint(mapping, GFP_KERNEL);
- 	struct page *head = NULL;
-@@ -1363,6 +1363,13 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
- 		prefetchw(&page->flags);
- 		list_del(&page->lru);
+ 	z_erofs_vle_owned_workgrp_t owned_head;
  
-+		/*
-+		 * A pure asynchronous readahead is indicated if
-+		 * a PG_readahead marked page is hitted at first.
-+		 * Let's also do asynchronous decompression for this case.
-+		 */
-+		sync &= !(PageReadahead(page) && !head);
+-	bool initial;
+-#if (EROFS_FS_ZIP_CACHE_LVL >= 2)
+-	erofs_off_t cachedzone_la;
+-#endif
++	/* used for applying cache strategy on the fly */
++	bool backmost;
++	erofs_off_t headoffset;
+ };
+ 
+ #define VLE_FRONTEND_INIT(__i) { \
+@@ -600,7 +599,7 @@ struct z_erofs_vle_frontend {
+ 	}, \
+ 	.builder = VLE_WORK_BUILDER_INIT(), \
+ 	.owned_head = Z_EROFS_VLE_WORKGRP_TAIL, \
+-	.initial = true, }
++	.backmost = true, }
+ 
+ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 				struct page *page,
+@@ -643,7 +642,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 	debugln("%s: [out-of-range] pos %llu", __func__, offset + cur);
+ 
+ 	if (z_erofs_vle_work_iter_end(builder))
+-		fe->initial = false;
++		fe->backmost = false;
+ 
+ 	map->m_la = offset + cur;
+ 	map->m_llen = 0;
+@@ -669,8 +668,8 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+ 		erofs_blknr(map->m_pa),
+ 		grp->compressed_pages, erofs_blknr(map->m_plen),
+ 		/* compressed page caching selection strategy */
+-		fe->initial | (EROFS_FS_ZIP_CACHE_LVL >= 2 ?
+-			map->m_la < fe->cachedzone_la : 0));
++		fe->backmost | (EROFS_FS_ZIP_CACHE_LVL >= 2 ?
++				map->m_la < fe->headoffset : 0));
+ 
+ 	if (noio_outoforder && builder_is_followed(builder))
+ 		builder->role = Z_EROFS_VLE_WORK_PRIMARY;
+@@ -1316,9 +1315,8 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
+ 
+ 	trace_erofs_readpage(page, false);
+ 
+-#if (EROFS_FS_ZIP_CACHE_LVL >= 2)
+-	f.cachedzone_la = (erofs_off_t)page->index << PAGE_SHIFT;
+-#endif
++	f.headoffset = (erofs_off_t)page->index << PAGE_SHIFT;
 +
- 		if (add_to_page_cache_lru(page, mapping, page->index, gfp)) {
- 			list_add(&page->lru, &pagepool);
- 			continue;
+ 	err = z_erofs_do_read_page(&f, page, &pagepool);
+ 	(void)z_erofs_vle_work_iter_end(&f.builder);
+ 
+@@ -1354,9 +1352,8 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+ 	trace_erofs_readpages(mapping->host, lru_to_page(pages),
+ 			      nr_pages, false);
+ 
+-#if (EROFS_FS_ZIP_CACHE_LVL >= 2)
+-	f.cachedzone_la = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
+-#endif
++	f.headoffset = (erofs_off_t)lru_to_page(pages)->index << PAGE_SHIFT;
++
+ 	for (; nr_pages; --nr_pages) {
+ 		struct page *page = lru_to_page(pages);
+ 
 -- 
 2.14.4
 
