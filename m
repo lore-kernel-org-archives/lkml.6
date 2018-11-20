@@ -2,895 +2,368 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F35C5ACBA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12407C5ACBA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3019214DA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3019214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 8ADFF214DA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 21:37:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ADFF214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeKUII3 (ORCPT
+        id S1727471AbeKUIId (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 03:08:29 -0500
-Received: from anholt.net ([50.246.234.109]:52766 "EHLO anholt.net"
+        Wed, 21 Nov 2018 03:08:33 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35018 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727211AbeKUII1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 03:08:27 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 9849D10A0AE6;
-        Tue, 20 Nov 2018 13:37:13 -0800 (PST)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id HTpw_Xmw3Anj; Tue, 20 Nov 2018 13:37:08 -0800 (PST)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id C509410A15F5;
-        Tue, 20 Nov 2018 13:37:03 -0800 (PST)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 8B1E62FE1FE9; Tue, 20 Nov 2018 13:37:02 -0800 (PST)
-From:   Eric Anholt <eric@anholt.net>
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH v2 3/5] soc: bcm: bcm2835-pm: Add support for power domains under a new binding.
-Date:   Tue, 20 Nov 2018 13:37:00 -0800
-Message-Id: <20181120213702.27958-4-eric@anholt.net>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181120213702.27958-1-eric@anholt.net>
-References: <20181120213702.27958-1-eric@anholt.net>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726840AbeKUII3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 03:08:29 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 13:37:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,258,1539673200"; 
+   d="scan'208";a="281632617"
+Received: from pmvancle-mobl.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.254.10.84])
+  by fmsmga005.fm.intel.com with ESMTP; 20 Nov 2018 13:36:59 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     tiwai@suse.de, broonie@kernel.org, vkoul@kernel.org,
+        liam.r.girdwood@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 5/6] ALSA: hda: Allow fallback binding with legacy HD-audio for Intel SKL+
+Date:   Tue, 20 Nov 2018 15:36:43 -0600
+Message-Id: <20181120213644.19103-6-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This provides a free software alternative to raspberrypi-power.c's
-firmware calls to manage power domains.  It also exposes a reset line,
-where previously the vc4 driver had to try to force power off the
-domain in order to trigger a reset.
+From: Takashi Iwai <tiwai@suse.de>
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
+Previous patches enabled distributions to select for which platform
+the Skylake driver will be used. This is not enough however since the
+DSP may or may not enabled by the BIOS, and a probe-time dynamic
+fallback is highly desired.
+
+This patch introduces a new AZX_DCAPS value, and when this field is
+set for the relevant PCI ID the HDaudio legacy driver will stop its
+probe. Conversely the Skylake driver will attempt to probe, but in
+case of errors (typically DSP not present or no HDAudio streams found)
+it will fall back to the HDaudio legacy.
+
+The behavior can be influenced by static Kconfig definitions to enable
+or disable this fallback. A 'legacy' parameter also controls the
+fallback, allowing testers to prevent the Skylake driver from probing
+or conversely preventing the fallback from happening.
+
+This patch only introduces the fallback capabilities and handling, the
+platform definitions are provided in a follow-up patch.
+
+Errors beyond the initial DSP capability parsing (e.g. missing
+firmware file, firmware authentication issue, missing topology file,
+bad topology configuration, etc) are considered out-of-scope. It is
+nearly impossible to handle all possible error cases and most errors
+are only detected after a timeout which isn't compatible with usual
+probe expectations. It is expected that additional debug hooks will
+have to be provided at a later point, e.g. module parameters to
+override hard-coded firmware name and topology files.
+
+Credits to Takashi for the initial code shared on the alsa-devel
+mailing list. Testing with base-defconfig, sst-defconfig and
+hdaudio-defconfigs provided at
+https://github.com/thesofproject/kconfig
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/mfd/bcm2835-pm.c             |  36 +-
- drivers/soc/bcm/Kconfig              |  11 +
- drivers/soc/bcm/Makefile             |   1 +
- drivers/soc/bcm/bcm2835-power.c      | 661 +++++++++++++++++++++++++++
- include/dt-bindings/soc/bcm2835-pm.h |  28 ++
- include/linux/mfd/bcm2835-pm.h       |   1 +
- 6 files changed, 734 insertions(+), 4 deletions(-)
- create mode 100644 drivers/soc/bcm/bcm2835-power.c
- create mode 100644 include/dt-bindings/soc/bcm2835-pm.h
+ include/sound/hdaudio.h        |  6 +++
+ sound/pci/hda/hda_controller.h |  2 +-
+ sound/pci/hda/hda_intel.c      | 32 ++++++++++++++-
+ sound/soc/intel/Kconfig        |  7 ++++
+ sound/soc/intel/skylake/skl.c  | 73 ++++++++++++++++++++++++++++++++--
+ 5 files changed, 114 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mfd/bcm2835-pm.c b/drivers/mfd/bcm2835-pm.c
-index 197ff8bcca90..fbc1a951b102 100644
---- a/drivers/mfd/bcm2835-pm.c
-+++ b/drivers/mfd/bcm2835-pm.c
-@@ -3,7 +3,7 @@
-  * PM MFD driver for Broadcom BCM2835
-  *
-  * This driver binds to the PM block and creates the MFD device for
-- * the WDT driver.
-+ * the WDT and power drivers.
-  */
+diff --git a/include/sound/hdaudio.h b/include/sound/hdaudio.h
+index cd1773d0e08f..2ed67f315962 100644
+--- a/include/sound/hdaudio.h
++++ b/include/sound/hdaudio.h
+@@ -8,6 +8,7 @@
  
- #include <linux/delay.h>
-@@ -21,11 +21,16 @@ static const struct mfd_cell bcm2835_pm_devs[] = {
- 	{ .name = "bcm2835-wdt" },
+ #include <linux/device.h>
+ #include <linux/interrupt.h>
++#include <linux/pci.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/timecounter.h>
+ #include <sound/core.h>
+@@ -634,4 +635,9 @@ static inline unsigned int snd_array_index(struct snd_array *array, void *ptr)
+ 	for ((idx) = 0, (ptr) = (array)->list; (idx) < (array)->used; \
+ 	     (ptr) = snd_array_elem(array, ++(idx)))
+ 
++/* shared resource with ASoC and legacy HD-audio drivers */
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++const struct pci_driver *snd_hda_intel_probe(struct pci_dev *pci);
++#endif
++
+ #endif /* __SOUND_HDAUDIO_H */
+diff --git a/sound/pci/hda/hda_controller.h b/sound/pci/hda/hda_controller.h
+index c95097bb5a0c..2351115f922e 100644
+--- a/sound/pci/hda/hda_controller.h
++++ b/sound/pci/hda/hda_controller.h
+@@ -37,7 +37,7 @@
+ #else
+ #define AZX_DCAPS_I915_COMPONENT 0		/* NOP */
+ #endif
+-/* 14 unused */
++#define AZX_DCAPS_INTEL_SHARED	(1 << 14)	/* shared with ASoC */
+ #define AZX_DCAPS_CTX_WORKAROUND (1 << 15)	/* X-Fi workaround */
+ #define AZX_DCAPS_POSFIX_LPIB	(1 << 16)	/* Use LPIB as default */
+ /* 17 unused */
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index d8eb2b5f51ae..eb00e37c1c27 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2081,8 +2081,8 @@ static const struct hda_controller_ops pci_hda_ops = {
+ 	.link_power = azx_intel_link_power,
  };
  
-+static const struct mfd_cell bcm2835_power_devs[] = {
-+	{ .name = "bcm2835-power" },
-+};
-+
- static int bcm2835_pm_probe(struct platform_device *pdev)
+-static int azx_probe(struct pci_dev *pci,
+-		     const struct pci_device_id *pci_id)
++static int __azx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id,
++		       bool skip_shared)
  {
- 	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	struct bcm2835_pm *pm;
-+	int ret;
+ 	static int dev;
+ 	struct snd_card *card;
+@@ -2091,6 +2091,10 @@ static int azx_probe(struct pci_dev *pci,
+ 	bool schedule_probe;
+ 	int err;
  
- 	pm = devm_kzalloc(dev, sizeof(*pm), GFP_KERNEL);
- 	if (!pm)
-@@ -39,9 +44,31 @@ static int bcm2835_pm_probe(struct platform_device *pdev)
- 	if (IS_ERR(pm->base))
- 		return PTR_ERR(pm->base);
- 
--	return devm_mfd_add_devices(dev, -1,
--				    bcm2835_pm_devs, ARRAY_SIZE(bcm2835_pm_devs),
--				    NULL, 0, NULL);
-+	ret = devm_mfd_add_devices(dev, -1,
-+				   bcm2835_pm_devs, ARRAY_SIZE(bcm2835_pm_devs),
-+				   NULL, 0, NULL);
-+	if (ret)
-+		return ret;
++	/* skip the entry if it's shared with ASoC */
++	if (skip_shared && (pci_id->driver_data & AZX_DCAPS_INTEL_SHARED))
++		return -ENODEV;
 +
-+	/* We'll use the presence of the AXI ASB regs in the
-+	 * bcm2835-pm binding as the key for whether we can reference
-+	 * the full PM register range and support power domains.
-+	 */
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+	if (res) {
-+		pm->asb = devm_ioremap_resource(dev, res);
-+		if (IS_ERR(pm->asb))
-+			return PTR_ERR(pm->asb);
-+
-+		ret = devm_mfd_add_devices(dev, -1,
-+					   bcm2835_power_devs,
-+					   ARRAY_SIZE(bcm2835_power_devs),
-+					   NULL, 0, NULL);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
+ 	if (dev >= SNDRV_CARDS)
+ 		return -ENODEV;
+ 	if (!enable[dev]) {
+@@ -2158,6 +2162,12 @@ static int azx_probe(struct pci_dev *pci,
+ 	return err;
  }
  
- static int bcm2835_pm_remove(struct platform_device *pdev)
-@@ -51,6 +78,7 @@ static int bcm2835_pm_remove(struct platform_device *pdev)
- 
- static const struct of_device_id bcm2835_pm_of_match[] = {
- 	{ .compatible = "brcm,bcm2835-pm-wdt", },
-+	{ .compatible = "brcm,bcm2835-pm", },
- 	{},
++static int azx_probe(struct pci_dev *pci, const struct pci_device_id *pci_id)
++{
++	return __azx_probe(pci, pci_id,
++			   IS_ENABLED(CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT));
++}
++
+ #ifdef CONFIG_PM
+ /* On some boards setting power_save to a non 0 value leads to clicking /
+  * popping sounds when ever we enter/leave powersaving mode. Ideally we would
+@@ -2650,4 +2660,22 @@ static struct pci_driver azx_driver = {
+ 	},
  };
- MODULE_DEVICE_TABLE(of, bcm2835_pm_of_match);
-diff --git a/drivers/soc/bcm/Kconfig b/drivers/soc/bcm/Kconfig
-index 055a845ed979..fe1af29560e9 100644
---- a/drivers/soc/bcm/Kconfig
-+++ b/drivers/soc/bcm/Kconfig
-@@ -1,5 +1,16 @@
- menu "Broadcom SoC drivers"
  
-+config BCM2835_POWER
-+	bool "BCM2835 power domain driver"
-+	depends on ARCH_BCM2835 || (COMPILE_TEST && OF)
-+	select PM_GENERIC_DOMAINS if PM
-+	select RESET_CONTROLLER
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++const struct pci_driver *
++snd_hda_intel_probe(struct pci_dev *pci)
++{
++	const struct pci_device_id *pci_id;
++	int ret;
++
++	pci_id = pci_match_id(azx_ids, pci);
++	if (!pci_id)
++		return ERR_PTR(-ENODEV);
++	ret = __azx_probe(pci, pci_id, false);
++	if (ret < 0)
++		return ERR_PTR(ret);
++	return &azx_driver;
++}
++EXPORT_SYMBOL_GPL(snd_hda_intel_probe);
++#endif
++
+ module_pci_driver(azx_driver);
+diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+index 99a62ba409df..c02d08d31d0d 100644
+--- a/sound/soc/intel/Kconfig
++++ b/sound/soc/intel/Kconfig
+@@ -194,6 +194,13 @@ config SND_SOC_INTEL_SKYLAKE_COMMON
+ 	  GeminiLake or CannonLake platform with the DSP enabled in the BIOS
+ 	  then enable this option by saying Y or m.
+ 
++config SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++	bool "Fallback legacy HD-audio binding"
++	depends on SND_HDA_INTEL=y || SND_SOC_INTEL_SKYLAKE_FAMILY=SND_HDA_INTEL
 +	help
-+	  This enables support for the BCM2835 power domains and reset
-+	  controller.  Any usage of power domains by the Raspberry Pi
-+	  firmware means that Linux usage of the same power domain
-+	  must be accessed using the RASPBERRYPI_POWER driver
++	  Fallback binding with the legacy HD-audio driver when no DSP is
++	  found
 +
- config RASPBERRYPI_POWER
- 	bool "Raspberry Pi power domain driver"
- 	depends on ARCH_BCM2835 || (COMPILE_TEST && OF)
-diff --git a/drivers/soc/bcm/Makefile b/drivers/soc/bcm/Makefile
-index dc4fced72d21..c81df4b2403c 100644
---- a/drivers/soc/bcm/Makefile
-+++ b/drivers/soc/bcm/Makefile
-@@ -1,2 +1,3 @@
-+obj-$(CONFIG_BCM2835_POWER)	+= bcm2835-power.o
- obj-$(CONFIG_RASPBERRYPI_POWER)	+= raspberrypi-power.o
- obj-$(CONFIG_SOC_BRCMSTB)	+= brcmstb/
-diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm2835-power.c
-new file mode 100644
-index 000000000000..48412957ec7a
---- /dev/null
-+++ b/drivers/soc/bcm/bcm2835-power.c
-@@ -0,0 +1,661 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Power domain driver for Broadcom BCM2835
-+ *
-+ * Copyright (C) 2018 Broadcom
-+ */
-+
-+#include <dt-bindings/soc/bcm2835-pm.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/mfd/bcm2835-pm.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
-+#include <linux/reset-controller.h>
-+#include <linux/types.h>
-+
-+#define PM_GNRIC                        0x00
-+#define PM_AUDIO                        0x04
-+#define PM_STATUS                       0x18
-+#define PM_RSTC				0x1c
-+#define PM_RSTS				0x20
-+#define PM_WDOG				0x24
-+#define PM_PADS0			0x28
-+#define PM_PADS2			0x2c
-+#define PM_PADS3			0x30
-+#define PM_PADS4			0x34
-+#define PM_PADS5			0x38
-+#define PM_PADS6			0x3c
-+#define PM_CAM0				0x44
-+#define PM_CAM0_LDOHPEN			BIT(2)
-+#define PM_CAM0_LDOLPEN			BIT(1)
-+#define PM_CAM0_CTRLEN			BIT(0)
-+
-+#define PM_CAM1				0x48
-+#define PM_CAM1_LDOHPEN			BIT(2)
-+#define PM_CAM1_LDOLPEN			BIT(1)
-+#define PM_CAM1_CTRLEN			BIT(0)
-+
-+#define PM_CCP2TX			0x4c
-+#define PM_CCP2TX_LDOEN			BIT(1)
-+#define PM_CCP2TX_CTRLEN		BIT(0)
-+
-+#define PM_DSI0				0x50
-+#define PM_DSI0_LDOHPEN			BIT(2)
-+#define PM_DSI0_LDOLPEN			BIT(1)
-+#define PM_DSI0_CTRLEN			BIT(0)
-+
-+#define PM_DSI1				0x54
-+#define PM_DSI1_LDOHPEN			BIT(2)
-+#define PM_DSI1_LDOLPEN			BIT(1)
-+#define PM_DSI1_CTRLEN			BIT(0)
-+
-+#define PM_HDMI				0x58
-+#define PM_HDMI_RSTDR			BIT(19)
-+#define PM_HDMI_LDOPD			BIT(1)
-+#define PM_HDMI_CTRLEN			BIT(0)
-+
-+#define PM_USB				0x5c
-+/* The power gates must be enabled with this bit before enabling the LDO in the
-+ * USB block.
-+ */
-+#define PM_USB_CTRLEN			BIT(0)
-+
-+#define PM_PXLDO			0x60
-+#define PM_PXBG				0x64
-+#define PM_DFT				0x68
-+#define PM_SMPS				0x6c
-+#define PM_XOSC				0x70
-+#define PM_SPAREW			0x74
-+#define PM_SPARER			0x78
-+#define PM_AVS_RSTDR			0x7c
-+#define PM_AVS_STAT			0x80
-+#define PM_AVS_EVENT			0x84
-+#define PM_AVS_INTEN			0x88
-+#define PM_DUMMY			0xfc
-+
-+#define PM_IMAGE			0x108
-+#define PM_GRAFX			0x10c
-+#define PM_PROC				0x110
-+#define PM_ENAB				BIT(12)
-+#define PM_ISPRSTN			BIT(8)
-+#define PM_H264RSTN			BIT(7)
-+#define PM_PERIRSTN			BIT(6)
-+#define PM_V3DRSTN			BIT(6)
-+#define PM_ISFUNC			BIT(5)
-+#define PM_MRDONE			BIT(4)
-+#define PM_MEMREP			BIT(3)
-+#define PM_ISPOW			BIT(2)
-+#define PM_POWOK			BIT(1)
-+#define PM_POWUP			BIT(0)
-+#define PM_INRUSH_SHIFT			13
-+#define PM_INRUSH_3_5_MA		0
-+#define PM_INRUSH_5_MA			1
-+#define PM_INRUSH_10_MA			2
-+#define PM_INRUSH_20_MA			3
-+#define PM_INRUSH_MASK			(3 << PM_INRUSH_SHIFT)
-+
-+#define PM_PASSWORD			0x5a000000
-+
-+#define PM_WDOG_TIME_SET		0x000fffff
-+#define PM_RSTC_WRCFG_CLR		0xffffffcf
-+#define PM_RSTS_HADWRH_SET		0x00000040
-+#define PM_RSTC_WRCFG_SET		0x00000030
-+#define PM_RSTC_WRCFG_FULL_RESET	0x00000020
-+#define PM_RSTC_RESET			0x00000102
-+
-+#define PM_READ(reg) readl(power->base + (reg))
-+#define PM_WRITE(reg, val) writel(PM_PASSWORD | (val), power->base + (reg))
-+
-+#define ASB_BRDG_VERSION                0x00
-+#define ASB_CPR_CTRL                    0x04
-+
-+#define ASB_V3D_S_CTRL			0x08
-+#define ASB_V3D_M_CTRL			0x0c
-+#define ASB_ISP_S_CTRL			0x10
-+#define ASB_ISP_M_CTRL			0x14
-+#define ASB_H264_S_CTRL			0x18
-+#define ASB_H264_M_CTRL			0x1c
-+
-+#define ASB_REQ_STOP                    BIT(0)
-+#define ASB_ACK                         BIT(1)
-+#define ASB_EMPTY                       BIT(2)
-+#define ASB_FULL                        BIT(3)
-+
-+#define ASB_AXI_BRDG_ID			0x20
-+
-+#define ASB_READ(reg) readl(power->asb + (reg))
-+#define ASB_WRITE(reg, val) writel(PM_PASSWORD | (val), power->asb + (reg))
-+
-+struct bcm2835_power_domain {
-+	struct generic_pm_domain base;
-+	struct bcm2835_power *power;
-+	u32 domain;
-+	struct clk *clk;
+ endif ## SND_SOC_INTEL_SKYLAKE_FAMILY
+ 
+ config SND_SOC_ACPI_INTEL_MATCH
+diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+index 73f82532770e..b67cb54d382c 100644
+--- a/sound/soc/intel/skylake/skl.c
++++ b/sound/soc/intel/skylake/skl.c
+@@ -41,6 +41,21 @@
+ #include "../../../soc/codecs/hdac_hda.h"
+ #endif
+ 
++enum {
++	SKL_BIND_AUTO,		/* fallback to legacy driver */
++	SKL_BIND_LEGACY,	/* bind only with legacy driver */
++	SKL_BIND_ASOC		/* bind only with ASoC driver */
 +};
 +
-+struct bcm2835_power {
-+	struct device		*dev;
-+	/* PM registers. */
-+	void __iomem		*base;
-+	/* AXI Async bridge registers. */
-+	void __iomem		*asb;
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++static const struct pci_driver *skl_fallback_driver;
++#define FALLBACK_PM_CALL(dev, method)					\
++	do {								\
++		if (skl_fallback_driver &&				\
++		    skl_fallback_driver->driver.pm->method)		\
++			return skl_fallback_driver->driver.pm->method(dev); \
++	} while (0)
 +
-+	struct genpd_onecell_data pd_xlate;
-+	struct bcm2835_power_domain domains[BCM2835_POWER_DOMAIN_COUNT];
-+	struct reset_controller_dev reset;
-+};
+ /*
+  * initialize the PCI registers
+  */
+@@ -264,6 +279,9 @@ static int skl_suspend_late(struct device *dev)
+ 	struct hdac_bus *bus = pci_get_drvdata(pci);
+ 	struct skl *skl = bus_to_skl(bus);
+ 
++	if (skl_fallback_driver)
++		return 0;
 +
-+static int bcm2835_asb_enable(struct bcm2835_power *power, u32 reg)
+ 	return skl_suspend_late_dsp(skl);
+ }
+ 
+@@ -313,6 +331,8 @@ static int skl_suspend(struct device *dev)
+ 	struct skl *skl  = bus_to_skl(bus);
+ 	int ret = 0;
+ 
++	FALLBACK_PM_CALL(dev, suspend);
++
+ 	/*
+ 	 * Do not suspend if streams which are marked ignore suspend are
+ 	 * running, we need to save the state for these and continue
+@@ -351,6 +371,8 @@ static int skl_resume(struct device *dev)
+ 	struct hdac_ext_link *hlink = NULL;
+ 	int ret;
+ 
++	FALLBACK_PM_CALL(dev, resume);
++
+ 	/* Turned OFF in HDMI codec driver after codec reconfiguration */
+ 	if (IS_ENABLED(CONFIG_SND_SOC_HDAC_HDMI)) {
+ 		ret = snd_hdac_display_power(bus, true);
+@@ -405,6 +427,8 @@ static int skl_runtime_suspend(struct device *dev)
+ 	struct pci_dev *pci = to_pci_dev(dev);
+ 	struct hdac_bus *bus = pci_get_drvdata(pci);
+ 
++	FALLBACK_PM_CALL(dev, runtime_suspend);
++
+ 	dev_dbg(bus->dev, "in %s\n", __func__);
+ 
+ 	return _skl_suspend(bus);
+@@ -415,15 +439,24 @@ static int skl_runtime_resume(struct device *dev)
+ 	struct pci_dev *pci = to_pci_dev(dev);
+ 	struct hdac_bus *bus = pci_get_drvdata(pci);
+ 
++	FALLBACK_PM_CALL(dev, runtime_resume);
++
+ 	dev_dbg(bus->dev, "in %s\n", __func__);
+ 
+ 	return _skl_resume(bus);
+ }
++
++static int skl_runtime_idle(struct device *dev)
 +{
-+	u64 start = ktime_get_ns();
-+
-+	/* Enable the module's async AXI bridges. */
-+	ASB_WRITE(reg, ASB_READ(reg) & ~ASB_REQ_STOP);
-+	while (ASB_READ(reg) & ASB_ACK) {
-+		cpu_relax();
-+		if (ktime_get_ns() - start >= 1000)
-+			return -ETIMEDOUT;
-+	}
-+
++	FALLBACK_PM_CALL(dev, runtime_idle);
 +	return 0;
 +}
-+
-+static int bcm2835_asb_disable(struct bcm2835_power *power, u32 reg)
-+{
-+	u64 start = ktime_get_ns();
-+
-+	/* Enable the module's async AXI bridges. */
-+	ASB_WRITE(reg, ASB_READ(reg) | ASB_REQ_STOP);
-+	while (!(ASB_READ(reg) & ASB_ACK)) {
-+		cpu_relax();
-+		if (ktime_get_ns() - start >= 1000)
-+			return -ETIMEDOUT;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bcm2835_power_power_off(struct bcm2835_power_domain *pd, u32 pm_reg)
-+{
-+	struct bcm2835_power *power = pd->power;
-+
-+	/* Enable functional isolation */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~PM_ISFUNC);
-+
-+	/* Enable electrical isolation */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~PM_ISPOW);
-+
-+	/* Open the power switches. */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~PM_POWUP);
-+
-+	return 0;
-+}
-+
-+static int bcm2835_power_power_on(struct bcm2835_power_domain *pd, u32 pm_reg)
-+{
-+	struct bcm2835_power *power = pd->power;
-+	struct device *dev = power->dev;
-+	u64 start;
-+	int ret;
-+	int inrush;
-+	bool powok;
-+
-+	/* If it was already powered on by the fw, leave it that way. */
-+	if (PM_READ(pm_reg) & PM_POWUP)
-+		return 0;
-+
-+	/* Enable power.  Allowing too much current at once may result
-+	 * in POWOK never getting set, so start low and ramp it up as
-+	 * necessary to succeed.
-+	 */
-+	powok = false;
-+	for (inrush = PM_INRUSH_3_5_MA; inrush <= PM_INRUSH_20_MA; inrush++) {
-+		PM_WRITE(pm_reg,
-+			 (PM_READ(pm_reg) & ~PM_INRUSH_MASK) |
-+			 (inrush << PM_INRUSH_SHIFT) |
-+			 PM_POWUP);
-+
-+		start = ktime_get_ns();
-+		while (!(powok = !!(PM_READ(pm_reg) & PM_POWOK))) {
-+			cpu_relax();
-+			if (ktime_get_ns() - start >= 3000)
-+				break;
-+		}
-+	}
-+	if (!powok) {
-+		dev_err(dev, "Timeout waiting for %s power OK\n",
-+			pd->base.name);
-+		ret = -ETIMEDOUT;
-+		goto err_disable_powup;
-+	}
-+
-+	/* Disable electrical isolation */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) | PM_ISPOW);
-+
-+	/* Repair memory */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) | PM_MEMREP);
-+	start = ktime_get_ns();
-+	while (!(PM_READ(pm_reg) & PM_MRDONE)) {
-+		cpu_relax();
-+		if (ktime_get_ns() - start >= 1000) {
-+			dev_err(dev, "Timeout waiting for %s memory repair\n",
-+				pd->base.name);
-+			ret = -ETIMEDOUT;
-+			goto err_disable_ispow;
-+		}
-+	}
-+
-+	/* Disable functional isolation */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) | PM_ISFUNC);
-+
-+	return 0;
-+
-+err_disable_ispow:
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~PM_ISPOW);
-+err_disable_powup:
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~(PM_POWUP | PM_INRUSH_MASK));
-+	return ret;
-+}
-+
-+static int bcm2835_asb_power_on(struct bcm2835_power_domain *pd,
-+				u32 pm_reg,
-+				u32 asb_m_reg,
-+				u32 asb_s_reg,
-+				u32 reset_flags)
-+{
-+	struct bcm2835_power *power = pd->power;
-+	int ret;
-+
-+	ret = clk_prepare_enable(pd->clk);
-+	if (ret) {
-+		dev_err(power->dev, "Failed to enable clock for %s\n",
-+			pd->base.name);
-+		return ret;
-+	}
-+
-+	/* Wait 32 clocks for reset to propagate, 1 us will be enough */
-+	udelay(1);
-+
-+	clk_disable_unprepare(pd->clk);
-+
-+	/* Deassert the resets. */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) | reset_flags);
-+
-+	ret = clk_prepare_enable(pd->clk);
-+	if (ret) {
-+		dev_err(power->dev, "Failed to enable clock for %s\n",
-+			pd->base.name);
-+		goto err_enable_resets;
-+	}
-+
-+	ret = bcm2835_asb_enable(power, asb_m_reg);
-+	if (ret) {
-+		dev_err(power->dev, "Failed to enable ASB master for %s\n",
-+			pd->base.name);
-+		goto err_disable_clk;
-+	}
-+	ret = bcm2835_asb_enable(power, asb_s_reg);
-+	if (ret) {
-+		dev_err(power->dev, "Failed to enable ASB slave for %s\n",
-+			pd->base.name);
-+		goto err_disable_asb_master;
-+	}
-+
-+	return 0;
-+
-+err_disable_asb_master:
-+	bcm2835_asb_disable(power, asb_m_reg);
-+err_disable_clk:
-+	clk_disable_unprepare(pd->clk);
-+err_enable_resets:
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~reset_flags);
-+	return ret;
-+}
-+
-+static int bcm2835_asb_power_off(struct bcm2835_power_domain *pd,
-+				 u32 pm_reg,
-+				 u32 asb_m_reg,
-+				 u32 asb_s_reg,
-+				 u32 reset_flags)
-+{
-+	struct bcm2835_power *power = pd->power;
-+	int ret;
-+
-+	ret = bcm2835_asb_disable(power, asb_s_reg);
-+	if (ret) {
-+		dev_warn(power->dev, "Failed to disable ASB slave for %s\n",
-+			 pd->base.name);
-+		return ret;
-+	}
-+	ret = bcm2835_asb_disable(power, asb_m_reg);
-+	if (ret) {
-+		dev_warn(power->dev, "Failed to disable ASB master for %s\n",
-+			 pd->base.name);
-+		bcm2835_asb_enable(power, asb_s_reg);
-+		return ret;
-+	}
-+
-+	clk_disable_unprepare(pd->clk);
-+
-+	/* Assert the resets. */
-+	PM_WRITE(pm_reg, PM_READ(pm_reg) & ~reset_flags);
-+
-+	return 0;
-+}
-+
-+static int bcm2835_power_pd_power_on(struct generic_pm_domain *domain)
-+{
-+	struct bcm2835_power_domain *pd =
-+		container_of(domain, struct bcm2835_power_domain, base);
-+	struct bcm2835_power *power = pd->power;
-+
-+	switch (pd->domain) {
-+	case BCM2835_POWER_DOMAIN_GRAFX:
-+		return bcm2835_power_power_on(pd, PM_GRAFX);
-+
-+	case BCM2835_POWER_DOMAIN_GRAFX_V3D:
-+		return bcm2835_asb_power_on(pd, PM_GRAFX,
-+					    ASB_V3D_M_CTRL, ASB_V3D_S_CTRL,
-+					    PM_V3DRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE:
-+		return bcm2835_power_power_on(pd, PM_IMAGE);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_PERI:
-+		return bcm2835_asb_power_on(pd, PM_IMAGE,
-+					    0, 0,
-+					    PM_PERIRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_ISP:
-+		return bcm2835_asb_power_on(pd, PM_IMAGE,
-+					    ASB_ISP_M_CTRL, ASB_ISP_S_CTRL,
-+					    PM_ISPRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_H264:
-+		return bcm2835_asb_power_on(pd, PM_IMAGE,
-+					    ASB_H264_M_CTRL, ASB_H264_S_CTRL,
-+					    PM_H264RSTN);
-+
-+	case BCM2835_POWER_DOMAIN_USB:
-+		PM_WRITE(PM_USB, PM_USB_CTRLEN);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_DSI0:
-+		PM_WRITE(PM_DSI0, PM_DSI0_CTRLEN);
-+		PM_WRITE(PM_DSI0, PM_DSI0_CTRLEN | PM_DSI0_LDOHPEN);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_DSI1:
-+		PM_WRITE(PM_DSI1, PM_DSI1_CTRLEN);
-+		PM_WRITE(PM_DSI1, PM_DSI1_CTRLEN | PM_DSI1_LDOHPEN);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_CCP2TX:
-+		PM_WRITE(PM_CCP2TX, PM_CCP2TX_CTRLEN);
-+		PM_WRITE(PM_CCP2TX, PM_CCP2TX_CTRLEN | PM_CCP2TX_LDOEN);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_HDMI:
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) | PM_HDMI_RSTDR);
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) | PM_HDMI_CTRLEN);
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) & ~PM_HDMI_LDOPD);
-+		usleep_range(100, 200);
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) & ~PM_HDMI_RSTDR);
-+		return 0;
-+
-+	default:
-+		dev_err(power->dev, "Invalid domain %d\n", pd->domain);
-+		return -EINVAL;
-+	}
-+}
-+
-+static int bcm2835_power_pd_power_off(struct generic_pm_domain *domain)
-+{
-+	struct bcm2835_power_domain *pd =
-+		container_of(domain, struct bcm2835_power_domain, base);
-+	struct bcm2835_power *power = pd->power;
-+
-+	switch (pd->domain) {
-+	case BCM2835_POWER_DOMAIN_GRAFX:
-+		return bcm2835_power_power_off(pd, PM_GRAFX);
-+
-+	case BCM2835_POWER_DOMAIN_GRAFX_V3D:
-+		return bcm2835_asb_power_off(pd, PM_GRAFX,
-+					     ASB_V3D_M_CTRL, ASB_V3D_S_CTRL,
-+					     PM_V3DRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE:
-+		return bcm2835_power_power_off(pd, PM_IMAGE);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_PERI:
-+		return bcm2835_asb_power_off(pd, PM_IMAGE,
-+					     0, 0,
-+					     PM_PERIRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_ISP:
-+		return bcm2835_asb_power_off(pd, PM_IMAGE,
-+					     ASB_ISP_M_CTRL, ASB_ISP_S_CTRL,
-+					     PM_ISPRSTN);
-+
-+	case BCM2835_POWER_DOMAIN_IMAGE_H264:
-+		return bcm2835_asb_power_off(pd, PM_IMAGE,
-+					     ASB_H264_M_CTRL, ASB_H264_S_CTRL,
-+					     PM_H264RSTN);
-+
-+	case BCM2835_POWER_DOMAIN_USB:
-+		PM_WRITE(PM_USB, 0);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_DSI0:
-+		PM_WRITE(PM_DSI0, PM_DSI0_CTRLEN);
-+		PM_WRITE(PM_DSI0, 0);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_DSI1:
-+		PM_WRITE(PM_DSI1, PM_DSI1_CTRLEN);
-+		PM_WRITE(PM_DSI1, 0);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_CCP2TX:
-+		PM_WRITE(PM_CCP2TX, PM_CCP2TX_CTRLEN);
-+		PM_WRITE(PM_CCP2TX, 0);
-+		return 0;
-+
-+	case BCM2835_POWER_DOMAIN_HDMI:
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) | PM_HDMI_LDOPD);
-+		PM_WRITE(PM_HDMI, PM_READ(PM_HDMI) & ~PM_HDMI_CTRLEN);
-+		return 0;
-+
-+	default:
-+		dev_err(power->dev, "Invalid domain %d\n", pd->domain);
-+		return -EINVAL;
-+	}
-+}
-+
-+static void
-+bcm2835_init_power_domain(struct bcm2835_power *power,
-+			  int pd_xlate_index, const char *name)
-+{
-+	struct device *dev = power->dev;
-+	struct bcm2835_power_domain *dom = &power->domains[pd_xlate_index];
-+
-+	dom->clk = devm_clk_get(dev->parent, name);
-+
-+	dom->base.name = name;
-+	dom->base.power_on = bcm2835_power_pd_power_on;
-+	dom->base.power_off = bcm2835_power_pd_power_off;
-+
-+	dom->domain = pd_xlate_index;
-+	dom->power = power;
-+
-+	/* XXX: on/off at boot? */
-+	pm_genpd_init(&dom->base, NULL, true);
-+
-+	power->pd_xlate.domains[pd_xlate_index] = &dom->base;
-+}
-+
-+/** bcm2835_reset_reset - Resets a block that has a reset line in the
-+ * PM block.
-+ *
-+ * The consumer of the reset controller must have the power domain up
-+ * -- there's no reset ability with the power domain down.  To reset
-+ * the sub-block, we just disable its access to memory through the
-+ * ASB, reset, and re-enable.
-+ */
-+static int bcm2835_reset_reset(struct reset_controller_dev *rcdev,
-+			       unsigned long id)
-+{
-+	struct bcm2835_power *power = container_of(rcdev, struct bcm2835_power,
-+						   reset);
-+	struct bcm2835_power_domain *pd;
-+	int ret;
-+
-+	switch (id) {
-+	case BCM2835_RESET_V3D:
-+		pd = &power->domains[BCM2835_POWER_DOMAIN_GRAFX_V3D];
-+		break;
-+	case BCM2835_RESET_H264:
-+		pd = &power->domains[BCM2835_POWER_DOMAIN_IMAGE_H264];
-+		break;
-+	case BCM2835_RESET_ISP:
-+		pd = &power->domains[BCM2835_POWER_DOMAIN_IMAGE_ISP];
-+		break;
-+	default:
-+		dev_err(power->dev, "Bad reset id %ld\n", id);
-+		return -EINVAL;
-+	}
-+
-+	ret = bcm2835_power_pd_power_off(&pd->base);
-+	if (ret)
-+		return ret;
-+
-+	return bcm2835_power_pd_power_on(&pd->base);
-+}
-+
-+static int bcm2835_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct bcm2835_power *power = container_of(rcdev, struct bcm2835_power,
-+						   reset);
-+
-+	switch (id) {
-+	case BCM2835_RESET_V3D:
-+		return !PM_READ(PM_GRAFX & PM_V3DRSTN);
-+	case BCM2835_RESET_H264:
-+		return !PM_READ(PM_IMAGE & PM_H264RSTN);
-+	case BCM2835_RESET_ISP:
-+		return !PM_READ(PM_IMAGE & PM_ISPRSTN);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+const struct reset_control_ops bcm2835_reset_ops = {
-+	.reset = bcm2835_reset_reset,
-+	.status = bcm2835_reset_status,
-+};
-+
-+static const char *const power_domain_names[] = {
-+	[BCM2835_POWER_DOMAIN_GRAFX] = "grafx",
-+	[BCM2835_POWER_DOMAIN_GRAFX_V3D] = "v3d",
-+
-+	[BCM2835_POWER_DOMAIN_IMAGE] = "image",
-+	[BCM2835_POWER_DOMAIN_IMAGE_PERI] = "peri_image",
-+	[BCM2835_POWER_DOMAIN_IMAGE_H264] = "h264",
-+	[BCM2835_POWER_DOMAIN_IMAGE_ISP] = "isp",
-+
-+	[BCM2835_POWER_DOMAIN_USB] = "usb",
-+	[BCM2835_POWER_DOMAIN_DSI0] = "dsi0",
-+	[BCM2835_POWER_DOMAIN_DSI1] = "dsi1",
-+	[BCM2835_POWER_DOMAIN_CAM0] = "cam0",
-+	[BCM2835_POWER_DOMAIN_CAM1] = "cam1",
-+	[BCM2835_POWER_DOMAIN_CCP2TX] = "ccp2tx",
-+	[BCM2835_POWER_DOMAIN_HDMI] = "hdmi",
-+};
-+
-+static int bcm2835_power_probe(struct platform_device *pdev)
-+{
-+	struct bcm2835_pm *pm = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct bcm2835_power *power;
-+	static const struct {
-+		int parent, child;
-+	} domain_deps[] = {
-+		{ BCM2835_POWER_DOMAIN_GRAFX, BCM2835_POWER_DOMAIN_GRAFX_V3D },
-+		{ BCM2835_POWER_DOMAIN_IMAGE, BCM2835_POWER_DOMAIN_IMAGE_PERI },
-+		{ BCM2835_POWER_DOMAIN_IMAGE, BCM2835_POWER_DOMAIN_IMAGE_H264 },
-+		{ BCM2835_POWER_DOMAIN_IMAGE, BCM2835_POWER_DOMAIN_IMAGE_ISP },
-+		{ BCM2835_POWER_DOMAIN_IMAGE_PERI, BCM2835_POWER_DOMAIN_USB },
-+		{ BCM2835_POWER_DOMAIN_IMAGE_PERI, BCM2835_POWER_DOMAIN_CAM0 },
-+		{ BCM2835_POWER_DOMAIN_IMAGE_PERI, BCM2835_POWER_DOMAIN_CAM1 },
-+	};
-+	int ret, i;
-+	u32 id;
-+
-+	power = devm_kzalloc(dev, sizeof(*power), GFP_KERNEL);
-+	if (!power)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, power);
-+
-+	power->dev = dev;
-+	power->base = pm->base;
-+	power->asb = pm->asb;
-+
-+	id = ASB_READ(ASB_AXI_BRDG_ID);
-+	if (id != 0x62726467 /* "BRDG" */) {
-+		dev_err(dev, "ASB register ID returned 0x%08x\n", id);
-+		return -ENODEV;
-+	}
-+
-+	power->pd_xlate.domains = devm_kcalloc(dev,
-+					       ARRAY_SIZE(power_domain_names),
-+					       sizeof(*power->pd_xlate.domains),
-+					       GFP_KERNEL);
-+	if (!power->pd_xlate.domains)
-+		return -ENOMEM;
-+
-+	power->pd_xlate.num_domains = ARRAY_SIZE(power_domain_names);
-+
-+	for (i = 0; i < ARRAY_SIZE(power_domain_names); i++)
-+		bcm2835_init_power_domain(power, i, power_domain_names[i]);
-+
-+	for (i = 0; i < ARRAY_SIZE(domain_deps); i++) {
-+		pm_genpd_add_subdomain(&power->domains[domain_deps[i].parent].base,
-+				       &power->domains[domain_deps[i].child].base);
-+	}
-+
-+	power->reset.owner = THIS_MODULE;
-+	power->reset.nr_resets = BCM2835_RESET_COUNT;
-+	power->reset.ops = &bcm2835_reset_ops;
-+	power->reset.of_node = dev->parent->of_node;
-+
-+	ret = devm_reset_controller_register(dev, &power->reset);
-+	if (ret)
-+		return ret;
-+
-+	of_genpd_add_provider_onecell(dev->parent->of_node, &power->pd_xlate);
-+
-+	dev_info(dev, "Broadcom BCM2835 power domains driver");
-+	return 0;
-+}
-+
-+static int bcm2835_power_remove(struct platform_device *pdev)
-+{
-+	return 0;
-+}
-+
-+static struct platform_driver bcm2835_power_driver = {
-+	.probe		= bcm2835_power_probe,
-+	.remove		= bcm2835_power_remove,
-+	.driver = {
-+		.name =	"bcm2835-power",
-+	},
-+};
-+module_platform_driver(bcm2835_power_driver);
-+
-+MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
-+MODULE_DESCRIPTION("Driver for Broadcom BCM2835 PM power domains and reset");
-+MODULE_LICENSE("GPL");
-diff --git a/include/dt-bindings/soc/bcm2835-pm.h b/include/dt-bindings/soc/bcm2835-pm.h
-new file mode 100644
-index 000000000000..153d75b8d99f
---- /dev/null
-+++ b/include/dt-bindings/soc/bcm2835-pm.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+
-+#ifndef _DT_BINDINGS_ARM_BCM2835_PM_H
-+#define _DT_BINDINGS_ARM_BCM2835_PM_H
-+
-+#define BCM2835_POWER_DOMAIN_GRAFX		0
-+#define BCM2835_POWER_DOMAIN_GRAFX_V3D		1
-+#define BCM2835_POWER_DOMAIN_IMAGE		2
-+#define BCM2835_POWER_DOMAIN_IMAGE_PERI		3
-+#define BCM2835_POWER_DOMAIN_IMAGE_ISP		4
-+#define BCM2835_POWER_DOMAIN_IMAGE_H264		5
-+#define BCM2835_POWER_DOMAIN_USB		6
-+#define BCM2835_POWER_DOMAIN_DSI0		7
-+#define BCM2835_POWER_DOMAIN_DSI1		8
-+#define BCM2835_POWER_DOMAIN_CAM0		9
-+#define BCM2835_POWER_DOMAIN_CAM1		10
-+#define BCM2835_POWER_DOMAIN_CCP2TX		11
-+#define BCM2835_POWER_DOMAIN_HDMI		12
-+
-+#define BCM2835_POWER_DOMAIN_COUNT		13
-+
-+#define BCM2835_RESET_V3D			0
-+#define BCM2835_RESET_ISP			1
-+#define BCM2835_RESET_H264			2
-+
-+#define BCM2835_RESET_COUNT			3
-+
-+#endif /* _DT_BINDINGS_ARM_BCM2835_PM_H */
-diff --git a/include/linux/mfd/bcm2835-pm.h b/include/linux/mfd/bcm2835-pm.h
-index b7d0ee1feffa..ed37dc40e82a 100644
---- a/include/linux/mfd/bcm2835-pm.h
-+++ b/include/linux/mfd/bcm2835-pm.h
-@@ -8,6 +8,7 @@
- struct bcm2835_pm {
- 	struct device *dev;
- 	void __iomem *base;
-+	void __iomem *asb;
+ #endif /* CONFIG_PM */
+ 
+ static const struct dev_pm_ops skl_pm = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(skl_suspend, skl_resume)
+-	SET_RUNTIME_PM_OPS(skl_runtime_suspend, skl_runtime_resume, NULL)
++	SET_RUNTIME_PM_OPS(skl_runtime_suspend, skl_runtime_resume,
++			   skl_runtime_idle)
+ 	.suspend_late = skl_suspend_late,
  };
  
- #endif /* BCM2835_MFD_PM_H */
+@@ -980,8 +1013,8 @@ static int skl_first_init(struct hdac_bus *bus)
+ 	return skl_init_chip(bus, true);
+ }
+ 
+-static int skl_probe(struct pci_dev *pci,
+-		     const struct pci_device_id *pci_id)
++static int __skl_probe(struct pci_dev *pci,
++		       const struct pci_device_id *pci_id)
+ {
+ 	struct skl *skl;
+ 	struct hdac_bus *bus = NULL;
+@@ -1060,6 +1093,25 @@ static int skl_probe(struct pci_dev *pci,
+ 	return err;
+ }
+ 
++static int skl_probe(struct pci_dev *pci,
++		     const struct pci_device_id *pci_id)
++{
++	int ret = -ENODEV;
++
++	if (skl_legacy_binding != SKL_BIND_LEGACY)
++		ret = __skl_probe(pci, pci_id);
++
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++	if (ret < 0 && skl_legacy_binding != SKL_BIND_ASOC) {
++		skl_fallback_driver = snd_hda_intel_probe(pci);
++		ret = PTR_ERR_OR_ZERO(skl_fallback_driver);
++		if (ret)
++			skl_fallback_driver = NULL;
++	}
++#endif
++	return ret;
++}
++
+ static void skl_shutdown(struct pci_dev *pci)
+ {
+ 	struct hdac_bus *bus = pci_get_drvdata(pci);
+@@ -1067,6 +1119,13 @@ static void skl_shutdown(struct pci_dev *pci)
+ 	struct hdac_ext_stream *stream;
+ 	struct skl *skl;
+ 
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++	if (skl_fallback_driver) {
++		skl_fallback_driver->shutdown(pci);
++		return;
++	}
++#endif
++
+ 	if (!bus)
+ 		return;
+ 
+@@ -1089,6 +1148,14 @@ static void skl_remove(struct pci_dev *pci)
+ 	struct hdac_bus *bus = pci_get_drvdata(pci);
+ 	struct skl *skl = bus_to_skl(bus);
+ 
++#ifdef CONFIG_SND_SOC_INTEL_SKL_LEGACY_SUPPORT
++	if (skl_fallback_driver) {
++		skl_fallback_driver->remove(pci);
++		skl_fallback_driver = NULL;
++		return;
++	}
++#endif
++
+ 	release_firmware(skl->tplg);
+ 
+ 	pm_runtime_get_noresume(&pci->dev);
 -- 
-2.19.1
+2.17.1
 
