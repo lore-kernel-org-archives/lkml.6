@@ -4,143 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F904C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C923C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 810DF2087E
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 351AB20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:51:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bR53PuEk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 810DF2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="VS7pSOvY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 351AB20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbeKUDU0 (ORCPT
+        id S1730179AbeKUDVQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:20:26 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54884 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729353AbeKUDUZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:20:25 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r63-v6so2800169wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 08:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+Wf6CDJUPs+eWjtmr8Hr9KG3FFVm+nlkqZS2f8RgM/w=;
-        b=bR53PuEkjfKVO5TfuQ57wxNpCGss5PElS42NlnIjUGGw8biMobE8VfD8A7yOhyg7TC
-         evXEdHcDLEQS1PR8hyjN3k1q1TpLWTTPVIMHma0fR4A9eq/FXWqA9rrXZQ6+52BApAWS
-         dXn5fVB13ahQLsouU+4AlZzMipjOTQmhOgXT0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=+Wf6CDJUPs+eWjtmr8Hr9KG3FFVm+nlkqZS2f8RgM/w=;
-        b=XCi1fe4x3AAr1lgBPGdk2tL5nSpIPb10ZHE5EpeBBK2H8C5+/Y7aGLWij/RY05tqN1
-         inMr9Bc+ShL/g1uW9cBfXlMwmGfXUYuCMKR7M0I0y83OLLaHSUUwU3jfXRX1+bhFF+Bb
-         0WQfalytU63W4h5hcWChYtWZveVQUoVWhN0H+rKIzHp1xvM0PTMGYFQFNEfWw3DgbCA3
-         bFLjOlJgGhx0RHym7N2kpF+VP1mV0pAQj5FqdA6Q9ZaRQ9nuSZ8elNnpvgL7SW59JaUn
-         ekM4CJ+iBxLG/fwmpn332jxXYztcw1/VyoZFN80kE1PFUrz7DqrG42kstJMusVXTvbFI
-         Qhvw==
-X-Gm-Message-State: AGRZ1gJCgDVt1DGAiddgsQMMWj9Bp0UOH2su0FarDMTtslb24MzwLxQY
-        JRIPzTgpb7KxaK8kJbNUiaR+mA==
-X-Google-Smtp-Source: AJdET5dkziSdP8kN9ecWfAoJJIrNuDvoLya7OiySpONwRyyCGhF1GloXfIzKPQNpK90RAvs1zJhLRA==
-X-Received: by 2002:a1c:bc82:: with SMTP id m124-v6mr2719620wmf.47.1542732619004;
-        Tue, 20 Nov 2018 08:50:19 -0800 (PST)
-Received: from [192.168.43.112] ([37.162.66.240])
-        by smtp.gmail.com with ESMTPSA id x6-v6sm13626648wrs.50.2018.11.20.08.50.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 08:50:18 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH V2 00/10] unify the interface of the proportional-share
- policy in blkio/io
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
-Date:   Tue, 20 Nov 2018 17:50:14 +0100
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+        Tue, 20 Nov 2018 22:21:16 -0500
+Received: from mail-eopbgr20047.outbound.protection.outlook.com ([40.107.2.47]:35360
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726179AbeKUDVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:21:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9FCtPTY9gCSfLnXD62XyhNmA20I24/PL/Qj6IFlM12U=;
+ b=VS7pSOvY+DF9H9YfshDQqJRvlQC8qq5Sm1myZuMoqvI15/wtd8/ItuCBn7hJ7JGeW/9GBOGAvvTshRM9d/fWLeDT+qgZaQZXBWb1+V3KhNGRKYn5W+dyo3UUT9XY7g1Yc+6vyl8x6wU/eYBX3rQO/+NlKu10DZw0sujkdbrWypY=
+Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com (10.172.255.18) by
+ VI1PR0402MB3743.eurprd04.prod.outlook.com (52.134.15.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Tue, 20 Nov 2018 16:51:08 +0000
+Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com
+ ([fe80::78a4:e54f:f26:36d9]) by VI1PR0402MB2800.eurprd04.prod.outlook.com
+ ([fe80::78a4:e54f:f26:36d9%7]) with mapi id 15.20.1294.045; Tue, 20 Nov 2018
+ 16:51:08 +0000
+From:   Ioana Ciornei <ioana.ciornei@nxp.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev-owner@vger.kernel.org" <netdev-owner@vger.kernel.org>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Leo Li <leoyang.li@nxp.com>
+Subject: RE: [PATCH v3 2/4] bus: fsl-mc: add fsl-mc userspace support
+Thread-Topic: [PATCH v3 2/4] bus: fsl-mc: add fsl-mc userspace support
+Thread-Index: AQHUgOdDaPiLexuoCUeDRyxH1kY+eaVY3r4AgAAASnA=
+Date:   Tue, 20 Nov 2018 16:51:07 +0000
+Message-ID: <VI1PR0402MB2800CF10719D11DD21F47356E0D90@VI1PR0402MB2800.eurprd04.prod.outlook.com>
+References: <1542728371-6972-1-git-send-email-ioana.ciornei@nxp.com>
+ <1542728371-6972-3-git-send-email-ioana.ciornei@nxp.com>
+ <20181120164416.GB27531@kroah.com>
+In-Reply-To: <20181120164416.GB27531@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ioana.ciornei@nxp.com; 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3743;6:r3/bghweo/S2khuesDmJZdcI7MRHDvhzPdPoPQsxgnhgiYj0mv1+sdeTjtbwmjZ9Nc0W668mT8QZiWxG6/jFKvmU10BuYUqYzcHNqXaf1Lujz86lfb94+a/W161/3hnjKJ8m8z2Ig6nnipOdGJTsWtmWER6m2axC3DACP3YyuNVT/j9hSyx6oEmu7VbQiZNwIf5ksGXFjIY6OSfPiQymS4nGat8prikRDUIPSXtkiZUUQg7hWc98LGzUO+aZw2h41HFPHF2uItbXj50FWt9QWuMaz8J6XGduw2Fycaqz1XUKnjnuUrYNWmE551+xqZw16OaNXYgrJgP9iwJ7eqe38m865x4+OabvVpnFQ5jodl5syef8zgSB8lPOFhGxQNJ/Wb11BOa0NLkv8cg2U8175MnzZM4VsMv0AW6Y2swRSVJ+db30aQdx1Tea1Fj6peCG5pkhg7XD3wQrGVkoM/tJAw==;5:zFo8b93uZtUFd5/20gbavU4cU/RTjXZUHBY55dFXP/cUwyKalN5f99H9jIP7T0OV8f6nvNyhCTaqtGR9Y4Joh80MrcRMbuzoP86xJsHw7J34/67oA9Sm4q11meRDs9iL7XADuyq7yqpChLPgdcxcqj2vubMl2kGAlrrJwz5ibdw=;7:SyFJefKnMoewh4koDzuo3K4zGflu2Br4wLm46HH/zn4ZIuMWL0S811OUak2aXjrgDx8RYr843nOt4P/XiONONh79+WeBIZf0R2jqJwi3+MypRJilGk5LcHSYJNKbCtgHmxYpn/oebsN4aidg6t1MkQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 90cd518b-364a-4846-5200-08d64f085e52
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3743;
+x-ms-traffictypediagnostic: VI1PR0402MB3743:
+x-microsoft-antispam-prvs: <VI1PR0402MB37431402800D70044484FCFFE0D90@VI1PR0402MB3743.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3743;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3743;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(39860400002)(346002)(136003)(366004)(189003)(199004)(31014005)(478600001)(33656002)(105586002)(5660300001)(106356001)(2906002)(6436002)(5640700003)(4326008)(25786009)(6246003)(53936002)(316002)(9686003)(55016002)(54906003)(2501003)(66066001)(14454004)(186003)(76176011)(97736004)(2351001)(305945005)(7736002)(99286004)(6506007)(74316002)(11346002)(3846002)(6116002)(486006)(476003)(2900100001)(7696005)(102836004)(26005)(1730700003)(44832011)(68736007)(8676002)(6916009)(81166006)(446003)(71190400001)(71200400001)(256004)(229853002)(86362001)(8936002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3743;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: U8QSR3JCn1xj2SbUDLywzZDGGaRnKVJp535YCc58FofJpG4jb6/3V4idsFF4K2uTFH2lhdeEeMu6JHYuCsKkydCC+wqixpTgy4I7BFz2D6H/6458/SHGgMT3Fe0W7mmnS/ubsz2CVq5ii8cEYEbrim0u+I/H9XUJFQQlXWvEwdLiJNInXx0/+c7y/fcQGrJ7dP3Q8sUQGDnGjTJXeU7QdB11JpOvrL3m59M0SiqP1A1pK05ryP339X6Gcys3jNR1VC3owW2R6KNPxstX8q6DMSskENGJZcdovSWodn+jRhMxq5Y/+8Pz9bw7BY2m0xv67DWGghQiaZf9FZjlFrqHoEPyXJ/dbwI0KSIMlcY7F+A=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <25296DAE-73EC-46CC-9A98-A8B7E9017BB7@linaro.org>
-References: <20181119103424.3853-1-paolo.valente@linaro.org>
- <20181120162816.GV2509588@devbig004.ftw2.facebook.com>
-To:     Tejun Heo <tj@kernel.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90cd518b-364a-4846-5200-08d64f085e52
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 16:51:07.8488
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3743
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> Il giorno 20 nov 2018, alle ore 17:28, Tejun Heo <tj@kernel.org> ha =
-scritto:
+> On Tue, Nov 20, 2018 at 03:39:45PM +0000, Ioana Ciornei wrote:
+> > +
+> > +			error =3D fsl_mc_uapi_create_device_file(mc_bus);
+> > +			if (error < 0) {
+> > +				error =3D -EPROBE_DEFER;
+> > +				goto error_cleanup_msi_domain;
+> > +			}
 >=20
-> Hello, Paolo.
->=20
-> On Mon, Nov 19, 2018 at 11:34:14AM +0100, Paolo Valente wrote:
->> - if all entities produce the same output, the this common output is
->> shown only once;
->> - if the outputs differ, then every per-entity output is shown,
->> followed by the name of the entity that produced that output.
->=20
-> So, this doesn't make sense to me.  One set of numbers is meaningful,
-> the other not and the user doesn't have a way to tell which one is.
-> It makes no sense to present both numbers.
+> What error could occur here that would be somehow fixed if you defer and =
+try
+> this all again?  Shouldn't you just return the error given (as something =
+really went
+> wrong here, it's not a "something else needs to start up first issue), an=
+d abort?
 >=20
 
-I do agree that these numbers may confuse.  Before discussing how to
-do this better, let me tell you why we are showing them.
+It's really a "something else needs to start up first" type of issue. The f=
+sl_mc_uapi_create_device_file fails only if the misc_register fails and thi=
+s could really happen when the misc char driver is not yet initialized.
 
-In the first place, the need for a diversified output showed up in the
-following case.  Given a group using the blkio/io controller, and two
-drives
-- one with legacy block and cfq
-- one with blk-mq and bfq
-there will be different statistics for each scheduler, for the same
-interface files.
+Initially, I have used the register_chrdev API and you suggested to use a m=
+isc device and just defer probe if it's not yet initialized.
 
-Then we understood that exactly the same happens with throttling, in
-case the latter is activated on different devices w.r.t. bfq.
+Ioana C
 
-In addition, the same may happen, in the near future, with the
-bandwidth controller Josef is working on.  If the controller can be
-configured per device, as with throttling, then statistics may differ,
-for the same interface files, between bfq, throttling and that
-controller.
 
-More general examples could be made considering that this extension is
-for the generic cgroup interface.
-
-Of course, suggestions for a clearer way to show these numbers are
-more than welcome!  Maybe involved device identifiers can be somehow
-gathered by the entities providing these numbers, and then shown?  In
-this respect, consider that, even without this extension, one still
-has the fundamental problem of not knowing to which devices numbers
-apply (unless I'm missing something else).
-
-Thanks,
-Paolo
-
-> Thanks.
+> thanks,
 >=20
-> --=20
-> tejun
-
+> greg k-h
