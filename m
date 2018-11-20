@@ -2,123 +2,89 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86266C4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502E5C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DEA720851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:18:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEA720851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E283206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:25:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSl1+qml"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E283206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbeKTSq3 (ORCPT
+        id S1726588AbeKTSxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:46:29 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37799 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbeKTSq3 (ORCPT
+        Tue, 20 Nov 2018 13:53:36 -0500
+Received: from mail-io1-f41.google.com ([209.85.166.41]:37748 "EHLO
+        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbeKTSxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:46:29 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAK8HwSN2909067
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 20 Nov 2018 00:17:58 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAK8Hwvc2909064;
-        Tue, 20 Nov 2018 00:17:58 -0800
-Date:   Tue, 20 Nov 2018 00:17:58 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Lutomirski <tipbot@zytor.com>
-Message-ID: <tip-1ad33f5aec20f53785dbad44c6fb3b204aefd921@git.kernel.org>
-Cc:     mingo@kernel.org, dave.hansen@linux.intel.com, luto@kernel.org,
-        brgerst@gmail.com, bp@alien8.de, yu-cheng.yu@intel.com,
-        riel@surriel.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        dvlasenk@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        luto@amacapital.net
-Reply-To: bp@alien8.de, riel@surriel.com, yu-cheng.yu@intel.com,
-          brgerst@gmail.com, luto@kernel.org, dave.hansen@linux.intel.com,
-          mingo@kernel.org, luto@amacapital.net, hpa@zytor.com,
-          tglx@linutronix.de, dvlasenk@redhat.com,
-          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-          peterz@infradead.org
-In-Reply-To: <d418022aa0fad9cb40467aa7acaf4e95be50ee96.1542667307.git.luto@kernel.org>
-References: <d418022aa0fad9cb40467aa7acaf4e95be50ee96.1542667307.git.luto@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/mm] x86/fault: Don't set thread.cr2, etc before OOPSing
-Git-Commit-ID: 1ad33f5aec20f53785dbad44c6fb3b204aefd921
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 20 Nov 2018 13:53:36 -0500
+Received: by mail-io1-f41.google.com with SMTP id a3so767991ioc.4;
+        Tue, 20 Nov 2018 00:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ItsFuh9qLalskdwwc1EzGsSkdgnBDgmaIBMhKLTUYjk=;
+        b=hSl1+qmlUkMIOTZ4NpjYhWyqfKFABq2huu51/9LR83HYFktO1teupaW1XJO2KlzDjZ
+         dwgfIb5nM84LUd4RAtA8aXvcZX3o0eSgAjXWXJJQLLL4OcQhiiT4zfus4lwWmBedsldy
+         otoqhS+Dwcg7CgMMEvh6P+aIpUugmzbXL8RIprtPUf30kLAvcVnjc/3lmdUbXoyV6cXN
+         ARFBLajWif91X4AmFUSBAIE/eNM6+DFKYTArMBu6G4GNcW8/xPmNuTMsb3nyU1InzTMf
+         I/WcE0YqcZnuI3Vs/N+xNYVw874uxp1ovc1b5EORxLiGGHlB0vg9xVDlRSNTkqYLBFS7
+         bhLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ItsFuh9qLalskdwwc1EzGsSkdgnBDgmaIBMhKLTUYjk=;
+        b=unWqR9Lq6X0FviRKNsISfTcGoY8NytHcfpzCHS8AzFBm3J4LT65uTcAQ/pzLkk0buB
+         lDwXXq5E4xJlb2xFzMkqZOBm0YDDc1U3lRN4+0pmnpNZRh/p5WmXV8hQMJxNgnqR0S4y
+         aX1dCBbH2LYxOI83jkZBtbVB2bxDnCGDaxuybw98+qk6O9h/NTnaJcRYcYuIfarXdZEm
+         Dopxx3qUP7Azt5h36LykPq1QH5NKgdOAYV18vpSE8c91DMvuYhdgmyE1F5PuYp0RfjUA
+         wrmEUjrb3caLeLLmOmgJ9HA+Nx0rwjkd9q+sff+aqsJP1LAm0R8Zkuga6mCK0MZDz1zQ
+         hPtg==
+X-Gm-Message-State: AA+aEWanB12+7AUxaZfv54Zs8mLQVymj/t/7gDBMvL30pizqkc4YyU0a
+        NmmKnCaqxZqG6Zs33sQjvhMAHUzGXT5SUCojYg+Hjg==
+X-Google-Smtp-Source: AFSGD/X4OHM6OjO6fFpRRTFw5sA+R5VlnRS9N+OGsgwapqZPLbtqcYr1b7zTFPZaCWtAlSpKAquWRK2+BIUYcknOXYQ=
+X-Received: by 2002:a6b:5b12:: with SMTP id v18mr858868ioh.157.1542702342234;
+ Tue, 20 Nov 2018 00:25:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20181120161546.1098b346@canb.auug.org.au>
+In-Reply-To: <20181120161546.1098b346@canb.auug.org.au>
+From:   Xin Long <lucien.xin@gmail.com>
+Date:   Tue, 20 Nov 2018 17:25:30 +0900
+Message-ID: <CADvbK_fBH5zL6H+j3vZPT3BuG5m0_tDKJ=YUzEe5PeMCz4y9pQ@mail.gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     davem <davem@davemloft.net>, network dev <netdev@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  1ad33f5aec20f53785dbad44c6fb3b204aefd921
-Gitweb:     https://git.kernel.org/tip/1ad33f5aec20f53785dbad44c6fb3b204aefd921
-Author:     Andy Lutomirski <luto@kernel.org>
-AuthorDate: Mon, 19 Nov 2018 14:45:32 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 20 Nov 2018 08:44:30 +0100
+On Tue, Nov 20, 2018 at 2:15 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi all,
+>
+> Commit
+>
+>   69fec325a643 ("Revert "sctp: remove sctp_transport_pmtu_check"")
+>
+> is missing a Signed-off-by from its author.
+Hi, Stephen, sorry about this.
 
-x86/fault: Don't set thread.cr2, etc before OOPSing
+David has reminded me, and I will be careful next time.
 
-The fault handling code sets the cr2, trap_nr, and error_code fields
-in thread_struct before OOPSing.  No one reads those fields during
-an OOPS, so remove the code to set them.
+Do I need to do something for this one now?
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/d418022aa0fad9cb40467aa7acaf4e95be50ee96.1542667307.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/mm/fault.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index b5ec1ca2f4a0..b898a38093a3 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -621,10 +621,6 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
- 	       tsk->comm, address);
- 	dump_pagetable(address);
- 
--	tsk->thread.cr2		= address;
--	tsk->thread.trap_nr	= X86_TRAP_PF;
--	tsk->thread.error_code	= error_code;
--
- 	if (__die("Bad pagetable", regs, error_code))
- 		sig = 0;
- 
-@@ -753,10 +749,6 @@ no_context(struct pt_regs *regs, unsigned long error_code,
- 	if (task_stack_end_corrupted(tsk))
- 		printk(KERN_EMERG "Thread overran stack, or stack corrupted\n");
- 
--	tsk->thread.cr2		= address;
--	tsk->thread.trap_nr	= X86_TRAP_PF;
--	tsk->thread.error_code	= error_code;
--
- 	sig = SIGKILL;
- 	if (__die("Oops", regs, error_code))
- 		sig = 0;
+Thanks.
