@@ -2,120 +2,234 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238D0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D05DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8FC2080C
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:18:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D7A208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 01:20:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="G8oNVOdL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8FC2080C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oIcnnVsb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17D7A208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbeKTLpO (ORCPT
+        id S1732311AbeKTLq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 06:45:14 -0500
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:20327 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729913AbeKTLpO (ORCPT
+        Tue, 20 Nov 2018 06:46:28 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43730 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726390AbeKTLq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 06:45:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1542676724; x=1574212724;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=KDp4SV5wa6FEhU/tN43Qt3FuqMoswbj9h1vKtM2TQe4=;
-  b=G8oNVOdLf+/7vKAjuH8kCIcoqqKd4j4pXjThGgQ4uzLaiKv+LRtaWiZn
-   3jcozyd7YdKPUa+PLUb++udlpFztPKht8WohdS3iXsDspwVvhZ1U2mYBS
-   KqT8dlqLuAU67CyKFTRRmH7JA9QlysgbHVcCNLP1JswQfz2hx3PzOt7uO
-   NroFGQZeyKK/Y8NYe/Hai2qp5BAA1ol4501Zh/RdaoRCW9PTDW8sTMmid
-   E6GeaUCFUzw5r6FAtv8pU7hoKyQnnGuW63+3ZfQ2J5TOPBV9m9p4KScJf
-   wyGeO7cvCihDDP56xrmlr9YjY8LbSxKFB8IbVws6XTdkqOUbVKr9kZXIB
-   w==;
-X-IronPort-AV: E=Sophos;i="5.56,255,1539619200"; 
-   d="scan'208";a="199186970"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Nov 2018 09:18:43 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 19 Nov 2018 17:01:59 -0800
-Received: from cnf003109.ad.shared (HELO [10.86.54.248]) ([10.86.54.248])
-  by uls-op-cesaip02.wdc.com with ESMTP; 19 Nov 2018 17:18:44 -0800
-Subject: Re: [RFC PATCH] Documentation: DT: arm: add support for sockets
- defining package boundaries
-To:     Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "mick@ics.forth.gr" <mick@ics.forth.gr>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "zong@andestech.com" <zong@andestech.com>,
-        "alankao@andestech.com" <alankao@andestech.com>
-References: <20181107171344.983-1-sudeep.holla@arm.com>
- <5bea0ecf.1c69fb81.7820a.2052@mx.google.com>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <e599eaf5-381b-e2e0-067a-4225bb348b80@wdc.com>
-Date:   Mon, 19 Nov 2018 17:18:42 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
+        Tue, 20 Nov 2018 06:46:27 -0500
+Received: by mail-ua1-f67.google.com with SMTP id z11so78842uaa.10
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Nov 2018 17:19:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=IT0/wzXaZloXy84KawzTMvz3xXD+UvQiCnHZyuu+rEY=;
+        b=oIcnnVsbnVYHYKYdHdg0NG4cISqrhSz/k9d7WNDFzFtBlCQ1IkosK8LQ9CfXBl5cmg
+         bp8+vgg6ydxxdUiDQo8PC4w3Puk+7C/BXXp1/X8loar1xz2txmcioCX644UGBOQwT91P
+         AeYrfTcW5wYZbDp4S0Dhy8TiN3fxGw4YijuO8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IT0/wzXaZloXy84KawzTMvz3xXD+UvQiCnHZyuu+rEY=;
+        b=kWszaxnpTU9Xeg7mYLs16uID1QuWYSf1ISA9FZMHYvl8fo944/K8jauei8K1EBqLBB
+         rQHaq2rmIBU71e7N0pxKgB/A5SqKZym77rwMcVr4Yv1k06UG1kes+osCRfZ89MkABv94
+         BHfhR02Ar17OIebBkZLRO2cXAiQoLm9lq7mi7E0527byDmEwyRTahVf582KJazuAB0nR
+         H7PU0yTiD8yi2JlAZXr1PE77m8A9t4dW9mWdCl0oP9/YAzsmCT801wfZg8EdBaq0l0Dq
+         FKmnKqtlpY2FCK3xwSF6YriOPOrpDM9Hwy+rLjhtLkwYBerUIav1/Au+rso57zYGZO6S
+         KVyQ==
+X-Gm-Message-State: AA+aEWa0EoeJyEQJMT+V9gz6jQs4x0IY3vsrgbCMXbr2F8hbqhj8aeRj
+        hdqGfBhc01rweqwGgWin56w4Xa0DxoRx/8Eosj1c28ZGE+V37Q==
+X-Google-Smtp-Source: AFSGD/WM9AlUeC3Pc8RHTG8+GP/dQFpngqNAtRu2SJ13ZnWRMJX4WNwQBfZtMK9Bo6YJH1ljv4+EUPqwwOLaR+MQbz0=
+X-Received: by 2002:ab0:2857:: with SMTP id c23mr6891uaq.7.1542676796581; Mon,
+ 19 Nov 2018 17:19:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <5bea0ecf.1c69fb81.7820a.2052@mx.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180912121955.33048-1-cychiang@chromium.org> <20180912121955.33048-2-cychiang@chromium.org>
+ <20180920161905.GM2471@sirena.org.uk> <CAFv8NwLpS9r=jD2wyBsVgJJofkS1xJNo6YssgYXuVHDmGDLogg@mail.gmail.com>
+ <1539338716.6204.2.camel@pengutronix.de> <20181012134620.fhhkyvvdgoq4sxqi@flea>
+ <1539795757.4729.15.camel@pengutronix.de>
+In-Reply-To: <1539795757.4729.15.camel@pengutronix.de>
+From:   Cheng-yi Chiang <cychiang@chromium.org>
+Date:   Tue, 20 Nov 2018 09:19:29 +0800
+Message-ID: <CAFv8Nw+swSyCjPQXv4g80bZ6H_r--Q-PT=DA1NT4P=56_755Fg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ASoC: max98927: Add reset-gpio support
+To:     p.zabel@pengutronix.de
+Cc:     maxime.ripard@bootlin.com, Mark Brown <broonie@kernel.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ryan Lee <ryans.lee@maximintegrated.com>,
+        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
+        tzungbi@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/18 3:37 PM, Rob Herring wrote:
-> On Wed, Nov 07, 2018 at 05:13:44PM +0000, Sudeep Holla wrote:
->> The current ARM DT topology description provides the operating system
->> with a topological view of the system that is based on leaf nodes
->> representing either cores or threads (in an SMT system) and a
->> hierarchical set of cluster nodes that creates a hierarchical topology
->> view of how those cores and threads are grouped.
->>
->> However this hierarchical representation of clusters does not allow to
->> describe what topology level actually represents the physical package or
->> the socket boundary, which is a key piece of information to be used by
->> an operating system to optimize resource allocation and scheduling.
->>
->> Lets add a new "socket" node type in the cpu-map node to describe the
->> same.
->>
->> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->> ---
->>   .../devicetree/bindings/arm/topology.txt      | 52 ++++++++++++++-----
->>   1 file changed, 39 insertions(+), 13 deletions(-)
->>
->> (Note patch generated with -b option to avoid 60+ of whitespace changes)
->>
->> Hi Rob,
->>
->> You had expressed your interest to generalise the CPU topology bindings
->> accross multiple architectures. Do you want to move to the generic
->> bindings before adding this $subject socket support or is it OK to
->> finalise on this and then move the majority(based on the agreement)
->> to generic binding.
-> 
-> Doesn't really matter to me as long as Risc-V folks are in agreement.
-> 
-> Otherwise, this looks fine to me.
-> 
-> Rob
-> 
-> 
-I can apply this patch in my unify topology series and resend everything 
-together as one series.
+Hi Philipp,
 
+On Thu, Oct 18, 2018 at 1:02 AM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>
+> Hi Maxime,
+>
+> On Fri, 2018-10-12 at 15:46 +0200, Maxime Ripard wrote:
+> > On Fri, Oct 12, 2018 at 12:05:16PM +0200, Philipp Zabel wrote:
+> [...]
+> > > What I would like better would be to let the consumers keep their reset-
+> > > gpios bindings, but add an optional hold time override in the DT:
+> > >
+> > >     c1 {
+> > >             reset-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+> > >             reset-delays-us = <10000>;
+> > >     };
+> > >
+> > >     c2 {
+> > >             reset-gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+> > >             reset-delays-us = <10000>;
+> > >     };
+> > >
+> > > The reset framework could create a reset_control backed by a gpio
+> > > instead of a rcdev. I have an unfinished patch for this, but without the
+> > > sharing requirement adding the reset framework abstraction between gpiod
+> > > and drivers never seemed really worth it.
+> >
+> > I don't remember the exact details of our past discussion, but I
+> > (still) don't really think that this would work well.
+>
+> It has been a while :) Thanks for jumping back in.
+>
+> > I see two main shortcomings with that approach:
+> >
+> >   - I guess that the main reason you want to do that would be to have
+> >     easy DT backward compatibility.
+>
+> Yes, that is true. The other reason is that I'd like devices to have a
+> single binding, regardless of whether somebody decided to put them onto
+> a board with shared reset lines.
+>
+> I'd find it hard to advocate for changing the thankfully common case
+> of device-exclusive reset gpios from:
+>
+>         some-device {
+>                 reset-gpios = <&gpiox y>;
+>         };
+>
+> to:
+>
+>         rstc: reset-controller {
+>                 compatible = "gpio-reset";
+>                 reset-gpios <&gpiox y>;
+>         };
+>
+>         some-device {
+>                 resets = <&rstc 0>;
+>         };
+>
+> even for new bindings.
+>
+> If the reset framework only supports the latter, and not the former,
+> drivers for devices which already have reset-gpios would have to handle
+> both reset_control and gpiod functionality, which I think should not be
+> necessary.
+>
+> Note that this is not really an argument against a "gpio-reset"
+> controller driver, but an argument for reset-gpios support integrated
+> into the reset framework.
+> My argument against a "gpio-reset" device node in the DT is only that it
+> is basically a virtual device that would only be used to work around
+> missing reset-gpios support in the reset framework. Physically, this
+> "device" consists of no more than a few PCB traces.
+>
+> >     Yet, the addition of the
+> >     reset-delay-us would break that compatibility, since drivers that
+> >     would have been converted now need to have it somehow, but older
+> >     DTs wouldn't have it
+>
+> That is why such a property would have to be optional, and the drivers
+> would have to keep providing the reset delay themselves, as they
+> currently do when handling GPIOs directly.
+> It would only serve to override the driver default in case of additional
+> delay requirements due to board specifics (such as delay elements, or
+> shared resets).
+>
+> >   - There's so many variations of the reset-gpios property name that
+> >     you wouldn't be able to cover all the cases anyhow, at least
+> >     without breaking the compatibility (again).
+>
+> This is true, and I do not have a solution for this. Especially for
+> those cases that don't use gpiod yet.
+>
+>         of_get_named_gpio(node, "reset-gpio")
+>
+> is still quite common, but I'd really like on gpiolib for polarity
+> support.
+>
+> > But I also see your point, and you're right that converting everyone
+> > to a gpio-reset node will not happen (even though I'd still really
+> > like to have that binding).
+>
+> See above. I'd be a lot less reluctant to support this binding if
+> somebody could demonstrate a real gpio controlled reset controller
+> device of some kind. And even then I would not want to have to use
+> this device just to connect a single GPIO with a single reset input.
+>
+> > What about having a function that would be called by the consumer to
+> > instantiate that reset controller from a GPIO for us, instead of
+> > trying to do it automatically? That function could take the property
+> > name that holds the GPIO, which would cover the second drawback, and
+> > the delay, which would cover the first.
+>
+> I like this idea.
+>
+> I'd like to avoid having to fall back from gpiod to of_get_named_gpio if
+> possible, so maybe we'd have to extend gpiolib-of.c with an
+> of_find_reset_gpio function, as is done for SPI and regulators already.
+>
+> We probably would have to support delay ranges. I see a lot of
+> usleep_range calls between reset GPIO toggles in the drivers.
+>
 
-Regards,
-Atish
+This looks great.
+
+I am not sure what is the plan proceeding from here.
+Are you going to implement this feature with the unfinished patch you
+mentioned to create reset_control backed by a GPIO?
+I am willing to help.
+If you have patch I can help testing it.
+It will be easier to test the shared reset line on my side since the
+board I am working now has this use case.
+
+If you don't have time for this, I can work on it based on your WIP patch.
+In that case could you please post the patch ?
+I just want to make sure I am on the right direction solving this
+without making duplicate efforts..
+
+> > And in order to cover shared GPIO reset lines, we could just look at
+> > the one already created by other drivers, and if one has been created,
+> > we just give the reference to that one instead of creating it.
+> >
+> > Does that make sense?
+>
+> I'm not quite sure how to match an already requested reset control from
+> the list given of_node and gpio property name at the moment - this might
+> involve exporting gpiod_find from gpiolib, but API wise I think this is
+> a sane proposal.
+>
+> I would not want to add reset controller devices for each of these GPIO
+> reset controls, but rather store the gpio_desc reference in the
+> reset_control instead of the rcdev reference.
+
+This plan to support shared reset line makes sense.
+
+Thanks a lot!
+
+>
+> regards
+> Philipp
