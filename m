@@ -2,135 +2,96 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D2CCC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E838BC4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D377206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:09:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1QradOm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D377206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E5E01206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:10:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E01206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbeKUDjb (ORCPT
+        id S1730314AbeKUDki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:39:31 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46626 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbeKUDjb (ORCPT
+        Tue, 20 Nov 2018 22:40:38 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:52988 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725925AbeKUDki (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:39:31 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so2275550ljh.13;
-        Tue, 20 Nov 2018 09:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6pTolY5fBaArEwysL7aNl8s8rq9lJuVGpA3jmobaelg=;
-        b=L1QradOmxRCJrYHyaDm76U1qi08YKvXhoOCqz7dJs8S8GpYPAuJpI/KXHPqJKV0BCF
-         g9sZkPl+yzOhO7+Dfn4WC4EMCB/26lh9bug1/wp5hHCAN7V06QjogudMMsrhuCjyAsom
-         QVFjgU475ty81TOfDD7k7RgP5ZecOTCvdyJeBSSwLy+0pZb7RjIL2lEdAMluCSyJoizG
-         QIyrpZyczFrdp+vOzprRGLb74hgWQTluzefKQmGlT+zfSSUqu9S8MmPOomMmbetLHiUh
-         gKBLbixGnBdurnqQUOHmOm1vke/gPhQfCnwibvR7BOIvgGSHfklQIPiyhpe7GfJjwgpx
-         SSiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6pTolY5fBaArEwysL7aNl8s8rq9lJuVGpA3jmobaelg=;
-        b=t756VryuvVMB2BdE7x9DFBJTtZ5LhgXwbGLcv8srIxlST3Awe7EoIzWuuhzhH5H7+6
-         UnLOIOCZ1JyMGOZfDqDqxeTrjwjfKFBh/9Sr3sp9nnzbCS/IaP/GuGAjYkR/HJfrQ9CV
-         S8tiE8OM+dB/gCRlcVmZ3GFZSe3OeQG+qceLLpSv8INDpVno8Z70pks9IU1DYo8nMw/e
-         kZXkIfSb+dCFpmuEdTiLnB2o37VrQpWFbZiSS0ew+7dfxzo1puDlRBY4xw72CzjDVXFV
-         f8H773uokRzoyjAywAf2dfluvtXvNJUWqpGu7R8xilONeA262Bhkz8Qfnx+iM+SlxiR5
-         92hg==
-X-Gm-Message-State: AA+aEWYAO5Sozp7ucVb2BPYe2fpdAOjbfV7PO3Jb930PSK02QBWwjlhz
-        6vgCLNJ2V5gyTj3YYgFnscw=
-X-Google-Smtp-Source: AFSGD/UUbvdN4K8sjoh2xbxu2dXTZ3ENWI0nBht23mfP9lKDw3lGxKFsslMR923qg7dS2qxcf6rj3g==
-X-Received: by 2002:a2e:8156:: with SMTP id t22-v6mr1027230ljg.32.1542733758766;
-        Tue, 20 Nov 2018 09:09:18 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2522211ljk.53.2018.11.20.09.09.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 09:09:18 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gP9WY-0003mB-6o; Tue, 20 Nov 2018 18:09:18 +0100
-Date:   Tue, 20 Nov 2018 18:09:18 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] serdev: make synchronous write return bytes written
-Message-ID: <20181120170918.GH19900@localhost>
-References: <20181114150904.19653-1-johan@kernel.org>
- <20181114150904.19653-3-johan@kernel.org>
- <CAL_JsqLuF-t_Rf5Hh400=aeiLT_ahTfE0a_czZ6XRG-mD9xmig@mail.gmail.com>
+        Tue, 20 Nov 2018 22:40:38 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wAKH97NE014878;
+        Tue, 20 Nov 2018 11:10:18 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2ntg9svcq8-1;
+        Tue, 20 Nov 2018 11:10:18 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 30CC1611C8AF;
+        Tue, 20 Nov 2018 11:13:02 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Tue, 20 Nov 2018
+ 17:10:17 +0000
+Received: from [198.90.251.121] (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.121])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ wAKHAH31015287;        Tue, 20 Nov 2018 17:10:17 GMT
+Subject: Re: Applied "regulator: wm8994: Pass descriptor instead of GPIO
+ number" to the regulator tree
+To:     Mark Brown <broonie@kernel.org>
+CC:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+References: <CGME20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137@eucas1p2.samsung.com>
+ <66d3b74c-0152-b17b-89d4-a21d33445b25@samsung.com>
+ <20181120144700.GB16508@imbe.wolfsonmicro.main>
+ <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
+ <20181120153215.GC16508@imbe.wolfsonmicro.main>
+ <20181120153610.GD16508@imbe.wolfsonmicro.main>
+ <9314db6c-9498-579d-430c-5a2992fe513e@samsung.com>
+ <59879030-93a4-f562-b03b-c5e579d44e89@opensource.cirrus.com>
+ <772b6fdc-57af-fef2-0c85-78446bec2c2a@samsung.com>
+ <ea2b959c-0d04-6a50-4d69-3f03576fdac9@opensource.cirrus.com>
+ <20181120170103.GP3894@sirena.org.uk>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <5eec838b-e454-9ce4-22b1-7d00ef28ead4@opensource.cirrus.com>
+Date:   Tue, 20 Nov 2018 17:10:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLuF-t_Rf5Hh400=aeiLT_ahTfE0a_czZ6XRG-mD9xmig@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181120170103.GP3894@sirena.org.uk>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=500 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811200152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 09:15:37AM -0600, Rob Herring wrote:
-> On Wed, Nov 14, 2018 at 9:10 AM Johan Hovold <johan@kernel.org> wrote:
-> >
-> > Make the synchronous serdev_device_write() helper behave analogous to
-> > the asynchronous serdev_device_write_buf() by returning the number of
-> > bytes written (or rather buffered) also on timeout.
-> >
-> > This will allow drivers to distinguish the case where data was partially
-> > written from the case where no data was written.
-> >
-> > Also update the only two users that checked the return value.
-> >
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> > ---
-> >  drivers/gnss/serial.c     |  2 +-
-> >  drivers/gnss/sirf.c       |  2 +-
-> >  drivers/tty/serdev/core.c | 12 ++++++++++--
-> >  3 files changed, 12 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gnss/serial.c b/drivers/gnss/serial.c
-> > index 31e891f00175..def64b36d994 100644
-> > --- a/drivers/gnss/serial.c
-> > +++ b/drivers/gnss/serial.c
-> > @@ -65,7 +65,7 @@ static int gnss_serial_write_raw(struct gnss_device *gdev,
-> >
-> >         /* write is only buffered synchronously */
-> >         ret = serdev_device_write(serdev, buf, count, MAX_SCHEDULE_TIMEOUT);
-> > -       if (ret < 0)
-> > +       if (ret < 0 || ret < count)
+On 20/11/18 17:01, Mark Brown wrote:
+> On Tue, Nov 20, 2018 at 04:57:16PM +0000, Richard Fitzgerald wrote:
+>> On 20/11/18 16:34, Marek Szyprowski wrote:
 > 
-> The 2nd condition covers the 1st condition.
-
-Actually it does not; ret is signed and count is unsigned, so this is
-needed to catch negative errnos which would otherwise become larger than
-count due to integer promotion.
-
-> Though I guess this will all change anyways when you address the FIXME
-> below.
-
-Not sure about that yet. If wait_until_sent is interrupted the data has
-already been buffered and we need to return that count. So I think I'll
-just drop the FIXME.
-
-> >                 return ret;
-> >
-> >         /* FIXME: determine if interrupted? */
-
-Thanks,
-Johan
+>>> Deferred probe was there already. This patch however introduced the
+>>> warning from gpiolib and I would like to have it fixed somehow. In both
+> 
+>> I don't follow what it is you want, are you asking that it shouldn't probe
+>> defer, or that it shouldn't log the reason why it deferred?
+> 
+> He's complaining that gpiolib and/or the driver's usage of it shouldn't
+> be generating a backtrace in normal operation.
+> 
+Ah, I didn't see that. I seem to have not received the start of this thread and
+the subsequent discussion only includes the -517 warnings not a mention of
+a backtrace.
