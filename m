@@ -6,94 +6,89 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77BFC32789
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5831CC32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF9620831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE9520684
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 16:13:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="gPl0Z7ia"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBF9620831
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V1bA6YEe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE9520684
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbeKUCkv (ORCPT
+        id S1727733AbeKUCnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:40:51 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58634 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725887AbeKUCkv (ORCPT
+        Tue, 20 Nov 2018 21:43:16 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42059 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbeKUCnQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:40:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uTesk2etsoL6IXRDcehVebOgmWnojIYoc53uEp/6eEo=; b=gPl0Z7ia6x1M4jfY7OYNcfcK9
-        ZKPjRLSXasmQBxebS4mn8imDeFu+PDl6fZSIUoDIfJtEM5eSj1SlplPDxQDGJYf67ydcUEzzH3Z/W
-        8po0/k6me/ewvWdGfZeSdctIOg8AXA4gAuR7fOBC4mdFp5Td2Xpf3pYgtuRKW/d7HlnX8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP8c3-0001ko-Tf; Tue, 20 Nov 2018 16:10:55 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 888851124DC2; Tue, 20 Nov 2018 16:10:55 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 16:10:55 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>, evgreen@chromium.org,
-        swboyd@chromium.org, Dmitry Osipenko <digetx@gmail.com>,
-        ryandcase@chromium.org, David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] regulator: core: add enable_count for consumers to
- debug fs
-Message-ID: <20181120161055.GI3894@sirena.org.uk>
-References: <20181120002654.1891-1-dianders@chromium.org>
- <20181120002654.1891-5-dianders@chromium.org>
+        Tue, 20 Nov 2018 21:43:16 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d19so569519qtq.9;
+        Tue, 20 Nov 2018 08:13:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bgwKqPKTuNIZc8ZNsu7oVmFBZQ8IygAJo53SBFGFiIQ=;
+        b=V1bA6YEeXrAtNVoYUUFf0jskgCq4F6fh+L1tUr4yzb8+4XauJAgjqEJT4vZI8S7ryQ
+         g7yt1a3lwu4fXWSLPSLAO7F/D9UgZkLc9uVpsqIi+bszk5j0RQlf4j4oTC874itO9Lvc
+         4fxRpShIc5ARo8KqCeVpAQY5Cx/MKFkuAeEXM3hGPRGI+pa1kZ0adZq+4RLqhKTU9SAO
+         JkjtMmTV1v5movdnpcR7sg4IYmloHCavOT/Hmit++RUJfNucmgbnbNyEF4R5tpe4sKQ+
+         ufzT0OaMpBZumOBDp6Q52NQ2isscfdZb0uhux60HLPaVJkUlAVyfyBx8Ty1te+A094jm
+         0TCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bgwKqPKTuNIZc8ZNsu7oVmFBZQ8IygAJo53SBFGFiIQ=;
+        b=XVr9UaN+1wzA72mms+ZA9HYsUg3NmBLAIF0EJP8yq1UfOcOqkbzVu+6D+4ayxHi4mc
+         av08EZQ51mNATsPdGH1qa7cEVu5zwh3QpxZweBqbYWE5Hsk/tqXYJyqPUTPoFOjyVJSJ
+         U185hQbra3y//6vMjaSo/R21n0oJK4hLc5Xh19z0CHXIZYzio3iIlIlKwCJgP/nuIGqC
+         iKosL5nUT6UYRsKdhwfXulZ19A9at3EtLOysO/6WZ/R1vX9iACPT2GuTo6SKHKLaIP+w
+         vFLBBLJheKtDwyYIh7b/dUoZ10k0yxocrvCXchVh4JyH2fXJXC+ICoXNUF/0KaDJrPBH
+         k+gQ==
+X-Gm-Message-State: AGRZ1gKXBdevhM5J4yglMUamFY2StGB+jp2HuWdq845xWW0NvuuY2IB6
+        Lh2TB5WDkOk40PNOsiVfICY=
+X-Google-Smtp-Source: AFSGD/VIsW4gD8DLFVSWgSyD0xUcqdl2qV3TzzosDMIBTVBGqkHNjhPMkYs9krS3b9n7OVz3LONANA==
+X-Received: by 2002:aed:2c87:: with SMTP id g7mr2422356qtd.52.1542730402507;
+        Tue, 20 Nov 2018 08:13:22 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:4b6a])
+        by smtp.gmail.com with ESMTPSA id r47sm28373586qtc.77.2018.11.20.08.13.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 08:13:21 -0800 (PST)
+Date:   Tue, 20 Nov 2018 08:13:19 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>
+Cc:     "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, kernel-team@fb.com
+Subject: Re: [PATCH for-4.20-fixes] cgroup: fix CSS_TASK_ITER_PROCS
+Message-ID: <20181120161319.GR2509588@devbig004.ftw2.facebook.com>
+References: <fdb057a2-342a-d49e-587a-f1ca8680033e@gmail.com>
+ <20181108201515.GC2509588@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fckbADODYWZD5TdN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181120002654.1891-5-dianders@chromium.org>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181108201515.GC2509588@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 08, 2018 at 12:15:15PM -0800, Tejun Heo wrote:
+> CSS_TASK_ITER_PROCS implements process-only iteration by making
+> css_task_iter_advance() skip tasks which aren't threadgroup leaders;
+> however, when an iteration is started css_task_iter_start() calls the
+> inner helper function css_task_iter_advance_css_set() instead of
+> css_task_iter_advance().  As the helper doesn't have the skip logic,
+> when the first task to visit is a non-leader thread, it doesn't get
+> skipped correctly as shown in the following example.
 
---fckbADODYWZD5TdN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied to cgroup/for-4.20-fixes.
 
-On Mon, Nov 19, 2018 at 04:26:52PM -0800, Douglas Anderson wrote:
-> Now that consumers all keep track of their own enable count, let's add
-> it into the regulator_summary.
+Thanks.
 
-This patch series contains a bunch of random stuff that's not
-particularly related to each other or even dependent on each other -
-it's better to just send unrelated things in unrelated threads, it
-makes it clear what actual dependencies exist, makes the serieses that
-are sent easier to understand and stops things getting blocked on
-unrelated changes earlier in the series.
-
---fckbADODYWZD5TdN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0Mg4ACgkQJNaLcl1U
-h9DXfgf8Cw3g/7zctbXaR35e5TTiL992HX0b5zD9KcNh7DSi/TbfrAZX5waMdLiz
-e7RYnc82tnOijxtpPl+T7AkUFlmJuZHwKJtZC/Z6Dh/aD0m0GYWYpKShu45vrdHM
-0aNfnwbu3vja1qBxr3Xq8YEePu05kiJYFqaJTsucYercNh6stBdHE1qnyr9Q1Hmh
-y1S4D6xCSi9dMXrbD4pUbAvPVxwTIr79+3Ek/qDAopYk+j+G6iRqtu1JNrgPSXZM
-SeBbg/R5wKjunfi0H+SCLhxcHAuU4XGiwx0KHEAaROTAPNC/RlT0M3jc/Ae2+yOA
-FJBg6ZGvafi5fPhleJ3AMOyoOvaO/g==
-=2g5c
------END PGP SIGNATURE-----
-
---fckbADODYWZD5TdN--
+-- 
+tejun
