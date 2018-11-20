@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D08FBC46463
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B7FC46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7C920989
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC7C920989
+	by mail.kernel.org (Postfix) with ESMTP id 317DE208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 317DE208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730493AbeKUDuV (ORCPT
+        id S1730514AbeKUDuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:50:21 -0500
-Received: from anholt.net ([50.246.234.109]:50686 "EHLO anholt.net"
+        Tue, 20 Nov 2018 22:50:22 -0500
+Received: from anholt.net ([50.246.234.109]:50704 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730458AbeKUDuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:50:20 -0500
+        id S1730458AbeKUDuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:50:22 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id D1A0810A0B73;
-        Tue, 20 Nov 2018 09:20:06 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id CF40310A15B1;
+        Tue, 20 Nov 2018 09:20:08 -0800 (PST)
 X-Virus-Scanned: Debian amavisd-new at anholt.net
 Received: from anholt.net ([127.0.0.1])
         by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id U9zRuxXkSd8t; Tue, 20 Nov 2018 09:20:05 -0800 (PST)
+        with LMTP id iob7z-d-gMCf; Tue, 20 Nov 2018 09:20:07 -0800 (PST)
 Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 53A8B10A15B1;
-        Tue, 20 Nov 2018 09:20:01 -0800 (PST)
+        by anholt.net (Postfix) with ESMTP id 6395510A165F;
+        Tue, 20 Nov 2018 09:20:02 -0800 (PST)
 Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 14F862FE1FE9; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
+        id 1DA2C2FE1FEB; Tue, 20 Nov 2018 09:20:00 -0800 (PST)
 From:   Eric Anholt <eric@anholt.net>
 To:     Florian Fainelli <f.fainelli@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -46,9 +46,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Stefan Wahren <stefan.wahren@i2se.com>,
         bcm-kernel-feedback-list@broadcom.com,
         Eric Anholt <eric@anholt.net>
-Subject: [PATCH 3/8] soc: bcm: bcm2835-pm: Stop using _relaxed mmio accessors.
-Date:   Tue, 20 Nov 2018 09:19:55 -0800
-Message-Id: <20181120172000.15102-4-eric@anholt.net>
+Subject: [PATCH 5/8] dt-bindings: soc: Add a new binding for the BCM2835 PM node.
+Date:   Tue, 20 Nov 2018 09:19:57 -0800
+Message-Id: <20181120172000.15102-6-eric@anholt.net>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120172000.15102-1-eric@anholt.net>
 References: <20181120172000.15102-1-eric@anholt.net>
@@ -59,81 +59,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We definitely don't want I/O to be reordered here (like the setting of
-the WDT timeout before enabling the WDT).  None of this is performance
-critical, anyway.
+This binding supersedes the bcm2835-pm-wdt binding which only covered
+enough to provide a watchdog, but the HW block is actually mostly
+about power domains.
 
 Signed-off-by: Eric Anholt <eric@anholt.net>
 ---
- drivers/soc/bcm/bcm2835-pm.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ .../bindings/soc/bcm/brcm,bcm2835-pm.txt      | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
 
-diff --git a/drivers/soc/bcm/bcm2835-pm.c b/drivers/soc/bcm/bcm2835-pm.c
-index ca37145e4e40..decc316fbe40 100644
---- a/drivers/soc/bcm/bcm2835-pm.c
-+++ b/drivers/soc/bcm/bcm2835-pm.c
-@@ -67,11 +67,11 @@ static int bcm2835_wdt_start(struct watchdog_device *wdog)
- 
- 	spin_lock_irqsave(&pm->lock, flags);
- 
--	writel_relaxed(PM_PASSWORD | (SECS_TO_WDOG_TICKS(wdog->timeout) &
--				PM_WDOG_TIME_SET), pm->base + PM_WDOG);
--	cur = readl_relaxed(pm->base + PM_RSTC);
--	writel_relaxed(PM_PASSWORD | (cur & PM_RSTC_WRCFG_CLR) |
--		  PM_RSTC_WRCFG_FULL_RESET, pm->base + PM_RSTC);
-+	writel(PM_PASSWORD | (SECS_TO_WDOG_TICKS(wdog->timeout) &
-+			      PM_WDOG_TIME_SET), pm->base + PM_WDOG);
-+	cur = readl(pm->base + PM_RSTC);
-+	writel(PM_PASSWORD | (cur & PM_RSTC_WRCFG_CLR) |
-+	       PM_RSTC_WRCFG_FULL_RESET, pm->base + PM_RSTC);
- 
- 	spin_unlock_irqrestore(&pm->lock, flags);
- 
-@@ -82,7 +82,7 @@ static int bcm2835_wdt_stop(struct watchdog_device *wdog)
- {
- 	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
- 
--	writel_relaxed(PM_PASSWORD | PM_RSTC_RESET, pm->base + PM_RSTC);
-+	writel(PM_PASSWORD | PM_RSTC_RESET, pm->base + PM_RSTC);
- 	return 0;
- }
- 
-@@ -90,7 +90,7 @@ static unsigned int bcm2835_wdt_get_timeleft(struct watchdog_device *wdog)
- {
- 	struct bcm2835_pm *pm = watchdog_get_drvdata(wdog);
- 
--	uint32_t ret = readl_relaxed(pm->base + PM_WDOG);
-+	uint32_t ret = readl(pm->base + PM_WDOG);
- 	return WDOG_TICKS_TO_SECS(ret & PM_WDOG_TIME_SET);
- }
- 
-@@ -99,11 +99,11 @@ static void __bcm2835_restart(struct bcm2835_pm *pm)
- 	u32 val;
- 
- 	/* use a timeout of 10 ticks (~150us) */
--	writel_relaxed(10 | PM_PASSWORD, pm->base + PM_WDOG);
--	val = readl_relaxed(pm->base + PM_RSTC);
-+	writel(10 | PM_PASSWORD, pm->base + PM_WDOG);
-+	val = readl(pm->base + PM_RSTC);
- 	val &= PM_RSTC_WRCFG_CLR;
- 	val |= PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET;
--	writel_relaxed(val, pm->base + PM_RSTC);
-+	writel(val, pm->base + PM_RSTC);
- 
- 	/* No sleeping, possibly atomic. */
- 	mdelay(1);
-@@ -159,9 +159,9 @@ static void bcm2835_power_off(void)
- 	 * from the normal (full) reset. bootcode.bin will not reboot after a
- 	 * hard reset.
- 	 */
--	val = readl_relaxed(pm->base + PM_RSTS);
-+	val = readl(pm->base + PM_RSTS);
- 	val |= PM_PASSWORD | PM_RSTS_RASPBERRYPI_HALT;
--	writel_relaxed(val, pm->base + PM_RSTS);
-+	writel(val, pm->base + PM_RSTS);
- 
- 	/* Continue with normal reset mechanism */
- 	__bcm2835_restart(pm);
+diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+new file mode 100644
+index 000000000000..7818d33a158f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.txt
+@@ -0,0 +1,42 @@
++BCM2835 PM (Power domains, watchdog)
++
++The PM block controls power domains and some reset lines, and includes
++a watchdog timer.  This binding supersedes the brcm,bcm2835-pm-wdt
++binding which covered some of PM's register range and functionality.
++
++Required properties:
++
++- compatible:		Should be "brcm,bcm2835-pm"
++- reg:			Specifies base physical address and size of the two
++			  register ranges ("PM" and "ASYNC_BRIDGE" in that
++			  order)
++- clocks:		a) v3d: The V3D clock from CPRMAN
++			b) peri_image: The PERI_IMAGE clock from CPRMAN
++			c) h264: The H264 clock from CPRMAN
++			d) isp: The ISP clock from CPRMAN
++- #reset-cells: 	Should be 1.  This property follows the reset controller
++			  bindings[1].
++- #power-domain-cells:	Should be 1.  This property follows the power domain
++			  bindings[2].
++
++Optional properties:
++
++- timeout-sec:	Contains the watchdog timeout in seconds
++
++[1] Documentation/devicetree/bindings/reset/reset.txt
++[2] Documentation/devicetree/bindings/power/power_domain.txt
++
++Example:
++
++pm {
++	compatible = "brcm,bcm2835-pm", "brcm,bcm2835-pm-wdt";
++	#power-domain-cells = <1>;
++	#reset-cells = <1>;
++	reg = <0x7e100000 0x114>,
++	      <0x7e00a000 0x24>;
++	clocks = <&clocks BCM2835_CLOCK_V3D>,
++		 <&clocks BCM2835_CLOCK_PERI_IMAGE>,
++		 <&clocks BCM2835_CLOCK_H264>,
++		 <&clocks BCM2835_CLOCK_ISP>;
++	clock-names = "v3d", "peri_image", "h264", "isp";
++};
 -- 
 2.19.1
 
