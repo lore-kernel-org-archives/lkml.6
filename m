@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C82C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C924BC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA840208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE27213A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 08:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fdfB+J7Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA840208E3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eeGUS8Pb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EE27213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbeKTSh7 (ORCPT
+        id S1726505AbeKTSjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 13:37:59 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35698 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725990AbeKTSh7 (ORCPT
+        Tue, 20 Nov 2018 13:39:35 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45610 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725968AbeKTSje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 13:37:59 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so841301ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:10:09 -0800 (PST)
+        Tue, 20 Nov 2018 13:39:34 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so668086lfa.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 00:11:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=GR9A2paDjRsYqaqOr/oLBHI/V9qzVftFzkbS59yIrbY=;
-        b=fdfB+J7Yh7IYjj9xiy/BAeE/94mRhj+luVe+crCsyK8OyoP+NhqT1dIUoCGa+a+j4r
-         LADdI8lWlpNqSKqROAU+0QnLJ9GY6aOz+xmVVvW73LbEFC6KFfE9t0+9DIZf9o3O2epg
-         jEqB+PRel1fKOcc1D6GEpeVdDNb5KgKNVN5yo=
+        bh=92OdRUHqBk0lw/gRMvbXx6EtORLqUStrpFH3ienDBdE=;
+        b=eeGUS8Pb1haLyus+q1Me9J9cXppj2wl9d9xMWV+c5v0bxUJoDz8arlLDhFRECkICCb
+         6zPhx5CNfe8RAqkoyFr8s+dTcN7AJwSmxwv7xYw4WIBNEOg/rv5sSAEbyrE8fl4Cjv1N
+         tGt5yOESFhIJuDf+v/KfAfJHODvIeI9mrTMkE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=GR9A2paDjRsYqaqOr/oLBHI/V9qzVftFzkbS59yIrbY=;
-        b=Ai94+NShoeTQFJGxmC7HL5YCGtIOPhQMFyfphUt0CqSt2XoulvJnf4c9cvA66cmnNt
-         nTOealgxNgQVRi862HWk1o/6rLDHj6X8dp7t1GJnpgWzMNk1/IACw/wg6YSiz/6YxxxL
-         4Ir9FuXx2oNfcTzAgIeh6nShoPcSV5M/BY7Kt38AfvRrXbTR6nl0q/wq9OjTrllM1+pr
-         XgG6JLfLjgJB4fjRaQrRXNw619w0rMzvN+cNqh8EGl8c7cq+f6rVGtdPr7MPjKghg8is
-         Jp55lGVfkPZf6WRIgG9/SbmAVNVL5TWnz6fBQmaZPNrjkjZWFjerKG6xm+D4feTjRFl0
-         rE/w==
-X-Gm-Message-State: AA+aEWaeICcdawP1uCgtY9BF8ZcDq5L55U1I1Je/HDrrkUyojmJjqmRU
-        h3eAnOTOowYHQ8HVzLqYjXY+loSn8u1zRzwyMAjPlg==
-X-Google-Smtp-Source: AFSGD/Ue6cXuAoz2T4IYUIVR+ahxWjPhEvQuE7Zdufnaa0Gw63Ybtl5I4hzSpmGA2jPUpWSXy02jn23B0GNv+uYpw8c=
-X-Received: by 2002:a2e:6594:: with SMTP id e20-v6mr642802ljf.123.1542701408205;
- Tue, 20 Nov 2018 00:10:08 -0800 (PST)
+        bh=92OdRUHqBk0lw/gRMvbXx6EtORLqUStrpFH3ienDBdE=;
+        b=T0ahabie931gdJ3K9fVW/ZCfmdhWEsNfRRWuUldqACMTTMoH5g2UBY64V+txQkKepX
+         TTugdsMDjAY9WB5zO3X6m9mFB4Jz6JN7KT0IMs5b714iCZqlOGHssyX+Reey1648OTfu
+         qDoZr/xZFaR/nahvwVRwN7EdhMzd9M+bvoRrGq9fjilbQCQQ5qus0bttbl74IiigI0fd
+         OQCHOW3xLbcTAQWcxC9hp0fohuoXIYmPL0fQ1JmHEHKA/ZbRZol7IQZA/4/0sRlnmrh2
+         oQ2u5PcmD156N085AMZ+Q5k72/LMD7CLYYXGfqDmyDZ1DE/IOwM8y9K/XWIMuuzB1ejy
+         LRkw==
+X-Gm-Message-State: AGRZ1gK9ebJYAiZs33s+NpB7Uc3caccDLN0idon3AQ22iktEp0uK13EG
+        PTIrkpgaeGkXCR7cpTZxasPFuBi5ES+dZONFKLrd0Q==
+X-Google-Smtp-Source: AJdET5dVOGZ8vt+RRRWsf10NiFKuNGVNjFuwXK/FHfcSEZJu9Usb5NJ/FqzwhQzfJ4rNwwy4GBWVdYQIicCjypZgcHg=
+X-Received: by 2002:a19:9a8c:: with SMTP id c134mr534196lfe.152.1542701503201;
+ Tue, 20 Nov 2018 00:11:43 -0800 (PST)
 MIME-Version: 1.0
-References: <20181119162612.951907286@linuxfoundation.org>
-In-Reply-To: <20181119162612.951907286@linuxfoundation.org>
+References: <20181119162612.046511542@linuxfoundation.org>
+In-Reply-To: <20181119162612.046511542@linuxfoundation.org>
 From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 20 Nov 2018 13:39:56 +0530
-Message-ID: <CA+G9fYvM5QqrGuEu4k2kaaXc1G_cZVPW=casoXNpEY=07a0M2Q@mail.gmail.com>
-Subject: Re: [PATCH 4.14 000/124] 4.14.82-stable review
+Date:   Tue, 20 Nov 2018 13:41:31 +0530
+Message-ID: <CA+G9fYsunFYiSB4eCLczcLJoH4tHd4w69XyPbNdwdr+cw5S7CQ@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/83] 4.9.138-stable review
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     open list <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -75,23 +75,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Nov 2018 at 22:18, Greg Kroah-Hartman
+On Mon, 19 Nov 2018 at 22:23, Greg Kroah-Hartman
 <gregkh@linuxfoundation.org> wrote:
 >
-> This is the start of the stable review cycle for the 4.14.82 release.
-> There are 124 patches in this series, all will be posted as a response
+> This is the start of the stable review cycle for the 4.9.138 release.
+> There are 83 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 >
-> Responses should be made by Wed Nov 21 16:25:07 UTC 2018.
+> Responses should be made by Wed Nov 21 16:25:13 UTC 2018.
 > Anything received after that time might be too late.
 >
 > The whole patch series can be found in one patch at:
 >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.14.82-rc1.gz
+4.9.138-rc1.gz
 > or in the git tree and branch at:
 >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.14.y
+-rc.git linux-4.9.y
 > and the diffstat can be found below.
 >
 > thanks,
@@ -104,22 +104,22 @@ No regressions on arm64, arm, x86_64, and i386.
 Summary
 ------------------------------------------------------------------------
 
-kernel: 4.14.82-rc1
+kernel: 4.9.138-rc1
 git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
 le-rc.git
-git branch: linux-4.14.y
-git commit: 43bb46eb6e2eae660d29ec037de28fca0cd2e7e5
-git describe: v4.14.81-125-g43bb46eb6e2e
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
-ild/v4.14.81-125-g43bb46eb6e2e
+git branch: linux-4.9.y
+git commit: 4ca3f6d71162e660e35f62700d1dd2486feb5e4c
+git describe: v4.9.137-83-g4ca3f6d71162
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.137-83-g4ca3f6d71162
 
 
-No regressions (compared to build v4.14.81)
+No regressions (compared to build v4.9.137)
 
 
-No fixes (compared to build v4.14.81)
+No fixes (compared to build v4.9.137)
 
-Ran 19592 total tests in the following environments and test suites.
+Ran 21057 total tests in the following environments and test suites.
 
 Environments
 --------------
