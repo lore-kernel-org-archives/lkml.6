@@ -2,120 +2,153 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D42C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE5BC18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B977F20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:49:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OoXC0kWh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B977F20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A841C20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:50:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A841C20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbeKUBTY (ORCPT
+        id S1729859AbeKUBTY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 20 Nov 2018 20:19:24 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33432 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbeKUBTW (ORCPT
+Received: from mail-out.m-online.net ([212.18.0.10]:49835 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727019AbeKUBTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:19:22 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAKEhqHn161269;
-        Tue, 20 Nov 2018 14:49:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=O1WGBOqujV4t0MJM3uCoAt6text/TbUo8RLfeEkbOAg=;
- b=OoXC0kWhO8MtzD/w87HtcoHTghYpgRuAKtpbuxvMhGzhgx4bCBjpYhMTiyrMiVxdGEdj
- Z+910as3ly5Wq3V69ULMgpcH2BD4X+QF/r4JPp18B+b18HeY2ZZz+ddVhBGsjKmpt/aY
- wn9C55+9UihAo7tOhyqOXK97xALVVC1466ef/zQ8K5hcPVL8qYO0Ue/LTZf/cea6bzJR
- IPFgPrpCAdXG41i+zcPy8diF68wuC6/wVJWsX6peH5HkV/Bin0iCF374k9RqPrNm91aE
- ak2tL0a4YIKGaUOuuZ2D6Z40jbbX5agB0KAhfP23KrZ6PDXoiqcEFmUjZQGN0yd855As rQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2ntaxq4b1s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 14:49:21 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAKEnKn0002939
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 14:49:20 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAKEnJe9007473;
-        Tue, 20 Nov 2018 14:49:19 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 20 Nov 2018 06:49:19 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 368C56A00D4; Tue, 20 Nov 2018 09:49:18 -0500 (EST)
-Date:   Tue, 20 Nov 2018 09:49:18 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     hch@lst.de, m.szyprowski@samsung.com, john.stultz@linaro.org,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] swiotlb: Make DIRECT_MAPPING_ERROR viable
-Message-ID: <20181120144918.GH10917@char.us.oracle.com>
-References: <cover.1542722463.git.robin.murphy@arm.com>
- <e90da5fbab881c502ac3412fb05c44b26c99f73a.1542722463.git.robin.murphy@arm.com>
+        Tue, 20 Nov 2018 20:19:23 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42zpWx6mSXz1qwHK;
+        Tue, 20 Nov 2018 15:49:49 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42zpWx5PYPz1qqkZ;
+        Tue, 20 Nov 2018 15:49:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 6vySD2GChx1J; Tue, 20 Nov 2018 15:49:48 +0100 (CET)
+X-Auth-Info: R3DM13I8PaVEJKL9r8P+YWrJ7GXytSKgDmciLshefpY=
+Received: from crub (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 20 Nov 2018 15:49:47 +0100 (CET)
+Date:   Tue, 20 Nov 2018 15:49:47 +0100
+From:   Anatolij Gustschin <agust@denx.de>
+To:     Trent Piepho <tpiepho@impinj.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "atull@kernel.org" <atull@kernel.org>,
+        "mdf@kernel.org" <mdf@kernel.org>
+Subject: Re: [PATCH v2 1/3] usb: misc: add driver for FT232H based FPGA
+ configuration devices
+Message-ID: <20181120154947.4dbc90d6@crub>
+In-Reply-To: <1542675372.30311.573.camel@impinj.com>
+References: <20181120002821.12794-1-agust@denx.de>
+        <20181120002821.12794-2-agust@denx.de>
+        <1542675372.30311.573.camel@impinj.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e90da5fbab881c502ac3412fb05c44b26c99f73a.1542722463.git.robin.murphy@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9082 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=945
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811200133
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:09:52PM +0000, Robin Murphy wrote:
-> With the overflow buffer removed, we no longer have a unique address
-> which is guaranteed not to be a valid DMA target to use as an error
-> token. The DIRECT_MAPPING_ERROR value of 0 tries to at least represent
-> an unlikely DMA target, but unfortunately there are already SWIOTLB
-> users with DMA-able memory at physical address 0 which now gets falsely
-> treated as a mapping failure and leads to all manner of misbehaviour.
-> 
-> The best we can do to mitigate that is flip DIRECT_MAPPING_ERROR to the
-> commonly-used all-bits-set value, since the last single byte of memory
-> is by far the least-likely-valid DMA target.
+On Tue, 20 Nov 2018 00:56:13 +0000
+Trent Piepho tpiepho@impinj.com wrote:
 
-Are all the callers checking for DIRECT_MAPPING_ERROR or is it more of
-a comparison (as in if (!ret)) ?
+>On Tue, 2018-11-20 at 01:28 +0100, Anatolij Gustschin wrote:
+>> Add USB interface driver for ARRI FPGA configuration devices based on
+>> FTDI FT232H chip. Depending on USB PID the driver registers different
+>> platform devices describing an FPGA configuration interface.  
+>
+>Is ARRI different than Arria?
 
+yes, ARRI is a company name.
 
-> 
-> Fixes: dff8d6c1ed58 ("swiotlb: remove the overflow buffer")]
-> Reported-by: John Stultz <john.stultz@linaro.org>
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> ---
->  include/linux/dma-direct.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index bd73e7a91410..9de9c7ab39d6 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -5,7 +5,7 @@
->  #include <linux/dma-mapping.h>
->  #include <linux/mem_encrypt.h>
->  
-> -#define DIRECT_MAPPING_ERROR		0
-> +#define DIRECT_MAPPING_ERROR		~(dma_addr_t)0
->  
->  #ifdef CONFIG_ARCH_HAS_PHYS_TO_DMA
->  #include <asm/dma-direct.h>
-> -- 
-> 2.19.1.dirty
-> 
+>> +/* Use baudrate calculation borrowed from libftdi */
+>> +static int ftdi_to_clkbits(int baudrate, unsigned int clk, int clk_div,  
+>
+>Linux uses unsigned values for clocks.  Does it make any sense to mix
+>the unsigned clk with signed values?  Seems like baudrate and clk_div
+>should also be unsigned.
+
+okay, will fix to unsigned.
+
+>> +			   unsigned long *encoded_divisor)  
+>
+>unsigned long is an odd choice here.  Is there any to reason to use an
+>unsigned long to store the result of right shifting a signed int
+>(best_div)?  It can't be longer than a int, but it can be negative.
+
+okay, I'll change that to unsigned int.
+
+>> +{
+>> +	static const char frac_code[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
+>> +	int best_baud = 0;
+>> +	int div, best_div;
+>> +
+>> +	if (baudrate >= clk / clk_div) {
+>> +		*encoded_divisor = 0;
+>> +		best_baud = clk / clk_div;
+>> +	} else if (baudrate >= clk / (clk_div + clk_div / 2)) {
+>> +		*encoded_divisor = 1;
+>> +		best_baud = clk / (clk_div + clk_div / 2);
+>> +	} else if (baudrate >= clk / (2 * clk_div)) {
+>> +		*encoded_divisor = 2;
+>> +		best_baud = clk / (2 * clk_div);
+>> +	} else {
+>> +		/*
+>> +		 * Divide by 16 to have 3 fractional bits and
+>> +		 * one bit for rounding
+>> +		 */
+>> +		div = clk * 16 / clk_div / baudrate;
+>> 
+>> +		if (div & 1)	/* Decide if to round up or down */
+>> +			best_div = div / 2 + 1;
+>> +		else
+>> +			best_div = div / 2;  
+>
+>In Linux we would write:
+>
+>best_div = DIV_ROUND_UP(div, 2);
+>
+>Though I think you can combine that with the above to get:
+>
+>best_div = DIV_ROUND_CLOSEST(clk * 8 / clk_div, baudrate);
+>
+>That what the above is trying to accomplish in a round about way
+
+will rework this, too. Thanks for suggestions.
+
+>> +		if (best_div > 0x20000)
+>> +			best_div = 0x1ffff;
+
+>Looks like the above was probably supposed to be >=
+
+I'll check it.
+
+>> +		best_baud = clk * 16 / clk_div / best_div;
+>> +		if (best_baud & 1)	/* Decide if to round up or down */
+>> +			best_baud = best_baud / 2 + 1;
+>> +		else
+>> +			best_baud = best_baud / 2;  
+>
+>Again, looks like a complicated way to round to the nearest.
+
+will change this, too.
+
+Thanks,
+Anatolij
