@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5691EC18E01
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64932C18DF5
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CDD520989
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDD520989
+	by mail.kernel.org (Postfix) with ESMTP id 0498C20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 14:54:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0498C20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbeKUBYe (ORCPT
+        id S1730053AbeKUBX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 20:24:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39284 "EHLO mx1.suse.de"
+        Tue, 20 Nov 2018 20:23:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39348 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729294AbeKUBXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 20:23:44 -0500
+        id S1729932AbeKUBXr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 20:23:47 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 83F4CAE02;
-        Tue, 20 Nov 2018 14:54:09 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id D0073AFD0;
+        Tue, 20 Nov 2018 14:54:11 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
@@ -33,9 +33,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 07/16] staging: vchiq-core: get rid of is_master distinction
-Date:   Tue, 20 Nov 2018 15:53:42 +0100
-Message-Id: <20181120145351.30390-8-nsaenzjulienne@suse.de>
+Subject: [PATCH 11/16] staging: vchiq: use completions instead of semaphores
+Date:   Tue, 20 Nov 2018 15:53:46 +0100
+Message-Id: <20181120145351.30390-12-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181120145351.30390-1-nsaenzjulienne@suse.de>
 References: <20181120145351.30390-1-nsaenzjulienne@suse.de>
@@ -46,535 +46,757 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VCHIQ bulk transfers are what most people call DMA transfers. The CPU
-sends a list of physical addresses to the VideoCore which then access
-the memory directly without the need for CPU interaction.  With this
-setup we call the CPU the "slave" and the VideoCore the "master".
+It is preferred in the kernel to avoid using semaphores to wait for
+events, as they are optimised for the opposite situation; where the
+common case is that they are available and may block only occasionally.
+FYI see this thread: https://lkml.org/lkml/2008/4/11/323.
 
-There seems to be an option to switch roles in vchiq. Which nobody is
-using nor is properly implemented. So we get rid of the "is_master == 1"
-option, and all the related code.
+Also completions are semantically more explicit in this case.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_2835_arm.c      |  12 +-
- .../interface/vchiq_arm/vchiq_core.c          | 300 +++---------------
- .../interface/vchiq_arm/vchiq_core.h          |  11 +-
- 3 files changed, 38 insertions(+), 285 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           |  60 ++++++-----
+ .../interface/vchiq_arm/vchiq_core.c          | 100 +++++++++---------
+ .../interface/vchiq_arm/vchiq_core.h          |  26 ++---
+ .../interface/vchiq_arm/vchiq_util.c          |  16 +--
+ .../interface/vchiq_arm/vchiq_util.h          |   6 +-
+ 5 files changed, 106 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-index 014583cdf367..ecee54a31f8d 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c
-@@ -163,7 +163,7 @@ int vchiq_platform_init(struct platform_device *pdev, VCHIQ_STATE_T *state)
- 	*(char **)&g_fragments_base[i * g_fragments_size] = NULL;
- 	sema_init(&g_free_fragments_sema, MAX_FRAGMENTS);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 7fa734991db9..20359924ed45 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -44,7 +44,7 @@
+ #include <linux/highmem.h>
+ #include <linux/pagemap.h>
+ #include <linux/bug.h>
+-#include <linux/semaphore.h>
++#include <linux/completion.h>
+ #include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+@@ -121,9 +121,9 @@ typedef struct user_service_struct {
+ 	int message_available_pos;
+ 	int msg_insert;
+ 	int msg_remove;
+-	struct semaphore insert_event;
+-	struct semaphore remove_event;
+-	struct semaphore close_event;
++	struct completion insert_event;
++	struct completion remove_event;
++	struct completion close_event;
+ 	VCHIQ_HEADER_T * msg_queue[MSG_QUEUE_SIZE];
+ } USER_SERVICE_T;
  
--	if (vchiq_init_state(state, vchiq_slot_zero, 0) != VCHIQ_SUCCESS)
-+	if (vchiq_init_state(state, vchiq_slot_zero) != VCHIQ_SUCCESS)
- 		return -EINVAL;
+@@ -138,8 +138,8 @@ struct vchiq_instance_struct {
+ 	VCHIQ_COMPLETION_DATA_T completions[MAX_COMPLETIONS];
+ 	int completion_insert;
+ 	int completion_remove;
+-	struct semaphore insert_event;
+-	struct semaphore remove_event;
++	struct completion insert_event;
++	struct completion remove_event;
+ 	struct mutex completion_mutex;
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -278,16 +278,6 @@ vchiq_complete_bulk(VCHIQ_BULK_T *bulk)
- 			      bulk->actual);
+ 	int connected;
+@@ -562,7 +562,8 @@ add_completion(VCHIQ_INSTANCE_T instance, VCHIQ_REASON_T reason,
+ 		vchiq_log_trace(vchiq_arm_log_level,
+ 			"%s - completion queue full", __func__);
+ 		DEBUG_COUNT(COMPLETION_QUEUE_FULL_COUNT);
+-		if (down_interruptible(&instance->remove_event) != 0) {
++		if (wait_for_completion_interruptible(
++					&instance->remove_event)) {
+ 			vchiq_log_info(vchiq_arm_log_level,
+ 				"service_callback interrupted");
+ 			return VCHIQ_RETRY;
+@@ -600,7 +601,7 @@ add_completion(VCHIQ_INSTANCE_T instance, VCHIQ_REASON_T reason,
+ 	insert++;
+ 	instance->completion_insert = insert;
+ 
+-	up(&instance->insert_event);
++	complete(&instance->insert_event);
+ 
+ 	return VCHIQ_SUCCESS;
  }
+@@ -673,7 +674,8 @@ service_callback(VCHIQ_REASON_T reason, VCHIQ_HEADER_T *header,
+ 			}
  
--void
--vchiq_transfer_bulk(VCHIQ_BULK_T *bulk)
--{
--	/*
--	 * This should only be called on the master (VideoCore) side, but
--	 * provide an implementation to avoid the need for ifdefery.
--	 */
--	BUG();
--}
--
- void
- vchiq_dump_platform_state(void *dump_context)
- {
+ 			DEBUG_TRACE(SERVICE_CALLBACK_LINE);
+-			if (down_interruptible(&user_service->remove_event)
++			if (wait_for_completion_interruptible(
++						&user_service->remove_event)
+ 				!= 0) {
+ 				vchiq_log_info(vchiq_arm_log_level,
+ 					"%s interrupted", __func__);
+@@ -705,7 +707,7 @@ service_callback(VCHIQ_REASON_T reason, VCHIQ_HEADER_T *header,
+ 		}
+ 
+ 		spin_unlock(&msg_queue_spinlock);
+-		up(&user_service->insert_event);
++		complete(&user_service->insert_event);
+ 
+ 		header = NULL;
+ 	}
+@@ -745,7 +747,7 @@ static void close_delivered(USER_SERVICE_T *user_service)
+ 		unlock_service(user_service->service);
+ 
+ 		/* Wake the user-thread blocked in close_ or remove_service */
+-		up(&user_service->close_event);
++		complete(&user_service->close_event);
+ 
+ 		user_service->close_pending = 0;
+ 	}
+@@ -867,7 +869,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		if (status == VCHIQ_SUCCESS) {
+ 			/* Wake the completion thread and ask it to exit */
+ 			instance->closing = 1;
+-			up(&instance->insert_event);
++			complete(&instance->insert_event);
+ 		}
+ 
+ 		break;
+@@ -948,9 +950,9 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 				instance->completion_remove - 1;
+ 			user_service->msg_insert = 0;
+ 			user_service->msg_remove = 0;
+-			sema_init(&user_service->insert_event, 0);
+-			sema_init(&user_service->remove_event, 0);
+-			sema_init(&user_service->close_event, 0);
++			init_completion(&user_service->insert_event);
++			init_completion(&user_service->remove_event);
++			init_completion(&user_service->close_event);
+ 
+ 			if (args.is_open) {
+ 				status = vchiq_open_service_internal
+@@ -1007,7 +1009,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		   has been closed until the client library calls the
+ 		   CLOSE_DELIVERED ioctl, signalling close_event. */
+ 		if (user_service->close_pending &&
+-			down_interruptible(&user_service->close_event))
++			wait_for_completion_interruptible(
++				&user_service->close_event))
+ 			status = VCHIQ_RETRY;
+ 		break;
+ 	}
+@@ -1182,7 +1185,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 
+ 			DEBUG_TRACE(AWAIT_COMPLETION_LINE);
+ 			mutex_unlock(&instance->completion_mutex);
+-			rc = down_interruptible(&instance->insert_event);
++			rc = wait_for_completion_interruptible(
++						&instance->insert_event);
+ 			mutex_lock(&instance->completion_mutex);
+ 			if (rc != 0) {
+ 				DEBUG_TRACE(AWAIT_COMPLETION_LINE);
+@@ -1310,7 +1314,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		}
+ 
+ 		if (ret != 0)
+-			up(&instance->remove_event);
++			complete(&instance->remove_event);
+ 		mutex_unlock(&instance->completion_mutex);
+ 		DEBUG_TRACE(AWAIT_COMPLETION_LINE);
+ 	} break;
+@@ -1350,8 +1354,8 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 			do {
+ 				spin_unlock(&msg_queue_spinlock);
+ 				DEBUG_TRACE(DEQUEUE_MESSAGE_LINE);
+-				if (down_interruptible(
+-					&user_service->insert_event) != 0) {
++				if (wait_for_completion_interruptible(
++					&user_service->insert_event)) {
+ 					vchiq_log_info(vchiq_arm_log_level,
+ 						"DEQUEUE_MESSAGE interrupted");
+ 					ret = -EINTR;
+@@ -1373,7 +1377,7 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		user_service->msg_remove++;
+ 		spin_unlock(&msg_queue_spinlock);
+ 
+-		up(&user_service->remove_event);
++		complete(&user_service->remove_event);
+ 		if (header == NULL)
+ 			ret = -ENOTCONN;
+ 		else if (header->size <= args.bufsize) {
+@@ -1984,8 +1988,8 @@ vchiq_open(struct inode *inode, struct file *file)
+ 
+ 		vchiq_debugfs_add_instance(instance);
+ 
+-		sema_init(&instance->insert_event, 0);
+-		sema_init(&instance->remove_event, 0);
++		init_completion(&instance->insert_event);
++		init_completion(&instance->remove_event);
+ 		mutex_init(&instance->completion_mutex);
+ 		mutex_init(&instance->bulk_waiter_list_mutex);
+ 		INIT_LIST_HEAD(&instance->bulk_waiter_list);
+@@ -2038,12 +2042,12 @@ vchiq_release(struct inode *inode, struct file *file)
+ 
+ 		/* Wake the completion thread and ask it to exit */
+ 		instance->closing = 1;
+-		up(&instance->insert_event);
++		complete(&instance->insert_event);
+ 
+ 		mutex_unlock(&instance->completion_mutex);
+ 
+ 		/* Wake the slot handler if the completion queue is full. */
+-		up(&instance->remove_event);
++		complete(&instance->remove_event);
+ 
+ 		/* Mark all services for termination... */
+ 		i = 0;
+@@ -2052,7 +2056,7 @@ vchiq_release(struct inode *inode, struct file *file)
+ 			USER_SERVICE_T *user_service = service->base.userdata;
+ 
+ 			/* Wake the slot handler if the msg queue is full. */
+-			up(&user_service->remove_event);
++			complete(&user_service->remove_event);
+ 
+ 			vchiq_terminate_service_internal(service);
+ 			unlock_service(service);
+@@ -2064,7 +2068,7 @@ vchiq_release(struct inode *inode, struct file *file)
+ 			!= NULL) {
+ 			USER_SERVICE_T *user_service = service->base.userdata;
+ 
+-			down(&service->remove_event);
++			wait_for_completion(&service->remove_event);
+ 
+ 			BUG_ON(service->srvstate != VCHIQ_SRVSTATE_FREE);
+ 
+@@ -2108,7 +2112,7 @@ vchiq_release(struct inode *inode, struct file *file)
+ 
+ 				/* Wake any blocked user-thread */
+ 				if (instance->use_close_delivered)
+-					up(&user_service->close_event);
++					complete(&user_service->close_event);
+ 				unlock_service(service);
+ 			}
+ 			instance->completion_remove++;
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 8c7bda2e7cb6..34a892011296 100644
+index 5791c2b670fa..a45cdd08e209 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -85,8 +85,6 @@ int vchiq_core_log_level = VCHIQ_LOG_DEFAULT;
- int vchiq_core_msg_log_level = VCHIQ_LOG_DEFAULT;
- int vchiq_sync_log_level = VCHIQ_LOG_DEFAULT;
+@@ -376,7 +376,7 @@ mark_service_closing_internal(VCHIQ_SERVICE_T *service, int sh_thread)
  
--static atomic_t pause_bulks_count = ATOMIC_INIT(0);
--
- static DEFINE_SPINLOCK(service_spinlock);
- DEFINE_SPINLOCK(bulk_waiter_spinlock);
- static DEFINE_SPINLOCK(quota_spinlock);
-@@ -1222,32 +1220,7 @@ notify_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue,
- 		(queue == &service->bulk_tx) ? 't' : 'r',
- 		queue->process, queue->remote_notify, queue->remove);
- 
--	if (service->state->is_master) {
--		while (queue->remote_notify != queue->process) {
--			VCHIQ_BULK_T *bulk =
--				&queue->bulks[BULK_INDEX(queue->remote_notify)];
--			int msgtype = (bulk->dir == VCHIQ_BULK_TRANSMIT) ?
--				VCHIQ_MSG_BULK_RX_DONE : VCHIQ_MSG_BULK_TX_DONE;
--			int msgid = VCHIQ_MAKE_MSG(msgtype, service->localport,
--				service->remoteport);
--			/* Only reply to non-dummy bulk requests */
--			if (bulk->remote_data) {
--				status = queue_message(
--						service->state,
--						NULL,
--						msgid,
--						memcpy_copy_callback,
--						&bulk->actual,
--						4,
--						0);
--				if (status != VCHIQ_SUCCESS)
--					break;
--			}
--			queue->remote_notify++;
--		}
--	} else {
--		queue->remote_notify = queue->process;
--	}
-+	queue->remote_notify = queue->process;
- 
- 	if (status == VCHIQ_SUCCESS) {
- 		while (queue->remove != queue->remote_notify) {
-@@ -1385,63 +1358,6 @@ poll_services(VCHIQ_STATE_T *state)
- 	}
+ 	/* Unblock any sending thread. */
+ 	service_quota = &state->service_quotas[service->localport];
+-	up(&service_quota->quota_event);
++	complete(&service_quota->quota_event);
  }
  
--/* Called by the slot handler or application threads, holding the bulk mutex. */
--static int
--resolve_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
--{
--	VCHIQ_STATE_T *state = service->state;
--	int resolved = 0;
--
--	while ((queue->process != queue->local_insert) &&
--		(queue->process != queue->remote_insert)) {
--		VCHIQ_BULK_T *bulk = &queue->bulks[BULK_INDEX(queue->process)];
--
--		vchiq_log_trace(vchiq_core_log_level,
--			"%d: rb:%d %cx - li=%x ri=%x p=%x",
--			state->id, service->localport,
--			(queue == &service->bulk_tx) ? 't' : 'r',
--			queue->local_insert, queue->remote_insert,
--			queue->process);
--
--		WARN_ON(!((int)(queue->local_insert - queue->process) > 0));
--		WARN_ON(!((int)(queue->remote_insert - queue->process) > 0));
--
--		if (mutex_lock_killable(&state->bulk_transfer_mutex))
--			break;
--
--		vchiq_transfer_bulk(bulk);
--		mutex_unlock(&state->bulk_transfer_mutex);
--
--		if (SRVTRACE_ENABLED(service, VCHIQ_LOG_INFO)) {
--			const char *header = (queue == &service->bulk_tx) ?
--				"Send Bulk to" : "Recv Bulk from";
--			if (bulk->actual != VCHIQ_BULK_ACTUAL_ABORTED)
--				vchiq_log_info(SRVTRACE_LEVEL(service),
--					"%s %c%c%c%c d:%d len:%d %pK<->%pK",
--					header,
--					VCHIQ_FOURCC_AS_4CHARS(
--						service->base.fourcc),
--					service->remoteport, bulk->size,
--					bulk->data, bulk->remote_data);
--			else
--				vchiq_log_info(SRVTRACE_LEVEL(service),
--					"%s %c%c%c%c d:%d ABORTED - tx len:%d,"
--					" rx len:%d %pK<->%pK",
--					header,
--					VCHIQ_FOURCC_AS_4CHARS(
--						service->base.fourcc),
--					service->remoteport,
--					bulk->size, bulk->remote_size,
--					bulk->data, bulk->remote_data);
--		}
--
--		vchiq_complete_bulk(bulk);
--		queue->process++;
--		resolved++;
--	}
--	return resolved;
--}
--
- /* Called with the bulk_mutex held */
  static void
- abort_outstanding_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
-@@ -1492,65 +1408,6 @@ abort_outstanding_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue)
+@@ -432,9 +432,9 @@ remote_event_wait(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
+ 		event->armed = 1;
+ 		dsb(sy);
+ 		if (!event->fired) {
+-			if (down_interruptible(
+-					(struct semaphore *)
+-					((char *)state + event->event)) != 0) {
++			if (wait_for_completion_interruptible(
++					(struct completion *)
++					((char *)state + event->event))) {
+ 				event->armed = 0;
+ 				return 0;
+ 			}
+@@ -451,7 +451,7 @@ static inline void
+ remote_event_signal_local(VCHIQ_STATE_T *state, REMOTE_EVENT_T *event)
+ {
+ 	event->armed = 0;
+-	up((struct semaphore *)((char *)state + event->event));
++	complete((struct completion *)((char *)state + event->event));
+ }
+ 
+ static inline void
+@@ -581,7 +581,7 @@ reserve_space(VCHIQ_STATE_T *state, size_t space, int is_blocking)
+ 
+ 		/* If there is no free slot... */
+ 
+-		if (down_trylock(&state->slot_available_event) != 0) {
++		if (!try_wait_for_completion(&state->slot_available_event)) {
+ 			/* ...wait for one. */
+ 
+ 			VCHIQ_STATS_INC(state, slot_stalls);
+@@ -592,13 +592,13 @@ reserve_space(VCHIQ_STATE_T *state, size_t space, int is_blocking)
+ 			remote_event_signal(&state->remote->trigger);
+ 
+ 			if (!is_blocking ||
+-				(down_interruptible(
+-				&state->slot_available_event) != 0))
++				(wait_for_completion_interruptible(
++				&state->slot_available_event)))
+ 				return NULL; /* No space available */
+ 		}
+ 
+ 		if (tx_pos == (state->slot_queue_available * VCHIQ_SLOT_SIZE)) {
+-			up(&state->slot_available_event);
++			complete(&state->slot_available_event);
+ 			pr_warn("%s: invalid tx_pos: %d\n", __func__, tx_pos);
+ 			return NULL;
+ 		}
+@@ -678,7 +678,7 @@ process_free_queue(VCHIQ_STATE_T *state, BITSET_T *service_found, size_t length)
+ 					/* Signal the service that it
+ 					** has dropped below its quota
+ 					*/
+-					up(&service_quota->quota_event);
++					complete(&service_quota->quota_event);
+ 				else if (count == 0) {
+ 					vchiq_log_error(vchiq_core_log_level,
+ 						"service %d message_use_count=%d (header %pK, msgid %x, header->msgid %x, header->size %x)",
+@@ -703,7 +703,7 @@ process_free_queue(VCHIQ_STATE_T *state, BITSET_T *service_found, size_t length)
+ 						/* Signal the service in case
+ 						** it has dropped below its
+ 						** quota */
+-						up(&service_quota->quota_event);
++						complete(&service_quota->quota_event);
+ 						vchiq_log_trace(
+ 							vchiq_core_log_level,
+ 							"%d: pfq:%d %x@%pK - slot_use->%d",
+@@ -744,7 +744,7 @@ process_free_queue(VCHIQ_STATE_T *state, BITSET_T *service_found, size_t length)
+ 					count - 1;
+ 			spin_unlock(&quota_spinlock);
+ 			if (count == state->data_quota)
+-				up(&state->data_quota_event);
++				complete(&state->data_quota_event);
+ 		}
+ 
+ 		/*
+@@ -754,7 +754,7 @@ process_free_queue(VCHIQ_STATE_T *state, BITSET_T *service_found, size_t length)
+ 		mb();
+ 
+ 		state->slot_queue_available = slot_queue_available;
+-		up(&state->slot_available_event);
++		complete(&state->slot_available_event);
  	}
  }
  
--/* Called from the slot handler thread */
--static void
--pause_bulks(VCHIQ_STATE_T *state)
--{
--	if (unlikely(atomic_inc_return(&pause_bulks_count) != 1)) {
--		WARN_ON_ONCE(1);
--		atomic_set(&pause_bulks_count, 1);
--		return;
--	}
--
--	/* Block bulk transfers from all services */
--	mutex_lock(&state->bulk_transfer_mutex);
--}
--
--/* Called from the slot handler thread */
--static void
--resume_bulks(VCHIQ_STATE_T *state)
--{
--	int i;
--
--	if (unlikely(atomic_dec_return(&pause_bulks_count) != 0)) {
--		WARN_ON_ONCE(1);
--		atomic_set(&pause_bulks_count, 0);
--		return;
--	}
--
--	/* Allow bulk transfers from all services */
--	mutex_unlock(&state->bulk_transfer_mutex);
--
--	if (state->deferred_bulks == 0)
--		return;
--
--	/* Deal with any bulks which had to be deferred due to being in
--	 * paused state.  Don't try to match up to number of deferred bulks
--	 * in case we've had something come and close the service in the
--	 * interim - just process all bulk queues for all services */
--	vchiq_log_info(vchiq_core_log_level, "%s: processing %d deferred bulks",
--		__func__, state->deferred_bulks);
--
--	for (i = 0; i < state->unused_service; i++) {
--		VCHIQ_SERVICE_T *service = state->services[i];
--		int resolved_rx = 0;
--		int resolved_tx = 0;
--
--		if (!service || (service->srvstate != VCHIQ_SRVSTATE_OPEN))
--			continue;
--
--		mutex_lock(&service->bulk_mutex);
--		resolved_rx = resolve_bulks(service, &service->bulk_rx);
--		resolved_tx = resolve_bulks(service, &service->bulk_tx);
--		mutex_unlock(&service->bulk_mutex);
--		if (resolved_rx)
--			notify_bulks(service, &service->bulk_rx, 1);
--		if (resolved_tx)
--			notify_bulks(service, &service->bulk_tx, 1);
--	}
--	state->deferred_bulks = 0;
--}
--
- static int
- parse_open(VCHIQ_STATE_T *state, VCHIQ_HEADER_T *header)
- {
-@@ -1871,73 +1728,16 @@ parse_rx_slots(VCHIQ_STATE_T *state)
- 			up(&state->connect);
+@@ -862,8 +862,8 @@ queue_message(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
+ 			spin_unlock(&quota_spinlock);
+ 			mutex_unlock(&state->slot_mutex);
+ 
+-			if (down_interruptible(&state->data_quota_event)
+-				!= 0)
++			if (wait_for_completion_interruptible(
++						&state->data_quota_event))
+ 				return VCHIQ_RETRY;
+ 
+ 			mutex_lock(&state->slot_mutex);
+@@ -873,7 +873,7 @@ queue_message(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
+ 			if ((tx_end_index == state->previous_data_index) ||
+ 				(state->data_use_count < state->data_quota)) {
+ 				/* Pass the signal on to other waiters */
+-				up(&state->data_quota_event);
++				complete(&state->data_quota_event);
+ 				break;
+ 			}
+ 		}
+@@ -893,8 +893,8 @@ queue_message(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
+ 				service_quota->slot_use_count);
+ 			VCHIQ_SERVICE_STATS_INC(service, quota_stalls);
+ 			mutex_unlock(&state->slot_mutex);
+-			if (down_interruptible(&service_quota->quota_event)
+-				!= 0)
++			if (wait_for_completion_interruptible(
++						&service_quota->quota_event))
+ 				return VCHIQ_RETRY;
+ 			if (service->closing)
+ 				return VCHIQ_ERROR;
+@@ -1251,7 +1251,7 @@ notify_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue,
+ 					waiter = bulk->userdata;
+ 					if (waiter) {
+ 						waiter->actual = bulk->actual;
+-						up(&waiter->event);
++						complete(&waiter->event);
+ 					}
+ 					spin_unlock(&bulk_waiter_spinlock);
+ 				} else if (bulk->mode ==
+@@ -1274,7 +1274,7 @@ notify_bulks(VCHIQ_SERVICE_T *service, VCHIQ_BULK_QUEUE_T *queue,
+ 			}
+ 
+ 			queue->remove++;
+-			up(&service->bulk_remove_event);
++			complete(&service->bulk_remove_event);
+ 		}
+ 		if (!retry_poll)
+ 			status = VCHIQ_SUCCESS;
+@@ -1667,7 +1667,7 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 				service->remoteport = remoteport;
+ 				vchiq_set_service_state(service,
+ 					VCHIQ_SRVSTATE_OPEN);
+-				up(&service->remove_event);
++				complete(&service->remove_event);
+ 			} else
+ 				vchiq_log_error(vchiq_core_log_level,
+ 					"OPENACK received in state %s",
+@@ -1721,7 +1721,7 @@ parse_rx_slots(VCHIQ_STATE_T *state)
+ 				"%d: prs CONNECT@%pK", state->id, header);
+ 			state->version_common = ((VCHIQ_SLOT_ZERO_T *)
+ 						 state->slot_data)->version;
+-			up(&state->connect);
++			complete(&state->connect);
  			break;
  		case VCHIQ_MSG_BULK_RX:
--		case VCHIQ_MSG_BULK_TX: {
--			VCHIQ_BULK_QUEUE_T *queue;
--
--			WARN_ON(!state->is_master);
--			queue = (type == VCHIQ_MSG_BULK_RX) ?
--				&service->bulk_tx : &service->bulk_rx;
--			if ((service->remoteport == remoteport)
--				&& (service->srvstate ==
--				VCHIQ_SRVSTATE_OPEN)) {
--				VCHIQ_BULK_T *bulk;
--				int resolved = 0;
--
--				DEBUG_TRACE(PARSE_LINE);
--				if (mutex_lock_killable(
--					&service->bulk_mutex) != 0) {
--					DEBUG_TRACE(PARSE_LINE);
--					goto bail_not_ready;
--				}
--
--				WARN_ON(!(queue->remote_insert < queue->remove +
--					VCHIQ_NUM_SERVICE_BULKS));
--				bulk = &queue->bulks[
--					BULK_INDEX(queue->remote_insert)];
--				bulk->remote_data =
--					(void *)(long)((int *)header->data)[0];
--				bulk->remote_size = ((int *)header->data)[1];
--				wmb();
--
--				vchiq_log_info(vchiq_core_log_level,
--					"%d: prs %s@%pK (%d->%d) %x@%pK",
--					state->id, msg_type_str(type),
--					header, remoteport, localport,
--					bulk->remote_size, bulk->remote_data);
--
--				queue->remote_insert++;
--
--				if (atomic_read(&pause_bulks_count)) {
--					state->deferred_bulks++;
--					vchiq_log_info(vchiq_core_log_level,
--						"%s: deferring bulk (%d)",
--						__func__,
--						state->deferred_bulks);
--					if (state->conn_state !=
--						VCHIQ_CONNSTATE_PAUSE_SENT)
--						vchiq_log_error(
--							vchiq_core_log_level,
--							"%s: bulks paused in "
--							"unexpected state %s",
--							__func__,
--							conn_state_names[
--							state->conn_state]);
--				} else if (state->conn_state ==
--					VCHIQ_CONNSTATE_CONNECTED) {
--					DEBUG_TRACE(PARSE_LINE);
--					resolved = resolve_bulks(service,
--						queue);
--				}
--
--				mutex_unlock(&service->bulk_mutex);
--				if (resolved)
--					notify_bulks(service, queue,
--						1/*retry_poll*/);
--			}
--		} break;
-+		case VCHIQ_MSG_BULK_TX:
-+			/*
-+			 * We should never receive a bulk request from the
-+			 * other side since we're not setup to perform as the
-+			 * master.
-+			 */
-+			WARN_ON(1);
-+			break;
- 		case VCHIQ_MSG_BULK_RX_DONE:
- 		case VCHIQ_MSG_BULK_TX_DONE:
--			WARN_ON(state->is_master);
- 			if ((service->remoteport == remoteport)
- 				&& (service->srvstate !=
- 				VCHIQ_SRVSTATE_FREE)) {
-@@ -2026,8 +1826,6 @@ parse_rx_slots(VCHIQ_STATE_T *state)
- 					NULL, NULL, 0, QMFLAGS_NO_MUTEX_UNLOCK)
- 				    == VCHIQ_RETRY)
- 					goto bail_not_ready;
--				if (state->is_master)
--					pause_bulks(state);
+ 		case VCHIQ_MSG_BULK_TX:
+@@ -2055,7 +2055,7 @@ sync_func(void *v)
+ 				vchiq_set_service_state(service,
+ 					VCHIQ_SRVSTATE_OPENSYNC);
+ 				service->sync = 1;
+-				up(&service->remove_event);
++				complete(&service->remove_event);
  			}
- 			/* At this point slot_mutex is held */
- 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_PAUSED);
-@@ -2039,8 +1837,6 @@ parse_rx_slots(VCHIQ_STATE_T *state)
- 				state->id, header, size);
- 			/* Release the slot mutex */
- 			mutex_unlock(&state->slot_mutex);
--			if (state->is_master)
--				resume_bulks(state);
- 			vchiq_set_conn_state(state, VCHIQ_CONNSTATE_CONNECTED);
- 			vchiq_platform_resumed(state);
+ 			release_message_sync(state, header);
  			break;
-@@ -2119,8 +1915,6 @@ slot_handler_func(void *v)
- 				break;
- 
- 			case VCHIQ_CONNSTATE_PAUSING:
--				if (state->is_master)
--					pause_bulks(state);
- 				if (queue_message(state, NULL,
- 					VCHIQ_MAKE_MSG(VCHIQ_MSG_PAUSE, 0, 0),
- 					NULL, NULL, 0,
-@@ -2129,8 +1923,6 @@ slot_handler_func(void *v)
- 					vchiq_set_conn_state(state,
- 						VCHIQ_CONNSTATE_PAUSE_SENT);
- 				} else {
--					if (state->is_master)
--						resume_bulks(state);
- 					/* Retry later */
- 					state->poll_needed = 1;
- 				}
-@@ -2145,8 +1937,6 @@ slot_handler_func(void *v)
- 					VCHIQ_MAKE_MSG(VCHIQ_MSG_RESUME, 0, 0),
- 					NULL, NULL, 0, QMFLAGS_NO_MUTEX_LOCK)
- 					!= VCHIQ_RETRY) {
--					if (state->is_master)
--						resume_bulks(state);
- 					vchiq_set_conn_state(state,
- 						VCHIQ_CONNSTATE_CONNECTED);
- 					vchiq_platform_resumed(state);
-@@ -2364,8 +2154,7 @@ vchiq_init_slots(void *mem_base, int mem_size)
- }
- 
- VCHIQ_STATUS_T
--vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
--		 int is_master)
-+vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
- {
- 	VCHIQ_SHARED_STATE_T *local;
- 	VCHIQ_SHARED_STATE_T *remote;
-@@ -2374,8 +2163,7 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
- 	int i;
- 
- 	vchiq_log_warning(vchiq_core_log_level,
--		"%s: slot_zero = %pK, is_master = %d",
--		__func__, slot_zero, is_master);
-+		"%s: slot_zero = %pK", __func__, slot_zero);
- 
- 	if (vchiq_states[0]) {
- 		pr_err("%s: VCHIQ state already initialized\n", __func__);
-@@ -2441,13 +2229,8 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
- 	if (VCHIQ_VERSION < slot_zero->version)
- 		slot_zero->version = VCHIQ_VERSION;
- 
--	if (is_master) {
--		local = &slot_zero->master;
--		remote = &slot_zero->slave;
--	} else {
--		local = &slot_zero->slave;
--		remote = &slot_zero->master;
--	}
-+	local = &slot_zero->slave;
-+	remote = &slot_zero->master;
- 
- 	if (local->initialised) {
- 		vchiq_loud_error_header();
-@@ -2455,16 +2238,13 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
- 			vchiq_loud_error("local state has already been "
- 				"initialised");
- 		else
--			vchiq_loud_error("master/slave mismatch - two %ss",
--				is_master ? "master" : "slave");
-+			vchiq_loud_error("master/slave mismatch two slaves");
- 		vchiq_loud_error_footer();
- 		return VCHIQ_ERROR;
- 	}
- 
- 	memset(state, 0, sizeof(VCHIQ_STATE_T));
- 
--	state->is_master = is_master;
--
- 	/*
- 		initialize shared state pointers
+@@ -2194,33 +2194,33 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
+ 		initialize events and mutexes
  	 */
-@@ -2971,7 +2751,7 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
- 		mutex_lock(&state->sync_mutex);
- 		/* fall through */
- 	case VCHIQ_SRVSTATE_OPEN:
--		if (state->is_master || close_recvd) {
-+		if (close_recvd) {
- 			if (!do_abort_bulks(service))
- 				status = VCHIQ_RETRY;
- 		}
-@@ -3018,11 +2798,9 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
- 			/* This happens when a process is killed mid-close */
- 			break;
  
--		if (!state->is_master) {
--			if (!do_abort_bulks(service)) {
--				status = VCHIQ_RETRY;
--				break;
--			}
-+		if (!do_abort_bulks(service)) {
-+			status = VCHIQ_RETRY;
-+			break;
- 		}
+-	sema_init(&state->connect, 0);
++	init_completion(&state->connect);
+ 	mutex_init(&state->mutex);
+-	sema_init(&state->trigger_event, 0);
+-	sema_init(&state->recycle_event, 0);
+-	sema_init(&state->sync_trigger_event, 0);
+-	sema_init(&state->sync_release_event, 0);
++	init_completion(&state->trigger_event);
++	init_completion(&state->recycle_event);
++	init_completion(&state->sync_trigger_event);
++	init_completion(&state->sync_release_event);
  
- 		if (status == VCHIQ_SUCCESS)
-@@ -3327,6 +3105,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 	const int dir_msgtype = (dir == VCHIQ_BULK_TRANSMIT) ?
- 		VCHIQ_MSG_BULK_TX : VCHIQ_MSG_BULK_RX;
- 	VCHIQ_STATUS_T status = VCHIQ_ERROR;
-+	int payload[2];
+ 	mutex_init(&state->slot_mutex);
+ 	mutex_init(&state->recycle_mutex);
+ 	mutex_init(&state->sync_mutex);
+ 	mutex_init(&state->bulk_transfer_mutex);
  
- 	if (!service || service->srvstate != VCHIQ_SRVSTATE_OPEN ||
- 	    !offset || vchiq_check_service(service) != VCHIQ_SUCCESS)
-@@ -3406,32 +3185,25 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
- 	if (service->srvstate != VCHIQ_SRVSTATE_OPEN)
- 		goto unlock_both_error_exit;
+-	sema_init(&state->slot_available_event, 0);
+-	sema_init(&state->slot_remove_event, 0);
+-	sema_init(&state->data_quota_event, 0);
++	init_completion(&state->slot_available_event);
++	init_completion(&state->slot_remove_event);
++	init_completion(&state->data_quota_event);
  
--	if (state->is_master) {
--		queue->local_insert++;
--		if (resolve_bulks(service, queue))
--			request_poll(state, service,
--				(dir == VCHIQ_BULK_TRANSMIT) ?
--				VCHIQ_POLL_TXNOTIFY : VCHIQ_POLL_RXNOTIFY);
--	} else {
--		int payload[2] = { (int)(long)bulk->data, bulk->size };
--
--		status = queue_message(state,
--				       NULL,
--				       VCHIQ_MAKE_MSG(dir_msgtype,
--						      service->localport,
--						      service->remoteport),
--				       memcpy_copy_callback,
--				       &payload,
--				       sizeof(payload),
--				       QMFLAGS_IS_BLOCKING |
--				       QMFLAGS_NO_MUTEX_LOCK |
--				       QMFLAGS_NO_MUTEX_UNLOCK);
--		if (status != VCHIQ_SUCCESS) {
--			goto unlock_both_error_exit;
--		}
--		queue->local_insert++;
-+	payload[0] = (int)(long)bulk->data;
-+	payload[1] = bulk->size;
-+	status = queue_message(state,
-+			       NULL,
-+			       VCHIQ_MAKE_MSG(dir_msgtype,
-+					      service->localport,
-+					      service->remoteport),
-+			       memcpy_copy_callback,
-+			       &payload,
-+			       sizeof(payload),
-+			       QMFLAGS_IS_BLOCKING |
-+			       QMFLAGS_NO_MUTEX_LOCK |
-+			       QMFLAGS_NO_MUTEX_UNLOCK);
-+	if (status != VCHIQ_SUCCESS) {
-+		goto unlock_both_error_exit;
+ 	state->slot_queue_available = 0;
+ 
+ 	for (i = 0; i < VCHIQ_MAX_SERVICES; i++) {
+ 		VCHIQ_SERVICE_QUOTA_T *service_quota =
+ 			&state->service_quotas[i];
+-		sema_init(&service_quota->quota_event, 0);
++		init_completion(&service_quota->quota_event);
  	}
  
-+	queue->local_insert++;
-+
- 	mutex_unlock(&state->slot_mutex);
- 	mutex_unlock(&service->bulk_mutex);
+ 	for (i = local->slot_first; i <= local->slot_last; i++) {
+ 		local->slot_queue[state->slot_queue_available++] = i;
+-		up(&state->slot_available_event);
++		complete(&state->slot_available_event);
+ 	}
  
+ 	state->default_slot_quota = state->slot_queue_available/2;
+@@ -2354,8 +2354,8 @@ vchiq_add_service_internal(VCHIQ_STATE_T *state,
+ 	service->service_use_count = 0;
+ 	init_bulk_queue(&service->bulk_tx);
+ 	init_bulk_queue(&service->bulk_rx);
+-	sema_init(&service->remove_event, 0);
+-	sema_init(&service->bulk_remove_event, 0);
++	init_completion(&service->remove_event);
++	init_completion(&service->bulk_remove_event);
+ 	mutex_init(&service->bulk_mutex);
+ 	memset(&service->stats, 0, sizeof(service->stats));
+ 
+@@ -2470,7 +2470,7 @@ vchiq_open_service_internal(VCHIQ_SERVICE_T *service, int client_id)
+ 			       QMFLAGS_IS_BLOCKING);
+ 	if (status == VCHIQ_SUCCESS) {
+ 		/* Wait for the ACK/NAK */
+-		if (down_interruptible(&service->remove_event) != 0) {
++		if (wait_for_completion_interruptible(&service->remove_event)) {
+ 			status = VCHIQ_RETRY;
+ 			vchiq_release_service_internal(service);
+ 		} else if ((service->srvstate != VCHIQ_SRVSTATE_OPEN) &&
+@@ -2622,7 +2622,7 @@ close_service_complete(VCHIQ_SERVICE_T *service, int failstate)
+ 			if (is_server)
+ 				service->closing = 0;
+ 
+-			up(&service->remove_event);
++			complete(&service->remove_event);
+ 		}
+ 	} else
+ 		vchiq_set_service_state(service, failstate);
+@@ -2663,7 +2663,7 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
+ 					vchiq_set_service_state(service,
+ 						VCHIQ_SRVSTATE_LISTENING);
+ 			}
+-			up(&service->remove_event);
++			complete(&service->remove_event);
+ 		} else
+ 			vchiq_free_service_internal(service);
+ 		break;
+@@ -2672,7 +2672,7 @@ vchiq_close_service_internal(VCHIQ_SERVICE_T *service, int close_recvd)
+ 			/* The open was rejected - tell the user */
+ 			vchiq_set_service_state(service,
+ 				VCHIQ_SRVSTATE_CLOSEWAIT);
+-			up(&service->remove_event);
++			complete(&service->remove_event);
+ 		} else {
+ 			/* Shutdown mid-open - let the other side know */
+ 			status = queue_message(state, service,
+@@ -2805,7 +2805,7 @@ vchiq_free_service_internal(VCHIQ_SERVICE_T *service)
+ 
+ 	vchiq_set_service_state(service, VCHIQ_SRVSTATE_FREE);
+ 
+-	up(&service->remove_event);
++	complete(&service->remove_event);
+ 
+ 	/* Release the initial lock */
+ 	unlock_service(service);
+@@ -2837,11 +2837,11 @@ vchiq_connect_internal(VCHIQ_STATE_T *state, VCHIQ_INSTANCE_T instance)
+ 	}
+ 
+ 	if (state->conn_state == VCHIQ_CONNSTATE_CONNECTING) {
+-		if (down_interruptible(&state->connect) != 0)
++		if (wait_for_completion_interruptible(&state->connect))
+ 			return VCHIQ_RETRY;
+ 
+ 		vchiq_set_conn_state(state, VCHIQ_CONNSTATE_CONNECTED);
+-		up(&state->connect);
++		complete(&state->connect);
+ 	}
+ 
+ 	return VCHIQ_SUCCESS;
+@@ -2936,7 +2936,7 @@ vchiq_close_service(VCHIQ_SERVICE_HANDLE_T handle)
+ 	}
+ 
+ 	while (1) {
+-		if (down_interruptible(&service->remove_event) != 0) {
++		if (wait_for_completion_interruptible(&service->remove_event)) {
+ 			status = VCHIQ_RETRY;
+ 			break;
+ 		}
+@@ -2997,7 +2997,7 @@ vchiq_remove_service(VCHIQ_SERVICE_HANDLE_T handle)
+ 		request_poll(service->state, service, VCHIQ_POLL_REMOVE);
+ 	}
+ 	while (1) {
+-		if (down_interruptible(&service->remove_event) != 0) {
++		if (wait_for_completion_interruptible(&service->remove_event)) {
+ 			status = VCHIQ_RETRY;
+ 			break;
+ 		}
+@@ -3054,7 +3054,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 		break;
+ 	case VCHIQ_BULK_MODE_BLOCKING:
+ 		bulk_waiter = (struct bulk_waiter *)userdata;
+-		sema_init(&bulk_waiter->event, 0);
++		init_completion(&bulk_waiter->event);
+ 		bulk_waiter->actual = 0;
+ 		bulk_waiter->bulk = NULL;
+ 		break;
+@@ -3080,8 +3080,8 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 		VCHIQ_SERVICE_STATS_INC(service, bulk_stalls);
+ 		do {
+ 			mutex_unlock(&service->bulk_mutex);
+-			if (down_interruptible(&service->bulk_remove_event)
+-				!= 0) {
++			if (wait_for_completion_interruptible(
++						&service->bulk_remove_event)) {
+ 				status = VCHIQ_RETRY;
+ 				goto error_exit;
+ 			}
+@@ -3157,7 +3157,7 @@ VCHIQ_STATUS_T vchiq_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle,
+ 
+ 	if (bulk_waiter) {
+ 		bulk_waiter->bulk = bulk;
+-		if (down_interruptible(&bulk_waiter->event) != 0)
++		if (wait_for_completion_interruptible(&bulk_waiter->event))
+ 			status = VCHIQ_RETRY;
+ 		else if (bulk_waiter->actual == VCHIQ_BULK_ACTUAL_ABORTED)
+ 			status = VCHIQ_ERROR;
+@@ -3326,7 +3326,7 @@ vchiq_set_service_option(VCHIQ_SERVICE_HANDLE_T handle,
+ 					 service_quota->message_use_count)) {
+ 					/* Signal the service that it may have
+ 					** dropped below its quota */
+-					up(&service_quota->quota_event);
++					complete(&service_quota->quota_event);
+ 				}
+ 				status = VCHIQ_SUCCESS;
+ 			}
+@@ -3347,7 +3347,7 @@ vchiq_set_service_option(VCHIQ_SERVICE_HANDLE_T handle,
+ 					service_quota->slot_use_count))
+ 					/* Signal the service that it may have
+ 					** dropped below its quota */
+-					up(&service_quota->quota_event);
++					complete(&service_quota->quota_event);
+ 				status = VCHIQ_SUCCESS;
+ 			}
+ 		} break;
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-index daada568f400..5b1696422e21 100644
+index 5b1696422e21..b76281f7510e 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h
-@@ -400,7 +400,6 @@ struct vchiq_state_struct {
- 	int id;
- 	int initialised;
- 	VCHIQ_CONNSTATE_T conn_state;
--	int is_master;
- 	short version_common;
+@@ -35,7 +35,7 @@
+ #define VCHIQ_CORE_H
  
- 	VCHIQ_SHARED_STATE_T *local;
-@@ -489,10 +488,6 @@ struct vchiq_state_struct {
+ #include <linux/mutex.h>
+-#include <linux/semaphore.h>
++#include <linux/completion.h>
+ #include <linux/kthread.h>
+ 
+ #include "vchiq_cfg.h"
+@@ -307,8 +307,8 @@ typedef struct vchiq_service_struct {
+ 	VCHIQ_BULK_QUEUE_T bulk_tx;
+ 	VCHIQ_BULK_QUEUE_T bulk_rx;
+ 
+-	struct semaphore remove_event;
+-	struct semaphore bulk_remove_event;
++	struct completion remove_event;
++	struct completion bulk_remove_event;
+ 	struct mutex bulk_mutex;
+ 
+ 	struct service_stats_struct {
+@@ -337,7 +337,7 @@ typedef struct vchiq_service_quota_struct {
+ 	unsigned short slot_use_count;
+ 	unsigned short message_quota;
+ 	unsigned short message_use_count;
+-	struct semaphore quota_event;
++	struct completion quota_event;
+ 	int previous_tx_index;
+ } VCHIQ_SERVICE_QUOTA_T;
+ 
+@@ -410,7 +410,7 @@ struct vchiq_state_struct {
+ 	unsigned short default_message_quota;
+ 
+ 	/* Event indicating connect message received */
+-	struct semaphore connect;
++	struct completion connect;
+ 
+ 	/* Mutex protecting services */
+ 	struct mutex mutex;
+@@ -426,16 +426,16 @@ struct vchiq_state_struct {
+ 	struct task_struct *sync_thread;
+ 
+ 	/* Local implementation of the trigger remote event */
+-	struct semaphore trigger_event;
++	struct completion trigger_event;
+ 
+ 	/* Local implementation of the recycle remote event */
+-	struct semaphore recycle_event;
++	struct completion recycle_event;
+ 
+ 	/* Local implementation of the sync trigger remote event */
+-	struct semaphore sync_trigger_event;
++	struct completion sync_trigger_event;
+ 
+ 	/* Local implementation of the sync release remote event */
+-	struct semaphore sync_release_event;
++	struct completion sync_release_event;
+ 
+ 	char *tx_data;
+ 	char *rx_data;
+@@ -481,12 +481,12 @@ struct vchiq_state_struct {
+ 	int unused_service;
+ 
+ 	/* Signalled when a free slot becomes available. */
+-	struct semaphore slot_available_event;
++	struct completion slot_available_event;
+ 
+-	struct semaphore slot_remove_event;
++	struct completion slot_remove_event;
+ 
  	/* Signalled when a free data slot becomes available. */
- 	struct semaphore data_quota_event;
+-	struct semaphore data_quota_event;
++	struct completion data_quota_event;
  
--	/* Incremented when there are bulk transfers which cannot be processed
--	 * whilst paused and must be processed on resume */
--	int deferred_bulks;
--
  	struct state_stats_struct {
  		int slot_stalls;
- 		int data_stalls;
-@@ -529,8 +524,7 @@ extern VCHIQ_SLOT_ZERO_T *
- vchiq_init_slots(void *mem_base, int mem_size);
+@@ -505,7 +505,7 @@ struct vchiq_state_struct {
  
- extern VCHIQ_STATUS_T
--vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero,
--	int is_master);
-+vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero);
+ struct bulk_waiter {
+ 	VCHIQ_BULK_T *bulk;
+-	struct semaphore event;
++	struct completion event;
+ 	int actual;
+ };
  
- extern VCHIQ_STATUS_T
- vchiq_connect_internal(VCHIQ_STATE_T *state, VCHIQ_INSTANCE_T instance);
-@@ -625,9 +619,6 @@ unlock_service(VCHIQ_SERVICE_T *service);
- extern VCHIQ_STATUS_T
- vchiq_prepare_bulk_data(VCHIQ_BULK_T *bulk, void *offset, int size, int dir);
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
+index 2e52f07bbaa9..44b954daa74a 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
+@@ -48,8 +48,8 @@ int vchiu_queue_init(VCHIU_QUEUE_T *queue, int size)
+ 	queue->write = 0;
+ 	queue->initialized = 1;
  
--extern void
--vchiq_transfer_bulk(VCHIQ_BULK_T *bulk);
--
- extern void
- vchiq_complete_bulk(VCHIQ_BULK_T *bulk);
+-	sema_init(&queue->pop, 0);
+-	sema_init(&queue->push, 0);
++	init_completion(&queue->pop);
++	init_completion(&queue->push);
  
+ 	queue->storage = kcalloc(size, sizeof(VCHIQ_HEADER_T *), GFP_KERNEL);
+ 	if (!queue->storage) {
+@@ -80,7 +80,7 @@ void vchiu_queue_push(VCHIU_QUEUE_T *queue, VCHIQ_HEADER_T *header)
+ 		return;
+ 
+ 	while (queue->write == queue->read + queue->size) {
+-		if (down_interruptible(&queue->pop) != 0)
++		if (wait_for_completion_interruptible(&queue->pop))
+ 			flush_signals(current);
+ 	}
+ 
+@@ -100,17 +100,17 @@ void vchiu_queue_push(VCHIU_QUEUE_T *queue, VCHIQ_HEADER_T *header)
+ 
+ 	queue->write++;
+ 
+-	up(&queue->push);
++	complete(&queue->push);
+ }
+ 
+ VCHIQ_HEADER_T *vchiu_queue_peek(VCHIU_QUEUE_T *queue)
+ {
+ 	while (queue->write == queue->read) {
+-		if (down_interruptible(&queue->push) != 0)
++		if (wait_for_completion_interruptible(&queue->push))
+ 			flush_signals(current);
+ 	}
+ 
+-	up(&queue->push); // We haven't removed anything from the queue.
++	complete(&queue->push); // We haven't removed anything from the queue.
+ 
+ 	/*
+ 	 * Read from queue->storage must be visible after read from
+@@ -126,7 +126,7 @@ VCHIQ_HEADER_T *vchiu_queue_pop(VCHIU_QUEUE_T *queue)
+ 	VCHIQ_HEADER_T *header;
+ 
+ 	while (queue->write == queue->read) {
+-		if (down_interruptible(&queue->push) != 0)
++		if (wait_for_completion_interruptible(&queue->push))
+ 			flush_signals(current);
+ 	}
+ 
+@@ -146,7 +146,7 @@ VCHIQ_HEADER_T *vchiu_queue_pop(VCHIU_QUEUE_T *queue)
+ 
+ 	queue->read++;
+ 
+-	up(&queue->pop);
++	complete(&queue->pop);
+ 
+ 	return header;
+ }
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
+index 5a1540d349d3..b226227fe5bc 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
+@@ -35,7 +35,7 @@
+ #define VCHIQ_UTIL_H
+ 
+ #include <linux/types.h>
+-#include <linux/semaphore.h>
++#include <linux/completion.h>
+ #include <linux/mutex.h>
+ #include <linux/bitops.h>
+ #include <linux/kthread.h>
+@@ -60,8 +60,8 @@ typedef struct {
+ 	int write;
+ 	int initialized;
+ 
+-	struct semaphore pop;
+-	struct semaphore push;
++	struct completion pop;
++	struct completion push;
+ 
+ 	VCHIQ_HEADER_T **storage;
+ } VCHIU_QUEUE_T;
 -- 
 2.19.1
 
