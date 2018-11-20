@@ -2,105 +2,2123 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78331C28CF8
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D1C28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE4320851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:43:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39CFA2087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 15:44:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="CYjMeD/D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE4320851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="VJ/turwv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39CFA2087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeKUCMy (ORCPT
+        id S1728562AbeKUCOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 21:12:54 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40074 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbeKUCMy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 21:12:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=JFCZycFUeSq0lZ4Nu7Yey1sobD9jXUjk6ZlCpB24TFY=; b=CYjMeD/DXRwyCE2oY6JRgqHWO
-        s0zWslGfZd5RXZv2YhhJraQ9gjg23/atPBxqwpdQ52dqz0xmxTu2Ay6/7CCgT8fY25xq7kU7Eh+Rk
-        66isXLFJRSk7WGurSfGEJaOXBBu+Sj3cCLq/fTaicoCQCeYhCcuxHP+/vVtofj/2hNh0E=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gP8B5-0001jE-7O; Tue, 20 Nov 2018 15:43:03 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 9BFB51124DC2; Tue, 20 Nov 2018 15:43:02 +0000 (GMT)
-Date:   Tue, 20 Nov 2018 15:43:02 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: Applied "regulator: wm8994: Pass descriptor instead of GPIO
- number" to the regulator tree
-Message-ID: <20181120154302.GF3894@sirena.org.uk>
-References: <20180517164120.485F844007E@finisterre.ee.mobilebroadband>
- <CGME20181120134333eucas1p27a19912dddf4b9b34da505e0973c9137@eucas1p2.samsung.com>
- <66d3b74c-0152-b17b-89d4-a21d33445b25@samsung.com>
- <20181120144700.GB16508@imbe.wolfsonmicro.main>
- <f1c7e9fe-aa57-c7c4-1c2f-02105a5a7474@samsung.com>
- <20181120153215.GC16508@imbe.wolfsonmicro.main>
+        Tue, 20 Nov 2018 21:14:04 -0500
+Received: from mail-eopbgr760081.outbound.protection.outlook.com ([40.107.76.81]:58144
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725949AbeKUCOD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 21:14:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jv9dFpSCGAQfY1LptkDx4tQmkSiM8kkepmPcsjE/9a0=;
+ b=VJ/turwvHCW6My0jEmH/S5zNFMkfkAC5Kc5Yilv8OwSE8//ESWLiaqLlUf2nBavun52afEAXfcfobjxLWB4jGKa6RfLrUJyemlmUfpDbkC8HQejGBlk7Ms4HsZm0JOab92dxwZEFtijpbALbJaOj/zaOlDUJcwtUhbiv1dXubuQ=
+Received: from CY1PR03CA0001.namprd03.prod.outlook.com (2603:10b6:600::11) by
+ BL2PR03MB547.namprd03.prod.outlook.com (2a01:111:e400:c23::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.14; Tue, 20 Nov 2018 15:44:06 +0000
+Received: from BY2FFO11FD004.protection.gbl (2a01:111:f400:7c0c::120) by
+ CY1PR03CA0001.outlook.office365.com (2603:10b6:600::11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.22 via Frontend Transport; Tue, 20 Nov 2018 15:44:05 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
+Received: from nwd2mta4.analog.com (137.71.25.57) by
+ BY2FFO11FD004.mail.protection.outlook.com (10.1.14.158) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.12
+ via Frontend Transport; Tue, 20 Nov 2018 15:44:05 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id wAKFi1pi014109
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Tue, 20 Nov 2018 07:44:01 -0800
+Received: from linux.ad.analog.com (10.32.224.122) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.301.0; Tue, 20 Nov 2018 10:44:01 -0500
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>
+CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        <stefan.popa@analog.com>
+Subject: [PATCH v2 1/2] staging: iio: ad7606: Move out of staging
+Date:   Tue, 20 Nov 2018 17:43:46 +0200
+Message-ID: <1542728626-25770-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TeJTyD9hb8KJN2Jy"
-Content-Disposition: inline
-In-Reply-To: <20181120153215.GC16508@imbe.wolfsonmicro.main>
-X-Cookie: fortune: No such file or directory
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(346002)(396003)(2980300002)(438002)(199004)(189003)(47776003)(50226002)(5660300001)(2906002)(305945005)(4744004)(6916009)(106002)(6666004)(356004)(478600001)(36756003)(72206003)(186003)(966005)(26005)(77096007)(7636002)(8936002)(50466002)(8676002)(107886003)(51416003)(48376002)(1720100001)(7696005)(486006)(476003)(126002)(44832011)(2616005)(336012)(6306002)(16586007)(316002)(54906003)(4326008)(106466001)(246002)(426003)(53946003)(14444005)(575784001)(2351001)(579004)(559001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR03MB547;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2FFO11FD004;1:sTiCrZFZXe3PFk7CQ4SRonrXtoYmXk24fDYc92yNWaXPseAWpBDOp4DyI1Q05DBMBNDA72d37bkmtPCeJu3jz8HeS3t0C5WRxoBDNJLYkDVMjCj9T3SyKwXzwEOyuzuD
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 8793684b-48cf-4ad2-68a3-08d64eff00ed
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BL2PR03MB547;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB547;3:FR5ExE+2mut1QT/dM+kPxlLI9wUWT729amwo8EczqL3M4neA49/OR84LQ8f/xECulZ202bP5icD0Hg2tu4bC3GuNqPTeHft1pOlNu3EBvdjviFNGrl2J7fcq0tGgqrS8Y7Qk092WP8bWCdwhxyKGBcRWvVDGb8sHWixR4ecBjcTPDR4k7VV7Wo4zoqe7pi5VzADQnooREbfC0eOOMhc3TXjsY6Ct3/1ungs01WxDUu/Kzolkg7auZnGTqnE0Di3DLocfdvUj+iUwnqircBLODrX4AToMzAmClU3ZKxYQV3dtt7zNXu363Gj8UawXtNRKeJ26kz7XkAkJQEYVF/Z/dBkoOq+XLcpt65u+w71ZHTc=;25:+8KhDGclvKc8mA7IEjjXjZXfAqx6fF5va5V4PHzNaJh2YXHIOrwAeXof3dUTYp+36WtG7w+Zk9xQRgAPQ7QXymipEeDLJW7E7JXsn2wA+3vaXTb0dNcHaeIUBogyPGx5Kf8eGM0Wv/UEadHjJA5hsezNocO2l+Nm0RkeSwL1bux3azLCP7WG350xteYzj29fz+O+rQsb/wxWiIVYcdviaPc41jVYM0ce0UgWmNgQdmYi+1hXAR5s06uhreoYUsqtJTqeFIHBZYz1Aup4A6irJS1UI1+Ogu4fhpZvVi6+403hF0g/O6bw0M7lgyrQuyN2YFQioooodBwCLk+HW0RtCGu97Dz5wFvf6/6G2XgUzAE=
+X-MS-TrafficTypeDiagnostic: BL2PR03MB547:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB547;31:MGt+IwPy0BziBGQwdon7jP3BZIOLSYv42SumZr6Z8s1Qr1oG1+sOiJzgWiZp0EwSV2sxX0bIJynTX+5FNJ3sEQ/0g1znRvFPh6davYd8UmxwSN/2buda66Ev7DmyeRfHcnXquNIyzpJ283G2fHJy5OPhLCy1jbtURoMSjczfegDAa+nIRFVsY93K282aY3lmK//RMh70UaLhN1fc0UKGB0KL9yCDP6dQWcWh9KCVNmE=;20:xSC8c5HzaNWw47PGTXBKPj6hNp6qLg110Ap/6BQjMcUpQQUPgiamkURBAQuFx7eVY7TXQ+DcoTN7tsBIwKlkK99mhdkvsuKwcEu2spglCMEzsaWPAoBRKOvm2Mi57OLNm6TgyAQ205mIJBiGjgOoQbttklPY6pgx+rj0OyP6ef2G46UjzdL+LvQOQeQmVUibQg88pDi3Pq9ufkg4+Ts/iH0UD/nCDDmZyDDkIpOhw1R/4sDZ9iIN7S3tBT5g/WYyJujfjCFTgBlkzWBU+PlinFR5VD6V+VX8QMRgQxZcKrP2s/fRwlCrproA0lcE6zKSNqNLLxFApJ8bTQdzZng4NRomTicbHo9fwsTTsNg64mqGXwnHQCWziIR25ohQDyqXPiuA8/URAqQOipp13lxYS9K+nydchC6Ejev1xTuLH8zGm+6VRfn1dUvME5BDYmUiYH4qpPkWiPWLO0hnNCL74+AObl/G23g0JiglZKlEOtttGN2xJ+7KKOm3Gcj2Z4Oy
+X-Microsoft-Antispam-PRVS: <BL2PR03MB5476F6C9EAE96326BCDD0EE9DD90@BL2PR03MB547.namprd03.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231442)(944501410)(4982022)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BL2PR03MB547;BCL:0;PCL:0;RULEID:;SRVR:BL2PR03MB547;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB547;4:uI5o5P35OSkLyH1EMsGxjOgTRVKNU8cNyL3b7iYQNjZ9xheQ7jAx7ir0i8JPplaB+2pAcepzYdgrAHhgX9H3xqLNadFsn5ymWpjQZ2kF7riqBprv9n7HLSDd9kx1EANygL5PwBk20vnr0Sc2VhUfIojn1+KMxcnM8zzoOBuksUKEzKd+h+g+ZuQJ3LDZ7xPulS4iw9me2pXijFhzUQjgIxdEdlhmD7gh3khpis8RBwpDRpgftsVTSpme+FoIwPQwY83thbxY6wScCO75KhLkIw==
+X-Forefront-PRVS: 08626BE3A5
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR03MB547;23:rpkvC00QsMpXx6JzehNj70rXAPeV4pX6ouD3pBbGBF?=
+ =?us-ascii?Q?05D+XqHvm6gjoxGt78mFaQPy5C2S3hJXmuZ7m+APu+3kg16eJWlIfEqxjSvT?=
+ =?us-ascii?Q?ZeX9r0iJ8SXmY4p2PD/coimz3NHYA0/yVEfsfBLQ/a9ifn48h3b1jMizXiUM?=
+ =?us-ascii?Q?wS81AyqG0Bza2EzwRFgF8zTja8aBhKW2VTfiRMOq0AYcBID19iLit587Izpi?=
+ =?us-ascii?Q?y2e1btKS2gGt5k+7JmEEKreiLQ4B6lYSoZpz4eNdSonseJiTscVF4D46syIv?=
+ =?us-ascii?Q?vouOckxo6jKzIIVu8qfYz2bcsLrv4kj1T+HIzsHEWvTRurXhsxkRf5jnM5r3?=
+ =?us-ascii?Q?Zq1hXbPcPEu0/BTaTIt0iKvr34EvSdSW0BgMQ3sk/l4HcektTz5NhJyrbvds?=
+ =?us-ascii?Q?Yy/AvUC4w4qpx9DQnL5/2pRyRuDdqF5/GLHPqkny0ihhDa9jbza8tAYY/zlS?=
+ =?us-ascii?Q?ySrDF7FndZm5Azk/RsnzDFaAPxlWyritrAvjgR0nvF93HyeE8ZRFPhEoZ/w1?=
+ =?us-ascii?Q?v0z7UbkuR2oqoEFGNULqy7v0Wz/lO4egpMrIDkGp1OdmgOBSvAAtAnHl4XlH?=
+ =?us-ascii?Q?h/VhvB6JklbChYbyTeMBSYQBM/UeCn3WXAtSX5qmJ05PsqYBIYD2Rvz22U1G?=
+ =?us-ascii?Q?ABDkETWA3jc9n7Y3NHXY3eJqqPvVfP3fsaUB6PhxmfvQ1e57WNSEVICKqVRx?=
+ =?us-ascii?Q?zBzwgARwN0D7FTYqRbnWNBTlgBka1gMpvyN1gGSL85g0R6FjVL55xfjIToLw?=
+ =?us-ascii?Q?slZnqLM5o3r5TLLK7ZaeqKEcebEBprUIAotQAp6jMYx2DXE1Xgs+PvmoIb6r?=
+ =?us-ascii?Q?J3aKGvB/Xb4UKsgrJBbE+MUYQiU4ZdUpn4O9rJKVeRCN2pdlm4ffczXvB13p?=
+ =?us-ascii?Q?F6ol1C64HNvjCbRU1d5iNicdk1t5+oaN9z8wDpSdIf/48P+cgNaxmSPoFbtT?=
+ =?us-ascii?Q?d0kq7ud+pjbq25z3WfpuEAaUh9EAUTOTvctdGr0gZICPsUsJMBkWfwYwCVqU?=
+ =?us-ascii?Q?f4OaYdeeOaGrbsZPlZpAH491a1FVCx6saIhor/If4XizfhtAIPssUgmdfAwP?=
+ =?us-ascii?Q?lbevoO9cH6eFfRUCkFP3k7YBU87APnFVSixGAz8CLqjE6n64PAlRfbZBVqR9?=
+ =?us-ascii?Q?whldhXqTMwLhogQEupClfcYL3w112MVL8lMp8dHtAsoxCsVmxGHNw9v6/XKt?=
+ =?us-ascii?Q?RVgj1HruVIRoI=3D?=
+X-Microsoft-Antispam-Message-Info: qjdF2TJBxfTo7aY0dzAiqvZEDf43gF9hNKRMrOC84x+QG/gvMx/duHrVkfznK051AWxfGnIqwCwi6h8ORxgB/DNNctvafETyfJhFc9+0h3tX14HKnZWvv5DB04ImRd4P5L8kuf6ZBogStzcksfKg8Ctgl7BoPJATnOYu/ve0PbOizhRVyB4WjIYfRklbGxhiEogvQeqEr1kmC+52uMbgUk0l85Trno03sj8hnWGwkIi/PipzV9MYBOj2RyLTxH9XYLf7Xw8x7EIXY+E5I21E+yVDHVBVviENnfl032rgSSgXSFVHuuLAOySqrLmJBkHCOCsTErzLIM6alLvXaq6s1NMzahhWjzY8NiD125jdTss=
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR03MB547;6:wNVfe/gaht/2oZr50cTPpq90z2w4CtmccGhQYLRItpVGzqd0dqLl2MdC1qelB9KG+4frXYj3gbVMFTzclSYZJFT1772BGRzxT8fHCj+tKCPk+6gdXs0mTs0XLfmBBxsKBHPoUsDC323o+aN0Xq663XzigYkB3SnJUssrv4+dErhC+0I0ZoT1EV+4I3h91BuAU5i8Ci8fZrgfMkw4cDkHJCqAuBCj5AWB1kW0XlKrOF3mnNLFU8UcsEu3XQADARzBMPso4jhxyx8iZ8vj7VoNQK2gPYklsiVTuPj/nmXQPopvXZubwp24Rn7hQEspibLM96LTz/DjY9mWHFTD0BAiV0wXiidenN/ld7lR8ocP1Z1yxw3TqfFrOFqvllapvtkpjnoGErJQLQ3teGv4ZNeJpwd08Fb/HZs4GA3c87telwjnGH1+wO+eQxLLV7dZ586J1IP1AaV2LtVelHCOudBNfA==;5:8zI+DMM/vY9xIiPYstuXF8snPwlA+obTJtGwJu/oCDMBHjlh/HfumW0DIq2y2HHK5aRXSUQmRs7CCYmqwX9N3z+ttGj4vDtKXuhlzMJQ1iL6qWLfGZkLPwobjz3fD9Xn/0oMJPCbBbE5PxzaocAW7XApabceW3UOxV0aiyQklKY=;7:qQ5i4AcDqp2ufefRO58ljYv3ZNmtZ0aW1XDBcTSoCxg81JMra51+I89BMTXDDJlzKsI9u9hFUiZG4Jjizrx2877SGsMTnLkcizElYKWa/2ZBor8zY8Gw/2aQ7C3GYO02DHX+Kh9y+ArlBKuDl+YB/A==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Nov 2018 15:44:05.1814
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8793684b-48cf-4ad2-68a3-08d64eff00ed
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR03MB547
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Move ad7606 ADC driver out of staging and into the mainline.
 
---TeJTyD9hb8KJN2Jy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+Changes in v2:
+	- Simplified the Kconfig menu.
+	- Added SPDX-License-Identifier.
+	- Ordered the includes alphabetically.
+	- Used a threaded interrupt.
+	- Replaced ad7606_poll_bh_to_ring() with ad7606_trigger_handler().
+	- Used a trigger. 
+	- Replaced wait_event_interruptible() with wait_for_completion_timeout().
+	- Replaced wake_up_interruptible() with complete().
+	- Used devm_iio_triggered_buffer_setup().
+	- Added buffer_ops.
+	- Used single line comments where needed.
+	- Removed the gap between docs and struct.
+	- Added ad7606_of_match[].
 
-On Tue, Nov 20, 2018 at 03:32:15PM +0000, Charles Keepax wrote:
-> On Tue, Nov 20, 2018 at 03:58:59PM +0100, Marek Szyprowski wrote:
+ MAINTAINERS                          |   7 +
+ drivers/iio/adc/Kconfig              |  28 ++
+ drivers/iio/adc/Makefile             |   3 +
+ drivers/iio/adc/ad7606.c             | 608 +++++++++++++++++++++++++++++++++++
+ drivers/iio/adc/ad7606.h             | 107 ++++++
+ drivers/iio/adc/ad7606_par.c         | 110 +++++++
+ drivers/iio/adc/ad7606_spi.c         |  88 +++++
+ drivers/staging/iio/adc/Kconfig      |  34 --
+ drivers/staging/iio/adc/Makefile     |   3 -
+ drivers/staging/iio/adc/ad7606.c     | 565 --------------------------------
+ drivers/staging/iio/adc/ad7606.h     | 106 ------
+ drivers/staging/iio/adc/ad7606_par.c | 113 -------
+ drivers/staging/iio/adc/ad7606_spi.c |  79 -----
+ 13 files changed, 951 insertions(+), 900 deletions(-)
+ create mode 100644 drivers/iio/adc/ad7606.c
+ create mode 100644 drivers/iio/adc/ad7606.h
+ create mode 100644 drivers/iio/adc/ad7606_par.c
+ create mode 100644 drivers/iio/adc/ad7606_spi.c
+ delete mode 100644 drivers/staging/iio/adc/ad7606.c
+ delete mode 100644 drivers/staging/iio/adc/ad7606.h
+ delete mode 100644 drivers/staging/iio/adc/ad7606_par.c
+ delete mode 100644 drivers/staging/iio/adc/ad7606_spi.c
 
-> > No board file, everything in DT.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f642044..843545d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -839,6 +839,13 @@ S:	Supported
+ F:	drivers/iio/dac/ad5758.c
+ F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
+ 
++ANALOG DEVICES INC AD7606 DRIVER
++M:	Stefan Popa <stefan.popa@analog.com>
++L:	linux-iio@vger.kernel.org
++W:	http://ez.analog.com/community/linux-device-drivers
++S:	Supported
++F:	drivers/iio/adc/ad7606.c
++
+ ANALOG DEVICES INC AD9389B DRIVER
+ M:	Hans Verkuil <hans.verkuil@cisco.com>
+ L:	linux-media@vger.kernel.org
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a52fea8..c3f61c9 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -58,6 +58,34 @@ config AD7476
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ad7476.
+ 
++config AD7606
++	tristate
++	depends on GPIOLIB || COMPILE_TEST
++	depends on HAS_IOMEM
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
++
++config AD7606_IFACE_PARALLEL
++	tristate "Analog Devices AD7606 ADC driver with parallel interface support"
++	select AD7606
++	help
++	  Say yes here to build parallel interface support for Analog Devices:
++	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called ad7606_parallel.
++
++config AD7606_IFACE_SPI
++	tristate "Analog Devices AD7606 ADC driver with spi interface support"
++	depends on SPI
++	select AD7606
++	help
++	  Say yes here to build spi interface support for Analog Devices:
++	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called ad7606_spi.
++
+ config AD7766
+ 	tristate "Analog Devices AD7766/AD7767 ADC driver"
+ 	depends on SPI_MASTER
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index a6e6a0b..b734f4f 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -8,6 +8,9 @@ obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
+ obj-$(CONFIG_AD7266) += ad7266.o
+ obj-$(CONFIG_AD7291) += ad7291.o
+ obj-$(CONFIG_AD7298) += ad7298.o
++obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
++obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
++obj-$(CONFIG_AD7606) += ad7606.o
+ obj-$(CONFIG_AD7923) += ad7923.o
+ obj-$(CONFIG_AD7476) += ad7476.o
+ obj-$(CONFIG_AD7766) += ad7766.o
+diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+new file mode 100644
+index 0000000..4e09635
+--- /dev/null
++++ b/drivers/iio/adc/ad7606.c
+@@ -0,0 +1,608 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AD7606 SPI ADC driver
++ *
++ * Copyright 2011 Analog Devices Inc.
++ */
++
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/regulator/consumer.h>
++#include <linux/sched.h>
++#include <linux/slab.h>
++#include <linux/sysfs.h>
++
++#include <linux/iio/iio.h>
++#include <linux/iio/buffer.h>
++#include <linux/iio/sysfs.h>
++#include <linux/iio/trigger.h>
++#include <linux/iio/triggered_buffer.h>
++#include <linux/iio/trigger_consumer.h>
++
++#include "ad7606.h"
++
++/*
++ * Scales are computed as 5000/32768 and 10000/32768 respectively,
++ * so that when applied to the raw values they provide mV values
++ */
++static const unsigned int scale_avail[2][2] = {
++	{0, 152588}, {0, 305176}
++};
++
++static int ad7606_reset(struct ad7606_state *st)
++{
++	if (st->gpio_reset) {
++		gpiod_set_value(st->gpio_reset, 1);
++		ndelay(100); /* t_reset >= 100ns */
++		gpiod_set_value(st->gpio_reset, 0);
++		return 0;
++	}
++
++	return -ENODEV;
++}
++
++static int ad7606_read_samples(struct ad7606_state *st)
++{
++	unsigned int num = st->chip_info->num_channels;
++	u16 *data = st->data;
++	int ret;
++
++	/*
++	 * The frstdata signal is set to high while and after reading the sample
++	 * of the first channel and low for all other channels. This can be used
++	 * to check that the incoming data is correctly aligned. During normal
++	 * operation the data should never become unaligned, but some glitch or
++	 * electrostatic discharge might cause an extra read or clock cycle.
++	 * Monitoring the frstdata signal allows to recover from such failure
++	 * situations.
++	 */
++
++	if (st->gpio_frstdata) {
++		ret = st->bops->read_block(st->dev, 1, data);
++		if (ret)
++			return ret;
++
++		if (!gpiod_get_value(st->gpio_frstdata)) {
++			ad7606_reset(st);
++			return -EIO;
++		}
++
++		data++;
++		num--;
++	}
++
++	return st->bops->read_block(st->dev, num, data);
++}
++
++static irqreturn_t ad7606_trigger_handler(int irq, void *p)
++{
++	struct iio_poll_func *pf = p;
++	struct iio_dev *indio_dev = pf->indio_dev;
++	struct ad7606_state *st = iio_priv(indio_dev);
++	int ret;
++
++	mutex_lock(&st->lock);
++
++	ret = ad7606_read_samples(st);
++	if (ret == 0)
++		iio_push_to_buffers_with_timestamp(indio_dev, st->data,
++						   iio_get_time_ns(indio_dev));
++
++	gpiod_set_value(st->gpio_convst, 0);
++	iio_trigger_notify_done(indio_dev->trig);
++
++	mutex_unlock(&st->lock);
++
++	return IRQ_HANDLED;
++}
++
++static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++	int ret;
++
++	gpiod_set_value(st->gpio_convst, 1);
++	ret = wait_for_completion_timeout(&st->completion,
++					  msecs_to_jiffies(1000));
++	if (!ret) {
++		ret = -ETIMEDOUT;
++		goto error_ret;
++	}
++
++	ret = ad7606_read_samples(st);
++	if (ret == 0)
++		ret = st->data[ch];
++
++error_ret:
++	gpiod_set_value(st->gpio_convst, 0);
++
++	return ret;
++}
++
++static int ad7606_read_raw(struct iio_dev *indio_dev,
++			   struct iio_chan_spec const *chan,
++			   int *val,
++			   int *val2,
++			   long m)
++{
++	int ret;
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	switch (m) {
++	case IIO_CHAN_INFO_RAW:
++		ret = iio_device_claim_direct_mode(indio_dev);
++		if (ret)
++			return ret;
++
++		ret = ad7606_scan_direct(indio_dev, chan->address);
++		iio_device_release_direct_mode(indio_dev);
++
++		if (ret < 0)
++			return ret;
++		*val = (short)ret;
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = scale_avail[st->range][0];
++		*val2 = scale_avail[st->range][1];
++		return IIO_VAL_INT_PLUS_MICRO;
++	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
++		*val = st->oversampling;
++		return IIO_VAL_INT;
++	}
++	return -EINVAL;
++}
++
++static ssize_t in_voltage_scale_available_show(struct device *dev,
++					       struct device_attribute *attr,
++					       char *buf)
++{
++	int i, len = 0;
++
++	for (i = 0; i < ARRAY_SIZE(scale_avail); i++)
++		len += scnprintf(buf + len, PAGE_SIZE - len, "%d.%06u ",
++				 scale_avail[i][0], scale_avail[i][1]);
++
++	buf[len - 1] = '\n';
++
++	return len;
++}
++
++static IIO_DEVICE_ATTR_RO(in_voltage_scale_available, 0);
++
++static int ad7606_oversampling_get_index(unsigned int val)
++{
++	unsigned char supported[] = {1, 2, 4, 8, 16, 32, 64};
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(supported); i++)
++		if (val == supported[i])
++			return i;
++
++	return -EINVAL;
++}
++
++static int ad7606_write_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int val,
++			    int val2,
++			    long mask)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++	int values[3];
++	int ret, i;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_SCALE:
++		ret = -EINVAL;
++		mutex_lock(&st->lock);
++		for (i = 0; i < ARRAY_SIZE(scale_avail); i++)
++			if (val2 == scale_avail[i][1]) {
++				gpiod_set_value(st->gpio_range, i);
++				st->range = i;
++
++				ret = 0;
++				break;
++			}
++		mutex_unlock(&st->lock);
++
++		return ret;
++	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
++		if (val2)
++			return -EINVAL;
++		ret = ad7606_oversampling_get_index(val);
++		if (ret < 0)
++			return ret;
++
++		values[0] = (ret >> 0) & 1;
++		values[1] = (ret >> 1) & 1;
++		values[2] = (ret >> 2) & 1;
++
++		mutex_lock(&st->lock);
++		gpiod_set_array_value(ARRAY_SIZE(values), st->gpio_os->desc,
++				      values);
++		st->oversampling = val;
++		mutex_unlock(&st->lock);
++
++		return 0;
++	default:
++		return -EINVAL;
++	}
++}
++
++static IIO_CONST_ATTR(oversampling_ratio_available, "1 2 4 8 16 32 64");
++
++static struct attribute *ad7606_attributes_os_and_range[] = {
++	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
++	&iio_const_attr_oversampling_ratio_available.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group ad7606_attribute_group_os_and_range = {
++	.attrs = ad7606_attributes_os_and_range,
++};
++
++static struct attribute *ad7606_attributes_os[] = {
++	&iio_const_attr_oversampling_ratio_available.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group ad7606_attribute_group_os = {
++	.attrs = ad7606_attributes_os,
++};
++
++static struct attribute *ad7606_attributes_range[] = {
++	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group ad7606_attribute_group_range = {
++	.attrs = ad7606_attributes_range,
++};
++
++#define AD760X_CHANNEL(num, mask) {				\
++		.type = IIO_VOLTAGE,				\
++		.indexed = 1,					\
++		.channel = num,					\
++		.address = num,					\
++		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
++		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),\
++		.info_mask_shared_by_all = mask,		\
++		.scan_index = num,				\
++		.scan_type = {					\
++			.sign = 's',				\
++			.realbits = 16,				\
++			.storagebits = 16,			\
++			.endianness = IIO_BE,			\
++		},						\
++}
++
++#define AD7605_CHANNEL(num)	\
++	AD760X_CHANNEL(num, 0)
++
++#define AD7606_CHANNEL(num)	\
++	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
++
++static const struct iio_chan_spec ad7605_channels[] = {
++	IIO_CHAN_SOFT_TIMESTAMP(4),
++	AD7605_CHANNEL(0),
++	AD7605_CHANNEL(1),
++	AD7605_CHANNEL(2),
++	AD7605_CHANNEL(3),
++};
++
++static const struct iio_chan_spec ad7606_channels[] = {
++	IIO_CHAN_SOFT_TIMESTAMP(8),
++	AD7606_CHANNEL(0),
++	AD7606_CHANNEL(1),
++	AD7606_CHANNEL(2),
++	AD7606_CHANNEL(3),
++	AD7606_CHANNEL(4),
++	AD7606_CHANNEL(5),
++	AD7606_CHANNEL(6),
++	AD7606_CHANNEL(7),
++};
++
++static const struct ad7606_chip_info ad7606_chip_info_tbl[] = {
++	/* More devices added in future */
++	[ID_AD7605_4] = {
++		.channels = ad7605_channels,
++		.num_channels = 5,
++	},
++	[ID_AD7606_8] = {
++		.channels = ad7606_channels,
++		.num_channels = 9,
++		.has_oversampling = true,
++	},
++	[ID_AD7606_6] = {
++		.channels = ad7606_channels,
++		.num_channels = 7,
++		.has_oversampling = true,
++	},
++	[ID_AD7606_4] = {
++		.channels = ad7606_channels,
++		.num_channels = 5,
++		.has_oversampling = true,
++	},
++};
++
++static int ad7606_request_gpios(struct ad7606_state *st)
++{
++	struct device *dev = st->dev;
++
++	st->gpio_convst = devm_gpiod_get(dev, "adi,conversion-start",
++					 GPIOD_OUT_LOW);
++	if (IS_ERR(st->gpio_convst))
++		return PTR_ERR(st->gpio_convst);
++
++	st->gpio_reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
++	if (IS_ERR(st->gpio_reset))
++		return PTR_ERR(st->gpio_reset);
++
++	st->gpio_range = devm_gpiod_get_optional(dev, "adi,range",
++						 GPIOD_OUT_LOW);
++	if (IS_ERR(st->gpio_range))
++		return PTR_ERR(st->gpio_range);
++
++	st->gpio_standby = devm_gpiod_get_optional(dev, "standby",
++						   GPIOD_OUT_HIGH);
++	if (IS_ERR(st->gpio_standby))
++		return PTR_ERR(st->gpio_standby);
++
++	st->gpio_frstdata = devm_gpiod_get_optional(dev, "adi,first-data",
++						    GPIOD_IN);
++	if (IS_ERR(st->gpio_frstdata))
++		return PTR_ERR(st->gpio_frstdata);
++
++	if (!st->chip_info->has_oversampling)
++		return 0;
++
++	st->gpio_os = devm_gpiod_get_array_optional(dev, "oversampling-ratio",
++			GPIOD_OUT_LOW);
++	return PTR_ERR_OR_ZERO(st->gpio_os);
++}
++
++/* Interrupt handler */
++static irqreturn_t ad7606_interrupt(int irq, void *dev_id)
++{
++	struct iio_dev *indio_dev = dev_id;
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (iio_buffer_enabled(indio_dev)) {
++		gpiod_set_value(st->gpio_convst, 1);
++		iio_trigger_poll_chained(st->trig);
++	} else {
++		complete(&st->completion);
++	}
++
++	return IRQ_HANDLED;
++};
++
++static int ad7606_validate_trigger(struct iio_dev *indio_dev,
++				   struct iio_trigger *trig)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (st->trig != trig)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int ad7606_buffer_postenable(struct iio_dev *indio_dev)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	mutex_lock(&st->lock);
++
++	iio_triggered_buffer_postenable(indio_dev);
++	gpiod_set_value(st->gpio_convst, 1);
++
++	mutex_unlock(&st->lock);
++
++	return 0;
++}
++
++static int ad7606_buffer_postdisable(struct iio_dev *indio_dev)
++{
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	gpiod_set_value(st->gpio_convst, 0);
++
++	return 0;
++}
++
++static const struct iio_buffer_setup_ops ad7606_buffer_ops = {
++	.postenable = &ad7606_buffer_postenable,
++	.predisable = &iio_triggered_buffer_predisable,
++	.postdisable = &ad7606_buffer_postdisable,
++};
++
++static const struct iio_info ad7606_info_no_os_or_range = {
++	.read_raw = &ad7606_read_raw,
++	.validate_trigger = &ad7606_validate_trigger,
++};
++
++static const struct iio_info ad7606_info_os_and_range = {
++	.read_raw = &ad7606_read_raw,
++	.write_raw = &ad7606_write_raw,
++	.attrs = &ad7606_attribute_group_os_and_range,
++	.validate_trigger = &ad7606_validate_trigger,
++};
++
++static const struct iio_info ad7606_info_os = {
++	.read_raw = &ad7606_read_raw,
++	.write_raw = &ad7606_write_raw,
++	.attrs = &ad7606_attribute_group_os,
++	.validate_trigger = &ad7606_validate_trigger,
++};
++
++static const struct iio_info ad7606_info_range = {
++	.read_raw = &ad7606_read_raw,
++	.write_raw = &ad7606_write_raw,
++	.attrs = &ad7606_attribute_group_range,
++	.validate_trigger = &ad7606_validate_trigger,
++};
++
++static const struct iio_trigger_ops ad7606_trigger_ops = {
++	.validate_device = iio_trigger_validate_own_device,
++};
++
++int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
++		 const char *name, unsigned int id,
++		 const struct ad7606_bus_ops *bops)
++{
++	struct ad7606_state *st;
++	int ret;
++	struct iio_dev *indio_dev;
++
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	st = iio_priv(indio_dev);
++
++	st->dev = dev;
++	mutex_init(&st->lock);
++	st->bops = bops;
++	st->base_address = base_address;
++	/* tied to logic low, analog input range is +/- 5V */
++	st->range = 0;
++	st->oversampling = 1;
++
++	st->reg = devm_regulator_get(dev, "avcc");
++	if (IS_ERR(st->reg))
++		return PTR_ERR(st->reg);
++
++	ret = regulator_enable(st->reg);
++	if (ret) {
++		dev_err(dev, "Failed to enable specified AVcc supply\n");
++		return ret;
++	}
++
++	st->chip_info = &ad7606_chip_info_tbl[id];
++
++	ret = ad7606_request_gpios(st);
++	if (ret)
++		goto error_disable_reg;
++
++	indio_dev->dev.parent = dev;
++	if (st->gpio_os) {
++		if (st->gpio_range)
++			indio_dev->info = &ad7606_info_os_and_range;
++		else
++			indio_dev->info = &ad7606_info_os;
++	} else {
++		if (st->gpio_range)
++			indio_dev->info = &ad7606_info_range;
++		else
++			indio_dev->info = &ad7606_info_no_os_or_range;
++	}
++	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->name = name;
++	indio_dev->channels = st->chip_info->channels;
++	indio_dev->num_channels = st->chip_info->num_channels;
++
++	ret = ad7606_reset(st);
++	if (ret)
++		dev_warn(st->dev, "failed to RESET: no RESET GPIO specified\n");
++
++	st->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
++					  indio_dev->name, indio_dev->id);
++	if (st->trig == NULL)
++		return -ENOMEM;
++
++	st->trig->ops = &ad7606_trigger_ops;
++	st->trig->dev.parent = dev;
++	iio_trigger_set_drvdata(st->trig, indio_dev);
++	ret = devm_iio_trigger_register(dev, st->trig);
++	if (ret)
++		return ret;
++
++	indio_dev->trig = iio_trigger_get(st->trig);
++
++	init_completion(&st->completion);
++
++	ret = devm_request_threaded_irq(dev, irq,
++					NULL,
++					&ad7606_interrupt,
++					IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
++					name, indio_dev);
++	if (ret)
++		goto error_disable_reg;
++
++	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
++					      &iio_pollfunc_store_time,
++					      &ad7606_trigger_handler,
++					      &ad7606_buffer_ops);
++	if (ret)
++		goto error_disable_reg;
++
++	ret = iio_device_register(indio_dev);
++	if (ret)
++		goto error_disable_reg;
++
++	dev_set_drvdata(dev, indio_dev);
++
++	return 0;
++
++error_disable_reg:
++	regulator_disable(st->reg);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(ad7606_probe);
++
++int ad7606_remove(struct device *dev, int irq)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	iio_device_unregister(indio_dev);
++
++	regulator_disable(st->reg);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ad7606_remove);
++
++#ifdef CONFIG_PM_SLEEP
++
++static int ad7606_suspend(struct device *dev)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (st->gpio_standby) {
++		gpiod_set_value(st->gpio_range, 1);
++		gpiod_set_value(st->gpio_standby, 0);
++	}
++
++	return 0;
++}
++
++static int ad7606_resume(struct device *dev)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	if (st->gpio_standby) {
++		gpiod_set_value(st->gpio_range, st->range);
++		gpiod_set_value(st->gpio_standby, 1);
++		ad7606_reset(st);
++	}
++
++	return 0;
++}
++
++SIMPLE_DEV_PM_OPS(ad7606_pm_ops, ad7606_suspend, ad7606_resume);
++EXPORT_SYMBOL_GPL(ad7606_pm_ops);
++
++#endif
++
++MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
++MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
+new file mode 100644
+index 0000000..9369201
+--- /dev/null
++++ b/drivers/iio/adc/ad7606.h
+@@ -0,0 +1,107 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * AD7606 ADC driver
++ *
++ * Copyright 2011 Analog Devices Inc.
++ */
++
++#ifndef IIO_ADC_AD7606_H_
++#define IIO_ADC_AD7606_H_
++
++/**
++ * struct ad7606_chip_info - chip specific information
++ * @channels:		channel specification
++ * @num_channels:	number of channels
++ * @has_oversampling:   whether the device has oversampling support
++ */
++struct ad7606_chip_info {
++	const struct iio_chan_spec	*channels;
++	unsigned int			num_channels;
++	bool				has_oversampling;
++};
++
++/**
++ * struct ad7606_state - driver instance specific data
++ * @dev		pointer to kernel device
++ * @chip_info		entry in the table of chips that describes this device
++ * @reg		regulator info for the the power supply of the device
++ * @poll_work		work struct for continuously reading data from the device
++ *			into an IIO triggered buffer
++ * @wq_data_avail	wait queue struct for buffer mode
++ * @bops		bus operations (SPI or parallel)
++ * @range		voltage range selection, selects which scale to apply
++ * @oversampling	oversampling selection
++ * @done		marks whether reading data is done
++ * @base_address	address from where to read data in parallel operation
++ * @lock		protect sensor state from concurrent accesses to GPIOs
++ * @gpio_convst	GPIO descriptor for conversion start signal (CONVST)
++ * @gpio_reset		GPIO descriptor for device hard-reset
++ * @gpio_range		GPIO descriptor for range selection
++ * @gpio_standby	GPIO descriptor for stand-by signal (STBY),
++ *			controls power-down mode of device
++ * @gpio_frstdata	GPIO descriptor for reading from device when data
++ *			is being read on the first channel
++ * @gpio_os		GPIO descriptors to control oversampling on the device
++ * @complete		completion to indicate end of conversion
++ * @trig		The IIO trigger associated with the device.
++ * @data		buffer for reading data from the device
++ */
++struct ad7606_state {
++	struct device			*dev;
++	const struct ad7606_chip_info	*chip_info;
++	struct regulator		*reg;
++	struct work_struct		poll_work;
++	wait_queue_head_t		wq_data_avail;
++	const struct ad7606_bus_ops	*bops;
++	unsigned int			range;
++	unsigned int			oversampling;
++	bool				done;
++	void __iomem			*base_address;
++
++	struct mutex			lock; /* protect sensor state */
++	struct gpio_desc		*gpio_convst;
++	struct gpio_desc		*gpio_reset;
++	struct gpio_desc		*gpio_range;
++	struct gpio_desc		*gpio_standby;
++	struct gpio_desc		*gpio_frstdata;
++	struct gpio_descs		*gpio_os;
++	struct iio_trigger		*trig;
++	struct completion		completion;
++
++	/*
++	 * DMA (thus cache coherency maintenance) requires the
++	 * transfer buffers to live in their own cache lines.
++	 * 8 * 16-bit samples + 64-bit timestamp
++	 */
++	unsigned short			data[12] ____cacheline_aligned;
++};
++
++/**
++ * struct ad7606_bus_ops - driver bus operations
++ * @read_block		function pointer for reading blocks of data
++ */
++struct ad7606_bus_ops {
++	/* more methods added in future? */
++	int (*read_block)(struct device *dev, int num, void *data);
++};
++
++int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
++		 const char *name, unsigned int id,
++		 const struct ad7606_bus_ops *bops);
++int ad7606_remove(struct device *dev, int irq);
++
++enum ad7606_supported_device_ids {
++	ID_AD7605_4,
++	ID_AD7606_8,
++	ID_AD7606_6,
++	ID_AD7606_4
++};
++
++#ifdef CONFIG_PM_SLEEP
++extern const struct dev_pm_ops ad7606_pm_ops;
++#define AD7606_PM_OPS (&ad7606_pm_ops)
++#else
++#define AD7606_PM_OPS NULL
++#endif
++
++#endif /* IIO_ADC_AD7606_H_ */
+diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
+new file mode 100644
+index 0000000..879cb91
+--- /dev/null
++++ b/drivers/iio/adc/ad7606_par.c
+@@ -0,0 +1,110 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AD7606 Parallel Interface ADC driver
++ *
++ * Copyright 2011 Analog Devices Inc.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/types.h>
++#include <linux/err.h>
++#include <linux/io.h>
++
++#include <linux/iio/iio.h>
++#include "ad7606.h"
++
++static int ad7606_par16_read_block(struct device *dev,
++				   int count, void *buf)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	insw((unsigned long)st->base_address, buf, count);
++
++	return 0;
++}
++
++static const struct ad7606_bus_ops ad7606_par16_bops = {
++	.read_block	= ad7606_par16_read_block,
++};
++
++static int ad7606_par8_read_block(struct device *dev,
++				  int count, void *buf)
++{
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
++	struct ad7606_state *st = iio_priv(indio_dev);
++
++	insb((unsigned long)st->base_address, buf, count * 2);
++
++	return 0;
++}
++
++static const struct ad7606_bus_ops ad7606_par8_bops = {
++	.read_block	= ad7606_par8_read_block,
++};
++
++static int ad7606_par_probe(struct platform_device *pdev)
++{
++	const struct platform_device_id *id = platform_get_device_id(pdev);
++	struct resource *res;
++	void __iomem *addr;
++	resource_size_t remap_size;
++	int irq;
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "no irq: %d\n", irq);
++		return irq;
++	}
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	addr = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(addr))
++		return PTR_ERR(addr);
++
++	remap_size = resource_size(res);
++
++	return ad7606_probe(&pdev->dev, irq, addr,
++			    id->name, id->driver_data,
++			    remap_size > 1 ? &ad7606_par16_bops :
++			    &ad7606_par8_bops);
++}
++
++static int ad7606_par_remove(struct platform_device *pdev)
++{
++	return ad7606_remove(&pdev->dev, platform_get_irq(pdev, 0));
++}
++
++static const struct platform_device_id ad7606_driver_ids[] = {
++	{
++		.name		= "ad7605-4",
++		.driver_data	= ID_AD7605_4,
++	}, {
++		.name		= "ad7606-8",
++		.driver_data	= ID_AD7606_8,
++	}, {
++		.name		= "ad7606-6",
++		.driver_data	= ID_AD7606_6,
++	}, {
++		.name		= "ad7606-4",
++		.driver_data	= ID_AD7606_4,
++	},
++	{ }
++};
++MODULE_DEVICE_TABLE(platform, ad7606_driver_ids);
++
++static struct platform_driver ad7606_driver = {
++	.probe = ad7606_par_probe,
++	.remove	= ad7606_par_remove,
++	.id_table = ad7606_driver_ids,
++	.driver = {
++		.name	 = "ad7606",
++		.pm	 = AD7606_PM_OPS,
++	},
++};
++module_platform_driver(ad7606_driver);
++
++MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
++MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+new file mode 100644
+index 0000000..ef43367
+--- /dev/null
++++ b/drivers/iio/adc/ad7606_spi.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AD7606 SPI ADC driver
++ *
++ * Copyright 2011 Analog Devices Inc.
++ */
++
++#include <linux/module.h>
++#include <linux/spi/spi.h>
++#include <linux/types.h>
++#include <linux/err.h>
++
++#include <linux/iio/iio.h>
++#include "ad7606.h"
++
++#define MAX_SPI_FREQ_HZ		23500000	/* VDRIVE above 4.75 V */
++
++static int ad7606_spi_read_block(struct device *dev,
++				 int count, void *buf)
++{
++	struct spi_device *spi = to_spi_device(dev);
++	int i, ret;
++	unsigned short *data = buf;
++	__be16 *bdata = buf;
++
++	ret = spi_read(spi, buf, count * 2);
++	if (ret < 0) {
++		dev_err(&spi->dev, "SPI read error\n");
++		return ret;
++	}
++
++	for (i = 0; i < count; i++)
++		data[i] = be16_to_cpu(bdata[i]);
++
++	return 0;
++}
++
++static const struct ad7606_bus_ops ad7606_spi_bops = {
++	.read_block = ad7606_spi_read_block,
++};
++
++static int ad7606_spi_probe(struct spi_device *spi)
++{
++	const struct spi_device_id *id = spi_get_device_id(spi);
++
++	return ad7606_probe(&spi->dev, spi->irq, NULL,
++			    id->name, id->driver_data,
++			    &ad7606_spi_bops);
++}
++
++static int ad7606_spi_remove(struct spi_device *spi)
++{
++	return ad7606_remove(&spi->dev, spi->irq);
++}
++
++static const struct spi_device_id ad7606_id_table[] = {
++	{"ad7605-4", ID_AD7605_4},
++	{"ad7606-8", ID_AD7606_8},
++	{"ad7606-6", ID_AD7606_6},
++	{"ad7606-4", ID_AD7606_4},
++	{}
++};
++MODULE_DEVICE_TABLE(spi, ad7606_id_table);
++
++static const struct of_device_id ad7606_of_match[] = {
++	{ .compatible = "adi,ad7605-4" },
++	{ .compatible = "adi,ad7606-8" },
++	{ .compatible = "adi,ad7606-6" },
++	{ .compatible = "adi,ad7606-4" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ad7606_of_match);
++
++static struct spi_driver ad7606_driver = {
++	.driver = {
++		.name = "ad7606",
++		.of_match_table = ad7606_of_match,
++		.pm = AD7606_PM_OPS,
++	},
++	.probe = ad7606_spi_probe,
++	.remove = ad7606_spi_remove,
++	.id_table = ad7606_id_table,
++};
++module_spi_driver(ad7606_driver);
++
++MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
++MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
+index 9d3062a..2c05adb 100644
+--- a/drivers/staging/iio/adc/Kconfig
++++ b/drivers/staging/iio/adc/Kconfig
+@@ -3,40 +3,6 @@
+ #
+ menu "Analog to digital converters"
+ 
+-config AD7606
+-	tristate "Analog Devices AD7606 ADC driver"
+-	depends on GPIOLIB || COMPILE_TEST
+-	depends on HAS_IOMEM
+-	select IIO_BUFFER
+-	select IIO_TRIGGERED_BUFFER
+-	help
+-	  Say yes here to build support for Analog Devices:
+-	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called ad7606.
+-
+-config AD7606_IFACE_PARALLEL
+-	tristate "parallel interface support"
+-	depends on AD7606
+-	help
+-	  Say yes here to include parallel interface support on the AD7606
+-	  ADC driver.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called ad7606_parallel.
+-
+-config AD7606_IFACE_SPI
+-	tristate "spi interface support"
+-	depends on AD7606
+-	depends on SPI
+-	help
+-	  Say yes here to include parallel interface support on the AD7606
+-	  ADC driver.
+-
+-	  To compile this driver as a module, choose M here: the
+-	  module will be called ad7606_spi.
+-
+ config AD7780
+ 	tristate "Analog Devices AD7780 and similar ADCs driver"
+ 	depends on SPI
+diff --git a/drivers/staging/iio/adc/Makefile b/drivers/staging/iio/adc/Makefile
+index ebe83c1..57a18e7 100644
+--- a/drivers/staging/iio/adc/Makefile
++++ b/drivers/staging/iio/adc/Makefile
+@@ -3,9 +3,6 @@
+ # Makefile for industrial I/O ADC drivers
+ #
+ 
+-obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
+-obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
+-obj-$(CONFIG_AD7606) += ad7606.o
+ 
+ obj-$(CONFIG_AD7780) += ad7780.o
+ obj-$(CONFIG_AD7816) += ad7816.o
+diff --git a/drivers/staging/iio/adc/ad7606.c b/drivers/staging/iio/adc/ad7606.c
+deleted file mode 100644
+index 0b728b6..0000000
+--- a/drivers/staging/iio/adc/ad7606.c
++++ /dev/null
+@@ -1,565 +0,0 @@
+-/*
+- * AD7606 SPI ADC driver
+- *
+- * Copyright 2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2.
+- */
+-
+-#include <linux/interrupt.h>
+-#include <linux/device.h>
+-#include <linux/kernel.h>
+-#include <linux/slab.h>
+-#include <linux/sysfs.h>
+-#include <linux/regulator/consumer.h>
+-#include <linux/err.h>
+-#include <linux/gpio/consumer.h>
+-#include <linux/delay.h>
+-#include <linux/sched.h>
+-#include <linux/module.h>
+-
+-#include <linux/iio/iio.h>
+-#include <linux/iio/sysfs.h>
+-#include <linux/iio/buffer.h>
+-#include <linux/iio/trigger_consumer.h>
+-#include <linux/iio/triggered_buffer.h>
+-
+-#include "ad7606.h"
+-
+-/*
+- * Scales are computed as 5000/32768 and 10000/32768 respectively,
+- * so that when applied to the raw values they provide mV values
+- */
+-static const unsigned int scale_avail[2][2] = {
+-	{0, 152588}, {0, 305176}
+-};
+-
+-static int ad7606_reset(struct ad7606_state *st)
+-{
+-	if (st->gpio_reset) {
+-		gpiod_set_value(st->gpio_reset, 1);
+-		ndelay(100); /* t_reset >= 100ns */
+-		gpiod_set_value(st->gpio_reset, 0);
+-		return 0;
+-	}
+-
+-	return -ENODEV;
+-}
+-
+-static int ad7606_read_samples(struct ad7606_state *st)
+-{
+-	unsigned int num = st->chip_info->num_channels;
+-	u16 *data = st->data;
+-	int ret;
+-
+-	/*
+-	 * The frstdata signal is set to high while and after reading the sample
+-	 * of the first channel and low for all other channels. This can be used
+-	 * to check that the incoming data is correctly aligned. During normal
+-	 * operation the data should never become unaligned, but some glitch or
+-	 * electrostatic discharge might cause an extra read or clock cycle.
+-	 * Monitoring the frstdata signal allows to recover from such failure
+-	 * situations.
+-	 */
+-
+-	if (st->gpio_frstdata) {
+-		ret = st->bops->read_block(st->dev, 1, data);
+-		if (ret)
+-			return ret;
+-
+-		if (!gpiod_get_value(st->gpio_frstdata)) {
+-			ad7606_reset(st);
+-			return -EIO;
+-		}
+-
+-		data++;
+-		num--;
+-	}
+-
+-	return st->bops->read_block(st->dev, num, data);
+-}
+-
+-static irqreturn_t ad7606_trigger_handler(int irq, void *p)
+-{
+-	struct iio_poll_func *pf = p;
+-	struct ad7606_state *st = iio_priv(pf->indio_dev);
+-
+-	gpiod_set_value(st->gpio_convst, 1);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-/**
+- * ad7606_poll_bh_to_ring() bh of trigger launched polling to ring buffer
+- * @work_s:	the work struct through which this was scheduled
+- *
+- * Currently there is no option in this driver to disable the saving of
+- * timestamps within the ring.
+- * I think the one copy of this at a time was to avoid problems if the
+- * trigger was set far too high and the reads then locked up the computer.
+- **/
+-static void ad7606_poll_bh_to_ring(struct work_struct *work_s)
+-{
+-	struct ad7606_state *st = container_of(work_s, struct ad7606_state,
+-						poll_work);
+-	struct iio_dev *indio_dev = iio_priv_to_dev(st);
+-	int ret;
+-
+-	ret = ad7606_read_samples(st);
+-	if (ret == 0)
+-		iio_push_to_buffers_with_timestamp(indio_dev, st->data,
+-						   iio_get_time_ns(indio_dev));
+-
+-	gpiod_set_value(st->gpio_convst, 0);
+-	iio_trigger_notify_done(indio_dev->trig);
+-}
+-
+-static int ad7606_scan_direct(struct iio_dev *indio_dev, unsigned int ch)
+-{
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-	int ret;
+-
+-	st->done = false;
+-	gpiod_set_value(st->gpio_convst, 1);
+-
+-	ret = wait_event_interruptible(st->wq_data_avail, st->done);
+-	if (ret)
+-		goto error_ret;
+-
+-	ret = ad7606_read_samples(st);
+-	if (ret == 0)
+-		ret = st->data[ch];
+-
+-error_ret:
+-	gpiod_set_value(st->gpio_convst, 0);
+-
+-	return ret;
+-}
+-
+-static int ad7606_read_raw(struct iio_dev *indio_dev,
+-			   struct iio_chan_spec const *chan,
+-			   int *val,
+-			   int *val2,
+-			   long m)
+-{
+-	int ret;
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	switch (m) {
+-	case IIO_CHAN_INFO_RAW:
+-		ret = iio_device_claim_direct_mode(indio_dev);
+-		if (ret)
+-			return ret;
+-
+-		ret = ad7606_scan_direct(indio_dev, chan->address);
+-		iio_device_release_direct_mode(indio_dev);
+-
+-		if (ret < 0)
+-			return ret;
+-		*val = (short)ret;
+-		return IIO_VAL_INT;
+-	case IIO_CHAN_INFO_SCALE:
+-		*val = scale_avail[st->range][0];
+-		*val2 = scale_avail[st->range][1];
+-		return IIO_VAL_INT_PLUS_MICRO;
+-	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+-		*val = st->oversampling;
+-		return IIO_VAL_INT;
+-	}
+-	return -EINVAL;
+-}
+-
+-static ssize_t in_voltage_scale_available_show(struct device *dev,
+-					       struct device_attribute *attr,
+-					       char *buf)
+-{
+-	int i, len = 0;
+-
+-	for (i = 0; i < ARRAY_SIZE(scale_avail); i++)
+-		len += scnprintf(buf + len, PAGE_SIZE - len, "%d.%06u ",
+-				 scale_avail[i][0], scale_avail[i][1]);
+-
+-	buf[len - 1] = '\n';
+-
+-	return len;
+-}
+-
+-static IIO_DEVICE_ATTR_RO(in_voltage_scale_available, 0);
+-
+-static int ad7606_oversampling_get_index(unsigned int val)
+-{
+-	unsigned char supported[] = {1, 2, 4, 8, 16, 32, 64};
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(supported); i++)
+-		if (val == supported[i])
+-			return i;
+-
+-	return -EINVAL;
+-}
+-
+-static int ad7606_write_raw(struct iio_dev *indio_dev,
+-			    struct iio_chan_spec const *chan,
+-			    int val,
+-			    int val2,
+-			    long mask)
+-{
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-	int values[3];
+-	int ret, i;
+-
+-	switch (mask) {
+-	case IIO_CHAN_INFO_SCALE:
+-		ret = -EINVAL;
+-		mutex_lock(&st->lock);
+-		for (i = 0; i < ARRAY_SIZE(scale_avail); i++)
+-			if (val2 == scale_avail[i][1]) {
+-				gpiod_set_value(st->gpio_range, i);
+-				st->range = i;
+-
+-				ret = 0;
+-				break;
+-			}
+-		mutex_unlock(&st->lock);
+-
+-		return ret;
+-	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+-		if (val2)
+-			return -EINVAL;
+-		ret = ad7606_oversampling_get_index(val);
+-		if (ret < 0)
+-			return ret;
+-
+-		values[0] = (ret >> 0) & 1;
+-		values[1] = (ret >> 1) & 1;
+-		values[2] = (ret >> 2) & 1;
+-
+-		mutex_lock(&st->lock);
+-		gpiod_set_array_value(ARRAY_SIZE(values), st->gpio_os->desc,
+-				      values);
+-		st->oversampling = val;
+-		mutex_unlock(&st->lock);
+-
+-		return 0;
+-	default:
+-		return -EINVAL;
+-	}
+-}
+-
+-static IIO_CONST_ATTR(oversampling_ratio_available, "1 2 4 8 16 32 64");
+-
+-static struct attribute *ad7606_attributes_os_and_range[] = {
+-	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
+-	&iio_const_attr_oversampling_ratio_available.dev_attr.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group ad7606_attribute_group_os_and_range = {
+-	.attrs = ad7606_attributes_os_and_range,
+-};
+-
+-static struct attribute *ad7606_attributes_os[] = {
+-	&iio_const_attr_oversampling_ratio_available.dev_attr.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group ad7606_attribute_group_os = {
+-	.attrs = ad7606_attributes_os,
+-};
+-
+-static struct attribute *ad7606_attributes_range[] = {
+-	&iio_dev_attr_in_voltage_scale_available.dev_attr.attr,
+-	NULL,
+-};
+-
+-static const struct attribute_group ad7606_attribute_group_range = {
+-	.attrs = ad7606_attributes_range,
+-};
+-
+-#define AD760X_CHANNEL(num, mask)				\
+-	{							\
+-		.type = IIO_VOLTAGE,				\
+-		.indexed = 1,					\
+-		.channel = num,					\
+-		.address = num,					\
+-		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
+-		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),\
+-		.info_mask_shared_by_all = mask,		\
+-		.scan_index = num,				\
+-		.scan_type = {					\
+-			.sign = 's',				\
+-			.realbits = 16,				\
+-			.storagebits = 16,			\
+-			.endianness = IIO_CPU,			\
+-		},						\
+-	}
+-
+-#define AD7605_CHANNEL(num)	\
+-	AD760X_CHANNEL(num, 0)
+-
+-#define AD7606_CHANNEL(num)	\
+-	AD760X_CHANNEL(num, BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO))
+-
+-static const struct iio_chan_spec ad7605_channels[] = {
+-	IIO_CHAN_SOFT_TIMESTAMP(4),
+-	AD7605_CHANNEL(0),
+-	AD7605_CHANNEL(1),
+-	AD7605_CHANNEL(2),
+-	AD7605_CHANNEL(3),
+-};
+-
+-static const struct iio_chan_spec ad7606_channels[] = {
+-	IIO_CHAN_SOFT_TIMESTAMP(8),
+-	AD7606_CHANNEL(0),
+-	AD7606_CHANNEL(1),
+-	AD7606_CHANNEL(2),
+-	AD7606_CHANNEL(3),
+-	AD7606_CHANNEL(4),
+-	AD7606_CHANNEL(5),
+-	AD7606_CHANNEL(6),
+-	AD7606_CHANNEL(7),
+-};
+-
+-static const struct ad7606_chip_info ad7606_chip_info_tbl[] = {
+-	/*
+-	 * More devices added in future
+-	 */
+-	[ID_AD7605_4] = {
+-		.channels = ad7605_channels,
+-		.num_channels = 5,
+-	},
+-	[ID_AD7606_8] = {
+-		.channels = ad7606_channels,
+-		.num_channels = 9,
+-		.has_oversampling = true,
+-	},
+-	[ID_AD7606_6] = {
+-		.channels = ad7606_channels,
+-		.num_channels = 7,
+-		.has_oversampling = true,
+-	},
+-	[ID_AD7606_4] = {
+-		.channels = ad7606_channels,
+-		.num_channels = 5,
+-		.has_oversampling = true,
+-	},
+-};
+-
+-static int ad7606_request_gpios(struct ad7606_state *st)
+-{
+-	struct device *dev = st->dev;
+-
+-	st->gpio_convst = devm_gpiod_get(dev, "conversion-start",
+-					 GPIOD_OUT_LOW);
+-	if (IS_ERR(st->gpio_convst))
+-		return PTR_ERR(st->gpio_convst);
+-
+-	st->gpio_reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
+-	if (IS_ERR(st->gpio_reset))
+-		return PTR_ERR(st->gpio_reset);
+-
+-	st->gpio_range = devm_gpiod_get_optional(dev, "range", GPIOD_OUT_LOW);
+-	if (IS_ERR(st->gpio_range))
+-		return PTR_ERR(st->gpio_range);
+-
+-	st->gpio_standby = devm_gpiod_get_optional(dev, "standby",
+-						   GPIOD_OUT_HIGH);
+-	if (IS_ERR(st->gpio_standby))
+-		return PTR_ERR(st->gpio_standby);
+-
+-	st->gpio_frstdata = devm_gpiod_get_optional(dev, "first-data",
+-						    GPIOD_IN);
+-	if (IS_ERR(st->gpio_frstdata))
+-		return PTR_ERR(st->gpio_frstdata);
+-
+-	if (!st->chip_info->has_oversampling)
+-		return 0;
+-
+-	st->gpio_os = devm_gpiod_get_array_optional(dev, "oversampling-ratio",
+-			GPIOD_OUT_LOW);
+-	return PTR_ERR_OR_ZERO(st->gpio_os);
+-}
+-
+-/**
+- *  Interrupt handler
+- */
+-static irqreturn_t ad7606_interrupt(int irq, void *dev_id)
+-{
+-	struct iio_dev *indio_dev = dev_id;
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	if (iio_buffer_enabled(indio_dev)) {
+-		schedule_work(&st->poll_work);
+-	} else {
+-		st->done = true;
+-		wake_up_interruptible(&st->wq_data_avail);
+-	}
+-
+-	return IRQ_HANDLED;
+-};
+-
+-static const struct iio_info ad7606_info_no_os_or_range = {
+-	.read_raw = &ad7606_read_raw,
+-};
+-
+-static const struct iio_info ad7606_info_os_and_range = {
+-	.read_raw = &ad7606_read_raw,
+-	.write_raw = &ad7606_write_raw,
+-	.attrs = &ad7606_attribute_group_os_and_range,
+-};
+-
+-static const struct iio_info ad7606_info_os = {
+-	.read_raw = &ad7606_read_raw,
+-	.write_raw = &ad7606_write_raw,
+-	.attrs = &ad7606_attribute_group_os,
+-};
+-
+-static const struct iio_info ad7606_info_range = {
+-	.read_raw = &ad7606_read_raw,
+-	.write_raw = &ad7606_write_raw,
+-	.attrs = &ad7606_attribute_group_range,
+-};
+-
+-int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+-		 const char *name, unsigned int id,
+-		 const struct ad7606_bus_ops *bops)
+-{
+-	struct ad7606_state *st;
+-	int ret;
+-	struct iio_dev *indio_dev;
+-
+-	indio_dev = devm_iio_device_alloc(dev, sizeof(*st));
+-	if (!indio_dev)
+-		return -ENOMEM;
+-
+-	st = iio_priv(indio_dev);
+-
+-	st->dev = dev;
+-	mutex_init(&st->lock);
+-	st->bops = bops;
+-	st->base_address = base_address;
+-	/* tied to logic low, analog input range is +/- 5V */
+-	st->range = 0;
+-	st->oversampling = 1;
+-	INIT_WORK(&st->poll_work, &ad7606_poll_bh_to_ring);
+-
+-	st->reg = devm_regulator_get(dev, "avcc");
+-	if (IS_ERR(st->reg))
+-		return PTR_ERR(st->reg);
+-
+-	ret = regulator_enable(st->reg);
+-	if (ret) {
+-		dev_err(dev, "Failed to enable specified AVcc supply\n");
+-		return ret;
+-	}
+-
+-	st->chip_info = &ad7606_chip_info_tbl[id];
+-
+-	ret = ad7606_request_gpios(st);
+-	if (ret)
+-		goto error_disable_reg;
+-
+-	indio_dev->dev.parent = dev;
+-	if (st->gpio_os) {
+-		if (st->gpio_range)
+-			indio_dev->info = &ad7606_info_os_and_range;
+-		else
+-			indio_dev->info = &ad7606_info_os;
+-	} else {
+-		if (st->gpio_range)
+-			indio_dev->info = &ad7606_info_range;
+-		else
+-			indio_dev->info = &ad7606_info_no_os_or_range;
+-	}
+-	indio_dev->modes = INDIO_DIRECT_MODE;
+-	indio_dev->name = name;
+-	indio_dev->channels = st->chip_info->channels;
+-	indio_dev->num_channels = st->chip_info->num_channels;
+-
+-	init_waitqueue_head(&st->wq_data_avail);
+-
+-	ret = ad7606_reset(st);
+-	if (ret)
+-		dev_warn(st->dev, "failed to RESET: no RESET GPIO specified\n");
+-
+-	ret = request_irq(irq, ad7606_interrupt, IRQF_TRIGGER_FALLING, name,
+-			  indio_dev);
+-	if (ret)
+-		goto error_disable_reg;
+-
+-	ret = iio_triggered_buffer_setup(indio_dev, &ad7606_trigger_handler,
+-					 NULL, NULL);
+-	if (ret)
+-		goto error_free_irq;
+-
+-	ret = iio_device_register(indio_dev);
+-	if (ret)
+-		goto error_unregister_ring;
+-
+-	dev_set_drvdata(dev, indio_dev);
+-
+-	return 0;
+-error_unregister_ring:
+-	iio_triggered_buffer_cleanup(indio_dev);
+-
+-error_free_irq:
+-	free_irq(irq, indio_dev);
+-
+-error_disable_reg:
+-	regulator_disable(st->reg);
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(ad7606_probe);
+-
+-int ad7606_remove(struct device *dev, int irq)
+-{
+-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	iio_device_unregister(indio_dev);
+-	iio_triggered_buffer_cleanup(indio_dev);
+-
+-	free_irq(irq, indio_dev);
+-	regulator_disable(st->reg);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(ad7606_remove);
+-
+-#ifdef CONFIG_PM_SLEEP
+-
+-static int ad7606_suspend(struct device *dev)
+-{
+-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	if (st->gpio_standby) {
+-		gpiod_set_value(st->gpio_range, 1);
+-		gpiod_set_value(st->gpio_standby, 0);
+-	}
+-
+-	return 0;
+-}
+-
+-static int ad7606_resume(struct device *dev)
+-{
+-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	if (st->gpio_standby) {
+-		gpiod_set_value(st->gpio_range, st->range);
+-		gpiod_set_value(st->gpio_standby, 1);
+-		ad7606_reset(st);
+-	}
+-
+-	return 0;
+-}
+-
+-SIMPLE_DEV_PM_OPS(ad7606_pm_ops, ad7606_suspend, ad7606_resume);
+-EXPORT_SYMBOL_GPL(ad7606_pm_ops);
+-
+-#endif
+-
+-MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
+-MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/staging/iio/adc/ad7606.h b/drivers/staging/iio/adc/ad7606.h
+deleted file mode 100644
+index 8618805..0000000
+--- a/drivers/staging/iio/adc/ad7606.h
++++ /dev/null
+@@ -1,106 +0,0 @@
+-/*
+- * AD7606 ADC driver
+- *
+- * Copyright 2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2.
+- */
+-
+-#ifndef IIO_ADC_AD7606_H_
+-#define IIO_ADC_AD7606_H_
+-
+-/**
+- * struct ad7606_chip_info - chip specific information
+- * @channels:		channel specification
+- * @num_channels:	number of channels
+- * @has_oversampling:   whether the device has oversampling support
+- */
+-
+-struct ad7606_chip_info {
+-	const struct iio_chan_spec	*channels;
+-	unsigned int			num_channels;
+-	bool				has_oversampling;
+-};
+-
+-/**
+- * struct ad7606_state - driver instance specific data
+- * @dev		pointer to kernel device
+- * @chip_info		entry in the table of chips that describes this device
+- * @reg		regulator info for the the power supply of the device
+- * @poll_work		work struct for continuously reading data from the device
+- *			into an IIO triggered buffer
+- * @wq_data_avail	wait queue struct for buffer mode
+- * @bops		bus operations (SPI or parallel)
+- * @range		voltage range selection, selects which scale to apply
+- * @oversampling	oversampling selection
+- * @done		marks whether reading data is done
+- * @base_address	address from where to read data in parallel operation
+- * @lock		protect sensor state from concurrent accesses to GPIOs
+- * @gpio_convst	GPIO descriptor for conversion start signal (CONVST)
+- * @gpio_reset		GPIO descriptor for device hard-reset
+- * @gpio_range		GPIO descriptor for range selection
+- * @gpio_standby	GPIO descriptor for stand-by signal (STBY),
+- *			controls power-down mode of device
+- * @gpio_frstdata	GPIO descriptor for reading from device when data
+- *			is being read on the first channel
+- * @gpio_os		GPIO descriptors to control oversampling on the device
+- * @data		buffer for reading data from the device
+- */
+-
+-struct ad7606_state {
+-	struct device			*dev;
+-	const struct ad7606_chip_info	*chip_info;
+-	struct regulator		*reg;
+-	struct work_struct		poll_work;
+-	wait_queue_head_t		wq_data_avail;
+-	const struct ad7606_bus_ops	*bops;
+-	unsigned int			range;
+-	unsigned int			oversampling;
+-	bool				done;
+-	void __iomem			*base_address;
+-
+-	struct mutex			lock; /* protect sensor state */
+-	struct gpio_desc		*gpio_convst;
+-	struct gpio_desc		*gpio_reset;
+-	struct gpio_desc		*gpio_range;
+-	struct gpio_desc		*gpio_standby;
+-	struct gpio_desc		*gpio_frstdata;
+-	struct gpio_descs		*gpio_os;
+-
+-	/*
+-	 * DMA (thus cache coherency maintenance) requires the
+-	 * transfer buffers to live in their own cache lines.
+-	 * 8 * 16-bit samples + 64-bit timestamp
+-	 */
+-	unsigned short			data[12] ____cacheline_aligned;
+-};
+-
+-/**
+- * struct ad7606_bus_ops - driver bus operations
+- * @read_block		function pointer for reading blocks of data
+- */
+-struct ad7606_bus_ops {
+-	/* more methods added in future? */
+-	int (*read_block)(struct device *dev, int num, void *data);
+-};
+-
+-int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
+-		 const char *name, unsigned int id,
+-		 const struct ad7606_bus_ops *bops);
+-int ad7606_remove(struct device *dev, int irq);
+-
+-enum ad7606_supported_device_ids {
+-	ID_AD7605_4,
+-	ID_AD7606_8,
+-	ID_AD7606_6,
+-	ID_AD7606_4
+-};
+-
+-#ifdef CONFIG_PM_SLEEP
+-extern const struct dev_pm_ops ad7606_pm_ops;
+-#define AD7606_PM_OPS (&ad7606_pm_ops)
+-#else
+-#define AD7606_PM_OPS NULL
+-#endif
+-
+-#endif /* IIO_ADC_AD7606_H_ */
+diff --git a/drivers/staging/iio/adc/ad7606_par.c b/drivers/staging/iio/adc/ad7606_par.c
+deleted file mode 100644
+index 8bd86e7..0000000
+--- a/drivers/staging/iio/adc/ad7606_par.c
++++ /dev/null
+@@ -1,113 +0,0 @@
+-/*
+- * AD7606 Parallel Interface ADC driver
+- *
+- * Copyright 2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/platform_device.h>
+-#include <linux/types.h>
+-#include <linux/err.h>
+-#include <linux/io.h>
+-
+-#include <linux/iio/iio.h>
+-#include "ad7606.h"
+-
+-static int ad7606_par16_read_block(struct device *dev,
+-				   int count, void *buf)
+-{
+-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	insw((unsigned long)st->base_address, buf, count);
+-
+-	return 0;
+-}
+-
+-static const struct ad7606_bus_ops ad7606_par16_bops = {
+-	.read_block	= ad7606_par16_read_block,
+-};
+-
+-static int ad7606_par8_read_block(struct device *dev,
+-				  int count, void *buf)
+-{
+-	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+-	struct ad7606_state *st = iio_priv(indio_dev);
+-
+-	insb((unsigned long)st->base_address, buf, count * 2);
+-
+-	return 0;
+-}
+-
+-static const struct ad7606_bus_ops ad7606_par8_bops = {
+-	.read_block	= ad7606_par8_read_block,
+-};
+-
+-static int ad7606_par_probe(struct platform_device *pdev)
+-{
+-	const struct platform_device_id *id = platform_get_device_id(pdev);
+-	struct resource *res;
+-	void __iomem *addr;
+-	resource_size_t remap_size;
+-	int irq;
+-
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no irq: %d\n", irq);
+-		return irq;
+-	}
+-
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	addr = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(addr))
+-		return PTR_ERR(addr);
+-
+-	remap_size = resource_size(res);
+-
+-	return ad7606_probe(&pdev->dev, irq, addr,
+-			    id->name, id->driver_data,
+-			    remap_size > 1 ? &ad7606_par16_bops :
+-			    &ad7606_par8_bops);
+-}
+-
+-static int ad7606_par_remove(struct platform_device *pdev)
+-{
+-	return ad7606_remove(&pdev->dev, platform_get_irq(pdev, 0));
+-}
+-
+-static const struct platform_device_id ad7606_driver_ids[] = {
+-	{
+-		.name		= "ad7605-4",
+-		.driver_data	= ID_AD7605_4,
+-	}, {
+-		.name		= "ad7606-8",
+-		.driver_data	= ID_AD7606_8,
+-	}, {
+-		.name		= "ad7606-6",
+-		.driver_data	= ID_AD7606_6,
+-	}, {
+-		.name		= "ad7606-4",
+-		.driver_data	= ID_AD7606_4,
+-	},
+-	{ }
+-};
+-
+-MODULE_DEVICE_TABLE(platform, ad7606_driver_ids);
+-
+-static struct platform_driver ad7606_driver = {
+-	.probe = ad7606_par_probe,
+-	.remove	= ad7606_par_remove,
+-	.id_table = ad7606_driver_ids,
+-	.driver = {
+-		.name	 = "ad7606",
+-		.pm	 = AD7606_PM_OPS,
+-	},
+-};
+-
+-module_platform_driver(ad7606_driver);
+-
+-MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
+-MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
+-MODULE_LICENSE("GPL v2");
+diff --git a/drivers/staging/iio/adc/ad7606_spi.c b/drivers/staging/iio/adc/ad7606_spi.c
+deleted file mode 100644
+index b76ca5a..0000000
+--- a/drivers/staging/iio/adc/ad7606_spi.c
++++ /dev/null
+@@ -1,79 +0,0 @@
+-/*
+- * AD7606 SPI ADC driver
+- *
+- * Copyright 2011 Analog Devices Inc.
+- *
+- * Licensed under the GPL-2.
+- */
+-
+-#include <linux/module.h>
+-#include <linux/spi/spi.h>
+-#include <linux/types.h>
+-#include <linux/err.h>
+-
+-#include <linux/iio/iio.h>
+-#include "ad7606.h"
+-
+-#define MAX_SPI_FREQ_HZ		23500000	/* VDRIVE above 4.75 V */
+-
+-static int ad7606_spi_read_block(struct device *dev,
+-				 int count, void *buf)
+-{
+-	struct spi_device *spi = to_spi_device(dev);
+-	int i, ret;
+-	unsigned short *data = buf;
+-	__be16 *bdata = buf;
+-
+-	ret = spi_read(spi, buf, count * 2);
+-	if (ret < 0) {
+-		dev_err(&spi->dev, "SPI read error\n");
+-		return ret;
+-	}
+-
+-	for (i = 0; i < count; i++)
+-		data[i] = be16_to_cpu(bdata[i]);
+-
+-	return 0;
+-}
+-
+-static const struct ad7606_bus_ops ad7606_spi_bops = {
+-	.read_block	= ad7606_spi_read_block,
+-};
+-
+-static int ad7606_spi_probe(struct spi_device *spi)
+-{
+-	const struct spi_device_id *id = spi_get_device_id(spi);
+-
+-	return ad7606_probe(&spi->dev, spi->irq, NULL,
+-			    id->name, id->driver_data,
+-			    &ad7606_spi_bops);
+-}
+-
+-static int ad7606_spi_remove(struct spi_device *spi)
+-{
+-	return ad7606_remove(&spi->dev, spi->irq);
+-}
+-
+-static const struct spi_device_id ad7606_id[] = {
+-	{"ad7605-4", ID_AD7605_4},
+-	{"ad7606-8", ID_AD7606_8},
+-	{"ad7606-6", ID_AD7606_6},
+-	{"ad7606-4", ID_AD7606_4},
+-	{}
+-};
+-MODULE_DEVICE_TABLE(spi, ad7606_id);
+-
+-static struct spi_driver ad7606_driver = {
+-	.driver = {
+-		.name = "ad7606",
+-		.pm = AD7606_PM_OPS,
+-	},
+-	.probe = ad7606_spi_probe,
+-	.remove = ad7606_spi_remove,
+-	.id_table = ad7606_id,
+-};
+-module_spi_driver(ad7606_driver);
+-
+-MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
+-MODULE_DESCRIPTION("Analog Devices AD7606 ADC");
+-MODULE_LICENSE("GPL v2");
+-- 
+2.7.4
 
-> This is really weird, because the error in your log relates to
-> DBVDD1 which is an independent regulator supplied by a separate
-> regulator. I am really having some difficulty seeing how the
-> patch interfers. It is definitely that patch which causes the
-> issue, like you revert it and things work again?
-
-It's a warning in the GPIO code, the switch to the gpiod API will have
-triggered it.
-
---TeJTyD9hb8KJN2Jy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv0K4UACgkQJNaLcl1U
-h9DOHwf/doBkRO+cG+zcjwZo+vjnnFDFaA+aYobDk58LzykYcHEfiwYXjjiwGS7g
-tGiuM6Zy9oSTt83RM26nWUUr0s690C0GRq2ygyIA3cRHLun9A9a67iE7D35K/UJO
-iKVTsXtkDHUErUxLFCPPuHlMrp03NAPXlwpE7uYuPD4WuijtLZcuVRDrzqQnrFOM
-yXxaBQVF7tTiGflfuodmtCeUecc6gcxgtqT4Yik7NJJFkZfYOZhUgn3rah9cEFqN
-z+jrH6Ohi9k4BeB2FUoBMNaQ4pQStL1Ii7b4WrGDBymPg2BKoQiyOVVtc60IyTXE
-1xEqYx+ZSWMkszcsmyULPs4PeFQkuQ==
-=Fpbn
------END PGP SIGNATURE-----
-
---TeJTyD9hb8KJN2Jy--
