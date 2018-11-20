@@ -2,99 +2,94 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF51C04EBB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BF5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:59:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288BE20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F5E20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:59:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBAcMslt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288BE20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LkuIjJYP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72F5E20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbeKTU0K (ORCPT
+        id S1728166AbeKTU1g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:26:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725999AbeKTU0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:26:10 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E565206BB;
-        Tue, 20 Nov 2018 09:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542707873;
-        bh=BIbBG4YYTTgzDEuYGUlCPq+arJLPQqjQ8FJkj+0eh8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NBAcMsltBMmIK2D4sHBUMErTrP6Wnd9805Gd8SXvZxNYMUTZQDR7pRqhkly+sz1JG
-         zYHMalSHfDvbSK5Q9BnoLBLKfensGPZjHckk1KZeaUftcMPQp770iEMP3ISY2u+fqD
-         S4ScuJis9hh5jFm95+mPT5PffCsNiKaYj7oOL8bM=
-Date:   Tue, 20 Nov 2018 10:57:51 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
-        dave.stevenson@raspberrypi.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/16] staging: vchiq: dead code removal & misc fixes
-Message-ID: <20181120095751.GB17738@kroah.com>
-References: <20181114125942.25163-1-nsaenzjulienne@suse.de>
- <1128999886.40745.1542556549581@email.ionos.de>
+        Tue, 20 Nov 2018 15:27:36 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46871 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbeKTU1f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:27:35 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f23so867919lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 01:59:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l1aXOe8O8JAT/r3b/fcHFbIJbYGE4HWaiWXOnwYcHGA=;
+        b=LkuIjJYP46v+GXFQHfw8PK7oJfxfCLmAgq4qgkYjAKdAIXME+5vadsny2GK0rRFrDW
+         E4lb5GUOl/B/ChDwelUhZ82OLiqb6IYN04o1jh1sZh7RK14Nuu84RSuMCPCdcXos86QC
+         thFpF9+ML5pzLEfx1t3sl+Oxba7I29mj8lpnw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l1aXOe8O8JAT/r3b/fcHFbIJbYGE4HWaiWXOnwYcHGA=;
+        b=AgCC6H3Be7AXKKVlVfQR52w3hc0VnP6Rb91Q3PIWWz8qUN6ntJFDBHdIr0P6uZSNNN
+         iblB23eQmj3z1uAu/nYtgMMIU9/FHbkOJiHQVRDGYKukJtZB+cgb2+2rk9FjBdy5wKpp
+         hGOgDrMi+U24gzY9HvWVqT9Oy5HmQj9si3CM2NryqLxOSjjAgqvTYx9Ta+hyfDR3QqXi
+         misj9VdFBTOJ6ZPPPRExz+cz8Wy03cWka0T0/UK6gtxUZPWjJwSgkvkpk4qwoyphDTMi
+         D4ah48kl90PphO4X96w3aBiS9u7wT+va7GWKqithXOnXJmkDKwFhSLD9unAQbW9DWkDi
+         gv2w==
+X-Gm-Message-State: AGRZ1gIubqCgvPOS/JLwzlbGUSWuBnfa5SQAaIN2vsUAYH6HLkwR8X5f
+        cDFPB/GZXyXPSIJhiozPZW4e59v3yWcxFxd+qkuA8g==
+X-Google-Smtp-Source: AJdET5ce5ZhwAEAbf4zyA10wso4u+D698Kk0hkLvt3/X17wnNsSiSFxir8KydF/D3FcTs5leDp2dqOHOvilWXXXW4vs=
+X-Received: by 2002:a19:c801:: with SMTP id y1mr722147lff.53.1542707957289;
+ Tue, 20 Nov 2018 01:59:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1128999886.40745.1542556549581@email.ionos.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1542589838.git.fthain@telegraphics.com.au>
+ <c235d0b21a648d329668f1ab436161c09d96e875.1542589838.git.fthain@telegraphics.com.au>
+ <CACRpkdZdJDYaOi1HeMiS2hkjOf0gjQphGXy-Ka+m=1LbDCXPfA@mail.gmail.com> <alpine.LNX.2.21.1811201925020.258@nippy.intranet>
+In-Reply-To: <alpine.LNX.2.21.1811201925020.258@nippy.intranet>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 20 Nov 2018 10:59:05 +0100
+Message-ID: <CACRpkdYOyU_43ExoB0bm2MB+kP4nAPik27Mw4oMDiUTZeODMgw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 10/14] m68k: mac: Convert to clocksource API
+To:     fthain@telegraphics.com.au
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
+        schwab@linux-m68k.org, Arnd Bergmann <arnd@arndb.de>,
+        schivers@csc.com.au, Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        schmitzmic@gmail.com, John Stultz <john.stultz@linaro.org>,
+        linux-m68k@lists.linux-m68k.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 04:55:49PM +0100, Stefan Wahren wrote:
-> Hi Nicolas,
-> 
-> > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 14. November 2018 um 13:59 geschrieben:
-> > 
-> > 
-> > Hi All,
-> > 
-> > This series was written in parallel with reading and understanding the
-> > vchiq code. So excuse me for the lack of logic in the sequence of
-> > patches.
-> > 
-> > The main focus was to delete as much code as possible, I've counted
-> > around 550 lines, which is not bad. Apart from that there are some
-> > patches enforcing proper kernel APIs usage.
-> > 
-> > The only patch that really changes code is the
-> > vchiq_ioc_copy_element_data() rewrite.
-> > 
-> > The last commit updates the TODO list with some of my observations, I
-> > realise some of the might be a little opinionated. If anything it's
-> > going to force a discussion on the topic, which is nice.
-> > 
-> > It was developed on top of the latest linux-next, and was tested on a
-> > RPIv3B+ with audio, video and running vchiq_test.
-> > 
-> > Regards,
-> > Nicolas
-> > 
-> 
-> without a changelog i won't start a review.
+On Tue, Nov 20, 2018 at 10:00 AM Finn Thain <fthain@telegraphics.com.au> wrote:
 
-What do you mean by this?  The individual patches have a "changelog" in
-them, this is just a summary of the overall changes.
+> If you use one timer as a clock event device and the other as a
+> clocksource, there are no timers left to run the existing
+> timer_interrupt() handler. So this arrangement would require
+> GENERIC_CLOCKEVENTS=y, right?
 
-What do you feel is missing here?
+I think so, yes.
 
-thanks,
+> Then, wouldn't all relevant platforms have to support
+> GENERIC_CLOCKEVENTS=y, if a single binary was to support all of those
+> platforms?
 
-greg k-h
+Good point. I wonder of there is a path forward where we
+could have peaceful GENERIC_CLOCKEVENTS and
+!GENERIC_CLOCKEVENTS co-existence.
+
+Yours,
+Linus Walleij
