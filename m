@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B515C32789
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88194C32788
 	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C787F214E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C787F214E0
+	by mail.kernel.org (Postfix) with ESMTP id 00DA62146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00DA62146D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727170AbeKULFU (ORCPT
+        id S1727234AbeKULFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 21 Nov 2018 06:05:20 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30245 "EHLO mga14.intel.com"
+Received: from mga14.intel.com ([192.55.52.115]:30243 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727098AbeKULFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:05:19 -0500
+        id S1726877AbeKULFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:05:18 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:23 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="93650200"
+   d="scan'208";a="93650193"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:23 -0800
+  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:22 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -53,9 +53,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         stable@vger.kernel.org
-Subject: [Patch v6 06/16] smt: Create cpu_smt_enabled static key for SMT specific code
-Date:   Tue, 20 Nov 2018 15:59:58 -0800
-Message-Id: <b0af92ab7e4db9b3ad14a4f65cf98ee6df0f4914.1542757030.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v6 05/16] x86/speculation: Reorganize speculation control MSRs update
+Date:   Tue, 20 Nov 2018 15:59:57 -0800
+Message-Id: <7c2334e74794e31f01cbfec1d14bc081745436a1.1542757030.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542757030.git.tim.c.chen@linux.intel.com>
 References: <cover.1542757030.git.tim.c.chen@linux.intel.com>
@@ -66,89 +66,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In later code, STIBP will be turned on/off in the context switch code
-path when SMT is enabled.  Checks for SMT is best
-avoided on such hot paths.
+The logic to detect whether there's a change in the previous
+and next task's flag relevant to update speculation control
+MSRs are spread out across multiple functions.
 
-Create cpu_smt_enabled static key to turn on such SMT specific code
-statically.
+Consolidate all checks needed for updating speculation
+control MSRs to __speculation_ctrl_update().
 
-The key is enabled by default and its scope has nothing to do with CPU
-hotplug. It depends on CONFIG_HOTPLUG_SMT which is the extra SMT control
-code which is currently only enabled on x86.
+This makes it easy to pick the right speculation control MSR,
+and the bits in the MSR that needs updating based on
+TIF flags changes.
 
+Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- include/linux/cpu.h |  4 ++++
- kernel/cpu.c        | 12 ++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
+ arch/x86/kernel/process.c | 44 +++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 33 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 218df7f..ce8267e 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -189,4 +189,8 @@ static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 8aa4960..74bef48 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -397,25 +397,48 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
  
-+#ifdef CONFIG_HOTPLUG_SMT
-+DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
-+#endif
+ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+ {
+-	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
++	u64 msr = x86_spec_ctrl_base;
 +
- #endif /* _LINUX_CPU_H_ */
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 3c7f3b4..e216154 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -370,6 +370,8 @@ static void lockdep_release_cpus_lock(void)
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
-+DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
-+EXPORT_SYMBOL_GPL(cpu_smt_enabled);
++	/*
++	 * If X86_FEATURE_SSBD is not set, the SSBD
++	 * bit is not to be touched.
++	 */
++	if (static_cpu_has(X86_FEATURE_SSBD))
++		msr |= ssbd_tif_to_spec_ctrl(tifn);
  
- static bool cpu_smt_available __read_mostly;
+ 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
+ }
  
-@@ -386,6 +388,7 @@ void __init cpu_smt_disable(bool force)
- 		pr_info("SMT: disabled\n");
- 		cpu_smt_control = CPU_SMT_DISABLED;
- 	}
-+	static_branch_disable(&cpu_smt_enabled);
+-static __always_inline void __speculation_ctrl_update(unsigned long tifn)
+-{
+-	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+-		amd_set_ssb_virt_state(tifn);
+-	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+-		amd_set_core_ssb_state(tifn);
+-	else
++/*
++ * Update the MSRs managing speculation control during context switch.
++ *
++ * tifp: previous task's thread flags
++ * tifn: next task's thread flags
++ */
++static __always_inline void __speculation_ctrl_update(unsigned long tifp,
++						      unsigned long tifn)
++{
++	bool updmsr = false;
++
++	/* If TIF_SSBD is different, select the proper mitigation method */
++	if ((tifp ^ tifn) & _TIF_SSBD) {
++		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
++			amd_set_ssb_virt_state(tifn);
++		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++			amd_set_core_ssb_state(tifn);
++		else if (static_cpu_has(X86_FEATURE_SSBD))
++			updmsr  = true;
++	}
++
++	if (updmsr)
+ 		spec_ctrl_update_msr(tifn);
+ }
+ 
+ void speculation_ctrl_update(unsigned long tif)
+ {
++	/* Forced update. Make sure all relevant TIF flags are different */
+ 	preempt_disable();
+-	__speculation_ctrl_update(tif);
++	__speculation_ctrl_update(~tif, tif);
+ 	preempt_enable();
+ }
+ 
+@@ -451,8 +474,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+ 	if ((tifp ^ tifn) & _TIF_NOCPUID)
+ 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+ 
+-	if ((tifp ^ tifn) & _TIF_SSBD)
+-		__speculation_ctrl_update(tifn);
++	__speculation_ctrl_update(tifp, tifn);
  }
  
  /*
-@@ -395,8 +398,10 @@ void __init cpu_smt_disable(bool force)
-  */
- void __init cpu_smt_check_topology_early(void)
- {
--	if (!topology_smt_supported())
-+	if (!topology_smt_supported()) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);
-+	}
- }
- 
- /*
-@@ -408,8 +413,10 @@ void __init cpu_smt_check_topology_early(void)
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!cpu_smt_available) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);
-+	}
- }
- 
- static int __init smt_cmdline_disable(char *str)
-@@ -2101,6 +2108,7 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	static_branch_enable(&cpu_smt_enabled);
- 	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
 -- 
 2.9.4
 
