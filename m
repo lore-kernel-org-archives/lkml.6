@@ -2,124 +2,96 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265B0C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98943C41536
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6193C206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:13:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="MC10FD+j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6193C206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B591206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:16:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B591206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730102AbeKUDnw (ORCPT
+        id S1729686AbeKUDq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:43:52 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:35503 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeKUDnw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:43:52 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wAKHDTcN010172;
-        Wed, 21 Nov 2018 02:13:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wAKHDTcN010172
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542734010;
-        bh=HiyW/Q0RXc4dHdrRRySoaw5wSTNJQhz5gwAPhJMcFrQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MC10FD+jy6SePztbztH2z8Z4fpujWIY5oQLAnSNPchOvkH3duDNsbEEQulC6EZIpO
-         H40lkbgkGILdELA5jf63s8G2mzOfQoxq9m1OkZXfB3qEYqXViCtcDcaxL8fuMzTg0S
-         Tt2meeZVcKg9WENu/BX8XNYAvM9frHo4MISGCiMitDVEadEI6G6Bp+FNyYofzXFfqU
-         c/vi+2mbxHCqCC40T78NKF4MN9nkwJivy6lVqAOWjZyf2vgiTBXVy73becNQD+LG6x
-         EH3rnSYYFzb5Wk+rqcTv81yjMCFN6OSSF4cqJhOmiu9WOPz/jNXUu3xPyf2mjKlUNO
-         e1bdyis2YQ+SA==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
+        Tue, 20 Nov 2018 22:46:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48031 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726975AbeKUDq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 22:46:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 073EC20745; Tue, 20 Nov 2018 18:16:13 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D13AD2037D;
+        Tue, 20 Nov 2018 18:16:12 +0100 (CET)
+Date:   Tue, 20 Nov 2018 18:16:12 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Romain Izard <romain.izard.pro@gmail.com>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: move modpost out of 'scripts' target
-Date:   Wed, 21 Nov 2018 02:13:24 +0900
-Message-Id: <1542734004-2673-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2: use the divided clock for SMC
+Message-ID: <20181120171612.GF8367@piout.net>
+References: <20181120165737.4998-1-romain.izard.pro@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120165737.4998-1-romain.izard.pro@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am eagar to build under the scripts/ directory only with $(HOSTCC),
-but scripts/mod/ highly depends on the $(CC) and target arch headers.
-That it why the 'scripts' target must depend on 'asm-generic',
-'gcc-plugins', and $(autoksyms_h).
+Hello Romain,
 
-Move it to the 'prepare0' stage. I know this is a cheesy workaround,
-but better than the current situation.
+On 20/11/2018 17:57:37+0100, Romain Izard wrote:
+> The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
+> different clocks for the peripherals in the SoC. The Static Memory
+> controller is connected to the divided master clock.
+> 
+> Unfortunately, the device tree does not correctly show this and uses the
+> master clock directly. This clock is then used by the code for the NAND
+> controller to calculate the timings for the controller, and we end up with
+> slow NAND Flash access.
+> 
+> Fix the device tree, and the performance of Flash access is improved.
+> 
+> Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+> ---
+>  arch/arm/boot/dts/sama5d2.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+> index 61f68e5c48e9..b405992eb601 100644
+> --- a/arch/arm/boot/dts/sama5d2.dtsi
+> +++ b/arch/arm/boot/dts/sama5d2.dtsi
+> @@ -308,7 +308,7 @@
+>  				  0x1 0x0 0x60000000 0x10000000
+>  				  0x2 0x0 0x70000000 0x10000000
+>  				  0x3 0x0 0x80000000 0x10000000>;
+> -			clocks = <&mck>;
+> +			clocks = <&h32ck>;
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+You will have to rebase on top of at91-dt. And if I'm not mistaken, this
+line should be:
 
- Makefile             | 3 ++-
- scripts/Makefile     | 3 +--
- scripts/mod/Makefile | 2 --
- 3 files changed, 3 insertions(+), 5 deletions(-)
++			clocks = <&pmc PMC_TYPE_CORE PMC_MCK2>;
 
-diff --git a/Makefile b/Makefile
-index b78cc97..21a7729 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1073,7 +1073,7 @@ include/config/kernel.release: $(srctree)/Makefile FORCE
- # Carefully list dependencies so we do not try to build scripts twice
- # in parallel
- PHONY += scripts
--scripts: scripts_basic scripts_dtc asm-generic gcc-plugins $(autoksyms_h)
-+scripts: scripts_basic scripts_dtc
- 	$(Q)$(MAKE) $(build)=$(@)
- 
- # Things we need to do before we recursively start building the kernel
-@@ -1111,6 +1111,7 @@ macroprepare: prepare1 archmacros
- archprepare: archheaders archscripts macroprepare scripts_basic
- 
- prepare0: archprepare gcc-plugins
-+	$(Q)$(MAKE) $(build)=scripts/mod
- 	$(Q)$(MAKE) $(build)=.
- 
- # All the preparing..
-diff --git a/scripts/Makefile b/scripts/Makefile
-index ece52ff..b48259d 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -37,9 +37,8 @@ build_unifdef: $(obj)/unifdef
- 	@:
- 
- subdir-$(CONFIG_MODVERSIONS) += genksyms
--subdir-y                     += mod
- subdir-$(CONFIG_SECURITY_SELINUX) += selinux
- subdir-$(CONFIG_GDB_SCRIPTS) += gdb
- 
- # Let clean descend into subdirs
--subdir-	+= basic dtc kconfig package gcc-plugins
-+subdir-	+= basic dtc kconfig mod package gcc-plugins
-diff --git a/scripts/mod/Makefile b/scripts/mod/Makefile
-index a5b4af4..42c5d50 100644
---- a/scripts/mod/Makefile
-+++ b/scripts/mod/Makefile
-@@ -4,8 +4,6 @@ OBJECT_FILES_NON_STANDARD := y
- hostprogs-y	:= modpost mk_elfconfig
- always		:= $(hostprogs-y) empty.o
- 
--CFLAGS_REMOVE_empty.o := $(ASM_MACRO_FLAGS)
--
- modpost-objs	:= modpost.o file2alias.o sumversion.o
- 
- devicetable-offsets-file := devicetable-offsets.h
+>  			status = "disabled";
+>  
+>  			nand_controller: nand-controller {
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.7.4
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
