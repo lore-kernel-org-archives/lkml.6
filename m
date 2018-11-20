@@ -2,106 +2,107 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C6BC41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423D4C32789
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF23D20685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31DF20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:05:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5cBvunJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF23D20685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZKP0TAdr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F31DF20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730197AbeKUDeV (ORCPT
+        id S1730284AbeKUDfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:34:21 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:42910 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeKUDeV (ORCPT
+        Tue, 20 Nov 2018 22:35:36 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:41567 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeKUDff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:34:21 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAKGs5ve076798;
-        Tue, 20 Nov 2018 17:03:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ia57VBRFeuLhQV762x6Y+AEm3Mp4r9xwLH862zX3kLk=;
- b=5cBvunJIOnI0mQrwta4TdiMMHzBB0D7wZf9e2A86dIDbVn85ut7satCuZsmFWnKeCYbX
- KAWxViSM4y9LChKYWXeGmVjyCTEJ6fo9t+qFq8wDUgf5gVTcM4GiDP9ffuqfKlGfpevY
- iDmArVdMkdv/Kd+jL0QhcYxnkdYpBEwuesI3p9fCUMw8Z73fS0NYM1S7+blyBe/P98qc
- Ii39xNG7M6Mjaxb4Cav54ad2a8FfRD5mPRWhvzQTZ+cBmRNjLZ5bhMrtpDu2fdyEZrYO
- 0+MWQrkz10ntoQt1TapbGHdQ7igA+5RO1hv6HOC3FtOKIronimKqwk9A9Gd8YS4cewbj Eg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ntbmqn2b6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 17:03:14 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAKH3DTr032335
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Nov 2018 17:03:13 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAKH3CHs030437;
-        Tue, 20 Nov 2018 17:03:12 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 20 Nov 2018 09:03:12 -0800
-Date:   Tue, 20 Nov 2018 09:03:21 -0800
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>, linux-mm@kvack.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aarcange@redhat.com, aaron.lu@intel.com, akpm@linux-foundation.org,
-        alex.williamson@redhat.com, bsd@redhat.com,
-        darrick.wong@oracle.com, dave.hansen@linux.intel.com,
-        jgg@mellanox.com, jwadams@google.com, jiangshanlai@gmail.com,
-        mhocko@kernel.org, mike.kravetz@oracle.com,
-        Pavel.Tatashin@microsoft.com, prasad.singamsetty@oracle.com,
-        rdunlap@infradead.org, steven.sistare@oracle.com,
-        tim.c.chen@intel.com, vbabka@suse.cz
-Subject: Re: [RFC PATCH v4 05/13] workqueue, ktask: renice helper threads to
- prevent starvation
-Message-ID: <20181120170320.2qvlwnpohzxow4bm@ca-dmjordan1.us.oracle.com>
-References: <20181105165558.11698-1-daniel.m.jordan@oracle.com>
- <20181105165558.11698-6-daniel.m.jordan@oracle.com>
- <20181113163400.GK2509588@devbig004.ftw2.facebook.com>
- <20181119164554.axobolrufu26kfah@ca-dmjordan1.us.oracle.com>
- <20181120163319.GW2509588@devbig004.ftw2.facebook.com>
+        Tue, 20 Nov 2018 22:35:35 -0500
+Received: by mail-vs1-f65.google.com with SMTP id t17so1500904vsc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:05:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rCvDkTrryc6h6D8BFtjV6gfC44cdnp3KB/9tnbV+mdM=;
+        b=ZKP0TAdrN3zpn+tFQSNOz8SOe6kRvv9cgu1tgI93umgPUMPVL3yd05z9/kzerd3QQo
+         IlR7ZyuLN61L6j+1m01OIiaHjoGQsQ1q1bcno958sih1ZlCqVg63A07/NFl0uHBP9VCd
+         uoh8lXw0nFEq9F/o+JOH5n2urj6NU3TBp6K4I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rCvDkTrryc6h6D8BFtjV6gfC44cdnp3KB/9tnbV+mdM=;
+        b=UfjqWoYLK3iNLptAOeSGAkbRr8wTLgpTV5SGrk2fl6UfVR0PxobWVJC4pPmUzAcMOF
+         CK0YRbdEn1mg/CAfd9sbgIl+XzvfjTi2+k5x/5yzyeLkmRlyt8Dy+HxVpmyu0oVTEUpd
+         Wky3urM19AQC25fosCR8viAhub2a6g6+n7LQ+yqwDw/+YrNAT5VduECfD66sIwUZkIHv
+         xCD+sAB5O9oiaLoFKxElewFZ8se3IkMrr+NMNgutItdKAFX9ffXLIiWurY8P5r3JdWm9
+         jdKBMQbo5HnPoUwDHMUzhMUIqfbHX/0/d3t8JI5ACWLSmK2GfoKC7/6wKRIPN/KvcEaR
+         Uzkw==
+X-Gm-Message-State: AA+aEWaFhzwJXarFnBFHqEkB4w42U3+fIuXYHdJbpM/ehKL+Kh2rorrT
+        58dHUGdDFk8a7QkzV/pNJ7JbiAVtQ/Y=
+X-Google-Smtp-Source: AJdET5dx4Q+LMy3r3WsASPIwHof/jHGrsnafR8k6JU4BlWLrg2GQqlryRTwOkTxf5RD9fnkfKX5DBA==
+X-Received: by 2002:a67:8513:: with SMTP id h19mr1143616vsd.91.1542733525515;
+        Tue, 20 Nov 2018 09:05:25 -0800 (PST)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id p136sm10159630vsc.18.2018.11.20.09.05.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 09:05:24 -0800 (PST)
+Received: by mail-vk1-f174.google.com with SMTP id h128so563183vkg.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 09:05:22 -0800 (PST)
+X-Received: by 2002:a1f:4301:: with SMTP id q1mr1219590vka.70.1542733521673;
+ Tue, 20 Nov 2018 09:05:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120163319.GW2509588@devbig004.ftw2.facebook.com>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9082 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=842
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811200150
+References: <20181120002654.1891-1-dianders@chromium.org> <20181120002654.1891-5-dianders@chromium.org>
+ <20181120161055.GI3894@sirena.org.uk> <CAD=FV=UO1Dt3SeDs22EgH-95dWX+jq0sU7zzRgew11_DVw43cg@mail.gmail.com>
+ <20181120165814.GM3894@sirena.org.uk>
+In-Reply-To: <20181120165814.GM3894@sirena.org.uk>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 20 Nov 2018 09:05:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UpQ1RNXsSS9j5fUtFm+c7aMi+zoau7c3m4R=oakqL_ig@mail.gmail.com>
+Message-ID: <CAD=FV=UpQ1RNXsSS9j5fUtFm+c7aMi+zoau7c3m4R=oakqL_ig@mail.gmail.com>
+Subject: Re: [PATCH 5/7] regulator: core: add enable_count for consumers to
+ debug fs
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Dmitry Osipenko <digetx@gmail.com>, ryandcase@chromium.org,
+        David Collins <collinsd@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 08:33:19AM -0800, Tejun Heo wrote:
-> On Mon, Nov 19, 2018 at 08:45:54AM -0800, Daniel Jordan wrote:
-> > So instead of flush_work_at_nice, how about this?:
-> > 
-> > void renice_work_sync(work_struct *work, long nice);
-> 
-> Wouldn't renice_or_cancel make more sense?
+Hi,
 
-I guess you mean, for renicing if the work is started and canceling if it
-hasn't?
+On Tue, Nov 20, 2018 at 8:58 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Tue, Nov 20, 2018 at 08:52:14AM -0800, Doug Anderson wrote:
+>
+> > I don't want to send v2 of things while you're still reviewing.  If
+> > you have a chance give me a ping when you're ready for me to send out
+> > v2 of things.  ...otherwise I'll plan to send it out later today or
+> > tomorrow morning.
+>
+> I'm pretty much done for today so probably easier to just resend now,
+> I've got other things in my queue to review anyway!
 
-Then yes, it would in this case, since if a ktask work hasn't start, there's no
-point in running it--there are no more chunks for it to work on.
+OK, got it.  NOTE: I think patch #3 ("regulator: core: Don't
+double-disable supplies in regulator_disable_deferred()") needs no
+resend and is ready to go if you think it's OK.  I won't plan to
+repost that one.
 
-Was attempting to generalize for other cases when the work did need to be run,
-but designing for the future can be dicey, and I'm fine either way.  So absent
-other opinions, I'll do renice_or_cancel.
+-Doug
