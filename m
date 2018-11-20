@@ -2,115 +2,103 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 486B6C41536
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:18:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B68C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 095F820831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 095F820831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 05C3D206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 17:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C3D206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbeKUDr7 (ORCPT
+        id S1730389AbeKUDsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 22:47:59 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:54701 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeKUDr6 (ORCPT
+        Tue, 20 Nov 2018 22:48:03 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:34377 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727085AbeKUDsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 22:47:58 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gP9eh-0006uK-Ff; Tue, 20 Nov 2018 18:17:43 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gP9eh-00005D-0Q; Tue, 20 Nov 2018 18:17:43 +0100
-Date:   Tue, 20 Nov 2018 18:17:42 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
-Message-ID: <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
-References: <20181120134032.31645-1-brgl@bgdev.pl>
- <20181120134032.31645-2-brgl@bgdev.pl>
+        Tue, 20 Nov 2018 22:48:02 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gP9ej-0006rb-Vs; Tue, 20 Nov 2018 17:17:46 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][drm-next] drm/amd/display: fix dereference of pointer fs_params before it is null checked
+Date:   Tue, 20 Nov 2018 17:17:45 +0000
+Message-Id: <20181120171745.13812-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181120134032.31645-2-brgl@bgdev.pl>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The irq_sim irqchip doesn't allow to configure the sensitivity so every
-> call to irq_sim_fire() fires a dummy interrupt. This used to not matter
-> for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
-> ("gpiolib: Don't support irq sharing for userspace") which made it
-> impossible for gpio-mockup to ignore certain events (e.g. only receive
-> notifications about rising edge events).
-> 
-> Introduce a specialized variant of irq_sim_fire() which takes another
-> argument called edge. allowing to specify the trigger type for the
-> dummy interrupt.
+From: Colin Ian King <colin.king@canonical.com>
 
-I wonder if it's worth the effort to fix irq_sim. If you take a look in
-my gpio-simulator patch, it is trivial to get it right without external
-help with an amount of code that is usual for a driver that handles
-irqs.
+Currently there are several instances of pointer fs_params being
+dereferenced before fs_params is being null checked.  Fix this by
+only dereferencing fs_params after the null check.
 
-> @@ -161,12 +171,28 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
->   */
->  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
->  {
-> -	if (sim->irqs[offset].enabled) {
-> +	/* Don't care about the edge. */
-> +	irq_sim_fire_edge(sim, offset, IRQ_TYPE_EDGE_BOTH);
+Detected by CoverityScan, CID#1475565 ("Dereference before null check")
 
-Conceptually irq_sim_fire_edge should be defined above irq_sim_fire.
+Fixes: e1e8a020c6b8 ("drm/amd/display: Add support for Freesync 2 HDR and Content to Display Mapping")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ .../drm/amd/display/modules/color/color_gamma.c  | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-> +EXPORT_SYMBOL_GPL(irq_sim_fire);
-> +
-> +/**
-> + * irq_sim_fire_edge - Enqueue an interrupt, specify the edge.
-> + *
-> + * @sim:        The interrupt simulator object.
-> + * @offset:     Offset of the simulated interrupt which should be fired.
-> + * edge:        Edge of the interrupt (IRQ_TYPE_EDGE_RISING/FALLING).
-> + */
-> +void irq_sim_fire_edge(struct irq_sim *sim, unsigned int offset, int edge)
-> +{
-> +	struct irq_sim_irq_ctx *irq = &sim->irqs[offset];
-> +
-> +	if (irq->enabled && (irq->edge & edge)) {
->  		set_bit(offset, sim->work_ctx.pending);
->  		irq_work_queue(&sim->work_ctx.work);
->  	}
->  }
-> -EXPORT_SYMBOL_GPL(irq_sim_fire);
-> +EXPORT_SYMBOL_GPL(irq_sim_fire_edge);
-
-Best regards
-Uwe
-
+diff --git a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+index 7480f072c375..bbecbaefb741 100644
+--- a/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
++++ b/drivers/gpu/drm/amd/display/modules/color/color_gamma.c
+@@ -813,20 +813,26 @@ static bool build_freesync_hdr(struct pwl_float_data_ex *rgb_regamma,
+ 	const struct hw_x_point *coord_x = coordinate_x;
+ 	struct fixed31_32 scaledX = dc_fixpt_zero;
+ 	struct fixed31_32 scaledX1 = dc_fixpt_zero;
+-	struct fixed31_32 max_display = dc_fixpt_from_int(fs_params->max_display);
+-	struct fixed31_32 min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
+-	struct fixed31_32 max_content = dc_fixpt_from_int(fs_params->max_content);
+-	struct fixed31_32 min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
++	struct fixed31_32 max_display;
++	struct fixed31_32 min_display;
++	struct fixed31_32 max_content;
++	struct fixed31_32 min_content;
+ 	struct fixed31_32 clip = dc_fixpt_one;
+ 	struct fixed31_32 output;
+ 	bool use_eetf = false;
+ 	bool is_clipped = false;
+-	struct fixed31_32 sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
++	struct fixed31_32 sdr_white_level;
+ 
+ 	if (fs_params == NULL || fs_params->max_content == 0 ||
+ 			fs_params->max_display == 0)
+ 		return false;
+ 
++	max_display = dc_fixpt_from_int(fs_params->max_display);
++	min_display = dc_fixpt_from_fraction(fs_params->min_display, 10000);
++	max_content = dc_fixpt_from_int(fs_params->max_content);
++	min_content = dc_fixpt_from_fraction(fs_params->min_content, 10000);
++	sdr_white_level = dc_fixpt_from_int(fs_params->sdr_white_level);
++
+ 	if (fs_params->min_display > 1000) // cap at 0.1 at the bottom
+ 		min_display = dc_fixpt_from_fraction(1, 10);
+ 	if (fs_params->max_display < 100) // cap at 100 at the top
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.19.1
+
