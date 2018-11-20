@@ -2,183 +2,93 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A9AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AF7C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01F220685
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:02:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QqpJRgoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01F220685
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 23DD020851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 11:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23DD020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbeKTVbI (ORCPT
+        id S1728977AbeKTVba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 16:31:08 -0500
-Received: from mail-eopbgr60076.outbound.protection.outlook.com ([40.107.6.76]:43472
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727497AbeKTVbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:31:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G/Porhk9rKN5O9rpyzS78zVPHRHYaot0kMJQlbQ5TJo=;
- b=QqpJRgoFgYbSb+g1OvmeRiEO9/T3apcX9PqRnPv+tdVu2OOxFPubVfHU7r2XLbzOBo0/YssngTr6MxIZstrto6vm5N9BUQrTNGFHXg2rqav8FpTlVL4zB+6d/1FiPtl79kYBkUPZdQRZiQM+78xXxa9BfCNbj8lYWDXa0NilGig=
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com (10.168.32.20) by
- HE1PR0401MB2202.eurprd04.prod.outlook.com (10.166.76.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.26; Tue, 20 Nov 2018 11:01:49 +0000
-Received: from HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2]) by HE1PR0401MB2235.eurprd04.prod.outlook.com
- ([fe80::60ff:1b2a:d0fd:5bd2%8]) with mapi id 15.20.1339.027; Tue, 20 Nov 2018
- 11:01:49 +0000
-From:   "M.h. Lian" <minghuan.lian@nxp.com>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Tue, 20 Nov 2018 16:31:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53094 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725989AbeKTVba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 16:31:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C69A120D72; Tue, 20 Nov 2018 12:02:54 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 72F67207B0;
+        Tue, 20 Nov 2018 12:02:44 +0100 (CET)
+Date:   Tue, 20 Nov 2018 12:02:44 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Naga Sureshkumar Relli <nagasure@xilinx.com>
+Cc:     "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>
-CC:     Mingkai Hu <mingkai.hu@nxp.com>, Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: RE: [PATCHv2 12/25] PCI: mobiveil: move out the link up waiting from
- mobiveil_host_init
-Thread-Topic: [PATCHv2 12/25] PCI: mobiveil: move out the link up waiting from
- mobiveil_host_init
-Thread-Index: AQHUgLMqaVbEFA8UPE25WAZopVq0WqVYf3Hw
-Date:   Tue, 20 Nov 2018 11:01:49 +0000
-Message-ID: <HE1PR0401MB2235E159D0F9F922F36B1517E8D90@HE1PR0401MB2235.eurprd04.prod.outlook.com>
-References: <20181120092615.11680-1-Zhiqiang.Hou@nxp.com>
- <20181120092615.11680-13-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181120092615.11680-13-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=minghuan.lian@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR0401MB2202;6:QiKYsdacK0gXskodqaBOJq4Z+og5zVZjDX20gX07GgCMIhvVIlysNR1BTBnlh7aQx2CGCEuBkhwy6keWuFAdhaPrjVg4wc785KeRd69qUO3qG279g4NCHaD8ucvcZPw+yyKk/0hVNwdaiAjjOJIdKDQWffy5KumloIy4zR5eDIbROjPSo+wkvD3gcozyucCI38xQ/HfBUTe1Cr9K3mJ8fNOWmXJNJKBPjPHG3CS8feWqnLhhijwj7GRxKwnrcTpXKKdcwF+wcqOlVigD2+27qBBEbwmDE3j6eSs9WoV9u+sKhZdP/VNhyMZtcYoQEf5gST9f/H+aB21+Wt4VVPI7YdYkNLwA1u0q6wIVX8s/HwfTC2lrTei2Sq9Zoa1OryWCdq1bQMmEMjbMW9RzFHZH5pDegAkxwUDgDb6LQE3/k7mvFl6Y73tdUJJrwaGmc+xnQau/5i6CjCeiJDyd9tD2newcdO7scsOwlHWgZgspT0s=;5:8MjjT0KicNJ7LQNubMtBDoVGDY6jDXsMZj9PgKxw2vy3onEkynae4cn32FBgvL4oSj6oQIzj3HYLp1J+5oMFKp6ba65OT8u4xzi/TPHK4Ml+NTux9BOWobnNEkKf/8Etslqsjp5iuZ7DdeC7DGOgUOZHJvfLrvXpg/iFn9AmqpA=;7:RJzAHeXod/7ByrPwKC92iYSiu0dn1z1uELJEiv7SYwNA/TowDOwzwOl0a7sid4D+eHXEXTkxABBv3jV+pqSbViAuVRH0BQn9HRPGfWN+nJOa2WVrUxYWnDKYtyzKH6AaM/IAmKPuGKQouSStfxCmhw==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7e03f4c4-4ad7-4c17-661d-08d64ed7921a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR0401MB2202;
-x-ms-traffictypediagnostic: HE1PR0401MB2202:
-x-microsoft-antispam-prvs: <HE1PR0401MB2202A428D34066D6C77B5D7FE8D90@HE1PR0401MB2202.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:HE1PR0401MB2202;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0401MB2202;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(346002)(136003)(366004)(189003)(199004)(13464003)(6506007)(53546011)(102836004)(99286004)(26005)(186003)(76176011)(7696005)(229853002)(106356001)(105586002)(54906003)(6436002)(14454004)(33656002)(25786009)(110136005)(486006)(3846002)(478600001)(68736007)(2900100001)(476003)(316002)(11346002)(446003)(53936002)(9686003)(55016002)(2201001)(81156014)(81166006)(74316002)(71200400001)(8936002)(71190400001)(7736002)(8676002)(66066001)(97736004)(305945005)(5660300001)(2501003)(6116002)(4326008)(2906002)(6246003)(7416002)(86362001)(256004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0401MB2202;H:HE1PR0401MB2235.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: f0K54lQOF69yPnJRFoSfFambDsTNZxEF1bRYJg9lt4x9MvWg6yM4bzZ6vG+dxFyz2EcLbhF+xnWWCDi2XEfJH24NIEBnMT6w57yXNSxg2xqKnZXT+leTP69Hd4hkABxUW+utgSOac/HO8Th0r/mOujDGpG7/99nSsKJNudxa4n2FwJwIQ6yFihqcZ6YpNBI9faG76OGDWEquBfJB83ouLDGO50Mbo/obnA828oKyRUE3iTiYsC+z9QajoBYNcp31mtUxPvQgVUw6WUlosj4YqvEMjtI7YQEtidj3O6Z6jGSj1akg/hBBCwKqBaPQX1r2j/3p865Dm6RopbH28dthubR3z8oRBt/r3kVlvvWUhR0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        Michal Simek <michals@xilinx.com>
+Subject: Re: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Message-ID: <20181120120244.7d2442b5@bbrezillon>
+In-Reply-To: <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181118204324.373ca9cc@bbrezillon>
+        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181119090246.49060019@bbrezillon>
+        <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e03f4c4-4ad7-4c17-661d-08d64ed7921a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 11:01:49.4080
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0401MB2202
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+On Tue, 20 Nov 2018 07:02:08 +0000
+Naga Sureshkumar Relli <nagasure@xilinx.com> wrote:
 
-> -----Original Message-----
-> From: Z.q. Hou
-> Sent: Tuesday, November 20, 2018 5:27 PM
-> To: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> bhelgaas@google.com; robh+dt@kernel.org; mark.rutland@arm.com;
-> l.subrahmanya@mobiveil.co.in; shawnguo@kernel.org; Leo Li
-> <leoyang.li@nxp.com>; lorenzo.pieralisi@arm.com;
-> catalin.marinas@arm.com; will.deacon@arm.com
-> Cc: Mingkai Hu <mingkai.hu@nxp.com>; M.h. Lian
-> <minghuan.lian@nxp.com>; Xiaowei Bao <xiaowei.bao@nxp.com>; Z.q. Hou
-> <zhiqiang.hou@nxp.com>
-> Subject: [PATCHv2 12/25] PCI: mobiveil: move out the link up waiting from
-> mobiveil_host_init
->=20
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->=20
-> Host initial sequence does not depend on PCIe link up, so move it to the
-> place just before the enumeration.
->=20
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V2:
->  - no change
->=20
->  drivers/pci/controller/pcie-mobiveil.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c
-> b/drivers/pci/controller/pcie-mobiveil.c
-> index 8eee1ab7ee24..c2848c22b466 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -582,15 +582,8 @@ static void mobiveil_pcie_enable_msi(struct
-> mobiveil_pcie *pcie)  static int mobiveil_host_init(struct mobiveil_pcie =
-*pcie)
-> {
->  	u32 value, pab_ctrl, type;
-> -	int err;
->  	struct resource_entry *win;
->=20
-> -	err =3D mobiveil_bringup_link(pcie);
-> -	if (err) {
-> -		dev_info(&pcie->pdev->dev, "link bring-up failed\n");
-> -		return err;
-> -	}
-> -
->  	/*
->  	 * program Bus Master Enable Bit in Command Register in PAB Config
->  	 * Space
-> @@ -662,7 +655,7 @@ static int mobiveil_host_init(struct mobiveil_pcie
-> *pcie)
->  	/* setup MSI hardware registers */
->  	mobiveil_pcie_enable_msi(pcie);
->=20
-> -	return err;
-> +	return 0;
->  }
->=20
->  static void mobiveil_mask_intx_irq(struct irq_data *data) @@ -922,6
-> +915,12 @@ static int mobiveil_pcie_probe(struct platform_device *pdev)
->  	bridge->map_irq =3D of_irq_parse_and_map_pci;
->  	bridge->swizzle_irq =3D pci_common_swizzle;
->=20
-> +	ret =3D mobiveil_bringup_link(pcie);
-> +	if (ret) {
-> +		dev_info(dev, "link bring-up failed\n");
-> +		goto error;
-> +	}
-> +
->  	/* setup the kernel resources for the newly added PCIe root bus */
->  	ret =3D pci_scan_root_bus_bridge(bridge);
->  	if (ret)
-> --
-> 2.17.1
 
+> > 
+> > Can you please run nandbiterrs (availaible in mtd-utils). I fear your
+> > device won't pass the test.  
+> Yes, nandbiterror test is passing till 24bit, after that it is failing.
+
+Can you paste the output of nandbiterrs please?
+
+> >   
+> > > But we are hitting this because of erased page reading(needed in case of ubifs).
+> > >  
+> > > >
+> > > > Don't you have a bit (or several bits) reporting when the ECC engine was not able to  
+> > correct  
+> > > > data? I you do, you should base the "detect bitflips in erase pages" logic on this information.  
+> > > Bit reporting for several bit errors is there only for Hamming(1bit correction and 2bit  
+> > detection) but not in BCH.  
+> > >  
+> > 
+> > Then I tend to agree with Miquel: your ECC engine is broken, and I'm
+> > not even sure how to deal with that yet.  
+> So as per the Miquel's suggestion, can I proceed to add the below one?
+> "you should re-read the page in raw mode and check for the number of bitflips manually (thanks to the helpers in the core). Again, if the number of BF is above 16, we can assume the page is bad and increment ->ecc.failed accordingly."
+
+But that's just partially fixing the problem. And you didn't answer my
+previous question: what happens when you configure the ECC engine in,
+say 12bit/1024 and you end up with uncorrectable errors (more than 12
+bitflips in a 1k block). What's the number reported ECC_ERR_CNT? Is it
+set to 13?
