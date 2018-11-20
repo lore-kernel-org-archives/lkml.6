@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 533FFC4161D
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC00C4161D
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D921208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D921208E3
+	by mail.kernel.org (Postfix) with ESMTP id C2D5D20989
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 18:16:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2D5D20989
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728751AbeKUEqH (ORCPT
+        id S1729282AbeKUEqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 23:46:07 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:37460 "EHLO inva020.nxp.com"
+        Tue, 20 Nov 2018 23:46:34 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:37478 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728520AbeKUEqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728525AbeKUEqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 23:46:07 -0500
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B1561A0079;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B16F01A0086;
         Tue, 20 Nov 2018 19:15:36 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 537DC1A0006;
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A387C1A0005;
         Tue, 20 Nov 2018 19:15:36 +0100 (CET)
 Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 138EF20621;
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 635DC20621;
         Tue, 20 Nov 2018 19:15:36 +0100 (CET)
 From:   Claudiu Manoil <claudiu.manoil@nxp.com>
 To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, alexandru.marginean@nxp.com,
         catalin.horghidan@nxp.com
-Subject: [PATCH net-next v2 2/4] enetc: Add ethtool statistics
-Date:   Tue, 20 Nov 2018 20:15:32 +0200
-Message-Id: <1542737734-21756-3-git-send-email-claudiu.manoil@nxp.com>
+Subject: [PATCH net-next v2 3/4] enetc: Add vf to pf messaging support
+Date:   Tue, 20 Nov 2018 20:15:33 +0200
+Message-Id: <1542737734-21756-4-git-send-email-claudiu.manoil@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
 References: <1542737734-21756-1-git-send-email-claudiu.manoil@nxp.com>
@@ -47,348 +47,570 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds most h/w statistics counters: non-privileged SI conters, as
-well as privileged Port and MAC counters available only to the PF.
-Per ring software stats are also included.
+VSIs (VFs) may send a message to the PSI (PF) for general notification
+or to gain access to hardware resources which requires host inspection.
+These messages may vary in size and are handled as a partition copy
+between two memory regions owned by the respective participants.
+The PSI will respond with fail or success and a 16-bit message code.
+The patch implements the vf to pf messaging mechanism above and, as the
+first application making use of this support, it enables the VF to
+configure its own primary MAC address.
 
-Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+Signed-off-by: Catalin Horghidan <catalin.horghidan@nxp.com>
 Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 ---
 v2:	- replaced sprintf by snprintf
 
+ drivers/net/ethernet/freescale/enetc/Makefile    |   1 +
+ drivers/net/ethernet/freescale/enetc/enetc.h     |  14 ++
+ drivers/net/ethernet/freescale/enetc/enetc_hw.h  |  50 +++++++
+ drivers/net/ethernet/freescale/enetc/enetc_msg.c | 164 +++++++++++++++++++++++
+ drivers/net/ethernet/freescale/enetc/enetc_pf.c  |  80 ++++++++++-
+ drivers/net/ethernet/freescale/enetc/enetc_pf.h  |  17 +++
+ drivers/net/ethernet/freescale/enetc/enetc_vf.c  |  85 ++++++++++++
+ 7 files changed, 408 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_msg.c
 
- .../net/ethernet/freescale/enetc/enetc_ethtool.c   | 187 +++++++++++++++++++++
- drivers/net/ethernet/freescale/enetc/enetc_hw.h    |  88 ++++++++++
- 2 files changed, 275 insertions(+)
-
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-index 365ac9c..9032b0e 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
-@@ -89,6 +89,187 @@ static void enetc_get_regs(struct net_device *ndev, struct ethtool_regs *regs,
- 	}
- }
+diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/ethernet/freescale/enetc/Makefile
+index a85ef2b..9529b018 100644
+--- a/drivers/net/ethernet/freescale/enetc/Makefile
++++ b/drivers/net/ethernet/freescale/enetc/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ obj-$(CONFIG_FSL_ENETC) += fsl-enetc.o
+ fsl-enetc-$(CONFIG_FSL_ENETC) += enetc.o enetc_cbdr.o enetc_ethtool.o
++fsl-enetc-$(CONFIG_PCI_IOV) += enetc_msg.o
+ fsl-enetc-objs := enetc_pf.o $(fsl-enetc-y)
  
-+static const struct {
-+	int reg;
-+	char name[ETH_GSTRING_LEN];
-+} enetc_si_counters[] =  {
-+	{ ENETC_SIROCT, "SI rx octets" },
-+	{ ENETC_SIRFRM, "SI rx frames" },
-+	{ ENETC_SIRUCA, "SI rx u-cast frames" },
-+	{ ENETC_SIRMCA, "SI rx m-cast frames" },
-+	{ ENETC_SITOCT, "SI tx octets" },
-+	{ ENETC_SITFRM, "SI tx frames" },
-+	{ ENETC_SITUCA, "SI tx u-cast frames" },
-+	{ ENETC_SITMCA, "SI tx m-cast frames" },
-+	{ ENETC_RBDCR(0), "Rx ring  0 discarded frames" },
-+	{ ENETC_RBDCR(1), "Rx ring  1 discarded frames" },
-+	{ ENETC_RBDCR(2), "Rx ring  2 discarded frames" },
-+	{ ENETC_RBDCR(3), "Rx ring  3 discarded frames" },
-+	{ ENETC_RBDCR(4), "Rx ring  4 discarded frames" },
-+	{ ENETC_RBDCR(5), "Rx ring  5 discarded frames" },
-+	{ ENETC_RBDCR(6), "Rx ring  6 discarded frames" },
-+	{ ENETC_RBDCR(7), "Rx ring  7 discarded frames" },
-+	{ ENETC_RBDCR(8), "Rx ring  8 discarded frames" },
-+	{ ENETC_RBDCR(9), "Rx ring  9 discarded frames" },
-+	{ ENETC_RBDCR(10), "Rx ring 10 discarded frames" },
-+	{ ENETC_RBDCR(11), "Rx ring 11 discarded frames" },
-+	{ ENETC_RBDCR(12), "Rx ring 12 discarded frames" },
-+	{ ENETC_RBDCR(13), "Rx ring 13 discarded frames" },
-+	{ ENETC_RBDCR(14), "Rx ring 14 discarded frames" },
-+	{ ENETC_RBDCR(15), "Rx ring 15 discarded frames" },
+ obj-$(CONFIG_FSL_ENETC_VF) += fsl-enetc-vf.o
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+index 800f38f..988b1ea 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+@@ -102,6 +102,12 @@ struct enetc_cbdr {
+ #define ENETC_TXBD(BDR, i) (&(((union enetc_tx_bd *)((BDR).bd_base))[i]))
+ #define ENETC_RXBD(BDR, i) (&(((union enetc_rx_bd *)((BDR).bd_base))[i]))
+ 
++struct enetc_msg_swbd {
++	void *vaddr;
++	dma_addr_t dma;
++	int size;
 +};
 +
-+static const struct {
-+	int reg;
-+	char name[ETH_GSTRING_LEN];
-+} enetc_port_counters[] = {
-+	{ ENETC_PM0_REOCT,  "MAC rx ethernet octets" },
-+	{ ENETC_PM0_RALN,   "MAC rx alignment errors" },
-+	{ ENETC_PM0_RXPF,   "MAC rx valid pause frames" },
-+	{ ENETC_PM0_RFRM,   "MAC rx valid frames" },
-+	{ ENETC_PM0_RFCS,   "MAC rx fcs errors" },
-+	{ ENETC_PM0_RVLAN,  "MAC rx VLAN frames" },
-+	{ ENETC_PM0_RERR,   "MAC rx frame errors" },
-+	{ ENETC_PM0_RUCA,   "MAC rx unicast frames" },
-+	{ ENETC_PM0_RMCA,   "MAC rx multicast frames" },
-+	{ ENETC_PM0_RBCA,   "MAC rx broadcast frames" },
-+	{ ENETC_PM0_RDRP,   "MAC rx dropped packets" },
-+	{ ENETC_PM0_RPKT,   "MAC rx packets" },
-+	{ ENETC_PM0_RUND,   "MAC rx undersized packets" },
-+	{ ENETC_PM0_R64,    "MAC rx 64 byte packets" },
-+	{ ENETC_PM0_R127,   "MAC rx 65-127 byte packets" },
-+	{ ENETC_PM0_R255,   "MAC rx 128-255 byte packets" },
-+	{ ENETC_PM0_R511,   "MAC rx 256-511 byte packets" },
-+	{ ENETC_PM0_R1023,  "MAC rx 512-1023 byte packets" },
-+	{ ENETC_PM0_R1518,  "MAC rx 1024-1518 byte packets" },
-+	{ ENETC_PM0_R1519X, "MAC rx 1519 to max-octet packets" },
-+	{ ENETC_PM0_ROVR,   "MAC rx oversized packets" },
-+	{ ENETC_PM0_RJBR,   "MAC rx jabber packets" },
-+	{ ENETC_PM0_RFRG,   "MAC rx fragment packets" },
-+	{ ENETC_PM0_RCNP,   "MAC rx control packets" },
-+	{ ENETC_PM0_RDRNTP, "MAC rx fifo drop" },
-+	{ ENETC_PM0_TEOCT,  "MAC tx ethernet octets" },
-+	{ ENETC_PM0_TOCT,   "MAC tx octets" },
-+	{ ENETC_PM0_TCRSE,  "MAC tx carrier sense errors" },
-+	{ ENETC_PM0_TXPF,   "MAC tx valid pause frames" },
-+	{ ENETC_PM0_TFRM,   "MAC tx frames" },
-+	{ ENETC_PM0_TFCS,   "MAC tx fcs errors" },
-+	{ ENETC_PM0_TVLAN,  "MAC tx VLAN frames" },
-+	{ ENETC_PM0_TERR,   "MAC tx frames" },
-+	{ ENETC_PM0_TUCA,   "MAC tx unicast frames" },
-+	{ ENETC_PM0_TMCA,   "MAC tx multicast frames" },
-+	{ ENETC_PM0_TBCA,   "MAC tx broadcast frames" },
-+	{ ENETC_PM0_TPKT,   "MAC tx packets" },
-+	{ ENETC_PM0_TUND,   "MAC tx undersized packets" },
-+	{ ENETC_PM0_T127,   "MAC tx 65-127 byte packets" },
-+	{ ENETC_PM0_T1023,  "MAC tx 512-1023 byte packets" },
-+	{ ENETC_PM0_T1518,  "MAC tx 1024-1518 byte packets" },
-+	{ ENETC_PM0_TCNP,   "MAC tx control packets" },
-+	{ ENETC_PM0_TDFR,   "MAC tx deferred packets" },
-+	{ ENETC_PM0_TMCOL,  "MAC tx multiple collisions" },
-+	{ ENETC_PM0_TSCOL,  "MAC tx single collisions" },
-+	{ ENETC_PM0_TLCOL,  "MAC tx late collisions" },
-+	{ ENETC_PM0_TECOL,  "MAC tx excessive collisions" },
-+	{ ENETC_UFDMF,      "SI MAC nomatch u-cast discards" },
-+	{ ENETC_MFDMF,      "SI MAC nomatch m-cast discards" },
-+	{ ENETC_PBFDSIR,    "SI MAC nomatch b-cast discards" },
-+	{ ENETC_PUFDVFR,    "SI VLAN nomatch u-cast discards" },
-+	{ ENETC_PMFDVFR,    "SI VLAN nomatch m-cast discards" },
-+	{ ENETC_PBFDVFR,    "SI VLAN nomatch b-cast discards" },
-+	{ ENETC_PFDMSAPR,   "SI pruning discarded frames" },
-+	{ ENETC_PICDR(0),   "ICM DR0 discarded frames" },
-+	{ ENETC_PICDR(1),   "ICM DR1 discarded frames" },
-+	{ ENETC_PICDR(2),   "ICM DR2 discarded frames" },
-+	{ ENETC_PICDR(3),   "ICM DR3 discarded frames" },
-+};
-+
-+static const char rx_ring_stats[][ETH_GSTRING_LEN] = {
-+	"Rx ring %2d frames",
-+	"Rx ring %2d alloc errors",
-+};
-+
-+static const char tx_ring_stats[][ETH_GSTRING_LEN] = {
-+	"Tx ring %2d frames",
-+};
-+
-+static int enetc_get_sset_count(struct net_device *ndev, int sset)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+
-+	if (sset == ETH_SS_STATS)
-+		return ARRAY_SIZE(enetc_si_counters) +
-+			ARRAY_SIZE(tx_ring_stats) * priv->num_tx_rings +
-+			ARRAY_SIZE(rx_ring_stats) * priv->num_rx_rings +
-+			(enetc_si_is_pf(priv->si) ?
-+			ARRAY_SIZE(enetc_port_counters) : 0);
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static void enetc_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	u8 *p = data;
-+	int i, j;
-+
-+	switch (stringset) {
-+	case ETH_SS_STATS:
-+		for (i = 0; i < ARRAY_SIZE(enetc_si_counters); i++) {
-+			strlcpy(p, enetc_si_counters[i].name, ETH_GSTRING_LEN);
-+			p += ETH_GSTRING_LEN;
-+		}
-+		for (i = 0; i < priv->num_tx_rings; i++) {
-+			for (j = 0; j < ARRAY_SIZE(tx_ring_stats); j++) {
-+				snprintf(p, ETH_GSTRING_LEN, tx_ring_stats[j],
-+					 i);
-+				p += ETH_GSTRING_LEN;
-+			}
-+		}
-+		for (i = 0; i < priv->num_rx_rings; i++) {
-+			for (j = 0; j < ARRAY_SIZE(rx_ring_stats); j++) {
-+				snprintf(p, ETH_GSTRING_LEN, rx_ring_stats[j],
-+					 i);
-+				p += ETH_GSTRING_LEN;
-+			}
-+		}
-+
-+		if (!enetc_si_is_pf(priv->si))
-+			break;
-+
-+		for (i = 0; i < ARRAY_SIZE(enetc_port_counters); i++) {
-+			strlcpy(p, enetc_port_counters[i].name,
-+				ETH_GSTRING_LEN);
-+			p += ETH_GSTRING_LEN;
-+		}
-+		break;
-+	}
-+}
-+
-+static void enetc_get_ethtool_stats(struct net_device *ndev,
-+				    struct ethtool_stats *stats, u64 *data)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct enetc_hw *hw = &priv->si->hw;
-+	int i, o = 0;
-+
-+	for (i = 0; i < ARRAY_SIZE(enetc_si_counters); i++)
-+		data[o++] = enetc_rd64(hw, enetc_si_counters[i].reg);
-+
-+	for (i = 0; i < priv->num_tx_rings; i++)
-+		data[o++] = priv->tx_ring[i]->stats.packets;
-+
-+	for (i = 0; i < priv->num_rx_rings; i++) {
-+		data[o++] = priv->rx_ring[i]->stats.packets;
-+		data[o++] = priv->rx_ring[i]->stats.rx_alloc_errs;
-+	}
-+
-+	if (!enetc_si_is_pf(priv->si))
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(enetc_port_counters); i++)
-+		data[o++] = enetc_port_rd(hw, enetc_port_counters[i].reg);
-+}
-+
- static void enetc_get_ringparam(struct net_device *ndev,
- 				struct ethtool_ringparam *ring)
- {
-@@ -115,6 +296,9 @@ static void enetc_get_ringparam(struct net_device *ndev,
- static const struct ethtool_ops enetc_pf_ethtool_ops = {
- 	.get_regs_len = enetc_get_reglen,
- 	.get_regs = enetc_get_regs,
-+	.get_sset_count = enetc_get_sset_count,
-+	.get_strings = enetc_get_strings,
-+	.get_ethtool_stats = enetc_get_ethtool_stats,
- 	.get_ringparam = enetc_get_ringparam,
- 	.get_link_ksettings = phy_ethtool_get_link_ksettings,
- 	.set_link_ksettings = phy_ethtool_set_link_ksettings,
-@@ -123,6 +307,9 @@ static const struct ethtool_ops enetc_pf_ethtool_ops = {
- static const struct ethtool_ops enetc_vf_ethtool_ops = {
- 	.get_regs_len = enetc_get_reglen,
- 	.get_regs = enetc_get_regs,
-+	.get_sset_count = enetc_get_sset_count,
-+	.get_strings = enetc_get_strings,
-+	.get_ethtool_stats = enetc_get_ethtool_stats,
- 	.get_ringparam = enetc_get_ringparam,
+ #define ENETC_REV1	0x1
+ enum enetc_errata {
+ 	ENETC_ERR_TXCSUM	= BIT(0),
+@@ -172,6 +178,14 @@ struct enetc_ndev_priv {
+ 	phy_interface_t if_mode;
  };
  
++/* Messaging */
++
++/* VF-PF set primary MAC address message format */
++struct enetc_msg_cmd_set_primary_mac {
++	struct enetc_msg_cmd_header header;
++	struct sockaddr mac;
++};
++
+ #define ENETC_CBD(R, i)	(&(((struct enetc_cbd *)((R).bd_base))[i]))
+ 
+ #define ENETC_CBDR_TIMEOUT	1000 /* usecs */
 diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index 78c0902..511bf5c 100644
+index 511bf5c..b161eff 100644
 --- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
 +++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -34,6 +34,17 @@
+@@ -34,6 +34,29 @@
  #define ENETC_SIPMAR0	0x80
  #define ENETC_SIPMAR1	0x84
  
-+/* SI statistics */
-+#define ENETC_SIROCT	0x300
-+#define ENETC_SIRFRM	0x308
-+#define ENETC_SIRUCA	0x310
-+#define ENETC_SIRMCA	0x318
-+#define ENETC_SITOCT	0x320
-+#define ENETC_SITFRM	0x328
-+#define ENETC_SITUCA	0x330
-+#define ENETC_SITMCA	0x338
-+#define ENETC_RBDCR(n)	(0x8180 + (n) * 0x200)
-+
- /* Control BDR regs */
- #define ENETC_SICBDRMR		0x800
- #define ENETC_SICBDRSR		0x804	/* RO */
-@@ -168,6 +179,65 @@ enum enetc_bdr_type {TX, RX};
- #define ENETC_PMO_IFM_RG	BIT(2)
- #define ENETC_PM0_IFM_RLP	(BIT(5) | BIT(11))
- 
-+/* MAC counters */
-+#define ENETC_PM0_REOCT		0x8100
-+#define ENETC_PM0_RALN		0x8110
-+#define ENETC_PM0_RXPF		0x8118
-+#define ENETC_PM0_RFRM		0x8120
-+#define ENETC_PM0_RFCS		0x8128
-+#define ENETC_PM0_RVLAN		0x8130
-+#define ENETC_PM0_RERR		0x8138
-+#define ENETC_PM0_RUCA		0x8140
-+#define ENETC_PM0_RMCA		0x8148
-+#define ENETC_PM0_RBCA		0x8150
-+#define ENETC_PM0_RDRP		0x8158
-+#define ENETC_PM0_RPKT		0x8160
-+#define ENETC_PM0_RUND		0x8168
-+#define ENETC_PM0_R64		0x8170
-+#define ENETC_PM0_R127		0x8178
-+#define ENETC_PM0_R255		0x8180
-+#define ENETC_PM0_R511		0x8188
-+#define ENETC_PM0_R1023		0x8190
-+#define ENETC_PM0_R1518		0x8198
-+#define ENETC_PM0_R1519X	0x81A0
-+#define ENETC_PM0_ROVR		0x81A8
-+#define ENETC_PM0_RJBR		0x81B0
-+#define ENETC_PM0_RFRG		0x81B8
-+#define ENETC_PM0_RCNP		0x81C0
-+#define ENETC_PM0_RDRNTP	0x81C8
-+#define ENETC_PM0_TEOCT		0x8200
-+#define ENETC_PM0_TOCT		0x8208
-+#define ENETC_PM0_TCRSE		0x8210
-+#define ENETC_PM0_TXPF		0x8218
-+#define ENETC_PM0_TFRM		0x8220
-+#define ENETC_PM0_TFCS		0x8228
-+#define ENETC_PM0_TVLAN		0x8230
-+#define ENETC_PM0_TERR		0x8238
-+#define ENETC_PM0_TUCA		0x8240
-+#define ENETC_PM0_TMCA		0x8248
-+#define ENETC_PM0_TBCA		0x8250
-+#define ENETC_PM0_TPKT		0x8260
-+#define ENETC_PM0_TUND		0x8268
-+#define ENETC_PM0_T127		0x8278
-+#define ENETC_PM0_T1023		0x8290
-+#define ENETC_PM0_T1518		0x8298
-+#define ENETC_PM0_TCNP		0x82C0
-+#define ENETC_PM0_TDFR		0x82D0
-+#define ENETC_PM0_TMCOL		0x82D8
-+#define ENETC_PM0_TSCOL		0x82E0
-+#define ENETC_PM0_TLCOL		0x82E8
-+#define ENETC_PM0_TECOL		0x82F0
-+
-+/* Port counters */
-+#define ENETC_PICDR(n)		(0x0700 + (n) * 8) /* n = [0..3] */
-+#define ENETC_PBFDSIR		0x0810
-+#define ENETC_PFDMSAPR		0x0814
-+#define ENETC_UFDMF		0x1680
-+#define ENETC_MFDMF		0x1684
-+#define ENETC_PUFDVFR		0x1780
-+#define ENETC_PMFDVFR		0x1784
-+#define ENETC_PBFDVFR		0x1788
-+
- /** Global regs, offset: 2_0000h */
- #define ENETC_GLOBAL_BASE	0x20000
- #define ENETC_G_EIPBRR0		0x0bf8
-@@ -186,9 +256,27 @@ struct enetc_hw {
- /* general register accessors */
- #define enetc_rd_reg(reg)	ioread32((reg))
- #define enetc_wr_reg(reg, val)	iowrite32((val), (reg))
-+#ifdef ioread64
-+#define enetc_rd_reg64(reg)	ioread64((reg))
-+#else
-+/* using this to read out stats on 32b systems */
-+static inline u64 enetc_rd_reg64(void __iomem *reg)
++/* VF-PF Message passing */
++#define ENETC_DEFAULT_MSG_SIZE	1024	/* and max size */
++/* msg size encoding: default and max msg value of 1024B encoded as 0 */
++static inline u32 enetc_vsi_set_msize(u32 size)
 +{
-+	u32 low, high, tmp;
++	return size < ENETC_DEFAULT_MSG_SIZE ? size >> 5 : 0;
++}
++
++#define ENETC_PSIMSGRR	0x204
++#define ENETC_PSIMSGRR_MR_MASK	GENMASK(2, 1)
++#define ENETC_PSIMSGRR_MR(n) BIT((n) + 1) /* n = VSI index */
++#define ENETC_PSIVMSGRCVAR0(n)	(0x210 + (n) * 0x8) /* n = VSI index */
++#define ENETC_PSIVMSGRCVAR1(n)	(0x214 + (n) * 0x8)
++
++#define ENETC_VSIMSGSR	0x204	/* RO */
++#define ENETC_VSIMSGSR_MB	BIT(0)
++#define ENETC_VSIMSGSR_MS	BIT(1)
++#define ENETC_VSIMSGSNDAR0	0x210
++#define ENETC_VSIMSGSNDAR1	0x214
++
++#define ENETC_SIMSGSR_SET_MC(val) ((val) << 16)
++#define ENETC_SIMSGSR_GET_MC(val) ((val) >> 16)
++
+ /* SI statistics */
+ #define ENETC_SIROCT	0x300
+ #define ENETC_SIRFRM	0x308
+@@ -405,6 +428,33 @@ static inline void enetc_get_primary_mac_addr(struct enetc_hw *hw, u8 *addr)
+ /* base index for Rx/Tx interrupts */
+ #define ENETC_BDR_INT_BASE_IDX	1
+ 
++/* Messaging */
++
++/* Command completion status */
++enum enetc_msg_cmd_status {
++	ENETC_MSG_CMD_STATUS_OK,
++	ENETC_MSG_CMD_STATUS_FAIL
++};
++
++/* VSI-PSI command message types */
++enum enetc_msg_cmd_type {
++	ENETC_MSG_CMD_MNG_MAC = 1, /* manage MAC address */
++	ENETC_MSG_CMD_MNG_RX_MAC_FILTER,/* manage RX MAC table */
++	ENETC_MSG_CMD_MNG_RX_VLAN_FILTER /* manage RX VLAN table */
++};
++
++/* VSI-PSI command action types */
++enum enetc_msg_cmd_action_type {
++	ENETC_MSG_CMD_MNG_ADD = 1,
++	ENETC_MSG_CMD_MNG_REMOVE
++};
++
++/* PSI-VSI command header format */
++struct enetc_msg_cmd_header {
++	u16 type;	/* command class type */
++	u16 id;		/* denotes the specific required action */
++};
++
+ /* Common H/W utility functions */
+ 
+ static inline void enetc_enable_rxvlan(struct enetc_hw *hw, int si_idx,
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_msg.c b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
+new file mode 100644
+index 0000000..b013a3e
+--- /dev/null
++++ b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++/* Copyright 2017-2018 NXP */
++
++#include "enetc_pf.h"
++
++static void enetc_msg_disable_mr_int(struct enetc_hw *hw)
++{
++	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
++	/* disable MR int source(s) */
++	enetc_wr(hw, ENETC_PSIIER, psiier & ~ENETC_PSIIER_MR_MASK);
++}
++
++static void enetc_msg_enable_mr_int(struct enetc_hw *hw)
++{
++	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
++
++	enetc_wr(hw, ENETC_PSIIER, psiier | ENETC_PSIIER_MR_MASK);
++}
++
++static irqreturn_t enetc_msg_psi_msix(int irq, void *data)
++{
++	struct enetc_si *si = (struct enetc_si *)data;
++	struct enetc_pf *pf = enetc_si_priv(si);
++
++	enetc_msg_disable_mr_int(&si->hw);
++	schedule_work(&pf->msg_task);
++
++	return IRQ_HANDLED;
++}
++
++static void enetc_msg_task(struct work_struct *work)
++{
++	struct enetc_pf *pf = container_of(work, struct enetc_pf, msg_task);
++	struct enetc_hw *hw = &pf->si->hw;
++	unsigned long mr_mask;
++	int i;
++
++	for (;;) {
++		mr_mask = enetc_rd(hw, ENETC_PSIMSGRR) & ENETC_PSIMSGRR_MR_MASK;
++		if (!mr_mask) {
++			/* re-arm MR interrupts, w1c the IDR reg */
++			enetc_wr(hw, ENETC_PSIIDR, ENETC_PSIIER_MR_MASK);
++			enetc_msg_enable_mr_int(hw);
++			return;
++		}
++
++		for (i = 0; i < pf->num_vfs; i++) {
++			u32 psimsgrr;
++			u16 msg_code;
++
++			if (!(ENETC_PSIMSGRR_MR(i) & mr_mask))
++				continue;
++
++			enetc_msg_handle_rxmsg(pf, i, &msg_code);
++
++			psimsgrr = ENETC_SIMSGSR_SET_MC(msg_code);
++			psimsgrr |= ENETC_PSIMSGRR_MR(i); /* w1c */
++			enetc_wr(hw, ENETC_PSIMSGRR, psimsgrr);
++		}
++	}
++}
++
++/* Init */
++static int enetc_msg_alloc_mbx(struct enetc_si *si, int idx)
++{
++	struct enetc_pf *pf = enetc_si_priv(si);
++	struct device *dev = &si->pdev->dev;
++	struct enetc_hw *hw = &si->hw;
++	struct enetc_msg_swbd *msg;
++	u32 val;
++
++	msg = &pf->rxmsg[idx];
++	/* allocate and set receive buffer */
++	msg->size = ENETC_DEFAULT_MSG_SIZE;
++
++	msg->vaddr = dma_zalloc_coherent(dev, msg->size, &msg->dma,
++					 GFP_KERNEL);
++	if (!msg->vaddr) {
++		dev_err(dev, "msg: fail to alloc dma buffer of size: %d\n",
++			msg->size);
++		return -ENOMEM;
++	}
++
++	/* set multiple of 32 bytes */
++	val = lower_32_bits(msg->dma);
++	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), val);
++	val = upper_32_bits(msg->dma);
++	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), val);
++
++	return 0;
++}
++
++static void enetc_msg_free_mbx(struct enetc_si *si, int idx)
++{
++	struct enetc_pf *pf = enetc_si_priv(si);
++	struct enetc_hw *hw = &si->hw;
++	struct enetc_msg_swbd *msg;
++
++	msg = &pf->rxmsg[idx];
++	dma_free_coherent(&si->pdev->dev, msg->size, msg->vaddr, msg->dma);
++	memset(msg, 0, sizeof(*msg));
++
++	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), 0);
++	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), 0);
++}
++
++int enetc_msg_psi_init(struct enetc_pf *pf)
++{
++	struct enetc_si *si = pf->si;
++	int vector, i, err;
++
++	/* register message passing interrupt handler */
++	snprintf(pf->msg_int_name, sizeof(pf->msg_int_name), "%s-vfmsg",
++		 si->ndev->name);
++	vector = pci_irq_vector(si->pdev, ENETC_SI_INT_IDX);
++	err = request_irq(vector, enetc_msg_psi_msix, 0, pf->msg_int_name, si);
++	if (err) {
++		dev_err(&si->pdev->dev,
++			"PSI messaging: request_irq() failed!\n");
++		return err;
++	}
++
++	/* set one IRQ entry for PSI message receive notification (SI int) */
++	enetc_wr(&si->hw, ENETC_SIMSIVR, ENETC_SI_INT_IDX);
++
++	/* initialize PSI mailbox */
++	INIT_WORK(&pf->msg_task, enetc_msg_task);
++
++	for (i = 0; i < pf->num_vfs; i++) {
++		err = enetc_msg_alloc_mbx(si, i);
++		if (err)
++			goto err_init_mbx;
++	}
++
++	/* enable MR interrupts */
++	enetc_msg_enable_mr_int(&si->hw);
++
++	return 0;
++
++err_init_mbx:
++	for (i--; i >= 0; i--)
++		enetc_msg_free_mbx(si, i);
++
++	free_irq(vector, si);
++
++	return err;
++}
++
++void enetc_msg_psi_free(struct enetc_pf *pf)
++{
++	struct enetc_si *si = pf->si;
++	int i;
++
++	cancel_work_sync(&pf->msg_task);
++
++	/* disable MR interrupts */
++	enetc_msg_disable_mr_int(&si->hw);
++
++	for (i = 0; i < pf->num_vfs; i++)
++		enetc_msg_free_mbx(si, i);
++
++	/* de-register message passing interrupt handler */
++	free_irq(pci_irq_vector(si->pdev, ENETC_SI_INT_IDX), si);
++}
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.c b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
+index 2e3e419..5a772fe 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
+@@ -365,6 +365,7 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+ 	struct enetc_pf *pf = enetc_si_priv(priv->si);
++	struct enetc_vf_state *vf_state;
+ 
+ 	if (vf >= pf->total_vfs)
+ 		return -EINVAL;
+@@ -372,6 +373,9 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
+ 	if (!is_valid_ether_addr(mac))
+ 		return -EADDRNOTAVAIL;
+ 
++	vf_state = &pf->vf_state[vf];
++	vf_state->flags |= ENETC_VF_FLAG_PF_SET_MAC;
++
+ 	enetc_pf_set_primary_mac_addr(&priv->si->hw, vf + 1, mac);
+ 	return 0;
+ }
+@@ -531,6 +535,53 @@ static void enetc_configure_port(struct enetc_pf *pf)
+ 	enetc_port_wr(hw, ENETC_PMR, ENETC_PMR_EN);
+ }
+ 
++/* Messaging */
++static u16 enetc_msg_pf_set_vf_primary_mac_addr(struct enetc_pf *pf,
++						int vf_id)
++{
++	struct enetc_vf_state *vf_state = &pf->vf_state[vf_id];
++	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
++	struct enetc_msg_cmd_set_primary_mac *cmd;
++	struct device *dev = &pf->si->pdev->dev;
++	u16 cmd_id;
++	char *addr;
++
++	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg->vaddr;
++	cmd_id = cmd->header.id;
++	if (cmd_id != ENETC_MSG_CMD_MNG_ADD)
++		return ENETC_MSG_CMD_STATUS_FAIL;
++
++	addr = cmd->mac.sa_data;
++	if (vf_state->flags & ENETC_VF_FLAG_PF_SET_MAC)
++		dev_warn(dev, "Attempt to override PF set mac addr for VF%d\n",
++			 vf_id);
++	else
++		enetc_pf_set_primary_mac_addr(&pf->si->hw, vf_id + 1, addr);
++
++	return ENETC_MSG_CMD_STATUS_OK;
++}
++
++void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int vf_id, u16 *status)
++{
++	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
++	struct device *dev = &pf->si->pdev->dev;
++	struct enetc_msg_cmd_header *cmd_hdr;
++	u16 cmd_type;
++
++	*status = ENETC_MSG_CMD_STATUS_OK;
++	cmd_hdr = (struct enetc_msg_cmd_header *)msg->vaddr;
++	cmd_type = cmd_hdr->type;
++
++	switch (cmd_type) {
++	case ENETC_MSG_CMD_MNG_MAC:
++		*status = enetc_msg_pf_set_vf_primary_mac_addr(pf, vf_id);
++		break;
++	default:
++		dev_err(dev, "command not supported (cmd_type: 0x%x)\n",
++			cmd_type);
++	}
++}
++
+ #ifdef CONFIG_PCI_IOV
+ static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
+ {
+@@ -541,17 +592,40 @@ static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
+ 	if (!num_vfs) {
+ 		pf->num_vfs = 0;
+ 		pci_disable_sriov(pdev);
++		enetc_msg_psi_free(pf);
++		kfree(pf->vf_state);
+ 	} else {
++		pf->num_vfs = num_vfs;
++
++		pf->vf_state = kcalloc(num_vfs, sizeof(struct enetc_vf_state),
++				       GFP_KERNEL);
++		if (!pf->vf_state) {
++			pf->num_vfs = 0;
++			return -ENOMEM;
++		}
++
++		err = enetc_msg_psi_init(pf);
++		if (err) {
++			dev_err(&pdev->dev, "enetc_msg_psi_init (%d)\n", err);
++			goto err_msg_psi;
++		}
++
+ 		err = pci_enable_sriov(pdev, num_vfs);
+ 		if (err) {
+ 			dev_err(&pdev->dev, "pci_enable_sriov err %d\n", err);
+-			return err;
++			goto err_en_sriov;
+ 		}
+-
+-		pf->num_vfs = num_vfs;
+ 	}
+ 
+ 	return num_vfs;
++
++err_en_sriov:
++	enetc_msg_psi_free(pf);
++err_msg_psi:
++	kfree(pf->vf_state);
++	pf->num_vfs = 0;
++
++	return err;
+ }
+ #else
+ #define enetc_sriov_configure(pdev, num_vfs)	(void)0
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.h b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
+index a9dbb082..6012943 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_pf.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
+@@ -19,14 +19,31 @@ struct enetc_mac_filter {
+ 
+ #define ENETC_VLAN_HT_SIZE	64
+ 
++enum enetc_vf_flags {
++	ENETC_VF_FLAG_PF_SET_MAC	= BIT(0),
++};
++
++struct enetc_vf_state {
++	enum enetc_vf_flags flags;
++};
++
+ struct enetc_pf {
+ 	struct enetc_si *si;
+ 	int num_vfs; /* number of active VFs, after sriov_init */
+ 	int total_vfs; /* max number of VFs, set for PF at probe */
++	struct enetc_vf_state *vf_state;
+ 
+ 	struct enetc_mac_filter mac_filter[ENETC_MAX_NUM_MAC_FLT];
+ 
++	struct enetc_msg_swbd rxmsg[ENETC_MAX_NUM_VFS];
++	struct work_struct msg_task;
++	char msg_int_name[ENETC_INT_NAME_MAX];
++
+ 	char vlan_promisc_simap; /* bitmap of SIs in VLAN promisc mode */
+ 	DECLARE_BITMAP(vlan_ht_filter, ENETC_VLAN_HT_SIZE);
+ 	DECLARE_BITMAP(active_vlans, VLAN_N_VID);
+ };
++
++int enetc_msg_psi_init(struct enetc_pf *pf);
++void enetc_msg_psi_free(struct enetc_pf *pf);
++void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int mbox_id, u16 *status);
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
+index 237a2a1..e199b4d 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
+@@ -13,12 +13,97 @@ static const char enetc_drv_ver[] = ENETC_DRV_VER_STR;
+ #define ENETC_DRV_NAME_STR "ENETC VF driver"
+ static const char enetc_drv_name[] = ENETC_DRV_NAME_STR;
+ 
++/* Messaging */
++static void enetc_msg_vsi_write_msg(struct enetc_hw *hw,
++				    struct enetc_msg_swbd *msg)
++{
++	u32 val;
++
++	val = enetc_vsi_set_msize(msg->size) | lower_32_bits(msg->dma);
++	enetc_wr(hw, ENETC_VSIMSGSNDAR1, upper_32_bits(msg->dma));
++	enetc_wr(hw, ENETC_VSIMSGSNDAR0, val);
++}
++
++static int enetc_msg_vsi_send(struct enetc_si *si, struct enetc_msg_swbd *msg)
++{
++	int timeout = 100;
++	u32 vsimsgsr;
++
++	enetc_msg_vsi_write_msg(&si->hw, msg);
 +
 +	do {
-+		high = ioread32(reg + 4);
-+		low = ioread32(reg);
-+		tmp = ioread32(reg + 4);
-+	} while (high != tmp);
++		vsimsgsr = enetc_rd(&si->hw, ENETC_VSIMSGSR);
++		if (!(vsimsgsr & ENETC_VSIMSGSR_MB))
++			break;
 +
-+	return le64_to_cpu((u64)high << 32 | low);
++		usleep_range(1000, 2000);
++	} while (--timeout);
++
++	if (!timeout)
++		return -ETIMEDOUT;
++
++	/* check for message delivery error */
++	if (vsimsgsr & ENETC_VSIMSGSR_MS) {
++		dev_err(&si->pdev->dev, "VSI command execute error: %d\n",
++			ENETC_SIMSGSR_GET_MC(vsimsgsr));
++		return -EIO;
++	}
++
++	return 0;
 +}
-+#endif
++
++static int enetc_msg_vsi_set_primary_mac_addr(struct enetc_ndev_priv *priv,
++					      struct sockaddr *saddr)
++{
++	struct enetc_msg_cmd_set_primary_mac *cmd;
++	struct enetc_msg_swbd msg;
++	int err;
++
++	msg.size = ALIGN(sizeof(struct enetc_msg_cmd_set_primary_mac), 64);
++	msg.vaddr = dma_zalloc_coherent(priv->dev, msg.size, &msg.dma,
++					GFP_KERNEL);
++	if (!msg.vaddr) {
++		dev_err(priv->dev, "Failed to alloc Tx msg (size: %d)\n",
++			msg.size);
++		return -ENOMEM;
++	}
++
++	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg.vaddr;
++	cmd->header.type = ENETC_MSG_CMD_MNG_MAC;
++	cmd->header.id = ENETC_MSG_CMD_MNG_ADD;
++	memcpy(&cmd->mac, saddr, sizeof(struct sockaddr));
++
++	/* send the command and wait */
++	err = enetc_msg_vsi_send(priv->si, &msg);
++
++	dma_free_coherent(priv->dev, msg.size, msg.vaddr, msg.dma);
++
++	return err;
++}
++
++static int enetc_vf_set_mac_addr(struct net_device *ndev, void *addr)
++{
++	struct enetc_ndev_priv *priv = netdev_priv(ndev);
++	struct sockaddr *saddr = addr;
++	int err;
++
++	if (!is_valid_ether_addr(saddr->sa_data))
++		return -EADDRNOTAVAIL;
++
++	err = enetc_msg_vsi_set_primary_mac_addr(priv, saddr);
++	if (err)
++		return err;
++
++	return 0;
++}
++
+ /* Probing/ Init */
+ static const struct net_device_ops enetc_ndev_ops = {
+ 	.ndo_open		= enetc_open,
+ 	.ndo_stop		= enetc_close,
+ 	.ndo_start_xmit		= enetc_xmit,
+ 	.ndo_get_stats		= enetc_get_stats,
++	.ndo_set_mac_address	= enetc_vf_set_mac_addr,
+ };
  
- #define enetc_rd(hw, off)		enetc_rd_reg((hw)->reg + (off))
- #define enetc_wr(hw, off, val)		enetc_wr_reg((hw)->reg + (off), val)
-+#define enetc_rd64(hw, off)		enetc_rd_reg64((hw)->reg + (off))
- /* port register accessors - PF only */
- #define enetc_port_rd(hw, off)		enetc_rd_reg((hw)->port + (off))
- #define enetc_port_wr(hw, off, val)	enetc_wr_reg((hw)->port + (off), val)
+ static void enetc_vf_netdev_setup(struct enetc_si *si, struct net_device *ndev,
 -- 
 2.7.4
 
