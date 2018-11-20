@@ -2,91 +2,66 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 256E4C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C69FC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A2F20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:00:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A2F20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 23D9020831
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 09:03:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23D9020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726979AbeKTT2c (ORCPT
+        id S1726923AbeKTTbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 14:28:32 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56812 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKTT2c (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 14:28:32 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id D3B8329FDD;
-        Tue, 20 Nov 2018 04:00:26 -0500 (EST)
-Date:   Tue, 20 Nov 2018 20:00:32 +1100 (AEDT)
-From:   Finn Thain <fthain@telegraphics.com.au>
-To:     Linus Walleij <linus.walleij@linaro.org>
-cc:     Geert Uytterhoeven <geert@linux-m68k.org>, funaho@jurai.org,
-        schwab@linux-m68k.org, Arnd Bergmann <arnd@arndb.de>,
-        schivers@csc.com.au, Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        schmitzmic@gmail.com, John Stultz <john.stultz@linaro.org>,
-        linux-m68k@lists.linux-m68k.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 10/14] m68k: mac: Convert to clocksource API
-In-Reply-To: <CACRpkdZdJDYaOi1HeMiS2hkjOf0gjQphGXy-Ka+m=1LbDCXPfA@mail.gmail.com>
-Message-ID: <alpine.LNX.2.21.1811201925020.258@nippy.intranet>
-References: <cover.1542589838.git.fthain@telegraphics.com.au> <c235d0b21a648d329668f1ab436161c09d96e875.1542589838.git.fthain@telegraphics.com.au> <CACRpkdZdJDYaOi1HeMiS2hkjOf0gjQphGXy-Ka+m=1LbDCXPfA@mail.gmail.com>
+        Tue, 20 Nov 2018 14:31:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726039AbeKTTbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 14:31:47 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6EB1EBDF7;
+        Tue, 20 Nov 2018 09:03:44 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E24C75D75E;
+        Tue, 20 Nov 2018 09:03:38 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Daniel Colascione <dancol@google.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        Rich Felker <dalias@libc.org>
+Subject: Re: Cleaning up numbering for new x86 syscalls?
+References: <CALCETrVPcgKarpTOsdTfODkNA76W04WvW+tNWoOx6+Em0KS04A@mail.gmail.com>
+Date:   Tue, 20 Nov 2018 10:03:30 +0100
+In-Reply-To: <CALCETrVPcgKarpTOsdTfODkNA76W04WvW+tNWoOx6+Em0KS04A@mail.gmail.com>
+        (Andy Lutomirski's message of "Mon, 19 Nov 2018 16:22:49 -0800")
+Message-ID: <87efbggly5.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 20 Nov 2018 09:03:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Linus Walleij wrote:
+* Andy Lutomirski:
 
-> On Mon, Nov 19, 2018 at 2:22 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> 
-> > Add a platform clocksource by adapting the existing arch_gettimeoffset
-> > implementation.
-> >
-> > Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > Tested-by: Stan Johnson <userm57@yahoo.com>
-> 
-> As noted for the Amiga CIA (which is pretty much a sibling to this MOS 
-> 6522 VIA) this chip also has two counters and could use one as 
-> clocksource and the other as clock event.
-> 
-> Again I bet this is just using one timer out of habit.
-> 
-> It will be an easy feat to make a clean clocksource+clock event for this 
-> hardware as well once this refactoring is complete.
-> 
+> 5. Adjust the scripts so that we only have to wire up new syscalls
+> once.  They'll have a nr above 1024, and they'll have the same nr on
+> all x86 variants.
 
-Right. Both timer 1 and timer 2 have a timed interrupt mode, and either 
-could probably serve as a clock event device or a clocksource. Some Mac 
-models have a second VIA with two more timers, but not all.
+Is there a sufficiently sized gap on all other architectures as well?
+The restriction to the x86 variants seems arbitrary to me.
 
-(As clock event devices, the longest interval you can program is about 83 
-ms. As 783360 Hz, 16-bit clocksources, they wrap about 12 times every 
-second.)
-
-If you use one timer as a clock event device and the other as a 
-clocksource, there are no timers left to run the existing 
-timer_interrupt() handler. So this arrangement would require 
-GENERIC_CLOCKEVENTS=y, right?
-
-Then, wouldn't all relevant platforms have to support 
-GENERIC_CLOCKEVENTS=y, if a single binary was to support all of those 
-platforms?
-
--- 
-
-> Yours,
-> Linus Walleij
-> 
+Thanks,
+Florian
