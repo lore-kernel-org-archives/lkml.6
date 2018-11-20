@@ -2,116 +2,113 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44375C4161B
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29335C46462
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D0320671
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eOXrG9dZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D0320671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 488802087E
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:23:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488802087E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeKTUvY (ORCPT
+        id S1728084AbeKTUv2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 15:51:24 -0500
-Received: from mail-eopbgr40054.outbound.protection.outlook.com ([40.107.4.54]:42325
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbeKTUvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 15:51:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CDNHDzkIRk0QBT0WxHhkDoODNrEaugXS9L2ZFghqEk4=;
- b=eOXrG9dZeMCrdrrBX6Fsvvx6RKxnCyOMSvAkYVrEaNDVC1PwZrU2xWZajQVnvycGrfO6ZPUTK2Ow2VUeR6HiaGHSq2AH4WkluKm9vMhKVY5ItLvmEX3abhna7fuvpwSVdkPU/s6Z+iMXy2wVlxKr0t3A9xQ9quR8+zfgET43EDs=
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com (20.178.122.159) by
- VI1PR04MB4495.eurprd04.prod.outlook.com (20.177.54.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.28; Tue, 20 Nov 2018 10:22:57 +0000
-Received: from VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::8484:31d3:d034:a547]) by VI1PR04MB5533.eurprd04.prod.outlook.com
- ([fe80::8484:31d3:d034:a547%5]) with mapi id 15.20.1361.013; Tue, 20 Nov 2018
- 10:22:57 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     "stefan@agner.ch" <stefan@agner.ch>
-CC:     Richard Zhu <hongxing.zhu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
-        "tpiepho@impinj.com" <tpiepho@impinj.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Subject: Re: [PATCH 2/2] PCI: imx6: limit DBI register length
-Thread-Topic: [PATCH 2/2] PCI: imx6: limit DBI register length
-Thread-Index: AQHUf+wjuvgCFMswEka/8Nnu3zUaUKVYdieA
-Date:   Tue, 20 Nov 2018 10:22:56 +0000
-Message-ID: <ceb95fbdf0f6d0e0eeb1db3a22743f1453c8e060.camel@nxp.com>
-References: <20181119094144.4127-1-stefan@agner.ch>
-         <20181119094144.4127-2-stefan@agner.ch>
-In-Reply-To: <20181119094144.4127-2-stefan@agner.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB4495;6:aBiOMKrqCJhdYBPRIaIDipkC3VAQ/9xugiGhyxLXv/a90Kq0RFvOv76ebZCeD0l+CEOdBY4wI8DpNZ8a6IubjkzONrvf3HRer4teyIW2sLY/94iklMiHmHhg1I89tHBlrhBWtlhr1+3sek6CLpdIK/+CPnd7RunwFVWHpwGUhNSf8t31I57vDzw6DHi2QlZ4FQhiJIeVVfR19C3hn/W8/v0OY+LPwQloky2mim2Tp8OW8ks0pj+KRF67SeR/MF8PAis8HKAUcBkDRAPdylnPqaMe9NGUMQOyWdTY756yPQOFH9QQYmSxP23S/s0MoYrRLw+bVybN1RLfwHZX0h0ejahKm+tWjN8vSBy5jXDi/rgCcmbWzEj2Mwq0P4oXLE7JTJiCcUVeY7AO7SRWV4d3gBRcQatEGaBiYX4OijNyxNBUxRQdNeuimTr/kW6aYXLMEbiGZNHCPjf/JMTBjNwcsA==;5:q9PzmPq5zSzC8IZ/2DFPu+EqF9zj1PGY9aGOOi8zxtHsmLdU3z+I1VR40wSK7mGBGIXZweQWezDKJ0KE6slY9e9JXWxu11lZHVLKPZsSVFQQjo0lF3PH2knskjWQuqYujfqF2CV6NG4zeJ9jM+Chs78yzPV+FDkj86/o450VW6I=;7:16FHW3NHb5wByIPB93ruppiTtDev9ephF3SnGW6k+t/lDj+ZH6F461aeUE3rjZo5zFYDWBsP9Leq0etRxouEax5S3eZJl5uT/nzZl3b3mdMpPzdsB0RWSTAEkNI5Gcbm5dO/1A0LWsdCsIh/7v4CdQ==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4b72a7c5-404a-489e-8e1f-08d64ed223db
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4495;
-x-ms-traffictypediagnostic: VI1PR04MB4495:
-x-microsoft-antispam-prvs: <VI1PR04MB4495B642E6F0F27130F7062AEED90@VI1PR04MB4495.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231442)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB4495;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB4495;
-x-forefront-prvs: 08626BE3A5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(376002)(39860400002)(396003)(136003)(199004)(189003)(1730700003)(5640700003)(68736007)(8676002)(81156014)(50226002)(81166006)(8936002)(3846002)(2906002)(6116002)(86362001)(5660300001)(14454004)(53936002)(66066001)(478600001)(6512007)(25786009)(6246003)(118296001)(2501003)(2351001)(305945005)(106356001)(36756003)(256004)(4326008)(4001150100001)(14444005)(6436002)(6486002)(2900100001)(102836004)(186003)(39060400002)(446003)(26005)(11346002)(105586002)(476003)(71190400001)(6916009)(2616005)(54906003)(316002)(44832011)(76176011)(486006)(99286004)(6506007)(97736004)(7736002)(71200400001)(229853002)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4495;H:VI1PR04MB5533.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: fkQnyitUZl303bpV44aL2FgaAXuiu0ZKrwUMVAQnQVMu3K13x9lSix9OWvWN60NUmuBgCvfo51TFzbugBsKS7t27QhsJ1XtFhpHJ2bJ1pT8o8O19cX9c17ILsH1RE9iXDWpmGqy4RyPaqG+wMuPE+hc8efYY2QY1X1SWSa2BE8TAOoqQNItd+NnIPneYxbIBghF2UNicQivjcb72bk8aE/E4nf0vcoFywymnQIQ08vOEni65fQZ6Yff4k/LMyeOfkhxpAXpaOWpKIddhPhAHhAN4BFqWKbzuLIsc4IWPMAxQNp1/foS23lQ6i+s3i7nISbdZB2A/XNWynMNgcbwDxLMF3yz50qLYIXIfLxGOQlc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E98A78B1129A474A833826780843F5E0@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 20 Nov 2018 15:51:28 -0500
+Received: from sauhun.de ([88.99.104.3]:52538 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726546AbeKTUv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 15:51:27 -0500
+Received: from localhost (p54B3346D.dip0.t-ipconnect.de [84.179.52.109])
+        by pokefinder.org (Postfix) with ESMTPSA id 8BB294C0E9C;
+        Tue, 20 Nov 2018 11:23:01 +0100 (CET)
+Date:   Tue, 20 Nov 2018 11:23:01 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Faiz Abbas <faiz_abbas@ti.com>,
+        Sjoerd Simons <sjoerd.simons@collabora.co.uk>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        kernel@collabora.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Bastian Stender <bst@pengutronix.de>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: Re: [PATCH] mmc: core: Remove timeout when enabling cache
+Message-ID: <20181120102300.GA1056@kunai>
+References: <20181106133007.12318-1-sjoerd.simons@collabora.co.uk>
+ <9051c212-6e2a-bc39-3686-693e6cd87f1d@ti.com>
+ <303b49cbb5b687d6b6a7ad4048eda459586c0806.camel@collabora.co.uk>
+ <20181107084741.GA31092@kunai>
+ <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b72a7c5-404a-489e-8e1f-08d64ed223db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:22:56.9963
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4495
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpedP1f4XZYvebFCuooYrBa2ux9F9mYRNi1Q=M-5eJ0Rg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE4LTExLTE5IGF0IDEwOjQxICswMTAwLCBTdGVmYW4gQWduZXIgd3JvdGU6DQo+
-IERlZmluZSB0aGUgbGVuZ3RoIG9mIHRoZSBEQkkgcmVnaXN0ZXJzLiBUaGlzIG1ha2VzIHN1cmUg
-dGhhdA0KPiB0aGUga2VybmVsIGRvZXMgbm90IGFjY2VzcyByZWdpc3RlcnMgYmV5b25kIHRoYXQg
-cG9pbnQsIGF2b2lkaW5nDQo+IHRoZSBmb2xsb3dpbmcgYWJvcnQgb24gYSBpLk1YIDZRdWFkOg0K
-PiAgICMgY2F0IC9zeXMvZGV2aWNlcy9zb2MwL3NvYy8xZmZjMDAwLnBjaWUvcGNpMDAwMFw6MDAv
-MDAwMFw6MDBcOjAwLjAvY29uZmlnDQo+ICAgWyAgMTAwLjAyMTQzM10gVW5oYW5kbGVkIGZhdWx0
-OiBpbXByZWNpc2UgZXh0ZXJuYWwgYWJvcnQgKDB4MTQwNikgYXQgMHhiNmVhNzAwMA0KPiAgIC4u
-Lg0KPiAgIFsgIDEwMC4wNTY0MjNdIFBDIGlzIGF0IGR3X3BjaWVfcmVhZCsweDUwLzB4ODQNCj4g
-ICBbICAxMDAuMDYwNzkwXSBMUiBpcyBhdCBkd19wY2llX3JkX293bl9jb25mKzB4NDQvMHg0OA0K
-PiAgIC4uLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogU3RlZmFuIEFnbmVyIDxzdGVmYW5AYWduZXIu
-Y2g+DQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvcGNpLWlt
-eDYuYw0KDQo+ICtzdHJ1Y3QgaW14Nl9wY2llX2RydmRhdGEgew0KPiArCWVudW0gaW14Nl9wY2ll
-X3ZhcmlhbnRzIHZhcmlhbnQ7DQo+ICsJaW50CQkJZGJpX2xlbmd0aDsNCj4gK307DQoNClR1cm5p
-bmcgaW14Nl9wY2llIGRydmRhdGEgaW50byBhIHN0cnVjdCBpcyB2ZXJ5IG5pY2UsIG1heWJlIGlu
-IHRoZQ0KZnV0dXJlIHNvbWUgb2YgdGhlIGxvbmcgY2FzZSBzdGF0ZW1lbnRzIGluIHRoaXMgZHJp
-dmVyIGNvdWxkIGJlIHNwbGl0DQppbnRvIHBlci1zb2MgZnVuY3Rpb25zIGNhbGxlZCB2aWEgZHJ2
-ZGF0YS4NCg==
+
+--GvXjxJ+pjyke8COw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> >> That also happens to be one of the cards we deploy; However i did
+> >> wonder about adding a quirk but decided against it as it was not clear
+> >> to me from the specification that CACHE ON really is meant to complete
+> >> within GENERIC_CMD6_TIMEOUT. That and i fret about ending up in hit-a-
+> >> mole games as the failure is really quite tedious (boot failure).
+> >
+> > I agree that we should use the more defensive variant as a default. I
+> > mean there should be no performance regression since most cards will
+> > respond just faster, or? The only downside I could see is that we might
+> > miss a real timeout with no bounds set and might get stuck?
+>=20
+> Well, you have a point, but still it's kind of nice to know which
+> cards are behaving well and which ones that doesn't. Hence I think I
+> prefer to stick using a quirk, unless you have a strong opinion.
+
+No strong opinion. Especially not if you say it is in the spec (although
+"must be sufficient" would be better than "should be" ;)). Also, I
+assume this failure is reproducible and should turn up during
+development? Compared to "happens once in a while randomly"?
+
+Yet, if we add a quirk for that, then we should probably mention it in
+an error message when we hit -ETIMEDOUT for cache on ("does your card
+need this quirk?")? It can be pretty time consuming to track this down
+otherwise, I'd think.
+
+
+--GvXjxJ+pjyke8COw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvz4IAACgkQFA3kzBSg
+KbYtPRAAlmLJPEorqqLLfPi7QvqV88+05ctnsL3aV/EqztKbRgQ/DjlDHmYpXozm
+WjRTG8HyRCLAlXQ6xC2TYQw+uqT0FzsOnzEVLtk8vsgfOjw0LOUhnAN5nJnc4jLl
+h3w3FGD71XH7cvM3QE4mCacYaiGLPVWpSbnDbTiPP9ljHlQpNPoVMlzgUxlDz6Gi
+eVNsT/r/PKboxBEdTox96bXxuGS8p0caV6p1yyFzROEf0+iyXEyQ16AjMhU4xMh8
+ZwmpkUslSfzqPy9Ird5tYEvbAF7k9d5lDO1Lu0fxKa8YjxKR4kh3sNP/5jQ1lQvF
+7qHYDi8UmOJG/9M+4KuqDsi4vVp9+H4apv98HRjlpHws+jeXPOBo9/iFLUthJyQ/
+Uf+Yn7Hw74oH8PA3VFy/+j+eChPxJ4Fbz5dZ+d35L5Q3Q5+9nta9ZPEaXFoq3p6G
+5twl0T+9v0QXdGp1zajSuquS40h7g7/vZOmded/CGHdSUiN5lI2/utGeKHK3wnVP
+SyZsEETFUf+3zcAPPrH7MI6qL1lBpVOxU6kDyGtS5mu8Bg6RMbKfNXqO+3Kyn+5P
+xenwy4w1ptTrsQyVsV5pSLHgTA/GmMB2fSvFZTgyJAvpv2hZvWRCeD3aX7FhB/0O
+CscRQHUlYB5hitEOnb+scm6qwH5hP0cBZSVsFb7lPfkh60BftLc=
+=Hkb8
+-----END PGP SIGNATURE-----
+
+--GvXjxJ+pjyke8COw--
