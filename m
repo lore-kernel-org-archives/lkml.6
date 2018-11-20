@@ -2,121 +2,178 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CEA7C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC611C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E170B20645
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:53:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KgwhH+mz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E170B20645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 6332320645
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 23:54:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6332320645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeKUKZA (ORCPT
+        id S1726790AbeKUK0Y convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 05:25:00 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39631 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUKY7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 05:24:59 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5-v6so2628907pla.6
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 15:53:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=qntHmQ/yJYzTdj612JJehQf+6zEZyf2EtTRHLKQu1dk=;
-        b=KgwhH+mzmKw1mIk7O9eBve0WXNTtq/kN2QMdchxTXro/8IbUlDla7kMN4aI7NV9npo
-         UmNPiHDF3ROROEyCEkHndpa9t/puPUJRW+OkDgiWRQ2bhaq4ekigcrNC/3++fCf++MeK
-         +mhxp+XvHgGoQYkR1NVkhoADqUdAq8TuvOJqjwcNOWpI/QtHjcmHx0dcfMQVZZoonUqm
-         0A13us+/C7CBZoGNQsdpBrB2wJAlhqituaQawbdPruu4sy9FwC8N56wpRamMJaNCs0GJ
-         dIXvVTu1QYUB5aJ6Ybs01BnZ0lhO6ilfFWhehpnqZ5sMmPNFFwNGEVbYgojOPGgE2Y36
-         OLHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=qntHmQ/yJYzTdj612JJehQf+6zEZyf2EtTRHLKQu1dk=;
-        b=LZMiyh0sgdq7Vg7+/AZg6YLwfLxJzNUqboVINDmDN1F3adgl8dllu3BEuYNXnL71YN
-         Da9QHgyjGKN+oScEURko0/rrDODSo/i5oJ4S/1Tv+tuQHofsccbgsfZ95CfBb+XPZezm
-         iij3D3IMHyqpaolr4HwRs1NWbKEECAr6v/6FnvACvHurX+woDhrxo5HQS38Zjc4hrcrD
-         7GJPa/wlGAM/OGDJ29B1KW4T8Zlq94v5aD5bpu4wwZaaXdOtxhpT6O5s3ngL06eisWBO
-         uW4NBuU/jSWBUJ+JBx9JD1qhv5JRlakjTgylUhRLa5gGYBO0VCE5AwJKug6D9CcNAAKG
-         HbDQ==
-X-Gm-Message-State: AA+aEWaTycUBhHhzjd4MVKvGLJ4wVyteLZCzV97bL5zfGdZE0Ybs5de9
-        1sAp7KjbZ1rx/YH8vfq11HBWdQ==
-X-Google-Smtp-Source: AFSGD/X13eRuxHvwWCKDDIiZa6HJDlEIsYs44/XMnqfnZgFrdAaj/dRkpGoF7ESTZoJrTdgR/dtzEg==
-X-Received: by 2002:a17:902:162:: with SMTP id 89-v6mr4344459plb.293.1542757992419;
-        Tue, 20 Nov 2018 15:53:12 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 78sm32330260pft.184.2018.11.20.15.53.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 15:53:11 -0800 (PST)
-Date:   Tue, 20 Nov 2018 15:53:10 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Stefan Priebe <s.priebe@profihost.ag>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.4 131/160] mm: thp: relax __GFP_THISNODE for MADV_HUGEPAGE
- mappings
-In-Reply-To: <20181120074447.GZ22247@dhcp22.suse.cz>
-Message-ID: <alpine.DEB.2.21.1811201551250.89573@chino.kir.corp.google.com>
-References: <20181119162630.031306128@linuxfoundation.org> <20181119162643.032920932@linuxfoundation.org> <alpine.DEB.2.21.1811191410520.150313@chino.kir.corp.google.com> <20181120074447.GZ22247@dhcp22.suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 21 Nov 2018 05:26:24 -0500
+Received: from mout.gmx.net ([212.227.15.15]:44107 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726001AbeKUK0Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 05:26:24 -0500
+Received: from [98.118.28.103] ([98.118.28.103]) by
+ msvc-mesg-gmx023.server.lan (via HTTP); Wed, 21 Nov 2018 00:54:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <trinity-ce6c61be-cc03-4a9d-8f26-562694d048da-1542758061535@msvc-mesg-gmx023>
+From:   "Qian Cai" <cai@gmx.us>
+To:     "Waiman Long" <longman@redhat.com>
+Cc:     tglx@linutronix.de, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, yang.shi@linux.alibaba.com,
+        arnd@arndb.de
+Subject: Re: [PATCH v3] debugobjects: scale the static pool size
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 21 Nov 2018 00:54:21 +0100
+In-Reply-To: <e286be8a-7f0a-65ab-0275-15abcd33eb07@redhat.com>
+References: <20181120201432.2163-1-cai@gmx.us>
+ <20181120232810.2503-1-cai@gmx.us>
+ <e286be8a-7f0a-65ab-0275-15abcd33eb07@redhat.com>
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:Yh8sHmUuIgZBnQjRZxoMr2hLVK5qzqlGCebz6+TpJ4RipbFMR0AhXZ+kLocNDZKCgAZhj
+ kaJWBPDEgE4MaJUCyYjfHAv9Yj+3GLSY5hkJe4P4+SFGKQb7Kv8x02E0imkSIv2iSdszSGPt7m1O
+ 5ewJVh+SCrRdug6S3s126CtWCntiF8CS+xbsyQp7N3skCDjoIO8MI4kyTju1NOMDiYZL6LMoaxJS
+ KlEsB5uroOH14AJprpMGAMdPQJJOB2cm4yvf1shp5bmJ+nK8OZlMa98RjQ13b9ed1yyrRqA33dR1
+ OJ0ErHgyZQ05JJM20YsPA+d
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Im5exJ9Hq+E=:Ted2bXWw4VdLekAPy59g/m
+ C64PdhreSIVUGGEo55Z1zU85EKNsp4Cw2p8asjxWQ0eXtSYqF7yFqwOfOoRuSAMajojJnMn3x
+ DKpj/sO/3ffnOCVwkwuD+xkiNpAxRTAYSk9yBcJtHINxD1tfprHaW8sJJZa05uWGVVddUifhb
+ Y68jorSDq38A8EovqEOX2UEGHZ0T+RtFVNH1NI8yHwQkr80dlrdD5OZEzkUBV4tUV3RXuCVmi
+ WqEHqHvgVsqNV5VYP4T8GXqVUXBDUGI/VthI2/eQUwP8jza2Hotk7L/SEeBJW5C53mxi/lbYS
+ tiOZ4xtuKWAAg7uwPqeULtogUk6EOK91YL9ZVaNqlW1ZPKYAZDpwJeik9+zllc5Jzjn/CnUj+
+ BgvAEFS/SDGAC3SQfuTsHQv4vaEo/MU7MAj5dPiLfKhQv0I4YPKCmmHTpdzbPw2k2SX1/747/
+ 6zY5nNGkymUpSj8ui+GbYOxMAYrFMFlfBsPyH4D+RHMeju99YYGLixJMrrjwELZY5rsaks0l2
+ 5l+BmgGpWW0jeNVzvW04amkyUEF5oFcDqPKK2Tyg4u6Epg4mA++i9b911OAAVM8/OyZfXPyNk
+ aYzqNSB1/5n1VUf6PTreYh6AFIQOWYeuLa
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Michal Hocko wrote:
+On 11/20/18 at 6:38 PM, Waiman Long wrote:
 
-> On Mon 19-11-18 14:16:24, David Rientjes wrote:
-> > On Mon, 19 Nov 2018, Greg Kroah-Hartman wrote:
-> > 
-> > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > 
-> > 
-> > As I noted when this patch was originally proposed and when I nacked it[*] 
-> > because it causes a 13.9% increase in remote memory access latency and up 
-> > to 40% increase in remote memory allocation latency on much of our 
-> > software stack that uses MADV_HUGEPAGE after mremapping the text segment 
-> > to memory backed by hugepages, I don't think this is stable material.
+> On 11/20/2018 06:28 PM, Qian Cai wrote:
+> > The current value of the early boot static pool size is not big enough
+> > for systems with large number of CPUs with timer or/and workqueue
+> > objects selected. As the results, systems have 60+ CPUs with both timer
+> > and workqueue objects enabled could trigger "ODEBUG: Out of memory.
+> > ODEBUG disabled". Hence, fixed it by computing it according to
+> > CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
+> >
+> > Signed-off-by: Qian Cai <cai@gmx.us>
+> > ---
+> > Changes since v2:
+> > * Made the calculation easier to read suggested by longman@redhat.com.
+> >
+> > Changes since v1:
+> > * Removed the CONFIG_NR_CPUS check since it is always defined.
+> > * Introduced a minimal default pool size to start with. Otherwise, the pool
+> >   size would be too low for systems only with a small number of CPUs.
+> > * Adjusted the scale factors according to data.
+> >
+> >  lib/debugobjects.c | 82 ++++++++++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 80 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+> > index 70935ed91125..02456a1e57cb 100644
+> > --- a/lib/debugobjects.c
+> > +++ b/lib/debugobjects.c
+> > @@ -23,9 +23,82 @@
+> >  #define ODEBUG_HASH_BITS	14
+> >  #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+> >  
+> > -#define ODEBUG_POOL_SIZE	1024
+> > +#define ODEBUG_DEFAULT_POOL	512
+> >  #define ODEBUG_POOL_MIN_LEVEL	256
+> >  
+> > +/*
+> > + * Some debug objects are allocated during the early boot. Enabling some
+> > + * options like timers or workqueue objects may increase the size required
+> > + * significantly with large number of CPUs. For example (as today, 20 Nov.
+> > + * 2018),
+> > + *
+> > + * No. CPUs x 2 (worker pool) objects:
+> > + *
+> > + * start_kernel
+> > + *   workqueue_init_early
+> > + *     init_worker_pool
+> > + *       init_timer_key
+> > + *         debug_object_init
+> > + *
+> > + * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
+> > + *
+> > + * sched_init
+> > + *   hrtick_rq_init
+> > + *     hrtimer_init
+> > + *
+> > + * CONFIG_DEBUG_OBJECTS_WORK:
+> > + * No. CPUs x 6 (workqueue) objects:
+> > + *
+> > + * workqueue_init_early
+> > + *   alloc_workqueue
+> > + *     __alloc_workqueue_key
+> > + *       alloc_and_link_pwqs
+> > + *         init_pwq
+> > + *
+> > + * Also, plus No. CPUs objects:
+> > + *
+> > + * perf_event_init
+> > + *    __init_srcu_struct
+> > + *      init_srcu_struct_fields
+> > + *        init_srcu_struct_nodes
+> > + *          __init_work
+> > + *
+> > + * Increase the number a bit more in case the implmentatins are changed in
+> > + * the future, as it is better to avoid OOM than spending a bit more kernel
+> > + * memory that will/can be freed.
+> > + *
+> > + * With all debug objects config options selected except the workqueue and
+> > + * the timers, kernel reports,
+> > + * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
+> > + * 256-CPU: ODEBUG: 4 of 4 active objects replaced
+> > + *
+> > + * all the options except the workqueue:
+> > + * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
+> > + * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
+> > + *
+> > + * all the options except the timers:
+> > + * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
+> > + * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
+> > + *
+> > + * all the options:
+> > + * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
+> > + * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
+> > + */
+> > +#ifdef CONFIG_DEBUG_OBJECTS_WORK
+> > +#define ODEBUG_WORK_PCPU_CNT	10
+> > +#else
+> > +#define ODEBUG_WORK_PCPU_CNT	0
+> > +#endif /* CONFIG_DEBUG_OBJECTS_WORK */
+> > +
+> > +#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
+> > +#define ODEBUG_TIMERS_PCPU_CNT	10
+> > +#else
+> > +#define ODEBUG_TIMERS_PCPU_CNT	0
+> > +#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
+> > +
+> > +#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
+> > +(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
 > 
-> There was a wider consensus that this is the most minimal fix for users
-> who see a regression introduced by 5265047ac301 ("mm, thp: really
-> limit transparent hugepage allocation to local node"). As it has been
-> discussed extensively there is no universal win but we should always opt
-> for the safer side which this patch is accomplishing. The changelog goes
-> in length explaining them along with numbers. I am not happy that your
-> particular workload is suffering but this area certainly requires much
-> more changes to satisfy wider range of users.
-> 
-> > The 4.4 kernel is almost three years old and this changes the NUMA 
-> > locality of any user of MADV_HUGEPAGE.
-> 
-> Yes and we have seen bug reports as we adopted this older kernel only
-> now.
+> Just a nit about indentation. There should be some indentation in the
+> continued line.
 
-I think the responsible thing to do would be allow users to remain on 
-their stable kernel that they know works, whether that's 4.4 or any of the 
-others this is proposed for, and downgrade from any current kernel release 
-that causes their workloads to have such severe regressions once they try 
-a kernel with this commit.
+I am fine to add that, but checkpatch.pl complained
+that there should no spaces at the beginning of a
+newline. Guess we just ignore the warning?
+
+“please, no spaces at the start of a line”
