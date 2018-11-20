@@ -2,76 +2,74 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508B7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEBAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0595D2089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:32:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0595D2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 36F332089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 02:32:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F332089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732739AbeKTM7K (ORCPT
+        id S1732756AbeKTM72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 07:59:10 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:56906 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbeKTM7K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 07:59:10 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3B1BD14D70696;
-        Mon, 19 Nov 2018 18:32:25 -0800 (PST)
-Date:   Mon, 19 Nov 2018 18:32:24 -0800 (PST)
-Message-Id: <20181119.183224.87651627805917399.davem@davemloft.net>
-To:     tanxiaojun@huawei.com
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        lipeng321@huawei.com, linyunsheng@huawei.com,
-        shenjian15@huawei.com, tanhuazhong@huawei.com,
-        liangfuyun1@huawei.com, netdev@vger.kernel.org,
+        Tue, 20 Nov 2018 07:59:28 -0500
+Received: from mga04.intel.com ([192.55.52.120]:12925 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726591AbeKTM72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Nov 2018 07:59:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Nov 2018 18:32:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,255,1539673200"; 
+   d="scan'208";a="90628583"
+Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
+  by orsmga007.jf.intel.com with ESMTP; 19 Nov 2018 18:32:39 -0800
+Date:   Tue, 20 Nov 2018 10:29:47 +0800
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: hns3: add common validation in hclge_dcb
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1542632535-18210-1-git-send-email-tanxiaojun@huawei.com>
-References: <1542632535-18210-1-git-send-email-tanxiaojun@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 19 Nov 2018 18:32:25 -0800 (PST)
+Subject: Re: [RFC PATCH 0/5] iommu: APIs for paravirtual PASID allocation
+Message-ID: <20181120022946.GA27998@yi.y.sun>
+References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
+ <20181119163648.GD31468@char.us.oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181119163648.GD31468@char.us.oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tan Xiaojun <tanxiaojun@huawei.com>
-Date: Mon, 19 Nov 2018 21:02:15 +0800
+On 18-11-19 11:36:48, Konrad Rzeszutek Wilk wrote:
+> On Mon, Nov 12, 2018 at 02:44:56PM +0800, Lu Baolu wrote:
+> > This adds an uniformed API set for global PASIDs used by IOMMU
+> > and device drivers which depend on IOMMU. It works for drivers
+> > running on bare metal, full virtualized environments and para-
+> > virtualized environment.
+> > 
+> 
+> Are there also some QEMU patches for this in RFC state?
 
-> From: Yunsheng Lin <linyunsheng@huawei.com>
-> 
-> Before setting tm related configuration to hardware, driver
-> needs to check the configuration provided by user is valid.
-> Currently hclge_ieee_setets and hclge_setup_tc both implement
-> their own checking, which has a lot in common.
-> 
-> This patch addes hclge_dcb_common_validate to do the common
-> checking. The checking in hclge_tm_prio_tc_info_update
-> and hclge_tm_schd_info_update is unnecessary now, so change
-> the return type to void, which removes the need to do error
-> handling when one of the checking fails.
-> 
-> Also, ets->prio_tc is indexed by user prio and ets->tc_tsa is
-> indexed by tc num, so this patch changes them to use different
-> index.
-> 
-> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
-
-Looks good, applied, thanks!
+Yes, we already have draft codes and are working on refining
+them. Will send patches out for your review. Thanks!
