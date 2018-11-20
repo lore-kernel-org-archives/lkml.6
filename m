@@ -2,43 +2,44 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A64EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75198C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1951F20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1951F20851
+	by mail.kernel.org (Postfix) with ESMTP id 45CAA20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 00:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45CAA20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732362AbeKTKm3 (ORCPT
+        id S1732370AbeKTKmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 20 Nov 2018 05:42:29 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55396 "EHLO
+        Tue, 20 Nov 2018 05:42:36 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55546 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbeKTKm3 (ORCPT
+        with ESMTP id S1725780AbeKTKmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 05:42:29 -0500
+        Tue, 20 Nov 2018 05:42:36 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 310E172CA5E;
-        Tue, 20 Nov 2018 03:16:13 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 81DE072CA5E;
+        Tue, 20 Nov 2018 03:16:20 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 266137CD1FF; Tue, 20 Nov 2018 03:16:13 +0300 (MSK)
-Date:   Tue, 20 Nov 2018 03:16:13 +0300
+        id 6EE527CD1FF; Tue, 20 Nov 2018 03:16:20 +0300 (MSK)
+Date:   Tue, 20 Nov 2018 03:16:20 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
 To:     Andy Lutomirski <luto@kernel.org>,
-        Richard Kuo <rkuo@codeaurora.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
         Paul Moore <paul@paul-moore.com>,
         Eric Paris <eparis@redhat.com>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        linux-hexagon@vger.kernel.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/15] hexagon: define syscall_get_arch()
-Message-ID: <20181120001612.GJ11387@altlinux.org>
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 11/15] nds32: define syscall_get_arch()
+Message-ID: <20181120001620.GK11387@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -54,47 +55,48 @@ request.
 
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
-v2: unchanged since v1
+v2: unchanged since [PATCH 10/13 v2]
 
- arch/hexagon/include/asm/syscall.h | 8 ++++++++
- include/uapi/linux/audit.h         | 1 +
- 2 files changed, 9 insertions(+)
+ arch/nds32/include/asm/syscall.h | 8 ++++++++
+ include/uapi/linux/audit.h       | 2 ++
+ 2 files changed, 10 insertions(+)
 
-diff --git a/arch/hexagon/include/asm/syscall.h b/arch/hexagon/include/asm/syscall.h
-index 4af9c7b6f13a..de3917aad3fd 100644
---- a/arch/hexagon/include/asm/syscall.h
-+++ b/arch/hexagon/include/asm/syscall.h
-@@ -21,6 +21,8 @@
- #ifndef _ASM_HEXAGON_SYSCALL_H
- #define _ASM_HEXAGON_SYSCALL_H
+diff --git a/arch/nds32/include/asm/syscall.h b/arch/nds32/include/asm/syscall.h
+index f7e5e86765fe..569149ca25da 100644
+--- a/arch/nds32/include/asm/syscall.h
++++ b/arch/nds32/include/asm/syscall.h
+@@ -5,6 +5,7 @@
+ #ifndef _ASM_NDS32_SYSCALL_H
+ #define _ASM_NDS32_SYSCALL_H	1
  
 +#include <uapi/linux/audit.h>
-+
- typedef long (*syscall_fn)(unsigned long, unsigned long,
- 	unsigned long, unsigned long,
- 	unsigned long, unsigned long);
-@@ -43,4 +45,10 @@ static inline void syscall_get_arguments(struct task_struct *task,
- 	BUG_ON(i + n > 6);
- 	memcpy(args, &(&regs->r00)[i], n * sizeof(args[0]));
+ #include <linux/err.h>
+ struct task_struct;
+ struct pt_regs;
+@@ -185,4 +186,11 @@ void syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
+ 
+ 	memcpy(&regs->uregs[0] + i, args, n * sizeof(args[0]));
  }
 +
 +static inline int syscall_get_arch(void)
 +{
-+	return AUDIT_ARCH_HEXAGON;
++	return IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
++		? AUDIT_ARCH_NDS32BE : AUDIT_ARCH_NDS32;
 +}
 +
- #endif
+ #endif /* _ASM_NDS32_SYSCALL_H */
 diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index d7fa1ba8dc82..421953fc2f13 100644
+index 421953fc2f13..b9ce3016e85b 100644
 --- a/include/uapi/linux/audit.h
 +++ b/include/uapi/linux/audit.h
-@@ -386,6 +386,7 @@ enum {
- #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_FRV		(EM_FRV)
- #define AUDIT_ARCH_H8300	(EM_H8_300)
-+#define AUDIT_ARCH_HEXAGON	(EM_HEXAGON)
- #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_IA64		(EM_IA_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_M32R		(EM_M32R)
+@@ -400,6 +400,8 @@ enum {
+ #define AUDIT_ARCH_MIPSEL64	(EM_MIPS|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_MIPSEL64N32	(EM_MIPS|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE|\
+ 				 __AUDIT_ARCH_CONVENTION_MIPS64_N32)
++#define AUDIT_ARCH_NDS32	(EM_NDS32|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_NDS32BE	(EM_NDS32)
+ #define AUDIT_ARCH_OPENRISC	(EM_OPENRISC)
+ #define AUDIT_ARCH_PARISC	(EM_PARISC)
+ #define AUDIT_ARCH_PARISC64	(EM_PARISC|__AUDIT_ARCH_64BIT)
 -- 
 ldv
