@@ -2,465 +2,153 @@ Return-Path: <SRS0=i6x1=N7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DBCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0CAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AE72208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29DF720851
+	for <linux-kernel@archiver.kernel.org>; Tue, 20 Nov 2018 10:53:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="YeWKdJKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AE72208E4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="AirywnqN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29DF720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbeKTVWL (ORCPT
+        id S1728830AbeKTVWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 20 Nov 2018 16:22:14 -0500
+Received: from mail-eopbgr1410129.outbound.protection.outlook.com ([40.107.141.129]:6174
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726398AbeKTVWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Nov 2018 16:22:11 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41620 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728617AbeKTVWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Nov 2018 16:22:10 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u6so818265plm.8
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 02:53:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6poamZw1VZ4CP464JV1h+0OfFG002ksXbca4SB7zros=;
-        b=YeWKdJKAeakxwdR7D9Jk2l2jqWZM7cuc2MsN3nX043IBM5MTJ1qKCtszuQeEmVnYXJ
-         v0OVJYMSbx2SsaTscKgGRbDlSLIfAf7MCQHjETbWUMqHRbP79cpsdXgtD4hRtjzmABhz
-         U81WaMyW5rieeAd191Vifc8LtTi+Zo91H0OH/g957mYdHpezQRy7/LVQ3O97ezKMUGM2
-         xCfo8iofaEocWXYOmWFYHsMtQ1H9CgtX9fBXmHJsq2raTqHePjfL2oOHwgU7DNRvWtTh
-         fZMPIRQWKAbWHUXX1ttafJ/EA8zULSdWZ7whqCosPMtxsFdA8xV593JPz/jKj2tMferx
-         Xlcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6poamZw1VZ4CP464JV1h+0OfFG002ksXbca4SB7zros=;
-        b=plLspq/juL5rkTMANtLaiI7tP10z/8CGty5viiZrmu38X3zQr4Gr6ESemyP6y0/qgF
-         gWQxEeVBwveUzDeB6Kt1oxe6wT6nB1FHrgaj7Ec4PUrMhSWtY7+YOvVpQIgJLjFDDn+S
-         h+4vmA7A1JXUYSXzBmyyDfksPQ8zLIG7csS6Ut5IskOnc46Ul9SVMHPczVgvbswmTpDo
-         8RyMZqEgKRxGInQ5j7ZWBIJHhD/frvaEYcQdpiUVCJoBB+VD9xc4b16pbsURFQWPhVhQ
-         MbPYVUDP9f+jcdI9O+/4zfVljvUp1aKS5rsBn8Y7Wl0an3gC4NZFb8q2q46aAkQk/Psw
-         UxYQ==
-X-Gm-Message-State: AA+aEWY+Gw7ge2EUPG8Mnkj393Q3OEsxk+jqIHzyfC24UCviBWlj6TXI
-        358Ed3ocZZNDtAIphGJtyOmeIQ==
-X-Google-Smtp-Source: AFSGD/Xni8rAmv3Ta9LLAuehekYMv17IgwokKR5ScsqGNKeeGNQyDYBRc1JlDMTK3sI51rsovvH5OA==
-X-Received: by 2002:a17:902:f20b:: with SMTP id gn11mr1606509plb.93.1542711218413;
-        Tue, 20 Nov 2018 02:53:38 -0800 (PST)
-Received: from localhost.localdomain ([2404:4404:133a:4500:9d11:de0b:446c:8485])
-        by smtp.gmail.com with ESMTPSA id g26sm11478524pfh.61.2018.11.20.02.53.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 02:53:37 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     ebiederm@xmission.com, linux-kernel@vger.kernel.org
-Cc:     serge@hallyn.com, jannh@google.com, luto@kernel.org,
-        akpm@linux-foundation.org, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, dancol@google.com, timmurray@google.com,
-        linux-man@vger.kernel.org,
-        Christian Brauner <christian@brauner.io>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v2] signal: add procfd_signal() syscall
-Date:   Tue, 20 Nov 2018 11:51:23 +0100
-Message-Id: <20181120105124.14733-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FRLec4/B40sLMkxPc8s5TslNmHflds30rdVMb7hLC7o=;
+ b=AirywnqN7D3qaDQ1vei6BM9Z3DxmAqGZ/SpRT6ut1cKRjYSQi6HwWK5JY11GEfLsy7KEBwV8Ws43O2ZpsEP3Q+JJlJ4DyvjVrMnxcZ25Jj977cjuzQOyFOaiq4sg4H2dxHAQVgAtuTgtmKhGbO0yFy0y1t5qlBx1EMGxEP6FQSo=
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.163.146) by
+ TY1PR01MB1437.jpnprd01.prod.outlook.com (10.174.227.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Tue, 20 Nov 2018 10:53:34 +0000
+Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::7484:f2b6:9b32:2c6]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
+ ([fe80::7484:f2b6:9b32:2c6%5]) with mapi id 15.20.1294.047; Tue, 20 Nov 2018
+ 10:53:33 +0000
+From:   Phil Edworthy <phil.edworthy@renesas.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>, Guan Xuetao <gxt@pku.edu.cn>,
+        =?iso-8859-1?Q?Uwe_Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH] clk: Add (devm_)clk_get_optional() functions
+Thread-Topic: [PATCH] clk: Add (devm_)clk_get_optional() functions
+Thread-Index: AQHUgBH/86BQSKkv2EWPF1EFJS36QaVYejqAgAADDdA=
+Date:   Tue, 20 Nov 2018 10:53:33 +0000
+Message-ID: <TY1PR01MB176982D5E11A665D0DCC9E31F5D90@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+References: <20181119141259.11992-1-phil.edworthy@renesas.com>
+ <20181120103832.GV10650@smile.fi.intel.com>
+In-Reply-To: <20181120103832.GV10650@smile.fi.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=phil.edworthy@renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1437;20:SoUSMmwiyhS1Amh3eIH8el9QIBFwQOezAYUHon6PLxZQFU3OJpstU8npJ7wv8ABziwMDWAr/YYAO2Kyl87Y4/dd/VfVa4AIRUOA77cKq2x8sruGvw0XWjyc3+75hEHOSFi+CJsWF6AzZL2muRAsMFu5uHWEW+KSSXyqUi+xejZk=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b697d8d4-5d7f-4c1c-529b-08d64ed66ab7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1437;
+x-ms-traffictypediagnostic: TY1PR01MB1437:
+x-microsoft-antispam-prvs: <TY1PR01MB14377C1E3F33E2E9E4E8A743F5D90@TY1PR01MB1437.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(93006095)(93001095)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:TY1PR01MB1437;BCL:0;PCL:0;RULEID:;SRVR:TY1PR01MB1437;
+x-forefront-prvs: 08626BE3A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(136003)(376002)(346002)(396003)(366004)(199004)(189003)(7736002)(8936002)(66066001)(54906003)(186003)(6116002)(3846002)(229853002)(8676002)(6916009)(44832011)(53936002)(7416002)(486006)(316002)(305945005)(55016002)(2900100001)(5660300001)(9686003)(81156014)(81166006)(6246003)(33656002)(14454004)(74316002)(71200400001)(71190400001)(105586002)(476003)(6436002)(106356001)(7696005)(25786009)(97736004)(256004)(4326008)(68736007)(26005)(86362001)(53546011)(11346002)(6506007)(478600001)(76176011)(99286004)(2906002)(102836004)(446003);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1437;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: TzLrcW+tZnC9cK+FQvd40i0PpNrGjANEwpeFDLwQNwj9LtNQaWsDzKADifoWLTw2ApYvOzuJyFr44Sj2huWHG7Br75efKddGuGUPc84UTAy8PD9Krnx+fYBxlaLMQ/fNRGLimapzwUw6J4cgV1kR+XluKQSO+DQDrfELvQTNjOYZDClVl2xbBzrv0wjPM4kARzpvxfyL1UCct5dDLpv51EqTHYUdQJ/7Wf9OJsA7PIZlyprH0CrGzyjmZ/kCS0l96h5Yq+QUqtbqGHvjHV2CREZyvJG4HVB6R0b4SKk5dPGroJ17kcZHGe817VBWXWREj7z8c96DaZUwJc0T1rZCLK42ZWaSZDX7XDjGPay1MQM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b697d8d4-5d7f-4c1c-529b-08d64ed66ab7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Nov 2018 10:53:33.7859
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1437
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kill() syscall operates on process identifiers. After a process has
-exited its pid can be reused by another process. If a caller sends a signal
-to a reused pid it will end up signaling the wrong process. This issue has
-often surfaced and there has been a push [1] to address this problem.
+Hi Andy,
 
-This patch uses file descriptors from proc/<pid> as stable handles on
-struct pid. Even if a pid is recycled the handle will not change. The file
-descriptor can be used to send signals to the referenced process.
-Thus, the  new syscall procfd_signal() is introduced to solve this problem.
-It operates on a process file descriptor.
-The syscall takes an additional siginfo_t and flags argument. If siginfo_t
-is NULL then procfd_signal() behaves like kill() if it is not NULL it
-behaves like rt_sigqueueinfo.
-The flags argument is added to allow for future extensions of this syscall.
-It currently needs to be passed as 0.
+On 20 November 2018 10:39 Andy Shevchenko wrote:
+> On Mon, Nov 19, 2018 at 02:12:59PM +0000, Phil Edworthy wrote:
+> > This adds clk_get_optional() and devm_clk_get_optional() functions to
+> > get optional clocks.
+> > They behave the same as (devm_)clk_get except where there is no clock
+> > producer. In this case, instead of returning -ENOENT, the function
+> > returns NULL. This makes error checking simpler and allows
+> > clk_prepare_enable, etc to be called on the returned reference without
+> > additional checks.
+>=20
+> >  - Instead of messing with the core functions, simply wrap them for the
+> >    _optional() versions. By putting clk_get_optional() inline in the he=
+ader
+> >    file, we can get rid of the arch specific patches as well.
+>=20
+> Fine if it would have no surprises with error handling.
+There shouldn't be any surprises. My earlier attempts at implementing this
+were hampered by the fact that of_clk_get_by_name() can return -EINVAL
+in some circumstances. By directly wrapping the (devm_)clk_get() functions
+that problem goes away.
 
-With this patch a process can be killed via:
+> > +	if (ERR_PTR(-ENOENT))
+Huh? That wasn't the code I sent...
 
- #define _GNU_SOURCE
- #include <errno.h>
- #include <fcntl.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <signal.h>
- #include <sys/stat.h>
- #include <sys/syscall.h>
- #include <sys/types.h>
- #include <unistd.h>
+> > +		return NULL;
+> > +	else
+> > +		return clk;
+>=20
+> return clk =3D=3D ERR_PTR(-ENOENT) ? NULL : clk;
+>=20
+> ?
+>=20
+> > +	if (clk =3D=3D ERR_PTR(-ENOENT))
+> > +		return NULL;
+> > +	else
+> > +		return clk;
+>=20
+> Ditto.
+Sure, will fix both.
 
- int main(int argc, char *argv[])
- {
-         int ret;
-         char buf[1000];
-
-         if (argc < 2)
-                 exit(EXIT_FAILURE);
-
-         ret = snprintf(buf, sizeof(buf), "/proc/%s", argv[1]);
-         if (ret < 0)
-                 exit(EXIT_FAILURE);
-
-         int fd = open(buf, O_DIRECTORY | O_CLOEXEC);
-         if (fd < 0) {
-                 printf("%s - Failed to open \"%s\"\n", strerror(errno), buf);
-                 exit(EXIT_FAILURE);
-         }
-
-         ret = syscall(__NR_procfd_signal, fd, SIGKILL, NULL, 0);
-         if (ret < 0) {
-                 printf("Failed to send SIGKILL \"%s\"\n", strerror(errno));
-                 close(fd);
-                 exit(EXIT_FAILURE);
-         }
-
-         close(fd);
-
-         exit(EXIT_SUCCESS);
- }
-
-[1]: https://lkml.org/lkml/2018/11/18/130
-
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirsky <luto@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christian Brauner <christian@brauner.io>
----
-Changelog:
-v2:
-- define __NR_procfd_signal in unistd.h
-- wire up compat syscall
-- s/proc_is_procfd/proc_is_tgid_procfd/g
-- provide stubs when CONFIG_PROC_FS=n
-- move proc_pid() to linux/proc_fs.h header
-- use proc_pid() to grab struct pid from /proc/<pid> fd
-v1:
-- patch introduced
----
- arch/x86/entry/syscalls/syscall_32.tbl |   1 +
- arch/x86/entry/syscalls/syscall_64.tbl |   2 +
- fs/proc/base.c                         |  11 ++-
- fs/proc/internal.h                     |   5 -
- include/linux/proc_fs.h                |  12 +++
- include/linux/syscalls.h               |   2 +
- include/uapi/asm-generic/unistd.h      |   4 +-
- kernel/signal.c                        | 127 +++++++++++++++++++++++--
- 8 files changed, 151 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index 3cf7b533b3d1..3f27ffd8ae87 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -398,3 +398,4 @@
- 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
-+387	i386	procfd_signal		sys_procfd_signal		__ia32_compat_sys_procfd_signal
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index f0b1709a5ffb..8a30cde82450 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -343,6 +343,7 @@
- 332	common	statx			__x64_sys_statx
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
-+335	64	procfd_signal		__x64_sys_procfd_signal
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-@@ -386,3 +387,4 @@
- 545	x32	execveat		__x32_compat_sys_execveat/ptregs
- 546	x32	preadv2			__x32_compat_sys_preadv64v2
- 547	x32	pwritev2		__x32_compat_sys_pwritev64v2
-+548	x32	procfd_signal		__x32_compat_sys_procfd_signal
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index ce3465479447..771c6bd1cac6 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -716,7 +716,10 @@ static int proc_pid_permission(struct inode *inode, int mask)
- 	return generic_permission(inode, mask);
- }
- 
--
-+struct pid *proc_pid(const struct inode *inode)
-+{
-+       return PROC_I(inode)->pid;
-+}
- 
- static const struct inode_operations proc_def_inode_operations = {
- 	.setattr	= proc_setattr,
-@@ -3038,6 +3041,12 @@ static const struct file_operations proc_tgid_base_operations = {
- 	.llseek		= generic_file_llseek,
- };
- 
-+bool proc_is_tgid_procfd(const struct file *file)
-+{
-+	return d_is_dir(file->f_path.dentry) &&
-+	       (file->f_op == &proc_tgid_base_operations);
-+}
-+
- static struct dentry *proc_tgid_base_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
- {
- 	return proc_pident_lookup(dir, dentry,
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51e..eb69afba83f3 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -113,11 +113,6 @@ static inline void *__PDE_DATA(const struct inode *inode)
- 	return PDE(inode)->data;
- }
- 
--static inline struct pid *proc_pid(const struct inode *inode)
--{
--	return PROC_I(inode)->pid;
--}
--
- static inline struct task_struct *get_proc_task(const struct inode *inode)
- {
- 	return get_pid_task(proc_pid(inode), PIDTYPE_PID);
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index d0e1f1522a78..96df2fe6311d 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -73,6 +73,8 @@ struct proc_dir_entry *proc_create_net_single_write(const char *name, umode_t mo
- 						    int (*show)(struct seq_file *, void *),
- 						    proc_write_t write,
- 						    void *data);
-+extern bool proc_is_tgid_procfd(const struct file *file);
-+extern struct pid *proc_pid(const struct inode *inode);
- 
- #else /* CONFIG_PROC_FS */
- 
-@@ -114,6 +116,16 @@ static inline int remove_proc_subtree(const char *name, struct proc_dir_entry *p
- #define proc_create_net(name, mode, parent, state_size, ops) ({NULL;})
- #define proc_create_net_single(name, mode, parent, show, data) ({NULL;})
- 
-+static inline bool proc_is_tgid_procfd(const struct file *file)
-+{
-+	return false;
-+}
-+
-+static inline struct pid *proc_pid(const struct inode *inode)
-+{
-+	return NULL;
-+}
-+
- #endif /* CONFIG_PROC_FS */
- 
- struct net;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 2ac3d13a915b..a5ca8cb84566 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -907,6 +907,8 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- 			  unsigned mask, struct statx __user *buffer);
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
-+asmlinkage long sys_procfd_signal(int fd, int sig, siginfo_t __user *info,
-+				  int flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 538546edbfbd..4dc81a994ad1 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
- __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
- #define __NR_rseq 293
- __SYSCALL(__NR_rseq, sys_rseq)
-+#define __NR_procfd_signal 294
-+__SC_COMP(__NR_procfd_signal, sys_procfd_signal, compat_sys_procfd_signal)
- 
- #undef __NR_syscalls
--#define __NR_syscalls 294
-+#define __NR_syscalls 295
- 
- /*
-  * 32 bit systems traditionally used different
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 9a32bc2088c9..13695342f150 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -19,7 +19,9 @@
- #include <linux/sched/task.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sched/cputime.h>
-+#include <linux/file.h>
- #include <linux/fs.h>
-+#include <linux/proc_fs.h>
- #include <linux/tty.h>
- #include <linux/binfmts.h>
- #include <linux/coredump.h>
-@@ -3286,6 +3288,16 @@ COMPAT_SYSCALL_DEFINE4(rt_sigtimedwait, compat_sigset_t __user *, uthese,
- }
- #endif
- 
-+static inline void prepare_kill_siginfo(int sig, struct kernel_siginfo *info)
-+{
-+	clear_siginfo(info);
-+	info->si_signo = sig;
-+	info->si_errno = 0;
-+	info->si_code = SI_USER;
-+	info->si_pid = task_tgid_vnr(current);
-+	info->si_uid = from_kuid_munged(current_user_ns(), current_uid());
-+}
-+
- /**
-  *  sys_kill - send a signal to a process
-  *  @pid: the PID of the process
-@@ -3295,16 +3307,119 @@ SYSCALL_DEFINE2(kill, pid_t, pid, int, sig)
- {
- 	struct kernel_siginfo info;
- 
--	clear_siginfo(&info);
--	info.si_signo = sig;
--	info.si_errno = 0;
--	info.si_code = SI_USER;
--	info.si_pid = task_tgid_vnr(current);
--	info.si_uid = from_kuid_munged(current_user_ns(), current_uid());
-+	prepare_kill_siginfo(sig, &info);
- 
- 	return kill_something_info(sig, &info, pid);
- }
- 
-+/*
-+ * Verify that the signaler and signalee either are in the same pid namespace
-+ * or that the signaler's pid namespace is an ancestor of the signalee's pid
-+ * namespace.
-+ */
-+static bool may_signal_procfd(struct pid *pid)
-+{
-+	struct pid_namespace *active = task_active_pid_ns(current);
-+	struct pid_namespace *p = ns_of_pid(pid);
-+
-+	for (;;) {
-+		if (!p)
-+			return false;
-+		if (p == active)
-+			break;
-+		p = p->parent;
-+	}
-+
-+	return true;
-+}
-+
-+static int do_procfd_signal(int fd, int sig, kernel_siginfo_t *kinfo, int flags,
-+			    bool had_siginfo)
-+{
-+	int ret;
-+	struct fd f;
-+	struct pid *pid;
-+
-+	/* Enforce flags be set to 0 until we add an extension. */
-+	if (flags)
-+		return -EINVAL;
-+
-+	f = fdget_raw(fd);
-+	if (!f.file)
-+		return -EBADF;
-+
-+	/* Is this a process file descriptor? */
-+	ret = -EINVAL;
-+	if (!proc_is_tgid_procfd(f.file))
-+		goto err;
-+
-+	/* Without CONFIG_PROC_FS proc_pid() returns NULL. */
-+	pid = proc_pid(file_inode(f.file));
-+	if (!pid)
-+		goto err;
-+
-+	if (!may_signal_procfd(pid))
-+		goto err;
-+
-+	if (had_siginfo) {
-+		/*
-+		 * Not even root can pretend to send signals from the kernel.
-+		 * Nor can they impersonate a kill()/tgkill(), which adds
-+		 * source info.
-+		 */
-+		ret = -EPERM;
-+		if ((kinfo->si_code >= 0 || kinfo->si_code == SI_TKILL) &&
-+		    (task_pid(current) != pid))
-+			goto err;
-+	} else {
-+		prepare_kill_siginfo(sig, kinfo);
-+	}
-+
-+	ret = kill_pid_info(sig, kinfo, pid);
-+
-+err:
-+	fdput(f);
-+	return ret;
-+}
-+
-+/**
-+ *  sys_procfd_signal - send a signal to a process through a process file
-+ *                      descriptor
-+ *  @fd: the file descriptor of the process
-+ *  @sig: signal to be sent
-+ *  @info: the signal info
-+ *  @flags: future flags to be passed
-+ */
-+SYSCALL_DEFINE4(procfd_signal, int, fd, int, sig, siginfo_t __user *, info,
-+		int, flags)
-+{
-+	kernel_siginfo_t kinfo;
-+
-+	if (info) {
-+		int ret = __copy_siginfo_from_user(sig, &kinfo, info);
-+		if (unlikely(ret))
-+			return ret;
-+	}
-+
-+	return do_procfd_signal(fd, sig, &kinfo, flags, !!info);
-+}
-+
-+#ifdef CONFIG_COMPAT
-+COMPAT_SYSCALL_DEFINE4(procfd_signal, int, fd, int, sig,
-+		       struct compat_siginfo __user *, info, int, flags)
-+{
-+	kernel_siginfo_t kinfo;
-+
-+	if (info) {
-+		int ret = __copy_siginfo_from_user32(sig, &kinfo, info);
-+		if (unlikely(ret))
-+			return ret;
-+	}
-+
-+	return do_procfd_signal(fd, sig, &kinfo, flags, !!info);
-+}
-+#endif
-+
- static int
- do_send_specific(pid_t tgid, pid_t pid, int sig, struct kernel_siginfo *info)
- {
--- 
-2.19.1
-
+Thanks
+Phil
