@@ -2,194 +2,206 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4A4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A21AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D73542147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:06:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D73542147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 05AEE21104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:08:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05AEE21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730005AbeKUVk0 (ORCPT
+        id S1729932AbeKUVmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:40:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:46992 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729710AbeKUVkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:40:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D6E515AB;
-        Wed, 21 Nov 2018 03:06:22 -0800 (PST)
-Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 252363F5A0;
-        Wed, 21 Nov 2018 03:06:21 -0800 (PST)
-Date:   Wed, 21 Nov 2018 12:06:20 +0100
-From:   Christoffer Dall <christoffer.dall@arm.com>
-To:     peng.hao2@zte.com.cn
-Cc:     marc.zyngier@arm.com, andre.przywara@arm.com,
-        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
-        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
-Message-ID: <20181121110620.GC18678@e113682-lin.lund.arm.com>
-References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
- <201811211656540883310@zte.com.cn>
+        Wed, 21 Nov 2018 16:42:21 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728114AbeKUVmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:42:21 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALB5c5j104159
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:08:23 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nw4ytv14r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:08:23 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
+        Wed, 21 Nov 2018 11:08:15 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 21 Nov 2018 11:08:13 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALB8CH38651186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Nov 2018 11:08:12 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 06B4DA4051;
+        Wed, 21 Nov 2018 11:08:12 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FD50A4055;
+        Wed, 21 Nov 2018 11:08:11 +0000 (GMT)
+Received: from oc4120165700.ibm.com (unknown [9.152.99.75])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 21 Nov 2018 11:08:11 +0000 (GMT)
+Subject: Re: [PATCH 3/4] scsi: hisi_sas: Make sg_tablesize consistent value
+From:   Steffen Maier <maier@linux.ibm.com>
+To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com
+Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>
+References: <1542725944-244183-1-git-send-email-john.garry@huawei.com>
+ <1542725944-244183-4-git-send-email-john.garry@huawei.com>
+ <146f7c38-0cd7-a664-31d6-30a27b7a182b@linux.ibm.com>
+Date:   Wed, 21 Nov 2018 12:08:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201811211656540883310@zte.com.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <146f7c38-0cd7-a664-31d6-30a27b7a182b@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18112111-0016-0000-0000-0000022A628D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18112111-0017-0000-0000-00003282A223
+Message-Id: <64113584-d9cc-6662-bcde-852ec7957517@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811210101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
-> >On 19/11/2018 09:10, Mark Rutland wrote:
-> >> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
-> >>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
-> >>>>>> Hi,
-> >>>>>>> When virtual machine starts, hang up.
-> >>>>>>
-> >>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
-> >>>>>> interrupt?
-> >>>>>>
-> >>>>>>> The kernel version of guest
-> >>>>>>> is 4.16. Host support vgic_v3.
-> >>>>>>
-> >>>>>> Your host kernel is something recent, I guess?
-> >>>>>>
-> >>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
-> >>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
-> >>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
-> >>>>>>> correctly, so group is not set.
-> >>>>>>
-> >>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
-> >>>>>> version?) or some other userland tool?
-> >>>>>>
-> >>>>>
-> >>>>> QEMU emulator version 3.0.50 .
-> >>>>>
-> >>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
-> >>>>>>> time.
-> >>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
-> >>>>>>> interrupt injection failed.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> >>>>>>> ---
-> >>>>>>>   virt/kvm/arm/vgic/vgic-v3.c | 2 +-
-> >>>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>>
-> >>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>> index 9c0dd23..d101000 100644
-> >>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> >>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
-> >>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
-> >>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
-> >>>>>>>
-> >>>>>>> -    if (irq->group)
-> >>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
-> >>>>>>
-> >>>>>> This is not the right fix, not only because it basically reverts the
-> >>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
-> >>>>>> their configured group).
-> >>>>>>
-> >>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
-> >>>>>> before dist->vgic_model is set, also what value it has?
-> >>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
-> >>>>>>
-> >>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
-> >>>>>   If the interrupt comes at this time, the interrupt injection fails.
-> >>>>
-> >>>> Does that mean that the guest is configuring its interrupts as Group0?
-> >>>> That sounds wrong, Linux should configure all it's interrupts as
-> >>>> non-secure group1.
-> >>>
-> >>> no, I think that uefi dose this, not linux.
-> >>> 1. kvm_vgic_vcpu_init
-> >>> 2. vgic_create
-> >>> 3. kvm_vgic_dist_init
-> >>> 4.vgic_mmio_write_group: uefi as guest, write group=0
-> >>> 5.vgic_mmio_write_group: linux as guest, write group=1
-> >>
-> >> Is this the same issue fixed by EDK2 commit:
-> >>
-> >> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
-> >>
-> >> ... where EDK2 would try to use IAR0 rather than IAR1?
-> >>
-> >> The commit messages notes this lead to a boot-time hang.
-> >
-> >I managed to trigger an issue with a really old EFI implementation that
-> >doesn't configure its interrupts as Group1, and yet tries to ACK its
-> >interrupts using the Group1 accessor. Guess what? It is not going to work.
-> >
-> >Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
-> >to be the fix (I only assume it does, I haven't actually checked). A
-> >recent build, as found in Debian Buster, works perfectly (tested with
-> >both QEMU v2.12 and tip of tree).
-> >
-> >Now, I really don't get what you're saying about Linux not getting
-> >interrupts. How do you get to booting Linux if EFI is not making any
-> >forward progress? Are you trying them independently?
-> >
-> I start linux with bypassing uefi, the print info is the same.
-> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
-> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
-> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
-> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
-> the command line is like this:
-> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
+On 11/21/2018 12:02 PM, Steffen Maier wrote:
+> On 11/20/2018 03:59 PM, John Garry wrote:
+>> From: Xiang Chen <chenxiang66@hisilicon.com>
+>>
+>> Sht->sg_tablesize is set in the driver, and it will be assigned to
+>> shost->sg_tablesize in SCSI mid-layer. So it is not necessary to
+>> assign shost->sg_table one more time in the driver.
+>>
+>> In addition to the change, change each scsi_host_template.sg_tablesize
+>> to HISI_SAS_SGE_PAGE_CNT instead of SG_ALL.
 > 
-> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
+> Might be completely irrelevant, so just as information: I once had 
+> problems due to changing (reducing) SHT.sg_tablesize because block queue 
+> limits of BSG devices of Scsi_Host and fc_host (not sure if you have an 
+> equivalent bsg device for your transport(s)) inherit from SHT, but don't 
+> update (automatically) on later updates of shost->sg_tablesize, which in 
+> turn affect scsi_devices allocated after the shost update.
+> Cf. 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/s390/scsi?id=5fea4291deacd80188b996d2f555fc6a1940e5d4 
 
-Could you try the following patch:
+Figured, your new constant seems to have the same value so no problem.
 
-diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-index c0c0b88af1d5..6fa858c7a5a6 100644
---- a/virt/kvm/arm/vgic/vgic-init.c
-+++ b/virt/kvm/arm/vgic/vgic-init.c
-@@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
- 			irq->config = VGIC_CONFIG_LEVEL;
- 		}
- 
--		/*
--		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
--		 * so we always know the emulation type at this point as it's
--		 * either explicitly configured as GICv3, or explicitly
--		 * configured as GICv2, or not configured yet which also
--		 * implies GICv2.
--		 */
- 		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
- 			irq->group = 1;
- 		else
-@@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
- 	if (ret)
- 		goto out;
- 
-+	/* Initialize groups on CPUs created before the VGIC type was known */
-+	kvm_for_each_vcpu(i, vcpu, kvm) {
-+		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
-+
-+		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
-+			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
-+			irq->group = 1;
-+		}
-+	}
-+
- 	if (vgic_has_its(kvm)) {
- 		ret = vgic_v4_init(kvm);
- 		if (ret)
+#define SG_CHUNK_SIZE	128
+#define SG_ALL	SG_CHUNK_SIZE
+#define HISI_SAS_SGE_PAGE_CNT SG_CHUNK_SIZE
+
+> ("[SCSI] zfcp: block queue limits with data router")
+> if you need more details.
+> 
+>> Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
+>> Signed-off-by: John Garry <john.garry@huawei.com>
+>> ---
+>>   drivers/scsi/hisi_sas/hisi_sas_main.c  | 1 -
+>>   drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 2 +-
+>>   drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 2 +-
+>>   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 +--
+>>   4 files changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c 
+>> b/drivers/scsi/hisi_sas/hisi_sas_main.c
+>> index d13a662..cbda48e 100644
+>> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
+>> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+>> @@ -2410,7 +2410,6 @@ int hisi_sas_probe(struct platform_device *pdev,
+>>       shost->max_lun = ~0;
+>>       shost->max_channel = 1;
+>>       shost->max_cmd_len = 16;
+>> -    shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
+>>       if (hisi_hba->hw->slot_index_alloc) {
+>>           shost->can_queue = hisi_hba->hw->max_command_entries;
+>>           shost->cmd_per_lun = hisi_hba->hw->max_command_entries;
+>> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c 
+>> b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+>> index d24342b..2d035cc 100644
+>> --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+>> +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
+>> @@ -1815,7 +1815,7 @@ static int hisi_sas_v1_init(struct hisi_hba 
+>> *hisi_hba)
+>>       .change_queue_depth    = sas_change_queue_depth,
+>>       .bios_param        = sas_bios_param,
+>>       .this_id        = -1,
+>> -    .sg_tablesize        = SG_ALL,
+>> +    .sg_tablesize        = HISI_SAS_SGE_PAGE_CNT,
+>>       .max_sectors        = SCSI_DEFAULT_MAX_SECTORS,
+>>       .use_clustering        = ENABLE_CLUSTERING,
+>>       .eh_device_reset_handler = sas_eh_device_reset_handler,
+>> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c 
+>> b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+>> index e78a97e..79e58a7 100644
+>> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+>> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
+>> @@ -3570,7 +3570,7 @@ struct device_attribute *host_attrs_v2_hw[] = {
+>>       .change_queue_depth    = sas_change_queue_depth,
+>>       .bios_param        = sas_bios_param,
+>>       .this_id        = -1,
+>> -    .sg_tablesize        = SG_ALL,
+>> +    .sg_tablesize        = HISI_SAS_SGE_PAGE_CNT,
+>>       .max_sectors        = SCSI_DEFAULT_MAX_SECTORS,
+>>       .use_clustering        = ENABLE_CLUSTERING,
+>>       .eh_device_reset_handler = sas_eh_device_reset_handler,
+>> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c 
+>> b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+>> index 7e2b020..8a08078 100644
+>> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+>> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+>> @@ -2224,7 +2224,7 @@ struct device_attribute *host_attrs_v3_hw[] = {
+>>       .change_queue_depth    = sas_change_queue_depth,
+>>       .bios_param        = sas_bios_param,
+>>       .this_id        = -1,
+>> -    .sg_tablesize        = SG_ALL,
+>> +    .sg_tablesize        = HISI_SAS_SGE_PAGE_CNT,
+>>       .max_sectors        = SCSI_DEFAULT_MAX_SECTORS,
+>>       .use_clustering        = ENABLE_CLUSTERING,
+>>       .eh_device_reset_handler = sas_eh_device_reset_handler,
+>> @@ -2366,7 +2366,6 @@ struct device_attribute *host_attrs_v3_hw[] = {
+>>       shost->max_lun = ~0;
+>>       shost->max_channel = 1;
+>>       shost->max_cmd_len = 16;
+>> -    shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
+>>       shost->can_queue = hisi_hba->hw->max_command_entries -
+>>           HISI_SAS_RESERVED_IPTT_CNT;
+>>       shost->cmd_per_lun = hisi_hba->hw->max_command_entries -
+>>
+> 
+> 
 
 
-Thanks,
+-- 
+Mit freundlichen Gruessen / Kind regards
+Steffen Maier
 
-    Christoffer
+Linux on IBM Z Development
+
+IBM Deutschland Research & Development GmbH
+Vorsitzende des Aufsichtsrats: Martina Koederitz
+Geschaeftsfuehrung: Dirk Wittkopp
+Sitz der Gesellschaft: Boeblingen
+Registergericht: Amtsgericht Stuttgart, HRB 243294
+
