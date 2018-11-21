@@ -2,120 +2,118 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3720C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CDCC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC90213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92405213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:30:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XiMhSNO9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC90213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XaMIRV2I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92405213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbeKUMA1 (ORCPT
+        id S1726288AbeKUMCY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:00:27 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43379 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeKUMA0 (ORCPT
+        Wed, 21 Nov 2018 07:02:24 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:35947 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725926AbeKUMCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:00:26 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u18so2746182lff.10
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:28:18 -0800 (PST)
+        Wed, 21 Nov 2018 07:02:24 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y6-v6so2950873plt.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:30:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OmE7ojsVEZaHbdNiiJMiC2FSdJbmDtHI4q6zyQMOEJs=;
-        b=XiMhSNO9OoOljcgItuy0BXPKKBKlAPJs7JAiBmXMV8SHBjHy40GLxeaGINFQr33ORa
-         KN2yZEfZTgSC3N/JFNzUcwu8sv9jfNo6+g4mbaRsVAM62UtfVOeGE3CL59qil8lJ+aq2
-         /bb7ZsdmNmAJaJK0sCLSE/he7ymkNTxYHB/fU=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tv1PBSaTO817C7DUqdqrU7oWmYyiru0DklUnyfmhnpQ=;
+        b=XaMIRV2Ii1COOsd6yyGdgAEmQ6Jbro6rGrKRVeAgCFk728Q3cV8yYvM9ROegtXJrgN
+         mHh2V/bFhmei49XYn6jaiOjdpxnMWRLrLGduSL7eJPL3i/5nj5taZSorUOhucD6Tzw1e
+         NcFBz2IIfwdRbCphtgqHncm9jARJy4evekCyJPS6azufIpGYmjwTaRu9sjVORqlHKv2p
+         Xxi/w49pvJXPDqzCJQx5nBvHD6s+netOcmNJ73vvwFYLu+lZxiaFtiv69emlP/wbhIec
+         6RkUSneAkbzIB6NmzABksBozbLqhQxt414winWXUSNJc6/5/yJ9XhjMmHgdIVMatq6RS
+         NdMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OmE7ojsVEZaHbdNiiJMiC2FSdJbmDtHI4q6zyQMOEJs=;
-        b=hIDe6LtoaeV+dFknLd8/5XuOBnQk1+QcXLAi1w1s0W/Ff/TtjY0IUEN1hd66tCRzU8
-         iXX0TDOLuokB7AC6xzIAwIFDjMkgZQv+stSfU3B6sWozUmjGdjiOVIUVZwiwisS9iFZ0
-         IxnoLQZPrCnegoFXr541oOjVyrGBUfc5//jKLWvmSenfyoP7TPZbDS9NBINzmuj66SXO
-         ukWolS0zf9xs++/T0h+z6igQzejZc+tBYc0gpJk+VEHmEOUTB19Wmr9nCwNAZmyXhZMq
-         TW5gbtD6qaK4QpLOGsKxJ45WsOtBLYjYOBDt4NqxSPMo7y/0StkjRU7uc9NL6/atp4i0
-         BZqg==
-X-Gm-Message-State: AGRZ1gIRTjqJn4fv/8y60QSJGkEfo/8LZZB22lSERQU31iF1UnoSZxOm
-        UmtJXykPP+HPnF9VzMrmjdET33PVlio=
-X-Google-Smtp-Source: AJdET5eFv423lwr3ZMCAjlYsAHoNQWePMca9qPgNOBWkiRjWF+/TSz1zkYV+Iwty3aDyCZlygD6d1w==
-X-Received: by 2002:a19:f510:: with SMTP id j16mr2296223lfb.35.1542763697160;
-        Tue, 20 Nov 2018 17:28:17 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id s24sm6074853lfc.30.2018.11.20.17.28.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 17:28:16 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id u6-v6so3368581ljd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:28:16 -0800 (PST)
-X-Received: by 2002:a2e:2416:: with SMTP id k22-v6mr2916986ljk.80.1542763695428;
- Tue, 20 Nov 2018 17:28:15 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tv1PBSaTO817C7DUqdqrU7oWmYyiru0DklUnyfmhnpQ=;
+        b=CfEJGDawuUUvZOimJ2yo5IjhYSOSJf920CemGitkLjdO4e1eO5oVgWCOBvurdHmn6E
+         0UMk1/sboGZT8ybck6GAODnL9qGk4ePj3XhEkX7CGAUJVyipeV09jD/6Kt180A6RuemC
+         9igqdYJ70yIkVHf6Sc5PNwaZElDu9dDV7NU216vGVDy4gpMaiMR+nrdwFj3oSgA5Z+0O
+         WurAypkwm+9uzFSpzgMYpktd/Q36prOqw+ixOaLA/aRKX+tvH9qIeDFAnhirhrFaqXEC
+         Io8D2IF5Bz2LjiQxiP3MVrqrhBzuQGKFCuTcb92qZ7q29QxengOOizOYhgy32/OOVlrz
+         ovUQ==
+X-Gm-Message-State: AGRZ1gLJTVIgbA0L6Bpc4cMEkgZN40W6NVkebQ5yL30cWdRYLmnJai9r
+        ZkFn67kX5DR48UbXlfSRJdM=
+X-Google-Smtp-Source: AJdET5cNk4+QfAHry4PGbQFbiUl3erd64lJL6GSCO9LmmqZo0gro5sghwWIKNNy3Z6IFeWIXTeBYiA==
+X-Received: by 2002:a62:682:: with SMTP id 124-v6mr4655489pfg.161.1542763816419;
+        Tue, 20 Nov 2018 17:30:16 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id 85sm60480617pfw.17.2018.11.20.17.30.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 17:30:15 -0800 (PST)
+Date:   Tue, 20 Nov 2018 17:30:12 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Robin Murphy <robin.murphy@arm.com>, m.szyprowski@samsung.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        vdumpa@nvidia.com
+Subject: Re: [PATCH RFC] dma-direct: do not allocate a single page from CMA
+ area
+Message-ID: <20181121013011.GA5663@Asurada-Nvidia.nvidia.com>
+References: <20181031200355.19945-1-nicoleotsuka@gmail.com>
+ <13d60076-33ad-b542-4d17-4d717d5aa4d3@arm.com>
+ <20181102063542.GA17073@lst.de>
+ <20181105224050.GA10411@Asurada-Nvidia.nvidia.com>
+ <20181120092010.GA7270@lst.de>
 MIME-Version: 1.0
-References: <cover.1542757030.git.tim.c.chen@linux.intel.com> <6652faa67f8c4e90c737f9fd9c7e0e2d3cd51cca.1542757030.git.tim.c.chen@linux.intel.com>
-In-Reply-To: <6652faa67f8c4e90c737f9fd9c7e0e2d3cd51cca.1542757030.git.tim.c.chen@linux.intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 20 Nov 2018 17:27:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-Message-ID: <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-Subject: Re: [Patch v6 14/16] x86/speculation: Use STIBP to restrict
- speculation on non-dumpable task
-To:     Tim Chen <tim.c.chen@linux.intel.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120092010.GA7270@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 4:33 PM Tim Chen <tim.c.chen@linux.intel.com> wrote:
->
-> Implements arch_update_spec_restriction() for x86.  Use STIBP to
-> restrict speculative execution when running a task set to non-dumpable,
-> or clear the restriction if the task is set to dumpable.
+On Tue, Nov 20, 2018 at 10:20:10AM +0100, Christoph Hellwig wrote:
+> On Mon, Nov 05, 2018 at 02:40:51PM -0800, Nicolin Chen wrote:
+> > > > In general, this seems to make sense to me. It does represent a theoretical 
+> > > > change in behaviour for devices which have their own CMA area somewhere 
+> > > > other than kernel memory, and only ever make non-atomic allocations, but 
+> > > > I'm not sure whether that's a realistic or common enough case to really 
+> > > > worry about.
+> > > 
+> > > Yes, I think we should make the decision in dma_alloc_from_contiguous
+> > > based on having a per-dev CMA area or not.  There is a lot of cruft in
+> > 
+> > It seems that cma_alloc() already has a CMA area check? Would it
+> > be duplicated to have a similar one in dma_alloc_from_contiguous?
+> 
+> It isn't duplicate if it serves a different purpose.
+> 
+> > > this area that should be cleaned up while we're at it, like always
+> > > falling back to the normal page allocator if there is no CMA area or
+> > > nothing suitable found in dma_alloc_from_contiguous instead of
+> > > having to duplicate all that in the caller.
+> > 
+> > Am I supposed to clean up things that's mentioned above by moving
+> > the fallback allocator into dma_alloc_from_contiguous, or to just
+> > move my change (the count check) into dma_alloc_from_contiguous?
+> > 
+> > I understand that'd be great to have a cleanup, yet feel it could
+> > be done separately as this patch isn't really a cleanup change.
+> 
+> I can take care of any cleanups.  I've been trying to dust up that
+> area anyway.
 
-I don't think this necessarily makes sense.
-
-The new "auto" behavior is that we aim to restrict untrusted code (and
-the loader of such code uses prctrl to set that flag), then this whole
-"set STIBP for non-dumpable" makes little sense.
-
-A non-dumpable app by definition is *more* trusted, not less trusted.
-
-So this model of "let's disable prediction for system processes" not
-only doesn't make sense, but it also unnecessarily penalizes those
-potentially very important system processes.
-
-Also, "dumpable" in general is pretty oddly defined to be used for this.
-
-The same (privileged) process can be dumpable or not depending on how
-it was started (ie if it was started by a regular user and became
-trusted through suid, it's not dumpable, but if it was started from a
-root process it remains dumpable.
-
-So I'm just not convinced "dumpability" is meaningful for STIBP.
-
-                  Linus
+Thanks for the reply. It looks like it'd be better for me to wait
+for the cleanup being done? I feel odd merely adding a size check
+in the dma_alloc_from_contiguous().
