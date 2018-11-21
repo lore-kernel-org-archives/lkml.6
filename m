@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D26C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90526C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE004214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 594F0214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:54:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgShIrMt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE004214C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5TsPJqD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 594F0214C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbeKVB3X (ORCPT
+        id S1731200AbeKVB3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:29:23 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45236 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728298AbeKVB3V (ORCPT
+        Wed, 21 Nov 2018 20:29:25 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45238 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731144AbeKVB3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:29:21 -0500
-Received: by mail-ed1-f68.google.com with SMTP id d39so5084928edb.12
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:54:36 -0800 (PST)
+        Wed, 21 Nov 2018 20:29:23 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d39so5084980edb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:54:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oPOfAAp695fHAn5TDSsb2YJrXbpcvTnkB9qGJG0Cl0U=;
-        b=hgShIrMtO/2+X6BuxejlDtyLwdpmpcuJ9w9iX1D3b6euJjr+QQBHivpRywXqOV8AvS
-         eePQunIY6AaJ7BRmraCeeM3UrX6hAKTKD6MhINT1FKzHcYPfEz3NNLUFB+m3IkJJpzRe
-         2R0j+pMQ2x8SgxmNZJKXRrC1vwRoY82PASIjDavEWkgq72BOYliMTXrfJBR9JR3SHE2P
-         BKjUvYUcVXILxXPa9snIgBYW4QwSEjd1rwt/ZjHz8hRARgecC7nDWukUykle0/8lIx4l
-         zgTLZjSDDhf8A02GeZPm7BkFs2KZ3GGBrMZDEB+BDrmP4VTtbuyKfuvwneiw6Nw6BX2F
-         E0YA==
+        bh=jp/LfLaAJfVo5R8t93ODciTQnG5UQq2Jvgw4KX1TnZ4=;
+        b=i5TsPJqDkdyxGcRcjufnaqTz0g2LrPcualRnmJEKzcMprUOJPTtxFn5AJMOeQ+ttOg
+         6jDFqqWEwBOU18TIooyYZAO3L1XZK7Fd6E2iqEKDlJde3egOvLe7K3+XANtznGRbBehy
+         Vkn9VkswvckosD5e1U8vyd3zGwcJ7+jok6qvflCS76YhPgm9KzU8gPIg/n1lRW/r0D1O
+         sb7RBqYN6gHBt3gbB++4soc7hrnkftLptvZFvzqX5HiY8uWCPwPz+EXG0jnEtLqLmd+s
+         76MMZ9d1dCSZ7nrjRhlLHyQvz5Ig1ECEvQasx1+DaCuXb02U8UG14//AbnQpNFL33pDb
+         J6nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oPOfAAp695fHAn5TDSsb2YJrXbpcvTnkB9qGJG0Cl0U=;
-        b=Wbw2UEIUw+KjcZ+Lx5O8cqkHdNom5/L2d8oTxh7r0ql4eQ4CmHpbsl/V8Qj671wNGw
-         mfmGPyHXIU9/Cluk7bzcRcBCg4YpruhOJla2caEWMJLoyQW1QLOwppMbLZYuXMH1Og9I
-         4A2iT/ReqydC1sgH5a2q58c49hfwyp/6sB94O+rMaogQ8FDDU1wjM2v4yj7gfZd5H0vC
-         hX9ywUcTTo2i2Tigd5Vw03x2Dm7jYG8r2mM59Lrt9OYFJbRzb+7rRQD5bwbGK/B56jlK
-         G7KUgz3WAax9xqPfLZzgMhd6M5W7Svc8RF0Gb8sMff6+HjgT3RldHqqAIGSxQG79uaIC
-         +MrA==
-X-Gm-Message-State: AA+aEWbTh9mgW20ZnLaCn637oE5TxVDAIj/VXBYxqcVzlyFPk/jSoMO6
-        xlz28cyDanjmjaMDjrquOlw=
-X-Google-Smtp-Source: AFSGD/XIx1vuAUyG/eJDZ6yT/SfH6yyNjPsTgMV8/4duISlfF9gzmDLhRDMrf8pmPltjIGxmUnBMSQ==
-X-Received: by 2002:a05:6402:1347:: with SMTP id y7mr6042141edw.114.1542812075524;
-        Wed, 21 Nov 2018 06:54:35 -0800 (PST)
+        bh=jp/LfLaAJfVo5R8t93ODciTQnG5UQq2Jvgw4KX1TnZ4=;
+        b=FJpY5V5FRICtlTnafau0GEEcrqWbxmgQdWzSH4yRnnigpNjY8CuW0HKet/nrdVm+P/
+         ssfme9raJ9Jn5AFOuDrJB2vqsedOLyE/xFQB136WA+8YVXeTHPNBLG7R4pwQ6x0WLGG3
+         5sWnBqvqe5jK6GuJi3pCW+Ov0jPBxIvGQ3Gs41JPyN1Cd8UFPUuBWACO3gUx6Jg7y4xw
+         7Q+GkEMTYhfz5+Tknu8KkOOf+S9u+j/UKLgLIpD+Jce2FpPbHZMVsnLVboZYGmp7QUrN
+         f13XB/WpLCeqPfGwfryM9Usr5BxAliXhEig6BAN+r7egeEmBaADlF5wVYRej7URarIKL
+         5q2A==
+X-Gm-Message-State: AA+aEWYeTmXyAwF0yHWLgtM4hFtaGjbEZLN2cD4N03FklP8UMC9eR3Wo
+        o9nC8wJEgctNLEzJ2MT6MKlzBEOz
+X-Google-Smtp-Source: AFSGD/Vl2mlfbiq5YDIqzii1acsiBgbj/uUH7gmvYFTYAtT+JHwbHYUelVr7ELvzvHJuicK0Ehrz2g==
+X-Received: by 2002:aa7:d817:: with SMTP id v23mr5918483edq.255.1542812077046;
+        Wed, 21 Nov 2018 06:54:37 -0800 (PST)
 Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id a11sm9062713edc.28.2018.11.21.06.54.34
+        by smtp.gmail.com with ESMTPSA id n29sm9873029edd.40.2018.11.21.06.54.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 06:54:34 -0800 (PST)
+        Wed, 21 Nov 2018 06:54:36 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Jassi Brar <jassisinghbrar@gmail.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 03/19] mailbox: bcm2835: Use device-managed registration API
-Date:   Wed, 21 Nov 2018 15:54:13 +0100
-Message-Id: <20181121145429.7582-4-thierry.reding@gmail.com>
+Subject: [PATCH 04/19] mailbox: bcm-flexrm: Use device-managed registration API
+Date:   Wed, 21 Nov 2018 15:54:14 +0100
+Message-Id: <20181121145429.7582-5-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121145429.7582-1-thierry.reding@gmail.com>
 References: <20181121145429.7582-1-thierry.reding@gmail.com>
@@ -83,44 +83,31 @@ device-managed registration API.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/mailbox/bcm2835-mailbox.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/mailbox/bcm-flexrm-mailbox.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/mailbox/bcm2835-mailbox.c b/drivers/mailbox/bcm2835-mailbox.c
-index e92bbc533821..d48f67b25567 100644
---- a/drivers/mailbox/bcm2835-mailbox.c
-+++ b/drivers/mailbox/bcm2835-mailbox.c
-@@ -178,7 +178,7 @@ static int bcm2835_mbox_probe(struct platform_device *pdev)
- 	if (!mbox->controller.chans)
- 		return -ENOMEM;
+diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c b/drivers/mailbox/bcm-flexrm-mailbox.c
+index d7a8ed7d8097..d713271ebf7c 100644
+--- a/drivers/mailbox/bcm-flexrm-mailbox.c
++++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+@@ -1665,7 +1665,7 @@ static int flexrm_mbox_probe(struct platform_device *pdev)
+ 		mbox->controller.chans[index].con_priv = &mbox->rings[index];
  
+ 	/* Register mailbox controller */
 -	ret = mbox_controller_register(&mbox->controller);
 +	ret = devm_mbox_controller_register(dev, &mbox->controller);
  	if (ret)
- 		return ret;
+ 		goto fail_free_debugfs_root;
  
-@@ -188,13 +188,6 @@ static int bcm2835_mbox_probe(struct platform_device *pdev)
- 	return ret;
- }
+@@ -1691,8 +1691,6 @@ static int flexrm_mbox_remove(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct flexrm_mbox *mbox = platform_get_drvdata(pdev);
  
--static int bcm2835_mbox_remove(struct platform_device *pdev)
--{
--	struct bcm2835_mbox *mbox = platform_get_drvdata(pdev);
 -	mbox_controller_unregister(&mbox->controller);
--	return 0;
--}
 -
- static const struct of_device_id bcm2835_mbox_of_match[] = {
- 	{ .compatible = "brcm,bcm2835-mbox", },
- 	{},
-@@ -207,7 +200,6 @@ static struct platform_driver bcm2835_mbox_driver = {
- 		.of_match_table = bcm2835_mbox_of_match,
- 	},
- 	.probe		= bcm2835_mbox_probe,
--	.remove		= bcm2835_mbox_remove,
- };
- module_platform_driver(bcm2835_mbox_driver);
+ 	debugfs_remove_recursive(mbox->root);
  
+ 	platform_msi_domain_free_irqs(dev);
 -- 
 2.19.1
 
