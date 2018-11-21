@@ -2,211 +2,91 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B75EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:55:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0828C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55062145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CE25214DE
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:01:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="W3YhlMXF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C55062145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="LJOGeou3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE25214DE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=verge.net.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeKUU3E (ORCPT
+        id S1729210AbeKUUfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:29:04 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40195 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726001AbeKUU3E (ORCPT
+        Wed, 21 Nov 2018 15:35:34 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:41655 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727981AbeKUUfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:29:04 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d3so4353029edx.7
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GqNpuOJ/0U5kjc3vagM6X7N+d2bFQTSim6LgbX55HBc=;
-        b=W3YhlMXF8TsWi/XNxAW73YQHD/6L9a6reo4ujcSflLcSLIUgGurKYqbVWrl3WPwcVc
-         U09mAG8sgMZVqZVdz6QvrI+ynZ0DG0tdFSnV9ZSX5RCVEolH0k//n/91ScmiKFz66FeE
-         xKvdr0iuAcCQbTU4Gs7qSHPM5wg9ilOhskE98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=GqNpuOJ/0U5kjc3vagM6X7N+d2bFQTSim6LgbX55HBc=;
-        b=IZpaAAD5wjk2bJVNEB0i9lluHIwMRTFQO7rTfpIco/JTqRtK1NA1AQdwce+NBGrp8A
-         sSG2+ijJPFsNa6zZr0U48h7oDQudvrJbeDxl3svFIU/qUyw10zNNhUr+ZXz8eRilWs45
-         VA1qbx0Twfhcmf+8kYavaPpaYgEPumVRqSgWdlvAzYVBzBcGrbwXvk1KC03PD1Ltnj38
-         rmsMfAp4nUXTprHTf3EJA9f9yl7KgXBBirTT9aEzAXGN9MMGOmgW+L8bXTUiMOjDuUKS
-         jbwniJjtsaP8ziA/kM1iLEE9wqrw2OqrXao608qneprpBxVUUmS68GU/Oh61yX8xTfwg
-         at2g==
-X-Gm-Message-State: AA+aEWZfkLQO2Q7Li7d/IK872JS3S7vqsHeJdWTfCszPnkZHGtpn+EPg
-        jrPb5jXtXNxo9wSYc8GjPzhpaw==
-X-Google-Smtp-Source: AFSGD/WlMEajwfbchJlpdtK2qS0MJgSJbYWAzNvcDidgIGDMYXzf64XpykyVg06M7AFOgUosvzQu0g==
-X-Received: by 2002:a50:a881:: with SMTP id k1-v6mr5101938edc.296.1542794115535;
-        Wed, 21 Nov 2018 01:55:15 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id t9sm4965929edd.25.2018.11.21.01.55.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 01:55:14 -0800 (PST)
-Date:   Wed, 21 Nov 2018 10:55:12 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Sergio Correia <sergio@correia.cc>
-Cc:     maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, sean@poorly.run
-Subject: Re: [PATCH] drm: restore is_master upon failure in
- drm_new_set_master()
-Message-ID: <20181121095512.GP4266@phenom.ffwll.local>
-Mail-Followup-To: Sergio Correia <sergio@correia.cc>,
-        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, sean@poorly.run
-References: <20181118235720.3150-1-sergio@correia.cc>
+        Wed, 21 Nov 2018 15:35:34 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 7945B25B781;
+        Wed, 21 Nov 2018 21:01:44 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1542794504; bh=wNuD2KgAfDtSUShJl8pKIgtcrP3uMm2VYTjm8cWbXDM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LJOGeou39OWCRA5rXgILLkPmvxgJbfIsCAAHkNQIjZVQJVbs8p2L9Umi3rfbUt2om
+         lebi4O1y6bS3kDfZrnZ82avZTenBy6WvB7hKOB3iPL4iXfaLVEZBxAzZ/bY05y/jFb
+         5hXX7m1LOaGTVXThJ/D6uGOcZMdquj3RsDFOBwRI=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 9978294034F; Wed, 21 Nov 2018 11:01:42 +0100 (CET)
+Date:   Wed, 21 Nov 2018 11:01:42 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: r9a06g032: Correct the GIC DT node name
+Message-ID: <20181121100142.q3wwgcu5pywsdzpx@verge.net.au>
+References: <20181120103427.23950-1-phil.edworthy@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181118235720.3150-1-sergio@correia.cc>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181120103427.23950-1-phil.edworthy@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 18, 2018 at 08:57:20PM -0300, Sergio Correia wrote:
-> When drm_new_set_master() fails, we restore the old master, however we may
-> have changed the is_master flag to 1, before failing, and it may be the
-> case it was 0 previously. Restore also this flag to its original state, in
-> case of failure.
-> 
-> Here is a problematic flow: we check is_master in drm_is_current_master(),
-> then proceed to call drm_lease_owner() passing master. If we do not restore
-> is_master status when drm_new_set_master() fails, we may have a situation
-> in which is_master will be 1 and master itself, NULL, leading to the deref
-> of a NULL pointer in drm_lease_owner().
-> 
-> This fixes the following OOPS, observed on an ArchLinux running a 4.19.2
-> kernel:
-> 
-> [   97.804282] BUG: unable to handle kernel NULL pointer dereference at 0000000000000080
-> [   97.807224] PGD 0 P4D 0
-> [   97.807224] Oops: 0000 [#1] PREEMPT SMP NOPTI
-> [   97.807224] CPU: 0 PID: 1348 Comm: xfwm4 Tainted: P           OE     4.19.2-arch1-1-ARCH #1
-> [   97.807224] Hardware name: To Be Filled By O.E.M. To Be Filled By O.E.M./AB350 Pro4, BIOS P5.10 10/16/2018
-> [   97.807224] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-> [   97.807224] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-> [   97.807224] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-> [   97.807224] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-> [   97.807224] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   97.807224] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-> [   97.807224] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-> [   97.807224] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-> [   97.807224] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-> [   97.807224] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   97.807224] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-> [   97.807224] Call Trace:
-> [   97.807224]  drm_is_current_master+0x1a/0x30 [drm]
-> [   97.807224]  drm_master_release+0x3e/0x130 [drm]
-> [   97.807224]  drm_file_free.part.0+0x2be/0x2d0 [drm]
-> [   97.807224]  drm_open+0x1ba/0x1e0 [drm]
-> [   97.807224]  drm_stub_open+0xaf/0xe0 [drm]
-> [   97.807224]  chrdev_open+0xa3/0x1b0
-> [   97.807224]  ? cdev_put.part.0+0x20/0x20
-> [   97.807224]  do_dentry_open+0x132/0x340
-> [   97.807224]  path_openat+0x2d1/0x14e0
-> [   97.807224]  ? mem_cgroup_commit_charge+0x7a/0x520
-> [   97.807224]  do_filp_open+0x93/0x100
-> [   97.807224]  ? __check_object_size+0x102/0x189
-> [   97.807224]  ? _raw_spin_unlock+0x16/0x30
-> [   97.807224]  do_sys_open+0x186/0x210
-> [   97.807224]  do_syscall_64+0x5b/0x170
-> [   97.807224]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> [   97.807224] RIP: 0033:0x7f4147b07976
-> [   97.807224] Code: 89 54 24 08 e8 7b f4 ff ff 8b 74 24 0c 48 8b 3c 24 41 89 c0 44 8b 54 24 08 b8 01 01 00 00 89 f2 48 89 fe bf 9c ff ff ff 0f 05 <48> 3d 00 f0 ff ff 77 30 44 89 c7 89 44 24 08 e8 a6 f4 ff ff 8b 44
-> [   97.807224] RSP: 002b:00007ffcced96ca0 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-> [   97.807224] RAX: ffffffffffffffda RBX: 00005619d5037f80 RCX: 00007f4147b07976
-> [   97.807224] RDX: 0000000000000002 RSI: 00005619d46b969c RDI: 00000000ffffff9c
-> [   98.040039] RBP: 0000000000000024 R08: 0000000000000000 R09: 0000000000000000
-> [   98.040039] R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000024
-> [   98.040039] R13: 0000000000000012 R14: 00005619d5035950 R15: 0000000000000012
-> [   98.040039] Modules linked in: nct6775 hwmon_vid algif_skcipher af_alg nls_iso8859_1 nls_cp437 vfat fat uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common arc4 videodev media snd_usb_audio snd_hda_codec_hdmi snd_usbmidi_lib snd_rawmidi snd_seq_device mousedev input_leds iwlmvm mac80211 snd_hda_codec_realtek snd_hda_codec_generic snd_hda_intel snd_hda_codec edac_mce_amd kvm_amd snd_hda_core kvm iwlwifi snd_hwdep r8169 wmi_bmof cfg80211 snd_pcm irqbypass snd_timer snd libphy soundcore pinctrl_amd rfkill pcspkr sp5100_tco evdev gpio_amdpt k10temp mac_hid i2c_piix4 wmi pcc_cpufreq acpi_cpufreq vboxnetflt(OE) vboxnetadp(OE) vboxpci(OE) vboxdrv(OE) msr sg crypto_user ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2 fscrypto uas usb_storage dm_crypt hid_generic usbhid hid
-> [   98.040039]  dm_mod raid1 md_mod sd_mod crct10dif_pclmul crc32_pclmul crc32c_intel ghash_clmulni_intel pcbc ahci libahci aesni_intel aes_x86_64 libata crypto_simd cryptd glue_helper ccp xhci_pci rng_core scsi_mod xhci_hcd nvidia_drm(POE) drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm agpgart nvidia_uvm(POE) nvidia_modeset(POE) nvidia(POE) ipmi_devintf ipmi_msghandler
-> [   98.040039] CR2: 0000000000000080
-> [   98.040039] ---[ end trace 3b65093b6fe62b2f ]---
-> [   98.040039] RIP: 0010:drm_lease_owner+0xd/0x20 [drm]
-> [   98.040039] Code: 83 c4 18 5b 5d c3 b8 ea ff ff ff eb e2 b8 ed ff ff ff eb db e8 b4 ca 68 fb 0f 1f 40 00 0f 1f 44 00 00 48 89 f8 eb 03 48 89 d0 <48> 8b 90 80 00 00 00 48 85 d2 75 f1 c3 66 0f 1f 44 00 00 0f 1f 44
-> [   98.040039] RSP: 0018:ffffb8cf08e07bb0 EFLAGS: 00010202
-> [   98.040039] RAX: 0000000000000000 RBX: ffff9cf0f2586c00 RCX: ffff9cf0f2586c88
-> [   98.040039] RDX: ffff9cf0ddbd8000 RSI: 0000000000000000 RDI: 0000000000000000
-> [   98.040039] RBP: ffff9cf1040e9800 R08: 0000000000000000 R09: 0000000000000000
-> [   98.040039] R10: ffffdeb30fd5d680 R11: ffffdeb30f5d6808 R12: ffff9cf1040e9888
-> [   98.040039] R13: 0000000000000000 R14: dead000000000200 R15: ffff9cf0f2586cc8
-> [   98.040039] FS:  00007f4145513180(0000) GS:ffff9cf10ea00000(0000) knlGS:0000000000000000
-> [   98.040039] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   98.040039] CR2: 0000000000000080 CR3: 00000003d7548000 CR4: 00000000003406f0
-> 
-> Signed-off-by: Sergio Correia <sergio@correia.cc>
+On Tue, Nov 20, 2018 at 10:34:27AM +0000, Phil Edworthy wrote:
+> Harmless mistake, but it's incorrect.
 
-Nice catch! I guess this is with the vmwgfx driver running? Only that has
-a master_set function, and I don't see anything else that could fail.
+Hi Phil,
 
+please fill-out this changelog with an explanation of "why".
+
+Thanks!
+
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 > ---
->  drivers/gpu/drm/drm_auth.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/arm/boot/dts/r9a06g032.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_auth.c b/drivers/gpu/drm/drm_auth.c
-> index d9c0f7573905..959a1ba5a3c6 100644
-> --- a/drivers/gpu/drm/drm_auth.c
-> +++ b/drivers/gpu/drm/drm_auth.c
-> @@ -138,11 +138,13 @@ static int drm_set_master(struct drm_device *dev, struct drm_file *fpriv,
->  static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
->  {
->  	struct drm_master *old_master;
-> +	int old_master_status;
->  	int ret;
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 2322268bc862..4c1ab49c7d39 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -173,7 +173,7 @@
+>  			status = "okay";
+>  		};
 >  
->  	lockdep_assert_held_once(&dev->master_mutex);
->  
->  	old_master = fpriv->master;
-> +	old_master_status = fpriv->is_master;
-
-We have the invariant here that fpriv->is_master == 0, so no need to
-restore anything, you can just unconditionally set it to 0 at the end. If
-you want, put a WARN_ON(fpriv->is_master) here.
-
-Can you pls respin? I'll apply it right away then.
-
-Thanks, Daniel
-
->  	fpriv->master = drm_master_create(dev);
->  	if (!fpriv->master) {
->  		fpriv->master = old_master;
-> @@ -170,6 +172,7 @@ static int drm_new_set_master(struct drm_device *dev, struct drm_file *fpriv)
->  	/* drop references and restore old master on failure */
->  	drm_master_put(&fpriv->master);
->  	fpriv->master = old_master;
-> +	fpriv->is_master = old_master_status;
->  
->  	return ret;
->  }
+> -		gic: gic@44101000 {
+> +		gic: interrupt-controller@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+>  			#interrupt-cells = <3>;
 > -- 
-> 2.19.1
+> 2.17.1
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
