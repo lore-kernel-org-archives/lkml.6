@@ -2,133 +2,254 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A324FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD2FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:24:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E01321479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:22:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E01321479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rwth-aachen.de
+	by mail.kernel.org (Postfix) with ESMTP id D713A21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D713A21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731680AbeKVC56 convert rfc822-to-8bit (ORCPT
+        id S1731712AbeKVC7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:57:58 -0500
-Received: from mail-out-3.itc.rwth-aachen.de ([134.130.5.48]:61561 "EHLO
-        mail-out-3.itc.rwth-aachen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730072AbeKVC56 (ORCPT
+        Wed, 21 Nov 2018 21:59:12 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:60121 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730398AbeKVC7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:57:58 -0500
-X-Greylist: delayed 591 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 21:57:57 EST
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AFDQB5g/Vb/5oagoZiHgEGBwaBZQKBL?=
- =?us-ascii?q?1OBaDGYBoINmTIMASyBS4J1AoQKIjgSAQMBAQIBAQJtKEIBEAEEAYRjAQEBAQI?=
- =?us-ascii?q?BJ0UKAwULAgEIDgoJJQ8BIiUCBA6FIAgBA6xqM4oljAWBWD6EI4RiEQuFWwKLE?=
- =?us-ascii?q?IRJj09VBwKBEZAziVuHK4dTkDECAgICCQIUgV0hgVVNJIM8kFlBgVmEQ4RCgl4?=
- =?us-ascii?q?BgR4BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2AFDQB5g/Vb/5oagoZiHgEGBwaBZQKBL1OBaDGYBoINmTI?=
- =?us-ascii?q?MASyBS4J1AoQKIjgSAQMBAQIBAQJtKEIBEAEEAYRjAQEBAQIBJ0UKAwULAgEID?=
- =?us-ascii?q?goJJQ8BIiUCBA6FIAgBA6xqM4oljAWBWD6EI4RiEQuFWwKLEIRJj09VBwKBEZA?=
- =?us-ascii?q?ziVuHK4dTkDECAgICCQIUgV0hgVVNJIM8kFlBgVmEQ4RCgl4BgR4BAQ?=
-X-IronPort-AV: E=Sophos;i="5.56,261,1539640800"; 
-   d="scan'208";a="24956557"
-Received: from rwthex-s2-a.rwth-ad.de ([134.130.26.154])
-  by mail-in-3.itc.rwth-aachen.de with ESMTP; 21 Nov 2018 17:13:01 +0100
-Received: from rwthex-w2-a.rwth-ad.de (2a00:8a60:1:e500::26:158) by
- rwthex-s2-a.rwth-ad.de (2a00:8a60:1:e500::26:154) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1531.3; Wed, 21 Nov 2018 17:13:01 +0100
-Received: from rwthex-w2-a.rwth-ad.de ([fe80::18f3:313d:3e:42ff]) by
- rwthex-w2-a.rwth-ad.de ([fe80::18f3:313d:3e:42ff%21]) with mapi id
- 15.01.1531.007; Wed, 21 Nov 2018 17:13:01 +0100
-From:   =?iso-8859-1?Q?Br=FCns=2C_Stefan?= <Stefan.Bruens@rwth-aachen.de>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-CC:     "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "m.purski@samsung.com" <m.purski@samsung.com>
-Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Thread-Topic: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Thread-Index: AQHUgTlMOgH+/TcWJ0m0L3+ib8kVa6VaVu4A
-Date:   Wed, 21 Nov 2018 16:13:01 +0000
-Message-ID: <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
-References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
-In-Reply-To: <20181121012629.5432-1-nicoleotsuka@gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [62.153.130.132]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <BCA2704DE6A397439FA7D327DA2C9E4F@rwth-ad.de>
-Content-Transfer-Encoding: 8BIT
+        Wed, 21 Nov 2018 21:59:11 -0500
+Received: by mail-it1-f197.google.com with SMTP id 66-v6so7509217itz.9
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 08:24:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Qrhq8boVGqRP3kxHMSbUuOMXq1cWYffgOCH+HyNAAt0=;
+        b=ZiCK7nzcHpWDGeVDGxGN/lM18nSy31HawuQ2mnX4aXFuGcYfHKnXMdL+V1sOG3ZPgl
+         s6Dsm48ohoJkW2cCHWkdoDfufRdBbmPzZSNV/oDdcobe8/LXHQ8RyTrNQWpgNYn8GqWt
+         P6WAp0mde0qcf9HTabLWocJAkTtsfwv/QUNfIjTdPCARO42r+DsU0pNtf/U+TevnjG0C
+         TKowiSqVgtOAHQtDBJEUm8YGPKyYrg/xh39MzmGQI4vNs/lEs6AaWphFMHFQFyvNG3hS
+         6I/MaWYAGzunI267O/jufOVmsYG21rhE41PZH5OHY7GZISalweyFJSdmoJs1s4Tw70Nj
+         tPJA==
+X-Gm-Message-State: AA+aEWYRI+katQes2QMXwhJIp0mDHfKZl1Ffdxf0hNWj7MRkw40rLEh0
+        1qR30QsrY6FzQlqRlR7TAsOOmBwZecV7ENofPTw/oldgicNv
+X-Google-Smtp-Source: AJdET5dzNi4PpLee+Iv7faZ4RurL5IXLZxE4v3Lfm2KpywJY78hZ/NVc528pcg+zgtT9HO2jo/TapwvBAPk+GJZ88kdqP11oS8Cx
 MIME-Version: 1.0
+X-Received: by 2002:a02:8ca9:: with SMTP id f38mr4797233jak.14.1542817443272;
+ Wed, 21 Nov 2018 08:24:03 -0800 (PST)
+Date:   Wed, 21 Nov 2018 08:24:03 -0800
+In-Reply-To: <000000000000d03eea0571adfe83@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a8e163057b2f2ddf@google.com>
+Subject: Re: possible deadlock in mnt_want_write
+From:   syzbot <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mittwoch, 21. November 2018 02:26:29 CET Nicolin Chen wrote:
-> === Background ===
-[...]
-> 
-> === Problem ===
-> Both methods simplify software routine by fixing one factor, which
-> sacrifices the precision of the hardware measurement results.
-> 
-> Using ina226 for example, with method A, the current scale was 1mA
-> and the power scale was 25mA.
-> 
-> With method B, calibration value is fixed at 2048 so the precision
-> is decided by shunt resistor value. It sounds reasonable since the
-> hardware engineers can use a larger shunt resistor when they need
-> higher resolution. However, they often concern power burning across
-> the resistor as well, so the resistor usually won't be so large: a
-> typical value 1000 micro-ohms, which results in a current scale at
-> 2.5 mA and a power sacle at 62.5 mW.
+syzbot has found a reproducer for the following crash on:
 
-Power loss surely is a concern, but figures should be kept reasonable.
+HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a1426d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1632326d400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a16ed5400000
 
-1. You mention 1.8V bus voltage, and currents in the 30mA range. Using the 
-1mOhm current shunt:
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com
 
-U_S = R_S * I_S 1e-3 Ohm * 30e-3 A = 30e-6 V  (30uV)
-P_S = U_S * I_S = 30e-6V * 30e-3 A = 900e-9W = 0.9 uW
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
 
-INA219 Power Supply (Datasheet)
-Min operating Voltage: 3V
-Quiescent Current: 0.7mA
--> Min power: 2.1mW
+======================================================
+WARNING: possible circular locking dependency detected
+4.20.0-rc1-next-20181109+ #110 Not tainted
+------------------------------------------------------
+syz-executor599/5968 is trying to acquire lock:
+00000000e42cbf00 (sb_writers#3){.+.+}, at: sb_start_write  
+include/linux/fs.h:1607 [inline]
+00000000e42cbf00 (sb_writers#3){.+.+}, at: mnt_want_write+0x3f/0xc0  
+fs/namespace.c:359
 
-So the INA219 alone uses 2.1mW, 1000 times more than the shunt.
+but task is already holding lock:
+00000000166f985a (&iint->mutex){+.+.}, at: process_measurement+0x438/0x1bf0  
+security/integrity/ima/ima_main.c:224
 
-Another concern may be voltage drop over the shunt, but for this case you have 
-a nominal voltage of 1.8V, so 30uV are 0.001%.
- 
-> When measuring a 1.8v voltage running a small current (e.g. 33 mA),
-> the power value (that's supposed to be 59.4 mW) becomes inaccurate
-> due to the larger scale (25mA for method A; 62.5 mA for method B).
-
-Another look into the datasheet reveals, even at full gain (PGA=1), the LSB is
-40mV / 2^12 = 40mV / 4096 ~ 10uV. So when the current ADC reads out as 3*LSB, 
-this anything between 25mA and 35mA. This is the best case figure.
-
-On top of quantisation error, you have the ADC offset voltage (V_OS), which is 
-given as (for PGA=1, best case): (+-) 10uV typical, (+-) 100uV max.
+which lock already depends on the new lock.
 
 
-So, if you want to have meaningful readouts adjust your shunt to a reasonable 
-value. Even 100 times the current value will have no measurable effect on you 
-system (power loss: 90uW, voltage drop: 3mV).
+the existing dependency chain (in reverse order) is:
 
-Kind regards,
+-> #1 (&iint->mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:925 [inline]
+        __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
+        mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+        process_measurement+0x438/0x1bf0  
+security/integrity/ima/ima_main.c:224
+        ima_file_check+0xe5/0x130 security/integrity/ima/ima_main.c:391
+        do_last fs/namei.c:3422 [inline]
+        path_openat+0x134a/0x5150 fs/namei.c:3534
+        do_filp_open+0x255/0x380 fs/namei.c:3564
+        do_sys_open+0x568/0x700 fs/open.c:1063
+        __do_sys_open fs/open.c:1081 [inline]
+        __se_sys_open fs/open.c:1076 [inline]
+        __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Stefan
+-> #0 (sb_writers#3){.+.+}:
+        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+        percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36  
+[inline]
+        percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+        __sb_start_write+0x214/0x370 fs/super.c:1564
+        sb_start_write include/linux/fs.h:1607 [inline]
+        mnt_want_write+0x3f/0xc0 fs/namespace.c:359
+        ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+        ovl_open_maybe_copy_up+0x12c/0x190 fs/overlayfs/copy_up.c:888
+        ovl_open+0xb3/0x260 fs/overlayfs/file.c:123
+        do_dentry_open+0x499/0x1250 fs/open.c:771
+        vfs_open fs/open.c:880 [inline]
+        dentry_open+0x143/0x1d0 fs/open.c:896
+        ima_calc_file_hash+0x324/0x570  
+security/integrity/ima/ima_crypto.c:427
+        ima_collect_measurement+0x619/0x730  
+security/integrity/ima/ima_api.c:232
+        process_measurement+0x11fd/0x1bf0  
+security/integrity/ima/ima_main.c:284
+        ima_file_check+0xe5/0x130 security/integrity/ima/ima_main.c:391
+        do_last fs/namei.c:3422 [inline]
+        path_openat+0x134a/0x5150 fs/namei.c:3534
+        do_filp_open+0x255/0x380 fs/namei.c:3564
+        do_sys_open+0x568/0x700 fs/open.c:1063
+        __do_sys_open fs/open.c:1081 [inline]
+        __se_sys_open fs/open.c:1076 [inline]
+        __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&iint->mutex);
+                                lock(sb_writers#3);
+                                lock(&iint->mutex);
+   lock(sb_writers#3);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor599/5968:
+  #0: 00000000166f985a (&iint->mutex){+.+.}, at:  
+process_measurement+0x438/0x1bf0 security/integrity/ima/ima_main.c:224
+
+stack backtrace:
+CPU: 0 PID: 5968 Comm: syz-executor599 Not tainted  
+4.20.0-rc1-next-20181109+ #110
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_circular_bug.isra.35.cold.56+0x1bd/0x27d  
+kernel/locking/lockdep.c:1221
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2347 [inline]
+  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36 [inline]
+  percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+  __sb_start_write+0x214/0x370 fs/super.c:1564
+  sb_start_write include/linux/fs.h:1607 [inline]
+  mnt_want_write+0x3f/0xc0 fs/namespace.c:359
+  ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+  ovl_open_maybe_copy_up+0x12c/0x190 fs/overlayfs/copy_up.c:888
+  ovl_open+0xb3/0x260 fs/overlayfs/file.c:123
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open fs/open.c:880 [inline]
+  dentry_open+0x143/0x1d0 fs/open.c:896
+  ima_calc_file_hash+0x324/0x570 security/integrity/ima/ima_crypto.c:427
+  ima_collect_measurement+0x619/0x730 security/integrity/ima/ima_api.c:232
+  process_measurement+0x11fd/0x1bf0 security/integrity/ima/ima_main.c:284
+  ima_file_check+0xe5/0x130 security/integrity/ima/ima_main.c:391
+  do_last fs/namei.c:3422 [inline]
+  path_openat+0x134a/0x5150 fs/namei.c:3534
+  do_filp_open+0x255/0x380 fs/namei.c:3564
+  do_sys_open+0x568/0x700 fs/open.c:1063
+  __do_sys_open fs/open.c:1081 [inline]
+  __se_sys_open fs/open.c:1076 [inline]
+  __x64_sys_open+0x7e/0xc0 fs/open.c:1076
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x441af9
+Code: 23 02 00 85 c0 b8 00 00 00 00 48 0f 44 c3 5b c3 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffce8c93d48 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000441af9
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000020000040
+RBP: 0000000000000000 R08: 0000000000402850 R09: 0000000000402850
+R10: 0000000000402850 R11: 0000000000000246 R12: 0000000000402850
+R13: 00000000004028e0 R14: 0000000000000000 R15: 0000000000000000
+kobject: 'rx-0' (000000008bf42b56): kobject_cleanup, parent 00000000f75c8bd3
+kobject: 'rx-0' (000000008bf42b56): auto cleanup 'remove' event
+kobject: 'rx-0' (000000008bf42b56): kobject_uevent_env
+kobject: 'rx-0' (000000008bf42b56): fill_kobj_path: path  
+= '/devices/virtual/net/syz_tun/queues/rx-0'
+kobject: 'rx-0' (000000008bf42b56): auto cleanup kobject_del
+kobject: 'rx-0' (000000008bf42b56): calling ktype release
+kobject: 'rx-0': free name
+kobject: 'tx-0' (00000000bbdcdbed): kobject_cleanup, parent 00000000f75c8bd3
+kobject: 'tx-0' (00000000bbdcdbed): auto cleanup 'remove' event
+kobject: 'tx-0' (00000000bbdcdbed): kobject_uevent_env
+kobject: 'tx-0' (00000000bbdcdbed): fill_kobj_path: path  
+= '/devices/virtual/net/syz_tun/queues/tx-0'
+kobject: 'tx-0' (00000000bbdcdbed): auto cleanup kobject_del
+kobject: 'tx-0' (00000000bbdcdbed): calling ktype release
+kobject: 'tx-0': free name
+kobject: 'queues' (00000000f75c8bd3): kobject_cleanup, parent            
+(null)
+kobject: 'queues' (00000000f75c8bd3): calling ktype release
+kobject: 'queues' (00000000f75c8bd3): kset_release
+kobject: 'queues': free name
+kobject: 'syz_tun' (00000000ad4d7dba): kobject_uevent_env
+kobject: 'syz_tun' (00000000ad4d7dba): fill_kobj_path: path  
+= '/devices/virtual/net/syz_tun'
+kobject: 'syz_tun' (00000000ad4d7dba): kobject_cleanup, parent            
+(null)
+kobject: 'syz_tun' (00000000ad4d7dba): calling ktype release
+kobject: 'syz_tun': free name
+kobject: 'rx-0' (0000000017c19f65): kobject_cleanup, parent 000000003ca64aec
+kobject: 'rx-0' (0000000017c19f65): auto cleanup 'remove' event
+kobject: 'rx-0' (0000000017c19f65): kobject_uevent_env
+kobject: 'rx-0' (0000000017c19f65): kobject_uevent_env: uevent_suppress  
+caused the event to drop!
+kobject: 'rx-0' (0000000017c19f65): auto cleanup kobject_del
+kobject: 'rx-0' (0000000017c19f65): calling ktype release
+kobject: 'rx-0': free name
+kobject: 'tx-0' (000000003e77b572): kobject_cleanup, parent 000000003ca64aec
+kobject: 'tx-0' (000000003e77b572): auto cleanup 'remove' event
+kobject: 'tx-0' (000000003e77b572): kobject_uevent_env
+kobject: 'tx-0' (000000003e77b572): kobject_uevent_env: uevent_suppress  
+caused the event to drop!
+kobject: 'tx-0' (000000003e77b572): auto cleanup kobject_del
+kobject: 'tx-0' (000000003e77b572): calling ktype release
+kobject: 'tx-0': free name
+
