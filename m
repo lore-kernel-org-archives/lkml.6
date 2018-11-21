@@ -1,78 +1,83 @@
 Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GUARANTEED_100_PERCENT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3204C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:45:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C52C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8F052145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:45:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 253F6204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:49:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggnoXW65"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F052145D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWwKBhGk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 253F6204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389686AbeKVHU7 (ORCPT
+        id S1733087AbeKVHZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:20:59 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40161 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeKVHU6 (ORCPT
+        Thu, 22 Nov 2018 02:25:43 -0500
+Received: from mail-wr1-f41.google.com ([209.85.221.41]:45779 "EHLO
+        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730074AbeKVHZm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:20:58 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so4971166lfe.7;
-        Wed, 21 Nov 2018 12:45:02 -0800 (PST)
+        Thu, 22 Nov 2018 02:25:42 -0500
+Received: by mail-wr1-f41.google.com with SMTP id v6so7076539wrr.12;
+        Wed, 21 Nov 2018 12:49:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XoLzKOMYMpvhfX9iLjV1f8bylSNS2Gb+5zk9Yy13474=;
-        b=ggnoXW65X2rPBJWLPbsDWh1UvQy4k1PO3FNRaMQTXsX9CrZ0jfDa5kpLxsFMFxwNiy
-         hT4T4kNbYRQgrKtKtdmme+FNoCiKDE5nhxFhczlQhsN+kBIYcm+isjB9X12GR2Z+vGzm
-         X37498OgtRrrr4zlj9FH4XoZAkZuAvxCEGQ5rCZH0b6ffxVbB9ZxYsygkFDX7kzXmlxe
-         F4VEuPjpGMJFHhmxyTRe2eoOiLWUJTjKt5rQfgm0numBA5IRhpvLqUBiVgdxU79LdKCa
-         gUyiaG9WA6Halwzb+ShDYz7lxQg+s6ObUMfiDHsX6cxA6lIgjQAZ8U4xCojV5mGsROp0
-         gK1Q==
+        bh=346XCBRRQI0U8VUrVFMaflldXA9IwQC48vwIUtejHmg=;
+        b=sWwKBhGk4upkcaRDP4orlbG1JyBBbvSzxnpXj8AdAx8uvATul7MNZ1Sk2TPJlV8Vh8
+         0t6fcUsIQrCzoSPqnYzB4GOV6YwvLL8uD7vixlOtTEQKejzzLq3u9uoB3NkPL3b4tqIt
+         6c2Px5Yx9rcfUqzMP3ApHSfDqkVe7Q4+8XSahemwkeVnkvbi1naDPoLWC+ByoRhEgeQw
+         UocnhK9dhd9CKhIZxEiVeZ43euINYVUVMjxaVIO6K2+qwt0AprXwr2Cx4SEEsiR9C5G4
+         +6faCUkqH/qO+VnbNMra4MnbXbsYwbpeX8DHEXKGwfJ6rSw+J9qOHTxDi2b1yrDf7O/q
+         2Cvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XoLzKOMYMpvhfX9iLjV1f8bylSNS2Gb+5zk9Yy13474=;
-        b=XtfCwSKTpCp/uCf6vWfWjjW0qaUcruEb+FPRJjQT8eT8VWrWsgof3rk3MF+8ip0AiP
-         oNlo6+dFDc0HMdN3HgZP6wKc+ELYsqb8G4oTK4jAKziKXVlCy60hNGvdAffkwxxetXnO
-         7c7QZV0lwCj8T3Zk+GREU2hdZwBOqbolJOwal45nmf5PU82y7ujda5BNqs/ItDYVKWIp
-         Ol0U18+WfGkWdPu5/UfSn3LfF7/QROLF/DqYuMVdxQyStl0xmkLa9quIlPHHCSwLzge7
-         HuM148YlY3kTVdemqPd/Z6vSj/RNPXjpxiYHuXz1Rs6V0o3OKVoZhTVvX9f1ZZDwKryR
-         Y4hg==
-X-Gm-Message-State: AGRZ1gJeXh7613+vJca0OZ/UAHrqVBKdUdEeNWmoRc3ckTmOg5Jhpwah
-        S9q6ERof7eQhuN8Wp+FQnkhN3fB1
-X-Google-Smtp-Source: AJdET5cJBViKFFPRiWKS1sW6vsDOVIRh5QKqYDtUNuaLoQUS/kFqqE1EkUT7RnThBfvTiXBk/uohaA==
-X-Received: by 2002:a19:d78c:: with SMTP id q12mr4602050lfi.27.1542833101582;
-        Wed, 21 Nov 2018 12:45:01 -0800 (PST)
-Received: from [192.168.1.18] (dma88.neoplus.adsl.tpnet.pl. [83.24.56.88])
-        by smtp.gmail.com with ESMTPSA id r29-v6sm6303381ljd.44.2018.11.21.12.44.58
+        bh=346XCBRRQI0U8VUrVFMaflldXA9IwQC48vwIUtejHmg=;
+        b=UpzlZT6Ncac3vbV2dTFC15JnvGCIvPq7j7jgJCxctsKJjEGIUEOscq27jZrjBtd1rz
+         CWdHssmCgLKZjL9MdgbKB9mMkSfNY3GDuipSkaYAb1GOTEIYDhKLFwpq9Td+xGgfqOIf
+         NhwUnKisJKmYFUFau1Hmj9MRHuL4X/sywximtrvU0Ottm3VSyi8ltj9bfaVQTDLpbiyL
+         id1i/PLNxF1KKb0NNTp7XuldEseEFTG039IMiRbSV94GWL3HGV2GBxK8YwkKIuRpOqKh
+         B8HV3kBPvwCMlzyzSDd0X1gA9DLp87p+apWg43fKWh9YLIx5JHZ69QubTAQEMDbPywY0
+         XHtA==
+X-Gm-Message-State: AA+aEWb8IhlWFKjVGO3xcMVCTdTI794UgfOTKGH832dvgXDD/5BuflLI
+        hY8kZqf59l0BRQ26b7dRV5s=
+X-Google-Smtp-Source: AFSGD/WlcakhRcrqLtR6LXyiS6eqElTJ2oBMQ0mOsgjFEVqD8SFdPUeSzkIuPnC6hJmK2vpQUj3T0w==
+X-Received: by 2002:adf:dcd0:: with SMTP id x16mr7102016wrm.143.1542833385590;
+        Wed, 21 Nov 2018 12:49:45 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:14d:188e:adb0:9ba6? (p200300EA8BCFE300014D188EADB09BA6.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:14d:188e:adb0:9ba6])
+        by smtp.googlemail.com with ESMTPSA id 68sm494702wmt.10.2018.11.21.12.49.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 12:45:00 -0800 (PST)
-Subject: Re: [PATCH] leds: powernv: add of_node_put()
-To:     Yangtao Li <tiny.windzz@gmail.com>, pavel@ucw.cz,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     linux-leds@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20181121123138.21870-1-tiny.windzz@gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <82ef58c4-1d18-9dd6-71ec-42f799370f33@gmail.com>
-Date:   Wed, 21 Nov 2018 21:44:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 21 Nov 2018 12:49:44 -0800 (PST)
+Subject: Re: Issue with RTL8111 NIC after upgrade to kernel 4.19
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Norbert Jurkeit <norbert.jurkeit@web.de>, nic_swsd@realtek.com,
+        Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        michael.wiktowy@gmail.com, jcline@redhat.com,
+        marc.c.dionne@gmail.com
+References: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de>
+ <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
+ <20181121202034.GA10697@lunn.ch>
+ <eda84d0b-2d9f-07ae-34a1-767bc5200964@gmail.com>
+Message-ID: <6aeba3d6-2292-1221-9be7-1c0bb7cbc203@gmail.com>
+Date:   Wed, 21 Nov 2018 21:49:40 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181121123138.21870-1-tiny.windzz@gmail.com>
+In-Reply-To: <eda84d0b-2d9f-07ae-34a1-767bc5200964@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -81,71 +86,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yangtao,
-
-Thank you for the patch.
-
-On 11/21/2018 01:31 PM, Yangtao Li wrote:
-> of_find_node_by_path() acquires a reference to the node returned by
-> it and that reference needs to be dropped by its caller.bl_idle_init()
-> doesn't do that, so fix it.
-
-s/bl_idle_init/powernv_led_probe/
-
-I suppose that you adopted the commit message from a fix
-for drivers/cpuidle/cpuidle-big_little.c.
-
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/leds/leds-powernv.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
+On 21.11.2018 21:32, Heiner Kallweit wrote:
+> On 21.11.2018 21:20, Andrew Lunn wrote:
+>>> request_module() is supposed to be synchronous, however after some
+>>> reading this may not be 100% guaranteed. Maybe the module init
+>>> function on some systems isn't finished yet when request_module()
+>>> returns. As a result the genphy driver may be used instead of
+>>> the PHY version-specific driver.
+>>
+>> Hi Heiner
+>>
+>> That would be true for all PHYs i think. We would of noticed this
+>> problem with other systems using other PHY drivers.
+>>
+>> 	Andrew
+>>
+> It could be a timing issue affecting certain systems only. At least
+> for now I don't have a good explanation why loading the module via
+> request_module() and loading it upfront manually makes a difference.
 > 
-> diff --git a/drivers/leds/leds-powernv.c b/drivers/leds/leds-powernv.c
-> index b1adbd70ce2e..0b1540029034 100644
-> --- a/drivers/leds/leds-powernv.c
-> +++ b/drivers/leds/leds-powernv.c
-> @@ -285,6 +285,7 @@ static int powernv_led_probe(struct platform_device *pdev)
->  	struct device_node *led_node;
->  	struct powernv_led_common *powernv_led_common;
->  	struct device *dev = &pdev->dev;
-> +	int rc;
->  
->  	led_node = of_find_node_by_path("/ibm,opal/leds");
->  	if (!led_node) {
-> @@ -295,15 +296,20 @@ static int powernv_led_probe(struct platform_device *pdev)
->  
->  	powernv_led_common = devm_kzalloc(dev, sizeof(*powernv_led_common),
->  					  GFP_KERNEL);
-> -	if (!powernv_led_common)
-> -		return -ENOMEM;
-> +	if (!powernv_led_common){
+> One affected user just reported the PHY to be a RTL8211B. This is
+> what I expected, because this PHY crashes when writing to the MMD
+> registers (the MMD registers are used otherwise by this PHY).
+> See also commit 0231b1a074c6 ("net: phy: realtek: Use the dummy
+> stubs for MMD register access for rtl8211b").
+> 
+> Let's see whether the other affected systems use the same PHY
+> version.
+> 
+Next report is also about a RTL8211B and as I assumed:
+- W/o manually loading the realtek module the genphy driver is used
+  and network fails.
+- W/ manually loading the realtek module the proper RTL8211B PHY
+  driver is used and network works.
 
-missing space:
+So it seems that even after request_module() the PHY driver isn't
+yet available when device and driver are matched.
 
-s/){/) {/
+If further reports support this (pre-)analysis, then indeed it
+seems to be a timing issue and a proper fix most likely is
+difficult. As a workaround I could imagine to add a delay loop
+after request_module() checking for a Realtek PHY driver via
+driver_find(). When adding one small delay after this we should
+be sufficiently sure that all Realtek PHY drivers are registered.
 
-> +		rc = -ENOMEM;
-> +		goto out;
-> +	}
->  
->  	mutex_init(&powernv_led_common->lock);
->  	powernv_led_common->max_led_type = cpu_to_be64(OPAL_SLOT_LED_TYPE_MAX);
->  
->  	platform_set_drvdata(pdev, powernv_led_common);
->  
-> -	return powernv_led_classdev(pdev, led_node, powernv_led_common);
-> +	rc = powernv_led_classdev(pdev, led_node, powernv_led_common);
-> +out:
-> +	of_node_put(led_node);
-> +	return rc;
->  }
->  
->  /* Platform driver remove */
+> Heiner
 > 
 
-I've fixed those trivial problems and applied the patch
-to the for-next branch of linux-leds.git.
-
--- 
-Best regards,
-Jacek Anaszewski
