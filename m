@@ -2,85 +2,74 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2878C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 521D6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:46:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3C021479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:45:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="REFSGg0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3C021479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 212E520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:46:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212E520989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeKUTTW (ORCPT
+        id S1728513AbeKUTTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:19:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60946 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbeKUTTW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:19:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ImXntfnjWxLNLwY0vNf6304naOv6EJJCfDzdkT1R29o=; b=REFSGg0yrfFaQsRTtoxDQx3SV
-        3uxrwWEzxwdwlPMajZqdtE1z1JAZNfNLtKVIfPceFDY89MVRtRvYkLB/FHwNaVStIoHAOi2U9v4LT
-        VS5KdwmjXLVVmGL/rLvoSgmaKOsK27Oqgta7BvbQ80+/tqQrmMosiLanIs2H0+Vk6Sh3LKtsjvFFy
-        nsWGxVyPFusXUktYX8aNG9D9MV0muEzRCeS/P8pgSw1JOBhBVXh2mzVxco5RLOyk16svTuLSk3mTj
-        3veJQLbrHafwLjprQSjQGooab5iTMEOTbuauPl1JPeA1HEZMGRnLF+Y6hzAwQaY8ek65HS64vphlO
-        sNOMpGSiQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPO8X-0006wV-LP; Wed, 21 Nov 2018 08:45:29 +0000
-Date:   Wed, 21 Nov 2018 00:45:29 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Kirti Wankhede <kwankhede@nvidia.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
-        kevin.tian@intel.com,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
-        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
-        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v4 6/8] vfio/mdev: Add iommu place holders in mdev_device
-Message-ID: <20181121084529.GA21766@infradead.org>
-References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
- <20181105073408.21815-7-baolu.lu@linux.intel.com>
- <20181106165356.44b59ec3@w520.home>
- <edadb198-e4ab-ac23-4520-28bfcac252c3@linux.intel.com>
- <7bfc2f2b-10e6-b53c-51f3-c6494b686aa3@nvidia.com>
- <25b9a20f-06b5-57ac-81f1-fd933845c77f@linux.intel.com>
- <20181116085714.GA13181@infradead.org>
- <339ab9c8-08e1-ce2f-6f71-99a06e4b82f3@nvidia.com>
+        Wed, 21 Nov 2018 14:19:48 -0500
+Received: from verein.lst.de ([213.95.11.211]:50061 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728210AbeKUTTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 14:19:47 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 4F0CA68C19; Wed, 21 Nov 2018 09:46:08 +0100 (CET)
+Date:   Wed, 21 Nov 2018 09:46:08 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+Message-ID: <20181121084608.GA29622@lst.de>
+References: <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me> <20181120161651.GB2629@lst.de> <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me> <20181121005902.GA31748@ming.t460p> <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me> <20181121034415.GA8408@ming.t460p> <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me> <7378bf49-5a7e-5622-d4d1-808ba37ce656@grimberg.me> <20181121050359.GA31915@ming.t460p> <fc268b0e-61b5-aacc-67be-cb7b266c6d8f@grimberg.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <339ab9c8-08e1-ce2f-6f71-99a06e4b82f3@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <fc268b0e-61b5-aacc-67be-cb7b266c6d8f@grimberg.me>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 02:22:08AM +0530, Kirti Wankhede wrote:
-> It is about how mdev framework can be used by existing drivers. These
-> symbols doesn't use any other exported symbols.
+On Tue, Nov 20, 2018 at 09:35:07PM -0800, Sagi Grimberg wrote:
+>> Given it is over TCP, I guess it should be doable for you to preallocate one
+>> 256-bvec table in one page for each request, then sets the max segment size as
+>> (unsigned int)-1, and max segment number as 256, the preallocated table
+>> should work anytime.
+>
+> 256 bvec table is really a lot to preallocate, especially when its not
+> needed, I can easily initialize the bvec_iter on the bio bvec. If this
+> involves preallocation of the worst-case than I don't consider this to
+> be an improvement.
 
-That is an unfortunate accident of history, but doesn't extent to new
-ones.  It also is another inidicator those drivers probably are derived
-works of the Linux kernel and might be in legal trouble one way or
-another.
+Ok, I took a look at the nvme-tcp code and it seems you care about
+bios because you want a contiguos bio chunk for sending it down
+the networking code.  Yes, in that case we sort of need to iterate
+over bios.  But you already have a special case for discard, so you
+don't really need any of the magic in the bio_bvecs() helper either
+can can just count bi_vcnt in the bio.
