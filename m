@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4579AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF50C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECAA214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 727E2214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="i4VRiNp2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ECAA214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BJPWO8FL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727E2214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388477AbeKVFpH (ORCPT
+        id S2388490AbeKVFpK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39836 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbeKVFpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:07 -0500
+        id S1730870AbeKVFpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E266D206BB;
-        Wed, 21 Nov 2018 19:09:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 46E44206BB;
+        Wed, 21 Nov 2018 19:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827374;
-        bh=Qw7BFTXtfWchXOU1sNqgvEQEOF4I61kzgBFriwtgyHA=;
+        s=default; t=1542827376;
+        bh=uXUj+zy2akVsMYba+cH4N60tqiNrDzcigXSWHr/qvYE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i4VRiNp2x74Ig0jbInI4A3JArnlSwE1g5XoFK+WBHhtYsdRwRTzyuQDloSg0rzDAX
-         CZWkTS8mmDg25XUCp5ZJ0FNzYNIQOGtxCEetvj/9lI8XpnMJ5sCdsX9NFLrHTL+HpC
-         l3ARrj4H812YWFhYGhWO+wG/LcYqQjZGtgIvAElE=
+        b=BJPWO8FLBLdOpKrTkUsDova85dfIO3hwY4x99otNFU2jmik9ickJHtPK4RrXb0SmE
+         0YaWHi59dqEoK/Sdn3ZJf0r60EgpOKrztKKl5UuyDlt3RsKA0gNI3P79llD8yr67ez
+         1AmNQ04VY94+haGMk2FE3jgnT3DRF/Jf1DADcXrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        Matthew Cover <matthew.cover@stackpath.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 07/21] tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
-Date:   Wed, 21 Nov 2018 20:06:51 +0100
-Message-Id: <20181121183422.389685303@linuxfoundation.org>
+Subject: [PATCH 4.14 08/21] tuntap: fix multiqueue rx
+Date:   Wed, 21 Nov 2018 20:06:52 +0100
+Message-Id: <20181121183422.431534668@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -64,69 +63,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Reddy Kallam <siva.kallam@broadcom.com>
+From: Matthew Cover <werekraken@gmail.com>
 
-[ Upstream commit 59663e42199c93d1d7314d1446f6782fc4b1eb81 ]
+[ Upstream commit 8ebebcba559a1bfbaec7bbda64feb9870b9c58da ]
 
-This patch has the fix to avoid PHY lockup with 5717/5719/5720 in change
-ring and flow control paths. This patch solves the RX hang while doing
-continuous ring or flow control parameters with heavy traffic from peer.
+When writing packets to a descriptor associated with a combined queue, the
+packets should end up on that queue.
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Acked-by: Michael Chan <michael.chan@broadcom.com>
+Before this change all packets written to any descriptor associated with a
+tap interface end up on rx-0, even when the descriptor is associated with a
+different queue.
+
+The rx traffic can be generated by either of the following.
+  1. a simple tap program which spins up multiple queues and writes packets
+     to each of the file descriptors
+  2. tx from a qemu vm with a tap multiqueue netdev
+
+The queue for rx traffic can be observed by either of the following (done
+on the hypervisor in the qemu case).
+  1. a simple netmap program which opens and reads from per-queue
+     descriptors
+  2. configuring RPS and doing per-cpu captures with rxtxcpu
+
+Alternatively, if you printk() the return value of skb_get_rx_queue() just
+before each instance of netif_receive_skb() in tun.c, you will get 65535
+for every skb.
+
+Calling skb_record_rx_queue() to set the rx queue to the queue_index fixes
+the association between descriptor and rx queue.
+
+Signed-off-by: Matthew Cover <matthew.cover@stackpath.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ drivers/net/tun.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -12395,6 +12395,7 @@ static int tg3_set_ringparam(struct net_
- {
- 	struct tg3 *tp = netdev_priv(dev);
- 	int i, irq_sync = 0, err = 0;
-+	bool reset_phy = false;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1214,6 +1214,7 @@ static void tun_rx_batched(struct tun_st
  
- 	if ((ering->rx_pending > tp->rx_std_ring_mask) ||
- 	    (ering->rx_jumbo_pending > tp->rx_jmb_ring_mask) ||
-@@ -12426,7 +12427,13 @@ static int tg3_set_ringparam(struct net_
+ 	if (!rx_batched || (!more && skb_queue_empty(queue))) {
+ 		local_bh_disable();
++		skb_record_rx_queue(skb, tfile->queue_index);
+ 		netif_receive_skb(skb);
+ 		local_bh_enable();
+ 		return;
+@@ -1233,8 +1234,11 @@ static void tun_rx_batched(struct tun_st
+ 		struct sk_buff *nskb;
  
- 	if (netif_running(dev)) {
- 		tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
--		err = tg3_restart_hw(tp, false);
-+		/* Reset PHY to avoid PHY lock up */
-+		if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
-+		    tg3_asic_rev(tp) == ASIC_REV_5719 ||
-+		    tg3_asic_rev(tp) == ASIC_REV_5720)
-+			reset_phy = true;
-+
-+		err = tg3_restart_hw(tp, reset_phy);
- 		if (!err)
- 			tg3_netif_start(tp);
+ 		local_bh_disable();
+-		while ((nskb = __skb_dequeue(&process_queue)))
++		while ((nskb = __skb_dequeue(&process_queue))) {
++			skb_record_rx_queue(nskb, tfile->queue_index);
+ 			netif_receive_skb(nskb);
++		}
++		skb_record_rx_queue(skb, tfile->queue_index);
+ 		netif_receive_skb(skb);
+ 		local_bh_enable();
  	}
-@@ -12460,6 +12467,7 @@ static int tg3_set_pauseparam(struct net
- {
- 	struct tg3 *tp = netdev_priv(dev);
- 	int err = 0;
-+	bool reset_phy = false;
- 
- 	if (tp->link_config.autoneg == AUTONEG_ENABLE)
- 		tg3_warn_mgmt_link_flap(tp);
-@@ -12550,7 +12558,13 @@ static int tg3_set_pauseparam(struct net
- 
- 		if (netif_running(dev)) {
- 			tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
--			err = tg3_restart_hw(tp, false);
-+			/* Reset PHY to avoid PHY lock up */
-+			if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
-+			    tg3_asic_rev(tp) == ASIC_REV_5719 ||
-+			    tg3_asic_rev(tp) == ASIC_REV_5720)
-+				reset_phy = true;
-+
-+			err = tg3_restart_hw(tp, reset_phy);
- 			if (!err)
- 				tg3_netif_start(tp);
- 		}
 
 
