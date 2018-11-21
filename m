@@ -1,114 +1,122 @@
 Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B932C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DA8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16AFA214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64A46214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:34:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mgbb9p9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AFA214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tUTl1ghM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64A46214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730814AbeKVAHa (ORCPT
+        id S1730255AbeKVAIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:07:30 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:38284 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbeKVAHa (ORCPT
+        Wed, 21 Nov 2018 19:08:39 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33224 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbeKVAIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:07:30 -0500
-Received: by mail-it1-f193.google.com with SMTP id h65so8823849ith.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 05:33:04 -0800 (PST)
+        Wed, 21 Nov 2018 19:08:39 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so5599571plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 05:34:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mW96xN5AtLZsqRZBB0JVK90Y7+USNXWQ/PGTkWqfW1c=;
-        b=Mgbb9p9JOkLRUatHdghXcpP47CIKwnyT1DrICKE+dRMJLeqYgoKY+/Crq49JKQb8V6
-         9stj7/90PWvYl9dqoNxIvrCaMe2lZB2rmsIoK3ZycmMtFPulPvpfrv5GtUuwoBp7T7AR
-         +pB9mzMJnLdFqO1YqxD7E3yFjvXn6aGh1PSzG2tjs+YENAAiefBfEg4axmJvunYfQU6M
-         RgIOW54TN/xOQhb7ZVaQAeN8gHSW9bmacEUaF3AxowDlyoVZpFtbxQ1nJBtDfBW14oPj
-         gMZChOkobuayJH9wSYQ7FxTKYiLg7DAEnB2sKJ5CWqwOqC3xrgVu3uGzBnet3R3bkFu/
-         bVWw==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=N53r5quA7Risz66wOdqYRld2kPWf4xgxHHUwFWN87so=;
+        b=tUTl1ghM2cPduhFIvyK3uXoB7Aboyb2l1hy6lQMMctpXexzSiaRdogwqgweHX1BdP8
+         kL6Tc7fsmOwj1Ktkaz9RQ2IY69gV2hh0L0COuL+evbhVWyCo3kEWOEPdq2BZfQ2JsHy7
+         1TeV6kq/BGhYf7MV8QinuJ06KKkx6gK1ds8mAgcjkURg7Mg85nu63cLdYr+s3qhQ3jyV
+         r1yOOtH1hbsZJMWLAE1TrUKsYs5JofiQamtmo3xsqAo3e/OJl0Cbkbm4JEzPqDkKunZM
+         BB914c4gnF07UJfSTjJhrXmqz12DoL+3V3VXwsspTNtGPn055omVRb5RF0osjdzXZUP5
+         CDlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mW96xN5AtLZsqRZBB0JVK90Y7+USNXWQ/PGTkWqfW1c=;
-        b=kd/L1WVJjFGAwz2GjjxNHpHUQcxvPWgUfcSTvVR2PTimVoXnJ/UH6V4OEa46hqxUMj
-         3PnZ/n9NK6U9Of09DGuQpvlMBzOtJ3wkDVwIngHhQXHS4TMuBytiPqt8CRxaSi+9JCzy
-         tBvk3J31MctPhSEj/mZaCt56bnxmNFkY5nJTwApOxf6mQYS+8zPTD5Q3fRkvvnqJqRQ5
-         Z9OBR4ECZcMHi/Qmzckx/NJTP0uI6lAQOSES5e6Cv4yVbEgdLco4UlM1TjaEl1OT6L+t
-         4Dd0AMkPG4UymJvXLe9FqTE+rVqHp+P8z6fbKH5COsFOB+Sl3Lk4pJWVkjRpUv6m1Oui
-         sS5A==
-X-Gm-Message-State: AA+aEWZpn5B/U2+PMi5drbsZTUKlBsvewkPuShfytG7mePC2tNT5vcc2
-        ujeS1Tk46pNEdLiYZMGi9M7G3yTNv8WhYanzBfxXGQ==
-X-Google-Smtp-Source: AJdET5dacCUKldR6cyXrs7298SyNjMf9fnQGUBeaGLFIlsZ3Qsm6jlINH4sINY+bYgsjfLMrWwjAXuDnWzabPN9p/Lc=
-X-Received: by 2002:a24:b009:: with SMTP id d9-v6mr5345763itf.166.1542807183807;
- Wed, 21 Nov 2018 05:33:03 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=N53r5quA7Risz66wOdqYRld2kPWf4xgxHHUwFWN87so=;
+        b=guakbs+ni3RBWySh8cQPBvVa4ppeVtd2YHhgRkj1L5kvIx2M7LRfOEUj56GbQxlAqO
+         iK2asuXhCWsommgD7Ga6i23UcZr7FRsAj9DU2pXpun5MjWBOoUNtIhkmtvfPTxPHbm9I
+         pWcZQnhwUZn3/tSTI8OW1whrJ/DqZV3Zh1PJVQjmDiDWrBb680KDrk1CVS+b0sTVxY4M
+         Iu9taaZxEizT9UCvWoVHFtaKoyjlgSJaErZ0CR/vsSD4o5gAxUjevIwiozExlfsiVUNA
+         gTYSodZdc+i5F5sr+5/K8/ETHS6odVOYNdfgQIoVrA7ln03okKodz3fOGB0jua0GZb4Z
+         LyDw==
+X-Gm-Message-State: AGRZ1gLyGKKTW3CrmFI3kQmsrDHkt79/meiTwBGz0IUQakv1jb2aJSbT
+        V1Xpy3fLTXLCFg/nzXJ2l6A=
+X-Google-Smtp-Source: AJdET5fsao6cLpjXnXXX5s1NtKZhLW6Yb+kYZS0pl8ZthPbpfuke2kFfGMU5qhHVJ6avYRNiorvANg==
+X-Received: by 2002:a62:3046:: with SMTP id w67-v6mr6813837pfw.177.1542807253679;
+        Wed, 21 Nov 2018 05:34:13 -0800 (PST)
+Received: from google.com ([122.38.223.241])
+        by smtp.gmail.com with ESMTPSA id t12sm43845469pfi.45.2018.11.21.05.34.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 05:34:12 -0800 (PST)
+Date:   Wed, 21 Nov 2018 05:34:08 -0800
+From:   Minchan Kim <minchan@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/6] zram: support idle page writeback
+Message-ID: <20181121133408.GA103278@google.com>
+References: <20181116072035.155108-1-minchan@kernel.org>
+ <20181116072035.155108-5-minchan@kernel.org>
+ <20181121045551.GC599@jagdpanzerIV>
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Wed, 21 Nov 2018 05:32:43
- -0800 (PST)
-In-Reply-To: <31735.1536701042@warthog.procyon.org.uk>
-References: <CACT4Y+ajxhUaRg+XSuqQZN8rD96S820yMTWx2GpRVRb9Maz50g@mail.gmail.com>
- <0000000000006082bd05752f92bb@google.com> <29979.1536223287@warthog.procyon.org.uk>
- <23632.1536696987@warthog.procyon.org.uk> <20180912063454.0620abb4@canb.auug.org.au>
- <31735.1536701042@warthog.procyon.org.uk>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 21 Nov 2018 14:32:43 +0100
-Message-ID: <CACT4Y+boXfNjHT1M5B6OttHiUFKsvL7AFH2Gfd+DbkNoQD4YVg@mail.gmail.com>
-Subject: Re: linux-next boot error (2)
-To:     David Howells <dhowells@redhat.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        syzbot <syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander" <alexander.levin@verizon.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        nikolaus.voss@loewensteinmedical.de,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121045551.GC599@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 11, 2018 at 11:24 PM, David Howells <dhowells@redhat.com> wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
->> I will apply this fix until the proper fix arrives in the vfs tree:
->
-> Thanks.
->
-> David
+On Wed, Nov 21, 2018 at 01:55:51PM +0900, Sergey Senozhatsky wrote:
+> On (11/16/18 16:20), Minchan Kim wrote:
+> > +		zram_set_flag(zram, index, ZRAM_UNDER_WB);
+> > +		zram_slot_unlock(zram, index);
+> > +		if (zram_bvec_read(zram, &bvec, index, 0, NULL)) {
+> > +			zram_slot_lock(zram, index);
+> > +			zram_clear_flag(zram, index, ZRAM_UNDER_WB);
+> > +			zram_slot_unlock(zram, index);
+> > +			continue;
+> > +		}
+> > +
+> > +		bio_init(&bio, &bio_vec, 1);
+> > +		bio_set_dev(&bio, zram->bdev);
+> > +		bio.bi_iter.bi_sector = blk_idx * (PAGE_SIZE >> 9);
+> > +		bio.bi_opf = REQ_OP_WRITE | REQ_SYNC;
+> > +
+> > +		bio_add_page(&bio, bvec.bv_page, bvec.bv_len,
+> > +				bvec.bv_offset);
+> > +		/*
+> > +		 * XXX: A single page IO would be inefficient for write
+> > +		 * but it would be not bad as starter.
+> > +		 */
+> > +		ret = submit_bio_wait(&bio);
+> > +		if (ret) {
+> > +			zram_slot_lock(zram, index);
+> > +			zram_clear_flag(zram, index, ZRAM_UNDER_WB);
+> > +			zram_slot_unlock(zram, index);
+> > +			continue;
+> > +		}
+> 
+> Just a thought,
+> 
+> I wonder if it will make sense (and if it will be possible) to writeback
+> idle _compressed_ objects. Right now we decompress, say, a perfectly
+> fine 400-byte compressed object to a PAGE_SIZE-d object and then push
+> it to the WB device. In this particular case it has a x10 bigger IO
+> pressure on flash. If we can write/read compressed object then we
+> will write and read 400-bytes, instead of PAGE_SIZE.
 
-
-This was fixed in September, but the Reported-by tag wasn't added and
-nobody told syzbot that this is fixed. So the bug is still considered
-open:
-https://syzkaller.appspot.com/bug?extid=762a577f56cfb1574647
-10 days ago linux-next become broken for another reason, but syzbot
-did not report a new bug because the previous one is still open (new
-reports are merged into the existing open bug).
-
-Please either use the Reported-by tag (for amended linux-next fixes
-Tested-by can make more sense and is recognized too), or tell syzbot
-separately:
-
-#syz fix: apparmor: Implement security hooks for the new mount API
-
-Also helps to keep dashboard relevant:
-https://syzkaller.appspot.com/#upstream-open
-a pile of hundreds of stale bugs is not too useful, and losing half of
-bug reports in LKML archives is not good too.
-
-Thanks in advance
+Although it has pros/cons, that's the my final goal although it would
+add much complicated stuffs. Sometime, we should have the feature.
+However, I want to go simple one first which is very valuable, too.
