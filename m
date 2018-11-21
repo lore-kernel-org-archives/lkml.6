@@ -2,106 +2,94 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21716C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E987EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90A6214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90A6214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id A6B5020870
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:19:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="juyeit0s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B5020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730152AbeKUWwE (ORCPT
+        id S1730179AbeKUWxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:52:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47400 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727094AbeKUWwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:52:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CEFD7ADED;
-        Wed, 21 Nov 2018 12:17:52 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 13:17:51 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 02/12] livepatch: Helper macros to define livepatch
- structures
-In-Reply-To: <20181024112822.tam6bal3hnrrgj5m@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1811211316200.26999@pobox.suse.cz>
-References: <20181015123713.25868-1-pmladek@suse.com> <20181015123713.25868-3-pmladek@suse.com> <20181017181756.cy65ujygmf3ulmiz@treble> <20181018111153.qcmvidttifi57u45@pathway.suse.cz> <20181018125824.ms5zovmsnikv3bgt@treble>
- <20181024112822.tam6bal3hnrrgj5m@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 21 Nov 2018 17:53:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728428AbeKUWxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:53:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GWr93rI5vOjJXu1utLg01PpRQmImuvJaHVDucwXozd0=; b=juyeit0swniFgBcdVatbZQ3Ah
+        01H0iRMsUXNkl/7kET1p6FMPx+2uwJClx5F54ER0Q1hbvpf4tTakc0ZoPPq5TX5AEJD9+o5d09hNu
+        LhytakDVWPnDYVGB6Z9uVyxp6UKTdrcJ7C3QYp+s2nwPTcLjLC6EW+O9Q0gfGS6kk14ZU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gPRTH-0003OT-Dn; Wed, 21 Nov 2018 12:19:07 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2890611250AD; Wed, 21 Nov 2018 12:19:07 +0000 (GMT)
+Date:   Wed, 21 Nov 2018 12:19:07 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        linus.walleij@linaro.org, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] regulator: wm8994: Don't use devres for enable GPIOs
+Message-ID: <20181121121907.GB8059@sirena.org.uk>
+References: <CGME20181120170248epcas1p2a93ec9ff7f74ad4908166590ed548386@epcas1p2.samsung.com>
+ <20181120170152.24652-1-ckeepax@opensource.cirrus.com>
+ <c426f174-dc45-3a25-4c7e-018972c2ceef@samsung.com>
+ <b7648606-b5d1-c42f-cf68-338fbc3cf4df@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="PmA2V3Z32TCmWXqI"
+Content-Disposition: inline
+In-Reply-To: <b7648606-b5d1-c42f-cf68-338fbc3cf4df@samsung.com>
+X-Cookie: There was a phone call for you.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Oct 2018, Petr Mladek wrote:
 
-> On Thu 2018-10-18 07:58:24, Josh Poimboeuf wrote:
-> > On Thu, Oct 18, 2018 at 01:11:53PM +0200, Petr Mladek wrote:
-> > > On Wed 2018-10-17 13:17:56, Josh Poimboeuf wrote:
-> > > > On Mon, Oct 15, 2018 at 02:37:03PM +0200, Petr Mladek wrote:
-> > > > > The definition of struct klp_func might be a bit confusing.
-> > > > > The original function is defined by name as a string.
-> > > > > The new function is defined by name as a function pointer
-> > > > > casted to unsigned long.
-> > > > > 
-> > > > > This patch adds helper macros that hide the different types.
-> > > > > The functions are defined just by the name. For example:
-> > > > 
-> > > > On one hand, these macros are kind of nice, because they do the function
-> > > > pointer casting for the user.
-> > > > 
-> > > > On the other hand, they hide the field names, which hurts readability a
-> > > > bit.  For example, it would be easy to accidentally assign the wrong
-> > > > callback function.
-> > > 
-> > > I am not a big fan of the macros either.
-> > > 
-> > > 
-> > > > Also, it's unfortunate that these macros are needed in the first place.
-> > > > 
-> > > > What if we just change new_addr (and old_addr) to be 'void *'?  Then the
-> > > > macros wouldn't be as useful, and we could just get rid of them.
-> > > 
-> > > Hmm, I wonder if any change make sense then. The above proposal might
-> > > just exchange one confusion with another one:
-> > > 
-> > >    + I would expect that a variable called addr is of the type
-> > >      unsigned long
-> > > 
-> > >    + we would need casting when calling ftrace API
-> > > 
-> > >    + .new_addr = function_xxx looks a bit weird and it will
-> > >      be used many times in all livepatch sources.
-> > 
-> > Fair points.  Instead of changing new_func to new_addr, how about we
-> > leave it alone, and instead change 'unsigned long old_addr' to 'void
-> > *old_func'?
-> > 
-> > That would give us consistent naming internally, while making the
-> > external interface more sensible and cast-free.
-> > 
-> > We'd still have to cast when passing to the ftrace API, but IMO it would
-> > be worth it.
-> 
-> I am fine with this. I will do this in v14 unless anyone complains ;-)
+--PmA2V3Z32TCmWXqI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I agree. I don't like the change from 1/12 much as it exposes casting to 
-user. Macros introduced here do not make any better and I go along with 
-Josh.
+On Wed, Nov 21, 2018 at 10:26:30AM +0100, Marek Szyprowski wrote:
 
-Miroslav
+> from wm8994_ldo_remove(), switched to regulator_register() in
+> wm8994_ldo_probe() and added regulator_unregister() in
+> wm8994_ldo_remove(). This way the warning is gone. If there is any
+
+I don't understand why you'd need to switch to regulator_register()?
+
+--PmA2V3Z32TCmWXqI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlv1TToACgkQJNaLcl1U
+h9C3fgf8C1bb6yGkcttdeXdyvwZEEn6gl0GMOvwtCHrHWs5iBNArWTUxnbL991iC
+8t3nRBVhP9TyKelPK7h0zYAA7hxa3xhfDJRiEVKSjVSEJCzUoCjWetWElAzb8qv2
+x7xBm7iAdi3lOsyV9H67ucWKhSaHdp1l7QfTa5PSinQBmfW40MMlq2iPSTI/lUjQ
+7cOiOVnCg2UVj5q9WX6KEUgf/uUcbi86V+QQFHObU0cLDulcJGlUEsv2Vs5fBbPz
+FZHYfyPrIw7mbEPG8SeP9UUzI6FTWa6Ezg60xmi8Kdhnv0px5hZdrutugQ6dQq8G
+BBRtUQkrZQ0q6bjsa/jRo/Gxhahoow==
+=lEJM
+-----END PGP SIGNATURE-----
+
+--PmA2V3Z32TCmWXqI--
