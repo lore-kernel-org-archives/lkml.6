@@ -3,61 +3,83 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1EBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49125C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E612F2075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E612F2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0957120831
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:48:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0957120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390225AbeKVJUb (ORCPT
+        id S2390271AbeKVJZL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:20:31 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38464 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387447AbeKVJUa (ORCPT
+        Thu, 22 Nov 2018 04:25:11 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45866 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387409AbeKVJZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:20:30 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2067E8E3;
-        Wed, 21 Nov 2018 22:44:05 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 14:44:04 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     john.hubbard@gmail.com
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH] mm/gup: finish consolidating error handling
-Message-Id: <20181121144404.efdab6dbccd7780034a55e1d@linux-foundation.org>
-In-Reply-To: <20181121081402.29641-2-jhubbard@nvidia.com>
-References: <20181121081402.29641-1-jhubbard@nvidia.com>
-        <20181121081402.29641-2-jhubbard@nvidia.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
+        Thu, 22 Nov 2018 04:25:11 -0500
+Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gPbIX-00025E-QI; Wed, 21 Nov 2018 23:48:41 +0100
+Date:   Wed, 21 Nov 2018 23:48:41 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
+        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
+        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
+In-Reply-To: <CAHk-=wj6fZpcad+1O5Ou0HZb0NEv1RM_BweyM0XBGtzE87YXXg@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811212345180.1665@nanos.tec.linutronix.de>
+References: <20181121201430.559770965@linutronix.de> <20181121201722.337599561@linutronix.de> <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com> <CAHk-=wj6fZpcad+1O5Ou0HZb0NEv1RM_BweyM0XBGtzE87YXXg@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018 00:14:02 -0800 john.hubbard@gmail.com wrote:
+On Wed, 21 Nov 2018, Linus Torvalds wrote:
 
-> Commit df06b37ffe5a4 ("mm/gup: cache dev_pagemap while pinning pages")
-> attempted to operate on each page that get_user_pages had retrieved. In
-> order to do that, it created a common exit point from the routine.
-> However, one case was missed, which this patch fixes up.
+> On Wed, Nov 21, 2018 at 12:28 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Ugh. Now you're using the broken quilt thing that makes a mush of emails for me.
 > 
-> Also, there was still an unnecessary shadow declaration (with a
-> different type) of the "ret" variable, which this patch removes.
+> Reading the series in alpine makes it look fine. No testing, but each
+> patch seems sensible.
 > 
+> And yes, triggering on seccomp makes more sense than dumpable to me.
 
-What is the bug which this supposedly fixes and what is that bug's
-user-visible impact?
+That's what we ended up with SSBD as well. We had the same discussion before.
 
+Btw, I really do not like the app2app wording. I'd rather go for usr2usr,
+but that's kinda horrible as well. But then, all of this is horrible.
+
+Any better ideas?
+
+Thanks,
+
+	tglx
