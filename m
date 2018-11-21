@@ -2,154 +2,260 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E3EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA12FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6F82145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF6F82145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 6D6E22145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:53:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D6E22145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731570AbeKVC2A (ORCPT
+        id S1731592AbeKVC2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:28:00 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56626 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731291AbeKVC2A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:28:00 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-96-HRHuzG45NRyCpNio0l2opA-1; Wed, 21 Nov 2018 15:52:58 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 21 Nov 2018 15:53:05 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 21 Nov 2018 15:53:05 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Jan Beulich' <JBeulich@suse.com>
-CC:     "mingo@elte.hu" <mingo@elte.hu>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>
-Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
-Thread-Topic: [PATCH v2] x86: modernize sync_bitops.h
-Thread-Index: AQHUgYKYAz8XcFA8pkaOqgSV6G3YUKVaHKgQgAAVTACAAAwV0IAAD5OAgAAPKkA=
-Date:   Wed, 21 Nov 2018 15:53:05 +0000
-Message-ID: <9dc88b57164e481184dfbb4b2079086e@AcuMS.aculab.com>
-References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
- <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
- <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
- <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
- <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
- <5BF5577202000078001FE7AC@prv1-mh.provo.novell.com>
- <47f7dfd9b32f4425ac8466c8b0065c6e@AcuMS.aculab.com>
- <5BF56EA502000078001FE90E@prv1-mh.provo.novell.com>
-In-Reply-To: <5BF56EA502000078001FE90E@prv1-mh.provo.novell.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Wed, 21 Nov 2018 21:28:06 -0500
+Received: from foss.arm.com ([217.140.101.70]:53418 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731291AbeKVC2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:28:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72CF4331A;
+        Wed, 21 Nov 2018 07:53:06 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C845C3F5CF;
+        Wed, 21 Nov 2018 07:53:04 -0800 (PST)
+Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
+To:     Christoffer Dall <christoffer.dall@arm.com>
+Cc:     peng.hao2@zte.com.cn, marc.zyngier@arm.com, andre.przywara@arm.com,
+        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
+        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
+ <201811211656540883310@zte.com.cn>
+ <20181121110620.GC18678@e113682-lin.lund.arm.com>
+ <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
+ <20181121152409.GC17441@e113682-lin.lund.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <84693a4d-34a5-8847-818a-9c05461f0ac8@arm.com>
+Date:   Wed, 21 Nov 2018 15:53:03 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-MC-Unique: HRHuzG45NRyCpNio0l2opA-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+In-Reply-To: <20181121152409.GC17441@e113682-lin.lund.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmFuIEJldWxpY2ggW21h
-aWx0bzpKQmV1bGljaEBzdXNlLmNvbV0NCj4gU2VudDogMjEgTm92ZW1iZXIgMjAxOCAxNDo0Mg0K
-PiBUbzogRGF2aWQgTGFpZ2h0DQo+IENjOiBtaW5nb0BlbHRlLmh1OyB0Z2x4QGxpbnV0cm9uaXgu
-ZGU7IEJvcmlzIE9zdHJvdnNreTsgSnVlcmdlbiBHcm9zczsgbGludXgta2VybmVsQHZnZXIua2Vy
-bmVsLm9yZzsNCj4gaHBhQHp5dG9yLmNvbQ0KPiBTdWJqZWN0OiBSRTogW1BBVENIIHYyXSB4ODY6
-IG1vZGVybml6ZSBzeW5jX2JpdG9wcy5oDQo+IA0KPiA+Pj4gT24gMjEuMTEuMTggYXQgMTQ6NDks
-IDxEYXZpZC5MYWlnaHRAQUNVTEFCLkNPTT4gd3JvdGU6DQo+ID4gRnJvbTogSmFuIEJldWxpY2gN
-Cj4gPj4gU2VudDogMjEgTm92ZW1iZXIgMjAxOCAxMzowMw0KPiA+Pg0KPiA+PiA+Pj4gT24gMjEu
-MTEuMTggYXQgMTI6NTUsIDxEYXZpZC5MYWlnaHRAQUNVTEFCLkNPTT4gd3JvdGU6DQo+ID4+ID4g
-RnJvbTogSmFuIEJldWxpY2gNCj4gPj4gPj4gU2VudDogMjEgTm92ZW1iZXIgMjAxOCAxMDoxMQ0K
-PiA+PiA+Pg0KPiA+PiA+PiBBZGQgbWlzc2luZyBpbnNuIHN1ZmZpeGVzIGFuZCB1c2Ugcm13Y2Mu
-aCBqdXN0IGxpa2Ugd2FzIChtb3JlIG9yIGxlc3MpDQo+ID4+ID4+IHJlY2VudGx5IGRvbmUgZm9y
-IGJpdG9wcy5oIGFzIHdlbGwuDQo+ID4+ID4NCj4gPj4gPiBXaHk/IGJ0cyAoZXRjKSBvbiBtZW1v
-cnkgZG9uJ3QgcmVhbGx5IGhhdmUgYW4gJ29wZXJhbmQgc2l6ZScuDQo+ID4+DQo+ID4+IE9mIGNv
-dXJzZSB0aGV5IGRvIC0gZGVwZW5kaW5nIG9uIG9wZXJhbmQgc2l6ZSB0aGV5IG9wZXJhdGUgb24N
-Cj4gPj4gMi0sIDQtLCBvciA4LWJ5dGUgcXVhbnRpdGllcy4gV2hlbiB0aGUgc2Vjb25kIG9wZXJh
-bmQgaXMgYQ0KPiA+PiByZWdpc3RlciwgdGhlIHN1ZmZpeCBpcyByZWR1bmRhbnQgKGJ1dCBkb2Vz
-bid0IGh1cnQpLCBidXQgd2hlbg0KPiA+PiB0aGUgc2Vjb25kIG9wZXJhbmQgaXMgYW4gaW1tZWRp
-YXRlLCB0aGUgYXNzZW1ibGVyIChpbiBBVCZUDQo+ID4+IHN5bnRheCkgaGFzIG5vIHdheSBvZiBr
-bm93aW5nIHdoYXQgb3BlcmFuZCBzaXplIHlvdSBtZWFuLg0KPiA+DQo+ID4gWW91IG5lZWQgdG8g
-UlRGTS4NCj4gDQo+IEV4Y3VzZSBtZT8gSG93IGFib3V0IHlvdSBsb29rIGF0IHRoaXMgdGFibGUg
-ZnJvbSB0aGUgU0RNDQo+IChmb3JtYXQgb2YgY291cnNlIGNvbWVzIG91dCBiZXR0ZXIgaW4gdGhl
-IC5wZGYpOg0KPiANCj4gMEYgQUIgL3IgQlRTIHIvbTE2LCByMTYgTVIgVmFsaWQgVmFsaWQgU3Rv
-cmUgc2VsZWN0ZWQgYml0IGluIENGIGZsYWcgYW5kIHNldC4NCj4gMEYgQUIgL3IgQlRTIHIvbTMy
-LCByMzIgTVIgVmFsaWQgVmFsaWQgU3RvcmUgc2VsZWN0ZWQgYml0IGluIENGIGZsYWcgYW5kIHNl
-dC4NCj4gUkVYLlcgKyAwRiBBQiAvciBCVFMgci9tNjQsIHI2NCBNUiBWYWxpZCBOLkUuIFN0b3Jl
-IHNlbGVjdGVkIGJpdCBpbiBDRiBmbGFnIGFuZCBzZXQuDQo+IDBGIEJBIC81IGliIEJUUyByL20x
-NiwgaW1tOCBNSSBWYWxpZCBWYWxpZCBTdG9yZSBzZWxlY3RlZCBiaXQgaW4gQ0YgZmxhZyBhbmQg
-c2V0Lg0KPiAwRiBCQSAvNSBpYiBCVFMgci9tMzIsIGltbTggTUkgVmFsaWQgVmFsaWQgU3RvcmUg
-c2VsZWN0ZWQgYml0IGluIENGIGZsYWcgYW5kIHNldC4NCj4gUkVYLlcgKyAwRiBCQSAvNSBpYiBC
-VFMgci9tNjQsIGltbTggTUkgVmFsaWQgTi5FLiBTdG9yZSBzZWxlY3RlZCBiaXQgaW4gQ0YgZmxh
-ZyBhbmQgc2V0Lg0KPiANCj4gUGxlYXNlIHJlYWQgbWFudWFscyB5b3Vyc2VsZiBiZWZvcmUgbWFr
-aW5nIHN1Y2ggc3RhdGVtZW50cy4NCj4gDQo+ID4gUmVnYXJkbGVzcyBvZiB0aGUgJ29wZXJhbmQg
-c2l6ZScgdGhlICdiaXQnIGluc3RydWN0aW9ucyBkbyBhIDMyIGJpdCBhbGlnbmVkDQo+ID4gMzIg
-Yml0IHdpZGUgcmVhZC9tb2RpZnkvd3JpdGUgY3ljbGUuDQo+ID4NCj4gPiBUaGUgJ29wZXJhbmQg
-c2l6ZScgZG9lcyBhZmZlY3Qgd2hldGhlciB0aGUgYml0IG51bWJlciAod2hpY2ggaXMgc2lnbmVk
-KQ0KPiA+IGNvbWVzIGZyb20gJWNsICg4IGJpdHMpLCAlY3ggKDE2IGJpdHMpLCAlcmN4ICgzMiBi
-aXRzKSBvciAoJWVjeCkgNjQgYml0cy4NCj4gPiBCdXQgdGhhdCBpcyBpbXBsaWNpdCBpbiB0aGUg
-cmVnaXN0ZXIgbmFtZSB1c2VkLg0KPiANCj4gVGhlcmUgaXMgbm8gZm9ybSB3aXRoICVjbCBhcyBv
-cGVyYW5kLiBJbnN0ZWFkIHRoZXJlIGFyZSBmb3JtcyB3aXRoDQo+IGFuIGltbWVkaWF0ZSBvcGVy
-YW5kLg0KDQpTZWUgYWxzbyBzZWN0aW9uIDMuMS4xLjkgKGluIHRoZSBjb3B5IG9mIDMyNTQ2Mi5w
-ZGYgSSBoYXZlKToNCihlZGl0ZWQgb3V0IHJlZmVyZW5jZXMgdG8gdGhlIGZpZ3VyZXMpDQoNCkJp
-dChCaXRCYXNlLCBCaXRPZmZzZXQpIOKAlCBSZXR1cm5zIHRoZSB2YWx1ZSBvZiBhIGJpdCB3aXRo
-aW4gYSBiaXQgc3RyaW5nLg0KICAgVGhlIGJpdCBzdHJpbmcgaXMgYSBzZXF1ZW5jZSBvZiBiaXRz
-IGluIG1lbW9yeSBvciBhIHJlZ2lzdGVyLiBCaXRzIGFyZQ0KICAgbnVtYmVyZWQgZnJvbSBsb3ct
-b3JkZXIgdG8gaGlnaC1vcmRlciB3aXRoaW4gcmVnaXN0ZXJzIGFuZCB3aXRoaW4gbWVtb3J5DQog
-ICBieXRlcy4gSWYgdGhlIEJpdEJhc2UgaXMgYSByZWdpc3RlciwgdGhlIEJpdE9mZnNldCBjYW4g
-YmUgaW4gdGhlIHJhbmdlIDANCiAgIHRvIFsxNSwgMzEsIDYzXSBkZXBlbmRpbmcgb24gdGhlIG1v
-ZGUgYW5kIHJlZ2lzdGVyIHNpemUuDQoNCiAgIElmIEJpdEJhc2UgaXMgYSBtZW1vcnkgYWRkcmVz
-cywgdGhlIEJpdE9mZnNldCBjYW4gcmFuZ2UgaGFzIGRpZmZlcmVudCByYW5nZXMNCiAgIGRlcGVu
-ZGluZyBvbiB0aGUgb3BlcmFuZCBzaXplIChzZWUgVGFibGUgMy0yKS4NCg0KICAgVGhlIGFkZHJl
-c3NlZCBiaXQgaXMgbnVtYmVyZWQgKE9mZnNldCBNT0QgOCkgd2l0aGluIHRoZSBieXRlIGF0IGFk
-ZHJlc3MNCiAgIChCaXRCYXNlICsgKEJpdE9mZnNldCBESVYgOCkpIHdoZXJlIERJViBpcyBzaWdu
-ZWQgZGl2aXNpb24gd2l0aCByb3VuZGluZw0KICAgdG93YXJkcyBuZWdhdGl2ZSBpbmZpbml0eSBh
-bmQgTU9EIHJldHVybnMgYSBwb3NpdGl2ZSBudW1iZXIuDQoNClRhYmxlIDMtMi4gUmFuZ2Ugb2Yg
-Qml0IFBvc2l0aW9ucyBTcGVjaWZpZWQgYnkgQml0IE9mZnNldCBPcGVyYW5kcw0KT3BlcmFuZCBT
-aXplIEltbWVkaWF0ZSBCaXRPZmZzZXQgICBSZWdpc3RlciBCaXRPZmZzZXQNCiAgICAxNiAgICAg
-ICAgICAgICAwIHRvIDE1ICAgICAgICAgMioqMTUgdG8gMioqMTUg4oiSIDENCiAgICAzMiAgICAg
-ICAgICAgICAwIHRvIDMxICAgICAgICAgMioqMzEgdG8gMioqMzEg4oiSIDENCiAgICA2NCAgICAg
-ICAgICAgICAwIHRvIDYzICAgICAgICAgMioqNjMgdG8gMioqNjMg4oiSIDENCg0KRm9yIEJpdCB0
-ZXN0IGl0IHNheXM6DQoNCldoZW4gYWNjZXNzaW5nIGEgYml0IGluIG1lbW9yeSwgdGhlIHByb2Nl
-c3NvciBtYXkgYWNjZXNzIDQgYnl0ZXMgc3RhcnRpbmcgZnJvbQ0KdGhlIG1lbW9yeSBhZGRyZXNz
-IGZvciBhIDMyLWJpdCBvcGVyYW5kIHNpemUsIHVzaW5nIGJ5IHRoZSBmb2xsb3dpbmcgcmVsYXRp
-b25zaGlwOg0KICAgIEVmZmVjdGl2ZSBBZGRyZXNzICsgKDQg4oiXIChCaXRPZmZzZXQgRElWIDMy
-KSkNCk9yLCBpdCBtYXkgYWNjZXNzIDIgYnl0ZXMgc3RhcnRpbmcgZnJvbSB0aGUgbWVtb3J5IGFk
-ZHJlc3MgZm9yIGEgMTYtYml0IG9wZXJhbmQsIHVzaW5nIHRoaXMgcmVsYXRpb25zaGlwOg0KICAg
-IEVmZmVjdGl2ZSBBZGRyZXNzICsgKDIg4oiXIChCaXRPZmZzZXQgRElWIDE2KSkNCkl0IG1heSBk
-byBzbyBldmVuIHdoZW4gb25seSBhIHNpbmdsZSBieXRlIG5lZWRzIHRvIGJlIGFjY2Vzc2VkIHRv
-IHJlYWNoIHRoZSBnaXZlbiBiaXQuDQoNCihUaGF0IGlzIHRoZSB0ZXh0IEkgcmVtZW1iZXIgYmVp
-bmcgaW4gdGhlIG9sZCBkb2NzLCBidXQgSSBkb24ndCB0aGluayBpdA0KdXNlZCB0byByZWZlciB0
-byB0aGUgYWRkcmVzcyBiZWluZyBhbGlnbmVkLg0KTXkgODA4NiwgMjg2IGFuZCAzODYgYm9va3Mg
-YXJlIGFsbCBhdCBob21lLikNCg0KVGhlIG90aGVyIGluc3RydWN0aW9ucyAoZWcgYnRjKSBzYXk6
-DQoNCklmIHRoZSBiaXQgYmFzZSBvcGVyYW5kIHNwZWNpZmllcyBhIG1lbW9yeSBsb2NhdGlvbiwg
-dGhlIG9wZXJhbmQgcmVwcmVzZW50cyB0aGUNCmFkZHJlc3Mgb2YgdGhlIGJ5dGUgaW4gbWVtb3J5
-IHRoYXQgY29udGFpbnMgdGhlIGJpdCBiYXNlIChiaXQgMCBvZiB0aGUgc3BlY2lmaWVkIGJ5dGUp
-DQpvZiB0aGUgYml0IHN0cmluZy4gVGhlIHJhbmdlIG9mIHRoZSBiaXQgcG9zaXRpb24gdGhhdCBj
-YW4gYmUNCnJlZmVyZW5jZWQgYnkgdGhlIG9mZnNldCBvcGVyYW5kIGRlcGVuZHMgb24gdGhlIG9w
-ZXJhbmQgc2l6ZS4NCg0KU28gdGhlICdvcGVyYW5kIHNpemUnIGdpdmVzIHRoZSBzaXplIG9mIHRo
-ZSBiaXQgb2Zmc2V0LCBub3QgdGhlIHNpemUgb2YNCnRoZSBtZW1vcnkgY3ljbGUuDQoNCk1heWJl
-IEknbGwgcnVuIHNvbWUgaW5zdHJ1Y3Rpb25zIGFnYWluc3QgYSBQQ0llIHNsYXZlIGFuZCBtb25p
-dG9yIHRoZSBUTFBzLg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRl
-LCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpS
-ZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
 
+
+On 21/11/18 15:24, Christoffer Dall wrote:
+> On Wed, Nov 21, 2018 at 12:17:45PM +0000, Julien Thierry wrote:
+>>
+>>
+>> On 21/11/18 11:06, Christoffer Dall wrote:
+>>> Hi,
+>>>
+>>> On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
+>>>>> On 19/11/2018 09:10, Mark Rutland wrote:
+>>>>>> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
+>>>>>>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
+>>>>>>>>>> Hi,
+>>>>>>>>>>> When virtual machine starts, hang up.
+>>>>>>>>>>
+>>>>>>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
+>>>>>>>>>> interrupt?
+>>>>>>>>>>
+>>>>>>>>>>> The kernel version of guest
+>>>>>>>>>>> is 4.16. Host support vgic_v3.
+>>>>>>>>>>
+>>>>>>>>>> Your host kernel is something recent, I guess?
+>>>>>>>>>>
+>>>>>>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+>>>>>>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
+>>>>>>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
+>>>>>>>>>>> correctly, so group is not set.
+>>>>>>>>>>
+>>>>>>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
+>>>>>>>>>> version?) or some other userland tool?
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> QEMU emulator version 3.0.50 .
+>>>>>>>>>
+>>>>>>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
+>>>>>>>>>>> time.
+>>>>>>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+>>>>>>>>>>> interrupt injection failed.
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>>>>>>> ---
+>>>>>>>>>>>    virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+>>>>>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>>>> index 9c0dd23..d101000 100644
+>>>>>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
+>>>>>>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
+>>>>>>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
+>>>>>>>>>>>
+>>>>>>>>>>> -    if (irq->group)
+>>>>>>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>>>>>>>>>>
+>>>>>>>>>> This is not the right fix, not only because it basically reverts the
+>>>>>>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
+>>>>>>>>>> their configured group).
+>>>>>>>>>>
+>>>>>>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
+>>>>>>>>>> before dist->vgic_model is set, also what value it has?
+>>>>>>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
+>>>>>>>>>>
+>>>>>>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
+>>>>>>>>>    If the interrupt comes at this time, the interrupt injection fails.
+>>>>>>>>
+>>>>>>>> Does that mean that the guest is configuring its interrupts as Group0?
+>>>>>>>> That sounds wrong, Linux should configure all it's interrupts as
+>>>>>>>> non-secure group1.
+>>>>>>>
+>>>>>>> no, I think that uefi dose this, not linux.
+>>>>>>> 1. kvm_vgic_vcpu_init
+>>>>>>> 2. vgic_create
+>>>>>>> 3. kvm_vgic_dist_init
+>>>>>>> 4.vgic_mmio_write_group: uefi as guest, write group=0
+>>>>>>> 5.vgic_mmio_write_group: linux as guest, write group=1
+>>>>>>
+>>>>>> Is this the same issue fixed by EDK2 commit:
+>>>>>>
+>>>>>> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
+>>>>>>
+>>>>>> ... where EDK2 would try to use IAR0 rather than IAR1?
+>>>>>>
+>>>>>> The commit messages notes this lead to a boot-time hang.
+>>>>>
+>>>>> I managed to trigger an issue with a really old EFI implementation that
+>>>>> doesn't configure its interrupts as Group1, and yet tries to ACK its
+>>>>> interrupts using the Group1 accessor. Guess what? It is not going to work.
+>>>>>
+>>>>> Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
+>>>>> to be the fix (I only assume it does, I haven't actually checked). A
+>>>>> recent build, as found in Debian Buster, works perfectly (tested with
+>>>>> both QEMU v2.12 and tip of tree).
+>>>>>
+>>>>> Now, I really don't get what you're saying about Linux not getting
+>>>>> interrupts. How do you get to booting Linux if EFI is not making any
+>>>>> forward progress? Are you trying them independently?
+>>>>>
+>>>> I start linux with bypassing uefi, the print info is the same.
+>>>> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
+>>>> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
+>>>> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
+>>>> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
+>>>> the command line is like this:
+>>>> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
+>>>>
+>>>> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
+>>>
+>>> Could you try the following patch:
+>>>
+>>> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+>>> index c0c0b88af1d5..6fa858c7a5a6 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-init.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-init.c
+>>> @@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+>>>   			irq->config = VGIC_CONFIG_LEVEL;
+>>>   		}
+>>> -		/*
+>>> -		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
+>>> -		 * so we always know the emulation type at this point as it's
+>>> -		 * either explicitly configured as GICv3, or explicitly
+>>> -		 * configured as GICv2, or not configured yet which also
+>>> -		 * implies GICv2.
+>>> -		 */
+>>>   		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>>>   			irq->group = 1;
+>>>   		else
+>>> @@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
+>>>   	if (ret)
+>>>   		goto out;
+>>> +	/* Initialize groups on CPUs created before the VGIC type was known */
+>>> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+>>> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+>>> +
+>>> +		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
+>>> +			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+>>> +			irq->group = 1;
+>>> +		}
+>>> +	}
+>>> +
+>>>   	if (vgic_has_its(kvm)) {
+>>>   		ret = vgic_v4_init(kvm);
+>>>   		if (ret)
+>>>
+>>>
+>>
+>> If the value of dist->vgic_model is not properly initialized at the time we
+>> call kvm_vgic_vcpu_init is call, won't we still overwrite the irq->group
+>> when we get there?
+> 
+> I don't understand this question.  When we get where?
+
+Sorry, I meant when we get to the irq->group initialization in 
+kvm_vgic_vcpu_init.
+
+> 
+>> (I still haven't seen why we could consider
+>> dist->vgic_model is initialized at that point).
+> 
+> Because there is no enforced ordering between creating VCPUs and
+> creating the VGIC.
+
+Hmmm, I think that's what I am saying, so we shouldn't look at the value 
+of vgic_dist->vgic_model since it could be uninitialized (or 0).
+
+> 
+>>
+>> Shouldn't we do the irq->group initialization somewhere in
+>> kvm_arch_vcpu_ioctl_vcpu_init? (with some vgic_* function to encapsulate it
+>> of course). At that point I believe we know that dist->vgic_model is
+>> initialized.
+>>
+> 
+> See above.  AFAICT we don't have a single point at which we can do
+> everything because creation of the two components can be interleaved.
+> 
+> We could hook into kvm_vcpu_first_run_init(), but then userspace can
+> observe uninitialized values if it looks at the GIC state prior to
+> running the VCPUs, which is also not great.
+> 
+> In other words, I think the problem is that you can do:
+> 
+>    create_vcpu(0);
+>    create_vgic(v3);
+>    create_vcpu(2);
+> 
+> Now you'll have vcpu0 have its private IRQs set to group 0, and you'll
+> have vcpu1 have its private IRQs set to group 1 (prior to my patch).
+> 
+> 
+> Am I missing something?
+> 
+
+No, I just got confused between create_vgic and vgic_init. So the place 
+looks fine. Sorry for the confusion.
+
+The fact that we still check dist->vgic_model in kvm_vgic_vcpu_init 
+(twice actually), however seems dodgy to me since it might not have been 
+initialized.
+
+Thanks,
+
+-- 
+Julien Thierry
