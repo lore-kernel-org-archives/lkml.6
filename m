@@ -2,147 +2,70 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D62FFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8E5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC4C20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:46:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Jw7hLthI";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Bx18a9H8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC4C20989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id C205D20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:50:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C205D20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thalesgroup.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbeKUSTt (ORCPT
+        id S1728262AbeKUSXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:19:49 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:45690 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725999AbeKUSTs (ORCPT
+        Wed, 21 Nov 2018 13:23:45 -0500
+Received: from thsbbfxrt01p.thalesgroup.com ([192.54.144.131]:37334 "EHLO
+        thsbbfxrt01p.thalesgroup.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728144AbeKUSXp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:19:48 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAL7h5QL020928;
-        Tue, 20 Nov 2018 23:45:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : content-type : content-id :
- content-transfer-encoding : mime-version; s=facebook;
- bh=J1MF/YJzZXjGsCBTKMBg+uNPpP8yR7buo46K1I13zgw=;
- b=Jw7hLthISlDaGmGgFwvBjY3yWm1+V31aEb+8DDjw9jube24BQIyKnGtSBBefvVbwBN/o
- 9zlH9vX8BiIqgVAhvvmXzTBNWgtw+6YUFmL1ziNtfb4zxv0yoAfXCKbMd+CQmK4SlZOJ
- hezluRWahlbmrQk5H5RlANn55zk5Osx82rA= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2nw2wbg28d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 20 Nov 2018 23:45:49 -0800
-Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
- frc-hub02.TheFacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Tue, 20 Nov 2018 23:45:47 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Tue, 20 Nov 2018 23:45:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J1MF/YJzZXjGsCBTKMBg+uNPpP8yR7buo46K1I13zgw=;
- b=Bx18a9H83QNnVoo8FWlStqCuylMSeYQqpAUMYoJ31sw2A0+IgLInGl7eOvNEGJzuBS/4BjvNRFtYb8cxNXVnW09ENzxv3oxZwyfE5rgYCqAdSNOSENJbR50pyrKqImptCbNlHv9W01HuvNWwvoj792jimZ7XEPbc9WcYdUZXw5g=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1197.namprd15.prod.outlook.com (10.175.2.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1361.14; Wed, 21 Nov 2018 07:45:29 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::6d1e:3274:a367:a55c]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::6d1e:3274:a367:a55c%3]) with mapi id 15.20.1361.015; Wed, 21 Nov 2018
- 07:45:29 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     lkml <linux-kernel@vger.kernel.org>
-CC:     "acme@kernel.org" <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "wangnan0@huawei.com" <wangnan0@huawei.com>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: perf tools: remove option --tail-synthesize ? 
-Thread-Topic: perf tools: remove option --tail-synthesize ? 
-Thread-Index: AQHUgW4srpZEvq4JIUKBhRXI12qWWw==
-Date:   Wed, 21 Nov 2018 07:45:28 +0000
-Message-ID: <89AC26A9-5A18-4608-8889-9C3C9C1C69D3@fb.com>
-Accept-Language: en-US
+        Wed, 21 Nov 2018 13:23:45 -0500
+X-Greylist: delayed 501 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 13:23:43 EST
+Received: from thsbbfxrt01p.thalesgroup.com (localhost [127.0.0.1])
+        by localhost (Postfix) with SMTP id 430Dzm6b7Mz8Tc;
+        Wed, 21 Nov 2018 08:41:56 +0100 (CET)
+From:   JABLONSKY Jan <Jan.JABLONSKY@thalesgroup.com>
+To:     Jaehoon Chung <jh80.chung@samsung.com>
+CC:     Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: dw_mmc: IDMAC Invalidate cache after read
+Thread-Topic: dw_mmc: IDMAC Invalidate cache after read
+Thread-Index: AQHUgW3NJS3s6fdIZ0u0s1IZXxrnfg==
+Date:   Wed, 21 Nov 2018 07:42:49 +0000
+Message-ID: <1542786115.18775.83.camel@atviedlbe741.rss.d3s.at.thales>
+Accept-Language: en-US, fr-FR
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.101.1)
-x-originating-ip: [2620:10d:c090:180::1:9aa]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1197;20:vh55rf269e6o2tBLzsbeT4UzGrPgu9qnEzpy2XqBNHD6qd6wz7Vsz+sQUO46zXMF1OLQubRKjyBRcjDarFQRdUOUgNRw/FQzvzaKmiu+CCZtJ35v8WPCAV8RfqYov1ySWAiXlCPq2NLi+E1BZJW60KXAzUUyJvorCgYs6+RxBws=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4a92934d-0585-40de-91ee-08d64f854ed4
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1197;
-x-ms-traffictypediagnostic: MWHPR15MB1197:
-x-microsoft-antispam-prvs: <MWHPR15MB1197ACE96211A57C39B0AAC7B3DA0@MWHPR15MB1197.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(93006095)(93001095)(3231442)(11241501184)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1197;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1197;
-x-forefront-prvs: 08635C03D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(346002)(376002)(396003)(136003)(199004)(189003)(83716004)(4743002)(71190400001)(71200400001)(478600001)(36756003)(6436002)(25786009)(4326008)(2906002)(97736004)(305945005)(7736002)(6512007)(6116002)(6486002)(8676002)(105586002)(81156014)(33656002)(476003)(8936002)(2900100001)(54906003)(99286004)(50226002)(53936002)(2616005)(86362001)(46003)(486006)(106356001)(57306001)(186003)(102836004)(82746002)(6916009)(81166006)(316002)(68736007)(6506007)(256004)(5660300001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1197;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +vojnIdc4FAjWFN/D/ljv/R6DiX6RqevLy9bL9sjrl1F/qo1PZk82wox3dNwMq0Ly3sFmCA/6S/d93V1i4zmDdEV5damj0enEhaAd3zLBiqOShVly5cuRK60WNLAOm4EWPbAFRWcvhcrk7FJHNYdBRH1DBRchOFqcuBUyRF0yXXoJuThi/BFEuKTQUXr6wUEPvvWvletFztxPwXASA2Iv9K2cn0heh8BrPSurDBg9O6A1X0xQRNnRT6rKl4wdUyXs7IkQBL3IbAoer8gsk6TQvIGiL0cseA8QSfuWh0yHpsZci3A4OfAjrWAM3+e9MenuG6PtnMQ3tX3+DGaOKhcsaddM0Zsbc0YxeNmZmxpDb4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <694BD9E8523B6C49B8F7CA5D7FED96CD@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+x-mailer: Evolution 3.10.4-0ubuntu2 
+x-originating-ip: [10.177.70.241]
+x-pmwin-version: 4.0.3, Antivirus-Engine: 3.73.0, Antivirus-Data: 5.57
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <447A5C5E3632EB419ED9A2822D0C5505@iris.infra.thales>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a92934d-0585-40de-91ee-08d64f854ed4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 07:45:29.0131
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1197
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-I found perf-record --tail-synthesize without --overwrite breaks symbols
-for perf-script, perf-report, etc. For example:
-
-[root@]# ~/perf record -ag --tail-synthesize -- sleep 1
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 1.129 MB perf.data (3531 samples) ]
-[root@]# ~/perf script | head
-swapper     0 [000] 1250675.051971:          1 cycles:ppp:
-        ffffffff81009e15 [unknown] ([unknown])
-        ffffffff81196b19 [unknown] ([unknown])
-        ffffffff81196579 [unknown] ([unknown])
-        ffffffff81110ca7 [unknown] ([unknown])
-        ffffffff81a01f4a [unknown] ([unknown])
-        ffffffff81a017bf [unknown] ([unknown])
-        ffffffff8180e17a [unknown] ([unknown])
-
-perf-record with --overwrite does NOT have this issue.
-
-After digging into this, I found this issue is introduced by commit
-a73e24d240bc136619d382b1268f34d75c9d25ce.
-
-Reverting this commit does fix this issue. However, on a second thought,
-I feel it is probably better just drop --tail-synthesize, as it doesn't
-make much sense without --overwrite. All we need is to do tail_synthesize
-when --overwrite is set.
-
-Thoughts?
-
-Thanks,
-Song
+Q1BVIG1heSBub3Qgc2VlIG1vc3QgdXAtdG8tZGF0ZSBhbmQgY29ycmVjdCBjb3B5IG9mIERNQSBi
+dWZmZXIsIHdoZW4NCmludGVybmFsIERNQSBjb250cm9sbGVyIGlzIGluIHVzZS4NClByb2JsZW0g
+YXBwZWFycyBvbiBUaGUgQWx0ZXJhIFNvQyBGUEdBICh1c2VzIGludGVncmF0ZWQgRE1BIGNvbnRy
+b2xsZXIpLA0KZHVyaW5nIGhpZ2hlciBDUFUgYW5kIHN5c3RlbSBtZW1vcnkgbG9hZA0KDQpTaWdu
+ZWQtb2ZmLWJ5OiBKYW4gSmFibG9uc2t5IDxqYW4uamFibG9uc2t5QHRoYWxlc2dyb3VwLmNvbT4N
+Ci0tLQ0KIGRyaXZlcnMvbW1jL2hvc3QvZHdfbW1jLmMgfCAzICstLQ0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+bW1jL2hvc3QvZHdfbW1jLmMgYi9kcml2ZXJzL21tYy9ob3N0L2R3X21tYy5jDQppbmRleCA4MGRj
+MmZkLi42Mzg3M2Q5IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9kd19tbWMuYw0KKysr
+IGIvZHJpdmVycy9tbWMvaG9zdC9kd19tbWMuYw0KQEAgLTQ5OSw4ICs0OTksNyBAQCBzdGF0aWMg
+dm9pZCBkd19tY2lfZG1hY19jb21wbGV0ZV9kbWEodm9pZCAqYXJnKQ0KIA0KIAlkZXZfdmRiZyho
+b3N0LT5kZXYsICJETUEgY29tcGxldGVcbiIpOw0KIA0KLQlpZiAoKGhvc3QtPnVzZV9kbWEgPT0g
+VFJBTlNfTU9ERV9FRE1BQykgJiYNCi0JICAgIGRhdGEgJiYgKGRhdGEtPmZsYWdzICYgTU1DX0RB
+VEFfUkVBRCkpDQorCWlmIChkYXRhICYmIChkYXRhLT5mbGFncyAmIE1NQ19EQVRBX1JFQUQpKQ0K
+IAkJLyogSW52YWxpZGF0ZSBjYWNoZSBhZnRlciByZWFkICovDQogCQlkbWFfc3luY19zZ19mb3Jf
+Y3B1KG1tY19kZXYoaG9zdC0+c2xvdC0+bW1jKSwNCiAJCQkJICAgIGRhdGEtPnNnLA0K
