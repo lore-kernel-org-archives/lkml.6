@@ -2,73 +2,73 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDCBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B019BC04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:08:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 528B52147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:07:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 528B52147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 793712147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 16:08:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 793712147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbeKVCmF (ORCPT
+        id S1731720AbeKVCnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:42:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:53908 "EHLO foss.arm.com"
+        Wed, 21 Nov 2018 21:43:16 -0500
+Received: from verein.lst.de ([213.95.11.211]:52268 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730072AbeKVCmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:42:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 310991D70;
-        Wed, 21 Nov 2018 08:07:03 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 01A493F5CF;
-        Wed, 21 Nov 2018 08:07:03 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id B60F21AE100A; Wed, 21 Nov 2018 16:07:18 +0000 (GMT)
-Date:   Wed, 21 Nov 2018 16:07:18 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     joro@8bytes.org, robin.murphy@arm.com,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        ganapatrao.kulkarni@cavium.com, hch@lst.de,
-        m.szyprowski@samsung.com, linuxarm@huawei.com
-Subject: Re: [PATCH v3] iommu/dma: Use NUMA aware memory allocations in
- __iommu_dma_alloc_pages()
-Message-ID: <20181121160718.GB24883@arm.com>
-References: <1542812051-178935-1-git-send-email-john.garry@huawei.com>
+        id S1730072AbeKVCnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 21:43:16 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 4440868C19; Wed, 21 Nov 2018 17:08:11 +0100 (CET)
+Date:   Wed, 21 Nov 2018 17:08:11 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 02/19] block: introduce multi-page bvec helpers
+Message-ID: <20181121160811.GA4977@lst.de>
+References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-3-ming.lei@redhat.com> <20181121131928.GA1640@lst.de> <20181121150610.GA19111@ming.t460p>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1542812051-178935-1-git-send-email-john.garry@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181121150610.GA19111@ming.t460p>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 10:54:10PM +0800, John Garry wrote:
-> From: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
+On Wed, Nov 21, 2018 at 11:06:11PM +0800, Ming Lei wrote:
+> bvec_iter_* is used for single-page bvec in current linus tree, and there are
+> lots of users now:
 > 
-> Change function __iommu_dma_alloc_pages() to allocate pages for DMA from
-> respective device NUMA node. The ternary operator which would be for
-> alloc_pages_node() is tidied along with this.
+> [linux]$ git grep -n "bvec_iter_*" ./ | wc
+>     191     995   13242
 > 
-> We also include a change to use kvzalloc() for kzalloc()/vzalloc()
-> combination.
-> 
-> Signed-off-by: Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>
-> [JPG: Added kvzalloc(), drop pages ** being device local, tidied ternary operator]
-> Signed-off-by: John Garry <john.garry@huawei.com>
+> If we have to switch it first, it can be a big change, just wondering if Jens
+> is happy with that?
 
-Weird, you're missing a diffstat here.
+Your above grep statement seems to catch every use of struct bvec_iter,
+due to the *.
 
-Anyway, the patch looks fine to me, but it would be nice if you could
-justify the change with some numbers. Do you actually see an improvement
-from this change?
-
-Will
+Most uses of bvec_iter_ are either in the block headers, or are
+ceph wrappers that match the above and can easily be redefined.
