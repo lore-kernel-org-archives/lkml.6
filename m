@@ -2,111 +2,74 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5A3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF99FC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5E62145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:59:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5E62145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 48ACA2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:00:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48ACA2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728455AbeKUSc7 (ORCPT
+        id S1728408AbeKUSeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:32:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35298 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbeKUSc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:32:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6BE09AC5E;
-        Wed, 21 Nov 2018 07:59:29 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 08:59:28 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Stefan Priebe <s.priebe@profihost.ag>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.4 131/160] mm: thp: relax __GFP_THISNODE for
- MADV_HUGEPAGE mappings
-Message-ID: <20181121075928.GJ12932@dhcp22.suse.cz>
-References: <20181119162630.031306128@linuxfoundation.org>
- <20181119162643.032920932@linuxfoundation.org>
- <alpine.DEB.2.21.1811191410520.150313@chino.kir.corp.google.com>
- <20181120074447.GZ22247@dhcp22.suse.cz>
- <alpine.DEB.2.21.1811201551250.89573@chino.kir.corp.google.com>
+        Wed, 21 Nov 2018 13:34:20 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:48402 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725999AbeKUSeU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 13:34:20 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gPNRJ-0004Vn-26; Wed, 21 Nov 2018 16:00:49 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gPNRF-0007Ym-GV; Wed, 21 Nov 2018 16:00:45 +0800
+Date:   Wed, 21 Nov 2018 16:00:45 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Pan Bian <bianpan2016@163.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pan Bian <bianpan2013@163.com>,
+        Mathias Krause <minipli@googlemail.com>
+Subject: Re: [net] xfrm_user: use xfrm_state_put to free xfrm_state_alloc
+ return value
+Message-ID: <20181121080045.4vtozqc6eyeyis2n@gondor.apana.org.au>
+References: <1542783468-67482-1-git-send-email-bianpan2016@163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811201551250.89573@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1542783468-67482-1-git-send-email-bianpan2016@163.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 20-11-18 15:53:10, David Rientjes wrote:
-> On Tue, 20 Nov 2018, Michal Hocko wrote:
+On Wed, Nov 21, 2018 at 02:57:48PM +0800, Pan Bian wrote:
+> From: Pan Bian <bianpan2013@163.com>
 > 
-> > On Mon 19-11-18 14:16:24, David Rientjes wrote:
-> > > On Mon, 19 Nov 2018, Greg Kroah-Hartman wrote:
-> > > 
-> > > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > > 
-> > > 
-> > > As I noted when this patch was originally proposed and when I nacked it[*] 
-> > > because it causes a 13.9% increase in remote memory access latency and up 
-> > > to 40% increase in remote memory allocation latency on much of our 
-> > > software stack that uses MADV_HUGEPAGE after mremapping the text segment 
-> > > to memory backed by hugepages, I don't think this is stable material.
-> > 
-> > There was a wider consensus that this is the most minimal fix for users
-> > who see a regression introduced by 5265047ac301 ("mm, thp: really
-> > limit transparent hugepage allocation to local node"). As it has been
-> > discussed extensively there is no universal win but we should always opt
-> > for the safer side which this patch is accomplishing. The changelog goes
-> > in length explaining them along with numbers. I am not happy that your
-> > particular workload is suffering but this area certainly requires much
-> > more changes to satisfy wider range of users.
-> > 
-> > > The 4.4 kernel is almost three years old and this changes the NUMA 
-> > > locality of any user of MADV_HUGEPAGE.
-> > 
-> > Yes and we have seen bug reports as we adopted this older kernel only
-> > now.
+> The memory chunk allocated by xfrm_state_alloc() should be released with
+> xfrm_state_put(), not kfree.
 > 
-> I think the responsible thing to do would be allow users to remain on 
-> their stable kernel that they know works, whether that's 4.4 or any of the 
-> others this is proposed for, and downgrade from any current kernel release 
-> that causes their workloads to have such severe regressions once they try 
-> a kernel with this commit.
+> Signed-off-by: Pan Bian <bianpan2013@163.com>
 
-But we do know that there are people affected on 4.4 kernel. Besides
-that we can revert in the stable tree as soon as we see bug reports on
-new stable tree releases.
+This bug was introduced by
 
-Really, there is no single proper behavior. It was a mistake to merge
-5265047ac301. Since then we are in an unfortunate situation that some
-workload might have started to depend on the new behavior.
+	commit 565f0fa902b64020d5d147ff1708567e9e0b6e49
+	Author: Mathias Krause <minipli@googlemail.com>
+	Date:   Thu May 3 10:55:07 2018 +0200
 
-But rather than repeating the previous long discussion I would call for
-a new one which actually deals with fallouts. AFAIR there is a patch
-series to reduce the fragmentation issues by Mel with a zero feedback so
-far. I also think we should start discussing a new memory policy to
-establish the semantic you are after.
+While using xfrm_state_put may work it's certainly not the designed
+to do this.  We should instead export a function that calls
+kmem_cache_free on xfrm_state directly and use that here.
 
+Thanks,
 -- 
-Michal Hocko
-SUSE Labs
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
