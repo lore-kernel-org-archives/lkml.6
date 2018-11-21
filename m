@@ -2,146 +2,86 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B66C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85015C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA27A214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B929214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:10:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sjm+e+Og"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA27A214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9cxTk0N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B929214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730857AbeKUXnB (ORCPT
+        id S1730870AbeKUXog (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:43:01 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47440 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeKUXnB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:43:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nCG+jXX8uNGqlqqoFESCKSdkKidtBODjCyXtca2k2vI=; b=sjm+e+OgG33mFjMDdbgTBF+fL
-        8ZSygXW4okVCuqU4/aU0I8uReiVYSQgjBEjvVXht3qfXuiOMc54RkRlc8OPfGYjo7aysEg803z4/Y
-        zIoSjdG6FHUw+kXR0r3NpqoB2mreU4y/km+jfpo2jQntY8Ej90eqDXVns3UUuvY7A6Oe8ANG2td8J
-        YKotM7YZeR1SvnDhQLWgpwxuJkCtXpjK/f8TFwMIf2+5zQmhDYq5GkWQbjyS8/+asirWsQKkakg0/
-        GtRDqZQfAARQYywoVqSLwemDXj04wQG8MX9YdPpX+1syurT4HQhlJU0oQYaLjd6qBmwRjBF49hzlJ
-        KtdX2slwA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPSEz-0006HP-JL; Wed, 21 Nov 2018 13:08:25 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B8C972029FD58; Wed, 21 Nov 2018 14:08:22 +0100 (CET)
-Date:   Wed, 21 Nov 2018 14:08:22 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 09/15] sched: Introduce sched_energy_present static key
-Message-ID: <20181121130822.GE2113@hirez.programming.kicks-ass.net>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-10-quentin.perret@arm.com>
+        Wed, 21 Nov 2018 18:44:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbeKUXog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 18:44:36 -0500
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B27AC214C4;
+        Wed, 21 Nov 2018 13:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542805816;
+        bh=kLuL0FVnoD3N1FQ/JTWasgEtoAOABM52i8DIVU76uhw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=X9cxTk0N74+J4ZnQi8sU1GVtQGa7tNtlJ0Kbrg6H4/qxHF2xbqzoVMzrRz7A60hDB
+         2wKJNuXIVKxlDaXh1aYAXSHdiGiNUiU23phRs6i3AE60+rKuJsN7q/+kIayckVcDZp
+         KddW9JUWc38msS2IpDxfw2Mpec8yTO0qKAm6SEbM=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id DC2D61443D6; Wed, 21 Nov 2018 10:10:13 -0300 (-03)
+Date:   Wed, 21 Nov 2018 10:10:13 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, ak@linux.intel.com
+Subject: Re: [PATCH 2/2] perf vendor events: Add JSON metrics for Cascadelake
+ server
+Message-ID: <20181121131013.GF6248@kernel.org>
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181114212416.15665-2-kan.liang@linux.intel.com>
+ <20181115132116.GH9600@krava>
+ <3ab97c73-c197-8555-1a35-b54636e667e6@linux.intel.com>
+ <20181115151442.GK9600@krava>
+ <20181121125130.GD6248@kernel.org>
+ <20181121125408.GE6248@kernel.org>
+ <20181121130202.GA22611@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181119141857.8625-10-quentin.perret@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181121130202.GA22611@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:18:51PM +0000, Quentin Perret wrote:
+Em Wed, Nov 21, 2018 at 02:02:02PM +0100, Jiri Olsa escreveu:
+> On Wed, Nov 21, 2018 at 09:54:08AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Wed, Nov 21, 2018 at 09:51:30AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > Em Thu, Nov 15, 2018 at 04:14:42PM +0100, Jiri Olsa escreveu:
+> > > > On Thu, Nov 15, 2018 at 08:33:27AM -0500, Liang, Kan wrote:
+> > > > > The patch is attached. Can it be applied?
 
-> +static void sched_energy_start(int ndoms_new, cpumask_var_t doms_new[])
-> +{
-> +	/*
-> +	 * The conditions for EAS to start are checked during the creation of
-> +	 * root domains. If one of them meets all conditions, it will have a
-> +	 * non-null list of performance domains.
-> +	 */
-> +	while (ndoms_new) {
-> +		if (cpu_rq(cpumask_first(doms_new[ndoms_new - 1]))->rd->pd)
-> +			goto enable;
-> +		ndoms_new--;
-> +	}
+> > > > yep, that one works
 
-That seems quite ugly; can't you simply return a bool from
-build_perf_domains() ?
+> > > Can I have your reviewed-by for this one as well?
 
-Something like the below, but less fugly ;-)
+> > I turned the "yep, that one works" into an Acked-by, please let me know
+> > if that is enough.
 
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -299,7 +299,7 @@ static void destroy_perf_domain_rcu(stru
- #define EM_MAX_COMPLEXITY 2048
- 
- extern struct cpufreq_governor schedutil_gov;
--static void build_perf_domains(const struct cpumask *cpu_map)
-+static bool build_perf_domains(const struct cpumask *cpu_map)
- {
- 	int i, nr_pd = 0, nr_cs = 0, nr_cpus = cpumask_weight(cpu_map);
- 	struct perf_domain *pd = NULL, *tmp;
-@@ -365,7 +365,7 @@ static void build_perf_domains(const str
- 	if (tmp)
- 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
- 
--	return;
-+	return !!pd;
- 
- free:
- 	free_pd(pd);
-@@ -373,6 +373,8 @@ static void build_perf_domains(const str
- 	rcu_assign_pointer(rd->pd, NULL);
- 	if (tmp)
- 		call_rcu(&tmp->rcu, destroy_perf_domain_rcu);
-+
-+	return false;
- }
- #else
- static void free_pd(struct perf_domain *pd) { }
-@@ -2173,6 +2175,9 @@ void partition_sched_domains(int ndoms_n
- 	}
- 
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+	{
-+	bool has_eas = false;
-+
- 	/* Build perf. domains: */
- 	for (i = 0; i < ndoms_new; i++) {
- 		for (j = 0; j < n && !sched_energy_update; j++) {
-@@ -2181,10 +2186,13 @@ void partition_sched_domains(int ndoms_n
- 				goto match3;
- 		}
- 		/* No match - add perf. domains for a new rd */
--		build_perf_domains(doms_new[i]);
-+		has_eas |= build_perf_domains(doms_new[i]);
- match3:
- 		;
- 	}
-+
-+	sched_energy_set(has_eas);
-+	}
- #endif
- 
- 	/* Remember the new sched domains: */
+> yes, if it applies it's ok for me.. but can't judge the events inside ;-)
+
+Ok, Acked-by kept then. Thanks!
+
+- Arnaldo
