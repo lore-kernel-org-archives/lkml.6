@@ -2,171 +2,147 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA0AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA76AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974CF20672
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:14:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CBFD206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:15:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="kiQOQlXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974CF20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kiKmmD2a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBFD206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389796AbeKVHuR (ORCPT
+        id S2389808AbeKVHv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:50:17 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46161 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731503AbeKVHuR (ORCPT
+        Thu, 22 Nov 2018 02:51:29 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:60580 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731503AbeKVHv2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:50:17 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so7185673ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 13:14:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:message-id:user-agent:mime-version;
-        bh=LlHtzztzxS4T2OrKG7lTvEsNJe4iqA/i93T5/U6Zcy8=;
-        b=kiQOQlXOQKLKGRU1CZ04S8T1Pog+mbGDwMYrY/o2Xl9nn6k3T1gEOBz4urwjvPH4t2
-         NIM7j0tl0M8VG3REU6vGQ0I0X+X0jX4fCIFPX4WPaEwR0v5gYLakYW/c35zLVRf1NrNF
-         3Y+qft45hd1Fvn+GRQ7s7w0BQn9AYA0viFPU1N2NqDflS6NJgL8dGVcdJ4fwTDwWgMuq
-         bDUAuUq2rLyfGZo+HLvdBRG9umn0C7y1RE0OKHQtRDH3ZStpV3OowjNaih5O2HrcB0dM
-         pyk2aMsQk7QubJ8MRKniYB8uvgPK7qWX1dxtDI4w3UFwf3sk329IDotJ1fiBpTeh0Vig
-         FPAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:user-agent
-         :mime-version;
-        bh=LlHtzztzxS4T2OrKG7lTvEsNJe4iqA/i93T5/U6Zcy8=;
-        b=E1TBRIRr2frsCnvjbkEaRCwF8aI8BUk4bmaMflMzwbJuBGVu+FH8dv0NcARQJuK+vA
-         wqopqyobpMFHf5S0YU/sprovmG2D22uiT5bBfkY5LR62Lc62Sog0MW84NhiNrkhnPrkF
-         xO9Tr4V6dv+pyVnwGunKI4SAgL9bMTJumfFvunrRepXHop6ts88WqnHae8R/65C74D2l
-         Voo9fHk4kUN/nM98cBr9AIqeVost+ahJoZutIRNo5GHPnmP0IloLXxkmQ3JrKewnQwCQ
-         HeUJFc4rjod8XcEik5lvvciTv5f/gOFWXM+QUCLSM8LPPDleEks/Uj318yKLA/6TmYrt
-         fS2g==
-X-Gm-Message-State: AA+aEWYbJwVgCTtuq6TwkEbza1KwNSGaVJ3NXU8yINhvV5GbNftxbwJj
-        3YBY2FwHB+v6098m+zRnzqzCHNdKzbM=
-X-Google-Smtp-Source: AFSGD/X8OD+o78rOmWemonaZ85uGywLVRGs4hpASPRWS7xIWFKHvwpol+z23dljmunc/VOLo0wKXBQ==
-X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr8354854pld.187.1542834855371;
-        Wed, 21 Nov 2018 13:14:15 -0800 (PST)
-Received: from localhost ([104.129.192.69])
-        by smtp.gmail.com with ESMTPSA id g65sm148321164pfa.63.2018.11.21.13.14.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 13:14:14 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Wed, 21 Nov 2018 13:14:13 -0800 (PST)
-To:     linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org
-cc:     Russell King <linux@armlinux.org.uk>, jimw@sifive.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH] modpost: skip ELF local symbols during section mismatch
- check
-Message-ID: <alpine.DEB.2.21.9999.1811211311410.18372@viisi.sifive.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Thu, 22 Nov 2018 02:51:28 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wALL4Bid174985;
+        Wed, 21 Nov 2018 21:14:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=7/umXGXBV3C2e+3VNDbja6cAXnD2lMfY4lBkbez89IA=;
+ b=kiKmmD2aa0O4zM8bCmL4nygC17oR3hx4e0a+gEwVlt82XnFJk5QW79+TMVSKmVrYvjgY
+ zVbindcfLPr/jmLDYYjQcwt/MLvyRCR3fACNfXUhl9kZ8krl4ixTdn5KQGJPnVw/Zh+W
+ XC9y7cJ1JqHjEcC8XvL95irH6gGlUWqtWSNiubsrsHmDzPJxQv1hskE9kluPokWsdTYD
+ Sr75y7zJgbz8mmAwsKamJNZMN1oYHIBRfBz2F6HsdX1wA9A3VeuEuFVqKOFvZyEXoDG2
+ DPSc+zfdR6+hzTbx5D3vHimZQTnVElrhtx3JuHRGW8Ucz6ktLr6JTVxjtXiYnUk5jVFm Gg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2120.oracle.com with ESMTP id 2ntaxqbqcy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 21:14:56 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wALLEtIG008043
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 21:14:56 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wALLEsKo010846;
+        Wed, 21 Nov 2018 21:14:54 GMT
+Received: from oracle.com (/23.233.26.138)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Nov 2018 13:14:54 -0800
+Date:   Wed, 21 Nov 2018 16:14:47 -0500
+From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Out of tree module build errors since v4.20-rc1
+Message-ID: <20181121211447.weqjjk2fwbc27er6@oracle.com>
+Mail-Followup-To: Nadav Amit <namit@vmware.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181121205633.oxksehwjg5a2q6rt@oracle.com>
+ <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
+User-Agent: NeoMutt/20180716
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9084 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811210184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+* Nadav Amit <namit@vmware.com> [181121 16:12]:
+> > On Nov 21, 2018, at 12:56 PM, Liam R. Howlett <Liam.Howlett@Oracle.com>=
+ wrote:
+> >=20
+> >=20
+> > My out of tree driver build is now reporting issues with the jump table:
+> >=20
+> > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_code=E2=
+=80=99:
+> > ./include/linux/jump_label.h:153:14: error: dereferencing pointer to in=
+complete type =E2=80=98const struct jump_entry=E2=80=99
+> >  return entry->code;
+> >              ^~
+> > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_set_init=
+=E2=80=99:
+> > ./include/linux/jump_label.h:180:7: error: dereferencing pointer to inc=
+omplete type =E2=80=98struct jump_entry=E2=80=99
+> >  entry->key |=3D 2;
+> >       ^~
+> > ./include/linux/jump_label.h: At top level:
+> > ./include/linux/jump_label.h:212:26: error: array type has incomplete e=
+lement type =E2=80=98struct jump_entry=E2=80=99
+> > extern struct jump_entry __start___jump_table[];
+> >                          ^~~~~~~~~~~~~~~~~~~~
+> > ./include/linux/jump_label.h:213:26: error: array type has incomplete e=
+lement type =E2=80=98struct jump_entry=E2=80=99
+> > extern struct jump_entry __stop___jump_table[];
+> >                          ^~~~~~~~~~~~~~~~~~~
+> >=20
+> >=20
+> > This happens in v4.20-rc3 as well, so I bisected between v4.19 to
+> > v4.20-rc1 which resulted in the following commit:
+> >=20
+> > b34006c4258c9c86597b6b7123d6a9a3513d6cd7 is the first bad commit
+> > commit b34006c4258c9c86597b6b7123d6a9a3513d6cd7
+> > Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > Date:   Tue Sep 18 23:51:41 2018 -0700
+> >=20
+> >    x86/jump_table: Use relative references
+> >=20
+> >=20
+> >=20
+> >=20
+> > Initially I assumed this was my own fault, but my module does not have
+> > these issues when using v4.19.  Is there anything I should try/change in
+> > my module makefile, includes, etc to support this relative reference
+> > code?
+>=20
+> Do you see HAVE_ARCH_JUMP_LABEL_RELATIVE set in your kernel config?
+>=20
 
-During development of a serial console driver with a gcc 8.2.0
-toolchain for RISC-V, the following modpost warning appeared:
-
-----
-WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-The variable .LANCHOR1 references
-the function __init sifive_serial_console_setup()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-----
-
-".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-anchor generation code:
-
-https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
-
-https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
-
-This was verified by compiling the kernel with -fno-section-anchors
-and observing that the ".LANCHOR1" ELF local symbol disappeared, and
-modpost no longer warned about the section mismatch.  The serial
-driver code idiom triggering the warning is standard Linux serial
-driver practice that has a specific whitelist inclusion in modpost.c.
-
-I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-useful for modpost to report section mismatch warnings caused by ELF
-local symbols by default.  Local symbols have compiler-generated
-names, and thus bypass modpost's whitelisting algorithm, which relies
-on the presence of a non-autogenerated symbol name.  This increases
-the likelihood that false positive warnings will be generated (as in
-the above case).
-
-Thus, disable section mismatch reporting on ELF local symbols.  The
-rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-ARM binutils leaking ELF local symbols") and of similar code already
-present in modpost.c:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
-
-This third version of the patch implements a suggestion from Masahiro
-Yamada <yamada.masahiro@socionext.com> to restructure the code as an
-additional pattern matching step inside secref_whitelist(), and
-further improves the patch description.
-
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jim Wilson <jimw@sifive.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
----
-  scripts/mod/modpost.c | 12 ++++++++++++
-  1 file changed, 12 insertions(+)
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 0d998c54564d..90bb04b4e166 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1163,6 +1163,14 @@ static const struct sectioncheck *section_mismatch(
-   *   fromsec = text section
-   *   refsymname = *.constprop.*
-   *
-+ * Pattern 6:
-+ *   Hide section mismatch warnings for ELF local symbols.  The goal
-+ *   is to eliminate false positive modpost warnings caused by
-+ *   compiler-generated ELF local symbol names such as ".LANCHOR1".
-+ *   Autogenerated symbol names bypass modpost's "Pattern 2"
-+ *   whitelisting, which relies on pattern-matching against symbol
-+ *   names to work.  (One situation where gcc can autogenerate ELF
-+ *   local symbols is when "-fsection-anchors" is used.)
-   **/
-  static int secref_whitelist(const struct sectioncheck *mismatch,
-  			    const char *fromsec, const char *fromsym,
-@@ -1201,6 +1209,10 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
-  	    match(fromsym, optim_symbols))
-  		return 0;
-
-+	/* Check for pattern 6 */
-+	if (strstarts(fromsym, ".L"))
-+		return 0;
-+
-  	return 1;
-  }
-
--- 
-2.19.1
+Yes:
+ $ grep HAVE_ARCH_JUMP_LABEL_RELATIVE .config
+ CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=3Dy
 
 
+I should have mentioned I ran 'make defoldconfig' between each bisect.
