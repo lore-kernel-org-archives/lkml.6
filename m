@@ -2,158 +2,138 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3245DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A8BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D592921479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:50:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D592921479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 589D72146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="h7hjQsuO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589D72146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbeKUTYZ (ORCPT
+        id S1727874AbeKUTZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:24:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58724 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbeKUTYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:24:25 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63F3C308212B;
-        Wed, 21 Nov 2018 08:50:47 +0000 (UTC)
-Received: from [10.36.117.231] (ovpn-117-231.ams2.redhat.com [10.36.117.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A9055D772;
-        Wed, 21 Nov 2018 08:50:18 +0000 (UTC)
-Subject: Re: [PATCH v1 3/8] kexec: export PG_offline to VMCOREINFO
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@suse.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        pv-drivers@vmware.com, Borislav Petkov <bp@alien8.de>,
-        linux-doc@vger.kernel.org, kexec-ml <kexec@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Omar Sandoval <osandov@fb.com>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
-        devel@linuxdriverproject.org, Dave Young <dyoung@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Lianbo Jiang <lijiang@redhat.com>
-References: <20181119101616.8901-1-david@redhat.com>
- <20181119101616.8901-4-david@redhat.com>
- <20181121060458.GC7386@MiWiFi-R3L-srv>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <ddd5a6f4-59d0-474b-45d5-3589a21ebcd4@redhat.com>
-Date:   Wed, 21 Nov 2018 09:50:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 21 Nov 2018 14:25:30 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34200 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbeKUTZa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 14:25:30 -0500
+Received: by mail-oi1-f193.google.com with SMTP id h25so3914980oig.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 00:51:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ArGJLbtCwPhwjPL7JTYWaUDheD9J/FfGKkJ/gUvMjAs=;
+        b=h7hjQsuOXw07C9whVQyX0IOV8A/vwXTIaRu/1cYhSBjz6lBnEQekZtH16nMat5lFxw
+         pIP5T8IxlwmXLPYNw332CM7pSApW/gy0s3tRSqy2SSnFSJR9sMLYx8p5dWf7zRUWFI54
+         LaNMf6ViOS/oguAQPMFRvaxNirEkxZrGDKXSojtknkNG2LpJG9RCs38MvxcDw7g44j99
+         t/UrzEpc4j3Kag89qyCkjVRImfT8ciN2wNALz/3LIdki7onILdO74Abb7WNqYpVg6zgB
+         7CeVCmqZQ8OBvgEOK2DbRSDX/DH450/Z49JMMe4ebaqxWyvFYbGe33/wCSA7gPOgFPFB
+         tRgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ArGJLbtCwPhwjPL7JTYWaUDheD9J/FfGKkJ/gUvMjAs=;
+        b=IZs7K4huH1ZSm0bNxVEUHgjwzRoDpQx5QB/6SsDZ+suHwsxO/42hZqY4+jEltl/FhH
+         gUJCLCivN9SRHyPPe0s5jkSlyZe+uaajJ+0TrQuEgOOv8H3KiThrCAwPfRBjqiRXL8nW
+         mG8MnAqrNlqGw4DjZPUMrcwGh67Ew6hibTjYOInYPS1vf+hPeCDtdbz8h+aRothwk4jb
+         MWCNvJXuEBik/KH38w+L65zVjSxTcQzofstFHH7PTKBpaH5PfrI4S/mhbzTKQ/zlLIhm
+         WUpk8s+3FiP9mDgq/EuKPF8JF1MzkSUCu3ARbpKidVFoC8ksAZjgb3vsphKB88wXQ+Bt
+         tRLA==
+X-Gm-Message-State: AGRZ1gLYR+ZRIJSIbH7zgaVji1B6MJxT0AvGg8HCp0LQdeL19/f4MPVV
+        5eTH+BFWDjWYu+caTyZ+FeFGTxf0ALjo32HJN8W8Yw==
+X-Google-Smtp-Source: AJdET5dNiAqcR45vbU7awEH1t6+pZDTYQtkzCAUmZUomhdetGx2nu7aVlC8mVbv7uXof4gx1gKwPQH+1lPxwvbh9P/4=
+X-Received: by 2002:aca:fd12:: with SMTP id b18-v6mr3235910oii.337.1542790312258;
+ Wed, 21 Nov 2018 00:51:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181121060458.GC7386@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 21 Nov 2018 08:50:47 +0000 (UTC)
+References: <20181113135051.15308-1-brgl@bgdev.pl> <20181113135051.15308-2-brgl@bgdev.pl>
+ <c092b014-d5cf-f1ad-de91-6696b05cdf17@ti.com> <63ac671f-b202-2533-3878-af16149fbdbb@ti.com>
+ <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
+In-Reply-To: <b30f6b76-52c1-89ca-dbf3-a4156d1fb55e@ti.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 21 Nov 2018 09:51:41 +0100
+Message-ID: <CAMpxmJV8rEC5s4Mi-_3g_V1oojt_WpiRkB1RrCCYJGF+fiwYLA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: davinci: define gpio interrupts as separate resources
+To:     Sekhar Nori <nsekhar@ti.com>
+Cc:     j-keerthy@ti.com, Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>, stable@vger.kernel.org,
+        lokeshvutla@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21.11.18 07:04, Baoquan He wrote:
-> On 11/19/18 at 11:16am, David Hildenbrand wrote:
->> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
->> index 933cb3e45b98..093c9f917ed0 100644
->> --- a/kernel/crash_core.c
->> +++ b/kernel/crash_core.c
->> @@ -464,6 +464,8 @@ static int __init crash_save_vmcoreinfo_init(void)
->>  	VMCOREINFO_NUMBER(PAGE_BUDDY_MAPCOUNT_VALUE);
->>  #ifdef CONFIG_HUGETLB_PAGE
->>  	VMCOREINFO_NUMBER(HUGETLB_PAGE_DTOR);
->> +#define PAGE_OFFLINE_MAPCOUNT_VALUE	(~PG_offline)
->> +	VMCOREINFO_NUMBER(PAGE_OFFLINE_MAPCOUNT_VALUE);
->>  #endif
-> 
-> This solution looks good to me. One small concern is why we don't
-> export PG_offline to vmcoreinfo directly, then define
-> PAGE_OFFLINE_MAPCOUNT_VALUE in makedumpfile. We have been exporting
-> kernel data/MACRO directly, why this one is exceptional.
-> 
+=C5=9Br., 21 lis 2018 o 00:07 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+>
+> On 20/11/18 12:08 PM, J, KEERTHY wrote:
+> >
+> >
+> > On 11/20/2018 2:22 AM, Sekhar Nori wrote:
+> >> On 13/11/18 7:20 PM, Bartosz Golaszewski wrote:
+> >>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>>
+> >>> Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
+> >>> IRQ numbering") the davinci GPIO driver fails to probe if we boot
+> >>> in legacy mode from any of the board files. Since the driver now
+> >>> expects every interrupt to be defined as a separate resource, split
+> >>> the definition in devices-da8xx.c instead of having a single continuo=
+us
+> >>> interrupt range.
+> >>>
+> >>> Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ
+> >>> numbering")
+> >>> Cc: stable@vger.kernel.org
+> >>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >>
+> >> There are a number of other boards that need such fixing too. And the
+> >> commit in question does not do a good job of explaining why it was
+> >> needed in the first place. The description  just repeats what can be
+> >> inferred by reading the patch.
+> >
+> > Cc Lokesh
+> >
+> > Sekhar,
+> >
+> > DT explicitly mentions every IRQ number. The patch in discussion
+> > explicitly calls platform_get_irq for all the interrupts which to me is
+> > the right thing to do as: platform_get_irq-->
+> > of_irq_get-->irq_create_of_mapping--> sequence is to be done for every =
+IRQ.
+> >
+> > k3-am654 definitely will need explicit calls to platform_get_irq as it
+> > will be involving interrupt router and interrupt numbers need not be
+> > continuous.
+> >
+> > So i do not think reverting the patch is the right idea.
+>
+> Well, all of this description of patch motivation should have been in
+> the patch description to begin with.
+>
+> Bartosz, can you please extend this patch to fix this problem for other
+> DaVinci SoCs too? I am on the road this week, but will do my best to
+> queue these fixes at the earliest .
+>
+> Thanks,
+> Sekhar
 
-1. We are much more similar to PG_buddy (in contrast to actual page
-flags), and for PG_buddy it is historically handled like this (and I
-think it makes sense to expose these as actual MAPCOUNT_VALUEs).
+Ok, to make it easier for you, I'll resend all the patches addressing
+the GPIO issue.
 
-2. Right now only one page type per page is supported. Therefore only
-exactly one value in mapcount indicates e.g. PageBuddy()/PageOffline().
-
-Now, if we ever decide to change this (e.g. treat them like real flags),
-it is much easier to switch to PG_offline/PG_buddy then. We can directly
-see in makedumpfile that .*_MAPCOUNT_VALUE is no longer available but
-instead e.g. PG_offline and PG_buddy. Instead we would no see a change
-in makedumpfile and would have to rely on other properties.
-
-If there are no strong opinions I will leave it like this.
-
-Thanks!
-
-> Thanks
-> Baoquan
-> 
-
-
--- 
-
-Thanks,
-
-David / dhildenb
+Bart
