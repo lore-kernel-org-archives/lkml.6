@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E33C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EECC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72CC8206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90716214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jLy3j7Kw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72CC8206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOhcm6z2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90716214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388697AbeKVFpu (ORCPT
+        id S2388716AbeKVFpx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40804 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728508AbeKVFpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:49 -0500
+        id S1732372AbeKVFpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 141A0206BB;
-        Wed, 21 Nov 2018 19:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F483214D9;
+        Wed, 21 Nov 2018 19:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827416;
-        bh=HzuT/h0DRroaD8qLXSTcMq1/DgaSsfO78cH52WUr/lM=;
+        s=default; t=1542827418;
+        bh=2SRwGS/xRFpfceYigVJsMO2ndCRqAwXHpuV1+esd9vA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jLy3j7KwZOJmOJEElPItfSrUv9+M2qRZssYKt1C69ykCkY+aph9Nl5RMKMG+sECg0
-         Prpv9OTyHTjVlZzywfKpbkrwsK8KwVUppFoxWVb4APFICHkdkUO7+7BDRd2mYztCdS
-         05PIsThQ8mf0uiESpX6KzIhc9lPlcg89NRpNwMzI=
+        b=HOhcm6z2MmPjP9eBfFGPHsAqwcHC0af/m0FAygwCyfbiG1bK2GXHH2y3JOnxNnwdV
+         g/pbtvmoODHRyz1cmC0rnE5ou13RI5hkDbnVLVMhEIrF9u5wp+qvwAByK9jPxyFpAl
+         clxyHqh1knsDBLjg8oesjttVowJP6sbOid3PD2bc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Davidson <md@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michal Marek <mmarek@suse.com>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 21/59] crypto, x86: aesni - fix token pasting for clang
-Date:   Wed, 21 Nov 2018 20:06:36 +0100
-Message-Id: <20181121183509.086487223@linuxfoundation.org>
+Subject: [PATCH 4.9 22/59] kbuild: Add __cc-option macro
+Date:   Wed, 21 Nov 2018 20:06:37 +0100
+Message-Id: <20181121183509.124128734@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -63,63 +65,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Davidson <md@google.com>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-commit fdb2726f4e61c5e3abc052f547d5a5f6c0dc5504 upstream.
+commit 9f3f1fd299768782465cb32cdf0dd4528d11f26b upstream.
 
-aes_ctrby8_avx-x86_64.S uses the C preprocessor for token pasting
-of character sequences that are not valid preprocessor tokens.
-While this is allowed when preprocessing assembler files it exposes
-an incompatibilty between the clang and gcc preprocessors where
-clang does not strip leading white space from macro parameters,
-leading to the CONCAT(%xmm, i) macro expansion on line 96 resulting
-in a token with a space character embedded in it.
+cc-option uses KBUILD_CFLAGS and KBUILD_CPPFLAGS when it determines
+whether an option is supported or not. This is fine for options used to
+build the kernel itself, however some components like the x86 boot code
+use a different set of flags.
 
-While this could be resolved by deleting the offending space character,
-the assembler is perfectly capable of doing the token pasting correctly
-for itself so we can just get rid of the preprocessor macros.
+Add the new macro __cc-option which is a more generic version of
+cc-option with additional parameters. One parameter is the compiler
+with which the check should be performed, the other the compiler options
+to be used instead KBUILD_C*FLAGS.
 
-Signed-off-by: Michael Davidson <md@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Refactor cc-option and hostcc-option to use __cc-option and move
+hostcc-option to scripts/Kbuild.include.
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Michal Marek <mmarek@suse.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/crypto/aes_ctrby8_avx-x86_64.S |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ Makefile               |    2 +-
+ scripts/Kbuild.include |   14 ++++++++++++--
+ scripts/Makefile.host  |    6 ------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
---- a/arch/x86/crypto/aes_ctrby8_avx-x86_64.S
-+++ b/arch/x86/crypto/aes_ctrby8_avx-x86_64.S
-@@ -65,7 +65,6 @@
- #include <linux/linkage.h>
- #include <asm/inst.h>
+--- a/Makefile
++++ b/Makefile
+@@ -303,7 +303,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH"
  
--#define CONCAT(a,b)	a##b
- #define VMOVDQ		vmovdqu
+ HOSTCC       = gcc
+ HOSTCXX      = g++
+-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
++HOSTCFLAGS   := -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
+ HOSTCXXFLAGS = -O2
  
- #define xdata0		%xmm0
-@@ -92,8 +91,6 @@
- #define num_bytes	%r8
+ ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -109,6 +109,11 @@ as-option = $(call try-run,\
+ as-instr = $(call try-run,\
+ 	printf "%b\n" "$(1)" | $(CC) $(KBUILD_AFLAGS) -c -x assembler -o "$$TMP" -,$(2),$(3))
  
- #define tmp		%r10
--#define	DDQ(i)		CONCAT(ddq_add_,i)
--#define	XMM(i)		CONCAT(%xmm, i)
- #define	DDQ_DATA	0
- #define	XDATA		1
- #define KEY_128		1
-@@ -131,12 +128,12 @@ ddq_add_8:
- /* generate a unique variable for ddq_add_x */
++# __cc-option
++# Usage: MY_CFLAGS += $(call __cc-option,$(CC),$(MY_CFLAGS),-march=winchip-c6,-march=i586)
++__cc-option = $(call try-run,\
++	$(1) -Werror $(2) $(3) -c -x c /dev/null -o "$$TMP",$(3),$(4))
++
+ # Do not attempt to build with gcc plugins during cc-option tests.
+ # (And this uses delayed resolution so the flags will be up to date.)
+ CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
+@@ -116,8 +121,13 @@ CC_OPTION_CFLAGS = $(filter-out $(GCC_PL
+ # cc-option
+ # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
  
- .macro setddq n
--	var_ddq_add = DDQ(\n)
-+	var_ddq_add = ddq_add_\n
- .endm
+-cc-option = $(call try-run,\
+-	$(CC) -Werror $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
++cc-option = $(call __cc-option, $(CC),\
++	$(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS),$(1),$(2))
++
++# hostcc-option
++# Usage: cflags-y += $(call hostcc-option,-march=winchip-c6,-march=i586)
++hostcc-option = $(call __cc-option, $(HOSTCC),\
++	$(HOSTCFLAGS) $(HOST_EXTRACFLAGS),$(1),$(2))
  
- /* generate a unique variable for xmm register */
- .macro setxdata n
--	var_xdata = XMM(\n)
-+	var_xdata = %xmm\n
- .endm
+ # cc-option-yn
+ # Usage: flag := $(call cc-option-yn,-march=winchip-c6)
+--- a/scripts/Makefile.host
++++ b/scripts/Makefile.host
+@@ -20,12 +20,6 @@
+ # Will compile qconf as a C++ program, and menu as a C program.
+ # They are linked as C++ code to the executable qconf
  
- /* club the numeric 'id' to the symbol 'name' */
+-# hostcc-option
+-# Usage: cflags-y += $(call hostcc-option,-march=winchip-c6,-march=i586)
+-
+-hostcc-option = $(call try-run,\
+-	$(HOSTCC) $(HOSTCFLAGS) $(HOST_EXTRACFLAGS) $(1) -c -x c /dev/null -o "$$TMP",$(1),$(2))
+-
+ __hostprogs := $(sort $(hostprogs-y) $(hostprogs-m))
+ host-cshlib := $(sort $(hostlibs-y) $(hostlibs-m))
+ host-cxxshlib := $(sort $(hostcxxlibs-y) $(hostcxxlibs-m))
 
 
