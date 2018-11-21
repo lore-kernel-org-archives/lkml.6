@@ -4,65 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021DAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE74C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16CB2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AA62145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qPFEVpj5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16CB2145D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dl2L8brl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AA62145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727079AbeKUNxH (ORCPT
+        id S1727164AbeKUNxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:53:07 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38284 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbeKUNxH (ORCPT
+        Wed, 21 Nov 2018 08:53:16 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53053 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbeKUNxN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:53:07 -0500
-Received: by mail-it1-f195.google.com with SMTP id h65so6908538ith.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:20:37 -0800 (PST)
+        Wed, 21 Nov 2018 08:53:13 -0500
+Received: by mail-it1-f196.google.com with SMTP id i7so6781165iti.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:20:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZIPzqofjs6yZ6OIwxBHyvs/wydE9D2NgOy4LYNGRIMY=;
-        b=qPFEVpj5vIyEQkjAGB6GOEzHx5rz3O6zkJ/+pKvtl+kysiklzTrysCGcOBEWC8v/dE
-         BNFnv8cUhbq8WUZ+lMRen9SiO4yBbwJFJDItDcf3ZXqJReEvINUVOLAC0XXoKY0fz/qq
-         wLi1QCohPJg9ruH/dPtDjGWRpxUDkaE9S8dKAfBMK402bXNcQQjWgvjGjqoz0vGruzVD
-         OjdTQeyohaSCsgDS1/3pRylbmmnGFu+EO5UcJ7stfZwx1lqdCstNDHM8Rado50RhUh9r
-         KXA9buu0Gl+IyC7eoJCY8RacN4f1VmajayijFK0UU9s2IyF+/S8z5TMcq4LQr2KKimac
-         Fa/A==
+        bh=Gg27hJiPQ3d4NHt0mdVgx9/ikHSqaLrJCVV/c5lQqOk=;
+        b=dl2L8brlBAQbXLQok8N8a5vojhfeMcvu8siUufhvsbO4jruRn4U8wVg03lmsIlDCdS
+         q6+0xaveD+dGnOsWipm3d9u+i90LbBp9ysSfNa6gJ55L8JIUacymYPXg7r/lIGDjikWN
+         HOLnhx++jUJsA/On+Blv26tODkj7NzgR6p1Iud+YTmgnXWkw9c88D4lpY8XktvdFrCLm
+         +jJWbhDkC4QGBu9ypRZUcr/itq7XeT66UMN3hAjeie28xumgthfuS5wTMW7bkW31nxYL
+         5qID8lGXKA4yH7priPGfcW+Pc858w/F/OeXKw8BEhbwX1FX4ecVER9VqSrXPnDHubR+V
+         juvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZIPzqofjs6yZ6OIwxBHyvs/wydE9D2NgOy4LYNGRIMY=;
-        b=aUdBJMcssC93TTVoITR6C0L4rRPv8ipc67BlNobW2RaVip7FkXBHiBnj6H96kdyHBV
-         1XtGrNt7vI68uYIT9C94MocbvWd1ZqqT+vWeUqVcTsRXWh66viGpFIQaUUS1jn6Qt2HJ
-         iqwJ8PItNhaqqQMVr9Wj3z2jA3ncLjhe5aEz81U2QIoyo/tUerVn/77SVBATAvqLh3J8
-         9sgznT7WqgE0TR0gNqeox9s1dJqmE4fReYdo/XNsqjYs0WMEixEXVfsOgydxRzGAMQC9
-         sD3b9XSxJhCF9bg6fmhacqYzj9orpSeMOWjvbVpRI/P9k7uYoOyB7Z9Jx0WsqteukBec
-         AIgg==
-X-Gm-Message-State: AA+aEWaR1liztUe3P0BDVXh4laFShoJ6wxgE/xm6rOAz7EjPdrzurtYK
-        tRve4tbiCd4Uz+UZlgPomNz8MCSFxz+PXy62csMgRw==
-X-Google-Smtp-Source: AFSGD/UJYSc0OyQV94+f+B93B/UzkvfGr3AHmpjbLg1ybnQlwg9hw4W5ttAWfXLj/FswxGnP84BoLXugckKobO6FHqM=
-X-Received: by 2002:a02:8527:: with SMTP id g36mr3826297jai.135.1542770436516;
- Tue, 20 Nov 2018 19:20:36 -0800 (PST)
+        bh=Gg27hJiPQ3d4NHt0mdVgx9/ikHSqaLrJCVV/c5lQqOk=;
+        b=K93GnQUGxRSQs1Es0MQgZbHtwz2/ND+quVVi1fxMalgHY3JT9v5LuF/t/BTO4QODGb
+         czMJXV52gzkPqFl41lrEKhQ9P7zizXOoNUiMdd4Ym4XiqVohsKmcnfZO7rjV5cCaUn08
+         2BwQ298e7h3YEEqBIhpu+Z4z4iJfqfjT2nmLM3g/YmHx6Scq2RwJubO0y4cH9/tZgDux
+         ncqOVhYdx3b18p+zBWi6Vg5I+DhThE0dZAXzIvDCTgMAVl3fk12TJO80dG8mr2dyQAlt
+         WbN2TKs50O9GCoAUq0rvDfLm3/BqYvWlG7nkrwLBOKjP8X2BanK5mNiKfpUwcJSTMOHQ
+         +onw==
+X-Gm-Message-State: AGRZ1gJoDvpBDGoJcwWFnQ0aWKfZaH5DvvJc3rOxp9EehZ4Uuk7aBvvJ
+        vZIwqroP9dKH2CCIOg819zEDnboxf+cMUCGwsFRODg==
+X-Google-Smtp-Source: AFSGD/WjYGc6w1cIZ5ZcmZ/y0sV4cDGVGBp7bAE2mtAIN6fcEXMtN4GkhGcxKOWggD1OZCnEGIIn1wHhz0JdtiTfbqU=
+X-Received: by 2002:a24:6c55:: with SMTP id w82-v6mr4415956itb.106.1542770442942;
+ Tue, 20 Nov 2018 19:20:42 -0800 (PST)
 MIME-Version: 1.0
-References: <20181004195906.201895-1-schuffelen@google.com> <8736tjgumd.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <8736tjgumd.fsf@kamboji.qca.qualcomm.com>
+References: <20181004195906.201895-1-schuffelen@google.com>
+ <20181005143323.ezyd2x6x5ymlb7rg@bars> <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
+ <CAJWu+oqoSsj=50vk-jUTKUVgZ_oj5Vng0bBF605Aw_iWD=W24A@mail.gmail.com>
+ <CAAELVAGAZ-UM77P=JqzHjUGja9oJcN5y9+YvxZWKBmOXAu=zNQ@mail.gmail.com> <87tvlzffmf.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87tvlzffmf.fsf@kamboji.qca.qualcomm.com>
 From:   Cody Schuffelen <schuffelen@google.com>
-Date:   Tue, 20 Nov 2018 19:20:25 -0800
-Message-ID: <CAAELVAE0QqON_6-m09CE4D-zypWmNxWaMRHi_AT-NOEDHaMPHw@mail.gmail.com>
+Date:   Tue, 20 Nov 2018 19:20:32 -0800
+Message-ID: <CAAELVAFgMPboCrhXW2v-jcwXaDExsWH0oxhWiVJRLJ5iBSYhaw@mail.gmail.com>
 Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation device
 To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Johannes Berg <johannes@sipsolutions.net>,
+Cc:     Joel Fernandes <joelaf@google.com>,
+        sergey.matyukevich.os@quantenna.com,
+        Johannes Berg <johannes@sipsolutions.net>,
         "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
         netdev@vger.kernel.org, kernel-team@android.com
@@ -72,10 +78,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I already said in v2 that you should not mark this for net-next as this
-> goes to mac80211-next (if it gets accepted), now you are just
-> unnecessarily confusing people.
+> 1. Do not EVER submit HTML mails, mailing lists will automatically
+>    reject them. So your mail didn't reach the lists and I only got it
+>    because I was in the Cc field.
 
-My fault, I misunderstood. The next version will be named correctly.
+I apologize, my mistake.
 
-The new version is uploaded here: https://lkml.org/lkml/2018/11/21/251
+> 2. Do not top post, it's really annoying:
+>
+>    https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#do_not_top_post_and_edit_your_quotes
+
+ Thanks for the reference, I will keep that in mind.
+
+> 3. Reply to the review comments you get, even if you agree with them. By
+>    not replying you give an impression that you are ignoring the review
+>    comments.
+
+ Thanks for calling this out, will do.
