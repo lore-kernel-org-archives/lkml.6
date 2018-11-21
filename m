@@ -2,228 +2,99 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B199C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2A0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47DAC206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:06:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VdV6G1eb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47DAC206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 817252075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:10:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817252075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389955AbeKVImt (ORCPT
+        id S2387616AbeKVIqu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:42:49 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:10711 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730599AbeKVImt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:42:49 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf5d6ec0000>; Wed, 21 Nov 2018 14:06:36 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 21 Nov 2018 14:06:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 21 Nov 2018 14:06:35 -0800
-Received: from [10.2.168.109] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
- 2018 22:06:35 +0000
-Subject: Re: [PATCH v2 0/6] RFC: gup+dma: tracking dma-pinned pages
-To:     Tom Talpey <tom@talpey.com>, <john.hubbard@gmail.com>,
-        <linux-mm@kvack.org>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181110085041.10071-1-jhubbard@nvidia.com>
- <942cb823-9b18-69e7-84aa-557a68f9d7e9@talpey.com>
- <97934904-2754-77e0-5fcb-83f2311362ee@nvidia.com>
- <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <c1ba07d6-ebfa-ddb9-c25e-e5c1bfbecf74@nvidia.com>
-Date:   Wed, 21 Nov 2018 14:06:34 -0800
+        Thu, 22 Nov 2018 03:46:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55468 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730599AbeKVIqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 03:46:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 05028AD5A;
+        Wed, 21 Nov 2018 22:10:34 +0000 (UTC)
+Subject: Re: [PATCH 2/4] mm: Move zone watermark accesses behind an accessor
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Linux-MM <linux-mm@kvack.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Michal Hocko <mhocko@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20181121101414.21301-1-mgorman@techsingularity.net>
+ <20181121101414.21301-3-mgorman@techsingularity.net>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <340eecec-347b-e9c2-58ff-2a8e837291b5@suse.cz>
+Date:   Wed, 21 Nov 2018 23:07:41 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <5159e02f-17f8-df8b-600c-1b09356e46a9@talpey.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181121101414.21301-3-mgorman@techsingularity.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542837996; bh=fSMDC+isoSwp3Q/l972yCehVhHHVAob7oW4sSby856U=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=VdV6G1eb/KqtCBeeCMx4/PJmie01PCJsG2ad5wo7vF65TjXQjK+rRGjPKMmjqMG4u
-         AcGc5Mlg2hpFW2zFEw8XcoFgt49Q8dXm3P32HQPPTHZ4GSZerl/VDSLRx5ugTLdpKH
-         UHkFJQ5L5WhmtPpnGKhozYbWsKfP66d89KMJw0BX+BqWid5ld1BL9ZlV8i+rNTqVgi
-         wx1WRWbG1idc+rTIoTFltnvefzoRPo8tmfgjWe+Dh50LLbDfmfXcJho3PZ+SfRsWl6
-         qBGZBMHDcMCMhO0GyRyVQV6B9bvJ8RrtUcSLwPRJTw9MEZUlVqa1cVci7LI3A0u3kQ
-         TcOALJWbksoLg==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/18 8:49 AM, Tom Talpey wrote:
-> On 11/21/2018 1:09 AM, John Hubbard wrote:
->> On 11/19/18 10:57 AM, Tom Talpey wrote:
->>> ~14000 4KB read IOPS is really, really low for an NVMe disk.
->>
->> Yes, but Jan Kara's original config file for fio is *intended* to highli=
-ght
->> the get_user_pages/put_user_pages changes. It was *not* intended to get =
-max
->> performance,=C2=A0 as you can see by the numjobs and direct IO parameter=
-s:
->>
->> cat fio.conf
->> [reader]
->> direct=3D1
->> ioengine=3Dlibaio
->> blocksize=3D4096
->> size=3D1g
->> numjobs=3D1
->> rw=3Dread
->> iodepth=3D64
->=20
-> To be clear - I used those identical parameters, on my lower-spec
-> machine, and got 400,000 4KB read IOPS. Those results are nearly 30x
-> higher than yours!
+On 11/21/18 11:14 AM, Mel Gorman wrote:
+> This is a preparation patch only, no functional change.
+> 
+> Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 
-OK, then something really is wrong here...
-
->=20
->> So I'm thinking that this is not a "tainted" test, but rather, we're con=
-straining
->> things a lot with these choices. It's hard to find a good test config to=
- run that
->> allows decisions, but so far, I'm not really seeing anything that says "=
-this
->> is so bad that we can't afford to fix the brokenness." I think.
->=20
-> I'm not suggesting we tune the benchmark, I'm suggesting the results
-> on your system are not meaningful since they are orders of magnitude
-> low. And without meaningful data it's impossible to see the performance
-> impact of the change...
->=20
->>> Can you confirm what type of hardware you're running this test on?
->>> CPU, memory speed and capacity, and NVMe device especially?
->>>
->>> Tom.
->>
->> Yes, it's a nice new system, I don't expect any strange perf problems:
->>
->> CPU: Intel(R) Core(TM) i7-7800X CPU @ 3.50GHz
->> =C2=A0=C2=A0=C2=A0=C2=A0 (Intel X299 chipset)
->> Block device: nvme-Samsung_SSD_970_EVO_250GB
->> DRAM: 32 GB
->=20
-> The Samsung Evo 970 250GB is speced to yield 200,000 random read IOPS
-> with a 4KB QD32 workload:
->=20
->=20
-> https://www.samsung.com/us/computing/memory-storage/solid-state-drives/ss=
-d-970-evo-nvme-m-2-250gb-mz-v7e250bw/#specs
->=20
-> And the I7-7800X is a 6-core processor (12 hyperthreads).
->=20
->> So, here's a comparison using 20 threads, direct IO, for the baseline vs=
-.
->> patched kernel (below). Highlights:
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0-- IOPS are similar, around 60k.
->> =C2=A0=C2=A0=C2=A0=C2=A0-- BW gets worse, dropping from 290 to 220 MB/s.
->> =C2=A0=C2=A0=C2=A0=C2=A0-- CPU is well under 100%.
->> =C2=A0=C2=A0=C2=A0=C2=A0-- latency is incredibly long, but...20 threads.
->>
->> Baseline:
->>
->> $ ./run.sh
->> fio configuration:
->> [reader]
->> ioengine=3Dlibaio
->> blocksize=3D4096
->> size=3D1g
->> rw=3Dread
->> group_reporting
->> iodepth=3D256
->> direct=3D1
->> numjobs=3D20
->=20
-> Ouch - 20 threads issuing 256 io's each!? Of course latency skyrockets.
-> That's going to cause tremendous queuing, and context switching, far
-> outside of the get_user_pages() change.
->=20
-> But even so, it only brings IOPS to 74.2K, which is still far short of
-> the device's 200K spec.
->=20
-> Comparing anyway:
->=20
->=20
->> Patched:
->>
->> -------- Running fio:
->> reader: (g=3D0): rw=3Dread, bs=3D(R) 4096B-4096B, (W) 4096B-4096B, (T) 4=
-096B-4096B, ioengine=3Dlibaio, iodepth=3D256
->> ...
->> fio-3.3
->> Starting 20 processes
->> Jobs: 13 (f=3D8): [_(1),R(1),_(1),f(1),R(2),_(1),f(2),_(1),R(1),f(1),R(1=
-),f(1),R(1),_(2),R(1),_(1),R(1)][97.9%][r=3D229MiB/s,w=3D0KiB/s][r=3D58.5k,=
-w=3D0 IOPS][eta 00m:02s]
->> reader: (groupid=3D0, jobs=3D20): err=3D 0: pid=3D2104: Tue Nov 20 22:01=
-:58 2018
->> =C2=A0=C2=A0=C2=A0 read: IOPS=3D56.8k, BW=3D222MiB/s (232MB/s)(20.0GiB/9=
-2385msec)
->> ...
->> Thoughts?
->=20
-> Concern - the 74.2K IOPS unpatched drops to 56.8K patched!
-
-ACK. :)
-
->=20
-> What I'd really like to see is to go back to the original fio parameters
-> (1 thread, 64 iodepth) and try to get a result that gets at least close
-> to the speced 200K IOPS of the NVMe device. There seems to be something
-> wrong with yours, currently.
-
-I'll dig into what has gone wrong with the test. I see fio putting data fil=
-es
-in the right place, so the obvious "using the wrong drive" is (probably)
-not it. Even though it really feels like that sort of thing. We'll see.=20
-
->=20
-> Then of course, the result with the patched get_user_pages, and
-> compare whichever of IOPS or CPU% changes, and how much.
->=20
-> If these are within a few percent, I agree it's good to go. If it's
-> roughly 25% like the result just above, that's a rocky road.
->=20
-> I can try this after the holiday on some basic hardware and might
-> be able to scrounge up better. Can you post that github link?
->=20
-
-Here:
-
-   git@github.com:johnhubbard/linux (branch: gup_dma_testing)
-
-
---=20
-thanks,
-John Hubbard
-NVIDIA
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
