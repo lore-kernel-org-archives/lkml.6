@@ -2,123 +2,255 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF13C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F9EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE112145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE112145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id 3D5382146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:21:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CFm1LMx2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5382146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbeKUNx0 (ORCPT
+        id S1727438AbeKUNxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:53:26 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34198 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbeKUNxZ (ORCPT
+        Wed, 21 Nov 2018 08:53:40 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:47033 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbeKUNxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:53:25 -0500
-Received: by mail-pl1-f195.google.com with SMTP id f12-v6so3336975plo.1;
-        Tue, 20 Nov 2018 19:20:55 -0800 (PST)
+        Wed, 21 Nov 2018 08:53:40 -0500
+Received: by mail-io1-f67.google.com with SMTP id m1-v6so2993528ioc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:21:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fvdD350S5xrXdLzzmPXVMAW0MEo3EiFNQTEvkxDsZmw=;
+        b=CFm1LMx2bOw7myYyHpo5gKNmUTrU/8vMjw9ZpmgQtfaMuTaHxu1zRnsOk/BKt40+fU
+         Opb22xmaR65gY35atLUSll3nlypgZOLODJbB470c95eksorntfdAVWFzY3vnHD45gq8V
+         ffNY7qpvwUgcWEp92AVfeUx4vRYpeOf5zILcyxDTvIsJthIEYHRjZZwJDP2QTyal84u7
+         OiIH2xgjTPCo4NW7UHDzdIOxcYlYaEXcJYfalPw0+14fms/sqqNniQLUgtvSxYdGfClb
+         zWsf3bFoOvI/B5GtqyF6//qqBC08rQfVeeJyfMTle+SLdT7wJtVvgWy0dtmIoDnIbbje
+         6iiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YUDK3byES5Clx+gNUxLq8kbY4gy4QnhkCiPin39VMxU=;
-        b=jXyUi5l9NdbIs24pP1OZovAfd2v6oIrojxCkmmIZmnGPBtd9cv5iusJJsZMcAKwE/D
-         +sx8zMVTBKTHhvYqVbmfiD6ZrD60aIBpIK8pLbes71cmZXF6S9HKawMX9gVQgA+L/2F7
-         U+Md3MM8p1udCjHF2eZO9nCuoBDZzx6hDM63nYXdk2fv9DAiSN21YvsSo4WBw4Mtlp09
-         Nj6ugtqp878LkVj1NOD+llU8Ourkjlf+lEv0Isaf0ygzecfz0vrIQUC5HfQgybecFk9S
-         zwXerpnJwyV2NCgyim7aaoSoxfi8k4B/PSlU8H3Ab+ypHVCv/eJvdG884mySGDXRkJpV
-         9l+Q==
-X-Gm-Message-State: AGRZ1gK7INY9GGd9aVsQecyoDR0XYBkBLZYzgtnhB+z5Tcu9IFyY4cbl
-        Xi7LGaUy+QEFINnfKDTOxtA=
-X-Google-Smtp-Source: AJdET5dJiV7FzcfTUZjsrEJPVAyWFsSbjIeiHP2PByBbx+NhoOUpUwU76NXXgVdSoo5Gt6sLjpYIqA==
-X-Received: by 2002:a62:b9a:: with SMTP id 26mr5096104pfl.196.1542770454986;
-        Tue, 20 Nov 2018 19:20:54 -0800 (PST)
-Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
-        by smtp.gmail.com with ESMTPSA id t90sm36137627pfj.23.2018.11.20.19.20.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 19:20:54 -0800 (PST)
-Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-10-ming.lei@redhat.com> <20181116134541.GH3165@lst.de>
- <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
- <20181120161651.GB2629@lst.de>
- <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
- <20181121005902.GA31748@ming.t460p>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
-Date:   Tue, 20 Nov 2018 19:20:45 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fvdD350S5xrXdLzzmPXVMAW0MEo3EiFNQTEvkxDsZmw=;
+        b=eg3YlypaGIprgvqTPTFkpBZDXLL5YHFRnBplQ8DaysGuOIPchSmXzmu8sTfIn4Nj0r
+         RtjskPU+UCGqq5H5ZK8ULJKkIJkX77Kv1PT82xMeiwtnx1oIfwuGHeiJjlndfcdKuuOb
+         dvA+aAL9NBn7ucwnuyZGzt8gaVGj25EoRAumHpKY84LIAOAgoV4IPanMJyyUVMioDZyS
+         Y8FXnr0ahVh/m45iahKYo+GONGu+FqPYeeFuIxjgJilpvLe/fKnQkcKI77qywbRqt2w+
+         C7pgNeYIcNXysC7oDcPIaUV/ZQszm6np9U/nEOdu3HUdInmSj6ooX7+ChEou50LCEMzc
+         sMvw==
+X-Gm-Message-State: AA+aEWb/RC+toWgmrxTpVGBlejw1AhuwjTwVT/IUnXM+CuKA71HCsarg
+        9hFcdZ+g9bH5UApAAG+uERH0MsOEBqbXPuOJ7kXBWA==
+X-Google-Smtp-Source: AFSGD/WPXZYYwtGjWf1lVXtH1cKIa16RE6r42PqhFTyI2QNHpmSS3QWLv10jiomhgzGTqai08AodXVswTtQ75B2eeBY=
+X-Received: by 2002:a6b:398b:: with SMTP id g133mr3564576ioa.67.1542770469043;
+ Tue, 20 Nov 2018 19:21:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181121005902.GA31748@ming.t460p>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181004195906.201895-1-schuffelen@google.com> <1539073540.3687.99.camel@sipsolutions.net>
+In-Reply-To: <1539073540.3687.99.camel@sipsolutions.net>
+From:   Cody Schuffelen <schuffelen@google.com>
+Date:   Tue, 20 Nov 2018 19:20:57 -0800
+Message-ID: <CAAELVAGhUeALjdi+D=K5XVCncQMaw5tUnjZ=jypL0JKN3MNgzA@mail.gmail.com>
+Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation device
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 9, 2018 at 1:25 AM Johannes Berg <johannes@sipsolutions.net> wrote:
+>
+> On Thu, 2018-10-04 at 12:59 -0700, Cody Schuffelen wrote:
+> >
+> > I wasn't completely clear on whether I should change the title (net-next
+> > to mac80211-next) so I left it as is for v3 to try to keep the patchwork
+> > series together.
+>
+> You can/should change it - patchwork doesn't really track this at all
+> anyway.
 
-> Not sure I understand the 'blocking' problem in this case.
-> 
-> We can build a bvec table from this req, and send them all
-> in send(),
+Got it, thanks.
 
-I would like to avoid growing bvec tables and keep everything
-preallocated. Plus, a bvec_iter operates on a bvec which means
-we'll need a table there as well... Not liking it so far...
+>
+> > The driver is also now a bool instead of a tristate to use __ro_after_init.
+>
+> Hmm? Why would that be required? __ro_after_init works fine in modules?
 
-> can this way avoid your blocking issue? You may see this
-> example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
+My mistake, you're right. Tested and this does work with a module.
 
-This is exactly an example of not ignoring the bios...
+> > +static struct ieee80211_rate bitrates_2ghz[] = {
+> > +     { .bitrate = 10 },
+> > +     { .bitrate = 20 },
+> > +     { .bitrate = 55 },
+> > +     { .bitrate = 60 },
+> > +     { .bitrate = 110 },
+> > +     { .bitrate = 120 },
+> > +     { .bitrate = 240 },
+> > +};
+>
+> Come to think of it, the typical order here would be 1,2,5.5,11,6,12,24
+> (6<->11), due to the ordering in the probe request frame I guess.
+>
+> I'm not sure it matters though.
 
-> If this way is what you need, I think you are right, even we may
-> introduce the following helpers:
-> 
-> 	rq_for_each_bvec()
-> 	rq_bvecs()
+Thanks, changed.
 
-I'm not sure how this helps me either. Unless we can set a bvec_iter to
-span bvecs or have an abstract bio crossing when we re-initialize the
-bvec_iter I don't see how I can ignore bios completely...
+>
+> > +static struct ieee80211_supported_band band_2ghz = {
+>
+> These can be const, I think?
 
-> So looks nvme-tcp host driver might be the 2nd driver which benefits
-> from multi-page bvec directly.
-> 
-> The multi-page bvec V11 has passed my tests and addressed almost
-> all the comments during review on V10. I removed bio_vecs() in V11,
-> but it won't be big deal, we can introduce them anytime when there
-> is the requirement.
+Unfortunately, the arrays they're assigned to in the wiphy is non-const:
+https://github.com/torvalds/linux/blob/master/include/net/cfg80211.h#L4055
+https://github.com/torvalds/linux/blob/master/include/net/cfg80211.h#L346
 
-multipage-bvecs and nvme-tcp are going to conflict, so it would be good
-to coordinate on this. I think that nvme-tcp host needs some adjustments
-as setting a bvec_iter. I'm under the impression that the change is 
-rather small and self-contained, but I'm not sure I have the full
-picture here.
+struct ieee80211_supported_band *bands[IEEE80211_NUM_BANDS];
+
+> > +/** Assigned at module init. Guaranteed locally-administered and unicast. */
+>
+> I think you should avoid ** - it's the kernel-doc marker.
+
+Good catch. Sorry about that, you pointed it out on an earlier version
+as well on a different line.
+
+>
+> > +static u8 fake_router_bssid[ETH_ALEN] __ro_after_init = {};
+>
+> If this is the reason for not allowing it to be a module then you don't
+> need  to disallow the module case.
+
+Good point, fixed.
+
+> > +
+> > +static void virt_wifi_scan_result(struct work_struct *work)
+> > +{
+> > +     const union {
+> > +             struct {
+> > +                     u8 tag;
+> > +                     u8 len;
+> > +                     u8 ssid[8];
+> > +             } __packed parts;
+> > +             u8 data[10];
+> > +     } ssid = { .parts = {
+> > +             .tag = WLAN_EID_SSID, .len = 8, .ssid = "VirtWifi" }
+> > +     };
+>
+> Not sure I see much value in the union, but I don't think it matters
+> much.
+> (You could just cast below - (void *)&ssid, sizeof(ssid))
+
+Good point, done.
+
+>
+> > +     rtnl_lock();
+> > +     if (priv->scan_request) {
+> > +             cfg80211_scan_done(priv->scan_request, &scan_info);
+> > +             priv->scan_request = NULL;
+> > +     }
+> > +     rtnl_unlock();
+>
+> Do you need the rtnl for the priv->scan_request locking?
+
+I've redone the structure a bit to clean this up, and don't use the
+lock here anymore.
+
+> > +static int virt_wifi_get_station(struct wiphy *wiphy,
+> > +                              struct net_device *dev,
+> > +                              const u8 *mac,
+> > +                              struct station_info *sinfo)
+> > +{
+> > [...]
+> > +     sinfo->tx_packets = 1;
+> > +     sinfo->tx_failed = 0;
+> > +     sinfo->signal = -60;
+>
+> I think Sergey pointed out the -60 elsewhere - need to check here too,
+> and maybe set in some place that you actually report dBm/mBm.
+
+Added a comment here, it looks like even with CFG80211_SIGNAL_TYPE_MBM
+this should be in dBm.
+https://github.com/torvalds/linux/blob/master/include/net/cfg80211.h#L1264
+
+> Also, I think you should only report something here if actually
+> connected - Sergey pointed this out on the dump station but it applies
+> here too.
+
+Thanks, get_station and dump_station now both check if the device is connected.
+
+> > +static void free_netdev_and_wiphy(struct net_device *dev)
+> > +{
+> > +     struct virt_wifi_netdev_priv *priv = netdev_priv(dev);
+> > +     struct virt_wifi_priv *w_priv;
+> > +
+> > +     flush_work(&priv->register_wiphy_work);
+> > +     if (dev->ieee80211_ptr && !IS_ERR(dev->ieee80211_ptr)) {
+> > +             w_priv = wiphy_priv(dev->ieee80211_ptr->wiphy);
+> > +             w_priv->being_deleted = true;
+> > +             flush_delayed_work(&w_priv->scan_result);
+> > +             flush_delayed_work(&w_priv->connect);
+> > +             flush_delayed_work(&w_priv->disconnect);
+>
+> this is called from
+>
+> > +static void virt_wifi_setup(struct net_device *dev)
+> > +{
+> > +     ether_setup(dev);
+> > +     dev->netdev_ops = &virt_wifi_ops;
+> > +     dev->priv_destructor = free_netdev_and_wiphy;
+> > +}
+>
+> the destructor, but I believe the destructor is invoked with the RTNL
+> held. As such, this will deadlock (and lockdep should complain - at
+> least in current kernel versions) when it's actually running when you
+> flush it, since you flush something that's (potentially) waiting to
+> acquire the RTNL, but you are holding the RTNL here and so neither side
+> can make progress.
+
+Good catch, this was not a good strategy. I think it was stable for me
+only because RTNL is technically not held when the destructor is
+invoked by netdev_run_todo, though I see now that's only because
+netdev_run_todo is a special case with respect to the RTNL mutex so
+interacting with it there seems like a bad idea.
+https://github.com/torvalds/linux/blob/master/net/core/dev.c#L8735
+
+I've changed the asynchronous strategy: at a high level, it now sets
+the device in a "down"/"being deleted" state to block any further
+asynchronous requests, cancels pending delayed work operations, and
+cleans up dangling callbacks the delayed work operations had committed
+to doing. More functions are also now annotated with which locks
+should already be held and which will be acquired and released. This
+relies heavily on cancel_delayed_work_sync. My assumption here is that
+cancel_delayed_work_sync puts the delayed work operations in a
+definite "not running" state, and uses the return value to determine
+if it needs to clean up any callbacks.
+
+> > +     /* The newlink callback is invoked while holding the rtnl lock, but
+> > +      * register_wiphy wants to claim the rtnl lock itself.
+> > +      */
+> > +     schedule_work(&priv->register_wiphy_work);
+>
+> Maybe we should fix/change that?
+
+Worked around it for this implementation by sharing one wiphy across
+all net_device instances. The module init and destroy now acquire the
+rtnl mutex to init/destroy the wiphy as well as registering the rtnl
+device type. The netdev setup is now more sane as the wiphy setup is
+done ahead of time. The only downside is that multiple wifi devices
+cannot scan simultaneously, so no great loss.
+
+I've uploaded the new version here: https://lkml.org/lkml/2018/11/21/251
