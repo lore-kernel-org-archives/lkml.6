@@ -2,136 +2,101 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF964C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9272AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A82172145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A82172145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5986D2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dm+hdtdQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5986D2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeKUO3L (ORCPT
+        id S1726705AbeKUOcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:29:11 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41728 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725982AbeKUO3L (ORCPT
+        Wed, 21 Nov 2018 09:32:12 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45420 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725982AbeKUOcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:29:11 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAL3rpYj093357
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 22:56:32 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nvrs5x90w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 22:56:32 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 21 Nov 2018 03:56:30 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Nov 2018 03:56:27 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAL3uQL655509052
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Nov 2018 03:56:26 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D9C74C04A;
-        Wed, 21 Nov 2018 03:56:26 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54D724C04E;
-        Wed, 21 Nov 2018 03:56:20 +0000 (GMT)
-Received: from bangoria.ibmuc.com (unknown [9.102.2.77])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Nov 2018 03:56:19 +0000 (GMT)
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-To:     mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org
-Cc:     benh@kernel.crashing.org, paulus@samba.org, ebiederm@xmission.com,
-        muriloo@linux.ibm.com, christophe.leroy@c-s.fr, npiggin@gmail.com,
-        leitao@debian.org, aneesh.kumar@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, naveen.n.rao@linux.vnet.ibm.com,
-        maddy@linux.vnet.ibm.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Subject: [PATCH v2] Powerpc/perf: Wire up PMI throttling
-Date:   Wed, 21 Nov 2018 09:26:37 +0530
-X-Mailer: git-send-email 2.19.1
+        Wed, 21 Nov 2018 09:32:12 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so3433782plm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:59:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WLVfDtgQ6dMyB51L8SjOel24v6nbaFrKazs5k12L7JM=;
+        b=Dm+hdtdQ7e2DxFOxslOBy1kf+z/7GfVyHKMA75HDhGlDJbiMXbnqHrkk5l0gHI7TC/
+         inVbLDLPSdgY8Igc9CyeqZxzI627+2oESyRD6D3n7mu9t4/DiGkycUqYEK8oNoV5TNui
+         +O0mipytwm9p3rmA5N1jGE7FdFlc55y0+QAqU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WLVfDtgQ6dMyB51L8SjOel24v6nbaFrKazs5k12L7JM=;
+        b=iwjoCfoeJj9JY+4OaZzKQk63jr6rzsexGgd14ETEC+x+JPDefAmZCOUMkBXTFh/9mF
+         /Oi3ubmrKTkAVW4JTnzKBDqFzXRT4Kz8KtvW4vrKgCD4xsxwle2SFVJZ2u2ILhlJ4xot
+         cFrXlkYbJw8qFFrJQMNav2x3ERlCrnoNnjdYbsBaFV7I+P0zOO1Mu/M05WDyavbQ1bq/
+         05NH9ykBQxoeqXZlfRfLXc7HbYAh+3KN5OBLSIdAVHCEf4I6s12O7cuTp7vBAFUk2/Aa
+         J/7an+IQUzBuKa++rodLVnm3fdrgsPSZwIBOC+qIEHE1+KZpcwDxqHkda5Ujgs7+6JGi
+         Ldaw==
+X-Gm-Message-State: AA+aEWYrOoGvwBxOjJKGhoBrimLckn5aJCIoEx/CjnZwBaZoN+BNFwwg
+        ORiReAIelJceWDSsJmlYhr9dRQ==
+X-Google-Smtp-Source: AFSGD/X2gxcamV/45/9rwmm/ng7Hsx5N9QgQKGtMRuT8RfPpWhca6zTlDbsHA3YwRuB8fLSZxNYxjA==
+X-Received: by 2002:a17:902:76c2:: with SMTP id j2mr5142138plt.339.1542772772901;
+        Tue, 20 Nov 2018 19:59:32 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id i63-v6sm11568838pfi.66.2018.11.20.19.59.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 19:59:31 -0800 (PST)
+Date:   Wed, 21 Nov 2018 09:29:25 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     rjw@rjwysocki.net, benh@kernel.crashing.org, paulus@samba.org,
+        mpe@ellerman.id.au, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: pmac64: add of_node_put()
+Message-ID: <20181121035925.67fsysw6jyswb3op@vireshk-i7>
+References: <20181120125409.19314-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112103-0028-0000-0000-0000031E00ED
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112103-0029-0000-0000-000023DA075B
-Message-Id: <20181121035637.17446-1-ravi.bangoria@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=923 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811210034
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181120125409.19314-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 14c63f17b1fde ("perf: Drop sample rate when sampling is too
-slow") introduced a way to throttle PMU interrupts if we're spending
-too much time just processing those. Wire up powerpc PMI handler to
-use this infrastructure.
+On 20-11-18, 07:54, Yangtao Li wrote:
+> use of_node_put to release the refcount of node.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/cpufreq/pmac64-cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
+> index be623dd7b9f2..1d32a863332d 100644
+> --- a/drivers/cpufreq/pmac64-cpufreq.c
+> +++ b/drivers/cpufreq/pmac64-cpufreq.c
+> @@ -411,6 +411,7 @@ static int __init g5_neo2_cpufreq_init(struct device_node *cpunode)
+>  		pfunc_set_vdnap0 = pmf_find_function(root, "set-vdnap0");
+>  		pfunc_vdnap0_complete =
+>  			pmf_find_function(root, "slewing-done");
+> +		of_node_put(root);
+>  		if (pfunc_set_vdnap0 == NULL ||
+>  		    pfunc_vdnap0_complete == NULL) {
+>  			pr_err("Can't find required platform function\n");
 
-We have throttling of the *rate* of interrupts, but this adds
-throttling based on the *time taken* to process the interrupts.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
----
-v1: https://lkml.org/lkml/2018/11/14/627
-
- arch/powerpc/perf/core-book3s.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-index 81f8a0c838ae..3cd2ec9c9732 100644
---- a/arch/powerpc/perf/core-book3s.c
-+++ b/arch/powerpc/perf/core-book3s.c
-@@ -10,6 +10,7 @@
-  */
- #include <linux/kernel.h>
- #include <linux/sched.h>
-+#include <linux/sched/clock.h>
- #include <linux/perf_event.h>
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
-@@ -2148,7 +2149,7 @@ static bool pmc_overflow(unsigned long val)
- /*
-  * Performance monitor interrupt stuff
-  */
--static void perf_event_interrupt(struct pt_regs *regs)
-+static void __perf_event_interrupt(struct pt_regs *regs)
- {
- 	int i, j;
- 	struct cpu_hw_events *cpuhw = this_cpu_ptr(&cpu_hw_events);
-@@ -2232,6 +2233,14 @@ static void perf_event_interrupt(struct pt_regs *regs)
- 		irq_exit();
- }
- 
-+static void perf_event_interrupt(struct pt_regs *regs)
-+{
-+	u64 start_clock = sched_clock();
-+
-+	__perf_event_interrupt(regs);
-+	perf_sample_event_took(sched_clock() - start_clock);
-+}
-+
- static int power_pmu_prepare_cpu(unsigned int cpu)
- {
- 	struct cpu_hw_events *cpuhw = &per_cpu(cpu_hw_events, cpu);
 -- 
-2.17.1
-
+viresh
