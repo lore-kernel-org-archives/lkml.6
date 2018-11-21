@@ -2,115 +2,160 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6978AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C58C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F8A214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:23:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DE70214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:23:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="CIyIkrPl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F8A214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ucoWbM+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DE70214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731268AbeKVF7F (ORCPT
+        id S1731512AbeKVF7b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:59:05 -0500
-Received: from mail-eopbgr810100.outbound.protection.outlook.com ([40.107.81.100]:64342
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730624AbeKVF7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:59:04 -0500
+        Thu, 22 Nov 2018 00:59:31 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35707 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730624AbeKVF7a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:59:30 -0500
+Received: by mail-pl1-f193.google.com with SMTP id v1-v6so6862715plo.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:23:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KjZzS6ospqoyPmETGhDmgGm8eo8we3Wqu+sf4Q0NYHY=;
- b=CIyIkrPlrJgSe4Rd6H1AAqCK3sKX5H/BoBrbW/Sv0mxMly9rhVDeKHHIr8e9Hn2LDQUGtiX8jYjd4qiAxXTmoyW1nmmoXsUKFf2jTRsVSsPCMEAPP5JIurHbqJCS3l+5eO81A2BktAXD9Yl37Rl7hK2pjVWoLGurwU+eHI6j2k8=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1392.namprd22.prod.outlook.com (10.172.63.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.28; Wed, 21 Nov 2018 19:23:28 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::690f:b86d:7c2:e105]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::690f:b86d:7c2:e105%6]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
- 19:23:28 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-CC:     Paul Burton <pburton@wavecomp.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>
-Subject: Re: [PATCH] mips: fix mips_get_syscall_arg o32 check
-Thread-Topic: [PATCH] mips: fix mips_get_syscall_arg o32 check
-Thread-Index: AQHUgc52QNF7mHHAKU+2VcJb+xKVPqVam7UA
-Date:   Wed, 21 Nov 2018 19:23:28 +0000
-Message-ID: <MWHPR2201MB1277D0B64034597F9714C089C1DA0@MWHPR2201MB1277.namprd22.prod.outlook.com>
-References: <20181121191438.GB10301@altlinux.org>
-In-Reply-To: <20181121191438.GB10301@altlinux.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR15CA0047.namprd15.prod.outlook.com
- (2603:10b6:300:ad::33) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1392;6:wpD9lvS8k45ydhUx56rfgqowYd6TXD+K6xwPf8LNk0PtD42x6NAI++6Gwo90RTpQLMRFWowINExhFC6itnPi+eDsNJ36vDHQ8BWLBxN90JBPz4f/vp4GeqbLop5P4cYKf01kL1Av9aAKMNPkJFuFXlc2qatdjuU6CTQeMKQZ9YJIpHAjEbOmwJdSkVBg0U/HuzAYyK6Yghn/A7iQGAtN4iYnfuD6bWMgjqfLrpT5kre+rRXqwQvtzPINkpnklBzXY4HkGxE0Cga+Xehd63Tl/I6DtJc2AQIuwZKCKxXxQMzfbhOvaeiGO6d8AlLSilWlUYkbpv8pybwcowbh5B1qakNAARn4aQbtwNXdSvvrKfmDVw+9tJee4dnSDFsZrKJwhJav0HCz4xVhPd+9A9+rw6WlXGgXHG1Le5yqPBPChzMOpXsAZ3ypQQOYoRt8wItkMz4lAIGJfMpHFSGWkgOe5Q==;5:yQY5dUQY1JBQfarWtV5ebxRqVmqaeFbGjZcsEZuz2zcuGSyWHQQIrjutlCAEop8JZkauurNxfLscbafMloIDYHDQhLBOLtoO1WAt6MWeBkFaMnftlTiZoZjXVe2G0cxk7ZwYYcabi6JOB5FEkzNkpnK909L3A9Oy4kDy0PD8EYU=;7:+m/PfqYCqIM6Of8IBfcIVYNpirQQOcmvsT1GqRCcYAqU8xawP1lJewOIrmPXF+o3m8D19ACy+I0fOPP48okgEUgxLodBzFo3oIG5++WteuwLgscomD3Uy1zaV2lrvPqM5bOs7w/zFOT/L75NPIeGSA==
-x-ms-office365-filtering-correlation-id: e806bdf7-d4fe-40a3-ebd8-08d64fe6d084
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1392;
-x-ms-traffictypediagnostic: MWHPR2201MB1392:
-x-microsoft-antispam-prvs: <MWHPR2201MB13927288AD498F06DD8DECE0C1DA0@MWHPR2201MB1392.namprd22.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(3002001)(10201501046)(3231442)(944501410)(52105112)(148016)(149066)(150057)(6041310)(2016111802025)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1392;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1392;
-x-forefront-prvs: 08635C03D4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39850400004)(346002)(136003)(376002)(396003)(199004)(189003)(76176011)(256004)(52116002)(6436002)(42882007)(7696005)(71200400001)(71190400001)(5660300001)(44832011)(68736007)(99286004)(486006)(66066001)(575784001)(26005)(6506007)(102836004)(7736002)(186003)(386003)(305945005)(54906003)(74316002)(6916009)(476003)(229853002)(97736004)(2900100001)(9686003)(3846002)(6116002)(508600001)(8936002)(6246003)(53936002)(55016002)(14454004)(81166006)(81156014)(106356001)(105586002)(446003)(33656002)(8676002)(11346002)(316002)(25786009)(4326008)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1392;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ySNBboqUmMjRg5xnc1xl07Gd3pHigX1Euby/bQsORW7M5fd/h+wpr30es7r4QaNCoKrNMhyJBO/MCxw7iTUaLWofaEe5++MfaUVPP5pTB7d4V/NOxaiBaT2oj2oOKVcgm9SfsX2ZES5kWfBlaYoZPlQ044+oStjS7bptS0n7qwImHMbYK+RW6gtjfgCrqoSE4cKhVs2Mv0lZ96AbPma+bQj3nFLRahH3T5Dwn61DfxDpqU4YYqoamTDJNiLMOcOobSosnAz8NyUsoXRle8VDxXUbtW2bWfxBzZNg9rXP2+BMbJdXpxL9ehrofwh4erHpFlvn2zyZvn2rgn0tPNfAcA+qRfcPNApxoSq3xaYE2fQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9qZJ3jp3lfwzcmiHGKUzerWyh35Dz9h1AnA2XoFWXho=;
+        b=ucoWbM+1ZdLHn0OErslYaSq1dkaQYpr/QggG5+msqTxoYakzQE1z4mc/hXsnTl9Gb7
+         fvyuuFEsH9kikiQX+xs4P9cFt7FwE9+axQTIvDSYlshKzkck2T4qEi8Z3AhHsJ6Ill96
+         d4bFbC1Mc1AmRRrNGWT8TVbFu3Xky6ETMIvWcIhXMIzHdW+6tlVEW29I+9+c2+g351YM
+         6kcWLwxWv2DUeF/ll/Mv89wE9AdA4ODt7EjKK7jYg5MIsRwY/usdZCJPAJdouRqlg2/7
+         PrFgHXJxWfRA9R0hJXkjIMfnVoQEHK8F69UsrqLTcXjnuy0kXnjamYpos0Y4a4pk3Cp1
+         1Czg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=9qZJ3jp3lfwzcmiHGKUzerWyh35Dz9h1AnA2XoFWXho=;
+        b=Nu/WXQEddFgFYAiwvvcC8qXWtXqalX4tFkR9RgnWs7kfsv55EJsz1a08ruPwvEsCc1
+         Uv+jaNoqDe2/rUouIHFRs0Q4Zblgsux6ji18tyzdIM0JKmK2uogtRejhS0wXDZnvBI4p
+         Of1Z8/iFMDwrV4qUQrs4cWbc7o78RHsXKg+OdXiuiI8Cg7WlKzZ/RK6vwKBvlQguO/WL
+         Tt8NnR9OT/SgnTyPedAkiYnlxCMknqTJ4WI1cmdVnrJAlJN525S3K5Yi3V/8kIaLR5kA
+         5EOU9AYLgk4r5fmPTQ48g5X4sPgM9eFCExCw/QGChT75ttAYHQmTqHFjxDpTISEEpKId
+         e+sA==
+X-Gm-Message-State: AA+aEWY1EuprOMX+fFZYYsTKPC52z2bdyLqdkxdKS8Ia9Qokm0CHdeTn
+        UmEfATtwB4il/asdg59DWNINMfl4
+X-Google-Smtp-Source: AFSGD/Wvp7hwCXWfIy96Vga/atC7h14gdMgg6NqOVGd3llzQcNLDPhTOLhFgO+9/B3xWxvIJwAtfLg==
+X-Received: by 2002:a63:6506:: with SMTP id z6mr7110852pgb.334.1542828234739;
+        Wed, 21 Nov 2018 11:23:54 -0800 (PST)
+Received: from [10.10.115.154] ([192.19.218.250])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm111154857pfg.180.2018.11.21.11.23.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 11:23:53 -0800 (PST)
+Subject: Re: [PATCH] soc: bcm: brcmstb: add of_node_put()
+To:     Yangtao Li <tiny.windzz@gmail.com>, computersforpeace@gmail.com,
+        gregory.0xf0@gmail.com, bcm-kernel-feedback-list@broadcom.com,
+        olof@lixom.net, treding@nvidia.com, arnd@arndb.de
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181121124342.21987-1-tiny.windzz@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ w0j9Sw==
+Message-ID: <1395243f-2c08-6079-e8a8-79712179fe57@gmail.com>
+Date:   Wed, 21 Nov 2018 11:23:42 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e806bdf7-d4fe-40a3-ebd8-08d64fe6d084
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 19:23:28.4182
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1392
+In-Reply-To: <20181121124342.21987-1-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-Dmitry V. Levin wrote:
-> When checking for TIF_32BIT_REGS flag, mips_get_syscall_arg() should
-> use the task specified as its argument instead of the current task.
->=20
-> This potentially affects all syscall_get_arguments() users
-> who specify tasks different from the current.
->=20
-> Fixes: c0ff3c53d4f99 ("MIPS: Enable HAVE_ARCH_TRACEHOOK.")
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 
-Applied to mips-fixes.
+On 11/21/2018 4:43 AM, Yangtao Li wrote:
+> of_find_node_by_path() acquires a reference to the node returned
+> by it and that reference needs to be dropped by its caller.
+> bl_idle_init() doesn't do that, so fix it.
 
-Thanks,
-    Paul
+You probably copied/pasted this from a prior patch, the function name is
+soc_is_brcmstb() here, do you mind fixing that and also providing a
+Fixes: tag?
 
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
+Thanks
+
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/soc/bcm/brcmstb/common.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
+> index 14185451901d..95b777fffee6 100644
+> --- a/drivers/soc/bcm/brcmstb/common.c
+> +++ b/drivers/soc/bcm/brcmstb/common.c
+> @@ -32,12 +32,15 @@ static const struct of_device_id brcmstb_machine_match[] = {
+>  bool soc_is_brcmstb(void)
+>  {
+>  	struct device_node *root;
+> +	bool rc;
+>  
+>  	root = of_find_node_by_path("/");
+>  	if (!root)
+>  		return false;
+>  
+> -	return of_match_node(brcmstb_machine_match, root) != NULL;
+> +	rc = of_match_node(brcmstb_machine_match, root) != NULL;
+> +	of_node_put(root);
+> +	return rc;
+>  }
+>  
+>  u32 brcmstb_get_family_id(void)
+> 
+
+-- 
+Florian
