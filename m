@@ -2,99 +2,89 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB51C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBA5C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E96642147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:15:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E96642147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 31DC72147D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:17:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DC72147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730685AbeKVAuD (ORCPT
+        id S1730730AbeKVAwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:50:03 -0500
-Received: from mga02.intel.com ([134.134.136.20]:35280 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726967AbeKVAuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:50:03 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 06:15:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="110014939"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 21 Nov 2018 06:15:23 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 21 Nov 2018 16:15:22 +0200
-Date:   Wed, 21 Nov 2018 16:15:22 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 06/15] i2c: acpi: Assign fwnode for devices created
- via i2c_acpi_new_device()
-Message-ID: <20181121141522.GA16476@kuha.fi.intel.com>
-References: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
- <20181120155924.10773-7-andriy.shevchenko@linux.intel.com>
- <c2ad13ad-cf27-2700-a051-4dda56755ebd@redhat.com>
- <20181121133549.GL10650@smile.fi.intel.com>
+        Wed, 21 Nov 2018 19:52:09 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51212 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727723AbeKVAwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 19:52:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAB3E22F8;
+        Wed, 21 Nov 2018 06:17:32 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E974A3F575;
+        Wed, 21 Nov 2018 06:17:30 -0800 (PST)
+Date:   Wed, 21 Nov 2018 14:17:25 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "stefan@agner.ch" <stefan@agner.ch>,
+        Trent Piepho <tpiepho@impinj.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+Subject: Re: [PATCH v3 2/2] PCI: imx6: limit DBI register length
+Message-ID: <20181121141725.GA24537@e107981-ln.cambridge.arm.com>
+References: <20181120165626.26424-1-stefan@agner.ch>
+ <20181120165626.26424-2-stefan@agner.ch>
+ <581b9548043d5276f6685f534386180fd0673a9a.camel@nxp.com>
+ <1542741198.30311.608.camel@impinj.com>
+ <268e109e1c6b309454bd5a313078894c@agner.ch>
+ <1542749302.30311.624.camel@impinj.com>
+ <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181121133549.GL10650@smile.fi.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <VI1PR04MB5533BBC2B45752ED84E4D037EEDA0@VI1PR04MB5533.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi guys,
-
-On Wed, Nov 21, 2018 at 03:35:49PM +0200, Andy Shevchenko wrote:
-> On Wed, Nov 21, 2018 at 12:44:27PM +0100, Hans de Goede wrote:
-
-> > I see 2 possible solutions here:
-> > 
-> > 1) Changing this patch so that i2c_acpi_new_device() does:
-> > 
-> >         /*
-> >          * The fwnode can not be shared between instantiated clients when
-> >          * adding device-properties to the instantiated client.
-> >          */
-> > 	if (!info->properties)
-> > 		info->fwnode = acpi_fwnode_handle(adev);
-> > 
-> > 2) Leave whether info->fwnode should be set or not up to the
-> > caller of i2c_acpi_new_device() (info is already passed in as
-> > a param). E.g. i2c-multi-instantiate.c could do this (for now,
-> > maybe in the future we will also want to add properties for
-> > some HIDs).
-> > 
-> > I think that 1. is the best solution and this is all kernel internal,
-> > so we can always revisit this if necessary.
+On Wed, Nov 21, 2018 at 01:47:05PM +0000, Leonard Crestez wrote:
+> On 11/20/2018 11:28 PM, Trent Piepho wrote:
+> > On Tue, 2018-11-20 at 21:42 +0100, Stefan Agner wrote:
+> >> On 20.11.2018 20:13, Trent Piepho wrote:
 > 
-> Heikki told me he has some ideas, but for now I will drop this patch.
+> >>> It also seems to me that this doesn't need to be in the internal pci
+> >>> config access functions.  The driver shouldn't be reading registers
+> >>> that don't exist anyway.  It's really about trying to fix sysfs access
+> >>> to registers that don't exist.  So maybe it should be done there.
+> >>
+> >> That was my first approach, see:
+> > 
+> > Yes, but that just used the pci device id which applies to every IMX
+> > design.
+> > 
+> > It's also not totally correct, as it seems real registers after 0x200
+> > do work on imx6, and that would prevent access to them.
+> 
+> I see that Lorenzo already accepted the patch in pci/dwc:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git/commit/?h=pci/dwc&id=f14eaec153aaebbe940ddd21e4198cc2abc927c2
+> 
+> My tests show that this series breaks pci cards on 6qdl and I think it 
+> should be reverted until a fix is found. Are you OK with this?
 
-I think the only thing that we can do is to assign the ACPI node as the
-secondary node to this kind of mfd "cells". It would most likely
-require some changes to the apci code in Linux kernel, probable
-nothing major, but no driver needs this for now (I think), so we don't
-need to worry about it right now.
+I will drop the patches from the PCI queue.
 
-
-thanks,
-
--- 
-heikki
+Lorenzo
