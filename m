@@ -2,118 +2,139 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2E7EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE05CC04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD2E9213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hJDr6Sfw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD2E9213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A26F72146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:44:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A26F72146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbeKUOMW (ORCPT
+        id S1727211AbeKUORV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:12:22 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36814 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727183AbeKUOMV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:12:21 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y6-v6so3387077plt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZTOWvfrx0BsJZxmGzOshOzTkCx1AKkW+EAS4P/Cqekc=;
-        b=hJDr6SfwqwXmLpxBMawMo3t9tZdCNcz5Ibwy3+xGs+3yYtQbI+D5FqveSwbrlfGXsh
-         IxHYL7J6SeyAtBp7SF5pM4YD66IyibTQ6eT/yeOzJLA7sJA8ldKz1i2YbOCtzP9d3QpX
-         jyv+JrtAes/a3WJZMHLe0k9IsilRWCU6mxI2M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZTOWvfrx0BsJZxmGzOshOzTkCx1AKkW+EAS4P/Cqekc=;
-        b=pWyJ3Zw7DRUv6Yyl0Wa0l5pCdbzsEF1VgFPkQKcqtiCvnZxDi+oj9QxrHUdCMFLFfb
-         Bq4ZfxomXarX5yQbLo9TdbriyBxlzODVwvEHMSKJ7+Iweu2iAkbdVXWFGgeRWCloOvuO
-         i4/Nj/Ox63+5uzABImp1+99f8lug+ZaeMszBPlbvUXhfo5nqpb6xJbPpqbsn+WJv8XTV
-         e8rotk23VB4TSyc58d4hfAM6tEdEQDegHvSqM84SIAygyecYrMUOtWC5bY6mEvHqqWHQ
-         utcOx5rYkT3Ze2fhnnBYtkFCNGDqF+zCBJHju5trDGiNOIH76rlkjT/sO5gKr5UT8fOM
-         ODQg==
-X-Gm-Message-State: AA+aEWb6Diyg4YO7ysyH0torMCebRqPAitsaTh8s9jUDHG2pgwDlov/V
-        z3yWFG6EzLriRCpHBtYQavY7
-X-Google-Smtp-Source: AFSGD/Xi4Hg7ko9o4lEGK+yHenIjUwyU29/LcfjDW9tyzqByLz1/BstRsAU8RENKxV2Z4/UuyXcUcQ==
-X-Received: by 2002:a17:902:6b03:: with SMTP id o3-v6mr5039743plk.208.1542771586612;
-        Tue, 20 Nov 2018 19:39:46 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:98b:9501:106a:f751:df0d:9e68])
-        by smtp.gmail.com with ESMTPSA id z8sm72025095pgz.53.2018.11.20.19.39.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 19:39:46 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
-        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
-        jslaby@suse.com
-Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, amit.kucheria@linaro.org,
-        linus.walleij@linaro.org, zhao_steven@263.net,
-        overseas.sales@unisoc.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 15/15] MAINTAINERS: Add entry for RDA Micro SoC architecture
-Date:   Wed, 21 Nov 2018 09:06:52 +0530
-Message-Id: <20181121033652.12247-16-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181121033652.12247-1-manivannan.sadhasivam@linaro.org>
-References: <20181121033652.12247-1-manivannan.sadhasivam@linaro.org>
+        Wed, 21 Nov 2018 09:17:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37070 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726195AbeKUORV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 09:17:21 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 815D730820D3;
+        Wed, 21 Nov 2018 03:44:44 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A0D4D19C7F;
+        Wed, 21 Nov 2018 03:44:20 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 11:44:16 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+Message-ID: <20181121034415.GA8408@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-10-ming.lei@redhat.com>
+ <20181116134541.GH3165@lst.de>
+ <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
+ <20181120161651.GB2629@lst.de>
+ <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
+ <20181121005902.GA31748@ming.t460p>
+ <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 21 Nov 2018 03:44:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for RDA Micro SoC architecture with myself
-and Andreas Färber as the maintainers.
+On Tue, Nov 20, 2018 at 07:20:45PM -0800, Sagi Grimberg wrote:
+> 
+> > Not sure I understand the 'blocking' problem in this case.
+> > 
+> > We can build a bvec table from this req, and send them all
+> > in send(),
+> 
+> I would like to avoid growing bvec tables and keep everything
+> preallocated. Plus, a bvec_iter operates on a bvec which means
+> we'll need a table there as well... Not liking it so far...
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+In case of bios in one request, we can't know how many bvecs there
+are except for calling rq_bvecs(), so it may not be suitable to
+preallocate the table. If you have to send the IO request in one send(),
+runtime allocation may be inevitable.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6c3fbbb361f8..7a5ae685a638 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1945,6 +1945,20 @@ M:	Lennert Buytenhek <kernel@wantstofly.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- 
-+ARM/RDA MICRO ARCHITECTURE
-+M:	Andreas Färber <afaerber@suse.de>
-+M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	arch/arm/boot/dts/rda8810pl-*
-+F:	drivers/clocksource/timer-rda.c
-+F:	drivers/irqchip/irq-rda-intc.c
-+F:	drivers/tty/serial/rda-uart.c
-+F:	Documentation/devicetree/bindings/arm/rda.txt
-+F:	Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
-+F:	Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-+F:	Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
-+
- ARM/REALTEK ARCHITECTURE
- M:	Andreas Färber <afaerber@suse.de>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.17.1
+If you don't require to send the IO request in one send(), you may send
+one bio in one time, and just uses the bio's bvec table directly,
+such as the single bio case in lo_rw_aio().
 
+> 
+> > can this way avoid your blocking issue? You may see this
+> > example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
+> 
+> This is exactly an example of not ignoring the bios...
+
+Yeah, that is the most common example, given merge is enabled
+in most of cases. If the driver or device doesn't care merge,
+you can disable it and always get single bio request, then the
+bio's bvec table can be reused for send().
+
+> 
+> > If this way is what you need, I think you are right, even we may
+> > introduce the following helpers:
+> > 
+> > 	rq_for_each_bvec()
+> > 	rq_bvecs()
+> 
+> I'm not sure how this helps me either. Unless we can set a bvec_iter to
+> span bvecs or have an abstract bio crossing when we re-initialize the
+> bvec_iter I don't see how I can ignore bios completely...
+
+rq_for_each_bvec() will iterate over all bvecs from all bios, so you
+needn't to see any bio in this req.
+
+rq_bvecs() will return how many bvecs there are in this request(cover
+all bios in this req)
+
+> 
+> > So looks nvme-tcp host driver might be the 2nd driver which benefits
+> > from multi-page bvec directly.
+> > 
+> > The multi-page bvec V11 has passed my tests and addressed almost
+> > all the comments during review on V10. I removed bio_vecs() in V11,
+> > but it won't be big deal, we can introduce them anytime when there
+> > is the requirement.
+> 
+> multipage-bvecs and nvme-tcp are going to conflict, so it would be good
+> to coordinate on this. I think that nvme-tcp host needs some adjustments
+> as setting a bvec_iter. I'm under the impression that the change is rather
+> small and self-contained, but I'm not sure I have the full
+> picture here.
+
+I guess I may not get your exact requirement on block io iterator from nvme-tcp
+too, :-(
+
+thanks,
+Ming
