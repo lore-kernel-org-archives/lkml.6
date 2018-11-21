@@ -2,150 +2,125 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8536DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430DBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F9B214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:18:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Km8wIjWm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F9B214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E53D22151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:21:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53D22151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732200AbeKVDyA (ORCPT
+        id S1732221AbeKVD4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 22:54:00 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36330 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727628AbeKVDyA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 22:54:00 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o125so5349588qkf.3;
-        Wed, 21 Nov 2018 09:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CqOYxN785h2fQNoNZ4FK6G9FNsxlTMO566BsH6YdgMg=;
-        b=Km8wIjWmSh6RphcTKtwKXbgNnF7/FWwCkxN1IbFRxyhET1k5/u0u+/hVfCnltgA04t
-         8EamhmeH6XSPYsGZR90KWufNZCTJh9iw7UUf5RvPM0vAfRrpBErxuk9quVrWd1uDNa05
-         t+Ol/2l7+4fK3AKOPJFVEGCY96hjoVOfG8GOSN06O8E/BrCPINEj0qgtFPU7eZNMXVqd
-         mJoHYfG1Yb+qATGDeYppaj6ej1JKklI9kHkxFvNzXhNi5ps3OCXP8XpPjKvIQtGi5YP8
-         j8yK6XhaGBh2IOb6wJFZ11vIiIdzmTvpHqDOEuzfC5jxq2GtwKEK1+ZMJ5IKrEUx6psl
-         SmRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CqOYxN785h2fQNoNZ4FK6G9FNsxlTMO566BsH6YdgMg=;
-        b=XQNWbD3RzAkZzusagWi7f1pFlrM19HalPJ4/tesvoe2VRC+9PZ33D4LHasi2j+rZd7
-         7Cfu9miTB79oNo+WGY4+g6a9D1722qpdTC69d2wp5VsZnm/kaHBPwCmXxQRvDykrLrVu
-         eyOkJfKRbk2/9PYPQSiYbF8Scwjzo8gdlFRT3QTohaS0rYNNKwj4XP3vJFCQ8ooFNqEB
-         HXxHBSNhSaKyo8jpCjF+BMb7rQgyVBG3vAoUhjxFFJW3SwSDXPnF6bkmNCUfqmxh1qj0
-         2g/BDfYt6ewiPiDYwDXVdZqoVf3DUSnNnoLkqWtW9pxZPTXf/snBrIjNHTguhiwrfcXQ
-         3kTA==
-X-Gm-Message-State: AA+aEWbWunRzUUMOD1xjf6g7SiSanfqMNLstvb5EIOHFOIGS2Abiqn9o
-        GXe/DaPoVLDXZX3QE2hPpgqUJPP7kLY1hY/Vr6k=
-X-Google-Smtp-Source: AFSGD/UIp53fKZO1rEazhjRTRIavUG68cgLNoljVhP9Frpwt7t33LfuM6K4c4+yTz0PBKHF0yfiCRyaA+s3xvNL83Lg=
-X-Received: by 2002:a37:9201:: with SMTP id u1mr6671700qkd.258.1542820722858;
- Wed, 21 Nov 2018 09:18:42 -0800 (PST)
+        Wed, 21 Nov 2018 22:56:17 -0500
+Received: from mga18.intel.com ([134.134.136.126]:49713 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727628AbeKVD4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 22:56:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 09:21:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="110062857"
+Received: from vrgaurav-mobl1.amr.corp.intel.com (HELO [10.252.133.91]) ([10.252.133.91])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2018 09:20:59 -0800
+Subject: Re: [RFC PATCH 2/6] ASoC: Intel: Skylake: stop init/probe if DSP is
+ not present
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+ <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
+ <20181121142925.GP10650@smile.fi.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <1d06c878-c69b-a627-b7e6-e9d92be3b08a@linux.intel.com>
+Date:   Wed, 21 Nov 2018 10:48:57 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1542786192-19164-1-git-send-email-wen.yang99@zte.com.cn>
-In-Reply-To: <1542786192-19164-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Y Song <ys114321@gmail.com>
-Date:   Wed, 21 Nov 2018 09:18:06 -0800
-Message-ID: <CAH3MdRVEoJXh1FRJKPiUvvphRLV9=-a8UV4pFUa=kq4qaWYjww@mail.gmail.com>
-Subject: Re: [PATCH 3/4] tools: bpftool: fix potential NULL pointer
- dereference in do_load
-To:     wen.yang99@zte.com.cn
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jiong Wang <jiong.wang@netronome.com>, guro@fb.com,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, zhong.weidong@zte.com.cn,
-        wang.yi59@zte.com.cn, julia.lawall@lip6.fr
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181121142925.GP10650@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:42 PM Wen Yang <wen.yang99@zte.com.cn> wrote:
->
-> This patch fixes a possible null pointer dereference in
-> do_load, detected by the semantic patch
-> deref_null.cocci, with the following warning:
->
-> ./tools/bpf/bpftool/prog.c:1021:23-25: ERROR: map_replace is NULL but dereferenced.
->
-> The following code has potential null pointer references:
->  881             map_replace = reallocarray(map_replace, old_map_fds + 1,
->  882                                        sizeof(*map_replace));
->  883             if (!map_replace) {
->  884                     p_err("mem alloc failed");
->  885                     goto err_free_reuse_maps;
->  886             }
->
-> ...
-> 1019 err_free_reuse_maps:
-> 1020         for (i = 0; i < old_map_fds; i++)
-> 1021                 close(map_replace[i].fd);
-> 1022         free(map_replace);
 
-I did not see any issues here.
-We have code looks like:
- 867         struct map_replace *map_replace = NULL;
- 868         struct bpf_program *prog = NULL, *pos;
- 869         unsigned int old_map_fds = 0;
-...
- 948                         map_replace = reallocarray(map_replace,
-old_map_fds + 1,
- 949                                                    sizeof(*map_replace));
- 950                         if (!map_replace) {
- 951                                 p_err("mem alloc failed");
- 952                                 goto err_free_reuse_maps;
- 953                         }
- 954                         map_replace[old_map_fds].idx = idx;
- 955                         map_replace[old_map_fds].name = name;
- 956                         map_replace[old_map_fds].fd = fd;
- 957                         old_map_fds++;
-...
-
-old_map_fds becomes non zero if and only if map_replace is not NULL.
-
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
-> CC: Julia Lawall <julia.lawall@lip6.fr>
-> ---
->  tools/bpf/bpftool/prog.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> index 5302ee2..de42187 100644
-> --- a/tools/bpf/bpftool/prog.c
-> +++ b/tools/bpf/bpftool/prog.c
-> @@ -1017,8 +1017,9 @@ static int do_load(int argc, char **argv)
->  err_close_obj:
->         bpf_object__close(obj);
->  err_free_reuse_maps:
-> -       for (i = 0; i < old_map_fds; i++)
-> -               close(map_replace[i].fd);
-> +       if (map_replace)
-> +               for (i = 0; i < old_map_fds; i++)
-> +                       close(map_replace[i].fd);
->         free(map_replace);
->         return -1;
->  }
-> --
-> 2.9.5
->
+On 11/21/18 8:29 AM, Andy Shevchenko wrote:
+> On Tue, Nov 20, 2018 at 03:36:40PM -0600, Pierre-Louis Bossart wrote:
+>> Check immediately if the DSP can be found, bail and avoid doing inits
+>> to enable legacy fallback without delay.
+> It does slightly more than described. Please do either remove unrelated changes, or fill the gap in the commit message. In the latter case it may require to split patch to two.
+ok, maybe I should change the commit message since there are really two 
+test conditions: DSP can be found and DSP streams found. The code really 
+does just that, nothing else.
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   sound/soc/intel/skylake/skl.c | 26 +++++++++++++++++---------
+>>   1 file changed, 17 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+>> index df36b8fe6d5e..1d7146773d19 100644
+>> --- a/sound/soc/intel/skylake/skl.c
+>> +++ b/sound/soc/intel/skylake/skl.c
+>> @@ -931,6 +931,12 @@ static int skl_first_init(struct hdac_bus *bus)
+>>   
+>>   	snd_hdac_bus_parse_capabilities(bus);
+>>   
+>> +	/* check if dsp is there */
+>> +	if (!bus->ppcap) {
+>> +		dev_err(bus->dev, "bus ppcap not set, DSP not present?\n");
+>> +		return -ENODEV;
+>> +	}
+>> +
+>>   	if (skl_acquire_irq(bus, 0) < 0)
+>>   		return -EBUSY;
+>>   
+>> @@ -940,23 +946,25 @@ static int skl_first_init(struct hdac_bus *bus)
+>>   	gcap = snd_hdac_chip_readw(bus, GCAP);
+>>   	dev_dbg(bus->dev, "chipset global capabilities = 0x%x\n", gcap);
+>>   
+>> -	/* allow 64bit DMA address if supported by H/W */
+>> -	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+>> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+>> -	} else {
+>> -		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+>> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+>> -	}
+>> -
+>>   	/* read number of streams from GCAP register */
+>>   	cp_streams = (gcap >> 8) & 0x0f;
+>>   	pb_streams = (gcap >> 12) & 0x0f;
+>>   
+>> -	if (!pb_streams && !cp_streams)
+>> +	if (!pb_streams && !cp_streams) {
+>> +		dev_err(bus->dev, "no streams found in GCAP definitions?\n");
+>>   		return -EIO;
+>> +	}
+>>   
+>>   	bus->num_streams = cp_streams + pb_streams;
+>>   
+>> +	/* allow 64bit DMA address if supported by H/W */
+>> +	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+>> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+>> +	} else {
+>> +		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+>> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+>> +	}
+>> +
+>>   	/* initialize streams */
+>>   	snd_hdac_ext_stream_init_all
+>>   		(bus, 0, cp_streams, SNDRV_PCM_STREAM_CAPTURE);
+>> -- 
+>> 2.17.1
+>>
