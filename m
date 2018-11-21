@@ -2,115 +2,116 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EE6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EF3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B253214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:15:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NkfpSCmr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B253214D9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F41FC206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41FC206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbeKVFuj (ORCPT
+        id S1732551AbeKVFur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:50:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730924AbeKVFpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE66D2151B;
-        Wed, 21 Nov 2018 19:10:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827421;
-        bh=QbIqRMfcFd7cE9cd0S0g3JEkF1HRuB8ZNXi//dPwGJk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NkfpSCmrRYoWFbe65mZVdmy7F7uqNRhLsyrnSNuaXmyrabCLO4rFg/axAAxka5mRz
-         daVtxjkdQdolPv3xjtMkrcrNjaTUrOphwEJikcUvprkzV7nGug/U1HjWfKa0Pb9Lch
-         PS5YlIdC0nVv2DeF4SZ0/Q74M8kJgDlKG8F3L1y0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 23/59] x86/build: Use __cc-option for boot code compiler options
-Date:   Wed, 21 Nov 2018 20:06:38 +0100
-Message-Id: <20181121183509.165565662@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
-References: <20181121183508.262873520@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Thu, 22 Nov 2018 00:50:47 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47183 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729634AbeKVFuq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:50:46 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gPXxu-0001Sr-SG; Wed, 21 Nov 2018 20:15:10 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gPXxt-0000aF-Pm; Wed, 21 Nov 2018 20:15:09 +0100
+Date:   Wed, 21 Nov 2018 20:15:09 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+Message-ID: <20181121191509.ia2vcklvx4q2rh56@pengutronix.de>
+References: <20181120134032.31645-1-brgl@bgdev.pl>
+ <20181120134032.31645-2-brgl@bgdev.pl>
+ <20181120171742.gkwb4s4qbcqvnefj@pengutronix.de>
+ <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MfKf_f+x3Wt5gScA5yb78kbpphL87bi2arxcKKGjg1S7Q@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Hello Bartosz,
 
-------------------
+On Wed, Nov 21, 2018 at 05:34:32PM +0100, Bartosz Golaszewski wrote:
+> wt., 20 lis 2018 o 18:17 Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> napisał(a):
+> >
+> > On Tue, Nov 20, 2018 at 02:40:31PM +0100, Bartosz Golaszewski wrote:
+> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > >
+> > > The irq_sim irqchip doesn't allow to configure the sensitivity so every
+> > > call to irq_sim_fire() fires a dummy interrupt. This used to not matter
+> > > for gpio-mockup (one of the irq_sim users) until commit fa38869b0161
+> > > ("gpiolib: Don't support irq sharing for userspace") which made it
+> > > impossible for gpio-mockup to ignore certain events (e.g. only receive
+> > > notifications about rising edge events).
+> > >
+> > > Introduce a specialized variant of irq_sim_fire() which takes another
+> > > argument called edge. allowing to specify the trigger type for the
+> > > dummy interrupt.
+> >
+> > I wonder if it's worth the effort to fix irq_sim. If you take a look in
+> > my gpio-simulator patch, it is trivial to get it right without external
+> > help with an amount of code that is usual for a driver that handles
+> > irqs.
+> 
+> You're basically recommending handcrafting another local piece of code
+> for simulating interrupts - something that multiple users may be
+> interested in. You did that in your proposed gpio-simulator and I
+> still can't understand why you couldn't reuse the existing solution.
+> Even if it's broken for your use-case, it's surely easier to fix it
+> than to rewrite and duplicate it? There are very few cases where code
+> consolidation is not a good thing and I don't think this is one of
+> them.
 
-From: Matthias Kaehlcke <mka@chromium.org>
+I don't say that factoring out common stuff is bad. But if in the end
+you call
 
-commit 032a2c4f65a2f81c93e161a11197ba19bc14a909 upstream.
+	irq_sim_something(some, parameters, offset);
 
-cc-option is used to enable compiler options for the boot code if they
-are available. The macro uses KBUILD_CFLAGS and KBUILD_CPPFLAGS for the
-check, however these flags aren't used to build the boot code, in
-consequence cc-option can yield wrong results. For example
--mpreferred-stack-boundary=2 is never set with a 64-bit compiler,
-since the setting is only valid for 16 and 32-bit binaries. This
-is also the case for 32-bit kernel builds, because the option -m32 is
-added to KBUILD_CFLAGS after the assignment of REALMODE_CFLAGS.
+with the simulator and if you don't use the irq simulator you do
 
-Use __cc-option instead of cc-option for the boot mode options.
-The macro receives the compiler options as parameter instead of using
-KBUILD_C*FLAGS, for the boot code we pass REALMODE_CFLAGS.
+	irq = irq_find_mapping(irqdomain, offset);
+	generic_handle_irq(irq);
 
-Also use separate statements for the __cc-option checks instead
-of performing them in the initial assignment of REALMODE_CFLAGS since
-the variable is an input of the macro.
+I prefer the latter because it's only a single additional line and in
+return it's more obvious what it does because it's the same that many
+other drivers (for real hardware) also do.
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Acked-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/x86/Makefile |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Best regards
+Uwe
 
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -24,10 +24,11 @@ REALMODE_CFLAGS	:= $(M16_CFLAGS) -g -Os
- 		   -DDISABLE_BRANCH_PROFILING \
- 		   -Wall -Wstrict-prototypes -march=i386 -mregparm=3 \
- 		   -fno-strict-aliasing -fomit-frame-pointer -fno-pic \
--		   -mno-mmx -mno-sse \
--		   $(call cc-option, -ffreestanding) \
--		   $(call cc-option, -fno-stack-protector) \
--		   $(call cc-option, -mpreferred-stack-boundary=2)
-+		   -mno-mmx -mno-sse
-+
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -ffreestanding)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -fno-stack-protector)
-+REALMODE_CFLAGS += $(call __cc-option, $(CC), $(REALMODE_CFLAGS), -mpreferred-stack-boundary=2)
- export REALMODE_CFLAGS
- 
- # BITS is used as extension for files which are available in a 32 bit
-
-
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
