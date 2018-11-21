@@ -2,98 +2,120 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBA5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2167FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7822146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1B5E2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:40:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvnVvtZg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7822146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gXo52Ov6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B5E2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728528AbeKUUOG (ORCPT
+        id S1728662AbeKUUOJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:14:06 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34039 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeKUUOF (ORCPT
+        Wed, 21 Nov 2018 15:14:09 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40792 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728532AbeKUUOI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:14:05 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so4925938wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:40:20 -0800 (PST)
+        Wed, 21 Nov 2018 15:14:08 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d3so4317858edx.7
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:40:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MeZ5z9u9mVL/xjvrUR2DdMqd7NAirflwMhSs//+R1rE=;
-        b=NvnVvtZg1+dRO2tmlnuPVEjZvIN2hvS7Tij+PE8zNsmoEfZw84T+tXn22CgQAza6HI
-         AZ8ZsOgJgOmLBF54OK6ka7kEsYk0dxJSEIxAvPV3GJOLCd0q7XBGC7RxKlcDc63eSdPK
-         jrfS07kvTkJxezFPobdqxfyHFaaOUkYRa0bTHRwMb30gkdJHmS7Wl1NL1k/yWH7vMIi4
-         ru2TmNrBopoCIMtt19YZ6YldWoSEISOGbc2hM6yoWAyeDhVAgBkZxOk1wGTaYzGa77zo
-         6khBF3NtPCzjO5HlrkMyl0AZj6qhbSlc8jhaH6RHyonuBj1JN+kRvJtbyjl2mlTw49Qk
-         9J/A==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=icQOPER0ybQIipyfCa6dQzK/fVv01EVv422B9EVucP4=;
+        b=gXo52Ov6f7XAEPQrV8P7kns9QUOZtlyb4iJSzyH0UMM0ZhqmO7lqpRsqenE9UP1nnr
+         ZHgz5Xb4jfYOtBceGTEvdbHka9W14lQbktrBivnpSStwbaZFqLsgLkN7ORSs7tdawBsm
+         fqYPAjGCF2Hwe+1yrtCklI3V2tS7QmpOkr9Mk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MeZ5z9u9mVL/xjvrUR2DdMqd7NAirflwMhSs//+R1rE=;
-        b=nAW94vMK5kG06566OYNjQ3PQC+dAt71zmOZqlaYNmC+r6KM0GI81aZ0QoC/CW0llQi
-         rOBBkzP5QJJWKtEvQO7QdXiiBtaSyaQ1lubORXfqwVgb4z05gAhYaioIY4Jrfvw99VwN
-         /XivNdEN4/nld/q7a5or48aPZmRPws3cA+LtGXJV5HVyzvpJ3Vu+xLhol5JeJzCEc0UB
-         FrYIWm6GeCdjdloyZj0rqFXsnVNXJrs9WCYwKNhgwLvrR3UhnTTshLKEXJ+mcWuIH12u
-         pl9em8/18HK5NVM8oSjNgBEfWBJLeXKKN/kH0S4pwUIKrggbdf9T1wUYju7AGRCa0Cvt
-         v4Iw==
-X-Gm-Message-State: AA+aEWYwr50gNg8eqcDd3RuWzw+1lorjmtAK+fG4FUAAbn4G/hb4cuzO
-        m/ufb7JvV1FPYRSHJOe9hx8=
-X-Google-Smtp-Source: AFSGD/XrdHv2ssdgXhmwhUHTaCgdiU+eByQ564snOuKoPhOAatw4D0VXWY2Is2ZJH5WbuVdY9/G3qw==
-X-Received: by 2002:a5d:684b:: with SMTP id o11mr4793635wrw.316.1542793219686;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=icQOPER0ybQIipyfCa6dQzK/fVv01EVv422B9EVucP4=;
+        b=jI70LQPn5Wirb1TQDlUC8qocAfUHT+NsPRLSDpiOv9naL/hGRBHspoSarigYJ/sIJx
+         eQg+aHc68EAXCTrdd2bzyi3Qq0Ou8ZivEbZawd3Yn0lnNB1MtaNb87ViHV5egPcIf4ng
+         vHuMUJR94/e0Do/OqkExxebymmkAk7wh34wuk9IPgGsML8E1ErYxgKiiLQCPZjRo+lbk
+         t4KaENE/CIwF47iz8BCPlK375KTyJB7g2oGNTVKIeEzOj/qF25OLbWCKKglhIxIr17mI
+         N2hA5GCM+3onH0yV096tOV6Oi+U+39fc2IhJCZ1c014UvWTRVXPv6nvXNIilstwscTnM
+         iLmg==
+X-Gm-Message-State: AA+aEWYalMCk3I2mQAu4OWoR1y4Cua/kMGHwIN+zr7cL6zmiGPNmIM0d
+        i1bwbta51FNGo32Mokv3DXyFbt8FzZQ=
+X-Google-Smtp-Source: AFSGD/VZzxz+krKyi1CCCbar+uHI07UwTj3W7iY/aKCc5T5IJeEFCslUtEajVxU0qs012euece2gpw==
+X-Received: by 2002:a50:a663:: with SMTP id d90-v6mr5220847edc.290.1542793221550;
+        Wed, 21 Nov 2018 01:40:21 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id a11sm8852131edc.28.2018.11.21.01.40.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Wed, 21 Nov 2018 01:40:19 -0800 (PST)
-Received: from localhost.localdomain ([94.204.252.234])
-        by smtp.gmail.com with ESMTPSA id c4-v6sm33338144wrr.74.2018.11.21.01.40.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Nov 2018 01:40:18 -0800 (PST)
-From:   Christian Hewitt <christianshewitt@gmail.com>
-Cc:     christianshewitt@gmail.com,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        David Airlie <airlied@linux.ie>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: add support for 1080p25 mode
-Date:   Wed, 21 Nov 2018 13:39:29 +0400
-Message-Id: <1542793169-13008-1-git-send-email-christianshewitt@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+Date:   Wed, 21 Nov 2018 10:40:17 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH] drm/fb-helper: Blacklist writeback when adding
+ connectors to fbdev
+Message-ID: <20181121094017.GM4266@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Sean Paul <sean@poorly.run>
+References: <20181115163248.21168-1-paul.kocialkowski@bootlin.com>
+ <20181119092835.3y2xqfclwlmk4cww@flea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181119092835.3y2xqfclwlmk4cww@flea>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This essential mode for PAL users is missing, so add it.
+On Mon, Nov 19, 2018 at 10:28:35AM +0100, Maxime Ripard wrote:
+> On Thu, Nov 15, 2018 at 05:32:48PM +0100, Paul Kocialkowski wrote:
+> > Writeback connectors do not produce any on-screen output and require
+> > special care for use. Such connectors are hidden from enumeration in
+> > DRM resources by default, but they are still picked-up by fbdev.
+> > This makes rather little sense since fbdev is not really adapted for
+> > dealing with writeback.
+> > 
+> > Moreover, this is also a source of issues when userspace disables the
+> > CRTC (and associated plane) without detaching the CRTC from the
+> > connector (which is hidden by default). In this case, the connector is
+> > still using the CRTC, leading to am "enabled/connectors mismatch" and
+> > eventually the failure of the associated atomic commit. This situation
+> > happens with VC4 testing under IGT GPU Tools.
+> > 
+> > Filter out writeback connectors in the fbdev helper to solve this.
+> > 
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> 
+> Reviewed-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Tested-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
----
- drivers/gpu/drm/meson/meson_venc.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied with a cc: stable to drm-misc-fixes. Btw, 2 r-b from committers,
+someone should have pushed this I think :-)
 
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index acbbad3..ab16046 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -714,6 +714,7 @@ struct meson_hdmi_venc_vic_mode {
- 	{ 5, &meson_hdmi_encp_mode_1080i60 },
- 	{ 20, &meson_hdmi_encp_mode_1080i50 },
- 	{ 32, &meson_hdmi_encp_mode_1080p24 },
-+	{ 33, &meson_hdmi_encp_mode_1080p50 },
- 	{ 34, &meson_hdmi_encp_mode_1080p30 },
- 	{ 31, &meson_hdmi_encp_mode_1080p50 },
- 	{ 16, &meson_hdmi_encp_mode_1080p60 },
+Thanks for patch&review.
+-Daniel
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
