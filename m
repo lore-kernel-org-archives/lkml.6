@@ -2,106 +2,162 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51132C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F92C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19711206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CFC4214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:12:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sj5or/z9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19711206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SiK6enNB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFC4214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389207AbeKVFrm (ORCPT
+        id S1730366AbeKVFsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:47:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43336 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:48:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389193AbeKVFrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:47:41 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1726004AbeKVFsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:48:18 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76C75214D9;
-        Wed, 21 Nov 2018 19:12:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E20E6206BB;
+        Wed, 21 Nov 2018 19:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827527;
-        bh=YWXPKmZNyBU9C+ofP1S29lo9d1NFD988gSNdegqRVFY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sj5or/z9VWlWvsM6XP8Ov828lc1d+h0wdxaN3izj3sc7sOCUWuuBc3oWjeXRCAb/d
-         utwnB/OG/bTdF3JDLWYgE4ME/JgFk4otMaSzXP4pBrcEo9cfwfblacFAUH36viOZx8
-         2z64a3MqR+0TQZpEVf4nUaes92cObcWckHh3M/hk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 28/59] efi/libstub/arm64: Use hidden attribute for struct screen_info reference
-Date:   Wed, 21 Nov 2018 20:06:43 +0100
-Message-Id: <20181121183509.360799865@linuxfoundation.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
-References: <20181121183508.262873520@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        s=default; t=1542827564;
+        bh=B2GFOcKRb2UPXfHAwb+EnD2/+Ba76pF/aJDGrLjg0fI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SiK6enNBgVLDHIbDgfWqYrEEo4XM+CjNyXMenRJyevMMNZ+E1mhAx6DJjWE6TKjJb
+         0j8biY8HfmnGVM1ST2sm3q1xaKxGP35btAjK0GdXuVvV4qLh1OhyCE8YYzGhyyMV55
+         c1TUs5J9XhTMRLBu+nzLeU6n6mVmGa1e0gSSOUDk=
+Date:   Wed, 21 Nov 2018 19:12:39 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Cc:     Alexandru Ardelean <alexandru.Ardelean@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Victor Colombo <victorcolombo@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, kernel-usp@googlegroups.com,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] staging:iio:ad2s90: Add device tree support
+Message-ID: <20181121191239.5aa312ea@archlinux>
+In-Reply-To: <CAHd-oW4mq1HnTqr_XZt7cktTgy_ytH=ARg+d3ac+Q5bSdbciUQ@mail.gmail.com>
+References: <20181118042540.12697-1-matheus.bernardino@usp.br>
+        <20181118042540.12697-2-matheus.bernardino@usp.br>
+        <f250fa3a01b51d59979e7a2e3e42cc34d02aa52e.camel@analog.com>
+        <CAHd-oW4mq1HnTqr_XZt7cktTgy_ytH=ARg+d3ac+Q5bSdbciUQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 20 Nov 2018 21:59:19 -0200
+Matheus Tavares Bernardino <matheus.bernardino@usp.br> wrote:
 
-------------------
+> On Mon, Nov 19, 2018 at 6:09 AM Ardelean, Alexandru
+> <alexandru.Ardelean@analog.com> wrote:
+> >
+> > On Sun, 2018-11-18 at 02:25 -0200, Matheus Tavares wrote:  
+> > > This patch adds device tree support to ad2s90 with standard
+> > > device tree id table.
+> > >  
+> >
+> > Hey,
+> >
+> > Comment inline
+> >  
+> > > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+> > > ---
+> > > Changes in v2:
+> > >  - none
+> > >
+> > >  drivers/staging/iio/resolver/ad2s90.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > >
+> > > diff --git a/drivers/staging/iio/resolver/ad2s90.c
+> > > b/drivers/staging/iio/resolver/ad2s90.c
+> > > index 3e257ac46f7a..6ffbac66b837 100644
+> > > --- a/drivers/staging/iio/resolver/ad2s90.c
+> > > +++ b/drivers/staging/iio/resolver/ad2s90.c
+> > > @@ -107,6 +107,12 @@ static int ad2s90_probe(struct spi_device *spi)
+> > >       return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+> > >  }
+> > >
+> > > +static const struct of_device_id ad2s90_of_match[] = {
+> > > +     { .compatible = "adi,ad2s90", },
+> > > +     {}
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, ad2s90_of_match);
+> > > +
+> > >  static const struct spi_device_id ad2s90_id[] = {
+> > >       { "ad2s90" },
+> > >       {}
+> > > @@ -116,6 +122,7 @@ MODULE_DEVICE_TABLE(spi, ad2s90_id);
+> > >  static struct spi_driver ad2s90_driver = {
+> > >       .driver = {
+> > >               .name = "ad2s90",
+> > > +             .of_match_table = of_match_ptr(ad2s90_of_match),  
+> >
+> > I think you need to remove the of_match_ptr().
+> > There was a comment from Jonathan on another thread about this.
+> > See:
+> >    https://patchwork.kernel.org/patch/10682963/
+> >  
+> 
+> Hm, got it, thanks!
+> 
+> I don't understand much about ACPI yet, and I had understood the
+> "of_match_ptr" as a guard. Could someone point me in which cases it
+> should be used? Or is it obsolete?
+>
+It's an odd one.  The ACPI route allows you to basically provide
+a temporary (these are really just for debugging purposes)
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+https://lwn.net/Articles/612062/
+https://www.kernel.org/doc/Documentation/acpi/enumeration.txt
+search for prp0001
 
-commit 760b61d76da6d6a99eb245ab61abf71ca5415cea upstream.
+So of_match_ptr is sort of obsolete, but conversely for some
+types of driver it might never make sense to use the prp0001
+route.  For the stuff I play with in my day job for example
+we can just change the firmware to do it right whenever we
+need to and have appropriate ACPI ids to be able to issue
+unique ones.
 
-To prevent the compiler from emitting absolute references to screen_info
-when building position independent code, redeclare the symbol with hidden
-visibility.
+Jonathan
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20170818194947.19347-3-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/efi.h |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/arch/arm64/include/asm/efi.h
-+++ b/arch/arm64/include/asm/efi.h
-@@ -54,6 +54,9 @@ int efi_set_mapping_permissions(struct m
- #define alloc_screen_info(x...)		&screen_info
- #define free_screen_info(x...)
- 
-+/* redeclare as 'hidden' so the compiler will generate relative references */
-+extern struct screen_info screen_info __attribute__((__visibility__("hidden")));
-+
- static inline void efifb_setup_from_dmi(struct screen_info *si, const char *opt)
- {
- }
-
+> Matheus
+> 
+> > So,
+> > +               .of_match_table = of_match_ptr(ad2s90_of_match),
+> >
+> > becomes  
+> > > +             .of_match_table = ad2s90_of_match,  
+> >  
+> > >       },
+> > >       .probe = ad2s90_probe,
+> > >       .id_table = ad2s90_id,  
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "Kernel USP" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
+> > To post to this group, send email to kernel-usp@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/f250fa3a01b51d59979e7a2e3e42cc34d02aa52e.camel%40analog.com.
+> > For more options, visit https://groups.google.com/d/optout.  
 
