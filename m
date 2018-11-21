@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3242FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE581214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:05:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CFA21527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:06:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uIsJLLnw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE581214DB
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IuGKi4SA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1CFA21527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388727AbeKVGlf (ORCPT
+        id S2388814AbeKVGlr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:41:35 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34738 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728351AbeKVGle (ORCPT
+        Thu, 22 Nov 2018 01:41:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39994 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388729AbeKVGlr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:41:34 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j2so7005934wrw.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:05:49 -0800 (PST)
+        Thu, 22 Nov 2018 01:41:47 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q26so6960154wmf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:06:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aFkan6mE7vMeI42C5RbUH0MMzP2/ZQRbqowrjxUng/A=;
-        b=uIsJLLnwxEIxGc2HOr5Hh++zPpKYa6Z41ufKycxwOyKIumWJB3aaaViVeQ2vQINRxZ
-         wLPcf7mmYvnd6I6J65TfQcn0JpFZlx6Uyiv7b6BqQeU1OOoT4VOkGS1ESTnSed74yBPP
-         E3w0l3QElvc2eAmgW9eeDnwYfjI2duWPBWrWpM8rSEArlXEHfblRDeRFmKLLjqIJ+IZz
-         xCHfSRETPTBdqPtwA68sFgrv0NZ305BzWVcxxluHDvJ9YJboJ+zYdTqDBK8qfN84IN9P
-         5slpNkTObb0FZBeMexTSUs3dkiFtnc4uGiYTQGagCfr8bYcrcfXznepUqEKXYasXZ5Dp
-         HAew==
+        bh=86mYLKT9oGNdx98UvpSwk/L4cpWIkqbF2PLCIi0AmOg=;
+        b=IuGKi4SAgOt4W7mB7qvPbiFn1iAZMNlSA13zaYFU2vvGEBD8WSNLpwZ4/HWEQlHD7u
+         XokX8LWNagUYl5A/YoLVmLXcrvVhUKlEKgFs99wB4LNMPAsVdjAlK4h5r/a/p4o/CYg0
+         Kc38/ayuVAhP0qIlnH4bkrnQbX0cHi5Vg9FrAcxNiJPI9S1FucDQTdLiptI8jjXUyO+P
+         FQOMfnd2C0eW2IhtoyCJ4gbhj44EDqY2DKaaPAZHU25uYi1auSWfkoL4j04bsEtKlMLT
+         L0pmuKU5dwSKUZJxMvXvQkqo+fB1ctOVC0VXjOmLN5C2Pol7jV12JdsntHtYBuBgKRGx
+         hWzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aFkan6mE7vMeI42C5RbUH0MMzP2/ZQRbqowrjxUng/A=;
-        b=FMw0eMQ5LfFCRvGZ2qncQQO38qSw/DQWjFrAuV7MgmFRo2KcSOQK9SBsOH3Sw8SA0Y
-         XJAwgN1n4+bctaqKeCeDjrzBdHXSGEB/DsbJ8SWoM9wG9Q9h/tJN6GJ54I2u4x/uMltd
-         cQ8odxxp8PRATUmje8SrG0yCvjq0lwlcvgvrlafYz83hUNuKkoWFhA2UEQEepne7tGAz
-         55xA4QbH+mXrQfrAtToFlXw4friVq7WAWpTw1UMCvl9qSuUR7O03mq6SmmUyvMGtuTgW
-         uH5iOFNCbSuH1s8lv6gZs++3Ev9O7G6pRLms4fApff4Qprzpz6eRZuODd7C4ii8Cu+IV
-         wKJg==
-X-Gm-Message-State: AA+aEWZtk94eyo9RPo4+X35xr6/ykuO7kIo9UaUUgKxGN+DgRceR/QHt
-        +wsXJ3lo/iNAN2K5mHvUNqQGueZg0wwdBW8jQKQ=
-X-Google-Smtp-Source: AFSGD/WksP5kWFvnHX4V/Ak5tcQZUyLIcSvoiPXy7i7i+hOYoZtRCzmNGVtgmOEUMMEv9ilE1Olax8DI3fxrDOlCPv4=
-X-Received: by 2002:adf:ef0d:: with SMTP id e13mr7014582wro.29.1542830748314;
- Wed, 21 Nov 2018 12:05:48 -0800 (PST)
+        bh=86mYLKT9oGNdx98UvpSwk/L4cpWIkqbF2PLCIi0AmOg=;
+        b=kO02Pm0iC5e5S8rC01A6ztu4ws6Ofd+lVP3+MfsPI2L5mLzcB5CwborJcTJ+rZ1kGw
+         YtHnUR4r1RLPzUgA546ToWvYBiJCbdZjrT0AfX7PYfhTJlzxJR1Jwk4O8Awktwh/DiMc
+         UNEvGFhUn2OEqDTcnleNHIcpgEZR4hhDNBUrJEKA7fdX8WMAjSgQNJEQTM8/Wt+YwEcp
+         5PypFwjYrQAkeTH1zYJjf19VZ592DOSd8hRyqVRAvGKZQyMqwmqaL5KnJE1i09gIFGF0
+         aDIRrRAWJcNDScl9Rr6q+7zTR02TeFGPUIXoWVUGn22CYidvxD6C4ka50kctXs6BEFj+
+         yAyg==
+X-Gm-Message-State: AGRZ1gKJRu8eRW0jhX4TDmDYjRzfHz7rmyPrigIRN57b9t9bV5VlLHUf
+        PtHWxKZSH8fGaFDHnDVhGdquhdk6LQ6M2Px/KkWTfdCDmbc=
+X-Google-Smtp-Source: AJdET5doddrf2C8oPNnDjaC2TRMp0t40dYrpjRoybRkN6uv7vASq/yHaEEJ1E45UVMPw0Nhogp7ljbWvWXlTrwoSKlA=
+X-Received: by 2002:a1c:9d97:: with SMTP id g145mr6886658wme.121.1542830761076;
+ Wed, 21 Nov 2018 12:06:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20181121071103.GA2622@hp-pavilion-15-notebook-pc-brajeswar> <13613dd2-dfef-7a8e-4c27-5b5bed336a89@amd.com>
-In-Reply-To: <13613dd2-dfef-7a8e-4c27-5b5bed336a89@amd.com>
+References: <20181121135151.GA2536@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20181121135151.GA2536@hp-pavilion-15-notebook-pc-brajeswar>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Wed, 21 Nov 2018 15:05:34 -0500
-Message-ID: <CADnq5_PVK+zfpLEh2rL3Cs_bC8OuNXDOAfSr=gt8aHHykRiWcg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/amdgpu/vce_v3_0.c: Remove duplicate header
-To:     Junwei Zhang <Jerry.Zhang@amd.com>
-Cc:     brajeswar.linux@gmail.com,
-        "Deucher, Alexander" <alexander.deucher@amd.com>,
+Date:   Wed, 21 Nov 2018 15:05:48 -0500
+Message-ID: <CADnq5_NknpPEDTpx+5h_8N=WTXhgbqxsMPsymPs_K+RTDeYedw@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/amdgpu: Remove duplicate header
+To:     brajeswar.linux@gmail.com
+Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
         Christian Koenig <christian.koenig@amd.com>,
         Chunming Zhou <David1.Zhou@amd.com>,
-        Dave Airlie <airlied@linux.ie>, Leo Liu <leo.liu@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
         Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
-        Emily Deng <Emily.Deng@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        Pixel Ding <Pixel.Ding@amd.com>, "monk.liu" <Monk.Liu@amd.com>,
         Maling list - DRI developers 
         <dri-devel@lists.freedesktop.org>,
         Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
@@ -83,31 +82,30 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Applied.  thanks!
-On Wed, Nov 21, 2018 at 3:16 AM Zhang, Jerry(Junwei)
-<Jerry.Zhang@amd.com> wrote:
+On Wed, Nov 21, 2018 at 9:24 AM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
 >
-> On 11/21/18 3:11 PM, Brajeswar Ghosh wrote:
-> > Remove gca/gfx_8_0_d.h which is included more than once
-> >
-> > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-> Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+> Remove gca/gfx_8_0_sh_mask.h which is included more than once
 >
-> > ---
-> >   drivers/gpu/drm/amd/amdgpu/vce_v3_0.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-> > index 6dbd39730070..4e4289a06a53 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
-> > @@ -37,7 +37,6 @@
-> >   #include "gca/gfx_8_0_d.h"
-> >   #include "smu/smu_7_1_2_d.h"
-> >   #include "smu/smu_7_1_2_sh_mask.h"
-> > -#include "gca/gfx_8_0_d.h"
-> >   #include "gca/gfx_8_0_sh_mask.h"
-> >   #include "ivsrcid/ivsrcid_vislands30.h"
-> >
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
+> index 64e875d528dd..6a0fcd67662a 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
+> @@ -37,7 +37,6 @@
+>  #include "gmc/gmc_8_2_sh_mask.h"
+>  #include "oss/oss_3_0_d.h"
+>  #include "oss/oss_3_0_sh_mask.h"
+> -#include "gca/gfx_8_0_sh_mask.h"
+>  #include "dce/dce_10_0_d.h"
+>  #include "dce/dce_10_0_sh_mask.h"
+>  #include "smu/smu_7_1_3_d.h"
+> --
+> 2.17.1
 >
 > _______________________________________________
 > amd-gfx mailing list
