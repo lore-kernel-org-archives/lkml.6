@@ -2,130 +2,113 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291DFC04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B932C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED72214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:32:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED72214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 16AFA214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:33:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Mgbb9p9J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16AFA214C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730805AbeKVAHL (ORCPT
+        id S1730814AbeKVAHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:07:11 -0500
-Received: from verein.lst.de ([213.95.11.211]:51393 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbeKVAHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:07:11 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id B141D68C19; Wed, 21 Nov 2018 14:32:44 +0100 (CET)
-Date:   Wed, 21 Nov 2018 14:32:44 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
-        linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V11 03/19] block: introduce bio_for_each_bvec()
-Message-ID: <20181121133244.GB1640@lst.de>
-References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-4-ming.lei@redhat.com>
+        Wed, 21 Nov 2018 19:07:30 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38284 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbeKVAHa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 19:07:30 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so8823849ith.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 05:33:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=mW96xN5AtLZsqRZBB0JVK90Y7+USNXWQ/PGTkWqfW1c=;
+        b=Mgbb9p9JOkLRUatHdghXcpP47CIKwnyT1DrICKE+dRMJLeqYgoKY+/Crq49JKQb8V6
+         9stj7/90PWvYl9dqoNxIvrCaMe2lZB2rmsIoK3ZycmMtFPulPvpfrv5GtUuwoBp7T7AR
+         +pB9mzMJnLdFqO1YqxD7E3yFjvXn6aGh1PSzG2tjs+YENAAiefBfEg4axmJvunYfQU6M
+         RgIOW54TN/xOQhb7ZVaQAeN8gHSW9bmacEUaF3AxowDlyoVZpFtbxQ1nJBtDfBW14oPj
+         gMZChOkobuayJH9wSYQ7FxTKYiLg7DAEnB2sKJ5CWqwOqC3xrgVu3uGzBnet3R3bkFu/
+         bVWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=mW96xN5AtLZsqRZBB0JVK90Y7+USNXWQ/PGTkWqfW1c=;
+        b=kd/L1WVJjFGAwz2GjjxNHpHUQcxvPWgUfcSTvVR2PTimVoXnJ/UH6V4OEa46hqxUMj
+         3PnZ/n9NK6U9Of09DGuQpvlMBzOtJ3wkDVwIngHhQXHS4TMuBytiPqt8CRxaSi+9JCzy
+         tBvk3J31MctPhSEj/mZaCt56bnxmNFkY5nJTwApOxf6mQYS+8zPTD5Q3fRkvvnqJqRQ5
+         Z9OBR4ECZcMHi/Qmzckx/NJTP0uI6lAQOSES5e6Cv4yVbEgdLco4UlM1TjaEl1OT6L+t
+         4Dd0AMkPG4UymJvXLe9FqTE+rVqHp+P8z6fbKH5COsFOB+Sl3Lk4pJWVkjRpUv6m1Oui
+         sS5A==
+X-Gm-Message-State: AA+aEWZpn5B/U2+PMi5drbsZTUKlBsvewkPuShfytG7mePC2tNT5vcc2
+        ujeS1Tk46pNEdLiYZMGi9M7G3yTNv8WhYanzBfxXGQ==
+X-Google-Smtp-Source: AJdET5dacCUKldR6cyXrs7298SyNjMf9fnQGUBeaGLFIlsZ3Qsm6jlINH4sINY+bYgsjfLMrWwjAXuDnWzabPN9p/Lc=
+X-Received: by 2002:a24:b009:: with SMTP id d9-v6mr5345763itf.166.1542807183807;
+ Wed, 21 Nov 2018 05:33:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121032327.8434-4-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Wed, 21 Nov 2018 05:32:43
+ -0800 (PST)
+In-Reply-To: <31735.1536701042@warthog.procyon.org.uk>
+References: <CACT4Y+ajxhUaRg+XSuqQZN8rD96S820yMTWx2GpRVRb9Maz50g@mail.gmail.com>
+ <0000000000006082bd05752f92bb@google.com> <29979.1536223287@warthog.procyon.org.uk>
+ <23632.1536696987@warthog.procyon.org.uk> <20180912063454.0620abb4@canb.auug.org.au>
+ <31735.1536701042@warthog.procyon.org.uk>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 21 Nov 2018 14:32:43 +0100
+Message-ID: <CACT4Y+boXfNjHT1M5B6OttHiUFKsvL7AFH2Gfd+DbkNoQD4YVg@mail.gmail.com>
+Subject: Re: linux-next boot error (2)
+To:     David Howells <dhowells@redhat.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        syzbot <syzbot+762a577f56cfb1574647@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Levin, Alexander" <alexander.levin@verizon.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux@dominikbrodowski.net,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        nikolaus.voss@loewensteinmedical.de,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#define bio_iter_mp_iovec(bio, iter)				\
-> +	segment_iter_bvec((bio)->bi_io_vec, (iter))
+On Tue, Sep 11, 2018 at 11:24 PM, David Howells <dhowells@redhat.com> wrote:
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+>> I will apply this fix until the proper fix arrives in the vfs tree:
+>
+> Thanks.
+>
+> David
 
-Besides the mp naming we'd like to get rid off there also is just
-a single user of this macro, please just expand it there.
 
-> +#define segment_iter_bvec(bvec, iter)				\
-> +((struct bio_vec) {							\
-> +	.bv_page	= segment_iter_page((bvec), (iter)),	\
-> +	.bv_len		= segment_iter_len((bvec), (iter)),	\
-> +	.bv_offset	= segment_iter_offset((bvec), (iter)),	\
-> +})
+This was fixed in September, but the Reported-by tag wasn't added and
+nobody told syzbot that this is fixed. So the bug is still considered
+open:
+https://syzkaller.appspot.com/bug?extid=762a577f56cfb1574647
+10 days ago linux-next become broken for another reason, but syzbot
+did not report a new bug because the previous one is still open (new
+reports are merged into the existing open bug).
 
-And for this one please keep the segment vs bvec versions of these
-macros close together in the file please, right now it follow the
-bvec_iter_bvec variant closely.
+Please either use the Reported-by tag (for amended linux-next fixes
+Tested-by can make more sense and is recognized too), or tell syzbot
+separately:
 
-> +static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
-> +				      unsigned bytes, unsigned max_seg_len)
->  {
->  	iter->bi_sector += bytes >> 9;
->  
->  	if (bio_no_advance_iter(bio))
->  		iter->bi_size -= bytes;
->  	else
-> -		bvec_iter_advance(bio->bi_io_vec, iter, bytes);
-> +		__bvec_iter_advance(bio->bi_io_vec, iter, bytes, max_seg_len);
->  		/* TODO: It is reasonable to complete bio with error here. */
->  }
->  
-> +static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
-> +				    unsigned bytes)
-> +{
-> +	__bio_advance_iter(bio, iter, bytes, PAGE_SIZE);
-> +}
+#syz fix: apparmor: Implement security hooks for the new mount API
 
-Btw, I think the remaining users of bio_advance_iter() in bio.h
-should probably switch to using __bio_advance_iter to make them a little
-more clear to read.
+Also helps to keep dashboard relevant:
+https://syzkaller.appspot.com/#upstream-open
+a pile of hundreds of stale bugs is not too useful, and losing half of
+bug reports in LKML archives is not good too.
 
-> +/* returns one real segment(multi-page bvec) each time */
-
-space before the brace, please.
-
-> +#define BVEC_MAX_LEN  ((unsigned int)-1)
-
->  	while (bytes) {
-> +		unsigned segment_len = segment_iter_len(bv, *iter);
->  
-> -		iter->bi_bvec_done += len;
-> +		if (max_seg_len < BVEC_MAX_LEN)
-> +			segment_len = min_t(unsigned, segment_len,
-> +					    max_seg_len -
-> +					    bvec_iter_offset(bv, *iter));
-> +
-> +		segment_len = min(bytes, segment_len);
-
-Please stick to passing the magic zero here as can often generate more
-efficient code.
-
-Talking about efficent code - I wonder how much code size we'd save
-by moving this function out of line..
-
-But while looking over this I wonder why we even need the max_seg_len
-here.  The only thing __bvec_iter_advance does it to move bi_bvec_done
-and bi_idx forward, with corresponding decrements of bi_size.  As far
-as I can tell the only thing that max_seg_len does is that we need
-to more iterations of the while loop to archive the same thing.
-
-And actual bvec used by the caller will be obtained using
-bvec_iter_bvec or segment_iter_bvec depending on if they want multi-page
-or single-page variants.
+Thanks in advance
