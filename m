@@ -2,91 +2,112 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BE5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:56:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCE2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8992080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:56:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 938FB206BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:57:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bRwMKMQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8992080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wLrVmaNg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 938FB206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390207AbeKVJdP (ORCPT
+        id S2390348AbeKVJdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:33:15 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:39404 "EHLO mail.skyhub.de"
+        Thu, 22 Nov 2018 04:33:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387769AbeKVJdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:33:15 -0500
-Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2390220AbeKVJdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 04:33:38 -0500
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8FC4F1EC09F7;
-        Wed, 21 Nov 2018 23:56:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542841007;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=6sgQQwkHQj9r7eepiXiLrIPgf3DQ1+6ETv0q8Pxgjmk=;
-        b=bRwMKMQgwPhfuRgRtjq39AZ3RatqhrFSgK0zffO5uj7YpJ5nWhg4tEVOqvk12/ZBpWGxkO
-        jFCP5yebJJGmz9KyFEfWIhaJrGuN9DjGHr5ySQXDkZPfmRE6xlO58tCaGaK76qYBsluqn/
-        o72sSCNmE7piIaTDaig0sYodY2aX220=
-Date:   Wed, 21 Nov 2018 23:56:46 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arjan van de Ven <arjan@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
-Message-ID: <20181121225646.GF27559@zn.tnic>
-References: <20181121201430.559770965@linutronix.de>
- <20181121201722.337599561@linutronix.de>
- <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com>
- <CAHk-=wj6fZpcad+1O5Ou0HZb0NEv1RM_BweyM0XBGtzE87YXXg@mail.gmail.com>
- <alpine.DEB.2.21.1811212345180.1665@nanos.tec.linutronix.de>
- <20181121225336.GE27559@zn.tnic>
- <9cbce8e5-bc0d-a817-04f5-57b9f8ec0f70@linux.intel.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C5D420C01
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 22:57:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542841031;
+        bh=rMSKPt/SYVaxJeKa+ZPcsP7P6nUdKAtiiF7JStebEOQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=wLrVmaNgiMfk1A9utYCp2clvnZmNOAfZzQDl8cqhirefuf+xlIq3gnpSTJ58pONRe
+         DYvoDJC3JNWPRHmS4sv8NTMMTFt8N3wJxwVVP/CzLWsupucI7Reghwlkq/q7cAj2co
+         emWa6rbYT3AixR7TbXiTvXd8QMd2t8Yz2BpYK1FI=
+Received: by mail-wm1-f47.google.com with SMTP id r11-v6so7076297wmb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 14:57:11 -0800 (PST)
+X-Gm-Message-State: AA+aEWbfnVXCRgeBa2SjGxFTx4FtjITkO9mw2fo4PYpPmNNl8lFqM9i+
+        V6eEAQ04EBtnbg5sAhYKKVOfp5U0SYcToqFiEqPh1A==
+X-Google-Smtp-Source: AJdET5fHgCvdeJqZn1R/hmpuSFocyxgqzIxbykTGYJ8g0jDg9MyihGJcXhVs6Txa/3viggEX2TtHHypxchtrE0nbQqs=
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr7045722wmf.32.1542841029636;
+ Wed, 21 Nov 2018 14:57:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9cbce8e5-bc0d-a817-04f5-57b9f8ec0f70@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181121165806.07da7c98@akathisia>
+In-Reply-To: <20181121165806.07da7c98@akathisia>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 21 Nov 2018 14:56:57 -0800
+X-Gmail-Original-Message-ID: <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
+Message-ID: <CALCETrV3TPCkYyhoLLcikXVeF-RdZUuLTCvKReK3Qb9LSS9Csw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] ptrace: add PTRACE_GET_SYSCALL_INFO request
+To:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <sasha.levin@oracle.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        strace-devel@lists.strace.io
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 02:55:20PM -0800, Arjan van de Ven wrote:
-> part of the problem is that "sharing" has multiple dimensions: time
-> and space (e.g. hyperthreading) which makes it hard to find a nice
-> term for it other than describing who attacks whom
+Please cc linux-api@vger.kernel.org for future versions.
 
-Shared Hardware Isolation of Tasks ?
+On Wed, Nov 21, 2018 at 7:58 AM Elvira Khabirova
+<lineprinter@altlinux.org> wrote:
+>
+> struct ptrace_syscall_info {
+>         __u8 op; /* 0 for entry, 1 for exit */
 
-:-)))
+Can you add proper defines, like:
 
--- 
-Regards/Gruss,
-    Boris.
+#define PTRACE_SYSCALL_ENTRY 0
+#define PTRACE_SYSCALL_EXIT 1
+#define PTRACE_SYSCALL_SECCOMP 2
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+and make seccomp work from the start?  I'd rather we don't merge an
+implementation that doesn't work for seccomp and then have to rework
+it later.
+
+>         __u8 __pad0[7];
+>         union {
+>                 struct {
+>                         __s32 nr;
+
+__u64 please.  Syscall numbers are, as a practical matter, 64 bits.
+Admittedly, the actual effects of setting the high bits are unclear,
+and seccomp has issues with it, but let's not perpetuate the problem.
+
+>                         __u32 arch;
+>                         __u64 instruction_pointer;
+>                         __u64 args[6];
+>                 } entry_info;
+>                 struct {
+>                         __s64 rval;
+>                         __u8 is_error;
+>                         __u8 __pad1[7];
+>                 } exit_info;
+>         };
+> };
+
+Should seccomp events use entry_info or should they just literally
+supply seccomp_data?
