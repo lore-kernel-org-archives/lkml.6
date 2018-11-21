@@ -2,187 +2,106 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34509C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09EAEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF28F2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:21:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lyn/e36M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF28F2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C9B4E2075B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:28:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9B4E2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388174AbeKVJ6Y (ORCPT
+        id S2390558AbeKVKEx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:58:24 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33750 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731684AbeKVJ6Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:58:24 -0500
-Received: by mail-vs1-f67.google.com with SMTP id p74so4313785vsc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 15:21:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wNUq75o5o6zHHPdUhKWdu9H60S7hdZrUOMIOdcwo1q4=;
-        b=Lyn/e36MpU84kl+WZZNvYqe2RoVsh70oyd0yFsJHCD/KYVZk4CNlr/0umKKTJtM2fk
-         Yum5w7aVBUqc1dAo8tot66cX0fW1sOQTPocjTEInyIT4MRTFjfR5VnPtguNCxfQlebbK
-         g64a7JR6CO958AD8xJdOQ9wKGfMGACXeXJ3XRCU0RkdzIEQy/12UFTnmKN3LPDjczLZB
-         LDkggmpFIV2sFoKMQ6ZQendfgLC/xDTGztgfqVetuYuCP/hVoPiKDxWe88SoN9qAX3+V
-         bDltj4kkZlllFcJzgKFdhqLo7ZokzT4+S+uG6k7063HpqZl5g2/GOkIOIs+hornSdroD
-         I14Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wNUq75o5o6zHHPdUhKWdu9H60S7hdZrUOMIOdcwo1q4=;
-        b=FmDLA5ws5Ad0dINR2uu9JjeZBhkQIi8QtVfnwQVTLa4qNBt2N02aD/rftmSLJEOcdF
-         +uWkLuJTjF80i8b7LWt1sdA0s/LbJ6Y4ekPzPpNqFlvIvD6YAZPnqR4zUv9ccMm7I6Gl
-         SpoME7qNxvILUqgZbsvHNmLYRO+Mbe0pQj0WFUrutoKVOrLG4EvyBJr8eDQ2XMgbhDpX
-         wB1iJ65ItFAmlsHlEK4oh036gvdKX0GPq9qli9GdLw/TCVzy5WBm13ziIlCrsuumA0Be
-         gx66+88er2Qre6Ft096VWwsDa2JE5UY3TzRYsysPZ9z/0PclDmWaZgI/EZXPS2LWGFaw
-         WF3Q==
-X-Gm-Message-State: AGRZ1gLaxQTN/0P70qWZpp97TtPnq5SfKQv9dzjJyNQyEzY6GVRTjQfe
-        SBcgBnKWHd76Hq40CIYapERfUTQ99e1DncDyLhr2/A==
-X-Google-Smtp-Source: AJdET5fG5mcRnJ7MeD9D7Lvi6ZAq+SqE86HUEiBiDDnV71Esf047/WreA1HycHP2CCHPNnVtTTApORJnuRHW+pFHM+Q=
-X-Received: by 2002:a67:105:: with SMTP id 5mr3623076vsb.183.1542842512322;
- Wed, 21 Nov 2018 15:21:52 -0800 (PST)
+        Thu, 22 Nov 2018 05:04:53 -0500
+Received: from mga09.intel.com ([134.134.136.24]:12257 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388174AbeKVKEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 05:04:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 15:28:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,262,1539673200"; 
+   d="scan'208";a="98106183"
+Received: from sohilbuildbox.sc.intel.com (HELO localhost.localdomain) ([172.25.110.4])
+  by FMSMGA003.fm.intel.com with ESMTP; 21 Nov 2018 15:28:21 -0800
+From:   Sohil Mehta <sohil.mehta@intel.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Ashok Raj <ashok.raj@intel.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] iommu/vt-d: Handle domain agaw being less than iommu agaw
+Date:   Wed, 21 Nov 2018 15:29:33 -0800
+Message-Id: <20181121232933.158582-1-sohil.mehta@intel.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-References: <20181121201452.77173-1-dancol@google.com> <20181121205428.165205-1-dancol@google.com>
- <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org>
- <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com> <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
-In-Reply-To: <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 21 Nov 2018 15:21:40 -0800
-Message-ID: <CAKOZuesF5zi9mpEE6No7oq0hDnM8KFhQFU=NM7qUF635s0r3-A@mail.gmail.com>
-Subject: Re: [PATCH v2] Add /proc/pid_gen
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Primiano Tucci <primiano@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
-        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
-        jpoimboe@redhat.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 2:50 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 21 Nov 2018 14:40:28 -0800 Daniel Colascione <dancol@google.com> wrote:
->
-> > On Wed, Nov 21, 2018 at 2:12 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> > >
-> > > On Wed, 21 Nov 2018 12:54:20 -0800 Daniel Colascione <dancol@google.com> wrote:
-> > >
-> > > > Trace analysis code needs a coherent picture of the set of processes
-> > > > and threads running on a system. While it's possible to enumerate all
-> > > > tasks via /proc, this enumeration is not atomic. If PID numbering
-> > > > rolls over during snapshot collection, the resulting snapshot of the
-> > > > process and thread state of the system may be incoherent, confusing
-> > > > trace analysis tools. The fundamental problem is that if a PID is
-> > > > reused during a userspace scan of /proc, it's impossible to tell, in
-> > > > post-processing, whether a fact that the userspace /proc scanner
-> > > > reports regarding a given PID refers to the old or new task named by
-> > > > that PID, as the scan of that PID may or may not have occurred before
-> > > > the PID reuse, and there's no way to "stamp" a fact read from the
-> > > > kernel with a trace timestamp.
-> > > >
-> > > > This change adds a per-pid-namespace 64-bit generation number,
-> > > > incremented on PID rollover, and exposes it via a new proc file
-> > > > /proc/pid_gen. By examining this file before and after /proc
-> > > > enumeration, user code can detect the potential reuse of a PID and
-> > > > restart the task enumeration process, repeating until it gets a
-> > > > coherent snapshot.
-> > > >
-> > > > PID rollover ought to be rare, so in practice, scan repetitions will
-> > > > be rare.
-> > >
-> > > In general, tracing is a rather specialized thing.  Why is this very
-> > > occasional confusion a sufficiently serious problem to warrant addition
-> > > of this code?
-> >
-> > I wouldn't call tracing a specialized thing: it's important enough to
-> > justify its own summit and a whole ecosystem of trace collection and
-> > analysis tools. We use it in every day in Android. It's tremendously
-> > helpful for understanding system behavior, especially in cases where
-> > multiple components interact in ways that we can't readily predict or
-> > replicate. Reliability and precision in this area are essential:
-> > retrospective analysis of difficult-to-reproduce problems involves
-> > puzzling over trace files and testing hypothesis, and when the trace
-> > system itself is occasionally unreliable, the set of hypothesis to
-> > consider grows. I've tried to keep the amount of kernel infrastructure
-> > needed to support this precision and reliability to a minimum, pushing
-> > most of the complexity to userspace. But we do need, from the kernel,
-> > reliable process disambiguation.
-> >
-> > Besides: things like checkpoint and restart are also non-core
-> > features, but the kernel has plenty of infrastructure to support them.
-> > We're talking about a very lightweight feature in this thread.
->
-> I'm still not understanding the seriousness of the problem.  Presumably
-> you've hit problems in real-life which were serious and frequent enough
-> to justify getting down and writing the code.  Please share some sob stories
-> with us!
+The Intel IOMMU driver opportunistically skips a few top level page
+tables from the domain paging directory while programming the IOMMU
+context entry. However there is an implicit assumption in the code that
+domain's adjusted guest address width (agaw) would always be greater
+than IOMMU's agaw.
 
-The problem here is the possibility of confusion, even if it's rare.
-Does the naive approach of just walking /proc and ignoring the
-possibility of PID reuse races work most of the time? Sure. But "most
-of the time" isn't good enough. It's not that there are tons of sob
-stories: it's that without completely robust reporting, we can't rule
-out of the possibility that weirdness we observe in a given trace is
-actually just an artifact from a kinda-sort-working best-effort trace
-collection system instead of a real anomaly in behavior. Tracing,
-essentially, gives us deltas for system state, and without an accurate
-baseline, collected via some kind of scan on trace startup, it's
-impossible to use these deltas to robustly reconstruct total system
-state at a given time. And this matters, because errors in
-reconstruction (e.g., assigning a thread to the wrong process because
-the IDs happen to be reused) can affect processing of the whole trace.
-If it's 3am and I'm analyzing the lone trace from a dogfooder
-demonstrating a particularly nasty problem, I don't want to find out
-that the trace I'm analyzing ended up being useless because the
-kernel's trace system is merely best effort. It's very cheap to be
-100% reliable here, so let's be reliable and rule out sources of
-error.
+The IOMMU capabilities in an upcoming platform cause the domain's agaw
+to be lower than IOMMU's agaw. The issue is seen when the IOMMU supports
+both 4-level and 5-level paging. The domain builds a 4-level page table
+based on agaw of 2. However the IOMMU's agaw is set as 3 (5-level). In
+this case the code incorrectly tries to skip page page table levels.
+This causes the IOMMU driver to avoid programming the context entry. The
+fix handles this case and programs the context entry accordingly.
 
-> > > Which userspace tools will be using pid_gen?  Are the developers of
-> > > those tools signed up to use pid_gen?
-> >
-> > I'll be changing Android tracing tools to capture process snapshots
-> > using pid_gen, using the algorithm in the commit message.
->
-> Which other tools could use this and what was the feedback from their
-> developers?
+Fixes: de24e55395698 ("iommu/vt-d: Simplify domain_context_mapping_one")
+Cc: <stable@vger.kernel.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reported-by: Ramos Falcon, Ernesto R <ernesto.r.ramos.falcon@intel.com>
+Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+---
+ drivers/iommu/intel-iommu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm going to have Android's systrace and Perfetto use this approach.
-Exactly how many tools signed up to use this feature do you need?
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index f3ccf025108b..fdf79baf1d79 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2044,7 +2044,7 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+ 	 * than default.  Unnecessary for PT mode.
+ 	 */
+ 	if (translation != CONTEXT_TT_PASS_THROUGH) {
+-		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
++		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+ 			ret = -ENOMEM;
+ 			pgd = phys_to_virt(dma_pte_addr(pgd));
+ 			if (!dma_pte_present(pgd))
+@@ -2058,7 +2058,7 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+ 			translation = CONTEXT_TT_MULTI_LEVEL;
+ 
+ 		context_set_address_root(context, virt_to_phys(pgd));
+-		context_set_address_width(context, iommu->agaw);
++		context_set_address_width(context, agaw);
+ 	} else {
+ 		/*
+ 		 * In pass through mode, AW must be programmed to
+-- 
+2.19.0
 
-> Those people are the intended audience and the
-> best-positioned reviewers so let's hear from them?
-
-I'm writing plenty of trace analysis tools myself, so I'm part of this
-intended audience. Other tracing tool authors have told me about
-out-of-tree hacks for process atomic snapshots via ftrace events. This
-approach avoids the necessity of these more-invasive hacks.
