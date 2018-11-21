@@ -2,167 +2,128 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6500C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171BDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7262146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4BA421479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:36:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Ho+G9Vdt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7262146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6MH4FnG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BA421479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeKURJ1 (ORCPT
+        id S1728076AbeKURKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 12:09:27 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:4603 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeKURJ0 (ORCPT
+        Wed, 21 Nov 2018 12:10:02 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44357 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbeKURKB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 12:09:26 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bf4fcdf0000>; Tue, 20 Nov 2018 22:36:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 20 Nov 2018 22:36:15 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 20 Nov 2018 22:36:15 -0800
-Received: from [10.19.225.182] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 21 Nov
- 2018 06:36:13 +0000
-Subject: Re: [PATCH] thermal: tegra: add get_trend ops
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <daniel.lezcano@linaro.org>, <linux-tegra@vger.kernel.org>,
-        <rui.zhang@intel.com>, <edubezval@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1542705077-29697-1-git-send-email-wni@nvidia.com>
- <20181120153833.GB28796@ulmo>
-From:   Wei Ni <wni@nvidia.com>
-Message-ID: <d510d768-452f-5f70-a9b6-37d6a63a56c9@nvidia.com>
-Date:   Wed, 21 Nov 2018 14:36:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 21 Nov 2018 12:10:01 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so3992826plq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 22:36:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ge2+rpVMSI1U2OE3wSpAYz8RwUeM3P2RnopoEmO8zLo=;
+        b=U6MH4FnG8r7ueGmDLtj+gkID/ZvnX7I6t2nGxNrE9JK0tJaIUebxBvTx5toIqosXY4
+         JtO3SP+7wE45iKVIxLnYrIxispDa4AQaARP5iQ6bHTzRwuz39hWS5vgnflrrHTUxEF7V
+         JLo0BgHFjohYkSQ4SaI+r0n4AjVZsp2gLWl/U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ge2+rpVMSI1U2OE3wSpAYz8RwUeM3P2RnopoEmO8zLo=;
+        b=gGmFf0hY5B7kvoN6dvIJIMuSYdrX+gd03XFBd1+W2NtFwgmIGtmxJIVBh2/hVQGhId
+         D5SZ06hJLoLpy6tZaSA06naWuql6ac5ZyFkgBh717i+RvDRZPWf7SilfxAoShH7/iBlr
+         NjOXg8riMTfrp5z/5mzF5/IzTvwrfkk/Lctc0ipu6fKmSh+vdjRic6KPIKxbin5dr1i1
+         2ibyyom1AtKekHVy7W6jO2o8qtNsMYmCMP5lS7rjdphZfCeZ8ZG3r3GS0ljcGx38eujF
+         6g8P3qBaYE+beGUINjOzhcHbDhzeo11Absq2yFctqEdGsRL1JVcW8ApAxXzsb0dHGlOd
+         RLWA==
+X-Gm-Message-State: AA+aEWaWceVgOJDf2jX35GbZ7T73wdtS05eUQyvTq+X7fmyjQLZ5ZAF+
+        GHPQUFiqX0//fNBqNEOXzN+UZg==
+X-Google-Smtp-Source: AFSGD/WpAzkaMNkBYM7C8iUS4Go3N1xYxNozEdutq8vrpay7Xs4QBDzwMlKry4UD7MmAdymGAJdlTA==
+X-Received: by 2002:a63:ee4c:: with SMTP id n12mr4675484pgk.21.1542782210192;
+        Tue, 20 Nov 2018 22:36:50 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id b68sm29716513pfg.160.2018.11.20.22.36.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 22:36:49 -0800 (PST)
+Date:   Wed, 21 Nov 2018 12:06:46 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] PM / Domains: Propagate performance state updates
+Message-ID: <20181121063646.37bha3vomxvzazzn@vireshk-i7>
+References: <cover.1541399301.git.viresh.kumar@linaro.org>
+ <7e1ea283f9eebce081af80ddb8d3ca5c9c76cd3b.1541399301.git.viresh.kumar@linaro.org>
+ <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
+ <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
+ <68a3294f-5556-4b5f-f8c7-79c20b5c70fb@codeaurora.org>
+ <5efc76bb-7732-52b6-4684-82b35ad52343@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20181120153833.GB28796@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542782175; bh=YkCGkxzpDfjW+OP4B45NyIRv2+jWK/j+fejmr3EN9o4=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Ho+G9VdtjTpUyMmbEu8mTTuqq/DseKLERj68HvOiFs4/7KaetTS4CHTWeAVXK6PHs
-         XT/0o4Igi7mQaIFvi0EflFHb3wuV71935Asy/wcgFq0UFBehJIJYR6R6jHBHBQ83SC
-         HLLOIFuA2GkU0QM+dtg/+gtMO8ntNlpifP9cNvFCmTC1wmirsGadz6nE0GO5K5MtFb
-         jXzbMHcBAMIdAVzPbiFtlaCwXlMOGzy/KhIiuTeFgYHYcVuTddiJnIf+0pHYwbDkAY
-         djAd8wRDqHLzHC3dKXolRsLbcxpKNc+UZwTxRPxr4HO5BPg56k0O1W++SGJj5dwe4K
-         R5NmLKZkKWXGQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5efc76bb-7732-52b6-4684-82b35ad52343@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21-11-18, 11:12, Rajendra Nayak wrote:
+> And the reason for that seems to be that we update the genpd status to GPD_STATE_ACTIVE
+> *after* we try to set the performance state, so we always hit this check which bails out
+> thinking the genpd is not ON.
 
+Thanks for looking at it. Here is the (untested) fix, please try it
+out.
 
-On 20/11/2018 11:38 PM, Thierry Reding wrote:
-> On Tue, Nov 20, 2018 at 05:11:17PM +0800, Wei Ni wrote:
->> Add support for get_trend ops that allows soctherm
->> sensors to be used with the step-wise governor.
->>
->> Signed-off-by: Wei Ni <wni@nvidia.com>
->> ---
->>  drivers/thermal/tegra/soctherm.c | 34 ++++++++++++++++++++++++++++++++++
->>  1 file changed, 34 insertions(+)
->>
->> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
->> index ed28110a3535..d2951fbe2b7c 100644
->> --- a/drivers/thermal/tegra/soctherm.c
->> +++ b/drivers/thermal/tegra/soctherm.c
->> @@ -488,9 +488,43 @@ static int tegra_thermctl_set_trip_temp(void *data, int trip, int temp)
->>  	return 0;
->>  }
->>  
->> +static int tegra_thermctl_get_trend(void *data, int trip,
->> +				    enum thermal_trend *trend)
->> +{
->> +	struct tegra_thermctl_zone *zone = data;
->> +	struct thermal_zone_device *tz = zone->tz;
->> +	int trip_temp, temp, last_temp, ret;
->> +
->> +	if (!tz)
->> +		return -EINVAL;
->> +
->> +	ret = tz->ops->get_trip_temp(zone->tz, trip, &trip_temp);
->> +	if (ret)
->> +		return ret;
->> +
->> +	mutex_lock(&tz->lock);
->> +	temp = tz->temperature;
->> +	last_temp = tz->last_temperature;
->> +	mutex_unlock(&tz->lock);
->> +
->> +	if (temp > trip_temp) {
->> +		if (temp >= last_temp)
->> +			*trend = THERMAL_TREND_RAISING;
->> +		else
->> +			*trend = THERMAL_TREND_STABLE;
->> +	} else if (temp < trip_temp) {
->> +		*trend = THERMAL_TREND_DROPPING;
->> +	} else {
->> +		*trend = THERMAL_TREND_STABLE;
->> +	}
->> +
->> +	return 0;
->> +}
-> 
-> This looks like a reimplementation of the get_tz_trend() helper. Is
-> seems like that helper already has everything we need. Perhaps this
-> isn't working because of-thermal installs of_thermal_get_trend(), a
-> function that returns -EINVAL if the driver doesn't implement the
-> ->get_trend() callback.
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 84c13695af65..92be4a224b45 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -250,9 +250,6 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
+        unsigned int mstate;
+        int ret;
+ 
+-       if (!genpd_status_on(genpd))
+-               goto out;
+-
+        /* Propagate to masters of genpd */
+        list_for_each_entry(link, &genpd->slave_links, slave_node) {
+                master = link->master;
+@@ -286,7 +283,6 @@ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
+        if (ret)
+                goto err;
+ 
+-out:
+        genpd->performance_state = state;
+        return 0;
+ 
+@@ -361,6 +357,11 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+                return 0;
+ 
+ update_state:
++       if (!genpd_status_on(genpd)) {
++               genpd->performance_state = state;
++               return 0;
++       }
++
+        return _genpd_set_performance_state(genpd, state, depth);
+ }
 
-1. The get_tz_trend() helper can work, because it has:
-if (tz->emul_temperature || !tz->ops->get_trend ||
-            tz->ops->get_trend(tz, trip, &trend)) {
-...
-}
-the tz->ops->get_trend is of_thermal_get_trend(). If without special
-get_trend(), it will return -EINVAL, so it will implement the if block
-to get the "trend". If we have the special get_trend(), then the
-of_thermal_get_trend() will return 0, so this helper will not implement
-the if block, it will get the "trend" from the special get_trend().
-
-2. There has a little difference between the helper and our special
-callback. The tegra_thermctl_get_trend() consider the trip_temp, but the
-get_tz_trend() helper didn't.
-
-> 
-> Perhaps a better way would be to do something like this in
-> thermal_zone_of_add_sensor():
-> 
-> 	if (ops->get_trend)
-> 		tzd->ops->get_trend = of_thermal_get_trend;
-> 
-> That's similar to how ->set_trips() and ->set_emul_temp() are set up
-> and should make sure that get_tz_trend() will do the right thing for
-> all drivers that don't implement a special ->get_trend().
-
-As above description, I think the of_thermal_get_trend() already can
-handle this case, doesn't need to change.
-
-Wei.
-
-> 
-> Thierry
-> 
+-- 
+viresh
