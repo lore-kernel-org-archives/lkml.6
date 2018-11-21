@@ -2,127 +2,141 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E17FFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:47:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74528C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F412145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E09E2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:51:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CdfboDlT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2F412145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pSNOkRsI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E09E2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbeKUMTf (ORCPT
+        id S1726287AbeKUMXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:19:35 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40747 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeKUMTf (ORCPT
+        Wed, 21 Nov 2018 07:23:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33282 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbeKUMXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:19:35 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b22-v6so3000262pls.7
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 17:47:24 -0800 (PST)
+        Wed, 21 Nov 2018 07:23:24 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u9-v6so3971894wrr.0;
+        Tue, 20 Nov 2018 17:51:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=NQhDUiRdx+ni6DnegyCIvUwQH41AOZN7l3quC8qClOE=;
-        b=CdfboDlTmfJPTp44yOLj2Rk/WxPrQ34XpH8zLG56fbhnerG1nFY7bKwrUqT5OsYz8E
-         GSmYWx2Q08ny+q+AJoijmv2TQJbMDhjDeH0H0Hg/9qPsBhvzcPs8dTUjadkIfX+fSJ0l
-         XRFKx7O8FtIBf4MtvyvnlJoBpc3dprtJff1O6JCPbUE3wsyYXE1KCpTt1bZb75QVGzPM
-         INExqyqNkc7AbxTwvpEMgWaE07s5PVbKmGUcpVIkf6B68tQvYBdioh3fRKSwCVbGgC9P
-         Oak9doFUYGbZxYOxb9OztmHaVjzJVNqJ9mWFHDzQZYJ4CjSB3ilR9oizqh8jlnoNrSeg
-         3tkw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y2fmDKf5hxF75CTQp/zdiNY8rMfrwOSiIfz3uPF+M8Y=;
+        b=pSNOkRsIARK2oIdnnwfNHEss24IDT1XV4ErQF4LtHQ5QIyllClKThjIpEdmJo79mAX
+         EvEhlEiWotZvVSHRDtHtNMLKsiopGTlH8WbmCs7zVMZrRBuV/xzgmJI5TX0zyz2mrYoU
+         7y9AgcRHdvqO1O39Td1MUwaCTGZwkNJ3kj0eRtC9vyIdKD3z/gGDLBWUrhzEo+Gk1J7E
+         h5k+GDAhL8KI5Bw/qMrDql2cx4OuODju32OUjVaJezdvT6o0xqFkUN1ciG21nVfW90mZ
+         yYc4clafkKcAC3YQUGmsTA8kmQJmdk+2Cc3djwp7WR6vLFZui7+keIKUuf0hUkVIzLes
+         5mTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=NQhDUiRdx+ni6DnegyCIvUwQH41AOZN7l3quC8qClOE=;
-        b=BFxY1TozX2zv+xQ8yprVfreAp7s4MRCeT5myGgK8eOzYQuEOxcGIIwqeCKOCVIZamb
-         D1q56+cBPk7utgXitL5sND7oHhLUYzEC+h1KWHWvLguqWLJmRldYxqltqrAqQqgnzz9h
-         740LrdjHYdswARCIrFLdLitL15m1zhFJSBD7IuNHQrI23/XjmbxOxeJQCIpCbUxDUaLy
-         dVZaDLeoVteR9IYf+MlIA2+NCSJg4dHgARdCzvwzvZdqjjwZ0dQ+16XI11AghFlTYTeA
-         8COPL4kI/1Zn9e+CxCXS5iiR7DsMxdsNOtc3/XSJJ15zlyvNntd1a1o/ZBLaFxubUdOx
-         nnzQ==
-X-Gm-Message-State: AGRZ1gK1XuRjG9ITXSdYLCKDl9K6IjXTZT7RxxIkFAGIHF65KsuEcnme
-        ry7wXfmUx0ofgo9+Z+4gsOfkhQ==
-X-Google-Smtp-Source: AJdET5cWChM+hbXYJXmqZ+AfDa3prXsccYljjq+UNJiIb9UtxIxk/bcXUyg/Dx4LLNOUbR+lFMPckg==
-X-Received: by 2002:a62:ed09:: with SMTP id u9-v6mr4630060pfh.188.1542764843686;
-        Tue, 20 Nov 2018 17:47:23 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id h17-v6sm63357489pfj.125.2018.11.20.17.47.22
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 20 Nov 2018 17:47:22 -0800 (PST)
-Date:   Tue, 20 Nov 2018 17:47:21 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <OSalvador@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        David Hildenbrand <david@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: [RFC PATCH 3/3] mm, fault_around: do not take a reference to a
- locked page
-In-Reply-To: <20181120134323.13007-4-mhocko@kernel.org>
-Message-ID: <alpine.LSU.2.11.1811201721470.2061@eggly.anvils>
-References: <20181120134323.13007-1-mhocko@kernel.org> <20181120134323.13007-4-mhocko@kernel.org>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y2fmDKf5hxF75CTQp/zdiNY8rMfrwOSiIfz3uPF+M8Y=;
+        b=oiDy7lcLN88SQpR3xsD04coK8FxF6jGxDF7GH18hkAZfghmIWvHCH5qOsqRQlgjvuf
+         zziUcwz+8w01BOQJ9lYj3IGbJ6tKph3VOBxG8Gc0CyNPxsLv4kFd5T6SRsyYbqrcPGja
+         LHSPzT3/j7B6HrlMNs9WCRG01m9qQLBL/wac5fB/9tcPAmdyXaqhrw7rAcOV8II15KhF
+         oJAm+VB2asZr2L85gEpaWodR/Lb9rCuov+Ho2+wZ7bLw1z5/s9QS6vuNJrX8O3NsLzhd
+         k3jwsZSeA9glsfq4HzBoVlO/cVkTMMQpjvOA6iGtdmGDDnyrZaBIPmpPGREqFi8nwejK
+         qh0A==
+X-Gm-Message-State: AA+aEWZ2c9/TYs2gvGgEzME2/bM0b0FEcnrTQR1ZFM4TuA2pMz8WhTTL
+        wVYGQ2J3/mS1NVYBc0utZ5Q=
+X-Google-Smtp-Source: AFSGD/VdbFLlDEph2z7nBp4nKPxxDi6x/gf8euC1qWidwrOjsTkKVyR0jhu5/TQN/rZ8xgqYG1vs0g==
+X-Received: by 2002:adf:dd06:: with SMTP id a6mr4203383wrm.2.1542765070912;
+        Tue, 20 Nov 2018 17:51:10 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id c13sm3481784wrb.38.2018.11.20.17.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 17:51:09 -0800 (PST)
+Subject: Re: [PATCH 2/2] dt-binding: spi: Document Renesas R-Car RPC
+ controller bindings
+To:     masonccyang@mxic.com.tw
+Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, tpiepho@impinj.com,
+        zhengxunli@mxic.com.tw
+References: <1542621690-10229-1-git-send-email-masonccyang@mxic.com.tw>
+ <1542621690-10229-3-git-send-email-masonccyang@mxic.com.tw>
+ <629a5d6f-5c13-9b24-1c21-461d09f1aa8a@gmail.com>
+ <OFDD04CD59.10199EDD-ON4825834B.001E1390-4825834B.001F65DD@mxic.com.tw>
+ <e7fd0653-75a7-249a-462a-18a7bf4616d1@gmail.com>
+ <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <163dfc15-71b2-fdbe-f872-f6c6e4c3e14e@gmail.com>
+Date:   Wed, 21 Nov 2018 02:51:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <OF26D8352D.B4B02BBE-ON4825834C.00043726-4825834C.0004E2F7@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Michal Hocko wrote:
+On 11/21/2018 01:53 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
-> From: Michal Hocko <mhocko@suse.com>
+Hi,
+
+>> Marek Vasut <marek.vasut@gmail.com>
+>> 2018/11/20 下午 08:57
+>>
+>> >> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
+>> >> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> >> > new file mode 100644
+>> >> > index 0000000..8286cc8
+>> >> > --- /dev/null
+>> >> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> >> > @@ -0,0 +1,33 @@
+>> >> > +Renesas R-Car D3 RPC controller Device Tree Bindings
+>> >> > +----------------------------------------------------
+>> >> > +
+>> >> > +Required properties:
+>> >> > +- compatible: should be "renesas,rpc-r8a77995"
+>> >> > +- #address-cells: should be 1
+>> >> > +- #size-cells: should be 0
+>> >> > +- reg: should contain 2 entries, one for the registers and one
+>> >> for the direct
+>> >> > +       mapping area
+>> >> > +- reg-names: should contain "rpc_regs" and "dirmap"
+>> >> > +- interrupts: interrupt line connected to the RPC SPI controller
+>> >>
+>> >> Do you also plan to support the RPC HF mode ? And if so, how would that
+>> >> look in the bindings ? I'd like to avoid having to redesign the
+> bindings
+>> >> later to handle both the SPI and HF modes.
+>> >>
+>> >
+>> > I patched this RPC SPI/Octa driver is for mx25uw51245g and you may also
+>> > refer to Boris's patch. [1][2][3]
+>>
+>> Does this mean the driver is specific to one particular kind of flash ?
+>>
 > 
-> filemap_map_pages takes a speculative reference to each page in the
-> range before it tries to lock that page. While this is correct it
-> also can influence page migration which will bail out when seeing
-> an elevated reference count. The faultaround code would bail on
-> seeing a locked page so we can pro-actively check the PageLocked
-> bit before page_cache_get_speculative and prevent from pointless
-> reference count churn.
+> No, this driver supports all SPI flash, spi, qspi and octa flash.
 > 
-> Cc: "Kirill A. Shutemov" <kirill@shutemov.name>
-> Suggested-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> The target is Octa 8-8-8 DDR2 mode once spi-nor layer is merged.[1][2][3]
 
-Acked-by: Hugh Dickins <hughd@google.com>
+The HyperFlash must also be supported, cfr my previous comment that I'd
+like to avoid redesigning the bindings again when the HF mode is added.
 
-though I think this patch is more useful to the avoid atomic ops,
-and unnecessary dirtying of the cacheline, than to avoid the very
-transient elevation of refcount, which will not affect page migration
-very much.
-
-> ---
->  mm/filemap.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 81adec8ee02c..c76d6a251770 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2553,6 +2553,9 @@ void filemap_map_pages(struct vm_fault *vmf,
->  			goto next;
->  
->  		head = compound_head(page);
-> +
-> +		if (PageLocked(head))
-> +			goto next;
->  		if (!page_cache_get_speculative(head))
->  			goto next;
->  
-> -- 
-> 2.19.1
+-- 
+Best regards,
+Marek Vasut
