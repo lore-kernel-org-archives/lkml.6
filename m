@@ -2,127 +2,103 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 632BCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 276D6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A4932147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:34:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFr8lgGl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A4932147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EB03A214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:34:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB03A214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731445AbeKVCJB (ORCPT
+        id S1731478AbeKVCJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:09:01 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35404 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbeKVCJB (ORCPT
+        Wed, 21 Nov 2018 21:09:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49038 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729128AbeKVCJs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:09:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id v11so9462912itj.0;
-        Wed, 21 Nov 2018 07:34:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=thkELfAxvTwr1N4EbyhLIU5J715IkVEuVYHX9Z2jW60=;
-        b=EFr8lgGl/6h84hxoxmWgIaCMT2UNfAeF0vQ4FR2toDNCbfyXnBt+QN6zCytKna7YwK
-         dGv+rAcdhWFs/M2oqKoofvgU7dFSnNdpbpqVNdrFzQUlbPLPFUZQEXiwPeZg8X8RqU19
-         5op64jsb6Krv3Pk9tMBcxumU8l5otbFi0/I0JpHMCx7UEel+VLTUoZXYHmQmZlgaKfug
-         qvs8VidiR0vFwBV5OIISGZaqaFpIH3kviBx/DzrKyvOskiwoLr4LLtWEv60qpQ7PTca3
-         xCnReqV+nqC23akb0/ceWrMYN4WgCaS/TdJpCyNg7QO+emtuXm6BY/iSzj5EklUBmIxd
-         C7Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=thkELfAxvTwr1N4EbyhLIU5J715IkVEuVYHX9Z2jW60=;
-        b=dzScsxL4Xnup6j7TL/0rgG6/xnIj4uASpvoX17UaKRdnICt3tLq8ft9v6L+MsNridd
-         rcJXVdCwn8rNhJUjAtTMRoUM9+EjYyashbO6Yn80CdmgFmUgeLyMQLEfzeBmgBFt6XMG
-         6+HMFosnoRMV5r/TmILyDvC4Ys2eGOLxcs6fqUunIvPn9ESA2Qurkwf9o5lXCw4we3I+
-         5T9NhDc8xwVER/QZO0C584+kHD/v1hd4Jl57WGYCLlX2kSlpMTFVRRDSt7sykpwH/kpZ
-         Fgci7GNjtPqJdnoVGg8K4pxF+lYzkHIq7Mpp24sC2BVWhdtTvHOBrruCokWrIM/9TmMI
-         86NA==
-X-Gm-Message-State: AA+aEWYknOTb/cNhfII7uGPGsPgb/Hb/UMS3NMsmMGsehdxGbcAKnrs5
-        AzK0rfR0QrNvVQJTVrUXKw6/hTDT0W5+ZZEv3Pxo5dCDYkA=
-X-Google-Smtp-Source: AFSGD/W+fLCS7yUlrtNAluvvBJvLyZrVpNMb6P3T+4d8hC/jxA2UQ/ehYQDiMdisvwDracqZ3RDChTKSSoYhp1bzlxQ=
-X-Received: by 2002:a02:5184:: with SMTP id s126mr1632705jaa.12.1542814445924;
- Wed, 21 Nov 2018 07:34:05 -0800 (PST)
+        Wed, 21 Nov 2018 21:09:48 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id D00DF271740
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-pm@vger.kernel.org, sre@kernel.org
+Cc:     Sameer Nanda <snanda@chromium.org>, gwendal@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH 1/2] power: supply: add input voltage limit property.
+Date:   Wed, 21 Nov 2018 16:34:43 +0100
+Message-Id: <20181121153444.24747-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181121130439.22255-1-tiny.windzz@gmail.com> <e45f832b-ef98-e419-6082-27dd7ced71d2@cogentembedded.com>
- <CAEExFWvw1tw-AWbp1beajZNCRLYQXdiC6ifMvGc5_po64i_GtQ@mail.gmail.com>
-In-Reply-To: <CAEExFWvw1tw-AWbp1beajZNCRLYQXdiC6ifMvGc5_po64i_GtQ@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Wed, 21 Nov 2018 23:33:44 +0800
-Message-ID: <CAEExFWsLP0oJVDV1KBENwsFKZ52ygZ18DQp1g1ah4a1ZmxeJLw@mail.gmail.com>
-Subject: Re: [PATCH] ata: pata_macio: add of_node_put()
-To:     sergei.shtylyov@cogentembedded.com
-Cc:     b.zolnierkie@samsung.com, axboe@kernel.dk,
-        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 11:31 PM Frank Lee <tiny.windzz@gmail.com> wrote:
->
-> On Wed, Nov 21, 2018 at 11:24 PM Sergei Shtylyov
-> <sergei.shtylyov@cogentembedded.com> wrote:
-> >
-> > Hello!
-> >
-> > On 11/21/2018 04:04 PM, Yangtao Li wrote:
-> >
-> > > of_find_node_by_path() acquires a reference to the node
-> > > returned by it and that reference needs to be dropped by its caller.
-> > > bl_idle_init() doesn't do that, so fix it.
-> >
-> >    I thought we're inside pata_macio_cable_detect()?
-Hi Sergei=EF=BC=9A
+We have a problem with USBPD chargers which under certain conditions
+can result in system overheating if the voltage provided by the USBPD
+port is too high. While the preferred means to control this would be
+through devicetree or ACPI settings, this is not always possible, and
+we need to have a means to set a voltage limit.
 
-Yeah,this is a typo.
-Need me to resend a patch?
+This patch exposes a new property, similar to input current limit, to
+re-configure the maximum voltage from the external supply at runtime
+based on system-level knowledge or user input.
 
-Thanks=EF=BC=8C
-Yangtao
-> Hi Sergei=EF=BC=9A
->
-> What do you mean?
-> Why not release the refcount of root?
->
-> Yours,
->     Yangtao
-> >
-> > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > > ---
-> > >  drivers/ata/pata_macio.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-> > > index 9588e685d994..8cc9c429ad95 100644
-> > > --- a/drivers/ata/pata_macio.c
-> > > +++ b/drivers/ata/pata_macio.c
-> > > @@ -483,6 +483,8 @@ static int pata_macio_cable_detect(struct ata_por=
-t *ap)
-> > >               struct device_node *root =3D of_find_node_by_path("/");
-> > >               const char *model =3D of_get_property(root, "model", NU=
-LL);
-> > >
-> > > +             of_node_put(root);
-> > > +
-> > >               if (cable && !strncmp(cable, "80-", 3)) {
-> > >                       /* Some drives fail to detect 80c cable in Powe=
-rBook
-> > >                        * These machine use proprietary short IDE cabl=
-e
-> >
-> > MBR, Sergei
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+
+ Documentation/power/power_supply_class.txt | 2 ++
+ drivers/power/supply/power_supply_sysfs.c  | 1 +
+ include/linux/power_supply.h               | 1 +
+ 3 files changed, 4 insertions(+)
+
+diff --git a/Documentation/power/power_supply_class.txt b/Documentation/power/power_supply_class.txt
+index 300d37896e51..7b4be615b4f8 100644
+--- a/Documentation/power/power_supply_class.txt
++++ b/Documentation/power/power_supply_class.txt
+@@ -137,6 +137,8 @@ power supply object.
+ 
+ INPUT_CURRENT_LIMIT - input current limit programmed by charger. Indicates
+ the current drawn from a charging source.
++INPUT_VOLTAGE_LIMIT - input voltage limit programmed by charger. Indicates
++the voltage limit from a charging source.
+ 
+ CHARGE_CONTROL_LIMIT - current charge control limit setting
+ CHARGE_CONTROL_LIMIT_MAX - maximum charge control limit setting
+diff --git a/drivers/power/supply/power_supply_sysfs.c b/drivers/power/supply/power_supply_sysfs.c
+index dce24f596160..5848742ebb59 100644
+--- a/drivers/power/supply/power_supply_sysfs.c
++++ b/drivers/power/supply/power_supply_sysfs.c
+@@ -275,6 +275,7 @@ static struct device_attribute power_supply_attrs[] = {
+ 	POWER_SUPPLY_ATTR(charge_control_limit),
+ 	POWER_SUPPLY_ATTR(charge_control_limit_max),
+ 	POWER_SUPPLY_ATTR(input_current_limit),
++	POWER_SUPPLY_ATTR(input_voltage_limit),
+ 	POWER_SUPPLY_ATTR(energy_full_design),
+ 	POWER_SUPPLY_ATTR(energy_empty_design),
+ 	POWER_SUPPLY_ATTR(energy_full),
+diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+index f80769175c56..608ba88e32ee 100644
+--- a/include/linux/power_supply.h
++++ b/include/linux/power_supply.h
+@@ -122,6 +122,7 @@ enum power_supply_property {
+ 	POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
+ 	POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT_MAX,
+ 	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
++	POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT,
+ 	POWER_SUPPLY_PROP_ENERGY_FULL_DESIGN,
+ 	POWER_SUPPLY_PROP_ENERGY_EMPTY_DESIGN,
+ 	POWER_SUPPLY_PROP_ENERGY_FULL,
+-- 
+2.19.1
+
