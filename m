@@ -2,105 +2,213 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6636C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BC4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC22214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:05:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC22214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A08121479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:07:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z94wua6x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A08121479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731162AbeKVBjq (ORCPT
+        id S1731164AbeKVBmF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:39:46 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60905 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbeKVBjq (ORCPT
+        Wed, 21 Nov 2018 20:42:05 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35399 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729828AbeKVBmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:39:46 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wALF4iVe3418559
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 21 Nov 2018 07:04:44 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wALF4iUu3418556;
-        Wed, 21 Nov 2018 07:04:44 -0800
-Date:   Wed, 21 Nov 2018 07:04:44 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-7bds48dhckfnleie08mit314@git.kernel.org>
-Cc:     mingo@kernel.org, wangnan0@huawei.com, acme@redhat.com,
-        hpa@zytor.com, adrian.hunter@intel.com, gregkh@linuxfoundation.org,
-        dsahern@gmail.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, nicolas.ferre@microchip.com,
-        tglx@linutronix.de, jolsa@kernel.org
-Reply-To: jolsa@kernel.org, nicolas.ferre@microchip.com,
-          tglx@linutronix.de, dsahern@gmail.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org,
-          gregkh@linuxfoundation.org, adrian.hunter@intel.com,
-          hpa@zytor.com, wangnan0@huawei.com, acme@redhat.com,
-          mingo@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools beauty ioctl: Support new ISO7816
- commands
-Git-Commit-ID: a4243e1494532ab8fa679a4134153149a71fa331
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 21 Nov 2018 20:42:04 -0500
+Received: by mail-it1-f196.google.com with SMTP id v11so9324896itj.0;
+        Wed, 21 Nov 2018 07:07:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mqFZ3m7DCD/G9EPHBuSBBQYmwret+6LrzpAX1ty+GYM=;
+        b=Z94wua6xH7DlJ4MZmI6uS4ZfPMIAWIgEqhZxxRWp3PsnuWBeb0hCPaQjktghaPud7u
+         pPTVLhd/fiezS7SJYc44bZ1JXlR/cKR48hdZNw8yrjMftVQNeXe/czQmLiAn/Map45FM
+         x6y8E0l3an/qDO2jg0Ym3q1OEwg/CLt9bU0dwVJHeGdufvutk+J51vBXcwmGOHKwiIuR
+         Sv7rBfw6KQkc7uO0PK+xBrOnLsVEtucKqTKhbIO0XsptW8JyfeMxj7iZeNgkLeATi08k
+         iIoP4jDovRPcV10GjZY80bIn9Be0fpObAc8R0wbI+o5hR6p503rdcmPTMK1meLFR+JHJ
+         c+Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mqFZ3m7DCD/G9EPHBuSBBQYmwret+6LrzpAX1ty+GYM=;
+        b=Ycdr8UahokcAJYvRTrc+sgGuXhmUEdd+V/G5Ig/3AN2ghisR61VfL8+hsCBz699ww3
+         LyCZiKyH62cjYGhFHULPOBm1yCzBU4bMW+duma5LkmTmWAvlsaJzEgBmDsMfaMzY6KlP
+         YBkC3f+oJ+zd00bYt6vbUiRwm3dOwqN4G9AzQrmido+qYgaCKwxSI1LZIX48fYKZ+DKT
+         xdIuNr+cdoQtX5bXgOwI8RA1l1Tvt7ROqeIflacfECZnFXRBS0jmwByEQoB5Mx83Z6RJ
+         Jnl6b2Sc78BscG9kYy7VnhM+IVmIbVkJVGFVAmMz6ODQ9321t72tqeY1O8joCndq7wop
+         4bpQ==
+X-Gm-Message-State: AGRZ1gLoYBuq+13dS9gqw3j5rbhmlgNHa51uYyaF40RD/Nzi+tkDYoYr
+        tcYVXirysY1T9KGAUzudGhE=
+X-Google-Smtp-Source: AJdET5dXvgOavTs2zYIzeo7As/y7vO5+Fw76+amoShOdJ8+EoIOpH4ZOgTp8f7pvg6/hDgahhkGBiw==
+X-Received: by 2002:a24:2493:: with SMTP id f141-v6mr6430603ita.46.1542812835583;
+        Wed, 21 Nov 2018 07:07:15 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id c3sm5113119ioi.2.2018.11.21.07.07.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 07:07:14 -0800 (PST)
+From:   thesven73@gmail.com
+X-Google-Original-From: TheSven73@googlemail.com
+To:     svendev@arcx.com, robh+dt@kernel.org, linus.walleij@linaro.org
+Cc:     lee.jones@linaro.org, mark.rutland@arm.com, afaerber@suse.de,
+        treding@nvidia.com, david@lechnology.com, noralf@tronnes.org,
+        johan@kernel.org, monstr@monstr.eu, michal.vokac@ysoft.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, maxime.ripard@bootlin.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH anybus v4 0/7] Add Fieldbus subsystem + support HMS Profinet card
+Date:   Wed, 21 Nov 2018 10:07:02 -0500
+Message-Id: <20181121150709.6030-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a4243e1494532ab8fa679a4134153149a71fa331
-Gitweb:     https://git.kernel.org/tip/a4243e1494532ab8fa679a4134153149a71fa331
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Mon, 19 Nov 2018 12:38:50 -0800
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 19 Nov 2018 12:38:50 -0800
+This patch:
+  1. adds a Fieldbus subsystem
+  2. adds support for the HMS Industrial Networks AB Profinet card.
 
-perf tools beauty ioctl: Support new ISO7816 commands
+1. Fieldbus subsystem
+---------------------
 
-Introduced in:
+Fieldbus device (client) adapters allow data exchange with a PLC aka.
+"Fieldbus Controller" over a fieldbus (Profinet, FLNet, etc.)
+They are typically used when a Linux device wants to expose itself
+as an actuator, motor, console light, switch, etc. over the fieldbus.
+The framework is designed to provide a generic interface to Fieldbus
+Devices from both the Linux Kernel and the userspace.
 
-  ad8c0eaa0a41 ("tty/serial_core: add ISO7816 infrastructure")
+2. Add support for HMS Profinet Card
+------------------------------------
 
-Now 'perf trace' will be able to pretty-print the 'cmd' ioctl arg when
-used in capable systems with software emitting those commands.
+Profinet is an industry technical standard for data communication over
+Industrial Ethernet, designed for collecting data from, and controlling,
+equipment in industrial systems, with a particular strength in delivering data
+under tight time constraints (on the order of 1ms or less).
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-7bds48dhckfnleie08mit314@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/trace/beauty/ioctl.c | 1 +
- 1 file changed, 1 insertion(+)
+The profinet card itself is connected to the system via an industrial bus
+called 'anybus'.
 
-diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
-index 5d2a7fd8d407..eae59ad15ce3 100644
---- a/tools/perf/trace/beauty/ioctl.c
-+++ b/tools/perf/trace/beauty/ioctl.c
-@@ -31,6 +31,7 @@ static size_t ioctl__scnprintf_tty_cmd(int nr, int dir, char *bf, size_t size)
- 	"TCSETSW2", "TCSETSF2", "TIOCGRS48", "TIOCSRS485", "TIOCGPTN", "TIOCSPTLCK",
- 	"TIOCGDEV", "TCSETX", "TCSETXF", "TCSETXW", "TIOCSIG", "TIOCVHANGUP", "TIOCGPKT",
- 	"TIOCGPTLCK", [_IOC_NR(TIOCGEXCL)] = "TIOCGEXCL", "TIOCGPTPEER",
-+	"TIOCGISO7816", "TIOCSISO7816",
- 	[_IOC_NR(FIONCLEX)] = "FIONCLEX", "FIOCLEX", "FIOASYNC", "TIOCSERCONFIG",
- 	"TIOCSERGWILD", "TIOCSERSWILD", "TIOCGLCKTRMIOS", "TIOCSLCKTRMIOS",
- 	"TIOCSERGSTRUCT", "TIOCSERGETLSR", "TIOCSERGETMULTI", "TIOCSERSETMULTI",
+I have followed the bus driver/client driver pattern, and created an anybus
+bus driver, plus a client driver for the profinet card.
+
+In case this patch set gets (eventually) accepted, drivers for other anybus
+client cards may follow: flnet, cc-link, ...
+
+The anybus slot on the host is located on an 'anybus bridge', which is
+custom h/w designed by arcx. Its driver is modeled as a misc device, which
+exposes a dual reset controller, plus a power readout unrelated to the anybus.
+
+v4:
+	general
+		create fieldbus_dev subsystem, with standardized 'simple'
+			userspace interface (sysfs + cdev)
+		remove redundant __packed keywords
+		use __be16/32 types wherever values are explicitly big-endian
+	hms-profinet:
+		remove configuration code, and uapi headers: not supported (yet)
+			when registering as a fieldbus_dev.
+	anybuss-host:
+		use struct kref to reference-count tasks
+		replace busy loops with usleep_range() loop after 10 tries
+		use threaded irq so time_before_eq(jiffies, timeout) will
+			continue to work
+		allow client devices to be assigned a devicetree node,
+			in the same way as pci/mmc/...
+
+v3:
+	devicetree-bindings
+		adding the vendor prefix is now a separate commit
+	anybus-bridge:
+		moved misc driver to drivers/bus/
+		converted of_gpio_* to gpiod_* abstractions
+		can power readout is now a fixed-voltage regulator
+	anybuss-host:
+		converted refcounts from atomic_t to refcount_t
+		fixed potential use-after-free
+	hms-profinet:
+		applied minor kernel build robot suggestion
+
+v2:
+	added architecture overview comments to host driver
+	completely reworked anybus-bridge driver, it becomes a reset controller
+	anybuss-host driver now needs devicetree entry, link to reset controller
+	I will hold off on kernel-doc until the overall architecture gets
+		more validation / approval
+	fixed Kconfig, comment-style, document ioctl magic numbers
+	removed redundant pwm dependency
+	renamed enable-gpios to reset-gpios
+	stop driving reset-gpio after unloading driver
+	use interrupt-parent / interrupts method to describe interrupts
+		in the devicetree
+	convert references 'i.MX WEIM parallel bus' to 'parallel bus'
+	replace devicetree functions with more generic platform_get_resource()
+							platform_get_irq()
+	added device unique data to add_device_randomness()
+
+v1:
+	first shot
+
+
+Sven Van Asbroeck (7):
+  fieldbus_dev: add Fieldbus Device subsystem.
+  fieldbus: support the Arcx anybus bridge
+  dt-bindings: Add vendor prefix for arcx / Archronix
+  dt-bindings: anybus-bridge: document devicetree binding
+  fieldbus: support HMS Anybus-S bus
+  dt-bindings: anybuss-host: document devicetree binding
+  fieldbus_dev: support HMS Profinet IRT industrial controller
+
+ Documentation/ABI/testing/fieldbus-dev-cdev   |   31 +
+ .../ABI/testing/sysfs-class-fieldbus-dev      |   63 +
+ .../bindings/fieldbus/arcx,anybus-bridge.txt  |   34 +
+ .../bindings/fieldbus/arcx,anybuss-host.txt   |   66 +
+ .../devicetree/bindings/vendor-prefixes.txt   |    1 +
+ Documentation/fieldbus_dev/fieldbus_dev.txt   |   66 +
+ drivers/Kconfig                               |    2 +
+ drivers/Makefile                              |    1 +
+ drivers/fieldbus/Kconfig                      |   56 +
+ drivers/fieldbus/Makefile                     |   12 +
+ drivers/fieldbus/anybus-bridge.c              |  321 ++++
+ drivers/fieldbus/anybuss-host.c               | 1497 +++++++++++++++++
+ drivers/fieldbus/dev_core.c                   |  355 ++++
+ drivers/fieldbus/hms-profinet.c               |  223 +++
+ include/linux/anybuss-client.h                |  104 ++
+ include/linux/fieldbus_dev.h                  |  106 ++
+ 16 files changed, 2938 insertions(+)
+ create mode 100644 Documentation/ABI/testing/fieldbus-dev-cdev
+ create mode 100644 Documentation/ABI/testing/sysfs-class-fieldbus-dev
+ create mode 100644 Documentation/devicetree/bindings/fieldbus/arcx,anybus-bridge.txt
+ create mode 100644 Documentation/devicetree/bindings/fieldbus/arcx,anybuss-host.txt
+ create mode 100644 Documentation/fieldbus_dev/fieldbus_dev.txt
+ create mode 100644 drivers/fieldbus/Kconfig
+ create mode 100644 drivers/fieldbus/Makefile
+ create mode 100644 drivers/fieldbus/anybus-bridge.c
+ create mode 100644 drivers/fieldbus/anybuss-host.c
+ create mode 100644 drivers/fieldbus/dev_core.c
+ create mode 100644 drivers/fieldbus/hms-profinet.c
+ create mode 100644 include/linux/anybuss-client.h
+ create mode 100644 include/linux/fieldbus_dev.h
+
+-- 
+2.17.1
+
