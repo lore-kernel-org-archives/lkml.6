@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C4FEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C52C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5E8214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5E8214DB
+	by mail.kernel.org (Postfix) with ESMTP id 8E34721707
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:18:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E34721707
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389368AbeKVGyJ (ORCPT
+        id S2389384AbeKVGyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:54:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45269 "EHLO
+        Thu, 22 Nov 2018 01:54:11 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:45303 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731268AbeKVGyH (ORCPT
+        with ESMTP id S2389353AbeKVGyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:54:07 -0500
+        Thu, 22 Nov 2018 01:54:10 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gPYwz-0000H6-Ot; Wed, 21 Nov 2018 21:18:17 +0100
-Message-Id: <20181121201723.673022436@linutronix.de>
+        id 1gPYx1-0000HU-VM; Wed, 21 Nov 2018 21:18:20 +0100
+Message-Id: <20181121201723.856044561@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Nov 2018 21:14:44 +0100
+Date:   Wed, 21 Nov 2018 21:14:46 +0100
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
@@ -49,60 +49,188 @@ Cc:     x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
         Waiman Long <longman9394@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [patch 14/24] x86/speculation: Unify conditional spectre v2 print
- functions
+        Kees Cook <keescook@chromium.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: [patch 16/24] x86/speculation: Prepare for per task indirect branch
+ speculation control
 References: <20181121201430.559770965@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline;
- filename=x86-speculation--Simplify-conditional-printout.patch
+ filename=x86-speculation-Turn-on-or-off-STIBP-according-to-a-task-s-TIF-STIBP.patch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no point in having two functions and a conditional at the call
-site.
+From: Tim Chen <tim.c.chen@linux.intel.com>
 
+To avoid the overhead of STIBP always on, it's necessary to allow per task
+control of STIBP.
+
+Add a new task flag TIF_SPEC_IB and evaluate it during context switch if
+SMT is active and flag evaluation is enabled by the speculation control
+code. Add the conditional evaluation to x86_virt_spec_ctrl() as well so the
+guest/host switch works properly.
+
+This has no effect because TIF_SPEC_IB cannot be set yet and the static key
+which controls evaluation is off. Preparatory patch for adding the control
+code.
+
+[ tglx: Simplify the context switch logic and make the TIF evaluation
+  	depend on SMP=y and on the static key controlling the conditional
+  	update. Rename it to TIF_SPEC_IB because it controls both STIBP and
+  	IBPB ]
+
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/kernel/cpu/bugs.c |   17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
 
+---
+ arch/x86/include/asm/msr-index.h   |    5 +++--
+ arch/x86/include/asm/spec-ctrl.h   |   12 ++++++++++++
+ arch/x86/include/asm/thread_info.h |    5 ++++-
+ arch/x86/kernel/cpu/bugs.c         |    4 ++++
+ arch/x86/kernel/process.c          |   24 ++++++++++++++++++++++--
+ 5 files changed, 45 insertions(+), 5 deletions(-)
+
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -41,9 +41,10 @@
+ 
+ #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
+ #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
+-#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
++#define SPEC_CTRL_STIBP_SHIFT		1	   /* Single Thread Indirect Branch Predictor (STIBP) bit */
++#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT)	/* STIBP mask */
+ #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
+-#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
++#define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)	/* Speculative Store Bypass Disable */
+ 
+ #define MSR_IA32_PRED_CMD		0x00000049 /* Prediction Command */
+ #define PRED_CMD_IBPB			(1 << 0)   /* Indirect Branch Prediction Barrier */
+--- a/arch/x86/include/asm/spec-ctrl.h
++++ b/arch/x86/include/asm/spec-ctrl.h
+@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(
+ 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
+ 
++static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
++{
++	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
++	return (tifn & _TIF_SPEC_IB) >> (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
+ {
+ 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
+ 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+ }
+ 
++static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
++{
++	BUILD_BUG_ON(TIF_SPEC_IB < SPEC_CTRL_STIBP_SHIFT);
++	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_SPEC_IB - SPEC_CTRL_STIBP_SHIFT);
++}
++
+ static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
+ {
+ 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -83,6 +83,7 @@ struct thread_info {
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
++#define TIF_SPEC_IB		9	/* Indirect branch speculation mitigation */
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+@@ -110,6 +111,7 @@ struct thread_info {
+ #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
+ #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
+ #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
++#define _TIF_SPEC_IB		(1 << TIF_SPEC_IB)
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+@@ -146,7 +148,8 @@ struct thread_info {
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW							\
+-	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
++	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
++	 _TIF_SSBD|_TIF_SPEC_IB)
+ 
+ #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
+ #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -257,15 +257,9 @@ static const struct {
- 	{ "auto",		SPECTRE_V2_CMD_AUTO,		  false },
- };
+@@ -148,6 +148,10 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl,
+ 		    static_cpu_has(X86_FEATURE_AMD_SSBD))
+ 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
  
--static void __init spec2_print_if_insecure(const char *reason)
-+static void __init spec_v2_print_cond(const char *reason, bool secure)
- {
--	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
--		pr_info("%s selected on command line.\n", reason);
--}
--
--static void __init spec2_print_if_secure(const char *reason)
--{
--	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
-+	if (boot_cpu_has_bug(X86_BUG_SPECTRE_V2) != secure)
- 		pr_info("%s selected on command line.\n", reason);
++		/* Check whether dynamic indirect branch control is on */
++		if (static_branch_unlikely(&switch_to_cond_stibp))
++			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
++
+ 		if (hostval != guestval) {
+ 			msrval = setguest ? guestval : hostval;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -12,6 +12,7 @@
+ #include <linux/sched/debug.h>
+ #include <linux/sched/task.h>
+ #include <linux/sched/task_stack.h>
++#include <linux/sched/topology.h>
+ #include <linux/init.h>
+ #include <linux/export.h>
+ #include <linux/pm.h>
+@@ -406,6 +407,11 @@ static __always_inline void spec_ctrl_up
+ 	if (static_cpu_has(X86_FEATURE_SSBD))
+ 		msr |= ssbd_tif_to_spec_ctrl(tifn);
+ 
++	/* Only evaluate STIBP if dynamic control is enabled */
++	if (IS_ENABLED(CONFIG_SMP) &&
++	    static_branch_unlikely(&switch_to_cond_stibp))
++		msr |= stibp_tif_to_spec_ctrl(tifn);
++
+ 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
  }
  
-@@ -309,11 +303,8 @@ static enum spectre_v2_mitigation_cmd __
- 		return SPECTRE_V2_CMD_AUTO;
+@@ -418,10 +424,16 @@ static __always_inline void spec_ctrl_up
+ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 						      unsigned long tifn)
+ {
++	unsigned long tif_diff = tifp ^ tifn;
+ 	bool updmsr = false;
+ 
+-	/* If TIF_SSBD is different, select the proper mitigation method */
+-	if ((tifp ^ tifn) & _TIF_SSBD) {
++	/*
++	 * If TIF_SSBD is different, select the proper mitigation
++	 * method. Note that if SSBD mitigation is disabled or permanentely
++	 * enabled this branch can't be taken because nothing can set
++	 * TIF_SSBD.
++	 */
++	if (tif_diff & _TIF_SSBD) {
+ 		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
+ 			amd_set_ssb_virt_state(tifn);
+ 		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
+@@ -430,6 +442,14 @@ static __always_inline void __speculatio
+ 			updmsr  = true;
  	}
  
--	if (mitigation_options[i].secure)
--		spec2_print_if_secure(mitigation_options[i].option);
--	else
--		spec2_print_if_insecure(mitigation_options[i].option);
--
-+	spec_v2_print_cond(mitigation_options[i].option,
-+			   mitigation_options[i].secure);
- 	return cmd;
++	/*
++	 * Only evaluate TIF_SPEC_IB if dynamic control is
++	 * enabled, otherwise avoid the MSR write
++	 */
++	if (IS_ENABLED(CONFIG_SMP) &&
++	    static_branch_unlikely(&switch_to_cond_stibp))
++		updmsr |= !!(tif_diff & _TIF_SPEC_IB);
++
+ 	if (updmsr)
+ 		spec_ctrl_update_msr(tifn);
  }
- 
 
 
