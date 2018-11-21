@@ -2,76 +2,169 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E71C7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DE6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3ACB2147D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:07:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x/cIjGu1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3ACB2147D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 219062145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 219062145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbeKUTlT (ORCPT
+        id S1729216AbeKUTsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:41:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42598 "EHLO mail.kernel.org"
+        Wed, 21 Nov 2018 14:48:01 -0500
+Received: from mga06.intel.com ([134.134.136.31]:40464 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbeKUTlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:41:19 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26E372145D;
-        Wed, 21 Nov 2018 09:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542791259;
-        bh=cXFlZOjbPyIxxfJsB0taJMsXQkfoeSOsl2CuJrQixBw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=x/cIjGu1z0XUlUNMF7pYJ8vRkQXkSLQL6DZ4NPiJmFlD4ahvKoX/Tob+ly0N48x5Z
-         KzoOvgb1POE5LAdVpiKkEBSk7XhWDZgfD1lepGJ53PSRuZ+T0efk/LRtH0hS23NQil
-         sR8IaQhBXCxjctup7DkjrfHSWWU15SJnCEVMb81s=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Andy Gross <andy.gross@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        David Brown <david.brown@linaro.org>,
+        id S1726665AbeKUTsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 14:48:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 01:14:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,260,1539673200"; 
+   d="scan'208";a="93752038"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 21 Nov 2018 01:14:19 -0800
+Received: from [10.125.252.12] (abudanko-mobl.ccr.corp.intel.com [10.125.252.12])
+        by linux.intel.com (Postfix) with ESMTP id 0C62C58040F;
+        Wed, 21 Nov 2018 01:14:15 -0800 (PST)
+Subject: [PATCH v2 1/2] Documentation/admin-guide: introduce perf-security.rst
+ file
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jonatan Corbet <corbet@lwn.net>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181106055013.11271-1-bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181106055013.11271-1-bjorn.andersson@linaro.org>
-Message-ID: <154279125838.88331.18392289591312243428@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845-mtp: Mark protected gcc clocks
-Date:   Wed, 21 Nov 2018 01:07:38 -0800
+        Tvrtko Ursulin <tursulin@ursulin.net>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+References: <259a9cd2-5c56-4f8d-57c4-cabaeaa774bc@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <4d95341d-d1f4-fc48-f173-a6fedfc70d33@linux.intel.com>
+Date:   Wed, 21 Nov 2018 12:14:14 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <259a9cd2-5c56-4f8d-57c4-cabaeaa774bc@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-11-05 21:50:13)
-> As of v4.20-rc1 probing the GCC driver on a SDM845 device with the
-> standard security implementation causes an access violation and an
-> immediate system restart. Use the protected-clocks property to mark the
-> offending clocks protected for the MTP, in order to allow it to boot.
-> =
 
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> =
+Implement initial version of perf-security.rst documentation file
+initially covering security concerns related to perf_events/Perf
+performance monitoring in multiuser environments.
 
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v2:
+- replaced PCL referencing by perf_events
+- skipped >=3 setting documentation at the moment
+---
+ Documentation/admin-guide/perf-security.rst | 77 +++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/admin-guide/perf-security.rst
 
-Sorry, I meant to say do you want me to send in the protected clk
-patches into clk-fixes so it can be merged for v4.20 final. I expected
-Andy to pick up these dts patches.
-
+diff --git a/Documentation/admin-guide/perf-security.rst b/Documentation/admin-guide/perf-security.rst
+new file mode 100644
+index 000000000000..55ccd9394809
+--- /dev/null
++++ b/Documentation/admin-guide/perf-security.rst
+@@ -0,0 +1,77 @@
++.. _perf_security:
++
++Perf Events and tool security
++=============================
++
++Overview
++--------
++
++Usage of Performance Counters for Linux (perf_events) [1]_ , [2]_ , [3]_ can
++impose a considerable risk of leaking sensitive data accessed by monitored
++processes. The data leakage is possible both in scenarios of direct usage of
++perf_events system call API [2]_ and over data files generated by Perf tool user
++mode utility (Perf) [3]_ , [4]_ . The risk depends on the nature of data that
++perf_events performance monitoring units (PMU) [2]_ collect and expose for
++performance analysis. Having that said perf_events/Perf performance monitoring
++is the subject for security access control management [5]_ .
++
++perf_events/Perf access control
++-------------------------------
++
++For the purpose of performing security checks Linux implementation splits
++processes into two categories [6]_ : a) privileged processes (whose effective
++user ID is 0, referred to as superuser or root), and b) unprivileged processes
++(whose effective UID is nonzero). Privileged processes bypass all kernel
++security permission checks so perf_events performance monitoring is fully
++available to privileged processes without *access*, *scope* and *resource*
++restrictions. Unprivileged processes are subject to full security permission
++check based on the process's credentials [5]_ (usually: effective UID, effective
++GID, and supplementary group list).
++
++perf_events/Perf unprivileged users
++--------------------------
++
++perf_events/Perf *scope* and *access* control for unprivileged processes is
++governed by perf_event_paranoid [2]_ setting:
++
++-1:
++     Impose no *scope* and *access* restrictions on using perf_events performance
++     monitoring. Per-user per-cpu perf_event_mlock_kb [2]_ locking limit is
++     ignored when allocating memory buffers for storing performance data.
++     This is the least secure mode since allowed monitored *scope* is
++     maximized and no perf_events specific limits are imposed on *resources*
++     allocated for performance monitoring.
++
++>=0:
++     *scope* includes per-process and system wide performance monitoring
++     but excludes raw tracepoints and ftrace function tracepoints monitoring.
++     CPU and system events happened when executing either in user or
++     in kernel space can be monitored and captured for later analysis.
++     Per-user per-cpu perf_event_mlock_kb locking limit is imposed but
++     ignored for unprivileged processes with CAP_IPC_LOCK [6]_ capability.
++
++>=1:
++     *scope* includes per-process performance monitoring only and excludes
++     system wide performance monitoring. CPU and system events happened when
++     executing either in user or in kernel space can be monitored and
++     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
++     locking limit is imposed but ignored for unprivileged processes with
++     CAP_IPC_LOCK capability.
++
++>=2:
++     *scope* includes per-process performance monitoring only. CPU and system
++     events happened when executing in user space only can be monitored and
++     captured for later analysis. Per-user per-cpu perf_event_mlock_kb
++     locking limit is imposed but ignored for unprivileged processes with
++     CAP_IPC_LOCK capability.
++
++Bibliography
++------------
++
++.. [1] `<https://lwn.net/Articles/337493/>`_
++.. [2] `<http://man7.org/linux/man-pages/man2/perf_event_open.2.html>`_
++.. [3] `<http://web.eece.maine.edu/~vweaver/projects/perf_events/>`_
++.. [4] `<https://perf.wiki.kernel.org/index.php/Main_Page>`_
++.. [5] `<https://www.kernel.org/doc/html/latest/security/credentials.html>`_
++.. [6] `<http://man7.org/linux/man-pages/man7/capabilities.7.html>`_
++
