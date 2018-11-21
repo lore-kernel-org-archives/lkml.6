@@ -2,162 +2,110 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D470C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AD4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46B82214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B82214D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B6C3C214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cPC7iQYA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C3C214DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733044AbeKVEwG (ORCPT
+        id S1733065AbeKVEwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:52:06 -0500
-Received: from mga07.intel.com ([134.134.136.100]:17340 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730328AbeKVEwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:52:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 10:16:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,262,1539673200"; 
-   d="scan'208";a="91107192"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga007.jf.intel.com with ESMTP; 21 Nov 2018 10:16:40 -0800
-Subject: Re: [Patch v7 14/18] x86/speculation: Add 'seccomp' Spectre v2 app to
- app protection mode
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Dave Stewart <david.c.stewart@intel.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>
-References: <cover.1542758656.git.tim.c.chen@linux.intel.com>
- <fc2524a59454509f505e120b0b63d60efcadfc98.1542758656.git.tim.c.chen@linux.intel.com>
- <alpine.DEB.2.21.1811211451250.1665@nanos.tec.linutronix.de>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <25fa3975-a686-94bc-6a95-297b6b66de5b@linux.intel.com>
-Date:   Wed, 21 Nov 2018 10:16:40 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        Wed, 21 Nov 2018 23:52:44 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36869 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729486AbeKVEwn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:52:43 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e5-v6so5682528lja.4
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rGZTYzn9mwObfrE4Ldf8+v9IqpFAGkRY76EdbzKnd1o=;
+        b=cPC7iQYA3cmstqQQvKodhhcJ2/YxrIRyLu5yKOc6WfAW/DG95VigZObKyYOuqWOnqn
+         WTHGA0TOD69R0yrmhEuw4qNkIbS1tPm/aelBBBnNM7/NTGo3i9SR7Dh+QcMIuEI7Ay0V
+         LsoCgGL9Evm0oEfUbaWB5KZJXoMRHp3ckAPbE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rGZTYzn9mwObfrE4Ldf8+v9IqpFAGkRY76EdbzKnd1o=;
+        b=jbo0h+/pDsuJUPDbprd56r3JuWaqV8v7ijvZUQnKIPW/mMxAehCYTtn9Zygt4jFy5M
+         uGd5XvoLsoqnx2doQCz8WP/qK+wol0mk325pWIO79/xNs7SKLH2Ndo7ueH3T8V2PAqJJ
+         1kmwvt/4Xyke2HLuvkVDuh3+i/7c/3QrIgUv8e4vWSjmHGHzHg7NSx0XXfMFmZquDyqg
+         I+NKPBQRFpx6N9CEl8w0yvvenzwMyb7Xf0SUuaSWWx7eErMh3e/xe1sf7kagDdX4L5B7
+         spHO/1Na3SexkrAlHX2DUv4yUGA8NPxZ1bL9RbQRu0nFYeZpZaCILgrg+0Xz3b7zTyjJ
+         iHsQ==
+X-Gm-Message-State: AGRZ1gK4u1BK59H/u0hXY/88br0kagiD3//GhxtjZGeiGeQw8Eu0/8AI
+        0SqpBjXlUG1MlYb4J0P4YeX7i1TYzCc=
+X-Google-Smtp-Source: AFSGD/VmRdEga56V0bBq1VcIjgNtzhFEj7hg2nFxkoUP0EyjbkrDixNTOEgIqR1BGfo476bi0Hk5aw==
+X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr4165935lji.154.1542824236320;
+        Wed, 21 Nov 2018 10:17:16 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id e94sm6868817lfi.23.2018.11.21.10.17.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 10:17:15 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id a16so4695427lfg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:17:14 -0800 (PST)
+X-Received: by 2002:a19:c014:: with SMTP id q20mr4191029lff.16.1542824234222;
+ Wed, 21 Nov 2018 10:17:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811211451250.1665@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
+ <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
+ <1c22125bb5d22c2dcd686d0d3b390f115894f746.camel@redhat.com> <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
+In-Reply-To: <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 21 Nov 2018 10:16:57 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
+Message-ID: <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
+Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
+To:     pabeni@redhat.com
+Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
+        Peter Anvin <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>, dvlasenk@redhat.com,
+        brgerst@gmail.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/2018 05:52 AM, Thomas Gleixner wrote:
-> On Tue, 20 Nov 2018, Tim Chen wrote:
->> According to software guidance:
->>
->> "Setting ... STIBP ... on a logical processor prevents the predicted
->> targets of indirect branches on any logical processor of that core
->> from being controlled by software that executes (or executed
->> previously) on another logical processor of the same core."
->>
->> https://software.intel.com/security-software-guidance/insights/deep-dive-single-thread-indirect-branch-predictors
->>
->> Hence setting STIBP on a sandboxed task will prevent the task
->> from attacking other sibling threads or getting attacked.
-> 
-> That's not sufficient, because you need an IBPB when the sandboxed task is
-> switched out.
-> 
+On Wed, Nov 21, 2018 at 9:27 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> It would be interesting to know exactly which copy it is that matters
+> so much...  *inlining* the erms case might show that nicely in
+> profiles.
 
-Right.  Which means this change is also needed:
+Side note: the fact that Jens' patch (which I don't like in that form)
+allegedly shrunk the resulting kernel binary would seem to indicate
+that there's a *lot* of compile-time constant-sized memcpy calls that
+we are missing, and that fall back to copy_user_generic().
 
-Tim
+It might be interesting to just change raw_copy_to/from_user() to
+handle a lot more cases (in particular, handle cases where 'size' is
+8-byte aligned). The special cases we *do* have may not be the right
+ones (the 10-byte case in particular looks odd).
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 616694c..de31438 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -202,7 +202,8 @@ static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
- 	 */
- 
- 	if (static_branch_unlikely(&spectre_v2_app_lite))
--		return test_tsk_thread_flag(tsk, TIF_SPEC_INDIR_BRANCH);
-+		return test_tsk_thread_flag(tsk, TIF_SPEC_INDIR_BRANCH) ||
-+		       test_tsk_thread_flag(current, TIF_SPEC_INDIR_BRANCH);
- 	else
- 		return ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB);
- }
+For example, instead of having a "if constant size is 8 bytes, do one
+get/put_user()" case, we might have a "if constant size is < 64 just
+unroll it into get/put_user()" calls.
+
+                  Linus
