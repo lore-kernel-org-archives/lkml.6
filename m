@@ -2,99 +2,69 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4051EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6142EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DF62241B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:02:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10DF62241B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 226FC214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 226FC214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730728AbeKUXg0 (ORCPT
+        id S1730738AbeKUXhD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 18:36:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33152 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbeKUXg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 18:36:26 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E9947A4058;
-        Wed, 21 Nov 2018 13:02:08 +0000 (UTC)
-Received: from krava (unknown [10.43.17.92])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 50F775C23D;
-        Wed, 21 Nov 2018 13:02:03 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 14:02:02 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     "Liang, Kan" <kan.liang@linux.intel.com>, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, ak@linux.intel.com
-Subject: Re: [PATCH 2/2] perf vendor events: Add JSON metrics for Cascadelake
- server
-Message-ID: <20181121130202.GA22611@krava>
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181114212416.15665-2-kan.liang@linux.intel.com>
- <20181115132116.GH9600@krava>
- <3ab97c73-c197-8555-1a35-b54636e667e6@linux.intel.com>
- <20181115151442.GK9600@krava>
- <20181121125130.GD6248@kernel.org>
- <20181121125408.GE6248@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Wed, 21 Nov 2018 18:37:03 -0500
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:48429 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbeKUXhD (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:6:1>);
+        Wed, 21 Nov 2018 18:37:03 -0500
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Wed, 21 Nov 2018 06:02:45 -0700
+Message-Id: <5BF5577202000078001FE7AC@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Wed, 21 Nov 2018 06:02:42 -0700
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "David Laight" <David.Laight@ACULAB.COM>
+Cc:     <mingo@elte.hu>, <tglx@linutronix.de>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        <hpa@zytor.com>
+Subject: RE: [PATCH v2] x86: modernize sync_bitops.h
+References: <5B30C2C302000078001CD6D1@prv1-mh.provo.novell.com>
+ <5B30C2C302000000000FA99B@prv1-mh.provo.novell.com>
+ <5B30C2C302000078001FE5A0@prv1-mh.provo.novell.com>
+ <5BF52F4D02000078001FE5C1@prv1-mh.provo.novell.com>
+ <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
+In-Reply-To: <92f590595593498eaa1f91a17875126f@AcuMS.aculab.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Content-Disposition: inline
-In-Reply-To: <20181121125408.GE6248@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 21 Nov 2018 13:02:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 09:54:08AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Nov 21, 2018 at 09:51:30AM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Thu, Nov 15, 2018 at 04:14:42PM +0100, Jiri Olsa escreveu:
-> > > On Thu, Nov 15, 2018 at 08:33:27AM -0500, Liang, Kan wrote:
-> > > > 
-> > > > 
-> > > > On 11/15/2018 8:21 AM, Jiri Olsa wrote:
-> > > > > On Wed, Nov 14, 2018 at 01:24:16PM -0800, kan.liang@linux.intel.com wrote:
-> > > > > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > > > > 
-> > > > > > Add JSON metrics (based on event list v1) for Cascadelake server
-> > > > > 
-> > > > > hum mail server probably crippled the email so it won't apply:
-> > > > > 
-> > > > > patching file pmu-events/arch/x86/cascadelakex/cache.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/clx-metrics.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/floating-point.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/frontend.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/memory.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/other.json
-> > > > > patching file pmu-events/arch/x86/cascadelakex/pipeline.json
-> > > > > patch: **** malformed patch at line 29879:  ow status bit and resets the counter to less than MAX. The reset value to the counter is not clocked immediately so the overflow status bit will flip 'high (1)' and generate another PMI (if enabled) after which the reset value gets clocked into the counter. Therefore, software will get the interrupt, read the overflow status bit '1 for bit 34 while the counter value is less than MAX. Software should ignore this case.",
-> > > > > 
-> > > > > I've similar error before and it was because of the 998 chars size
-> > > > > limit for line.. I guess you could either post it as attachment or
-> > > > > change the transfer encoding
-> > > > > 
-> > > > 
-> > > > The patch is attached. Can it be applied?
-> > > 
-> > > yep, that one works
-> > 
-> > Can I have your reviewed-by for this one as well?
+>>> On 21.11.18 at 12:55, <David.Laight@ACULAB.COM> wrote:
+> From: Jan Beulich
+>> Sent: 21 November 2018 10:11
+>> 
+>> Add missing insn suffixes and use rmwcc.h just like was (more or less)
+>> recently done for bitops.h as well.
 > 
-> I turned the "yep, that one works" into an Acked-by, please let me know
-> if that is enough.
+> Why? bts (etc) on memory don't really have an 'operand size'.
 
-yes, if it applies it's ok for me.. but can't judge the events inside ;-)
+Of course they do - depending on operand size they operate on
+2-, 4-, or 8-byte quantities. When the second operand is a
+register, the suffix is redundant (but doesn't hurt), but when
+the second operand is an immediate, the assembler (in AT&T
+syntax) has no way of knowing what operand size you mean.
 
-jirka
+Jan
+
+
