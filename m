@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B272C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F337C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 030B7214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 449AD206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgXnqusr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 030B7214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="REUjTvm8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449AD206BB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbeKVFpl (ORCPT
+        id S2388656AbeKVFpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40560 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbeKVFpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:40 -0500
+        id S1729195AbeKVFpm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C52214D9;
-        Wed, 21 Nov 2018 19:10:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05E5C206BB;
+        Wed, 21 Nov 2018 19:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827406;
-        bh=7pCd3Y6Kp4fGzUKeYe8AQHKtfjsPS/tAUfqY/iGb1mE=;
+        s=default; t=1542827409;
+        bh=QBzofZZFZhmMW4CzHL3uxCdqZm22ResYrRhfmXjkwbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CgXnqusrt5fMN0uQUJOrvpri5mLuZSyXaQCp6yYHwCiJeICqA1qdCYShjPfMjNhrh
-         wQtoJ+TD4pRvR8TvQe1kxb6Ye2aXZ/fC4XiAdUMcbxiyQgIN4tBsWIT3PzHJFwZSo1
-         do9yBSy9HADl4wJg/BuPRodhNA9aGQMDYRWZCzVA=
+        b=REUjTvm8/rkP7kw7SBfP/ziF0EMEsBF6ZnmmE3toUo8ISg2YQ636CHdVHwCvHRtkN
+         OUlSvhcJh0/wCyhV/fETJZ72ZZdyvbwwBHesAAuEgJGVlqtSgMjx2djyfkrqp509J8
+         gFYZgVcG0kbQjoi3Zry8DH9Ouqc8/086epqhnxSg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Vin=C3=ADcius=20Tinti?= <viniciustinti@gmail.com>,
-        Behan Webster <behanw@converseincode.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Rusty Russell <rusty@rustcorp.com.au>,
+        Jessica Yu <jeyu@redhat.com>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 18/59] kbuild: Add support to generate LLVM assembly files
-Date:   Wed, 21 Nov 2018 20:06:33 +0100
-Message-Id: <20181121183508.966337846@linuxfoundation.org>
+Subject: [PATCH 4.9 19/59] modules: mark __inittest/__exittest as __maybe_unused
+Date:   Wed, 21 Nov 2018 20:06:34 +0100
+Message-Id: <20181121183509.007071715@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -66,82 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vinícius Tinti <viniciustinti@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 433db3e260bc8134d4a46ddf20b3668937e12556 upstream.
+commit 1f318a8bafcfba9f0d623f4870c4e890fd22e659 upstream.
 
-Add rules to kbuild in order to generate LLVM assembly files with the .ll
-extension when using clang.
+clang warns about unused inline functions by default:
 
-  # from c code
-  make CC=clang kernel/pid.ll
+arch/arm/crypto/aes-cipher-glue.c:68:1: warning: unused function '__inittest' [-Wunused-function]
+arch/arm/crypto/aes-cipher-glue.c:69:1: warning: unused function '__exittest' [-Wunused-function]
 
-Signed-off-by: Vinícius Tinti <viniciustinti@gmail.com>
-Signed-off-by: Behan Webster <behanw@converseincode.com>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+As these appear in every single module, let's just disable the warnings by marking the
+two functions as __maybe_unused.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Acked-by: Rusty Russell <rusty@rustcorp.com.au>
+Signed-off-by: Jessica Yu <jeyu@redhat.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .gitignore             |    1 +
- Makefile               |    5 +++++
- scripts/Makefile.build |    8 ++++++++
- 3 files changed, 14 insertions(+)
+ include/linux/module.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/.gitignore
-+++ b/.gitignore
-@@ -33,6 +33,7 @@
- *.lzo
- *.patch
- *.gcno
-+*.ll
- modules.builtin
- Module.symvers
- *.dwo
---- a/Makefile
-+++ b/Makefile
-@@ -1390,6 +1390,8 @@ help:
- 	@echo  '                    (default: $$(INSTALL_MOD_PATH)/lib/firmware)'
- 	@echo  '  dir/            - Build all files in dir and below'
- 	@echo  '  dir/file.[ois]  - Build specified target only'
-+	@echo  '  dir/file.ll     - Build the LLVM assembly file'
-+	@echo  '                    (requires compiler support for LLVM assembly generation)'
- 	@echo  '  dir/file.lst    - Build specified mixed source/assembly target only'
- 	@echo  '                    (requires a recent binutils and recent build (System.map))'
- 	@echo  '  dir/file.ko     - Build module including final link'
-@@ -1574,6 +1576,7 @@ clean: $(clean-dirs)
- 		-o -name '*.symtypes' -o -name 'modules.order' \
- 		-o -name modules.builtin -o -name '.tmp_*.o.*' \
- 		-o -name '*.c.[012]*.*' \
-+		-o -name '*.ll' \
- 		-o -name '*.gcno' \) -type f -print | xargs rm -f
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -127,13 +127,13 @@ extern void cleanup_module(void);
  
- # Generate tags for editors
-@@ -1677,6 +1680,8 @@ endif
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
- %.symtypes: %.c prepare scripts FORCE
- 	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
-+%.ll: %.c prepare scripts FORCE
-+	$(Q)$(MAKE) $(build)=$(build-dir) $(target-dir)$(notdir $@)
+ /* Each module must use one module_init(). */
+ #define module_init(initfn)					\
+-	static inline initcall_t __inittest(void)		\
++	static inline initcall_t __maybe_unused __inittest(void)		\
+ 	{ return initfn; }					\
+ 	int init_module(void) __attribute__((alias(#initfn)));
  
- # Modules
- /: prepare scripts FORCE
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -176,6 +176,14 @@ cmd_cc_symtypes_c =
- $(obj)/%.symtypes : $(src)/%.c FORCE
- 	$(call cmd,cc_symtypes_c)
+ /* This is only required if you want to be unloadable. */
+ #define module_exit(exitfn)					\
+-	static inline exitcall_t __exittest(void)		\
++	static inline exitcall_t __maybe_unused __exittest(void)		\
+ 	{ return exitfn; }					\
+ 	void cleanup_module(void) __attribute__((alias(#exitfn)));
  
-+# LLVM assembly
-+# Generate .ll files from .c
-+quiet_cmd_cc_ll_c = CC $(quiet_modtag)  $@
-+      cmd_cc_ll_c = $(CC) $(c_flags) -emit-llvm -S -o $@ $<
-+
-+$(obj)/%.ll: $(src)/%.c FORCE
-+	$(call if_changed_dep,cc_ll_c)
-+
- # C (.c) files
- # The C file is compiled and updated dependency information is generated.
- # (See cmd_cc_o_c + relevant part of rule_cc_o_c)
 
 
