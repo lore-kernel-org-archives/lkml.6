@@ -2,190 +2,192 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,HK_RANDOM_FROM,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC219C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA7FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A7920989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A7920989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id BD7DC20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:06:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jiR2C8f2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7DC20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbeKUVga (ORCPT
+        id S1729716AbeKUVkN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:36:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44366 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728367AbeKUVga (ORCPT
+        Wed, 21 Nov 2018 16:40:13 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33122 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728114AbeKUVkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:36:30 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALAwfdD119486
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:02:33 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nw59v2vbb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:02:32 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <maier@linux.ibm.com>;
-        Wed, 21 Nov 2018 11:02:29 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Nov 2018 11:02:27 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALB2QK0655702
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Nov 2018 11:02:26 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E3BFA4053;
-        Wed, 21 Nov 2018 11:02:26 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04AE4A405D;
-        Wed, 21 Nov 2018 11:02:26 +0000 (GMT)
-Received: from oc4120165700.ibm.com (unknown [9.152.99.75])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Nov 2018 11:02:25 +0000 (GMT)
-Subject: Re: [PATCH 3/4] scsi: hisi_sas: Make sg_tablesize consistent value
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linuxarm@huawei.com, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Xiang Chen <chenxiang66@hisilicon.com>
-References: <1542725944-244183-1-git-send-email-john.garry@huawei.com>
- <1542725944-244183-4-git-send-email-john.garry@huawei.com>
-From:   Steffen Maier <maier@linux.ibm.com>
-Date:   Wed, 21 Nov 2018 12:02:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1542725944-244183-4-git-send-email-john.garry@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18112111-0012-0000-0000-000002CDE590
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112111-0013-0000-0000-00002103125F
-Message-Id: <146f7c38-0cd7-a664-31d6-30a27b7a182b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811210100
+        Wed, 21 Nov 2018 16:40:13 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v1-v6so4469250ljd.0;
+        Wed, 21 Nov 2018 03:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=jFPWHyZAjAggUIVzrbs3G+fYFLNlqzeCxZZheT3QbS0=;
+        b=jiR2C8f2U3QcNnkRVEZukKevTrAAVodfsuS1TXviRQqGwL9CZiR7Qm2UY9H18ZFDf1
+         dH6WaMn/mghKWhDyb7eklzhxNJ27J2tFtBllVqvaW7J+Oo5KbfQGp11fEvfR0OT5nWH5
+         /6H4ZJKdUR8BsXQdySZPtxdDmklUsg+QsQ6c08DHnm6TFodNajyVsot4wQM9+t0FRhsx
+         PWJb/N5GD+kNYyRv6DRsRFm+3in3uW46vnoTWy7B84/lB5jzw0HmGcvr8+0pPnVM7KA4
+         CoOqOWKuW8F+RQLPw2pXAXrkEv0uBhXxKzitEzTbwOXFJGpsShRqHFQ3KG4P8/B5gPCF
+         /n3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=jFPWHyZAjAggUIVzrbs3G+fYFLNlqzeCxZZheT3QbS0=;
+        b=CCGeIU7xReaBDAS1bM+9uBWy/3Zo8ToEEvuHEkimlviE8ToYdAuO/Xl8aoSa2MchHH
+         oQS2uRgc381ydv4Z7eBnyCmvBWxvYs9hRbpcdbsrOsUlslJCXjmpvWHJHtaZm9uFYjM3
+         Dwz3+Z5zqgfEzr9GN+/cFakNezJhs5lX341AA4ChSL+0Le6V5Uyx2VpZjwrNHsRyGp9S
+         RI+wOrbmTNIYw+6bFGv18dg46CHgEX/iOm4c58gDJrIh9Bm9EOlsVjZaS5EWatw1L7zw
+         p8R7eDsyzoUK0+sjGIrafO+zL7/NLwmKcKrPx9L9CLEXJsm6PqpDqWI1nvm7FtsUMxkp
+         GzEA==
+X-Gm-Message-State: AA+aEWZZvTjwzGIHSWXmTfrrKiU/gRJrMnbQV7wFSp4I6ah6wIeqlibv
+        hwRBKi8J+p8ibgV8RDMAkiA=
+X-Google-Smtp-Source: AFSGD/VEol6P6RH106aDGXPMaBDGthh+m7LKze/z5u8bccez3BHtDBcRWUl+s1g9smb05hOT+YktdQ==
+X-Received: by 2002:a2e:568b:: with SMTP id k11-v6mr3744503lje.105.1542798373363;
+        Wed, 21 Nov 2018 03:06:13 -0800 (PST)
+Received: from z50.intranet (78-10-164-223.static.ip.netia.com.pl. [78.10.164.223])
+        by smtp.gmail.com with ESMTPSA id x11sm7280047lfd.81.2018.11.21.03.06.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 03:06:12 -0800 (PST)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-mtd@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Subject: [PATCH v4 0/4] mtd: rawnand: ams-delta: Use GPIO API for data I/O
+Date:   Wed, 21 Nov 2018 12:08:02 +0100
+Message-Id: <20181121110806.32076-1-jmkrzyszt@gmail.com>
+X-Mailer: git-send-email 2.18.1
+In-Reply-To: <20180813223448.21316-1-jmkrzyszt@gmail.com>
+References: <20180813223448.21316-1-jmkrzyszt@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/20/2018 03:59 PM, John Garry wrote:
-> From: Xiang Chen <chenxiang66@hisilicon.com>
-> 
-> Sht->sg_tablesize is set in the driver, and it will be assigned to
-> shost->sg_tablesize in SCSI mid-layer. So it is not necessary to
-> assign shost->sg_table one more time in the driver.
-> 
-> In addition to the change, change each scsi_host_template.sg_tablesize
-> to HISI_SAS_SGE_PAGE_CNT instead of SG_ALL.
 
-Might be completely irrelevant, so just as information: I once had 
-problems due to changing (reducing) SHT.sg_tablesize because block queue 
-limits of BSG devices of Scsi_Host and fc_host (not sure if you have an 
-equivalent bsg device for your transport(s)) inherit from SHT, but don't 
-update (automatically) on later updates of shost->sg_tablesize, which in 
-turn affect scsi_devices allocated after the shost update.
-Cf. 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/s390/scsi?id=5fea4291deacd80188b996d2f555fc6a1940e5d4
-("[SCSI] zfcp: block queue limits with data router")
-if you need more details.
+Finalize implementation of the idea suggested by Artem Bityutskiy and
+Tony Lindgren, described in commit b027274d2e3a ("mtd: ams-delta: fix
+request_mem_region() failure"). Use pure GPIO consumer API, as reqested
+by Boris Brezillon.
 
-> Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-> Signed-off-by: John Garry <john.garry@huawei.com>
-> ---
->   drivers/scsi/hisi_sas/hisi_sas_main.c  | 1 -
->   drivers/scsi/hisi_sas/hisi_sas_v1_hw.c | 2 +-
->   drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 2 +-
->   drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 3 +--
->   4 files changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> index d13a662..cbda48e 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-> @@ -2410,7 +2410,6 @@ int hisi_sas_probe(struct platform_device *pdev,
->   	shost->max_lun = ~0;
->   	shost->max_channel = 1;
->   	shost->max_cmd_len = 16;
-> -	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
->   	if (hisi_hba->hw->slot_index_alloc) {
->   		shost->can_queue = hisi_hba->hw->max_command_entries;
->   		shost->cmd_per_lun = hisi_hba->hw->max_command_entries;
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> index d24342b..2d035cc 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v1_hw.c
-> @@ -1815,7 +1815,7 @@ static int hisi_sas_v1_init(struct hisi_hba *hisi_hba)
->   	.change_queue_depth	= sas_change_queue_depth,
->   	.bios_param		= sas_bios_param,
->   	.this_id		= -1,
-> -	.sg_tablesize		= SG_ALL,
-> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
->   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
->   	.use_clustering		= ENABLE_CLUSTERING,
->   	.eh_device_reset_handler = sas_eh_device_reset_handler,
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> index e78a97e..79e58a7 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-> @@ -3570,7 +3570,7 @@ struct device_attribute *host_attrs_v2_hw[] = {
->   	.change_queue_depth	= sas_change_queue_depth,
->   	.bios_param		= sas_bios_param,
->   	.this_id		= -1,
-> -	.sg_tablesize		= SG_ALL,
-> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
->   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
->   	.use_clustering		= ENABLE_CLUSTERING,
->   	.eh_device_reset_handler = sas_eh_device_reset_handler,
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> index 7e2b020..8a08078 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> +++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-> @@ -2224,7 +2224,7 @@ struct device_attribute *host_attrs_v3_hw[] = {
->   	.change_queue_depth	= sas_change_queue_depth,
->   	.bios_param		= sas_bios_param,
->   	.this_id		= -1,
-> -	.sg_tablesize		= SG_ALL,
-> +	.sg_tablesize		= HISI_SAS_SGE_PAGE_CNT,
->   	.max_sectors		= SCSI_DEFAULT_MAX_SECTORS,
->   	.use_clustering		= ENABLE_CLUSTERING,
->   	.eh_device_reset_handler = sas_eh_device_reset_handler,
-> @@ -2366,7 +2366,6 @@ struct device_attribute *host_attrs_v3_hw[] = {
->   	shost->max_lun = ~0;
->   	shost->max_channel = 1;
->   	shost->max_cmd_len = 16;
-> -	shost->sg_tablesize = min_t(u16, SG_ALL, HISI_SAS_SGE_PAGE_CNT);
->   	shost->can_queue = hisi_hba->hw->max_command_entries -
->   		HISI_SAS_RESERVED_IPTT_CNT;
->   	shost->cmd_per_lun = hisi_hba->hw->max_command_entries -
-> 
+Janusz Krzysztofik (4):
+      ARM: OMAP1: ams-delta: Provide GPIO lookup table for NAND data port
+      mtd: rawnand: ams-delta: Request data port GPIO resource
+      mtd: rawnand: ams-delta: Use GPIO API for data I/O
+      ARM: OMAP1: ams-delta: Drop obsolete NAND resources
 
+ arch/arm/mach-omap1/board-ams-delta.c |   22 ++----
+ drivers/mtd/nand/raw/ams-delta.c      |  120 +++++++++++++++++++---------------
+ 2 files changed, 80 insertions(+), 62 deletions(-)
 
--- 
-Mit freundlichen Gruessen / Kind regards
-Steffen Maier
+Performance on Amstrad Delta is now acceptable after recent extensions
+to GPIO API and rawnanad enhancements.
 
-Linux on IBM Z Development
+Series intented to be merged via mtd tree, should not conflict with
+other OMAP1 patches submitted for 4.21.
 
-IBM Deutschland Research & Development GmbH
-Vorsitzende des Aufsichtsrats: Martina Koederitz
-Geschaeftsfuehrung: Dirk Wittkopp
-Sitz der Gesellschaft: Boeblingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+Changelog:
+v4:   
+- drop patches 1/7, 2/7, 5/7 6/7 - changes already merged,
+- reintroduce postponed PATCH v2 06/12 as 4/4,
+- rebase on nand-next for 4.21.
+
+v3:
+[PATCH v3 1/7] mtd: rawnand: ams-delta: show parent device in sysfs
+- renamed and an explanation added based on other similar patches on
+ Marek Vasut request, thanks.
+[PATCH v3 2/7] mtd: rawnand: ams-delta: Use private structure
+- no changes.
+[PATCH v3 3/7] ARM: OMAP1: ams-delta: Provide GPIO lookup table for NAND
+ data port
+- no changes.
+[PATCH v3 4/7] mtd: rawnand: ams-delta: request data port GPIO resource
+- no changes.
+[PATCH v3 5/7] mtd: rawnand: ams-delta: Set port direction when needed
+- modified to set port direction only when needed instead of on each
+ transfer as suggested by Boris, thanks, though I kept separate 
+ *_next_byte() functions to maximize performance as much as possible,
+- moved back in front of "mtd: rawnand: ams-delta: use GPIO API for data
+ I/O" with a comment added referring to the planned switch to GPIO API.
+[PATCH v3 6/7] mtd: rawnand: ams-delta: Simplify pointer resolution
+- moved back in front of "mtd: rawnand: ams-delta: use GPIO API for data 
+ I/O" on Boris request, thanks.
+[RFC PATCH v3 7/7] mtd: rawnand: ams-delta: use GPIO API for data I/O
+- rebased back on top of the two mentioned above,
+- not intended to apply it yet due to performance issues on Amstrad Delta.
+Removed from the series:
+[RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct
+ mapping
+[RFC PATCH v2 10/12] gpiolib: Introduce bitmap get/set array API extension
+[RFC PATCH v2 11/12] mtd: rawnand: ams-delta: Use GPIO API bitmap extension
+[RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
+- intended to be still iterated in a follow up series until performance
+ issues are resolved.
+[RFC PATCH v2 06/12] ARM: OMAP1: ams-delta: drop obsolete NAND resources
+- postponed until acceptable performance on Amstrad Delta is achieved.
+
+v2:
+[RFC PATCH v2 00/12] mtd: rawnand: ams-delta: Use GPIO API for data I/O
+- renamed from former [RFC PATCH 0/8] mtd: rawnand: ams-delta: Use
+  gpio-omap accessors for data I/O
+[RFC PATCH v2 01/12] mtd: rawnand: ams-delta: Assign mtd->dev.parent,
+                        not mtd->owner
+- split out from former [RFC PATCH 1/8] on Boris request, thanks.
+[RFC PATCH v2 02/12] mtd: rawnand: ams-delta: Use private structure
+- remaining part of the former [RFC PATCH 1/8].
+[RFC PATCH v2 03/12] ARM: OMAP1: ams-delta: Provide GPIO lookup table
+                        for NAND data port
+- split out from former [RFC PATCH 5/8] on Boris requesst, thanks,
+[RFC PATCH v2 04/12] mtd: rawnand: ams-delta: request data port GPIO resource
+- remaining part of the former [RFC PATCH 5/8],
+[RFC PATCH v2 05/12] mtd: rawnand: ams-delta: use GPIO API for data read/write
+- reworked from former [RFC PATCH 8/8] on Boris requesst to use pure
+  GPIO API, thanks,
+- moved up in front of former [RFC PATCH 3/8] on Boris request, thanks.
+[RFC PATCH v2 06/12] ARM: OMAP1: ams-delta: drop obsolete NAND resources
+- split out from former [RFC PATCH 8/8].
+[RFC PATCH v2 07/12] mtd: rawnand: ams-delta: Set port direction once per
+                        transfer
+- reworked from former [RFC PATCH 3/8] on top of [RFC PATCH v2 05/12].
+[RFC PATCH v2 08/12] mtd: rawnand: ams-delta: Simplify pointer resolution
+                        on read/write
+- reworked from former [RFC PATCH 4/8] on top of [RFC PATCH v2 08/12],
+- renamed from 'Optimize' to 'Simplify' on Boris request, thanks.
+[RFC PATCH v2 09/12] gpiolib: Identify GPIO descriptor arrays with direct
+                        mapping
+- new patch.
+[RFC PATCH v2 10/12] gpiolib: Introduce bitmap get/set array API extension
+- new patch.
+[RFC PATCH v2 11/12] mtd: rawnand: ams-delta: Use GPIO API bitmap extension
+- new patch.
+[RFC PATCH v2 12/12] gpiolib: Add fast processing path to bitmap API functions
+- new patch.
+Removed from the series:
+[RFC PATCH 2/8] mtd: rawnand: ams-delta: Write protect device during probe
+- postponed on Boris request, thanks.
+[RFC PATCH 6/8] gpio: omap: Add get/set_multiple() callbacks
+- already applied by Linux in linux-gpio tree, thanks.
+[RFC PATCH 7/8] mtd: rawnand: ams-delta: Check sanity of data GPIO resource
+- most controversial one, no longer needed after switching to GPIO API.
+
+Thanks,
+Janusz
 
