@@ -2,55 +2,61 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B38C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0695C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89173214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 661F3214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm7sJQ7L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89173214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2ASWtBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661F3214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388500AbeKVFpN (ORCPT
+        id S2388512AbeKVFpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39936 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbeKVFpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:12 -0500
+        id S1730870AbeKVFpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C5B8206BB;
-        Wed, 21 Nov 2018 19:09:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0416B206BB;
+        Wed, 21 Nov 2018 19:09:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827379;
-        bh=JXykUnlM5vnLoc9wwEQR2R/imevof9sixaw0diVjwaQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zm7sJQ7L9KL1xTVq5qqFRzsOa4gw8EEUVppbLW76DjeW4g572CKUX6lAAuLGffSNr
-         f664BzKcQpwsU3G5y/zj/VZqXEpwQFrc02Vrp14MwxaYiAnPS1Sz6jn4OyYHbiLkfw
-         nv8XKku95SQPZLN6643AGodhlwokv3LOksqBmNMU=
+        s=default; t=1542827381;
+        bh=5FqKqt9Ejp1iDMhvHvgtkPyxykZ1rA7IvjYyKekisAs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=r2ASWtBUf+8Hs+XxBxVxWYkQcpu2l4zFZ0QEx7Tw/ijsK/iWRQbODDjGB1oRAmeot
+         Ta4WaM8P08EUKF4gfqHzIzUF3bKAaVdkS2wkrI6cDeLkA5de4K94E+6vtKmLMw02sU
+         hz9ht05B+KZ4yPvKk7fS8qxRMgpZ1Fe04Dy0TDw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 09/21] net: systemport: Protect stop from timeout
-Date:   Wed, 21 Nov 2018 20:06:53 +0100
-Message-Id: <20181121183422.467454278@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 00/21] 4.14.83-stable review
+Date:   Wed, 21 Nov 2018 20:06:44 +0100
+Message-Id: <20181121183422.103826775@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
-References: <20181121183422.103826775@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.83-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.83-rc1
+X-KernelTest-Deadline: 2018-11-23T18:34+00:00
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,120 +64,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.14.83 release.
+There are 21 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Fri Nov 23 18:34:13 UTC 2018.
+Anything received after that time might be too late.
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.83-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
 
-[ Upstream commit 7cb6a2a2c72c1ed8f42fb01f1a661281b568dead ]
+thanks,
 
-A timing hazard exists when the network interface is stopped that
-allows a watchdog timeout to be processed by a separate core in
-parallel. This creates the potential for the timeout handler to
-wake the queues while the driver is shutting down, or access
-registers after their clocks have been removed.
+greg k-h
 
-The more common case is that the watchdog timeout will produce a
-warning message which doesn't lead to a crash. The chances of this
-are greatly increased by the fact that bcm_sysport_netif_stop stops
-the transmit queues which can easily precipitate a watchdog time-
-out because of stale trans_start data in the queues.
+-------------
+Pseudo-Shortlog of commits:
 
-This commit corrects the behavior by ensuring that the watchdog
-timeout is disabled before enterring bcm_sysport_netif_stop. There
-are currently only two users of the bcm_sysport_netif_stop function:
-close and suspend.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.83-rc1
 
-The close case already handles the issue by exiting the RUNNING
-state before invoking the driver close service.
+Chris Paterson <chris.paterson2@renesas.com>
+    ARM: dts: r8a7793: Correct critical CPU temperature
 
-The suspend case now performs the netif_device_detach to exit the
-PRESENT state before the call to bcm_sysport_netif_stop rather than
-after it.
+Chris Paterson <chris.paterson2@renesas.com>
+    ARM: dts: r8a7791: Correct critical CPU temperature
 
-These behaviors prevent any future scheduling of the driver timeout
-service during the window. The netif_tx_stop_all_queues function
-in bcm_sysport_netif_stop is replaced with netif_tx_disable to ensure
-synchronization with any transmit or timeout threads that may
-already be executing on other cores.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
 
-For symmetry, the netif_device_attach call upon resume is moved to
-after the call to bcm_sysport_netif_start. Since it wakes the transmit
-queues it is not necessary to invoke netif_tx_start_all_queues from
-bcm_sysport_netif_start so it is moved into the driver open service.
+Eric Dumazet <edumazet@google.com>
+    inet: frags: better deal with smp races
 
-Fixes: 40755a0fce17 ("net: systemport: add suspend and resume support")
-Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/broadcom/bcmsysport.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Frieder Schrempf <frieder.schrempf@kontron.de>
+    usbnet: smsc95xx: disable carrier check while suspending
 
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -1774,9 +1774,6 @@ static void bcm_sysport_netif_start(stru
- 		intrl2_1_mask_clear(priv, 0xffffffff);
- 	else
- 		intrl2_0_mask_clear(priv, INTRL2_0_TDMA_MBDONE_MASK);
--
--	/* Last call before we start the real business */
--	netif_tx_start_all_queues(dev);
- }
- 
- static void rbuf_init(struct bcm_sysport_priv *priv)
-@@ -1922,6 +1919,8 @@ static int bcm_sysport_open(struct net_d
- 
- 	bcm_sysport_netif_start(dev);
- 
-+	netif_tx_start_all_queues(dev);
-+
- 	return 0;
- 
- out_clear_rx_int:
-@@ -1945,7 +1944,7 @@ static void bcm_sysport_netif_stop(struc
- 	struct bcm_sysport_priv *priv = netdev_priv(dev);
- 
- 	/* stop all software from updating hardware */
--	netif_tx_stop_all_queues(dev);
-+	netif_tx_disable(dev);
- 	napi_disable(&priv->napi);
- 	phy_stop(dev->phydev);
- 
-@@ -2267,12 +2266,12 @@ static int bcm_sysport_suspend(struct de
- 	if (!netif_running(dev))
- 		return 0;
- 
-+	netif_device_detach(dev);
-+
- 	bcm_sysport_netif_stop(dev);
- 
- 	phy_suspend(dev->phydev);
- 
--	netif_device_detach(dev);
--
- 	/* Disable UniMAC RX */
- 	umac_enable_set(priv, CMD_RX_EN, 0);
- 
-@@ -2356,8 +2355,6 @@ static int bcm_sysport_resume(struct dev
- 		goto out_free_rx_ring;
- 	}
- 
--	netif_device_attach(dev);
--
- 	/* RX pipe enable */
- 	topctrl_writel(priv, 0, RX_FLUSH_CNTL);
- 
-@@ -2402,6 +2399,8 @@ static int bcm_sysport_resume(struct dev
- 
- 	bcm_sysport_netif_start(dev);
- 
-+	netif_device_attach(dev);
-+
- 	return 0;
- 
- out_free_rx_ring:
+Stefan Wahren <stefan.wahren@i2se.com>
+    net: smsc95xx: Fix MTU range
+
+Shalom Toledo <shalomt@mellanox.com>
+    mlxsw: spectrum: Fix IP2ME CPU policer configuration
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: not increase stream's incnt before sending addstrm_in request
+
+Martin Schiller <ms@dev.tdt.de>
+    net: phy: mdio-gpio: Fix working over slow can_sleep GPIOs
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: fix strchange_flags name for Stream Change Event
+
+Tristram Ha <Tristram.Ha@microchip.com>
+    net: dsa: microchip: initialize mutex before use
+
+Subash Abhinov Kasiviswanathan <subashab@codeaurora.org>
+    net: qualcomm: rmnet: Fix incorrect assignment of real_dev
+
+Florian Fainelli <f.fainelli@gmail.com>
+    net: systemport: Protect stop from timeout
+
+Matthew Cover <werekraken@gmail.com>
+    tuntap: fix multiqueue rx
+
+Siva Reddy Kallam <siva.kallam@broadcom.com>
+    tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: not allow to set asoc prsctp_enable by sockopt
+
+Eric Dumazet <edumazet@google.com>
+    net-gro: reset skb->pkt_type in napi_reuse_skb()
+
+David Ahern <dsahern@gmail.com>
+    ipv6: Fix PMTU updates for UDP/raw sockets in presence of VRF
+
+Sabrina Dubroca <sd@queasysnail.net>
+    ip_tunnel: don't force DF when MTU is locked
+
+Michał Mirosław <mirq-linux@rere.qmqm.pl>
+    ibmvnic: fix accelerated VLAN handling
+
+배석진 <soukjin.bae@samsung.com>
+    flow_dissector: do not dissect l4 ports for fragments
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                        |  4 +-
+ arch/arm/boot/dts/r8a7791.dtsi                  |  2 +-
+ arch/arm/boot/dts/r8a7793.dtsi                  |  2 +-
+ arch/x86/kernel/cpu/bugs.c                      | 57 +++----------------------
+ drivers/net/dsa/microchip/ksz_common.c          | 10 ++---
+ drivers/net/ethernet/broadcom/bcmsysport.c      | 15 +++----
+ drivers/net/ethernet/broadcom/tg3.c             | 18 +++++++-
+ drivers/net/ethernet/ibm/ibmvnic.c              |  2 +-
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c  |  1 -
+ drivers/net/ethernet/qualcomm/rmnet/rmnet_vnd.c |  6 +--
+ drivers/net/phy/mdio-gpio.c                     | 10 ++---
+ drivers/net/tun.c                               |  6 ++-
+ drivers/net/usb/smsc95xx.c                      |  9 ++++
+ include/uapi/linux/sctp.h                       |  2 +
+ kernel/cpu.c                                    | 11 +----
+ net/core/dev.c                                  |  4 ++
+ net/core/flow_dissector.c                       |  4 +-
+ net/ipv4/inet_fragment.c                        | 28 ++++++------
+ net/ipv4/ip_tunnel_core.c                       |  2 +-
+ net/ipv6/route.c                                |  7 ++-
+ net/sctp/socket.c                               | 26 +++--------
+ net/sctp/stream.c                               |  1 -
+ 22 files changed, 96 insertions(+), 131 deletions(-)
 
 
