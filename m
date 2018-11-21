@@ -2,66 +2,146 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,GUARANTEED_100_PERCENT,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C28C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6743C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD4D5214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8348F2151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:22:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="FyMxmwYh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD4D5214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bUz5sXcX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8348F2151B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731233AbeKVG4c (ORCPT
+        id S1731172AbeKVG61 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:56:32 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:44655 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726210AbeKVG4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=NMi8JmbN2y/VCpdE/OVAx3JH65kMFkQHfJdtDh/coIc=;
-        b=FyMxmwYhs6SKvvDEH0Wvc/208xbhihbP+uSVfNaMnLyEznPpPQZc266Ok/TBO8fsoo2UcJf1dB6Z5n9UQq8TC0viRLBYaPKJwt4Y1etEgg2cx+/LjWb2U/cJZCgD108PKaS9ojgoz2wgC47x1UvxGRJrA9hbmnaNOtFkHmqNbSA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gPYzC-0002oq-N2; Wed, 21 Nov 2018 21:20:34 +0100
-Date:   Wed, 21 Nov 2018 21:20:34 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Norbert Jurkeit <norbert.jurkeit@web.de>, nic_swsd@realtek.com,
-        Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        michael.wiktowy@gmail.com, jcline@redhat.com,
-        marc.c.dionne@gmail.com
-Subject: Re: Issue with RTL8111 NIC after upgrade to kernel 4.19
-Message-ID: <20181121202034.GA10697@lunn.ch>
-References: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de>
- <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
+        Thu, 22 Nov 2018 01:58:27 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:33028 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726210AbeKVG61 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 01:58:27 -0500
+Received: by mail-yw1-f67.google.com with SMTP id q11so2784288ywa.0;
+        Wed, 21 Nov 2018 12:22:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QlG7ftrcjxrscPNM5bFlvJAM5MFYY65IJ8h487XRFto=;
+        b=bUz5sXcXIul88E9NFWDuSOOYfP5TWt2/Gw4nOtkjmadnu6z8rdNsc5vJaAidROKxcP
+         YaOmOrl62ZufOUxKLC6/gwQh4mQb+ctjW2mPvbPDUvH294vIfClKcaVPBwsQT5ot9sbA
+         7qSoSQHEpU/2cG7xRMPidtwQcO51aSjQV1JRWj0Gbf9K0JzEXWsPnZi0jOOeDAJ6G3UB
+         l/RA79cT7I8qjBsh5xGRZQNiICJq6g/msNFpWFPP47/tXio8BtWhcQNotchFLCLZYuY4
+         K0fXtkf80Ij/fm2S/5Nnu2uC5ghKoRXiHT+4wgQSY6v8/eR98HsWXXKPD3ptL6WJTjUz
+         ZBpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QlG7ftrcjxrscPNM5bFlvJAM5MFYY65IJ8h487XRFto=;
+        b=V8EY/1KBmbV5EJdkl0WRq2ne8oxPLw1cQNW9W0SmhuLITefDn799d27DQbYoM4YLHP
+         aPQiOKF8XsQt+bLqoJFgo25iVgp8UhFgeXM2ENmliP+ke86hOfDEIWw7CYN+Z4vkjKTl
+         JH0pyR+VMr85mwgYXpTze+wHiCIPn4Sd4sqRy/e/9lkAeH1m8eRgL8B29nT+gIkyof/k
+         F7/Ovr3Thrm0TvfzuF98If+Wx2EOFt+xfPRt7EgwN3Y48OUiwtaiGSxuhanui95ZiptS
+         Laf6Xo7aWRilOp46o+g75a1m/aqoVv+jO4QYApuIRdMwLw9XTfHEt9yVawIWbKEuy8WI
+         xwwQ==
+X-Gm-Message-State: AGRZ1gITi5BsFU8eTlRpyWycs1sjMMP69S3xEyTnHUkMVh369z4EQ3Ku
+        nxb+SBGedymblTWvdArpZ8WC4JvvOupvnvJYUkU=
+X-Google-Smtp-Source: AJdET5effEdOh/KPzk0p2Hf+zkI96E4/68Kxb+lNC5m8euOZDdOalWtoDInRgloqIf7dRoAqxbsJsnxPnnWfvY15COA=
+X-Received: by 2002:a81:34d3:: with SMTP id b202mr8105592ywa.241.1542831757432;
+ Wed, 21 Nov 2018 12:22:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <000000000000d03eea0571adfe83@google.com> <000000000000a8e163057b2f2ddf@google.com>
+ <CAOQ4uxhAwdaZnPLX6+qYWaNL6NHQDMptx5TMyzo3B7CCcgWTjg@mail.gmail.com> <20181121200114.yqis7fvn5x7nsw6e@merlin>
+In-Reply-To: <20181121200114.yqis7fvn5x7nsw6e@merlin>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 21 Nov 2018 22:22:26 +0200
+Message-ID: <CAOQ4uxgzxmpY6TLR6FGZRvSyCYfED9bM-5oKjWi9VnL9d9kF2w@mail.gmail.com>
+Subject: Re: possible deadlock in mnt_want_write
+To:     Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc:     syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> request_module() is supposed to be synchronous, however after some
-> reading this may not be 100% guaranteed. Maybe the module init
-> function on some systems isn't finished yet when request_module()
-> returns. As a result the genphy driver may be used instead of
-> the PHY version-specific driver.
+On Wed, Nov 21, 2018 at 10:04 PM Goldwyn Rodrigues <rgoldwyn@suse.de> wrote:
+>
+> On 20:57 21/11, Amir Goldstein wrote:
+> > On Wed, Nov 21, 2018 at 8:33 PM syzbot
+> > <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com> wrote:
+> > >
+> > > syzbot has found a reproducer for the following crash on:
+> > >
+> > > HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=11a1426d400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1632326d400000
+> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a16ed5400000
+> > >
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com
+> > >
+...
+> > >         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
+> > >         __sb_start_write+0x214/0x370 fs/super.c:1564
+> > >         sb_start_write include/linux/fs.h:1607 [inline]
+> > >         mnt_want_write+0x3f/0xc0 fs/namespace.c:359
+> > >         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+> > >         ovl_open_maybe_copy_up+0x12c/0x190 fs/overlayfs/copy_up.c:888
+> > >         ovl_open+0xb3/0x260 fs/overlayfs/file.c:123
+> > >         do_dentry_open+0x499/0x1250 fs/open.c:771
+> > >         vfs_open fs/open.c:880 [inline]
+> > >         dentry_open+0x143/0x1d0 fs/open.c:896
+> > >         ima_calc_file_hash+0x324/0x570
+> >
+> > I suppose ima_calc_file_hash opens the file with write flags
+> > and cause overlay to try to copy up which takes mnt_want_write().
+> > Why does IMA need to open the file with write flags?
+> >
+> > Isn't this commit supposed to prevent that:
+> > a408e4a86b36 ima: open a new file instance if no read permissions
+> >
+>
+> Not write, read flags. This patch re-opens the files in O_RDONLY for
+> files opened with O_WRONLY and cannot be read, so that the hash can be
+> calculated. IOW, the user opened the file in overlayfs with write flags.
+>
 
-Hi Heiner
+My point is:
+ovl_open_need_copy_up() -> ovl_open_flags_need_copy_up()
+returns false for O_RDONLY flags and never gets to ovl_want_write(),
+so how is the stack trace below possible when ima_calc_file_hash()
+removes all "write" flags before opening the file?
 
-That would be true for all PHYs i think. We would of noticed this
-problem with other systems using other PHY drivers.
+  ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
+  ovl_open_maybe_copy_up+0x12c/0x190 fs/overlayfs/copy_up.c:888
+  ovl_open+0xb3/0x260 fs/overlayfs/file.c:123
+  do_dentry_open+0x499/0x1250 fs/open.c:771
+  vfs_open fs/open.c:880 [inline]
+  dentry_open+0x143/0x1d0 fs/open.c:896
+  ima_calc_file_hash+0x324/0x570 security/integrity/ima/ima_crypto.c:427
 
-	Andrew
+The answer is found in the zysbot repro: it opens the file with
+open(O_WRONLY|O_RDWR) (0x3)
+Not nice, but apparently possible.
+
+How about adding O_RDWR to the masked flags in ima_calc_file_hash()?
+Since syzbot has a reproducer, you can send it a patch to verify the fix.
+
+Thanks,
+Amir.
