@@ -7,50 +7,54 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1350C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE11AC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9407821582
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9D1C214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x0Xi8GRb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9407821582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gp0W0HBU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D1C214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388526AbeKVFpR (ORCPT
+        id S2388533AbeKVFpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40060 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730870AbeKVFpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:16 -0500
+        id S1729105AbeKVFpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C2C12151B;
-        Wed, 21 Nov 2018 19:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCE73214DB;
+        Wed, 21 Nov 2018 19:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827383;
-        bh=T5BRjfZIa3GLOEFxW+bwXD8ZBLYXvBQCUYKQaPWZFgI=;
+        s=default; t=1542827386;
+        bh=8KjP9kOuFuqv0oYS6QI0mOOnIgLfjYqkU9Haov8rEHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0Xi8GRb8433kdNKZV9j5ZKeNWVmGh5lza5LccySq9BO33pdfhNLP2WAx6NizHKi3
-         E011mWnrJarZSLgcUoAUgy1q8EOR+J2s68Z/P9SJxM7Z5W5HkBG4UEYTFXWI9Vni2f
-         8egAdQ04W5aipMLNeI8zNeKKwXVBGygu/8/+L2FA=
+        b=gp0W0HBUpq+lGNOo7v89M6Q3IW4n+jF3M199j/O42jjGfe2OlnUsP8n1n9mnXeP+8
+         sVWzuzRH1OpaYmtPV1+9OH/oj/CgpoPPAHLWqx/BWwzGx93WXv3Rdsadvc7kzqfJ7w
+         5Ej/xhuvtzZNvG/Cru2sNg/n51MMcYJUnrkvoZgM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 01/59] flow_dissector: do not dissect l4 ports for fragments
-Date:   Wed, 21 Nov 2018 20:06:16 +0100
-Message-Id: <20181121183508.316417893@linuxfoundation.org>
+        stable@vger.kernel.org, Behan Webster <behanw@converseincode.com>,
+        =?UTF-8?q?Jan-Simon=20M=C3=B6ller?= <dl9pf@gmx.de>,
+        Mark Charlebois <charlebm@gmail.com>,
+        Greg Hackmann <ghackmann@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH 4.9 10/59] kbuild: Add better clang cross build support
+Date:   Wed, 21 Nov 2018 20:06:25 +0100
+Message-Id: <20181121183508.664285134@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -63,49 +67,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: 배석진 <soukjin.bae@samsung.com>
+From: Behan Webster <behanw@converseincode.com>
 
-[ Upstream commit 62230715fd2453b3ba948c9d83cfb3ada9169169 ]
+commit 785f11aa595bc3d4e74096cbd598ada54ecc0d81 upstream.
 
-Only first fragment has the sport/dport information,
-not the following ones.
+Add cross target to CC if using clang. Also add custom gcc toolchain
+path for fallback gcc tools.
 
-If we want consistent hash for all fragments, we need to
-ignore ports even for first fragment.
+Clang will fallback to using things like ld, as, and libgcc if
+(respectively) one of the llvm linkers isn't available, the integrated
+assembler is turned off, or an appropriately cross-compiled version of
+compiler-rt isn't available. To this end, you can specify the path to
+this fallback gcc toolchain with GCC_TOOLCHAIN.
 
-This bug is visible for IPv6 traffic, if incoming fragments
-do not have a flow label, since skb_get_hash() will give
-different results for first fragment and following ones.
-
-It is also visible if any routing rule wants dissection
-and sport or dport.
-
-See commit 5e5d6fed3741 ("ipv6: route: dissect flow
-in input path if fib rules need it") for details.
-
-[edumazet] rewrote the changelog completely.
-
-Fixes: 06635a35d13d ("flow_dissect: use programable dissector in skb_flow_dissect and friends")
-Signed-off-by: 배석진 <soukjin.bae@samsung.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Behan Webster <behanw@converseincode.com>
+Reviewed-by: Jan-Simon Möller <dl9pf@gmx.de>
+Reviewed-by: Mark Charlebois <charlebm@gmail.com>
+Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/flow_dissector.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Makefile |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -538,8 +538,8 @@ ip_proto_again:
- 		break;
- 	}
+--- a/Makefile
++++ b/Makefile
+@@ -704,6 +704,15 @@ endif
+ KBUILD_CFLAGS += $(stackp-flag)
  
--	if (dissector_uses_key(flow_dissector,
--			       FLOW_DISSECTOR_KEY_PORTS)) {
-+	if (dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_PORTS) &&
-+	    !(key_control->flags & FLOW_DIS_IS_FRAGMENT)) {
- 		key_ports = skb_flow_dissector_target(flow_dissector,
- 						      FLOW_DISSECTOR_KEY_PORTS,
- 						      target_container);
+ ifeq ($(cc-name),clang)
++ifneq ($(CROSS_COMPILE),)
++CLANG_TARGET	:= -target $(notdir $(CROSS_COMPILE:%-=%))
++GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
++endif
++ifneq ($(GCC_TOOLCHAIN),)
++CLANG_GCC_TC	:= -gcc-toolchain $(GCC_TOOLCHAIN)
++endif
++KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
++KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
+ KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+ KBUILD_CPPFLAGS += $(call cc-option,-Wno-unknown-warning-option,)
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
 
 
