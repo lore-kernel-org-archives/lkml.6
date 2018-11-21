@@ -2,161 +2,225 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 710C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C446C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:48:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4F32087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:42:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T5A2zuy2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zpt5hEdG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4F32087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E8DC21104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:48:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E8DC21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727981AbeKUQPu (ORCPT
+        id S1727069AbeKUQVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:15:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58534 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeKUQPu (ORCPT
+        Wed, 21 Nov 2018 11:21:07 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:3748 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725939AbeKUQVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:15:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B1490604BE; Wed, 21 Nov 2018 05:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542778969;
-        bh=cg++jPYdvEMH05r/S5ppxU4kSI9sjHmyEPOakhsFU+g=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=T5A2zuy2u8Mm7qL4AtjLi/aedIb3sEFZJzQz1LUFWtB6w/wV2aaqBiRF5TTZ7Z9wn
-         OU4N7chraN0T3OQmZNLMDatrwuHu6JdJ/WhI1zO3/Ijiksgz0nh4TLnaZNbH50VOO7
-         IaSJjOu9WLOLJb3SI/zvjgm72FUenCHalbwejIQs=
-Received: from [10.79.128.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 71AF5604BE;
-        Wed, 21 Nov 2018 05:42:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542778968;
-        bh=cg++jPYdvEMH05r/S5ppxU4kSI9sjHmyEPOakhsFU+g=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=Zpt5hEdGU3KGQq1yhkaudwFsqfquOwv6v0zOqZLSPuhvd2GphVBvhaNR8ds8/9VO8
-         i9aBf0d9exQvqUqhgKF40rMlBuvse1aSNhHvrHg7QgwyZpQzQIAaUnlKh1XC8OTdwJ
-         v4sYBgUXI1DqbhChAq0n2Uj7wSUV7NNc4G9r0hig=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 71AF5604BE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 4/4] PM / Domains: Propagate performance state updates
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
-References: <cover.1541399301.git.viresh.kumar@linaro.org>
- <7e1ea283f9eebce081af80ddb8d3ca5c9c76cd3b.1541399301.git.viresh.kumar@linaro.org>
- <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
- <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
- <68a3294f-5556-4b5f-f8c7-79c20b5c70fb@codeaurora.org>
-Message-ID: <5efc76bb-7732-52b6-4684-82b35ad52343@codeaurora.org>
-Date:   Wed, 21 Nov 2018 11:12:43 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 21 Nov 2018 11:21:07 -0500
+X-UUID: 9100305099a6491d92486c4fb7afafb4-20181121
+X-UUID: 9100305099a6491d92486c4fb7afafb4-20181121
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 610551348; Wed, 21 Nov 2018 13:47:53 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 21 Nov 2018 13:47:52 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 21 Nov 2018 13:47:51 +0800
+Message-ID: <1542779271.2401.0.camel@mtkswgap22>
+Subject: Re: [PATCH v2] PCI: mediatek: Use
+ devm_of_pci_get_host_bridge_resources() to parse DT
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     <honghui.zhang@mediatek.com>
+CC:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>
+Date:   Wed, 21 Nov 2018 13:47:51 +0800
+In-Reply-To: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
+References: <1541645815-30340-1-git-send-email-honghui.zhang@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <68a3294f-5556-4b5f-f8c7-79c20b5c70fb@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-11-08 at 10:56 +0800, honghui.zhang@mediatek.com wrote:
+> From: Honghui Zhang <honghui.zhang@mediatek.com>
+> 
+> Use the devm_of_pci_get_host_bridge_resources() API in place of the PCI OF
+> DT parser.
+> 
+> Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> ---
+>  drivers/pci/controller/pcie-mediatek.c | 98 +++++++++-------------------------
+>  1 file changed, 24 insertions(+), 74 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> index 2a1f97c..0590a93 100644
+> --- a/drivers/pci/controller/pcie-mediatek.c
+> +++ b/drivers/pci/controller/pcie-mediatek.c
+> @@ -197,11 +197,7 @@ struct mtk_pcie_port {
+>   * @dev: pointer to PCIe device
+>   * @base: IO mapped register base
+>   * @free_ck: free-run reference clock
+> - * @io: IO resource
+> - * @pio: PIO resource
+>   * @mem: non-prefetchable memory resource
+> - * @busn: bus range
+> - * @offset: IO / Memory offset
+>   * @ports: pointer to PCIe port information
+>   * @soc: pointer to SoC-dependent operations
+>   */
+> @@ -210,14 +206,7 @@ struct mtk_pcie {
+>  	void __iomem *base;
+>  	struct clk *free_ck;
+>  
+> -	struct resource io;
+> -	struct resource pio;
+>  	struct resource mem;
+> -	struct resource busn;
+> -	struct {
+> -		resource_size_t mem;
+> -		resource_size_t io;
+> -	} offset;
+>  	struct list_head ports;
+>  	const struct mtk_pcie_soc *soc;
+>  };
+> @@ -1045,55 +1034,43 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->dev;
+>  	struct device_node *node = dev->of_node, *child;
+> -	struct of_pci_range_parser parser;
+> -	struct of_pci_range range;
+> -	struct resource res;
+>  	struct mtk_pcie_port *port, *tmp;
+> +	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> +	struct list_head *windows = &host->windows;
+> +	struct resource_entry *win, *tmp_win;
+> +	resource_size_t io_base;
+>  	int err;
+>  
+> -	if (of_pci_range_parser_init(&parser, node)) {
+> -		dev_err(dev, "missing \"ranges\" property\n");
+> -		return -EINVAL;
+> -	}
+> +	err = devm_of_pci_get_host_bridge_resources(dev, 0, 0xff,
+> +						    windows, &io_base);
+> +	if (err)
+> +		return err;
+>  
+> -	for_each_of_pci_range(&parser, &range) {
+> -		err = of_pci_range_to_resource(&range, node, &res);
+> -		if (err < 0)
+> -			return err;
+> +	err = devm_request_pci_bus_resources(dev, windows);
+> +	if (err < 0)
+> +		return err;
+>  
+> -		switch (res.flags & IORESOURCE_TYPE_BITS) {
+> +	/* Get the I/O and memory ranges from DT */
+> +	resource_list_for_each_entry_safe(win, tmp_win, windows) {
+> +		switch (resource_type(win->res)) {
+>  		case IORESOURCE_IO:
+> -			pcie->offset.io = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->pio, &res, sizeof(res));
+> -			pcie->pio.name = node->full_name;
+> -
+> -			pcie->io.start = range.cpu_addr;
+> -			pcie->io.end = range.cpu_addr + range.size - 1;
+> -			pcie->io.flags = IORESOURCE_MEM;
+> -			pcie->io.name = "I/O";
+> -
+> -			memcpy(&res, &pcie->io, sizeof(res));
+> +			err = devm_pci_remap_iospace(dev, win->res, io_base);
+> +			if (err) {
+> +				dev_warn(dev, "error %d: failed to map resource %pR\n",
+> +					 err, win->res);
+> +				resource_list_destroy_entry(win);
+> +			}
+>  			break;
+> -
+>  		case IORESOURCE_MEM:
+> -			pcie->offset.mem = res.start - range.pci_addr;
+> -
+> -			memcpy(&pcie->mem, &res, sizeof(res));
+> +			memcpy(&pcie->mem, win->res, sizeof(*win->res));
+>  			pcie->mem.name = "non-prefetchable";
+>  			break;
+> +		case IORESOURCE_BUS:
+> +			host->busnr = win->res->start;
+> +			break;
+>  		}
+>  	}
+>  
+> -	err = of_pci_parse_bus_range(node, &pcie->busn);
+> -	if (err < 0) {
+> -		dev_err(dev, "failed to parse bus ranges property: %d\n", err);
+> -		pcie->busn.name = node->name;
+> -		pcie->busn.start = 0;
+> -		pcie->busn.end = 0xff;
+> -		pcie->busn.flags = IORESOURCE_BUS;
+> -	}
+> -
+>  	for_each_available_child_of_node(node, child) {
+>  		int slot;
+>  
+> @@ -1125,28 +1102,6 @@ static int mtk_pcie_setup(struct mtk_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> -static int mtk_pcie_request_resources(struct mtk_pcie *pcie)
+> -{
+> -	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+> -	struct list_head *windows = &host->windows;
+> -	struct device *dev = pcie->dev;
+> -	int err;
+> -
+> -	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
+> -	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
+> -	pci_add_resource(windows, &pcie->busn);
+> -
+> -	err = devm_request_pci_bus_resources(dev, windows);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	err = devm_pci_remap_iospace(dev, &pcie->pio, pcie->io.start);
+> -	if (err < 0)
+> -		return err;
+> -
+> -	return 0;
+> -}
+> -
+>  static int mtk_pcie_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1169,11 +1124,6 @@ static int mtk_pcie_probe(struct platform_device *pdev)
+>  	if (err)
+>  		return err;
+>  
+> -	err = mtk_pcie_request_resources(pcie);
+> -	if (err)
+> -		goto put_resources;
+> -
+> -	host->busnr = pcie->busn.start;
+>  	host->dev.parent = pcie->dev;
+>  	host->ops = pcie->soc->ops;
+>  	host->map_irq = of_irq_parse_and_map_pci;
 
-On 11/21/2018 11:01 AM, Rajendra Nayak wrote:
-> 
-> 
-> On 11/21/2018 10:46 AM, Viresh Kumar wrote:
->> On 21-11-18, 10:33, Rajendra Nayak wrote:
->>> Hi Viresh,
->>>
->>> On 11/5/2018 12:06 PM, Viresh Kumar wrote:
->>>> This commit updates genpd core to start propagating performance state
->>>> updates to master domains that have their set_performance_state()
->>>> callback set.
->>>>
->>>> A genpd handles two type of performance states now. The first one is the
->>>> performance state requirement put on the genpd by the devices and
->>>> sub-domains under it, which is already represented by
->>>> genpd->performance_state. The second type, introduced in this commit, is
->>>> the performance state requirement(s) put by the genpd on its master
->>>> domain(s). There is a separate value required for each master that the
->>>> genpd has and so a new field is added to the struct gpd_link
->>>> (link->performance_state), which represents the link between a genpd and
->>>> its master. The struct gpd_link also got another field
->>>> prev_performance_state, which is used by genpd core as a temporary
->>>> variable during transitions.
->>>>
->>>> We need to propagate setting performance state while powering-on a genpd
->>>> as well, as we ignore performance state requirements from sub-domains
->>>> which are powered-off. For this reason _genpd_power_on() also received
->>>> the additional parameter, depth, which is used for hierarchical locking
->>>> within genpd.
->>>>
->>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>>> ---
->>>>    drivers/base/power/domain.c | 107 +++++++++++++++++++++++++++++-------
->>>>    include/linux/pm_domain.h   |   4 ++
->>>>    2 files changed, 92 insertions(+), 19 deletions(-)
->>>>
->>>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->>>> index 6d2e9b3406f1..81e02c5f753f 100644
->>>> --- a/drivers/base/power/domain.c
->>>> +++ b/drivers/base/power/domain.c
->>>> @@ -239,28 +239,86 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
->>>>    static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
->>>>    #endif
->>>> +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
->>>> +                       unsigned int state, int depth);
->>>> +
->>>>    static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
->>>> -                    unsigned int state)
->>>> +                    unsigned int state, int depth)
->>>>    {
->>>> +    struct generic_pm_domain *master;
->>>> +    struct gpd_link *link;
->>>> +    unsigned int mstate;
->>>>        int ret;
->>>>        if (!genpd_status_on(genpd))
->>>>            goto out;
->>>
->>> This check here would mean we only propogate performance state
->>> to masters if the genpd is ON?
->>
->> Yeah, isn't that what should we do anyway? It is similar to clk-enable
->> etc. Why increase the reference count if the device isn't enabled and
->> isn't using the clock ?
-> 
-> I would think this is analogous to a driver calling clk_set_rate() first and
-> then a clk_enable(), which is certainly valid.
-> So my question is, if calling a dev_pm_genpd_set_performance_state()
-> and then runtime enabling the device would work (and take care of propagating the performance
-> state). In my testing I found it does not.
+Acked-by: Ryder Lee <ryder.lee@mediatek.com>
 
-And the reason for that seems to be that we update the genpd status to GPD_STATE_ACTIVE
-*after* we try to set the performance state, so we always hit this check which bails out
-thinking the genpd is not ON.
-
-> 
->>
->> Also you can see that I have updated the genpd power-on code to start
->> propagation to make sure we don't miss anything.
->>
