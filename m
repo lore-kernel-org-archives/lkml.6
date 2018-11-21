@@ -2,107 +2,131 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EAE8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8BEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3647E214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:28:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KOY5BEKf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3647E214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3325B214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:29:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3325B214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbeKVBCu (ORCPT
+        id S1730981AbeKVBEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:02:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53234 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbeKVBCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:02:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RGgf+RGYgeOH6bNPQ8M/PQp4i4mIU1zC+ATlh14g5rU=; b=KOY5BEKfu5V/UyY83VM5pJ6ll
-        KBK1fjfZzhaMHMOqrnCn4SWhmYy/wf2ZsmAmT3NwSlNqsvqsJewQPUUk/+tM6FG8bEbWq5ciUOPpJ
-        LH3785hgZ4hPs2vMdkHf58aQwmAT144sf65d02W+Dyi5/Vp2HNultbp/wyciWqspRWlHSSHzAFwrL
-        K5qrYRIexO4HE7FV+23tAi0UQ+M5tWe3HHxjpEQRQom3iP8qSKJiwa0UgqzSRCaD7brpcCiuq1Av4
-        sWBKOTF9zHqM1acfLK84qd+r2KQXhQm6f6Z6y250BOCl4ilSSX3GnSc5EL+1IA/NqaSZWYtcDdB0b
-        gPTuEIQzw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPTU5-00026z-B0; Wed, 21 Nov 2018 14:28:05 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6BE012029FD58; Wed, 21 Nov 2018 15:28:03 +0100 (CET)
-Date:   Wed, 21 Nov 2018 15:28:03 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        mingo@redhat.com, dietmar.eggemann@arm.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@codeaurora.org,
-        skannan@codeaurora.org, pkondeti@codeaurora.org,
-        juri.lelli@redhat.com, edubezval@gmail.com,
-        srinivas.pandruvada@linux.intel.com, currojerez@riseup.net,
-        javi.merino@kernel.org
-Subject: Re: [PATCH v9 13/15] sched/fair: Introduce an energy estimation
- helper function
-Message-ID: <20181121142803.GF2113@hirez.programming.kicks-ass.net>
-References: <20181119141857.8625-1-quentin.perret@arm.com>
- <20181119141857.8625-14-quentin.perret@arm.com>
+        Wed, 21 Nov 2018 20:04:10 -0500
+Received: from mga12.intel.com ([192.55.52.136]:11655 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728283AbeKVBEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:04:10 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 06:29:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="110017681"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2018 06:29:26 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gPTVN-0004HU-En; Wed, 21 Nov 2018 16:29:25 +0200
+Date:   Wed, 21 Nov 2018 16:29:25 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/6] ASoC: Intel: Skylake: stop init/probe if DSP is
+ not present
+Message-ID: <20181121142925.GP10650@smile.fi.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+ <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181119141857.8625-14-quentin.perret@arm.com>
+In-Reply-To: <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 02:18:55PM +0000, Quentin Perret wrote:
-> +static long
-> +compute_energy(struct task_struct *p, int dst_cpu, struct perf_domain *pd)
-> +{
-> +	long util, max_util, sum_util, energy = 0;
-> +	int cpu;
-> +
-> +	for (; pd; pd = pd->next) {
-> +		max_util = sum_util = 0;
-> +		/*
-> +		 * The capacity state of CPUs of the current rd can be driven by
-> +		 * CPUs of another rd if they belong to the same performance
-> +		 * domain. So, account for the utilization of these CPUs too
-> +		 * by masking pd with cpu_online_mask instead of the rd span.
-> +		 *
-> +		 * If an entire performance domain is outside of the current rd,
-> +		 * it will not appear in its pd list and will not be accounted
-> +		 * by compute_energy().
-> +		 */
-> +		for_each_cpu_and(cpu, perf_domain_span(pd), cpu_online_mask) {
+On Tue, Nov 20, 2018 at 03:36:40PM -0600, Pierre-Louis Bossart wrote:
+> Check immediately if the DSP can be found, bail and avoid doing inits
+> to enable legacy fallback without delay.
 
-Should that not be cpu_active_mask ?
+It does slightly more than described. Please do either remove unrelated changes, or fill the gap in the commit message. In the latter case it may require to split patch to two.
 
-> +			util = cpu_util_next(cpu, p, dst_cpu);
-> +			util = schedutil_energy_util(cpu, util);
-> +			max_util = max(util, max_util);
-> +			sum_util += util;
-> +		}
-> +
-> +		energy += em_pd_energy(pd->em_pd, max_util, sum_util);
+> 
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  sound/soc/intel/skylake/skl.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
+> index df36b8fe6d5e..1d7146773d19 100644
+> --- a/sound/soc/intel/skylake/skl.c
+> +++ b/sound/soc/intel/skylake/skl.c
+> @@ -931,6 +931,12 @@ static int skl_first_init(struct hdac_bus *bus)
+>  
+>  	snd_hdac_bus_parse_capabilities(bus);
+>  
+> +	/* check if dsp is there */
+> +	if (!bus->ppcap) {
+> +		dev_err(bus->dev, "bus ppcap not set, DSP not present?\n");
+> +		return -ENODEV;
 > +	}
 > +
-> +	return energy;
-> +}
+>  	if (skl_acquire_irq(bus, 0) < 0)
+>  		return -EBUSY;
+>  
+> @@ -940,23 +946,25 @@ static int skl_first_init(struct hdac_bus *bus)
+>  	gcap = snd_hdac_chip_readw(bus, GCAP);
+>  	dev_dbg(bus->dev, "chipset global capabilities = 0x%x\n", gcap);
+>  
+> -	/* allow 64bit DMA address if supported by H/W */
+> -	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+> -	} else {
+> -		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+> -	}
+> -
+>  	/* read number of streams from GCAP register */
+>  	cp_streams = (gcap >> 8) & 0x0f;
+>  	pb_streams = (gcap >> 12) & 0x0f;
+>  
+> -	if (!pb_streams && !cp_streams)
+> +	if (!pb_streams && !cp_streams) {
+> +		dev_err(bus->dev, "no streams found in GCAP definitions?\n");
+>  		return -EIO;
+> +	}
+>  
+>  	bus->num_streams = cp_streams + pb_streams;
+>  
+> +	/* allow 64bit DMA address if supported by H/W */
+> +	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
+> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
+> +	} else {
+> +		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
+> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
+> +	}
+> +
+>  	/* initialize streams */
+>  	snd_hdac_ext_stream_init_all
+>  		(bus, 0, cp_streams, SNDRV_PCM_STREAM_CAPTURE);
+> -- 
+> 2.17.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
