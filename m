@@ -2,120 +2,87 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8FCC04EBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEB1C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1441A21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1441A21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 706152145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:37:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706152145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726849AbeKULHl (ORCPT
+        id S1726172AbeKULJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:07:41 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:51973 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726279AbeKULHl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:07:41 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TDYPnkY_1542760531;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TDYPnkY_1542760531)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 21 Nov 2018 08:35:31 +0800
-Subject: Re: [LKP] dd2283f260 [ 97.263072]
- WARNING:at_kernel/locking/lockdep.c:#lock_downgrade
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     kernel test robot <rong.a.chen@intel.com>,
-        Waiman Long <longman@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org, LKP <lkp@01.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>
-References: <20181115055443.GF18977@shao2-debian>
- <d9371abc-60f6-ce37-529f-d097464a1412@linux.alibaba.com>
- <20181120085749.lj7dzk52633oq42s@kshutemo-mobl1>
- <9dec33d0-f408-8428-b004-fa63fc2e9091@linux.alibaba.com>
- <20181120134216.s5derazwpay5gkfk@kshutemo-mobl1>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <d552af11-7b73-da6a-ed12-6cb7bd1bb5a4@linux.alibaba.com>
-Date:   Wed, 21 Nov 2018 08:35:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Wed, 21 Nov 2018 06:09:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41810 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725903AbeKULJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:09:38 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 740E83082A2F;
+        Wed, 21 Nov 2018 00:37:41 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 66F0E18978;
+        Wed, 21 Nov 2018 00:37:37 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     intel-gfx@lists.freedesktop.org
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: Synchronize hpd work in i915_hpd_storm_ctl_show()
+Date:   Tue, 20 Nov 2018 19:37:17 -0500
+Message-Id: <20181121003718.17704-1-lyude@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181120134216.s5derazwpay5gkfk@kshutemo-mobl1>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 21 Nov 2018 00:37:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+While trying to add a chamelium test for short HPD IRQs, I ran into
+issues where a hotplug storm would be triggered, but the point at which
+it would be reported by the kernel would be after igt actually finished
+checking i915_hpd_storm_ctl's status. So, fix this by simply
+synchronizing our IRQ work, dig_port_work, and hotplug_work before
+printing out the HPD storm status in i915_hpd_storm_ctl_show().
 
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-On 11/20/18 9:42 PM, Kirill A. Shutemov wrote:
-> On Tue, Nov 20, 2018 at 08:10:51PM +0800, Yang Shi wrote:
->>
->> On 11/20/18 4:57 PM, Kirill A. Shutemov wrote:
->>> On Fri, Nov 16, 2018 at 08:56:04AM -0800, Yang Shi wrote:
->>>>> a8dda165ec  vfree: add debug might_sleep()
->>>>> dd2283f260  mm: mmap: zap pages with read mmap_sem in munmap
->>>>> 5929a1f0ff  Merge tag 'riscv-for-linus-4.20-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux
->>>>> 0bc80e3cb0  Add linux-next specific files for 20181114
->>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
->>>>> |                                                     | a8dda165ec | dd2283f260 | 5929a1f0ff | next-20181114 |
->>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
->>>>> | boot_successes                                      | 314        | 178        | 190        | 168           |
->>>>> | boot_failures                                       | 393        | 27         | 21         | 40            |
->>>>> | WARNING:held_lock_freed                             | 383        | 23         | 17         | 39            |
->>>>> | is_freeing_memory#-#,with_a_lock_still_held_there   | 383        | 23         | 17         | 39            |
->>>>> | BUG:unable_to_handle_kernel                         | 5          | 2          | 4          | 1             |
->>>>> | Oops:#[##]                                          | 9          | 3          | 4          | 1             |
->>>>> | EIP:debug_check_no_locks_freed                      | 9          | 3          | 4          | 1             |
->>>>> | Kernel_panic-not_syncing:Fatal_exception            | 9          | 3          | 4          | 1             |
->>>>> | Mem-Info                                            | 4          | 1          |            |               |
->>>>> | invoked_oom-killer:gfp_mask=0x                      | 1          | 1          |            |               |
->>>>> | WARNING:at_kernel/locking/lockdep.c:#lock_downgrade | 0          | 6          | 4          | 7             |
->>>>> | EIP:lock_downgrade                                  | 0          | 6          | 4          | 7             |
->>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
->>>>>
->>>>> [   96.288009] random: get_random_u32 called from arch_rnd+0x3c/0x70 with crng_init=0
->>>>> [   96.359626] input_id (331) used greatest stack depth: 6360 bytes left
->>>>> [   96.749228] grep (358) used greatest stack depth: 6336 bytes left
->>>>> [   96.921470] network.sh (341) used greatest stack depth: 6212 bytes left
->>>>> [   97.262340]
->>>>> [   97.262587] =========================
->>>>> [   97.263072] WARNING: held lock freed!
->>>>> [   97.263536] 4.19.0-06969-gdd2283f #1 Not tainted
->>>>> [   97.264110] -------------------------
->>>>> [   97.264575] udevd/198 is freeing memory 9c16c930-9c16c99b, with a lock still held there!
->>>>> [   97.265542] (ptrval) (&anon_vma->rwsem){....}, at: unlink_anon_vmas+0x14e/0x420
->>>>> [   97.266450] 1 lock held by udevd/198:
->>>>> [   97.266924]  #0: (ptrval) (&mm->mmap_sem){....}, at: __do_munmap+0x531/0x730
->>>> I have not figured out what this is caused by. But, the below warning looks
->>>> more confusing. This might be caused by the below one.
->>> I *think* we need to understand more about what detached VMAs mean for
->>> rmap. The anon_vma for these VMAs still reachable for the rmap and
->>> therefore VMA too. I don't quite grasp what is implications of this, but
->>> it doesn't look good.
->> I'm supposed before accessing anon_vma, VMA need to be found by find_vma()
->> first, right? But, finding VMA need hold mmap_sem, once detach VMAs is
->> called, others should not be able to find the VMAs anymore. So, the anon_vma
->> should not be reachable except the munmap caller.
-> No. anon_vma can be reached from page->mapping. The page can be reached
-> during physcal memory scan or if the page is shared (across fork()). None
-> of these accesses require mmap_sem.
-
-If they don't require mmap_sem at all, this problem should be valid 
-regardless of the optimization. We just downgraded write mmap_sem to 
-read, but still hold it.
-
->
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 69447c68b9af..af4268a6d2d9 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -4592,6 +4592,13 @@ static int i915_hpd_storm_ctl_show(struct seq_file *m, void *data)
+ 	struct drm_i915_private *dev_priv = m->private;
+ 	struct i915_hotplug *hotplug = &dev_priv->hotplug;
+ 
++	/* Synchronize with everything first in case there's been an HPD
++	 * storm, but we haven't finished handling it in the kernel yet
++	 */
++	synchronize_irq(dev_priv->drm.irq);
++	flush_work(&dev_priv->hotplug.dig_port_work);
++	flush_work(&dev_priv->hotplug.hotplug_work);
++
+ 	seq_printf(m, "Threshold: %d\n", hotplug->hpd_storm_threshold);
+ 	seq_printf(m, "Detected: %s\n",
+ 		   yesno(delayed_work_pending(&hotplug->reenable_work)));
+-- 
+2.19.1
 
