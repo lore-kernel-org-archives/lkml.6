@@ -2,75 +2,85 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6480CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6B5C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EAEA2087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:31:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ik5xnLp/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J0xrMgul"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EAEA2087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id B3D56214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 05:35:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D56214DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbeKUQEM (ORCPT
+        id S1727946AbeKUQIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:04:12 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53892 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726061AbeKUQEM (ORCPT
+        Wed, 21 Nov 2018 11:08:11 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36546 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKUQIK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:04:12 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 78F8B60452; Wed, 21 Nov 2018 05:31:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542778274;
-        bh=DXAP7dnhkXOyaHajPI/Y+bQJvimXrJktQXop/VIzLIc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ik5xnLp/nTtcfSn8w/r9ySt9FwtcwTGvZB+0Ha5kyK1qy5K6XcSAf8eM+Yq3Nolck
-         bA98hXUzNgITzh1WzhpZwS23zJnIHaytqmgWNMQuU5caOj5hZyucskrGyhg0i9OwKN
-         BYVfGuesJ4S6mv9bPuTAZzgY6aO5dCTwdQppnATc=
-Received: from [10.79.128.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 371D460541;
-        Wed, 21 Nov 2018 05:31:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542778273;
-        bh=DXAP7dnhkXOyaHajPI/Y+bQJvimXrJktQXop/VIzLIc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=J0xrMgulJPsVQ76Xlag9QUHtvIya3JzQMmX03UXW9fHHX0DWsB6BuPLnRZavv4mL9
-         RhztfYTTjIQqn28hPQgVZBXB/olOH/NRr8EBCt9FZ0rY8ArIon2ftjREZ1tdtQiVun
-         AFmhz84Yyi4HbyQAMt3VbIpZ0Lrhcvof0r1OHm34=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 371D460541
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-Subject: Re: [PATCH 4/4] PM / Domains: Propagate performance state updates
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        niklas.cassel@linaro.org, linux-kernel@vger.kernel.org
-References: <cover.1541399301.git.viresh.kumar@linaro.org>
- <7e1ea283f9eebce081af80ddb8d3ca5c9c76cd3b.1541399301.git.viresh.kumar@linaro.org>
- <71530b01-eefa-4778-0b17-d7774eb48356@codeaurora.org>
- <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-Message-ID: <68a3294f-5556-4b5f-f8c7-79c20b5c70fb@codeaurora.org>
-Date:   Wed, 21 Nov 2018 11:01:07 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 21 Nov 2018 11:08:10 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y6-v6so3776208plt.3;
+        Tue, 20 Nov 2018 21:35:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uw2Rc/+SN/AQ2BCQF67M559YyvRnmu3XKYQrGvf+BK4=;
+        b=J3V8cWzJgIRg5cI/uFjFq6RzxJcszoO5u1FeQuG6n8nOJPx+49XnivAVd3vIK20cWc
+         BAsFneKl3ts/xYgp07jxKFxzGb6mEpTMe6yOLv/s3gSiCoXBSGsZFhpIMeMd4ehDj/tT
+         XLz084oQqInS+MfbQXGbSbD+/X7LxFcWI1SyZlYKjYFeXH/ZQER6yvFvKeYfbJ9aAd7f
+         D0ebC2Q5z005XpBrp75yzonBw0o/Ln2lYb42DjulbhWRqinJltFNHRTnXdpSFV8bRa23
+         8CT+JgKue7G1KLcDu/D0fZDqBkIymqT1DYlygBitaSCK3Wb0VfFnmJOv83zEE3JsjFmK
+         Skng==
+X-Gm-Message-State: AA+aEWb8Hpcnblk+XGpFNpZnVXC3sfU10djgKmOgoFuW3+yoNbyz3KYu
+        Vccz16UpJFzem29qH1ZWVCo=
+X-Google-Smtp-Source: AFSGD/WkT/yqAhpG/m/H/089gI8a+YTXF6dmZ52eIxWlemBQhNwe4w7mEaT1whWhxkeR4rRsjCwFKg==
+X-Received: by 2002:a17:902:1126:: with SMTP id d35mr1769887pla.1.1542778511439;
+        Tue, 20 Nov 2018 21:35:11 -0800 (PST)
+Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
+        by smtp.gmail.com with ESMTPSA id 19sm42960007pfs.108.2018.11.20.21.35.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Nov 2018 21:35:10 -0800 (PST)
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20181115085306.9910-10-ming.lei@redhat.com>
+ <20181116134541.GH3165@lst.de>
+ <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
+ <20181120161651.GB2629@lst.de>
+ <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
+ <20181121005902.GA31748@ming.t460p>
+ <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
+ <20181121034415.GA8408@ming.t460p>
+ <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me>
+ <7378bf49-5a7e-5622-d4d1-808ba37ce656@grimberg.me>
+ <20181121050359.GA31915@ming.t460p>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <fc268b0e-61b5-aacc-67be-cb7b266c6d8f@grimberg.me>
+Date:   Tue, 20 Nov 2018 21:35:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181121051626.izb6dem62zoaf2c4@vireshk-i7>
+In-Reply-To: <20181121050359.GA31915@ming.t460p>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,75 +90,23 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 11/21/2018 10:46 AM, Viresh Kumar wrote:
-> On 21-11-18, 10:33, Rajendra Nayak wrote:
->> Hi Viresh,
->>
->> On 11/5/2018 12:06 PM, Viresh Kumar wrote:
->>> This commit updates genpd core to start propagating performance state
->>> updates to master domains that have their set_performance_state()
->>> callback set.
->>>
->>> A genpd handles two type of performance states now. The first one is the
->>> performance state requirement put on the genpd by the devices and
->>> sub-domains under it, which is already represented by
->>> genpd->performance_state. The second type, introduced in this commit, is
->>> the performance state requirement(s) put by the genpd on its master
->>> domain(s). There is a separate value required for each master that the
->>> genpd has and so a new field is added to the struct gpd_link
->>> (link->performance_state), which represents the link between a genpd and
->>> its master. The struct gpd_link also got another field
->>> prev_performance_state, which is used by genpd core as a temporary
->>> variable during transitions.
->>>
->>> We need to propagate setting performance state while powering-on a genpd
->>> as well, as we ignore performance state requirements from sub-domains
->>> which are powered-off. For this reason _genpd_power_on() also received
->>> the additional parameter, depth, which is used for hierarchical locking
->>> within genpd.
->>>
->>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
->>> ---
->>>    drivers/base/power/domain.c | 107 +++++++++++++++++++++++++++++-------
->>>    include/linux/pm_domain.h   |   4 ++
->>>    2 files changed, 92 insertions(+), 19 deletions(-)
->>>
->>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->>> index 6d2e9b3406f1..81e02c5f753f 100644
->>> --- a/drivers/base/power/domain.c
->>> +++ b/drivers/base/power/domain.c
->>> @@ -239,28 +239,86 @@ static void genpd_update_accounting(struct generic_pm_domain *genpd)
->>>    static inline void genpd_update_accounting(struct generic_pm_domain *genpd) {}
->>>    #endif
->>> +static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
->>> +					   unsigned int state, int depth);
->>> +
->>>    static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
->>> -					unsigned int state)
->>> +					unsigned int state, int depth)
->>>    {
->>> +	struct generic_pm_domain *master;
->>> +	struct gpd_link *link;
->>> +	unsigned int mstate;
->>>    	int ret;
->>>    	if (!genpd_status_on(genpd))
->>>    		goto out;
->>
->> This check here would mean we only propogate performance state
->> to masters if the genpd is ON?
+>> Wait, I see that the bvec is still a single array per bio. When you said
+>> a table I thought you meant a 2-dimentional array...
 > 
-> Yeah, isn't that what should we do anyway? It is similar to clk-enable
-> etc. Why increase the reference count if the device isn't enabled and
-> isn't using the clock ?
-
-I would think this is analogous to a driver calling clk_set_rate() first and
-then a clk_enable(), which is certainly valid.
-So my question is, if calling a dev_pm_genpd_set_performance_state()
-and then runtime enabling the device would work (and take care of propagating the performance
-state). In my testing I found it does not.
-
+> I mean a new 1-d table A has to be created for multiple bios in one rq,
+> and build it in the following way
 > 
-> Also you can see that I have updated the genpd power-on code to start
-> propagation to make sure we don't miss anything.
+>             rq_for_each_bvec(tmp, rq, rq_iter)
+>                      *A = tmp;
 > 
+> Then you can pass A to iov_iter_bvec() & send().
+> 
+> Given it is over TCP, I guess it should be doable for you to preallocate one
+> 256-bvec table in one page for each request, then sets the max segment size as
+> (unsigned int)-1, and max segment number as 256, the preallocated table
+> should work anytime.
+
+256 bvec table is really a lot to preallocate, especially when its not
+needed, I can easily initialize the bvec_iter on the bio bvec. If this
+involves preallocation of the worst-case than I don't consider this to
+be an improvement.
