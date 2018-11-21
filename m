@@ -2,149 +2,97 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64229C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665D5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B5B21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:06:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B5B21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3457521479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:07:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3457521479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729622AbeKUUjZ (ORCPT
+        id S1728262AbeKUUlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:39:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:14789 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729526AbeKUUjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:39:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 02:05:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,260,1539673200"; 
-   d="scan'208";a="275727057"
-Received: from btwcube1.sh.intel.com ([10.67.104.173])
-  by orsmga005.jf.intel.com with ESMTP; 21 Nov 2018 02:05:32 -0800
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org
-Cc:     wexu@redhat.com, jfreimann@redhat.com, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com
-Subject: [PATCH net-next v3 05/13] virtio_ring: introduce debug helpers
-Date:   Wed, 21 Nov 2018 18:03:22 +0800
-Message-Id: <20181121100330.24846-6-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181121100330.24846-1-tiwei.bie@intel.com>
-References: <20181121100330.24846-1-tiwei.bie@intel.com>
+        Wed, 21 Nov 2018 15:41:39 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:36458 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726147AbeKUUlj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 15:41:39 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wALA4K0F000633;
+        Wed, 21 Nov 2018 04:07:46 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth986m4j-1;
+        Wed, 21 Nov 2018 04:07:45 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id CEEB4611C8B3;
+        Wed, 21 Nov 2018 04:10:29 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 21 Nov 2018
+ 10:07:44 +0000
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wALA7hat014725; Wed,
+ 21 Nov 2018 10:07:44 GMT
+Date:   Wed, 21 Nov 2018 10:07:43 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+CC:     <broonie@kernel.org>, <linus.walleij@linaro.org>,
+        <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: Re: [PATCH] regulator: wm8994: Don't use devres for enable GPIOs
+Message-ID: <20181121100743.GF16508@imbe.wolfsonmicro.main>
+References: <CGME20181120170248epcas1p2a93ec9ff7f74ad4908166590ed548386@epcas1p2.samsung.com>
+ <20181120170152.24652-1-ckeepax@opensource.cirrus.com>
+ <c426f174-dc45-3a25-4c7e-018972c2ceef@samsung.com>
+ <b7648606-b5d1-c42f-cf68-338fbc3cf4df@samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <b7648606-b5d1-c42f-cf68-338fbc3cf4df@samsung.com>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=886 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811210092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce debug helpers for last_add_time update, check and
-invalid. They will be used by packed ring too.
+On Wed, Nov 21, 2018 at 10:26:30AM +0100, Marek Szyprowski wrote:
+> On 2018-11-20 18:25, Marek Szyprowski wrote:
+> > On 2018-11-20 18:01, Charles Keepax wrote:
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 0 PID: 1 at drivers/gpio/gpiolib.c:2421
+> > regulator_ena_gpio_free+0x70/0xa0
+> 
+> I've checked a bit more and it looks that the issue is caused by
+> gpiod_put() in regulator_ena_gpio_free(). I've removed gpiod_put() call
+> from wm8994_ldo_remove(), switched to regulator_register() in
+> wm8994_ldo_probe() and added regulator_unregister() in
+> wm8994_ldo_remove(). This way the warning is gone. If there is any
+> other, simpler way to fix it, let me know. When regulator_register()
+> fails, gpiod will be freed only in some cases, depending what caused
+> failure. It looks that this needs some clarification...
+> 
 
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
- drivers/virtio/virtio_ring.c | 49 ++++++++++++++++++++++++--------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+Ah.. ok, so is perhaps what is happening here that both the
+devm_gpio_get and the regualtor_ena_gpio_free are both trying to
+free the GPIO? I assume the regulator core does this to handle
+the case of shared GPIOs, so presumably the correct fix would
+just be to switch from devm_gpiod_get to just plain gpiod_get and
+not add the additional gpiod_put in wm8994_ldo_remove, as the
+regulator core will handle freeing the GPIO for us.
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 0b97e5c79654..10d407910aa2 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -44,6 +44,26 @@
- 	} while (0)
- #define END_USE(_vq) \
- 	do { BUG_ON(!(_vq)->in_use); (_vq)->in_use = 0; } while(0)
-+#define LAST_ADD_TIME_UPDATE(_vq)				\
-+	do {							\
-+		ktime_t now = ktime_get();			\
-+								\
-+		/* No kick or get, with .1 second between?  Warn. */ \
-+		if ((_vq)->last_add_time_valid)			\
-+			WARN_ON(ktime_to_ms(ktime_sub(now,	\
-+				(_vq)->last_add_time)) > 100);	\
-+		(_vq)->last_add_time = now;			\
-+		(_vq)->last_add_time_valid = true;		\
-+	} while (0)
-+#define LAST_ADD_TIME_CHECK(_vq)				\
-+	do {							\
-+		if ((_vq)->last_add_time_valid) {		\
-+			WARN_ON(ktime_to_ms(ktime_sub(ktime_get(), \
-+				      (_vq)->last_add_time)) > 100); \
-+		}						\
-+	} while (0)
-+#define LAST_ADD_TIME_INVALID(_vq)				\
-+	((_vq)->last_add_time_valid = false)
- #else
- #define BAD_RING(_vq, fmt, args...)				\
- 	do {							\
-@@ -53,6 +73,9 @@
- 	} while (0)
- #define START_USE(vq)
- #define END_USE(vq)
-+#define LAST_ADD_TIME_UPDATE(vq)
-+#define LAST_ADD_TIME_CHECK(vq)
-+#define LAST_ADD_TIME_INVALID(vq)
- #endif
- 
- struct vring_desc_state {
-@@ -295,18 +318,7 @@ static inline int virtqueue_add_split(struct virtqueue *_vq,
- 		return -EIO;
- 	}
- 
--#ifdef DEBUG
--	{
--		ktime_t now = ktime_get();
--
--		/* No kick or get, with .1 second between?  Warn. */
--		if (vq->last_add_time_valid)
--			WARN_ON(ktime_to_ms(ktime_sub(now, vq->last_add_time))
--					    > 100);
--		vq->last_add_time = now;
--		vq->last_add_time_valid = true;
--	}
--#endif
-+	LAST_ADD_TIME_UPDATE(vq);
- 
- 	BUG_ON(total_sg == 0);
- 
-@@ -467,13 +479,8 @@ static bool virtqueue_kick_prepare_split(struct virtqueue *_vq)
- 	new = vq->split.avail_idx_shadow;
- 	vq->num_added = 0;
- 
--#ifdef DEBUG
--	if (vq->last_add_time_valid) {
--		WARN_ON(ktime_to_ms(ktime_sub(ktime_get(),
--					      vq->last_add_time)) > 100);
--	}
--	vq->last_add_time_valid = false;
--#endif
-+	LAST_ADD_TIME_CHECK(vq);
-+	LAST_ADD_TIME_INVALID(vq);
- 
- 	if (vq->event) {
- 		needs_kick = vring_need_event(virtio16_to_cpu(_vq->vdev,
-@@ -597,9 +604,7 @@ static void *virtqueue_get_buf_ctx_split(struct virtqueue *_vq,
- 				&vring_used_event(&vq->split.vring),
- 				cpu_to_virtio16(_vq->vdev, vq->last_used_idx));
- 
--#ifdef DEBUG
--	vq->last_add_time_valid = false;
--#endif
-+	LAST_ADD_TIME_INVALID(vq);
- 
- 	END_USE(vq);
- 	return ret;
--- 
-2.14.5
+I will respin the patch and lets see where that gets us to.
 
+Thanks,
+Charles
