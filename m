@@ -2,131 +2,121 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F8BEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CE6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3325B214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:29:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3325B214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C0A021479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:31:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Wjzk0UsN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C0A021479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbeKVBEK (ORCPT
+        id S1730780AbeKVBGU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:04:10 -0500
-Received: from mga12.intel.com ([192.55.52.136]:11655 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728283AbeKVBEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:04:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 06:29:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="110017681"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Nov 2018 06:29:26 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gPTVN-0004HU-En; Wed, 21 Nov 2018 16:29:25 +0200
-Date:   Wed, 21 Nov 2018 16:29:25 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/6] ASoC: Intel: Skylake: stop init/probe if DSP is
- not present
-Message-ID: <20181121142925.GP10650@smile.fi.intel.com>
-References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
- <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120213644.19103-3-pierre-louis.bossart@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 21 Nov 2018 20:06:20 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:44406 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbeKVBGU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:06:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wALEEWWl073172;
+        Wed, 21 Nov 2018 14:29:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=xy7MccKEKYg95kZohZdiR5wZbdk+kdGHER5W08Ahjyo=;
+ b=Wjzk0UsN6BBqHy6tkEukt8nv9s4YXXHv+7rOwjkA6frDw0BZkl5IdaLTGd2nXpBxXoab
+ 4XKjZWO6PXOmB69z+hwoc4SEIYq/fTUWOLuduAMXn8SK2O8MVYqDoUZMfFa/J3K+TOFg
+ Ys0BZMNPQp+y4M69qSwl/srpzcWqDyEjk5iJHKK9SyJHnBAC3yps+cfM4x6myDc+HbFB
+ FCUNLDCXon8N1iOC00hdncX4zbSRiS/Mn444IqRI14X7fhzbHJ4M71i9Ag3jHR633Z10
+ MpZi7NipZunChCjIeIWuB0Gq16abZggbMJFG1YWlzVvx/I6hhEPoEGKHc001POwVgNUQ Bg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2ntadu1uyf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 14:29:50 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wALETnn3003104
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 14:29:49 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wALETeA7027352;
+        Wed, 21 Nov 2018 14:29:40 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 21 Nov 2018 06:29:39 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181121123513.GF3065@bombadil.infradead.org>
+Date:   Wed, 21 Nov 2018 07:29:37 -0700
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>, rppt@linux.ibm.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
+        Kees Cook <keescook@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
+        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
+        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D13F3DA0-1CD3-43AF-BAF6-5103FE7C4B5A@oracle.com>
+References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+ <20181116182836.GB17088@rapoport-lnx>
+ <CAFqt6zYp0j999WXw9Jus0oZMjADQQkPfso8btv6du6L9CE3PXA@mail.gmail.com>
+ <20181117143742.GB7861@bombadil.infradead.org>
+ <CAFqt6zbOWX5LUTWwoGDJsGdf+pTR6N1yTPVxyr1W3-6Fte39ww@mail.gmail.com>
+ <833B5050-DEF6-44A0-9832-276F86671212@oracle.com>
+ <20181121123513.GF3065@bombadil.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9083 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=618
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811210126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 03:36:40PM -0600, Pierre-Louis Bossart wrote:
-> Check immediately if the DSP can be found, bail and avoid doing inits
-> to enable legacy fallback without delay.
 
-It does slightly more than described. Please do either remove unrelated changes, or fill the gap in the commit message. In the latter case it may require to split patch to two.
 
-> 
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  sound/soc/intel/skylake/skl.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-> index df36b8fe6d5e..1d7146773d19 100644
-> --- a/sound/soc/intel/skylake/skl.c
-> +++ b/sound/soc/intel/skylake/skl.c
-> @@ -931,6 +931,12 @@ static int skl_first_init(struct hdac_bus *bus)
->  
->  	snd_hdac_bus_parse_capabilities(bus);
->  
-> +	/* check if dsp is there */
-> +	if (!bus->ppcap) {
-> +		dev_err(bus->dev, "bus ppcap not set, DSP not present?\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	if (skl_acquire_irq(bus, 0) < 0)
->  		return -EBUSY;
->  
-> @@ -940,23 +946,25 @@ static int skl_first_init(struct hdac_bus *bus)
->  	gcap = snd_hdac_chip_readw(bus, GCAP);
->  	dev_dbg(bus->dev, "chipset global capabilities = 0x%x\n", gcap);
->  
-> -	/* allow 64bit DMA address if supported by H/W */
-> -	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
-> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
-> -	} else {
-> -		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
-> -		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
-> -	}
-> -
->  	/* read number of streams from GCAP register */
->  	cp_streams = (gcap >> 8) & 0x0f;
->  	pb_streams = (gcap >> 12) & 0x0f;
->  
-> -	if (!pb_streams && !cp_streams)
-> +	if (!pb_streams && !cp_streams) {
-> +		dev_err(bus->dev, "no streams found in GCAP definitions?\n");
->  		return -EIO;
-> +	}
->  
->  	bus->num_streams = cp_streams + pb_streams;
->  
-> +	/* allow 64bit DMA address if supported by H/W */
-> +	if (!dma_set_mask(bus->dev, DMA_BIT_MASK(64))) {
-> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(64));
-> +	} else {
-> +		dma_set_mask(bus->dev, DMA_BIT_MASK(32));
-> +		dma_set_coherent_mask(bus->dev, DMA_BIT_MASK(32));
-> +	}
-> +
->  	/* initialize streams */
->  	snd_hdac_ext_stream_init_all
->  		(bus, 0, cp_streams, SNDRV_PCM_STREAM_CAPTURE);
-> -- 
-> 2.17.1
-> 
+> On Nov 21, 2018, at 5:35 AM, Matthew Wilcox <willy@infradead.org> =
+wrote:
+>=20
+> It's probably better to be more explicit and answer Randy's question:
+>=20
+> * If we fail to insert any page into the vma, the function will return
+> * immediately leaving any previously-inserted pages present.  Callers
+> * from the mmap handler may immediately return the error as their
+> * caller will destroy the vma, removing any successfully-inserted =
+pages.
+> * Other callers should make their own arrangements for calling =
+unmap_region().
 
--- 
-With Best Regards,
-Andy Shevchenko
+That works for me as well.
 
 
