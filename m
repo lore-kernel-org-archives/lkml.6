@@ -1,89 +1,116 @@
 Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GUARANTEED_100_PERCENT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C218BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7866EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:32:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89396214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:31:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B09A20878
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:32:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iHvfIKmN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89396214C4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaEXx/0s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B09A20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389629AbeKVHHs (ORCPT
+        id S2389641AbeKVHIU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:07:48 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeKVHHs (ORCPT
+        Thu, 22 Nov 2018 02:08:20 -0500
+Received: from mail-wm1-f43.google.com ([209.85.128.43]:52331 "EHLO
+        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeKVHIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:07:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=045HICJJn4lFtl8ezh0YLS2Wnlr4WooCucz847EazK4=; b=iHvfIKmNxp9JxGQV46iWtPeoV
-        ks9+VAq/hKX4fdWsGRx5c6Omifd4qhqaUqT0iy7bfmrA/vdgVHGjvUa/0XTvD5UrjCU+6d6pnDapb
-        5uExaBY25Lbkl7OirjCho6dKZTLNOYcIKLjycP85KLS0tSz3sv0ffNjimfgwuBKPXZ1Tf+yAY89Yx
-        AhiYuPehKZebl+pipBdWPuTcMpuOCU/nppIUQ8YdTRB7qkJKbuGiqyNIi8vBT+VPCd/Se/TFHnBQy
-        EsG82N+3pNAwmYHlKgafhm2d7nEIHOXji8XT4oLZvTLmBGLl9gYI5c+kbYPW4S43DDCmpyS82dGmW
-        jtioCZoyQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gPZA6-0002zC-I2; Wed, 21 Nov 2018 20:31:50 +0000
-Date:   Wed, 21 Nov 2018 12:31:50 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        timmurray@google.com, primiano@google.com, joelaf@google.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
-        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
-        Prashant Dhamdhere <pdhamdhe@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Michal Hocko <mhocko@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH] Add /proc/pid_generation
-Message-ID: <20181121203150.GK3065@bombadil.infradead.org>
-References: <20181121201452.77173-1-dancol@google.com>
+        Thu, 22 Nov 2018 02:08:19 -0500
+Received: by mail-wm1-f43.google.com with SMTP id r11-v6so6803668wmb.2;
+        Wed, 21 Nov 2018 12:32:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ZDNpzCU+EsoDZ857ASMZVtKmYhKP1SV8EHH5PU77BnA=;
+        b=CaEXx/0s54wenJ3aXKIF4vsOW607ou6sWUY39bP3+6IzFW1wautX7KmX85Y+9UBo/h
+         brBHuW3GkeKTKGdz48m64wETxY+GRFsNNKYnpus3pgNkawTQw12Uxoz3uj6/PYIV1zHd
+         asTZRqa9jOLZ+GibrUueUUGvpcdrFGPNuYypVXX6iHnjiOz/U2roJ5GXaRxTuYAmyCGe
+         nYfCImNWHWb1bXLOiIFGjYMm9Hp30MFKJ1N0flfqbJykxYGDre0xARHpwYPBVGnSNV61
+         QRHp44PdPRvduqCH+JbEtSiHWR5clYiyy3UYHGO2QxEZu/FNROV+SXu4/NvswWHJqGv8
+         bOkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZDNpzCU+EsoDZ857ASMZVtKmYhKP1SV8EHH5PU77BnA=;
+        b=rlli2GS7Zb+AO6esjRqaMHntQMMUethubLnxUsxfOgQf5IB+XO3ZJeFLjjmqtBWH7x
+         OdOshkOHz7KzWrC4VtaOhDu3JUF1N0hsCIUVy4qF2YqjY8LCVc6xVLU0dGl/DKKIRPXW
+         T4QuEkGQeDS1m5ryjOUATdyG27NjaBQ+6CSGzPDzwoP+ZnsNB5zXEAXmYqh69cEBcVso
+         TAPExwL2Qg4DV8yh/34Y16QazT3CYc9LGYyqHcPN9QuzvSEgS9e5OToWjXuemE7TABke
+         OBmOpqFTQbC6uon9N3U3AGu/8hihbAXMY4mnK4hwD4ygz8Ure07SNa3swnsHqyoNxsrZ
+         LdtQ==
+X-Gm-Message-State: AGRZ1gIKSaJHKPZIwh+ha5qegDL3tkLVIQqd5a3ProzpWFWUmWz2zV1s
+        J/sxsccfabg5Q5Z5dvMTwzc=
+X-Google-Smtp-Source: AJdET5eesM8OE/Negg9pL8qkkO/S45J9dpFYbE5PKjaDxszo8/zXj2EO9vckIszBou8cQGEaOAwjDQ==
+X-Received: by 2002:a1c:cf0d:: with SMTP id f13mr6971752wmg.70.1542832346658;
+        Wed, 21 Nov 2018 12:32:26 -0800 (PST)
+Received: from ?IPv6:2003:ea:8bcf:e300:14d:188e:adb0:9ba6? (p200300EA8BCFE300014D188EADB09BA6.dip0.t-ipconnect.de. [2003:ea:8bcf:e300:14d:188e:adb0:9ba6])
+        by smtp.googlemail.com with ESMTPSA id z8sm29546270wrr.52.2018.11.21.12.32.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 12:32:26 -0800 (PST)
+Subject: Re: Issue with RTL8111 NIC after upgrade to kernel 4.19
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Norbert Jurkeit <norbert.jurkeit@web.de>, nic_swsd@realtek.com,
+        Florian Fainelli <f.fainelli@gmail.com>, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        michael.wiktowy@gmail.com, jcline@redhat.com,
+        marc.c.dionne@gmail.com
+References: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de>
+ <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
+ <20181121202034.GA10697@lunn.ch>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <eda84d0b-2d9f-07ae-34a1-767bc5200964@gmail.com>
+Date:   Wed, 21 Nov 2018 21:32:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121201452.77173-1-dancol@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181121202034.GA10697@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 12:14:44PM -0800, Daniel Colascione wrote:
-> This change adds a per-pid-namespace 64-bit generation number,
-> incremented on PID rollover, and exposes it via a new proc file
-> /proc/pid_generation. By examining this file before and after /proc
-> enumeration, user code can detect the potential reuse of a PID and
-> restart the task enumeration process, repeating until it gets a
-> coherent snapshot.
+On 21.11.2018 21:20, Andrew Lunn wrote:
+>> request_module() is supposed to be synchronous, however after some
+>> reading this may not be 100% guaranteed. Maybe the module init
+>> function on some systems isn't finished yet when request_module()
+>> returns. As a result the genphy driver may be used instead of
+>> the PHY version-specific driver.
 > 
-> PID rollover ought to be rare, so in practice, scan repetitions will
-> be rare.
+> Hi Heiner
+> 
+> That would be true for all PHYs i think. We would of noticed this
+> problem with other systems using other PHY drivers.
+> 
+> 	Andrew
+> 
+It could be a timing issue affecting certain systems only. At least
+for now I don't have a good explanation why loading the module via
+request_module() and loading it upfront manually makes a difference.
 
-Then why does it need to be 64-bit?
+One affected user just reported the PHY to be a RTL8211B. This is
+what I expected, because this PHY crashes when writing to the MMD
+registers (the MMD registers are used otherwise by this PHY).
+See also commit 0231b1a074c6 ("net: phy: realtek: Use the dummy
+stubs for MMD register access for rtl8211b").
+
+Let's see whether the other affected systems use the same PHY
+version.
+
+Heiner
+
