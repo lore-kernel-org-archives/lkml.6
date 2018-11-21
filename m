@@ -2,212 +2,106 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4F4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21716C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79C5A20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C5A20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D90A6214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90A6214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeKUWv6 (ORCPT
+        id S1730152AbeKUWwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:51:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48728 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727094AbeKUWv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:51:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AA0935DC;
-        Wed, 21 Nov 2018 04:17:48 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A9F2C3F5A0;
-        Wed, 21 Nov 2018 04:17:46 -0800 (PST)
-Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
-To:     Christoffer Dall <christoffer.dall@arm.com>, peng.hao2@zte.com.cn
-Cc:     marc.zyngier@arm.com, andre.przywara@arm.com,
-        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
-        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
-        linux-arm-kernel@lists.infradead.org
-References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
- <201811211656540883310@zte.com.cn>
- <20181121110620.GC18678@e113682-lin.lund.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
-Date:   Wed, 21 Nov 2018 12:17:45 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 21 Nov 2018 17:52:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47400 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727094AbeKUWwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:52:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CEFD7ADED;
+        Wed, 21 Nov 2018 12:17:52 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 13:17:51 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 02/12] livepatch: Helper macros to define livepatch
+ structures
+In-Reply-To: <20181024112822.tam6bal3hnrrgj5m@pathway.suse.cz>
+Message-ID: <alpine.LSU.2.21.1811211316200.26999@pobox.suse.cz>
+References: <20181015123713.25868-1-pmladek@suse.com> <20181015123713.25868-3-pmladek@suse.com> <20181017181756.cy65ujygmf3ulmiz@treble> <20181018111153.qcmvidttifi57u45@pathway.suse.cz> <20181018125824.ms5zovmsnikv3bgt@treble>
+ <20181024112822.tam6bal3hnrrgj5m@pathway.suse.cz>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181121110620.GC18678@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 24 Oct 2018, Petr Mladek wrote:
 
-
-On 21/11/18 11:06, Christoffer Dall wrote:
-> Hi,
+> On Thu 2018-10-18 07:58:24, Josh Poimboeuf wrote:
+> > On Thu, Oct 18, 2018 at 01:11:53PM +0200, Petr Mladek wrote:
+> > > On Wed 2018-10-17 13:17:56, Josh Poimboeuf wrote:
+> > > > On Mon, Oct 15, 2018 at 02:37:03PM +0200, Petr Mladek wrote:
+> > > > > The definition of struct klp_func might be a bit confusing.
+> > > > > The original function is defined by name as a string.
+> > > > > The new function is defined by name as a function pointer
+> > > > > casted to unsigned long.
+> > > > > 
+> > > > > This patch adds helper macros that hide the different types.
+> > > > > The functions are defined just by the name. For example:
+> > > > 
+> > > > On one hand, these macros are kind of nice, because they do the function
+> > > > pointer casting for the user.
+> > > > 
+> > > > On the other hand, they hide the field names, which hurts readability a
+> > > > bit.  For example, it would be easy to accidentally assign the wrong
+> > > > callback function.
+> > > 
+> > > I am not a big fan of the macros either.
+> > > 
+> > > 
+> > > > Also, it's unfortunate that these macros are needed in the first place.
+> > > > 
+> > > > What if we just change new_addr (and old_addr) to be 'void *'?  Then the
+> > > > macros wouldn't be as useful, and we could just get rid of them.
+> > > 
+> > > Hmm, I wonder if any change make sense then. The above proposal might
+> > > just exchange one confusion with another one:
+> > > 
+> > >    + I would expect that a variable called addr is of the type
+> > >      unsigned long
+> > > 
+> > >    + we would need casting when calling ftrace API
+> > > 
+> > >    + .new_addr = function_xxx looks a bit weird and it will
+> > >      be used many times in all livepatch sources.
+> > 
+> > Fair points.  Instead of changing new_func to new_addr, how about we
+> > leave it alone, and instead change 'unsigned long old_addr' to 'void
+> > *old_func'?
+> > 
+> > That would give us consistent naming internally, while making the
+> > external interface more sensible and cast-free.
+> > 
+> > We'd still have to cast when passing to the ftrace API, but IMO it would
+> > be worth it.
 > 
-> On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
->>> On 19/11/2018 09:10, Mark Rutland wrote:
->>>> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
->>>>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
->>>>>>>> Hi,
->>>>>>>>> When virtual machine starts, hang up.
->>>>>>>>
->>>>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
->>>>>>>> interrupt?
->>>>>>>>
->>>>>>>>> The kernel version of guest
->>>>>>>>> is 4.16. Host support vgic_v3.
->>>>>>>>
->>>>>>>> Your host kernel is something recent, I guess?
->>>>>>>>
->>>>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
->>>>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
->>>>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
->>>>>>>>> correctly, so group is not set.
->>>>>>>>
->>>>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
->>>>>>>> version?) or some other userland tool?
->>>>>>>>
->>>>>>>
->>>>>>> QEMU emulator version 3.0.50 .
->>>>>>>
->>>>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
->>>>>>>>> time.
->>>>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
->>>>>>>>> interrupt injection failed.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
->>>>>>>>> ---
->>>>>>>>>    virt/kvm/arm/vgic/vgic-v3.c | 2 +-
->>>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>>>>
->>>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>> index 9c0dd23..d101000 100644
->>>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
->>>>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
->>>>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
->>>>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
->>>>>>>>>
->>>>>>>>> -    if (irq->group)
->>>>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
->>>>>>>>
->>>>>>>> This is not the right fix, not only because it basically reverts the
->>>>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
->>>>>>>> their configured group).
->>>>>>>>
->>>>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
->>>>>>>> before dist->vgic_model is set, also what value it has?
->>>>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
->>>>>>>>
->>>>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
->>>>>>>    If the interrupt comes at this time, the interrupt injection fails.
->>>>>>
->>>>>> Does that mean that the guest is configuring its interrupts as Group0?
->>>>>> That sounds wrong, Linux should configure all it's interrupts as
->>>>>> non-secure group1.
->>>>>
->>>>> no, I think that uefi dose this, not linux.
->>>>> 1. kvm_vgic_vcpu_init
->>>>> 2. vgic_create
->>>>> 3. kvm_vgic_dist_init
->>>>> 4.vgic_mmio_write_group: uefi as guest, write group=0
->>>>> 5.vgic_mmio_write_group: linux as guest, write group=1
->>>>
->>>> Is this the same issue fixed by EDK2 commit:
->>>>
->>>> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
->>>>
->>>> ... where EDK2 would try to use IAR0 rather than IAR1?
->>>>
->>>> The commit messages notes this lead to a boot-time hang.
->>>
->>> I managed to trigger an issue with a really old EFI implementation that
->>> doesn't configure its interrupts as Group1, and yet tries to ACK its
->>> interrupts using the Group1 accessor. Guess what? It is not going to work.
->>>
->>> Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
->>> to be the fix (I only assume it does, I haven't actually checked). A
->>> recent build, as found in Debian Buster, works perfectly (tested with
->>> both QEMU v2.12 and tip of tree).
->>>
->>> Now, I really don't get what you're saying about Linux not getting
->>> interrupts. How do you get to booting Linux if EFI is not making any
->>> forward progress? Are you trying them independently?
->>>
->> I start linux with bypassing uefi, the print info is the same.
->> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
->> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
->> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
->> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
->> the command line is like this:
->> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
->>
->> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
-> 
-> Could you try the following patch:
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
-> index c0c0b88af1d5..6fa858c7a5a6 100644
-> --- a/virt/kvm/arm/vgic/vgic-init.c
-> +++ b/virt/kvm/arm/vgic/vgic-init.c
-> @@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
->   			irq->config = VGIC_CONFIG_LEVEL;
->   		}
->   
-> -		/*
-> -		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
-> -		 * so we always know the emulation type at this point as it's
-> -		 * either explicitly configured as GICv3, or explicitly
-> -		 * configured as GICv2, or not configured yet which also
-> -		 * implies GICv2.
-> -		 */
->   		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
->   			irq->group = 1;
->   		else
-> @@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
->   	if (ret)
->   		goto out;
->   
-> +	/* Initialize groups on CPUs created before the VGIC type was known */
-> +	kvm_for_each_vcpu(i, vcpu, kvm) {
-> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
-> +
-> +		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
-> +			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
-> +			irq->group = 1;
-> +		}
-> +	}
-> +
->   	if (vgic_has_its(kvm)) {
->   		ret = vgic_v4_init(kvm);
->   		if (ret)
-> 
-> 
+> I am fine with this. I will do this in v14 unless anyone complains ;-)
 
-If the value of dist->vgic_model is not properly initialized at the time 
-we call kvm_vgic_vcpu_init is call, won't we still overwrite the 
-irq->group when we get there? (I still haven't seen why we could 
-consider dist->vgic_model is initialized at that point).
+I agree. I don't like the change from 1/12 much as it exposes casting to 
+user. Macros introduced here do not make any better and I go along with 
+Josh.
 
-Shouldn't we do the irq->group initialization somewhere in 
-kvm_arch_vcpu_ioctl_vcpu_init? (with some vgic_* function to encapsulate 
-it of course). At that point I believe we know that dist->vgic_model is 
-initialized.
-
-Cheers,
-
--- 
-Julien Thierry
+Miroslav
