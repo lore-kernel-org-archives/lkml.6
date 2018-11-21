@@ -2,33 +2,33 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7936C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB65C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A28F20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A28F20989
+	by mail.kernel.org (Postfix) with ESMTP id 17BDC20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:14:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BDC20989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729929AbeKUUsj (ORCPT
+        id S1729943AbeKUUsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:48:39 -0500
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:48981 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729688AbeKUUsI (ORCPT
+        Wed, 21 Nov 2018 15:48:46 -0500
+Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:36514 "EHLO
+        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729661AbeKUUsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:48:08 -0500
+        Wed, 21 Nov 2018 15:48:06 -0500
 Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id CFAE41C28AB
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:14:15 +0000 (GMT)
-Received: (qmail 19936 invoked from network); 21 Nov 2018 10:14:15 -0000
+        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id F178EB8709
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:14:14 +0000 (GMT)
+Received: (qmail 19847 invoked from network); 21 Nov 2018 10:14:14 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.229.69])
-  by 81.17.254.9 with ESMTPA; 21 Nov 2018 10:14:15 -0000
+  by 81.17.254.9 with ESMTPA; 21 Nov 2018 10:14:14 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     Linux-MM <linux-mm@kvack.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -39,557 +39,121 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Michal Hocko <mhocko@kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 4/4] mm: Stall movable allocations until kswapd progresses during serious external fragmentation event
-Date:   Wed, 21 Nov 2018 10:14:14 +0000
-Message-Id: <20181121101414.21301-5-mgorman@techsingularity.net>
+Subject: [PATCH 0/4] Fragmentation avoidance improvements v4
+Date:   Wed, 21 Nov 2018 10:14:10 +0000
+Message-Id: <20181121101414.21301-1-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20181121101414.21301-1-mgorman@techsingularity.net>
-References: <20181121101414.21301-1-mgorman@techsingularity.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An event that potentially causes external fragmentation problems has
-already been described but there are degrees of severity.  A "serious"
-event is defined as one that steals a contiguous range of pages of an order
-lower than fragment_stall_order (PAGE_ALLOC_COSTLY_ORDER by default). If a
-movable allocation request that is allowed to sleep needs to steal a small
-block then it schedules until kswapd makes progress or a timeout passes.
-The watermarks are also boosted slightly faster so that kswapd makes
-greater effort to reclaim enough pages to avoid the fragmentation event.
+No major change from v3 really, mostly resending to see if there is any
+review reaction. It's rebased but a partial test indicated that the
+behaviour is similar to the previous baseline
 
-This stall is not guaranteed to avoid serious fragmentation events.
-If memory pressure is high enough, the pages freed by kswapd may be
-reallocated or the free pages may not be in pageblocks that contain
-only movable pages. Furthermore an allocation request that cannot stall
-(e.g. atomic allocations) or unmovable/reclaimable allocations will still
-proceed without stalling.
+Changelog since v3
+o Rebase to 4.20-rc3
+o Remove a stupid warning from the last patch
 
-The worst-case scenario for stalling is a combination of both high memory
-pressure where kswapd is having trouble keeping free pages over the
-pfmemalloc_reserve and movable allocations are fragmenting memory. In this
-case, an allocation request may sleep for longer. There are both vmstats
-to identify stalls are happening and a tracepoint to quantify what the
-stall durations are. Note that the granularity of the stall detection is
-a jiffy so the delay accounting is not precise.
+Changelog since v2
+o Drop patch 5 as it was borderline
+o Decrease timeout when stalling on fragmentation events
 
-1-socket Skylake machine
-config-global-dhp__workload_thpfioscale XFS (no special madvise)
-4 fio threads, 1 THP allocating thread
---------------------------------------
+Changelog since v1
+o Rebase to v4.20-rc1 for the THP __GFP_THISNODE patch in particular
+o Add tracepoint to record fragmentation stall durations
+o Add vmstat event to record that a fragmentation stall occurred
+o Stalls now alter watermark boosting
+o Stalls occur only when the allocation is about to fail
 
-4.20-rc1 extfrag events < order 9:  1023463
-4.20-rc1+patch:                      358574 (65% reduction)
-4.20-rc1+patch1-3:                    19274 (98% reduction)
-4.20-rc1+patch1-4:                     1094 (99.9% reduction)
+It has been noted before that fragmentation avoidance (aka
+anti-fragmentation) is not perfect. Given sufficient time or an adverse
+workload, memory gets fragmented and the long-term success of high-order
+allocations degrades. This series defines an adverse workload, a definition
+of external fragmentation events (including serious) ones and a series
+that reduces the level of those fragmentation events.
 
-                                   4.20.0-rc1             4.20.0-rc1
-                                   boost-v3r1             stall-v3r1
-Amean     fault-base-1      659.85 (   0.00%)      658.74 (   0.17%)
-Amean     fault-huge-1      172.19 (   0.00%)      168.00 (   2.43%)
+The details of the workload and the consequences are described in more
+detail in the changelogs. However, from patch 1, this is a high-level
+summary of the adverse workload. The exact details are found in the
+mmtests implementation.
 
-thpfioscale Percentage Faults Huge
-                              4.20.0-rc1             4.20.0-rc1
-                              boost-v3r1             stall-v3r1
-Percentage huge-1        1.68 (   0.00%)        0.88 ( -47.52%)
+The broad details of the workload are as follows;
 
-Fragmentation events are now reduced to negligible levels.
+1. Create an XFS filesystem (not specified in the configuration but done
+   as part of the testing for this patch)
+2. Start 4 fio threads that write a number of 64K files inefficiently.
+   Inefficiently means that files are created on first access and not
+   created in advance (fio parameterr create_on_open=1) and fallocate
+   is not used (fallocate=none). With multiple IO issuers this creates
+   a mix of slab and page cache allocations over time. The total size
+   of the files is 150% physical memory so that the slabs and page cache
+   pages get mixed
+3. Warm up a number of fio read-only threads accessing the same files
+   created in step 2. This part runs for the same length of time it
+   took to create the files. It'll fault back in old data and further
+   interleave slab and page cache allocations. As it's now low on
+   memory due to step 2, fragmentation occurs as pageblocks get
+   stolen.
+4. While step 3 is still running, start a process that tries to allocate
+   75% of memory as huge pages with a number of threads. The number of
+   threads is based on a (NR_CPUS_SOCKET - NR_FIO_THREADS)/4 to avoid THP
+   threads contending with fio, any other threads or forcing cross-NUMA
+   scheduling. Note that the test has not been used on a machine with less
+   than 8 cores. The benchmark records whether huge pages were allocated
+   and what the fault latency was in microseconds
+5. Measure the number of events potentially causing external fragmentation,
+   the fault latency and the huge page allocation success rate.
+6. Cleanup
 
-The latencies and allocation success rates are roughly similar.  Over the
-course of 16 minutes, there were 52 stalls due to fragmentation avoidance
-with a total stall time of 0.2 seconds.
+Overall the series reduces external fragmentation causing events by over 95%
+on 1 and 2 socket machines, which in turn impacts high-order allocation
+success rates over the long term. There are differences in latencies and
+high-order allocation success rates. Latencies are a mixed bag as they
+are vulnerable to exact system state and whether allocations succeeded so
+they are treated as a secondary metric.
 
-1-socket Skylake machine
-global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
------------------------------------------------------------------
+Patch 1 uses lower zones if they are populated and have free memory
+	instead of fragmenting a higher zone. It's special cased to
+	handle a Normal->DMA32 fallback with the reasons explained
+	in the changelog.
 
-4.20-rc1 extfrag events < order 9:  342549
-4.20-rc1+patch:                     337890 ( 1% reduction)
-4.20-rc1+patch1-3:                   12801 (96% reduction)
-4.20-rc1+patch1-4:                    1112 (99.7% reduction)
+Patch 2+3 boosts watermarks temporarily when an external fragmentation
+	event occurs. kswapd wakes to reclaim a small amount of old memory
+	and then wakes kcompactd on completion to recover the system
+	slightly. This introduces some overhead in the slowpath. The level
+	of boosting can be tuned or disabled depending on the tolerance
+	for fragmentation vs allocation latency.
 
-                                   4.20.0-rc1             4.20.0-rc1
-                                   boost-v3r1             stall-v3r1
-Amean     fault-base-1     1578.91 (   0.00%)     1647.00 (  -4.31%)
-Amean     fault-huge-1     1090.23 (   0.00%)      559.31 *  48.70%*
+Patch 4 is more heavy handed. In the event of a movable allocation
+	request that can stall, it'll wake kswapd as in patch 3.  However,
+	if the expected fragmentation event is serious then the request
+	will stall briefly on pfmemalloc_wait until kswapd completes
+	light reclaim work and retry the allocation without stalling.
+	This can avoid the fragmentation event entirely in some cases.
+	The definition of a serious fragmentation event can be tuned
+	or disabled.
 
-                              4.20.0-rc1             4.20.0-rc1
-                              boost-v3r1             stall-v3r1
-Percentage huge-1       82.59 (   0.00%)       99.98 (  21.05%)
+The bulk of the improvement in fragmentation avoidance is from patches
+1-3 (94-97% reduction in fragmentation events for an adverse workload on
+both a 1-socket and 2-socket machine). The primary benefit of patch 4 is
+the increase in THP success rates and the fact it reduces fragmentation
+events to almost negligible levels with the option of eliminating them.
 
-The fragmentation events were reduced and the latencies are good. This
-is a big difference between v2 and v3 of the series as v2 had stalls
-that reached the timeout of HZ/10 where as a timeout of HZ/50 has better
-latencies without compromising on fragmentation events or allocation success rates.
+ Documentation/sysctl/vm.txt   |  42 ++++++++
+ include/linux/mm.h            |   2 +
+ include/linux/mmzone.h        |  14 ++-
+ include/linux/vm_event_item.h |   1 +
+ include/trace/events/kmem.h   |  21 ++++
+ kernel/sysctl.c               |  18 ++++
+ mm/compaction.c               |   2 +-
+ mm/internal.h                 |  14 ++-
+ mm/page_alloc.c               | 238 ++++++++++++++++++++++++++++++++++++++----
+ mm/vmscan.c                   | 123 ++++++++++++++++++++--
+ mm/vmstat.c                   |   1 +
+ 11 files changed, 436 insertions(+), 40 deletions(-)
 
-There were 219 stalls over the course of 16 minutes for a total stall
-time of roughly 1 second (as opposed to 11 seconds with HZ/10). The
-distribution of stalls is as follows
-
-    209 4000
-      1 8000
-      9 20000
-
-This shows the majority of stalls were for just one jiffie.
-
-2-socket Haswell machine
-config-global-dhp__workload_thpfioscale XFS (no special madvise)
-4 fio threads, 5 THP allocating threads
-----------------------------------------------------------------
-
-4.20-rc1 extfrag events < order 9:  209820
-4.20-rc1+patch:                     185923 (11% reduction)
-4.20-rc1+patch1-3:                   11240 (95% reduction)
-4.20-rc1+patch1-4:                    8709 (96% reduction)
-
-                                   4.20.0-rc1             4.20.0-rc1
-                                   boost-v3r1             stall-v3r1
-Amean     fault-base-5     1395.28 (   0.00%)     1335.23 (   4.30%)
-Amean     fault-huge-5      539.69 (   0.00%)      614.88 * -13.93%*
-
-                              4.20.0-rc1             4.20.0-rc1
-                              boost-v3r1             stall-v3r1
-Percentage huge-5        0.53 (   0.00%)        2.16 ( 306.25%)
-
-There is a slight reduction in fragmentation events but it's slight
-enough that it may be due to luck.  There is a small increase in latencies
-which is partially offset by a slight increase in THP allocation success
-rates. There were 65 stalls over the course of 63 minutes with stall time
-of a total of roughly 0.2 seconds.
-
-2-socket Haswell machine
-global-dhp__workload_thpfioscale-madvhugepage-xfs (MADV_HUGEPAGE)
------------------------------------------------------------------
-
-4.20-rc1 extfrag events < order 9: 167464
-4.20-rc1+patch:                    130081 (22% reduction)
-4.20-rc1+patch1-3:                  12057 (92% reduction)
-4.20-rc1+patch1-4:                  11494 (93% reduction)
-
-thpfioscale Fault Latencies
-                                   4.20.0-rc1             4.20.0-rc1
-                                   boost-v3r1             stall-v3r1
-Amean     fault-base-5     8691.83 (   0.00%)     7380.80 (  15.08%)
-Amean     fault-huge-5     2899.83 (   0.00%)     4066.94 * -40.25%*
-
-                              4.20.0-rc1             4.20.0-rc1
-                              boost-v3r1             stall-v3r1
-Percentage huge-5       95.55 (   0.00%)       98.98 (   3.59%)
-
-The fragmentation events are reduced and while there is some wobble on
-the latency, the success rate is near 100% while under heavy pressure.
-There were 2016 stalls over the course of 85 minutes with a total stall
-time of roughly 8 seconds.
-
-This patch does reduce fragmentation rates overall but it's not free
-as some allocataions can stall for short periods of time and there
-are knock-on effects to latency when THP allocation success rates are
-higher. While it's within acceptable limits for the adverse test case,
-there may be other workloads that cannot tolerate the stalls. If this
-occurs, it can be tuned to disable the feature or more ideally, the test
-case is made available for analysis to see if the stall behaviour can be
-reduced while still limiting the fragmentation events. On the flip-side,
-it has been checked that setting the fragment_stall_order to 9 eliminated
-fragmentation events entirely.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- Documentation/sysctl/vm.txt   | 23 +++++++++++
- include/linux/mm.h            |  1 +
- include/linux/mmzone.h        |  2 +
- include/linux/vm_event_item.h |  1 +
- include/trace/events/kmem.h   | 21 ++++++++++
- kernel/sysctl.c               | 10 +++++
- mm/internal.h                 |  1 +
- mm/page_alloc.c               | 93 +++++++++++++++++++++++++++++++++++++------
- mm/vmstat.c                   |  1 +
- 9 files changed, 141 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/sysctl/vm.txt b/Documentation/sysctl/vm.txt
-index 4dff1b75229b..7d4f41bf7902 100644
---- a/Documentation/sysctl/vm.txt
-+++ b/Documentation/sysctl/vm.txt
-@@ -31,6 +31,7 @@ files can be found in mm/swap.c.
- - dirty_writeback_centisecs
- - drop_caches
- - extfrag_threshold
-+- fragment_stall_order
- - hugetlb_shm_group
- - laptop_mode
- - legacy_va_layout
-@@ -275,6 +276,28 @@ any throttling.
- 
- ==============================================================
- 
-+fragment_stall_order
-+
-+External fragmentation control is managed on a pageblock level where the
-+page allocator tries to avoid mixing pages of different mobility within page
-+blocks (e.g. order 9 on 64-bit x86). If external fragmentation is perfectly
-+controlled then a THP allocation will often succeed up to the number of
-+movable pageblocks in the system as reported by /proc/pagetypeinfo.
-+
-+When memory is low, the system may have to mix pageblocks and will wake
-+kswapd to try control future fragmentation. fragment_stall_order controls if
-+the allocating task will stall if possible until kswapd makes some progress
-+in preference to fragmenting the system. This incurs a small stall penalty
-+in exchange for future success at allocating huge pages. If the stalls
-+are undesirable and high-order allocations are irrelevant then this can
-+be disabled by writing 0 to the tunable. Writing the pageblock order will
-+strongly (but not perfectly) control external fragmentation.
-+
-+The default will stall for fragmenting allocations smaller than the
-+PAGE_ALLOC_COSTLY_ORDER (defined as order-3 at the time of writing).
-+
-+==============================================================
-+
- hugetlb_shm_group
- 
- hugetlb_shm_group contains group id that is allowed to create SysV
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 2c4c69508413..2b72de790ef9 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2204,6 +2204,7 @@ extern void zone_pcp_reset(struct zone *zone);
- extern int min_free_kbytes;
- extern int watermark_boost_factor;
- extern int watermark_scale_factor;
-+extern int fragment_stall_order;
- 
- /* nommu.c */
- extern atomic_long_t mmap_pages_allocated;
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index d352c1dab486..cffec484ac8a 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -890,6 +890,8 @@ int watermark_boost_factor_sysctl_handler(struct ctl_table *, int,
- 					void __user *, size_t *, loff_t *);
- int watermark_scale_factor_sysctl_handler(struct ctl_table *, int,
- 					void __user *, size_t *, loff_t *);
-+int fragment_stall_order_sysctl_handler(struct ctl_table *, int,
-+					void __user *, size_t *, loff_t *);
- extern int sysctl_lowmem_reserve_ratio[MAX_NR_ZONES];
- int lowmem_reserve_ratio_sysctl_handler(struct ctl_table *, int,
- 					void __user *, size_t *, loff_t *);
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index 47a3441cf4c4..7661abe5236e 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -43,6 +43,7 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		PAGEOUTRUN, PGROTATED,
- 		DROP_PAGECACHE, DROP_SLAB,
- 		OOM_KILL,
-+		FRAGMENTSTALL,
- #ifdef CONFIG_NUMA_BALANCING
- 		NUMA_PTE_UPDATES,
- 		NUMA_HUGE_PTE_UPDATES,
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index eb57e3037deb..caadd8681ac5 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -315,6 +315,27 @@ TRACE_EVENT(mm_page_alloc_extfrag,
- 		__entry->change_ownership)
- );
- 
-+TRACE_EVENT(mm_fragmentation_stall,
-+
-+	TP_PROTO(int nid, unsigned long duration),
-+
-+	TP_ARGS(nid, duration),
-+
-+	TP_STRUCT__entry(
-+		__field(	int,		nid		)
-+		__field(	unsigned long,	duration	)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->nid		= nid;
-+		__entry->duration	= duration
-+	),
-+
-+	TP_printk("nid=%d duration=%lu",
-+		__entry->nid,
-+		__entry->duration)
-+);
-+
- #endif /* _TRACE_KMEM_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 1825f712e73b..eb09c79ddbef 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -126,6 +126,7 @@ static int zero;
- static int __maybe_unused one = 1;
- static int __maybe_unused two = 2;
- static int __maybe_unused four = 4;
-+static int __maybe_unused max_order = MAX_ORDER;
- static unsigned long one_ul = 1;
- static int one_hundred = 100;
- static int one_thousand = 1000;
-@@ -1479,6 +1480,15 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= &one,
- 		.extra2		= &one_thousand,
- 	},
-+	{
-+		.procname	= "fragment_stall_order",
-+		.data		= &fragment_stall_order,
-+		.maxlen		= sizeof(fragment_stall_order),
-+		.mode		= 0644,
-+		.proc_handler	= fragment_stall_order_sysctl_handler,
-+		.extra1		= &zero,
-+		.extra2		= &max_order,
-+	},
- 	{
- 		.procname	= "percpu_pagelist_fraction",
- 		.data		= &percpu_pagelist_fraction,
-diff --git a/mm/internal.h b/mm/internal.h
-index 544355156c92..5506a4596d59 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -489,6 +489,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
- #else
- #define ALLOC_NOFRAGMENT	  0x0
- #endif
-+#define ALLOC_FRAGMENT_STALL	0x200 /* stall if fragmenting heavily */
- 
- enum ttu_flags;
- struct tlbflush_unmap_batch;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 04b29228e9f0..e8b0691e8971 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -265,6 +265,7 @@ int min_free_kbytes = 1024;
- int user_min_free_kbytes = -1;
- int watermark_boost_factor __read_mostly = 15000;
- int watermark_scale_factor = 10;
-+int fragment_stall_order __read_mostly = (PAGE_ALLOC_COSTLY_ORDER + 1);
- 
- static unsigned long nr_kernel_pages __meminitdata;
- static unsigned long nr_all_pages __meminitdata;
-@@ -2130,9 +2131,10 @@ static bool can_steal_fallback(unsigned int order, int start_mt)
- 	return false;
- }
- 
--static inline void boost_watermark(struct zone *zone)
-+static inline void boost_watermark(struct zone *zone, bool fast_boost)
- {
- 	unsigned long max_boost;
-+	unsigned long nr;
- 
- 	if (!watermark_boost_factor)
- 		return;
-@@ -2140,9 +2142,36 @@ static inline void boost_watermark(struct zone *zone)
- 	max_boost = mult_frac(wmark_pages(zone, WMARK_HIGH),
- 			watermark_boost_factor, 10000);
- 	max_boost = max(pageblock_nr_pages, max_boost);
-+	nr = pageblock_nr_pages;
- 
--	zone->watermark_boost = min(zone->watermark_boost + pageblock_nr_pages,
--		max_boost);
-+	/* Scale relative to the MIGRATE_PCPTYPES similar to min_free_kbytes */
-+	if (fast_boost)
-+		nr += pageblock_nr_pages * (MIGRATE_PCPTYPES << 1);
-+
-+	zone->watermark_boost = min(zone->watermark_boost + nr, max_boost);
-+}
-+
-+static void stall_fragmentation(struct zone *pzone)
-+{
-+	DEFINE_WAIT(wait);
-+	long remaining = 0;
-+	long timeout = HZ/50;
-+	pg_data_t *pgdat = pzone->zone_pgdat;
-+
-+	if (current->flags & PF_MEMALLOC)
-+		return;
-+
-+	boost_watermark(pzone, true);
-+	prepare_to_wait(&pgdat->pfmemalloc_wait, &wait, TASK_INTERRUPTIBLE);
-+	if (waitqueue_active(&pgdat->kswapd_wait))
-+		wake_up_interruptible(&pgdat->kswapd_wait);
-+	remaining = schedule_timeout(timeout);
-+	finish_wait(&pgdat->pfmemalloc_wait, &wait);
-+	if (remaining != timeout) {
-+		trace_mm_fragmentation_stall(pgdat->node_id,
-+			jiffies_to_usecs(timeout - remaining));
-+		count_vm_event(FRAGMENTSTALL);
-+	}
- }
- 
- /*
-@@ -2153,8 +2182,9 @@ static inline void boost_watermark(struct zone *zone)
-  * of pages are free or compatible, we can change migratetype of the pageblock
-  * itself, so pages freed in the future will be put on the correct free list.
-  */
--static void steal_suitable_fallback(struct zone *zone, struct page *page,
--					int start_type, bool whole_block)
-+static bool steal_suitable_fallback(struct zone *zone, struct page *page,
-+					int start_type, bool whole_block,
-+					unsigned int alloc_flags)
- {
- 	unsigned int current_order = page_order(page);
- 	struct free_area *area;
-@@ -2181,9 +2211,14 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
- 	 * likelihood of future fallbacks. Wake kswapd now as the node
- 	 * may be balanced overall and kswapd will not wake naturally.
- 	 */
--	boost_watermark(zone);
-+	boost_watermark(zone, false);
- 	wakeup_kswapd(zone, 0, 0, zone_idx(zone));
- 
-+	if ((alloc_flags & ALLOC_FRAGMENT_STALL) &&
-+	    current_order < fragment_stall_order) {
-+		return false;
-+	}
-+
- 	/* We are not allowed to try stealing from the whole block */
- 	if (!whole_block)
- 		goto single_page;
-@@ -2224,11 +2259,12 @@ static void steal_suitable_fallback(struct zone *zone, struct page *page,
- 			page_group_by_mobility_disabled)
- 		set_pageblock_migratetype(page, start_type);
- 
--	return;
-+	return true;
- 
- single_page:
- 	area = &zone->free_area[current_order];
- 	list_move(&page->lru, &area->free_list[start_type]);
-+	return true;
- }
- 
- /*
-@@ -2467,13 +2503,14 @@ __rmqueue_fallback(struct zone *zone, int order, int start_migratetype,
- 	page = list_first_entry(&area->free_list[fallback_mt],
- 							struct page, lru);
- 
--	steal_suitable_fallback(zone, page, start_migratetype, can_steal);
-+	if (!steal_suitable_fallback(zone, page, start_migratetype, can_steal,
-+								alloc_flags))
-+		return false;
- 
- 	trace_mm_page_alloc_extfrag(page, order, current_order,
- 		start_migratetype, fallback_mt);
- 
- 	return true;
--
- }
- 
- /*
-@@ -3340,9 +3377,11 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 						const struct alloc_context *ac)
- {
- 	struct zoneref *z = ac->preferred_zoneref;
-+	struct zone *pzone = z->zone;
- 	struct zone *zone;
- 	struct pglist_data *last_pgdat_dirty_limit = NULL;
- 	bool no_fallback;
-+	bool fragment_stall;
- 
- retry:
- 	/*
-@@ -3350,6 +3389,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 	 * See also __cpuset_node_allowed() comment in kernel/cpuset.c.
- 	 */
- 	no_fallback = alloc_flags & ALLOC_NOFRAGMENT;
-+	fragment_stall = alloc_flags & ALLOC_FRAGMENT_STALL;
-+
- 	for_next_zone_zonelist_nodemask(zone, z, ac->zonelist, ac->high_zoneidx,
- 								ac->nodemask) {
- 		struct page *page;
-@@ -3388,7 +3429,7 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 			}
- 		}
- 
--		if (no_fallback) {
-+		if (no_fallback || fragment_stall) {
- 			int local_nid;
- 
- 			/*
-@@ -3396,9 +3437,12 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 			 * fragmenting fallbacks. Locality is more important
- 			 * than fragmentation avoidance.
- 			 */
--			local_nid = zone_to_nid(ac->preferred_zoneref->zone);
-+			local_nid = zone_to_nid(pzone);
- 			if (zone_to_nid(zone) != local_nid) {
-+				if (fragment_stall)
-+					stall_fragmentation(pzone);
- 				alloc_flags &= ~ALLOC_NOFRAGMENT;
-+				alloc_flags &= ~ALLOC_FRAGMENT_STALL;
- 				goto retry;
- 			}
- 		}
-@@ -3474,8 +3518,12 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 	 * It's possible on a UMA machine to get through all zones that are
- 	 * fragmented. If avoiding fragmentation, reset and try again
- 	 */
--	if (no_fallback) {
-+	if (no_fallback || fragment_stall) {
-+		if (fragment_stall)
-+			stall_fragmentation(pzone);
-+
- 		alloc_flags &= ~ALLOC_NOFRAGMENT;
-+		alloc_flags &= ~ALLOC_FRAGMENT_STALL;
- 		goto retry;
- 	}
- 
-@@ -4186,6 +4234,14 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	 */
- 	alloc_flags = gfp_to_alloc_flags(gfp_mask);
- 
-+	/*
-+	 * Consider stalling on heavy for movable allocations in preference to
-+	 * fragmenting unmovable/reclaimable pageblocks.
-+	 */
-+	if ((gfp_mask & (__GFP_MOVABLE|__GFP_DIRECT_RECLAIM)) ==
-+			(__GFP_MOVABLE|__GFP_DIRECT_RECLAIM))
-+		alloc_flags |= ALLOC_FRAGMENT_STALL;
-+
- 	/*
- 	 * We need to recalculate the starting point for the zonelist iterator
- 	 * because we might have used different nodemask in the fast path, or
-@@ -4207,6 +4263,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
- 	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
- 	if (page)
- 		goto got_pg;
-+	alloc_flags &= ~ALLOC_FRAGMENT_STALL;
- 
- 	/*
- 	 * For costly allocations, try direct compaction first, as it's likely
-@@ -7583,6 +7640,18 @@ int watermark_boost_factor_sysctl_handler(struct ctl_table *table, int write,
- 	return 0;
- }
- 
-+int fragment_stall_order_sysctl_handler(struct ctl_table *table, int write,
-+	void __user *buffer, size_t *length, loff_t *ppos)
-+{
-+	int rc;
-+
-+	rc = proc_dointvec_minmax(table, write, buffer, length, ppos);
-+	if (rc)
-+		return rc;
-+
-+	return 0;
-+}
-+
- int watermark_scale_factor_sysctl_handler(struct ctl_table *table, int write,
- 	void __user *buffer, size_t *length, loff_t *ppos)
- {
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 9c624595e904..6cc7755c6eb1 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1211,6 +1211,7 @@ const char * const vmstat_text[] = {
- 	"drop_pagecache",
- 	"drop_slab",
- 	"oom_kill",
-+	"fragment_stall",
- 
- #ifdef CONFIG_NUMA_BALANCING
- 	"numa_pte_updates",
 -- 
 2.16.4
 
