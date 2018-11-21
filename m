@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE2AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5816C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E78206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B0A2206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jr7Bm6Ve"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E78206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uudMBs0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B0A2206BB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388349AbeKVFot (ORCPT
+        id S2388362AbeKVFou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39422 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:44:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732079AbeKVFor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:44:47 -0500
+        id S2388345AbeKVFot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:44:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4BA1214D9;
-        Wed, 21 Nov 2018 19:09:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E1CB214DB;
+        Wed, 21 Nov 2018 19:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827354;
-        bh=ANklPTjvpm0Y4uIBZvLGDMtEqmQi2yUXZcqZJ+uCtaw=;
+        s=default; t=1542827356;
+        bh=I4LySIWhChNwJWPlIpZcIZvJr7Gdh/V64nff2Z0i51g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jr7Bm6VeWTh/ghusQfIHqoHcusI3oYF6YZUp6yeh4G8uYOX2tQ+vJvmpRombx+15X
-         eA5jJSTOhcOD59sZ5YP63VMWxvfnFZqjwn+/qXS2NoXJUKabOpkVe+NhOsDoZOBgfh
-         ZLso7OKxJ4Tr8R7q3x2yPZxE6ztBa8jWdQw1MdrQ=
+        b=uudMBs0F3ZH3bTrhxEG+jHZ+177TkjAoTK6/RvacAmEgP3LlBtmRbK85FtLwEYNTU
+         j20M2Vdcm65vbBWcnMWhfL8qa2a0hx0yCfuEM8Mu5NunSvMRdnQGoVMbHURxPk+vdG
+         1Nf+cmXix5ZslEIChFkaBdbTa7Dzv/Pfwyerp+8c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "WoodhouseDavid" <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "SchauflerCasey" <casey.schaufler@intel.com>
-Subject: [PATCH 4.14 19/21] Revert "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
-Date:   Wed, 21 Nov 2018 20:07:03 +0100
-Message-Id: <20181121183422.929606585@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 02/21] ibmvnic: fix accelerated VLAN handling
+Date:   Wed, 21 Nov 2018 20:06:46 +0100
+Message-Id: <20181121183422.199098595@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -69,161 +63,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
 
-This reverts commit 8a13906ae519b3ed95cd0fb73f1098b46362f6c4 which is
-commit 53c613fe6349994f023245519265999eed75957f upstream.
+[ Upstream commit e84b47941e15e6666afb8ee8b21d1c3fc1a013af ]
 
-It's not ready for the stable trees as there are major slowdowns
-involved with this patch.
+Don't request tag insertion when it isn't present in outgoing skb.
 
-Reported-by: Jiri Kosina <jkosina@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc:  "WoodhouseDavid" <dwmw@amazon.co.uk>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc:  "SchauflerCasey" <casey.schaufler@intel.com>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/bugs.c |   57 ++++-----------------------------------------
- kernel/cpu.c               |   11 --------
- 2 files changed, 7 insertions(+), 61 deletions(-)
+ drivers/net/ethernet/ibm/ibmvnic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -34,10 +34,12 @@ static void __init spectre_v2_select_mit
- static void __init ssb_select_mitigation(void);
- static void __init l1tf_select_mitigation(void);
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1259,7 +1259,7 @@ static int ibmvnic_xmit(struct sk_buff *
+ 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
+ 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
  
--/* The base value of the SPEC_CTRL MSR that always has to be preserved. */
--u64 x86_spec_ctrl_base;
-+/*
-+ * Our boot-time value of the SPEC_CTRL MSR. We read it once so that any
-+ * writes to SPEC_CTRL contain whatever reserved bits have been set.
-+ */
-+u64 __ro_after_init x86_spec_ctrl_base;
- EXPORT_SYMBOL_GPL(x86_spec_ctrl_base);
--static DEFINE_MUTEX(spec_ctrl_mutex);
- 
- /*
-  * The vendor and possibly platform specific bits which can be modified in
-@@ -321,46 +323,6 @@ static enum spectre_v2_mitigation_cmd __
- 	return cmd;
- }
- 
--static bool stibp_needed(void)
--{
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
--		return false;
--
--	if (!boot_cpu_has(X86_FEATURE_STIBP))
--		return false;
--
--	return true;
--}
--
--static void update_stibp_msr(void *info)
--{
--	wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
--}
--
--void arch_smt_update(void)
--{
--	u64 mask;
--
--	if (!stibp_needed())
--		return;
--
--	mutex_lock(&spec_ctrl_mutex);
--	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
--		mask |= SPEC_CTRL_STIBP;
--	else
--		mask &= ~SPEC_CTRL_STIBP;
--
--	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				cpu_smt_control == CPU_SMT_ENABLED ?
--				"Enabling" : "Disabling");
--		x86_spec_ctrl_base = mask;
--		on_each_cpu(update_stibp_msr, NULL, 1);
--	}
--	mutex_unlock(&spec_ctrl_mutex);
--}
--
- static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
-@@ -460,9 +422,6 @@ specv2_set_mode:
- 		setup_force_cpu_cap(X86_FEATURE_USE_IBRS_FW);
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
+-	if (adapter->vlan_header_insertion) {
++	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
+ 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
+ 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
  	}
--
--	/* Enable STIBP if appropriate */
--	arch_smt_update();
- }
- 
- #undef pr_fmt
-@@ -855,8 +814,6 @@ static ssize_t l1tf_show_state(char *buf
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -871,12 +828,10 @@ static ssize_t cpu_show_common(struct de
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
- 
- 	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
- 			       spectre_v2_module_string());
--		return ret;
- 
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -2045,12 +2045,6 @@ static void cpuhp_online_cpu_device(unsi
- 	kobject_uevent(&dev->kobj, KOBJ_ONLINE);
- }
- 
--/*
-- * Architectures that need SMT-specific errata handling during SMT hotplug
-- * should override this.
-- */
--void __weak arch_smt_update(void) { };
--
- static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- {
- 	int cpu, ret = 0;
-@@ -2077,10 +2071,8 @@ static int cpuhp_smt_disable(enum cpuhp_
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret) {
-+	if (!ret)
- 		cpu_smt_control = ctrlval;
--		arch_smt_update();
--	}
- 	cpu_maps_update_done();
- 	return ret;
- }
-@@ -2091,7 +2083,6 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
--	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
 
 
