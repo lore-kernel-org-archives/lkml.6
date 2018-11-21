@@ -1,144 +1,140 @@
 Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,GUARANTEED_100_PERCENT,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A4BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C138C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1702080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49BF0206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:54:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZIs/Dwy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1702080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o4K0JgNw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BF0206B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389902AbeKVIUg (ORCPT
+        id S2389915AbeKVIaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:20:36 -0500
-Received: from mail-io1-f45.google.com ([209.85.166.45]:45765 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729727AbeKVIUg (ORCPT
+        Thu, 22 Nov 2018 03:30:11 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:34165 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729727AbeKVIaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:20:36 -0500
-Received: by mail-io1-f45.google.com with SMTP id w7so5151522iom.12
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 13:44:28 -0800 (PST)
+        Thu, 22 Nov 2018 03:30:11 -0500
+Received: by mail-ed1-f43.google.com with SMTP id b3so6116930ede.1;
+        Wed, 21 Nov 2018 13:54:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=zvQfOE74+PILfenmuxRflVw0EMeCHeMf/eXJisDTHgs=;
-        b=UZIs/Dwy/GlvrrwJXzHXUb7yVHghrabcwxJZrc/48CCwGQlmMKu9K/1J2HMXDTWsUH
-         lz+8XYn1T+loJGDEMpKFgywEwvGWyqmbjMOPb7qAcStM7vOzbIXWCloECCMQ0g3b7MMs
-         zE1CTy/7wQK7QpSxwgJphIewEicHhDwRlI0L4=
+         :cc;
+        bh=XbLZhKaFrImgSQZp0hI5VXqY5OtZj7kXKOoHxFXUKiI=;
+        b=o4K0JgNwt/H1ZeC6OCaEH1FsOdJglCAhV23BM72OCf4i87CjyyrAxNV0yXmNO8cFVN
+         i2tBjXb3RMdd5ey+KzepVL/2ujye4A2N0hN/AQSee2C3cx1vcQdHLvjD6uNlepskyGDB
+         H9liAHKsUxfD5E7dMKrcvifV3k0FPmQr6uUNvhI1bmptVZG74nNSsjiqdxdC1LOf0Owb
+         m2V0CRmin5En4bOjMlkqlfS8muHyMRHaWjHH0FlO81B31G9ZFrfHOhljcZcZ7mqZPI3p
+         fvwBkGIPAXRDV+cAp6thJkPESwpIkNnbfk73xadAqdImmX6AAmOl2CKtkU5YQPQjx3bL
+         IyDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=zvQfOE74+PILfenmuxRflVw0EMeCHeMf/eXJisDTHgs=;
-        b=WVn1nEbhehnpnBW53KEFV2r4dnT0xde8/Ya9wh9eR/n8x4dVp9eXds8fjqmEl83Bou
-         gkI6jpw1qClTt89JDTql6T3x47/43ewSfugRXRNOwq8LjgL63owhC5QTncEdgk1ZU5sw
-         mYQ37PbYKAoHNzOIZl0M+IN6uab9/MOdzlQbYSb357feWRUGGVS6WQ35qlDGex2VuKhr
-         e80oh6bkt6wQOQFT9r8LYwaHxTkc9YR4U0PCbd3z811VwWdf06ouTMclUeCHbPOju3X8
-         Xlbiz+Al+ZjLGVhe7C3qrBBssYHi4ATSxlNG17hCUF7VRzswhPOyhbdKtL1utSAvWMJ8
-         PnBQ==
-X-Gm-Message-State: AA+aEWY2ccYYWENLc4DnGitUPWYieeQryHXzao0iqfXcygNytO0VUKUw
-        lBenxXCkDtWqhUR92M4uP25TJsP4iiYx35CdKfHXEg==
-X-Google-Smtp-Source: AFSGD/XCppLfdA9hanOWu8KpFTHzgB3rzChYpmL8f4rjDkys0UBgxylePO2f38NUwMyD1+EDCvRcqohZupZYguWxkAs=
-X-Received: by 2002:a6b:5d01:: with SMTP id r1mr5927472iob.170.1542836667412;
- Wed, 21 Nov 2018 13:44:27 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=XbLZhKaFrImgSQZp0hI5VXqY5OtZj7kXKOoHxFXUKiI=;
+        b=eJ8vRqkV2d8LtHMyLdiCaXbu8mcqb6rIKZU3yiB/6ZlK3J98xuq9ohqKCA7CdDUXKC
+         ZHjywcGw5OTQXP/osuJCpb7NhZ1lYxeu1aTzgaT/ScsIXXswPvBH3WnNtlNbVqZn62Fm
+         RGx7fZf+3UKM3Kl9QeJf5LVlkM5DJvHMz9ip55aTI9qFu0/v+PWoIfm+j1AXpZTknXsU
+         66WZojOfX/oOmIiIURXoNclNc4rBmZ8YMEQG/oqqMN+2ah+jHZYmc9lUNgw5ZVAJPATE
+         e3749bt0ZEzcoxJ3cXHW9nggBPxlaJGgWnSAjU7rLLOCOAQDdevpkZ+pWj8+732+I7AN
+         lSuA==
+X-Gm-Message-State: AGRZ1gL6T2PNrQ01/6Qpnl2Qh1JDgJW83HNQI9DPCp5aROGseDOwzV4z
+        VlhtNeo8jhaw744wm5ZmWN+QPmpw31Yd5vuFnBQ=
+X-Google-Smtp-Source: AJdET5d0QmsZNMxkCDzJOQS3ziTEDOBV6RDfjer2JXoguyyor/xXQZiCxhy0p5RoJZ18zFZ2785s4x3gAjfCVF59+bQ=
+X-Received: by 2002:a17:906:2555:: with SMTP id j21-v6mr6255759ejb.103.1542837239680;
+ Wed, 21 Nov 2018 13:53:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20181121205633.oxksehwjg5a2q6rt@oracle.com> <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
- <20181121211447.weqjjk2fwbc27er6@oracle.com>
-In-Reply-To: <20181121211447.weqjjk2fwbc27er6@oracle.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 21 Nov 2018 22:44:16 +0100
-Message-ID: <CAKv+Gu-jnppk-zJnqij-J6CwW0Vf4xZw+uESGWBCHoyk3ZEgDA@mail.gmail.com>
-Subject: Re: Out of tree module build errors since v4.20-rc1
-To:     namit@vmware.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <d0a53002-bf14-6cd9-ab0f-5d3f9aa395ce@web.de> <38dad61b-bc7f-7038-6d1b-f5c4afe3841c@gmail.com>
+ <20181121202034.GA10697@lunn.ch> <eda84d0b-2d9f-07ae-34a1-767bc5200964@gmail.com>
+ <6aeba3d6-2292-1221-9be7-1c0bb7cbc203@gmail.com> <7d6362e1-e197-d338-d6b0-9036c3802e2c@gmail.com>
+In-Reply-To: <7d6362e1-e197-d338-d6b0-9036c3802e2c@gmail.com>
+From:   Marc Dionne <marc.c.dionne@gmail.com>
+Date:   Wed, 21 Nov 2018 17:53:46 -0400
+Message-ID: <CAB9dFdvw8QqzaVYV3bOMGtACyvqWnE9uy96m1tu2C+jjzQR9_Q@mail.gmail.com>
+Subject: Re: Issue with RTL8111 NIC after upgrade to kernel 4.19
+To:     hkallweit1@gmail.com
+Cc:     andrew@lunn.ch, norbert.jurkeit@web.de, nic_swsd@realtek.com,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        michael.wiktowy@gmail.com, jcline@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018 at 22:15, Liam R. Howlett <Liam.Howlett@oracle.com> wro=
-te:
+On Wed, Nov 21, 2018 at 4:52 PM Heiner Kallweit <hkallweit1@gmail.com> wrote:
 >
-> * Nadav Amit <namit@vmware.com> [181121 16:12]:
-> > > On Nov 21, 2018, at 12:56 PM, Liam R. Howlett <Liam.Howlett@Oracle.co=
-m> wrote:
-> > >
-> > >
-> > > My out of tree driver build is now reporting issues with the jump tab=
-le:
-> > >
-> > > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_code=E2=
-=80=99:
-> > > ./include/linux/jump_label.h:153:14: error: dereferencing pointer to =
-incomplete type =E2=80=98const struct jump_entry=E2=80=99
-> > >  return entry->code;
-> > >              ^~
-> > > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_set_ini=
-t=E2=80=99:
-> > > ./include/linux/jump_label.h:180:7: error: dereferencing pointer to i=
-ncomplete type =E2=80=98struct jump_entry=E2=80=99
-> > >  entry->key |=3D 2;
-> > >       ^~
-> > > ./include/linux/jump_label.h: At top level:
-> > > ./include/linux/jump_label.h:212:26: error: array type has incomplete=
- element type =E2=80=98struct jump_entry=E2=80=99
-> > > extern struct jump_entry __start___jump_table[];
-> > >                          ^~~~~~~~~~~~~~~~~~~~
-> > > ./include/linux/jump_label.h:213:26: error: array type has incomplete=
- element type =E2=80=98struct jump_entry=E2=80=99
-> > > extern struct jump_entry __stop___jump_table[];
-> > >                          ^~~~~~~~~~~~~~~~~~~
-> > >
-> > >
-> > > This happens in v4.20-rc3 as well, so I bisected between v4.19 to
-> > > v4.20-rc1 which resulted in the following commit:
-> > >
-> > > b34006c4258c9c86597b6b7123d6a9a3513d6cd7 is the first bad commit
-> > > commit b34006c4258c9c86597b6b7123d6a9a3513d6cd7
-> > > Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > > Date:   Tue Sep 18 23:51:41 2018 -0700
-> > >
-> > >    x86/jump_table: Use relative references
-> > >
-> > >
-> > >
-> > >
-> > > Initially I assumed this was my own fault, but my module does not hav=
-e
-> > > these issues when using v4.19.  Is there anything I should try/change=
- in
-> > > my module makefile, includes, etc to support this relative reference
-> > > code?
+> On 21.11.2018 21:49, Heiner Kallweit wrote:
+> > On 21.11.2018 21:32, Heiner Kallweit wrote:
+> >> On 21.11.2018 21:20, Andrew Lunn wrote:
+> >>>> request_module() is supposed to be synchronous, however after some
+> >>>> reading this may not be 100% guaranteed. Maybe the module init
+> >>>> function on some systems isn't finished yet when request_module()
+> >>>> returns. As a result the genphy driver may be used instead of
+> >>>> the PHY version-specific driver.
+> >>>
+> >>> Hi Heiner
+> >>>
+> >>> That would be true for all PHYs i think. We would of noticed this
+> >>> problem with other systems using other PHY drivers.
+> >>>
+> >>>     Andrew
+> >>>
+> >> It could be a timing issue affecting certain systems only. At least
+> >> for now I don't have a good explanation why loading the module via
+> >> request_module() and loading it upfront manually makes a difference.
+> >>
+> >> One affected user just reported the PHY to be a RTL8211B. This is
+> >> what I expected, because this PHY crashes when writing to the MMD
+> >> registers (the MMD registers are used otherwise by this PHY).
+> >> See also commit 0231b1a074c6 ("net: phy: realtek: Use the dummy
+> >> stubs for MMD register access for rtl8211b").
+> >>
+> >> Let's see whether the other affected systems use the same PHY
+> >> version.
+> >>
+> > Next report is also about a RTL8211B and as I assumed:
+> > - W/o manually loading the realtek module the genphy driver is used
+> >   and network fails.
+> > - W/ manually loading the realtek module the proper RTL8211B PHY
+> >   driver is used and network works.
 > >
-> > Do you see HAVE_ARCH_JUMP_LABEL_RELATIVE set in your kernel config?
+> > So it seems that even after request_module() the PHY driver isn't
+> > yet available when device and driver are matched.
 > >
+> > If further reports support this (pre-)analysis, then indeed it
+> > seems to be a timing issue and a proper fix most likely is
+> > difficult. As a workaround I could imagine to add a delay loop
+> > after request_module() checking for a Realtek PHY driver via
+> > driver_find(). When adding one small delay after this we should
+> > be sufficiently sure that all Realtek PHY drivers are registered.
+> >
+> Uups, no. We talk about phylib here, not about the r8169 driver.
+> So we need a different solution.
 >
-> Yes:
->  $ grep HAVE_ARCH_JUMP_LABEL_RELATIVE .config
->  CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=3Dy
->
->
-> I should have mentioned I ran 'make defoldconfig' between each bisect.
+> >> Heiner
 
-That is puzzling. linux/jump_label.h defines a type struct
-jump_label_entry if CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE is #define'd,
-and so the error suggests that it is not.
+Thanks for the explanation, better than my crude attempt at
+understanding what was going on.
 
-Can you share the command line (with V=3D1) and the preprocessed result?
-(Re-execute the failing GCC command but replace -c with -E)
+If you have any proposed fixes or diagnostic patches based on current
+mainline I can quickly compile and test them here on an affected
+system.  It doesn't fail consistently for me (as others have
+reported), but that could be because it depends on the timing.
+
+Marc
