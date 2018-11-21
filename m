@@ -2,147 +2,102 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA76AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEADC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CBFD206B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:15:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kiKmmD2a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CBFD206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C405206B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:17:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C405206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389808AbeKVHv3 (ORCPT
+        id S2389815AbeKVHxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:51:29 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:60580 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731503AbeKVHv2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:51:28 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wALL4Bid174985;
-        Wed, 21 Nov 2018 21:14:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=7/umXGXBV3C2e+3VNDbja6cAXnD2lMfY4lBkbez89IA=;
- b=kiKmmD2aa0O4zM8bCmL4nygC17oR3hx4e0a+gEwVlt82XnFJk5QW79+TMVSKmVrYvjgY
- zVbindcfLPr/jmLDYYjQcwt/MLvyRCR3fACNfXUhl9kZ8krl4ixTdn5KQGJPnVw/Zh+W
- XC9y7cJ1JqHjEcC8XvL95irH6gGlUWqtWSNiubsrsHmDzPJxQv1hskE9kluPokWsdTYD
- Sr75y7zJgbz8mmAwsKamJNZMN1oYHIBRfBz2F6HsdX1wA9A3VeuEuFVqKOFvZyEXoDG2
- DPSc+zfdR6+hzTbx5D3vHimZQTnVElrhtx3JuHRGW8Ucz6ktLr6JTVxjtXiYnUk5jVFm Gg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2ntaxqbqcy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Nov 2018 21:14:56 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wALLEtIG008043
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Nov 2018 21:14:56 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wALLEsKo010846;
-        Wed, 21 Nov 2018 21:14:54 GMT
-Received: from oracle.com (/23.233.26.138)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Nov 2018 13:14:54 -0800
-Date:   Wed, 21 Nov 2018 16:14:47 -0500
-From:   "Liam R. Howlett" <Liam.Howlett@Oracle.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Out of tree module build errors since v4.20-rc1
-Message-ID: <20181121211447.weqjjk2fwbc27er6@oracle.com>
-Mail-Followup-To: Nadav Amit <namit@vmware.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181121205633.oxksehwjg5a2q6rt@oracle.com>
- <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
+        Thu, 22 Nov 2018 02:53:31 -0500
+Received: from ozlabs.org ([203.11.71.1]:46451 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731131AbeKVHxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 02:53:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 430b4l0dG7z9s29;
+        Thu, 22 Nov 2018 08:17:27 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Breno Leitao <leitao@debian.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] powerpc/ptrace: replace ptrace_report_syscall() with a tracehook call
+In-Reply-To: <20181119210139.GA8360@altlinux.org>
+References: <20181116121701.14359da0@akathisia> <87ftw12nyn.fsf@concordia.ellerman.id.au> <20181119210139.GA8360@altlinux.org>
+Date:   Thu, 22 Nov 2018 08:17:25 +1100
+Message-ID: <87efbe166y.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9084 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811210184
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Nadav Amit <namit@vmware.com> [181121 16:12]:
-> > On Nov 21, 2018, at 12:56 PM, Liam R. Howlett <Liam.Howlett@Oracle.com>=
- wrote:
-> >=20
-> >=20
-> > My out of tree driver build is now reporting issues with the jump table:
-> >=20
-> > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_code=E2=
-=80=99:
-> > ./include/linux/jump_label.h:153:14: error: dereferencing pointer to in=
-complete type =E2=80=98const struct jump_entry=E2=80=99
-> >  return entry->code;
-> >              ^~
-> > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_set_init=
-=E2=80=99:
-> > ./include/linux/jump_label.h:180:7: error: dereferencing pointer to inc=
-omplete type =E2=80=98struct jump_entry=E2=80=99
-> >  entry->key |=3D 2;
-> >       ^~
-> > ./include/linux/jump_label.h: At top level:
-> > ./include/linux/jump_label.h:212:26: error: array type has incomplete e=
-lement type =E2=80=98struct jump_entry=E2=80=99
-> > extern struct jump_entry __start___jump_table[];
-> >                          ^~~~~~~~~~~~~~~~~~~~
-> > ./include/linux/jump_label.h:213:26: error: array type has incomplete e=
-lement type =E2=80=98struct jump_entry=E2=80=99
-> > extern struct jump_entry __stop___jump_table[];
-> >                          ^~~~~~~~~~~~~~~~~~~
-> >=20
-> >=20
-> > This happens in v4.20-rc3 as well, so I bisected between v4.19 to
-> > v4.20-rc1 which resulted in the following commit:
-> >=20
-> > b34006c4258c9c86597b6b7123d6a9a3513d6cd7 is the first bad commit
-> > commit b34006c4258c9c86597b6b7123d6a9a3513d6cd7
-> > Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > Date:   Tue Sep 18 23:51:41 2018 -0700
-> >=20
-> >    x86/jump_table: Use relative references
-> >=20
-> >=20
-> >=20
-> >=20
-> > Initially I assumed this was my own fault, but my module does not have
-> > these issues when using v4.19.  Is there anything I should try/change in
-> > my module makefile, includes, etc to support this relative reference
-> > code?
->=20
-> Do you see HAVE_ARCH_JUMP_LABEL_RELATIVE set in your kernel config?
->=20
+Hi Dmitry,
 
-Yes:
- $ grep HAVE_ARCH_JUMP_LABEL_RELATIVE .config
- CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=3Dy
+Thanks for the patch.
 
+"Dmitry V. Levin" <ldv@altlinux.org> writes:
+> From: Elvira Khabirova <lineprinter@altlinux.org>
+>
+> Arch code should use tracehook_*() helpers as documented
+> in include/linux/tracehook.h,
+> ptrace_report_syscall() is not expected to be used outside that file.
+>
+> Co-authored-by: Dmitry V. Levin <ldv@altlinux.org>
+> Fixes: 5521eb4bca2d ("powerpc/ptrace: Add support for PTRACE_SYSEMU")
+> Signed-off-by: Elvira Khabirova <lineprinter@altlinux.org>
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>
+> v3: add a descriptive comment
+> v2: explicitly ignore tracehook_report_syscall_entry() return code
+>
+>  arch/powerpc/kernel/ptrace.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
+> index afb819f4ca68..e84220d91bbd 100644
+> --- a/arch/powerpc/kernel/ptrace.c
+> +++ b/arch/powerpc/kernel/ptrace.c
+> @@ -3266,7 +3266,12 @@ long do_syscall_trace_enter(struct pt_regs *regs)
+>  	user_exit();
+>  
+>  	if (test_thread_flag(TIF_SYSCALL_EMU)) {
+> -		ptrace_report_syscall(regs);
+> +		/*
+> +		 * A nonzero return code from tracehook_report_syscall_entry()
+> +		 * tells us to prevent the syscall execution, but we are not
+> +		 * going to execute it anyway.
+> +		 */
+> +		(void) tracehook_report_syscall_entry(regs);
 
-I should have mentioned I ran 'make defoldconfig' between each bisect.
+Unfortunately the (void) cast doesn't work to suppress the must check
+warning.
+
+  arch/powerpc/kernel/ptrace.c:3274:3: error: ignoring return value of 'tracehook_report_syscall_entry', declared with attribute warn_unused_result [-Werror=unused-result]
+
+AFAIK we don't have a way to suppress that.
+
+I guess we should rewrite it to only call
+tracehook_report_syscall_entry() once, like x86 does.
+
+I'll try and get a patch for that done & tested.
+
+cheers
