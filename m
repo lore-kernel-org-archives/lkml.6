@@ -3,163 +3,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C4DAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE2EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 212B02075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:16:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 212B02075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rwth-aachen.de
+	by mail.kernel.org (Postfix) with ESMTP id F27B0206BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:17:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27B0206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387780AbeKVIw1 convert rfc822-to-8bit (ORCPT
+        id S2390031AbeKVIx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:52:27 -0500
-Received: from mail-out-1.itc.rwth-aachen.de ([134.130.5.46]:47433 "EHLO
-        mail-out-1.itc.rwth-aachen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731864AbeKVIw1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:52:27 -0500
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AEDQAN2PVb/5wagoZiHgEGBwaBZQKBL?=
- =?us-ascii?q?1OBaCcKmhKXTIFmDAEsgUuCdQKECiI4EgEDAQECAQECbShCARABBAGEYwEBAQM?=
- =?us-ascii?q?BJ0UKAxACAQgOCgklDwEiJQIEDgWFGwgBA6xOM4omjAWBWD6DJX6EQiARC4VbA?=
- =?us-ascii?q?odVgzuESY9PVQcCgRGQM4FZiAIrhwCHU5AxAgICAgkCFIFdIYFVTSSDO5BaQTG?=
- =?us-ascii?q?BKIRahFiCXAGBHgEB?=
-X-IPAS-Result: =?us-ascii?q?A2AEDQAN2PVb/5wagoZiHgEGBwaBZQKBL1OBaCcKmhKXTIF?=
- =?us-ascii?q?mDAEsgUuCdQKECiI4EgEDAQECAQECbShCARABBAGEYwEBAQMBJ0UKAxACAQgOC?=
- =?us-ascii?q?gklDwEiJQIEDgWFGwgBA6xOM4omjAWBWD6DJX6EQiARC4VbAodVgzuESY9PVQc?=
- =?us-ascii?q?CgRGQM4FZiAIrhwCHU5AxAgICAgkCFIFdIYFVTSSDO5BaQTGBKIRahFiCXAGBH?=
- =?us-ascii?q?gEB?=
-X-IronPort-AV: E=Sophos;i="5.56,262,1539640800"; 
-   d="scan'208";a="61875155"
-Received: from rwthex-w1-a.rwth-ad.de ([134.130.26.156])
-  by mail-in-1.itc.rwth-aachen.de with ESMTP; 21 Nov 2018 23:16:10 +0100
-Received: from rwthex-w2-a.rwth-ad.de (2a00:8a60:1:e500::26:158) by
- rwthex-w1-a.rwth-ad.de (2a00:8a60:1:e500::26:156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1531.3; Wed, 21 Nov 2018 23:16:09 +0100
-Received: from rwthex-w2-a.rwth-ad.de ([fe80::18f3:313d:3e:42ff]) by
- rwthex-w2-a.rwth-ad.de ([fe80::18f3:313d:3e:42ff%21]) with mapi id
- 15.01.1531.007; Wed, 21 Nov 2018 23:16:09 +0100
-From:   =?iso-8859-1?Q?Br=FCns=2C_Stefan?= <Stefan.Bruens@rwth-aachen.de>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-CC:     "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Thread-Topic: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Thread-Index: AQHUgTlMOgH+/TcWJ0m0L3+ib8kVa6VaVu4AgAA6FACAACtjgA==
-Date:   Wed, 21 Nov 2018 22:16:09 +0000
-Message-ID: <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
-References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
- <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
- <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
-In-Reply-To: <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [62.153.130.132]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <CA6EB60E46892E4F93344B5E046B6A91@rwth-ad.de>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Thu, 22 Nov 2018 03:53:59 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56250 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731864AbeKVIx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 03:53:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22C38AE14;
+        Wed, 21 Nov 2018 22:17:42 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 23:17:41 +0100
+Message-ID: <s5hh8gaaxdm.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, broonie@kernel.org, vkoul@kernel.org,
+        liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] ASoC: Intel: Skylake: Add CFL-S support
+In-Reply-To: <20181121173841.GS10650@smile.fi.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+        <20181120213644.19103-2-pierre-louis.bossart@linux.intel.com>
+        <20181121142721.GO10650@smile.fi.intel.com>
+        <414b4c3a-7e04-2775-7d87-16a236b5b4e8@linux.intel.com>
+        <20181121173841.GS10650@smile.fi.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mittwoch, 21. November 2018 20:40:52 CET Nicolin Chen wrote:
-> (Removing "m.purski@samsung.com" since it's not reachable any more)
+On Wed, 21 Nov 2018 18:38:41 +0100,
+Andy Shevchenko wrote:
 > 
-> Hi Stefan,
+> On Wed, Nov 21, 2018 at 11:16:50AM -0600, Pierre-Louis Bossart wrote:
+> > On 11/21/18 8:27 AM, Andy Shevchenko wrote:
 > 
-> Thank you for the comments.
+> > > May you consider to switch to PCI_DEVICE_DATA() first?
+> > 
+> > Is this really the recommended path?
+> > 
+> > The macro generates PCI_DEVICE_ID_##vend##_##dev, and I don't have a turn
+> > key #define PCI_DEVICE_ID_INTEL_AUDIO_CFL 0xa348 I can use. In a number of
+> > cases we have multiple variants of the same hardware, and it starts being
+> > painful to use a 20-letter macro to differentiate between INTEL_AUDIO_CFL_Y
+> > and INTEL_AUDIO_CFL_H. The explicit code and a short comment are more
+> > readable really.
+> > 
+> > git grep PCI_DEVICE_ID_INTEL gives me hundreds of definitions, some global,
+> > some local to specific drivers, doesn't seem like there is a well-agreed
+> > usage of this macro, is there? I don't mind making the change but I don't
+> > sense an strong argument for it?
 > 
-> On Wed, Nov 21, 2018 at 04:13:01PM +0000, Brüns, Stefan wrote:
-> > > === Problem ===
-> > > Both methods simplify software routine by fixing one factor, which
-> > > sacrifices the precision of the hardware measurement results.
-> > > 
-> > > Using ina226 for example, with method A, the current scale was 1mA
-> > > and the power scale was 25mA.
-> > > 
-> > > With method B, calibration value is fixed at 2048 so the precision
-> > > is decided by shunt resistor value. It sounds reasonable since the
-> > > hardware engineers can use a larger shunt resistor when they need
-> > > higher resolution. However, they often concern power burning across
-> > > the resistor as well, so the resistor usually won't be so large: a
-> > > typical value 1000 micro-ohms, which results in a current scale at
-> > > 2.5 mA and a power sacle at 62.5 mW.
-> > 
-> > Power loss surely is a concern, but figures should be kept reasonable.
-> > 
-> > 1. You mention 1.8V bus voltage, and currents in the 30mA range. Using the
-> > 1mOhm current shunt:
-> > 
-> > U_S = R_S * I_S 1e-3 Ohm * 30e-3 A = 30e-6 V  (30uV)
-> > P_S = U_S * I_S = 30e-6V * 30e-3 A = 900e-9W = 0.9 uW
-> > 
-> > INA219 Power Supply (Datasheet)
-> > Min operating Voltage: 3V
-> > Quiescent Current: 0.7mA
-> > -> Min power: 2.1mW
-> > 
-> > So the INA219 alone uses 2.1mW, 1000 times more than the shunt.
+> Compare:
 > 
-> Chip can enter power-down or one-shot mode. Though this upstream
-> driver doesn't have these two mode supports yet, I am working on
-> it so they'll be added.
-
-The power-down current is 6uA, so even if you never leave power-down mode, you 
-are down to 18uW. But on top of that, you need power for the conversion, and 
-you need power for communication.
-
-> > Another concern may be voltage drop over the shunt, but for this case you
-> > have a nominal voltage of 1.8V, so 30uV are 0.001%.
-> > 
-> > > When measuring a 1.8v voltage running a small current (e.g. 33 mA),
-> > > the power value (that's supposed to be 59.4 mW) becomes inaccurate
-> > > due to the larger scale (25mA for method A; 62.5 mA for method B).
+> 	/* CFL */
+> 	{ PCI_DEVICE(0x8086, 0xa348),
+> 		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
 > 
-> Just found out that I have typos here: 25mW and 62.5mW.
+> to something like:
 > 
-> > Another look into the datasheet reveals, even at full gain (PGA=1), the
-> > LSB is 40mV / 2^12 = 40mV / 4096 ~ 10uV. So when the current ADC reads
-> > out as 3*LSB, this anything between 25mA and 35mA. This is the best case
-> > figure.
-> Current read doesn't get affected a lot actually, since hwmon ABI
-> also reports current value in unit mA. However, the power read is
-> the matter here. With a 62.5mW power_lsb, power results are kinda
-> useless on my system.
+> #define PCI_DEVICE_ID_INTEL_AUDIO_CFL	0xa348
+> ...
+> 
+> 	{PCI_DEVICE_DATA(INTEL, AUDIO_CFL, &snd_soc_acpi_intel_cnl_machines)},
 
-The reported current does not matter here, actually. Internally, the ADC value 
-will have an uncertainty of 10mA (at PGA=1). At 1.8V, your uncertainty is 
-18mW. And thats *only* the quantization noise. It wont get better than that.
+The former gives a better grep-ability, though.
 
-Also note, you are apparently using the ina2xx hwmon driver - I strongly 
-advise against it, you should either use the ina2xx driver from the IIO 
-subsystem directly, or use the IIO driver via iio-hwmon.
+I have no big preference over two, just want to mention that both have
+merits and demerits.
 
-1. INA219 is not properly supported by the hwmon driver, see the changes in 
-the IIO driver.
-2. The IIO driver has many more features:
-  - setting the PGA (INA219)
-  - setting the bus voltage range (INA219)
-  - selecting the conversion time (INA219/226)
 
-There is also always the possibility to read the bus and shunt voltage 
-registers and calculate the power manually.
+thanks,
 
-Regards,
-
-Stefan
+Takashi
