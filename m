@@ -2,142 +2,114 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B910C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 340C6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E22B214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:04:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E22B214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id EE581214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:05:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uIsJLLnw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE581214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbeKVGkW (ORCPT
+        id S2388727AbeKVGlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:40:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40074 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730780AbeKVGkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:40:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CDF66AEDB;
-        Wed, 21 Nov 2018 20:04:34 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 14:04:21 -0600
-From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: possible deadlock in mnt_want_write
-Message-ID: <20181121200114.yqis7fvn5x7nsw6e@merlin>
-References: <000000000000d03eea0571adfe83@google.com>
- <000000000000a8e163057b2f2ddf@google.com>
- <CAOQ4uxhAwdaZnPLX6+qYWaNL6NHQDMptx5TMyzo3B7CCcgWTjg@mail.gmail.com>
+        Thu, 22 Nov 2018 01:41:35 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34738 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbeKVGle (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 01:41:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so7005934wrw.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aFkan6mE7vMeI42C5RbUH0MMzP2/ZQRbqowrjxUng/A=;
+        b=uIsJLLnwxEIxGc2HOr5Hh++zPpKYa6Z41ufKycxwOyKIumWJB3aaaViVeQ2vQINRxZ
+         wLPcf7mmYvnd6I6J65TfQcn0JpFZlx6Uyiv7b6BqQeU1OOoT4VOkGS1ESTnSed74yBPP
+         E3w0l3QElvc2eAmgW9eeDnwYfjI2duWPBWrWpM8rSEArlXEHfblRDeRFmKLLjqIJ+IZz
+         xCHfSRETPTBdqPtwA68sFgrv0NZ305BzWVcxxluHDvJ9YJboJ+zYdTqDBK8qfN84IN9P
+         5slpNkTObb0FZBeMexTSUs3dkiFtnc4uGiYTQGagCfr8bYcrcfXznepUqEKXYasXZ5Dp
+         HAew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aFkan6mE7vMeI42C5RbUH0MMzP2/ZQRbqowrjxUng/A=;
+        b=FMw0eMQ5LfFCRvGZ2qncQQO38qSw/DQWjFrAuV7MgmFRo2KcSOQK9SBsOH3Sw8SA0Y
+         XJAwgN1n4+bctaqKeCeDjrzBdHXSGEB/DsbJ8SWoM9wG9Q9h/tJN6GJ54I2u4x/uMltd
+         cQ8odxxp8PRATUmje8SrG0yCvjq0lwlcvgvrlafYz83hUNuKkoWFhA2UEQEepne7tGAz
+         55xA4QbH+mXrQfrAtToFlXw4friVq7WAWpTw1UMCvl9qSuUR7O03mq6SmmUyvMGtuTgW
+         uH5iOFNCbSuH1s8lv6gZs++3Ev9O7G6pRLms4fApff4Qprzpz6eRZuODd7C4ii8Cu+IV
+         wKJg==
+X-Gm-Message-State: AA+aEWZtk94eyo9RPo4+X35xr6/ykuO7kIo9UaUUgKxGN+DgRceR/QHt
+        +wsXJ3lo/iNAN2K5mHvUNqQGueZg0wwdBW8jQKQ=
+X-Google-Smtp-Source: AFSGD/WksP5kWFvnHX4V/Ak5tcQZUyLIcSvoiPXy7i7i+hOYoZtRCzmNGVtgmOEUMMEv9ilE1Olax8DI3fxrDOlCPv4=
+X-Received: by 2002:adf:ef0d:: with SMTP id e13mr7014582wro.29.1542830748314;
+ Wed, 21 Nov 2018 12:05:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhAwdaZnPLX6+qYWaNL6NHQDMptx5TMyzo3B7CCcgWTjg@mail.gmail.com>
-User-Agent: NeoMutt/20180323
+References: <20181121071103.GA2622@hp-pavilion-15-notebook-pc-brajeswar> <13613dd2-dfef-7a8e-4c27-5b5bed336a89@amd.com>
+In-Reply-To: <13613dd2-dfef-7a8e-4c27-5b5bed336a89@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 21 Nov 2018 15:05:34 -0500
+Message-ID: <CADnq5_PVK+zfpLEh2rL3Cs_bC8OuNXDOAfSr=gt8aHHykRiWcg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/amdgpu/vce_v3_0.c: Remove duplicate header
+To:     Junwei Zhang <Jerry.Zhang@amd.com>
+Cc:     brajeswar.linux@gmail.com,
+        "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>, Leo Liu <leo.liu@amd.com>,
+        Andrey Grodzovsky <andrey.grodzovsky@amd.com>,
+        Emily Deng <Emily.Deng@amd.com>, Rex Zhu <Rex.Zhu@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20:57 21/11, Amir Goldstein wrote:
-> On Wed, Nov 21, 2018 at 8:33 PM syzbot
-> <syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com> wrote:
+Applied.  thanks!
+On Wed, Nov 21, 2018 at 3:16 AM Zhang, Jerry(Junwei)
+<Jerry.Zhang@amd.com> wrote:
+>
+> On 11/21/18 3:11 PM, Brajeswar Ghosh wrote:
+> > Remove gca/gfx_8_0_d.h which is included more than once
 > >
-> > syzbot has found a reproducer for the following crash on:
+> > Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+>
+> > ---
+> >   drivers/gpu/drm/amd/amdgpu/vce_v3_0.c | 1 -
+> >   1 file changed, 1 deletion(-)
 > >
-> > HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=11a1426d400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=ae82084b07d0297e566b
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1632326d400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a16ed5400000
+> > diff --git a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> > index 6dbd39730070..4e4289a06a53 100644
+> > --- a/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> > +++ b/drivers/gpu/drm/amd/amdgpu/vce_v3_0.c
+> > @@ -37,7 +37,6 @@
+> >   #include "gca/gfx_8_0_d.h"
+> >   #include "smu/smu_7_1_2_d.h"
+> >   #include "smu/smu_7_1_2_sh_mask.h"
+> > -#include "gca/gfx_8_0_d.h"
+> >   #include "gca/gfx_8_0_sh_mask.h"
+> >   #include "ivsrcid/ivsrcid_vislands30.h"
 > >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+ae82084b07d0297e566b@syzkaller.appspotmail.com
-> >
-> > IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> > IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> > 8021q: adding VLAN 0 to HW filter on device team0
-> >
-> > ======================================================
-> > WARNING: possible circular locking dependency detected
-> > 4.20.0-rc1-next-20181109+ #110 Not tainted
-> > ------------------------------------------------------
-> > syz-executor599/5968 is trying to acquire lock:
-> > 00000000e42cbf00 (sb_writers#3){.+.+}, at: sb_start_write
-> > include/linux/fs.h:1607 [inline]
-> > 00000000e42cbf00 (sb_writers#3){.+.+}, at: mnt_want_write+0x3f/0xc0
-> > fs/namespace.c:359
-> >
-> > but task is already holding lock:
-> > 00000000166f985a (&iint->mutex){+.+.}, at: process_measurement+0x438/0x1bf0
-> > security/integrity/ima/ima_main.c:224
-> >
-> > which lock already depends on the new lock.
-> >
-> >
-> > the existing dependency chain (in reverse order) is:
-> >
-> > -> #1 (&iint->mutex){+.+.}:
-> >         __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-> >         __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
-> >         mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-> >         process_measurement+0x438/0x1bf0
-> > security/integrity/ima/ima_main.c:224
-> >         ima_file_check+0xe5/0x130 security/integrity/ima/ima_main.c:391
-> >         do_last fs/namei.c:3422 [inline]
-> >         path_openat+0x134a/0x5150 fs/namei.c:3534
-> >         do_filp_open+0x255/0x380 fs/namei.c:3564
-> >         do_sys_open+0x568/0x700 fs/open.c:1063
-> >         __do_sys_open fs/open.c:1081 [inline]
-> >         __se_sys_open fs/open.c:1076 [inline]
-> >         __x64_sys_open+0x7e/0xc0 fs/open.c:1076
-> >         do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> >         entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> >
-> > -> #0 (sb_writers#3){.+.+}:
-> >         lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-> >         percpu_down_read_preempt_disable include/linux/percpu-rwsem.h:36
-> > [inline]
-> >         percpu_down_read include/linux/percpu-rwsem.h:59 [inline]
-> >         __sb_start_write+0x214/0x370 fs/super.c:1564
-> >         sb_start_write include/linux/fs.h:1607 [inline]
-> >         mnt_want_write+0x3f/0xc0 fs/namespace.c:359
-> >         ovl_want_write+0x76/0xa0 fs/overlayfs/util.c:24
-> >         ovl_open_maybe_copy_up+0x12c/0x190 fs/overlayfs/copy_up.c:888
-> >         ovl_open+0xb3/0x260 fs/overlayfs/file.c:123
-> >         do_dentry_open+0x499/0x1250 fs/open.c:771
-> >         vfs_open fs/open.c:880 [inline]
-> >         dentry_open+0x143/0x1d0 fs/open.c:896
-> >         ima_calc_file_hash+0x324/0x570
-> 
-> I suppose ima_calc_file_hash opens the file with write flags
-> and cause overlay to try to copy up which takes mnt_want_write().
-> Why does IMA need to open the file with write flags?
-> 
-> Isn't this commit supposed to prevent that:
-> a408e4a86b36 ima: open a new file instance if no read permissions
-> 
-
-Not write, read flags. This patch re-opens the files in O_RDONLY for
-files opened with O_WRONLY and cannot be read, so that the hash can be
-calculated. IOW, the user opened the file in overlayfs with write flags.
-
-The copy-up, since it is already in write mode can add the security.ima
-xattrs.
-
--- 
-Goldwyn
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
