@@ -2,136 +2,328 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF80FC04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7447FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80EA921479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80EA921479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2BD5B21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pC19eJT0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD5B21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730155AbeKUWjb (ORCPT
+        id S1730199AbeKUWjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:39:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33574 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729128AbeKUWjb (ORCPT
+        Wed, 21 Nov 2018 17:39:36 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59580 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730156AbeKUWjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:39:31 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALBx6kw056071
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 07:05:22 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nw5p847fp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 07:05:22 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <gor@linux.ibm.com>;
-        Wed, 21 Nov 2018 12:05:20 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Nov 2018 12:05:17 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wALC5GXF60817580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Nov 2018 12:05:16 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4EB1CA4060;
-        Wed, 21 Nov 2018 12:05:16 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C844A405F;
-        Wed, 21 Nov 2018 12:05:16 +0000 (GMT)
-Received: from localhost (unknown [9.152.212.229])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 21 Nov 2018 12:05:15 +0000 (GMT)
-Date:   Wed, 21 Nov 2018 13:05:10 +0100
-From:   Vasily Gorbik <gor@linux.ibm.com>
-To:     David Howells <dhowells@redhat.com>,
-        James Morris <jmorris@namei.org>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH next-lockdown 1/1] debugfs: avoid EPERM when no open file
- operation defined
-References: <4136.1522452584@warthog.procyon.org.uk>
- <cover.thread-bfac1b.your-ad-here.call-01542799656-ext-6093@work.hours>
+        Wed, 21 Nov 2018 17:39:35 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181121120526euoutp026f037424fae98c7b32121946bccacc8b~pIi2m04D62261922619euoutp02W
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:05:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181121120526euoutp026f037424fae98c7b32121946bccacc8b~pIi2m04D62261922619euoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542801926;
+        bh=I2tpKmCNPwId09rrDPGJvPyUmJzEx7fFcN8jX/LngRE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pC19eJT0UqJhgaYVye/JAlIPCAiFYMfHlZcs6d+scsYo0Ju6ikvvz/UwrqwJTeE++
+         zROkF5tyHVXSkh77L+8aZlM9AcimvqoNPR8lx/9rip5D/vtyJI17inIik56t5Rem86
+         7izQMpxHjwZ3TpZDb8gn93HRfyeW8PI7rPFIrmwA=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181121120525eucas1p2c8cb0268fee6522f364644f8211fd78f~pIi10Oj3x1461914619eucas1p2d;
+        Wed, 21 Nov 2018 12:05:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 0C.8B.04441.50A45FB5; Wed, 21
+        Nov 2018 12:05:25 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4~pIi04ArRd2011820118eucas1p1z;
+        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181121120524eusmtrp2d2d0d481138fc35f1f9c11fa0dae0647~pIi0pTsnR0951809518eusmtrp2O;
+        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
+X-AuditID: cbfec7f2-a1ae89c000001159-60-5bf54a05593e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 60.EE.04284.40A45FB5; Wed, 21
+        Nov 2018 12:05:24 +0000 (GMT)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181121120524eusmtip223e98abf511a7329cad4c0c957e81ece~pIi0MB8Rb1613116131eusmtip2u;
+        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+To:     k.konieczny@partner.samsung.com
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] clk: samsung: exynos5433: add imem clock
+Date:   Wed, 21 Nov 2018 13:05:09 +0100
+Message-Id: <20181121120509.18892-5-k.konieczny@partner.samsung.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.thread-bfac1b.your-ad-here.call-01542799656-ext-6093@work.hours>
-X-TM-AS-GCONF: 00
-x-cbid: 18112112-0008-0000-0000-000002963F3F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18112112-0009-0000-0000-000022006F52
-Message-Id: <patch-1.thread-bfac1b.git-bfac1b60354c.your-ad-here.call-01542799656-ext-6093@work.hours>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811210107
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djP87qsXl+jDRZ1a1jMP3KO1aJv339G
+        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYun1i0wWrXuPsDtweqyZt4bRY9OqTjaPzUvq
+        PQ6+28Pk8XmTXABrFJdNSmpOZllqkb5dAlfGoxtTWAuuOVW8uNLC3sDYY9XFyMkhIWAise/k
+        LOYuRi4OIYEVjBI9Rw4ygySEBL4wSqzb5glhf2aUeH7WEaZh3vtZrBANy4Hir14jNDxf4gdi
+        swmYSzzafoYJxBYRUJaYfG862AZmgRlMEmuOfWXrYuTgEBawlfi5GqyeRUBV4vTy3YwgNq+A
+        i8S9l6eYIJbJSzTs2swOYnMKuEqsnXyVBaJGUOLkzCdgNjNQTfPW2WDzJQQWsUucv74OqtlF
+        Yn3vFChbWOLV8S3sELaMxP+d86Hi5RK7tz5jh2huYZSYO3kRVMJa4vDxi6wghzILaEqs36UP
+        YkoIOEr8m1UBYfJJ3HgrCHECn8SkbSAvgoR5JTrahCBm6ErM+3+GFcKWluj6vw7K9pA4/G43
+        4wRGxVlInpmF5JlZCGsXMDKvYhRPLS3OTU8tNsxLLdcrTswtLs1L10vOz93ECEw7p/8d/7SD
+        8eulpEOMAhyMSjy8CcJfooVYE8uKK3MPMUpwMCuJ8EbafI0W4k1JrKxKLcqPLyrNSS0+xCjN
+        waIkzlvN8CBaSCA9sSQ1OzW1ILUIJsvEwSnVwNgUe35H7YQeubVGU3jcbhz/OfOfv0raVdsD
+        iXt5DyyRsp6Xsrz9jsXjB747gzqj4rez/O59+SNgbUeb1lYp6ZUx/w3rdLKdeF3bSkR0Mndz
+        2xRX/6mXvnKYe2N3gcuTPqm55t9bRRQufPBMr8/Y91k1X+RxxIdD/8w33Uo2vM3wIi3srIqP
+        rhJLcUaioRZzUXEiABZoeXg3AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsVy+t/xe7osXl+jDaZsUbOYf+Qcq0Xfvv+M
+        Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+TxdLrF5ksWvceYXfg9Fgzbw2jx6ZVnWwem5fU
+        exx8t4fJ4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
+        zLLUIn27BL2MRzemsBZcc6p4caWFvYGxx6qLkZNDQsBEYt77WaxdjFwcQgJLGSW+XznNDJGQ
+        lmg8vZoJwhaW+HOtiw2i6BOjxNX2SYwgCTYBc4lH28+AFYkIKEtMvjedGaSIWWABk8SWK8+A
+        ijg4hAVsJX6u9gOpYRFQlTi9fDdYL6+Ai8S9l6egFshLNOzazA5icwq4SqydfJUFpFUIqKb3
+        Ei9EuaDEyZlPWEBsZqDy5q2zmScwCsxCkpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66XnJ+
+        7iZGYJRsO/Zz8w7GSxuDDzEKcDAq8fAmCH+JFmJNLCuuzD3EKMHBrCTCG2nzNVqINyWxsiq1
+        KD++qDQntfgQoynQDxOZpUST84ERnFcSb2hqaG5haWhubG5sZqEkznveoDJKSCA9sSQ1OzW1
+        ILUIpo+Jg1OqgTFu1YqLNgW212aa13QcrJ4cbHc83lt69onm7ZK8cwyW/5j8Pa3+ova2bY8W
+        V4kZPjC7t+zM77iEWSlny/Z8YV23OlzeuuVPgmiK5K/gnVN3TOJ1dFswe8qMg3ttzu5efDnw
+        7e7m68XO0c0zUivf1VWq6EqxsxzUelRd5PH3za8c0SsTD3d+C3msxFKckWioxVxUnAgAbKtu
+        mqgCAAA=
+X-CMS-MailID: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
+References: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
+        <CGME20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With "debugfs: Restrict debugfs when the kernel is locked down"
-return code "r" is unconditionally set to -EPERM, which stays like that
-until function return if no "open" file operation defined, effectivelly
-resulting in "Operation not permitted" for all such files despite kernel
-lock down status or CONFIG_LOCK_DOWN_KERNEL being enabled.
+Add imem clock for exynos5433.
 
-In particular this breaks 2 debugfs files on s390:
-/sys/kernel/debug/s390_hypfs/diag_304
-/sys/kernel/debug/s390_hypfs/diag_204
-
-To address that set EPERM return code only when debugfs_is_locked_down
-returns true.
-
-Fixes: 3fc322605158 ("debugfs: Restrict debugfs when the kernel is locked down")
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 ---
- fs/debugfs/file.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c   | 123 +++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h |  55 +++++++++++
+ 2 files changed, 178 insertions(+)
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 51cb894c21f2..89c86faaa02a 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -167,9 +167,10 @@ static int open_proxy_open(struct inode *inode, struct file *filp)
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 24c3360db65b..db29cbd1fbdc 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -2345,6 +2345,129 @@ static const struct samsung_cmu_info fsys_cmu_info __initconst = {
+ 	.clk_name		= "aclk_fsys_200",
+ };
  
- 	real_fops = debugfs_real_fops(filp);
++/*
++ * Register offset definitions for CMU_IMEM
++ *
++ */
++
++#define ENABLE_ACLK_IMEM			0x0800
++#define ENABLE_ACLK_IMEM_SSS			0x0808
++#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
++#define ENABLE_PCLK_IMEM			0x0900
++#define ENABLE_PCLK_IMEM_SSS			0x0904
++#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
++
++static const unsigned long imem_clk_regs[] __initconst = {
++ENABLE_ACLK_IMEM,
++ENABLE_ACLK_IMEM_SSS,
++ENABLE_ACLK_IMEM_SLIMSSS,
++ENABLE_PCLK_IMEM,
++ENABLE_PCLK_IMEM_SSS,
++ENABLE_PCLK_IMEM_SLIMSSS,
++};
++
++static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
++	/* ENABLE_ACLK_IMEM */
++	GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 24, 0, 0),
++	GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_SROMC, "aclk_sromc", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 22, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_ARBG_TX, "aclk_bts_arbg_tx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 21, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXI_IMEMX, "aclk_asyncaxi_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 20, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIUS_IMEMX, "aclk_axius_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 19, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_IMEMX, "aclk_xiu_imemx", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 18, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXI_SSSX, "aclk_asyncaxi_sssx", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SLIMSSS, "aclk_bts_slimsss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SSS_DRAM, "aclk_bts_sss_dram", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_BTS_SSS_CCI, "aclk_bts_sss_cci", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 13, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ALB_IMEM, "aclk_alb_imem", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 12, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM1P, "aclk_axids_pimemx_imem1p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 11, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM0P, "aclk_axids_pimemx_imem0p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 10, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXIDS_PIMEMX_GIC, "aclk_axids_pimemx_gic", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 9, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAHBM_SSS_ATLAS, "aclk_asyncahbm_sss_atlas", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_ASYNCAXIS_MIF_PIMEMX, "aclk_asyncaxis_mif_pimemx", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI2APB_IMEM1P, "aclk_axi2apb_imem1p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AXI2APB_IMEM0P, "aclk_axi2apb_imem0p", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_SSSX, "aclk_xiu_sssx", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_XIU_PIMEMX, "aclk_xiu_pimemx", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_IMEMND_266, "aclk_imemnd_266", "aclk_imem_266",
++			ENABLE_ACLK_IMEM, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_GIC, "aclk_gic", "aclk_imem_200",
++			ENABLE_ACLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_ACLK_IMEM_SSS */
++	GATE(CLK_ACLK_SSS, "aclk_sss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM_SSS, 0, CLK_IGNORE_UNUSED, 0),
++	/* ENABLE_ACLK_IMEM_SLIMSSS */
++	GATE(CLK_ACLK_SLIMSSS, "aclk_slimsss", "aclk_imem_sssx_266",
++			ENABLE_ACLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_IMEM */
++	GATE(CLK_PCLK_GPIO_IMEM, "pclk_gpio_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAXI_IMEMX, "pclk_asyncaxi_imemx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 16, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_ARBG_TX, "pclk_bts_arbg_tx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ASYNCAPB_ARBG_TX, "pclk_asyncapb_arbg_tx", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
++
++	GATE(CLK_PCLK_BTS_SLIMSSS, "pclk_bts_slimsss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 8, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_SSS_DRAM, "pclk_bts_sss_dram", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_BTS_SSS_CCI, "pclk_bts_sss_cci", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_ALB_IMEM, "pclk_alb_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_PMU_IMEM, "pclk_pmu_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_PCLK_SYSREG_IMEM, "pclk_sysreg_imem", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
++	/* ENABLE_PCLK_IMEM_SSS */
++	GATE(CLK_PCLK_SSS, "pclk_sss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
++	/* ENABLE_PCLK_IMEM_SLIMSSS */
++	GATE(CLK_PCLK_SLIMSSS, "pclk_slimsss", "aclk_imem_200",
++			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
++};
++
++static const struct samsung_cmu_info imem_cmu_info __initconst = {
++	.gate_clks		= imem_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
++	.nr_clk_ids		= IMEM_NR_CLK,
++	.clk_regs		= imem_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
++};
++
++static void __init exynos5433_cmu_imem_init(struct device_node *np)
++{
++	samsung_cmu_register_one(np, &imem_cmu_info);
++}
++
++CLK_OF_DECLARE(exynos5433_cmu_imem, "samsung,exynos5433-cmu-imem",
++		exynos5433_cmu_imem_init);
++
+ /*
+  * Register offset definitions for CMU_G2D
+  */
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 87bb2b017143..312d8810b56d 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -623,6 +623,61 @@
  
--	r = -EPERM;
--	if (debugfs_is_locked_down(inode, filp, real_fops))
-+	if (debugfs_is_locked_down(inode, filp, real_fops)) {
-+		r = -EPERM;
- 		goto out;
-+	}
+ #define FSYS_NR_CLK			116
  
- 	real_fops = fops_get(real_fops);
- 	if (!real_fops) {
-@@ -296,9 +297,10 @@ static int full_proxy_open(struct inode *inode, struct file *filp)
- 		return r == -EIO ? -ENOENT : r;
- 
- 	real_fops = debugfs_real_fops(filp);
--	r = -EPERM;
--	if (debugfs_is_locked_down(inode, filp, real_fops))
-+	if (debugfs_is_locked_down(inode, filp, real_fops)) {
-+		r = -EPERM;
- 		goto out;
-+	}
- 
- 	real_fops = fops_get(real_fops);
- 	if (!real_fops) {
++/* CMU_IMEM */
++#define CLK_ACLK_SSS			1
++#define CLK_ACLK_SLIMSSS		2
++#define CLK_ACLK_RTIC			3
++#define CLK_ACLK_XIU_SSSX		4
++#define CLK_ACLK_ASYNCAHBM_SSS_ATLAS	5
++#define CLK_ACLK_ASYNCAXI_SSSX		6
++#define CLK_ACLK_BTS_SSS_CCI		7
++#define CLK_ACLK_BTS_SSS_DRAM		8
++#define CLK_ACLK_BTS_SLIMSSS		9
++#define CLK_ACLK_SMMU_SSS_CCI		10
++#define CLK_ACLK_SMMU_SSS_DRAM		11
++#define CLK_ACLK_SMMU_SLIMSSS		12
++#define CLK_ACLK_SMMU_RTIC		13
++#define CLK_ACLK_IMEMND_266		14
++#define CLK_ACLK_ALB_IMEM		15
++#define CLK_ACLK_XIU_IMEMX		16
++#define CLK_ACLK_AXIUS_IMEMX		17
++#define CLK_ACLK_ASYNCAXI_IMEMX		18
++#define CLK_ACLK_ARBG_TX		19
++#define CLK_ACLK_BTS_ARBG_TX		20
++#define CLK_ACLK_SMMU_ARBG_TX		21
++#define CLK_ACLK_GIC			22
++#define CLK_ACLK_INT_MEM		23
++#define CLK_ACLK_XIU_PIMEMX		24
++#define CLK_ACLK_AXI2APB_IMEM0P		25
++#define CLK_ACLK_AXI2APB_IMEM1P		26
++#define CLK_ACLK_ASYNCAXIS_MIF_PIMEMX	27
++#define CLK_ACLK_AXIDS_PIMEMX_GIC	28
++#define CLK_ACLK_AXIDS_PIMEMX_IMEM0P	29
++#define CLK_ACLK_AXIDS_PIMEMX_IMEM1P	30
++#define CLK_ACLK_SROMC			31
++#define CLK_ACLK_AXIDS_SROMC		32
++#define CLK_ACLK_AXI2AHB_IMEMH		33
++#define CLK_PCLK_SSS			34
++#define CLK_PCLK_SLIMSSS		35
++#define CLK_PCLK_RTIC			36
++#define CLK_PCLK_SYSREG_IMEM		37
++#define CLK_PCLK_PMU_IMEM		38
++#define CLK_PCLK_ALB_IMEM		39
++#define CLK_PCLK_BTS_SSS_CCI		40
++#define CLK_PCLK_BTS_SSS_DRAM		41
++#define CLK_PCLK_BTS_SLIMSSS		42
++#define CLK_PCLK_SMMU_SSS_CCI		43
++#define CLK_PCLK_SMMU_SSS_DRAM		44
++#define CLK_PCLK_SMMU_SLIMSSS		45
++#define CLK_PCLK_SMMU_RTIC		46
++#define CLK_PCLK_ASYNCAPB_ARBG_TX	47
++#define CLK_PCLK_BTS_ARBG_TX		48
++#define CLK_PCLK_SMMU_ARBG_TX		49
++#define CLK_PCLK_ASYNCAXI_IMEMX		50
++#define CLK_PCLK_GPIO_IMEM		51
++
++#define IMEM_NR_CLK			52
++
+ /* CMU_G2D */
+ #define CLK_MUX_ACLK_G2D_266_USER	1
+ #define CLK_MUX_ACLK_G2D_400_USER	2
 -- 
-2.18.0.13.gd42ae10
+2.19.1
 
