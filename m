@@ -2,110 +2,186 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AD4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4148C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C3C214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD54B214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:17:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cPC7iQYA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C3C214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iV9aqA7A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD54B214D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733065AbeKVEwo (ORCPT
+        id S1733080AbeKVExC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:52:44 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36869 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729486AbeKVEwn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:52:43 -0500
-Received: by mail-lj1-f195.google.com with SMTP id e5-v6so5682528lja.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:17:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rGZTYzn9mwObfrE4Ldf8+v9IqpFAGkRY76EdbzKnd1o=;
-        b=cPC7iQYA3cmstqQQvKodhhcJ2/YxrIRyLu5yKOc6WfAW/DG95VigZObKyYOuqWOnqn
-         WTHGA0TOD69R0yrmhEuw4qNkIbS1tPm/aelBBBnNM7/NTGo3i9SR7Dh+QcMIuEI7Ay0V
-         LsoCgGL9Evm0oEfUbaWB5KZJXoMRHp3ckAPbE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rGZTYzn9mwObfrE4Ldf8+v9IqpFAGkRY76EdbzKnd1o=;
-        b=jbo0h+/pDsuJUPDbprd56r3JuWaqV8v7ijvZUQnKIPW/mMxAehCYTtn9Zygt4jFy5M
-         uGd5XvoLsoqnx2doQCz8WP/qK+wol0mk325pWIO79/xNs7SKLH2Ndo7ueH3T8V2PAqJJ
-         1kmwvt/4Xyke2HLuvkVDuh3+i/7c/3QrIgUv8e4vWSjmHGHzHg7NSx0XXfMFmZquDyqg
-         I+NKPBQRFpx6N9CEl8w0yvvenzwMyb7Xf0SUuaSWWx7eErMh3e/xe1sf7kagDdX4L5B7
-         spHO/1Na3SexkrAlHX2DUv4yUGA8NPxZ1bL9RbQRu0nFYeZpZaCILgrg+0Xz3b7zTyjJ
-         iHsQ==
-X-Gm-Message-State: AGRZ1gK4u1BK59H/u0hXY/88br0kagiD3//GhxtjZGeiGeQw8Eu0/8AI
-        0SqpBjXlUG1MlYb4J0P4YeX7i1TYzCc=
-X-Google-Smtp-Source: AFSGD/VmRdEga56V0bBq1VcIjgNtzhFEj7hg2nFxkoUP0EyjbkrDixNTOEgIqR1BGfo476bi0Hk5aw==
-X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr4165935lji.154.1542824236320;
-        Wed, 21 Nov 2018 10:17:16 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id e94sm6868817lfi.23.2018.11.21.10.17.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 10:17:15 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id a16so4695427lfg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:17:14 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr4191029lff.16.1542824234222;
- Wed, 21 Nov 2018 10:17:14 -0800 (PST)
+        Wed, 21 Nov 2018 23:53:02 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53656 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729486AbeKVExC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:53:02 -0500
+Received: from zn.tnic (p200300EC2BD0AB00883B4D3E2A7F8FA4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:ab00:883b:4d3e:2a7f:8fa4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9E6531EC04DA;
+        Wed, 21 Nov 2018 19:17:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542824255;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uBn5Lp/NIAUXZ/IbISzpsZb7P5e1DZUQOmxj+auHdXk=;
+        b=iV9aqA7A55c/xr49Re2FdryjpJ4T6pMkDN9p23GgVMhVb15ei1AKrkJsl6sBp34jYtR24x
+        dB216zAxIDP+Jbwblp/hG6ce+EZO5xHB+3aAOm9WM8GHcVthjHOfbm2dyNcRwsQnoYdWKt
+        aKNGBIyi+YK488Jpi1BrEf6q0aPQba8=
+Date:   Wed, 21 Nov 2018 19:17:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        David Wang <davidwang@zhaoxin.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 06/23] x86/cpu/intel: Detect SGX support and update
+ caps appropriately
+Message-ID: <20181121181728.GA27559@zn.tnic>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-References: <02bfc577-32a5-66be-64bf-d476b7d447d2@kernel.dk>
- <20181121063609.GA109082@gmail.com> <48e27a3a-2bb2-ff41-3512-8aeb3fd59e57@kernel.dk>
- <1c22125bb5d22c2dcd686d0d3b390f115894f746.camel@redhat.com> <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
-In-Reply-To: <CAHk-=wgnjB+=o0771=J_YkQzabU5aadh6pN3x9Vk4HPs3MHL3g@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 21 Nov 2018 10:16:57 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
-Message-ID: <CAHk-=wjweUiVewcnk39mUccEN-SjxHeTZdB3VOXZrvvW4Cs3dw@mail.gmail.com>
-Subject: Re: [PATCH] x86: only use ERMS for user copies for larger sizes
-To:     pabeni@redhat.com
-Cc:     Jens Axboe <axboe@kernel.dk>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        Peter Anvin <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, dvlasenk@redhat.com,
-        brgerst@gmail.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181116010412.23967-7-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 9:27 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> It would be interesting to know exactly which copy it is that matters
-> so much...  *inlining* the erms case might show that nicely in
-> profiles.
+On Fri, Nov 16, 2018 at 03:01:13AM +0200, Jarkko Sakkinen wrote:
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> Similar to other large Intel features such as VMX and TXT, SGX must be
+> explicitly enabled in IA32_FEATURE_CONTROL MSR to be truly usable.
+> Clear all SGX related capabilities if SGX is not fully enabled in
+> IA32_FEATURE_CONTROL or if the SGX1 instruction set isn't supported
+> (impossible on bare metal, theoretically possible in a VM if the VMM is
+> doing something weird).
+> 
+> Like SGX itself, SGX Launch Control must be explicitly enabled via a
+> flag in IA32_FEATURE_CONTROL. Clear the SGX_LC capability if Launch
+> Control is not fully enabled (or obviously if SGX itself is disabled).
+> 
+> Note that clearing X86_FEATURE_SGX_LC creates a bit of a conundrum
+> regarding the SGXLEPUBKEYHASH MSRs, as it may be desirable to read the
+> MSRs even if they are not writable, e.g. to query the configured key,
+> but clearing the capability leaves no breadcrum for discerning whether
+> or not the MSRs exist.  But, such usage will be rare (KVM is the only
+> known case at this time) and not performance critical, so it's not
+> unreasonable to require the use of rdmsr_safe().  Clearing the cap bit
+> eliminates the need for an additional flag to track whether or not
+> Launch Control is truly enabled, which is what we care about the vast
+> majority of the time.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> index fc3c07fe7df5..8a20a193d399 100644
+> --- a/arch/x86/kernel/cpu/intel.c
+> +++ b/arch/x86/kernel/cpu/intel.c
+> @@ -596,6 +596,40 @@ static void detect_tme(struct cpuinfo_x86 *c)
+>  	c->x86_phys_bits -= keyid_bits;
+>  }
+>  
+> +static void detect_sgx(struct cpuinfo_x86 *c)
+> +{
+> +	unsigned long long fc;
+> +
+> +	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+> +	if (!(fc & FEATURE_CONTROL_LOCKED)) {
+> +		pr_err_once("sgx: IA32_FEATURE_CONTROL MSR is not locked\n");
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_ENABLE)) {
+> +		pr_err_once("sgx: not enabled in IA32_FEATURE_CONTROL MSR\n");
 
-Side note: the fact that Jens' patch (which I don't like in that form)
-allegedly shrunk the resulting kernel binary would seem to indicate
-that there's a *lot* of compile-time constant-sized memcpy calls that
-we are missing, and that fall back to copy_user_generic().
+Start those messages with a capital letter: "sgx: SGX is not enabled ...".
 
-It might be interesting to just change raw_copy_to/from_user() to
-handle a lot more cases (in particular, handle cases where 'size' is
-8-byte aligned). The special cases we *do* have may not be the right
-ones (the 10-byte case in particular looks odd).
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!cpu_has(c, X86_FEATURE_SGX1)) {
+> +		pr_err_once("sgx: SGX1 instruction set not supported\n");
+> +		goto out_unsupported;
+> +	}
+> +
+> +	if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
 
-For example, instead of having a "if constant size is 8 bytes, do one
-get/put_user()" case, we might have a "if constant size is < 64 just
-unroll it into get/put_user()" calls.
+I see the build failure here has been pointed out already but lemme
+repeat it out for another reason:
 
-                  Linus
+It is very important that no patch we merge breaks bisectability -
+please build every patch before sending:
+
+arch/x86/kernel/cpu/intel.c: In function ‘detect_sgx’:
+arch/x86/kernel/cpu/intel.c:619:13: error: ‘FEATURE_CONTROL_SGX_LE_WR’ undeclared (first use in this function); did you mean ‘FEATURE_CONTROL_SGX_ENABLE’?
+  if (!(fc & FEATURE_CONTROL_SGX_LE_WR)) {
+             ^~~~~~~~~~~~~~~~~~~~~~~~~
+             FEATURE_CONTROL_SGX_ENABLE
+arch/x86/kernel/cpu/intel.c:619:13: note: each undeclared identifier is reported only once for each function it appears in
+make[3]: *** [scripts/Makefile.build:291: arch/x86/kernel/cpu/intel.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [scripts/Makefile.build:516: arch/x86/kernel/cpu] Error 2
+make[1]: *** [scripts/Makefile.build:516: arch/x86/kernel] Error 2
+make: *** [Makefile:1060: arch/x86] Error 2
+make: *** Waiting for unfinished jobs....
+
+
+> +		pr_info_once("sgx: launch control MSRs are not writable\n");
+> +		goto out_msrs_rdonly;
+> +	}
+> +
+> +	return;
+
+<---- newline here.
+
+> +out_unsupported:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX1);
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX2);
+
+<---- newline here.
+
+> +out_msrs_rdonly:
+> +	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
+> +}
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
