@@ -2,126 +2,178 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC118C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC12C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9914120659
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79C51214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:46:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="A/BX2PJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9914120659
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="D1Sb+13g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C51214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732848AbeKVGRh (ORCPT
+        id S1732905AbeKVGVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:17:37 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:33962 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbeKVGRg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:17:36 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id A768124E12C5;
-        Wed, 21 Nov 2018 11:41:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542829317; bh=SMSSTlNFhJOx8xe5MPofETBAI9S74btb7y31gJPLUNU=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=A/BX2PJRw5MhB6GdxV6EHkePCBkv0OQh2vBbD3Oj9eNB8y6KSMbtXGZtBR1osYQ1u
-         tkPb59G/UbtOxvSNS9TpfiUZvMdgV8gJl1HebB1WiLPCxdNbIbUZjuxRrksM9Egu5j
-         rfpz72yEe5ohp/y+07VCAmQy5n/1D5PyORZoTL4kdpuI/ueDA8y6nxQhko5cB9luqK
-         OhAwDcBOPJe/WV0cMTWbjy9HHJz6S4Nmek4dpjh8OKzSj3eKIh/VSKdxYxm44n5B7g
-         jrgrz1nFGxaN68VzgYwXVOyE1FcJpyB0416vSSjU/BjH5LYhfmKCXA7Y37HJ35NSpy
-         Tk5vDR7ykDpCQ==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2B04B387E;
-        Wed, 21 Nov 2018 11:41:57 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Wed,
- 21 Nov 2018 11:41:57 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Vitor Soares <vitor.soares@synopsys.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        Jose Abreu <jose.abreu@synopsys.com>
-CC:     arcml <linux-snps-arc@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: Misaligned Access
-Thread-Topic: Misaligned Access
-Thread-Index: AQHUa8BEl692JJiolkiUiQERHFjjDw==
-Date:   Wed, 21 Nov 2018 19:41:56 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641580A@US01WEMBX2.internal.synopsys.com>
-References: <13D59CF9CEBAF94592A12E8AE55501350113CD10@DE02WEMBXB.internal.synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA23075012B0B4CD5@US01WEMBX2.internal.synopsys.com>
- <9ffd1270-ad92-88b7-eb53-85c65fe971dd@synopsys.com>
- <f8c469e7-9e1d-18d6-4e56-ba4338462048@synopsys.com>
- <ebe7f165-2901-2885-0583-c7be53329372@synopsys.com>
- <4881796E12491D4BB15146FE0209CE6468198AC6@DE02WEMBXB.internal.synopsys.com>
- <C2D7FE5348E1B147BCA15975FBA230750146415496@US01WEMBX2.internal.synopsys.com>
- <661a4323-5768-4977-5434-ab644c5418aa@synopsys.com>
+        Thu, 22 Nov 2018 01:21:41 -0500
+Received: from mail-eopbgr780100.outbound.protection.outlook.com ([40.107.78.100]:32352
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726505AbeKVGVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 01:21:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eWkvJQbIhorjLQqxD5SOKS1mSUyFdmHff425N3CIyT0=;
+ b=D1Sb+13g3goV2vy/b8bQtxOF30aeX4I+0yz+qUKQr1dnEsxhZLiGzOkARlKjaLaSIbq7gEr4GMfv/aDcaatHTHASlKj+sNk1KD0/BcLKPhk0XBDQ/zxRG54CCQntVgyu882C0CsZ603/2hH31LhYDNC7bs5hWyGQhhXirIywIHs=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1054.namprd22.prod.outlook.com (10.174.169.140) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.31; Wed, 21 Nov 2018 19:45:51 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::690f:b86d:7c2:e105]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::690f:b86d:7c2:e105%6]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
+ 19:45:51 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+CC:     Andy Lutomirski <luto@kernel.org>, Eric Paris <eparis@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-c6x-dev@linux-c6x.org" <linux-c6x-dev@linux-c6x.org>,
+        "linux-hexagon@vger.kernel.org" <linux-hexagon@vger.kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "nios2-dev@lists.rocketboards.org" <nios2-dev@lists.rocketboards.org>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "uclinux-h8-devel@lists.sourceforge.jp" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 16/15 v2] syscall_get_arch: add "struct task_struct *"
+ argument
+Thread-Topic: [PATCH v2 16/15 v2] syscall_get_arch: add "struct task_struct *"
+ argument
+Thread-Index: AQHUgdFVNht9C6cLakeqWf7v58LJOqVaofiA
+Date:   Wed, 21 Nov 2018 19:45:51 +0000
+Message-ID: <20181121194549.4glznckje73z2uxk@pburton-laptop>
+References: <20181107042751.3b519062@akathisia>
+ <CALCETrV1v-DPRfDRwiH=xn29bxWxiHdZtAH1nw=dsmDtnT0YGQ@mail.gmail.com>
+ <20181120001128.GA11300@altlinux.org> <20181121004422.GA29053@altlinux.org>
+ <20181121184004.jro532jopnbmru2m@pburton-laptop>
+ <20181121190009.GA10301@altlinux.org> <20181121193512.GA11297@altlinux.org>
+In-Reply-To: <20181121193512.GA11297@altlinux.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
+x-clientproxiedby: MWHPR1401CA0002.namprd14.prod.outlook.com
+ (2603:10b6:301:4b::12) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1054;6:iefVsIiWh3uSZ2Iht040SAjaQCtvchxT03wgPvh+VpGX1p3R3M6+3gJ3Hwtdu7YcJKw9PyRr8gQIk9mHGTMTzV6a0IcNPM00sUAsExcuo7uDmKFRjpAQdFgBZcChE1RRQV9vaCJiK1IZXBbphlY+esioMe/wGR5RSel9WwpVTVfvZNCH8cQve75J5ZIfxWm9NfCbE1tqoGH4VPNl0hChacriOFT41p2gvHVTvEJVLjKVrCMyisIQj/eyAukWS9c3jw1njeqKRWKOWeyhB6ukoxNn5GTSaZLmyc8hren3fYi8T871H/FxJ9n5bURg/73zDuY75TgzNE9p+sraTEFqVZ28jMrcraQBC5KdBXqVXShlJ4ZV7y7LIeKDRcKnGTp7NK735Wksiw/FFy5mXD9JHr6FewBxqFHsjWmrfKqTayq49Z7anaAR0+KAGylHU3bahQFOr3Z2GYI7arhkJ/nBAQ==;5:VlvW9W3grT5+p8yxno+MzGJblhCfWx7Okt26ECM4e2cLqr807DLbCLViPwMI1L2hi7WUCNYUBSjFukQ1xvmPFXJqt5pHT033H+x4KOLm0nE8Sd0u8ZFP4EZ6TpwvKK3O/pexdeAV0BxWk+FptLXaiSbQV4cBaxdPO5aT28AB+ac=;7:xkfgEy3twUi7UxOk2pOtmgmzIvDV1hPoLLl2uwb8BglgW7hDDdJZ9u6tWW7of4UqC72r8CsNGUebv7W8Po6TwXCzjSdeTpCfzKhheybyD1NmqOFrArGPChMS2RnZKIRR9gOPWyieZ5SvlBl2OdEgAA==
+x-ms-office365-filtering-correlation-id: 5ad994e2-1dd3-4947-a468-08d64fe9f0fe
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1054;
+x-ms-traffictypediagnostic: MWHPR2201MB1054:
+x-microsoft-antispam-prvs: <MWHPR2201MB10549F70E8677210F41C11F1C1DA0@MWHPR2201MB1054.namprd22.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(65623756079841)(197064567915663);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(93006095)(3231442)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1054;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1054;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(366004)(39840400004)(396003)(136003)(346002)(376002)(189003)(199004)(52314003)(3846002)(1076002)(6116002)(53936002)(71190400001)(71200400001)(8936002)(81166006)(81156014)(54906003)(2900100001)(8676002)(33896004)(58126008)(7736002)(44832011)(476003)(11346002)(7416002)(7406005)(6486002)(14454004)(2906002)(6436002)(68736007)(5660300001)(229853002)(6512007)(9686003)(508600001)(6916009)(6506007)(386003)(102836004)(6246003)(256004)(14444005)(305945005)(97736004)(26005)(66066001)(111086002)(33716001)(105586002)(76176011)(42882007)(52116002)(4326008)(486006)(99286004)(316002)(25786009)(93886005)(106356001)(446003)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1054;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: TnJ/L4eKAimvBE9ftH/a91H2VNANF6dEdMp7boUv+FixxuPeKRiVZWlMLr3BvCFisnZYsgVVV5RN4WavQtyGmktvXjfkdyv6ju1ceUxE0mZk5aMouRezI9yHpQ37N9grPRaJWLm9urjsCobOj7RQsTolRkr0sDtd2JlxC7pmTDrIZG+c5zu6nU3qJVznF2oa9GPWQ9BOQlvf3CLOGC9z85AAwQyQpiGSmTiKUhE7kH155Zf3vpqRKmvoNgvE3YgWD/ICcFuSvcbFjHd+9RcpeV58NRwxXXINverEBDuwBDPr2B0tpPxWkFM4o1G8wGiYyRSO9hmJ30gAQe4aKPP6ZxrcMM5FZLiSp/9xM3l8YDk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <708ADDE084183B41A3B884270BF84771@namprd22.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ad994e2-1dd3-4947-a468-08d64fe9f0fe
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 19:45:51.5163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1054
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+CC lkml, Arnd : subject matter expert=0A=
-=0A=
-On 11/21/18 10:06 AM, Vitor Soares wrote:=0A=
-> I use the follow function to get data from a RX Fifo.=0A=
->=0A=
->=0A=
-> static void dw_i3c_master_read_rx_fifo(struct dw_i3c_master *master,=0A=
->                         u8 *bytes, int nbytes)=0A=
-> {=0A=
->      readsl(master->regs + RX_TX_DATA_PORT, bytes, nbytes / 4);=0A=
-=0A=
-So the semantics are reading the same fifo register N times, to get the N w=
-ords,=0A=
-hence read*s*l is appropriate. That however expects the buffer to be 4 byte=
-s=0A=
-aligned, hence your issue. You can't possibly use the reads*b* as we want t=
-he=0A=
-=0A=
-The obvious but crude hack is to use a temp array for readsl and then copy =
-over=0A=
-using memcpy, but I'm sure there are better ways, @Arnd ? To summarize is i=
-ssue is=0A=
-a driver triggering unaligned access due to the misinteraction of API (driv=
-er get=0A=
-an unaligned u8 *) which goes against expectations of io accessor readl  (n=
-eeded=0A=
-since the register contents are 4 bytes)=0A=
-=0A=
-=0A=
->      if (nbytes & 3) {=0A=
->          u32 tmp;=0A=
->=0A=
->          readsl(master->regs + RX_TX_DATA_PORT, &tmp, 1);=0A=
->          memcpy(bytes + (nbytes & ~3), &tmp, nbytes & 3);=0A=
->      }=0A=
-> }=0A=
->=0A=
->=0A=
-> and the pointer u8 *bytes is what is unaligned and breaks when inside of =
-=0A=
-> realdsl() it does:=0A=
->=0A=
->      *buf++ =3D x;=0A=
->=0A=
->=0A=
-> Note that the u8 *bytes pointer is the __u8 *buf of the i2c_msg struct.=
-=0A=
-=0A=
+Hi Dmitry,
+
+On Wed, Nov 21, 2018 at 10:35:12PM +0300, Dmitry V. Levin wrote:
+> This argument is required to extend the generic ptrace API with
+> PTRACE_GET_SYSCALL_INFO request: syscall_get_arch() is going to be
+> called from ptrace_request() along with other syscall_get_* functions
+> with a tracee as their argument.
+>=20
+> This change partially reverts commit 5e937a9ae913 ("syscall_get_arch:
+> remove useless function arguments").
+>=20
+> Reviewed-by: Andy Lutomirski <luto@kernel.org> # for x86
+> Reviewed-by: Palmer Dabbelt <palmer@sifive.com>
+> Cc: linux-audit@redhat.com
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-c6x-dev@linux-c6x.org
+> Cc: linux-hexagon@vger.kernel.org
+> Cc: linux-ia64@vger.kernel.org
+> Cc: linux-m68k@lists.linux-m68k.org
+> Cc: linux-mips@linux-mips.org
+> Cc: linux-parisc@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+> Cc: linux-snps-arc@lists.infradead.org
+> Cc: linux-um@lists.infradead.org
+> Cc: linux-xtensa@linux-xtensa.org
+> Cc: linuxppc-dev@lists.ozlabs.org
+> Cc: nios2-dev@lists.rocketboards.org
+> Cc: openrisc@lists.librecores.org
+> Cc: sparclinux@vger.kernel.org
+> Cc: uclinux-h8-devel@lists.sourceforge.jp
+> Cc: x86@kernel.org
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+>=20
+> v2: cleaned up mips part, added Reviewed-by
+
+I thought the last one was v2? :)
+
+Anyway, this looks fine to me now:
+
+    Acked-by: Paul Burton <paul.burton@mips.com> # MIPS parts
+
+Thanks,
+    Paul
