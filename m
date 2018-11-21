@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC829C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2383C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815F92151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BC282151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bk4oltK1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815F92151B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+1Q/PBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BC282151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388250AbeKVFob (ORCPT
+        id S2388264AbeKVFod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:44:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39054 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:44:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39104 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbeKVFoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:44:30 -0500
+        id S1726862AbeKVFoc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:44:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28692214DB;
-        Wed, 21 Nov 2018 19:08:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF71214DB;
+        Wed, 21 Nov 2018 19:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827337;
-        bh=rS2Fcw2udW/xoT3mtkbyQZWhYIwYI5o/gtRZRnUDY3s=;
+        s=default; t=1542827339;
+        bh=FoikNZIV43030ewHQnPIrpdkrYKJbL5vYmKpY9+7LZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bk4oltK1rSUtqOqZIa6rkH1sVTuzsB3XU8yHK6EQKFctgb34HcyWC9qOQfM2ErjIH
-         Vf738oCnQMpON8NOhDHjoIPpc6NYqQxxeYpRWUtxmA+cIFpYhWgw+1abdLs4mdAQJG
-         qeIcFspq/F5v5Aze6lFFSuZUcQXm5Gki1ETdQE/4=
+        b=I+1Q/PBzocUMyhZWH7Y8uZnEqopd/3vLD5wUdDFTNmzUhuSpATSeF5FhLu3tM89K8
+         yxNVv+xkXwkaGD5FaRrYAfrtxMwh0v9fP7RtL6gLeJXfQTTmWC6sxSeh94Ztr+GKWR
+         D+KTZScbZHBL8lXpI9FiPkdy0JPOS8r4gyg3+H7A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianwen Ji <jiji@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 12/21] sctp: fix strchange_flags name for Stream Change Event
-Date:   Wed, 21 Nov 2018 20:06:56 +0100
-Message-Id: <20181121183422.576949851@linuxfoundation.org>
+Subject: [PATCH 4.14 13/21] net: phy: mdio-gpio: Fix working over slow can_sleep GPIOs
+Date:   Wed, 21 Nov 2018 20:06:57 +0100
+Message-Id: <20181121183422.621304382@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183422.103826775@linuxfoundation.org>
 References: <20181121183422.103826775@linuxfoundation.org>
@@ -63,35 +64,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Martin Schiller <ms@dev.tdt.de>
 
-[ Upstream commit fd82d61ba142f0b83463e47064bf5460aac57b6e ]
+[ Upstream commit df5a8ec64eed7fe45b556cfff503acd6429ab817 ]
 
-As defined in rfc6525#section-6.1.3, SCTP_STREAM_CHANGE_DENIED
-and SCTP_STREAM_CHANGE_FAILED should be used instead of
-SCTP_ASSOC_CHANGE_DENIED and SCTP_ASSOC_CHANGE_FAILED.
+Up until commit 7e5fbd1e0700 ("net: mdio-gpio: Convert to use gpiod
+functions where possible"), the _cansleep variants of the gpio_ API was
+used. After that commit and the change to gpiod_ API, the _cansleep()
+was dropped. This then results in WARN_ON() when used with GPIO
+devices which do sleep. Add back the _cansleep() to avoid this.
 
-To keep the compatibility, fix it by adding two macros.
-
-Fixes: b444153fb5a6 ("sctp: add support for generating add stream change event notification")
-Reported-by: Jianwen Ji <jiji@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Fixes: 7e5fbd1e0700 ("net: mdio-gpio: Convert to use gpiod functions where possible")
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/uapi/linux/sctp.h |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/phy/mdio-gpio.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/include/uapi/linux/sctp.h
-+++ b/include/uapi/linux/sctp.h
-@@ -519,6 +519,8 @@ struct sctp_assoc_reset_event {
+--- a/drivers/net/phy/mdio-gpio.c
++++ b/drivers/net/phy/mdio-gpio.c
+@@ -79,7 +79,7 @@ static void mdio_dir(struct mdiobb_ctrl
+ 		 * assume the pin serves as pull-up. If direction is
+ 		 * output, the default value is high.
+ 		 */
+-		gpiod_set_value(bitbang->mdo, 1);
++		gpiod_set_value_cansleep(bitbang->mdo, 1);
+ 		return;
+ 	}
  
- #define SCTP_ASSOC_CHANGE_DENIED	0x0004
- #define SCTP_ASSOC_CHANGE_FAILED	0x0008
-+#define SCTP_STREAM_CHANGE_DENIED	SCTP_ASSOC_CHANGE_DENIED
-+#define SCTP_STREAM_CHANGE_FAILED	SCTP_ASSOC_CHANGE_FAILED
- struct sctp_stream_change_event {
- 	__u16 strchange_type;
- 	__u16 strchange_flags;
+@@ -94,7 +94,7 @@ static int mdio_get(struct mdiobb_ctrl *
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	return gpiod_get_value(bitbang->mdio);
++	return gpiod_get_value_cansleep(bitbang->mdio);
+ }
+ 
+ static void mdio_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -103,9 +103,9 @@ static void mdio_set(struct mdiobb_ctrl
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+ 	if (bitbang->mdo)
+-		gpiod_set_value(bitbang->mdo, what);
++		gpiod_set_value_cansleep(bitbang->mdo, what);
+ 	else
+-		gpiod_set_value(bitbang->mdio, what);
++		gpiod_set_value_cansleep(bitbang->mdio, what);
+ }
+ 
+ static void mdc_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -113,7 +113,7 @@ static void mdc_set(struct mdiobb_ctrl *
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	gpiod_set_value(bitbang->mdc, what);
++	gpiod_set_value_cansleep(bitbang->mdc, what);
+ }
+ 
+ static const struct mdiobb_ops mdio_gpio_ops = {
 
 
