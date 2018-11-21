@@ -2,77 +2,99 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 160B9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75A87C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD125214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:38:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="DLoqFf+t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD125214DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 1FE50214DA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE50214DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732410AbeKVENu (ORCPT
+        id S1732426AbeKVEOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:13:50 -0500
-Received: from a9-92.smtp-out.amazonses.com ([54.240.9.92]:44158 "EHLO
-        a9-92.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726671AbeKVENt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:13:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1542821910;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=S1EWvX3UZYb3JEPOjlAPrDF2PAzMoi+8UxVNd5C4oIw=;
-        b=DLoqFf+tcRxMRlEWuqRLoNmN+fRQLqlBdUzuywUtEfvQ4NVPZ+p3gvud5xAcyRlI
-        p1eiu5NU/ohC0wlRqfyPNK6zNOlnvBn6mr/i6t/WhoHn2IvOvB1ZwP6lZ/r87LYq06Z
-        wb7Lt70TBUMb3YD13wxRarxVnso7JaNu+32zing8=
-Date:   Wed, 21 Nov 2018 17:38:30 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Will Deacon <will.deacon@arm.com>
-cc:     Nicolas Boichat <drinkcat@chromium.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Levin Alexander <Alexander.Levin@microsoft.com>,
-        Huaisheng Ye <yehs1@lenovo.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Yong Wu <yong.wu@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Tomasz Figa <tfiga@google.com>, yingjoe.chen@mediatek.com
-Subject: Re: [PATCH v2 3/3] iommu/io-pgtable-arm-v7s: Request DMA32 memory,
- and improve debugging
-In-Reply-To: <20181121164638.GD24883@arm.com>
-Message-ID: <01000167375a15f8-362aa1e2-cf01-49b5-92b5-f0a4efcca477-000000@email.amazonses.com>
-References: <20181111090341.120786-1-drinkcat@chromium.org> <20181111090341.120786-4-drinkcat@chromium.org> <20181121164638.GD24883@arm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 21 Nov 2018 23:14:05 -0500
+Received: from mga18.intel.com ([134.134.136.126]:51217 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726671AbeKVEOF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:14:05 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 09:38:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="87681720"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga007.fm.intel.com with ESMTP; 21 Nov 2018 09:38:42 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gPWSX-0005Qv-Bm; Wed, 21 Nov 2018 19:38:41 +0200
+Date:   Wed, 21 Nov 2018 19:38:41 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, liam.r.girdwood@linux.intel.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/6] ASoC: Intel: Skylake: Add CFL-S support
+Message-ID: <20181121173841.GS10650@smile.fi.intel.com>
+References: <20181120213644.19103-1-pierre-louis.bossart@linux.intel.com>
+ <20181120213644.19103-2-pierre-louis.bossart@linux.intel.com>
+ <20181121142721.GO10650@smile.fi.intel.com>
+ <414b4c3a-7e04-2775-7d87-16a236b5b4e8@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2018.11.21-54.240.9.92
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <414b4c3a-7e04-2775-7d87-16a236b5b4e8@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, Will Deacon wrote:
+On Wed, Nov 21, 2018 at 11:16:50AM -0600, Pierre-Louis Bossart wrote:
+> On 11/21/18 8:27 AM, Andy Shevchenko wrote:
 
-> > +#define ARM_V7S_TABLE_SLAB_CACHE SLAB_CACHE_DMA32
+> > May you consider to switch to PCI_DEVICE_DATA() first?
+> 
+> Is this really the recommended path?
+> 
+> The macro generates PCI_DEVICE_ID_##vend##_##dev, and I don't have a turn
+> key #define PCI_DEVICE_ID_INTEL_AUDIO_CFL 0xa348 I can use. In a number of
+> cases we have multiple variants of the same hardware, and it starts being
+> painful to use a 20-letter macro to differentiate between INTEL_AUDIO_CFL_Y
+> and INTEL_AUDIO_CFL_H. The explicit code and a short comment are more
+> readable really.
+> 
+> git grep PCI_DEVICE_ID_INTEL gives me hundreds of definitions, some global,
+> some local to specific drivers, doesn't seem like there is a well-agreed
+> usage of this macro, is there? I don't mind making the change but I don't
+> sense an strong argument for it?
 
-SLAB_CACHE_DMA32??? WTH is going on here? We are trying to get rid of
-the dma slab array.
+Compare:
+
+	/* CFL */
+	{ PCI_DEVICE(0x8086, 0xa348),
+		.driver_data = (unsigned long)&snd_soc_acpi_intel_cnl_machines},
+
+to something like:
+
+#define PCI_DEVICE_ID_INTEL_AUDIO_CFL	0xa348
+...
+
+	{PCI_DEVICE_DATA(INTEL, AUDIO_CFL, &snd_soc_acpi_intel_cnl_machines)},
+
+
+Macro is recently introduced, that's why not many users of it. At least I'm
+planning to clean up dwc3-pci.c using it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
