@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE11AC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E26C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D1C214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 151F02151B
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gp0W0HBU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D1C214DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY/zhla2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151F02151B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388533AbeKVFpU (ORCPT
+        id S2388542AbeKVFpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729105AbeKVFpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:19 -0500
+        id S1729105AbeKVFpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCE73214DB;
-        Wed, 21 Nov 2018 19:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B536214D9;
+        Wed, 21 Nov 2018 19:09:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827386;
-        bh=8KjP9kOuFuqv0oYS6QI0mOOnIgLfjYqkU9Haov8rEHA=;
+        s=default; t=1542827388;
+        bh=14QBHg2WPpMB1PWAkLUVCzYusKiEFA1Educo0QEqDn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gp0W0HBUpq+lGNOo7v89M6Q3IW4n+jF3M199j/O42jjGfe2OlnUsP8n1n9mnXeP+8
-         sVWzuzRH1OpaYmtPV1+9OH/oj/CgpoPPAHLWqx/BWwzGx93WXv3Rdsadvc7kzqfJ7w
-         5Ej/xhuvtzZNvG/Cru2sNg/n51MMcYJUnrkvoZgM=
+        b=pY/zhla2r5X8ZlMjqnaDfq+ndG1S4enJR0XzbmaF5vThx7nGPEkfFY5xzzgCW88Rs
+         3k/pm9Lafcq/LgepI6d1w0cXtl7JyeRfAdfKatWUg1iLBXgUZI63KsZTQGMnDTf1y/
+         CMRiaDcq8Qv8etqtKZL0gJOzsN2PSrZDp95MGXuA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Behan Webster <behanw@converseincode.com>,
-        =?UTF-8?q?Jan-Simon=20M=C3=B6ller?= <dl9pf@gmx.de>,
-        Mark Charlebois <charlebm@gmail.com>,
-        Greg Hackmann <ghackmann@google.com>,
+        stable@vger.kernel.org, Michael Davidson <md@google.com>,
         Matthias Kaehlcke <mka@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH 4.9 10/59] kbuild: Add better clang cross build support
-Date:   Wed, 21 Nov 2018 20:06:25 +0100
-Message-Id: <20181121183508.664285134@linuxfoundation.org>
+Subject: [PATCH 4.9 11/59] kbuild: clang: add -no-integrated-as to KBUILD_[AC]FLAGS
+Date:   Wed, 21 Nov 2018 20:06:26 +0100
+Message-Id: <20181121183508.705946990@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -67,48 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Behan Webster <behanw@converseincode.com>
+From: Michael Davidson <md@google.com>
 
-commit 785f11aa595bc3d4e74096cbd598ada54ecc0d81 upstream.
+commit a37c45cd82e62a361706b9688a984a3a63957321 upstream.
 
-Add cross target to CC if using clang. Also add custom gcc toolchain
-path for fallback gcc tools.
+The Linux Kernel relies on GCC's acceptance of inline assembly as an
+opaque object which will not have any validation performed on the content.
+The current behaviour in LLVM is to perform validation of the contents by
+means of parsing the input if the MC layer can handle it.
 
-Clang will fallback to using things like ld, as, and libgcc if
-(respectively) one of the llvm linkers isn't available, the integrated
-assembler is turned off, or an appropriately cross-compiled version of
-compiler-rt isn't available. To this end, you can specify the path to
-this fallback gcc toolchain with GCC_TOOLCHAIN.
+Disable clangs integrated assembler and use the GNU assembler instead.
 
-Signed-off-by: Behan Webster <behanw@converseincode.com>
-Reviewed-by: Jan-Simon Möller <dl9pf@gmx.de>
-Reviewed-by: Mark Charlebois <charlebm@gmail.com>
-Signed-off-by: Greg Hackmann <ghackmann@google.com>
+Wording-mostly-from: Saleem Abdulrasool <compnerd@compnerd.org>
+Signed-off-by: Michael Davidson <md@google.com>
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Makefile |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ Makefile |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/Makefile
 +++ b/Makefile
-@@ -704,6 +704,15 @@ endif
- KBUILD_CFLAGS += $(stackp-flag)
+@@ -725,6 +725,8 @@ KBUILD_CFLAGS += $(call cc-disable-warni
+ # See modpost pattern 2
+ KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
+ KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
++KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
++KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+ else
  
- ifeq ($(cc-name),clang)
-+ifneq ($(CROSS_COMPILE),)
-+CLANG_TARGET	:= -target $(notdir $(CROSS_COMPILE:%-=%))
-+GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
-+endif
-+ifneq ($(GCC_TOOLCHAIN),)
-+CLANG_GCC_TC	:= -gcc-toolchain $(GCC_TOOLCHAIN)
-+endif
-+KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
-+KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
- KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
- KBUILD_CPPFLAGS += $(call cc-option,-Wno-unknown-warning-option,)
- KBUILD_CFLAGS += $(call cc-disable-warning, unused-variable)
+ # These warnings generated too much noise in a regular build.
 
 
