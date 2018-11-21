@@ -2,77 +2,88 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC97C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:30:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C218BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 752C421527
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:30:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 752C421527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 89396214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:31:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iHvfIKmN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89396214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389619AbeKVHGh (ORCPT
+        id S2389629AbeKVHHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:06:37 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:45574 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeKVHGh (ORCPT
+        Thu, 22 Nov 2018 02:07:48 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55448 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeKVHHs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:06:37 -0500
-Received: from p4fea46ac.dip0.t-ipconnect.de ([79.234.70.172] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gPZ91-0000j3-Hr; Wed, 21 Nov 2018 21:30:43 +0100
-Date:   Wed, 21 Nov 2018 21:30:42 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Jiri Kosina <jkosina@suse.cz>, thomas.lendacky@amd.com,
+        Thu, 22 Nov 2018 02:07:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=045HICJJn4lFtl8ezh0YLS2Wnlr4WooCucz847EazK4=; b=iHvfIKmNxp9JxGQV46iWtPeoV
+        ks9+VAq/hKX4fdWsGRx5c6Omifd4qhqaUqT0iy7bfmrA/vdgVHGjvUa/0XTvD5UrjCU+6d6pnDapb
+        5uExaBY25Lbkl7OirjCho6dKZTLNOYcIKLjycP85KLS0tSz3sv0ffNjimfgwuBKPXZ1Tf+yAY89Yx
+        AhiYuPehKZebl+pipBdWPuTcMpuOCU/nppIUQ8YdTRB7qkJKbuGiqyNIi8vBT+VPCd/Se/TFHnBQy
+        EsG82N+3pNAwmYHlKgafhm2d7nEIHOXji8XT4oLZvTLmBGLl9gYI5c+kbYPW4S43DDCmpyS82dGmW
+        jtioCZoyQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gPZA6-0002zC-I2; Wed, 21 Nov 2018 20:31:50 +0000
+Date:   Wed, 21 Nov 2018 12:31:50 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        timmurray@google.com, primiano@google.com, joelaf@google.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Roman Gushchin <guro@fb.com>, Vlastimil Babka <vbabka@suse.cz>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com, Kees Cook <keescook@chromium.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [patch 01/24] x86/speculation: Update the TIF_SSBD comment
-In-Reply-To: <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1811212130000.1665@nanos.tec.linutronix.de>
-References: <20181121201430.559770965@linutronix.de> <20181121201722.337599561@linutronix.de> <CAHk-=wgLZkKDLeNN818VG0wC6B_kCUJqKPLdW+KDVocU6_DvtA@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Howells <dhowells@redhat.com>,
+        KJ Tsanaktsidis <ktsanaktsidis@zendesk.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH] Add /proc/pid_generation
+Message-ID: <20181121203150.GK3065@bombadil.infradead.org>
+References: <20181121201452.77173-1-dancol@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121201452.77173-1-dancol@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Nov 2018, Linus Torvalds wrote:
-
-> On Wed, Nov 21, 2018 at 12:18 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> >
-> > From: Tim Chen "Reduced Data Speculation" is an obsolete term.
+On Wed, Nov 21, 2018 at 12:14:44PM -0800, Daniel Colascione wrote:
+> This change adds a per-pid-namespace 64-bit generation number,
+> incremented on PID rollover, and exposes it via a new proc file
+> /proc/pid_generation. By examining this file before and after /proc
+> enumeration, user code can detect the potential reuse of a PID and
+> restart the task enumeration process, repeating until it gets a
+> coherent snapshot.
 > 
-> Ugh. Now you're using the broken quilt thing that makes a mush of emails for me.
+> PID rollover ought to be rare, so in practice, scan repetitions will
+> be rare.
 
-Gah. Dammit, I forgot to disable this file inline thingy. Sorry about that.
-
-/me goes and fixes
-
-Thanks,
-
-	tglx
+Then why does it need to be 64-bit?
