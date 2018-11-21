@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A318C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B076C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:36:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3089020989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:36:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3173520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:36:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="yCKqkjS/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3089020989
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="iB2Itlhq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3173520989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbeKUUKS (ORCPT
+        id S1729851AbeKUUK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:10:18 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:42047 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeKUUJU (ORCPT
+        Wed, 21 Nov 2018 15:10:27 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44614 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbeKUUJS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:09:20 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q18so4880077wrx.9
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:35:35 -0800 (PST)
+        Wed, 21 Nov 2018 15:09:18 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so598195wrt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:35:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=PjdzFhQREPTnJUNVsg8kuyC1vvOrCeXjQBrgQGo9DMI=;
-        b=yCKqkjS/a9fhkywBvKntg0bv1vn9Us/g5a+VAfC6Dl0GTlbx4Bh5Z1OwlE+61X+kX3
-         jwJN8qYRPztOSx5jKl4EYa6wbazuuG7gBsGAHkT6CsaZ1JhOqA4mG7FQ5yOdHx2O8Cxl
-         OeKgXhlD+RA5llamk3V7UPe3Gcu0HFuNKa3Ncy8DWEubmYA+b1JmLUAzm3M0bJzDpMPh
-         yPyIq7rINWBvkW17XpJUDuPaSQa4t6JMzciBUBVEL52T4iOVtIUFnDPTTIPT1Cs5GCSz
-         Dk8Y1OCaJJxa3dvA/Vdi8slYhSdDEBwdkFG9Ujcv+GQX4d5ni4lthpybyf6tFhRRWCbC
-         jFRA==
+        bh=HC+mchDEZwGYwrWGM+6feJYkdRI25AY3Wcks9Ijr2dE=;
+        b=iB2ItlhqxqQKQpsTkdSyBdwNwda2ZSnnkC720HijPxDPzkj4l6vYEQYds64HCq6TbQ
+         dAovMHP1uO2ehmbdM8UWoUVILulAq0Hz+FF/PjZIC6cVoV80jwOFFvxliB4VwctbSL5X
+         bxqDfCisz+9Ftxpk6C2L6NL4DeaWrBX20059z8uQiVIdDKw6AaK9ZcQ7VxgGM6+4xqcu
+         fWuFDxJGdIdxN/FxUjIbqq0c6PqhDonMmV9fruf7MU6YzU6Zwv8LuQMZCi5JIT2kvNsQ
+         N0qyvfWOm2xUFPMQb7GQ+mpdOCTJyJWjMv/czmg+OyX7wHTukID247QC50JJfKLIXQiv
+         is2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=PjdzFhQREPTnJUNVsg8kuyC1vvOrCeXjQBrgQGo9DMI=;
-        b=fIJH3SWGaTetHL5H/Id+vjoJbQIZygV7LGIgnNQZmr5K1GlMFnf+FUWiHzK5lzne67
-         bXjGFpI0Ko53WCAUIhzucyMlMkNoDpsaYuV+yuURAccdNWo/wE7cRE2L1uzUHswRrqLD
-         G9M5qX8z4AO2jOCd83Q28x7CJ47IrxFeD7klpZpsSX0Au/8WRp54DLYUN2r89HHHj3YZ
-         YMzNdnuJVx4E7O4mHFeTXyv11fSuHRUPQaCRyJ+tcHzWoKDvH2Ekut0Y5MxRAJHHGk4Q
-         e9sRXw2YO8MjB2AbAfIbA5qVUpSMSi1+Yiym4jXM5Y+ev6Jz49lj5+9L/fBSw23XTvuM
-         /30w==
-X-Gm-Message-State: AA+aEWZ86vfkK3YCwXMtm27iCMMKOXko0wtfMlb0AQ/Va56O+gNcSg+Y
-        l+WjVwMh2CgasgBl1KshWfaMPw==
-X-Google-Smtp-Source: AFSGD/U8MZAngrsDB11zme7tjW7DvR3eS6LadxlZSP1EWiwN5PnumTYZjEwESegbqG4CsRzsnubvhQ==
-X-Received: by 2002:adf:f649:: with SMTP id x9mr4927531wrp.247.1542792934877;
-        Wed, 21 Nov 2018 01:35:34 -0800 (PST)
+        bh=HC+mchDEZwGYwrWGM+6feJYkdRI25AY3Wcks9Ijr2dE=;
+        b=T88XwIentD9PdDuo/HymUb++9+nqJtoVSL0i6CcZbT6wrtZkBgFCkH2KzlGuuuAziN
+         X3xEZ7JuHZCXV+YfQIo0p+1JSRVdfBF/gJUdMWsu81ku+t6/lnaE7HmPFMr5VgNhXXFg
+         Gy4b6mYwfdUWo2Ke85dT4njLrxVo71sP4TcCCxmsJNx0KUN6yh61+Htc5aOpUBqlENFg
+         AeUwydr8WpoOy2cEimkKpUe6mhbdlrvkytSaFGFF/TtihSLJy3FFAxs61gHEB/6eF9YS
+         MhQ7ZLfCaxeHtFMR/1410yHf/l4jaOtwj3MWjE/ud7jWi0ml88ewkTpq7Mggc54Feygm
+         lFwQ==
+X-Gm-Message-State: AA+aEWb0stNnWt66YqHwTa4gXACwwtH1saCTzgP50bVzbCUCcHbOH94T
+        ct8HyztU0KTeoCGucdeXnC3SXw==
+X-Google-Smtp-Source: AFSGD/UvPXBF79Bclhv0n50IlUiKs7axgXrGGaqXj2eSBdaVnL4CEq2hpOA4u4dEptsr8klK7sCI9w==
+X-Received: by 2002:adf:b190:: with SMTP id q16mr5019328wra.95.1542792932567;
+        Wed, 21 Nov 2018 01:35:32 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id o8sm10443785wrx.15.2018.11.21.01.35.33
+        by smtp.gmail.com with ESMTPSA id o8sm10443785wrx.15.2018.11.21.01.35.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 01:35:34 -0800 (PST)
+        Wed, 21 Nov 2018 01:35:32 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         stable@vger.kernel.org
-Subject: [PATCH 04/12] ARM: davinci: dm355: define gpio interrupts as separate resources
-Date:   Wed, 21 Nov 2018 10:35:15 +0100
-Message-Id: <20181121093523.12503-5-brgl@bgdev.pl>
+Subject: [PATCH 02/12] ARM: davinci: dm365: define gpio interrupts as separate resources
+Date:   Wed, 21 Nov 2018 10:35:13 +0100
+Message-Id: <20181121093523.12503-3-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121093523.12503-1-brgl@bgdev.pl>
 References: <20181121093523.12503-1-brgl@bgdev.pl>
@@ -95,48 +95,53 @@ Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/dm355.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm/mach-davinci/dm365.c | 35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 9f7d38d12c88..2b0f5d97ab7c 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -548,6 +548,36 @@ static struct resource dm355_gpio_resources[] = {
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index abcf2a5ed89b..42665914166a 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -267,6 +267,41 @@ static struct resource dm365_gpio_resources[] = {
  	},
  	{	/* interrupt */
- 		.start	= IRQ_DM355_GPIOBNK0,
-+		.end	= IRQ_DM355_GPIOBNK0,
+ 		.start	= IRQ_DM365_GPIO0,
++		.end	= IRQ_DM365_GPIO0,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK1,
-+		.end	= IRQ_DM355_GPIOBNK1,
++		.start	= IRQ_DM365_GPIO1,
++		.end	= IRQ_DM365_GPIO1,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK2,
-+		.end	= IRQ_DM355_GPIOBNK2,
++		.start	= IRQ_DM365_GPIO2,
++		.end	= IRQ_DM365_GPIO2,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK3,
-+		.end	= IRQ_DM355_GPIOBNK3,
++		.start	= IRQ_DM365_GPIO3,
++		.end	= IRQ_DM365_GPIO3,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK4,
-+		.end	= IRQ_DM355_GPIOBNK4,
++		.start	= IRQ_DM365_GPIO4,
++		.end	= IRQ_DM365_GPIO4,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK5,
-+		.end	= IRQ_DM355_GPIOBNK5,
++		.start	= IRQ_DM365_GPIO5,
++		.end	= IRQ_DM365_GPIO5,
 +		.flags	= IORESOURCE_IRQ,
 +	},
 +	{
-+		.start	= IRQ_DM355_GPIOBNK6,
- 		.end	= IRQ_DM355_GPIOBNK6,
++		.start	= IRQ_DM365_GPIO6,
++		.end	= IRQ_DM365_GPIO6,
++		.flags	= IORESOURCE_IRQ,
++	},
++	{
++		.start	= IRQ_DM365_GPIO7,
+ 		.end	= IRQ_DM365_GPIO7,
  		.flags	= IORESOURCE_IRQ,
  	},
 -- 
