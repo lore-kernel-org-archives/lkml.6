@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CCCC32788
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3598C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4757213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:43:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4757213A2
+	by mail.kernel.org (Postfix) with ESMTP id 85998213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:43:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85998213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeKULP0 (ORCPT
+        id S1727878AbeKULP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 21 Nov 2018 06:15:26 -0500
-Received: from mga12.intel.com ([192.55.52.136]:16659 "EHLO mga12.intel.com"
+Received: from mga05.intel.com ([192.55.52.43]:6936 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbeKULOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726704AbeKULOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Nov 2018 06:14:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:42:05 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:42:04 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="251346829"
+   d="scan'208";a="251346810"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
   by orsmga004.jf.intel.com with ESMTP; 20 Nov 2018 16:42:04 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
@@ -53,9 +53,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         stable@vger.kernel.org
-Subject: [Patch v7 09/18] x86/smt: Convert cpu_smt_control check to cpu_smt_enabled static key
-Date:   Tue, 20 Nov 2018 16:08:48 -0800
-Message-Id: <d928244ca07ab3cc3a9858dbfc11d5d6e2c5f683.1542758656.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v7 03/18] x86/speculation: Reorganize cpu_show_common()
+Date:   Tue, 20 Nov 2018 16:08:42 -0800
+Message-Id: <d6171c8cd0f55bb6fcffc29d9700959071b6a762.1542758656.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542758656.git.tim.c.chen@linux.intel.com>
 References: <cover.1542758656.git.tim.c.chen@linux.intel.com>
@@ -66,123 +66,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The checks to cpu_smt_control outside of kernel/cpu.c can be converted
-to use cpu_smt_enabled key to run SMT specific code.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
 
-Save the export of cpu_smt_control and convert usage of cpu_smt_control
-to cpu_smt_enabled outside of kernel/cpu.c.
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 13 +++++++------
- arch/x86/kvm/vmx.c         |  2 +-
- include/linux/cpu.h        | 12 +++---------
- kernel/cpu.c               | 11 +++++++++--
- 4 files changed, 20 insertions(+), 18 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index a63456a..3e5ae2c 100644
+index 84e3579..91a754a 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -353,15 +353,16 @@ void arch_smt_update(void)
- 
- 	mutex_lock(&spec_ctrl_mutex);
- 	mask = x86_spec_ctrl_base;
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (cpu_use_smt_and_hotplug)
- 		mask |= SPEC_CTRL_STIBP;
- 	else
- 		mask &= ~SPEC_CTRL_STIBP;
- 
- 	if (mask != x86_spec_ctrl_base) {
--		pr_info("Spectre v2 cross-process SMT mitigation: %s STIBP\n",
--				cpu_smt_control == CPU_SMT_ENABLED ?
--				"Enabling" : "Disabling");
-+		if (cpu_use_smt_and_hotplug)
-+			pr_info("Spectre v2 cross-process SMT mitigation: Enabling STIBP\n");
-+		else
-+			pr_info("Spectre v2 cross-process SMT mitigation: Disabling STIBP\n");
- 		x86_spec_ctrl_base = mask;
- 		on_each_cpu(update_stibp_msr, NULL, 1);
- 	}
-@@ -844,13 +845,13 @@ static ssize_t l1tf_show_state(char *buf)
- 
- 	if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_EPT_DISABLED ||
- 	    (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER &&
--	     cpu_smt_control == CPU_SMT_ENABLED))
-+	     cpu_use_smt_and_hotplug))
- 		return sprintf(buf, "%s; VMX: %s\n", L1TF_DEFAULT_MSG,
- 			       l1tf_vmx_states[l1tf_vmx_mitigation]);
- 
- 	return sprintf(buf, "%s; VMX: %s, SMT %s\n", L1TF_DEFAULT_MSG,
- 		       l1tf_vmx_states[l1tf_vmx_mitigation],
--		       cpu_smt_control == CPU_SMT_ENABLED ? "vulnerable" : "disabled");
-+		       cpu_use_smt_and_hotplug ? "vulnerable" : "disabled");
+@@ -853,6 +853,22 @@ static ssize_t l1tf_show_state(char *buf)
  }
- #else
- static ssize_t l1tf_show_state(char *buf)
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 4555077..6c71d4c 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -11607,7 +11607,7 @@ static int vmx_vm_init(struct kvm *kvm)
- 			 * Warn upon starting the first VM in a potentially
- 			 * insecure environment.
- 			 */
--			if (cpu_smt_control == CPU_SMT_ENABLED)
-+			if (cpu_use_smt_and_hotplug)
- 				pr_warn_once(L1TF_MSG_SMT);
- 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
- 				pr_warn_once(L1TF_MSG_L1D);
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index ce8267e..6f43024 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -170,20 +170,14 @@ void cpuhp_report_idle_dead(void);
- static inline void cpuhp_report_idle_dead(void) { }
- #endif /* #ifdef CONFIG_HOTPLUG_CPU */
+ #endif
  
--enum cpuhp_smt_control {
--	CPU_SMT_ENABLED,
--	CPU_SMT_DISABLED,
--	CPU_SMT_FORCE_DISABLED,
--	CPU_SMT_NOT_SUPPORTED,
--};
--
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
--extern enum cpuhp_smt_control cpu_smt_control;
-+DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
-+#define cpu_use_smt_and_hotplug	(static_branch_likely(&cpu_smt_enabled))
- extern void cpu_smt_disable(bool force);
- extern void cpu_smt_check_topology_early(void);
- extern void cpu_smt_check_topology(void);
- #else
--# define cpu_smt_control		(CPU_SMT_ENABLED)
-+#define cpu_use_smt_and_hotplug	false
- static inline void cpu_smt_disable(bool force) { }
- static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index e216154..f846416 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -368,8 +368,15 @@ static void lockdep_release_cpus_lock(void)
- #endif	/* CONFIG_HOTPLUG_CPU */
++static char *stibp_state(void)
++{
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
++		return "";
++}
++
++static char *ibpb_state(void)
++{
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
++}
++
+ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
+ 			       char *buf, unsigned int bug)
+ {
+@@ -874,9 +890,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
  
- #ifdef CONFIG_HOTPLUG_SMT
--enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
--EXPORT_SYMBOL_GPL(cpu_smt_control);
-+
-+enum cpuhp_smt_control {
-+	CPU_SMT_ENABLED,
-+	CPU_SMT_DISABLED,
-+	CPU_SMT_FORCE_DISABLED,
-+	CPU_SMT_NOT_SUPPORTED,
-+};
-+
-+static enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
- EXPORT_SYMBOL_GPL(cpu_smt_enabled);
+ 	case X86_BUG_SPECTRE_V2:
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
+ 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
+ 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
+ 			       spectre_v2_module_string());
  
 -- 
 2.9.4
