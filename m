@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82516C04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F68C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A70421582
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5870121527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:08:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y1z0n+kj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A70421582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R31R3v15"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5870121527
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388109AbeKVFnh (ORCPT
+        id S2388123AbeKVFnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:43:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732097AbeKVFnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:43:37 -0500
+        id S1732097AbeKVFnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:43:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D14A214DB;
-        Wed, 21 Nov 2018 19:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84CB721527;
+        Wed, 21 Nov 2018 19:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827284;
-        bh=IX9e6h9Y2FkHf2T8q1R/mwfUOFwLRBO41GNuV6W4xYE=;
+        s=default; t=1542827288;
+        bh=86bpagLTLS0C/Qv6BbTqtkfrjobH6t4ntvMmSycc6cI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y1z0n+kj24IraQkk1mIQRlOgJ9kgpXPJ5Y1dkmy5lvb3yNZ0UKMCmdJCfBxFgDPbI
-         Xbz45oen4LnWuHsZFaAmvq8KExX7aN2akpFbyRPzufQaWeRXmOhkUknIdOetdFqEAx
-         2TsDP7wC2Tu8RGLGUQdJ38nHJ18KTCtJgf2JPZdQ=
+        b=R31R3v159QCQ03KRlZuanDtpjHM2+jBp4jW6KP5qrA8RtjizYjjQCfs4/E4nrsB0U
+         Pq5V8wN7pwxJW2qKzeRVVejH65isS02yHQ5IWr+if56TUOU9MWDoSksUxZpLaCwSyM
+         duKjDzVgLYUgzRAUezQeIgDg8s9/H6zjJuVY7MFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Siva Reddy Kallam <siva.kallam@broadcom.com>,
-        Michael Chan <michael.chan@broadcom.com>,
+        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 10/42] tg3: Add PHY reset for 5717/5719/5720 in change ring and flow control paths
-Date:   Wed, 21 Nov 2018 20:05:46 +0100
-Message-Id: <20181121183148.436876267@linuxfoundation.org>
+Subject: [PATCH 4.19 11/42] tipc: dont assume linear buffer when reading ancillary data
+Date:   Wed, 21 Nov 2018 20:05:47 +0100
+Message-Id: <20181121183148.469188747@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
 References: <20181121183147.869199006@linuxfoundation.org>
@@ -64,69 +62,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Siva Reddy Kallam <siva.kallam@broadcom.com>
+From: Jon Maloy <donmalo99@gmail.com>
 
-[ Upstream commit 59663e42199c93d1d7314d1446f6782fc4b1eb81 ]
+[ Upstream commit 1c1274a56999fbdf9cf84e332b28448bb2d55221 ]
 
-This patch has the fix to avoid PHY lockup with 5717/5719/5720 in change
-ring and flow control paths. This patch solves the RX hang while doing
-continuous ring or flow control parameters with heavy traffic from peer.
+The code for reading ancillary data from a received buffer is assuming
+the buffer is linear. To make this assumption true we have to linearize
+the buffer before message data is read.
 
-Signed-off-by: Siva Reddy Kallam <siva.kallam@broadcom.com>
-Acked-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/broadcom/tg3.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ net/tipc/socket.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -12426,6 +12426,7 @@ static int tg3_set_ringparam(struct net_
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -1548,16 +1548,17 @@ static void tipc_sk_set_orig_addr(struct
+ /**
+  * tipc_sk_anc_data_recv - optionally capture ancillary data for received message
+  * @m: descriptor for message info
+- * @msg: received message header
++ * @skb: received message buffer
+  * @tsk: TIPC port associated with message
+  *
+  * Note: Ancillary data is not captured if not requested by receiver.
+  *
+  * Returns 0 if successful, otherwise errno
+  */
+-static int tipc_sk_anc_data_recv(struct msghdr *m, struct tipc_msg *msg,
++static int tipc_sk_anc_data_recv(struct msghdr *m, struct sk_buff *skb,
+ 				 struct tipc_sock *tsk)
  {
- 	struct tg3 *tp = netdev_priv(dev);
- 	int i, irq_sync = 0, err = 0;
-+	bool reset_phy = false;
++	struct tipc_msg *msg;
+ 	u32 anc_data[3];
+ 	u32 err;
+ 	u32 dest_type;
+@@ -1566,6 +1567,7 @@ static int tipc_sk_anc_data_recv(struct
  
- 	if ((ering->rx_pending > tp->rx_std_ring_mask) ||
- 	    (ering->rx_jumbo_pending > tp->rx_jmb_ring_mask) ||
-@@ -12457,7 +12458,13 @@ static int tg3_set_ringparam(struct net_
+ 	if (likely(m->msg_controllen == 0))
+ 		return 0;
++	msg = buf_msg(skb);
  
- 	if (netif_running(dev)) {
- 		tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
--		err = tg3_restart_hw(tp, false);
-+		/* Reset PHY to avoid PHY lock up */
-+		if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
-+		    tg3_asic_rev(tp) == ASIC_REV_5719 ||
-+		    tg3_asic_rev(tp) == ASIC_REV_5720)
-+			reset_phy = true;
-+
-+		err = tg3_restart_hw(tp, reset_phy);
- 		if (!err)
- 			tg3_netif_start(tp);
- 	}
-@@ -12491,6 +12498,7 @@ static int tg3_set_pauseparam(struct net
- {
- 	struct tg3 *tp = netdev_priv(dev);
- 	int err = 0;
-+	bool reset_phy = false;
+ 	/* Optionally capture errored message object(s) */
+ 	err = msg ? msg_errcode(msg) : 0;
+@@ -1576,6 +1578,9 @@ static int tipc_sk_anc_data_recv(struct
+ 		if (res)
+ 			return res;
+ 		if (anc_data[1]) {
++			if (skb_linearize(skb))
++				return -ENOMEM;
++			msg = buf_msg(skb);
+ 			res = put_cmsg(m, SOL_TIPC, TIPC_RETDATA, anc_data[1],
+ 				       msg_data(msg));
+ 			if (res)
+@@ -1737,9 +1742,10 @@ static int tipc_recvmsg(struct socket *s
  
- 	if (tp->link_config.autoneg == AUTONEG_ENABLE)
- 		tg3_warn_mgmt_link_flap(tp);
-@@ -12581,7 +12589,13 @@ static int tg3_set_pauseparam(struct net
+ 	/* Collect msg meta data, including error code and rejected data */
+ 	tipc_sk_set_orig_addr(m, skb);
+-	rc = tipc_sk_anc_data_recv(m, hdr, tsk);
++	rc = tipc_sk_anc_data_recv(m, skb, tsk);
+ 	if (unlikely(rc))
+ 		goto exit;
++	hdr = buf_msg(skb);
  
- 		if (netif_running(dev)) {
- 			tg3_halt(tp, RESET_KIND_SHUTDOWN, 1);
--			err = tg3_restart_hw(tp, false);
-+			/* Reset PHY to avoid PHY lock up */
-+			if (tg3_asic_rev(tp) == ASIC_REV_5717 ||
-+			    tg3_asic_rev(tp) == ASIC_REV_5719 ||
-+			    tg3_asic_rev(tp) == ASIC_REV_5720)
-+				reset_phy = true;
-+
-+			err = tg3_restart_hw(tp, reset_phy);
- 			if (!err)
- 				tg3_netif_start(tp);
+ 	/* Capture data if non-error msg, otherwise just set return value */
+ 	if (likely(!err)) {
+@@ -1849,9 +1855,10 @@ static int tipc_recvstream(struct socket
+ 		/* Collect msg meta data, incl. error code and rejected data */
+ 		if (!copied) {
+ 			tipc_sk_set_orig_addr(m, skb);
+-			rc = tipc_sk_anc_data_recv(m, hdr, tsk);
++			rc = tipc_sk_anc_data_recv(m, skb, tsk);
+ 			if (rc)
+ 				break;
++			hdr = buf_msg(skb);
  		}
+ 
+ 		/* Copy data if msg ok, otherwise return error/partial data */
 
 
