@@ -2,119 +2,113 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF07DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D64C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91CF620989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91CF620989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C4DE20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:13:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C4DE20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbeKUUpy (ORCPT
+        id S1728373AbeKUUrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:45:54 -0500
-Received: from smtprelay0198.hostedemail.com ([216.40.44.198]:54559 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726048AbeKUUoy (ORCPT
+        Wed, 21 Nov 2018 15:47:13 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37048 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726016AbeKUUrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:44:54 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 49208837F24A;
-        Wed, 21 Nov 2018 10:11:04 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: tax71_90b58eb99762
-X-Filterd-Recvd-Size: 3008
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 21 Nov 2018 10:11:02 +0000 (UTC)
-Message-ID: <9704b8ad06e556fc3d412d8b4962baf2f38e8818.camel@perches.com>
-Subject: Re: [PATCH] staging: greybus: Parenthesis alignment
-From:   Joe Perches <joe@perches.com>
-To:     NeilBrown <neilb@suse.com>,
-        Cristian Sicilia <sicilia.cristian@gmail.com>,
-        Vaibhav Hiremath <hvaibhav.linux@gmail.com>,
-        Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vaibhav Agarwal <vaibhav.sr@gmail.com>,
-        Mark Greer <mgreer@animalcreek.com>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        David Lin <dtwlin@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        Bryan O'Donoghue <pure.logic@nexus-software.ie>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 21 Nov 2018 02:11:00 -0800
-In-Reply-To: <87zhu3auwi.fsf@notabene.neil.brown.name>
-References: <1542569289-19899-1-git-send-email-sicilia.cristian@gmail.com>
-         <0d630c2b5d234eb4131b8021b345edbf080b2c52.camel@perches.com>
-         <87zhu3auwi.fsf@notabene.neil.brown.name>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 21 Nov 2018 15:47:13 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wALA9eXa004613;
+        Wed, 21 Nov 2018 04:13:19 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2nth986mfx-1;
+        Wed, 21 Nov 2018 04:13:18 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 99D9A611C8BB;
+        Wed, 21 Nov 2018 04:16:41 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Wed, 21 Nov 2018
+ 10:13:17 +0000
+Received: from algalon.ad.cirrus.com (algalon.ad.cirrus.com [198.90.251.122])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id wALADGkx014959; Wed,
+ 21 Nov 2018 10:13:16 GMT
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     <broonie@kernel.org>
+CC:     <linus.walleij@linaro.org>, <lgirdwood@gmail.com>,
+        <m.szyprowski@samsung.com>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>
+Subject: [PATCH v2] regulator: wm8994: Don't use devres for enable GPIOs
+Date:   Wed, 21 Nov 2018 10:13:16 +0000
+Message-ID: <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
+X-Mailer: git-send-email 2.11.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=861 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1811210093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-21 at 15:58 +1100, NeilBrown wrote:
-> On Sun, Nov 18 2018, Joe Perches wrote:
-> 
-> > On Sun, 2018-11-18 at 20:28 +0100, Cristian Sicilia wrote:
-> > > Some parameters are aligned with parentheses.
-> > > Some parentheses are opened at end of line.
-> > 
-> > Given the very long identifier lengths, I wouldn't
-> > consider many of these appropriate.
-> > 
-> > 80 column line lengths and long identifiers don't
-> > play well together.
-> > 
-> > > diff --git a/drivers/staging/greybus/audio_codec.c b/drivers/staging/greybus/audio_codec.c
-> > 
-> > []
-> > > @@ -70,7 +70,7 @@ static int gbaudio_module_enable_tx(struct gbaudio_codec_info *codec,
-> > >  		i2s_port = 0;	/* fixed for now */
-> > >  		cportid = data->connection->hd_cport_id;
-> > >  		ret = gb_audio_apbridgea_register_cport(data->connection,
-> > > -						i2s_port, cportid,
-> > > +							i2s_port, cportid,
-> > >  						AUDIO_APBRIDGEA_DIRECTION_TX);
-> 
-> My preferred formatting in this situation is
-> 
->   		ret = gb_audio_apbridgea_register_cport(
->                 	data->connection,
->  			i2s_port, cportid,
-> 			AUDIO_APBRIDGEA_DIRECTION_TX);
+The regulator core takes over managing the lifetime of the enable GPIO
+once the regulator is registered. As such we shouldn't register the
+enable GPIO using devm, or it will be freed twice.
 
-Odd mixing of spacing and tabs in your example here.
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+---
 
-> but checkpatch doesn't like the '(' at the end of the line.
-> Do you know why that is?
+Again only build tested.
 
-Generally to avoid function declarations like
+Thanks,
+Charles
 
-static int foo(
-	int bar,
-	int baz)
-{
-	...
-}
+ drivers/regulator/wm8994-regulator.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-But this also is meant for function calls.
-
-And this obviously does not work well with excessively
-long identifiers where a statement or declaration could
-not fit in 80 columns.
-
-Perhaps some logic could be added to suggest use of
-shorter than some specific longish identifier length.
-
-cheers, Joe
+diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
+index d7fec533c4032..46e6b4ee1491a 100644
+--- a/drivers/regulator/wm8994-regulator.c
++++ b/drivers/regulator/wm8994-regulator.c
+@@ -147,11 +147,14 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	config.regmap = wm8994->regmap;
+ 	config.init_data = &ldo->init_data;
+ 
+-	/* Look up LDO enable GPIO from the parent device node */
+-	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
+-					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
+-					GPIOD_OUT_LOW |
+-					GPIOD_FLAGS_BIT_NONEXCLUSIVE);
++	/*
++	 * Look up LDO enable GPIO from the parent device node, we don't
++	 * use devm because the regulator core will free the GPIO
++	 */
++	gpiod = gpiod_get_optional(pdev->dev.parent,
++				   id ? "wlf,ldo2ena" : "wlf,ldo1ena",
++				   GPIOD_OUT_LOW |
++				   GPIOD_FLAGS_BIT_NONEXCLUSIVE);
+ 	if (IS_ERR(gpiod))
+ 		return PTR_ERR(gpiod);
+ 	config.ena_gpiod = gpiod;
+@@ -184,6 +187,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err:
++	gpiod_put(gpiod);
+ 	return ret;
+ }
+ 
+-- 
+2.11.0
 
