@@ -2,112 +2,197 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20FA3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4366C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D580E2151B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:55:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9y6SnmP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D580E2151B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A9E3E214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:55:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E3E214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731365AbeKVB3p (ORCPT
+        id S1731389AbeKVB3u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:29:45 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42224 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731334AbeKVB3o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:29:44 -0500
-Received: by mail-ed1-f68.google.com with SMTP id j6so5102256edp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 06:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nDKxi01t5e8VWtbwcHz6I82SRccgYuDoZRYkHOFG0TA=;
-        b=I9y6SnmPp2gFaJHbxxSEFdWQNAJ2GBwk5sLhuGolYxRjryal7ixFHj2w7izUbEDiQ5
-         WCM8+wyHayk/ykbTaZd/iZaNrA3WgsxO0ehcV5MLkNhYVam1LcwMjgnxG2vZ6SsMcUcv
-         LcXreSYRcsy3qhMUFlnqRoksst0r42oFuQem9Klr69eG9eZxErsnwl9qtInAUIq/Ru0r
-         8aHY1slz4lRXDUWWmPkDJy5hrfOjKgOF6iqGNC+3Gfiswrj/EYGkXrfNnn4jsdvDRpC8
-         rtl1U/zkFE17GkKa9FKZSKYXTFnuYmQwKgkOJqK40ytlWIkSEa0EOOfalKioKz0lJXql
-         /Q0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nDKxi01t5e8VWtbwcHz6I82SRccgYuDoZRYkHOFG0TA=;
-        b=hHUEqNo3p9I5bN2sW1w9CmIB48FJ+xMBkXXj6WUbNA0vPq1pU2pOlA4kdjcH3yioTO
-         a9BU4tt1m1VelNatDqxqsFM3UeQ/UPbRwuz8IpvXjCg8vtLse6RvU5gPrjM1xZN+gEzW
-         H8yd0aUDKWdJCe/bAjgc77NIbXx/LH0XR12Grba7GFj75ClwgGjNo2z9HZvt+F/DJEUg
-         PXNs8xsGnbOfKIlADW7A93XqOxdTtzdRETpDy1B/qwipX56TAPuPDMyuj4z/5wgIGVPc
-         qpsTEZs7laRc6hXFtTHDPTSnXIulr9CprZhII2liz/qXHiJ50kj2jD9Hm4wezZEuU8n0
-         Tj9w==
-X-Gm-Message-State: AA+aEWY+zXAjx8pMbuO+k+j9m8bBFzwPx/xVsA3ArgL2/g6fWMtstu+h
-        AJxytJuO/p0aypSK8rBpT0Ntpuq8
-X-Google-Smtp-Source: AFSGD/XuGhqxOG31vyHSMq6h1JCrXd7zHfgHw8xJXRg0AVA9yJMIKwpIK7M7zn/nERdS9ifpVxsh/w==
-X-Received: by 2002:a50:c19a:: with SMTP id m26-v6mr6207118edf.82.1542812098127;
-        Wed, 21 Nov 2018 06:54:58 -0800 (PST)
-Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id c2sm13146625edv.14.2018.11.21.06.54.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 06:54:57 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 18/19] mailbox: stm32-ipcc: Use device-managed registration API
-Date:   Wed, 21 Nov 2018 15:54:28 +0100
-Message-Id: <20181121145429.7582-19-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121145429.7582-1-thierry.reding@gmail.com>
-References: <20181121145429.7582-1-thierry.reding@gmail.com>
+        Wed, 21 Nov 2018 20:29:50 -0500
+Received: from verein.lst.de ([213.95.11.211]:51843 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731048AbeKVB3t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:29:49 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 4ABAF68C19; Wed, 21 Nov 2018 15:55:02 +0100 (CET)
+Date:   Wed, 21 Nov 2018 15:55:02 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>, Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 15/19] block: enable multipage bvecs
+Message-ID: <20181121145502.GA3241@lst.de>
+References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-16-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121032327.8434-16-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Wed, Nov 21, 2018 at 11:23:23AM +0800, Ming Lei wrote:
+>  	if (bio->bi_vcnt > 0) {
+> -		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
+> +		struct bio_vec bv;
+> +		struct bio_vec *seg = &bio->bi_io_vec[bio->bi_vcnt - 1];
+>  
+> -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
+> -			bv->bv_len += len;
+> +		bvec_last_segment(seg, &bv);
+> +
+> +		if (page == bv.bv_page && off == bv.bv_offset + bv.bv_len) {
 
-Get rid of some boilerplate driver removal code by using the newly added
-device-managed registration API.
+I think this we can simplify the try to merge into bio case a bit,
+and also document it better with something like this:
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/mailbox/stm32-ipcc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/mailbox/stm32-ipcc.c b/drivers/mailbox/stm32-ipcc.c
-index 533b0da5235d..a338bd4cd7db 100644
---- a/drivers/mailbox/stm32-ipcc.c
-+++ b/drivers/mailbox/stm32-ipcc.c
-@@ -299,7 +299,7 @@ static int stm32_ipcc_probe(struct platform_device *pdev)
- 	for (i = 0; i < ipcc->controller.num_chans; i++)
- 		ipcc->controller.chans[i].con_priv = (void *)i;
- 
--	ret = mbox_controller_register(&ipcc->controller);
-+	ret = devm_mbox_controller_register(dev, &ipcc->controller);
- 	if (ret)
- 		goto err_irq_wkp;
- 
-@@ -329,8 +329,6 @@ static int stm32_ipcc_remove(struct platform_device *pdev)
+diff --git a/block/bio.c b/block/bio.c
+index 854676edc438..cc913281a723 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -822,54 +822,40 @@ EXPORT_SYMBOL(bio_add_pc_page);
+  * @page: page to add
+  * @len: length of the data to add
+  * @off: offset of the data in @page
++ * @same_page: if %true only merge if the new data is in the same physical
++ *		page as the last segment of the bio.
+  *
+- * Try to add the data at @page + @off to the last page of @bio.  This is a
++ * Try to add the data at @page + @off to the last bvec of @bio.  This is a
+  * a useful optimisation for file systems with a block size smaller than the
+  * page size.
+  *
+  * Return %true on success or %false on failure.
+  */
+ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+-		unsigned int len, unsigned int off)
++		unsigned int len, unsigned int off, bool same_page)
  {
- 	struct stm32_ipcc *ipcc = platform_get_drvdata(pdev);
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return false;
  
--	mbox_controller_unregister(&ipcc->controller);
+ 	if (bio->bi_vcnt > 0) {
+-		struct bio_vec bv;
+-		struct bio_vec *seg = &bio->bi_io_vec[bio->bi_vcnt - 1];
 -
- 	if (ipcc->wkp)
- 		dev_pm_clear_wake_irq(&pdev->dev);
+-		bvec_last_segment(seg, &bv);
+-
+-		if (page == bv.bv_page && off == bv.bv_offset + bv.bv_len) {
+-			seg->bv_len += len;
+-			bio->bi_iter.bi_size += len;
+-			return true;
+-		}
++		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
++		phys_addr_t vec_addr = page_to_phys(bv->bv_page);
++		phys_addr_t page_addr = page_to_phys(page);
++
++		if (vec_addr + bv->bv_offset + bv->bv_len != page_addr + off)
++			return false;
++		if (same_page &&
++		    (vec_addr & PAGE_SIZE) != (page_addr & PAGE_SIZE))
++			return false;
++
++		bv->bv_len += len;
++		bio->bi_iter.bi_size += len;
++		return true;
+ 	}
+ 	return false;
+ }
+ EXPORT_SYMBOL_GPL(__bio_try_merge_page);
  
--- 
-2.19.1
-
+-static bool bio_try_merge_segment(struct bio *bio, struct page *page,
+-				  unsigned int len, unsigned int off)
+-{
+-	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+-		return false;
+-
+-	if (bio->bi_vcnt > 0) {
+-		struct bio_vec *seg = &bio->bi_io_vec[bio->bi_vcnt - 1];
+-
+-		if (page_to_phys(seg->bv_page) + seg->bv_offset + seg->bv_len ==
+-		    page_to_phys(page) + off) {
+-			seg->bv_len += len;
+-			bio->bi_iter.bi_size += len;
+-			return true;
+-		}
+-	}
+-	return false;
+-}
+-
+ /**
+  * __bio_add_page - add page to a bio in a new segment
+  * @bio: destination bio
+@@ -910,7 +896,7 @@ EXPORT_SYMBOL_GPL(__bio_add_page);
+ int bio_add_page(struct bio *bio, struct page *page,
+ 		 unsigned int len, unsigned int offset)
+ {
+-	if (!bio_try_merge_segment(bio, page, len, offset)) {
++	if (!__bio_try_merge_page(bio, page, len, offset, false)) {
+ 		if (bio_full(bio))
+ 			return 0;
+ 		__bio_add_page(bio, page, len, offset);
+diff --git a/fs/iomap.c b/fs/iomap.c
+index ccc2ba115f4d..d918acb9bfc9 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -313,7 +313,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+ 	 */
+ 	sector = iomap_sector(iomap, pos);
+ 	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
+-		if (__bio_try_merge_page(ctx->bio, page, plen, poff))
++		if (__bio_try_merge_page(ctx->bio, page, plen, poff, true))
+ 			goto done;
+ 		is_contig = true;
+ 	}
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 5c2190216614..b9fd44168f61 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -616,7 +616,7 @@ xfs_add_to_ioend(
+ 				bdev, sector);
+ 	}
+ 
+-	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff)) {
++	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff, true)) {
+ 		if (iop)
+ 			atomic_inc(&iop->write_count);
+ 		if (bio_full(wpc->ioend->io_bio))
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index e5b975fa0558..f08e6940c1ab 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -442,7 +442,7 @@ extern int bio_add_page(struct bio *, struct page *, unsigned int,unsigned int);
+ extern int bio_add_pc_page(struct request_queue *, struct bio *, struct page *,
+ 			   unsigned int, unsigned int);
+ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+-		unsigned int len, unsigned int off);
++		unsigned int len, unsigned int off, bool same_page);
+ void __bio_add_page(struct bio *bio, struct page *page,
+ 		unsigned int len, unsigned int off);
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
