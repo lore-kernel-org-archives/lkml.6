@@ -2,104 +2,107 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC3AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:51:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A440C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D417214C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:51:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NFFdkR70"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D417214C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CB66204FD
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 20:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB66204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388873AbeKVH1G (ORCPT
+        id S2389281AbeKVH1T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 02:27:06 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44582 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730074AbeKVH1G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 02:27:06 -0500
-Received: by mail-vs1-f65.google.com with SMTP id g68so4078782vsd.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:51:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4MAG6q11GJTCo0sHyNxIZ3Ay7kIn973OOOVT+DbzJeU=;
-        b=NFFdkR70VCoBdkXODFt6EOUIqL7M3ap2a9rZdMH3WUwFK86ifnGl3jZRpL82jxL9ef
-         SMTuN1dSOcg6hs2QAx5XTyQLCVZEdwE4opSkALHqlxhEXH0Pm7/ZfmEiHjwhUTrCl6O4
-         s1OXwauXv0aHVWOGqAxO+f2kJGgC1kK6t78Vw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4MAG6q11GJTCo0sHyNxIZ3Ay7kIn973OOOVT+DbzJeU=;
-        b=tJ2puoQpsb9MvKOp8GKgMOsmkR/uUwJgpdeJX7QZUXRc5F4/y0+YlWxxISMSzxj9+K
-         /Ef1cayA8qX+GnQP5IHUSXlAvcoJeZCIjADW8W5OMaxBNZdx87tmeHGlWPSF/tYDx2OU
-         9KhkXjgv6DEtBFDv/5+JwQFOFYztOIruUmBDayi1uKTwUqwKZVRw7GATc3N6xOWVCu12
-         UuBgK+dCWs6wZyd/nh4xzj6n7kJKSZDCZzwZzJ2zvwtPWON7w1GUqv2LAJOK77EkmaMR
-         yhiowJhdXNaRTlMj91C9jiM8aG/+0Wypzc5pVVFyzm6GOKCZhh9yjvseEI4deYfPqbCh
-         soXg==
-X-Gm-Message-State: AA+aEWbfxGAJ0Zz6u2Ym2i5X2h4gBvJZQKXcvYLpSMqP74aD8fAgjVMS
-        yzuVO1kH8biMNccSvl9mDfI7emle+Gc=
-X-Google-Smtp-Source: AJdET5dQ5v4GLSfiLBeRh+PBQCirUqwcqDSZuHjf+BSCjDYRG/8nfEnJXA9hScMzp/Jlxa1+k9tkBg==
-X-Received: by 2002:a67:43c7:: with SMTP id q190mr3129982vsa.237.1542833469346;
-        Wed, 21 Nov 2018 12:51:09 -0800 (PST)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id f186sm7167133vkc.7.2018.11.21.12.51.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 12:51:08 -0800 (PST)
-Received: by mail-vs1-f52.google.com with SMTP id r14so4073580vsc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:51:08 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr933593vsj.144.1542833468047;
- Wed, 21 Nov 2018 12:51:08 -0800 (PST)
+        Thu, 22 Nov 2018 02:27:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47358 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388933AbeKVH1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 02:27:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B5C7AFFD;
+        Wed, 21 Nov 2018 20:51:21 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 21:51:19 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Dave Stewart <david.c.stewart@intel.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] x86/speculation: Revert turning on STIBP all the time
+In-Reply-To: <0693f05ac4b041ee2f988dfec31ebc81f4f28f17.1542830344.git.tim.c.chen@linux.intel.com>
+Message-ID: <nycvar.YFH.7.76.1811212149080.21108@cbobk.fhfr.pm>
+References: <0693f05ac4b041ee2f988dfec31ebc81f4f28f17.1542830344.git.tim.c.chen@linux.intel.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181122072528.11372826@canb.auug.org.au> <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
-In-Reply-To: <CAD=FV=WErS73ZLVmnP1o1WYX1VfrhwhCa6yhRC4gS9B=3vPYGg@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 21 Nov 2018 12:50:56 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X4JjQYnuqR_tKcu8t5mAGFnLt1x+u_F9XB+G=7iPXhWA@mail.gmail.com>
-Message-ID: <CAD=FV=X4JjQYnuqR_tKcu8t5mAGFnLt1x+u_F9XB+G=7iPXhWA@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the regulator tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, 21 Nov 2018, Tim Chen wrote:
 
-On Wed, Nov 21, 2018 at 12:39 PM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
-> On Wed, Nov 21, 2018 at 12:25 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> >
-> > Commit
-> >
-> >   fe115f7fd44b ("regulator: core: Only count load for enabled consumers")
-> >
-> > is missing a Signed-off-by from its author.
->
-> Argh.  When I squashed two commits together I must have clobbered the
-> Signed-off-by.  :(  Is there a suggested way that I can fix this?
+> Commit 53c613fe "x86/speculation: Enable cross-hyperthread spectre v2 STIBP mitigation"
+> turns on STIBP all the time.
+> 
+> This causes large performance regression in many workloads.
+> 
+> One case is perlbench in the SpecInt Rate 2006 test suite which shows a
+> 21% reduction in throughput.
+> There're also other reports of drop in performance on Python and PHP benchmarks:
+> https://www.phoronix.com/scan.php?page=article&item=linux-420-bisect&num=2
+> 
+> STIBP on all the time should not be the default option.
+> 
+> Turn off STIBP all the time for now till STIBP can be applied on
+> a per task basis.
+> 
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index c37e66e..21a8f39 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -332,7 +332,7 @@ static bool stibp_needed(void)
+>  	if (!boot_cpu_has(X86_FEATURE_STIBP))
+>  		return false;
+>  
+> -	return true;
+> +	return false;
+>  }
 
-Oh.  Actually it looks like my dumb commit message is to blame.  :(  I
-used two dashes ("--") to separate parts of my patch description.
-"git am" seems to think this means it's after the cut.  Thus my
-"Signed-off-by" got cut off...
+For -stable, which actually makes it to production, I already asked Greg 
+to drop it.
 
--Doug
+For -rc, I don't think we need to do this at this moment, given the 
+prctl+seccomp fixup is basically ready, do we?
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
