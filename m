@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE4AC04EBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05837C32788
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA8C2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CA8C2146D
+	by mail.kernel.org (Postfix) with ESMTP id 65F87214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:33:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F87214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeKULFW (ORCPT
+        id S1727343AbeKULFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:05:22 -0500
+        Wed, 21 Nov 2018 06:05:24 -0500
 Received: from mga14.intel.com ([192.55.52.115]:30246 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727171AbeKULFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:05:21 -0500
+        id S1727239AbeKULFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:05:22 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:25 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:33:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="93650212"
+   d="scan'208";a="93650220"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:25 -0800
+  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 16:33:26 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -53,9 +53,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Dave Stewart <david.c.stewart@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
         stable@vger.kernel.org
-Subject: [Patch v6 08/16] x86/speculation: Turn on or off STIBP according to a task's TIF_STIBP
-Date:   Tue, 20 Nov 2018 16:00:00 -0800
-Message-Id: <b6a7deb9f976680d5d96a2c1affc032604bb1879.1542757030.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v6 10/16] x86/speculation: Create PRCTL interface to restrict indirect branch speculation
+Date:   Tue, 20 Nov 2018 16:00:02 -0800
+Message-Id: <3b20131a0ca572aa476cdf7fc7885580f5376ef7.1542757030.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542757030.git.tim.c.chen@linux.intel.com>
 References: <cover.1542757030.git.tim.c.chen@linux.intel.com>
@@ -66,132 +66,211 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If STIBP is used all the time, tasks that do not need STIBP
-protection will get unnecessarily slowed down by STIBP.
+Create PRCTL interface to restrict an application's indirect branch
+speculation.  This will protect the application against spectre v2 attack
+from another application.
 
-To apply STIBP only to tasks that need it, a new task TIF_STIBP flag is
-created. A x86 CPU uses STIBP only for tasks labeled with TIF_STIBP.
+Invocations:
+Check indirect branch speculation status with
+- prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, 0, 0, 0);
 
-During context switch, this flag is checked and the STIBP bit in SPEC_CTRL
-MSR is updated according to changes in this flag between previous and
-next task.
+Enable indirect branch speculation with
+- prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
+
+Disable indirect branch speculation with
+- prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_DISABLE, 0, 0);
+
+Force disable indirect branch speculation with
+- prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+
+See Documentation/userspace-api/spec_ctrl.rst.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/include/asm/msr-index.h   |  6 +++++-
- arch/x86/include/asm/spec-ctrl.h   | 12 ++++++++++++
- arch/x86/include/asm/thread_info.h |  5 ++++-
- arch/x86/kernel/process.c          | 14 +++++++++++++-
- 4 files changed, 34 insertions(+), 3 deletions(-)
+ Documentation/userspace-api/spec_ctrl.rst |  9 ++++
+ arch/x86/kernel/cpu/bugs.c                | 80 +++++++++++++++++++++++++++++++
+ include/linux/sched.h                     |  9 ++++
+ include/uapi/linux/prctl.h                |  1 +
+ tools/include/uapi/linux/prctl.h          |  1 +
+ 5 files changed, 100 insertions(+)
 
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 80f4a4f..501c9d3 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -41,7 +41,11 @@
- 
- #define MSR_IA32_SPEC_CTRL		0x00000048 /* Speculation Control */
- #define SPEC_CTRL_IBRS			(1 << 0)   /* Indirect Branch Restricted Speculation */
--#define SPEC_CTRL_STIBP			(1 << 1)   /* Single Thread Indirect Branch Predictors */
-+#define SPEC_CTRL_STIBP_SHIFT		1          /*
-+						    * Single Thread Indirect Branch
-+						    * Predictor (STIBP) bit
-+						    */
-+#define SPEC_CTRL_STIBP			(1 << SPEC_CTRL_STIBP_SHIFT) /* STIBP mask */
- #define SPEC_CTRL_SSBD_SHIFT		2	   /* Speculative Store Bypass Disable bit */
- #define SPEC_CTRL_SSBD			(1 << SPEC_CTRL_SSBD_SHIFT)   /* Speculative Store Bypass Disable */
- 
-diff --git a/arch/x86/include/asm/spec-ctrl.h b/arch/x86/include/asm/spec-ctrl.h
-index 8e2f841..41b993e 100644
---- a/arch/x86/include/asm/spec-ctrl.h
-+++ b/arch/x86/include/asm/spec-ctrl.h
-@@ -53,12 +53,24 @@ static inline u64 ssbd_tif_to_spec_ctrl(u64 tifn)
- 	return (tifn & _TIF_SSBD) >> (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
+diff --git a/Documentation/userspace-api/spec_ctrl.rst b/Documentation/userspace-api/spec_ctrl.rst
+index 32f3d55..8a4e268 100644
+--- a/Documentation/userspace-api/spec_ctrl.rst
++++ b/Documentation/userspace-api/spec_ctrl.rst
+@@ -92,3 +92,12 @@ Speculation misfeature controls
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_ENABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_DISABLE, 0, 0);
+    * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_STORE_BYPASS, PR_SPEC_FORCE_DISABLE, 0, 0);
++
++- PR_SPEC_INDIR_BRANCH: Indirect Branch Speculation in User Processes
++                        (Mitigate Spectre V2 style attacks against user processes)
++
++  Invocations:
++   * prctl(PR_GET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, 0, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_DISABLE, 0, 0);
++   * prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_FORCE_DISABLE, 0, 0);
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 387de54..26e1a87 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -771,12 +771,69 @@ static int ssb_prctl_set(struct task_struct *task, unsigned long ctrl)
+ 	return 0;
  }
  
-+static inline u64 stibp_tif_to_spec_ctrl(u64 tifn)
++static void set_task_restrict_indir_branch(struct task_struct *tsk, bool restrict_on)
 +{
-+	BUILD_BUG_ON(TIF_SPEC_INDIR_BRANCH < SPEC_CTRL_STIBP_SHIFT);
-+	return (tifn & _TIF_SPEC_INDIR_BRANCH) >> (TIF_SPEC_INDIR_BRANCH - SPEC_CTRL_STIBP_SHIFT);
-+}
++	bool update = false;
 +
- static inline unsigned long ssbd_spec_ctrl_to_tif(u64 spec_ctrl)
- {
- 	BUILD_BUG_ON(TIF_SSBD < SPEC_CTRL_SSBD_SHIFT);
- 	return (spec_ctrl & SPEC_CTRL_SSBD) << (TIF_SSBD - SPEC_CTRL_SSBD_SHIFT);
- }
- 
-+static inline unsigned long stibp_spec_ctrl_to_tif(u64 spec_ctrl)
-+{
-+	BUILD_BUG_ON(TIF_SPEC_INDIR_BRANCH < SPEC_CTRL_STIBP_SHIFT);
-+	return (spec_ctrl & SPEC_CTRL_STIBP) << (TIF_SPEC_INDIR_BRANCH - SPEC_CTRL_STIBP_SHIFT);
-+}
-+
- static inline u64 ssbd_tif_to_amd_ls_cfg(u64 tifn)
- {
- 	return (tifn & _TIF_SSBD) ? x86_amd_ls_cfg_ssbd_mask : 0ULL;
-diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
-index 2ff2a30..b3032c7 100644
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@ -83,6 +83,7 @@ struct thread_info {
- #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
- #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
- #define TIF_SECCOMP		8	/* secure computing */
-+#define TIF_SPEC_INDIR_BRANCH	9	/* Indirect branch speculation restricted */
- #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
- #define TIF_UPROBE		12	/* breakpointed or singlestepping */
- #define TIF_PATCH_PENDING	13	/* pending live patching update */
-@@ -110,6 +111,7 @@ struct thread_info {
- #define _TIF_SYSCALL_EMU	(1 << TIF_SYSCALL_EMU)
- #define _TIF_SYSCALL_AUDIT	(1 << TIF_SYSCALL_AUDIT)
- #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
-+#define _TIF_SPEC_INDIR_BRANCH	(1 << TIF_SPEC_INDIR_BRANCH)
- #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
- #define _TIF_UPROBE		(1 << TIF_UPROBE)
- #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
-@@ -146,7 +148,8 @@ struct thread_info {
- 
- /* flags to check in __switch_to() */
- #define _TIF_WORK_CTXSW							\
--	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|_TIF_SSBD)
-+	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
-+	 _TIF_SSBD|_TIF_SPEC_INDIR_BRANCH)
- 
- #define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
- #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index 74bef48..48fcd46 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -406,6 +406,8 @@ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
- 	if (static_cpu_has(X86_FEATURE_SSBD))
- 		msr |= ssbd_tif_to_spec_ctrl(tifn);
- 
-+	msr |= stibp_tif_to_spec_ctrl(tifn);
-+
- 	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
- }
- 
-@@ -418,7 +420,17 @@ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
- static __always_inline void __speculation_ctrl_update(unsigned long tifp,
- 						      unsigned long tifn)
- {
--	bool updmsr = false;
-+	bool updmsr;
-+
-+	/*
-+	 * Need STIBP defense against Spectre v2 attack
-+	 * if SMT is in use and enhanced IBRS is unsupported.
-+	 */
-+	if (static_cpu_has(X86_FEATURE_STIBP) && cpu_use_smt_and_hotplug &&
-+	    !static_cpu_has(X86_FEATURE_USE_IBRS_ENHANCED))
-+		updmsr = !!((tifp ^ tifn) & _TIF_SPEC_INDIR_BRANCH);
++	if (restrict_on)
++		update = !test_and_set_tsk_thread_flag(tsk, TIF_SPEC_INDIR_BRANCH);
 +	else
-+		updmsr = false;
++		update = test_and_clear_tsk_thread_flag(tsk, TIF_SPEC_INDIR_BRANCH);
++
++	if (tsk == current && update)
++		speculation_ctrl_update_current();
++}
++
++static int indir_branch_prctl_set(struct task_struct *task, unsigned long ctrl)
++{
++	switch (ctrl) {
++	case PR_SPEC_ENABLE:
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
++			return 0;
++		/*
++		 * Indirect branch speculation is always disabled in
++		 * strict mode.
++		 */
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
++			return -EPERM;
++		task_clear_spec_indir_branch_disable(task);
++		set_task_restrict_indir_branch(task, false);
++		break;
++	case PR_SPEC_DISABLE:
++		/*
++		 * Indirect branch speculation is always allowed when
++		 * mitigation is force disabled.
++		 */
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
++			return -EPERM;
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
++			return 0;
++		task_set_spec_indir_branch_disable(task);
++		set_task_restrict_indir_branch(task, true);
++		break;
++	case PR_SPEC_FORCE_DISABLE:
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
++			return -EPERM;
++		if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_STRICT)
++			return 0;
++		task_set_spec_indir_branch_disable(task);
++		task_set_spec_indir_branch_force_disable(task);
++		set_task_restrict_indir_branch(task, true);
++		break;
++	default:
++		return -ERANGE;
++	}
++	return 0;
++}
++
+ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+ 			     unsigned long ctrl)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_set(task, ctrl);
++	case PR_SPEC_INDIR_BRANCH:
++		return indir_branch_prctl_set(task, ctrl);
+ 	default:
+ 		return -ENODEV;
+ 	}
+@@ -809,11 +866,34 @@ static int ssb_prctl_get(struct task_struct *task)
+ 	}
+ }
  
- 	/* If TIF_SSBD is different, select the proper mitigation method */
- 	if ((tifp ^ tifn) & _TIF_SSBD) {
++static int indir_branch_prctl_get(struct task_struct *task)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V2))
++		return PR_SPEC_NOT_AFFECTED;
++
++	switch (spectre_v2_app2app_enabled) {
++	case SPECTRE_V2_APP2APP_NONE:
++		return PR_SPEC_ENABLE;
++	case SPECTRE_V2_APP2APP_PRCTL:
++		if (task_spec_indir_branch_force_disable(task))
++			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
++		if (test_tsk_thread_flag(task, TIF_SPEC_INDIR_BRANCH))
++			return PR_SPEC_PRCTL | PR_SPEC_DISABLE;
++		return PR_SPEC_PRCTL | PR_SPEC_ENABLE;
++	case SPECTRE_V2_APP2APP_STRICT:
++		return PR_SPEC_DISABLE;
++	default:
++		return PR_SPEC_NOT_AFFECTED;
++	}
++}
++
+ int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
+ {
+ 	switch (which) {
+ 	case PR_SPEC_STORE_BYPASS:
+ 		return ssb_prctl_get(task);
++	case PR_SPEC_INDIR_BRANCH:
++		return indir_branch_prctl_get(task);
+ 	default:
+ 		return -ENODEV;
+ 	}
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a51c13c..e92e4bf 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1453,6 +1453,8 @@ static inline bool is_percpu_thread(void)
+ #define PFA_SPREAD_SLAB			2	/* Spread some slab caches over cpuset */
+ #define PFA_SPEC_SSB_DISABLE		3	/* Speculative Store Bypass disabled */
+ #define PFA_SPEC_SSB_FORCE_DISABLE	4	/* Speculative Store Bypass force disabled*/
++#define PFA_SPEC_INDIR_BRANCH_DISABLE	5	/* Indirect branch speculation restricted in apps */
++#define PFA_SPEC_INDIR_BRANCH_FORCE_DISABLE 6	/* Indirect branch speculation restricted in apps forced */
+ 
+ #define TASK_PFA_TEST(name, func)					\
+ 	static inline bool task_##func(struct task_struct *p)		\
+@@ -1484,6 +1486,13 @@ TASK_PFA_CLEAR(SPEC_SSB_DISABLE, spec_ssb_disable)
+ TASK_PFA_TEST(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ TASK_PFA_SET(SPEC_SSB_FORCE_DISABLE, spec_ssb_force_disable)
+ 
++TASK_PFA_TEST(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
++TASK_PFA_SET(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
++TASK_PFA_CLEAR(SPEC_INDIR_BRANCH_DISABLE, spec_indir_branch_disable)
++
++TASK_PFA_TEST(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
++TASK_PFA_SET(SPEC_INDIR_BRANCH_FORCE_DISABLE, spec_indir_branch_force_disable)
++
+ static inline void
+ current_restore_flags(unsigned long orig_flags, unsigned long flags)
+ {
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0..577f2ca 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIR_BRANCH		1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
+diff --git a/tools/include/uapi/linux/prctl.h b/tools/include/uapi/linux/prctl.h
+index c0d7ea0..577f2ca 100644
+--- a/tools/include/uapi/linux/prctl.h
++++ b/tools/include/uapi/linux/prctl.h
+@@ -212,6 +212,7 @@ struct prctl_mm_map {
+ #define PR_SET_SPECULATION_CTRL		53
+ /* Speculation control variants */
+ # define PR_SPEC_STORE_BYPASS		0
++# define PR_SPEC_INDIR_BRANCH		1
+ /* Return and control values for PR_SET/GET_SPECULATION_CTRL */
+ # define PR_SPEC_NOT_AFFECTED		0
+ # define PR_SPEC_PRCTL			(1UL << 0)
 -- 
 2.9.4
 
