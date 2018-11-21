@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C80EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0DCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C86213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4D96213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LEjFpsOg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C86213A2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AAs4YApw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4D96213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbeKUOLt (ORCPT
+        id S1727992AbeKUOL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 09:11:49 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36886 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727002AbeKUOLt (ORCPT
+        Wed, 21 Nov 2018 09:11:59 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34119 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeKUOL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 09:11:49 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so3389392plr.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:39:15 -0800 (PST)
+        Wed, 21 Nov 2018 09:11:59 -0500
+Received: by mail-pl1-f195.google.com with SMTP id f12-v6so3397675plo.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:39:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XKV6tkSPqX0yNGtFVz2wCvLN8kVE5+HDG9FY2wblCzs=;
-        b=LEjFpsOgz+0OPLB1VA0nGOoMSkQ2hGJNouKoLv6S26+cax3TGZRUiLYaGoN4ywnhAN
-         jKg9HPE03PIwZIH+E5+gZf5s/QIEbmK+mOu+zRyI/KIr7uFxrUejXy8ou9pYNEyVCNb+
-         5VRCWtCO/PSvyipvFwXZoxGZ2Q0VwBGSP8eFI=
+        bh=2J9GuMrRuN9jrVYEvL+pORK4zBer4omKoAIBCCYCOE4=;
+        b=AAs4YApwX9+ZPH6P3/s9x5/DBqtabP3DyOtp+gU7sGHSnXH533BPNSeExFPqGcMD4m
+         GpQT5mLpQF9zFwrPJElBmJ1rT/IpoxHqaklAWPWt6wNR2UIy5CIA1ZhHy7EV1NwiO6Yj
+         F/erEqEhuU5gvob2HkPwxAjKRszvNn6U0LgV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XKV6tkSPqX0yNGtFVz2wCvLN8kVE5+HDG9FY2wblCzs=;
-        b=Atpp6s5ctscwd6l7sObSKLwjPtAa/y3Pk1MF8hlYl8kOUEwlUxul0FYC0iwsAvGPsF
-         o56jTA4Ynj7Drt1f+CKogHXp3RZNOeDoV5QmNA1rb+sFhdSYVcrAs3FAGCJkLvVC2LCJ
-         EiO9rcCRcAMMZCdhPaWbx43WUks9nenv7WUlrAQn3poIHeRhinGI0uwQ45nYWKt1uXHt
-         YKOBvYaZki+hRXvd/za2UoSo6Q3aVNatnpHN3q9fVjhE1z0eHAzDEnzaCdWcJca+/u3e
-         UF9Ec7t3svalmbt5LSwZOqaCNHQHDeNNdjcz6fQK7DEFoaEBUpJR1qZt1/WC2sudzEBg
-         ybeg==
-X-Gm-Message-State: AA+aEWbABehtPQhA+R3SzuMX+KJU/VQu+SFZgK4suXnamkkEeDC5QK3C
-        f0KP4UFkTtzNfuhlcBvmbxrf
-X-Google-Smtp-Source: AFSGD/WH6kcnRgiWee3vPoeC+X5fz9BHsjfblauBdhGsbTlw19x+oEoMg1RLNgnSNYfzu4K7ENOeTA==
-X-Received: by 2002:a63:5026:: with SMTP id e38mr4441685pgb.123.1542771554867;
-        Tue, 20 Nov 2018 19:39:14 -0800 (PST)
+        bh=2J9GuMrRuN9jrVYEvL+pORK4zBer4omKoAIBCCYCOE4=;
+        b=BnzqSVGWEwu0A6GlXAIf99nhsHEFLRaUFn1fC79+WZ2UE40wwHPr/IN0TbUmbLYvGv
+         7fvGwuE+JNE4eNCedkBi4be+Jkl3hkvsJ0Vh5erN7wzzTtYFHAUEzG1Zz3xbzJVctMWi
+         +CjxXcqxQNAiHwW3cOemmENq5vV+Xwk3btAp02fs4w4PPQA9DaA5GBBYvcm0aU/f6o4z
+         Y2UyPa6+T000B7q2QxbybcEOYZTpcYv8nRgX/JZSaZdG2AvIcHZmJ4hMREg7fmLCSZMf
+         MJ5FEZe1lN9Aql0Bhcolz8huAEGdN/qWdV/hgk8Zd+Rw9I88RkgIR2WK9PS5mfgABYDT
+         I1RQ==
+X-Gm-Message-State: AGRZ1gIfbBxK0dxBUKv2V2hnHarCG3KAMm3zmgJr6UuVAGTElSiotqbc
+        PcA4Y96oyB9JNiU0eCJAvP0D
+X-Google-Smtp-Source: AJdET5eLgH2kBTZkR+AudUMygO6LUFNXonO8fQ8wsyKQsTSdXolC/QRN/fK8TPFKxqULRsMsyan7jQ==
+X-Received: by 2002:a62:db41:: with SMTP id f62mr5125126pfg.123.1542771564579;
+        Tue, 20 Nov 2018 19:39:24 -0800 (PST)
 Received: from localhost.localdomain ([2409:4072:98b:9501:106a:f751:df0d:9e68])
-        by smtp.gmail.com with ESMTPSA id z8sm72025095pgz.53.2018.11.20.19.39.04
+        by smtp.gmail.com with ESMTPSA id z8sm72025095pgz.53.2018.11.20.19.39.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 19:39:14 -0800 (PST)
+        Tue, 20 Nov 2018 19:39:24 -0800 (PST)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
         tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
@@ -67,9 +67,9 @@ Cc:     afaerber@suse.de, linux-arm-kernel@lists.infradead.org,
         linus.walleij@linaro.org, zhao_steven@263.net,
         overseas.sales@unisoc.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 12/15] dt-bindings: serial: Document RDA Micro UART
-Date:   Wed, 21 Nov 2018 09:06:49 +0530
-Message-Id: <20181121033652.12247-13-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 13/15] arm: dts: rda8810pl: Add interrupt support for UART
+Date:   Wed, 21 Nov 2018 09:06:50 +0530
+Message-Id: <20181121033652.12247-14-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181121033652.12247-1-manivannan.sadhasivam@linaro.org>
 References: <20181121033652.12247-1-manivannan.sadhasivam@linaro.org>
@@ -81,38 +81,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Färber <afaerber@suse.de>
-
-Add an initial binding for the UART in RDA Micro RDA8810PL SoC.
+Add interrupt support for UART in RDA Micro RDA8810PL SoC.
 
 Signed-off-by: Andreas Färber <afaerber@suse.de>
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- .../bindings/serial/rda,8810pl-uart.txt           | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+ arch/arm/boot/dts/rda8810pl.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-new file mode 100644
-index 000000000000..ee03116d7415
---- /dev/null
-+++ b/Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
-@@ -0,0 +1,15 @@
-+RDA Micro UART
-+
-+Required properties:
-+- compatible :  "rda,8810pl-uart" for RDA8810PL SoCs.
-+- reg        :  Offset and length of the register set for the device.
-+- interrupts :  Should contain UART interrupt.
-+
-+
-+Example:
-+
-+		uart2: serial@20a90000 {
-+			compatible = "rda,8810pl-uart";
-+			reg = <0x20a90000 0x1000>;
+diff --git a/arch/arm/boot/dts/rda8810pl.dtsi b/arch/arm/boot/dts/rda8810pl.dtsi
+index 17ae93410769..d5df53ba9109 100644
+--- a/arch/arm/boot/dts/rda8810pl.dtsi
++++ b/arch/arm/boot/dts/rda8810pl.dtsi
+@@ -71,18 +71,21 @@
+ 		uart0: serial@0 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x0 0x1000>;
++			interrupts = <9 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart1: serial@10000 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x10000 0x1000>;
++			interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
+ 		};
+ 
+ 		uart2: serial@90000 {
+ 			compatible = "rda,8810pl-uart";
+ 			reg = <0x90000 0x1000>;
 +			interrupts = <11 IRQ_TYPE_LEVEL_HIGH>;
-+		};
+ 			status = "disabled";
+ 		};
+ 	};
 -- 
 2.17.1
 
