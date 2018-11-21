@@ -2,95 +2,92 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4C0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C105C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 304FC2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 304FC2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id CD4332146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4332146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeKUMK6 (ORCPT
+        id S1726656AbeKUMLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:10:58 -0500
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:54211 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725913AbeKUMK6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:10:58 -0500
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id wAL1bYQo004897;
-        Wed, 21 Nov 2018 09:37:34 +0800 (GMT-8)
-        (envelope-from vincentc@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 21 Nov 2018
- 09:38:15 +0800
-From:   Vincent Chen <vincentc@andestech.com>
-To:     <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
-        <rdunlap@infradead.org>, <yuehaibing@huawei.com>
-CC:     <vincentc@andestech.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
-Date:   Wed, 21 Nov 2018 09:38:11 +0800
-Message-ID: <1542764291-11208-1-git-send-email-vincentc@andestech.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 21 Nov 2018 07:11:13 -0500
+Received: from mga04.intel.com ([192.55.52.120]:57904 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbeKUMLN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 07:11:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 17:39:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
+   d="scan'208";a="93661380"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga008.jf.intel.com with ESMTP; 20 Nov 2018 17:39:01 -0800
+Subject: Re: [PATCH v3 2/2] proc: add /proc/<pid>/arch_state
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Aubrey Li <aubrey.li@intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
+ <1542236407-4323-2-git-send-email-aubrey.li@intel.com>
+ <20181119173904.GC2131@hirez.programming.kicks-ass.net>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <c62acf67-2529-15b1-5325-e0265b0f613d@linux.intel.com>
+Date:   Wed, 21 Nov 2018 09:39:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com wAL1bYQo004897
+In-Reply-To: <20181119173904.GC2131@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the original ftmac100_interrupt(), the interrupts are only disabled when
-the condition "netif_running(netdev)" is true. However, this condition
-causes kerenl hang in the following case. When the user requests to
-disable the network device, kernel will clear the bit __LINK_STATE_START
-from the dev->state and then call the driver's ndo_stop function. Network
-device interrupts are not blocked during this process. If an interrupt
-occurs between clearing __LINK_STATE_START and stopping network device,
-kernel cannot disable the interrupts due to the condition
-"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
-continuous interruption of the network device.
+On 2018/11/20 1:39, Peter Zijlstra wrote:
+> On Thu, Nov 15, 2018 at 07:00:07AM +0800, Aubrey Li wrote:
+>> Add a /proc/<pid>/arch_state interface to expose per-task cpu specific
+>> state values.
+>>
+>> Exposing AVX-512 Hi16_ZMM registers usage is for the user space job
+>> scheduler to cluster AVX-512 using tasks together, because these tasks
+>> could cause core turbo frequency drop.
+> 
+> I still don't much like the name; how about arch_simd_state ? 
 
-In order to solve the above problem, the interrupts of the network device
-should always be disabled in the ISR without being restricted by the
-condition "netif_running(netdev)".
+My intention is
+#cat /proc/<pid>/arch_state
+0 1 0
 
-[V2]
-Remove unnecessary curly braces.
+Here, the first "0" denotes simd_state, and the second "1" denotes another
+cpu specific feature(may come soon), and can be extended.
 
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
----
- drivers/net/ethernet/faraday/ftmac100.c |    7 +++----
- 1 files changed, 3 insertions(+), 4 deletions(-)
+But sure I can limit it to simd_state and change the name in the patch.
+>Also,
+> since we're printing an integer, I still prefer we go print the turbo
+> license level. I know level 1 isn't too interesting atm, but consider
+> future hardware widening the thing again and us growing level 3 or
+> something.
+The problem is, FWICT, the bits in XSAVE buffer is not exactly mapped to
+the turbo license level, so we can't print turbo license level correctly,
+or the first patch need rework for that.
 
-diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
-index 21d7660..17a3625 100644
---- a/drivers/net/ethernet/faraday/ftmac100.c
-+++ b/drivers/net/ethernet/faraday/ftmac100.c
-@@ -875,11 +875,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
- 	struct net_device *netdev = dev_id;
- 	struct ftmac100 *priv = netdev_priv(netdev);
- 
--	if (likely(netif_running(netdev))) {
--		/* Disable interrupts for polling */
--		ftmac100_disable_all_int(priv);
-+	/* Disable interrupts for polling */
-+	ftmac100_disable_all_int(priv);
-+	if (likely(netif_running(netdev)))
- 		napi_schedule(&priv->napi);
--	}
- 
- 	return IRQ_HANDLED;
- }
--- 
-1.7.1
+> 
+> Also; you were going to shop around with the other architectures to see
+> what they want/need for this interface. I see nothing on that.
+> 
+I'm open for your suggestion, :)
 
+Thanks,
+-Aubrey
