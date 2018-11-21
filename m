@@ -2,230 +2,122 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE5C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2DEC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0498F20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:59:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AkYL1Ovc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0498F20671
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 5CDA520671
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:59:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDA520671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726288AbeKULbf (ORCPT
+        id S1726553AbeKULbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:31:35 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43980 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726135AbeKULbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:31:34 -0500
-Received: by mail-pl1-f196.google.com with SMTP id gn14so2843011plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 16:59:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=SueHlyFVJ++hnnTVh5859U557Ripqy3MhgFlrhxUUYA=;
-        b=AkYL1OvcwZEYBD3RS/eLKcI1v2r01wNaA7DCNa3NAdcxyYFAo71iLyVnaOOmLFt1ZX
-         LMoM8faRrrHvFCypGD1u10n6E/wO6KusHB4B3RIjgnINYqPWVYzwDDHRAu9AGgmFtBie
-         qliw/sUg+ka3lcaSuBcJI1/baArYkJVA3UH8U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=SueHlyFVJ++hnnTVh5859U557Ripqy3MhgFlrhxUUYA=;
-        b=nnpR+yCIz7kL4LkeJBnNcCz4XlC7gxvqWJH9dk3Vk3ds/LcUY54ZBI4cp4Xo9KNzo8
-         J4W9dxiCCzNIQ0mXWRxpOz02y0DKOUIfuEDfQEaUSU9gEJPLjnEALjFYGISQEzUU8I2Y
-         NZuEFOqjSeSN9CEaV/FJMW2RZVPl593dtYpAXg2Sf1coxY8exS8t4e5mDYFH9VIEsb5l
-         r9iSWMa4eCXEo81yMg74AIeoQ+vv1hsdU8uKg9PMGcleMtAxplsCRk1kxTCD06d5OB0e
-         FVHPxnYZT0Xym/7mMurhhN9b66N40ogTXpG7KWGIOa3aNl7hBHXCVz8M5UIEm2xu7JMv
-         vm7w==
-X-Gm-Message-State: AA+aEWZ5eYUseblxjNvN34thruR7peADeul1Srydc0NmF5R6iA7Q16g4
-        tdormlG07Hsxm++exhfviqbjpQ==
-X-Google-Smtp-Source: AFSGD/UnESDTl555q8AD6vZLr5326OnMwcBlb6Ljx2XTiwMcefMxfnRspZFuDypoJkdZjuKN8fPqoQ==
-X-Received: by 2002:a17:902:45:: with SMTP id 63mr4394917pla.272.1542761972434;
-        Tue, 20 Nov 2018 16:59:32 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
-        by smtp.gmail.com with ESMTPSA id w5sm13709880pfn.89.2018.11.20.16.59.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 16:59:31 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 21 Nov 2018 06:31:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeKULbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:31:38 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8642981DEC;
+        Wed, 21 Nov 2018 00:59:36 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-21.pek2.redhat.com [10.72.8.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9C1396A51B;
+        Wed, 21 Nov 2018 00:59:09 +0000 (UTC)
+Date:   Wed, 21 Nov 2018 08:59:03 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Sagi Grimberg <sagi@grimberg.me>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+Message-ID: <20181121005902.GA31748@ming.t460p>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-10-ming.lei@redhat.com>
+ <20181116134541.GH3165@lst.de>
+ <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
+ <20181120161651.GB2629@lst.de>
+ <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20181116002337.GP22824@google.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, evgreen@google.com
-References: <1539257761-23023-1-git-send-email-tdas@codeaurora.org>
- <1539257761-23023-3-git-send-email-tdas@codeaurora.org>
- <153981915373.5275.15971019914218464179@swboyd.mtv.corp.google.com>
- <0c51a12e-38d3-2df5-4f5f-6a687727e9bf@codeaurora.org>
- <154130523254.88331.12609105382114756048@swboyd.mtv.corp.google.com>
- <3aa7b871-9cf9-9626-11fe-b9aa6009b477@codeaurora.org>
- <20181116002337.GP22824@google.com>
-Message-ID: <154276197062.88331.8324696168748324451@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Tue, 20 Nov 2018 16:59:30 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 21 Nov 2018 00:59:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Matthias Kaehlcke (2018-11-15 16:23:37)
-> On Sun, Nov 11, 2018 at 06:12:29PM +0530, Taniya Das wrote:
-> > On 11/4/2018 9:50 AM, Stephen Boyd wrote:
-> > > Quoting Taniya Das (2018-11-02 20:06:00)
-> > > > On 10/18/2018 5:02 AM, Stephen Boyd wrote:
-> > > > > Quoting Taniya Das (2018-10-11 04:36:01)
-> > > > > > --- a/drivers/cpufreq/Kconfig.arm
-> > > > > > +++ b/drivers/cpufreq/Kconfig.arm
-> > > > > > @@ -121,6 +121,17 @@ config ARM_QCOM_CPUFREQ_KRYO
-> > > > > > =
+On Tue, Nov 20, 2018 at 12:11:35PM -0800, Sagi Grimberg wrote:
+> 
+> > > > The only user in your final tree seems to be the loop driver, and
+> > > > even that one only uses the helper for read/write bios.
+> > > > 
+> > > > I think something like this would be much simpler in the end:
+> > > 
+> > > The recently submitted nvme-tcp host driver should also be a user
+> > > of this. Does it make sense to keep it as a helper then?
+> > 
+> > I did take a brief look at the code, and I really don't understand
+> > why the heck it even deals with bios to start with.  Like all the
+> > other nvme transports it is a blk-mq driver and should iterate
+> > over segments in a request and more or less ignore bios.  Something
+> > is horribly wrong in the design.
+> 
+> Can you explain a little more? I'm more than happy to change that but
+> I'm not completely clear how...
+> 
+> Before we begin a data transfer, we need to set our own iterator that
+> will advance with the progression of the data transfer. We also need to
+> keep in mind that all the data transfer (both send and recv) are
+> completely non blocking (and zero-copy when we send).
+> 
+> That means that every data movement needs to be able to suspend
+> and resume asynchronously. i.e. we cannot use the following pattern:
+> rq_for_each_segment(bvec, rq, rq_iter) {
+> 	iov_iter_bvec(&iov_iter, WRITE, &bvec, 1, bvec.bv_len);
+> 	send(sock, iov_iter);
+> }
 
-> > > > > >             If in doubt, say N.
-> > > > > > =
+Not sure I understand the 'blocking' problem in this case.
 
-> > > > > > +config ARM_QCOM_CPUFREQ_HW
-> > > > > > +       bool "QCOM CPUFreq HW driver"
-> > > > > =
+We can build a bvec table from this req, and send them all
+in send(), can this way avoid your blocking issue? You may see this
+example in branch 'rq->bio != rq->biotail' of lo_rw_aio().
 
-> > > > > Is there any reason this can't be a module?
-> > > > > =
+If this way is what you need, I think you are right, even we may
+introduce the following helpers:
 
-> > > > =
+	rq_for_each_bvec()
+	rq_bvecs()
 
-> > > > We do not have any use cases where we need to support it as module.
-> > > =
+So looks nvme-tcp host driver might be the 2nd driver which benefits
+from multi-page bvec directly.
 
-> > > Ok, so it could easily be tristate then? Why not allow it?
-> > > =
+The multi-page bvec V11 has passed my tests and addressed almost
+all the comments during review on V10. I removed bio_vecs() in V11,
+but it won't be big deal, we can introduce them anytime when there
+is the requirement.
 
-> > =
-
-> > I have checked other vendors CPUfreq drivers and those too support only
-> > "bool".
-> =
-
-> That's not entirely correct. Most drivers in Kconfig are 'tristate'
-> and about 50% of those in KConfig.arm are. I'd say make it 'tristate'
-> unless there are good reasons not to do so.
-
-Yes, please make tristate.
-
-> =
-
-> > > > > > diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufre=
-q/qcom-cpufreq-hw.c
-> > > > > > new file mode 100644
-> > > > > > index 0000000..fe1c264
-> > > > > > --- /dev/null
-> > > > > > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > > > > > @@ -0,0 +1,354 @@
-> > > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > > +/*
-> > > > > > + * Copyright (c) 2018, The Linux Foundation. All rights reserv=
-ed.
-> > > > > > + */
-> > > [...]
-> > > > > > +
-> > > > > > +static const u16 cpufreq_qcom_std_offsets[REG_ARRAY_SIZE] =3D {
-> > > > > =
-
-> > > > > Is this going to change in the future?
-> > > > > =
-
-> > > > =
-
-> > > > Yes, they could change and that was the reason to introduce the off=
-sets.
-> > > > This was discussed earlier too with Sudeep and was to add them.
-> > > > =
-
-> > > > > > +       [REG_ENABLE]            =3D 0x0,
-> > > =
-
-> > > This is only used once? Maybe it could be removed.
-> > > =
-
-> > > > > > +       [REG_LUT_TABLE]         =3D 0x110,
-> > > =
-
-> > > And this is only used during probe to figure out the supported
-> > > frequencies. So we definitely don't need to store around the registers
-> > > after probe in an array of iomem pointers. The only one that we need
-> > > after probe is the one below.
-> > > =
-
-> > > > > > +       [REG_PERF_STATE]        =3D 0x920,
-> > > > > > +};
-> > > > > > +
-> > =
-
-> > As these address offsets could change, so I am of the opinion to leave =
-them
-> > as it is.
-> =
-
-> As of now there is only one set of offsets. Let's just keep the code
-> simple while this is the case and address different offsets when it is
-> actually needed, as suggested by Stephen and Sudeep.
-
-Yes, please simplify by getting rid of this and not storing anything in
-the struct that's only used during probe.
-
-> =
-
-> > > =
-
-> > > With fast switching we can avoid incurring any extra instructions, so
-> > > please make another iomem pointer in the cpufreq_qcom struct just for
-> > > writing the index or if possible, just pass the iomem pointer that
-> > > points to the REG_PERF_STATE as the policy->driver_data variable here.
-> > > Then we have the address in hand without any extra load. If my
-> > > understanding is correct, we don't need to keep around anything besid=
-es
-> > > this register address anyway so we should be able to just load it and
-> > > write it immediately.
-> > > =
-
-> > =
-
-> > The c->reg_bases[] is just an index to the updated bases addresses. I a=
-m not
-> > clear as to why it would incur an extra instruction.
-> > =
-
-> > The below code would already take care of it.
-> > =
-
-> > +     for (i =3D REG_ENABLE; i < REG_ARRAY_SIZE; i++)
-> > +             c->reg_bases[i] =3D base + offsets[i];
-> > +
-> =
-
-> From a performance point of view using a direct iomem pointer
-> seems like a micro-optimization that probably doesn't have a
-> measurable impact. However I think the code shouldn't be more complex
-> than necessary, and at this point the indirection isn't needed.
-> =
-
-
-Yes it's a micro-optimization for sure, in the task switching path so it
-may actually be useful. Either way, I think we can greatly simplify by
-just having the iomem pointer be the only pointer that is stored in the
-policy driver_data.
-
+Thanks,
+Ming
