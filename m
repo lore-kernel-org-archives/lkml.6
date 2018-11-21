@@ -2,283 +2,190 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0615C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 02:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7A1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 02:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC64214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 02:06:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="HqqpzCYZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC64214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 0D48D213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 02:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D48D213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbeKUMib (ORCPT
+        id S1726434AbeKUMor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:38:31 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46108 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbeKUMia (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:38:30 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so3052584ply.13
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 18:06:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mLrc5VvGL2N/gPMXDeBK8nQNeuQu7t6ZLUm6vpU0Sf4=;
-        b=HqqpzCYZYXzsfIRFBB0U7SNqlT4f78HLjAtc1CWdbV0R911KN/kQqKbTB7pyspHriQ
-         b0D7rQzeETkCgRRTpgR1tSU0ntkb+y7fADdDx7WXKdski2XM998/HbZiyoXPbNTIS11F
-         PFsnkH78b/FvkivUHHpeExXP1RDw8UkpHEE2E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mLrc5VvGL2N/gPMXDeBK8nQNeuQu7t6ZLUm6vpU0Sf4=;
-        b=cdGtG7mwAmCSEdYupdnNBRj3Jh3X4EhsOdZAlFucnvVIRGUkvTKNH5q3h7I4pccFqZ
-         9HjqaTJ1ddJrV+iWOCy3ut4jLs9Yu+W/8bX5xAN0qRF4GreP9yc2Qos15FGzNCuFORhu
-         aTHk/cCfaldOudY+588D262OvmRccFJY6fZ+9PDb1mjfcpzbhhPhbAtiuYRhyY0mV8MO
-         00PQ8wXAzsPwVwPEHkNkSDvH5vVq7shCvgIb8SYb82WlHH7RMswJ9XjHfDNGpVdAMO7R
-         Z9gZKDrxwxchKcRKtLzOZRTsQbjNJMlwLgtZuMVTT3GmQb/wur9pYVafcDeGNeD6b2v7
-         d1aw==
-X-Gm-Message-State: AA+aEWYVdxL9jtAl2tdQcZVNCKXueLfGZKwY49FHA4gRAH/RA5TeLkQx
-        IAjbtN+xUHkusMsYTdPqxheZgA==
-X-Google-Smtp-Source: AFSGD/UEVrbzIpIQjUuoDOJ1KZ2fUcrrpxMJQ1/u9Mq4vfs+S8M/J2IW4y4QlMJXrYulKoI9K4+xyA==
-X-Received: by 2002:a17:902:b701:: with SMTP id d1-v6mr4534224pls.29.1542765974865;
-        Tue, 20 Nov 2018 18:06:14 -0800 (PST)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id r83sm65459082pfc.115.2018.11.20.18.06.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Nov 2018 18:06:13 -0800 (PST)
-Date:   Tue, 20 Nov 2018 18:06:12 -0800
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
-        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
-        jiangshanlai@gmail.com
-Subject: Re: dyntick-idle CPU and node's qsmask
-Message-ID: <20181121020612.GB60896@google.com>
-References: <20181110214659.GA96924@google.com>
- <20181110230436.GL4170@linux.ibm.com>
- <20181111030925.GA182908@google.com>
- <20181111042210.GN4170@linux.ibm.com>
- <20181111180916.GA25327@google.com>
- <20181111183618.GY4170@linux.ibm.com>
- <20181120204243.GA22801@google.com>
- <20181120222813.GE4170@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120222813.GE4170@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 21 Nov 2018 07:44:47 -0500
+Received: from mout.gmx.net ([212.227.15.19]:49863 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725913AbeKUMor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 07:44:47 -0500
+Received: from ovpn-124-218.rdu2.redhat.com ([98.118.28.103]) by mail.gmx.com
+ (mrgmx003 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0LmbZb-1fqmGC2rRr-00aEe2; Wed, 21 Nov 2018 03:12:16 +0100
+From:   Qian Cai <cai@gmx.us>
+To:     akpm@linux-foundation.org, tglx@linutronix.de
+Cc:     longman@redhat.com, yang.shi@linux.alibaba.com, arnd@arndb.de,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@gmx.us>
+Subject: [PATCH v4] debugobjects: scale the static pool size
+Date:   Tue, 20 Nov 2018 21:11:57 -0500
+Message-Id: <20181121021157.3061-1-cai@gmx.us>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20181120232810.2503-1-cai@gmx.us>
+References: <20181120232810.2503-1-cai@gmx.us>
+X-Provags-ID: V03:K1:LHELuvoYZ2TrgLTOI13I0EQp94ZVQGBu/Ak0seTPX6A7TFBwEkl
+ T4R92PKgbtAW7uSBzHjHbTPpyNH/nRRvctj7+GL7ezFq19l06M4uSDg1sgomhaXCyLBFmF9
+ 1zzLthU9iotssjFWFSLPmdL87UXCmG7YnzEx+WwpSHGeMnwahLUHc+Asy7mLAD4HlPap0CL
+ EPaH18tc2yI/Lnh3RqLPA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:AMfjaao8D2s=:RtS+OePKKjvkCdcSyzAlDs
+ SXi3rj12sg7jEeIAjHBCKZEVpeEnOK84FCKPUlGeRoNwR1dIq1xqFV/4SJILwVTz9dpqgPj0X
+ n0QpmCMkiA0hqt/g+YtNHfJA69/3dhP//AbxigtNkziUSoNxXP0CvTtqLUmOvxj2Zi+sxo8hq
+ GxxrsWAyWmHSE67BJZUIhhrgCQQwbqTlCLY6OI4ERGA/FDwE5WqVUa58c4S2Lc/PWuOYG9B+D
+ vW6DyM/4cHn6uW4UhBXX9T6mOCf9E/Ikvj2qu8Ve56FkKh4zonqM3xmE/Hwb8hhilpSdiFSl9
+ Ws4jiI8mDh+BaVlOD8KjSY6R5Vff85bxA1hgHwVcP+D65su7RrTwh3pMPS0gdR6mjlIhDFEjO
+ 565v8/hBABWzgt4NXoVAl0/yPohFY2Mv92xDCH3jJAWOUxgQx370Fda6jkX+AeIrJJCBCi/Yi
+ Xx8Kk2x8Q3ZLSlVBLQXkOQ1iWvZYP4VnxV1hkOtB8xRdyUnJ9t8rKwchxSKgsImEo9iQDaGlS
+ XD3ezc16NysxvkdUeF7HcO9fob+xpD9xkoWgp9qmO3oG7aMiEt1l0tE9OE+55CbBsG0DvmhLa
+ dxnUvAb/aHyJ3VyhMO6UK9DOi5WM5JMRUI2OCSFk7H0gERMzdZEaWOkjU7BaMtENT7SLqchs/
+ J8yLzj8b8KIYNnWcI0PgNcXqfsniY1wl2lMpHZk1c+SbxqW8QHanmzFM4/rGcBNqKY7ZfxEy3
+ wThbNK5wc+Kc0t+VI3ZWLUFAyfD4BS+xFn2JBTbYamhJzY602f8av/1LwfM0VkXPP1bPHdjP+
+ LaKfZfRMfPCELOk1ySHmtnMvsBhWI8g437kSLixnEC3+zVDHUexxj1qFFshb1C3AW4S/nS/SG
+ VSss6WlRiyYnefG2bu3AlYCK84kVyDnYE71czC4qE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 02:28:14PM -0800, Paul E. McKenney wrote:
-> On Tue, Nov 20, 2018 at 12:42:43PM -0800, Joel Fernandes wrote:
-> > On Sun, Nov 11, 2018 at 10:36:18AM -0800, Paul E. McKenney wrote:
-> > > On Sun, Nov 11, 2018 at 10:09:16AM -0800, Joel Fernandes wrote:
-> > > > On Sat, Nov 10, 2018 at 08:22:10PM -0800, Paul E. McKenney wrote:
-> > > > > On Sat, Nov 10, 2018 at 07:09:25PM -0800, Joel Fernandes wrote:
-> > > > > > On Sat, Nov 10, 2018 at 03:04:36PM -0800, Paul E. McKenney wrote:
-> > > > > > > On Sat, Nov 10, 2018 at 01:46:59PM -0800, Joel Fernandes wrote:
-> > > > > > > > Hi Paul and everyone,
-> > > > > > > > 
-> > > > > > > > I was tracing/studying the RCU code today in paul/dev branch and noticed that
-> > > > > > > > for dyntick-idle CPUs, the RCU GP thread is clearing the rnp->qsmask
-> > > > > > > > corresponding to the leaf node for the idle CPU, and reporting a QS on their
-> > > > > > > > behalf.
-> > > > > > > > 
-> > > > > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 792 0 dti
-> > > > > > > > rcu_sched-10    [003]    40.008039: rcu_fqs:              rcu_sched 801 2 dti
-> > > > > > > > rcu_sched-10    [003]    40.008041: rcu_quiescent_state_report: rcu_sched 805 5>0 0 0 3 0
-> > > > > > > > 
-> > > > > > > > That's all good but I was wondering if we can do better for the idle CPUs if
-> > > > > > > > we can some how not set the qsmask of the node in the first place. Then no
-> > > > > > > > reporting would be needed of quiescent state is needed for idle CPUs right?
-> > > > > > > > And we would also not need to acquire the rnp lock I think.
-> > > > > > > > 
-> > > > > > > > At least for a single node tree RCU system, it seems that would avoid needing
-> > > > > > > > to acquire the lock without complications. Anyway let me know your thoughts
-> > > > > > > > and happy to discuss this at the hallways of the LPC as well for folks
-> > > > > > > > attending :)
-> > > > > > > 
-> > > > > > > We could, but that would require consulting the rcu_data structure for
-> > > > > > > each CPU while initializing the grace period, thus increasing the number
-> > > > > > > of cache misses during grace-period initialization and also shortly after
-> > > > > > > for any non-idle CPUs.  This seems backwards on busy systems where each
-> > > > > > 
-> > > > > > When I traced, it appears to me that rcu_data structure of a remote CPU was
-> > > > > > being consulted anyway by the rcu_sched thread. So it seems like such cache
-> > > > > > miss would happen anyway whether it is during grace-period initialization or
-> > > > > > during the fqs stage? I guess I'm trying to say, the consultation of remote
-> > > > > > CPU's rcu_data happens anyway.
-> > > > > 
-> > > > > Hmmm...
-> > > > > 
-> > > > > The rcu_gp_init() function does access an rcu_data structure, but it is
-> > > > > that of the current CPU, so shouldn't involve a communications cache miss,
-> > > > > at least not in the common case.
-> > > > > 
-> > > > > Or are you seeing these cross-CPU rcu_data accesses in rcu_gp_fqs() or
-> > > > > functions that it calls?  In that case, please see below.
-> > > > 
-> > > > Yes, it was rcu_implicit_dynticks_qs called from rcu_gp_fqs.
-> > > > 
-> > > > > > > CPU will with high probability report its own quiescent state before three
-> > > > > > > jiffies pass, in which case the cache misses on the rcu_data structures
-> > > > > > > would be wasted motion.
-> > > > > > 
-> > > > > > If all the CPUs are busy and reporting their QS themselves, then I think the
-> > > > > > qsmask is likely 0 so then rcu_implicit_dynticks_qs (called from
-> > > > > > force_qs_rnp) wouldn't be called and so there would no cache misses on
-> > > > > > rcu_data right?
-> > > > > 
-> > > > > Yes, but assuming that all CPUs report their quiescent states before
-> > > > > the first call to rcu_gp_fqs().  One exception is when some CPU is
-> > > > > looping in the kernel for many milliseconds without passing through a
-> > > > > quiescent state.  This is because for recent kernels, cond_resched()
-> > > > > is not a quiescent state until the grace period is something like 100
-> > > > > milliseconds old.  (For older kernels, cond_resched() was never an RCU
-> > > > > quiescent state unless it actually scheduled.)
-> > > > > 
-> > > > > Why wait 100 milliseconds?  Because otherwise the increase in
-> > > > > cond_resched() overhead shows up all too well, causing 0day test robot
-> > > > > to complain bitterly.  Besides, I would expect that in the common case,
-> > > > > CPUs would be executing usermode code.
-> > > > 
-> > > > Makes sense. I was also wondering about this other thing you mentioned about
-> > > > waiting for 3 jiffies before reporting the idle CPU's quiescent state. Does
-> > > > that mean that even if a single CPU is dyntick-idle for a long period of
-> > > > time, then the minimum grace period duration would be atleast 3 jiffies? In
-> > > > our mobile embedded devices, jiffies is set to 3.33ms (HZ=300) to keep power
-> > > > consumption low. Not that I'm saying its an issue or anything (since IIUC if
-> > > > someone wants shorter grace periods, they should just use expedited GPs), but
-> > > > it sounds like it would be shorter GP if we just set the qsmask early on some
-> > > > how and we can manage the overhead of doing so.
-> > > 
-> > > First, there is some autotuning of the delay based on HZ:
-> > > 
-> > > #define RCU_JIFFIES_TILL_FORCE_QS (1 + (HZ > 250) + (HZ > 500))
-> > > 
-> > > So at HZ=300, you should be seeing a two-jiffy delay rather than the
-> > > usual HZ=1000 three-jiffy delay.  Of course, this means that the delay
-> > > is 6.67ms rather than the usual 3ms, but the theory is that lower HZ
-> > > rates often mean slower instruction execution and thus a desire for
-> > > lower RCU overhead.  There is further autotuning based on number of
-> > > CPUs, but this does not kick in until you have 256 CPUs on your system,
-> > > and I bet that smartphones aren't there yet.  Nevertheless, check out
-> > > RCU_JIFFIES_FQS_DIV for more info on this.
-> > > 
-> > > But you can always override this autotuning using the following kernel
-> > > boot paramters:
-> > > 
-> > > rcutree.jiffies_till_first_fqs
-> > > rcutree.jiffies_till_next_fqs
-> > 
-> > Slightly related, I was just going through your patch in the dev branch "doc:
-> > Now jiffies_till_sched_qs solicits from cond_resched()".
-> > 
-> > If I understand correctly, what you're trying to do is set
-> > rcu_data.rcu_urgent_qs if you've not heard from the CPU long enough from
-> > rcu_implicit_dynticks_qs.
-> > 
-> > Then in the other paths, you are reading this value and similuating a dyntick
-> > idle transition even though you may not be really going into dyntick-idle.
-> > Actually in the scheduler-tick, you are also using it to set NEED_RESCHED
-> > appropriately.
-> > 
-> > Did I get it right so far?
-> 
-> Partially.
-> 
-> The simulated dyntick-idle transition happens if the grace period extends
-> for even longer, so that ->rcu_need_heavy_qs gets set.  Up to that point,
-> all that is asked for is a local-to-the-CPU report of a quiescent state.
+The current value of the early boot static pool size is not big enough
+for systems with large number of CPUs with timer or/and workqueue
+objects selected. As the results, systems have 60+ CPUs with both timer
+and workqueue objects enabled could trigger "ODEBUG: Out of memory.
+ODEBUG disabled". Hence, fixed it by computing it according to
+CONFIG_NR_CPUS and CONFIG_DEBUG_OBJECTS_* options.
 
-Right, that's true. My feeling was the whole "fake a dyntick idle transition"
-seems to me a bit of a hack and I was thinking if not depending on that would
-simplify the code so we don't need the rcu_momentary_dyntick_idle.
+Signed-off-by: Qian Cai <cai@gmx.us>
+---
 
-> > I was thinking if we could simplify rcu_note_context_switch (the parts that
-> > call rcu_momentary_dyntick_idle), if we did the following in
-> > rcu_implicit_dynticks_qs.
-> > 
-> > Since we already call rcu_qs in rcu_note_context_switch, that would clear the
-> > rdp->cpu_no_qs flag. Then there should be no need to call
-> > rcu_momentary_dyntick_idle from rcu_note_context switch.
-> 
-> But does this also work for the rcu_all_qs() code path?
+Changes since v3:
+* style fixes
 
-Could we not do something like this in rcu_all_qs? as some over-simplified
-pseudo code:
+Changes since v2:
+* Made the calculation easier to read suggested by longman@redhat.com.
 
-rcu_all_qs() {
-  if (!urgent_qs || !heavy_qs)
-     return;
+Changes since v1:
+* Removed the CONFIG_NR_CPUS check since it is always defined.
+* Introduced a minimal default pool size to start with. Otherwise, the pool
+  size would be too low for systems only with a small number of CPUs.
+* Adjusted the scale factors according to data.
 
-  rcu_qs();   // This clears the rdp->cpu_no_qs flags which we can monitor in
-              //  the diff in my last email (from rcu_implicit_dynticks_qs)
-}
+ lib/debugobjects.c | 81 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 79 insertions(+), 2 deletions(-)
 
-> > I think this would simplify cond_resched as well.  Could this avoid the need
-> > for having an rcu_all_qs at all? Hopefully I didn't some Tasks-RCU corner cases..
-> 
-> There is also the code path from cond_resched() in PREEMPT=n kernels.
-> This needs rcu_all_qs().  Though it is quite possible that some additional
-> code collapsing is possible.
-> 
-> > Basically for some background, I was thinking can we simplify the code that
-> > calls "rcu_momentary_dyntick_idle" since we already register a qs in other
-> > ways (like by resetting cpu_no_qs).
-> 
-> One complication is that rcu_all_qs() is invoked with interrupts
-> and preemption enabled, while rcu_note_context_switch() is
-> invoked with interrupts disabled.  Also, as you say, Tasks RCU.
-> Plus rcu_all_qs() wants to exit immediately if there is nothing to
-> do, while rcu_note_context_switch() must unconditionally do rcu_qs()
-> -- yes, it could check, but that would be redundant with the checks
-
-This immediate exit is taken care off in the above psuedo code, would that
-help the cond_resched performance?
-
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index c818e0c91a81..5aa0259c014d 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -1063,7 +1063,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
-> >  	 * read-side critical section that started before the beginning
-> >  	 * of the current RCU grace period.
-> >  	 */
-> > -	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap)) {
-> > +	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap) || !rdp->cpu_no_qs.b.norm) {
-> 
-> If I am not too confused, this change could cause trouble for
-> nohz_full CPUs looping in the kernel.  Such CPUs don't necessarily take
-> scheduler-clock interrupts, last I checked, and this could prevent the
-> CPU from reporting its quiescent state to core RCU.
-
-Would that still be a problem if rcu_all_qs called rcu_qs? Also the above
-diff is an OR condition so it is more relaxed than before.
-
-Assuming the NOHZ_FULL CPUs call cond_resched during their looping, that
-would trigger the rcu_all_qs -> rcu_qs path which would clear cpu_no_qs flag
-for that CPU right? This would result in the above diff causing a return of 1
-for that CPU (from rcu_implicit_dynticks_qs).
-
-> Or am I missing something here?
-
-I think I might be the one missing something but I'm glad we are almost on
-the same page ;-)
-
-thanks,
-
- -  Joel
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 70935ed91125..140571aa483c 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -23,9 +23,81 @@
+ #define ODEBUG_HASH_BITS	14
+ #define ODEBUG_HASH_SIZE	(1 << ODEBUG_HASH_BITS)
+ 
+-#define ODEBUG_POOL_SIZE	1024
++#define ODEBUG_DEFAULT_POOL	512
+ #define ODEBUG_POOL_MIN_LEVEL	256
+ 
++/*
++ * Some debug objects are allocated during the early boot. Enabling some options
++ * like timers or workqueue objects may increase the size required significantly
++ * with large number of CPUs. For example (as today, 20 Nov. 2018),
++ *
++ * No. CPUs x 2 (worker pool) objects:
++ *
++ * start_kernel
++ *   workqueue_init_early
++ *     init_worker_pool
++ *       init_timer_key
++ *         debug_object_init
++ *
++ * No. CPUs objects (CONFIG_HIGH_RES_TIMERS):
++ *
++ * sched_init
++ *   hrtick_rq_init
++ *     hrtimer_init
++ *
++ * CONFIG_DEBUG_OBJECTS_WORK:
++ * No. CPUs x 6 (workqueue) objects:
++ *
++ * workqueue_init_early
++ *   alloc_workqueue
++ *     __alloc_workqueue_key
++ *       alloc_and_link_pwqs
++ *         init_pwq
++ *
++ * Also, plus No. CPUs objects:
++ *
++ * perf_event_init
++ *    __init_srcu_struct
++ *      init_srcu_struct_fields
++ *        init_srcu_struct_nodes
++ *          __init_work
++ *
++ * Increase the number a bit more in case the implmentatins are changed in the
++ * future, as it is better to avoid OOM than spending a bit more kernel memory
++ * that will/can be freed.
++ *
++ * With all debug objects config options selected except the workqueue and the
++ * timers, kernel reports,
++ * 64-CPU:  ODEBUG: 4 of 4 active objects replaced
++ * 256-CPU: ODEBUG: 4 of 4 active objects replaced
++ *
++ * all the options except the workqueue:
++ * 64-CPU:  ODEBUG: 466 of 466 active objects replaced
++ * 256-CPU: ODEBUG: 1810 of 1810 active objects replaced
++ *
++ * all the options except the timers:
++ * 64-CPU:  ODEBUG: 652 of 652 active objects replaced
++ * 256-CPU: ODEBUG: 2572 of 2572 active objects replaced
++ *
++ * all the options:
++ * 64-CPU:  ODEBUG: 1114 of 1114 active objects replaced
++ * 256-CPU: ODEBUG: 4378 of 4378 active objects replaced
++ */
++#ifdef CONFIG_DEBUG_OBJECTS_WORK
++#define ODEBUG_WORK_PCPU_CNT	10
++#else
++#define ODEBUG_WORK_PCPU_CNT	0
++#endif /* CONFIG_DEBUG_OBJECTS_WORK */
++
++#ifdef CONFIG_DEBUG_OBJECTS_TIMERS
++#define ODEBUG_TIMERS_PCPU_CNT	10
++#else
++#define ODEBUG_TIMERS_PCPU_CNT	0
++#endif /* CONFIG_DEBUG_OBJECTS_TIMERS */
++
++#define ODEBUG_POOL_SIZE	(ODEBUG_DEFAULT_POOL + CONFIG_NR_CPUS * \
++				(ODEBUG_TIMERS_PCPU_CNT + ODEBUG_WORK_PCPU_CNT))
++
+ #define ODEBUG_CHUNK_SHIFT	PAGE_SHIFT
+ #define ODEBUG_CHUNK_SIZE	(1 << ODEBUG_CHUNK_SHIFT)
+ #define ODEBUG_CHUNK_MASK	(~(ODEBUG_CHUNK_SIZE - 1))
+@@ -58,8 +130,13 @@ static int			debug_objects_fixups __read_mostly;
+ static int			debug_objects_warnings __read_mostly;
+ static int			debug_objects_enabled __read_mostly
+ 				= CONFIG_DEBUG_OBJECTS_ENABLE_DEFAULT;
++/*
++ * This is only used after replaced static objects, so no need to scale it to
++ * use the early boot static pool size and it has already been scaled according
++ * to actual No. CPUs in the box within debug_objects_mem_init().
++ */
+ static int			debug_objects_pool_size __read_mostly
+-				= ODEBUG_POOL_SIZE;
++				= ODEBUG_DEFAULT_POOL;
+ static int			debug_objects_pool_min_level __read_mostly
+ 				= ODEBUG_POOL_MIN_LEVEL;
+ static struct debug_obj_descr	*descr_test  __read_mostly;
+-- 
+2.17.2 (Apple Git-113)
 
