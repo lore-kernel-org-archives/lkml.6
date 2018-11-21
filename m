@@ -2,174 +2,143 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721DBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A4BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C862075B
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C862075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C1702080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 21:44:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZIs/Dwy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1702080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389891AbeKVIP4 (ORCPT
+        id S2389902AbeKVIUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 03:15:56 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:49560 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729727AbeKVIPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 03:15:55 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id 2336588A; Wed, 21 Nov 2018 15:39:46 -0600 (CST)
-Date:   Wed, 21 Nov 2018 15:39:46 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Daniel Colascione <dancol@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        linux-man <linux-man@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v1 2/2] signal: add procfd_signal() syscall
-Message-ID: <20181121213946.GA10795@mail.hallyn.com>
-References: <20181119103241.5229-3-christian@brauner.io>
- <20181119202857.k5zw742xjfrw677j@yavin>
- <20181119205518.btew3vxwgva4w3zh@brauner.io>
- <20181119211810.73ptfhnwdmkngfi4@yavin>
- <20181119212126.u2nkijmula6wcfqi@brauner.io>
- <CAKOZuevEx6CbcxrR8eVZrUXDcN5y1GPsXdSoHfQteSQKypx0qw@mail.gmail.com>
- <20181119213722.z54huio5g4kuldxk@brauner.io>
- <CAKOZueup5L9Fd=tTK5g1415x0muLP_cPkxf4o26-kCPtH_caqw@mail.gmail.com>
- <87muq4xs2n.fsf@xmission.com>
- <20181120103111.etlqp7zop34v6nv4@brauner.io>
+        Thu, 22 Nov 2018 03:20:36 -0500
+Received: from mail-io1-f45.google.com ([209.85.166.45]:45765 "EHLO
+        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729727AbeKVIUg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 03:20:36 -0500
+Received: by mail-io1-f45.google.com with SMTP id w7so5151522iom.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 13:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=zvQfOE74+PILfenmuxRflVw0EMeCHeMf/eXJisDTHgs=;
+        b=UZIs/Dwy/GlvrrwJXzHXUb7yVHghrabcwxJZrc/48CCwGQlmMKu9K/1J2HMXDTWsUH
+         lz+8XYn1T+loJGDEMpKFgywEwvGWyqmbjMOPb7qAcStM7vOzbIXWCloECCMQ0g3b7MMs
+         zE1CTy/7wQK7QpSxwgJphIewEicHhDwRlI0L4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=zvQfOE74+PILfenmuxRflVw0EMeCHeMf/eXJisDTHgs=;
+        b=WVn1nEbhehnpnBW53KEFV2r4dnT0xde8/Ya9wh9eR/n8x4dVp9eXds8fjqmEl83Bou
+         gkI6jpw1qClTt89JDTql6T3x47/43ewSfugRXRNOwq8LjgL63owhC5QTncEdgk1ZU5sw
+         mYQ37PbYKAoHNzOIZl0M+IN6uab9/MOdzlQbYSb357feWRUGGVS6WQ35qlDGex2VuKhr
+         e80oh6bkt6wQOQFT9r8LYwaHxTkc9YR4U0PCbd3z811VwWdf06ouTMclUeCHbPOju3X8
+         Xlbiz+Al+ZjLGVhe7C3qrBBssYHi4ATSxlNG17hCUF7VRzswhPOyhbdKtL1utSAvWMJ8
+         PnBQ==
+X-Gm-Message-State: AA+aEWY2ccYYWENLc4DnGitUPWYieeQryHXzao0iqfXcygNytO0VUKUw
+        lBenxXCkDtWqhUR92M4uP25TJsP4iiYx35CdKfHXEg==
+X-Google-Smtp-Source: AFSGD/XCppLfdA9hanOWu8KpFTHzgB3rzChYpmL8f4rjDkys0UBgxylePO2f38NUwMyD1+EDCvRcqohZupZYguWxkAs=
+X-Received: by 2002:a6b:5d01:: with SMTP id r1mr5927472iob.170.1542836667412;
+ Wed, 21 Nov 2018 13:44:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181120103111.etlqp7zop34v6nv4@brauner.io>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181121205633.oxksehwjg5a2q6rt@oracle.com> <5A24CA1A-3059-44BE-A0D5-4E29FC6E5BE9@vmware.com>
+ <20181121211447.weqjjk2fwbc27er6@oracle.com>
+In-Reply-To: <20181121211447.weqjjk2fwbc27er6@oracle.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 21 Nov 2018 22:44:16 +0100
+Message-ID: <CAKv+Gu-jnppk-zJnqij-J6CwW0Vf4xZw+uESGWBCHoyk3ZEgDA@mail.gmail.com>
+Subject: Re: Out of tree module build errors since v4.20-rc1
+To:     namit@vmware.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 20, 2018 at 11:31:13AM +0100, Christian Brauner wrote:
-> On Mon, Nov 19, 2018 at 10:59:12PM -0600, Eric W. Biederman wrote:
-> > Daniel Colascione <dancol@google.com> writes:
-> > 
-> > > On Mon, Nov 19, 2018 at 1:37 PM Christian Brauner <christian@brauner.io> wrote:
-> > >>
-> > >> On Mon, Nov 19, 2018 at 01:26:22PM -0800, Daniel Colascione wrote:
-> > >> > On Mon, Nov 19, 2018 at 1:21 PM, Christian Brauner <christian@brauner.io> wrote:
-> > >> > > That can be done without a loop by comparing the level counter for the
-> > >> > > two pid namespaces.
-> > >> > >
-> > >> > >>
-> > >> > >> And you can rewrite pidns_get_parent to use it. So you would instead be
-> > >> > >> doing:
-> > >> > >>
-> > >> > >>     if (pidns_is_descendant(proc_pid_ns, task_active_pid_ns(current)))
-> > >> > >>         return -EPERM;
-> > >> > >>
-> > >> > >> (Or you can just copy the 5-line loop into procfd_signal -- though I
-> > >> > >> imagine we'll need this for all of the procfd_* APIs.)
-> > >> >
-> > >> > Why is any of this even necessary? Why does the child namespace we're
-> > >> > considering even have a file descriptor to its ancestor's procfs? If
-> > >>
-> > >> Because you can send file descriptors between processes and container
-> > >> runtimes tend to do that.
+On Wed, 21 Nov 2018 at 22:15, Liam R. Howlett <Liam.Howlett@oracle.com> wro=
+te:
+>
+> * Nadav Amit <namit@vmware.com> [181121 16:12]:
+> > > On Nov 21, 2018, at 12:56 PM, Liam R. Howlett <Liam.Howlett@Oracle.co=
+m> wrote:
 > > >
-> > > Right. But why *would* a container runtime send one of these procfs
-> > > FDs to a container?
 > > >
-> > >> > it has one of these FDs, it can already *read* all sorts of
-> > >> > information it really shouldn't be able to acquire, so the additional
-> > >> > ability to send a signal (subject to the usual permission checks)
-> > >> > feels like sticking a finger in a dike that's already well-perforated.
-> > >> > IMHO, we shouldn't bother with this check. The patch would be simpler
-> > >> > without it.
-> > >>
-> > >> We will definitely not allow signaling processes in an ancestor pid
-> > >> namespace! That is a security issue! I can imagine container runtimes
-> > >> killing their monitoring process etc. pp. Not happening, unless someone
-> > >> with deep expertise in signals can convince me otherwise.
+> > > My out of tree driver build is now reporting issues with the jump tab=
+le:
 > > >
-> > > If parent namespace procfs FDs or mounts really can leak into child
-> > > namespaces as easily as Aleksa says, then I don't mind adding the
-> > > check. I was under the impression that if you find yourself in this
-> > > situation, you already have a big problem.
-> > 
-> > There is one big reason to have the check, and I have not seen it
-> > mentioned yet in this thread.
-> > 
-> > When SI_USER is set we report the pid of the sender of the signal in
-> > si_pid.  When the signal comes from the kernel si_pid == 0.  When signal
-> > is sent from an ancestor pid namespace si_pid also equals 0 (which is
-> > reasonable).
-> > 
-> > A signal out to a process in a parent pid namespace such as SIGCHLD is
-> > reasonable as we can map the pid.  I really don't see the point of
-> > forbidding that.  From the perspective of the process in the parent pid
-> > namespace it is just another process in it's pid namespace.  So it
-> > should pose no problem from the perspective of the receiving process.
-> > 
-> > A signal to a process in a pid namespace that is neither a parent nor a
-> > descendent pid namespace would be a problem, as there is no well defined
-> > notion of what si_pid should be set to.  So for that case perhaps we
-> > should have something like a noprocess pid that we can set.  Perhaps we
-> > could set si_pid to 0xffffffff.  That would take a small extension to
-> > pid_nr_ns.
-> > 
-> > File descriptors are not namespaced.  It is completely legitimate to use
-> > file descriptors to get around limitations of namespaces.
-> 
-> Frankly, I don't see a good argument for why we would allow that even if
-> safe. I have not heard a legitimate use-case or need for this.
-> At this point I care about very simple semantics. Being able to signal
-> into ancestor pid namespaces and cousin namespaces is interesting but
-> makes the syscall more brittle and harder to understand.
+> > > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_code=E2=
+=80=99:
+> > > ./include/linux/jump_label.h:153:14: error: dereferencing pointer to =
+incomplete type =E2=80=98const struct jump_entry=E2=80=99
+> > >  return entry->code;
+> > >              ^~
+> > > ./include/linux/jump_label.h: In function =E2=80=98jump_entry_set_ini=
+t=E2=80=99:
+> > > ./include/linux/jump_label.h:180:7: error: dereferencing pointer to i=
+ncomplete type =E2=80=98struct jump_entry=E2=80=99
+> > >  entry->key |=3D 2;
+> > >       ^~
+> > > ./include/linux/jump_label.h: At top level:
+> > > ./include/linux/jump_label.h:212:26: error: array type has incomplete=
+ element type =E2=80=98struct jump_entry=E2=80=99
+> > > extern struct jump_entry __start___jump_table[];
+> > >                          ^~~~~~~~~~~~~~~~~~~~
+> > > ./include/linux/jump_label.h:213:26: error: array type has incomplete=
+ element type =E2=80=98struct jump_entry=E2=80=99
+> > > extern struct jump_entry __stop___jump_table[];
+> > >                          ^~~~~~~~~~~~~~~~~~~
+> > >
+> > >
+> > > This happens in v4.20-rc3 as well, so I bisected between v4.19 to
+> > > v4.20-rc1 which resulted in the following commit:
+> > >
+> > > b34006c4258c9c86597b6b7123d6a9a3513d6cd7 is the first bad commit
+> > > commit b34006c4258c9c86597b6b7123d6a9a3513d6cd7
+> > > Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > > Date:   Tue Sep 18 23:51:41 2018 -0700
+> > >
+> > >    x86/jump_table: Use relative references
+> > >
+> > >
+> > >
+> > >
+> > > Initially I assumed this was my own fault, but my module does not hav=
+e
+> > > these issues when using v4.19.  Is there anything I should try/change=
+ in
+> > > my module makefile, includes, etc to support this relative reference
+> > > code?
+> >
+> > Do you see HAVE_ARCH_JUMP_LABEL_RELATIVE set in your kernel config?
+> >
+>
+> Yes:
+>  $ grep HAVE_ARCH_JUMP_LABEL_RELATIVE .config
+>  CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE=3Dy
+>
+>
+> I should have mentioned I ran 'make defoldconfig' between each bisect.
 
-Yeah, I'm with you on that.  We can always open that door later if a good
-use case comes up, but I prefer simple at first.
+That is puzzling. linux/jump_label.h defines a type struct
+jump_label_entry if CONFIG_HAVE_ARCH_JUMP_LABEL_RELATIVE is #define'd,
+and so the error suggests that it is not.
 
-> Changing pid_nr_ns() might be the solution but this function is called
-> all over the place in the kernel and I'm not going to risk breaking
-> something by changing it for a feature that no one so far has ever
-> asked for.
-> If you are ok with this then we should hold off on this. We can always
-> add this feature later by removing the check when someone has a use-case
-> for it.
-> I'll send a v2 of the patch that keeps the restriction for now. If you
-> insist on it being removed we can make the change in a follow-up
-> iteration.
-> 
-> Christian
-> 
-> > 
-> > Adding limitations to a file descriptor based api because someone else
-> > can't set up their processes in such a way as to get the restrictions
-> > they are looking for seems very sad.
-> > 
-> > Frankly I think it is one of the better features of namespaces that we
-> > have to carefully handle and define these cases so that when the
-> > inevitable leaks happen you are not immediately in a world of hurt.  All
-> > of the other permission checks etc continue to do their job.  Plus you
-> > are prepared for the case when someone wants their containers to have an
-> > interesting communication primitive.
-> > 
-> > Eric
-> > 
-> > 
-> > 
-> > 
+Can you share the command line (with V=3D1) and the preprocessed result?
+(Re-execute the failing GCC command but replace -c with -E)
