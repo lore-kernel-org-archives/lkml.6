@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7262C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840CFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 909C1206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D83214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yvbD7GI8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 909C1206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKLL0nLq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D83214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387816AbeKVFmx (ORCPT
+        id S2387832AbeKVFm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:42:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37452 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:42:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387767AbeKVFmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:42:52 -0500
+        id S2387767AbeKVFmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:42:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3752E206BB;
-        Wed, 21 Nov 2018 19:07:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BA6F214DB;
+        Wed, 21 Nov 2018 19:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827239;
-        bh=Oxk8wEbo5hJUTVgjc2ylDn9h/W7wczpN4zl+gASGQQU=;
+        s=default; t=1542827242;
+        bh=QT7vzL22FBlOhQK3AgHRrgshvgpa6rBvwohncDvt6CY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yvbD7GI8WdXSEXcNpiJnLlTubT21qqjEP4S+12I2Fc+cL0Pi4y8O/R1xiA6NZR0Q9
-         aLDzM/PHgaWsuNMSzdEHvW4U5dbDdQ72mMtuq/4ckSvNU7h5azUrdcBG5QR5PdLOIk
-         VVqWe1KN7QW5FxS/oUKY+G6Fg6JNiVt3yTNEB/KU=
+        b=DKLL0nLqPMdhEj544Ai5jTK9GH7MDrMZma9MN1juSa/AbK+43DXoPbsCTfaaqUVQn
+         HCIShIY6v7y5pmvxuDTkQV0tdwPzamFqA8Qqm1RoKg5VC2cVm3sF2LTqSsr/47EIcH
+         Kd22iBZqxD5nDcBtcBZk2S16/Nc6bydTNBHI1Ly8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        =?UTF-8?q?=EB=B0=B0=EC=84=9D=EC=A7=84?= <soukjin.bae@samsung.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Guillaume Nault <g.nault@alphalink.fr>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 26/42] inet: frags: better deal with smp races
-Date:   Wed, 21 Nov 2018 20:06:02 +0100
-Message-Id: <20181121183149.133109771@linuxfoundation.org>
+Subject: [PATCH 4.19 27/42] l2tp: fix a sock refcnt leak in l2tp_tunnel_register
+Date:   Wed, 21 Nov 2018 20:06:03 +0100
+Message-Id: <20181121183149.168507222@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
 References: <20181121183147.869199006@linuxfoundation.org>
@@ -63,89 +64,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 0d5b9311baf27bb545f187f12ecfd558220c607d ]
+[ Upstream commit f8504f4ca0a0e9f84546ef86e00b24d2ea9a0bd2 ]
 
-Multiple cpus might attempt to insert a new fragment in rhashtable,
-if for example RPS is buggy, as reported by 배석진 in
-https://patchwork.ozlabs.org/patch/994601/
+This issue happens when trying to add an existent tunnel. It
+doesn't call sock_put() before returning -EEXIST to release
+the sock refcnt that was held by calling sock_hold() before
+the existence check.
 
-We use rhashtable_lookup_get_insert_key() instead of
-rhashtable_insert_fast() to let cpus losing the race
-free their own inet_frag_queue and use the one that
-was inserted by another cpu.
+This patch is to fix it by holding the sock after doing the
+existence check.
 
-Fixes: 648700f76b03 ("inet: frags: use rhashtables for reassembly units")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: 배석진 <soukjin.bae@samsung.com>
+Fixes: f6cd651b056f ("l2tp: fix race in duplicate tunnel detection")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/inet_fragment.c |   29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+ net/l2tp/l2tp_core.c |    9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/ipv4/inet_fragment.c
-+++ b/net/ipv4/inet_fragment.c
-@@ -178,21 +178,22 @@ static struct inet_frag_queue *inet_frag
- }
- 
- static struct inet_frag_queue *inet_frag_create(struct netns_frags *nf,
--						void *arg)
-+						void *arg,
-+						struct inet_frag_queue **prev)
- {
- 	struct inet_frags *f = nf->f;
- 	struct inet_frag_queue *q;
--	int err;
- 
- 	q = inet_frag_alloc(nf, f, arg);
--	if (!q)
-+	if (!q) {
-+		*prev = ERR_PTR(-ENOMEM);
- 		return NULL;
--
-+	}
- 	mod_timer(&q->timer, jiffies + nf->timeout);
- 
--	err = rhashtable_insert_fast(&nf->rhashtable, &q->node,
--				     f->rhash_params);
--	if (err < 0) {
-+	*prev = rhashtable_lookup_get_insert_key(&nf->rhashtable, &q->key,
-+						 &q->node, f->rhash_params);
-+	if (*prev) {
- 		q->flags |= INET_FRAG_COMPLETE;
- 		inet_frag_kill(q);
- 		inet_frag_destroy(q);
-@@ -204,22 +205,22 @@ static struct inet_frag_queue *inet_frag
- /* TODO : call from rcu_read_lock() and no longer use refcount_inc_not_zero() */
- struct inet_frag_queue *inet_frag_find(struct netns_frags *nf, void *key)
- {
--	struct inet_frag_queue *fq;
-+	struct inet_frag_queue *fq = NULL, *prev;
- 
- 	if (!nf->high_thresh || frag_mem_limit(nf) > nf->high_thresh)
- 		return NULL;
- 
- 	rcu_read_lock();
- 
--	fq = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
--	if (fq) {
-+	prev = rhashtable_lookup(&nf->rhashtable, key, nf->f->rhash_params);
-+	if (!prev)
-+		fq = inet_frag_create(nf, key, &prev);
-+	if (prev && !IS_ERR(prev)) {
-+		fq = prev;
- 		if (!refcount_inc_not_zero(&fq->refcnt))
- 			fq = NULL;
--		rcu_read_unlock();
--		return fq;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1490,12 +1490,7 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 			goto err_sock;
  	}
- 	rcu_read_unlock();
+ 
+-	sk = sock->sk;
 -
--	return inet_frag_create(nf, key);
-+	return fq;
- }
- EXPORT_SYMBOL(inet_frag_find);
+-	sock_hold(sk);
+-	tunnel->sock = sk;
+ 	tunnel->l2tp_net = net;
+-
+ 	pn = l2tp_pernet(net);
+ 
+ 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
+@@ -1510,6 +1505,10 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
+ 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
+ 
++	sk = sock->sk;
++	sock_hold(sk);
++	tunnel->sock = sk;
++
+ 	if (tunnel->encap == L2TP_ENCAPTYPE_UDP) {
+ 		struct udp_tunnel_sock_cfg udp_cfg = {
+ 			.sk_user_data = tunnel,
 
 
