@@ -2,149 +2,159 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71720C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3C3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C8520C01
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:41:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C8520C01
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id E218020831
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:44:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E218020831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730453AbeKUWP2 (ORCPT
+        id S1729389AbeKUWSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:15:28 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:46562 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727343AbeKUWP0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:15:26 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DB8E62002A1;
-        Wed, 21 Nov 2018 12:41:20 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CF5C42000C5;
-        Wed, 21 Nov 2018 12:41:20 +0100 (CET)
-Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 1FB00205F3;
-        Wed, 21 Nov 2018 12:41:20 +0100 (CET)
-From:   Madalin Bucur <madalin.bucur@nxp.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org
-Cc:     leoyang.li@nxp.com, roy.pledge@nxp.com,
-        linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH v3 3/3] dpaa_eth: add ethtool coalesce control
-Date:   Wed, 21 Nov 2018 13:41:09 +0200
-Message-Id: <1542800469-6802-4-git-send-email-madalin.bucur@nxp.com>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1542800469-6802-1-git-send-email-madalin.bucur@nxp.com>
-References: <1542800469-6802-1-git-send-email-madalin.bucur@nxp.com>
-Reply-to: madalin.bucur@nxp.com
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Wed, 21 Nov 2018 17:18:35 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45258 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbeKUWSf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:18:35 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v6so5323961wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 03:44:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=In3+Un/UnGOxZik1Xw6eX4R2q+wEwqkSI6o/dhQxc9U=;
+        b=XJnWeg+G0lTHc8wEnR9HCDEn+L+QGSa804BROIaQe4PK8GeO98EMQR9cSqTV/f/Im+
+         Jqdu+LSCxaDwwzO8AwxH3cerFDXc+g0PzJvWIyDmvOUqYJmjVnyq7augQi0UTclmLDJA
+         7Dujl+JpC6uqHGjD3N1cqOLC2qzR5AOmF1qeVENCNVOXt5HrVgfGhGlgvZUHf5yxqNGh
+         +9hQ8FAiXc++ScZd2yTp19PP8/hyIy6Mj4AxDnA0sVBZB7EvSp/p6oSCCctNwMZFeZb9
+         fG9gKQ31rWHMQhcdJ9pvJEim0n/YYwd7jCdcEWb/XNn7PXePXWgr6A+Z/YuQ7JO6aEGg
+         zjTQ==
+X-Gm-Message-State: AA+aEWbT0tvWAmhH7dpCrKKieqHjXw8f3Jrlw18gjvS8NJGF5ZmJNpll
+        nRwvpUfz4wFxOCTMAwvQaQlDVU5Wvr0=
+X-Google-Smtp-Source: AFSGD/UpmcMTgE5OQhcWUanBNv5RKJKMMaMoQhAKQ+hsvpEqxVVNC6zXlR5M7zzBBzfDCt0pJP2IDA==
+X-Received: by 2002:adf:b190:: with SMTP id q16mr5468336wra.95.1542800668881;
+        Wed, 21 Nov 2018 03:44:28 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id a1sm24835768wrw.76.2018.11.21.03.44.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 03:44:28 -0800 (PST)
+Subject: Re: [PATCH v1 06/15] i2c: acpi: Assign fwnode for devices created via
+ i2c_acpi_new_device()
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-i2c@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20181120155924.10773-1-andriy.shevchenko@linux.intel.com>
+ <20181120155924.10773-7-andriy.shevchenko@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c2ad13ad-cf27-2700-a051-4dda56755ebd@redhat.com>
+Date:   Wed, 21 Nov 2018 12:44:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181120155924.10773-7-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow ethtool control of the DPAA QMan portal interrupt coalescing
-settings.
+Hi,
 
-Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+On 20-11-18 16:59, Andy Shevchenko wrote:
+> i2c_acpi_new_device() doesn't assign fwnode like it's done, for example,
+> in i2c_acpi_register_devices() path.
+> 
+> Assign fwnode in i2c_acpi_new_device() as it's done elsewhere.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-index 13d6e2272ece..62497119c85f 100644
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
-@@ -529,6 +529,75 @@ static int dpaa_get_ts_info(struct net_device *net_dev,
- 	return 0;
- }
- 
-+static int dpaa_get_coalesce(struct net_device *dev,
-+			     struct ethtool_coalesce *c)
-+{
-+	struct qman_portal *portal;
-+	u32 period;
-+	u8 thresh;
-+
-+	portal = qman_get_affine_portal(smp_processor_id());
-+	qman_portal_get_iperiod(portal, &period);
-+	qman_dqrr_get_ithresh(portal, &thresh);
-+
-+	c->rx_coalesce_usecs = period;
-+	c->rx_max_coalesced_frames = thresh;
-+	c->use_adaptive_rx_coalesce = false;
-+
-+	return 0;
-+}
-+
-+static int dpaa_set_coalesce(struct net_device *dev,
-+			     struct ethtool_coalesce *c)
-+{
-+	const cpumask_t *cpus = qman_affine_cpus();
-+	bool needs_revert[NR_CPUS] = {false};
-+	struct qman_portal *portal;
-+	u32 period, prev_period;
-+	u8 thresh, prev_thresh;
-+	int cpu, res;
-+
-+	if (c->use_adaptive_rx_coalesce)
-+		return -EINVAL;
-+
-+	period = c->rx_coalesce_usecs;
-+	thresh = c->rx_max_coalesced_frames;
-+
-+	/* save previous values */
-+	portal = qman_get_affine_portal(smp_processor_id());
-+	qman_portal_get_iperiod(portal, &prev_period);
-+	qman_dqrr_get_ithresh(portal, &prev_thresh);
-+
-+	/* set new values */
-+	for_each_cpu(cpu, cpus) {
-+		portal = qman_get_affine_portal(cpu);
-+		res = qman_portal_set_iperiod(portal, period);
-+		if (res)
-+			goto revert_values;
-+		res = qman_dqrr_set_ithresh(portal, thresh);
-+		if (res) {
-+			qman_portal_set_iperiod(portal, prev_period);
-+			goto revert_values;
-+		}
-+		needs_revert[cpu] = true;
-+	}
-+
-+	return 0;
-+
-+revert_values:
-+	/* restore previous values */
-+	for_each_cpu(cpu, cpus) {
-+		if (!needs_revert[cpu])
-+			continue;
-+		portal = qman_get_affine_portal(cpu);
-+		/* previous values will not fail, ignore return value */
-+		qman_portal_set_iperiod(portal, prev_period);
-+		qman_dqrr_set_ithresh(portal, prev_thresh);
-+	}
-+
-+	return res;
-+}
-+
- const struct ethtool_ops dpaa_ethtool_ops = {
- 	.get_drvinfo = dpaa_get_drvinfo,
- 	.get_msglevel = dpaa_get_msglevel,
-@@ -545,4 +614,6 @@ const struct ethtool_ops dpaa_ethtool_ops = {
- 	.get_rxnfc = dpaa_get_rxnfc,
- 	.set_rxnfc = dpaa_set_rxnfc,
- 	.get_ts_info = dpaa_get_ts_info,
-+	.get_coalesce = dpaa_get_coalesce,
-+	.set_coalesce = dpaa_set_coalesce,
- };
--- 
-2.1.0
+As already mentioned in my reply to the cover letter, a NACK from me for
+this one.
 
+The problem is that this causes the fwnode to be shared by all the
+"struct device"-s (embedded in the i2c-clients created).
+
+This in itself is not necessarily a problem, but it does become a
+problem when combined with using device_add_properties as
+intel_cht_int33fe.c does.
+
+Since the info in the ACPI tables for devices which use this
+driver is pretty terrible, we add a bunch of properties to notify
+the drivers about how the different parts which make up the Type-C
+functionality are tied together.
+
+device_add_properties creates a new fwnode and then calls
+set_secondary_fwnode. For devices which already have a fwnode
+assigned (which the i2c-clients will have after this patch)
+set_secondary_fwnode sets dev->fwnode->secondary to the fwnode
+which has been newly created to hold the added properties.
+
+Since all i2c-clients instantiated now share dev->fwnode,
+the result of this is that all i2c-clients created now will
+have the properties of the last i2c-client instantiated for
+an acpi-node which describes multiple clients in a single
+node.
+
+Also the fwnodes created  for the properties of earlier
+instantiated i2c-clients will be leaked.
+
+I see 2 possible solutions here:
+
+1) Changing this patch so that i2c_acpi_new_device() does:
+
+         /*
+          * The fwnode can not be shared between instantiated clients when
+          * adding device-properties to the instantiated client.
+          */
+	if (!info->properties)
+		info->fwnode = acpi_fwnode_handle(adev);
+
+2) Leave whether info->fwnode should be set or not up to the
+caller of i2c_acpi_new_device() (info is already passed in as
+a param). E.g. i2c-multi-instantiate.c could do this (for now,
+maybe in the future we will also want to add properties for
+some HIDs).
+
+I think that 1. is the best solution and this is all kernel internal,
+so we can always revisit this if necessary.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>   drivers/i2c/i2c-core-acpi.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/i2c/i2c-core-acpi.c b/drivers/i2c/i2c-core-acpi.c
+> index af4b5bd5d973..478862abb82a 100644
+> --- a/drivers/i2c/i2c-core-acpi.c
+> +++ b/drivers/i2c/i2c-core-acpi.c
+> @@ -420,6 +420,7 @@ struct i2c_client *i2c_acpi_new_device(struct device *dev, int index,
+>   	if (!adapter)
+>   		return NULL;
+>   
+> +	info->fwnode = acpi_fwnode_handle(adev);
+>   	return i2c_new_device(adapter, info);
+>   }
+>   EXPORT_SYMBOL_GPL(i2c_acpi_new_device);
+> 
