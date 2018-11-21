@@ -2,112 +2,187 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27616C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34509C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC6C206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:20:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC6C206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id DF28F2080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 23:21:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lyn/e36M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF28F2080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388139AbeKVJ4w (ORCPT
+        id S2388174AbeKVJ6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:56:52 -0500
-Received: from www62.your-server.de ([213.133.104.62]:51836 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731891AbeKVJ4w (ORCPT
+        Thu, 22 Nov 2018 04:58:24 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33750 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731684AbeKVJ6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:56:52 -0500
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gPbmu-0005Zw-61; Thu, 22 Nov 2018 00:20:04 +0100
-Received: from [178.197.249.20] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gPbmt-0007pZ-Sa; Thu, 22 Nov 2018 00:20:03 +0100
-Subject: Re: [PATCH v2 2/2] arm64/bpf: don't allocate BPF JIT programs in
- module memory
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jessica Yu <jeyu@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20181121131733.14910-1-ard.biesheuvel@linaro.org>
- <20181121131733.14910-3-ard.biesheuvel@linaro.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <945415e1-0ff8-65ce-15fa-33cea0a7d1c9@iogearbox.net>
-Date:   Thu, 22 Nov 2018 00:20:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Thu, 22 Nov 2018 04:58:24 -0500
+Received: by mail-vs1-f67.google.com with SMTP id p74so4313785vsc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 15:21:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wNUq75o5o6zHHPdUhKWdu9H60S7hdZrUOMIOdcwo1q4=;
+        b=Lyn/e36MpU84kl+WZZNvYqe2RoVsh70oyd0yFsJHCD/KYVZk4CNlr/0umKKTJtM2fk
+         Yum5w7aVBUqc1dAo8tot66cX0fW1sOQTPocjTEInyIT4MRTFjfR5VnPtguNCxfQlebbK
+         g64a7JR6CO958AD8xJdOQ9wKGfMGACXeXJ3XRCU0RkdzIEQy/12UFTnmKN3LPDjczLZB
+         LDkggmpFIV2sFoKMQ6ZQendfgLC/xDTGztgfqVetuYuCP/hVoPiKDxWe88SoN9qAX3+V
+         bDltj4kkZlllFcJzgKFdhqLo7ZokzT4+S+uG6k7063HpqZl5g2/GOkIOIs+hornSdroD
+         I14Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wNUq75o5o6zHHPdUhKWdu9H60S7hdZrUOMIOdcwo1q4=;
+        b=FmDLA5ws5Ad0dINR2uu9JjeZBhkQIi8QtVfnwQVTLa4qNBt2N02aD/rftmSLJEOcdF
+         +uWkLuJTjF80i8b7LWt1sdA0s/LbJ6Y4ekPzPpNqFlvIvD6YAZPnqR4zUv9ccMm7I6Gl
+         SpoME7qNxvILUqgZbsvHNmLYRO+Mbe0pQj0WFUrutoKVOrLG4EvyBJr8eDQ2XMgbhDpX
+         wB1iJ65ItFAmlsHlEK4oh036gvdKX0GPq9qli9GdLw/TCVzy5WBm13ziIlCrsuumA0Be
+         gx66+88er2Qre6Ft096VWwsDa2JE5UY3TzRYsysPZ9z/0PclDmWaZgI/EZXPS2LWGFaw
+         WF3Q==
+X-Gm-Message-State: AGRZ1gLaxQTN/0P70qWZpp97TtPnq5SfKQv9dzjJyNQyEzY6GVRTjQfe
+        SBcgBnKWHd76Hq40CIYapERfUTQ99e1DncDyLhr2/A==
+X-Google-Smtp-Source: AJdET5fG5mcRnJ7MeD9D7Lvi6ZAq+SqE86HUEiBiDDnV71Esf047/WreA1HycHP2CCHPNnVtTTApORJnuRHW+pFHM+Q=
+X-Received: by 2002:a67:105:: with SMTP id 5mr3623076vsb.183.1542842512322;
+ Wed, 21 Nov 2018 15:21:52 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181121131733.14910-3-ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25141/Wed Nov 21 23:16:24 2018)
+References: <20181121201452.77173-1-dancol@google.com> <20181121205428.165205-1-dancol@google.com>
+ <20181121141220.0e533c1dcb4792480efbf3ff@linux-foundation.org>
+ <CAKOZuetW6WMNFdL5_2=UbrEf8mjxYTdz1+4BiRLSgdoKh8FsqQ@mail.gmail.com> <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
+In-Reply-To: <20181121145043.fa029f4f91afddc2a10bb81e@linux-foundation.org>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 21 Nov 2018 15:21:40 -0800
+Message-ID: <CAKOZuesF5zi9mpEE6No7oq0hDnM8KFhQFU=NM7qUF635s0r3-A@mail.gmail.com>
+Subject: Re: [PATCH v2] Add /proc/pid_gen
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Primiano Tucci <primiano@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin <guro@fb.com>,
+        Prashant Dhamdhere <pdhamdhe@redhat.com>,
+        "Dennis Zhou (Facebook)" <dennisszhou@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>, rostedt@goodmis.org,
+        tglx@linutronix.de, mingo@kernel.org, linux@dominikbrodowski.net,
+        jpoimboe@redhat.com, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        ktsanaktsidis@zendesk.com, David Howells <dhowells@redhat.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/21/2018 02:17 PM, Ard Biesheuvel wrote:
-> The arm64 module region is a 128 MB region that is kept close to
-> the core kernel, in order to ensure that relative branches are
-> always in range. So using the same region for programs that do
-> not have this restriction is wasteful, and preferably avoided.
-> 
-> Now that the core BPF JIT code permits the alloc/free routines to
-> be overridden, implement them by simple vmalloc_exec()/vfree()
-> calls, which can be served from anywere. This also solves an
-> issue under KASAN, where shadow memory is needlessly allocated for
-> all BPF programs (which don't require KASAN shadow pages since
-> they are not KASAN instrumented)
-> 
-> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> ---
->  arch/arm64/net/bpf_jit_comp.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> index a6fdaea07c63..f91b7c157841 100644
-> --- a/arch/arm64/net/bpf_jit_comp.c
-> +++ b/arch/arm64/net/bpf_jit_comp.c
-> @@ -940,3 +940,13 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
->  					   tmp : orig_prog);
->  	return prog;
->  }
-> +
-> +void *bpf_jit_alloc_exec(unsigned long size)
-> +{
-> +	return vmalloc_exec(size);
-> +}
-> +
-> +void bpf_jit_free_exec(const void *addr)
-> +{
-> +	return vfree(size);
-> +}
+On Wed, Nov 21, 2018 at 2:50 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Wed, 21 Nov 2018 14:40:28 -0800 Daniel Colascione <dancol@google.com> wrote:
+>
+> > On Wed, Nov 21, 2018 at 2:12 PM Andrew Morton <akpm@linux-foundation.org> wrote:
+> > >
+> > > On Wed, 21 Nov 2018 12:54:20 -0800 Daniel Colascione <dancol@google.com> wrote:
+> > >
+> > > > Trace analysis code needs a coherent picture of the set of processes
+> > > > and threads running on a system. While it's possible to enumerate all
+> > > > tasks via /proc, this enumeration is not atomic. If PID numbering
+> > > > rolls over during snapshot collection, the resulting snapshot of the
+> > > > process and thread state of the system may be incoherent, confusing
+> > > > trace analysis tools. The fundamental problem is that if a PID is
+> > > > reused during a userspace scan of /proc, it's impossible to tell, in
+> > > > post-processing, whether a fact that the userspace /proc scanner
+> > > > reports regarding a given PID refers to the old or new task named by
+> > > > that PID, as the scan of that PID may or may not have occurred before
+> > > > the PID reuse, and there's no way to "stamp" a fact read from the
+> > > > kernel with a trace timestamp.
+> > > >
+> > > > This change adds a per-pid-namespace 64-bit generation number,
+> > > > incremented on PID rollover, and exposes it via a new proc file
+> > > > /proc/pid_gen. By examining this file before and after /proc
+> > > > enumeration, user code can detect the potential reuse of a PID and
+> > > > restart the task enumeration process, repeating until it gets a
+> > > > coherent snapshot.
+> > > >
+> > > > PID rollover ought to be rare, so in practice, scan repetitions will
+> > > > be rare.
+> > >
+> > > In general, tracing is a rather specialized thing.  Why is this very
+> > > occasional confusion a sufficiently serious problem to warrant addition
+> > > of this code?
+> >
+> > I wouldn't call tracing a specialized thing: it's important enough to
+> > justify its own summit and a whole ecosystem of trace collection and
+> > analysis tools. We use it in every day in Android. It's tremendously
+> > helpful for understanding system behavior, especially in cases where
+> > multiple components interact in ways that we can't readily predict or
+> > replicate. Reliability and precision in this area are essential:
+> > retrospective analysis of difficult-to-reproduce problems involves
+> > puzzling over trace files and testing hypothesis, and when the trace
+> > system itself is occasionally unreliable, the set of hypothesis to
+> > consider grows. I've tried to keep the amount of kernel infrastructure
+> > needed to support this precision and reliability to a minimum, pushing
+> > most of the complexity to userspace. But we do need, from the kernel,
+> > reliable process disambiguation.
+> >
+> > Besides: things like checkpoint and restart are also non-core
+> > features, but the kernel has plenty of infrastructure to support them.
+> > We're talking about a very lightweight feature in this thread.
+>
+> I'm still not understanding the seriousness of the problem.  Presumably
+> you've hit problems in real-life which were serious and frequent enough
+> to justify getting down and writing the code.  Please share some sob stories
+> with us!
 
-Hmm, could you elaborate in the commit log on the potential performance
-regression for JITed progs on arm64 after this change?
+The problem here is the possibility of confusion, even if it's rare.
+Does the naive approach of just walking /proc and ignoring the
+possibility of PID reuse races work most of the time? Sure. But "most
+of the time" isn't good enough. It's not that there are tons of sob
+stories: it's that without completely robust reporting, we can't rule
+out of the possibility that weirdness we observe in a given trace is
+actually just an artifact from a kinda-sort-working best-effort trace
+collection system instead of a real anomaly in behavior. Tracing,
+essentially, gives us deltas for system state, and without an accurate
+baseline, collected via some kind of scan on trace startup, it's
+impossible to use these deltas to robustly reconstruct total system
+state at a given time. And this matters, because errors in
+reconstruction (e.g., assigning a thread to the wrong process because
+the IDs happen to be reused) can affect processing of the whole trace.
+If it's 3am and I'm analyzing the lone trace from a dogfooder
+demonstrating a particularly nasty problem, I don't want to find out
+that the trace I'm analyzing ended up being useless because the
+kernel's trace system is merely best effort. It's very cheap to be
+100% reliable here, so let's be reliable and rule out sources of
+error.
 
-I think this change would also break JITing of BPF to BPF calls. You might
-have the same issue as ppc64 folks where the offset might not fit into imm
-anymore and would have to transfer it via fp->aux->func[off]->bpf_func
-instead.
+> > > Which userspace tools will be using pid_gen?  Are the developers of
+> > > those tools signed up to use pid_gen?
+> >
+> > I'll be changing Android tracing tools to capture process snapshots
+> > using pid_gen, using the algorithm in the commit message.
+>
+> Which other tools could use this and what was the feedback from their
+> developers?
+
+I'm going to have Android's systrace and Perfetto use this approach.
+Exactly how many tools signed up to use this feature do you need?
+
+> Those people are the intended audience and the
+> best-positioned reviewers so let's hear from them?
+
+I'm writing plenty of trace analysis tools myself, so I'm part of this
+intended audience. Other tracing tool authors have told me about
+out-of-tree hacks for process atomic snapshots via ftrace events. This
+approach avoids the necessity of these more-invasive hacks.
