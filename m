@@ -2,341 +2,120 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14082C04EBB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8FCC04EBB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7898921479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="INkcAAEd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7898921479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
+	by mail.kernel.org (Postfix) with ESMTP id 1441A21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:35:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1441A21479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbeKULHg (ORCPT
+        id S1726849AbeKULHl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:07:36 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:2412 "EHLO mx.kolabnow.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725926AbeKULHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 06:07:35 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTP id 1131A358;
-        Wed, 21 Nov 2018 01:35:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        content-transfer-encoding:mime-version:message-id:date:date
-        :subject:subject:from:from:received:received:received; s=
-        dkim20160331; t=1542760534; x=1544574935; bh=fwUboIHHcAuX6HREmJ+
-        Gki5mn5Hr+LI/YEBqcJMFJt0=; b=INkcAAEdqX8MdcOV72ZNbq4GUL0AX4c3/Md
-        sQT049zCsoe76H7UtfnKmxd5YNjskMqy4bJ99ezSFHowkR4huLtBXJ0jmbfD5tFj
-        Sxf9SeLZZZYy2dCCJP1LTGt2EBRLEzCNWLb5dI/Jp2yb59uliR6VoulamDIWugbZ
-        g6oKDnRlUuVPNGDfYYGN8qv5meJrbvMk0nGhxLEPtoQoXijPSPle2/e5YJ4tWDJy
-        oQwu9ihKnjgyotqit8ASTnc4qT1kqOofykowsmQI+jH7SHfp6jrnEBBXNI8cMGKo
-        r6/e3PkQsuvuxh9BpaR59OSHV0CdDwLCaJR7DaO+ZjBuoW4GbbDyKuz4dawt5SSR
-        RhrO4uJFeq6GWoeqAE06SKUuOoo4AngdRRhPvvHuyV1J/teHdg+BOCKbuoNeXEeG
-        tWRFivFfsunKmUYI16+OGxqhINzs+WCnA89I7DZWF53OolbNK91OQ7IBxHrVs2nF
-        iL8OJBurpZ29pVgu0AaynmsWcEtpyR+DO4ct4vhDKz9qC0f7/CBGt9LQvU7mvfO9
-        vaW7aSdGAlTp6dGZ3U+7ru/9FqZO7QlqvZdi4NueGiCDQPZjgcy6qp84ogMr5I4B
-        0sGKwibPzvG+P6Ct4RqJXcEX/XfJ8Vngp/r45igS6/6ru/+/7tML96SYRX7QwPqr
-        qNGR4cEA=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out001.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id C7nP4oxmnTRh; Wed, 21 Nov 2018 01:35:34 +0100 (CET)
-Received: from int-mx001.mykolab.com (unknown [10.9.13.1])
-        by ext-mx-out001.mykolab.com (Postfix) with ESMTPS id 10B9D1AD;
-        Wed, 21 Nov 2018 01:35:34 +0100 (CET)
-Received: from ext-subm002.mykolab.com (unknown [10.9.6.2])
-        by int-mx001.mykolab.com (Postfix) with ESMTPS id AE2E52B0;
-        Wed, 21 Nov 2018 01:35:33 +0100 (CET)
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Federico Vaga <federico.vaga@vaga.pv.it>
-Subject: [PATCH v2] doc:process: add links where missing
-Date:   Wed, 21 Nov 2018 01:35:19 +0100
-Message-Id: <20181121003519.12559-1-federico.vaga@vaga.pv.it>
+        Wed, 21 Nov 2018 06:07:41 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:51973 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726279AbeKULHl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 06:07:41 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0TDYPnkY_1542760531;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TDYPnkY_1542760531)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Nov 2018 08:35:31 +0800
+Subject: Re: [LKP] dd2283f260 [ 97.263072]
+ WARNING:at_kernel/locking/lockdep.c:#lock_downgrade
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     kernel test robot <rong.a.chen@intel.com>,
+        Waiman Long <longman@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+References: <20181115055443.GF18977@shao2-debian>
+ <d9371abc-60f6-ce37-529f-d097464a1412@linux.alibaba.com>
+ <20181120085749.lj7dzk52633oq42s@kshutemo-mobl1>
+ <9dec33d0-f408-8428-b004-fa63fc2e9091@linux.alibaba.com>
+ <20181120134216.s5derazwpay5gkfk@kshutemo-mobl1>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <d552af11-7b73-da6a-ed12-6cb7bd1bb5a4@linux.alibaba.com>
+Date:   Wed, 21 Nov 2018 08:35:28 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181120134216.s5derazwpay5gkfk@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some documents are refering to others without links. With this
-patch I add those missing links.
 
-This patch affects only documents under process/ and labels where
-necessary.
 
-Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
----
- Documentation/admin-guide/devices.rst        |  1 +
- Documentation/dev-tools/coccinelle.rst       |  2 ++
- Documentation/doc-guide/sphinx.rst           |  2 ++
- Documentation/driver-api/pm/devices.rst      |  2 ++
- Documentation/process/4.Coding.rst           |  3 ++-
- Documentation/process/5.Posting.rst          | 23 +++++++++++---------
- Documentation/process/8.Conclusion.rst       |  7 +++---
- Documentation/process/changes.rst            |  2 +-
- Documentation/process/coding-style.rst       |  2 +-
- Documentation/process/howto.rst              | 11 +++++-----
- Documentation/process/management-style.rst   |  5 +++--
- Documentation/process/submitting-drivers.rst |  8 ++++---
- 12 files changed, 42 insertions(+), 26 deletions(-)
+On 11/20/18 9:42 PM, Kirill A. Shutemov wrote:
+> On Tue, Nov 20, 2018 at 08:10:51PM +0800, Yang Shi wrote:
+>>
+>> On 11/20/18 4:57 PM, Kirill A. Shutemov wrote:
+>>> On Fri, Nov 16, 2018 at 08:56:04AM -0800, Yang Shi wrote:
+>>>>> a8dda165ec  vfree: add debug might_sleep()
+>>>>> dd2283f260  mm: mmap: zap pages with read mmap_sem in munmap
+>>>>> 5929a1f0ff  Merge tag 'riscv-for-linus-4.20-rc2' of git://git.kernel.org/pub/scm/linux/kernel/git/palmer/riscv-linux
+>>>>> 0bc80e3cb0  Add linux-next specific files for 20181114
+>>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
+>>>>> |                                                     | a8dda165ec | dd2283f260 | 5929a1f0ff | next-20181114 |
+>>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
+>>>>> | boot_successes                                      | 314        | 178        | 190        | 168           |
+>>>>> | boot_failures                                       | 393        | 27         | 21         | 40            |
+>>>>> | WARNING:held_lock_freed                             | 383        | 23         | 17         | 39            |
+>>>>> | is_freeing_memory#-#,with_a_lock_still_held_there   | 383        | 23         | 17         | 39            |
+>>>>> | BUG:unable_to_handle_kernel                         | 5          | 2          | 4          | 1             |
+>>>>> | Oops:#[##]                                          | 9          | 3          | 4          | 1             |
+>>>>> | EIP:debug_check_no_locks_freed                      | 9          | 3          | 4          | 1             |
+>>>>> | Kernel_panic-not_syncing:Fatal_exception            | 9          | 3          | 4          | 1             |
+>>>>> | Mem-Info                                            | 4          | 1          |            |               |
+>>>>> | invoked_oom-killer:gfp_mask=0x                      | 1          | 1          |            |               |
+>>>>> | WARNING:at_kernel/locking/lockdep.c:#lock_downgrade | 0          | 6          | 4          | 7             |
+>>>>> | EIP:lock_downgrade                                  | 0          | 6          | 4          | 7             |
+>>>>> +-----------------------------------------------------+------------+------------+------------+---------------+
+>>>>>
+>>>>> [   96.288009] random: get_random_u32 called from arch_rnd+0x3c/0x70 with crng_init=0
+>>>>> [   96.359626] input_id (331) used greatest stack depth: 6360 bytes left
+>>>>> [   96.749228] grep (358) used greatest stack depth: 6336 bytes left
+>>>>> [   96.921470] network.sh (341) used greatest stack depth: 6212 bytes left
+>>>>> [   97.262340]
+>>>>> [   97.262587] =========================
+>>>>> [   97.263072] WARNING: held lock freed!
+>>>>> [   97.263536] 4.19.0-06969-gdd2283f #1 Not tainted
+>>>>> [   97.264110] -------------------------
+>>>>> [   97.264575] udevd/198 is freeing memory 9c16c930-9c16c99b, with a lock still held there!
+>>>>> [   97.265542] (ptrval) (&anon_vma->rwsem){....}, at: unlink_anon_vmas+0x14e/0x420
+>>>>> [   97.266450] 1 lock held by udevd/198:
+>>>>> [   97.266924]  #0: (ptrval) (&mm->mmap_sem){....}, at: __do_munmap+0x531/0x730
+>>>> I have not figured out what this is caused by. But, the below warning looks
+>>>> more confusing. This might be caused by the below one.
+>>> I *think* we need to understand more about what detached VMAs mean for
+>>> rmap. The anon_vma for these VMAs still reachable for the rmap and
+>>> therefore VMA too. I don't quite grasp what is implications of this, but
+>>> it doesn't look good.
+>> I'm supposed before accessing anon_vma, VMA need to be found by find_vma()
+>> first, right? But, finding VMA need hold mmap_sem, once detach VMAs is
+>> called, others should not be able to find the VMAs anymore. So, the anon_vma
+>> should not be reachable except the munmap caller.
+> No. anon_vma can be reached from page->mapping. The page can be reached
+> during physcal memory scan or if the page is shared (across fork()). None
+> of these accesses require mmap_sem.
 
-diff --git a/Documentation/admin-guide/devices.rst b/Documentation/admin-guide/devices.rst
-index 7fadc05330dd..d41671aeaef0 100644
---- a/Documentation/admin-guide/devices.rst
-+++ b/Documentation/admin-guide/devices.rst
-@@ -1,3 +1,4 @@
-+.. _admin_devices:
- 
- Linux allocated devices (4.x+ version)
- ======================================
-diff --git a/Documentation/dev-tools/coccinelle.rst b/Documentation/dev-tools/coccinelle.rst
-index aa14f05cabb1..00a3409b0c28 100644
---- a/Documentation/dev-tools/coccinelle.rst
-+++ b/Documentation/dev-tools/coccinelle.rst
-@@ -4,6 +4,8 @@
- 
- .. highlight:: none
- 
-+.. _devtools_coccinelle:
-+
- Coccinelle
- ==========
- 
-diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
-index f0796daa95b4..02605ee1d876 100644
---- a/Documentation/doc-guide/sphinx.rst
-+++ b/Documentation/doc-guide/sphinx.rst
-@@ -1,3 +1,5 @@
-+.. _sphinxdoc:
-+
- Introduction
- ============
- 
-diff --git a/Documentation/driver-api/pm/devices.rst b/Documentation/driver-api/pm/devices.rst
-index 1128705a5731..090c151aa86b 100644
---- a/Documentation/driver-api/pm/devices.rst
-+++ b/Documentation/driver-api/pm/devices.rst
-@@ -6,6 +6,8 @@
- .. |struct wakeup_source| replace:: :c:type:`struct wakeup_source <wakeup_source>`
- .. |struct device| replace:: :c:type:`struct device <device>`
- 
-+.. _driverapi_pm_devices:
-+
- ==============================
- Device Power Management Basics
- ==============================
-diff --git a/Documentation/process/4.Coding.rst b/Documentation/process/4.Coding.rst
-index eb4b185d168c..cfe264889447 100644
---- a/Documentation/process/4.Coding.rst
-+++ b/Documentation/process/4.Coding.rst
-@@ -315,7 +315,8 @@ variety of potential coding problems; it can also propose fixes for those
- problems.  Quite a few "semantic patches" for the kernel have been packaged
- under the scripts/coccinelle directory; running "make coccicheck" will run
- through those semantic patches and report on any problems found.  See
--Documentation/dev-tools/coccinelle.rst for more information.
-+:ref:`Documentation/dev-tools/coccinelle.rst <devtools_coccinelle>`
-+for more information.
- 
- Other kinds of portability errors are best found by compiling your code for
- other architectures.  If you do not happen to have an S/390 system or a
-diff --git a/Documentation/process/5.Posting.rst b/Documentation/process/5.Posting.rst
-index c418c5d6cae4..4213e580f273 100644
---- a/Documentation/process/5.Posting.rst
-+++ b/Documentation/process/5.Posting.rst
-@@ -9,9 +9,10 @@ kernel.  Unsurprisingly, the kernel development community has evolved a set
- of conventions and procedures which are used in the posting of patches;
- following them will make life much easier for everybody involved.  This
- document will attempt to cover these expectations in reasonable detail;
--more information can also be found in the files process/submitting-patches.rst,
--process/submitting-drivers.rst, and process/submit-checklist.rst in the kernel
--documentation directory.
-+more information can also be found in the files
-+:ref:`Documentation/process/submitting-patches.rst <submittingpatches>`,
-+:ref:`Documentation/process/submitting-drivers.rst  <submittingdrivers>`
-+and :ref:`Documentation/process/submit-checklist.rst <submitchecklist>`.
- 
- 
- When to post
-@@ -198,8 +199,10 @@ pass it to diff with the "-X" option.
- 
- The tags mentioned above are used to describe how various developers have
- been associated with the development of this patch.  They are described in
--detail in the process/submitting-patches.rst document; what follows here is a
--brief summary.  Each of these lines has the format:
-+detail in
-+the :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-+document; what follows here is a brief summary.  Each of these lines has
-+the format:
- 
- ::
- 
-@@ -210,8 +213,8 @@ The tags in common use are:
-  - Signed-off-by: this is a developer's certification that he or she has
-    the right to submit the patch for inclusion into the kernel.  It is an
-    agreement to the Developer's Certificate of Origin, the full text of
--   which can be found in Documentation/process/submitting-patches.rst.  Code
--   without a proper signoff cannot be merged into the mainline.
-+   which can be found in :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-+   Code without a proper signoff cannot be merged into the mainline.
- 
-  - Co-developed-by: states that the patch was also created by another developer
-    along with the original author.  This is useful at times when multiple
-@@ -226,7 +229,7 @@ The tags in common use are:
-    it to work.
- 
-  - Reviewed-by: the named developer has reviewed the patch for correctness;
--   see the reviewer's statement in Documentation/process/submitting-patches.rst
-+   see the reviewer's statement in :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-    for more detail.
- 
-  - Reported-by: names a user who reported a problem which is fixed by this
-@@ -253,8 +256,8 @@ take care of:
-    be examined in any detail.  If there is any doubt at all, mail the patch
-    to yourself and convince yourself that it shows up intact.
- 
--   Documentation/process/email-clients.rst has some helpful hints on making
--   specific mail clients work for sending patches.
-+   :ref:`Documentation/process/email-clients.rst <email_clients>` has some
-+   helpful hints on making specific mail clients work for sending patches.
- 
-  - Are you sure your patch is free of silly mistakes?  You should always
-    run patches through scripts/checkpatch.pl and address the complaints it
-diff --git a/Documentation/process/8.Conclusion.rst b/Documentation/process/8.Conclusion.rst
-index 1c7f54cd0261..8395aa2c1f3a 100644
---- a/Documentation/process/8.Conclusion.rst
-+++ b/Documentation/process/8.Conclusion.rst
-@@ -5,9 +5,10 @@ For more information
- 
- There are numerous sources of information on Linux kernel development and
- related topics.  First among those will always be the Documentation
--directory found in the kernel source distribution.  The top-level process/howto.rst
--file is an important starting point; process/submitting-patches.rst and
--process/submitting-drivers.rst are also something which all kernel developers should
-+directory found in the kernel source distribution.  The top-level :ref:`process/howto.rst <process_howto>`
-+file is an important starting point; :ref:`process/submitting-patches.rst <submittingpatches>`
-+and :ref:`process/submitting-drivers.rst  <submittingdrivers>`
-+are also something which all kernel developers should
- read.  Many internal kernel APIs are documented using the kerneldoc
- mechanism; "make htmldocs" or "make pdfdocs" can be used to generate those
- documents in HTML or PDF format (though the version of TeX shipped by some
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index d1bf143b446f..18735dc460a0 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -326,7 +326,7 @@ Kernel documentation
- Sphinx
- ------
- 
--Please see :ref:`sphinx_install` in ``Documentation/doc-guide/sphinx.rst``
-+Please see :ref:`sphinx_install` in :ref:`Documentation/doc-guide/sphinx.rst <sphinxdoc>`
- for details about Sphinx requirements.
- 
- Getting updated software
-diff --git a/Documentation/process/coding-style.rst b/Documentation/process/coding-style.rst
-index 4e7c0a1c427a..277c113376a6 100644
---- a/Documentation/process/coding-style.rst
-+++ b/Documentation/process/coding-style.rst
-@@ -1075,5 +1075,5 @@ gcc internals and indent, all available from http://www.gnu.org/manual/
- WG14 is the international standardization working group for the programming
- language C, URL: http://www.open-std.org/JTC1/SC22/WG14/
- 
--Kernel process/coding-style.rst, by greg@kroah.com at OLS 2002:
-+Kernel :ref:`process/coding-style.rst <codingstyle>`, by greg@kroah.com at OLS 2002:
- http://www.kroah.com/linux/talks/ols_2002_kernel_codingstyle_talk/html/
-diff --git a/Documentation/process/howto.rst b/Documentation/process/howto.rst
-index a4a9f9eb0dd8..58b2f46c4f98 100644
---- a/Documentation/process/howto.rst
-+++ b/Documentation/process/howto.rst
-@@ -298,9 +298,9 @@ two weeks, but it can be longer if there are no pressing problems.  A
- security-related problem, instead, can cause a release to happen almost
- instantly.
- 
--The file Documentation/process/stable-kernel-rules.rst in the kernel tree
--documents what kinds of changes are acceptable for the -stable tree, and
--how the release process works.
-+The file :ref:`Documentation/process/stable-kernel-rules.rst <stable_kernel_rules>`
-+in the kernel tree documents what kinds of changes are acceptable for
-+the -stable tree, and how the release process works.
- 
- 4.x -git patches
- ~~~~~~~~~~~~~~~~
-@@ -360,7 +360,8 @@ tool.  For details on how to use the kernel bugzilla, please see:
- 
- 	https://bugzilla.kernel.org/page.cgi?id=faq.html
- 
--The file admin-guide/reporting-bugs.rst in the main kernel source directory has a good
-+The file :ref:`admin-guide/reporting-bugs.rst <reportingbugs>`
-+in the main kernel source directory has a good
- template for how to report a possible kernel bug, and details what kind
- of information is needed by the kernel developers to help track down the
- problem.
-@@ -426,7 +427,7 @@ add your statements between the individual quoted sections instead of
- writing at the top of the mail.
- 
- If you add patches to your mail, make sure they are plain readable text
--as stated in Documentation/process/submitting-patches.rst.
-+as stated in :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`.
- Kernel developers don't want to deal with
- attachments or compressed patches; they may want to comment on
- individual lines of your patch, which works only that way. Make sure you
-diff --git a/Documentation/process/management-style.rst b/Documentation/process/management-style.rst
-index 85ef8ca8f639..186753ff3d2d 100644
---- a/Documentation/process/management-style.rst
-+++ b/Documentation/process/management-style.rst
-@@ -5,8 +5,9 @@ Linux kernel management style
- 
- This is a short document describing the preferred (or made up, depending
- on who you ask) management style for the linux kernel.  It's meant to
--mirror the process/coding-style.rst document to some degree, and mainly written to
--avoid answering [#f1]_  the same (or similar) questions over and over again.
-+mirror the :ref:`process/coding-style.rst <codingstyle>` document to some
-+degree, and mainly written to avoid answering [#f1]_  the same (or similar)
-+questions over and over again.
- 
- Management style is very personal and much harder to quantify than
- simple coding style rules, so this document may or may not have anything
-diff --git a/Documentation/process/submitting-drivers.rst b/Documentation/process/submitting-drivers.rst
-index b38bf2054ce3..58bc047e7b95 100644
---- a/Documentation/process/submitting-drivers.rst
-+++ b/Documentation/process/submitting-drivers.rst
-@@ -16,7 +16,8 @@ you should probably talk to XFree86 (http://www.xfree86.org/) and/or X.Org
- 
-    Oh, and we don't really recommend submitting changes to XFree86 :)
- 
--Also read the Documentation/process/submitting-patches.rst document.
-+Also read the :ref:`Documentation/process/submitting-patches.rst <submittingpatches>`
-+document.
- 
- 
- Allocating Device Numbers
-@@ -27,7 +28,8 @@ by the Linux assigned name and number authority (currently this is
- Torben Mathiasen). The site is http://www.lanana.org/. This
- also deals with allocating numbers for devices that are not going to
- be submitted to the mainstream kernel.
--See Documentation/admin-guide/devices.rst for more information on this.
-+See :ref:`Documentation/admin-guide/devices.rst <admin_devices>`
-+for more information on this.
- 
- If you don't use assigned numbers then when your device is submitted it will
- be given an assigned number even if that is different from values you may
-@@ -117,7 +119,7 @@ PM support:
- 		anything.  For the driver testing instructions see
- 		Documentation/power/drivers-testing.txt and for a relatively
- 		complete overview of the power management issues related to
--		drivers see Documentation/driver-api/pm/devices.rst.
-+		drivers see :ref:`Documentation/driver-api/pm/devices.rst <driverapi_pm_devices>`.
- 
- Control:
- 		In general if there is active maintenance of a driver by
--- 
-2.19.1
+If they don't require mmap_sem at all, this problem should be valid 
+regardless of the optimization. We just downgraded write mmap_sem to 
+read, but still hold it.
+
+>
 
