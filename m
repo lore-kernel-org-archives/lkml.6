@@ -2,103 +2,102 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CF6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E704C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 541C72145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:42:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541C72145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+	by mail.kernel.org (Postfix) with ESMTP id 3D5CC21104
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:51:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KYUv/rCE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D5CC21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKUPOz (ORCPT
+        id S1727206AbeKUPYq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 10:14:55 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46812 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbeKUPOz (ORCPT
+        Wed, 21 Nov 2018 10:24:46 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34580 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbeKUPYp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 10:14:55 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so3573825ply.13;
-        Tue, 20 Nov 2018 20:42:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=beNzxtekC3eXWHufu9KYAAFX95VFF++NlzuARk/OlmM=;
-        b=OtGo04Uq2QpF0OwfLkHXvcJkd6Qgo4FtDHwcw1PLV7ZutmqvcCH9n05BcvPbN9epud
-         AvrARewg1IxOuuZTbEv9Ff+I4p2oKJrQFirTu4nNJjN62JARofS2egUQjF6gf4NtlgZg
-         hOgNGZjV/GNFEjVlNOb0eNQAIBmETBl0UtZPT96Pg/HiUNFaflL6X228M/ljpjBrH++R
-         EYnvlnf/oYyEUDr1mSdmlq86GoCwqRJB/whBF2jdYjpPkC4I3OQwOD/QDlzZ7x1YKVmW
-         ViWCVfp/oq+uz8+m4hxO8G+QSWOQ4QjBZtqcFQsJxckJZTaAhZFumjnq8/y6nx/dZtFV
-         K0zQ==
-X-Gm-Message-State: AA+aEWY/NG424koZUjf0EADULCbDS5H/+YCOrrB9fSb+KASvNWPdknGE
-        nv/U3XdrSFC+YYo+38hmtB0=
-X-Google-Smtp-Source: AFSGD/VfQU9yeCQvEyKVSqmkBBv3/CBEFUNv2FLAgZo9cuQAsWuO+IksYjy7sC2dMkjEksRN1uHK8Q==
-X-Received: by 2002:a63:f006:: with SMTP id k6mr4563792pgh.259.1542775327338;
-        Tue, 20 Nov 2018 20:42:07 -0800 (PST)
-Received: from ?IPv6:2601:647:4800:973f:8a0:7611:3223:f4db? ([2601:647:4800:973f:8a0:7611:3223:f4db])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm49421268pfm.114.2018.11.20.20.42.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Nov 2018 20:42:06 -0800 (PST)
-Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
-From:   Sagi Grimberg <sagi@grimberg.me>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-10-ming.lei@redhat.com> <20181116134541.GH3165@lst.de>
- <002fe56b-25e4-573e-c09b-bb12c3e8d25a@grimberg.me>
- <20181120161651.GB2629@lst.de>
- <53526aae-fb9b-ee38-0a01-e5899e2d4e4d@grimberg.me>
- <20181121005902.GA31748@ming.t460p>
- <2d9bee7a-f010-dcf4-1184-094101058584@grimberg.me>
- <20181121034415.GA8408@ming.t460p>
- <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me>
-Message-ID: <7378bf49-5a7e-5622-d4d1-808ba37ce656@grimberg.me>
-Date:   Tue, 20 Nov 2018 20:42:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <2a47d336-c19b-6bf4-c247-d7382871eeea@grimberg.me>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Wed, 21 Nov 2018 10:24:45 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAL4nMqs032244;
+        Wed, 21 Nov 2018 04:51:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=ObcDvYuCvCRY854lGNth8zzfyqEUvVBRMF/Qt74EXuE=;
+ b=KYUv/rCE/lT+oc+6eV3gucNcZHOeI3d0yFGKUrSOtHxcLZGq+9ibWqZ19it0q2hXyPkD
+ qd0fA2rAKTW2dDpijvMP3FEq5JiZA81qH+niJCYoY+DONuchuL3K8rZ5YM1eXtaWgS9X
+ p8ACNP4Q+GghzoQgRIwtQyaZ5FkNvsRtUXMdL5VYqL2P7JZl7qP3xsCsqCcj/U3fPZrE
+ fhgDzaEKCnxzwJkEcUJjEZQR5LCHQx2mwMnCRy4aIfkggDwbcZTkm0hg/o6r+ubeKtEb
+ luHD6oacE2q10FNMFfg6QkbF4LdOr9tsi8tyKEGVkmg8qvSZgbxliFq5omN0Ek+RRjUP VA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2ntadtydgj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 04:51:49 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAL4pg56026719
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Nov 2018 04:51:43 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAL4pf8x018611;
+        Wed, 21 Nov 2018 04:51:41 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 20 Nov 2018 20:51:40 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 3/3] mm, fault_around: do not take a reference to a
+ locked page
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20181120141207.GK22247@dhcp22.suse.cz>
+Date:   Tue, 20 Nov 2018 21:51:39 -0700
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        David Hildenbrand <david@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: 7bit
+Message-Id: <29F15A96-D6EB-450E-B54B-A4CB460ED9B3@oracle.com>
+References: <20181120134323.13007-1-mhocko@kernel.org>
+ <20181120134323.13007-4-mhocko@kernel.org>
+ <20181120140715.mouc7okin3ht5krr@kshutemo-mobl1>
+ <20181120141207.GK22247@dhcp22.suse.cz>
+To:     Michal Hocko <mhocko@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9083 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=663
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811210044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
->> Yeah, that is the most common example, given merge is enabled
->> in most of cases. If the driver or device doesn't care merge,
->> you can disable it and always get single bio request, then the
->> bio's bvec table can be reused for send().
+
+> On Nov 20, 2018, at 7:12 AM, Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> Does bvec_iter span bvecs with your patches? I didn't see that change?
+> +		/*
+> +		 * Check the locked pages before taking a reference to not
+> +		 * go in the way of migration.
+> +		 */
 
-Wait, I see that the bvec is still a single array per bio. When you said
-a table I thought you meant a 2-dimentional array...
+Could you make this a tiny bit more explanative, something like:
 
-Unless I'm not mistaken, I think that the change is pretty simple then.
-However, nvme-tcp still needs to be bio aware unless we have some
-abstraction in place.. Which will mean that nvme-tcp will need to
-open-code bio_bvecs.
++		/*
++		 * Check for a locked page first, as a speculative
++		 * reference may adversely influence page migration.
++		 */
+
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
