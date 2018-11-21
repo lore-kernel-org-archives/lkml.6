@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1552EC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168D7C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C2C2148E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:42:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C2C2148E
+	by mail.kernel.org (Postfix) with ESMTP id D63D721527
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 00:42:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D63D721527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbeKULOW (ORCPT
+        id S1727533AbeKULO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 06:14:22 -0500
-Received: from mga05.intel.com ([192.55.52.43]:6936 "EHLO mga05.intel.com"
+        Wed, 21 Nov 2018 06:14:28 -0500
+Received: from mga12.intel.com ([192.55.52.136]:16663 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726001AbeKULOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727188AbeKULOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Nov 2018 06:14:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:42:05 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Nov 2018 16:42:06 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,259,1539673200"; 
-   d="scan'208";a="251346846"
+   d="scan'208";a="251346858"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by orsmga004.jf.intel.com with ESMTP; 20 Nov 2018 16:42:04 -0800
+  by orsmga004.jf.intel.com with ESMTP; 20 Nov 2018 16:42:05 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Tom Lendacky <thomas.lendacky@amd.com>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -51,11 +52,10 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Greg KH <gregkh@linuxfoundation.org>,
         Dave Stewart <david.c.stewart@intel.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org,
-        stable@vger.kernel.org, Jiri Kosina <jkosina@suse.cz>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: [Patch v7 14/18] x86/speculation: Add 'seccomp' Spectre v2 app to app protection mode
-Date:   Tue, 20 Nov 2018 16:08:53 -0800
-Message-Id: <fc2524a59454509f505e120b0b63d60efcadfc98.1542758656.git.tim.c.chen@linux.intel.com>
+        stable@vger.kernel.org
+Subject: [Patch v7 18/18] x86/smt: Allow disabling of SMT when last SMT is offlined
+Date:   Tue, 20 Nov 2018 16:08:57 -0800
+Message-Id: <e48e75a70ec4a821caa0cf2393a0554d619afdd0.1542758656.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542758656.git.tim.c.chen@linux.intel.com>
 References: <cover.1542758656.git.tim.c.chen@linux.intel.com>
@@ -66,158 +66,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Kosina <jikos@kernel.org>
+Currently cpu_use_smt_and_hotplug is only set during boot time
+to indicate if SMT is in use.
 
-From: Jiri Kosina <jkosina@suse.cz>
+However, CPU topology may change and when the last SMT thread is offlined,
+the SMT code path can be skipped.  The sched_smt_present key detects
+this condition.
 
-If 'prctl' mode of app2app protection from spectre_v2 is selected on
-kernel command-line, we are currently applying STIBP protection to
-tasks that restrict their indirect branch speculation via
+Export sched_smt_present and incorporate it into cpu_use_smt_and_hotplug
+to disable SMT code when there are no paired siblings.
 
-	prctl(PR_SET_SPECULATION_CTRL, PR_SPEC_INDIR_BRANCH, PR_SPEC_ENABLE, 0, 0);
-
-Let's extend this to cover also SECCOMP tasks (analogically to how we
-apply SSBD protection).
-
-According to software guidance:
-
-"Setting ... STIBP ... on a logical processor prevents the predicted
-targets of indirect branches on any logical processor of that core
-from being controlled by software that executes (or executed
-previously) on another logical processor of the same core."
-
-https://software.intel.com/security-software-guidance/insights/deep-dive-single-thread-indirect-branch-predictors
-
-Hence setting STIBP on a sandboxed task will prevent the task
-from attacking other sibling threads or getting attacked.
-
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  7 ++++++-
- arch/x86/include/asm/nospec-branch.h            |  1 +
- arch/x86/kernel/cpu/bugs.c                      | 21 +++++++++++++++++++--
- 3 files changed, 26 insertions(+), 3 deletions(-)
+ include/linux/cpu.h  | 12 ++++++++++++
+ kernel/sched/sched.h |  2 --
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index d2255f7..89b193c 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4227,12 +4227,17 @@
- 				  and STIBP mitigations against Spectre V2 attacks.
- 				  If the CPU is not vulnerable, "off" is selected.
- 				  If the CPU is vulnerable, the default mitigation
--				  is "prctl".
-+				  is architecture and Kconfig dependent. See below.
- 			prctl   - Enable mitigations per thread by restricting
- 				  indirect branch speculation via prctl.
- 				  Mitigation for a thread is not enabled by default to
- 				  avoid mitigation overhead. The state of
- 				  of the control is inherited on fork.
-+			seccomp - Same as "prctl" above, but all seccomp threads
-+				  will disable SSB unless they explicitly opt out.
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 4fef90a..2fc649d 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -100,6 +100,10 @@ static inline void cpu_maps_update_done(void)
+ #endif /* CONFIG_SMP */
+ extern struct bus_type cpu_subsys;
+ 
++#ifdef CONFIG_SCHED_SMT
++extern struct static_key_false sched_smt_present;
++#endif
 +
-+			Default mitigations:
-+			If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
+ #ifdef CONFIG_HOTPLUG_CPU
+ extern void cpus_write_lock(void);
+ extern void cpus_write_unlock(void);
+@@ -172,7 +176,15 @@ static inline void cpuhp_report_idle_dead(void) { }
  
- 			Not specifying this option is equivalent to
- 			spectre_v2_app2app=auto.
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 69d2657..077ec54 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -231,6 +231,7 @@ enum spectre_v2_app2app_mitigation {
- 	SPECTRE_V2_APP2APP_NONE,
- 	SPECTRE_V2_APP2APP_STRICT,
- 	SPECTRE_V2_APP2APP_PRCTL,
-+	SPECTRE_V2_APP2APP_SECCOMP,
- };
- 
- /* The Speculative Store Bypass disable variants */
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 44f7127..f349b3f 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -138,6 +138,7 @@ enum spectre_v2_app2app_mitigation_cmd {
- 	SPECTRE_V2_APP2APP_CMD_FORCE,
- 	SPECTRE_V2_APP2APP_CMD_AUTO,
- 	SPECTRE_V2_APP2APP_CMD_PRCTL,
-+	SPECTRE_V2_APP2APP_CMD_SECCOMP,
- };
- 
- static const char *spectre_v2_strings[] = {
-@@ -153,6 +154,7 @@ static const char *spectre_v2_app2app_strings[] = {
- 	[SPECTRE_V2_APP2APP_NONE]    = "App-App Vulnerable",
- 	[SPECTRE_V2_APP2APP_STRICT]  = "App-App Mitigation: Full app to app attack protection",
- 	[SPECTRE_V2_APP2APP_PRCTL]   = "App-App Mitigation: Protect branch speculation restricted tasks",
-+	[SPECTRE_V2_APP2APP_SECCOMP] = "App-App Mitigation: Protect branch speculation restricted and seccomp tasks",
- };
- 
- /* Lightweight mitigation: mitigate only tasks with TIF_SPEC_INDIR_BRANCH */
-@@ -573,10 +575,17 @@ static void __init spectre_v2_select_mitigation(void)
- 		break;
- 
- 	case SPECTRE_V2_APP2APP_CMD_PRCTL:
--	case SPECTRE_V2_APP2APP_CMD_AUTO:
- 		app2app_mode = SPECTRE_V2_APP2APP_PRCTL;
- 		break;
- 
-+	case SPECTRE_V2_APP2APP_CMD_AUTO:
-+	case SPECTRE_V2_APP2APP_CMD_SECCOMP:
-+		if (IS_ENABLED(CONFIG_SECCOMP))
-+			app2app_mode = SPECTRE_V2_APP2APP_SECCOMP;
-+		else
-+			app2app_mode = SPECTRE_V2_APP2APP_PRCTL;
-+		break;
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
 +
- 	case SPECTRE_V2_APP2APP_CMD_FORCE:
- 		app2app_mode = SPECTRE_V2_APP2APP_STRICT;
- 		break;
-@@ -595,7 +604,8 @@ static void __init spectre_v2_select_mitigation(void)
- set_app2app_mode:
- 	spectre_v2_app2app_enabled = app2app_mode;
- 	pr_info("%s\n", spectre_v2_app2app_strings[app2app_mode]);
--	if (app2app_mode == SPECTRE_V2_APP2APP_PRCTL)
-+	if (app2app_mode == SPECTRE_V2_APP2APP_PRCTL ||
-+	    app2app_mode == SPECTRE_V2_APP2APP_SECCOMP)
- 		static_branch_enable(&spectre_v2_app_lite);
++#ifdef CONFIG_SCHED_SMT
++#define cpu_use_smt_and_hotplug				\
++	(static_branch_likely(&cpu_smt_enabled) &&	\
++	 static_branch_unlikely(&sched_smt_present))
++#else
+ #define cpu_use_smt_and_hotplug	(static_branch_likely(&cpu_smt_enabled))
++#endif
++
+ extern void cpu_smt_disable(bool force);
+ extern void cpu_smt_check_topology_early(void);
+ extern void cpu_smt_check_topology(void);
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 618577f..e1e3f09 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -937,8 +937,6 @@ static inline int cpu_of(struct rq *rq)
  
- 	/* Enable STIBP if appropriate */
-@@ -849,6 +859,8 @@ void arch_seccomp_spec_mitigate(struct task_struct *task)
- {
- 	if (ssb_mode == SPEC_STORE_BYPASS_SECCOMP)
- 		ssb_prctl_set(task, PR_SPEC_FORCE_DISABLE);
-+	if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_SECCOMP)
-+		set_task_restrict_indir_branch(task, true);
- }
- #endif
+ #ifdef CONFIG_SCHED_SMT
  
-@@ -879,6 +891,7 @@ static int indir_branch_prctl_get(struct task_struct *task)
- 	switch (spectre_v2_app2app_enabled) {
- 	case SPECTRE_V2_APP2APP_NONE:
- 		return PR_SPEC_ENABLE;
-+	case SPECTRE_V2_APP2APP_SECCOMP:
- 	case SPECTRE_V2_APP2APP_PRCTL:
- 		if (task_spec_indir_branch_force_disable(task))
- 			return PR_SPEC_PRCTL | PR_SPEC_FORCE_DISABLE;
-@@ -1075,6 +1088,8 @@ static char *stibp_state(void)
- 		return "";
- 	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_PRCTL)
- 		return ", STIBP-prctl";
-+	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_SECCOMP)
-+		return ", STIBP-seccomp";
- 	else
- 		return ", STIBP-all";
- }
-@@ -1085,6 +1100,8 @@ static char *ibpb_state(void)
- 		return "";
- 	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_PRCTL)
- 		return ", IBPB-prctl";
-+	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_SECCOMP)
-+		return ", IBPB-seccomp";
- 	else
- 		return ", IBPB-all";
- }
+-extern struct static_key_false sched_smt_present;
+-
+ extern void __update_idle_core(struct rq *rq);
+ 
+ static inline void update_idle_core(struct rq *rq)
 -- 
 2.9.4
 
