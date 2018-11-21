@@ -2,375 +2,281 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10676C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCFEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDC22214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:44:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DFE721479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 15:44:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJDYwxLr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDC22214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="EOtFMWKP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DFE721479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731548AbeKVCTB (ORCPT
+        id S1731563AbeKVCTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 21:19:01 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37249 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbeKVCTA (ORCPT
+        Wed, 21 Nov 2018 21:19:35 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:43831 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728289AbeKVCTf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 21:19:00 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so6068276plr.4;
-        Wed, 21 Nov 2018 07:44:03 -0800 (PST)
+        Wed, 21 Nov 2018 21:19:35 -0500
+X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
+   d="scan'208";a="23091206"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 21 Nov 2018 08:44:36 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 21 Nov 2018 08:44:36 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=GWqnFdgh0NZNOxLr5qxoxiqeTsIWfVLKsZF4k3Cl7TU=;
-        b=JJDYwxLrtrdFXGc5MtYqPZWogU3vtO794Wm+XJ+xD18CwhBr5wiTCA6oun++NG/KY0
-         R+mTbR9N+RSMEMiER83WEXguYH75tUUr4KBnMhyCNF7qiFgVawRt1i4n0pObtW7b5flq
-         RQUysBM0vrLKMz6hXZ0aBi365TgEomlsBi6cXyE1kPHreOdM4i6DRO4Zf6bLUYByGstt
-         LSksbjrD3zWD9SqYdotShj7wC2Of48lmuNV2hkowPexSeAjVW4ghsnYCnpY8b9OO+KxG
-         aZwxGFuJJVQqoMtm+Vq6m0ubxWgGihMJZrvhjT2NxaBs1eQYepFxGSsgtOVCZ6XXR0GF
-         3xTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=GWqnFdgh0NZNOxLr5qxoxiqeTsIWfVLKsZF4k3Cl7TU=;
-        b=eJk2X4XL9T1yIXh49jl5P6moybeZFgy3euiMIqWqMi/Tt+g9Ycp34qmGKRIqchCAEt
-         41PP66GX57WantQClp+LHCJpryFIwzD5PlKHfloBcGr63MivJvRw/0jelu247PgTs7qv
-         abaI9NmS7fky+C8K/5JK9pHnGAKVs4EaMXfqvFVv4h8ZEigIPA7JFpIR4VflybbLmG1Y
-         bQniZkbUncVjn7+jFPJTze9BllIBlwQ7mmoPF9mERSyG5i2BSNU3nJ3e/2tEbGtBRN6N
-         Zc0Ol1xTmoq1EQaydRze/hn7jvwL2rbwKS8S4cJOzHyAK5enpniiOuOEGUfP0X4fiiSG
-         1pVQ==
-X-Gm-Message-State: AA+aEWYp2KFcz5bQVZEaSHk4wCcwQCPtMRbIUgQlR+m0jPjXGl23AT65
-        EUrVbtOxC4hwMUQYme6B0oM=
-X-Google-Smtp-Source: AFSGD/Uorep3RzKUuybXtBkK2oSDJQSTy+avVwUPfGgds2NUWmiaQVhcbsr02UBRmvjpL/UbDkgOIA==
-X-Received: by 2002:a17:902:a516:: with SMTP id s22-v6mr7302462plq.255.1542815043009;
-        Wed, 21 Nov 2018 07:44:03 -0800 (PST)
-Received: from arx-s1 ([116.238.148.251])
-        by smtp.gmail.com with ESMTPSA id d3sm66112548pgl.64.2018.11.21.07.43.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 07:44:02 -0800 (PST)
-Date:   Wed, 21 Nov 2018 23:43:57 +0800
-From:   Hao Zhang <hao5781286@gmail.com>
-To:     robh+dt@kernel.org, maxime.ripard@free-electrons.com,
-        wens@csie.org, icenowy@aosc.io
-Cc:     linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com, hao5781286@gmail.com
-Subject: [PATCH v1 1/2] ARM: dts: sun8i: Add board dts file for t3-cqa3t-bv3.
-Message-ID: <20181121154356.GA4359@arx-s1>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vG5wEf+ZPNIdRkWjqXUFh6tbX6j6LsAzQWI7JVatwpc=;
+ b=EOtFMWKPDgIuNWFwEjfYJpGn4ANl8ID7SifhuTlq/a7GLOI3L/ENZE3Rw7oWISSicPLp5RFxPyyrrn3mhS0OyJvTyH12GCSwNQPvKj2xbUvTsiOK7FwblZTrR8M46i6QjZ3xxEuENmOMX7KufmrJmwJQD+Ne9oGSwVnWtVmkQCY=
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
+ BN6PR1101MB2355.namprd11.prod.outlook.com (10.173.203.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.21; Wed, 21 Nov 2018 15:44:32 +0000
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1]) by BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::853f:28dc:6c66:cfb1%4]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
+ 15:44:32 +0000
+From:   <Andrei.Stefanescu@microchip.com>
+To:     <broonie@kernel.org>
+CC:     <lgirdwood@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
+        <Nicolas.Ferre@microchip.com>, <Cristian.Birsan@microchip.com>,
+        <Claudiu.Beznea@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 3/3] regulator: mcp16502: add regulator driver for
+ MCP16502
+Thread-Topic: [PATCH 3/3] regulator: mcp16502: add regulator driver for
+ MCP16502
+Thread-Index: AQHUe0QrcREzl+A6dEyfXafqi5KdhqVN+tiAgAxw4wA=
+Date:   Wed, 21 Nov 2018 15:44:31 +0000
+Message-ID: <03b902d9-49a8-9acd-6f98-048f117b1e93@microchip.com>
+References: <1542108563-10108-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1542108563-10108-4-git-send-email-andrei.stefanescu@microchip.com>
+ <20181113174539.GB2089@sirena.org.uk>
+In-Reply-To: <20181113174539.GB2089@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0502CA0003.eurprd05.prod.outlook.com
+ (2603:10a6:803:1::16) To BN6PR1101MB2243.namprd11.prod.outlook.com
+ (2603:10b6:405:52::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2355;6:iJPwBQSzWcyV8XW6vCOL7ozXakdydAKv8ijht3wj2/D52XWTtmQ6aAhCkWCJYT54kmhwozGIew2DYIY+BAXFq0RhNquFunnukJI3ZcrmUJRDCD8r8rm3ERQ5nYiAkS+MZh7Mam4gT85L4faxhOfdmc9xK4wWB9XS7pfvhg3ecKoJyrMBSP4SjDDlbR15Kq+mRQdDbPgpNM0EbqCELnbjQhuGgtQBaL0BqpWZgTp6/yhVKfWZIfsTuGMuF9tjBtJxepzyojt/z9fjQgrFsQ2quxEozJjaL6QyMX8knEti6/X96WtFICL5cgKX1lcIpLNDlv1uqzcjfZfQpEiFVCb4If87wnuvRxQUgKbLt7SHtM+dMoiyfJFpT1SAugHkbbIa6VMvSUe2jhxB/QE5DI88U6dCFylg46QD7LD5LZLFghZc4pQymWGCoEddn62vBJebBJPBhrSbo697644EllMFvA==;5:P5mKxn745JvFugjmlhHg1xvq3mOwbcaqcL0MeJ1idDY030qz8MHsphignHM2IvLjBuTi6lxmD5IiNOS+Tz9wASETdbREG/jZ5qZAfEs/APEurmNNBqtLGcU/j0d0LXzOymfCpJfNswaNAugY01PKI69xGKAUh0b3qiCCffEGHpg=;7:hob5RKJXu+Akv4AKEmp3nMbE2HOIIGBRAMGXLloZijVwXTAPZU4Qp4wm0gtINY0TvyjN8opfUYDei/SAoXJj6jF851ttnf1bM4cHYsGIHueg/y6E6rDoAYlP7Y0vkhun5bLU2oLXO6q5ZO5qHFoj0A==
+x-ms-office365-filtering-correlation-id: 8282533c-c6a3-4ec4-6796-08d64fc83a5e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2355;
+x-ms-traffictypediagnostic: BN6PR1101MB2355:
+x-microsoft-antispam-prvs: <BN6PR1101MB2355CCA3D54000212CFEB4F0EDDA0@BN6PR1101MB2355.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231442)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2355;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2355;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(39860400002)(366004)(136003)(376002)(396003)(346002)(189003)(199004)(6512007)(68736007)(8676002)(76176011)(36756003)(6916009)(6486002)(486006)(11346002)(14444005)(446003)(6436002)(476003)(2616005)(25786009)(8936002)(7736002)(66066001)(2906002)(31686004)(305945005)(81166006)(72206003)(31696002)(4326008)(5660300001)(86362001)(478600001)(229853002)(81156014)(316002)(39060400002)(186003)(54906003)(3846002)(6246003)(6116002)(345774005)(52116002)(386003)(6506007)(105586002)(102836004)(71190400001)(71200400001)(53546011)(99286004)(2900100001)(14454004)(97736004)(256004)(53936002)(26005)(106356001)(309714004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2355;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 6qqkmw3EcfhUBSyB9RlNpvN7fIjvT+d8toCjsfRsnJSAr7X6QHbQR22+TrvVyTq4OI+FNETZeBdK+ZE2gTWkzncBm23HPAzrckgwFNWnNkCk0r0diIiP7cEZcxgpSSq7vEcMaxQC31SC+hrx3V4Ewdd+pKa7Fj3zGhIECvQiLoDv2f30NqXGSZAVp1Rd9+pvbUzrlJTONWm4rqgXITBH55NugXYUGWa7rGWwEi0tZyENfZLNnjAgeVshYXIe4h0+Fpfljcia+CKiUUi9WeFwEzFlnEMmoIOxYH9s+Croi+SIw07trbr9djQVL0fE4XFbX7IN18YHJ0bGDrOMib5CZzs7+tIsLce7W7+dJaqEy5E=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <31C8C535EDB1C846BBC8B1F2AAF4901C@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8282533c-c6a3-4ec4-6796-08d64fc83a5e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 15:44:31.9729
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2355
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The T3/R40/V40 using the same sdk and config file in allwinner
-sdk, it seem they are the same SOC just with different name, so
-compatible with R40.
+Hello Mark,
 
-The t3-cqa3t-bv3 based on Allwinner T3 SoC, it has various connectors,
-leds, buttons, and sell on:
-https://item.taobao.com/item.htm?spm=2013.1.w4023-4203040713.25.62704cce7UCgLS&id=557154455330
+Thank you for your review. While working on the next version I realized tha=
+t
+the implementation should change a bit. The mcp16502 PMIC has separate=20
+registers
+for each of its operating modes (Performance, Active, Low-power, Hibernate)=
+.
+So, it is possible to setup the values for Low-power (Linux standby) and
+Hibernate (Linux suspend-to-ram) and these values would not be affected by
+changes made during runtime (which are made to the ACTIVE registers).
 
-It features:
- - X-Powers AXP221s PMIC connected to i2c0
- - 1/2 GB DDR3 DRAM
- - 8 GB eMMC
- - 2x USB 2.0 hosts
- - 1x USB 2.0 OTG
- - 2 LVDS connectors
- - 24 bit RGB LCD connector
- - HDMI output
- - DVP camera interface (support 500w cmos camera)
- - GPIO connectors
- - 5 TTL uarts and 2 RS232 uarts
- - 1 RS485 connector
- - support i2c capacitive tp and usb infrared tp
- - boot control, reset and user buttons
- - 3.5mm headphone and 3.5mm mic jack
- - 100M RJ45
- - micro SD card slot
- - DC power jack
- - RCT power slot
- - 1 CVBS TVIN
- - 1 CVBS TVOUT
- - 2 customer leds
- - 1 buzzer
- - 1 minipcie
- - I2C output
- - SPI output
- - PCM output
- - wifi and bt connector reserved.
+This means that the calls to suspend_set_* are not necessary to be made eac=
+h
+time the board suspends. My idea is to add three functions to the=20
+regulator_ops
+(setup_suspend_standby/mem/max) which would be called after the regulator i=
+s
+registered and which would set the values found inside the devicetree
+in the regulator-state-standby/mem/disk subnodes.
 
-Board info can find here:
-https://github.com/Axl-zhang/Allwinner-V40-T3-R40-manual
+However, I am not sure whether this is in fact a good idea or which is=20
+the best
+approach.
 
-Signed-off-by: Hao Zhang <hao5781286@gmail.com>
----
- arch/arm/boot/dts/Makefile               |   1 +
- arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts | 226 +++++++++++++++++++++++++++++++
- 2 files changed, 227 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts
+Other possible suggestions for this setup_suspend* functions:
+- Break each function into smaller pieces(set_voltage, set_mode,=20
+enable/disable)
+- Add support for regmap helpers, which would mean adding reg and mask=20
+members
+ =A0 to regulator_desc. However, I am not sure which naming scheme you pref=
+er
+ =A0 (enable_suspend_mem_reg for example seems not to be a great idea).=20
+Perhaps use
+ =A0 arrays (e.g. enable_suspend[] and index it via PM_SUSPEND_*)?
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 2a1a8c6..7ca266a 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1053,6 +1053,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-r16-nintendo-super-nes-classic.dtb \
- 	sun8i-r16-parrot.dtb \
- 	sun8i-r40-bananapi-m2-ultra.dtb \
-+	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3s-licheepi-zero.dtb \
- 	sun8i-v3s-licheepi-zero-dock.dtb \
- 	sun8i-v40-bananapi-m2-berry.dtb
-diff --git a/arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts b/arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts
-new file mode 100644
-index 0000000..6931aaa
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-t3-cqa3t-bv3.dts
-@@ -0,0 +1,226 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright (C) 2017 Chen-Yu Tsai <wens@csie.org>
-+ * Copyright (C) 2017 Icenowy Zheng <icenowy@aosc.io>
-+ * Copyright (C) 2018 Hao Zhang <hao5781286@gmail.com>
-+ *
-+ * This file is dual-licensed: you can use it either under the terms
-+ * of the GPL or the X11 license, at your option. Note that this dual
-+ * licensing only applies to this file, and not this project as a
-+ * whole.
-+ *
-+ *  a) This file is free software; you can redistribute it and/or
-+ *     modify it under the terms of the GNU General Public License as
-+ *     published by the Free Software Foundation; either version 2 of the
-+ *     License, or (at your option) any later version.
-+ *
-+ *     This file is distributed in the hope that it will be useful,
-+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ *     GNU General Public License for more details.
-+ *
-+ * Or, alternatively,
-+ *
-+ *  b) Permission is hereby granted, free of charge, to any person
-+ *     obtaining a copy of this software and associated documentation
-+ *     files (the "Software"), to deal in the Software without
-+ *     restriction, including without limitation the rights to use,
-+ *     copy, modify, merge, publish, distribute, sublicense, and/or
-+ *     sell copies of the Software, and to permit persons to whom the
-+ *     Software is furnished to do so, subject to the following
-+ *     conditions:
-+ *
-+ *     The above copyright notice and this permission notice shall be
-+ *     included in all copies or substantial portions of the Software.
-+ *
-+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ *     OTHER DEALINGS IN THE SOFTWARE.
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-r40.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "t3-cqa3t-bv3";
-+	compatible = "qihua,t3-cqa3t-bv3", "allwinner,sun8i-t3",
-+		     "allwinner,sun8i-r40";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	connector {
-+		compatible = "hdmi-connector";
-+		type = "a";
-+
-+		port {
-+			hdmi_con_in: endpoint {
-+				remote-endpoint = <&hdmi_out_con>;
-+			};
-+		};
-+	};
-+
-+	reg_vcc5v0: vcc5v0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc5v0";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&pio 7 23 GPIO_ACTIVE_HIGH>; /* PH23 */
-+		enable-active-high;
-+	};
-+};
-+
-+&ahci {
-+	ahci-supply = <&reg_dldo4>;
-+	phy-supply = <&reg_eldo3>;
-+	status = "okay";
-+};
-+
-+&de {
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&hdmi {
-+	status = "okay";
-+};
-+
-+&hdmi_out {
-+	hdmi_out_con: endpoint {
-+		remote-endpoint = <&hdmi_con_in>;
-+	};
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	axp22x: pmic@34 {
-+		compatible = "x-powers,axp221";
-+		reg = <0x34>;
-+		interrupt-parent = <&nmi_intc>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+#include "axp22x.dtsi"
-+
-+&mmc0 {
-+	vmmc-supply = <&reg_dcdc1>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 7 15 GPIO_ACTIVE_LOW>; /* PH15 */
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	vmmc-supply = <&reg_dcdc1>;
-+	vqmmc-supply = <&reg_dcdc1>;
-+	bus-width = <8>;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&reg_aldo2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2500000>;
-+	regulator-max-microvolt = <2500000>;
-+	regulator-name = "vcc-pa";
-+};
-+
-+&reg_aldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2700000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "avcc";
-+};
-+
-+&reg_dcdc1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3000000>;
-+	regulator-max-microvolt = <3000000>;
-+	regulator-name = "vcc-3v0";
-+};
-+
-+&reg_dcdc2 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1000000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-cpu";
-+};
-+
-+&reg_dcdc3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1000000>;
-+	regulator-max-microvolt = <1300000>;
-+	regulator-name = "vdd-sys";
-+};
-+
-+&reg_dcdc5 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-name = "vcc-dram";
-+};
-+
-+&reg_dldo1 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-pg";
-+};
-+
-+&reg_dldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <3300000>;
-+	regulator-max-microvolt = <3300000>;
-+	regulator-name = "vcc-dldo3";
-+};
-+
-+&reg_eldo3 {
-+	regulator-always-on;
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "vcc-pe";
-+};
-+
-+&tcon_tv0 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pb_pins>;
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb1_vbus-supply = <&reg_vcc5v0>;
-+	usb2_vbus-supply = <&reg_vcc5v0>;
-+	status = "okay";
-+};
--- 
-2.7.4
 
+Best regards,
+Andrei
+
+On 13.11.2018 19:45, Mark Brown wrote:
+> On Tue, Nov 13, 2018 at 11:29:41AM +0000, Andrei.Stefanescu@microchip.com=
+ wrote:
+>
+>> index 0000000..29c72d3
+>> --- /dev/null
+>> +++ b/drivers/regulator/mcp16502.c
+>> @@ -0,0 +1,524 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * MCP16502 PMIC driver
+> Please make the entire comment a C++ comment so it looks more
+> intentional.
+>
+>> +/*
+>> + * This macro is useful for iterating over all regulators and accessing=
+ their
+>> + * registers in a generic way or accessing a regulator device by its id=
+.
+>> + */
+>> +#define BASE(i) (((i) + 1) << 4)
+> This macro name is likely to run into collisions at some point, a prefix
+> would be better.
+>
+>> +static int mcp16502_update_regulator(struct regulator_dev *rdev,
+>> +				     bool hibernate,
+>> +				     unsigned int mask, unsigned int val)
+>> +{
+>> +	struct mcp16502 *mcp =3D rdev_get_drvdata(rdev);
+>> +	unsigned int reg =3D BASE(rdev_get_id(rdev));
+>> +
+>> +	reg +=3D (hibernate) ? OFFSET_MODE_HIB : OFFSET_MODE_A;
+> Please write this as a normal if statement to improve legibility.
+>
+>> +static int mcp16502_read(struct regulator_dev *rdev, bool hibernate,
+>> +			 unsigned int mask)
+>> +{
+>> +	struct mcp16502 *mcp =3D rdev_get_drvdata(rdev);
+>> +	unsigned int reg =3D BASE(rdev_get_id(rdev));
+>> +	int ret, val;
+>> +
+>> +	reg +=3D (hibernate) ? OFFSET_MODE_HIB : OFFSET_MODE_A;
+>> +
+>> +	ret =3D regmap_read(mcp->rmap, reg, &val);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return val & mask;
+>> +}
+> I'm not convinced that these custom read/write functions are adding much
+> compared to just using the standard regmap helpers for things - they're
+> adding a bunch of code instead of data.  If you need extra helpers for
+> suspend mode just add those, I'm sure they'd be useful for other
+> drivers.
+>
+>> +static unsigned int mcp16502_get_mode(struct regulator_dev *rdev)
+>> +{
+>> +	int val;
+>> +
+>> +	val =3D mcp16502_read(rdev, false, MCP16502_MODE_MASK);
+>> +	if (val < 0)
+>> +		return val;
+>> +
+>> +	if (val =3D=3D MCP16502_MODE_FPWM)
+>> +		return REGULATOR_MODE_NORMAL;
+>> +	else if (val =3D=3D MCP16502_MODE_AUTO_PFM)
+>> +		return REGULATOR_MODE_IDLE;
+>> +
+>> +	return REGULATOR_MODE_INVALID;
+>> +}
+> Please just write a switch statement to improve legibility.
+>
+>> +/*
+>> + * mcp16502_is_enabled - regulator_ops is_enabled
+>> + */
+>> +static int mcp16502_is_enabled(struct regulator_dev *rdev)
+>> +{
+>> +	int val;
+>> +
+>> +	val =3D mcp16502_read(rdev, false, MCP16502_EN_MASK);
+>> +	if (val < 0)
+>> +		return val;
+>> +
+>> +	return !!val;
+>> +}
+> This can use regulator_is_enabled_regmap().
+>
+>> +	if (mode !=3D REGULATOR_MODE_NORMAL && mode !=3D REGULATOR_MODE_IDLE)
+>> +		return -EINVAL;
+>> +
+>> +	val =3D (mode =3D=3D REGULATOR_MODE_NORMAL) ? MCP16502_MODE_FPWM :
+>> +						MCP16502_MODE_AUTO_PFM;
+>> +
+>> +	return mcp16502_update_regulator(rdev, hibernate, MCP16502_MODE_MASK,
+>> +					 val);
+> Again a switch statement would be clearer.
+>
+>> +static int mcp16502_get_status(struct regulator_dev *rdev)
+>> +{
+>> +	int mode =3D mcp16502_get_mode(rdev);
+>> +
+>> +	if (!mcp16502_is_enabled(rdev))
+>> +		return REGULATOR_STATUS_OFF;
+>> +	else if (mode =3D=3D REGULATOR_MODE_NORMAL)
+>> +		return REGULATOR_STATUS_NORMAL;
+>> +	else if (mode =3D=3D REGULATOR_MODE_IDLE)
+>> +		return REGULATOR_STATUS_IDLE;
+>> +
+>> +	return REGULATOR_STATUS_UNDEFINED;
+>> +}
+> The _status() function should only be implemented if there's hardware
+> support for reading back the actual status from the device, we already
+> know what we set through software.
+>
+>> +#ifdef CONFIG_PM_SLEEP
+>> +static int mcp16502_suspend(struct device *dev)
+>> +{
+>> +	struct i2c_client *client =3D to_i2c_client(dev);
+>> +	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
+>> +
+>> +	mcp16502_gpio_set_mode(mcp, MCP16502_MODE_HIB);
+>> +
+>> +	return 0;
+>> +}
+> This will put the regulators into hibernate mode before the system has
+> finished suspending which is likely to cause breakage - hibernate mode
+> in the PMIC is expected to be triggered by the SoC as it shuts down.
+>
+>> +static int __init mcp16502_init(void)
+>> +{
+>> +	return i2c_add_driver(&mcp16502_drv);
+>> +}
+> module_i2c_driver.
