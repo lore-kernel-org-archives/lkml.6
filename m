@@ -2,70 +2,109 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8E5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7784FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C205D20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:50:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C205D20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thalesgroup.com
+	by mail.kernel.org (Postfix) with ESMTP id 449082145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 07:52:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449082145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728262AbeKUSXp (ORCPT
+        id S1728294AbeKUSZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 13:23:45 -0500
-Received: from thsbbfxrt01p.thalesgroup.com ([192.54.144.131]:37334 "EHLO
-        thsbbfxrt01p.thalesgroup.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728144AbeKUSXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 13:23:45 -0500
-X-Greylist: delayed 501 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 13:23:43 EST
-Received: from thsbbfxrt01p.thalesgroup.com (localhost [127.0.0.1])
-        by localhost (Postfix) with SMTP id 430Dzm6b7Mz8Tc;
-        Wed, 21 Nov 2018 08:41:56 +0100 (CET)
-From:   JABLONSKY Jan <Jan.JABLONSKY@thalesgroup.com>
-To:     Jaehoon Chung <jh80.chung@samsung.com>
-CC:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: dw_mmc: IDMAC Invalidate cache after read
-Thread-Topic: dw_mmc: IDMAC Invalidate cache after read
-Thread-Index: AQHUgW3NJS3s6fdIZ0u0s1IZXxrnfg==
-Date:   Wed, 21 Nov 2018 07:42:49 +0000
-Message-ID: <1542786115.18775.83.camel@atviedlbe741.rss.d3s.at.thales>
-Accept-Language: en-US, fr-FR
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.10.4-0ubuntu2 
-x-originating-ip: [10.177.70.241]
-x-pmwin-version: 4.0.3, Antivirus-Engine: 3.73.0, Antivirus-Data: 5.57
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <447A5C5E3632EB419ED9A2822D0C5505@iris.infra.thales>
-Content-Transfer-Encoding: base64
+        Wed, 21 Nov 2018 13:25:50 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:36479 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725999AbeKUSZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 13:25:50 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 733BA207AB; Wed, 21 Nov 2018 08:52:22 +0100 (CET)
+Received: from qschulz (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 115BB20729;
+        Wed, 21 Nov 2018 08:52:22 +0100 (CET)
+Date:   Wed, 21 Nov 2018 08:52:20 +0100
+From:   Quentin Schulz <quentin.schulz@bootlin.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Tony Lindgren <tony@atomide.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH v3 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181121075220.z6smcpk3y7vab7ix@qschulz>
+References: <20181120012424.11802-1-grygorii.strashko@ti.com>
+ <20181120012424.11802-5-grygorii.strashko@ti.com>
+ <d80901b2-a38a-7abf-23b2-c2b0c84ff321@ti.com>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2ee7o6gc4xs4vs53"
+Content-Disposition: inline
+In-Reply-To: <d80901b2-a38a-7abf-23b2-c2b0c84ff321@ti.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Q1BVIG1heSBub3Qgc2VlIG1vc3QgdXAtdG8tZGF0ZSBhbmQgY29ycmVjdCBjb3B5IG9mIERNQSBi
-dWZmZXIsIHdoZW4NCmludGVybmFsIERNQSBjb250cm9sbGVyIGlzIGluIHVzZS4NClByb2JsZW0g
-YXBwZWFycyBvbiBUaGUgQWx0ZXJhIFNvQyBGUEdBICh1c2VzIGludGVncmF0ZWQgRE1BIGNvbnRy
-b2xsZXIpLA0KZHVyaW5nIGhpZ2hlciBDUFUgYW5kIHN5c3RlbSBtZW1vcnkgbG9hZA0KDQpTaWdu
-ZWQtb2ZmLWJ5OiBKYW4gSmFibG9uc2t5IDxqYW4uamFibG9uc2t5QHRoYWxlc2dyb3VwLmNvbT4N
-Ci0tLQ0KIGRyaXZlcnMvbW1jL2hvc3QvZHdfbW1jLmMgfCAzICstLQ0KIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-bW1jL2hvc3QvZHdfbW1jLmMgYi9kcml2ZXJzL21tYy9ob3N0L2R3X21tYy5jDQppbmRleCA4MGRj
-MmZkLi42Mzg3M2Q5IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9kd19tbWMuYw0KKysr
-IGIvZHJpdmVycy9tbWMvaG9zdC9kd19tbWMuYw0KQEAgLTQ5OSw4ICs0OTksNyBAQCBzdGF0aWMg
-dm9pZCBkd19tY2lfZG1hY19jb21wbGV0ZV9kbWEodm9pZCAqYXJnKQ0KIA0KIAlkZXZfdmRiZyho
-b3N0LT5kZXYsICJETUEgY29tcGxldGVcbiIpOw0KIA0KLQlpZiAoKGhvc3QtPnVzZV9kbWEgPT0g
-VFJBTlNfTU9ERV9FRE1BQykgJiYNCi0JICAgIGRhdGEgJiYgKGRhdGEtPmZsYWdzICYgTU1DX0RB
-VEFfUkVBRCkpDQorCWlmIChkYXRhICYmIChkYXRhLT5mbGFncyAmIE1NQ19EQVRBX1JFQUQpKQ0K
-IAkJLyogSW52YWxpZGF0ZSBjYWNoZSBhZnRlciByZWFkICovDQogCQlkbWFfc3luY19zZ19mb3Jf
-Y3B1KG1tY19kZXYoaG9zdC0+c2xvdC0+bW1jKSwNCiAJCQkJICAgIGRhdGEtPnNnLA0K
+
+--2ee7o6gc4xs4vs53
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Kishon,
+
+On Wed, Nov 21, 2018 at 01:08:42PM +0530, Kishon Vijay Abraham I wrote:
+> Antoine,
+>=20
+> On 20/11/18 6:54 AM, Grygorii Strashko wrote:
+> > Convert mvebu-cp110-comphy PHY driver to use recently introduced
+> > PHY_MODE_ETHERNET and phy_set_mode_ext().
+>=20
+> Care to give ACK for this patch?
+>=20
+
+Acked-by Antoine and Tested-by Maxime given in v2:
+https://patchwork.kernel.org/patch/10676749/
+
+Quentin
+
+--2ee7o6gc4xs4vs53
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlv1DrQACgkQhLiadT7g
+8aMsxw/8DZIY08G7GiQ6Hhpu4eFYrQOVzgAbVHkOswZR6czVJiUlqnP64QR+k8j9
+3znL+KA7X45/BEMPoai1QtnA1fHoDAjrKtgyqtcJyRBaxk96AEWZNnpdBFAhTw9w
+QRVl0b0OQ+ckNMOze4BIhrtUB2+JnCDaf339WOIN4Eup0N+4Y7OsTS4N3Ngy7rTQ
+Rs3kmA7wwSePQ2ylbgG5yRoo7bVVItrOogK9x6acSiP02waEse4n1gfoWrQv005e
+qoEeZZYjX3ILe8b3v2yQKIV5VYA7D2HOPv0uIv9KzWGqST9c/B8aEW8Duqq1soCr
+8x79jqpGvDTYwlVmPR1sLpy48l3ejKEVE0y8RTm7g6gshuNhG0c7MVI99vzj0Jwi
+8bPxO2CTu0scVYVh233VYJSWvg6oOBmZsYjmoJiABIO+Ol9uZlYBGEwIQDz1P+t0
+cHKWFd0IYARVasAAtwwyLUeYXTC2TU2LkZmsg1bjjFIOoHPKFckGyEspp1OfJs/A
+oA02GQK+n2SxCSYq14BXvYDb1ckD+bgQPtD6CV4Uxw7K8U83EkF6qFefNkRhZU7K
++NVagxaCscHEkt+WmH/4YW2Hu1Eti6SrQ1ImQi5E0tDJpPly2trU1Qqty0gQsUix
+BPXJXOoGY6cmam6jmoBXpVzkARPjFpNgkgCjtOIKBIIhsUTzoTk=
+=hpTL
+-----END PGP SIGNATURE-----
+
+--2ee7o6gc4xs4vs53--
