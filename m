@@ -4,94 +4,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE74C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D6EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58AA62145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B18D2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 03:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dl2L8brl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58AA62145D
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hMdTlTN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B18D2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbeKUNxQ (ORCPT
+        id S1727239AbeKUNxU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 08:53:16 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53053 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbeKUNxN (ORCPT
+        Wed, 21 Nov 2018 08:53:20 -0500
+Received: from mail-pl1-f174.google.com ([209.85.214.174]:43893 "EHLO
+        mail-pl1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbeKUNxT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 08:53:13 -0500
-Received: by mail-it1-f196.google.com with SMTP id i7so6781165iti.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:20:43 -0800 (PST)
+        Wed, 21 Nov 2018 08:53:19 -0500
+Received: by mail-pl1-f174.google.com with SMTP id gn14so3323470plb.10
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 19:20:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Gg27hJiPQ3d4NHt0mdVgx9/ikHSqaLrJCVV/c5lQqOk=;
-        b=dl2L8brlBAQbXLQok8N8a5vojhfeMcvu8siUufhvsbO4jruRn4U8wVg03lmsIlDCdS
-         q6+0xaveD+dGnOsWipm3d9u+i90LbBp9ysSfNa6gJ55L8JIUacymYPXg7r/lIGDjikWN
-         HOLnhx++jUJsA/On+Blv26tODkj7NzgR6p1Iud+YTmgnXWkw9c88D4lpY8XktvdFrCLm
-         +jJWbhDkC4QGBu9ypRZUcr/itq7XeT66UMN3hAjeie28xumgthfuS5wTMW7bkW31nxYL
-         5qID8lGXKA4yH7priPGfcW+Pc858w/F/OeXKw8BEhbwX1FX4ecVER9VqSrXPnDHubR+V
-         juvw==
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=TZ1ILf36vluQRmD7+XUbNoBKgZDQAlA/hXOW/yYPvow=;
+        b=hMdTlTN02M98lXyk7Ucwpt/RH5xmd+8WA/v/Jt3jTrFs0BJiYCEs05ZeW0x2farKNt
+         Fd9C1DnZz+vZWHT8b2wmBMRfg8WMCjq+fzFMcVic5v/O/wcZVCUgtKO2oj6vJ1pVZv4b
+         e3LibR8BfHSjVFWDxJ7n/xJDXTUwmJYxoOf/hEXGhGb1ved2rUF+NbW+2f8Nq4xidHpp
+         +NKBTXN8ASjBchCl414x99gAISGePaLhBcx+GMHRgDHF6A+RpM8UPAPbIYIAQ4KfMKt4
+         NJk2UoPwTCnQWg1HgopWoPMwzRRThJCgbT0LV/bY5lLHdH+K4hwIkClzKK7Ik2MiOlmo
+         57fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Gg27hJiPQ3d4NHt0mdVgx9/ikHSqaLrJCVV/c5lQqOk=;
-        b=K93GnQUGxRSQs1Es0MQgZbHtwz2/ND+quVVi1fxMalgHY3JT9v5LuF/t/BTO4QODGb
-         czMJXV52gzkPqFl41lrEKhQ9P7zizXOoNUiMdd4Ym4XiqVohsKmcnfZO7rjV5cCaUn08
-         2BwQ298e7h3YEEqBIhpu+Z4z4iJfqfjT2nmLM3g/YmHx6Scq2RwJubO0y4cH9/tZgDux
-         ncqOVhYdx3b18p+zBWi6Vg5I+DhThE0dZAXzIvDCTgMAVl3fk12TJO80dG8mr2dyQAlt
-         WbN2TKs50O9GCoAUq0rvDfLm3/BqYvWlG7nkrwLBOKjP8X2BanK5mNiKfpUwcJSTMOHQ
-         +onw==
-X-Gm-Message-State: AGRZ1gJoDvpBDGoJcwWFnQ0aWKfZaH5DvvJc3rOxp9EehZ4Uuk7aBvvJ
-        vZIwqroP9dKH2CCIOg819zEDnboxf+cMUCGwsFRODg==
-X-Google-Smtp-Source: AFSGD/WjYGc6w1cIZ5ZcmZ/y0sV4cDGVGBp7bAE2mtAIN6fcEXMtN4GkhGcxKOWggD1OZCnEGIIn1wHhz0JdtiTfbqU=
-X-Received: by 2002:a24:6c55:: with SMTP id w82-v6mr4415956itb.106.1542770442942;
- Tue, 20 Nov 2018 19:20:42 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=TZ1ILf36vluQRmD7+XUbNoBKgZDQAlA/hXOW/yYPvow=;
+        b=bzO2kFNVCayJHJCMigVIvJ0kWNr28mRJqEwcBmjluc9PPMsKplg0s9kmh6RVNEkIn5
+         4gKq2xrxRYPVHj4/fyyrzY1EOUsTWbl6Rla98D//FRv4B2RwzlMYJTBZaS+lAxnB6oty
+         StQefNkIaiHUTbJFhvmf7ZbHpKkjeeltmZTHPJWe/zfpNIXMEaR9hhfEmbPS5c2I+wKV
+         kpjZGyEFB+VD6liWdUTl/9gsFoAf56cqEYQN5I/Qohx9D9zf503pk5qr2m1G2t1c2BAv
+         DYocYk5AAP4nvJ1R2lm2f54RmcjNe61N1+vgBulKP4PP53eyGSWN76TNi3HgOGHIqSmq
+         ju/A==
+X-Gm-Message-State: AGRZ1gJm6sAoku30A5DAgl4l1fS1aeNGVXwg5je0caNNSPAnFcZk6e10
+        +2hCpDc0ff/dJYAGxABaUMBcww==
+X-Google-Smtp-Source: AJdET5c+OxqqMj0UgKkzjCN0oOuM0t3Gsc4pzY5/JEuvn0VxEf1n4XATouVx0bruhL0HTnGnRsNMeQ==
+X-Received: by 2002:a62:3a04:: with SMTP id h4mr4950852pfa.119.1542770448949;
+        Tue, 20 Nov 2018 19:20:48 -0800 (PST)
+Received: from [100.112.89.103] ([104.133.8.103])
+        by smtp.gmail.com with ESMTPSA id 18sm43687573pgl.50.2018.11.20.19.20.47
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 20 Nov 2018 19:20:48 -0800 (PST)
+Date:   Tue, 20 Nov 2018 19:20:40 -0800 (PST)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@eggly.anvils
+To:     Vlastimil Babka <vbabka@suse.cz>
+cc:     Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        pifang@redhat.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, aarcange@redhat.com,
+        Mel Gorman <mgorman@suse.de>
+Subject: Re: Memory hotplug softlock issue
+In-Reply-To: <alpine.LSU.2.11.1811201630360.2061@eggly.anvils>
+Message-ID: <alpine.LSU.2.11.1811201852370.2804@eggly.anvils>
+References: <20181115143204.GV23831@dhcp22.suse.cz> <20181116012433.GU2653@MiWiFi-R3L-srv> <20181116091409.GD14706@dhcp22.suse.cz> <20181119105202.GE18471@MiWiFi-R3L-srv> <20181119124033.GJ22247@dhcp22.suse.cz> <20181119125121.GK22247@dhcp22.suse.cz>
+ <20181119141016.GO22247@dhcp22.suse.cz> <20181119173312.GV22247@dhcp22.suse.cz> <alpine.LSU.2.11.1811191215290.15640@eggly.anvils> <20181119205907.GW22247@dhcp22.suse.cz> <20181120015644.GA5727@MiWiFi-R3L-srv> <alpine.LSU.2.11.1811192127130.2848@eggly.anvils>
+ <3f1a82a8-f2aa-ac5e-e6a8-057256162321@suse.cz> <alpine.LSU.2.11.1811201630360.2061@eggly.anvils>
+User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
 MIME-Version: 1.0
-References: <20181004195906.201895-1-schuffelen@google.com>
- <20181005143323.ezyd2x6x5ymlb7rg@bars> <CAJWu+ooTRUxj2PAiUkgjTLb+VC9OoBpkj9-_ZoC-oCS3owc5Hg@mail.gmail.com>
- <CAJWu+oqoSsj=50vk-jUTKUVgZ_oj5Vng0bBF605Aw_iWD=W24A@mail.gmail.com>
- <CAAELVAGAZ-UM77P=JqzHjUGja9oJcN5y9+YvxZWKBmOXAu=zNQ@mail.gmail.com> <87tvlzffmf.fsf@kamboji.qca.qualcomm.com>
-In-Reply-To: <87tvlzffmf.fsf@kamboji.qca.qualcomm.com>
-From:   Cody Schuffelen <schuffelen@google.com>
-Date:   Tue, 20 Nov 2018 19:20:32 -0800
-Message-ID: <CAAELVAFgMPboCrhXW2v-jcwXaDExsWH0oxhWiVJRLJ5iBSYhaw@mail.gmail.com>
-Subject: Re: [PATCH net-next v3] wireless-drivers: rtnetlink wifi simulation device
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     Joel Fernandes <joelaf@google.com>,
-        sergey.matyukevich.os@quantenna.com,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 1. Do not EVER submit HTML mails, mailing lists will automatically
->    reject them. So your mail didn't reach the lists and I only got it
->    because I was in the Cc field.
+On Tue, 20 Nov 2018, Hugh Dickins wrote:
+> On Tue, 20 Nov 2018, Vlastimil Babka wrote:
+> > >  
+> > >  	finish_wait(q, wait);
+> > 
+> > ... the code continues by:
+> > 
+> >         if (thrashing) {
+> >                 if (!PageSwapBacked(page))
+> > 
+> > So maybe we should not set 'thrashing' true when lock < 0?
+> 
+> Very good catch, thank you Vlastimil: as you might have guessed, the
+> patch from a pre-PSI kernel applied cleanly, and I just hadn't reviewed
+> the surrounding context properly before sending out.
+> 
+> I cannot say immediately what the right answer is, I'll have to do some
+> research first: maybe not enter the block that sets thrashing true when
+> lock < 0, as you suggest, or maybe force lock < 0 to 0 and put_page()
+> afterwards, or... 
 
-I apologize, my mistake.
+... I still won't adjust the patch tonight, but the answer is obvious
+now I look closer: as you show in your extract above, the only thing
+it does with "page" at the end is to ask if it was SwapBacked, so we
+just need to set one more bool at the beginning to check at the end
+(or I could make "thrashing" a -1, 0, 1 int like "lock": but my guess
+is that that would not be to other people's taste: acceptable for the
+arg, but stretching your patience for the local variable).
 
-> 2. Do not top post, it's really annoying:
->
->    https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#do_not_top_post_and_edit_your_quotes
+By the way, I do have a further patch to wait_on_page_bit_common(),
+which I could send at the same time, if it sounds right to you
+(but it's a no-op in the put_and_wait page migration case).  That
+__add_wait_queue_entry_tail() is right for the first time into
+the loop, but I maintain that it should use __add_wait_queue()
+for fairness thereafter, to avoid repeatedly sending older waiters
+back to the back of the queue.  I don't have hard numbers for it,
+but it's one of several patches, each of which helped to reduce our
+wait_on_page_bit lockups in some (perhaps unrealistic) stress tests.
 
- Thanks for the reference, I will keep that in mind.
-
-> 3. Reply to the review comments you get, even if you agree with them. By
->    not replying you give an impression that you are ignoring the review
->    comments.
-
- Thanks for calling this out, will do.
+Hugh
