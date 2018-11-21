@@ -2,96 +2,101 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D134C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758E5C04EBA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 015C32146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 08:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015C32146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 31A3E2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:00:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PRCdZlCs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A3E2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729147AbeKUTbA (ORCPT
+        id S1728990AbeKUTd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 14:31:00 -0500
-Received: from mga18.intel.com ([134.134.136.126]:9262 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728149AbeKUTbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 14:31:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 00:57:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,260,1539673200"; 
-   d="scan'208";a="101986096"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 21 Nov 2018 00:57:21 -0800
-Received: from [10.125.252.12] (abudanko-mobl.ccr.corp.intel.com [10.125.252.12])
-        by linux.intel.com (Postfix) with ESMTP id 527A258040F;
-        Wed, 21 Nov 2018 00:57:17 -0800 (PST)
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jonatan Corbet <corbet@lwn.net>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tvrtko Ursulin <tursulin@ursulin.net>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v2 0/2] Documentation/admin-guide: introduce perf-security.rst
- file and extend perf_event_paranoid documentation
-Organization: Intel Corp.
-Message-ID: <259a9cd2-5c56-4f8d-57c4-cabaeaa774bc@linux.intel.com>
-Date:   Wed, 21 Nov 2018 11:57:12 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 21 Nov 2018 14:33:58 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33353 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbeKUTd6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 14:33:58 -0500
+Received: by mail-pl1-f195.google.com with SMTP id z23so4575837plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=SFGUiStujf5wvh3nJrKTmjksqfmzQg7H3bcVPePRWB8=;
+        b=PRCdZlCsWgOntbiwsIrsZ5SuZxHJUqJG3broeVWWXrGtMO6F+ohKVyjGNFpi8438SC
+         MAgiKy6EJkBExCL9HPjb28zfxzjGc85OB9YxyAXKhTBbKho4B9DTVKDWED4F4Uw5cc0E
+         Hr7G2/y/GuMXoNToHMhk9I2dBWIJ+HrfGs3uc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=SFGUiStujf5wvh3nJrKTmjksqfmzQg7H3bcVPePRWB8=;
+        b=VswOwfprSgNvRln7epae90PQQJ3JD7ZFDu7YHoahD2e8Mauw763jIAUNlugeVQE0qv
+         B5Kd/gMD7HEbIVlPqSRO4GzGggUZgz4rKh4cFJ4s9VQiBfTDnc5v+mAaQnxOA66Uvou5
+         kcttDSOhDfXDFEf8Sn1ejxT0MzJyOU7hPlKXnQNx3ml791DZED+MeEmw5nxgz+sMTQdH
+         sroZvJJQ64RCKT25xxP39/FVrx+VLhgn4IiFzIzFUDuUcZ781W8CxQNVf3SMt+3+Stfz
+         vYeEBD00g/Bn0lOp+LV+XtsQe2stBL0m1Go7P89wlzctZxgHxFwOXWQl+X/RyB3mQ5zD
+         nWWQ==
+X-Gm-Message-State: AA+aEWbKDu1KDAEdzezUETUQm0VBnvnZk7/r405SMn5xTwQHWUc7bgZL
+        f34WyRhz4h3/zboy+P8WxBjXoeLF8nY=
+X-Google-Smtp-Source: AFSGD/VXSVCvDj2tGNjf7T1ga+6FrUwE8lfMKU4DFskE/hDAMgSJZKuWxUNPqJ2A09r7MBi2fFoh9g==
+X-Received: by 2002:a63:151f:: with SMTP id v31mr5120336pgl.34.1542790819181;
+        Wed, 21 Nov 2018 01:00:19 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id x7sm46370014pga.68.2018.11.21.01.00.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 01:00:18 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181105194011.43770-2-swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>
+References: <20181105194011.43770-1-swboyd@chromium.org>
+ <20181105194011.43770-2-swboyd@chromium.org>
+Message-ID: <154279081676.88331.1516496381312386439@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] dt-bindings: clk: Introduce 'protected-clocks' property
+Date:   Wed, 21 Nov 2018 01:00:16 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Stephen Boyd (2018-11-05 11:40:10)
+> Add a generic clk property for clks which are not intended to be used by
+> the OS due to security restrictions put in place by firmware. For
+> example, on some Qualcomm firmwares reading or writing certain clk
+> registers causes the entire system to reboot, but on other firmwares
+> reading and writing those same registers is required to make devices
+> like QSPI work. Rather than adding one-off properties each time a new
+> set of clks appears to be protected, let's add a generic clk property to
+> describe any set of clks that shouldn't be touched by the OS. This way
+> we never need to register the clks or use them in certain firmware
+> configurations.
+> =
 
-To facilitate informed decision making by system administrators [1]
-to permit and manage access to Perf Events (perf_events) / Perf tool (Perf) [2],[3] 
-performance monitoring for multiple users perf-security.rst document 
-suggested by Thomas Gleixner is introduced [4] that:
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
 
-a) states perf_events/Perf access security concerns for multi user environment
-b) refers to base Linux access control and management principles
-c) extends documentation of possible perf_event_paranoid knob settings 
+Applied to clk-next
 
-The file serves as single knowledge source for perf_events/Perf security and 
-access control related matter according to decisions, discussion and  
-PoC prototype previously made here [5],[6].
-
-The file can later be extended with information describing:
-
-a) perf_events/Perf usage models and its security implications
-b) perf_events/Perf user interface, its changes and related security implications
-c) security related implications of monitoring by a specific perf_events PMU [2]
-
----
-Alexey Budankov (2):
-  Documentation/admin-guide: introduce perf-security.rst file
-  Documentation/admin-guide: update admin-guide index.rst
-
- Documentation/admin-guide/index.rst         |  1 +
- Documentation/admin-guide/perf-security.rst | 77 +++++++++++++++++++++
- 2 files changed, 78 insertions(+)
- create mode 100644 Documentation/admin-guide/perf-security.rst
