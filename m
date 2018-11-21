@@ -2,104 +2,212 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 976E3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE4F4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4786320878
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:09:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUO7y4c8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4786320878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 79C5A20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79C5A20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbeKUWnZ (ORCPT
+        id S1730000AbeKUWv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:43:25 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35708 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeKUWnZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:43:25 -0500
-Received: by mail-pl1-f196.google.com with SMTP id v1-v6so5295122plo.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 04:09:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hjs6e+34+F5HLbMhxhfF0KqM0OnTCnmOp0cB2CC4F2c=;
-        b=HUO7y4c8yRAQDg4/vtzCW9HFg7ulIy5YUsBLASSXgrzYyGFQtM8TWj+LnMLTNGhiU/
-         20FTR+CDWYlaCEzeJghgMdFw9coKxhuUU9HkrYhldMUI30Px203IPSiEO72f6Di6KAY1
-         1Map88h4KIdt7vnqv66LGm6pJx7YyfBNNFGYsfUxIClPgJ717jJVXSfT81zOIYhnoSTH
-         lLO46TfZVJP4X7xe7EAg7TUginxuaIRoGLPquF1RdBc+pYDknRQUmIGHNyycRDmdZo0g
-         wZSm7eAc49Z4Vdps42v8Aa4wqhw78EA7FWa9klUZH2iXsVvFO4PSs/LWmskzUmBxEwAN
-         G6AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hjs6e+34+F5HLbMhxhfF0KqM0OnTCnmOp0cB2CC4F2c=;
-        b=Kb0amxnQpPbfuZPZF1+WelRXlv1+OdJwawzo4lYOedLPvt3gDhv7vvlR0Vxp9gbNgt
-         v/2MxKtrs3UdPVTcj4ZpGo/SaZSw1CxItN6Ak1/WSiT/8WvJyRqERlV53HR9oWXiXDPT
-         K/CUAjPlY+T61DNtMriL2kAahnyR0qzRtbgxWz63o8L6+RbM99c9mIqIJ/ZQVtE9K1O3
-         9BteZizf27dnUBcqjeZAfAvPcwf2ht6THrnWy4I6cyKJ27M92Ae845kRtWmGgQUTH9nC
-         NR9KiKiAzlseck9aYpw3sekD85WQ1oNA0CRmzpmO+XI3if1fR4M6AX8rl9Le4EgPtjUb
-         4t9Q==
-X-Gm-Message-State: AA+aEWYM4DefyjIusU4rcRT4fcMpXhHBIWal1LfHkPANFcFcRr05BGl5
-        keSd1aUIUj2yfKL5+mWdxO8=
-X-Google-Smtp-Source: AFSGD/V4bcFeYvIS8P8Z8blEE2QttipuHPqPDP/76gDpYo/CW0Ivd98JFGClW+xtEkh/EjiD5W0jdQ==
-X-Received: by 2002:a63:5b1f:: with SMTP id p31mr5723135pgb.56.1542802156952;
-        Wed, 21 Nov 2018 04:09:16 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([45.251.61.116])
-        by smtp.gmail.com with ESMTPSA id x7sm47279673pga.68.2018.11.21.04.09.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 04:09:16 -0800 (PST)
-Date:   Wed, 21 Nov 2018 17:39:13 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     harry.wentland@amd.com, sunpeng.li@amd.com,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, Tony.Cheng@amd.com,
-        shirish.s@amd.com, Bhawanpreet.Lakha@amd.com,
-        David.Francis@amd.com, Anthony.Koo@amd.com
-Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] drm/amd/display/amdgpu_dm/amdgpu_dm.c: Remove duplicate
- header
-Message-ID: <20181121120913.GA2289@hp-pavilion-15-notebook-pc-brajeswar>
+        Wed, 21 Nov 2018 17:51:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48728 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727094AbeKUWv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:51:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3AA0935DC;
+        Wed, 21 Nov 2018 04:17:48 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A9F2C3F5A0;
+        Wed, 21 Nov 2018 04:17:46 -0800 (PST)
+Subject: Re: [PATCH] kvm: arm/arm64 : fix vm's hanging at startup time
+To:     Christoffer Dall <christoffer.dall@arm.com>, peng.hao2@zte.com.cn
+Cc:     marc.zyngier@arm.com, andre.przywara@arm.com,
+        linux-kernel@vger.kernel.org, leif.lindholm@linaro.org,
+        ard.bieshseuvel@linaro.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <01746207-c9bb-dc91-58d7-a66c0d971f88@arm.com>
+ <201811211656540883310@zte.com.cn>
+ <20181121110620.GC18678@e113682-lin.lund.arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <26c4ad81-f808-5a84-c725-72db8de7cd2b@arm.com>
+Date:   Wed, 21 Nov 2018 12:17:45 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181121110620.GC18678@e113682-lin.lund.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove dm_services_types.h which is included more than once
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index e224f23e2215..62a96c683584 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -38,7 +38,6 @@
- #include "amd_shared.h"
- #include "amdgpu_dm_irq.h"
- #include "dm_helpers.h"
--#include "dm_services_types.h"
- #include "amdgpu_dm_mst_types.h"
- #if defined(CONFIG_DEBUG_FS)
- #include "amdgpu_dm_debugfs.h"
+On 21/11/18 11:06, Christoffer Dall wrote:
+> Hi,
+> 
+> On Wed, Nov 21, 2018 at 04:56:54PM +0800, peng.hao2@zte.com.cn wrote:
+>>> On 19/11/2018 09:10, Mark Rutland wrote:
+>>>> On Sat, Nov 17, 2018 at 10:58:37AM +0800, peng.hao2@zte.com.cn wrote:
+>>>>>> On 16/11/18 00:23, peng.hao2@zte.com.cn wrote:
+>>>>>>>> Hi,
+>>>>>>>>> When virtual machine starts, hang up.
+>>>>>>>>
+>>>>>>>> I take it you mean the *guest* hangs? Because it doesn't get a timer
+>>>>>>>> interrupt?
+>>>>>>>>
+>>>>>>>>> The kernel version of guest
+>>>>>>>>> is 4.16. Host support vgic_v3.
+>>>>>>>>
+>>>>>>>> Your host kernel is something recent, I guess?
+>>>>>>>>
+>>>>>>>>> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+>>>>>>>>> during injection interruption. when kvm_vgic_vcpu_init is called,
+>>>>>>>>> dist is not initialized at this time. Unable to get vgic V3 or V2
+>>>>>>>>> correctly, so group is not set.
+>>>>>>>>
+>>>>>>>> Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
+>>>>>>>> version?) or some other userland tool?
+>>>>>>>>
+>>>>>>>
+>>>>>>> QEMU emulator version 3.0.50 .
+>>>>>>>
+>>>>>>>>> group is setted to 1 when vgic_mmio_write_group is invoked at some
+>>>>>>>>> time.
+>>>>>>>>> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+>>>>>>>>> interrupt injection failed.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+>>>>>>>>> ---
+>>>>>>>>>    virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+>>>>>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>> index 9c0dd23..d101000 100644
+>>>>>>>>> --- a/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+>>>>>>>>> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
+>>>>>>>>> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
+>>>>>>>>> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
+>>>>>>>>>
+>>>>>>>>> -    if (irq->group)
+>>>>>>>>> +    if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>>>>>>>>
+>>>>>>>> This is not the right fix, not only because it basically reverts the
+>>>>>>>> GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
+>>>>>>>> their configured group).
+>>>>>>>>
+>>>>>>>> Can you try to work out why kvm_vgic_vcpu_init() is apparently called
+>>>>>>>> before dist->vgic_model is set, also what value it has?
+>>>>>>>> If I understand the code correctly, that shouldn't happen for a GICv3.
+>>>>>>>>
+>>>>>>> Even if the value of  group is correctly assigned in kvm_vgic_vcpu_init, the group is then written 0 through vgic_mmio_write_group.
+>>>>>>>    If the interrupt comes at this time, the interrupt injection fails.
+>>>>>>
+>>>>>> Does that mean that the guest is configuring its interrupts as Group0?
+>>>>>> That sounds wrong, Linux should configure all it's interrupts as
+>>>>>> non-secure group1.
+>>>>>
+>>>>> no, I think that uefi dose this, not linux.
+>>>>> 1. kvm_vgic_vcpu_init
+>>>>> 2. vgic_create
+>>>>> 3. kvm_vgic_dist_init
+>>>>> 4.vgic_mmio_write_group: uefi as guest, write group=0
+>>>>> 5.vgic_mmio_write_group: linux as guest, write group=1
+>>>>
+>>>> Is this the same issue fixed by EDK2 commit:
+>>>>
+>>>> 66127011a544b90e ("ArmPkg/ArmGicDxe ARM: fix encoding for GICv3 interrupt acknowledge")
+>>>>
+>>>> ... where EDK2 would try to use IAR0 rather than IAR1?
+>>>>
+>>>> The commit messages notes this lead to a boot-time hang.
+>>>
+>>> I managed to trigger an issue with a really old EFI implementation that
+>>> doesn't configure its interrupts as Group1, and yet tries to ACK its
+>>> interrupts using the Group1 accessor. Guess what? It is not going to work.
+>>>
+>>> Commit c7fefb690661f2e38afcb8200bd318ecf38ab961 in the edk2 tree seems
+>>> to be the fix (I only assume it does, I haven't actually checked). A
+>>> recent build, as found in Debian Buster, works perfectly (tested with
+>>> both QEMU v2.12 and tip of tree).
+>>>
+>>> Now, I really don't get what you're saying about Linux not getting
+>>> interrupts. How do you get to booting Linux if EFI is not making any
+>>> forward progress? Are you trying them independently?
+>>>
+>> I start linux with bypassing uefi, the print info is the same.
+>> [507107.748908]  vgic_mmio_write_group:## intid/27 group=0
+>> [507107.752185]  vgic_mmio_write_group:## intid/27 group=0
+>> [507107.899566]  vgic_mmio_write_group:## intid/27 group=1
+>> [507107.907370]  vgic_mmio_write_group:## intid/27 group=1
+>> the command line is like this:
+>> /home/qemu-patch/linshi/qemu/aarch64-softmmu/qemu-system-aarch64  -machine virt-3.1,accel=kvm,usb=off,dump-guest-core=off,gic-version=3  -kernel /home/kernelboot/vmlinuz-4.16.0+ -initrd /home/kernelboot/initramfs-4.16.0+.img -append root=/dev/mapper/cla-root ro crashkernel=auto rd.lvm.lv=cla/root rd.lvm.lv=cla/swap.UTF-8  -drive file=/home/centos74-ph/boot.qcow2,format=qcow2,if=none,id=drive-scsi0-0-0-0 -device scsi-hd,bus=scsi0.0,channel=0,scsi-id=0,lun=0,drive=drive-scsi0-0-0-0,id=scsi0-0-0-0,bootindex=1  -vnc 0.0.0.0:0 -k en-us -device virtio-gpu-pci,id=video0,max_outputs=1,bus=pci.3,addr=0x0 -device pvpanic-mmio -msg timestamp=on
+>>
+>> This is strange. That's probably the Linux 4.16  kernel setting group to 0, and I'll continue to track in guest.
+> 
+> Could you try the following patch:
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+> index c0c0b88af1d5..6fa858c7a5a6 100644
+> --- a/virt/kvm/arm/vgic/vgic-init.c
+> +++ b/virt/kvm/arm/vgic/vgic-init.c
+> @@ -231,13 +231,6 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+>   			irq->config = VGIC_CONFIG_LEVEL;
+>   		}
+>   
+> -		/*
+> -		 * GICv3 can only be created via the KVM_DEVICE_CREATE API and
+> -		 * so we always know the emulation type at this point as it's
+> -		 * either explicitly configured as GICv3, or explicitly
+> -		 * configured as GICv2, or not configured yet which also
+> -		 * implies GICv2.
+> -		 */
+>   		if (dist->vgic_model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>   			irq->group = 1;
+>   		else
+> @@ -298,6 +291,16 @@ int vgic_init(struct kvm *kvm)
+>   	if (ret)
+>   		goto out;
+>   
+> +	/* Initialize groups on CPUs created before the VGIC type was known */
+> +	kvm_for_each_vcpu(i, vcpu, kvm) {
+> +		struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
+> +
+> +		for (i = 0; i < VGIC_NR_PRIVATE_IRQS; i++) {
+> +			struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+> +			irq->group = 1;
+> +		}
+> +	}
+> +
+>   	if (vgic_has_its(kvm)) {
+>   		ret = vgic_v4_init(kvm);
+>   		if (ret)
+> 
+> 
+
+If the value of dist->vgic_model is not properly initialized at the time 
+we call kvm_vgic_vcpu_init is call, won't we still overwrite the 
+irq->group when we get there? (I still haven't seen why we could 
+consider dist->vgic_model is initialized at that point).
+
+Shouldn't we do the irq->group initialization somewhere in 
+kvm_arch_vcpu_ioctl_vcpu_init? (with some vgic_* function to encapsulate 
+it of course). At that point I believe we know that dist->vgic_model is 
+initialized.
+
+Cheers,
+
 -- 
-2.17.1
-
+Julien Thierry
