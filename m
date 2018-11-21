@@ -2,157 +2,130 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752EFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A66C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4493C21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:48:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4493C21479
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D10221479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:48:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UuqwvCeo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D10221479
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeKVAWi (ORCPT
+        id S1730502AbeKVAX0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:22:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49564 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729179AbeKVAWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:22:38 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1E4D520D31; Wed, 21 Nov 2018 14:48:07 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E1BB420D72;
-        Wed, 21 Nov 2018 14:47:56 +0100 (CET)
-Date:   Wed, 21 Nov 2018 14:47:56 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v2 8/9] phy: Add Cadence D-PHY support
-Message-ID: <20181121134756.aoj6otdcl4stpd6p@flea>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <4ec9e47fb5aa9794f69a8e75a04108055094c056.1541516029.git-series.maxime.ripard@bootlin.com>
- <5f5bcc06-51b2-d565-56a0-083c66c1f01a@ti.com>
- <8536050b-40ab-1ec4-d325-e59bb3a92e73@ti.com>
- <20181121101121.7rhe2hz2mnmc72cu@flea>
- <20c0fd85-95f6-9849-c10b-998a1e0f527d@ti.com>
+        Wed, 21 Nov 2018 19:23:26 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34680 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730315AbeKVAX0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 19:23:26 -0500
+Received: by mail-pl1-f196.google.com with SMTP id f12-v6so5644826plo.1;
+        Wed, 21 Nov 2018 05:48:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
+         :user-agent;
+        bh=bCS9yRoap5lSFPEZzERHCkUHT9HEPOkVXZIfX7zFhU8=;
+        b=UuqwvCeofMnVHNzrbjvIyIINDWyE+DhyWLMhXw3aSwNR8WtbhE5kQ2MPyJdPC+RV2W
+         ck/kwRz2fMPdJOv9glgxyCcfJ2EdVEaeBRNRwSlyrCiXCfoS0Xela2pw9UV1HCfMIq2f
+         36OkJKVzFUpJXg5tXC47IxwU3+CcGfA5Q47H2SicETm0/trAMk54JZQQDbK8IniQWOsm
+         msqoJdMVq26oK2xheUMOSZ4LHYtAjsbKxW4qqF4jhRhFFJ14bbAAkK3QIjnIYFjetfZc
+         gLnbX4e9VgtJ3UpuefvgVEBzfK6FyakcWXBXyhg/1zQXBeUB+c6BhRdcM3Uyt2pRlFld
+         qbJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
+         :content-disposition:user-agent;
+        bh=bCS9yRoap5lSFPEZzERHCkUHT9HEPOkVXZIfX7zFhU8=;
+        b=e5+320Fuys+qx/Wryr5q348FUmXk+EzqqO5L9KDnA9AnHhrBOpB3LqS+Vji9z20YMx
+         Sby2cr2+i/H8KFjr/jPP7Ofw8OJ6DGFf/evNjxXSkBSONkbgQffMHsTmxaKslEBXIF88
+         YyZ7GAUfkKtZuNjlcBfeCGLg326/HbaTPqs7YYOlY+g2rtC1GT/NHeu2Vy32t74XFPzU
+         wpq50zqsBq3tBfPBBpQb8cYrm3k0+MKraTRnW7k0ISNKw9R2bCYC93DXPy/UkjneWLMu
+         ygAhY1s//w3yjVK1lODoF4wx0O+8Wo7khvGA6LYh871L/FNzAvoue1NH95erhxr40NXh
+         sRYQ==
+X-Gm-Message-State: AA+aEWbDMve5Nd7p9R4MQ4ZmipoTRk20UFMS2ob+W58YCsnnSYCa9xk4
+        gr7dxUvXsP2QHbFMJ3lF4rk=
+X-Google-Smtp-Source: AFSGD/UtiAowMex+eTh/6w6uIdl/06dnkH0vHSbBYI3kw8IQmgZihWX3VFtqil6KwMCSS9VmqX2C6g==
+X-Received: by 2002:a63:4044:: with SMTP id n65mr5888031pga.90.1542808137132;
+        Wed, 21 Nov 2018 05:48:57 -0800 (PST)
+Received: from sabyasachi ([45.116.191.194])
+        by smtp.gmail.com with ESMTPSA id 139sm38383001pfb.127.2018.11.21.05.48.55
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Nov 2018 05:48:56 -0800 (PST)
+Message-ID: <5bf56248.1c69fb81.21a6e.5a72@mx.google.com>
+X-Google-Original-Message-ID: <20181121134852.GA3645@sabyasachi.linux@gmail.com>
+Date:   Wed, 21 Nov 2018 19:18:52 +0530
+From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+To:     jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        jthumshirn@suse.de
+Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+Subject: [PATCH] scsi/mvsas/mv_init.c: Use dma_zalloc_coherent
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iu5ypcxah5lvujer"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20c0fd85-95f6-9849-c10b-998a1e0f527d@ti.com>
-User-Agent: NeoMutt/20180716
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Replace dma_alloc_coherent + memset with dma_zalloc_coherent
 
---iu5ypcxah5lvujer
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+---
+ drivers/scsi/mvsas/mv_init.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Hi Kishon,
+diff --git a/drivers/scsi/mvsas/mv_init.c b/drivers/scsi/mvsas/mv_init.c
+index 3ac3437..495bddb 100644
+--- a/drivers/scsi/mvsas/mv_init.c
++++ b/drivers/scsi/mvsas/mv_init.c
+@@ -253,33 +253,29 @@ static int mvs_alloc(struct mvs_info *mvi, struct Scsi_Host *shost)
+ 	/*
+ 	 * alloc and init our DMA areas
+ 	 */
+-	mvi->tx = dma_alloc_coherent(mvi->dev,
++	mvi->tx = dma_zalloc_coherent(mvi->dev,
+ 				     sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ,
+ 				     &mvi->tx_dma, GFP_KERNEL);
+ 	if (!mvi->tx)
+ 		goto err_out;
+-	memset(mvi->tx, 0, sizeof(*mvi->tx) * MVS_CHIP_SLOT_SZ);
+-	mvi->rx_fis = dma_alloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
++	mvi->rx_fis = dma_zalloc_coherent(mvi->dev, MVS_RX_FISL_SZ,
+ 					 &mvi->rx_fis_dma, GFP_KERNEL);
+ 	if (!mvi->rx_fis)
+ 		goto err_out;
+-	memset(mvi->rx_fis, 0, MVS_RX_FISL_SZ);
+ 
+-	mvi->rx = dma_alloc_coherent(mvi->dev,
++	mvi->rx = dma_zalloc_coherent(mvi->dev,
+ 				     sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1),
+ 				     &mvi->rx_dma, GFP_KERNEL);
+ 	if (!mvi->rx)
+ 		goto err_out;
+-	memset(mvi->rx, 0, sizeof(*mvi->rx) * (MVS_RX_RING_SZ + 1));
+ 	mvi->rx[0] = cpu_to_le32(0xfff);
+ 	mvi->rx_cons = 0xfff;
+ 
+-	mvi->slot = dma_alloc_coherent(mvi->dev,
++	mvi->slot = dma_zalloc_coherent(mvi->dev,
+ 				       sizeof(*mvi->slot) * slot_nr,
+ 				       &mvi->slot_dma, GFP_KERNEL);
+ 	if (!mvi->slot)
+ 		goto err_out;
+-	memset(mvi->slot, 0, sizeof(*mvi->slot) * slot_nr);
+ 
+ 	mvi->bulk_buffer = dma_alloc_coherent(mvi->dev,
+ 				       TRASH_BUCKET_SIZE,
+-- 
+2.7.4
 
-On Wed, Nov 21, 2018 at 03:59:43PM +0530, Kishon Vijay Abraham I wrote:
-> On 21/11/18 3:41 PM, Maxime Ripard wrote:
-> > Hi Kishon,
-> >=20
-> > On Tue, Nov 20, 2018 at 11:02:34AM +0530, Kishon Vijay Abraham I wrote:
-> >>>> +static int cdns_dphy_config_from_opts(struct phy *phy,
-> >>>> +				      struct phy_configure_opts_mipi_dphy *opts,
-> >>>> +				      struct cdns_dphy_cfg *cfg)
-> >>>> +{
-> >>>> +	struct cdns_dphy *dphy =3D phy_get_drvdata(phy);
-> >>>> +	unsigned int dsi_hfp_ext =3D 0;
-> >>>> +	int ret;
-> >>>> +
-> >>>> +	ret =3D phy_mipi_dphy_config_validate(opts);
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	ret =3D cdns_dsi_get_dphy_pll_cfg(dphy, cfg,
-> >>>> +					opts, &dsi_hfp_ext);
-> >>>> +	if (ret)
-> >>>> +		return ret;
-> >>>> +
-> >>>> +	opts->wakeup =3D cdns_dphy_get_wakeup_time_ns(dphy);
-> >>
-> >> Is the wakeup populated here used by the consumer driver?
-> >=20
-> > It's supposed to, if it can yes.
->=20
-> But I guess right now it's not using. I'm thinking the usefulness of vali=
-date
-> callback (only from this series point of view). Why should a consumer dri=
-ver
-> invoke validate if it doesn't intend to configure the PHY?
->=20
-> The 3 steps required are
-> 	* The consumer driver gets the default config
-> 	* The consumer driver changes some of the configuration and
-> 	* The consumer driver invokes phy configure callback.
->=20
-> phy_configure anyways can validate the config before actually configuring=
- the phy.
-
-If you only want to configure the PHY, then yes, sure.
-
-However, the point here is that validate helps negotiating what the
-source device (DSI controller for example) and what the sink device
-(say a panel) are capable of.
-
-A panel for example might very well have multiple resolutions that it
-supports, and the DSI controller will have some as well. And the PHY
-will only be able to operate within certain boundaries too. However,
-they don't necessarily match, since there's so many panels, and so
-many SoCs.
-
-Let's say our (very weird) panel is able to do 640x480, 1024x768 and
-1280x800. Our DSI driver can only operate with 1024 pixels in both
-dimensions, and the PHY can only reach the bus frequency needed for
-around 800x600.
-
-We'll want to filter out 1280x800 (because the DSI controller can't
-provide that) and 1024x768 (because the PHY can go fast enough), to
-only provide the 640x480 option to the user.
-
-That's what validate bring you. The option to test whether a given
-configuration *would* work, without actually wanting to apply it right
-now.
-
-Does that make sense?
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---iu5ypcxah5lvujer
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW/ViDAAKCRDj7w1vZxhR
-xa3GAP0ZHJFfdP8AHbU/zVcZO1407Vempr4G9duf1m2fclsISAEAhbmlotNSdZ5P
-EEO4XJflXWB0UOENX9goeLsVFreSHAo=
-=M7Mr
------END PGP SIGNATURE-----
-
---iu5ypcxah5lvujer--
