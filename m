@@ -2,52 +2,54 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8E7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A7FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E62214E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96F62214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 14:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="my1sMwxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7E62214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6IOH2dm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F62214DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730924AbeKVBAB (ORCPT
+        id S1730945AbeKVBAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 20:00:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57944 "EHLO mail.kernel.org"
+        Wed, 21 Nov 2018 20:00:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728460AbeKVBAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 20:00:00 -0500
+        id S1728460AbeKVBAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 20:00:03 -0500
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E136214DA;
-        Wed, 21 Nov 2018 14:25:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47BCF2151B;
+        Wed, 21 Nov 2018 14:25:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542810322;
-        bh=LR6l3eUp04bEBIuYzU0kxrBxiIzMENBB/cyI8tAzMp4=;
+        s=default; t=1542810325;
+        bh=GtXdug3pQnrYceMXmt2IbdrEnk/ghR+XpZkhqEHu204=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=my1sMwxECYm6YHo6jODD7nUGnGBoeSVrKBtZPHJ2eKrHujGkPXJ8ctKlm0dAjON36
-         eq9DjM19kRwnK3gk/Xh0rC/aXEzRUeVGL3gmK233LtZM6Htba1U6eA8GpOQF40YuqE
-         ucTvgbKmFbfmi2rLNiEslAVdbMk8C9lPR313ZkP0=
+        b=R6IOH2dmjE/t8kd7mH+Z/mU9zf94WsWszmKvaFE8mmYIf9HkfEF/4nuIp2lSUvoxo
+         ttAnPnPYogf7Dcpu7vwM8ZgRpr2SqwFpxJUVgmNGl0/3eirBFjDDnz9xhZKm6BZafj
+         Qre6Y73hOk9PfEEbyRou7kG+PbaqfAftms/VVpPI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 3/7] perf tools: Restore proper cwd on return from mnt namespace
-Date:   Wed, 21 Nov 2018 11:25:01 -0300
-Message-Id: <20181121142505.27379-4-acme@kernel.org>
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 4/7] tools headers uapi: Synchronize i915_drm.h
+Date:   Wed, 21 Nov 2018 11:25:02 -0300
+Message-Id: <20181121142505.27379-5-acme@kernel.org>
 X-Mailer: git-send-email 2.14.5
 In-Reply-To: <20181121142505.27379-1-acme@kernel.org>
 References: <20181121142505.27379-1-acme@kernel.org>
@@ -56,126 +58,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-When reporting on 'record' server we try to retrieve/use the mnt
-namespace of the profiled tasks. We use following API with cookie to
-hold the return namespace, roughly:
+To pick up the changes in:
 
-  nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
-    setns(newns, 0);
-  ...
-  new ns related open..
-  ...
-  nsinfo__mountns_exit(struct nscookie *nc)
-    setns(nc->oldns)
+  900ccf30f9e1 ("drm/i915: Only force GGTT coherency w/a on required chipsets")
 
-Once finished we setns to old namespace, which also sets the current
-working directory (cwd) to "/", trashing the cwd we had.
+No changes are required in tools/ nor does anything gets automatically
+generated to be used in the 'perf trace' syscall arg beautifiers.
 
-This is mostly fine, because we use absolute paths almost everywhere,
-but it screws up 'perf diff':
+This silences this perf build warning:
 
-  # perf diff
-  failed to open perf.data: No such file or directory  (try 'perf record' first)
-  ...
+  Warning: Kernel ABI header at 'tools/include/uapi/drm/i915_drm.h' differs from latest version at 'include/uapi/drm/i915_drm.h'
+  diff -u tools/include/uapi/drm/i915_drm.h include/uapi/drm/i915_drm.h
 
-Adding the current working directory to be part of the cookie and
-restoring it in the nsinfo__mountns_exit call.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
-Link: http://lkml.kernel.org/r/20181101170001.30019-1-jolsa@kernel.org
-[ No need to check for NULL args for free(), use zfree() for struct members ]
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-t2vor2wegv41gt5n49095kly@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/namespaces.c | 17 +++++++++++++++--
- tools/perf/util/namespaces.h |  1 +
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ tools/include/uapi/drm/i915_drm.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-index cf8bd123cf73..aed170bd4384 100644
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -18,6 +18,7 @@
- #include <stdio.h>
- #include <string.h>
- #include <unistd.h>
-+#include <asm/bug.h>
+diff --git a/tools/include/uapi/drm/i915_drm.h b/tools/include/uapi/drm/i915_drm.h
+index 7f5634ce8e88..a4446f452040 100644
+--- a/tools/include/uapi/drm/i915_drm.h
++++ b/tools/include/uapi/drm/i915_drm.h
+@@ -529,6 +529,28 @@ typedef struct drm_i915_irq_wait {
+  */
+ #define I915_PARAM_CS_TIMESTAMP_FREQUENCY 51
  
- struct namespaces *namespaces__new(struct namespaces_event *event)
- {
-@@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	char curpath[PATH_MAX];
- 	int oldns = -1;
- 	int newns = -1;
-+	char *oldcwd = NULL;
- 
- 	if (nc == NULL)
- 		return;
-@@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
- 		return;
- 
-+	oldcwd = get_current_dir_name();
-+	if (!oldcwd)
-+		return;
++/*
++ * Once upon a time we supposed that writes through the GGTT would be
++ * immediately in physical memory (once flushed out of the CPU path). However,
++ * on a few different processors and chipsets, this is not necessarily the case
++ * as the writes appear to be buffered internally. Thus a read of the backing
++ * storage (physical memory) via a different path (with different physical tags
++ * to the indirect write via the GGTT) will see stale values from before
++ * the GGTT write. Inside the kernel, we can for the most part keep track of
++ * the different read/write domains in use (e.g. set-domain), but the assumption
++ * of coherency is baked into the ABI, hence reporting its true state in this
++ * parameter.
++ *
++ * Reports true when writes via mmap_gtt are immediately visible following an
++ * lfence to flush the WCB.
++ *
++ * Reports false when writes via mmap_gtt are indeterminately delayed in an in
++ * internal buffer and are _not_ immediately visible to third parties accessing
++ * directly via mmap_cpu/mmap_wc. Use of mmap_gtt as part of an IPC
++ * communications channel when reporting false is strongly disadvised.
++ */
++#define I915_PARAM_MMAP_GTT_COHERENT	52
 +
- 	oldns = open(curpath, O_RDONLY);
- 	if (oldns < 0)
--		return;
-+		goto errout;
- 
- 	newns = open(nsi->mntns_path, O_RDONLY);
- 	if (newns < 0)
-@@ -210,11 +216,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (setns(newns, CLONE_NEWNS) < 0)
- 		goto errout;
- 
-+	nc->oldcwd = oldcwd;
- 	nc->oldns = oldns;
- 	nc->newns = newns;
- 	return;
- 
- errout:
-+	free(oldcwd);
- 	if (oldns > -1)
- 		close(oldns);
- 	if (newns > -1)
-@@ -223,11 +231,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 
- void nsinfo__mountns_exit(struct nscookie *nc)
- {
--	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
-+	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
- 		return;
- 
- 	setns(nc->oldns, CLONE_NEWNS);
- 
-+	if (nc->oldcwd) {
-+		WARN_ON_ONCE(chdir(nc->oldcwd));
-+		zfree(&nc->oldcwd);
-+	}
-+
- 	if (nc->oldns > -1) {
- 		close(nc->oldns);
- 		nc->oldns = -1;
-diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-index cae1a9a39722..d5f46c09ea31 100644
---- a/tools/perf/util/namespaces.h
-+++ b/tools/perf/util/namespaces.h
-@@ -38,6 +38,7 @@ struct nsinfo {
- struct nscookie {
- 	int			oldns;
- 	int			newns;
-+	char			*oldcwd;
- };
- 
- int nsinfo__init(struct nsinfo *nsi);
+ typedef struct drm_i915_getparam {
+ 	__s32 param;
+ 	/*
 -- 
 2.14.5
 
