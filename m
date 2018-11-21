@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC29C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D454C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365BF20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 418D520989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:35:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="tD+zxbFT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 365BF20989
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="uPXTR+ST"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418D520989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbeKUUJU (ORCPT
+        id S1729656AbeKUUJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:09:20 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44616 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729564AbeKUUJT (ORCPT
+        Wed, 21 Nov 2018 15:09:24 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55397 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729623AbeKUUJW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:09:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so598257wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:35:34 -0800 (PST)
+        Wed, 21 Nov 2018 15:09:22 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y139so4743717wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 01:35:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=m3wZBxxhoW0hv41EZ6owq2gUmTW5TqD7gIWFHMpOd28=;
-        b=tD+zxbFToGlOLdHoW27X3+KKg8pw3Dj70R3J6fsC8gcyLnsQ2rPrbbIVA03OyVIemj
-         RsvmAQ+CkKsqkIm7kgSPdUlBpW/nuD04Y77Ac0zxiHPT/jt9BJ7gWkfS0lIuep8KXh2k
-         aydrh0KdhOpANN3IJGqD0cnex5YAABte+cWxQliXGMye5BwtQHdTFRD/OoYaE1tygo58
-         ojXlOAIifWCT9nXmVDeyFpxbqJnoCSE4op2wKhJdqWa+ClTQ7rfjX5j6knFgwuQ6biQS
-         YRDgTccpQhSRo5nLnqMshfFVPmntPfxQpQOylmQ+8QlWUTQFG1mwXSYC/3j9EORbfD/e
-         Ad2w==
+        bh=bXvrUaCBdXRbbMq56OlspLiruOVYgLTKU+757JvGY/Y=;
+        b=uPXTR+STqxwJMGYpDPDRUiAfVOY+2bUeXFfbslIMcgr1f9Kyf0jIO2hT8E/9IACLVi
+         lLk0X8Cfqbz/cWnOS9Hc3Ey6wpZpKtd5UBsDUXDOllZQlJrCbf0Qm0ZaGCRRvpsyuJ6S
+         3pXpwC91rjuMXO0HrEeUmxZg9p66fy0Np4B5AktfwQrGyNZ0/jIPdhrCzvIgf6+Xa4eI
+         EhYeEXKBrImBEzy4XBKGTzGntDT9dAD1wF1WatGdBUEqOmePy0ewuVv/am5TD7j30Vfm
+         EGKjP1DvvYON2dphvZhkIuxHAipYiR1cE+9a2fEcZMdE6/+AVR/jV3VohItd29tj49bv
+         O4xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=m3wZBxxhoW0hv41EZ6owq2gUmTW5TqD7gIWFHMpOd28=;
-        b=DqZpLyY49LDUBwJryqwxjvJtuqILstgRvgO6zHZJRnBcIA6x3L7DHdsQEDMDDstDuE
-         DGOp8Gdb/eRnPnbwvsDiDvIsb9zshM7lCYvRtxKjW3POY4cNCftov732jPznaL0kS7Cy
-         J/Bdm2P2LEpC4PYxPuk9otZaMjB6CA7SbelT/WnGs/ROaynd2JnAh6V0bBMUW6WVpuzK
-         gG9JuztU9VMlum8Sbvcdz+bZ1tDHabXptTDOq0rVbAOTIEubLICA7u4E6fTZO09pMAHe
-         bJCI85X2seE5zIWhrchpJZbuVbAHLGo02vPuRgKsA+IAFDPYMu01rQpe2EvmCIn+SqCb
-         2aKA==
-X-Gm-Message-State: AA+aEWaSHpMZV0CU2x78tPhrm/u8WBvHwoBLRKlwWocLov0WEzYeTh7b
-        hTbtvLNVngKghcqfYeYCxfDupg==
-X-Google-Smtp-Source: AFSGD/Usi2zU03IHHtEHxq7GgxxUQVl204cqWxbGPoygORrnCfXkwluTnCprAjuAUSsppxEkP3iTPA==
-X-Received: by 2002:a05:6000:51:: with SMTP id k17mr4752487wrx.259.1542792933703;
-        Wed, 21 Nov 2018 01:35:33 -0800 (PST)
+        bh=bXvrUaCBdXRbbMq56OlspLiruOVYgLTKU+757JvGY/Y=;
+        b=q52kW8qb/wLrthjnUxGaDHP7+N+tQAE6w0Ru0OpJKQOEjtAoZxWX2R97lrgQNKExC2
+         JlKngyJN305KqEfK9qj1Gz/jfSfPYZesMlOq7HzR4ZuWhmluDmckZIq71h+psPSlwHPl
+         /DCIggSnZ50i+AHR1BoQ1dMKCS9DJj+VVUf80jt8VLOv5X1zbS6UUbU+P2TCR6G/qUgo
+         5yn0JnqKqdZDoE6SmxuRKZaUd5e1xak+v666kWdFeli20NxIovItMhkmelAHw/zwFFdh
+         +BZCSDKzbnmziSXFNUyxP2ISQBLal9vzwqQTZXSLs1p5wXLB3qASubCDi1YjFWB5llxl
+         vEnQ==
+X-Gm-Message-State: AA+aEWac9jRpJ8iqHSIvKEmEhfmliSUPnh02nl+jQeyYz57nW/pq8MGT
+        N5o1BKt7jP7t0OT6DfA7067kKA==
+X-Google-Smtp-Source: AFSGD/USrGD/UxF5KngQm5Y5Z9/vKtMVcBlQCojsUJSNcGeM+y0KeQAaSW5lUKF3TyX2mfL071BstA==
+X-Received: by 2002:a1c:adc9:: with SMTP id w192-v6mr5228413wme.103.1542792937190;
+        Wed, 21 Nov 2018 01:35:37 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id o8sm10443785wrx.15.2018.11.21.01.35.32
+        by smtp.gmail.com with ESMTPSA id o8sm10443785wrx.15.2018.11.21.01.35.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 01:35:33 -0800 (PST)
+        Wed, 21 Nov 2018 01:35:36 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -69,9 +69,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         stable@vger.kernel.org
-Subject: [PATCH 03/12] ARM: davinci: dm646x: define gpio interrupts as separate resources
-Date:   Wed, 21 Nov 2018 10:35:14 +0100
-Message-Id: <20181121093523.12503-4-brgl@bgdev.pl>
+Subject: [PATCH 06/12] gpio: davinci: restore a way to manually specify the GPIO base
+Date:   Wed, 21 Nov 2018 10:35:17 +0100
+Message-Id: <20181121093523.12503-7-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121093523.12503-1-brgl@bgdev.pl>
 References: <20181121093523.12503-1-brgl@bgdev.pl>
@@ -84,41 +84,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Since commit eb3744a2dd01 ("gpio: davinci: Do not assume continuous
-IRQ numbering") the davinci GPIO driver fails to probe if we boot
-in legacy mode from any of the board files. Since the driver now
-expects every interrupt to be defined as a separate resource, split
-the definition of IRQ resources instead of having a single continuous
-interrupt range.
+Commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
+automatic base selection") broke the network support in legacy boot
+mode for da850-evm since we can no longer request the MDIO clock GPIO.
 
-Fixes: eb3744a2dd01 ("gpio: davinci: Do not assume continuous IRQ numbering")
+Other boards may be broken too, which I haven't tested.
+
+The problem is in the fact that most board files still use the legacy
+GPIO API where lines are requested by numbers rather than descriptors.
+
+While this should be fixed eventually, in order to unbreak the board
+for now - provide a way to manually specify the GPIO base in platform
+data.
+
+Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
 Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/mach-davinci/dm646x.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpio/gpio-davinci.c                | 2 +-
+ include/linux/platform_data/gpio-davinci.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 6bd2ed069d0d..d9b93e2806d2 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -442,6 +442,16 @@ static struct resource dm646x_gpio_resources[] = {
- 	},
- 	{	/* interrupt */
- 		.start	= IRQ_DM646X_GPIOBNK0,
-+		.end	= IRQ_DM646X_GPIOBNK0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_DM646X_GPIOBNK1,
-+		.end	= IRQ_DM646X_GPIOBNK1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.start	= IRQ_DM646X_GPIOBNK2,
- 		.end	= IRQ_DM646X_GPIOBNK2,
- 		.flags	= IORESOURCE_IRQ,
- 	},
+diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
+index 5c1564fcc24e..bdb29e51b417 100644
+--- a/drivers/gpio/gpio-davinci.c
++++ b/drivers/gpio/gpio-davinci.c
+@@ -258,7 +258,7 @@ static int davinci_gpio_probe(struct platform_device *pdev)
+ 	chips->chip.set = davinci_gpio_set;
+ 
+ 	chips->chip.ngpio = ngpio;
+-	chips->chip.base = -1;
++	chips->chip.base = pdata->no_auto_base ? pdata->base : -1;
+ 
+ #ifdef CONFIG_OF_GPIO
+ 	chips->chip.of_gpio_n_cells = 2;
+diff --git a/include/linux/platform_data/gpio-davinci.h b/include/linux/platform_data/gpio-davinci.h
+index f92a47e18034..a93841bfb9f7 100644
+--- a/include/linux/platform_data/gpio-davinci.h
++++ b/include/linux/platform_data/gpio-davinci.h
+@@ -17,6 +17,8 @@
+ #define __DAVINCI_GPIO_PLATFORM_H
+ 
+ struct davinci_gpio_platform_data {
++	bool	no_auto_base;
++	u32	base;
+ 	u32	ngpio;
+ 	u32	gpio_unbanked;
+ };
 -- 
 2.19.1
 
