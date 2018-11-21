@@ -2,283 +2,130 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E3BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFE4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96016214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96016214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DC3A2214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:06:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3SApyc6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC3A2214D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbeKVFmZ (ORCPT
+        id S2387623AbeKVFm3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:42:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38096 "EHLO mx1.redhat.com"
+        Thu, 22 Nov 2018 00:42:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730172AbeKVFmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:42:24 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731730AbeKVFm2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:42:28 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 85C4630DDBA1;
-        Wed, 21 Nov 2018 19:06:51 +0000 (UTC)
-Received: from [10.40.204.241] (ovpn-204-241.brq.redhat.com [10.40.204.241])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 185794530;
-        Wed, 21 Nov 2018 19:06:48 +0000 (UTC)
-Subject: Re: [PATCH] powerpc/numa: fix hot-added CPU on memory-less node
-To:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Satheesh Rajendran <satheera@in.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20181114170319.24828-1-lvivier@redhat.com>
- <20181115091948.GA14462@dhcp-9-193-110-205.in.ibm.com>
-From:   Laurent Vivier <lvivier@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=lvivier@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a0ceaa0f-2a05-0db6-2a94-45d150758c34@redhat.com>
-Date:   Wed, 21 Nov 2018 20:06:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DDC12151B;
+        Wed, 21 Nov 2018 19:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542827214;
+        bh=Ic38ja+f8gvPrz7tkv2kV/F2H9SmMW6A4ylFAICX/DM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M3SApyc6u482lPsAj/MbuNEsW1ttW42Qc07YgeQ48UBrOXsgKV1JXJ7vnjLbODnUs
+         H5DwMWWOjge9gitdo8f3obKGVbEFeWsh3+ngQET/G6gwkd4RxUHfD4OX0O17SyrTQd
+         IbEBQ8g6MNzVMFBQk3GP5V8HSh9jd6RP7/UPf/1k=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 17/42] tipc: fix link re-establish failure
+Date:   Wed, 21 Nov 2018 20:05:53 +0100
+Message-Id: <20181121183148.784210432@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181121183147.869199006@linuxfoundation.org>
+References: <20181121183147.869199006@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20181115091948.GA14462@dhcp-9-193-110-205.in.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 21 Nov 2018 19:06:51 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2018 10:19, Satheesh Rajendran wrote:
-> On Wed, Nov 14, 2018 at 06:03:19PM +0100, Laurent Vivier wrote:
->> Trying to hotplug a CPU on an empty NUMA node (without
->> memory or CPU) crashes the kernel when the CPU is onlined.
->>
->> During the onlining process, the kernel calls start_secondary()
->> that ends by calling
->> set_numa_mem(local_memory_node(numa_cpu_lookup_table[cpu]))
->> that relies on NODE_DATA(nid)->node_zonelists and in our case
->> NODE_DATA(nid) is NULL.
->>
->> To fix that, add the same checking as we already have in
->> find_and_online_cpu_nid(): if NODE_DATA() is NULL, use
->> the first online node.
->>
->> Bug: https://github.com/linuxppc/linux/issues/184
->> Fixes: ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6
->>        (powerpc/numa: Ensure nodes initialized for hotplug)
->> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
->> ---
->>  arch/powerpc/mm/numa.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
-> 
-> This patch causes regression for cold plug numa case(Case 1) and 
-> hotplug case + reboot(Case 2) with adding all vcpus into node 0.
-> 
-> 
-> Env: HW: Power8 Host.
-> Kernel: 4.20-rc2 + this patch
-> 
-> Case 1:
-> 1. boot a guest with 8 vcpus(all available), spreadout in 4 numa nodes.
-> <vcpu placement='static'>8</vcpu>
-> ...
->    <numa>
->       <cell id='0' cpus='0-1' memory='4194304' unit='KiB'/>
->       <cell id='1' cpus='2-3' memory='4194304' unit='KiB'/>
->       <cell id='2' cpus='4-5' memory='0' unit='KiB'/>
->       <cell id='3' cpus='6-7' memory='0' unit='KiB'/>
->     </numa>
-> 
-> 2. Check lscpu --- all vcpus are added to node0 --> NOK
-> 
-> # lscpu
-> Architecture:        ppc64le
-> Byte Order:          Little Endian
-> CPU(s):              8
-> On-line CPU(s) list: 0-7
-> Thread(s) per core:  1
-> Core(s) per socket:  8
-> Socket(s):           1
-> NUMA node(s):        4
-> Model:               2.1 (pvr 004b 0201)
-> Model name:          POWER8 (architected), altivec supported
-> Hypervisor vendor:   KVM
-> Virtualization type: para
-> L1d cache:           64K
-> L1i cache:           32K
-> NUMA node0 CPU(s):   0-7
-> NUMA node1 CPU(s):   
-> NUMA node2 CPU(s):   
-> NUMA node3 CPU(s): 
-> 
-> without this patch it was working fine.
-> # lscpu
-> Architecture:        ppc64le
-> Byte Order:          Little Endian
-> CPU(s):              8
-> On-line CPU(s) list: 0-7
-> Thread(s) per core:  1
-> Core(s) per socket:  8
-> Socket(s):           1
-> NUMA node(s):        4
-> Model:               2.1 (pvr 004b 0201)
-> Model name:          POWER8 (architected), altivec supported
-> Hypervisor vendor:   KVM
-> Virtualization type: para
-> L1d cache:           64K
-> L1i cache:           32K
-> NUMA node0 CPU(s):   0,1
-> NUMA node1 CPU(s):   2,3
-> NUMA node2 CPU(s):   4,5
-> NUMA node3 CPU(s):   6,7
-> 
-> 
-> Case 2:
-> 1. boot a guest with 8 vcpus(2 available, 6 possible), spreadout in 4 numa nodes.
-> <vcpu placement='static' current='2'>8</vcpu>
-> ...
->    <numa>
->       <cell id='0' cpus='0-1' memory='0' unit='KiB'/>
->       <cell id='1' cpus='2-3' memory='4194304' unit='KiB'/>
->       <cell id='2' cpus='4-5' memory='0' unit='KiB'/>
->       <cell id='3' cpus='6-7' memory='0' unit='KiB'/>
->     </numa>
-> 
-> 2. Hotplug all vcpus
-> # lscpu
-> Architecture:        ppc64le
-> Byte Order:          Little Endian
-> CPU(s):              8
-> On-line CPU(s) list: 0-7
-> Thread(s) per core:  1
-> Core(s) per socket:  8
-> Socket(s):           1
-> NUMA node(s):        2
-> Model:               2.1 (pvr 004b 0201)
-> Model name:          POWER8 (architected), altivec supported
-> Hypervisor vendor:   KVM
-> Virtualization type: para
-> L1d cache:           64K
-> L1i cache:           32K
-> NUMA node0 CPU(s):   0,1,4-7
-> NUMA node1 CPU(s):   2,3
-> 
-> 
-> 3. reboot the guest
-> # lscpu
-> Architecture:        ppc64le
-> Byte Order:          Little Endian
-> CPU(s):              8
-> On-line CPU(s) list: 0-7
-> Thread(s) per core:  1
-> Core(s) per socket:  8
-> Socket(s):           1
-> NUMA node(s):        4
-> Model:               2.1 (pvr 004b 0201)
-> Model name:          POWER8 (architected), altivec supported
-> Hypervisor vendor:   KVM
-> Virtualization type: para
-> L1d cache:           64K
-> L1i cache:           32K
-> NUMA node0 CPU(s):   0-7
-> NUMA node1 CPU(s):
-> NUMA node2 CPU(s):
-> NUMA node3 CPU(s):
-> 
-> 
-> Without this patch, Case 2 crashes the guest during hotplug, i.e
-> issue reported in https://github.com/linuxppc/linux/issues/184
-> 
-> Regards,
-> -Satheesh.
-> 
->>
->> diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
->> index 3a048e98a132..1b2d25a3c984 100644
->> --- a/arch/powerpc/mm/numa.c
->> +++ b/arch/powerpc/mm/numa.c
->> @@ -483,6 +483,15 @@ static int numa_setup_cpu(unsigned long lcpu)
->>  	if (nid < 0 || !node_possible(nid))
->>  		nid = first_online_node;
->>
->> +	if (NODE_DATA(nid) == NULL) {
->> +		/*
->> +		 * Default to using the nearest node that has memory installed.
->> +		 * Otherwise, it would be necessary to patch the kernel MM code
->> +		 * to deal with more memoryless-node error conditions.
->> +		 */
->> +		nid = first_online_node;
->> +	}
->> +
->>  	map_cpu_to_node(lcpu, nid);
->>  	of_node_put(cpu);
->>  out:
->> -- 
->> 2.17.2
->>
-> 
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-I have worked a while on this problem, and I don't see any easy fix for
-that. It seems kernel is not ready to online a memory-less/cpu-less node
-when someone hotplug a CPU in it. I think we have to fix several areas
-to be able to do that.
+------------------
 
-Perhaps someone from IBM could have a better view on what we need?
+From: Jon Maloy <donmalo99@gmail.com>
 
-Michael? Nathan?
+[ Upstream commit 7ab412d33b4c7ff3e0148d3db25dd861edd1283d ]
 
-Thanks,
-Laurent
+When a link failure is detected locally, the link is reset, the flag
+link->in_session is set to false, and a RESET_MSG with the 'stopping'
+bit set is sent to the peer.
+
+The purpose of this bit is to inform the peer that this endpoint just
+is going down, and that the peer should handle the reception of this
+particular RESET message as a local failure. This forces the peer to
+accept another RESET or ACTIVATE message from this endpoint before it
+can re-establish the link. This again is necessary to ensure that
+link session numbers are properly exchanged before the link comes up
+again.
+
+If a failure is detected locally at the same time at the peer endpoint
+this will do the same, which is also a correct behavior.
+
+However, when receiving such messages, the endpoints will not
+distinguish between 'stopping' RESETs and ordinary ones when it comes
+to updating session numbers. Both endpoints will copy the received
+session number and set their 'in_session' flags to true at the
+reception, while they are still expecting another RESET from the
+peer before they can go ahead and re-establish. This is contradictory,
+since, after applying the validation check referred to below, the
+'in_session' flag will cause rejection of all such messages, and the
+link will never come up again.
+
+We now fix this by not only handling received RESET/STOPPING messages
+as a local failure, but also by omitting to set a new session number
+and the 'in_session' flag in such cases.
+
+Fixes: 7ea817f4e832 ("tipc: check session number before accepting link protocol messages")
+Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/tipc/link.c |   11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+--- a/net/tipc/link.c
++++ b/net/tipc/link.c
+@@ -1594,14 +1594,17 @@ static int tipc_link_proto_rcv(struct ti
+ 		if (in_range(peers_prio, l->priority + 1, TIPC_MAX_LINK_PRI))
+ 			l->priority = peers_prio;
+ 
+-		/* ACTIVATE_MSG serves as PEER_RESET if link is already down */
+-		if (msg_peer_stopping(hdr))
++		/* If peer is going down we want full re-establish cycle */
++		if (msg_peer_stopping(hdr)) {
+ 			rc = tipc_link_fsm_evt(l, LINK_FAILURE_EVT);
+-		else if ((mtyp == RESET_MSG) || !link_is_up(l))
++			break;
++		}
++		/* ACTIVATE_MSG serves as PEER_RESET if link is already down */
++		if (mtyp == RESET_MSG || !link_is_up(l))
+ 			rc = tipc_link_fsm_evt(l, LINK_PEER_RESET_EVT);
+ 
+ 		/* ACTIVATE_MSG takes up link if it was already locally reset */
+-		if ((mtyp == ACTIVATE_MSG) && (l->state == LINK_ESTABLISHING))
++		if (mtyp == ACTIVATE_MSG && l->state == LINK_ESTABLISHING)
+ 			rc = TIPC_LINK_UP_EVT;
+ 
+ 		l->peer_session = msg_session(hdr);
+
+
