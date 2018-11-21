@@ -2,266 +2,187 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D51CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D449C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3156B214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4717D21731
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 18:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpLflJIb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3156B214D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="tBSaAqqX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4717D21731
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732934AbeKVEvA (ORCPT
+        id S1733034AbeKVEvZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:51:00 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38511 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729486AbeKVEvA (ORCPT
+        Wed, 21 Nov 2018 23:51:25 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46358 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732947AbeKVEvY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:51:00 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so5319619oii.5;
-        Wed, 21 Nov 2018 10:15:35 -0800 (PST)
+        Wed, 21 Nov 2018 23:51:24 -0500
+Received: by mail-io1-f65.google.com with SMTP id m1-v6so4719960ioc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=R9nfbY/ESfvzWeB9uFr/8JCTAmiNOUw29zPfPXua1+A=;
-        b=gpLflJIbeDBMNe7jbOvalUQ5zDuAtRKRKOOeu28Pius2gBHSRlIaJZeTU2EBjc0JRJ
-         uLHSNGxe2bk61VLmk0+zypSaOh6teqKHchLNc8JHn74RU20YFFhsnFsIKeMGoa8Haws0
-         z0f11boyZdg0O9Z6vXCSQFuYsnc3bKdowYlvlKxVOme2BdSWV6Ha2ZuFm9c0ZErslPqy
-         GNMmBNDElNgc4HXIJ/KefUm7S4vPsn6w94w+BIHmGYJwTZ/HHo87DAP91x/uIYvzByE8
-         zLlUmKvtYcELJGXcasc1hWyAF5Xwy0GUuNs5pOaiCq2qQxlQBKqBgV187ZxtvzMxtSVj
-         B79Q==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=GmIGIP5BMNNQIU9SWNX7PqO+dvzqp1ZHFbw42p5PecE=;
+        b=tBSaAqqX2CJoq08gjXFyy0rSOkk4HVt+BHen25kTBbaaGlg/G51ZwPFnv8JVwQ9Do0
+         a50+Ld9jEYgBHtFTP0AdfyKEfxeHLeGhadsxMbxzR+VcbGTHAodsjqY6HTHK8dH/ncGf
+         K839hVu/p/U88Lvp9EPY4avocC5zIoxNzV/UznyuNoJsRt5YhQiK9zRgI1fOw19RgB94
+         1YJK/Hr2HAZkqra5C0Cb0DUTqOsDEccY9RnWgj1dgkhXgQk2/nm0mSq2U1r6NYsIoUNI
+         46VYZHvz64DZHutqpwB23WHPcWCJOWhRvRO8gEHXzUit80167MkupGu2mGK63KgY+cAm
+         LqFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=R9nfbY/ESfvzWeB9uFr/8JCTAmiNOUw29zPfPXua1+A=;
-        b=iUDuNCU7OLzxS25jkboNTQ79D0ziyhTFl6T1Cj30JDQaW9VOwg3g2vudar5RxG2YFn
-         REOxR65G6spUgillKoXxn0z32wpIwdvFUdATWdiioYyRjsq6C8OijSuzFRy4ZF5BnBzz
-         i7puRAMDLxf/EjyK3365ke9LlCewxXQMDtLP7+NPuclcOjPyIJ6kTxiheXjEMkETZkub
-         XZEOcvNKjJwsGtm3O3e23/xgXE+H0nuMeuG+WGZythMwcW85f9LNZwvzsoHuJrQ7rSfN
-         AFhyP3pfKebH/7XzPemNd34mbDXi2nDYovEjScKIynXx6ADxyJnXBkDvrckWAo0WVeS+
-         uSwg==
-X-Gm-Message-State: AGRZ1gLjFXWoFxhL98NX30CstRrhkqFfx0aBOK3ijlbF4Nv7L+R7z69r
-        8YjaUHDRY14HcNcSxBwb7ub4OfZNszxgHMJ852h5qA==
-X-Google-Smtp-Source: AJdET5ebKZZWpn/3AOeoMCciPTFryiWIERDyAXroFA2Drsqef2ckVG3Yl0gAY0OwDWVBomkfG3SdrdY78sPC31WZdKc=
-X-Received: by 2002:a54:4d01:: with SMTP id v1mr4054138oix.246.1542824134055;
- Wed, 21 Nov 2018 10:15:34 -0800 (PST)
-MIME-Version: 1.0
-References: <20181109190327.23606-1-matwey@sai.msu.ru> <20181109190327.23606-3-matwey@sai.msu.ru>
-In-Reply-To: <20181109190327.23606-3-matwey@sai.msu.ru>
-From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Date:   Wed, 21 Nov 2018 21:15:21 +0300
-Message-ID: <CAJs94Eb6Ev5O+Q_THYruxozSW2sTjWCrHhU8wciFNgYx7oCRuQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=GmIGIP5BMNNQIU9SWNX7PqO+dvzqp1ZHFbw42p5PecE=;
+        b=K3mnK12K1uC02fWAIRwOfGqsDXexW9fo7Q8muzuFT01mn5JM5GVOPdXe9o4jHk8rSn
+         xBmoJL55AsScq1aYSOfGc+dN9F5ydmxs6saWN/mvR2C9+h0Dq67vq/uLK7HRTUuwRj+1
+         4JjA0oPo7tZ35EOJYG2gGFwWCKTm1r/2gGzund8VKzvfANBX/TwuL3QXLBdwwT9FJ1Ay
+         T/LMlK2gNhf225BzO3K/oQH8l7Ed5+ZcNZNOfS2kCjTDld5y6xXpywC8D7p/A4wU33Op
+         0vLEIcTF4fQHYuRne4iXmR8TVdithnKHYF3I8d93MrzLKYoRhMOxJmtXVLEx8Cbt/E5G
+         aYYw==
+X-Gm-Message-State: AA+aEWaHbj8ghqZe9mMZp0zobQYRtunkaniHpQ6GX6zMWSdPOwd8X7r2
+        8AUGfSAgVtoVaUr+boj9BQd8xA==
+X-Google-Smtp-Source: AFSGD/UPRYnitpcH6b5hqb9s1xNfYVbQJgUW7ZyCZpur77D9ucZuaVh/On2qHQtvdjbvqMW7M07Duw==
+X-Received: by 2002:a6b:c402:: with SMTP id y2mr6080745ioa.77.1542824159250;
+        Wed, 21 Nov 2018 10:15:59 -0800 (PST)
+Received: from ?IPv6:2600:100e:b040:b126:ec78:48dd:44e2:e165? ([2600:100e:b040:b126:ec78:48dd:44e2:e165])
+        by smtp.gmail.com with ESMTPSA id c187-v6sm608844itc.2.2018.11.21.10.15.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Nov 2018 10:15:57 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+Date:   Wed, 21 Nov 2018 11:15:56 -0700
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <3BB9DE07-E0AE-43E2-99F1-E4AA774CD462@amacapital.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com> <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com> <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com> <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com> <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com> <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com> <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com> <1166e55c-0c06-195c-a501-383b4055ea46@gmail.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=BF=D1=82, 9 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 22:03, Matwey=
- V. Kornilov <matwey@sai.msu.ru>:
->
-> DMA cocherency slows the transfer down on systems without hardware
-> coherent DMA.
-> Instead we use noncocherent DMA memory and explicit sync at data receive
-> handler.
->
-> Based on previous commit the following performance benchmarks have been
-> carried out. Average memcpy() data transfer rate (rate) and handler
-> completion time (time) have been measured when running video stream at
-> 640x480 resolution at 10fps.
->
-> x86_64 based system (Intel Core i5-3470). This platform has hardware
-> coherent DMA support and proposed change doesn't make big difference here=
-.
->
->  * kmalloc:            rate =3D (2.0 +- 0.4) GBps
->                        time =3D (5.0 +- 3.0) usec
->  * usb_alloc_coherent: rate =3D (3.4 +- 1.2) GBps
->                        time =3D (3.5 +- 3.0) usec
->
-> We see that the measurements agree within error ranges in this case.
-> So theoretically predicted performance downgrade cannot be reliably
-> measured here.
->
-> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
-> has no hardware coherent DMA support. DMA coherence is implemented via
-> disabled page caching that slows down memcpy() due to memory controller
-> behaviour.
->
->  * kmalloc:            rate =3D  ( 94 +- 4) MBps
->                        time =3D  (101 +- 4) usec
->  * usb_alloc_coherent: rate =3D (28.1 +- 0.1) MBps
->                        time =3D  (341 +- 2) usec
->
-> Note, that quantative difference leads (this commit leads to 3.3 times
-> acceleration) to qualitative behavior change in this case. As it was
-> stated before, the video stream cannot be successfully received at AM335x
-> platforms with MUSB based USB host controller due to performance issues
-> [1].
->
-> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
->
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
 
-Ping
 
-> ---
->  drivers/media/usb/pwc/pwc-if.c | 62 +++++++++++++++++++++++++++++++++---=
-------
->  1 file changed, 49 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-i=
-f.c
-> index 53c111bd5a22..a81fb319b339 100644
-> --- a/drivers/media/usb/pwc/pwc-if.c
-> +++ b/drivers/media/usb/pwc/pwc-if.c
-> @@ -159,6 +159,32 @@ static const struct video_device pwc_template =3D {
->  /***********************************************************************=
-****/
->  /* Private functions */
->
-> +static void *pwc_alloc_urb_buffer(struct device *dev,
-> +                                 size_t size, dma_addr_t *dma_handle)
-> +{
-> +       void *buffer =3D kmalloc(size, GFP_KERNEL);
-> +
-> +       if (!buffer)
-> +               return NULL;
-> +
-> +       *dma_handle =3D dma_map_single(dev, buffer, size, DMA_FROM_DEVICE=
-);
-> +       if (dma_mapping_error(dev, *dma_handle)) {
-> +               kfree(buffer);
-> +               return NULL;
-> +       }
-> +
-> +       return buffer;
-> +}
-> +
-> +static void pwc_free_urb_buffer(struct device *dev,
-> +                               size_t size,
-> +                               void *buffer,
-> +                               dma_addr_t dma_handle)
-> +{
-> +       dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
-> +       kfree(buffer);
-> +}
-> +
->  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pd=
-ev)
->  {
->         unsigned long flags =3D 0;
-> @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
->         /* Reset ISOC error counter. We did get here, after all. */
->         pdev->visoc_errors =3D 0;
->
-> +       dma_sync_single_for_cpu(&urb->dev->dev,
-> +                               urb->transfer_dma,
-> +                               urb->transfer_buffer_length,
-> +                               DMA_FROM_DEVICE);
-> +
->         /* vsync: 0 =3D don't copy data
->                   1 =3D sync-hunt
->                   2 =3D synched
-> @@ -352,6 +383,11 @@ static void pwc_isoc_handler(struct urb *urb)
->                 pdev->vlast_packet_size =3D flen;
->         }
->
-> +       dma_sync_single_for_device(&urb->dev->dev,
-> +                                  urb->transfer_dma,
-> +                                  urb->transfer_buffer_length,
-> +                                  DMA_FROM_DEVICE);
-> +
->  handler_end:
->         trace_pwc_handler_exit(urb, pdev);
->
-> @@ -428,16 +464,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
->                 urb->dev =3D udev;
->                 urb->pipe =3D usb_rcvisocpipe(udev, pdev->vendpoint);
->                 urb->transfer_flags =3D URB_ISO_ASAP | URB_NO_TRANSFER_DM=
-A_MAP;
-> -               urb->transfer_buffer =3D usb_alloc_coherent(udev,
-> -                                                         ISO_BUFFER_SIZE=
-,
-> -                                                         GFP_KERNEL,
-> -                                                         &urb->transfer_=
-dma);
-> +               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
-> +               urb->transfer_buffer =3D pwc_alloc_urb_buffer(&udev->dev,
-> +                                                           urb->transfer=
-_buffer_length,
-> +                                                           &urb->transfe=
-r_dma);
->                 if (urb->transfer_buffer =3D=3D NULL) {
->                         PWC_ERROR("Failed to allocate urb buffer %d\n", i=
-);
->                         pwc_isoc_cleanup(pdev);
->                         return -ENOMEM;
->                 }
-> -               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
->                 urb->complete =3D pwc_isoc_handler;
->                 urb->context =3D pdev;
->                 urb->start_frame =3D 0;
-> @@ -488,15 +523,16 @@ static void pwc_iso_free(struct pwc_device *pdev)
->
->         /* Freeing ISOC buffers one by one */
->         for (i =3D 0; i < MAX_ISO_BUFS; i++) {
-> -               if (pdev->urbs[i]) {
-> +               struct urb *urb =3D pdev->urbs[i];
-> +
-> +               if (urb) {
->                         PWC_DEBUG_MEMORY("Freeing URB\n");
-> -                       if (pdev->urbs[i]->transfer_buffer) {
-> -                               usb_free_coherent(pdev->udev,
-> -                                       pdev->urbs[i]->transfer_buffer_le=
-ngth,
-> -                                       pdev->urbs[i]->transfer_buffer,
-> -                                       pdev->urbs[i]->transfer_dma);
-> -                       }
-> -                       usb_free_urb(pdev->urbs[i]);
-> +                       if (urb->transfer_buffer)
-> +                               pwc_free_urb_buffer(&urb->dev->dev,
-> +                                                   urb->transfer_buffer_=
-length,
-> +                                                   urb->transfer_buffer,
-> +                                                   urb->transfer_dma);
-> +                       usb_free_urb(urb);
->                         pdev->urbs[i] =3D NULL;
->                 }
->         }
+> On Nov 21, 2018, at 9:34 AM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>=20
+> Hi,
+>=20
+>>> On 13/11/2018 20:36, Andy Lutomirski wrote:
+>>> On Tue, Nov 13, 2018 at 10:33 AM Igor Stoppa <igor.stoppa@huawei.com> wr=
+ote:
+>>>=20
+>>> I forgot one sentence :-(
+>>>=20
+>>>>> On 13/11/2018 20:31, Igor Stoppa wrote:
+>>>>> On 13/11/2018 19:47, Andy Lutomirski wrote:
+>>>>>=20
+>>>>> For general rare-writish stuff, I don't think we want IRQs running
+>>>>> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
+>>>>=20
+>>>> Why would these be less sensitive?
+>>>>=20
+>>>> But I see a big difference between my initial implementation and this o=
+ne.
+>>>>=20
+>>>> In my case, by using a shared mapping, visible to all cores, freezing
+>>>> the core that is performing the write would have exposed the writable
+>>>> mapping to a potential attack run from another core.
+>>>>=20
+>>>> If the mapping is private to the core performing the write, even if it
+>>>> is frozen, it's much harder to figure out what it had mapped and where,=
+
+>>>> from another core.
+>>>>=20
+>>>> To access that mapping, the attack should be performed from the ISR, I
+>>>> think.
+>>>=20
+>>> Unless the secondary mapping is also available to other cores, through
+>>> the shared mm_struct ?
+>> I don't think this matters much.  The other cores will only be able to
+>> use that mapping when they're doing a rare write.
+>=20
+>=20
+> I'm still mulling over this.
+> There might be other reasons for replicating the mm_struct.
+>=20
+> If I understand correctly how the text patching works, it happens sequenti=
+ally, because of the text_mutex used by arch_jump_label_transform
+>=20
+> Which might be fine for this specific case, but I think I shouldn't introd=
+uce a global mutex, when it comes to data.
+> Most likely, if two or more cores want to perform a write rare operation, t=
+here is no correlation between them, they could proceed in parallel. And if t=
+here really is, then the user of the API should introduce own locking, for t=
+hat specific case.
+
+Text patching uses the same VA for different physical addresses, so it need a=
+ mutex to avoid conflicts. I think that, for rare writes, you should just ma=
+p each rare-writable address at a *different* VA.  You=E2=80=99ll still need=
+ a mutex (mmap_sem) to synchronize allocation and freeing of rare-writable r=
+anges, but that shouldn=E2=80=99t have much contention.
+
+>=20
+> A bit unrelated question, related to text patching: I see that each patchi=
+ng operation is validated, but wouldn't it be more robust to first validate =
+ all of then, and only after they are all found to be compliant, to proceed w=
+ith the actual modifications?
+>=20
+> And about the actual implementation of the write rare for the statically a=
+llocated variables, is it expected that I use Nadav's function?
+> Or that I refactor the code?
+
+I would either refactor it or create a new function to handle the write. The=
+ main thing that Nadav is adding that I think you=E2=80=99ll want to use is t=
+he infrastructure for temporarily switching mms from a non-kernel-thread con=
+text.
+
+>=20
+> The name, referring to text would definitely not be ok for data.
+> And I would have to also generalize it, to deal with larger amounts of dat=
+a.
+>=20
+> I would find it easier, as first cut, to replicate its behavior and refact=
+or only later, once it has stabilized and possibly Nadav's patches have been=
+ acked.
+>=20
+
+Sounds reasonable. You=E2=80=99ll still want Nadav=E2=80=99s code for settin=
+g up the mm in the first place, though.
+
 > --
-> 2.16.4
->
-
-
---=20
-With best regards,
-Matwey V. Kornilov
+> igor
