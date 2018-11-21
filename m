@@ -2,178 +2,183 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD80C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1410EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99EBC2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:58:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bcjpE7Il"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99EBC2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id CFE20206BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 22:58:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFE20206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390398AbeKVJe3 (ORCPT
+        id S2390406AbeKVJfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 04:34:29 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33266 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387670AbeKVJe3 (ORCPT
+        Thu, 22 Nov 2018 04:35:21 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45725 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387668AbeKVJfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 04:34:29 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so7516195plo.0;
-        Wed, 21 Nov 2018 14:58:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=EylomEtdWUd082R3jxytnlAYpt4BAW0GmgTIx2O+agI=;
-        b=bcjpE7Ilr5Kx4GXH6xbVfThQu8ldFDH0a8W4YIkFdP83VFSuiRG7zQPu9GNCpC+kgs
-         W0gKlIgQB65sAg1eOquWogyHzNiyWM6GHLBIxgpsPumjr5WDxkgr8vsZVb5cPfcrPSJ9
-         CZZxtXk7/Rw8wCCw0lAyszxRjx7q/jucY2Tqz1c1bu/KhRqa5N39br+gfJJw4DQddFGj
-         W3zTxWrniXBx4wliZLrzElW2GVfAVjydxx6k6kcAJI/Tlz4Iio+DYAmPCG4kFEPK+Jb8
-         pNG4l1mQPXFt4broKXMgmlNpE4yKWahlIY4MXHufD1TqGajLfbfDl9VktwKQKg59CSex
-         D99w==
+        Thu, 22 Nov 2018 04:35:21 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so7497755plm.12;
+        Wed, 21 Nov 2018 14:58:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=EylomEtdWUd082R3jxytnlAYpt4BAW0GmgTIx2O+agI=;
-        b=idrMZ8u7wZhbpx0fphRD+2nkLZF/NiUHF6glCjv8XmDzVaZ9rqidCFhKfGgeO68l4J
-         bv0w4bB6Vu5uw0IkNfTsKJiWlF22tu4w7JUS52FW7k9mDsiC6tPkQ7PZmBArGKC6ciM2
-         wXriGNth1D5XmALgNI6pF4FixFkmGZ2XjmEBTG30YtBcUoNht5Dp3MBYlJSSLzYhMp2V
-         npPv7nnrwZi44UMF8ZzedSsbSzMahz7NDuAd8JRGUmKVtME8coZ1+bYVhY5eM4MUbGZv
-         7I06m2hBF+bS8noxPCcDdyjh2GaEa+qSnrn3PUii12izIcBQBzIPDKNO1s4fJW4oR3vK
-         TbEw==
-X-Gm-Message-State: AGRZ1gIornM9fzFp3t0xo2X05A4YSy0vV9resNwfAdrQKFHH5/9mX+Wb
-        1R6dhGWSRmjZcU5Y6ks8tkE=
-X-Google-Smtp-Source: AFSGD/U6BaP6ExXH4AyoO1FxzRIlukmL1SaLyVQ9IEXqrSu1BTcEyFNZ0TltirmOsbsGBHapUWRjLw==
-X-Received: by 2002:a63:fd53:: with SMTP id m19mr7844622pgj.340.1542841081100;
-        Wed, 21 Nov 2018 14:58:01 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 64sm21346794pff.101.2018.11.21.14.57.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 14:58:00 -0800 (PST)
-Date:   Wed, 21 Nov 2018 14:57:58 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     =?iso-8859-1?B?QnL8bnMs?= Stefan <Stefan.Bruens@rwth-aachen.de>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [RFC][PATCH] hwmon: (ina2xx) Improve current and power reading
- precision
-Message-ID: <20181121225758.GA1421@roeck-us.net>
-References: <20181121012629.5432-1-nicoleotsuka@gmail.com>
- <2863036.QIPGp1Eqjm@sbruens-linux.lcs.intern>
- <20181121194051.GA8902@Asurada-Nvidia.nvidia.com>
- <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W3SLUllYhiDSE3+aA/Sq9gVZvgBvI7jP88VskiGrhPI=;
+        b=JU7GpA7ebAloU5SXY3cuvXVEuEX8K7rHAcgnhEcAgS5CEb+DinE8IUMRKKtdzr1H03
+         SOCGHQPITSKBmCdza5QZ69HhwFVzpE8YBrqvLFEv4imiECbGkrfhtFtcOIKb3/dTRSVw
+         GAE47jpI4Tq7xO/l21wOfBJ/NY1yKhn0zcfO3QZa7E9cwOloIxVvm0cqgrT1a9FoVM6P
+         qgXK/59htbFnZWVgxDPwOsw3hTIdqD8bPTcNZFKP45gvoqUIxry+0o6TY7QxtAANRP1G
+         iSL0Nke2COVhpzElIBlXXu49j1MbauprjmAPJ+ph0AG90dVhh2fzvgVLsDM/b9t5Ui6u
+         wa+w==
+X-Gm-Message-State: AA+aEWa0xhUhM6Om4zu17i30wlM9UjBZZJzIIOJbo1qW+pHmuT6pDNWr
+        iYN+Q+r9XKMygFT1KRjQh8s=
+X-Google-Smtp-Source: AFSGD/W7wZ2oGkznw7YFCF2jIl0AdzxDoY7kcskakt5GHQw+CENHDL5IQ/3JhpH8wDqOyKL1UlCkAQ==
+X-Received: by 2002:a63:a84a:: with SMTP id i10mr7838623pgp.263.1542841133145;
+        Wed, 21 Nov 2018 14:58:53 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id h124sm21810539pfg.143.2018.11.21.14.58.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Nov 2018 14:58:51 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 21 Nov 2018 14:58:49 -0800
+Date:   Wed, 21 Nov 2018 14:58:49 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Sam Ravnborg <sam@ravnborg.org>, Petr Vorel <pvorel@suse.cz>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Valentin Rothberg <valentinrothberg@gmail.com>,
+        Vegard Nossum <vegard.nossum@oracle.com>, nbd@nbd.name,
+        kconfig-sat@googlegroups.com
+Subject: Re: [kconfig-sat] Re: [ANN] init-kconfig - easy way to embrace
+ Linux's kconfig
+Message-ID: <20181121225849.GC4922@garbanzo.do-not-panic.com>
+References: <20181004200249.GL5238@garbanzo.do-not-panic.com>
+ <CAK7LNAT3NQnTtdxyz79jgoQHoUS0TxkP99yuoY-N5yALLnFO1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1717545.GXSegKtrMu@sbruens-linux.lcs.intern>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAK7LNAT3NQnTtdxyz79jgoQHoUS0TxkP99yuoY-N5yALLnFO1A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 10:16:09PM +0000, Brüns, Stefan wrote:
-> On Mittwoch, 21. November 2018 20:40:52 CET Nicolin Chen wrote:
-> > (Removing "m.purski@samsung.com" since it's not reachable any more)
-> > 
-> > Hi Stefan,
-> > 
-> > Thank you for the comments.
-> > 
-> > On Wed, Nov 21, 2018 at 04:13:01PM +0000, Brüns, Stefan wrote:
-> > > > === Problem ===
-> > > > Both methods simplify software routine by fixing one factor, which
-> > > > sacrifices the precision of the hardware measurement results.
-> > > > 
-> > > > Using ina226 for example, with method A, the current scale was 1mA
-> > > > and the power scale was 25mA.
-> > > > 
-> > > > With method B, calibration value is fixed at 2048 so the precision
-> > > > is decided by shunt resistor value. It sounds reasonable since the
-> > > > hardware engineers can use a larger shunt resistor when they need
-> > > > higher resolution. However, they often concern power burning across
-> > > > the resistor as well, so the resistor usually won't be so large: a
-> > > > typical value 1000 micro-ohms, which results in a current scale at
-> > > > 2.5 mA and a power sacle at 62.5 mW.
-> > > 
-> > > Power loss surely is a concern, but figures should be kept reasonable.
-> > > 
-> > > 1. You mention 1.8V bus voltage, and currents in the 30mA range. Using the
-> > > 1mOhm current shunt:
-> > > 
-> > > U_S = R_S * I_S 1e-3 Ohm * 30e-3 A = 30e-6 V  (30uV)
-> > > P_S = U_S * I_S = 30e-6V * 30e-3 A = 900e-9W = 0.9 uW
-> > > 
-> > > INA219 Power Supply (Datasheet)
-> > > Min operating Voltage: 3V
-> > > Quiescent Current: 0.7mA
-> > > -> Min power: 2.1mW
-> > > 
-> > > So the INA219 alone uses 2.1mW, 1000 times more than the shunt.
-> > 
-> > Chip can enter power-down or one-shot mode. Though this upstream
-> > driver doesn't have these two mode supports yet, I am working on
-> > it so they'll be added.
+On Fri, Oct 05, 2018 at 07:48:34PM +0900, Masahiro Yamada wrote:
+> Hi,
 > 
-> The power-down current is 6uA, so even if you never leave power-down mode, you 
-> are down to 18uW. But on top of that, you need power for the conversion, and 
-> you need power for communication.
 > 
-> > > Another concern may be voltage drop over the shunt, but for this case you
-> > > have a nominal voltage of 1.8V, so 30uV are 0.001%.
-> > > 
-> > > > When measuring a 1.8v voltage running a small current (e.g. 33 mA),
-> > > > the power value (that's supposed to be 59.4 mW) becomes inaccurate
-> > > > due to the larger scale (25mA for method A; 62.5 mA for method B).
-> > 
-> > Just found out that I have typos here: 25mW and 62.5mW.
-> > 
-> > > Another look into the datasheet reveals, even at full gain (PGA=1), the
-> > > LSB is 40mV / 2^12 = 40mV / 4096 ~ 10uV. So when the current ADC reads
-> > > out as 3*LSB, this anything between 25mA and 35mA. This is the best case
-> > > figure.
-> > Current read doesn't get affected a lot actually, since hwmon ABI
-> > also reports current value in unit mA. However, the power read is
-> > the matter here. With a 62.5mW power_lsb, power results are kinda
-> > useless on my system.
 > 
-> The reported current does not matter here, actually. Internally, the ADC value 
-> will have an uncertainty of 10mA (at PGA=1). At 1.8V, your uncertainty is 
-> 18mW. And thats *only* the quantization noise. It wont get better than that.
+> On Fri, Oct 5, 2018 at 5:03 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > Every now and then a project is born, and they decide to use Linux's
+> > kconfig to enable configuration of their project. As it stands we *know*
+> > kconfig is now used in at least over 12 different projects [0]. I myself
+> > added kconfig to one as well years ago. Even research reveals that
+> > kconfig has become one of the leading industrial variability modeling
+> > languages [1] [2].
+> >
+> > What is often difficult to do though is to start off using kconfig and
+> > integrating it into a project. Or updating / syncing to the latest
+> > kconfig from upstream Linux.
+> >
+> > I had yet another need to use kconfig for another small project so
+> > decided to make a clean template others can use and help keep it in sync.
+> > This is a passive fork which aims to keep in sync with the Linux
+> > kernel's latest kconfig to make it easier to keep up to date and to
+> > enable new projects to use and embrace kconfig on their own.  The goal
+> > is *not* to fork kconfig and evolve it separately, but rather keep in
+> > sync with the evolution of kconfig on Linux to make it easier for
+> > projects to use kconfig and also update their own kconfig when needed.
 > 
-> Also note, you are apparently using the ina2xx hwmon driver - I strongly 
-> advise against it, you should either use the ina2xx driver from the IIO 
-> subsystem directly, or use the IIO driver via iio-hwmon.
 > 
-> 1. INA219 is not properly supported by the hwmon driver, see the changes in 
-> the IIO driver.
-> 2. The IIO driver has many more features:
->   - setting the PGA (INA219)
->   - setting the bus voltage range (INA219)
->   - selecting the conversion time (INA219/226)
-> 
+> Syncing kconfig files is easy
 
-I agree. Not because of the functionality per se ("not properly supported, see
-changes in IIO driver" is a bit vague given the number of changes there),
-but you don't really use both ina3221 and ina219 as hwmon device. Afer all,
-one-shot mode effectively turns off limit tracking.
+I disagree. Even as someone who has done this in the past and is an
+experience developer it hasn't been a swift process by any mean.
 
-Ultimately it would be nice if iio would support limits and alarms, and iio-hwmon
-could read and report those. This would enable us to drop the iio-hwmon driver.
+> since the files are collected in the single place, scripts/kconfig/.
 
-Guenter
+That helps, but isn't enough.
+
+> It is true you need some efforts to introduce Kconfig in your project,
+> but once established, it is just a matter of copying files
+> under scripts/kconfig.
+
+Nope, there is other random subtle work needed, a few of things which
+I noted earlier before I forgot what things I had to do / change manually
+which we not obvious.
+
+> Copying stuff directly from Linux would be as easy as
+> doing so from your init-kconfig.
+
+Clearly I disagree, the idea with init-kconfig is the process of
+upkeeping is done centrally, and so users really do just take that
+and go.
+
+If we want to make the process smoother upstream, then great.
+
+> > This may also be useful if folks want to test R&D code on a smaller
+> > compartamentalized codebase.
+> >
+> > If you find this useful and you'd like to help keep it in sync, send
+> > patches my way as the kernel's kconfig evolves. The code is up on
+> > gitlab [3].
+> >
+> > Do we want to document this option on Linux in case folks want to try
+> > and embrace kconfig on their own for other projects?
+> >
+> > [0] http://www.eng.uwaterloo.ca/~shshe/kconfig_semantics.pdf
+> > [1] http://gsd.uwaterloo.ca/sites/default/files/vm-2013-berger.pdf
+> > [2] http://gsd.uwaterloo.ca/sites/default/files/ase241-berger_0.pdf
+> > [3] https://gitlab.com/mcgrof/init-kconfig
+> >
+> >   Luis
+> 
+> 
+> Looks like init-kconfig is trying to build some objects as demo.
+> 
+> obj-y = main.o
+> obj-$(CONFIG_FOO) += foo.o
+> obj-$(CONFIG_BAR) += bar.o
+> obj-$(CONFIG_BAZ) += baz.o
+> obj-$(CONFIG_ALPHA) += alpha/
+
+Indeed, we are spoiled with our build process. Mimicing this was
+actually a separate effort, and so I didn't match on par, but just
+enough to demo a basic use.
+
+> FWIW, this is something I played with some time ago.
+> 
+> Kbuild Skeleton
+> https://github.com/masahir0y/kbuild_skeleton
+> 
+> It consists of some core Makefiles and Kconfig.
+> 
+> 
+> From the time-stamp, it is already 6 years too old.
+> 
+> I am not sure if it is useful for people,
+> if so, it is pretty easy to sync up with the latest Linux.
+
+Groovy, indeed this is useful thanks. I still think this process can
+be improved to allow perhaps both kconfig and its object makefiles magic
+& dependency tracking thing be easily sharable. I however understand if
+we don't want that to be a goal, there would have to be obvious gains
+for it. I don't think we're there yet. Right now it would just make it
+easier for enhancements to trickle out to the community and/or fixes to
+bubble up, however I don't expect many people doing much kconfig hacking
+outside of Linux. Perhaps the best advantage I can think for this as a
+goal for us right now is to enable researchers with sandboxes, proof of
+concepts, so that we can eventually get the fruits of such work.
+
+  Luis
