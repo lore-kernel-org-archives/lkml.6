@@ -7,45 +7,51 @@ X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F93C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD293214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE883214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:10:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRAmT++T"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD293214D9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8dVftTr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE883214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388671AbeKVFpo (ORCPT
+        id S2388686AbeKVFps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40672 "EHLO mail.kernel.org"
+        Thu, 22 Nov 2018 00:45:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729195AbeKVFpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:45:44 -0500
+        id S1729195AbeKVFpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:45:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C6AC2151B;
-        Wed, 21 Nov 2018 19:10:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 732C221527;
+        Wed, 21 Nov 2018 19:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542827411;
-        bh=Vzi33WsWqQZMBafQgO+hlLFgPyTJHP3c4DfrnkbCO9U=;
+        s=default; t=1542827414;
+        bh=ta4QeKfdzuzsp83dCfJi9Nzby8TRSsnnuGpCfa6LW/Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRAmT++TUYI7Wy6hwXQGBkjlOYPzoOj0PmPD357I5+DXDEJoKFD6tmPSTNVzaF98I
-         RWJXIIipOfSwP1y1E9+biX8mHQB5Se9H2WH4JbQ51rJMilF8zJGTuNbUMcGB+zMFT2
-         ua++d0S3QskgNhtZAOJMnfJTdDKW3zfVy6eFQQqc=
+        b=k8dVftTrp6RnYwFy+rRs3zaqjt83uW0BGmjZZ2BXuoXxoiWHdBBUI7YMX18DtCGz7
+         fD3zYYy9EuNiPa/VkHCRYpeebFsKTuYK+KxZV63kGXWFyXONBIXRRV/2n79SQ97c2D
+         ggt0JHvcJEJKaa3maVhUzqbBBSvo4MwFdbh6CRDY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 02/59] ibmvnic: fix accelerated VLAN handling
-Date:   Wed, 21 Nov 2018 20:06:17 +0100
-Message-Id: <20181121183508.356241777@linuxfoundation.org>
+        stable@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Greg Hackmann <ghackmann@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Davidson <md@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, grundler@chromium.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: [PATCH 4.9 20/59] x86/kbuild: Use cc-option to enable -falign-{jumps/loops}
+Date:   Wed, 21 Nov 2018 20:06:35 +0100
+Message-Id: <20181121183509.047028042@linuxfoundation.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
 References: <20181121183508.262873520@linuxfoundation.org>
@@ -63,29 +69,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Michał Mirosław" <mirq-linux@rere.qmqm.pl>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit e84b47941e15e6666afb8ee8b21d1c3fc1a013af ]
+commit 2c4fd1ac3ff167c91272dc43c7bfd2269ef61557 upstream.
 
-Don't request tag insertion when it isn't present in outgoing skb.
+clang currently does not support these optimizations, only enable them
+when they are available.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Michael Davidson <md@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: grundler@chromium.org
+Link: http://lkml.kernel.org/r/20170413172609.118122-1-mka@chromium.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/Makefile |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -786,7 +786,7 @@ static int ibmvnic_xmit(struct sk_buff *
- 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
- 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -88,10 +88,10 @@ else
+         KBUILD_CFLAGS += -m64
  
--	if (adapter->vlan_header_insertion) {
-+	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
- 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
- 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
- 	}
+         # Align jump targets to 1 byte, not the default 16 bytes:
+-        KBUILD_CFLAGS += -falign-jumps=1
++        KBUILD_CFLAGS += $(call cc-option,-falign-jumps=1)
+ 
+         # Pack loops tightly as well:
+-        KBUILD_CFLAGS += -falign-loops=1
++        KBUILD_CFLAGS += $(call cc-option,-falign-loops=1)
+ 
+         # Don't autogenerate traditional x87 instructions
+         KBUILD_CFLAGS += $(call cc-option,-mno-80387)
 
 
