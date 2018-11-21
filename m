@@ -2,279 +2,220 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FC3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A390C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79FE020989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:58:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79FE020989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E820A20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 01:58:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="W1SUmuXQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E820A20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726425AbeKUMa2 (ORCPT
+        id S1726594AbeKUMaf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 07:30:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60752 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725913AbeKUMa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 07:30:27 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B5E233082A2F;
-        Wed, 21 Nov 2018 01:58:13 +0000 (UTC)
-Received: from redhat.com (ovpn-120-136.rdu2.redhat.com [10.10.120.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DFFAD66070;
-        Wed, 21 Nov 2018 01:58:08 +0000 (UTC)
-Date:   Tue, 20 Nov 2018 20:58:07 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
-        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        kexec-ml <kexec@lists.infradead.org>, pv-drivers@vmware.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Hansen <chansen3@cisco.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        David Rientjes <rientjes@google.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-Subject: Re: [PATCH v1 2/8] mm: convert PG_balloon to PG_offline
-Message-ID: <20181120205632-mutt-send-email-mst@kernel.org>
-References: <20181119101616.8901-1-david@redhat.com>
- <20181119101616.8901-3-david@redhat.com>
+        Wed, 21 Nov 2018 07:30:35 -0500
+Received: from mail-eopbgr150040.outbound.protection.outlook.com ([40.107.15.40]:54776
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725913AbeKUMae (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 07:30:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pMU/v/SX6wiE+FvNbKBwQ1dqaxXl82H+0YOiZOhb7Kw=;
+ b=W1SUmuXQzepKH9PmzKj+tGECLBJTw5l9IgP+WLq8VzRQ6awr/zlmBrAFePELT0BBhqjwYR4EkUSNiGiWnDY3ywvMnvNns2aQ411uZ2pLMzY/2yg29zKu1kaOttetDZQNKYPjtIAM4dg7O5ogRH/x3teew4OVzKIykfscsyH6By4=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3852.eurprd04.prod.outlook.com (52.134.71.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.27; Wed, 21 Nov 2018 01:58:17 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::e992:8455:42e:7a0b%2]) with mapi id 15.20.1294.048; Wed, 21 Nov 2018
+ 01:58:17 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V2] thermal: imx: fix for dependency on cpu-freq
+Thread-Topic: [PATCH V2] thermal: imx: fix for dependency on cpu-freq
+Thread-Index: AQHUgT2rutTwZP1maU6Y9yw4ZWmM4g==
+Date:   Wed, 21 Nov 2018 01:58:16 +0000
+Message-ID: <1542765172-4004-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0P153CA0030.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:17::18) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3852;6:kFYhjrO+di0bUI+rBPMnSzKM0EqwOeOlalCNZ3acLsXiH/k9LfS5p9pinVMTbKTmtloE2odcAw0tPVcTDv2UHLqoVCKreoWCehULzvrrZFAPiroRfCHh72ktqd8dTQ5xWNXTiKP/Bogl3vAqZIGK0Q69plN1V2aZQ6XzMZ3tpcN8UHKCgYqNeNXpDV3e13F7wn9deCoxVpA7KHBps30yKVq+TdLmRO7nWM14A9bVyIBzGYiTUXhv/s0715nq2JSGOBXt3c/fbMbytWXPm6Yfgc0JAyvSJ5BeIYASQUymEKQ3N9KI5nZZeFPSVmbbs1pP/d7grzR89NP1fJX4MN+RsAXi8qLn8dcWWi8KFO1RypyDVTGtgyPo8nNUZj5oQLpSv1VzpeIFLwNoBDCBhLPMbKc6FSuw/EraK//Wqfb8dIqUcpdWs8tedIZI3C3JLdtirPh6A3ju3ys5S3Lv9gNMMg==;5:Fk/yzRGFi5lI+K5/xRKW6l40oOZr+1OMkhrRmabfGrSNneeoj5/2/nvhwytLrxf2OVxvuKM32wk2AtTaSdYFp5ZrKt+Q8KoTbmOgXSt4/61DekBCIhWKNyxy2w9VHEcoUlOdETS/KW/FuwpnREFZkfzC9/kzlSmlEmszhSbY9IE=;7:adAJlTrE4ko03qnTx+wPIPP7at16OTpkFDKhnzSARmGYFGqEros2rJK+brf9sJlrW2i+gFb9Sb7xXBd3DB6W3ksKTMjtYT1mlUb/nOmjssJ+gP4/o8aUOfz2m4Qz93EmoqYAeD6GcfTRGzcH08M+tg==
+x-ms-office365-filtering-correlation-id: 5fedb34b-dd88-4489-f16d-08d64f54cd9c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3852;
+x-ms-traffictypediagnostic: DB3PR0402MB3852:
+x-microsoft-antispam-prvs: <DB3PR0402MB38520187A9B121E16C25352FF5DA0@DB3PR0402MB3852.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72170088055959)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231442)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3852;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3852;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(396003)(376002)(199004)(189003)(316002)(71200400001)(110136005)(8676002)(25786009)(81166006)(4326008)(71190400001)(6116002)(3846002)(106356001)(97736004)(5660300001)(66066001)(2201001)(2906002)(50226002)(478600001)(81156014)(8936002)(2501003)(256004)(14454004)(68736007)(39060400002)(36756003)(26005)(186003)(2900100001)(6486002)(6506007)(386003)(102836004)(86362001)(6436002)(6512007)(53936002)(7736002)(105586002)(52116002)(476003)(305945005)(486006)(99286004)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3852;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: /A+QNAsquvbt2EiiRSdRSDFsXq5+yyhtxUp5gtscQt8Tly9e2+6/p86e4z6fbkqGWOHTGIFsyNQubuotnLXlP03F7QGZ0IGLXvv1YvHq9nu0/+Z7+dtXmz3hFQRNyJ62J38gfGySC8iXlF7cKJMbEd5R1PoAAHmQY34xbmHb3czLqm8eWpW/5Xql449afzKIq5C30za4nuMzbcQeN7JGRhNFEnxF3wuMkwVCVs6Kzc3tIThyDbrSDBNLezRlmkY1WGofTh6eK/1N/IXER5NAirR0E9VGrKq/lUfO4GFX9ipyHHsokJf5RiFaNeuvIvFqklzZCaL9rqKRZLvghhdgr2OPnOuR5H7KAD3DPEWiMAE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181119101616.8901-3-david@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 21 Nov 2018 01:58:14 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fedb34b-dd88-4489-f16d-08d64f54cd9c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 01:58:17.0359
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3852
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 19, 2018 at 11:16:10AM +0100, David Hildenbrand wrote:
-> PG_balloon was introduced to implement page migration/compaction for pages
-> inflated in virtio-balloon. Nowadays, it is only a marker that a page is
-> part of virtio-balloon and therefore logically offline.
-> 
-> We also want to make use of this flag in other balloon drivers - for
-> inflated pages or when onlining a section but keeping some pages offline
-> (e.g. used right now by XEN and Hyper-V via set_online_page_callback()).
-> 
-> We are going to expose this flag to dump tools like makedumpfile. But
-> instead of exposing PG_balloon, let's generalize the concept of marking
-> pages as logically offline, so it can be reused for other purposes
-> later on.
-> 
-> Rename PG_balloon to PG_offline. This is an indicator that the page is
-> logically offline, the content stale and that it should not be touched
-> (e.g. a hypervisor would have to allocate backing storage in order for the
-> guest to dump an unused page).  We can then e.g. exclude such pages from
-> dumps.
-> 
-> We replace and reuse KPF_BALLOON (23), as this shouldn't really harm
-> (and for now the semantics stay the same).  In following patches, we will
-> make use of this bit also in other balloon drivers. While at it, document
-> PGTABLE.
-> 
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Alexey Dobriyan <adobriyan@gmail.com>
-> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Christian Hansen <chansen3@cisco.com>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-> Cc: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> Cc: Miles Chen <miles.chen@mediatek.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-> Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  Documentation/admin-guide/mm/pagemap.rst |  9 ++++++---
->  fs/proc/page.c                           |  4 ++--
->  include/linux/balloon_compaction.h       |  8 ++++----
->  include/linux/page-flags.h               | 11 +++++++----
->  include/uapi/linux/kernel-page-flags.h   |  2 +-
->  tools/vm/page-types.c                    |  2 +-
->  6 files changed, 21 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
-> index 3f7bade2c231..340a5aee9b80 100644
-> --- a/Documentation/admin-guide/mm/pagemap.rst
-> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> @@ -75,9 +75,10 @@ number of times a page is mapped.
->      20. NOPAGE
->      21. KSM
->      22. THP
-> -    23. BALLOON
-> +    23. OFFLINE
->      24. ZERO_PAGE
->      25. IDLE
-> +    26. PGTABLE
->  
->   * ``/proc/kpagecgroup``.  This file contains a 64-bit inode number of the
->     memory cgroup each page is charged to, indexed by PFN. Only available when
-> @@ -118,8 +119,8 @@ Short descriptions to the page flags
->      identical memory pages dynamically shared between one or more processes
->  22 - THP
->      contiguous pages which construct transparent hugepages
-> -23 - BALLOON
-> -    balloon compaction page
-> +23 - OFFLINE
-> +    page is logically offline
->  24 - ZERO_PAGE
->      zero page for pfn_zero or huge_zero page
->  25 - IDLE
-> @@ -128,6 +129,8 @@ Short descriptions to the page flags
->      Note that this flag may be stale in case the page was accessed via
->      a PTE. To make sure the flag is up-to-date one has to read
->      ``/sys/kernel/mm/page_idle/bitmap`` first.
-> +26 - PGTABLE
-> +    page is in use as a page table
->  
->  IO related page flags
->  ---------------------
-> diff --git a/fs/proc/page.c b/fs/proc/page.c
-> index 6c517b11acf8..378401af4d9d 100644
-> --- a/fs/proc/page.c
-> +++ b/fs/proc/page.c
-> @@ -152,8 +152,8 @@ u64 stable_page_flags(struct page *page)
->  	else if (page_count(page) == 0 && is_free_buddy_page(page))
->  		u |= 1 << KPF_BUDDY;
->  
-> -	if (PageBalloon(page))
-> -		u |= 1 << KPF_BALLOON;
-> +	if (PageOffline(page))
-> +		u |= 1 << KPF_OFFLINE;
->  	if (PageTable(page))
->  		u |= 1 << KPF_PGTABLE;
->  
-> diff --git a/include/linux/balloon_compaction.h b/include/linux/balloon_compaction.h
-> index cbe50da5a59d..f111c780ef1d 100644
-> --- a/include/linux/balloon_compaction.h
-> +++ b/include/linux/balloon_compaction.h
-> @@ -95,7 +95,7 @@ extern int balloon_page_migrate(struct address_space *mapping,
->  static inline void balloon_page_insert(struct balloon_dev_info *balloon,
->  				       struct page *page)
->  {
-> -	__SetPageBalloon(page);
-> +	__SetPageOffline(page);
->  	__SetPageMovable(page, balloon->inode->i_mapping);
->  	set_page_private(page, (unsigned long)balloon);
->  	list_add(&page->lru, &balloon->pages);
-> @@ -111,7 +111,7 @@ static inline void balloon_page_insert(struct balloon_dev_info *balloon,
->   */
->  static inline void balloon_page_delete(struct page *page)
->  {
-> -	__ClearPageBalloon(page);
-> +	__ClearPageOffline(page);
->  	__ClearPageMovable(page);
->  	set_page_private(page, 0);
->  	/*
-> @@ -141,13 +141,13 @@ static inline gfp_t balloon_mapping_gfp_mask(void)
->  static inline void balloon_page_insert(struct balloon_dev_info *balloon,
->  				       struct page *page)
->  {
-> -	__SetPageBalloon(page);
-> +	__SetPageOffline(page);
->  	list_add(&page->lru, &balloon->pages);
->  }
->  
->  static inline void balloon_page_delete(struct page *page)
->  {
-> -	__ClearPageBalloon(page);
-> +	__ClearPageOffline(page);
->  	list_del(&page->lru);
->  }
->  
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 50ce1bddaf56..f91da3d0a67e 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -670,7 +670,7 @@ PAGEFLAG_FALSE(DoubleMap)
->  #define PAGE_TYPE_BASE	0xf0000000
->  /* Reserve		0x0000007f to catch underflows of page_mapcount */
->  #define PG_buddy	0x00000080
-> -#define PG_balloon	0x00000100
-> +#define PG_offline	0x00000100
->  #define PG_kmemcg	0x00000200
->  #define PG_table	0x00000400
->  
-> @@ -700,10 +700,13 @@ static __always_inline void __ClearPage##uname(struct page *page)	\
->  PAGE_TYPE_OPS(Buddy, buddy)
->  
->  /*
-> - * PageBalloon() is true for pages that are on the balloon page list
-> - * (see mm/balloon_compaction.c).
-> + * PageOffline() indicates that the pages is logically offline although the
+The thermal driver is a standalone driver for monitoring SoC temperature
+by enabling thermal sensor, so it can be enabled even when CONFIG_CPU_FREQ
+is NOT set. So remove the dependency with CPU_THERMAL.
 
-with this typo fixed ..
+Introduce dummy function of legacy cooling register/unregister to make
+thermal driver probe successfully when CONFIG_CPU_FREQ is NOT set.
 
-> + * containing section is online. (e.g. inflated in a balloon driver or
-> + * not onlined when onlining the section).
-> + * The content of these pages is effectively stale. Such pages should not
-> + * be touched (read/write/dump/save) except by their owner.
->   */
-> -PAGE_TYPE_OPS(Balloon, balloon)
-> +PAGE_TYPE_OPS(Offline, offline)
->  
->  /*
->   * If kmemcg is enabled, the buddy allocator will set PageKmemcg() on
-> diff --git a/include/uapi/linux/kernel-page-flags.h b/include/uapi/linux/kernel-page-flags.h
-> index 21b9113c69da..6f2f2720f3ac 100644
-> --- a/include/uapi/linux/kernel-page-flags.h
-> +++ b/include/uapi/linux/kernel-page-flags.h
-> @@ -32,7 +32,7 @@
->  
->  #define KPF_KSM			21
->  #define KPF_THP			22
-> -#define KPF_BALLOON		23
-> +#define KPF_OFFLINE		23
->  #define KPF_ZERO_PAGE		24
->  #define KPF_IDLE		25
->  #define KPF_PGTABLE		26
-> diff --git a/tools/vm/page-types.c b/tools/vm/page-types.c
-> index 37908a83ddc2..6c38d3b862e4 100644
-> --- a/tools/vm/page-types.c
-> +++ b/tools/vm/page-types.c
-> @@ -133,7 +133,7 @@ static const char * const page_flag_names[] = {
->  	[KPF_NOPAGE]		= "n:nopage",
->  	[KPF_KSM]		= "x:ksm",
->  	[KPF_THP]		= "t:thp",
-> -	[KPF_BALLOON]		= "o:balloon",
-> +	[KPF_OFFLINE]		= "o:offline",
->  	[KPF_PGTABLE]		= "g:pgtable",
->  	[KPF_ZERO_PAGE]		= "z:zero_page",
->  	[KPF_IDLE]              = "i:idle_page",
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+changes since V1:
+	Introduce dummy function of legacy cooling register/unregister instead
+of adding #define check in .probe function, handle error path correctly whe=
+n
+CONFIG_CPU_FREQ is NOT set.
+ drivers/thermal/Kconfig       |  2 +-
+ drivers/thermal/imx_thermal.c | 39 ++++++++++++++++++++++++++++++---------
+ 2 files changed, 31 insertions(+), 10 deletions(-)
 
-for balloon changes:
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 5422523..93bd3bb 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -212,7 +212,7 @@ config HISI_THERMAL
+=20
+ config IMX_THERMAL
+ 	tristate "Temperature sensor driver for Freescale i.MX SoCs"
+-	depends on (ARCH_MXC && CPU_THERMAL) || COMPILE_TEST
++	depends on ARCH_MXC || COMPILE_TEST
+ 	depends on NVMEM || !NVMEM
+ 	depends on MFD_SYSCON
+ 	depends on OF
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index 1566154..44e0154 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -648,15 +648,24 @@ static const struct of_device_id of_imx_thermal_match=
+[] =3D {
+ };
+ MODULE_DEVICE_TABLE(of, of_imx_thermal_match);
+=20
++#ifdef CONFIG_CPU_FREQ
+ /*
+  * Create cooling device in case no #cooling-cells property is available i=
+n
+  * CPU node
+  */
+ static int imx_thermal_register_legacy_cooling(struct imx_thermal_data *da=
+ta)
+ {
+-	struct device_node *np =3D of_get_cpu_node(data->policy->cpu, NULL);
++	struct device_node *np;
+ 	int ret;
+=20
++	data->policy =3D cpufreq_cpu_get(0);
++	if (!data->policy) {
++		pr_debug("%s: CPUFreq policy not found\n", __func__);
++		return -EPROBE_DEFER;
++	}
++
++	np =3D of_get_cpu_node(data->policy->cpu, NULL);
++
+ 	if (!np || !of_find_property(np, "#cooling-cells", NULL)) {
+ 		data->cdev =3D cpufreq_cooling_register(data->policy);
+ 		if (IS_ERR(data->cdev)) {
+@@ -669,6 +678,23 @@ static int imx_thermal_register_legacy_cooling(struct =
+imx_thermal_data *data)
+ 	return 0;
+ }
+=20
++static int imx_thermal_unregister_legacy_cooling(struct imx_thermal_data *=
+data)
++{
++	cpufreq_cooling_unregister(data->cdev);
++	cpufreq_cpu_put(data->policy);
++}
++#else
++static inline int imx_thermal_register_legacy_cooling(struct imx_thermal_d=
+ata *data)
++{
++	return 0;
++}
++
++static inline int imx_thermal_unregister_legacy_cooling(struct imx_thermal=
+_data *data)
++{
++	return 0;
++}
++#endif
++
+ static int imx_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct imx_thermal_data *data;
+@@ -743,13 +769,9 @@ static int imx_thermal_probe(struct platform_device *p=
+dev)
+ 	regmap_write(map, data->socdata->sensor_ctrl + REG_SET,
+ 		     data->socdata->power_down_mask);
+=20
+-	data->policy =3D cpufreq_cpu_get(0);
+-	if (!data->policy) {
+-		pr_debug("%s: CPUFreq policy not found\n", __func__);
+-		return -EPROBE_DEFER;
+-	}
+-
+ 	ret =3D imx_thermal_register_legacy_cooling(data);
++	if (ret =3D=3D -EPROBE_DEFER)
++		return ret;
+ 	if (ret) {
+ 		dev_err(&pdev->dev,
+ 			"failed to register cpufreq cooling device: %d\n", ret);
+@@ -830,8 +852,7 @@ static int imx_thermal_probe(struct platform_device *pd=
+ev)
+ clk_disable:
+ 	clk_disable_unprepare(data->thermal_clk);
+ cpufreq_put:
+-	cpufreq_cooling_unregister(data->cdev);
+-	cpufreq_cpu_put(data->policy);
++	imx_thermal_unregister_legacy_cooling(data);
+=20
+ 	return ret;
+ }
+--=20
+2.7.4
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-
-> -- 
-> 2.17.2
