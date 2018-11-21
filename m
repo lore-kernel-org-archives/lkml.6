@@ -2,164 +2,278 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF49C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D043CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A11214D9
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqM8oOGx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96A11214D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 93F16214D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 17:46:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F16214D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732543AbeKVEVW (ORCPT
+        id S1732585AbeKVEVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 23:21:22 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:34079 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729279AbeKVEVW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 23:21:22 -0500
-Received: by mail-qk1-f193.google.com with SMTP id a132so5411032qkg.1;
-        Wed, 21 Nov 2018 09:46:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+y0+HMCgkTMUY378kVyZT/5XfnJg2CUDxwv1cJf63Do=;
-        b=kqM8oOGxk9x+SO5aXUg96yaqCYXOEcus3T6WejXDLvnakJocq3mnqg8uWtcDcX14Sc
-         nI/J29m0c2/XrDz2AijIvc6t+6HGTYUaXTbO/1VMiBVrcy+il/uuoK5s+cb/4UaA4uf4
-         g7+syzOp3RcOv+9znxVqly1wSrc5ddzFVgXz/IYe9pofOVULJ02W6xeWtMoKlMLZ3TyW
-         bX+IUIuIGzbotywbfGZZUEx5zl4yHwnO2GeRVu5LpsF+j3OfJY/EKUn5KTOOYX2gCF4K
-         RZUsMvxvVd12mApqsKn3TTIUDYUzGxzSL2yYtrfV7udyiM8yeRrqWBm/5PMLIIaLohyc
-         Plvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+y0+HMCgkTMUY378kVyZT/5XfnJg2CUDxwv1cJf63Do=;
-        b=I8Uh8WcHSkXp4wZX92o3I67gt753NASiAPOrnKo9xc7vWBH2yLwCtTCmf4NRZsvVQC
-         eCW512ZXEkYRv2BBOO0Ttr9WR90yDCvlQgu9hy6ic2EC4nDCOrCm3qBnl7e1DcDglKa8
-         6hIqcm6bKSPJtTCxpg1Sb5ebWit0D7ThiFrPhqoqaEfePNIF7e4gZZYE0kEVc1QU74+/
-         O++1vpC0l+FGIENhQThki1wZyGZSh/+Am1XkefyPXbyU1l369zXEwhdQ/vij1zQf/jRO
-         lBAuOQ8jsHtXkmJkeRQunHVIEMQ2S7SIfDNbea71KOAGmBPkpG+oEHlx2OuTl5QN5F6O
-         8DGg==
-X-Gm-Message-State: AA+aEWbgr7GnVEpWKYpfTNnn/MV6c/WZjPLkUJyi5Of2MLKvSt20eUno
-        OBnRg+Md2h5nrMtEA6Aq/VZzqFUDUwuFJvxDyXU=
-X-Google-Smtp-Source: AFSGD/UVxAIxhenCFO0t8cnEKS+YMZYEq3EeS2F5rbwlj4ZvP83L+hrEvA3CK3Z49Ne7FnH12xLVvRdgRtabpdj1LIk=
-X-Received: by 2002:a37:41d2:: with SMTP id o201mr6410640qka.24.1542822361006;
- Wed, 21 Nov 2018 09:46:01 -0800 (PST)
+        Wed, 21 Nov 2018 23:21:45 -0500
+Received: from verein.lst.de ([213.95.11.211]:52815 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729279AbeKVEVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 23:21:44 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id F1D2D68C19; Wed, 21 Nov 2018 18:46:21 +0100 (CET)
+Date:   Wed, 21 Nov 2018 18:46:21 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, David Sterba <dsterba@suse.com>,
+        linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V11 14/19] block: handle non-cluster bio out of
+ blk_bio_segment_split
+Message-ID: <20181121174621.GA6961@lst.de>
+References: <20181121032327.8434-1-ming.lei@redhat.com> <20181121032327.8434-15-ming.lei@redhat.com> <20181121143355.GB2594@lst.de> <20181121153726.GC19111@ming.t460p>
 MIME-Version: 1.0
-References: <1542786192-19164-1-git-send-email-wen.yang99@zte.com.cn>
- <CAH3MdRVEoJXh1FRJKPiUvvphRLV9=-a8UV4pFUa=kq4qaWYjww@mail.gmail.com> <20181121093044.3c34b66b@cakuba.netronome.com>
-In-Reply-To: <20181121093044.3c34b66b@cakuba.netronome.com>
-From:   Y Song <ys114321@gmail.com>
-Date:   Wed, 21 Nov 2018 09:45:24 -0800
-Message-ID: <CAH3MdRV-8dva2dW7pFbvKmEbAcB3rG3gVNLiLfU6wO+Uuh+=Yg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] tools: bpftool: fix potential NULL pointer
- dereference in do_load
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc:     wen.yang99@zte.com.cn, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jiong Wang <jiong.wang@netronome.com>, guro@fb.com,
-        Sandipan Das <sandipan@linux.vnet.ibm.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, zhong.weidong@zte.com.cn,
-        wang.yi59@zte.com.cn, julia.lawall@lip6.fr
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121153726.GC19111@ming.t460p>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 21, 2018 at 9:30 AM Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
->
-> On Wed, 21 Nov 2018 09:18:06 -0800, Y Song wrote:
-> > On Tue, Nov 20, 2018 at 11:42 PM Wen Yang <wen.yang99@zte.com.cn> wrote:
-> > >
-> > > This patch fixes a possible null pointer dereference in
-> > > do_load, detected by the semantic patch
-> > > deref_null.cocci, with the following warning:
-> > >
-> > > ./tools/bpf/bpftool/prog.c:1021:23-25: ERROR: map_replace is NULL but dereferenced.
-> > >
-> > > The following code has potential null pointer references:
-> > >  881             map_replace = reallocarray(map_replace, old_map_fds + 1,
-> > >  882                                        sizeof(*map_replace));
-> > >  883             if (!map_replace) {
-> > >  884                     p_err("mem alloc failed");
-> > >  885                     goto err_free_reuse_maps;
-> > >  886             }
-> > >
-> > > ...
-> > > 1019 err_free_reuse_maps:
-> > > 1020         for (i = 0; i < old_map_fds; i++)
-> > > 1021                 close(map_replace[i].fd);
-> > > 1022         free(map_replace);
-> >
-> > I did not see any issues here.
-> > We have code looks like:
-> >  867         struct map_replace *map_replace = NULL;
-> >  868         struct bpf_program *prog = NULL, *pos;
-> >  869         unsigned int old_map_fds = 0;
-> > ...
-> >  948                         map_replace = reallocarray(map_replace,
-> > old_map_fds + 1,
-> >  949                                                    sizeof(*map_replace));
-> >  950                         if (!map_replace) {
-> >  951                                 p_err("mem alloc failed");
-> >  952                                 goto err_free_reuse_maps;
-> >  953                         }
-> >  954                         map_replace[old_map_fds].idx = idx;
-> >  955                         map_replace[old_map_fds].name = name;
-> >  956                         map_replace[old_map_fds].fd = fd;
-> >  957                         old_map_fds++;
-> > ...
-> >
-> > old_map_fds becomes non zero if and only if map_replace is not NULL.
->
-> Note that this is a realloc in a loop, and map_replace will become NULL
-> again if realloc fails.  We should check the return value of realloc()
-> without loosing the pointer to the old value.  No?
+Actually..
 
-Or right. Agreed. The right fix seems to restore the old map_replace
-in the error path
-and jump to err_free_reuse_maps if reallocarray fails.
+I think we can kill this code entirely.  If we look at what the
+clustering setting is really about it is to avoid ever merging a
+segement that spans a page boundary.  And we should be able to do
+that with something like this before your series:
 
->
-> > > Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-> > > Reviewed-by: Tan Hu <tan.hu@zte.com.cn>
-> > > CC: Julia Lawall <julia.lawall@lip6.fr>
-> > > ---
-> > >  tools/bpf/bpftool/prog.c | 5 +++--
-> > >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/tools/bpf/bpftool/prog.c b/tools/bpf/bpftool/prog.c
-> > > index 5302ee2..de42187 100644
-> > > --- a/tools/bpf/bpftool/prog.c
-> > > +++ b/tools/bpf/bpftool/prog.c
-> > > @@ -1017,8 +1017,9 @@ static int do_load(int argc, char **argv)
-> > >  err_close_obj:
-> > >         bpf_object__close(obj);
-> > >  err_free_reuse_maps:
-> > > -       for (i = 0; i < old_map_fds; i++)
-> > > -               close(map_replace[i].fd);
-> > > +       if (map_replace)
-> > > +               for (i = 0; i < old_map_fds; i++)
-> > > +                       close(map_replace[i].fd);
-> > >         free(map_replace);
-> > >         return -1;
-> > >  }
-> > > --
-> > > 2.9.5
-> > >
->
+---
+From 0d46fa76c376493a74ea0dbe77305bd5fa2cf011 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Wed, 21 Nov 2018 18:39:47 +0100
+Subject: block: remove the "cluster" flag
+
+The cluster flag implements some very old SCSI behavior.  As far as I
+can tell the original intent was to enable or disable any kind of
+segment merging.  But the actually visible effect to the LLDD is that
+it limits each segments to be inside a single page, which we can
+also affect by setting the maximum segment size and the virt
+boundary.
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/blk-merge.c       | 20 ++++++++------------
+ block/blk-settings.c    |  3 ---
+ block/blk-sysfs.c       |  5 +----
+ drivers/scsi/scsi_lib.c | 16 +++++++++++++---
+ include/linux/blkdev.h  |  6 ------
+ 5 files changed, 22 insertions(+), 28 deletions(-)
+
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 6be04ef8da5b..e69d8f8ba819 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -195,7 +195,7 @@ static struct bio *blk_bio_segment_split(struct request_queue *q,
+ 			goto split;
+ 		}
+ 
+-		if (bvprvp && blk_queue_cluster(q)) {
++		if (bvprvp) {
+ 			if (seg_size + bv.bv_len > queue_max_segment_size(q))
+ 				goto new_segment;
+ 			if (!biovec_phys_mergeable(q, bvprvp, &bv))
+@@ -295,10 +295,10 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 					     bool no_sg_merge)
+ {
+ 	struct bio_vec bv, bvprv = { NULL };
+-	int cluster, prev = 0;
+ 	unsigned int seg_size, nr_phys_segs;
+ 	struct bio *fbio, *bbio;
+ 	struct bvec_iter iter;
++	bool prev = false;
+ 
+ 	if (!bio)
+ 		return 0;
+@@ -313,7 +313,6 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 	}
+ 
+ 	fbio = bio;
+-	cluster = blk_queue_cluster(q);
+ 	seg_size = 0;
+ 	nr_phys_segs = 0;
+ 	for_each_bio(bio) {
+@@ -325,7 +324,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 			if (no_sg_merge)
+ 				goto new_segment;
+ 
+-			if (prev && cluster) {
++			if (prev) {
+ 				if (seg_size + bv.bv_len
+ 				    > queue_max_segment_size(q))
+ 					goto new_segment;
+@@ -343,7 +342,7 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+ 
+ 			nr_phys_segs++;
+ 			bvprv = bv;
+-			prev = 1;
++			prev = true;
+ 			seg_size = bv.bv_len;
+ 		}
+ 		bbio = bio;
+@@ -396,9 +395,6 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
+ {
+ 	struct bio_vec end_bv = { NULL }, nxt_bv;
+ 
+-	if (!blk_queue_cluster(q))
+-		return 0;
+-
+ 	if (bio->bi_seg_back_size + nxt->bi_seg_front_size >
+ 	    queue_max_segment_size(q))
+ 		return 0;
+@@ -415,12 +411,12 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
+ static inline void
+ __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
+ 		     struct scatterlist *sglist, struct bio_vec *bvprv,
+-		     struct scatterlist **sg, int *nsegs, int *cluster)
++		     struct scatterlist **sg, int *nsegs)
+ {
+ 
+ 	int nbytes = bvec->bv_len;
+ 
+-	if (*sg && *cluster) {
++	if (*sg) {
+ 		if ((*sg)->length + nbytes > queue_max_segment_size(q))
+ 			goto new_segment;
+ 		if (!biovec_phys_mergeable(q, bvprv, bvec))
+@@ -466,12 +462,12 @@ static int __blk_bios_map_sg(struct request_queue *q, struct bio *bio,
+ {
+ 	struct bio_vec bvec, bvprv = { NULL };
+ 	struct bvec_iter iter;
+-	int cluster = blk_queue_cluster(q), nsegs = 0;
++	int nsegs = 0;
+ 
+ 	for_each_bio(bio)
+ 		bio_for_each_segment(bvec, bio, iter)
+ 			__blk_segment_map_sg(q, &bvec, sglist, &bvprv, sg,
+-					     &nsegs, &cluster);
++					     &nsegs);
+ 
+ 	return nsegs;
+ }
+diff --git a/block/blk-settings.c b/block/blk-settings.c
+index 3abe831e92c8..3e7038e475ee 100644
+--- a/block/blk-settings.c
++++ b/block/blk-settings.c
+@@ -56,7 +56,6 @@ void blk_set_default_limits(struct queue_limits *lim)
+ 	lim->alignment_offset = 0;
+ 	lim->io_opt = 0;
+ 	lim->misaligned = 0;
+-	lim->cluster = 1;
+ 	lim->zoned = BLK_ZONED_NONE;
+ }
+ EXPORT_SYMBOL(blk_set_default_limits);
+@@ -547,8 +546,6 @@ int blk_stack_limits(struct queue_limits *t, struct queue_limits *b,
+ 	t->io_min = max(t->io_min, b->io_min);
+ 	t->io_opt = lcm_not_zero(t->io_opt, b->io_opt);
+ 
+-	t->cluster &= b->cluster;
+-
+ 	/* Physical block size a multiple of the logical block size? */
+ 	if (t->physical_block_size & (t->logical_block_size - 1)) {
+ 		t->physical_block_size = t->logical_block_size;
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index 80eef48fddc8..ef7b844a3e00 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -132,10 +132,7 @@ static ssize_t queue_max_integrity_segments_show(struct request_queue *q, char *
+ 
+ static ssize_t queue_max_segment_size_show(struct request_queue *q, char *page)
+ {
+-	if (blk_queue_cluster(q))
+-		return queue_var_show(queue_max_segment_size(q), (page));
+-
+-	return queue_var_show(PAGE_SIZE, (page));
++	return queue_var_show(queue_max_segment_size(q), page);
+ }
+ 
+ static ssize_t queue_logical_block_size_show(struct request_queue *q, char *page)
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 0df15cb738d2..c1ea50962286 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1810,6 +1810,7 @@ static int scsi_map_queues(struct blk_mq_tag_set *set)
+ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+ {
+ 	struct device *dev = shost->dma_dev;
++	unsigned max_segment_size = dma_get_max_seg_size(dev);
+ 
+ 	/*
+ 	 * this limit is imposed by hardware restrictions
+@@ -1831,10 +1832,19 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+ 	blk_queue_segment_boundary(q, shost->dma_boundary);
+ 	dma_set_seg_boundary(dev, shost->dma_boundary);
+ 
+-	blk_queue_max_segment_size(q, dma_get_max_seg_size(dev));
++	/*
++	 * Clustering is a really old concept from the stone age of Linux
++	 * SCSI support.  But the basic idea is that we never give the
++	 * driver a segment that spans multiple pages.  For that we need
++	 * to limit the segment size, and set the virt boundary so that
++	 * we never merge a second segment which is no page aligned.
++	 */
++	if (!shost->use_clustering) {
++		blk_queue_virt_boundary(q, PAGE_SIZE - 1);
++		max_segment_size = min_t(unsigned, max_segment_size, PAGE_SIZE);
++	}
+ 
+-	if (!shost->use_clustering)
+-		q->limits.cluster = 0;
++	blk_queue_max_segment_size(q, max_segment_size);
+ 
+ 	/*
+ 	 * Set a reasonable default alignment:  The larger of 32-byte (dword),
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 9b53db06ad08..399a7a415609 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -341,7 +341,6 @@ struct queue_limits {
+ 
+ 	unsigned char		misaligned;
+ 	unsigned char		discard_misaligned;
+-	unsigned char		cluster;
+ 	unsigned char		raid_partial_stripes_expensive;
+ 	enum blk_zoned_model	zoned;
+ };
+@@ -660,11 +659,6 @@ static inline bool queue_is_mq(struct request_queue *q)
+ 	return q->mq_ops;
+ }
+ 
+-static inline unsigned int blk_queue_cluster(struct request_queue *q)
+-{
+-	return q->limits.cluster;
+-}
+-
+ static inline enum blk_zoned_model
+ blk_queue_zoned_model(struct request_queue *q)
+ {
+-- 
+2.19.1
+
