@@ -2,133 +2,138 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F73AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE0CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B66214DB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC2C214E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:55:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeG3qaiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B66214DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="GvLtOU1Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC2C214E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387509AbeKVG0Z (ORCPT
+        id S2387801AbeKVGbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 01:26:25 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35653 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732989AbeKVGZp (ORCPT
+        Thu, 22 Nov 2018 01:31:25 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:60784 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732576AbeKVGbY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 01:25:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so6968844wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:50:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HTqGI/zVcHRk6bjLU+5ley79BR6mM3U3/ygvVB1xjdU=;
-        b=AeG3qaiDvaHjq6CyfQZk0wAwrNu3duKUUneU1P/JSkJZGmDeGNLMUJIs399oOwGs+a
-         VXphgPjX83E3Ts3dcnA4H3JyjrPps3wUJ2gNTaHNnan9NFb41utjutjIj9Flg36dIxv1
-         rK3dXA4nzkarbA+CkUIozaXAF0g266Vrty00JAICJJsjmV7F2ux4Ic6Dv01BC45SImKp
-         nYWZ0/uZcJqwdw/8RmUl9DDTX+engT2lKuI+N2VyTC/9RY6Dk6y0ttkCnGwHW7f6e6hV
-         lsEisCowcjqP0qU4jkyP1eoGPxiZ049RQcaRVwyqkru9tctTN39bQOgLoLFxnFcUaIY+
-         6p9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HTqGI/zVcHRk6bjLU+5ley79BR6mM3U3/ygvVB1xjdU=;
-        b=pq5dUJqB6X/F7lU/9xiaX+PnFTwErpXz/847WJ6rb/OCzwFlwmQg2ZY5QIyzUjPa7h
-         R/06tAjOT44EioNtYFMVZfUsn9SEydSSnyah3tBPYk8SFZqLsYh5tLbolW8Og57rj6ku
-         8tZLcgI8Glx2ZR6bnConhn6R5HPRh5NOakusr+8QFDEtKb4FPzW/K8Loq/mz0vtSChM9
-         PTyyzPMlJQCX8WlcLPnQwJgV7yOgqYQZhBNm68HO9KWZDpisockxoEptrMVujSdg9DCc
-         5l+e9kH8dNwF1dt6YJxGJVtEEVBIXyZDxxYmpCXGQN/I7c9LnrEDqW6qf82Ji+br4gtw
-         xXWA==
-X-Gm-Message-State: AA+aEWbMmyTvudb3txc1oppcEbbeYMJ5jo9nUszeOfWXdBZosShVi+zd
-        pDp75LlGwTWqQkcV5Mcoc20=
-X-Google-Smtp-Source: AFSGD/UGTarsL0QFwmWaMozL5IqTJ5Weo9PCuKKm0ESG7fDKZY+NfHlt0KDfKvA5afdYswCrKg4nWA==
-X-Received: by 2002:adf:fe8f:: with SMTP id l15mr6769656wrr.313.1542829803667;
-        Wed, 21 Nov 2018 11:50:03 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8108:85c0:3a84:1919:ecb4:15a4:d6ba])
-        by smtp.gmail.com with ESMTPSA id j20sm30599wme.20.2018.11.21.11.50.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Nov 2018 11:50:03 -0800 (PST)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 04/10] staging: rtl8188eu: rename LedCfg to avoid CamelCase
-Date:   Wed, 21 Nov 2018 20:49:31 +0100
-Message-Id: <20181121194937.1852-4-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121194937.1852-1-straube.linux@gmail.com>
-References: <20181121194937.1852-1-straube.linux@gmail.com>
+        Thu, 22 Nov 2018 01:31:24 -0500
+Received: from pps.filterd (m0001255.ppops.net [127.0.0.1])
+        by mx0b-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wALJpRVF002473
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:55:41 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=RiHwm2h8NVbXXPTiYyLmwjF8A6ju8lwMsd5VnZdgrt4=;
+ b=GvLtOU1Z2OUeN/nMcY5i3cNifmIA3xqRIGpUS3X4f+qMvv/hukrYn8AzA40X6YMv+AqN
+ mMvxOvdNYBrkRNVAvN4m0635fCps5Rgc+EhrQ0ekc6/PHnyPtrldiurhhtZv3zRBgAOp
+ 6DiAHUHaOOyjqC8xK7FhjDRtKzPLbsiYGH0= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0b-00082601.pphosted.com with ESMTP id 2nwdmtr27f-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 11:55:40 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::130) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Wed, 21 Nov 2018 11:55:38 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 1484062E19DA; Wed, 21 Nov 2018 11:55:31 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <acme@kernel.org>, <peterz@infradead.org>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH perf,bpf 0/5] reveal invisible bpf programs
+Date:   Wed, 21 Nov 2018 11:54:57 -0800
+Message-ID: <20181121195502.3259930-1-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-21_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the variable LedCfg to avoid CamleCase.
-LedCfg -> led_cfg
+Changes RFC -> PATCH v1:
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/hal/rtl8188eu_led.c | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+1. In perf-record, poll vip events in a separate thread;
+2. Add tag to bpf prog name;
+3. Small refactorings.
 
-diff --git a/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c b/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-index d4495839af34..7e3f04bfd3f0 100644
---- a/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-+++ b/drivers/staging/rtl8188eu/hal/rtl8188eu_led.c
-@@ -12,30 +12,30 @@
- 
- void SwLedOn(struct adapter *padapter, struct LED_871x *pLed)
- {
--	u8	LedCfg;
-+	u8 led_cfg;
- 
- 	if (padapter->bSurpriseRemoved || padapter->bDriverStopped)
- 		return;
--	LedCfg = usb_read8(padapter, REG_LEDCFG2);
--	usb_write8(padapter, REG_LEDCFG2, (LedCfg & 0xf0) | BIT(5) | BIT(6));
-+	led_cfg = usb_read8(padapter, REG_LEDCFG2);
-+	usb_write8(padapter, REG_LEDCFG2, (led_cfg & 0xf0) | BIT(5) | BIT(6));
- 	pLed->bLedOn = true;
- }
- 
- void SwLedOff(struct adapter *padapter, struct LED_871x *pLed)
- {
--	u8	LedCfg;
-+	u8 led_cfg;
- 
- 	if (padapter->bSurpriseRemoved || padapter->bDriverStopped)
- 		goto exit;
- 
--	LedCfg = usb_read8(padapter, REG_LEDCFG2);/* 0x4E */
-+	led_cfg = usb_read8(padapter, REG_LEDCFG2);/* 0x4E */
- 
- 	/*  Open-drain arrangement for controlling the LED) */
--	LedCfg &= 0x90; /*  Set to software control. */
--	usb_write8(padapter, REG_LEDCFG2, (LedCfg | BIT(3)));
--	LedCfg = usb_read8(padapter, REG_MAC_PINMUX_CFG);
--	LedCfg &= 0xFE;
--	usb_write8(padapter, REG_MAC_PINMUX_CFG, LedCfg);
-+	led_cfg &= 0x90; /*  Set to software control. */
-+	usb_write8(padapter, REG_LEDCFG2, (led_cfg | BIT(3)));
-+	led_cfg = usb_read8(padapter, REG_MAC_PINMUX_CFG);
-+	led_cfg &= 0xFE;
-+	usb_write8(padapter, REG_MAC_PINMUX_CFG, led_cfg);
- exit:
- 	pLed->bLedOn = false;
- }
--- 
-2.19.1
+Original cover letter (with minor revisions):
 
+This is to follow up Alexei's early effort to show bpf programs
+
+   https://www.spinics.net/lists/netdev/msg524232.html
+
+In this version, PERF_RECORD_BPF_EVENT is introduced to send real time BPF
+load/unload events to user space. In user space, perf-record is modified
+to listen to these events (through a dedicated ring buffer) and generate
+detailed information about the program (struct bpf_prog_info_event). Then,
+perf-report translates these events into proper symbols.
+
+With this set, perf-report will show bpf program as:
+
+   18.49%     0.16%  test  [kernel.vmlinux]    [k] ksys_write
+   18.01%     0.47%  test  [kernel.vmlinux]    [k] vfs_write
+   17.02%     0.40%  test  bpf_prog            [k] bpf_prog_07367f7ba80df72b_
+   16.97%     0.10%  test  [kernel.vmlinux]    [k] __vfs_write
+   16.86%     0.12%  test  [kernel.vmlinux]    [k] comm_write
+   16.67%     0.39%  test  [kernel.vmlinux]    [k] bpf_probe_read
+
+Note that, the program name is still work in progress, it will be cleaner
+with function types in BTF.
+
+Please share your comments on this.
+
+Thanks,
+Song
+
+Song Liu (5):
+  perf, bpf: Introduce PERF_RECORD_BPF_EVENT
+  perf: sync tools/include/uapi/linux/perf_event.h
+  perf util: basic handling of PERF_RECORD_BPF_EVENT
+  perf util: introduce bpf_prog_info_event
+  perf util: generate bpf_prog_info_event for short living bpf programs
+
+ include/linux/perf_event.h            |   5 +
+ include/uapi/linux/perf_event.h       |  27 ++-
+ kernel/bpf/syscall.c                  |   4 +
+ kernel/events/core.c                  |  82 ++++++-
+ tools/include/uapi/linux/perf_event.h |  27 ++-
+ tools/perf/builtin-record.c           |  91 +++++++-
+ tools/perf/builtin-report.c           |   2 +
+ tools/perf/util/Build                 |   2 +
+ tools/perf/util/bpf-info.c            | 305 ++++++++++++++++++++++++++
+ tools/perf/util/bpf-info.h            |  29 +++
+ tools/perf/util/event.c               |  21 ++
+ tools/perf/util/event.h               |  29 +++
+ tools/perf/util/evlist.c              |  58 ++++-
+ tools/perf/util/evlist.h              |   6 +
+ tools/perf/util/evsel.c               |   9 +
+ tools/perf/util/evsel.h               |   3 +
+ tools/perf/util/machine.c             |  10 +
+ tools/perf/util/machine.h             |   2 +
+ tools/perf/util/session.c             |   8 +
+ tools/perf/util/tool.h                |   7 +-
+ 20 files changed, 714 insertions(+), 13 deletions(-)
+ create mode 100644 tools/perf/util/bpf-info.c
+ create mode 100644 tools/perf/util/bpf-info.h
+
+--
+2.17.1
