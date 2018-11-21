@@ -2,188 +2,172 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A55BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F481C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:43:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA33121479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFEA22146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 10:43:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gBOYXYya"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA33121479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EcqEKCLc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y8Y5m6ZG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFEA22146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728923AbeKUVQE (ORCPT
+        id S1729292AbeKUVQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:16:04 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33228 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726849AbeKUVQD (ORCPT
+        Wed, 21 Nov 2018 16:16:58 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46798 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728177AbeKUVQ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:16:03 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181121104209euoutp0189829a43dc30bc5dc9270598bad5396a~pHaITcgFf0105401054euoutp01Z
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 10:42:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181121104209euoutp0189829a43dc30bc5dc9270598bad5396a~pHaITcgFf0105401054euoutp01Z
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542796929;
-        bh=OE2Ofg/Z2F3jD2kYIYIdQaLaRFk3hZo6XgaPXck4xoU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=gBOYXYyaOf9Jymig1UwcD2l7blDJbdqMPjp0Zv6o4LwioGxlEW0TY4qErwaaX6VOZ
-         ci3O5E4/+8SUQQCOrs7N4/8ZcM0yc0YaEmrkiH+N90jvYUnjL9mLzwoORO+RQvo0Tu
-         KwN8TH2AS/I/Z5z7mr1Gob3vuKKOqOeWzvwkY0i4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181121104208eucas1p1bd1851e2f546c7a7db336b7c96f43f91~pHaHh7h3O0514605146eucas1p1U;
-        Wed, 21 Nov 2018 10:42:08 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 6A.EE.04441.08635FB5; Wed, 21
-        Nov 2018 10:42:08 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181121104207eucas1p2cd2fcbff22d365b5f5c66c3cffded2ad~pHaGjNA9s0319803198eucas1p2N;
-        Wed, 21 Nov 2018 10:42:07 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181121104207eusmtrp2e555dfc8e48d68a5199be309472bcc04~pHaGiVT4q1948819488eusmtrp2T;
-        Wed, 21 Nov 2018 10:42:07 +0000 (GMT)
-X-AuditID: cbfec7f2-5e3ff70000001159-79-5bf536802901
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id E8.F2.04284.F7635FB5; Wed, 21
-        Nov 2018 10:42:07 +0000 (GMT)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20181121104207eusmtip12e27bfdc0b994fd1adaaeffce3735e59~pHaGLa5H32709227092eusmtip1F;
-        Wed, 21 Nov 2018 10:42:06 +0000 (GMT)
-Subject: Re: [PATCH v2] regulator: wm8994: Don't use devres for enable GPIOs
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
-Cc:     linus.walleij@linaro.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Message-ID: <c0a2d30d-b18e-e72a-f369-c8678f1854ff@samsung.com>
-Date:   Wed, 21 Nov 2018 11:42:06 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
-        Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djPc7oNZl+jDf7/4baY+vAJm8WV1k2M
-        Ft+udDBZTPmznMni8q45bBaf3+9ndWDz2DnrLrvHplWdbB53ru1h85g+5z+jx+dNcgGsUVw2
-        Kak5mWWpRfp2CVwZkxdcYSt4JFTx+LtXA2M7fxcjJ4eEgInE0ZZ5TF2MXBxCAisYJdoXXIBy
-        vjBKLGs+xAbhfGaUOHDsDxNMy9tlB6ASyxklFrcvg2p5zyjR9PUvaxcjB4ewgI/E1yUiIA0i
-        Am4Sr++vYQaxmQUKJL71PgGz2QQMJbredrGB2LwCdhILl2xiAbFZBFQl9m1/BFYjKhAjcWzl
-        DUaIGkGJkzOfgNVwCjhLnPg9ix1iprzE9rdzoOaLS9x6Mh/sHgmBVewSHa/OskFc7SLRv/I9
-        I4QtLPHq+BZ2CFtG4v9OmIZmYADMAJkK4vQwSmydswOq21ri8PGLYJ8xC2hKrN+lD2JKCDhK
-        7HvqCmHySdx4KwhxA5/EpG3TmSHCvBIdbUIQM9QkZh1fB7f14IVLzBMYlWYh+WwWkm9mIflm
-        FsLaBYwsqxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQLTzul/xz/tYPx6KekQowAHoxIP
-        b4Lwl2gh1sSy4srcQ4wSHMxKIry/VL5GC/GmJFZWpRblxxeV5qQWH2KU5mBREuetZngQLSSQ
-        nliSmp2aWpBaBJNl4uCUamAsbep0O3GqzF/IWMOox9dh4icp4T2Mfg2F2+4ufdRlGl+SPe+N
-        U2Hs+U73yglX2pWjb078+rDZfd1TPpF/hVnb82QvOBmE8epnxRUdDXOykG0786pmS/3SyDcp
-        Bj7qt26v5zZR6utasMHrZS3DowLtm+LLbp58Ktcq/myG5wWPLe8mrLnCXafEUpyRaKjFXFSc
-        CABX2E+mNwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsVy+t/xu7r1Zl+jDdYuELeY+vAJm8WV1k2M
-        Ft+udDBZTPmznMni8q45bBaf3+9ndWDz2DnrLrvHplWdbB53ru1h85g+5z+jx+dNcgGsUXo2
-        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZkxdcYSt4
-        JFTx+LtXA2M7fxcjJ4eEgInE22UH2LoYuTiEBJYySjy+epYRIiEjcXJaAyuELSzx51oXVNFb
-        Rome5u9MXYwcHMICPhJfl4iA1IgIuEm8vr+GGcRmFiiQONlylx2ifhqjxIM5XWBD2QQMJbre
-        ggzi5OAVsJNYuGQTC4jNIqAqsW/7I7BmUYEYic7r86BqBCVOznwCVsMp4Cxx4vcsdogF6hJ/
-        5l2CWiYvsf3tHChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5Nzy021CtOzC0u
-        zUvXS87P3cQIjLRtx35u3sF4aWPwIUYBDkYlHt4E4S/RQqyJZcWVuYcYJTiYlUR4f6l8jRbi
-        TUmsrEotyo8vKs1JLT7EaAr03ERmKdHkfGASyCuJNzQ1NLewNDQ3Njc2s1AS5z1vUBklJJCe
-        WJKanZpakFoE08fEwSnVwFjecm9ibQH3tfAlie62m3by3P78ZtNvV+n8HBOz+5UM9pOidkiv
-        dz7kVd1z+ovirdsCaR9EF2xqDOc5/N73TJuyxv+VXMl7mYvTXPxaGbqm7dx0wmyJ3KufLaZ6
-        z3OPbHDYIMT8wNxmx9Fmd1t3hX7XiRrG7i8T/gR0LZm66mQG08770/y3TlRiKc5INNRiLipO
-        BADbDpDsygIAAA==
-X-CMS-MailID: 20181121104207eucas1p2cd2fcbff22d365b5f5c66c3cffded2ad
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121101410epcas3p27a2a577c3b5a0608f7808ff733fab9d1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121101410epcas3p27a2a577c3b5a0608f7808ff733fab9d1
-References: <CGME20181121101410epcas3p27a2a577c3b5a0608f7808ff733fab9d1@epcas3p2.samsung.com>
-        <20181121101316.32194-1-ckeepax@opensource.cirrus.com>
+        Wed, 21 Nov 2018 16:16:58 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 94D0E602D7; Wed, 21 Nov 2018 10:43:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542796983;
+        bh=MFGfn1YqQ+11f76bcdXQvOko2Z5OI0ImcCxJfnkg3EE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EcqEKCLcLBeWt651lDimD2PEHU5FlJOJSW4nu/YkZBFxfVO0yi+gfcrQ/MWEqB50g
+         wlJVplAKbnepfUjZgaRkWmVhztb4QbVqRSYLRo4S25o6fVuE6jfLG1Lw0jNr1evVu0
+         SdUr8r65UmQvTJZuCmqlY+ZyN2q9OJnPO3SGPfwM=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 600DA602D7;
+        Wed, 21 Nov 2018 10:42:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542796982;
+        bh=MFGfn1YqQ+11f76bcdXQvOko2Z5OI0ImcCxJfnkg3EE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Y8Y5m6ZG/Tu8E9KYctIN5xZwsg1hmmuL0N4RmFHMlHZLrrt7bNmitRLLD7xpP3dW7
+         geB/Emd/nwvM40a5pPaK1tlgc/nDGEuK8onTKH50/DZaEQWtcsxJ4t1VOYglfe5b4l
+         So8fGpgnANp7euHn/83QX0a1FjKfTdhDMaYZp208=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 600DA602D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v10 0/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+Date:   Wed, 21 Nov 2018 16:12:45 +0530
+Message-Id: <1542796967-5949-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Charles,
+ [v10]
+  * Update Documentation binding for cpufreq node.
+  * Make the driver 'tristate' instead of 'bool' and update code.
+  * Update the clock name to reflect the hardware name.
+  * Remove support for varying offset.
 
-On 2018-11-21 11:13, Charles Keepax wrote:
-> The regulator core takes over managing the lifetime of the enable GPIO
-> once the regulator is registered. As such we shouldn't register the
-> enable GPIO using devm, or it will be freed twice.
->
-> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> ---
->
-> Again only build tested.
+ [v9]
+  * Update the Documentation binding for freq-domain-cells & cpufreq node.
+  * Address comments in Kconfig.arm & Makefile.
+  * Remove include file & MODULE_DESCRIPTION not required.
+  * Fix the code for 'of_node_put(cpu_np)'.
 
-Thanks for the patch. It fixes the observed GPIOlib warning.
+ [v8]
+   * Address comments to update code to take cpufreq_hw phandle and index from
+     the CPU nodes.
+   * Updated the Documentation for the above change in DT.
+   * Updated logic for assigning 'qcom_freq_domain_map' for related CPUs.
+   * Clock input to the HW block is taken from DT which has been updated in
+     code and Device tree documentation.
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+ [v7]
+   * Updated the logic to check for related CPUs.
 
-It might sense to add:
+ [v6]
+   * Renamed match table 'qcom_cpufreq_hw_match'.
+   * Renamed 'qcom_read_lut' to 'qcom_cpufreq_hw_read_lut'.
+   * Updated the logic to check for related CPUs at the beginning of the
+     'qcom_cpu_resources_init'.
+   * Use devm_ioremap_resource instead of devm_ioremap.
+   * Update the use of of_node_put to handle error conditions.
+   * Use policy->cached_resolved_idx in fast switch callback.
+   * Keep precalculated offsets 'reg_bases'.
+   * XO clock is taken from Device tree.
+   * Update documentation binding for clocks/clock-names.
+   * Minor comments in Kconfig.arm.
+   * Comments to move dev_info to dev_dbg.
 
-Fixes: 1d2f46814d20 ("regulator: wm8994: Pass descriptor instead of GPIO
-number")
+ [v5]
+   * Remove mapping different register regions of perf/lut/enable,
+     instead map the entire HW region.
+   * Add reg_offset/cpufreq_qcom_std_offsets to be supplied as device data.
+   * Check of src == 0 during lut read.
+   * Add of_node_put(cpu_np) in qcom_get_related_cpus
+   * Update the qcom_cpu_resources_init for register offset data,
+     and cleanup the related cpus to keep a single copy of CPUfreq.
+   * Replace FW with HW, update Kconfig, rename filename qcom-cpufreq-hw.c
+   * Update the documentation binding to reflect the changes of mapping the
+   * entire HW region.
 
+ [v4]
+   * Fixed console messages as per comments.
+   * Return error from qcom_resources_init()
+     in the cases where failed to get frequency domain.
+   * Rename cpu_dev to cpu_np in qcom_resources_init,
+     qcom_get_related_cpus(). Also use temp variable freq_np in
+     qcom_get_related_cpus().
+   * Update qcom_cpufreq_fw_get() to use the policy data to incoporate
+     the hotplug use case.
+   * Update code to use of fast_switching.
+   * Check for !c->max_cores instead of cpumask_empty in
+     qcom_get_related_cpus().
+   * Update the logic of assigning 'c' to qcom_freq_domain_map[cpu].
 
-Linus, Mark: Similar issue is probably in the other regulator drivers,
-which use enable GPIO allocated by devm_gpio_get*(). This driver is
-simply the first one, which we observed it. It would be great if one
-would take a look into regulator_register() error path, because for some
-cases the GPIO will be freed, for the other - not.
+ [v3]
+   * Remove index check from 'qcom_cpufreq_fw_target_index'.
+   * Update the Documentation binding to add the platform specific properties in
+     the CPU nodes, node name "qcom,freq-domain".
+   * Update return value to '0' from -ENODEV from 'qcom_cpufreq_fw_get'.
+   * Update the logic for boost frequency to use local variables instead of
+     cpufreq driver data in 'qcom_read_lut'.
+   * Update the logic in 'qcom_get_related_cpus' to find the related cpus.
+   * Update the reg-names to remove "_base" and also update the binding with the
+     description of these registers.
+   * Update the logic in 'qcom_resources_init' to address the new device tree
+     notation of handling the frequency domain phandles.
 
-> Thanks,
-> Charles
->
->  drivers/regulator/wm8994-regulator.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
-> index d7fec533c4032..46e6b4ee1491a 100644
-> --- a/drivers/regulator/wm8994-regulator.c
-> +++ b/drivers/regulator/wm8994-regulator.c
-> @@ -147,11 +147,14 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
->  	config.regmap = wm8994->regmap;
->  	config.init_data = &ldo->init_data;
->  
-> -	/* Look up LDO enable GPIO from the parent device node */
-> -	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
-> -					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
-> -					GPIOD_OUT_LOW |
-> -					GPIOD_FLAGS_BIT_NONEXCLUSIVE);
-> +	/*
-> +	 * Look up LDO enable GPIO from the parent device node, we don't
-> +	 * use devm because the regulator core will free the GPIO
-> +	 */
-> +	gpiod = gpiod_get_optional(pdev->dev.parent,
-> +				   id ? "wlf,ldo2ena" : "wlf,ldo1ena",
-> +				   GPIOD_OUT_LOW |
-> +				   GPIOD_FLAGS_BIT_NONEXCLUSIVE);
->  	if (IS_ERR(gpiod))
->  		return PTR_ERR(gpiod);
->  	config.ena_gpiod = gpiod;
-> @@ -184,6 +187,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
->  	return 0;
->  
->  err:
-> +	gpiod_put(gpiod);
->  	return ret;
->  }
->  
+ [v2]
+   * Fixed the alignment issues in "qcom_cpufreq_fw_target_index" for dev_err and
+     also for "qcom_cpu_resources_init".
+   * Removed ret = 0 from qcom_get_related_cpus and added to check for
+     cpu_mask_empty to return -ENOENT.
+   * Fixes qcom_cpu_resources_init function
+   * Remove initialization of 'index'
+   * Check for valid 'c'
+   * Removed initialization of 'prev_cc' from 'qcom_read_lut'.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Taniya Das (2):
+  dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware bindings
+  cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
+
+ .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 172 ++++++++++
+ drivers/cpufreq/Kconfig.arm                        |  11 +
+ drivers/cpufreq/Makefile                           |   1 +
+ drivers/cpufreq/qcom-cpufreq-hw.c                  | 346 +++++++++++++++++++++
+ 4 files changed, 530 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+ create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
