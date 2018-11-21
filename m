@@ -2,188 +2,185 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8582EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DFAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D07D2087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D07D2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BE7F2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 04:37:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="kBFcWVzs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BE7F2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727247AbeKUPAt (ORCPT
+        id S1726705AbeKUPKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 10:00:49 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:52860 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727010AbeKUPAt (ORCPT
+        Wed, 21 Nov 2018 10:10:12 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40465 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeKUPKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 10:00:49 -0500
-Received: by mail-io1-f69.google.com with SMTP id h7so4144473iof.19
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 20:28:04 -0800 (PST)
+        Wed, 21 Nov 2018 10:10:11 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b22-v6so3570960pls.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Nov 2018 20:37:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8sm5U8cKgs+Hk5a0p2QXRBGPqZ7nN5nin9bTAzAn6D0=;
+        b=kBFcWVzsWnCIMDVTR8h7GDL7Kvggn1JU5Lu/AsSFW5Yxp2mFTAyOmcT23FmqNwU6nF
+         2xQT/rggQSHUU1FUNUBTI6svDOYH5GRqwKEMIXXJKSqCXROVUg56NQCpOwWBQ0RjL5Yr
+         sQD/8lUJRWQHQ1nmMV5jRhkq5m6Vh6y63qn5k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=VDLroSLjyPR0DtQ5ZuGtkmT92SznokM22QD+Ag5ejEI=;
-        b=aRhZ8Rb+kt+zCqxIrqxt9SKDZr/THNJpeLkzaAjvzB+Hhppwy4AIV/DSqjIchLQttm
-         h27m02hI47qLdWDLzYJ4iW2MLlItPApRfwaIvIQl/5TLQ8NsdKCuBEiDnMI7hOTJ0c3c
-         yqkNWMjGI5MwlZKJUc07EWMLLwiZOfC3jF1Tnl8Q4v9ofb8RZz4hbBJDLhXb3f2Gq6kh
-         T9QJuYN1w9enCWE/QbeXLVDlo/e3dzcD/4M3q0wpVnGEzaEURU6Cohxwc2eXxPhi/mw3
-         D5fDrb3BKowtQ4PgAS+LhsILGW/fj5+IWQ9qhQZMewSsOc59bh+Qr4A1RNcZfbwlYtLg
-         UAKw==
-X-Gm-Message-State: AA+aEWZOzpnyZmd7MT7yoIAi2eq68Yp70WjSdT9rMTqnAX8NR/u9zSk5
-        zzm2krsMaLqebmIw9Y/J9yS9tojZs+Ep203VVitU5vVZWiRc
-X-Google-Smtp-Source: AJdET5foDGeVwM6kvtLD7lClpFYbJgvJQrLZ8FNAOBKV+udoIBmX7tw4OXMMfzy5iqH/Ujp2lwMfyncY1AF3AtXKasQz2EEXMBS6
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8sm5U8cKgs+Hk5a0p2QXRBGPqZ7nN5nin9bTAzAn6D0=;
+        b=CtKM6Sao2Z1LQqNvwo4XgU06BuR/MLB6IZAhgxMnUV9f7dG5j5Lf9JfHyegz9RloXg
+         OtV0K6hXMSGQKfSAXIvCCuYcpP/b1sk4pXTEKCub5zSrLWjgKETDZt4jH+xOa5hUo8B6
+         JipSuDBa5zALNjANQSPj5i2D4dU7mEhXgVJkAkWTMZcTCF56haeHZAtwFbAUkOMxKmuD
+         v7RNKFQvwaijon5TtyxJvat1lJb2bDwOwZuQP0qB23aCNPT7cZYwI4lCUb8ZoPVu/t5C
+         SgXMc5S+ARW9Q6B5Zy0eY7/7DsFC/OC9MiTCbEjsHTjMd2fOntTkKunK49uneIjYaP1H
+         Cidg==
+X-Gm-Message-State: AGRZ1gIZPnrKla/7tVQfXCsRZQzJRbG0sSQx5kDfYNT3qMMeXll5O5o0
+        IfshYT71NhRnHStzTStumKajKQ==
+X-Google-Smtp-Source: AJdET5fs90hJgFD9nxQNL+JCVe+VUMWyKKYkC/om6nM6wxJF4vg2NR4mGiK10XytmXHGrrlUIkibkQ==
+X-Received: by 2002:a62:6ec8:: with SMTP id j191mr5206605pfc.198.1542775044987;
+        Tue, 20 Nov 2018 20:37:24 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id q195sm48747758pgq.7.2018.11.20.20.37.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Nov 2018 20:37:23 -0800 (PST)
+Date:   Tue, 20 Nov 2018 20:37:22 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, josh@joshtriplett.org,
+        rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+        jiangshanlai@gmail.com
+Subject: Re: dyntick-idle CPU and node's qsmask
+Message-ID: <20181121043722.GA102501@google.com>
+References: <20181110214659.GA96924@google.com>
+ <20181110230436.GL4170@linux.ibm.com>
+ <20181111030925.GA182908@google.com>
+ <20181111042210.GN4170@linux.ibm.com>
+ <20181111180916.GA25327@google.com>
+ <20181111183618.GY4170@linux.ibm.com>
+ <20181120204243.GA22801@google.com>
+ <20181120222813.GE4170@linux.ibm.com>
+ <20181121020612.GB60896@google.com>
+ <20181121024107.GI4170@linux.ibm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:59d1:: with SMTP id p200-v6mr3602646itb.10.1542774483891;
- Tue, 20 Nov 2018 20:28:03 -0800 (PST)
-Date:   Tue, 20 Nov 2018 20:28:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000014c430057b252d70@google.com>
-Subject: general protection fault in sctp_sched_dequeue_common
-From:   syzbot <syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181121024107.GI4170@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, Nov 20, 2018 at 06:41:07PM -0800, Paul E. McKenney wrote:
+[...] 
+> > > > I was thinking if we could simplify rcu_note_context_switch (the parts that
+> > > > call rcu_momentary_dyntick_idle), if we did the following in
+> > > > rcu_implicit_dynticks_qs.
+> > > > 
+> > > > Since we already call rcu_qs in rcu_note_context_switch, that would clear the
+> > > > rdp->cpu_no_qs flag. Then there should be no need to call
+> > > > rcu_momentary_dyntick_idle from rcu_note_context switch.
+> > > 
+> > > But does this also work for the rcu_all_qs() code path?
+> > 
+> > Could we not do something like this in rcu_all_qs? as some over-simplified
+> > pseudo code:
+> > 
+> > rcu_all_qs() {
+> >   if (!urgent_qs || !heavy_qs)
+> >      return;
+> > 
+> >   rcu_qs();   // This clears the rdp->cpu_no_qs flags which we can monitor in
+> >               //  the diff in my last email (from rcu_implicit_dynticks_qs)
+> > }
+> 
+> Except that rcu_qs() doesn't necessarily report the quiescent state to
+> the RCU core.  Keeping down context-switch overhead and all that.
 
-syzbot found the following crash on:
+Sure yeah, but I think the QS will be indirectly anyway by the force_qs_rnp()
+path if we detect that rcu_qs() happened on the CPU?
 
-HEAD commit:    cfc6731d2f79 Merge branch 'sctp-add-subscribe-per-asoc-and..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14fc234d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=73e2bc0cb6463446
-dashboard link: https://syzkaller.appspot.com/bug?extid=e33a3a138267ca119c7d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > I think this would simplify cond_resched as well.  Could this avoid the need
+> > > > for having an rcu_all_qs at all? Hopefully I didn't some Tasks-RCU corner cases..
+> > > 
+> > > There is also the code path from cond_resched() in PREEMPT=n kernels.
+> > > This needs rcu_all_qs().  Though it is quite possible that some additional
+> > > code collapsing is possible.
+> > > 
+> > > > Basically for some background, I was thinking can we simplify the code that
+> > > > calls "rcu_momentary_dyntick_idle" since we already register a qs in other
+> > > > ways (like by resetting cpu_no_qs).
+> > > 
+> > > One complication is that rcu_all_qs() is invoked with interrupts
+> > > and preemption enabled, while rcu_note_context_switch() is
+> > > invoked with interrupts disabled.  Also, as you say, Tasks RCU.
+> > > Plus rcu_all_qs() wants to exit immediately if there is nothing to
+> > > do, while rcu_note_context_switch() must unconditionally do rcu_qs()
+> > > -- yes, it could check, but that would be redundant with the checks
+> > 
+> > This immediate exit is taken care off in the above psuedo code, would that
+> > help the cond_resched performance?
+> 
+> It look like you are cautiously edging towards the two wrapper functions
+> calling common code, relying on inlining and simplification.  Why not just
+> try doing it?  ;-)
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Sure yeah. I was more thinking of the ambitious goal of getting rid of the
+complexity and exploring the general design idea, than containing/managing
+the complexity with reducing code duplication. :D
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index c818e0c91a81..5aa0259c014d 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -1063,7 +1063,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
+> > > >  	 * read-side critical section that started before the beginning
+> > > >  	 * of the current RCU grace period.
+> > > >  	 */
+> > > > -	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap)) {
+> > > > +	if (rcu_dynticks_in_eqs_since(rdp, rdp->dynticks_snap) || !rdp->cpu_no_qs.b.norm) {
+> > > 
+> > > If I am not too confused, this change could cause trouble for
+> > > nohz_full CPUs looping in the kernel.  Such CPUs don't necessarily take
+> > > scheduler-clock interrupts, last I checked, and this could prevent the
+> > > CPU from reporting its quiescent state to core RCU.
+> > 
+> > Would that still be a problem if rcu_all_qs called rcu_qs? Also the above
+> > diff is an OR condition so it is more relaxed than before.
+> 
+> Yes, because rcu_qs() is only guaranteed to capture the quiescent
+> state on the current CPU, not necessarily report it to the RCU core.
 
-netlink: 'syz-executor1': attribute type 39 has an invalid length.
-IPv6: ADDRCONF(NETDEV_CHANGE): lo: link becomes ready
-A link change request failed with some changes committed already. Interface  
-lo may have been left with an inconsistent configuration, please check.
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 4030 Comm: syz-executor5 Not tainted 4.20.0-rc3+ #304
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
-Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
-5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
-RSP: 0018:ffff8881c1bfea48 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8881bb175618 RCX: ffffc9001006b000
-RDX: 0000000000000000 RSI: ffffffff8752c823 RDI: ffff8881bb175620
-RBP: ffff8881c1bfea60 R08: ffff88818dc04200 R09: ffff8881c1bff488
-R10: ffffed103837feb6 R11: 0000000000000003 R12: 0000000000000000
-R13: 0000000000000000 R14: ffff8881cb4d8e20 R15: dffffc0000000000
-FS:  00007f34b0944700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000ae0ed0 CR3: 00000001cb898000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  __list_del_entry include/linux/list.h:117 [inline]
-  list_del_init include/linux/list.h:159 [inline]
-  sctp_sched_dequeue_common+0xab/0x610 net/sctp/stream_sched.c:267
-  sctp_sched_fcfs_dequeue+0x18d/0x280 net/sctp/stream_sched.c:90
-  sctp_outq_dequeue_data net/sctp/outqueue.c:90 [inline]
-  sctp_outq_flush_data net/sctp/outqueue.c:1079 [inline]
-  sctp_outq_flush+0x13e2/0x34f0 net/sctp/outqueue.c:1205
-  sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:772
-  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
-  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-  sctp_do_sm+0x5ff/0x7180 net/sctp/sm_sideeffect.c:1191
-  sctp_primitive_SEND+0xa0/0xd0 net/sctp/primitive.c:178
-  sctp_sendmsg_to_asoc+0xa0b/0x1a10 net/sctp/socket.c:1955
-  sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2113
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  sock_write_iter+0x35e/0x5c0 net/socket.c:900
-  call_write_iter include/linux/fs.h:1857 [inline]
-  new_sync_write fs/read_write.c:474 [inline]
-  __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f34b0943c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
-RDX: 0000000000034000 RSI: 0000000020000040 RDI: 0000000000000005
-RBP: 000000000072bfa0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f34b09446d4
-R13: 00000000004c5cde R14: 00000000004da090 R15: 00000000ffffffff
-Modules linked in:
----[ end trace 23757f22491d2e93 ]---
-RIP: 0010:__list_del_entry_valid+0x84/0x100 lib/list_debug.c:51
-Code: 0f 84 60 01 00 00 48 b8 00 02 00 00 00 00 ad de 49 39 c4 0f 84 39 01  
-00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 e2 48 c1 ea 03 <80> 3c 02 00 75  
-5f 49 8b 14 24 48 39 da 0f 85 4e 01 00 00 49 8d 7d
-kobject: 'loop0' (00000000e65c44e1): kobject_uevent_env
-kobject: 'loop0' (00000000e65c44e1): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-RSP: 0018:ffff8881c1bfea48 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8881bb175618 RCX: ffffc9001006b000
-kobject: 'rx-0' (000000005994716d): kobject_cleanup, parent 00000000ba7aa131
-RDX: 0000000000000000 RSI: ffffffff8752c823 RDI: ffff8881bb175620
-kobject: 'loop4' (000000004d250bad): kobject_uevent_env
-kobject: 'rx-0' (000000005994716d): auto cleanup 'remove' event
-kobject: 'loop4' (000000004d250bad): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'rx-0' (000000005994716d): kobject_uevent_env
-RBP: ffff8881c1bfea60 R08: ffff88818dc04200 R09: ffff8881c1bff488
-R10: ffffed103837feb6 R11: 0000000000000003 R12: 0000000000000000
-kobject: 'rx-0' (000000005994716d): kobject_uevent_env: uevent_suppress  
-caused the event to drop!
-R13: 0000000000000000 R14: ffff8881cb4d8e20 R15: dffffc0000000000
-kobject: 'rx-0' (000000005994716d): auto cleanup kobject_del
-FS:  00007f34b0944700(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-kobject: 'rx-0' (000000005994716d): calling ktype release
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000072c000 CR3: 00000001cb898000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-kobject: 'rx-0': free name
-kobject: 'loop0' (00000000e65c44e1): kobject_uevent_env
-kobject: 'tx-3' (00000000a24965cd): kobject_cleanup, parent 00000000ba7aa131
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-kobject: 'tx-3' (00000000a24965cd): auto cleanup 'remove' event
-kobject: 'loop0' (00000000e65c44e1): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-kobject: 'tx-3' (00000000a24965cd): kobject_uevent_env
-kobject: 'tx-3' (00000000a24965cd): kobject_uevent_env: uevent_suppress  
-caused the event to drop!
-kobject: 'tx-3' (00000000a24965cd): auto cleanup kobject_del
+The reporting to the core is necessary to call rcu_report_qs_rnp so that the
+QS information is propogating up the tree, right?
+
+Wouldn't that reporting be done anyway by:
+
+force_qs_rnp
+  -> rcu_implicit_dynticks_qs  (which returns 1 because rdp->cpu_no_qs.b.norm
+				was cleared by rcu_qs() and we detect that
+				with help of above diff)
+
+  -> rcu_report_qs_rnp is called with mask bit set for corresponding CPU that
+  				has the !rdp->cpu_no_qs.b.norm
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I think that's what I am missing - that why wouldn't the above scheme work.
+The only difference is reporting to the RCU core might invoke pending
+callbacks but I'm not sure if that matters for this. I'll these changes,
+and try tracing it out and study it more.  thanks for the patience,
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+ - Joel
+ 
