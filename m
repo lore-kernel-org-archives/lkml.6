@@ -2,110 +2,123 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EA1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABE3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 431C52145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 431C52145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B45172145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 06:15:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VkRSWUTO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B45172145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbeKUQsH (ORCPT
+        id S1728183AbeKUQs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 11:48:07 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53292 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725939AbeKUQsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 11:48:07 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A6611AD02;
-        Wed, 21 Nov 2018 06:14:58 +0000 (UTC)
-Date:   Wed, 21 Nov 2018 07:14:56 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>, thomas.lendacky@amd.com,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>, dave.hansen@intel.com,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        "Van De Ven, Arjan" <arjan@linux.intel.com>, jcm@redhat.com,
-        longman9394@gmail.com, Greg KH <gregkh@linuxfoundation.org>,
-        david.c.stewart@intel.com,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        stable@vger.kernel.org
-Subject: Re: [Patch v6 14/16] x86/speculation: Use STIBP to restrict speculation
- on non-dumpable task
-In-Reply-To: <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-Message-ID: <nycvar.YFH.7.76.1811210700510.21108@cbobk.fhfr.pm>
-References: <cover.1542757030.git.tim.c.chen@linux.intel.com> <6652faa67f8c4e90c737f9fd9c7e0e2d3cd51cca.1542757030.git.tim.c.chen@linux.intel.com> <CAHk-=wiRh4QVAHV086U02tDCJz9g8MYHegEHbxCZ6-Ap4ow5Lw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Wed, 21 Nov 2018 11:48:26 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:34184 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbeKUQs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 11:48:26 -0500
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id wAL6F17r013486;
+        Wed, 21 Nov 2018 15:15:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wAL6F17r013486
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542780902;
+        bh=zB9Y5yyvxPcBgFCnd1m/5LsDMilPNg9+nFlfgxS2Oyg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VkRSWUTO1LcQjQU3glnBQMDCDtiNIGOhFvOgpgC4CUkQLE8hDYmjfcXten5fi8TvY
+         d/aqZ86JT5F9BFVKlVpECzhAHtjAdnjRgRn9eqTTf/m/BvCP9N2O2PXqyHzdiwq0Sn
+         n+80BKF4G94FTKLtIGaj/t0nsFUN07mp2BBB3RYnwL8ecbE13iNXngoTB8hQInqEzk
+         fQIkQu+W0B6cZ8oPUQw0n6gchqu/E9WfISGT4CWo7lecK5D4v9GHge65jBTkv2XXTt
+         o0APTMbe30T0+9ToAZvJ2X5i6McrIZ+RQYzAQkWpC6+TJFEdUiqwBOWmGftUvHbcKu
+         0qIYN9NRumlxw==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id u19so1538052uae.4;
+        Tue, 20 Nov 2018 22:15:01 -0800 (PST)
+X-Gm-Message-State: AA+aEWaKuzmUBZTFkqCs4NqdkqgVBrDIk/uhx3CJaBVUSR0q6Wp4k3qr
+        Eje52z/k7qfUYisH3nr65kI8tt6ebjvMvQHwLeE=
+X-Google-Smtp-Source: AFSGD/UNXD31pXr62mBt74CcXL6CkOfiDVKpTMpzjfOVBVTFoK5s+BZGWLBDt7NdSz0tlPC6EmZfc6ls/fizPdzYb30=
+X-Received: by 2002:a9f:3f41:: with SMTP id i1mr2144141uaj.42.1542780900768;
+ Tue, 20 Nov 2018 22:15:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20181115005602.30746-1-paul.walmsley@sifive.com> <20181115005602.30746-2-paul.walmsley@sifive.com>
+In-Reply-To: <20181115005602.30746-2-paul.walmsley@sifive.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 21 Nov 2018 15:14:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATQL78X2aLsAM9YQb3oCZOb+kQkB2NkoX8r=rBsH7e7mQ@mail.gmail.com>
+Message-ID: <CAK7LNATQL78X2aLsAM9YQb3oCZOb+kQkB2NkoX8r=rBsH7e7mQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] modpost: drop unused command line switches
+To:     paul.walmsley@sifive.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Paul Walmsley <paul@pwsan.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Nov 2018, Linus Torvalds wrote:
+On Thu, Nov 15, 2018 at 9:56 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> Drop modpost command line switches that are no longer used by
+> makefile.modpost, upon request from Sam Ravnborg <sam@ravnborg.org>,
+> who wrote:
+>
+>     modpost is not supposed to be used outside the kernel build. [...]
+>     I checked if there were any options supported by modpost that
+>     was not configurable in makefile.modpost.
+>     And I could see that the -M and -K options in getopt() was leftovers.
+>     The code that used these option was was dropped in:
+>     commit a8773769d1a1 ("Kbuild: clear marker out of modpost")
+>
+>     Could you add a patch that delete these on top of what you already have.
+>
+> https://lore.kernel.org/lkml/20181020140835.GA3351@ravnborg.org/
+>
+> Cc: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: linux-kbuild@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+> ---
 
-> > Implements arch_update_spec_restriction() for x86.  Use STIBP to
-> > restrict speculative execution when running a task set to non-dumpable,
-> > or clear the restriction if the task is set to dumpable.
-> 
-> I don't think this necessarily makes sense.
-> 
-> The new "auto" behavior is that we aim to restrict untrusted code (and
-> the loader of such code uses prctrl to set that flag), then this whole
-> "set STIBP for non-dumpable" makes little sense.
-> 
-> A non-dumpable app by definition is *more* trusted, not less trusted.
+Applied to linux-kbuild.
+Thanks!
 
-I understand your argument. I believe actually both ways of protection do 
-make sense in some way (but it doesn't mean we should do it by default). 
-Basically:
 
-- process marks itself "I am loading untrusted code" via that prctl() in 
-  order to avoid its untrusted code to be used as spectrev2 gadgets
 
-- process marks itself "I am loading untrusted code" via that prctl() in
-  order to have its all threads/subprocesses marked the same way, so that
-  one thread can't influence speculative code flow of the other in order
-  to read its memory (the "javascript in one browser tab reads secrets 
-  from another tab")
+>  scripts/mod/modpost.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index 0d998c54564d..85bd93c63180 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -2416,7 +2416,7 @@ int main(int argc, char **argv)
+>         struct ext_sym_list *extsym_iter;
+>         struct ext_sym_list *extsym_start = NULL;
+>
+> -       while ((opt = getopt(argc, argv, "i:I:e:mnsST:o:awM:K:E")) != -1) {
+> +       while ((opt = getopt(argc, argv, "i:I:e:mnsST:o:awE")) != -1) {
+>                 switch (opt) {
+>                 case 'i':
+>                         kernel_read = optarg;
+> --
+> 2.19.1
+>
 
-- non-dumpable tasks have the branch predictor flushed when 
-  context switching to them (IBPB) or when sibling is running untrusted 
-  code (STIBP) in order not guarantee that its speculative code flow can
-  never be influenced by previous / sibling process mistraining branch
-  predictor for it, and therefore do not allow reading its secrets from 
-  memory through gadgets that'd have to be in the process code itself
-
-But I agree there are many reasons why this shouldn't be done by default 
-if we accept 'prctl' as the default mode. Namely:
-
-- the whole "proper gadgets need to be present in the process' .text" is 
-  dubious by itself
-
-- the unavoidable overhead it'd impose on network daemons that you can't 
-  really get rid of
-
-The distiled patchset that Thomas will be sending around today is not have 
-the dumpability restriction in it.
-
-Thanks,
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Best Regards
+Masahiro Yamada
