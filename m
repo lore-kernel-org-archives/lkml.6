@@ -2,266 +2,165 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60A0AC04EBA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E05C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A7BE20989
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A7BE20989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id A7A9D20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 09:33:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GWqr4FEU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ddt341OD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A9D20989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbeKUUHS (ORCPT
+        id S1729539AbeKUUHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 15:07:18 -0500
-Received: from mx.socionext.com ([202.248.49.38]:18059 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728810AbeKUUHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 15:07:17 -0500
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 21 Nov 2018 18:33:31 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 960F518020D;
-        Wed, 21 Nov 2018 18:33:31 +0900 (JST)
-Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Wed, 21 Nov 2018 18:33:31 +0900
-Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
- SOC-EX02V.e01.socionext.com (10.213.24.22) with Microsoft SMTP Server (TLS)
- id 15.0.995.29; Wed, 21 Nov 2018 18:33:30 +0900
-Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
- SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
- Wed, 21 Nov 2018 18:33:30 +0900
-From:   <sugaya.taichi@socionext.com>
-To:     <robh+dt@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-        <linux@armlinux.org.uk>, <jslaby@suse.com>,
-        <masami.hiramatsu@linaro.org>, <jaswinder.singh@linaro.org>
-Subject: RE: [PATCH 01/14] ARM: milbeaut: Add basic support for Milbeaut m10v
- SoC
-Thread-Topic: [PATCH 01/14] ARM: milbeaut: Add basic support for Milbeaut m10v
- SoC
-Thread-Index: AQHUf6NEpQdO41NVC0WXlgD9LEyJRKVWsnSAgAMI5HA=
-Date:   Wed, 21 Nov 2018 09:33:29 +0000
-Message-ID: <37936bec442a4325bdda03a0fe2e90f8@SOC-EX02V.e01.socionext.com>
-References: <1542589274-13878-1-git-send-email-sugaya.taichi@socionext.com>
- <1542589274-13878-2-git-send-email-sugaya.taichi@socionext.com>
- <CAL_JsqJotYwwC490XmCtn_=-mrosxG3UUCy0P_SVO3d94yW6VA@mail.gmail.com>
-In-Reply-To: <CAL_JsqJotYwwC490XmCtn_=-mrosxG3UUCy0P_SVO3d94yW6VA@mail.gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.3.2
-x-shieldmailcheckerpolicyversion: POLICY180220
-x-originating-ip: [10.213.24.1]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 21 Nov 2018 15:07:32 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37874 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728810AbeKUUHc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 15:07:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 60ED460B12; Wed, 21 Nov 2018 09:33:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542792827;
+        bh=XUKaYDR/t6sKVg5zxPi9jY85x462ISIHa/Ib9RRhS6I=;
+        h=Date:From:To:Subject:From;
+        b=GWqr4FEUIOsL82iQUIa4cV9OrB5O3b2HbGa7zvvDbyyQJmro3gyYAE+C+dY3wnkDz
+         NuIpkb1EfyV+JQS1f5ZnzMRwTmokWfmwvTe1vjea++AN4BcBbKMVRF0tG5Omv0xkee
+         lbI1vH7A9PaRhxYWtQLf6csUvcF3Mb9P/FtF6TAo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id A42756047C;
+        Wed, 21 Nov 2018 09:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542792826;
+        bh=XUKaYDR/t6sKVg5zxPi9jY85x462ISIHa/Ib9RRhS6I=;
+        h=Date:From:To:Subject:From;
+        b=Ddt341ODjJcljgc0YVDk5YJEGhgsqnn76uVliEz325vp4EjTchNNYT4QanchzV4AQ
+         7iRlB9kKw2rawLupn0BaK8M5LzQ9ehyCkqoA6GBoDVN0EG1plXkHitPcpwWkvT14Zv
+         x5vWvHRJdPlFdJvGCl3kdWRmTTOpo3R50il5ySxc=
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 21 Nov 2018 15:03:46 +0530
+From:   poza@codeaurora.org
+To:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: ASPEED graphics card: ast_pci_probe causes RCU stalls
+Message-ID: <146595c1e1c6753cca92cf70a7b79f47@codeaurora.org>
+X-Sender: poza@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgUm9iDQoNClRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50cy4NCg0KPiAtLS0tLU9yaWdpbmFs
-IE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSb2IgSGVycmluZyBbbWFpbHRvOnJvYmgrZHRAa2VybmVs
-Lm9yZ10NCj4gU2VudDogVHVlc2RheSwgTm92ZW1iZXIgMjAsIDIwMTggMToyNCBBTQ0KPiBUbzog
-U3VnYXlhLCBUYWljaGkNCj4gQ2M6IGxpbnV4LWNsazsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
-cmc7IG1vZGVyYXRlZCBsaXN0OkFSTS9GUkVFU0NBTEUNCj4gSU1YIC8gTVhDIEFSTSBBUkNISVRF
-Q1RVUkU7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IG9wZW4gbGlzdDpTRVJJQUwNCj4g
-RFJJVkVSUzsgTWljaGFlbCBUdXJxdWV0dGU7IFN0ZXBoZW4gQm95ZDsgTWFyayBSdXRsYW5kOyBH
-cmVnIEtyb2FoLUhhcnRtYW47DQo+IERhbmllbCBMZXpjYW5vOyBUaG9tYXMgR2xlaXhuZXI7IFJ1
-c3NlbGwgS2luZzsgSmlyaSBTbGFieTsgTWFzYW1pIEhpcmFtYXRzdTsNCj4gSmFzc2kgQnJhcg0K
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDAxLzE0XSBBUk06IG1pbGJlYXV0OiBBZGQgYmFzaWMgc3Vw
-cG9ydCBmb3IgTWlsYmVhdXQNCj4gbTEwdiBTb0MNCj4gDQo+IE9uIFN1biwgTm92IDE4LCAyMDE4
-IGF0IDc6MDAgUE0gU3VnYXlhIFRhaWNoaQ0KPiA8c3VnYXlhLnRhaWNoaUBzb2Npb25leHQuY29t
-PiB3cm90ZToNCj4gPg0KPiA+IFRoaXMgYWRkcyB0aGUgYmFzaWMgTTEwViBTb0Mgc3VwcG9ydCB1
-bmRlciBhcmNoL2FybS4NCj4gPiBTaW5jZSBhbGwgY29yZXMgYXJlIGFjdGl2YXRlZCBpbiB0aGUg
-Y3VzdG9tIGJvb3Rsb2FkZXIgYmVmb3JlIGJvb3RpbmcNCj4gPiBsaW51eCwgaXQgaXMgbmVjZXNz
-YXJ5IHRvIHdhaXQgZm9yIHN1Yi1jb3JlcyB1c2luZyB0aGUgdHJhbXBvbGluZSBhcmVhLg0KPiA+
-DQo+ID4gU2lnbmVkLW9mZi1ieTogU3VnYXlhIFRhaWNoaSA8c3VnYXlhLnRhaWNoaUBzb2Npb25l
-eHQuY29tPg0KPiA+IC0tLQ0KPiA+ICBhcmNoL2FybS9LY29uZmlnICAgICAgICAgICAgICAgICAg
-fCAgIDIgKw0KPiA+ICBhcmNoL2FybS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgfCAgIDEgKw0K
-PiA+ICBhcmNoL2FybS9tYWNoLW1pbGJlYXV0L0tjb25maWcgICAgfCAgMjggKysrKysrKw0KPiA+
-ICBhcmNoL2FybS9tYWNoLW1pbGJlYXV0L01ha2VmaWxlICAgfCAgIDMgKw0KPiA+ICBhcmNoL2Fy
-bS9tYWNoLW1pbGJlYXV0L20xMHZfZXZiLmMgfCAgMzEgKysrKysrKysNCj4gPiAgYXJjaC9hcm0v
-bWFjaC1taWxiZWF1dC9wbGF0c21wLmMgIHwgMTU3DQo+ICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrDQo+ID4gIDYgZmlsZXMgY2hhbmdlZCwgMjIyIGluc2VydGlvbnMoKykN
-Cj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtbWlsYmVhdXQvS2NvbmZpZw0K
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1taWxiZWF1dC9NYWtlZmlsZQ0K
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1taWxiZWF1dC9tMTB2X2V2Yi5j
-DQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLW1pbGJlYXV0L3BsYXRzbXAu
-Yw0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL0tjb25maWcgYi9hcmNoL2FybS9LY29u
-ZmlnDQo+ID4gaW5kZXggOTFiZTc0ZC4uMGI4YTFhZiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2Fy
-bS9LY29uZmlnDQo+ID4gKysrIGIvYXJjaC9hcm0vS2NvbmZpZw0KPiA+IEBAIC03NjcsNiArNzY3
-LDggQEAgc291cmNlICJhcmNoL2FybS9tYWNoLW1lZGlhdGVrL0tjb25maWciDQo+ID4NCj4gPiAg
-c291cmNlICJhcmNoL2FybS9tYWNoLW1lc29uL0tjb25maWciDQo+ID4NCj4gPiArc291cmNlICJh
-cmNoL2FybS9tYWNoLW1pbGJlYXV0L0tjb25maWciDQo+ID4gKw0KPiA+ICBzb3VyY2UgImFyY2gv
-YXJtL21hY2gtbW1wL0tjb25maWciDQo+ID4NCj4gPiAgc291cmNlICJhcmNoL2FybS9tYWNoLW1v
-eGFydC9LY29uZmlnIg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9NYWtlZmlsZSBiL2FyY2gv
-YXJtL01ha2VmaWxlDQo+ID4gaW5kZXggMDVhOTFkOC4uNjI3ODUzYyAxMDA2NDQNCj4gPiAtLS0g
-YS9hcmNoL2FybS9NYWtlZmlsZQ0KPiA+ICsrKyBiL2FyY2gvYXJtL01ha2VmaWxlDQo+ID4gQEAg
-LTE5MCw2ICsxOTAsNyBAQCBtYWNoaW5lLSQoQ09ORklHX0FSQ0hfTVY3OFhYMCkgICAgICAgICAg
-ICAgICs9DQo+IG12Nzh4eDANCj4gPiAgbWFjaGluZS0kKENPTkZJR19BUkNIX01WRUJVKSAgICAg
-ICAgICAgKz0gbXZlYnUNCj4gPiAgbWFjaGluZS0kKENPTkZJR19BUkNIX01YQykgICAgICAgICAg
-ICAgKz0gaW14DQo+ID4gIG1hY2hpbmUtJChDT05GSUdfQVJDSF9NRURJQVRFSykgICAgICAgICAg
-ICAgICAgKz0gbWVkaWF0ZWsNCj4gPiArbWFjaGluZS0kKENPTkZJR19BUkNIX01JTEJFQVVUKSAg
-ICAgICAgICAgICAgICArPSBtaWxiZWF1dA0KPiA+ICBtYWNoaW5lLSQoQ09ORklHX0FSQ0hfTVhT
-KSAgICAgICAgICAgICArPSBteHMNCj4gPiAgbWFjaGluZS0kKENPTkZJR19BUkNIX05FVFgpICAg
-ICAgICAgICAgKz0gbmV0eA0KPiA+ICBtYWNoaW5lLSQoQ09ORklHX0FSQ0hfTk9NQURJSykgICAg
-ICAgICArPSBub21hZGlrDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbWlsYmVhdXQv
-S2NvbmZpZw0KPiBiL2FyY2gvYXJtL21hY2gtbWlsYmVhdXQvS2NvbmZpZw0KPiA+IG5ldyBmaWxl
-IG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uNjNiNmY2OQ0KPiA+IC0tLSAvZGV2L251
-bGwNCj4gPiArKysgYi9hcmNoL2FybS9tYWNoLW1pbGJlYXV0L0tjb25maWcNCj4gPiBAQCAtMCww
-ICsxLDI4IEBADQo+ID4gKyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPiAr
-bWVudWNvbmZpZyBBUkNIX01JTEJFQVVUDQo+ID4gKyAgICAgICBib29sICJTb2Npb25leHQgTWls
-YmVhdXQgU29DcyINCj4gPiArICAgICAgIGRlcGVuZHMgb24gQVJDSF9NVUxUSV9WNw0KPiA+ICsg
-ICAgICAgc2VsZWN0IEFSTV9HSUMNCj4gDQo+ID4gKyAgICAgICBzZWxlY3QgQ0xLREVWX0xPT0tV
-UA0KPiA+ICsgICAgICAgc2VsZWN0IEdFTkVSSUNfQ0xPQ0tFVkVOVFMNCj4gPiArICAgICAgIHNl
-bGVjdCBDTEtTUkNfTU1JTw0KPiANCj4gVGhlIGNsb2NrIGFuZCB0aW1lciBkcml2ZXJzJyBrY29u
-ZmlnIGVudHJpZXMgc2hvdWxkIHNlbGVjdCB0aGVzZS4NCk9LLiBtb3ZlIHRoZXNlIHRvIHRoZSBj
-b3JyZWN0IGtjb25maWcuDQoNCj4gDQo+ID4gKyAgICAgICBzZWxlY3QgWk9ORV9ETUENCj4gDQo+
-IFdoeSBpcyB0aGlzIG5lZWRlZD8NCkFoLCBpdCBtYXkgbm90IGJlIG5lZWRlZCB5ZXQuIGNvbmZp
-cm0gaXQuDQoNCj4gDQo+ID4gKyAgICAgICBoZWxwDQo+ID4gKyAgICAgICAgICAgICAgIFRoaXMg
-ZW5hYmxlcyBzdXBwb3J0IGZvciBTb2Npb25leHQgTWlsYmVhdXQgU29Dcw0KPiA+ICsNCj4gPiAr
-aWYgQVJDSF9NSUxCRUFVVA0KPiA+ICsNCj4gPiArY29uZmlnIEFSQ0hfTUlMQkVBVVRfTTEwVg0K
-PiA+ICsgICAgICAgYm9vbCAiTWlsYmVhdXQgU0MyMDAwL00xMFYgcGxhdGZvcm0iDQo+ID4gKyAg
-ICAgICBzZWxlY3QgQVJNX0FSQ0hfVElNRVINCj4gPiArICAgICAgIHNlbGVjdCBNMTBWX1RJTUVS
-DQo+ID4gKyAgICAgICBzZWxlY3QgUElOQ1RSTA0KPiA+ICsgICAgICAgc2VsZWN0IFBJTkNUUkxf
-TTEwVg0KPiA+ICsgICAgICAgaGVscA0KPiA+ICsgICAgICAgICBTdXBwb3J0IGZvciBTb2Npb25l
-eHQncyBNSUxCRUFVVCBNMTBWIGJhc2VkIHN5c3RlbXMNCj4gPiArDQo+ID4gK2NvbmZpZyBNQUNI
-X00xMFZfRVZCDQo+ID4gKyAgICAgICBib29sICJTdXBwb3J0IGZvciBNaWxiZWF1dCBFdmFsdWF0
-aW9uIGJvYXJkcyINCj4gDQo+IFlvdSBzaG91bGRuJ3QgbmVlZCBhIGtjb25maWcgZW50cnkgZm9y
-IGVhY2ggYm9hcmQuDQpJIHNlZS4gDQoNCj4gDQo+ID4gKyAgICAgICBkZWZhdWx0IHkNCj4gPiAr
-DQo+ID4gK2VuZGlmDQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtbWlsYmVhdXQvTWFr
-ZWZpbGUNCj4gYi9hcmNoL2FybS9tYWNoLW1pbGJlYXV0L01ha2VmaWxlDQo+ID4gbmV3IGZpbGUg
-bW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwLi42NGY2ZjUyDQo+ID4gLS0tIC9kZXYvbnVs
-bA0KPiA+ICsrKyBiL2FyY2gvYXJtL21hY2gtbWlsYmVhdXQvTWFrZWZpbGUNCj4gPiBAQCAtMCww
-ICsxLDMgQEANCj4gPiArb2JqLSQoQ09ORklHX1NNUCkgKz0gcGxhdHNtcC5vDQo+ID4gK29iai0k
-KENPTkZJR19NQUNIX00xMFZfRVZCKSArPSBtMTB2X2V2Yi5vDQo+ID4gKw0KPiA+IGRpZmYgLS1n
-aXQgYS9hcmNoL2FybS9tYWNoLW1pbGJlYXV0L20xMHZfZXZiLmMNCj4gYi9hcmNoL2FybS9tYWNo
-LW1pbGJlYXV0L20xMHZfZXZiLmMNCj4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4
-IDAwMDAwMDAuLmExZmE3YzMNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvYXJjaC9hcm0v
-bWFjaC1taWxiZWF1dC9tMTB2X2V2Yi5jDQo+IA0KPiBUaGlzIGFsbCBsb29rcyBTb0Mgc3BlY2lm
-aWMsIG5vdCBib2FyZCBzcGVjaWZpYy4NClVtIHRoYXQgaXMgcmlnaHQuLg0KDQo+IA0KPiA+IEBA
-IC0wLDAgKzEsMzEgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAN
-Cj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDE4IFNvY2lvbmV4dCBJbmMuDQo+ID4g
-KyAqIENvcHlyaWdodDogICAoQykgMjAxNSBMaW5hcm8gTHRkLg0KPiA+ICsgKi8NCj4gPiArDQo+
-ID4gKyNpbmNsdWRlIDxsaW51eC9vZi5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1f
-ZGV2aWNlLmg+DQo+IA0KPiBOb3QgbmVlZGVkLg0KT0suDQoNCj4gDQo+ID4gKw0KPiA+ICsjaW5j
-bHVkZSA8YXNtL21hY2gvYXJjaC5oPg0KPiA+ICsjaW5jbHVkZSA8YXNtL21hY2gvbWFwLmg+DQo+
-ID4gKw0KPiA+ICtzdGF0aWMgc3RydWN0IG1hcF9kZXNjIG0xMHZfaW9fZGVzY1tdIF9faW5pdGRh
-dGEgPSB7DQo+ID4gK307DQo+ID4gKw0KPiA+ICt2b2lkIF9faW5pdCBtMTB2X21hcF9pbyh2b2lk
-KQ0KPiA+ICt7DQo+ID4gKyAgICAgICBkZWJ1Z19sbF9pb19pbml0KCk7DQo+IA0KPiBJZiB5b3Ug
-dXNlIGVhcmx5Y29uIGluc3RlYWQsIHRoZW4gdGhpcyBpc24ndCBuZWVkZWQuDQo+IA0KPiA+ICsg
-ICAgICAgaW90YWJsZV9pbml0KG0xMHZfaW9fZGVzYywgQVJSQVlfU0laRShtMTB2X2lvX2Rlc2Mp
-KTsNCj4gDQo+IFRoaXMgaXNuJ3QgbmVlZGVkLg0KT0suDQoNCj4gDQo+ID4gK30NCj4gPiArDQo+
-ID4gK3N0YXRpYyBjb25zdCBjaGFyICogY29uc3QgbTEwdl9jb21wYXRbXSA9IHsNCj4gPiArICAg
-ICAgICJzb2Npb25leHQsbWlsYmVhdXQtbTEwdi1ldmIiLA0KPiA+ICsgICAgICAgTlVMTCwNCj4g
-PiArfTsNCj4gPiArDQo+ID4gK0RUX01BQ0hJTkVfU1RBUlQoTTEwVl9SRUIsICJTb2Npb25leHQg
-TWlsYmVhdXQiKQ0KPiA+ICsgICAgICAgLmR0X2NvbXBhdCAgICAgID0gbTEwdl9jb21wYXQsDQo+
-ID4gKyAgICAgICAubDJjX2F1eF9tYXNrICAgPSAweGZmZmZmZmZmLA0KPiA+ICsgICAgICAgLm1h
-cF9pbyAgICAgICAgID0gbTEwdl9tYXBfaW8sDQo+IA0KPiBJdCBsb29rcyBsaWtlIHlvdSBjYW4g
-cmVtb3ZlIHRoaXMgZW50aXJlIGZpbGUgYW5kIHVzZSB0aGUgZGVmYXVsdCBtYWNoaW5lDQo+IGRl
-c2MuDQpPSywgdHJ5IHRvIHVzZSB0aGUgZGVmYXVsdCBtYWNoaW5lIGRlc2NyaXB0b3IgaW5zdGVh
-ZC4NCg0KPiANCj4gPiArTUFDSElORV9FTkQNCj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFj
-aC1taWxiZWF1dC9wbGF0c21wLmMNCj4gYi9hcmNoL2FybS9tYWNoLW1pbGJlYXV0L3BsYXRzbXAu
-Yw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uYjcwNjg1MQ0K
-PiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9hcmNoL2FybS9tYWNoLW1pbGJlYXV0L3BsYXRz
-bXAuYw0KPiA+IEBAIC0wLDAgKzEsMTU3IEBADQo+ID4gKy8vIFNQRFgtTGljZW5zZS1JZGVudGlm
-aWVyOiBHUEwtMi4wDQo+ID4gKy8qDQo+ID4gKyAqIENvcHlyaWdodCAoQykgMjAxOCBTb2Npb25l
-eHQgSW5jLg0KPiA+ICsgKiBDb3B5cmlnaHQ6ICAoQykgMjAxNSBMaW5hcm8gTHRkLg0KPiA+ICsg
-Ki8NCj4gPiArDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9jcHVfcG0uaD4NCj4gPiArI2luY2x1ZGUg
-PGxpbnV4L2lycWNoaXAvYXJtLWdpYy5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvb2ZfZGV2aWNl
-Lmg+DQo+IA0KPiBOb3QgbmVlZGVkLg0KT2theS4NCg0KPiANCj4gPiArI2luY2x1ZGUgPGxpbnV4
-L29mX2FkZHJlc3MuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPg0K
-PiANCj4gTm90IG5lZWRlZC4NCk9rYXkuDQoNCj4gDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9zdXNw
-ZW5kLmg+DQo+ID4gKw0KPiA+ICsjaW5jbHVkZSA8YXNtL2NhY2hlZmx1c2guaD4NCj4gPiArI2lu
-Y2x1ZGUgPGFzbS9jcDE1Lmg+DQo+ID4gKyNpbmNsdWRlIDxhc20vaWRtYXAuaD4NCj4gPiArI2lu
-Y2x1ZGUgPGFzbS9zbXBfcGxhdC5oPg0KPiA+ICsjaW5jbHVkZSA8YXNtL3N1c3BlbmQuaD4NCj4g
-PiArDQo+ID4gKyNkZWZpbmUgTTEwVl9NQVhfQ1BVICAgNA0KPiA+ICsNCj4gPiArI2RlZmluZSBL
-RVJORUxfVU5CT09UX0ZMQUcgICAgIDB4MTIzNDU2NzgNCj4gPiArI2RlZmluZSBDUFVfRklOSVNI
-X1NVU1BFTkRfRkxBRyAweDU2Nzg0MzIxDQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBfX2lvbWVt
-ICp0cmFtcG9saW5lOw0KPiA+ICsNCj4gPiArc3RhdGljIGludCBtMTB2X2Jvb3Rfc2Vjb25kYXJ5
-KHVuc2lnbmVkIGludCBsX2NwdSwgc3RydWN0IHRhc2tfc3RydWN0DQo+ICppZGxlKQ0KPiA+ICt7
-DQo+ID4gKyAgICAgICB1bnNpZ25lZCBpbnQgbXBpZHIsIGNwdSwgY2x1c3RlcjsNCj4gPiArDQo+
-ID4gKyAgICAgICBtcGlkciA9IGNwdV9sb2dpY2FsX21hcChsX2NwdSk7DQo+ID4gKyAgICAgICBj
-cHUgPSBNUElEUl9BRkZJTklUWV9MRVZFTChtcGlkciwgMCk7DQo+ID4gKyAgICAgICBjbHVzdGVy
-ID0gTVBJRFJfQUZGSU5JVFlfTEVWRUwobXBpZHIsIDEpOw0KPiA+ICsNCj4gPiArICAgICAgIGlm
-IChjcHUgPj0gTTEwVl9NQVhfQ1BVKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
-TDsNCj4gPiArDQo+ID4gKyAgICAgICBwcl9kZWJ1ZygiJXM6IGNwdSAldSBjbHVzdGVyICV1XG4i
-LCBfX2Z1bmNfXywgY3B1LCBjbHVzdGVyKTsNCj4gPiArDQo+ID4gKyAgICAgICB3cml0ZWwodmly
-dF90b19waHlzKHNlY29uZGFyeV9zdGFydHVwKSwgdHJhbXBvbGluZSArIGNwdSAqIDQpOw0KPiA+
-ICsgICAgICAgYXJjaF9zZW5kX3dha2V1cF9pcGlfbWFzayhjcHVtYXNrX29mKGxfY3B1KSk7DQo+
-ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyB2
-b2lkIG0xMHZfY3B1X2RpZSh1bnNpZ25lZCBpbnQgbF9jcHUpDQo+ID4gK3sNCj4gPiArICAgICAg
-IGdpY19jcHVfaWZfZG93bigwKTsNCj4gPiArDQo+ID4gKyAgICAgICB2N19leGl0X2NvaGVyZW5j
-eV9mbHVzaChsb3Vpcyk7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogTm93IHdlIGFyZSBwcmVwYXJl
-ZCBmb3IgcG93ZXItZG93biwgZG8gaXQ6ICovDQo+ID4gKyAgICAgICB3ZmkoKTsNCj4gPiArfQ0K
-PiA+ICsNCj4gPiArc3RhdGljIGludCBtMTB2X2NwdV9raWxsKHVuc2lnbmVkIGludCBsX2NwdSkN
-Cj4gPiArew0KPiA+ICsgICAgICAgdW5zaWduZWQgaW50IG1waWRyLCBjcHU7DQo+ID4gKw0KPiA+
-ICsgICAgICAgbXBpZHIgPSBjcHVfbG9naWNhbF9tYXAobF9jcHUpOw0KPiA+ICsgICAgICAgY3B1
-ID0gTVBJRFJfQUZGSU5JVFlfTEVWRUwobXBpZHIsIDApOw0KPiA+ICsNCj4gPiArICAgICAgIHdy
-aXRlbChLRVJORUxfVU5CT09UX0ZMQUcsIHRyYW1wb2xpbmUgKyBjcHUgKiA0KTsNCj4gPiArDQo+
-ID4gKyAgICAgICByZXR1cm4gMTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIHN0cnVjdCBz
-bXBfb3BlcmF0aW9ucyBtMTB2X3NtcF9vcHMgX19pbml0ZGF0YSA9IHsNCj4gPiArICAgICAgIC5z
-bXBfYm9vdF9zZWNvbmRhcnkgICAgID0gbTEwdl9ib290X3NlY29uZGFyeSwNCj4gPiArICAgICAg
-IC5jcHVfZGllICAgICAgICAgICAgICAgID0gbTEwdl9jcHVfZGllLA0KPiA+ICsgICAgICAgLmNw
-dV9raWxsICAgICAgICAgICAgICAgPSBtMTB2X2NwdV9raWxsLA0KPiA+ICt9Ow0KPiA+ICsNCj4g
-PiArc3RhdGljIGludCBfX2luaXQgbTEwdl9zbXBfaW5pdCh2b2lkKQ0KPiA+ICt7DQo+ID4gKyAg
-ICAgICB1bnNpZ25lZCBpbnQgbXBpZHIsIGNwdSwgY2x1c3RlcjsNCj4gPiArICAgICAgIHN0cnVj
-dCBkZXZpY2Vfbm9kZSAqbnA7DQo+ID4gKw0KPiA+ICsgICAgICAgbnAgPSBvZl9maW5kX2NvbXBh
-dGlibGVfbm9kZShOVUxMLCBOVUxMLA0KPiAic29jaW9uZXh0LG1pbGJlYXV0LW0xMHYtZXZiIik7
-DQo+ID4gKyAgICAgICBpZiAoIW5wIHx8ICFvZl9kZXZpY2VfaXNfYXZhaWxhYmxlKG5wKSkNCj4g
-DQo+IEp1c3QgdXNlIG9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSgpIGhlcmUuDQpJIGdvdCBpdCwg
-dXNlIHRoZSBmdW5jdGlvbiBpbnN0ZWFkLg0KDQpUaGFua3MNClN1Z2F5YSBUYWljaGkNCg0KPiAN
-Cj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9ERVY7DQo+ID4gKyAgICAgICBvZl9ub2Rl
-X3B1dChucCk7DQo+ID4gKw0KPiA+ICsgICAgICAgbnAgPSBvZl9maW5kX2NvbXBhdGlibGVfbm9k
-ZShOVUxMLCBOVUxMLA0KPiAic29jaW9uZXh0LHNtcC10cmFtcG9saW5lIik7DQo+ID4gKyAgICAg
-ICBpZiAoIW5wKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsNCj4gPiArDQo+
-ID4gKyAgICAgICB0cmFtcG9saW5lID0gb2ZfaW9tYXAobnAsIDApOw0KPiA+ICsgICAgICAgaWYg
-KCF0cmFtcG9saW5lKQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVOT0RFVjsNCj4gPiAr
-ICAgICAgIG9mX25vZGVfcHV0KG5wKTsNCj4gPiArDQo+ID4gKyAgICAgICBtcGlkciA9IHJlYWRf
-Y3B1aWRfbXBpZHIoKTsNCj4gPiArICAgICAgIGNwdSA9IE1QSURSX0FGRklOSVRZX0xFVkVMKG1w
-aWRyLCAwKTsNCj4gPiArICAgICAgIGNsdXN0ZXIgPSBNUElEUl9BRkZJTklUWV9MRVZFTChtcGlk
-ciwgMSk7DQo+ID4gKw0KPiA+ICsgICAgICAgcHJfaW5mbygiTUNQTSBib290IG9uIGNwdV8ldSBj
-bHVzdGVyXyV1XG4iLCBjcHUsIGNsdXN0ZXIpOw0KPiA+ICsNCj4gPiArICAgICAgIGZvciAoY3B1
-ID0gMDsgY3B1IDwgTTEwVl9NQVhfQ1BVOyBjcHUrKykNCj4gPiArICAgICAgICAgICAgICAgd3Jp
-dGVsKEtFUk5FTF9VTkJPT1RfRkxBRywgdHJhbXBvbGluZSArIGNwdSAqIDQpOw0KPiA+ICsNCj4g
-PiArICAgICAgIHNtcF9zZXRfb3BzKCZtMTB2X3NtcF9vcHMpOw0KPiA+ICsNCj4gPiArICAgICAg
-IHJldHVybiAwOw0KPiA+ICt9DQo+ID4gK2Vhcmx5X2luaXRjYWxsKG0xMHZfc21wX2luaXQpOw0K
-PiA+ICsNCj4gPiArc3RhdGljIGludCBtMTB2X3BtX3ZhbGlkKHN1c3BlbmRfc3RhdGVfdCBzdGF0
-ZSkNCj4gPiArew0KPiA+ICsgICAgICAgcmV0dXJuIChzdGF0ZSA9PSBQTV9TVVNQRU5EX1NUQU5E
-QlkpIHx8IChzdGF0ZSA9PQ0KPiBQTV9TVVNQRU5EX01FTSk7DQo+ID4gK30NCj4gPiArDQo+ID4g
-K3R5cGVkZWYgdm9pZCAoKnBoeXNfcmVzZXRfdCkodW5zaWduZWQgbG9uZyk7DQo+ID4gK3N0YXRp
-YyBwaHlzX3Jlc2V0X3QgcGh5c19yZXNldDsNCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgbTEwdl9k
-aWUodW5zaWduZWQgbG9uZyBhcmcpDQo+ID4gK3sNCj4gPiArICAgICAgIHNldHVwX21tX2Zvcl9y
-ZWJvb3QoKTsNCj4gPiArICAgICAgIGFzbSgid2ZpIik7DQo+ID4gKyAgICAgICAvKiBCb290IGp1
-c3QgbGlrZSBhIHNlY29uZGFyeSAqLw0KPiA+ICsgICAgICAgcGh5c19yZXNldCA9IChwaHlzX3Jl
-c2V0X3QpKHVuc2lnbmVkDQo+IGxvbmcpdmlydF90b19waHlzKGNwdV9yZXNldCk7DQo+ID4gKyAg
-ICAgICBwaHlzX3Jlc2V0KHZpcnRfdG9fcGh5cyhjcHVfcmVzdW1lKSk7DQo+ID4gKw0KPiA+ICsg
-ICAgICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgbTEwdl9wbV9l
-bnRlcihzdXNwZW5kX3N0YXRlX3Qgc3RhdGUpDQo+ID4gK3sNCj4gPiArICAgICAgIHN3aXRjaCAo
-c3RhdGUpIHsNCj4gPiArICAgICAgIGNhc2UgUE1fU1VTUEVORF9TVEFOREJZOg0KPiA+ICsgICAg
-ICAgICAgICAgICBwcl9lcnIoIlNUQU5EQllcbiIpOw0KPiA+ICsgICAgICAgICAgICAgICBhc20o
-IndmaSIpOw0KPiA+ICsgICAgICAgICAgICAgICBicmVhazsNCj4gPiArICAgICAgIGNhc2UgUE1f
-U1VTUEVORF9NRU06DQo+ID4gKyAgICAgICAgICAgICAgIHByX2VycigiU1VTUEVORFxuIik7DQo+
-ID4gKyAgICAgICAgICAgICAgIGNwdV9wbV9lbnRlcigpOw0KPiA+ICsgICAgICAgICAgICAgICBj
-cHVfc3VzcGVuZCgwLCBtMTB2X2RpZSk7DQo+ID4gKyAgICAgICAgICAgICAgIGNwdV9wbV9leGl0
-KCk7DQo+ID4gKyAgICAgICAgICAgICAgIGJyZWFrOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsgICAg
-ICAgcmV0dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBjb25zdCBzdHJ1Y3QgcGxh
-dGZvcm1fc3VzcGVuZF9vcHMgbTEwdl9wbV9vcHMgPSB7DQo+ID4gKyAgICAgICAudmFsaWQgICAg
-ICAgICAgPSBtMTB2X3BtX3ZhbGlkLA0KPiA+ICsgICAgICAgLmVudGVyICAgICAgICAgID0gbTEw
-dl9wbV9lbnRlciwNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0cnVjdCBjbGsgKm0xMHZfY2xjbGtf
-cmVnaXN0ZXIoc3RydWN0IGRldmljZSAqY3B1X2Rldik7DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50
-IF9faW5pdCBtMTB2X3BtX2luaXQodm9pZCkNCj4gPiArew0KPiA+ICsgICAgICAgc3VzcGVuZF9z
-ZXRfb3BzKCZtMTB2X3BtX29wcyk7DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIDA7DQo+ID4g
-K30NCj4gPiArbGF0ZV9pbml0Y2FsbChtMTB2X3BtX2luaXQpOw0KPiA+IC0tDQo+ID4gMS45LjEN
-Cj4gPg0K
+Hi,
+
+
+we have on-board ASPEED Graphics card on PCIe.
+
+kernel version: 4.16
+
+I select following drive to enable ast graphics support.
+Symbol: DRM_AST [=y]                                                     
+                                                                          
+                                                           \u2502
+   AST server chips                                                       
+                                                                          
+                                                     \u2502
+   Location:                                                              
+                                                                          
+                                                           \u2502
+   -> Device Drivers                                                      
+                                                                          
+                                                         \u2502
+     -> Graphics support                                                  
+                                                                          
+                                                         \u2502
+   Defined at drivers/gpu/drm/ast/Kconfig:1                               
+                                                                          
+                                                           \u2502
+   Depends on: HAS_IOMEM [=y] && DRM [=y] && PCI [=y] && MMU [=y]         
+                                                                          
+                                                           \u2502
+   Selects: DRM_TTM [=y] && DRM_KMS_HELPER [=y] && DRM_TTM [=y]
+
+lspci -vvv output.
+-----------------------------
+
+0007:02:00.0 VGA compatible controller: ASPEED Technology, Inc. ASPEED 
+Graphics Family (rev 41) (prog-if 00 [VGA controller])
+         Subsystem: ASPEED Technology, Inc. ASPEED Graphics Family
+         Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- 
+ParErr- Stepping- SERR- FastB2B- DisINTx-
+         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=medium >TAbort- 
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+         Latency: 0
+         Interrupt: pin A routed to IRQ 255
+         Region 0: Memory at e70101000000 (32-bit, non-prefetchable) 
+[size=16M]
+         Region 1: Memory at e70100800000 (32-bit, non-prefetchable) 
+[size=128K]
+         Region 2: I/O ports at 60000 [size=128]
+         Capabilities: [40] Power Management version 3
+                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA 
+PME(D0+,D1+,D2+,D3hot+,D3cold+)
+                 Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
+         Capabilities: [50] MSI: Enable- Count=1/2 Maskable- 64bit+
+                 Address: 0000000000000000  Data: 0000
+
+
+it seems to me that; ast_pci_probe seems to stuck in set_clock
+
+[   38.293239] INFO: rcu_sched self-detected stall on CPU
+[   38.300808]  0-....: (35 ticks this GP) 
+idle=256/1/4611686018427387906 softirq=183/183 fqs=187
+[   38.313653]   (t=421 jiffies g=-232 c=-233 q=322)
+[   38.320592] Task dump for CPU 0:
+[   38.325566] kworker/0:0     R  running task        0     3      2 
+0x00000002
+[   38.335989] Workqueue: events work_for_cpu_fn
+[   38.342409] Call trace:
+[   38.346025]  dump_backtrace+0x0/0x170
+[   38.351413]  show_stack+0x14/0x20
+[   38.356297]  sched_show_task+0x104/0x128
+[   38.362173]  dump_cpu_task+0x40/0x50
+[   38.367441]  rcu_dump_cpu_stacks+0x94/0xd4
+[   38.373480]  rcu_check_callbacks+0x574/0x7b0
+[   38.379785]  update_process_times+0x2c/0x58
+[   38.385946]  tick_sched_handle.isra.5+0x30/0x50
+[   38.393830]  tick_sched_timer+0x40/0x90
+[   38.399480]  __hrtimer_run_queues+0x120/0x1b8
+[   38.405895]  hrtimer_interrupt+0xd4/0x250
+[   38.411815]  arch_timer_handler_phys+0x28/0x40
+[   38.418361]  handle_percpu_devid_irq+0x80/0x138
+[   38.425152]  generic_handle_irq+0x24/0x38
+[   38.431057]  __handle_domain_irq+0x5c/0xb0
+[   38.437104]  gic_handle_irq+0x7c/0x184
+[   38.442639]  el1_irq+0xb0/0x140
+[   38.447265]  ast_get_index_reg_mask+0x4/0x38
+[   38.453553]  __i2c_bit_add_bus+0x54/0x3e0
+[   38.459532]  i2c_bit_add_bus+0x14/0x20
+[   38.465057]  ast_mode_init+0x230/0x358
+[   38.470584]  ast_driver_load+0x5a4/0x968
+[   38.476368]  drm_dev_register+0x154/0x1d8
+[   38.482283]  drm_get_pci_dev+0x94/0x160
+[   38.488047]  ast_pci_probe+0x18/0x20
+[   38.493318]  local_pci_probe+0x28/0x80
+[   38.498830]  work_for_cpu_fn+0x18/0x28
+[   38.504367]  process_one_work+0x1d4/0x310
+[   38.510271]  worker_thread+0x230/0x470
+[   38.515804]  kthread+0x128/0x130
+[   38.520777]  ret_from_fork+0x10/0x18
+
+Regards,
+Oza.
+
