@@ -2,80 +2,126 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCA0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7204CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DB1206BB
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:14:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DB1206BB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 39FEC206BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 19:14:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="spSqPFU+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39FEC206BB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731226AbeKVFuO (ORCPT
+        id S1731428AbeKVFuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 22 Nov 2018 00:50:14 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37842 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729009AbeKVFuO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Nov 2018 00:50:14 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8EC4972CC66;
-        Wed, 21 Nov 2018 22:14:39 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 811D77CD20A; Wed, 21 Nov 2018 22:14:39 +0300 (MSK)
-Date:   Wed, 21 Nov 2018 22:14:39 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mips: fix mips_get_syscall_arg o32 check
-Message-ID: <20181121191438.GB10301@altlinux.org>
-References: <20181107042751.3b519062@akathisia>
- <CALCETrV1v-DPRfDRwiH=xn29bxWxiHdZtAH1nw=dsmDtnT0YGQ@mail.gmail.com>
- <20181120001128.GA11300@altlinux.org>
- <20181121004422.GA29053@altlinux.org>
- <20181121184004.jro532jopnbmru2m@pburton-laptop>
- <20181121190009.GA10301@altlinux.org>
+        Thu, 22 Nov 2018 00:50:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41168 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732351AbeKVFqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Nov 2018 00:46:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 452FC214D9;
+        Wed, 21 Nov 2018 19:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542827430;
+        bh=nPDLVY1T9PKl7LayrFyTe3iJypB2hvPysZmhLJu4kkE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=spSqPFU+0s0Hz6PrLGke/8EFxxRZ7Dk9WmEW7uWW6SDk/ShrfRVHwTatuLjWct2WC
+         Gww5XNIgtAeF75s7ICieEROC0hBnhg4s2rjg+nWT1/3gns1Syj4CC6uvsPBOPdNh0o
+         PZx12isAEvSAtMuuy6bK3XJ/ZvTiOQOLxnKK5vdI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Davidson <md@google.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+        Bernhard.Rosenkranzer@linaro.org,
+        Greg Hackmann <ghackmann@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 27/59] x86/boot: #undef memcpy() et al in string.c
+Date:   Wed, 21 Nov 2018 20:06:42 +0100
+Message-Id: <20181121183509.323347749@linuxfoundation.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181121183508.262873520@linuxfoundation.org>
+References: <20181121183508.262873520@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181121190009.GA10301@altlinux.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When checking for TIF_32BIT_REGS flag, mips_get_syscall_arg() should
-use the task specified as its argument instead of the current task.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-This potentially affects all syscall_get_arguments() users
-who specify tasks different from the current.
+------------------
 
-Fixes: c0ff3c53d4f99 ("MIPS: Enable HAVE_ARCH_TRACEHOOK.")
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+From: Michael Davidson <md@google.com>
+
+commit 18d5e6c34a8eda438d5ad8b3b15f42dab01bf05d upstream.
+
+undef memcpy() and friends in boot/string.c so that the functions
+defined here will have the correct names, otherwise we end up
+up trying to redefine __builtin_memcpy() etc.
+
+Surprisingly, GCC allows this (and, helpfully, discards the
+__builtin_ prefix from the function name when compiling it),
+but clang does not.
+
+Adding these #undef's appears to preserve what I assume was
+the original intent of the code.
+
+Signed-off-by: Michael Davidson <md@google.com>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Acked-by: H. Peter Anvin <hpa@zytor.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Bernhard.Rosenkranzer@linaro.org
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20170724235155.79255-1-mka@chromium.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/mips/include/asm/syscall.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/boot/string.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/mips/include/asm/syscall.h b/arch/mips/include/asm/syscall.h
-index 0170602a1e4e..6cf8ffb5367e 100644
---- a/arch/mips/include/asm/syscall.h
-+++ b/arch/mips/include/asm/syscall.h
-@@ -73,7 +73,7 @@ static inline unsigned long mips_get_syscall_arg(unsigned long *arg,
- #ifdef CONFIG_64BIT
- 	case 4: case 5: case 6: case 7:
- #ifdef CONFIG_MIPS32_O32
--		if (test_thread_flag(TIF_32BIT_REGS))
-+		if (test_tsk_thread_flag(task, TIF_32BIT_REGS))
- 			return get_user(*arg, (int *)usp + n);
- 		else
- #endif
--- 
-ldv
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -16,6 +16,15 @@
+ #include "ctype.h"
+ #include "string.h"
+ 
++/*
++ * Undef these macros so that the functions that we provide
++ * here will have the correct names regardless of how string.h
++ * may have chosen to #define them.
++ */
++#undef memcpy
++#undef memset
++#undef memcmp
++
+ int memcmp(const void *s1, const void *s2, size_t len)
+ {
+ 	bool diff;
+
+
