@@ -2,171 +2,304 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF35C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94385C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6C0214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6C0214DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 38CCF214DB
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 11:21:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UDLOxGie"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CCF214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730186AbeKUVyA convert rfc822-to-8bit (ORCPT
+        id S1730218AbeKUVzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 16:54:00 -0500
-Received: from mga04.intel.com ([192.55.52.120]:35650 "EHLO mga04.intel.com"
+        Wed, 21 Nov 2018 16:55:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbeKUVyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 16:54:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Nov 2018 03:19:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,261,1539673200"; 
-   d="scan'208";a="110121056"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.84.195])
-  by orsmga001.jf.intel.com with ESMTP; 21 Nov 2018 03:19:55 -0800
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Pavel Machek <pavel@ucw.cz>, bp@alien8.de, hpa@zytor.com,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        tglx@linutronix.de, x86@kernel.org
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20181108175803.GA10785@amd>
-Cc:     jani.nikula@linux.intel.com, rodrigo.vivi@intel.com,
-        intel-gfx@lists.freedesktop.org, chris@chris-wilson.co.uk
-References: <20181108175803.GA10785@amd>
-Message-ID: <154279919462.20217.14259089584802660420@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: v4.20-rc1: list_del corruption on thinkpad x220
-Date:   Wed, 21 Nov 2018 13:19:54 +0200
+        id S1729334AbeKUVzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 16:55:24 -0500
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54830214DA;
+        Wed, 21 Nov 2018 11:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542799282;
+        bh=JxEM0h0QfTTwAv1cSp+ieojTf/aX8tYPRvL7gUy2uvk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=UDLOxGiejqDhaDVHuei5YdKa08xbfwJDr6xukF6d/DJeOf9UaTtpyFjbCusFuGZB3
+         xLj55WFhLczIYDMYQhCW1tTap54QWeopRlVQRBb164hsW/2S64v3I8jNqs/GKJGElj
+         TiruYIyXQAjHJy6qn3VOqAWjQtiIu00su/gUd3SU=
+Message-ID: <cd0a28f4b699024e611cb464a82a957c41217466.camel@kernel.org>
+Subject: Re: [LKP] [fs/locks]  3c19f2312f:  will-it-scale.per_thread_ops
+ -65.2% regression
+From:   Jeff Layton <jlayton@kernel.org>
+To:     kernel test robot <rong.a.chen@intel.com>,
+        NeilBrown <neilb@suse.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, lkp@01.org
+Date:   Wed, 21 Nov 2018 06:21:19 -0500
+In-Reply-To: <20181121004450.GB18977@shao2-debian>
+References: <20181121004450.GB18977@shao2-debian>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Chris
-
-Quoting Pavel Machek (2018-11-08 19:58:03)
-> Hi!
+On Wed, 2018-11-21 at 08:44 +0800, kernel test robot wrote:
+> Greeting,
 > 
-> My machine locked hard (thinkpad x220). After reboot, I found this in
-> syslog:
+> FYI, we noticed a -65.2% regression of will-it-scale.per_thread_ops due to commit:
 > 
-> Sounds like memory corruption..? Does not sound like easy to debug.
+> 
+> commit: 3c19f2312f48a3d36a4e13f5072a6a95e755b3d5 ("fs/locks: always delete_block after waiting.")
+> https://git.kernel.org/cgit/linux/kernel/git/jlayton/linux.git locks-4.21
+> 
+> in testcase: will-it-scale
+> on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
+> with following parameters:
+> 
+> 	nr_task: 100%
+> 	mode: thread
+> 	test: lock1
+> 	ucode: 0xb00002e
+> 	cpufreq_governor: performance
+> 
+> test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+> test-url: https://github.com/antonblanchard/will-it-scale
+> 
+> 
 
-Were you doing something GPU intense when you experienced the hard hang?
+Looking at the testcase, it just does whole-file exclusive fcntl
+lock/unlock cycles. My gut feeling is that the reduction in wakeups is
+probably worth some extra processing time here, but maybe it's possible
+to do better.
 
-And if so, have you been able to hit the issue more than once? At this
-point it doesn't look like anything we've hit previously, so would be
-great to have some more insight into how we could reproduce.
+If I'm looking at the profile below correctly, it looks like we're
+spending quite a bit more time spinning on spinlocks. That makes some
+sense since we're now taking the blocked_lock_lock in more cases.
 
-There's one similar for nouveau in Bugzilla, but it seems like a genuine
-memory corruption (1 bit flipped):
+I wonder if we could optimize that function away in some cases without
+taking the lock? Maybe if fl_blocked_requests is empty and fl_blocker is
+NULL? How to test those in a race-free way without taking the spinlock
+may not be possible though.
 
-https://bugs.freedesktop.org/show_bug.cgi?id=84880
+Thoughts?
 
-Any extra information would be of use :)
-
-Regards, Joonas
-
-PS. Could you open a bug to Bugzilla, it'll help to collect the
-information in one consolidated place:
-
-https://01.org/linuxgraphics/documentation/how-report-bugs
 
 > 
-> ...otoh, it still looks like an addres, so maybe it is "just" race in
-> GPU drivers?
+> Details are as below:
+> -------------------------------------------------------------------------------------------------->
 > 
-> Any ideas?
->                                                                 Pavel
 > 
-> Nov  8 18:35:01 duo CRON[28511]: (root) CMD (command -v debian-sa1 >
-> /dev/null && debian-sa
-> 1 1 1)
-> Nov  8 18:42:57 duo kernel: list_del corruption. prev->next should be
-> ffff8801742b8178, but
->  was ffffc9000192fec8
->  Nov  8 18:42:57 duo kernel: ------------[ cut here ]------------
->  Nov  8 18:42:57 duo kernel: kernel BUG at
->  /data/fast/l/k/lib/list_debug.c:53!
->  Nov  8 18:42:57 duo kernel: invalid opcode: 0000 [#1] SMP PTI
->  Nov  8 18:42:57 duo kernel: CPU: 2 PID: 1082 Comm: i915/signal:1 Not
->  tainted 4.20.0-rc1+ #3
->  Nov  8 18:42:57 duo kernel: Hardware name: LENOVO 42872WU/42872WU,
->  BIOS 8DET74WW (1.44 ) 03
->  /13/2018
->  Nov  8 18:42:57 duo kernel: RIP:
->  0010:__list_del_entry_valid+0x8e/0x90
->  Nov  8 18:42:57 duo kernel: Code: 66 88 d1 ff 0f 0b 48 89 fe 31 c0 48
->  c7 c7 90 74 5e 85 e8
->  53 88 d1 ff 0f 0b 48 89 fe 31 c0 48 c7 c7 c8 74 5e 85 e8 40 88 d1 ff
->  <0f> 0b 55 48 89 d0 48
->   8b 52 08 48 89 e5 48 39 f2 75 19 48 8b 32 48
->   Nov  8 18:42:57 duo kernel: RSP: 0000:ffffc9000196be78 EFLAGS:
->   00210086
->   Nov  8 18:42:57 duo kernel: RAX: 0000000000000054 RBX:
->   ffff8801742b8178 RCX: 00000000000000
->   00
->   Nov  8 18:42:57 duo kernel: RDX: 0000000000000000 RSI:
->   ffff88019e2a53d8 RDI: ffff88019e2a53
->   d8
->   Nov  8 18:42:57 duo kernel: RBP: ffffc9000196be78 R08:
->   ffff880196e2cd10 R09: 00000000000000
->   00
->   Nov  8 18:42:57 duo kernel: R10: 00000000e7684eb9 R11:
->   3863656632393101 R12: ffffc9000196be
->   c8
->   Nov  8 18:42:57 duo kernel: R13: ffff88019707e000 R14:
->   ffff8801742b8080 R15: ffffc9000192fd
->   d0
->   Nov  8 18:42:57 duo kernel: FS:  0000000000000000(0000)
->   GS:ffff88019e280000(0000) knlGS:000
->   0000000000000
->   Nov  8 18:42:57 duo kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
->   0000000080050033
->   Nov  8 18:42:57 duo kernel: CR2: 00000000ed2bf000 CR3:
->   000000000581e001 CR4: 00000000000606a0
->   Nov  8 18:42:57 duo kernel: Call Trace:
->   Nov  8 18:42:57 duo kernel: intel_breadcrumbs_signaler+0x162/0x330
->   Nov  8 18:42:57 duo kernel: kthread+0x116/0x150
->   Nov  8 18:42:57 duo kernel: ? intel_engine_wakeup+0x40/0x40
->   Nov  8 18:42:57 duo kernel: ? kthread_park+0x90/0x90
->   Nov  8 18:42:57 duo kernel: ret_from_fork+0x35/0x40
->   Nov  8 18:42:57 duo kernel: Modules linked in:
->   Nov  8 18:42:57 duo kernel: ---[ end trace 2f8da183a56f80f6 ]---
->   Nov  8 18:42:57 duo kernel: RIP:
->   0010:__list_del_entry_valid+0x8e/0x90
->   Nov  8 18:42:57 duo kernel: Code: 66 88 d1 ff 0f 0b 48 89 fe 31 c0
->   48 c7 c7 90 74 5e 85 e8 53 88 d1 ff 0f 0b 48 89 fe 31 c0 48 c7 c7 c8
->   74 5e 85 e8 40 88 d1 ff <0f> 0b 55 48 89 d0 48 8b 52 08 48 89 e5 48
->   39 f2 75 19 48 8b 32 48
->   Nov  8 18:42:57 duo kernel: RSP: 0000:ffffc9000196be78 EFLAGS:
->   00210086
->   Nov  8 18:42:57 duo kernel: RAX: 0000000000000054 RBX:
->   ffff8801742b8178 RCX: 0000000000000000
->   Nov  8 18:42:57 duo kernel: RDX: 0000000000000000 RSI:
->   ffff88019e2a53d8 RDI: ffff88019e2a53d8
->   Nov  8 18:42:57 duo kernel: RBP: ffffc9000196be78 R08:
->   ffff880196e2cd10 R09: 0000000000000000
->   Nov  8 18:42:57 duo kernel: R10: 00000000e7684eb9 R11:
->   3863656632393101 R12: ffffc9000196bec8
->   Nov  8 18:42:57 duo kernel: R13: ffff88019707e000 R14:
->   ffff8801742b8080 R15: ffffc9000192fdd0
->   Nov  8 18:42:57 duo kernel: FS:  0000000000000000(0000)
->   GS:ffff88019e280000(0000) knlGS:0000000000000000
->   Nov  8 18:42:57 duo kernel: CS:  0010 DS: 0000 ES: 0000 CR0:
->   0000000080050033
->   Nov  8 18:42:57 duo kernel: CR2: 00000000ed2bf000 CR3:
->   000000000581e001 CR4: 00000000000606a0
+> To reproduce:
 > 
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+>         git clone https://github.com/intel/lkp-tests.git
+>         cd lkp-tests
+>         bin/lkp install job.yaml  # job file is attached in this email
+>         bin/lkp run     job.yaml
+> 
+> =========================================================================================
+> compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase/ucode:
+>   gcc-7/performance/x86_64-rhel-7.2/thread/100%/debian-x86_64-2018-04-03.cgz/lkp-bdw-ep3b/lock1/will-it-scale/0xb00002e
+> 
+> commit: 
+>   816f2fb5a2 ("fs/locks: allow a lock request to block other requests.")
+>   3c19f2312f ("fs/locks: always delete_block after waiting.")
+> 
+> 816f2fb5a2fc678c 3c19f2312f48a3d36a4e13f507 
+> ---------------- -------------------------- 
+>          %stddev     %change         %stddev
+>              \          |                \  
+>      71447           -65.2%      24854        will-it-scale.per_thread_ops
+>     138940            -2.9%     134886        will-it-scale.time.involuntary_context_switches
+>     279.85           -64.2%     100.29        will-it-scale.time.user_time
+>    6287454           -65.2%    2187242        will-it-scale.workload
+>       1.09            -0.7        0.42        mpstat.cpu.usr%
+>     371230 ±  4%      +9.5%     406403        softirqs.SCHED
+>       1803 ± 16%     +48.9%       2685 ±  8%  numa-meminfo.node0.PageTables
+>       2784 ± 10%     -30.7%       1928 ± 12%  numa-meminfo.node1.PageTables
+>     224.55            -1.8%     220.57        turbostat.PkgWatt
+>       7.70            -3.0%       7.47        turbostat.RAMWatt
+>     450.50 ± 17%     +49.0%     671.25 ±  8%  numa-vmstat.node0.nr_page_table_pages
+>     644147 ± 10%     -19.8%     516646 ± 11%  numa-vmstat.node0.numa_hit
+>     639812 ± 10%     -20.6%     508027 ± 12%  numa-vmstat.node0.numa_local
+>     696.25 ± 10%     -30.7%     482.50 ± 12%  numa-vmstat.node1.nr_page_table_pages
+>       4617            +2.1%       4715        proc-vmstat.nr_inactive_anon
+>       7097            +2.0%       7241        proc-vmstat.nr_mapped
+>      20507            +7.0%      21934 ±  3%  proc-vmstat.nr_shmem
+>       4617            +2.1%       4715        proc-vmstat.nr_zone_inactive_anon
+>     690109            +1.0%     696863        proc-vmstat.numa_hit
+>     672911            +1.0%     679694        proc-vmstat.numa_local
+>      23133 ±  2%      +8.9%      25196 ±  4%  proc-vmstat.pgactivate
+>     607.03 ±  6%     -16.0%     509.80 ± 12%  sched_debug.cfs_rq:/.util_est_enqueued.avg
+>      24.42 ± 28%     +38.2%      33.75 ± 22%  sched_debug.cpu.cpu_load[2].max
+>       2.20 ± 28%     +39.9%       3.08 ± 23%  sched_debug.cpu.cpu_load[2].stddev
+>      25.33 ± 12%     +23.2%      31.21 ±  9%  sched_debug.cpu.cpu_load[3].max
+>       2.28 ± 21%     +29.6%       2.95 ± 12%  sched_debug.cpu.cpu_load[3].stddev
+>      52140 ± 23%     +37.1%      71510 ±  3%  sched_debug.cpu.nr_switches.max
+>      53379 ± 24%     +46.4%      78158 ± 11%  sched_debug.cpu.sched_count.max
+>       7132 ± 12%     +32.3%       9436 ± 15%  sched_debug.cpu.sched_count.stddev
+>  4.587e+12            -7.5%  4.245e+12        perf-stat.branch-instructions
+>       0.24            -0.1        0.15        perf-stat.branch-miss-rate%
+>  1.107e+10           -43.0%  6.312e+09        perf-stat.branch-misses
+>      40.04            -2.0       38.01        perf-stat.cache-miss-rate%
+>  8.415e+09 ±  2%     -19.4%  6.782e+09 ±  6%  perf-stat.cache-misses
+>  2.101e+10           -15.1%  1.783e+10 ±  5%  perf-stat.cache-references
+>       3.85           +10.7%       4.26        perf-stat.cpi
+>       0.00 ±  2%      +0.0        0.00 ±  4%  perf-stat.dTLB-load-miss-rate%
+>   90399109 ±  2%      +6.6%   96381582 ±  4%  perf-stat.dTLB-load-misses
+>  4.956e+12           -11.6%   4.38e+12        perf-stat.dTLB-loads
+>       0.00 ±  8%      +0.0        0.01 ± 24%  perf-stat.dTLB-store-miss-rate%
+>  8.789e+11           -61.0%  3.427e+11        perf-stat.dTLB-stores
+>      80.76           -10.8       69.98        perf-stat.iTLB-load-miss-rate%
+>  3.901e+09           -63.3%   1.43e+09        perf-stat.iTLB-load-misses
+>    9.3e+08 ±  6%     -34.0%  6.135e+08 ±  2%  perf-stat.iTLB-loads
+>  1.912e+13            -9.6%  1.728e+13        perf-stat.instructions
+>       4901          +146.5%      12081        perf-stat.instructions-per-iTLB-miss
+>       0.26            -9.6%       0.23        perf-stat.ipc
+>      82.36            -3.7       78.70        perf-stat.node-store-miss-rate%
+>  2.319e+09           -20.6%  1.842e+09        perf-stat.node-store-misses
+>    3041599          +159.7%    7898884        perf-stat.path-length
+>      61.02 ± 10%     -61.0        0.00        perf-profile.calltrace.cycles-pp._raw_spin_lock.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64
+>      60.64 ± 10%     -60.6        0.00        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.fcntl_setlk.do_fcntl.__x64_sys_fcntl
+>      98.79            +0.7       99.50        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe
+>      98.76            +0.7       99.49        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>      98.64            +0.8       99.44        perf-profile.calltrace.cycles-pp.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>      97.70            +1.5       99.16        perf-profile.calltrace.cycles-pp.do_fcntl.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>      97.41            +1.6       99.05        perf-profile.calltrace.cycles-pp.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+>      35.73 ± 18%     +62.7       98.45        perf-profile.calltrace.cycles-pp.do_lock_file_wait.fcntl_setlk.do_fcntl.__x64_sys_fcntl.do_syscall_64
+>       0.00           +65.1       65.07        perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock.locks_delete_block.do_lock_file_wait.fcntl_setlk
+>       0.00           +65.3       65.28        perf-profile.calltrace.cycles-pp._raw_spin_lock.locks_delete_block.do_lock_file_wait.fcntl_setlk.do_fcntl
+>       0.00           +65.3       65.31        perf-profile.calltrace.cycles-pp.locks_delete_block.do_lock_file_wait.fcntl_setlk.do_fcntl.__x64_sys_fcntl
+>       1.13 ±  2%      -0.7        0.43        perf-profile.children.cycles-pp.locks_alloc_lock
+>       0.98 ±  2%      -0.6        0.38        perf-profile.children.cycles-pp.kmem_cache_alloc
+>       0.59            -0.4        0.23 ±  2%  perf-profile.children.cycles-pp.syscall_return_via_sysret
+>       0.53            -0.3        0.20 ±  2%  perf-profile.children.cycles-pp.entry_SYSCALL_64
+>       0.35 ± 11%      -0.3        0.06 ±  9%  perf-profile.children.cycles-pp.fput
+>       0.41 ±  2%      -0.3        0.15 ±  3%  perf-profile.children.cycles-pp.file_has_perm
+>       0.33 ±  2%      -0.2        0.12 ±  6%  perf-profile.children.cycles-pp.memset_erms
+>       0.30 ±  3%      -0.2        0.11 ±  3%  perf-profile.children.cycles-pp.security_file_lock
+>       0.25 ±  3%      -0.2        0.10 ±  5%  perf-profile.children.cycles-pp.security_file_fcntl
+>       0.24 ±  2%      -0.1        0.10 ±  4%  perf-profile.children.cycles-pp._copy_from_user
+>       0.22 ± 12%      -0.1        0.07 ±  5%  perf-profile.children.cycles-pp.__fget_light
+>       0.21 ±  3%      -0.1        0.08 ±  6%  perf-profile.children.cycles-pp.avc_has_perm
+>       0.20 ±  5%      -0.1        0.08        perf-profile.children.cycles-pp.___might_sleep
+>       0.16 ±  5%      -0.1        0.06        perf-profile.children.cycles-pp.__fget
+>       0.24 ±  3%      -0.1        0.17 ±  2%  perf-profile.children.cycles-pp.kmem_cache_free
+>       0.12 ±  5%      -0.1        0.05        perf-profile.children.cycles-pp.__might_sleep
+>       0.24 ± 15%      -0.1        0.18        perf-profile.children.cycles-pp.locks_insert_lock_ctx
+>       0.11 ±  3%      -0.0        0.10 ±  4%  perf-profile.children.cycles-pp.locks_free_lock
+>      98.83            +0.7       99.54        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
+>      98.79            +0.7       99.52        perf-profile.children.cycles-pp.do_syscall_64
+>      98.65            +0.8       99.44        perf-profile.children.cycles-pp.__x64_sys_fcntl
+>      97.71            +1.5       99.17        perf-profile.children.cycles-pp.do_fcntl
+>      97.42            +1.6       99.05        perf-profile.children.cycles-pp.fcntl_setlk
+>      94.97            +3.0       97.98        perf-profile.children.cycles-pp._raw_spin_lock
+>      93.97            +3.3       97.24        perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
+>      35.74 ± 18%     +62.7       98.46        perf-profile.children.cycles-pp.do_lock_file_wait
+>       0.00           +65.3       65.31        perf-profile.children.cycles-pp.locks_delete_block
+>       0.59            -0.4        0.23 ±  2%  perf-profile.self.cycles-pp.syscall_return_via_sysret
+>       0.53            -0.3        0.20 ±  2%  perf-profile.self.cycles-pp.entry_SYSCALL_64
+>       0.35 ± 10%      -0.3        0.06 ±  9%  perf-profile.self.cycles-pp.fput
+>       1.00 ±  2%      -0.3        0.74        perf-profile.self.cycles-pp._raw_spin_lock
+>       0.38 ±  3%      -0.2        0.14        perf-profile.self.cycles-pp.kmem_cache_alloc
+>       0.32 ±  2%      -0.2        0.12 ±  3%  perf-profile.self.cycles-pp.memset_erms
+>       0.20 ±  3%      -0.1        0.08 ±  6%  perf-profile.self.cycles-pp.avc_has_perm
+>       0.20 ±  2%      -0.1        0.08 ±  6%  perf-profile.self.cycles-pp.posix_lock_inode
+>       0.20 ±  6%      -0.1        0.08        perf-profile.self.cycles-pp.___might_sleep
+>       0.16 ±  4%      -0.1        0.05 ±  9%  perf-profile.self.cycles-pp.__fget
+>       0.15 ±  8%      -0.1        0.06        perf-profile.self.cycles-pp.fcntl_setlk
+>       0.24            -0.1        0.15 ±  2%  perf-profile.self.cycles-pp.kmem_cache_free
+>       0.11            -0.1        0.03 ±100%  perf-profile.self.cycles-pp.__x64_sys_fcntl
+>       0.11 ±  4%      -0.1        0.03 ±100%  perf-profile.self.cycles-pp.__might_sleep
+>       0.13            -0.1        0.05        perf-profile.self.cycles-pp.locks_alloc_lock
+>       0.13 ±  5%      -0.1        0.05        perf-profile.self.cycles-pp.file_has_perm
+>       0.07 ±  7%      -0.0        0.05        perf-profile.self.cycles-pp.locks_free_lock
+>      93.64            +3.3       96.89        perf-profile.self.cycles-pp.native_queued_spin_lock_slowpath
+> 
+> 
+>                                                                                 
+>                             will-it-scale.per_thread_ops                        
+>                                                                                 
+>   75000 +-+-----------------------------------------------------------------+   
+>   70000 +-+.. .+.+.+..+.+.+.+..        .+. .+.. .+.+.  .+. .+.+..+.+.+.+..+.|   
+>         |    +                 +. .+.+.   +    +     +.   +                 |   
+>   65000 +-+                      +                                          |   
+>   60000 +-+                                                                 |   
+>   55000 +-+                                                                 |   
+>   50000 +-+                                                                 |   
+>         |                                                                   |   
+>   45000 +-+                                                                 |   
+>   40000 +-+                                                                 |   
+>   35000 +-+                                                                 |   
+>   30000 +-+                                                                 |   
+>         |                                                                   |   
+>   25000 O-O  O O O O  O O O O  O O O O  O O O  O O O O  O O                 |   
+>   20000 +-+-----------------------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                                 will-it-scale.workload                          
+>                                                                                 
+>   6.5e+06 +-+---------------------------------------------------------------+   
+>           |.+.  .+.+.+.+    +   +.      .+. .+.  .+.+. .+.  .+.+   +.+..+.+ |   
+>     6e+06 +-+ +.                  +.+..+   +   +.     +   +.                |   
+>   5.5e+06 +-+                                                               |   
+>           |                                                                 |   
+>     5e+06 +-+                                                               |   
+>   4.5e+06 +-+                                                               |   
+>           |                                                                 |   
+>     4e+06 +-+                                                               |   
+>   3.5e+06 +-+                                                               |   
+>           |                                                                 |   
+>     3e+06 +-+                                                               |   
+>   2.5e+06 +-+                                                               |   
+>           O O O  O O     O  O O O O O  O O O O O  O O O O O                 |   
+>     2e+06 +-+--------O-O----------------------------------------------------+   
+>                                                                                 
+>                                                                                                                                                                 
+>                            will-it-scale.time.user_time                         
+>                                                                                 
+>   300 +-+-------------------------------------------------------------------+   
+>   280 +-+            .+.. .+.                                  .+.. .+.  .+.|   
+>       |.+..+.+.+..+.+    +   +..      .+.+.+..+.+.+..+.+.+..+.+    +   +.   |   
+>   260 +-+                       +.+.+.                                      |   
+>   240 +-+                                                                   |   
+>   220 +-+                                                                   |   
+>   200 +-+                                                                   |   
+>       |                                                                     |   
+>   180 +-+                                                                   |   
+>   160 +-+                                                                   |   
+>   140 +-+  O                                                                |   
+>   120 +-+                                                                   |   
+>       O O    O O                  O                                         |   
+>   100 +-+         O O O  O O O  O   O  O O O  O O O  O O O                  |   
+>    80 +-+-------------------------------------------------------------------+   
+>                                                                                 
+>                                                                                 
+> [*] bisect-good sample
+> [O] bisect-bad  sample
+> 
+> 
+> 
+> Disclaimer:
+> Results have been estimated based on internal Intel analysis and are provided
+> for informational purposes only. Any difference in system hardware or software
+> design or configuration may affect actual performance.
+> 
+> 
+> Thanks,
+> Rong Chen
+
+-- 
+Jeff Layton <jlayton@kernel.org>
+
