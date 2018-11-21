@@ -2,328 +2,139 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7447FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CEDC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD5B21479
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0D2B21479
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 12:06:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pC19eJT0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD5B21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=partner.samsung.com
+	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="T4cku3fz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0D2B21479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbeKUWjg (ORCPT
+        id S1730213AbeKUWkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 17:39:36 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59580 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730156AbeKUWjf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 17:39:35 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181121120526euoutp026f037424fae98c7b32121946bccacc8b~pIi2m04D62261922619euoutp02W
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 12:05:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181121120526euoutp026f037424fae98c7b32121946bccacc8b~pIi2m04D62261922619euoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542801926;
-        bh=I2tpKmCNPwId09rrDPGJvPyUmJzEx7fFcN8jX/LngRE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pC19eJT0UqJhgaYVye/JAlIPCAiFYMfHlZcs6d+scsYo0Ju6ikvvz/UwrqwJTeE++
-         zROkF5tyHVXSkh77L+8aZlM9AcimvqoNPR8lx/9rip5D/vtyJI17inIik56t5Rem86
-         7izQMpxHjwZ3TpZDb8gn93HRfyeW8PI7rPFIrmwA=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181121120525eucas1p2c8cb0268fee6522f364644f8211fd78f~pIi10Oj3x1461914619eucas1p2d;
-        Wed, 21 Nov 2018 12:05:25 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 0C.8B.04441.50A45FB5; Wed, 21
-        Nov 2018 12:05:25 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4~pIi04ArRd2011820118eucas1p1z;
-        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181121120524eusmtrp2d2d0d481138fc35f1f9c11fa0dae0647~pIi0pTsnR0951809518eusmtrp2O;
-        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
-X-AuditID: cbfec7f2-a1ae89c000001159-60-5bf54a05593e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 60.EE.04284.40A45FB5; Wed, 21
-        Nov 2018 12:05:24 +0000 (GMT)
-Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181121120524eusmtip223e98abf511a7329cad4c0c957e81ece~pIi0MB8Rb1613116131eusmtip2u;
-        Wed, 21 Nov 2018 12:05:24 +0000 (GMT)
-From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
-To:     k.konieczny@partner.samsung.com
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] clk: samsung: exynos5433: add imem clock
-Date:   Wed, 21 Nov 2018 13:05:09 +0100
-Message-Id: <20181121120509.18892-5-k.konieczny@partner.samsung.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
+        Wed, 21 Nov 2018 17:40:15 -0500
+Received: from mail-eopbgr50065.outbound.protection.outlook.com ([40.107.5.65]:26176
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727069AbeKUWkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 17:40:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector1-arm-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lDI+TE3uoArN257qBdo8XH1HRuwZOVn43uDONJJOd/g=;
+ b=T4cku3fztcc4OLcyeHzIRaZGMvvpZ8euGTe35h0r/2rbWQ3rDhLMWGGtNvlMRi1qNM9+4gZwUzyDdRqRF9YJv7GTKrA6/nyi2HyjzLjkZrzepeoonPzFnkvwDEYoTeeGWqdAijUrPMkB5+O2zr5Z8lWd9ZUrPaneKuG2V6zBZLU=
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com (10.175.20.142) by
+ VI1PR0802MB2142.eurprd08.prod.outlook.com (10.172.12.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.26; Wed, 21 Nov 2018 12:06:02 +0000
+Received: from VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac]) by VI1PR0802MB2528.eurprd08.prod.outlook.com
+ ([fe80::3d5c:5229:b634:b1ac%9]) with mapi id 15.20.1339.027; Wed, 21 Nov 2018
+ 12:06:02 +0000
+From:   Dave Rodgman <dave.rodgman@arm.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     nd <nd@arm.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
+        "markus@oberhumer.com" <markus@oberhumer.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        Sonny Rao <sonnyrao@google.com>
+Subject: [PATCH 0/6] lib/lzo: performance improvements
+Thread-Topic: [PATCH 0/6] lib/lzo: performance improvements
+Thread-Index: AQHUgZI88EDtuaHmFU63dmJG+DkKOw==
+Date:   Wed, 21 Nov 2018 12:06:02 +0000
+Message-ID: <VI1PR0802MB25289788BFADB136CE08AADA8FDA0@VI1PR0802MB2528.eurprd08.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=dave.rodgman@arm.com; 
+x-originating-ip: [217.140.106.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0802MB2142;6:JHb9DIFMSOxSWPeX4bImgxLHtV1g6h4XiIKX+EJRafbRHQkR9psmI/XCBJGzVK9PdJPdnk4afUH2Ip2DR2HztyWuOImvMLS9FCzTXeGerw1hwgE+Zy8pOpeGcrDs/VWhVg1TvGmRdKettI45uE0DdLrZsg9sTvAd0M060GiiuDRkIqkrK9zK6Rtt3YMM6jLcnO6Fov9nFdx7vFFqSz66zC6GrdXnHiWbSsCMi3H8xhA+MLdyP1KN75I7IAvgHv0AJGHelJ3InjFuuDnUV8QNDcs/e1l+bidqm0VfPVkPicxPtVKJ3JYDO+7U0WgZABAzGfDc+rO3LuIzXXwmPtn/NSk1vNttGwW3jG7EEu5E5LPvm/JdISbLRFMAR0HLGAwLWF3RtuxGM2iHM2NuUoRZEUyxw57mW0wSjqq3TozZI7uH5BY2uiwi5NFceYMG7I/rM+P2ZyE6oW2UbbTi5uZmhg==;5:GS4RxUCmhk6OUAixGVwifvj5Ij9fyqdRN55CmgswG5XIIfR+lV69c4Wi5tDUc8bWBkisqRAhMZFARZfB7Mum0A0CRXqO6bxwFXGC0xJ8y7u4C0QLP7bc5FMQU71qSjjl+JFuluqzSvhEh+TV5BHwbvx/oE4WisrEQUJXSE+vcHw=;7:pihB+y+FEMLUxF9DkOQQg/ac4RTRwbnRonZkvwXjymGWpDhO6j+lqxgJSBUIsF1tUwFiInblCokj5nYlGypT1Qwu+9R6T1t+naKhYgXVFl9QRePxHduwYpNeOjV9uW+ple2vms/fc8Wp36056jbmvg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 1e5f8151-fb79-49fd-15a7-08d64fa9b540
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0802MB2142;
+x-ms-traffictypediagnostic: VI1PR0802MB2142:
+nodisclaimer: True
+x-microsoft-antispam-prvs: <VI1PR0802MB2142E7FF7B6834D360CD74A28FDA0@VI1PR0802MB2142.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231442)(944501410)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0802MB2142;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0802MB2142;
+x-forefront-prvs: 08635C03D4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(376002)(39860400002)(189003)(199004)(81166006)(2900100001)(14454004)(6116002)(3846002)(39060400002)(5640700003)(86362001)(97736004)(4326008)(2906002)(9686003)(6306002)(55016002)(53936002)(54906003)(7696005)(68736007)(316002)(26005)(6506007)(2351001)(81156014)(99286004)(476003)(102836004)(186003)(486006)(105586002)(5660300001)(966005)(106356001)(478600001)(44832011)(6916009)(74316002)(71200400001)(71190400001)(66066001)(14444005)(8936002)(25786009)(7736002)(2501003)(305945005)(33656002)(8676002)(256004)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0802MB2142;H:VI1PR0802MB2528.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: FkjE/+ZIm4lY2zyU/QWDVGKpqqckJ0wocDwW1C8s6qu2Cq2o4WhY/vX4bT6kbBhpNvnA5Oi4SUlft9pPONwa+vnvMGnlt0o3WyWshQtZyXXJa/8hW5aMPSGFSN8vXaDAhsWigBDAp+vK2YyRnagrl5ijuPHQMMOptrOsWO1F5HWJxqwGOuKI8wYSH8pMroF2ONhtWPHo8ZLrTOpuIEt+dISCZ0Uc7DvhDAavjU/5cXIHCxFafvtIx/5d2IPUT2CAyc+TBQPYW5L17JxO6dQtmbA8v//29/AUPbNC1kIsGk85elmsHGDtaiIYvIrQzaaRokkJ08UYS24YtIERJpW/6ErNO3HmgDT5vg6xahWJXbE=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRmVeSWpSXmKPExsWy7djP87qsXl+jDRZ1a1jMP3KO1aJv339G
-        i/7Hr5ktzp/fwG6x6fE1VovLu+awWcw4v4/JYun1i0wWrXuPsDtweqyZt4bRY9OqTjaPzUvq
-        PQ6+28Pk8XmTXABrFJdNSmpOZllqkb5dAlfGoxtTWAuuOVW8uNLC3sDYY9XFyMkhIWAise/k
-        LOYuRi4OIYEVjBI9Rw4ygySEBL4wSqzb5glhf2aUeH7WEaZh3vtZrBANy4Hir14jNDxf4gdi
-        swmYSzzafoYJxBYRUJaYfG862AZmgRlMEmuOfWXrYuTgEBawlfi5GqyeRUBV4vTy3YwgNq+A
-        i8S9l6eYIJbJSzTs2swOYnMKuEqsnXyVBaJGUOLkzCdgNjNQTfPW2WDzJQQWsUucv74OqtlF
-        Yn3vFChbWOLV8S3sELaMxP+d86Hi5RK7tz5jh2huYZSYO3kRVMJa4vDxi6wghzILaEqs36UP
-        YkoIOEr8m1UBYfJJ3HgrCHECn8SkbSAvgoR5JTrahCBm6ErM+3+GFcKWluj6vw7K9pA4/G43
-        4wRGxVlInpmF5JlZCGsXMDKvYhRPLS3OTU8tNsxLLdcrTswtLs1L10vOz93ECEw7p/8d/7SD
-        8eulpEOMAhyMSjy8CcJfooVYE8uKK3MPMUpwMCuJ8EbafI0W4k1JrKxKLcqPLyrNSS0+xCjN
-        waIkzlvN8CBaSCA9sSQ1OzW1ILUIJsvEwSnVwNgUe35H7YQeubVGU3jcbhz/OfOfv0raVdsD
-        iXt5DyyRsp6Xsrz9jsXjB747gzqj4rez/O59+SNgbUeb1lYp6ZUx/w3rdLKdeF3bSkR0Mndz
-        2xRX/6mXvnKYe2N3gcuTPqm55t9bRRQufPBMr8/Y91k1X+RxxIdD/8w33Uo2vM3wIi3srIqP
-        rhJLcUaioRZzUXEiABZoeXg3AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKIsWRmVeSWpSXmKPExsVy+t/xe7osXl+jDaZsUbOYf+Qcq0Xfvv+M
-        Fv2PXzNbnD+/gd1i0+NrrBaXd81hs5hxfh+TxdLrF5ksWvceYXfg9Fgzbw2jx6ZVnWwem5fU
-        exx8t4fJ4/MmuQDWKD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSc
-        zLLUIn27BL2MRzemsBZcc6p4caWFvYGxx6qLkZNDQsBEYt77WaxdjFwcQgJLGSW+XznNDJGQ
-        lmg8vZoJwhaW+HOtiw2i6BOjxNX2SYwgCTYBc4lH28+AFYkIKEtMvjedGaSIWWABk8SWK8+A
-        ijg4hAVsJX6u9gOpYRFQlTi9fDdYL6+Ai8S9l6egFshLNOzazA5icwq4SqydfJUFpFUIqKb3
-        Ei9EuaDEyZlPWEBsZqDy5q2zmScwCsxCkpqFJLWAkWkVo0hqaXFuem6xoV5xYm5xaV66XnJ+
-        7iZGYJRsO/Zz8w7GSxuDDzEKcDAq8fAmCH+JFmJNLCuuzD3EKMHBrCTCG2nzNVqINyWxsiq1
-        KD++qDQntfgQoynQDxOZpUST84ERnFcSb2hqaG5haWhubG5sZqEkznveoDJKSCA9sSQ1OzW1
-        ILUIpo+Jg1OqgTFu1YqLNgW212aa13QcrJ4cbHc83lt69onm7ZK8cwyW/5j8Pa3+ova2bY8W
-        V4kZPjC7t+zM77iEWSlny/Z8YV23OlzeuuVPgmiK5K/gnVN3TOJ1dFswe8qMg3ttzu5efDnw
-        7e7m68XO0c0zUivf1VWq6EqxsxzUelRd5PH3za8c0SsTD3d+C3msxFKckWioxVxUnAgAbKtu
-        mqgCAAA=
-X-CMS-MailID: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4
-References: <20181121120509.18892-1-k.konieczny@partner.samsung.com>
-        <CGME20181121120524eucas1p166a26857df78947c9e08f0fb8dbf75e4@eucas1p1.samsung.com>
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e5f8151-fb79-49fd-15a7-08d64fa9b540
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2018 12:06:02.7197
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0802MB2142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add imem clock for exynos5433.
+This patch series introduces performance improvements for lzo.
 
-Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c   | 123 +++++++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h |  55 +++++++++++
- 2 files changed, 178 insertions(+)
+The improvements fall into two categories: general Arm-specific optimisatio=
+ns
+(e.g., more efficient memory access); and the introduction of a special cas=
+e=A0
+for handling runs of zeros (which is a common case for zram) using run-leng=
+th
+encoding.
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 24c3360db65b..db29cbd1fbdc 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -2345,6 +2345,129 @@ static const struct samsung_cmu_info fsys_cmu_info __initconst = {
- 	.clk_name		= "aclk_fsys_200",
- };
- 
-+/*
-+ * Register offset definitions for CMU_IMEM
-+ *
-+ */
-+
-+#define ENABLE_ACLK_IMEM			0x0800
-+#define ENABLE_ACLK_IMEM_SSS			0x0808
-+#define ENABLE_ACLK_IMEM_SLIMSSS		0x080c
-+#define ENABLE_PCLK_IMEM			0x0900
-+#define ENABLE_PCLK_IMEM_SSS			0x0904
-+#define ENABLE_PCLK_IMEM_SLIMSSS		0x0908
-+
-+static const unsigned long imem_clk_regs[] __initconst = {
-+ENABLE_ACLK_IMEM,
-+ENABLE_ACLK_IMEM_SSS,
-+ENABLE_ACLK_IMEM_SLIMSSS,
-+ENABLE_PCLK_IMEM,
-+ENABLE_PCLK_IMEM_SSS,
-+ENABLE_PCLK_IMEM_SLIMSSS,
-+};
-+
-+static const struct samsung_gate_clock imem_gate_clks[] __initconst = {
-+	/* ENABLE_ACLK_IMEM */
-+	GATE(CLK_ACLK_AXI2AHB_IMEMH, "aclk_axi2ahb_imemh", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 24, 0, 0),
-+	GATE(CLK_ACLK_AXIDS_SROMC, "aclk_axids_sromc", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 23, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_SROMC, "aclk_sromc", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 22, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_ARBG_TX, "aclk_bts_arbg_tx", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXI_IMEMX, "aclk_asyncaxi_imemx", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 20, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIUS_IMEMX, "aclk_axius_imemx", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 19, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_IMEMX, "aclk_xiu_imemx", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 18, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXI_SSSX, "aclk_asyncaxi_sssx", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_SLIMSSS, "aclk_bts_slimsss", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_SSS_DRAM, "aclk_bts_sss_dram", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_BTS_SSS_CCI, "aclk_bts_sss_cci", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 13, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ALB_IMEM, "aclk_alb_imem", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 12, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM1P, "aclk_axids_pimemx_imem1p", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 11, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIDS_PIMEMX_IMEM0P, "aclk_axids_pimemx_imem0p", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 10, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXIDS_PIMEMX_GIC, "aclk_axids_pimemx_gic", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 9, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAHBM_SSS_ATLAS, "aclk_asyncahbm_sss_atlas", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_ASYNCAXIS_MIF_PIMEMX, "aclk_asyncaxis_mif_pimemx", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXI2APB_IMEM1P, "aclk_axi2apb_imem1p", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_AXI2APB_IMEM0P, "aclk_axi2apb_imem0p", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_SSSX, "aclk_xiu_sssx", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_PIMEMX, "aclk_xiu_pimemx", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 2, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_IMEMND_266, "aclk_imemnd_266", "aclk_imem_266",
-+			ENABLE_ACLK_IMEM, 1, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_GIC, "aclk_gic", "aclk_imem_200",
-+			ENABLE_ACLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_ACLK_IMEM_SSS */
-+	GATE(CLK_ACLK_SSS, "aclk_sss", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM_SSS, 0, CLK_IGNORE_UNUSED, 0),
-+	/* ENABLE_ACLK_IMEM_SLIMSSS */
-+	GATE(CLK_ACLK_SLIMSSS, "aclk_slimsss", "aclk_imem_sssx_266",
-+			ENABLE_ACLK_IMEM_SLIMSSS, 0, CLK_IGNORE_UNUSED, 0),
-+
-+	/* ENABLE_PCLK_IMEM */
-+	GATE(CLK_PCLK_GPIO_IMEM, "pclk_gpio_imem", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 17, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAXI_IMEMX, "pclk_asyncaxi_imemx", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 16, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_ARBG_TX, "pclk_bts_arbg_tx", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 15, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ASYNCAPB_ARBG_TX, "pclk_asyncapb_arbg_tx", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 14, CLK_IGNORE_UNUSED, 0),
-+
-+	GATE(CLK_PCLK_BTS_SLIMSSS, "pclk_bts_slimsss", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_SSS_DRAM, "pclk_bts_sss_dram", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 7, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_BTS_SSS_CCI, "pclk_bts_sss_cci", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_ALB_IMEM, "pclk_alb_imem", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 5, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_PMU_IMEM, "pclk_pmu_imem", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_IMEM, "pclk_sysreg_imem", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 3, CLK_IGNORE_UNUSED, 0),
-+	/* ENABLE_PCLK_IMEM_SSS */
-+	GATE(CLK_PCLK_SSS, "pclk_sss", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-+	/* ENABLE_PCLK_IMEM_SLIMSSS */
-+	GATE(CLK_PCLK_SLIMSSS, "pclk_slimsss", "aclk_imem_200",
-+			ENABLE_PCLK_IMEM, 0, CLK_IGNORE_UNUSED, 0),
-+};
-+
-+static const struct samsung_cmu_info imem_cmu_info __initconst = {
-+	.gate_clks		= imem_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(imem_gate_clks),
-+	.nr_clk_ids		= IMEM_NR_CLK,
-+	.clk_regs		= imem_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(imem_clk_regs),
-+};
-+
-+static void __init exynos5433_cmu_imem_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &imem_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos5433_cmu_imem, "samsung,exynos5433-cmu-imem",
-+		exynos5433_cmu_imem_init);
-+
- /*
-  * Register offset definitions for CMU_G2D
-  */
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index 87bb2b017143..312d8810b56d 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -623,6 +623,61 @@
- 
- #define FSYS_NR_CLK			116
- 
-+/* CMU_IMEM */
-+#define CLK_ACLK_SSS			1
-+#define CLK_ACLK_SLIMSSS		2
-+#define CLK_ACLK_RTIC			3
-+#define CLK_ACLK_XIU_SSSX		4
-+#define CLK_ACLK_ASYNCAHBM_SSS_ATLAS	5
-+#define CLK_ACLK_ASYNCAXI_SSSX		6
-+#define CLK_ACLK_BTS_SSS_CCI		7
-+#define CLK_ACLK_BTS_SSS_DRAM		8
-+#define CLK_ACLK_BTS_SLIMSSS		9
-+#define CLK_ACLK_SMMU_SSS_CCI		10
-+#define CLK_ACLK_SMMU_SSS_DRAM		11
-+#define CLK_ACLK_SMMU_SLIMSSS		12
-+#define CLK_ACLK_SMMU_RTIC		13
-+#define CLK_ACLK_IMEMND_266		14
-+#define CLK_ACLK_ALB_IMEM		15
-+#define CLK_ACLK_XIU_IMEMX		16
-+#define CLK_ACLK_AXIUS_IMEMX		17
-+#define CLK_ACLK_ASYNCAXI_IMEMX		18
-+#define CLK_ACLK_ARBG_TX		19
-+#define CLK_ACLK_BTS_ARBG_TX		20
-+#define CLK_ACLK_SMMU_ARBG_TX		21
-+#define CLK_ACLK_GIC			22
-+#define CLK_ACLK_INT_MEM		23
-+#define CLK_ACLK_XIU_PIMEMX		24
-+#define CLK_ACLK_AXI2APB_IMEM0P		25
-+#define CLK_ACLK_AXI2APB_IMEM1P		26
-+#define CLK_ACLK_ASYNCAXIS_MIF_PIMEMX	27
-+#define CLK_ACLK_AXIDS_PIMEMX_GIC	28
-+#define CLK_ACLK_AXIDS_PIMEMX_IMEM0P	29
-+#define CLK_ACLK_AXIDS_PIMEMX_IMEM1P	30
-+#define CLK_ACLK_SROMC			31
-+#define CLK_ACLK_AXIDS_SROMC		32
-+#define CLK_ACLK_AXI2AHB_IMEMH		33
-+#define CLK_PCLK_SSS			34
-+#define CLK_PCLK_SLIMSSS		35
-+#define CLK_PCLK_RTIC			36
-+#define CLK_PCLK_SYSREG_IMEM		37
-+#define CLK_PCLK_PMU_IMEM		38
-+#define CLK_PCLK_ALB_IMEM		39
-+#define CLK_PCLK_BTS_SSS_CCI		40
-+#define CLK_PCLK_BTS_SSS_DRAM		41
-+#define CLK_PCLK_BTS_SLIMSSS		42
-+#define CLK_PCLK_SMMU_SSS_CCI		43
-+#define CLK_PCLK_SMMU_SSS_DRAM		44
-+#define CLK_PCLK_SMMU_SLIMSSS		45
-+#define CLK_PCLK_SMMU_RTIC		46
-+#define CLK_PCLK_ASYNCAPB_ARBG_TX	47
-+#define CLK_PCLK_BTS_ARBG_TX		48
-+#define CLK_PCLK_SMMU_ARBG_TX		49
-+#define CLK_PCLK_ASYNCAXI_IMEMX		50
-+#define CLK_PCLK_GPIO_IMEM		51
-+
-+#define IMEM_NR_CLK			52
-+
- /* CMU_G2D */
- #define CLK_MUX_ACLK_G2D_266_USER	1
- #define CLK_MUX_ACLK_G2D_400_USER	2
--- 
-2.19.1
+The introduction of RLE modifies the bitstream such that it can't be decode=
+d
+by old versions of lzo (the new lzo-rle can correctly decode old bitstreams=
+).
+To avoid possible issues where data is persisted on disk (e.g., squashfs), =
+the=A0
+final patch in this series separates lzo-rle into a separate algorithm
+alongside lzo, so that the new lzo-rle is (by default) only used for zram a=
+nd
+must be explicitly selected for other use-cases. This final patch could be
+omitted if the consensus is that we'd rather avoid proliferation of lzo
+variants.
 
+Overall, performance is improved by around 1.1 - 4.8x (data-dependent: data
+with many zero runs shows higher improvement). Under real-world testing wit=
+h
+zram, time spent in (de)compression during swapping is reduced by around 27=
+%.
+The graph below shows the weighted round-trip throughput of lzo, lz4 and
+lzo-rle, for randomly generated 4k chunks of data with varying levels of
+entropy. (To calculate weighted round-trip throughput, compression performa=
+nce
+is emphasised to reflect the fact that zram does around 2.25x more compress=
+ion
+than decompression. (Results and overall trends are fairly similar for
+unweighted).
+
+https://drive.google.com/file/d/18GU4pgRVCLNN7wXxynz-8R2ygrY2IdyE/view
+
+Contributors:
+Dave Rodgman <dave.rodgman@arm.com>
+Matt Sealey <matt.sealey@arm.com>=
