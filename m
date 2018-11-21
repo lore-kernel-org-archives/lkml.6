@@ -2,101 +2,152 @@ Return-Path: <SRS0=ejdu=OA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9283FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAB7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5EF2146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:51:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CC5D214C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:52:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+kcajeq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A5EF2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="hkJBrV7C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CC5D214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbeKVA00 (ORCPT
+        id S1729767AbeKVA1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:26:26 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37578 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730337AbeKVA00 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:26:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so5654749plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Nov 2018 05:51:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=cETyAdPLrLTj0wzmDmaxzOJk55XPIRRxIlHTFh1H2r4=;
-        b=d+kcajeq5S7J3WFU7KkCrbpL4Pb4jlGFSCpI+TjuQ8aWtsY3SPqRGzrvQf4jvstLOq
-         soyRIQu/PSU8IzhJweloKKXHSJrVfgl1warXSjfvKAt99DJ9PRprkAPvMcazI2lMY7Us
-         QThgWwlUNvXvGtO3AeNQ9/wsSVfDLWE6uI8HAb89ca3l0Lb8T3IzvTXIzuGwnC5pss58
-         /+61XFxKL3O8O1d0ggBFxt0hJWX0fo8wIuQytV3tT69gm3YN+d49do8Z/YFwkvplVx34
-         nPfaAPtdCus2rdJwyZYcbPLeoCsQ4qy9QzyWzUoh5pktuJOn3BSvAIc5Y8jkjq5EbOey
-         k+DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cETyAdPLrLTj0wzmDmaxzOJk55XPIRRxIlHTFh1H2r4=;
-        b=XuTr0sJS6d57ot0CAb9UKnCBu7V6hiziQX65eUQ1M6X6Mca//7dXRwwnP93Ykb2w4k
-         sMXSi+rax+cfNRpVTWI1ZAvVe8e6xy43GxqOTl3NC4w4Tgdnicg1Bo/Qddrab4gv0NWT
-         gCpm0WejDm7F9Bo+zoZW9xprnayTPGRcqynL6NZJicd0sWftnDnz17bjXY+9EpmqGkXW
-         AVQhBePtcYzpZF1fWNFFQWu66yjZxgeiL+yyTe4qoZsCZfApJGZb1XK6nXEf6vCA9uwm
-         NWldEpsuNIcNIMyVuuqDgSUN9isGC2vnJP4/yAqzy1nCYRRfe/CVjUd7S2ICf5sCAZoC
-         fz5A==
-X-Gm-Message-State: AA+aEWYsKLG56RwzNAm0M84xzlvLEL7Amwt717Ukze2nV4M3n/jh5Z+M
-        zSZWW253NvFfV7n5Z16dMyk=
-X-Google-Smtp-Source: AFSGD/Xldf0My1L1M9IY5kkVMojTtlSoWsy4B82HAjnWqcL4RK7DjG83Y3ZAeJpGGK0GxbkNL5mwLg==
-X-Received: by 2002:a63:83c1:: with SMTP id h184mr5968333pge.437.1542808315957;
-        Wed, 21 Nov 2018 05:51:55 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([45.251.62.8])
-        by smtp.gmail.com with ESMTPSA id a9sm18943242pgq.20.2018.11.21.05.51.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Nov 2018 05:51:55 -0800 (PST)
-Date:   Wed, 21 Nov 2018 19:21:52 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, andrey.grodzovsky@amd.com,
-        Pixel.Ding@amd.com, Monk.Liu@amd.com
-Cc:     jrdr.linux@gmail.com, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        sabyasachi.linux@gmail.com
-Subject: [PATCH] drm/amd/amdgpu: Remove duplicate header
-Message-ID: <20181121135151.GA2536@hp-pavilion-15-notebook-pc-brajeswar>
+        Wed, 21 Nov 2018 19:27:24 -0500
+Received: from mail.servus.at ([193.170.194.20]:33822 "EHLO mail.servus.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728045AbeKVA1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Nov 2018 19:27:24 -0500
+X-Greylist: delayed 480 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Nov 2018 19:27:23 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mail.servus.at (Postfix) with ESMTP id 5953D3000677;
+        Wed, 21 Nov 2018 14:44:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
+        content-transfer-encoding:content-type:content-type:in-reply-to
+        :mime-version:user-agent:date:date:message-id:organization:from
+        :from:references:subject:subject:received:received; s=main; t=
+        1542807891; x=1544622292; bh=aAphKOCgmy46W7vOMqmhSKzSpxRPSKLfWvc
+        mCIk0FdU=; b=hkJBrV7CtmzEMQGR6+Nmgiss1sfE+AqUBYCEEzpoR1EdRJVq6XE
+        rUWezZL4HJEVWZxxykryGlle7TcMsGeYYyXyjesqSF8hLzwOS47a9YZXSwonnfxk
+        kepAnxf2+NnMyiYpIc9Ih26pjHUcJxtI7nt2If8aYohFcKHPuXcHRkcM=
+X-Virus-Scanned: amavisd-new at servus.at
+Received: from mail.servus.at ([127.0.0.1])
+        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nklUh_TOA-HP; Wed, 21 Nov 2018 14:44:51 +0100 (CET)
+Received: from [192.168.216.53] (unknown [81.10.228.128])
+        (Authenticated sender: oh_markus)
+        by mail.servus.at (Postfix) with ESMTPSA id B077E3000676;
+        Wed, 21 Nov 2018 14:44:49 +0100 (CET)
+Subject: Re: [PATCH 0/6] lib/lzo: performance improvements
+To:     Dave Rodgman <dave.rodgman@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <VI1PR0802MB25289788BFADB136CE08AADA8FDA0@VI1PR0802MB2528.eurprd08.prod.outlook.com>
+Cc:     nd <nd@arm.com>,
+        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Matt Sealey <Matt.Sealey@arm.com>,
+        "nitingupta910@gmail.com" <nitingupta910@gmail.com>,
+        "rpurdie@openedhand.com" <rpurdie@openedhand.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "sergey.senozhatsky.work@gmail.com" 
+        <sergey.senozhatsky.work@gmail.com>,
+        Sonny Rao <sonnyrao@google.com>
+From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Organization: oberhumer.com
+Message-ID: <5BF56151.5090201@oberhumer.com>
+Date:   Wed, 21 Nov 2018 14:44:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <VI1PR0802MB25289788BFADB136CE08AADA8FDA0@VI1PR0802MB2528.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove gca/gfx_8_0_sh_mask.h which is included more than once
+Hi Dave,
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
----
- drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c | 1 -
- 1 file changed, 1 deletion(-)
+thanks for your patch set. Just some initial comments:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-index 64e875d528dd..6a0fcd67662a 100644
---- a/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_vi.c
-@@ -37,7 +37,6 @@
- #include "gmc/gmc_8_2_sh_mask.h"
- #include "oss/oss_3_0_d.h"
- #include "oss/oss_3_0_sh_mask.h"
--#include "gca/gfx_8_0_sh_mask.h"
- #include "dce/dce_10_0_d.h"
- #include "dce/dce_10_0_sh_mask.h"
- #include "smu/smu_7_1_3_d.h"
+
+I think the three patches
+
+  [PATCH 2/6] lib/lzo: enable 64-bit CTZ on Arm
+  [PATCH 3/6] lib/lzo: 64-bit CTZ on Arm aarch64
+  [PATCH 4/6] lib/lzo: fast 8-byte copy on arm64
+
+should be applied in any case - could you please make an extra
+pull request out of these and try to get them merged as fast
+as possible. Thanks.
+
+
+The first patch
+
+  [PATCH 1/6] lib/lzo: clean-up by introducing COPY16
+
+does not really affect the resulting code at the moment, but please
+note that in one case the actual copy unit is not allowed to
+be greater 8 bytes (which might be implied by the name "COPY16").
+So this needs more work like an extra COPY16_BY_8() macro.
+
+
+As for your your "lzo-rle" improvements I'll have a look.
+
+Please note that the first byte value 17 is actually valid when using
+external dictionaries ("lzo1x_decompress_dict_safe()" in the LZO source
+code). While this functionality is not present in the Linux kernel at
+the moment it might be worrisome wrt future enhancements.
+
+Finally I'm wondering if your chart comparisions just compares the "lzo-rle"
+patch or also includes the ARM64 improvments - I cannot understand where a
+20% speedup should come from if you have 0% zeros.
+
+Cheers,
+Markus
+
+
+
+On 2018-11-21 13:06, Dave Rodgman wrote:
+> This patch series introduces performance improvements for lzo.
+> 
+> The improvements fall into two categories: general Arm-specific optimisations
+> (e.g., more efficient memory access); and the introduction of a special case 
+> for handling runs of zeros (which is a common case for zram) using run-length
+> encoding.
+> 
+> The introduction of RLE modifies the bitstream such that it can't be decoded
+> by old versions of lzo (the new lzo-rle can correctly decode old bitstreams).
+> To avoid possible issues where data is persisted on disk (e.g., squashfs), the 
+> final patch in this series separates lzo-rle into a separate algorithm
+> alongside lzo, so that the new lzo-rle is (by default) only used for zram and
+> must be explicitly selected for other use-cases. This final patch could be
+> omitted if the consensus is that we'd rather avoid proliferation of lzo
+> variants.
+> 
+> Overall, performance is improved by around 1.1 - 4.8x (data-dependent: data
+> with many zero runs shows higher improvement). Under real-world testing with
+> zram, time spent in (de)compression during swapping is reduced by around 27%.
+> The graph below shows the weighted round-trip throughput of lzo, lz4 and
+> lzo-rle, for randomly generated 4k chunks of data with varying levels of
+> entropy. (To calculate weighted round-trip throughput, compression performance
+> is emphasised to reflect the fact that zram does around 2.25x more compression
+> than decompression. (Results and overall trends are fairly similar for
+> unweighted).
+> 
+> https://drive.google.com/file/d/18GU4pgRVCLNN7wXxynz-8R2ygrY2IdyE/view
+> 
+> Contributors:
+> Dave Rodgman <dave.rodgman@arm.com>
+> Matt Sealey <matt.sealey@arm.com>
+> 
+
 -- 
-2.17.1
-
+Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
