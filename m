@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21225C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BC3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE7BB215E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 472FF214DE
+	for <linux-kernel@archiver.kernel.org>; Wed, 21 Nov 2018 13:30:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="fqTaW8ye"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7BB215E5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Rhs4F3Dh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 472FF214DE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730693AbeKVAFH (ORCPT
+        id S1730994AbeKVAFJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 21 Nov 2018 19:05:07 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59966 "EHLO
+        Wed, 21 Nov 2018 19:05:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60000 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730630AbeKVAFG (ORCPT
+        with ESMTP id S1730596AbeKVAFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Nov 2018 19:05:06 -0500
+        Wed, 21 Nov 2018 19:05:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=mUSghe2efHNkf301YI9MNmu7vKCaH1lXh9fm2dyQf08=; b=fqTaW8yeCcbd
-        JnMEt3uZ0aXi3Td+DuShZqMOF4uhNhrGVwX77JbilQwRDipFlzYDvp3oAa4RozlaG+DQg2DjWEosq
-        V1xm30uhe6kPMk11kYXZ+fhEmfXqEhFc/wH3qktFM9l/YCZ7u86U6Jy1DJhGxYkmgYRKAHNzd5Ca2
-        HW/LQ=;
+        List-Archive; bh=hwCaOpkVJpY7QqfFdxeEwXVxJRI8H1PYgyv8O0XdmBs=; b=Rhs4F3DhzcKy
+        lAY2t5Rvm3ZiPAjY4ecwtUgHP3HuGERQZAx5f2Zao53dYiDc+0LqCZGubDn6mRJr2WN1z1rLfBWqZ
+        NPKULpRs3tuDF0UI76hdOHl8z1vWrK0vhUN/lNHlUwv6OT7NAjjVrkkmIOHYbVFsZt2rQIoqGvxIV
+        lhoko=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gPSaX-0003Zr-16; Wed, 21 Nov 2018 13:30:41 +0000
+        id 1gPSaY-0003Zx-Mb; Wed, 21 Nov 2018 13:30:42 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B69AE11250AE; Wed, 21 Nov 2018 13:30:40 +0000 (GMT)
+        id 5D9C411250AE; Wed, 21 Nov 2018 13:30:42 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ryan Case <ryandcase@chromium.org>
+To:     Douglas Anderson <dianders@chromium.org>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "spi: spi-qcom-qspi: Fix remaining driver nits" to the regulator tree
+Subject: Applied "regulator: core: Avoid propagating to supplies when possible" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181121133040.B69AE11250AE@debutante.sirena.org.uk>
-Date:   Wed, 21 Nov 2018 13:30:40 +0000 (GMT)
+Message-Id: <20181121133042.5D9C411250AE@debutante.sirena.org.uk>
+Date:   Wed, 21 Nov 2018 13:30:42 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: spi-qcom-qspi: Fix remaining driver nits
+   regulator: core: Avoid propagating to supplies when possible
 
 has been applied to the regulator tree at
 
@@ -80,57 +80,99 @@ to this mail.
 Thanks,
 Mark
 
-From dc04f0e4ca82103889895615b3c2eb77110b1b1a Mon Sep 17 00:00:00 2001
-From: Ryan Case <ryandcase@chromium.org>
-Date: Mon, 22 Oct 2018 18:07:07 -0700
-Subject: [PATCH] spi: spi-qcom-qspi: Fix remaining driver nits
+From 488c008a7b7c88b0989ab165f9d0d89ee0777add Mon Sep 17 00:00:00 2001
+From: Douglas Anderson <dianders@chromium.org>
+Date: Tue, 20 Nov 2018 09:52:54 -0800
+Subject: [PATCH] regulator: core: Avoid propagating to supplies when possible
 
-Address remaining comments from original driver patch series
+When we called regulator_enable() on a regulator we'd end up
+propagating that call all the way up the chain every time.  This is a
+bit of a waste of time.  A child regulator already refcounts its own
+enables so it should avoid passing on to its parent unless the
+refcount transitioned between 0 and 1.
 
-* Move RD_FIFO_CFG to be ordered corretly
-* Expand spinlock comment
+Historically this hasn't been a huge problem since we skipped dealing
+with enable for always-on regulators.  In a previous patch, however,
+we removed the always-on optimization.  On one system, the debugfs
+regulator_summary was now showing a "use_count" of 33 for a top-level
+regulator.
 
-Signed-off-by: Ryan Case <ryandcase@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Let's implement this optimization.  This turns out to be fairly
+trivial with the recent reorganization of the regulator core.
+
+NOTE: as part of this patch I'll make "always-on" regulators start
+with a use count of 1.  This keeps the counts clean when recursively
+resolving regulators.
+
+ALSO NOTE: this commit also contains somewhat of a bug fix to
+regulator_force_disable().  It was incorrectly looping over
+"rdev->open_count" when it should have been looping over use_count.
+We have to touch that code anyway (since we should no longer loop at
+all), so we'll fix it together in one patch.  Also: since this comes
+after commit f8702f9e4aa7 ("regulator: core: Use ww_mutex for
+regulators locking") we can now move to use _regulator_disable() for
+our supply and keep it in the lock.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-qcom-qspi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/regulator/core.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/spi/spi-qcom-qspi.c b/drivers/spi/spi-qcom-qspi.c
-index b8163b40bb92..e0f061139c8f 100644
---- a/drivers/spi/spi-qcom-qspi.c
-+++ b/drivers/spi/spi-qcom-qspi.c
-@@ -90,6 +90,9 @@
- #define PIO_DATAOUT_1B		0x0020
- #define PIO_DATAOUT_4B		0x0024
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 26a0c523ed86..03a03763457c 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1822,6 +1822,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+ 			rdev->supply = NULL;
+ 			return ret;
+ 		}
++		rdev->use_count = 1;
+ 	}
  
-+#define RD_FIFO_CFG		0x0028
-+#define CONTINUOUS_MODE		BIT(0)
-+
- #define RD_FIFO_STATUS	0x002c
- #define FIFO_EMPTY	BIT(11)
- #define WR_CNTS_MSK	0x7f0
-@@ -99,9 +102,6 @@
- #define RDY_16BYTE	BIT(1)
- #define FIFO_RDY	BIT(0)
+ 	return 0;
+@@ -2491,7 +2492,7 @@ static int _regulator_enable(struct regulator *regulator)
  
--#define RD_FIFO_CFG		0x0028
--#define CONTINUOUS_MODE		BIT(0)
--
- #define RD_FIFO_RESET		0x0030
- #define RESET_FIFO		BIT(0)
+ 	lockdep_assert_held_once(&rdev->mutex.base);
  
-@@ -139,7 +139,7 @@ struct qcom_qspi {
- 	struct device *dev;
- 	struct clk_bulk_data clks[QSPI_NUM_CLKS];
- 	struct qspi_xfer xfer;
--	/* Lock to protect data accessed by IRQs */
-+	/* Lock to protect xfer and IRQ accessed registers */
- 	spinlock_t lock;
- };
+-	if (rdev->supply) {
++	if (rdev->use_count == 0 && rdev->supply) {
+ 		ret = _regulator_enable(rdev->supply);
+ 		if (ret < 0)
+ 			return ret;
+@@ -2539,7 +2540,7 @@ static int _regulator_enable(struct regulator *regulator)
+ 	_regulator_handle_consumer_disable(regulator);
  
+ err_disable_supply:
+-	if (rdev->supply)
++	if (rdev->use_count == 0 && rdev->supply)
+ 		_regulator_disable(rdev->supply);
+ 
+ 	return ret;
+@@ -2648,7 +2649,7 @@ static int _regulator_disable(struct regulator *regulator)
+ 	if (ret == 0 && rdev->coupling_desc.n_coupled > 1)
+ 		ret = regulator_balance_voltage(rdev, PM_SUSPEND_ON);
+ 
+-	if (ret == 0 && rdev->supply)
++	if (ret == 0 && rdev->use_count == 0 && rdev->supply)
+ 		ret = _regulator_disable(rdev->supply);
+ 
+ 	return ret;
+@@ -2733,11 +2734,10 @@ int regulator_force_disable(struct regulator *regulator)
+ 		ret = drms_uA_update(rdev);
+ 	}
+ 
+-	regulator_unlock_dependent(rdev, &ww_ctx);
++	if (rdev->use_count != 0 && rdev->supply)
++		_regulator_disable(rdev->supply);
+ 
+-	if (rdev->supply)
+-		while (rdev->open_count--)
+-			regulator_disable(rdev->supply);
++	regulator_unlock_dependent(rdev, &ww_ctx);
+ 
+ 	return ret;
+ }
 -- 
 2.19.0.rc2
 
